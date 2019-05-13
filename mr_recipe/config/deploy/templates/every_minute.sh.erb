@@ -1,0 +1,3 @@
+<% fetch(:whenever_every_minute).each do |script| -%>
+  source bin/every_minute/<%= script %>.sh
+<% end -%>

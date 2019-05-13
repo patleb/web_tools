@@ -1,0 +1,2 @@
+mymodfunc()
+  echo "hi im a powscript module!"

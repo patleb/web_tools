@@ -1,0 +1,2 @@
+module SunCap
+end

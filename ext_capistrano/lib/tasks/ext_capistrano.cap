@@ -1,0 +1,49 @@
+# TODO change lib/capistrano/tasks to lib/tasks/capistrano
+# https://github.com/capistrano/sshkit/blob/master/EXAMPLES.md
+load_rel 'ext_capistrano/**/*.cap'
+
+namespace :load do
+  task :defaults do
+    set :gems,                -> { [] }
+    set :single_server,       -> { true }
+    set :admin_name,          -> { fetch(:stage) == :vagrant ? 'vagrant' : 'ubuntu' }
+    set :deployer_name,       -> { 'deployer' }
+    set :deploy_dir,          -> { "#{fetch(:application)}_#{fetch(:stage)}" }
+    # TODO                    -> { "#{fetch(:application)}_#{fetch(:stage)}#{'_' + fetch(:server_id) if fetch(:server_id)}" }
+    set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
+    # TODO remove capability to deploy from another root directory --> it makes Gemfile sync to complicated
+    set :root,                -> { ENV['RAILS_ROOT'] || '' } # -> { "../#{fetch(:application)}" }
+
+    set :pty,                 -> { true }
+
+    set :files_public_dirs,   -> { %w(system images) }
+    set :files_private_dirs,  -> { [] }
+
+    set :rbenv_ruby,          -> { RUBY_VERSION }
+    set :rbenv_prefix,        -> { "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec" }
+
+    set :passenger_restart_command, -> { 'rbenv sudo passenger-config restart-app' }
+
+    append :sunzistrano_context, *%i(
+      admin_name
+      application
+      deployer_name
+      deploy_dir
+      deploy_to
+      rbenv_ruby
+      server
+      stage
+      root
+    )
+
+    set :whenever_identifier,   -> { fetch(:deploy_dir) }
+
+    append :linked_dirs, *%w(
+      log
+      tmp/pids
+      tmp/cache
+      tmp/sockets
+      public/system
+    )
+  end
+end

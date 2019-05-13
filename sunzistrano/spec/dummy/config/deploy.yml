@@ -1,0 +1,23 @@
+---
+shared:
+  timezone: America/New_York
+  locales: en_US en_US.UTF-8
+  swap_size: 2048M
+  ssl_country: CA
+  ssl_state: QC
+  ssl_city: Quebec
+  ssl_organization: TODO
+
+admin:
+  skip_recipes:
+  #   - ssl_ca
+  #   - ssl_server
+    - backup
+    - logrotate
+  add_recipes:
+    - logrotate
+    - mysql
+    - wkhtmltopdf
+  reboot: false
+  remote_recipes:
+    - https://raw.githubusercontent.com/patleb/sunzistrano/master/config/sunzi/recipes/mysql.sh

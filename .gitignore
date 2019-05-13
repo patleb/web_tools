@@ -1,0 +1,7 @@
+.bundle/
+pkg/
+**/Gemfile.lock
+**/*.gem
+mr_system-*.gem
+Gemfile.lock
+/tmp/*

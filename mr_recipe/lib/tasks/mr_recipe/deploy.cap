@@ -1,0 +1,58 @@
+namespace :deploy do
+  desc 'link dev shared folder'
+  task :link_dev do
+    on release_roles(:all) do
+      next if fetch(:stage) != :vagrant
+      execute :rm, '-f', current_path
+      execute :ln, "-s", '/vagrant', current_path
+      set :bundle_path, nil
+      set :bundle_binstubs, nil
+      set :bundle_jobs, nil
+      set :bundle_without, nil
+      set :bundle_flags, nil
+      ENV['DEVELOPMENT'] = 'true'
+      invoke 'bundler:install'
+      invoke 'nginx:app:push', 'reload'
+    end
+  end
+
+  desc 'unlink dev shared folder'
+  task :unlink_dev do
+    on release_roles(:all) do
+      next if fetch(:stage) != :vagrant
+      execute :rm, '-f', current_path
+      execute :ln, '-s', "$(ls -dt #{releases_path}/* | head -1)", current_path
+      invoke 'nginx:app:push', 'reload'
+    end
+  end
+
+  # TODO stop batches (db mutex), wait to finish, continue with passenger-restart, start batches
+
+  desc 'Full server deploy after provisioning'
+  task push: %i(
+    dns:set_localhost
+    nginx:push
+    deploy:app:push
+    monit:push
+    monit:restart
+  )
+
+  namespace :app do
+    desc 'App server deploy after provisioning'
+    task push: %i(
+      deploy:check:directories
+      deploy:check:linked_dirs
+      deploy:check:make_linked_dirs
+      secrets:push
+      logrotate:push
+      nginx:app:push
+      nginx:app:enable
+      nginx:app:maintenance:push
+      db:pg:create_user
+      db:pg:create_database
+      db:pg:set_superuser
+      deploy
+      whenever:create_cron_log
+    )
+  end
+end

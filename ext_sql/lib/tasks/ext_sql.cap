@@ -1,0 +1,8 @@
+load_rel 'ext_sql/**/*.cap'
+
+namespace :load do
+  task :defaults do
+    set :migration_role, -> { :web }
+    set :db_roles,       -> { :web }
+  end
+end

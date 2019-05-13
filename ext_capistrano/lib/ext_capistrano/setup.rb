@@ -1,0 +1,70 @@
+require "capistrano/doctor"
+require "capistrano/immutable_task"
+
+module Capistrano::DSL::Stages::Apps
+  def stages
+    bases = super
+    bases + bases.map{ |stage| apps(stage) }.flatten
+  end
+
+  def apps(stage)
+    names = Dir[app_definitions(stage)].map { |f| "#{stage}:#{File.basename(f, ".rb")}" } +
+      Dir[app_definitions('applications')].map { |f| "#{stage}:#{File.basename(f, ".rb")}" }
+    names.uniq!
+    assert_valid_stage_names(names)
+    names
+  end
+
+  def app_definitions(stage)
+    stage_config_path.join(stage, "*.rb")
+  end
+end
+
+extend Capistrano::DSL::Stages::Apps
+include Capistrano::DSL
+include Capistrano::DSL::Stages::Apps
+
+namespace :load do
+  task :defaults do
+    load "capistrano/defaults.rb"
+  end
+end
+
+require "airbrussh/capistrano"
+# We don't need to show the "using Airbrussh" banner announcement since
+# Airbrussh is now the built-in formatter. Also enable command output by
+# default; hiding the output might be confusing to users new to Capistrano.
+Airbrussh.configure do |airbrussh|
+  airbrussh.banner = false
+  airbrussh.command_output = true
+end
+
+stages.each do |stage|
+  Rake::Task.define_task(stage) do
+    stage, app = stage.split(':', 2)
+    set(:stage, stage.to_sym)
+
+    invoke "load:defaults"
+    Rake.application["load:defaults"].extend(Capistrano::ImmutableTask)
+    env.variables.untrusted! do
+      load deploy_config_path
+      load stage_config_path.join("#{stage}.rb")
+      if app
+        set(:application, app)
+        app_config_path = stage_config_path.join('applications', "#{app}.rb")
+        load app_config_path if File.exist?(app_config_path)
+        stage_app_config_path = stage_config_path.join(stage, "#{app}.rb")
+        load stage_app_config_path if File.exist?(stage_app_config_path)
+      end
+      Secret.all(env: stage, app: app, root: fetch(:root))
+      if fetch(:single_server) # TODO rsync to other servers before passenger-restart, but don't use roles
+        server fetch(:server), user: fetch(:deployer_name), roles: %i(web app)
+      end
+    end
+    configure_scm
+    I18n.locale = fetch(:locale, :en)
+    configure_backend
+  end
+end
+
+require "capistrano/dotfile"

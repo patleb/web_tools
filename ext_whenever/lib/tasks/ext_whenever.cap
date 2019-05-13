@@ -1,0 +1,17 @@
+namespace :load do
+  task :defaults do
+    set :whenever_roles, -> { :web }
+  end
+end
+
+namespace :whenever do
+  desc 'Create log/cron.log'
+  task :create_cron_log do
+    on release_roles fetch(:whenever_roles) do
+      within shared_path do
+        execute :mkdir, '-p', 'log'
+        execute :touch, File.join('log', 'cron.log')
+      end
+    end
+  end
+end

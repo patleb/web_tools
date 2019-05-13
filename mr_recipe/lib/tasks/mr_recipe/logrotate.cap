@@ -1,0 +1,11 @@
+namespace :logrotate do
+  desc 'upload app logrotate'
+  task :push do
+    on release_roles fetch(:bundle_roles) do
+      host_path = "/etc/logrotate.d/#{fetch(:deploy_dir)}"
+      invoke! 'template:push', 'logrotate', host_path
+      execute :sudo, :chown, 'root:root', host_path
+      execute :sudo, :chmod, '0644', host_path
+    end
+  end
+end

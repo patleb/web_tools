@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+require 'pathname'
+
+# Abort beautifully with ctrl+c.
+Signal.trap(:INT) { abort "\nAborting." }
+
+source_path = (Pathname.new(__FILE__).dirname + '../lib').expand_path
+$LOAD_PATH << source_path
+
+require 'sunzistrano/version'
+
+if ['-v', '--version'].include? ARGV[0]
+  puts Sunzistrano::VERSION
+  exit 0
+end
+
+require 'sunzistrano'
+
+Sunzistrano::Cli.start
