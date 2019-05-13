@@ -3,5 +3,7 @@ require 'mr_secret/secret'
 require 'mr_secret/railtie' if defined? Rails
 
 module MrSecret
-  # Your code goes here...
+  def self.root
+    @root ||= Pathname.new(File.dirname(__dir__)).expand_path
+  end
 end

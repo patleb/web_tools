@@ -1,3 +1,43 @@
+namespace :rails do
+  desc 'setup secrets.yml, settings.yml, initializers/mr_secret.rb, database.yml and .gitignore files'
+  task :setup_secrets, [:no_master_key] => :environment do |t, args|
+    base = MrSecret.root.join('lib/tasks/templates')
+
+    ['config/initializers/mr_secret.rb', 'config/settings.yml'].each do |file|
+      FileUtils.cp base.join(file).to_s, Rails.root.join(file).to_s
+    end
+
+    ['config/secrets.yml', 'config/secrets.example.yml'].each do |file|
+      Rails.root.join(file).write(ERB.new(base.join('config/secrets.yml.erb').read).result(binding))
+    end
+
+    Rails.root.join('config/database.yml').write(ERB.new(base.join('config/database.yml.erb').read).result(binding))
+
+    file = Rails.root.join('.gitignore')
+    unless (gitignore = file.read).include? 'config/secrets.yml'
+      file.write(gitignore << "\n/config/secrets.yml\n")
+    end
+
+    if flag_on? args, :no_master_key
+      ['config/credentials.yml.enc', 'config/master.key'].each do |file|
+        Rails.root.join(file).delete rescue nil
+      end
+    end
+  end
+
+  def app_name
+    @app_name ||= Rails.application.engine_name.delete_suffix('_application')
+  end
+
+  def app_secret
+    SecureRandom.hex(64)
+  end
+
+  def generate_password
+    SecureRandom.hex(16)
+  end
+end
+
 namespace :secret do
   task :dump, [:env, :app, :file] do |t, args|
     raise 'argument [:app] must be specified' unless (ENV['RAILS_APP'] = args[:app]).present?
