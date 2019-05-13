@@ -55,7 +55,7 @@ module MrSystem
       def add_to_manifests
         require_line = "# require '#{plugin_name}'\n"
         %w(all).each do |name|
-          path = MrSystem.root.join('lib/mr_system', "#{name}.rb")
+          path = Pathname.new("lib/mr_system/#{name}.rb")
           lines = path.readlines
           next if lines.include? require_line
           path.write (lines << require_line).sort_by!{ |line| strip_require(line) }.join
@@ -64,13 +64,13 @@ module MrSystem
 
       def add_to_gemfile
         before = anchor[:type] == :before
-        insert_into_file MrSystem.root.join('Gemfile'),
+        insert_into_file 'Gemfile',
           "#{"\n" unless before}gem '#{plugin_name}', path: './#{plugin_name}'#{"\n" if before}",
           anchor[:type] => anchor[:value]
       end
 
       def add_to_gemspec
-        path = MrSystem.root.join('mr_system.gemspec')
+        path = Pathname.new('mr_system.gemspec')
         lines = path.readlines.select{ |line| line.include?('s.add_dependency') && line.include?('version') }
         gem = "  s.add_dependency \"#{plugin_name}\", "
         return if lines.any?{ |line| line.include? gem }
@@ -85,7 +85,7 @@ module MrSystem
 
       def anchor
         @anchor ||= begin
-          lines = MrSystem.root.join('lib/mr_system/all.rb').readlines
+          lines = Pathname.new('lib/mr_system/all.rb').readlines
           index = lines.index{ |line| line.include? "'#{plugin_name}'" }
           before = index < lines.size - 1
           lines.map!{ |line| strip_require(line) }

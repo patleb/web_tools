@@ -14,7 +14,6 @@ if ['-v', '--version'].include? ARGV[0]
   exit 0
 end
 
-require 'mr_system'
 require 'mr_system/cli'
 
 MrSystem::Cli.start
