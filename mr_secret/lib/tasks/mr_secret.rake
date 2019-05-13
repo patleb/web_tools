@@ -25,6 +25,10 @@ namespace :rails do
     end
   end
 
+  task :rebuild_secrets => :environment do
+    Rails.root.join('config/secrets.yml').write(ERB.new(base.join('config/secrets.yml.erb').read).result(binding))
+  end
+
   def app_name
     @app_name ||= Rails.application.engine_name.delete_suffix('_application')
   end
