@@ -1,10 +1,10 @@
 ﻿-- noinspection SqlNoDataSourceInspectionForFile
 
 create type test_results as (
-  test_name varchar, 
-  successful boolean, 
-  failed boolean, 
-  errorneous boolean, 
+  test_name varchar,
+  successful boolean,
+  failed boolean,
+  errorneous boolean,
   error_message varchar,
   duration interval);
 
@@ -26,7 +26,7 @@ $$ language plpgsql set search_path from current;
 -- The test case stored procedure name has to match 'test_case_<p_suite>%' patern.
 -- It is assumed the setup and precondition procedures are in the same schema as
 -- the test stored procedure.
--- 
+--
 -- select * from test_run_suite('my_test'); will run all tests that will have
 -- 'test_case_my_test' prefix.
 create or replace function test_run_suite(p_suite TEXT) returns setof test_results as $$
@@ -41,15 +41,15 @@ declare
   l_postcondition_cmd text;
 begin
   l_sid := pg_backend_pid();
-  for l_proc in select p.proname, n.nspname 
-			from pg_catalog.pg_proc p join pg_catalog.pg_namespace n 
+  for l_proc in select p.proname, n.nspname
+			from pg_catalog.pg_proc p join pg_catalog.pg_namespace n
 				on p.pronamespace = n.oid
 			where p.proname like 'test/_case/_' || COALESCE(p_suite, '') || '%' escape '/'
 			order by p.proname loop
     -- check for setup
     l_condition := test_get_procname(l_proc.proname, 2, 'test_setup');
     if l_condition is not null then
-      l_cmd := 'DO $body$ begin perform ' || quote_ident(l_proc.nspname) || '.' || quote_ident(l_condition) 
+      l_cmd := 'DO $body$ begin perform ' || quote_ident(l_proc.nspname) || '.' || quote_ident(l_condition)
         || '(); end; $body$';
       perform test_autonomous(l_cmd);
     end if;
@@ -73,14 +73,14 @@ begin
     -- execute the test
     l_start_ts := clock_timestamp();
     begin
-      l_cmd := 'DO $body$ begin ' || l_precondition_cmd || 'perform ' || quote_ident(l_proc.nspname) || '.' || quote_ident(l_proc.proname) 
+      l_cmd := 'DO $body$ begin ' || l_precondition_cmd || 'perform ' || quote_ident(l_proc.nspname) || '.' || quote_ident(l_proc.proname)
         || '(); ' || l_postcondition_cmd || ' end; $body$';
       perform test_autonomous(l_cmd);
       l_row.successful := true;
       l_row.failed := false;
       l_row.errorneous := false;
       l_row.error_message := 'OK';
-    exception 
+    exception
       when triggered_action_exception then
         l_row.successful := false;
         l_row.failed := true;
@@ -97,7 +97,7 @@ begin
     -- check for teardown
     l_condition := test_get_procname(l_proc.proname, 2, 'test_teardown');
     if l_condition is not null then
-      l_cmd := 'DO $body$ begin perform ' || quote_ident(l_proc.nspname) || '.' || quote_ident(l_condition) 
+      l_cmd := 'DO $body$ begin perform ' || quote_ident(l_proc.nspname) || '.' || quote_ident(l_condition)
         || '(); end; $body$';
       perform test_autonomous(l_cmd);
     end if;
@@ -120,7 +120,7 @@ begin
   for idx in (p_from + 1) .. p_to loop
     name := name || '_' || parts[idx];
   end loop;
-  
+
   return name;
 end;
 $$ language plpgsql set search_path from current immutable;
@@ -152,14 +152,14 @@ begin
 
   len := array_length(array_proc, 1);
   for idx in reverse len .. 1 loop
-    proc_name := result_prefix || '_' 
+    proc_name := result_prefix || '_'
       || test_build_procname(array_proc, 1, idx);
     select 1 into is_valid from pg_catalog.pg_proc where proname = proc_name;
     if is_valid = 1 then
       return proc_name;
     end if;
   end loop;
-  
+
   return null;
 end;
 $$ language plpgsql set search_path from current;
@@ -183,8 +183,8 @@ $$ language plpgsql set search_path from current;
 -- Use: select test_terminate('db name'); to terminate all locked processes
 --
 create or replace function test_terminate(db VARCHAR) returns setof record as $$
-  SELECT pg_terminate_backend(pid), query 
-    FROM pg_stat_activity 
+  SELECT pg_terminate_backend(pid), query
+    FROM pg_stat_activity
     WHERE pid != pg_backend_pid() AND datname = db AND state = 'active';
 $$ language sql;
 
@@ -196,8 +196,15 @@ create or replace function test_autonomous(p_statement VARCHAR) returns void as 
 declare
     l_error_text character varying;
     l_error_detail character varying;
+    l_dblink_conn_extra character varying;
 begin
-	perform test_dblink_connect('test_auto', 'dbname=' || current_catalog);
+        begin
+	    select current_setting('pgunit.dblink_conn_extra') into l_dblink_conn_extra;
+        exception
+            when undefined_object then
+                select '' into l_dblink_conn_extra;
+        end;
+	perform test_dblink_connect('test_auto', 'dbname=' || current_catalog || ' ' || l_dblink_conn_extra);
         begin
             perform test_dblink_exec('test_auto', 'BEGIN WORK;');
             perform test_dblink_exec('test_auto', p_statement);
@@ -209,7 +216,7 @@ begin
 					l_error_detail = pg_exception_detail;
                 perform test_dblink_exec('test_auto', 'ROLLBACK;');
                 perform test_dblink_disconnect('test_auto');
-                raise exception '%: Error on executing: % % %', sqlstate, p_statement, l_error_text, l_error_detail 
+                raise exception '%: Error on executing: % % %', sqlstate, p_statement, l_error_text, l_error_detail
 			using errcode = sqlstate;
         end;
 end;
