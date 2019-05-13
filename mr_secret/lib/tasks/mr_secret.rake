@@ -19,7 +19,7 @@ namespace :rails do
     end
 
     if flag_on? args, :no_master_key
-      ['config/credentials.yml.enc', 'config/master.key'].each do |file|
+      ['config/credentials.yml.enc', 'config/master.key', 'tmp/development_secret.txt'].each do |file|
         Rails.root.join(file).delete rescue nil
       end
     end
