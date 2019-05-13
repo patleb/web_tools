@@ -13,7 +13,7 @@ module ActiveTask
 
     protected
 
-    def reload_settings_yml
+    def reload_secrets
       Secret.reload
     end
 
