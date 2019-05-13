@@ -28,7 +28,7 @@ module Sunzistrano
       context.merge! Capistrano.config(stage) if defined? SunCap
       @stage, @application, root = context.values_at(:stage, :application, :root)
       @role = role
-      settings = Secret.all(env: @stage, app: @application, root: root || ENV['RAILS_ROOT'] || '') if defined? Secret
+      settings = Secret.load(env: @stage, app: @application, root: root || ENV['RAILS_ROOT'] || '') if defined? Secret
       yml = YAML.safe_load(ERB.new(self.class.provision_yml.read).result(binding))
       role_yml = (yml['shared'] || {}).merge!(yml[@role] || {})
       env_yml = (yml[@stage] || {})

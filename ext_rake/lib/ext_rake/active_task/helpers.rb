@@ -14,7 +14,7 @@ module ActiveTask
     protected
 
     def reload_settings_yml
-      Secret.all(force: true)
+      Secret.reload
     end
 
     private

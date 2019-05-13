@@ -25,6 +25,10 @@ class Secret
     cast(value, @types[name])
   end
 
+  def self.[]=(name, value)
+    all[name] = value
+  end
+
   def self.dig(*names)
     value = all.dig(*names)
     cast(value, @types.dig(*names))
@@ -69,7 +73,15 @@ class Secret
     @all
   end
 
-  def self.all(env: rails_env, app: rails_app, root: rails_root, force: false)
+  def self.load(**options)
+    all(false, **options)
+  end
+
+  def self.reload(**options)
+    all(true, **options)
+  end
+
+  def self.all(force = false, env: rails_env, app: rails_app, root: rails_root)
     if force
       current = instance_variables.reject{ |ivar| ivar.to_s.end_with?('_was') }
       current.each{ |ivar| instance_variable_set("#{ivar}_was", instance_variable_get(ivar)) }

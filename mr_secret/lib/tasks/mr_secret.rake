@@ -23,7 +23,7 @@ namespace :secret do
   task :decrypt, [:env, :key, :file] do |t, args|
     assign_environment! args
 
-    Secret.all
+    Secret.load
     if args[:file].present?
       Pathname.new(args[:file]).expand_path.write(Secret[args[:key]])
       puts "[#{args[:key]}] key written to file [#{args[:file]}]"

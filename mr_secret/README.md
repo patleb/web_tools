@@ -42,12 +42,12 @@ Secret[:name_1] # => 'value_1'
 #### Ruby
 
 For a ruby script outside of the Rails context, but running at the root of the project,
-you must specify the environment either by passing it as `env` parameter to `all`:
+you must specify the environment either by passing it as `env` parameter to `load`:
 
 ```ruby
 require 'mr_secret'
 
-settings = Secret.all(env: fetch(:stage))
+settings = Secret.load(env: fetch(:stage))
 
 settings['name]      # => 'value'
 
@@ -62,7 +62,7 @@ If the script is running outside of the project root,
 then the project path must be specified either by passing it as `root` parameter to `with`:
 
 ```ruby
-Secret.all(env: stage, root: '/path/to/base/dir')
+Secret.load(env: stage, root: '/path/to/base/dir')
 ```
 
 or to `RAILS_ROOT` environment variable on the command line:

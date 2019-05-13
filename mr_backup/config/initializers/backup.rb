@@ -2,7 +2,7 @@
 
 require 'mr_backup/configuration'
 
-Secret.all
+Secret.load
 
 root_path MrBackup.config.backup_dir
 
