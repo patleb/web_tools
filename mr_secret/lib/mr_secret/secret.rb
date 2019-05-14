@@ -169,9 +169,7 @@ class Secret
   end
 
   def self.gem_root(name)
-    path = (@gems[name] ||= Gem.loaded_specs[name]&.gem_dir)
-    path or raise "gem [#{name}] not found"
-    Pathname.new(path)
+    @gems[name] ||= Gem.root(name) or raise "gem [#{name}] not found"
   end
 
   def self.encryptor?(secrets)
@@ -267,7 +265,7 @@ class Secret
 
   def self.require_initializers
     (@gems.values << @root).each do |root|
-      path = Pathname.new(root).join('config/initializers/mr_secret.rb')
+      path = root.join('config/initializers/mr_secret.rb')
       require path.to_s if path.exist?
     end
   end

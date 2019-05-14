@@ -39,8 +39,8 @@ module ExtCapistrano
 
         unless File.exist? source_erb
           fetch(:gems).each do |name|
-            if (dirname = Gem.loaded_specs[name].try(:gem_dir))
-              if (path = Pathname.new(dirname).join(source_erb)).exist?
+            if (root = Gem.root(name))
+              if (path = root.join(source_erb)).exist?
                 source_erb = path
                 break
               end

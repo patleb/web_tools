@@ -90,9 +90,9 @@ module Sunzistrano
         dirnames = [basenames]
         dirnames << @sun.local_dir.join(basenames).to_s if @sun.local_dir
         (@sun.gems || []).each do |name|
-          next unless (path = Gem.loaded_specs[name].try(:gem_dir))
+          next unless (root = Gem.root(name))
           require "#{name}/sunzistrano" rescue nil
-          dirnames << Pathname.new(path).expand_path.join(basenames).to_s
+          dirnames << root.expand_path.join(basenames).to_s
         end
         dirnames << Sunzistrano.root.join(basenames).to_s
 
