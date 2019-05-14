@@ -1,4 +1,4 @@
-module MrRecipe
+module MrSystem
   module Vpn
     class UpdateIp < ActiveTask::Base
       IP = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}/

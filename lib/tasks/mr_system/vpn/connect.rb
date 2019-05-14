@@ -1,4 +1,4 @@
-module MrRecipe
+module MrSystem
   module Vpn
     module Connect
       extend ActiveSupport::Concern

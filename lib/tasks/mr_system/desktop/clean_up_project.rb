@@ -1,4 +1,4 @@
-module MrRecipe
+module MrSystem
   module Desktop
     class CleanUpProject < ActiveTask::Base
       CHMOD_777 = 'rwxrwxrwx'

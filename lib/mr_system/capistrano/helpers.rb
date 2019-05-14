@@ -1,4 +1,4 @@
-module MrRecipe
+module MrSystem
   module Helpers
     def url_for(path, **params)
       path = path[0] == '/' ? path[1..-1] : path

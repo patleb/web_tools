@@ -1,4 +1,4 @@
-module MrRecipe
+module MrSystem
   module Desktop
     class UpdateApplication < ActiveTask::Base
       GEMFILE_LOCK = /Gemfile\.lock$/

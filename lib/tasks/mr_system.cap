@@ -1,10 +1,10 @@
-load_rel 'mr_recipe/**/*.cap'
+load_rel 'mr_system/**/*.cap'
 
 namespace :load do
   task :defaults do
-    set :docker_dir,          -> { 'docker' }
+    set :docker_dir, -> { 'docker' }
 
-    append :gems, 'mr_recipe'
+    append :gems, 'mr_system'
 
     set :nginx_max_body_size, -> { '10m' }
     set :nginx_public_dirs,   -> { fetch(:files_public_dirs) }
