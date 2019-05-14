@@ -1,26 +1,26 @@
 namespace :mr_secret do
   desc 'setup secrets.yml, settings.yml, initializers/mr_secret.rb, database.yml and .gitignore files'
   task :setup, [:no_master_key] => :environment do |t, args|
-    base = MrSecret.root.join('lib/tasks/templates')
+    src, dst = MrSecret.root.join('lib/tasks/templates'), Rails.root
 
     ['config/initializers/mr_secret.rb', 'config/settings.yml'].each do |file|
-      cp base.join(file).to_s, Rails.root.join(file).to_s
+      cp src.join(file).to_s, dst.join(file).to_s
     end
 
     ['config/secrets.yml', 'config/secrets.example.yml'].each do |file|
-      Rails.root.join(file).write(ERB.new(base.join('config/secrets.yml.erb').read).result(binding))
+      dst.join(file).write(ERB.new(src.join('config/secrets.yml.erb').read).result(binding))
     end
 
-    Rails.root.join('config/database.yml').write(ERB.new(base.join('config/database.yml.erb').read).result(binding))
+    dst.join('config/database.yml').write(ERB.new(src.join('config/database.yml.erb').read).result(binding))
 
-    file = Rails.root.join('.gitignore')
+    file = dst.join('.gitignore')
     unless (gitignore = file.read).include? 'config/secrets.yml'
       file.write(gitignore << "\n/config/secrets.yml\n")
     end
 
     if flag_on? args, :no_master_key
       ['config/credentials.yml.enc', 'config/master.key', 'tmp/development_secret.txt'].each do |file|
-        Rails.root.join(file).delete rescue nil
+        dst.join(file).delete rescue nil
       end
     end
   end
