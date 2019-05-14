@@ -1,6 +1,6 @@
-namespace :rails do
+namespace :mr_secret do
   desc 'setup secrets.yml, settings.yml, initializers/mr_secret.rb, database.yml and .gitignore files'
-  task :setup_secrets, [:no_master_key] => :environment do |t, args|
+  task :setup, [:no_master_key] => :environment do |t, args|
     base = MrSecret.root.join('lib/tasks/templates')
 
     ['config/initializers/mr_secret.rb', 'config/settings.yml'].each do |file|
@@ -23,10 +23,6 @@ namespace :rails do
         Rails.root.join(file).delete rescue nil
       end
     end
-  end
-
-  task :rebuild_secrets => :environment do
-    Rails.root.join('config/secrets.yml').write(ERB.new(base.join('config/secrets.yml.erb').read).result(binding))
   end
 
   def app_name
