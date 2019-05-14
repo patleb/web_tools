@@ -1,21 +1,18 @@
 require_rel 'ext_rake'
 
 namespace :ext_rake do
-  desc 'setup Rakefile, app/libraries/.keep, app/tasks/application.rake and lib/.keep'
+  desc 'setup app/libraries/.keep, app/tasks/application.rake, lib/.keep and Rakefile'
   task :setup do
-    before = 'Rails.application.load_tasks'
-    after = "load 'app/tasks/application.rake'\n\nRails.application.all_rake_tasks"
-    Pathname.new('Rakefile').write(Pathname.new('Rakefile').read.sub(before, after))
-
-    base = Gem.root('ext_rake').join('lib/tasks/templates')
-
-    mkdir_p Rails.root.join('app/libraries')
-    touch   Rails.root.join('app/libraries/.keep')
-    mkdir_p Rails.root.join('app/tasks')
-    cp      base.join('app/tasks/application.rake'), Rails.root.join('app/tasks/application.rake')
-    rmtree  Rails.root.join('lib')
-    mkdir   Rails.root.join('lib')
-    touch   Rails.root.join('lib/.keep')
+    # TODO https://gist.github.com/metaskills/8691558
+    src, dst = Gem.root('ext_rake').join('lib/tasks/templates'), Rails.root
+    mkdir_p dst.join('app/libraries')
+    touch   dst.join('app/libraries/.keep')
+    mkdir_p dst.join('app/tasks')
+    cp      src.join('app/tasks/application.rake'), dst.join('app/tasks/application.rake')
+    rmtree  dst.join('lib')
+    mkdir   dst.join('lib')
+    touch   dst.join('lib/.keep')
+    cp      src.join('Rakefile'), dst.join('Rakefile')
   end
 
   desc 'truncate log'
