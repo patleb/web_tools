@@ -1,11 +1,21 @@
 require_rel 'ext_rake'
 
-namespace :rails do
-  desc 'setup Rakefile'
-  task :setup_rakefile do
+namespace :ext_rake do
+  desc 'setup Rakefile, app/libraries/.keep, app/tasks/application.rake and lib/.keep'
+  task :setup do
     before = 'Rails.application.load_tasks'
     after = "load 'app/tasks/application.rake'\n\nRails.application.all_rake_tasks"
     Pathname.new('Rakefile').write(Pathname.new('Rakefile').read.sub(before, after))
+
+    base = Gem.root('ext_rake').join('lib/tasks/templates')
+
+    mkdir_p Rails.root.join('app/libraries')
+    touch   Rails.root.join('app/libraries/.keep')
+    mkdir_p Rails.root.join('app/tasks')
+    cp      base.join('app/tasks/application.rake'), Rails.root.join('app/tasks/application.rake')
+    rmtree  Rails.root.join('lib')
+    mkdir   Rails.root.join('lib')
+    touch   Rails.root.join('lib/.keep')
   end
 
   desc 'truncate log'
