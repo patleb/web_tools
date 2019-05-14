@@ -11,5 +11,9 @@ module MrSystem
     require 'mr_secret'
     # require 'sun_cap'
     # require 'sunzistrano'
+
+    config.before_configuration do |app|
+      app.config.active_record.schema_format = :sql
+    end
   end
 end
