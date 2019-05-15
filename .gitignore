@@ -5,3 +5,4 @@ pkg/
 mr_system-*.gem
 Gemfile.lock
 /tmp/*
+.editorconfig
