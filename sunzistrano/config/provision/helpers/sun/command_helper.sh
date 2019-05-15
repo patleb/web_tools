@@ -2,17 +2,21 @@ sun.install() {
   if sun.installed "$@"; then
     echo "$@ already installed"
   else
-    sun.mute "apt-get -y install $@"
+    sun.mute "$os_package_get -y install $@"
   fi
 }
 
 sun.installed() {
-  dpkg -s $@ >/dev/null 2>&1
+  "$os_package_installed $@" >/dev/null 2>&1
   return $?
 }
 
 sun.update() {
-  sun.mute "apt update"
+  sun.mute "$os_package_update"
+}
+
+sun.upgrade() {
+  $os_package_upgrade
 }
 
 sun.mute() {

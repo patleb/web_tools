@@ -1,3 +1,7 @@
-sun.mute "dpkg --configure -a"
+case "$OS" in
+ubuntu)
+  sun.mute "dpkg --configure -a"
+;;
+esac
 sun.update
-yes | apt upgrade
+yes | sun.upgrade

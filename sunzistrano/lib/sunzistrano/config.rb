@@ -107,7 +107,7 @@ module Sunzistrano
     end
 
     def list_recipes(*names, base: nil)
-      recipes = _merge_recipes names, base, substract: true
+      recipes = _merge_recipes *names, base, substract: true
       if recipe.present?
         recipes.select! do |name|
           name.end_with?("/#{LIST_NAME}") || name == recipe
@@ -129,7 +129,7 @@ module Sunzistrano
     end
 
     def _merge_recipes(names, base = nil, substract: false)
-      recipes = Array.wrap(*names).reject(&:blank?)
+      recipes = Array.wrap(names).reject(&:blank?)
       if base
         recipes.map!{ |name| "#{base}/#{name}" }
       end
