@@ -4,7 +4,7 @@ namespace :mr_secret do
     src, dst = MrSecret.root.join('lib/tasks/templates'), Rails.root
 
     ['config/initializers/mr_secret.rb', 'config/settings.yml'].each do |file|
-      cp src.join(file).to_s, dst.join(file).to_s
+      cp src.join(file), dst.join(file)
     end
 
     ['config/secrets.yml', 'config/secrets.example.yml'].each do |file|
