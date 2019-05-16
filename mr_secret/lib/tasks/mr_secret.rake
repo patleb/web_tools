@@ -8,19 +8,19 @@ namespace :mr_secret do
     end
 
     ['config/secrets.yml', 'config/secrets.example.yml'].each do |file|
-      dst.join(file).write(ERB.new(src.join('config/secrets.yml.erb').read).result(binding))
+      write dst.join(file), ERB.template(src.join('config/secrets.yml.erb'), binding)
     end
 
-    dst.join('config/database.yml').write(ERB.new(src.join('config/database.yml.erb').read).result(binding))
+    write dst.join('config/database.yml'), ERB.template(src.join('config/database.yml.erb'), binding)
 
     file = dst.join('.gitignore')
     unless (gitignore = file.read).include? 'config/secrets.yml'
-      file.write(gitignore << "\n/config/secrets.yml\n")
+      write file, (gitignore << "\n/config/secrets.yml")
     end
 
     if flag_on? args, :no_master_key
       ['config/credentials.yml.enc', 'config/master.key', 'tmp/development_secret.txt'].each do |file|
-        dst.join(file).delete rescue nil
+        remove dst.join(file) rescue nil
       end
     end
   end
