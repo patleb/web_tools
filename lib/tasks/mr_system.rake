@@ -13,6 +13,19 @@ namespace :mr_system do
     %w(/vendor/ruby /.vscode/* /.idea/* .editorconfig .generators .rakeTasks).each do |ignore|
       gitignore dst, ignore
     end
+
+    write dst.join('Vagrantfile'), ERB.template(src.join('Vagrantfile.erb'), binding)
+  end
+
+  def free_local_ip
+    require 'socket'
+    network = ''
+    networks = [''].concat Socket.getifaddrs.map{ |i| i.addr.ip_address.sub(/\.\d+$/, '') if i.addr.ipv4? }.compact
+    loop do
+      break unless networks.include?(network)
+      network = "192.168.#{rand(4..254)}"
+    end
+    "#{network}.#{rand(2..254)}"
   end
 end
 
@@ -32,14 +45,6 @@ namespace :vpn do
   desc "-- [options] VPN Update IP"
   task :update_ip => :environment do |t|
     MrSystem::Vpn::UpdateIp.new(self, t).run
-  end
-end
-
-namespace :vagrant do
-  desc 'install ~/.vagrant.d/Vagrantfile'
-  task :copy_file do
-    vagrantfile = Gem.root('mr_system').join('lib/tasks/mr_system/Vagrantfile').to_s
-    cp vagrantfile, File.expand_path('~/.vagrant.d/Vagrantfile')
   end
 end
 
