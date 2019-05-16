@@ -8,15 +8,13 @@ namespace :mr_secret do
     end
 
     ['config/secrets.yml', 'config/secrets.example.yml'].each do |file|
-      write dst.join(file), ERB.template(src.join('config/secrets.yml.erb'), binding)
+      secret = dst.join(file)
+      write secret, ERB.template(src.join('config/secrets.yml.erb'), binding) unless secret.exist?
     end
 
     write dst.join('config/database.yml'), ERB.template(src.join('config/database.yml.erb'), binding)
 
-    file = dst.join('.gitignore')
-    unless (gitignore = file.read).include? 'config/secrets.yml'
-      write file, (gitignore << "\n/config/secrets.yml")
-    end
+    gitignore dst, '/config/secrets.yml'
 
     if flag_on? args, :no_master_key
       ['config/credentials.yml.enc', 'config/master.key', 'tmp/development_secret.txt'].each do |file|
