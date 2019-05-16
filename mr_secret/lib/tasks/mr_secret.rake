@@ -1,6 +1,6 @@
 namespace :mr_secret do
   desc 'setup secrets.yml, settings.yml, initializers/mr_secret.rb, database.yml and .gitignore files'
-  task :setup, [:no_master_key] => :environment do |t, args|
+  task :setup, [:no_master_key, :force] => :environment do |t, args|
     src, dst = MrSecret.root.join('lib/tasks/templates'), Rails.root
 
     ['config/initializers/mr_secret.rb', 'config/settings.yml'].each do |file|
@@ -9,7 +9,9 @@ namespace :mr_secret do
 
     ['config/secrets.yml', 'config/secrets.example.yml'].each do |file|
       secret = dst.join(file)
-      write secret, ERB.template(src.join('config/secrets.yml.erb'), binding) unless secret.exist?
+      if flag_on?(args, :force) || !secret.exist?
+        write secret, ERB.template(src.join('config/secrets.yml.erb'), binding)
+      end
     end
 
     write dst.join('config/database.yml'), ERB.template(src.join('config/database.yml.erb'), binding)
