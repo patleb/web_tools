@@ -1,5 +1,5 @@
 require 'mr_system/engine'
 
 module MrSystem
-  # Your code goes here...
+  # rails new example_name --database=postgresql --webpack=vue --skip-action-cable --skip-active-storage --skip-puma --skip-spring --skip-turbolinks --skip-listen --skip-coffee --skip-system-test
 end
