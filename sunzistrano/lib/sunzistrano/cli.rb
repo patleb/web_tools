@@ -102,24 +102,24 @@ module Sunzistrano
         end
 
         files.each do |file|
-          compile_file File.expand_path(file), compiled(file), force: true
+          compile_file File.expand_path(file), expand(:deploy, file), force: true
         end
 
         (@sun.local_files || []).each do |file|
-          compile_file File.expand_path(file), compiled("files/local/#{File.basename(file)}"), force: true
+          compile_file File.expand_path(file), expand(:deploy, "files/local/#{File.basename(file)}"), force: true
         end
       end
 
       def build_role
         around = %i(before after).each_with_object({}) do |hook, memo|
-          path = compiled("role_#{hook}.sh")
-          compile_file based("role_#{hook}.sh", root: true), path, force: true
+          path = expand(:deploy, "role_#{hook}.sh")
+          compile_file expand(:root, "role_#{hook}.sh"), path, force: true
           memo[hook] = File.binread(path)
         end
-        content = around[:before] << "\n" << File.binread(compiled("roles/#{@sun.role}.sh")) << "\n" << around[:after]
+        content = around[:before] << "\n" << File.binread(expand(:deploy, "roles/#{@sun.role}.sh")) << "\n" << around[:after]
 
-        create_file compiled("role.sh"), content, force: true
-        compile_file based("sun.sh", root: true), compiled("sun.sh"), force: true
+        create_file expand(:deploy, "role.sh"), content, force: true
+        compile_file expand(:root, "sun.sh"), expand(:deploy, "sun.sh"), force: true
       end
 
       def compile_file(*args, **options)
@@ -143,7 +143,7 @@ module Sunzistrano
       end
 
       def get_remote_file(file, type)
-        file_path = based("#{type}/remote/#{File.basename(file)}")
+        file_path = expand("#{type}/remote/#{File.basename(file)}")
         return if File.exist? file_path
         get file, file_path
       end
@@ -204,16 +204,22 @@ module Sunzistrano
         File.file?(file) &&
           !file[/\.keep$/] &&
           !file[/\/roles\/(?!(#{@sun.role}|hook_\w+)\.sh)/] &&
-          others.none?{ |f| file.end_with? f }
+          others.none?{ |f| file.end_with? name_of(f) }
       end
 
-      def based(file, root: false)
-        file = "config/provision/#{file.sub(/.*config\/provision\//, '')}"
-        File.expand_path(root ? Sunzistrano.root.join(file) : file)
+      def expand(type, file = type)
+        file = "config/provision/#{name_of(file)}"
+        case type
+        when :root
+          file = Sunzistrano.root.join(file)
+        when :deploy
+          file = ".deploy/#{file}"
+        end
+        File.expand_path(file)
       end
 
-      def compiled(file)
-        File.expand_path(".deploy/#{file.sub(/.*config\/provision\//, '')}")
+      def name_of(file)
+        file.sub(/.*config\/provision\//, '')
       end
 
       def abort_with(text)

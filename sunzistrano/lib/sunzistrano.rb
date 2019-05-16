@@ -7,8 +7,7 @@ require 'rainbow'
 require 'rainbow/version'
 require 'rainbow/ext/string' unless Rainbow::VERSION < '2.0.0'
 require 'bcrypt'
-require 'active_support/string_inquirer'
-require 'active_support/core_ext/array/wrap'
+require 'ext_ruby'
 require 'mr_secret' if Gem.loaded_specs['mr_secret']
 require 'sun_cap/sunzistrano' if Gem.loaded_specs['sun_cap']
 require 'sunzistrano/config'
