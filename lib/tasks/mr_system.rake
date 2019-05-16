@@ -15,7 +15,7 @@ namespace :mr_system do
       cp src.join("config/initializers/#{init}.rb"), dst.join("config/initializers/#{init}.rb")
     end
 
-    %w(/vendor/ruby /.vscode/* /.idea/* .editorconfig .generators .rakeTasks).each do |ignore|
+    %w(/vendor/ruby /.deploy/* /.vagrant/* /.vscode/* /.idea/* .editorconfig .generators .rakeTasks).each do |ignore|
       gitignore dst, ignore
     end
 
