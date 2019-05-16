@@ -33,6 +33,7 @@ require 'ext_ruby/numeric'
 require 'ext_ruby/object/try'
 require 'ext_ruby/pathname'
 require 'ext_ruby/rake/dsl'
+require 'ext_ruby/railtie' if defined? Rails
 require 'ext_ruby/secure_random'
 require 'ext_ruby/sh'
 require 'ext_ruby/string'

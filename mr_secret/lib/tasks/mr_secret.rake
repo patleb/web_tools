@@ -24,18 +24,6 @@ namespace :mr_secret do
       end
     end
   end
-
-  def app_name
-    @app_name ||= Rails.application.engine_name.delete_suffix('_application')
-  end
-
-  def app_secret
-    SecureRandom.hex(64)
-  end
-
-  def generate_password
-    SecureRandom.hex(16)
-  end
 end
 
 namespace :secret do
