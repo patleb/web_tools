@@ -5,13 +5,11 @@ namespace :ext_rake do
   task :setup do
     # TODO https://gist.github.com/metaskills/8691558
     src, dst = Gem.root('ext_rake').join('lib/tasks/templates'), Rails.root
-    mkdir_p dst.join('app/libraries')
-    touch   dst.join('app/libraries/.keep')
+    keep    dst.join('app/libraries')
     mkdir_p dst.join('app/tasks')
     cp      src.join('app/tasks/application.rake'), dst.join('app/tasks/application.rake')
     rmtree  dst.join('lib')
-    mkdir   dst.join('lib')
-    touch   dst.join('lib/.keep')
+    keep    dst.join('lib')
     cp      src.join('Rakefile'), dst.join('Rakefile')
   end
 

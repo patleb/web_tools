@@ -1,5 +1,11 @@
 module Rake
   module DSL
+    def keep(root)
+      root = Pathname.new(root)
+      mkdir_p root
+      touch   root.join('.keep')
+    end
+
     def gitignore(root, ignore, verbose: true)
       file = Pathname.new(root).join('.gitignore')
       unless (gitignore = file.read).match? /^#{ignore.escape_regex}$/
