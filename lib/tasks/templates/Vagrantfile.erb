@@ -49,10 +49,9 @@ Vagrant.configure("2") do |config|
 
   development_paths = %w(
   )
-  config.vm.synced_folder '.', '/vagrant', nfs: true
   development_paths.each do |root|
     if (dir = Pathname.new(root).expand_path).exist?
-      config.vm.synced_folder dir.to_s, dir.to_s, nfs: true
+      config.vm.synced_folder dir.to_s, dir.to_s
     end
   end
 
