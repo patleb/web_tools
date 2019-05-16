@@ -1,6 +1,6 @@
 module MrSystem
   class Engine < ::Rails::Engine
-    # require 'ext_capistrano'
+    require 'ext_capistrano'
     # require 'ext_minitest'
     require 'ext_rake'
     require 'ext_ruby'
