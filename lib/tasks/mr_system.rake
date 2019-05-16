@@ -1,5 +1,21 @@
 require_rel 'mr_system'
 
+namespace :mr_system do
+  desc 'setup environments and .gitignore files'
+  task :setup do
+    src, dst = Gem.root('mr_system').join('lib/tasks/templates'), Rails.root
+
+    %w(development staging vagrant).each do |env|
+      cp  src.join("config/environments/#{env}.rb"), dst.join("config/environments/#{env}.rb")
+    end
+    write dst.join('config/environments/production.rb'), ERB.template(src.join('config/environments/production.rb.erb'), binding)
+
+    %w(/vendor/ruby /.vscode/* /.idea/* .editorconfig .generators .rakeTasks).each do |ignore|
+      gitignore dst, ignore
+    end
+  end
+end
+
 namespace :desktop do
   desc "-- [options] Desktop Clean-up Project"
   task :clean_up_project => :environment do |t|
