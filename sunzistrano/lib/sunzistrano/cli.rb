@@ -3,20 +3,20 @@ module Sunzistrano
   class Cli < Thor
     include Thor::Actions
 
-    desc 'deploy [stage] [role] [--recipe] [--vagrant-ssh] [--username] [--password]', 'Deploy sunzistrano project'
-    method_options recipe: :string, vagrant_ssh: :string, username: :string, password: :string
+    desc 'deploy [stage] [role] [--recipe] [--vagrant-name] [--username] [--password]', 'Deploy sunzistrano project'
+    method_options recipe: :string, vagrant_name: :string, username: :string, password: :string
     def deploy(stage, role)
       do_deploy(stage, role)
     end
 
-    desc 'rollback [stage] [role] [recipe] [--vagrant-ssh] [--username] [--password]', 'Rollback sunzistrano recipe'
-    method_options vagrant_ssh: :string, username: :string, password: :string
+    desc 'rollback [stage] [role] [recipe] [--vagrant-name] [--username] [--password]', 'Rollback sunzistrano recipe'
+    method_options vagrant_name: :string, username: :string, password: :string
     def rollback(stage, role, recipe)
       do_deploy(stage, role, recipe: recipe, rollback: true)
     end
 
-    desc 'compile [stage] [role] [--recipe] [--vagrant-ssh] [--rollback]', 'Compile sunzistrano project'
-    method_options recipe: :string, vagrant_ssh: :string, rollback: false
+    desc 'compile [stage] [role] [--recipe] [--vagrant-name] [--rollback]', 'Compile sunzistrano project'
+    method_options recipe: :string, vagrant_name: :string, rollback: false
     def compile(stage, role)
       do_compile(stage, role)
     end
@@ -166,8 +166,8 @@ module Sunzistrano
       end
 
       def deploy_commands
-        if @sun.vagrant_ssh?
-          "cd .deploy && tar cz . | (cd .. && vagrant ssh #{@sun.vagrant_ssh} -- '#{deploy_remote_commands}')"
+        if @sun.env.vagrant?
+          "cd .deploy && tar cz . | (cd .. && vagrant ssh #{@sun.vagrant_name} -- '#{deploy_remote_commands}')"
         else
           <<~BASH
             #{"eval $(ssh-agent) && ssh-add #{@sun.pkey} 2> /dev/null &&" if @sun.pkey.present?}
@@ -208,12 +208,13 @@ module Sunzistrano
       end
 
       def expand(type, file = type)
-        file = "config/provision/#{name_of(file)}"
         case type
         when :root
-          file = Sunzistrano.root.join(file)
+          file = Sunzistrano.root.join("config/provision/#{name_of(file)}")
         when :deploy
-          file = ".deploy/#{file}"
+          file = ".deploy/#{name_of(file)}"
+        else
+          file = "config/provision/#{name_of(file)}"
         end
         File.expand_path(file)
       end

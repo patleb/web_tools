@@ -25,10 +25,11 @@ module Sunzistrano
     def initialize(stage, role, options)
       env, app = stage.split(':', 2)
       context = { stage: env, application: app }.with_indifferent_access
-      context.merge! Capistrano.config(stage) if defined? SunCap
+      if Gem.loaded_specs['sun_cap']
+        context.merge! Capistrano.config(stage)
+      end
       @stage, @application, root = context.values_at(:stage, :application, :root)
       @role = role
-      settings = Secret.load(env: @stage, app: @application, root: root || ENV['RAILS_ROOT'] || '') if defined? Secret
       yml = YAML.safe_load(ERB.new(self.class.provision_yml.read).result(binding))
       role_yml = (yml['shared'] || {}).merge!(yml[@role] || {})
       env_yml = (yml[@stage] || {})
@@ -41,22 +42,14 @@ module Sunzistrano
         app_yml.merge!(yml["#{@application}_#{@stage}_#{@role}"] || {})
         role_yml.merge!(app_yml)
       end
-      %i(lock gems).each do |name|
-        role_yml["settings_#{name}"] = settings.delete(name)
+      if Gem.loaded_specs['mr_secret']
+        secrets = Secret.load(env: @stage, app: @application, root: root || ENV['RAILS_ROOT'] || '')
+        %i(lock gems).each do |name|
+          role_yml["secrets_#{name}"] = secrets.delete(name)
+        end
+        context.merge! secrets
       end
-      super(context.merge!(settings).merge!(role_yml).merge!(role: @role).merge!(options))
-    end
-
-    def vagrant_ssh?
-      env.vagrant? && vagrant_ssh
-    end
-
-    def vagrant_ssh
-      if (value = self[:vagrant_ssh]).to_b?
-        value.to_b ? '' : nil
-      else
-        value
-      end
+      super(context.merge!(role_yml).merge!(role: @role).merge!(options))
     end
 
     def username
