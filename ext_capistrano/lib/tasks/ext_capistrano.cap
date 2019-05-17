@@ -32,6 +32,7 @@ namespace :load do
       deployer_name
       deploy_dir
       deploy_to
+      linux_os
       rbenv_ruby
       server
       stage
