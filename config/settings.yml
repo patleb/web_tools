@@ -21,7 +21,7 @@ development:
   server_port: 3000
 
 vagrant:
-  server_host: app.vagrant-web.test
+  server_host: vagrant-web.test
   min_instances: 2
   mail_domain: notify.vagrant-web.test
   deployer_password: vagrant
