@@ -1,16 +1,21 @@
-<% %w(
-  apt-transport-https
+<% if @sun.os.centos? %>
+  yes | yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
+  yes | yum localinstall --nogpgcheck http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-latest-7.noarch.rpm
+  yes | yum localinstall --nogpgcheck http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+<% end %>
+<% %W(
+  #{'apt-transport-https' if @sun.os.ubuntu?}
   autoconf
   bison
-  build-essential
+  #{@sun.os.ubuntu? ? 'build-essential'      : 'gcc gcc-c++ make rpm-build redhat-rpm-config'}
   ca-certificates
-  castxml
+  #{'castxml' if @sun.os.ubuntu?}
   clang
   git
-  imagemagick
-  libcurl4-openssl-dev
-  libffi-dev
-  libgdbm-dev
+  #{@sun.os.ubuntu? ? 'imagemagick'          : 'ImageMagick ImageMagick-devel'}
+  #{@sun.os.ubuntu? ? 'libcurl4-openssl-dev' : 'openssl-devel'}
+  #{@sun.os.ubuntu? ? 'libffi-dev'           : 'libffi-devel'}
+  #{@sun.os.ubuntu? ? 'libgdbm-dev'          : 'libgdbm-devel'}
   libgdbm3
   libgmp-dev
   libncurses5-dev
@@ -26,7 +31,7 @@
   openssl
   pigz
   zlib1g-dev
-).each do |package| %>
+).reject(&:blank?).each do |package| %>
 
   sun.install "<%= package %>"
 
