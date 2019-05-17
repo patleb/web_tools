@@ -24,7 +24,7 @@ sudo su - $DEPLOYER_NAME << 'EOF'
     cd $PLUGINS_PATH/ruby-build && git pull
     cd $PLUGINS_PATH/rbenv-gem-rehash && git pull
     cd $PLUGINS_PATH/rbenv-sudo && git pull
-    cd ~
+    cd /home/$DEPLOYER_NAME
   fi
 
   <%= Sh.rbenv_export(@sun.deployer_name) %>

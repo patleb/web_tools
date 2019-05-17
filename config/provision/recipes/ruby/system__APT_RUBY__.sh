@@ -5,6 +5,8 @@ if [[ ! -s "$RUBY_MANIFEST" ]]; then
   sun.install "ruby-full=$RUBY_VERSION"
   apt-mark hold ruby-full
 
+  echo 'gem: --no-document' > $HOME/.gemrc
+  # centos root
   echo 'gem: --no-document' > ~/.gemrc
 
   gem install bundler

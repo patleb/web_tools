@@ -7,7 +7,7 @@ sun.install() {
 }
 
 sun.installed() {
-  "$os_package_installed $@" >/dev/null 2>&1
+  $os_package_installed $@ >/dev/null 2>&1
   return $?
 }
 

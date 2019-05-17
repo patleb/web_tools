@@ -77,6 +77,6 @@ sun.ensure() {
   cd $(sun.deploy_path)
   source roles/hook_ensure.sh
   sun.elapsed_time $ROLE_START
-  <%= "rm -rf ~/#{@sun.DEPLOY_DIR}" unless @sun.debug %>
+  <%= "rm -rf $HOME/#{@sun.DEPLOY_DIR}" unless @sun.debug %>
 }
 trap sun.ensure EXIT

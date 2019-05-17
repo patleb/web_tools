@@ -28,22 +28,23 @@ fi
 
 source /etc/os-release
 source sun.sh
+export TERM=linux
+
+sun.setup_progress
+export ROLE_ID=<%= @sun.role %>
+export ROLE_START=$(sun.start_time)
+export REBOOT_FORCE=false
+
 case "$OS" in
 ubuntu)
   export DEBIAN_FRONTEND=noninteractive
 ;;
 centos)
-  sun.installed "rpmdevtools"
-  if [[ $? -ne 0 ]]; then
+  export HOME=/home/<%= @sun.username %>
+  if ! sun.installed "rpmdevtools"; then
     sun.mute "$os_package_get -y install rpmdevtools"
   fi
 ;;
 esac
-export TERM=linux
-
-sun.setup_progress
-ROLE_ID=<%= @sun.role %>
-ROLE_START=$(sun.start_time)
-REBOOT_FORCE=false
 
 source roles/hook_before.sh
