@@ -77,6 +77,11 @@ sun.ensure() {
   cd $(sun.deploy_path)
   source roles/hook_ensure.sh
   sun.elapsed_time $ROLE_START
+  set +u
+  if [[ ! -z "$RECIPE_ID" ]]; then
+    echo ERROR
+  fi
+  set -u
   <%= "rm -rf $HOME/#{@sun.DEPLOY_DIR}" unless @sun.debug %>
 }
 trap sun.ensure EXIT
