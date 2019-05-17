@@ -5,7 +5,7 @@
   swap
   nofile
   packages
-  backports
+  #{'backports' if @sun.os.ubuntu?}
   ssh
   firewall
   firewall/deny_mail
