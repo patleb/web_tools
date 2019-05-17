@@ -12,12 +12,12 @@ module Sh::Vpn
       #{linux}down /etc/openvpn/update-resolv-conf
     CONF
     if print.to_b
-      print_key = <<~BASH
+      print_key = <<~SH
         echo "'#{client_ovpn}' should be kept encrypted in your settings.yml"
         #{Sh.escape_newlines client_ovpn}
-      BASH
+      SH
     end
-    <<~BASH
+    <<~SH
       if [[ -f '#{client_ovpn}' ]]; then
         echo "'#{client_ovpn}' already exists"
         exit 1
@@ -45,13 +45,13 @@ module Sh::Vpn
         <(echo -e '<tls-auth>') '#{ca_keys_dir}/ta.key'  <(echo -e '</tls-auth>') \
         > '#{client_ovpn}'
       #{print_key}
-    BASH
+    SH
   end
 
   def revoke_client_ovpn(name:)
     raise 'client name must be specified' unless name.present?
     client_ovpn = client_ovpn(name)
-    <<~BASH
+    <<~SH
       if [[ ! -f '#{client_ovpn}' ]]; then
         echo "'#{client_ovpn}' doesn't exist"
         exit 1
@@ -60,7 +60,7 @@ module Sh::Vpn
       ./revoke-full '#{name}'
       cp -f '#{ca_keys_dir}/crl.pem' /etc/openvpn
       #{Sh.concat '/etc/openvpn/server.conf', 'crl-verify crl.pem', unique: true}
-    BASH
+    SH
   end
 
   private

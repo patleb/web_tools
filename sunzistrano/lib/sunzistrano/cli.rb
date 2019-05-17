@@ -60,16 +60,6 @@ module Sunzistrano
         end
       end
 
-      def do_concat
-        # TODO
-        # https://github.com/geerlingguy/docker-ubuntu1604-ansible
-        # http://alesnosek.com/blog/2016/09/12/first-impressions-about-ansible-container/
-        # replace source 'recipes/...', mv 'files/...', cp 'files/...' by actual content
-        # FROM ruby:2.3-alpine
-        # COPY ansible ansible
-        # RUN apk add --no-cache ansible && ansible-playbook ansible/build.yml -vv
-      end
-
       def load_config(stage, role, **custom_options)
         validate_config_presence!
 
@@ -123,7 +113,7 @@ module Sunzistrano
       end
 
       def compile_file(*args, **options)
-        # TODO scan .esh file for bash/erb unnescaped characters
+        # TODO compare .esh with .ref file for bash/erb unnescaped characters
         template *args, **options
         if args[0].to_s.end_with? '.pow'
           compiled_pow = args[1]
@@ -166,38 +156,34 @@ module Sunzistrano
       end
 
       def deploy_commands
-        if @sun.env.vagrant?
-          "cd .deploy && tar cz . | (cd .. && vagrant ssh #{@sun.vagrant_name} -- '#{deploy_remote_commands}')"
-        else
-          <<~BASH
-            #{"eval $(ssh-agent) && ssh-add #{@sun.pkey} 2> /dev/null &&" if @sun.pkey.present?}
-            cd .deploy && tar cz . | #{"sshpass -p #{@sun.password}" if @sun.password} ssh \
-            -o 'StrictHostKeyChecking no' \
-            #{@sun.username}@#{@sun.server} \
-            #{"-p #{@sun.port}" if @sun.port} \
-            '#{deploy_remote_commands}' && (cd .. && rm -rf .deploy) || (cd .. && rm -rf .deploy)
-          BASH
-        end
+        <<~SH
+          #{"eval $(ssh-agent) && ssh-add #{@sun.pkey} 2> /dev/null &&" if @sun.pkey.present?}
+          cd .deploy && tar cz . | #{"sshpass -p #{@sun.password}" if @sun.password} ssh \
+          -o 'StrictHostKeyChecking no' \
+          #{@sun.username}@#{@sun.server} \
+          #{"-p #{@sun.port}" if @sun.port} \
+          '#{deploy_remote_commands} '#{'&& (cd .. && rm -rf .deploy) || (cd .. && rm -rf .deploy)' unless @sun.debug}
+        SH
       end
 
       def deploy_remote_commands
-        <<~BASH
+        <<~SH
           rm -rf ~/#{@sun.DEPLOY_DIR} &&
           mkdir ~/#{@sun.DEPLOY_DIR} &&
           cd ~/#{@sun.DEPLOY_DIR} &&
           tar xz &&
           #{'sudo' if @sun.sudo} bash role.sh |& tee -a ~/#{@sun.DEPLOY_LOG}
-        BASH
+        SH
       end
 
       def download_commands(path, ref)
-        <<~BASH
+        <<~SH
           #{"eval $(ssh-agent) && ssh-add #{@sun.pkey} 2> /dev/null &&" if @sun.pkey.present?}
           rsync --rsync-path='sudo rsync' -azvh -e "ssh \
           -o 'StrictHostKeyChecking no' \
           #{"-p #{@sun.port}" if @sun.port}" \
           #{@sun.username}@#{@sun.server}:#{path} #{ref}
-        BASH
+        SH
       end
 
       def provision?(file, others)

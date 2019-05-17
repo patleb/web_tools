@@ -73,7 +73,7 @@ module Sunzistrano
     def pkey
       @_pkey ||=
         if env.vagrant?
-          `vagrant ssh-config #{vagrant_ssh}`.split("\n").drop(1).map(&:strip).each_with_object({}){ |key_value, configs|
+          `vagrant ssh-config #{vagrant_name}`.split("\n").drop(1).map(&:strip).each_with_object({}){ |key_value, configs|
             key, value = key_value.split(' ', 2)
             configs[key.underscore] = value
           }['identity_file']

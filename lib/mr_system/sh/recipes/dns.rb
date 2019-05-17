@@ -4,7 +4,7 @@ module Sh::Dns
 
     hosts = '/etc/hosts'
     hosts_defaults = "/home/#{admin_name}/#{Sunzistrano::Config::DEFAULTS_DIR}/#{hosts.tr('/', '~')}"
-    <<~BASH
+    <<~SH
       INTERNAL_IP=$(#{Sh.internal_ip})
       cp '#{hosts_defaults}' '#{hosts}'
       if ! grep -q $(hostname) '#{hosts}'; then
@@ -12,6 +12,6 @@ module Sh::Dns
       fi
       echo "$INTERNAL_IP  #{server}" | tee -a '#{hosts}'
       echo -e "#{entries}" | tee -a '#{hosts}'
-    BASH
+    SH
   end
 end

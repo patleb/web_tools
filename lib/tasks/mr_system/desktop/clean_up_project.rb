@@ -46,11 +46,11 @@ module MrSystem
       def enable_git_permission_reset
         return if `git config --get-regexp permission-reset`.present?
 
-        git_permission_reset = <<~BASH
+        git_permission_reset = <<~SH
           git diff -p -R --no-color \
             | grep -E "^(diff|(old|new) mode)" --color=never \
             | git apply
-        BASH
+        SH
 
         sh "git config --global --add alias.permission-reset '!#{git_permission_reset.strip}'"
       end
