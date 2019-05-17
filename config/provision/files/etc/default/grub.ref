@@ -33,12 +33,21 @@ GRUB_CMDLINE_LINUX="<%= 'net.ifnames=0 biosdevname=0 ' if @sun.env.vagrant? %>"
 
 # Uncomment to get a beep at grub start
 #GRUB_INIT_TUNE="480 440 1"
-<% else -%>
+<% elsif @sun.env.vagrant? -%>
 GRUB_TIMEOUT=5
 GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
 GRUB_DEFAULT=saved
 GRUB_DISABLE_SUBMENU=true
 GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 crashkernel=auto rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet"
+GRUB_DISABLE_RECOVERY="true"
+<% else -%>
+GRUB_TIMEOUT=1
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL="serial console"
+GRUB_SERIAL_COMMAND="serial --speed=115200"
+GRUB_CMDLINE_LINUX="console=tty0 crashkernel=auto console=ttyS0,115200"
 GRUB_DISABLE_RECOVERY="true"
 <% end -%>
