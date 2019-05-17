@@ -4,6 +4,7 @@ load_rel 'ext_capistrano/**/*.cap'
 
 namespace :load do
   task :defaults do
+    set :server,              -> { Secret[:server] }
     set :gems,                -> { [] }
     set :single_server,       -> { true }
     set :admin_name,          -> { fetch(:stage) == :vagrant ? 'vagrant' : 'ubuntu' }
