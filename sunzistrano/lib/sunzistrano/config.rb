@@ -64,6 +64,10 @@ module Sunzistrano
       @_env ||= ActiveSupport::StringInquirer.new(stage.to_s)
     end
 
+    def os
+      @_os ||= ActiveSupport::StringInquirer.new(linux_os)
+    end
+
     def local_dir
       if local_path.present?
         @_local_dir ||= Pathname.new(local_path).expand_path

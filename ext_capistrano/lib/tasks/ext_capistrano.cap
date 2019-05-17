@@ -7,7 +7,8 @@ namespace :load do
     set :server,              -> { Secret[:server] }
     set :gems,                -> { [] }
     set :single_server,       -> { true }
-    set :admin_name,          -> { fetch(:stage) == :vagrant ? 'vagrant' : 'ubuntu' }
+    set :linux_os,            -> { 'ubuntu' } # 'centos' also supported
+    set :admin_name,          -> { fetch(:stage) == :vagrant ? 'vagrant' : fetch(:linux_os) }
     set :deployer_name,       -> { 'deployer' }
     set :deploy_dir,          -> { "#{fetch(:application)}_#{fetch(:stage)}" }
     # TODO                    -> { "#{fetch(:application)}_#{fetch(:stage)}#{'_' + fetch(:server_id) if fetch(:server_id)}" }
