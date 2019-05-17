@@ -27,10 +27,9 @@ else
 fi
 
 source /etc/os-release
-source sun.sh
 export TERM=linux
+source sun.sh
 
-sun.setup_progress
 export ROLE_ID=<%= @sun.role %>
 export ROLE_START=$(sun.start_time)
 export REBOOT_FORCE=false
@@ -47,4 +46,5 @@ centos)
 ;;
 esac
 
+sun.setup_progress
 source roles/hook_before.sh
