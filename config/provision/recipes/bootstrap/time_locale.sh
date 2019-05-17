@@ -14,7 +14,6 @@ centos)
 ;;
 esac
 
-sun.install "curl"
 sun.install "ntp"
 
 systemctl enable ntpd

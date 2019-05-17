@@ -5,3 +5,6 @@ ubuntu)
 esac
 sun.update
 yes | sun.upgrade
+
+sun.install "curl"
+sun.install "rsync"
