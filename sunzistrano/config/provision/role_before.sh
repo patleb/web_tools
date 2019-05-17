@@ -18,8 +18,8 @@ elif which yum >/dev/null 2>&1; then
   export CENTOS_OS=true
   export OS=centos
   export os_package_get=yum
-  export os_package_update='yum check-update'
-  export os_package_upgrade='yum update'
+  export os_package_update='yum clean expire-cache'
+  export os_package_upgrade='yum --exclude=kernel* update'
   export os_package_installed='rpm -q'
 else
   echo "Unsupported OS"
