@@ -20,9 +20,10 @@ staging:
   mail_address:
   mail_port:
   mail_domain:
-  mail_user_name: $SECRET encrypted_secret
+  mail_user_name:
   mail_password: $SECRET encrypted_secret
   admin_public_key:
+  admin_private_key: $SECRET encrypted_secret
 
 production:
   server_host:
@@ -31,6 +32,7 @@ production:
   mail_address:
   mail_port:
   mail_domain:
-  mail_user_name: $SECRET encrypted_secret
+  mail_user_name:
   mail_password: $SECRET encrypted_secret
   admin_public_key:
+  admin_private_key: $SECRET encrypted_secret
