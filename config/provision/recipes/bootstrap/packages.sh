@@ -15,6 +15,7 @@
   #{@sun.os.ubuntu? ? 'libgmp-dev'           : 'gmp-devel'}
   #{@sun.os.ubuntu? ? 'libncurses5-dev'      : 'ncurses-devel'}
   #{@sun.os.ubuntu? ? 'libreadline-dev'      : 'readline-devel'}
+  #{@sun.os.ubuntu? ? 'libsqlite3-dev'       : 'sqlite-devel'}
   #{@sun.os.ubuntu? ? 'libssl-dev'           : 'openssl-devel'}
   #{@sun.os.ubuntu? ? 'libvips'              : 'vips'}
   #{@sun.os.ubuntu? ? 'libvips-dev'          : 'vips-devel'}
@@ -24,8 +25,9 @@
   #{@sun.os.ubuntu? ? 'libyaml-dev'          : 'libyaml-devel'}
   openssh-server
   openssl
+  #{@sun.os.ubuntu? ? 'libyaml-dev'          : 'libyaml-devel'}
   pigz
-  #{@sun.os.ubuntu? ? 'zlib1g-dev'           : 'zlib-devel'}
+  #{@sun.os.ubuntu? ? 'sqlite3'              : 'sqlite'}
 ).reject(&:blank?).each do |package| %>
 
   sun.install "<%= package %>"
