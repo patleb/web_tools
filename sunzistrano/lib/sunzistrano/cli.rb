@@ -50,7 +50,8 @@ module Sunzistrano
       def do_download(stage, role, path)
         load_config(stage, role)
         ref = Pathname.new(Dir.pwd).expand_path
-        ref = ref.join('config', 'provision', 'files', "#{path.sub(/^\//, '')}.ref")
+        ref = ref.join('config', 'provision', 'files', "#{path.delete_prefix('/')}.ref")
+        FileUtils.mkdir_p File.dirname(ref)
         if @sun.saved
           path = "/home/#{@sun.username}/#{@sun.DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
         end
