@@ -6,21 +6,21 @@ set -u
 <% end %>
 
 if which apt-get >/dev/null 2>&1; then
-  export UBUNTU_OS=true
-  export CENTOS_OS=false
   export OS=ubuntu
-  export os_package_get=apt-get
+  export os_package_get='apt-get'
   export os_package_update='apt update'
   export os_package_upgrade='apt upgrade'
   export os_package_installed='dpkg -s'
+  export os_package_lock='apt-mark hold'
+  export os_package_unlock='apt-mark unhold'
 elif which yum >/dev/null 2>&1; then
-  export UBUNTU_OS=false
-  export CENTOS_OS=true
   export OS=centos
-  export os_package_get=yum
+  export os_package_get='yum'
   export os_package_update='yum clean expire-cache'
   export os_package_upgrade='yum --exclude=kernel* update'
   export os_package_installed='rpm -q'
+  export os_package_lock='yum versionlock add'
+  export os_package_unlock='yum versionlock delete'
 else
   echo "Unsupported OS"
   exit 1
