@@ -43,6 +43,10 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
     echo 'Alias=postgresql.service' >> /usr/lib/systemd/system/postgresql-$PG_MAJOR.service
     systemctl enable postgresql-$PG_MAJOR
     systemctl start postgresql
+# TODO
+#     sudo su - postgres << EOF
+#       psql -c "ALTER USER postgres WITH PASSWORD 'postgres'";
+# EOF
   ;;
   esac
 else
@@ -76,7 +80,6 @@ else
 
   if [[ "$PG_OLD_MAJOR" != "$PG_MAJOR" ]]; then
     # pg_lsclusters
-    # ALTER USER "postgres" WITH PASSWORD 'postgres';
     sun.backup_compare "$PG_CONF_DIR/postgresql.conf"
     sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
     sudo su - postgres << EOF
