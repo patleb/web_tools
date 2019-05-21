@@ -1,19 +1,26 @@
 ### TODO
-# https://docs.timescale.com/v0.10/getting-started/installation/linux/installation-apt-ubuntu
 # https://github.com/pgbackrest
 # https://github.com/reorg/pg_repack
 # https://www.modio.se/scaling-past-the-single-machine.html
 # https://askubuntu.com/questions/732431/how-to-uninstall-specific-versions-of-postgres
 
-sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
-wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
-sun.update
-
-# '10+191.pgdg16.04+1'
+# '10+191.pgdg16.04+1' --> TODO force MAJOR, do not infer
 PG_VERSION="<%= @sun.postgres || "$(sun.current_version 'postgresql')" %>"
 PG_MAJOR=$(sun.pg_major_version "$PG_VERSION")
 PG_MANIFEST=$(sun.manifest_path 'postgresql')
 PG_HOLD="postgresql-$PG_MAJOR libpq-dev postgresql postgresql-contrib postgresql-common"
+
+case "$OS" in
+ubuntu)
+  sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
+  wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+  sun.update
+;;
+centos)
+  yes | yum localinstall --nogpgcheck https://yum.postgresql.org/11/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+  sun.install "postgresql$PG_MAJOR-server"
+;;
+esac
 
 if [[ ! -s "$PG_MANIFEST" ]]; then
   sun.install "postgresql-$PG_MAJOR"
