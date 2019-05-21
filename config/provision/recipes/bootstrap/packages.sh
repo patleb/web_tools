@@ -9,7 +9,7 @@
   clang
   git
   #{@sun.os.ubuntu? ? 'imagemagick'          : 'ImageMagick ImageMagick-devel'}
-  #{@sun.os.ubuntu? ? 'libcurl4-openssl-dev' : ''}
+  #{@sun.os.ubuntu? ? 'libcurl4-openssl-dev' : 'libcurl-devel'}
   #{@sun.os.ubuntu? ? 'libffi-dev'           : 'libffi-devel'}
   #{@sun.os.ubuntu? ? 'libgdbm-dev libgdbm5' : 'gdbm-devel'}
   #{@sun.os.ubuntu? ? 'libgmp-dev'           : 'gmp-devel'}
