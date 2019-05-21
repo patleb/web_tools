@@ -9,7 +9,9 @@ if [[ ! -s "$RUBY_MANIFEST" ]]; then
   # centos root
   echo 'gem: --no-document' > ~/.gemrc
 
-  gem install bundler
+  if sun.version_is_smaller "$RUBY_VERSION" "2.6"; then
+    gem install bundler
+  fi
 else
   sun.update
 
