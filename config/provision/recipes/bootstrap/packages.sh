@@ -28,6 +28,7 @@
   #{@sun.os.ubuntu? ? 'libyaml-dev'          : 'libyaml-devel'}
   pigz
   #{@sun.os.ubuntu? ? 'sqlite3'              : 'sqlite'}
+  #{@sun.os.ubuntu? ? ''                     : 'yum-versionlock'}
 ).reject(&:blank?).each do |package| %>
 
   sun.install "<%= package %>"
