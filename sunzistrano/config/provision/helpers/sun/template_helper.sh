@@ -53,7 +53,7 @@ sun.compare_defaults() {
     echo "defaults: $ref: No such file"
     exit 1
   fi
-  local diff="$(diff --ignore-trailing-space --strip-trailing-cr $bkp $ref)"
+  local diff="$(diff --strip-trailing-cr --ignore-blank-lines --ignore-space-change $bkp $ref)"
   if [[ ! $diff ]]; then
     return 0
   else
