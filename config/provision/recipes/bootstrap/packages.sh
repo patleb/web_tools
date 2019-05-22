@@ -24,6 +24,7 @@
   openssl
   pigz
   #{@sun.os.ubuntu? ? 'sqlite3 libsqlite3-dev'            : 'sqlite sqlite-devel'}
+  #{@sun.os.ubuntu? ? 'software-properties-common'        : ''}
   #{@sun.os.ubuntu? ? ''                                  : 'yum-utils'}
   #{@sun.os.ubuntu? ? ''                                  : 'yum-versionlock'}
   #{@sun.os.ubuntu? ? 'zlib1g-dev'                        : 'zlib zlib-devel'}

@@ -3,6 +3,7 @@ ubuntu)
   sun.mute "dpkg --configure -a"
 ;;
 centos)
+  yes | yum localinstall --nogpgcheck https://centos7.iuscommunity.org/ius-release.rpm
   yes | yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
   yes | yum localinstall --nogpgcheck http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
   yes | yum localinstall --nogpgcheck http://rpms.famillecollet.com/enterprise/remi-release-7.rpm

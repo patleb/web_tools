@@ -7,10 +7,13 @@
   nginx/logrotate
   ssl/ca
   #{@sun.env.vagrant? ? 'ssl/self_signed' : 'ssl/cerbot'}
-  ruby/system__OS_RUBY__
-  nodejs/system__OS_NODEJS__
+  lang/ruby/system__RUBY__
+  lang/nodejs/system__NODEJS__
+  lang/rust/system__RUST__
+  lang/crystal/system__CRYSTAL__
+  lang/python/system__PYTHON__
   utils/all
-  ruby/app__RBENV_RUBY__
+  lang/ruby/app__RBENV_RUBY__
 )) do |name, id| %>
 
   sun.source_recipe "<%= name %>" <%= id %>

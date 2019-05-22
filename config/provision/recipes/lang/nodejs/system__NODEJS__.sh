@@ -1,4 +1,4 @@
-NODE_VERSION=<%= @sun.os_nodejs || '10' %>
+NODE_VERSION=<%= @sun.nodejs || '10' %>
 
 case "$OS" in
 ubuntu)
