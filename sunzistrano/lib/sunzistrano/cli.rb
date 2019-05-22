@@ -37,7 +37,7 @@ module Sunzistrano
 
         validate_version!
 
-        send_commands(deploy_commands)
+        send_commands(deploy_cmd)
       end
 
       def do_compile(stage, role, **custom_options)
@@ -56,7 +56,7 @@ module Sunzistrano
           path = "/home/#{@sun.username}/#{@sun.DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
         end
 
-        unless system download_commands(path, ref)
+        unless system download_cmd(path, ref)
           puts "Cannot transfer [#{path}] to [#{ref}]".color(:red).bright
         end
       end
@@ -156,42 +156,42 @@ module Sunzistrano
         end
       end
 
-      def deploy_commands
-        <<~SH
-          #{ssh_add_command} cd .deploy && tar cz . | #{"sshpass -p #{@sun.password}" if @sun.password} ssh \
+      def deploy_cmd
+        <<~CMD
+          #{ssh_add_cmd} cd .deploy && tar cz . | #{"sshpass -p #{@sun.password}" if @sun.password} ssh \
           -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
           #{@sun.username}@#{@sun.server} \
           #{"-p #{@sun.port}" if @sun.port} \
-          '#{deploy_remote_commands} '#{'&& (cd .. && rm -rf .deploy) || (cd .. && rm -rf .deploy)' unless @sun.debug}
-        SH
+          '#{deploy_remote_cmd} '#{'&& (cd .. && rm -rf .deploy) || (cd .. && rm -rf .deploy)' unless @sun.debug}
+        CMD
       end
 
-      def deploy_remote_commands
-        <<~SH
+      def deploy_remote_cmd
+        <<~CMD
           rm -rf ~/#{@sun.DEPLOY_DIR} &&
           mkdir ~/#{@sun.DEPLOY_DIR} &&
           cd ~/#{@sun.DEPLOY_DIR} &&
           tar xz &&
           #{'sudo' if @sun.sudo} bash role.sh |& tee -a ~/#{@sun.DEPLOY_LOG}
-        SH
+        CMD
       end
 
-      def download_commands(path, ref)
-        <<~SH
-          #{ssh_add_command} rsync --rsync-path='sudo rsync' -azvh -e "ssh \
+      def download_cmd(path, ref)
+        <<~CMD
+          #{ssh_add_cmd} rsync --rsync-path='sudo rsync' -azvh -e "ssh \
           -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
           #{"-p #{@sun.port}" if @sun.port}" \
           #{@sun.username}@#{@sun.server}:#{path} #{ref}
-        SH
+        CMD
       end
 
-      def ssh_add_command
-        <<~SH if @sun.pkey.present?
+      def ssh_add_cmd
+        <<~CMD if @sun.pkey.present?
           if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then \
             eval $(ssh-agent); \
           fi \
           && ssh-add #{@sun.pkey} 2> /dev/null &&
-        SH
+        CMD
       end
 
       def provision?(file, others)
