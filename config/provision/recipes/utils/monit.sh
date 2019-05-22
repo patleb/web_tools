@@ -1,6 +1,13 @@
 sun.install "monit"
 
-sun.backup_compare "/etc/monit/monitrc"
+case "$OS" in
+ubuntu)
+  sun.backup_compare "/etc/monit/monitrc"
+;;
+centos)
+  sun.backup_compare "/etc/monitrc"
+;;
+esac
 
 systemctl start monit
 
