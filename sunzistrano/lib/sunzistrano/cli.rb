@@ -158,9 +158,8 @@ module Sunzistrano
 
       def deploy_commands
         <<~SH
-          #{"eval $(ssh-agent) && ssh-add #{@sun.pkey} 2> /dev/null &&" if @sun.pkey.present?}
-          cd .deploy && tar cz . | #{"sshpass -p #{@sun.password}" if @sun.password} ssh \
-          -o 'StrictHostKeyChecking no' \
+          #{ssh_add_command} cd .deploy && tar cz . | #{"sshpass -p #{@sun.password}" if @sun.password} ssh \
+          -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
           #{@sun.username}@#{@sun.server} \
           #{"-p #{@sun.port}" if @sun.port} \
           '#{deploy_remote_commands} '#{'&& (cd .. && rm -rf .deploy) || (cd .. && rm -rf .deploy)' unless @sun.debug}
@@ -179,11 +178,19 @@ module Sunzistrano
 
       def download_commands(path, ref)
         <<~SH
-          #{"eval $(ssh-agent) && ssh-add #{@sun.pkey} 2> /dev/null &&" if @sun.pkey.present?}
-          rsync --rsync-path='sudo rsync' -azvh -e "ssh \
-          -o 'StrictHostKeyChecking no' \
+          #{ssh_add_command} rsync --rsync-path='sudo rsync' -azvh -e "ssh \
+          -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
           #{"-p #{@sun.port}" if @sun.port}" \
           #{@sun.username}@#{@sun.server}:#{path} #{ref}
+        SH
+      end
+
+      def ssh_add_command
+        <<~SH if @sun.pkey.present?
+          if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then \
+            eval $(ssh-agent); \
+          fi \
+          && ssh-add #{@sun.pkey} 2> /dev/null &&
         SH
       end
 
