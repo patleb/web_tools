@@ -1,8 +1,13 @@
 DEPLOYER_NAME=<%= @sun.deployer_name %>
 
-if [[ ! -s "/home/$DEPLOYER_NAME/.rbenv" ]]; then
+case "$OS" in
+ubuntu)
   sun.install "libjemalloc-dev"
-fi
+;;
+centos)
+  sun.install "jemalloc jemalloc-devel"
+;;
+esac
 
 sudo su - $DEPLOYER_NAME << 'EOF'
   DEPLOYER_NAME=<%= @sun.deployer_name %>

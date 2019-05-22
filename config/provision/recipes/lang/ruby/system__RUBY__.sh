@@ -8,10 +8,7 @@ ubuntu)
     apt-mark hold ruby-full
 
     echo 'gem: --no-document' > $HOME/.gemrc
-
-    if sun.version_is_smaller "$RUBY_VERSION" "2.6"; then
-      gem install bundler
-    fi
+    gem install bundler
   else
     sun.update
 
