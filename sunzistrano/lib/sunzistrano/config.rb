@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO make all config accessible through $SUN_(config_name) --> will need less ERB
 module Sunzistrano
   class Config < OpenStruct
     LIST_NAME = 'all'
@@ -22,6 +23,7 @@ module Sunzistrano
       Pathname.new(File.expand_path('config/provision.yml'))
     end
 
+    # TODO merge gems, add_recipes, skip_recipes and remote_(files|helpers|recipes|roles)
     def initialize(stage, role, options)
       env, app = stage.split(':', 2)
       context = { stage: env, application: app }.with_indifferent_access
