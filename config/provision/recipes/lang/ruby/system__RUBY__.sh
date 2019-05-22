@@ -30,6 +30,7 @@ ubuntu)
   echo "$RUBY_VERSION" >> "$RUBY_MANIFEST"
 ;;
 centos)
+  sun.install "ruby-devel"
   echo 'gem: --no-document' > $HOME/.gemrc
   echo 'gem: --no-document' > ~/.gemrc
   gem install bundler -v=1.17.3
