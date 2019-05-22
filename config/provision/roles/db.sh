@@ -2,7 +2,7 @@
   bootstrap/all
   user/deployer
   db/postgres__POSTGRES__
-  ruby/system__APT_RUBY__
+  ruby/system__OS_RUBY__
   utils/all
 )) do |name, id| %>
 

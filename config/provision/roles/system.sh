@@ -7,8 +7,8 @@
   nginx/logrotate
   ssl/ca
   #{@sun.env.vagrant? ? 'ssl/self_signed' : 'ssl/cerbot'}
-  ruby/system__APT_RUBY__
-  nodejs/system__APT_NODEJS__
+  ruby/system__OS_RUBY__
+  nodejs/system__OS_NODEJS__
   utils/all
   ruby/app__RBENV_RUBY__
 )) do |name, id| %>
