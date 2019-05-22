@@ -9,3 +9,5 @@ centos)
   sun.install "java-1.$JAVA_VERSION.0-openjdk-devel"
 ;;
 esac
+
+sh -c "echo export JAVA_HOME=$(dirname $(dirname $(readlink $(readlink $(which javac))))) >> /etc/environment"
