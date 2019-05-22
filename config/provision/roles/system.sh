@@ -1,4 +1,4 @@
-<% @sun.role_recipes(%W(
+<% @sun.role_recipes(*%W(
   bootstrap/all
   user/deployer
   db/postgres__POSTGRES__
