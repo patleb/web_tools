@@ -1,5 +1,5 @@
 DEPLOYER_NAME=<%= @sun.deployer_name %>
-GEOSERVER_VERSION=<%= @sun.geoserver || '2.15.1' %>
+GEOSERVER_VERSION=<%= @sun.geoserver || '2.15.0' %>
 
 wget -q "http://sourceforge.net/projects/geoserver/files/GeoServer/$GEOSERVER_VERSION/geoserver-$GEOSERVER_VERSION-bin.zip"
 unzip -q "geoserver-$GEOSERVER_VERSION-bin.zip"
