@@ -14,6 +14,7 @@ sudo su - $DEPLOYER_NAME << 'EOF'
   PLUGINS_PATH=/home/$DEPLOYER_NAME/.rbenv/plugins
   PROFILE=/home/$DEPLOYER_NAME/.bashrc
   RUBY_VERSION=<%= @sun.rbenv_ruby %>
+  RBENV_OPTIONS='--with-jemalloc --enable-shared --disable-install-doc --disable-install-rdoc --disable-install-capi'
 
   if [[ ! -s "/home/$DEPLOYER_NAME/.rbenv" ]]; then
     git clone git://github.com/sstephenson/rbenv.git /home/$DEPLOYER_NAME/.rbenv
@@ -35,7 +36,7 @@ sudo su - $DEPLOYER_NAME << 'EOF'
   <%= Sh.rbenv_export(@sun.deployer_name) %>
   <%= Sh.rbenv_init %>
 
-  RUBY_CONFIGURE_OPTS='--with-jemalloc --enable-shared' rbenv install $RUBY_VERSION
+  RUBY_CONFIGURE_OPTS=$RBENV_OPTIONS rbenv install $RUBY_VERSION
   rbenv global $RUBY_VERSION
   gem install bundler
 EOF
