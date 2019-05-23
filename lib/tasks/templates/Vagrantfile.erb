@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
     config.hostmanager.manage_host = true
   end
 
-  hostname, ip = 'vagrant-web.test', '<%= ip %>'
+  hostname, ip = 'vagrant-web.test', '<%= free_local_ip %>'
   subdomains = %w(
   )
   config.vm.define :web, primary: true do |node|
