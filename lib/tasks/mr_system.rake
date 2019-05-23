@@ -36,6 +36,20 @@ namespace :mr_system do
   end
 end
 
+namespace :db do
+  desc 'drop pgrest'
+  task :drop_pgrest => :environment do
+    if MrSystem.config.with_pgrest
+      ActiveRecord::Base.connection.execute <<-SQL.strip_sql
+        DROP SCHEMA api CASCADE;
+        DROP ROLE #{Secret[:pgrest_username]};
+        DROP ROLE web_anon;
+      SQL
+    end
+  end
+end
+Rake::Task['db:drop'].enhance ['db:drop_pgrest']
+
 namespace :desktop do
   desc "-- [options] Desktop Clean-up Project"
   task :clean_up_project => :environment do |t|
