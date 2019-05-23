@@ -1,0 +1,12 @@
+[Unit]
+Description=GeoServer Service
+After=postgresql.service
+Requires=network-online.target postgresql.service
+[Service]
+Environment="GEOSERVER_HOME=/opt/geoserver"
+Type=simple
+ExecStart=/opt/geoserver/bin/startup.sh
+ExecStop=/opt/geoserver/bin/shutdown.sh
+Restart=always
+[Install]
+WantedBy=multi-user.target
