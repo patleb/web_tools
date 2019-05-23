@@ -1,12 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Take a snapshot with:
-# vagrant halt && VBoxManage snapshot "<%= ip = free_local_ip %>" take $(date '+%Y%m%d%H%M%S') && vagrant up
-
-# Rollback to previous snapshot with:
-# vagrant halt && VBoxManage snapshot "<%= ip %>" restorecurrent && vagrant up
-
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
