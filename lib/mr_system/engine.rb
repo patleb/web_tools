@@ -13,6 +13,8 @@ module MrSystem
     # require 'sunzistrano'
 
     config.before_configuration do |app|
+      require 'mr_system/rails/engine'
+
       app.config.active_record.schema_format = :sql
     end
   end
