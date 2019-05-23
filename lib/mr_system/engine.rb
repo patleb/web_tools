@@ -12,10 +12,16 @@ module MrSystem
     # require 'sun_cap'
     # require 'sunzistrano'
 
+    require 'mr_system/configuration'
+
     config.before_configuration do |app|
       require 'mr_system/rails/engine'
 
       app.config.active_record.schema_format = :sql
+    end
+
+    initializer 'ext_sql.append_migrations' do |app|
+      append_migrations(app) if MrSystem.config.with_pgrest
     end
   end
 end

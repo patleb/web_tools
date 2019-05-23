@@ -1,0 +1,9 @@
+db-uri = "<%= Secret[:pgrest_uri] %>"
+db-schema = "api"
+db-anon-role = "web_anon"
+db-pool = <%= Secret[:pgrest_pool] || 10 %>
+
+server-host = "<%= Secret[:pgrest_server_host] || '127.0.0.1' %>"
+server-port = <%= Secret[:pgrest_server_port] || 4000 %>
+
+<%= %{jwt-secret = "#{Secret[:pgrest_jwt_secret]}"} if Secret[:pgrest_jwt_secret].present? %>

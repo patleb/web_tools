@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = "MrSystem"
   s.license     = "MIT"
 
-  s.files = Dir["{app,bin,config,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["{app,bin,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
 
   s.add_dependency "rails", "~> #{MrSystem::RAILS_VERSION::STRING}"
   s.add_dependency "ext_capistrano", version
