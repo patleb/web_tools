@@ -52,14 +52,6 @@ EOF
   ;;
   esac
 else
-  case "$OS" in
-  centos)
-    # TODO centos
-    echo "postgres upgrade not supported on CentOS"
-    exit 1
-  ;;
-  esac
-
   PG_OLD_VERSION=$(tac "$PG_MANIFEST" | grep -m 1 '.')
   PG_OLD_MAJOR=$(sun.pg_major_version "$PG_OLD_VERSION")
 
