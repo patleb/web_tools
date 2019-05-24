@@ -9,6 +9,7 @@ centos)
 ;;
 esac
 
+systemctl enable monit
 systemctl start monit
 
 # configured with ext_capistrano gem

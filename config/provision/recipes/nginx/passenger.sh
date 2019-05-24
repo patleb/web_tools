@@ -32,6 +32,7 @@ esac
 
 sun.backup_compare "/etc/nginx/nginx.conf"
 
+systemctl enable nginx
 systemctl restart nginx
 
 # configured with ext_capistrano gem
