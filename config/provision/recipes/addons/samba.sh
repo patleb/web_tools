@@ -18,4 +18,5 @@ ufw allow samba
 ufw reload
 
 # testparm -v /etc/samba/smb.conf
+systemctl enable smbd
 systemctl restart smbd

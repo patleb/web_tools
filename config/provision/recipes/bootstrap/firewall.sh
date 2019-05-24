@@ -19,3 +19,4 @@ if service --status-all | grep -Fq netfilter-persistent; then
   systemctl disable netfilter-persistent
 fi
 systemctl enable ufw
+systemctl enable fail2ban
