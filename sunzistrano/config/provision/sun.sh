@@ -79,7 +79,9 @@ sun.ensure() {
   sun.elapsed_time $ROLE_START
   set +u
   if [[ ! -z "$RECIPE_ID" ]]; then
-    echo ERROR
+    if [[ "$RECIPE_ID" != 'reboot' ]]; then
+      echo ERROR
+    fi
   fi
   set -u
   <%= "rm -rf $HOME/#{@sun.DEPLOY_DIR}" unless @sun.debug %>
