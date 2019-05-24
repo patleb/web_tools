@@ -43,9 +43,12 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
     postgresql-$PG_MAJOR-setup initdb
     sun.backup_compare "$PG_CONF_DIR/postgresql.conf"
     sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
+    sun.move "$PG_CONF_DIR/pg_hba.conf"
+    chmod 600 "$PG_CONF_DIR/pg_hba.conf"
+    chown postgres:postgres "$PG_CONF_DIR/pg_hba.conf"
     echo 'Alias=postgresql.service' >> /usr/lib/systemd/system/postgresql-$PG_MAJOR.service
     systemctl enable postgresql-$PG_MAJOR
-    systemctl start postgresql
+    systemctl restart postgresql
     sudo su - postgres << EOF
       psql -c "ALTER USER postgres WITH PASSWORD 'postgres'";
 EOF
