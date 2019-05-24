@@ -1,0 +1,10 @@
+namespace :geoserver do
+  %w[start stop restart reload].each do |action|
+    desc "#{action.capitalize} GeoServer"
+    task action do
+      on release_roles :all do
+        execute :sudo, "systemctl #{action} geoserver"
+      end
+    end
+  end
+end
