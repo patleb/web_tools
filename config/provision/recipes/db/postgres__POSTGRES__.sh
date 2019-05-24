@@ -37,7 +37,10 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
     sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
   ;;
   centos)
-    /usr/pgsql-$PG_MAJOR/bin/postgresql-$PG_MAJOR-setup initdb
+    echo 'export PATH=$PATH:/usr/pgsql-$PG_MAJOR/bin' > "/etc/profile.d/pgsql-$PG_MAJOR.sh"
+    export PATH="$PATH:/usr/pgsql-$PG_MAJOR/bin"
+
+    postgresql-$PG_MAJOR-setup initdb
     sun.backup_compare "$PG_CONF_DIR/postgresql.conf"
     sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
     echo 'Alias=postgresql.service' >> /usr/lib/systemd/system/postgresql-$PG_MAJOR.service

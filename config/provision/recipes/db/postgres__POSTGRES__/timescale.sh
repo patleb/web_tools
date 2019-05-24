@@ -27,5 +27,5 @@ esac
 sun.update
 sun.install "timescaledb-postgresql-$PG_MAJOR"
 sun.lock "timescaledb-postgresql-$PG_MAJOR"
-timescaledb-tune --quiet --yes --dry-run --pg-config="/usr/pgsql-$PG_MAJOR/bin/pg_config" >> "$PG_CONF_DIR/postgresql.conf"
+timescaledb-tune --quiet --yes --dry-run >> "$PG_CONF_DIR/postgresql.conf"
 systemctl restart postgresql
