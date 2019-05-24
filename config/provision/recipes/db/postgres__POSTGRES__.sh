@@ -37,7 +37,7 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
     sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
   ;;
   centos)
-    echo "export PATH=\$PATH:/usr/pgsql-$PG_MAJOR/bin" > "/etc/profile.d/pgsql-$PG_MAJOR.sh"
+    echo "export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/pgsql-$PG_MAJOR/bin" >> /etc/environment
     export PATH="$PATH:/usr/pgsql-$PG_MAJOR/bin"
 
     postgresql-$PG_MAJOR-setup initdb
