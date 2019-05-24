@@ -6,6 +6,7 @@
   nofile
   packages
   #{'backports' if @sun.os.ubuntu?}
+  #{'unattended_upgrade' if @sun.os.centos?}
   ssh
   firewall
   firewall/deny_mail
