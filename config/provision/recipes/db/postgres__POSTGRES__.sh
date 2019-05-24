@@ -37,7 +37,7 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
     sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
   ;;
   centos)
-    echo 'export PATH=$PATH:/usr/pgsql-$PG_MAJOR/bin' > "/etc/profile.d/pgsql-$PG_MAJOR.sh"
+    echo "export PATH=\$PATH:/usr/pgsql-$PG_MAJOR/bin" > "/etc/profile.d/pgsql-$PG_MAJOR.sh"
     export PATH="$PATH:/usr/pgsql-$PG_MAJOR/bin"
 
     postgresql-$PG_MAJOR-setup initdb
@@ -52,6 +52,13 @@ EOF
   ;;
   esac
 else
+  case "$OS" in
+  centos)
+    echo "postgres upgrade is not yet supported on CentOS"
+    exit 1
+  ;;
+  esac
+
   PG_OLD_VERSION=$(tac "$PG_MANIFEST" | grep -m 1 '.')
   PG_OLD_MAJOR=$(sun.pg_major_version "$PG_OLD_VERSION")
 
