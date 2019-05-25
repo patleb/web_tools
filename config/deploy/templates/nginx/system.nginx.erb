@@ -99,7 +99,12 @@ http {
   # Uncomment it if you installed passenger or passenger-enterprise
   ##
 
-  passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
+  <% if fetch(:linux_os) == 'centos' %>
+    passenger_root /usr/share/ruby/vendor_ruby/phusion_passenger/locations.ini;
+    passenger_instance_registry_dir /var/run/passenger-instreg;
+  <% else %>
+    passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
+  <% end %>
   passenger_ruby /home/<%= fetch(:deployer_name) %>/.rbenv/shims/ruby;
   passenger_pool_idle_time 300;
   passenger_min_instances <%= Secret[:min_instances] || 1 %>;

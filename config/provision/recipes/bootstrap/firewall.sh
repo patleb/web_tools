@@ -15,7 +15,7 @@ ufw allow http
 ufw allow https
 yes | ufw enable
 
-if service --status-all | grep -Fq netfilter-persistent; then
+if systemctl list-unit-files | grep enabled | grep -Fq netfilter-persistent; then
   systemctl disable netfilter-persistent
 fi
 systemctl enable ufw

@@ -28,7 +28,7 @@ namespace :nginx do
   desc "Configtest nginx service"
   task :configtest do
     on release_roles :all do
-      if test("[ $(sudo service nginx configtest | grep -c 'fail') -eq 0 ]")
+      if test("[ $(sudo nginx -t | grep -c 'failed') -eq 0 ]")
         info 'config [OK]'
       else
         abort("nginx configuration is invalid! (Make sure nginx configuration files are readable and correctly formated.)")
