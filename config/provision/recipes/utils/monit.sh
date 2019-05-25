@@ -6,6 +6,7 @@ ubuntu)
 ;;
 centos)
   sun.backup_compare "/etc/monitrc"
+  mkdir /var/lib/monit
 ;;
 esac
 
