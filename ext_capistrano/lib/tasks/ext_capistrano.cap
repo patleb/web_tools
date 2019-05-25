@@ -40,8 +40,6 @@ namespace :load do
       root
     )
 
-    set :whenever_identifier,   -> { fetch(:deploy_dir) }
-
     append :linked_dirs, *%w(
       log
       tmp/pids

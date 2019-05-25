@@ -1,6 +1,9 @@
 namespace :load do
   task :defaults do
-    set :whenever_roles, -> { :web }
+    set :whenever_roles,      -> { :web }
+    set :whenever_identifier, -> { fetch(:deploy_dir) }
+
+    append :linked_dirs, 'tmp/locks'
   end
 end
 
