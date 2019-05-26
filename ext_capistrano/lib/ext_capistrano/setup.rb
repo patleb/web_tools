@@ -56,10 +56,10 @@ stages.each do |stage|
         stage_app_config_path = stage_config_path.join(stage, "#{app}.rb")
         load stage_app_config_path if File.exist?(stage_app_config_path)
       end
+
       Secret.load(env: stage, app: app, root: fetch(:root))
-      if fetch(:single_server) # TODO rsync to other servers before passenger-restart, but don't use roles
-        server fetch(:server), user: fetch(:deployer_name), roles: %i(web app)
-      end
+
+      server fetch(:server), user: fetch(:deployer_name), roles: %i(web app)
     end
     configure_scm
     I18n.locale = fetch(:locale, :en)

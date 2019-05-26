@@ -1,4 +1,4 @@
-# TODO change lib/capistrano/tasks to lib/tasks/capistrano
+# TODO rsync to other servers before passenger-restart, but don't use roles
 # https://github.com/capistrano/sshkit/blob/master/EXAMPLES.md
 load_rel 'ext_capistrano/**/*.cap'
 
@@ -6,14 +6,13 @@ namespace :load do
   task :defaults do
     set :server,              -> { Secret[:server] }
     set :gems,                -> { [] }
-    set :single_server,       -> { true }
     set :linux_os,            -> { 'ubuntu' }
     set :format,              -> { fetch(:linux_os) == 'centos' ? :pretty : :airbrussh }
     set :admin_name,          -> { fetch(:stage) == :vagrant ? 'vagrant' : fetch(:linux_os) }
     set :deployer_name,       -> { 'deployer' }
     set :deploy_dir,          -> { "#{fetch(:application)}_#{fetch(:stage)}" }
-    # TODO                    -> { "#{fetch(:application)}_#{fetch(:stage)}#{'_' + fetch(:server_id) if fetch(:server_id)}" }
     set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
+
     # TODO remove capability to deploy from another root directory --> it makes Gemfile sync to complicated
     set :root,                -> { ENV['RAILS_ROOT'] || '' } # -> { "../#{fetch(:application)}" }
 
@@ -41,11 +40,14 @@ namespace :load do
     )
 
     append :linked_dirs, *%w(
+      .bundle
       log
       tmp/pids
       tmp/cache
       tmp/sockets
+      public/packs
       public/system
+      node_modules
     )
   end
 end
