@@ -14,7 +14,7 @@ shared:
   pgrest_pool: 10
   pgrest_username: authenticator
   pgrest_password: not-secret
-  pgrest_server_host: 127.0.0.1
+  pgrest_server_host: localhost
   pgrest_server_port: 4000
   pgrest_max_rows: 100
 
