@@ -7,6 +7,10 @@ Secret.class_eval do
     "postgresql://#{user}:#{pwd}@#{self[:db_host] || '127.0.0.1'}:#{self[:db_port] || 5432}/#{self[:db_database]}"
   end
 
+  def self.pgrest_server
+    [self[:pgrest_server_host], self[:pgrest_server_port]].compact.join(':')
+  end
+
   def self.server
     [self[:server_host], self[:server_port]].compact.join(':')
   end

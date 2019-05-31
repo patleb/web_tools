@@ -9,6 +9,7 @@ shared:
   mail_address: localhost
   mail_port: 1025
   mail_domain: localhost:3000
+  pgrest_server: $METHOD
   pgrest_uri: $METHOD
   pgrest_pool: 10
   pgrest_username: authenticator
