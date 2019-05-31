@@ -7,3 +7,5 @@ server-host = "<%= Secret[:pgrest_server_host] || '127.0.0.1' %>"
 server-port = <%= Secret[:pgrest_server_port] || 4000 %>
 
 <%= %{jwt-secret = "#{Secret[:pgrest_jwt_secret]}"} if Secret[:pgrest_jwt_secret].present? %>
+
+max-rows = <%= Secret[:pgrest_max_rows] || 100 %>
