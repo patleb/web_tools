@@ -9,11 +9,13 @@ shared:
   mail_address: localhost
   mail_port: 1025
   mail_domain: localhost:3000
-  pgrest_server: $METHOD
-  pgrest_uri: $METHOD
-  pgrest_pool: 10
-  pgrest_username: authenticator
-  pgrest_password: not-secret
+  geoserver_url: $METHOD
+  geoserver_host: localhost
+  geoserver_port: 8080
+  pgrest_db_uri: $METHOD
+  pgrest_db_pool: 10
+  pgrest_db_username: authenticator
+  pgrest_db_password: not-secret
   pgrest_server_host: localhost
   pgrest_server_port: 4000
   pgrest_max_rows: 100

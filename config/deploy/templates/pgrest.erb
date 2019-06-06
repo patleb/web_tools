@@ -1,7 +1,7 @@
-db-uri = "<%= Secret[:pgrest_uri] %>"
+db-uri = "<%= Secret[:pgrest_db_uri] %>"
 db-schema = "api"
 db-anon-role = "web_anon"
-db-pool = <%= Secret[:pgrest_pool] %>
+db-pool = <%= Secret[:pgrest_db_pool] %>
 
 server-host = "<%= Secret[:pgrest_server_host] %>"
 server-port = <%= Secret[:pgrest_server_port] %>

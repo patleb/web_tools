@@ -43,7 +43,7 @@ namespace :db do
     if MrSystem.config.with_pgrest
       ActiveRecord::Base.connection.execute <<-SQL.strip_sql
         DROP SCHEMA IF EXISTS api CASCADE;
-        DROP ROLE IF EXISTS #{Secret[:pgrest_username]};
+        DROP ROLE IF EXISTS #{Secret[:pgrest_db_username]};
         DROP ROLE IF EXISTS web_anon;
       SQL
     end
