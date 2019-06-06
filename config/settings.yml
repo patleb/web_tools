@@ -12,6 +12,7 @@ shared:
   geoserver_url: $METHOD
   geoserver_host: localhost
   geoserver_port: 8080
+  pgrest_url: $METHOD
   pgrest_db_uri: $METHOD
   pgrest_db_pool: 10
   pgrest_db_username: authenticator
