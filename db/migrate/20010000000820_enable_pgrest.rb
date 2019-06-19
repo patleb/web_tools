@@ -4,11 +4,19 @@ class EnablePgrest < ActiveRecord::Migration[5.2]
       CREATE SCHEMA api;
       GRANT USAGE ON SCHEMA api TO public;
 
-      CREATE ROLE web_anon NOLOGIN;
+      DO $do$ BEGIN
+        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE  rolname = 'web_anon') THEN
+          CREATE ROLE web_anon NOLOGIN;
+        END IF;
+      END $do$;
       GRANT USAGE ON SCHEMA api TO web_anon;
       ALTER ROLE web_anon SET search_path TO api;
 
-      CREATE ROLE #{Secret[:pgrest_db_username]} NOINHERIT LOGIN;
+      DO $do$ BEGIN
+        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '#{Secret[:pgrest_db_username]}') THEN
+          CREATE ROLE #{Secret[:pgrest_db_username]} NOINHERIT LOGIN;
+        END IF;
+      END $do$;
       ALTER USER #{Secret[:pgrest_db_username]} WITH PASSWORD '#{Secret[:pgrest_db_password]}';
       GRANT web_anon TO #{Secret[:pgrest_db_username]};
     SQL

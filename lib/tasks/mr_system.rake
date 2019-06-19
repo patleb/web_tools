@@ -41,11 +41,11 @@ namespace :db do
   desc 'drop pgrest'
   task :drop_pgrest => :environment do
     if MrSystem.config.with_pgrest
-      ActiveRecord::Base.connection.execute <<-SQL.strip_sql
-        DROP SCHEMA IF EXISTS api CASCADE;
-        DROP ROLE IF EXISTS #{Secret[:pgrest_db_username]};
-        DROP ROLE IF EXISTS web_anon;
-      SQL
+      ActiveRecord::Base.connection.exec_query 'DROP SCHEMA IF EXISTS api CASCADE'
+      unless Rails.env.test?
+        ActiveRecord::Base.connection.exec_query "DROP ROLE IF EXISTS #{Secret[:pgrest_db_username]}"
+        ActiveRecord::Base.connection.exec_query 'DROP ROLE IF EXISTS web_anon'
+      end
     end
   end
 end
