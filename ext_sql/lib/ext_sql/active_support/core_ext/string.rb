@@ -11,6 +11,7 @@ class String
     open, close = delimiters.chars
     open_regex, close_regex = open.escape_regex, close.escape_regex
     result = strip_sql
+    result.gsub! "'", "''"
     result.start_with?(open) ? result.delete_prefix!(open) : result.prepend("'")
     result.end_with?(close) ? result.delete_suffix!(close) : result.concat("'")
     result.gsub! /#{close_regex}\s*#{open_regex}/, ' '
