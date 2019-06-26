@@ -1,5 +1,5 @@
 require 'action_view/helpers/text_helper'
-require 'mr_secret'
+require 'mr_setting'
 
 class Notice
   include ActionView::Helpers::TextHelper
@@ -13,16 +13,16 @@ class Notice
 
     mail = ::Mail.new
     mail.delivery_method :smtp, {
-      address: Secret[:mail_address],
-      port: Secret[:mail_port],
-      domain: Secret[:mail_domain],
-      user_name: Secret[:mail_user_name],
-      password: Secret[:mail_password],
+      address: Setting[:mail_address],
+      port: Setting[:mail_port],
+      domain: Setting[:mail_domain],
+      user_name: Setting[:mail_user_name],
+      password: Setting[:mail_password],
       authentication: "plain",
       enable_starttls_auto: true,
     }
-    mail.to   = Secret[:mail_to]
-    mail.from = Secret[:mail_from]
+    mail.to   = Setting[:mail_to]
+    mail.from = Setting[:mail_from]
     message = <<~TEXT
       [#{Time.current.utc}]#{BODY_START}
       #{"#{before_body}\n" if before_body}#{exception.backtrace_log}#{"\n#{after_body}" if after_body}

@@ -1,17 +1,17 @@
-# MrSecret
+# MrSetting
 
 ### Installation
 
 As a global gem:
 
-    $ gem install mr_secret
+    $ gem install mr_setting
 
 In your `Gemfile`:
 
 ```ruby
 # Gemfile
 
-gem 'mr_secret'
+gem 'mr_setting'
 ```
 
 ### Usage
@@ -33,10 +33,10 @@ production:
   name_2: value_3
 ```
 
-and access your settings through the `Secret` class:
+and access your settings through the `Setting` class:
 
 ```ruby
-Secret[:name_1] # => 'value_1'
+Setting[:name_1] # => 'value_1'
 ```
 
 #### Ruby
@@ -45,13 +45,13 @@ For a ruby script outside of the Rails context, but running at the root of the p
 you must specify the environment either by passing it as `env` parameter to `load`:
 
 ```ruby
-require 'mr_secret'
+require 'mr_setting'
 
-settings = Secret.load(env: fetch(:stage))
+settings = Setting.load(env: fetch(:stage))
 
 settings['name]      # => 'value'
 
-Secret['name']  # => 'value'
+Setting['name']  # => 'value'
 ```
 
 or to `RAILS_ENV` environment variable on the command line:
@@ -62,7 +62,7 @@ If the script is running outside of the project root,
 then the project path must be specified either by passing it as `root` parameter to `with`:
 
 ```ruby
-Secret.load(env: stage, root: '/path/to/base/dir')
+Setting.load(env: stage, root: '/path/to/base/dir')
 ```
 
 or to `RAILS_ROOT` environment variable on the command line:
@@ -148,7 +148,7 @@ Available rake tasks to help encrypt/decrypt with the first argument as the envi
 
 ### Version lock
 
-The current loaded `MrSecret::VERSION` and the `lock` key in your project `settings.yml` must match,
+The current loaded `MrSetting::VERSION` and the `lock` key in your project `settings.yml` must match,
 otherwise an error is raised.
 
 ```yaml

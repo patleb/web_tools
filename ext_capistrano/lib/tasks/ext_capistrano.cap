@@ -4,7 +4,7 @@ load_rel 'ext_capistrano/**/*.cap'
 
 namespace :load do
   task :defaults do
-    set :server,              -> { Secret[:server] }
+    set :server,              -> { Setting[:server] }
     set :gems,                -> { [] }
     set :linux_os,            -> { 'ubuntu' }
     set :format,              -> { fetch(:linux_os) == 'centos' ? :pretty : :airbrussh }

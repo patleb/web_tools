@@ -29,7 +29,7 @@ namespace :monit do
   desc 'Check mail users'
   task :check_mail_users do
     on release_roles :all do
-      Secret[:mail_to].each do |mail_to|
+      Setting[:mail_to].each do |mail_to|
         unless test :sudo, "cat #{monitrc} | grep 'set alert #{mail_to} not on'"
           invoke 'monit:push'
           invoke 'monit:reload'

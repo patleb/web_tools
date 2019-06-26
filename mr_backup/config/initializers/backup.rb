@@ -2,7 +2,7 @@
 
 require 'mr_backup/configuration'
 
-Secret.load
+Setting.load
 
 root_path MrBackup.config.backup_dir
 
@@ -42,13 +42,13 @@ Notifier::Mail.defaults do |mail|
   mail.on_warning           = false
   mail.on_failure           = true
 
-  mail.from                 = Secret[:mail_from]
-  mail.to                   = Secret[:mail_to]
-  mail.address              = Secret[:mail_address]
-  mail.port                 = Secret[:mail_port]
-  mail.domain               = Secret[:mail_domain]
-  mail.user_name            = Secret[:mail_user_name]
-  mail.password             = Secret[:mail_password]
+  mail.from                 = Setting[:mail_from]
+  mail.to                   = Setting[:mail_to]
+  mail.address              = Setting[:mail_address]
+  mail.port                 = Setting[:mail_port]
+  mail.domain               = Setting[:mail_domain]
+  mail.user_name            = Setting[:mail_user_name]
+  mail.password             = Setting[:mail_password]
   mail.authentication       = "plain"
   mail.encryption           = :starttls
 end

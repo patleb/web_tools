@@ -7,9 +7,9 @@ namespace :db do
     desc 'create user'
     task :create_user, [:username, :password] do |t, args|
       on release_roles fetch(:db_roles) do
-        user = args[:username].presence || Secret[:db_username]
+        user = args[:username].presence || Setting[:db_username]
         next if psql '-tAc', %{"SELECT 1 FROM pg_roles WHERE rolname='#{user}';" | grep -q 1}
-        pwd = args[:password].presence || Secret[:db_password]
+        pwd = args[:password].presence || Setting[:db_password]
         if psql '-c', %{"CREATE USER #{user} WITH PASSWORD '#{pwd}';"}
           info 'create user successful'
         else
@@ -22,8 +22,8 @@ namespace :db do
     desc 'set superuser'
     task :set_superuser, [:username] do |t, args|
       on release_roles fetch(:db_roles) do
-        next unless Secret[:db_host].in? ['127.0.0.1', 'localhost']
-        user = args[:username].presence || Secret[:db_username]
+        next unless Setting[:db_host].in? ['127.0.0.1', 'localhost']
+        user = args[:username].presence || Setting[:db_username]
         if psql '-c', %{"ALTER USER #{user} WITH SUPERUSER;"}
           info 'superuser successful'
         else
@@ -36,10 +36,10 @@ namespace :db do
     desc 'create database'
     task :create_database, [:database, :username] do |t, args|
       on release_roles fetch(:db_roles) do
-        next unless Secret[:db_host].in? ['127.0.0.1', 'localhost']
-        db = args[:database] || Secret[:db_database]
+        next unless Setting[:db_host].in? ['127.0.0.1', 'localhost']
+        db = args[:database] || Setting[:db_database]
         next if psql '-tAc', %{"SELECT 1 FROM pg_database WHERE datname='#{db}';" | grep -q 1}
-        user = args[:username].presence || Secret[:db_username]
+        user = args[:username].presence || Setting[:db_username]
         if psql '-c', %{"CREATE DATABASE #{db} OWNER #{user};"}
           info 'create database successful'
         else

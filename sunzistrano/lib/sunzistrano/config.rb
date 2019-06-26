@@ -44,8 +44,8 @@ module Sunzistrano
         app_yml.merge!(yml["#{@application}_#{@stage}_#{@role}"] || {})
         role_yml.merge!(app_yml)
       end
-      if Gem.loaded_specs['mr_secret']
-        secrets = Secret.load(env: @stage, app: @application, root: root || ENV['RAILS_ROOT'] || '')
+      if Gem.loaded_specs['mr_setting']
+        secrets = Setting.load(env: @stage, app: @application, root: root || ENV['RAILS_ROOT'] || '')
         %i(lock gems).each do |name|
           role_yml["secrets_#{name}"] = secrets.delete(name)
         end

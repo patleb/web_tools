@@ -24,7 +24,7 @@ module MrSystem
 
       def fetch_record
         @record_set = dns_record_sets.find do |record_set|
-          record_set.name.chop == Secret[:vpn_domain] && record_set.type == 'A'
+          record_set.name.chop == Setting[:vpn_domain] && record_set.type == 'A'
         end
       end
 
@@ -50,14 +50,14 @@ module MrSystem
       end
 
       def dns_zone
-        @_dns_zone ||= dns.list_hosted_zones_by_name.hosted_zones.select{ |zone| zone.name.chop == Secret[:dns_domain] }.first
+        @_dns_zone ||= dns.list_hosted_zones_by_name.hosted_zones.select{ |zone| zone.name.chop == Setting[:dns_domain] }.first
       end
 
       def dns
         @_dns ||= Aws::Route53::Resource.new(
-          region: Secret[:aws_region],
-          access_key_id: Secret[:aws_access_key_id],
-          secret_access_key: Secret[:aws_secret_access_key],
+          region: Setting[:aws_region],
+          access_key_id: Setting[:aws_access_key_id],
+          secret_access_key: Setting[:aws_secret_access_key],
         ).client
       end
     end

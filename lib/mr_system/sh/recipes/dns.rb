@@ -1,6 +1,6 @@
 module Sh::Dns
   def build_hosts(admin_name, server)
-    entries = (Secret[:dns_hosts] || []).map{ |name| "$INTERNAL_IP  #{name}" }.join("\\n")
+    entries = (Setting[:dns_hosts] || []).map{ |name| "$INTERNAL_IP  #{name}" }.join("\\n")
 
     hosts = '/etc/hosts'
     hosts_defaults = "/home/#{admin_name}/#{Sunzistrano::Config::DEFAULTS_DIR}/#{hosts.tr('/', '~')}"

@@ -1,5 +1,5 @@
 require 'whenever'
-require 'mr_secret'
+require 'mr_setting'
 
 module ExtWhenever
   def self.setup(context)

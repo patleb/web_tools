@@ -9,7 +9,7 @@ module MrSystem
         end
 
         def vpn_client_name
-          Secret[:vpn_client_name] || "client_#{ExtRake.config.rails_env}"
+          Setting[:vpn_client_name] || "client_#{ExtRake.config.rails_env}"
         end
       end
 

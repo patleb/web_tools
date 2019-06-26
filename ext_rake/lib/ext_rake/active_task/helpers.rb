@@ -14,7 +14,7 @@ module ActiveTask
     protected
 
     def reload_secrets
-      Secret.reload
+      Setting.reload
     end
 
     private

@@ -13,19 +13,19 @@ class EnablePgrest < ActiveRecord::Migration[5.2]
       ALTER ROLE web_anon SET search_path TO api;
 
       DO $do$ BEGIN
-        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '#{Secret[:pgrest_db_username]}') THEN
-          CREATE ROLE #{Secret[:pgrest_db_username]} NOINHERIT LOGIN;
+        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '#{Setting[:pgrest_db_username]}') THEN
+          CREATE ROLE #{Setting[:pgrest_db_username]} NOINHERIT LOGIN;
         END IF;
       END $do$;
-      ALTER USER #{Secret[:pgrest_db_username]} WITH PASSWORD '#{Secret[:pgrest_db_password]}';
-      GRANT web_anon TO #{Secret[:pgrest_db_username]};
+      ALTER USER #{Setting[:pgrest_db_username]} WITH PASSWORD '#{Setting[:pgrest_db_password]}';
+      GRANT web_anon TO #{Setting[:pgrest_db_username]};
     SQL
   end
 
   def down
     execute <<-SQL.strip_sql
-      REVOKE web_anon FROM #{Secret[:pgrest_db_username]};
-      DROP ROLE #{Secret[:pgrest_db_username]};
+      REVOKE web_anon FROM #{Setting[:pgrest_db_username]};
+      DROP ROLE #{Setting[:pgrest_db_username]};
 
       REVOKE USAGE ON SCHEMA api FROM web_anon;
       DROP ROLE web_anon;

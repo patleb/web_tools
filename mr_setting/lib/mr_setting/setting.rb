@@ -3,10 +3,10 @@ require 'active_support/message_encryptor'
 require 'erb'
 require 'yaml'
 require 'inifile'
-require 'mr_secret/type'
+require 'mr_setting/type'
 
-class Secret
-  include MrSecret::Type
+class Setting
+  include MrSetting::Type
 
   DIRECT = /[a-zA-Z_][a-zA-Z0-9_]+/
   NESTED = /\[[:\[\]a-zA-Z0-9_]+\]/
@@ -265,14 +265,14 @@ class Secret
 
   def self.require_initializers
     (@gems.values << @root).each do |root|
-      path = root.join('config/initializers/mr_secret.rb')
+      path = root.join('config/initializers/mr_setting.rb')
       require path.to_s if path.exist?
     end
   end
 
   def self.validate_version!(lock)
-    unless lock == MrSecret::VERSION
-      raise "Secret version [#{MrSecret::VERSION}] is different from locked version [#{lock}]"
+    unless lock == MrSetting::VERSION
+      raise "Setting version [#{MrSetting::VERSION}] is different from locked version [#{lock}]"
     end
   end
 end

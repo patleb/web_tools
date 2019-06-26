@@ -5,22 +5,22 @@ module MrBackup
     attr_writer :archive, :s3_versionned
 
     def s3_access_key_id
-      Secret[:s3_access_key_id] || Secret[:aws_access_key_id]
+      Setting[:s3_access_key_id] || Setting[:aws_access_key_id]
     end
 
     def s3_secret_access_key
-      Secret[:s3_secret_access_key] || Secret[:aws_secret_access_key]
+      Setting[:s3_secret_access_key] || Setting[:aws_secret_access_key]
     end
 
     def s3_region
-      Secret[:s3_region] || Secret[:aws_region]
+      Setting[:s3_region] || Setting[:aws_region]
     end
 
     def s3_bucket
       if s3_versionned?
-        "#{Secret[:s3_bucket]}-version"
+        "#{Setting[:s3_bucket]}-version"
       else
-        Secret[:s3_bucket]
+        Setting[:s3_bucket]
       end
     end
 
@@ -87,7 +87,7 @@ module MrBackup
 
     # TODO add rsync storage
     def remote?
-      Secret[:backup_storage] == 's3'
+      Setting[:backup_storage] == 's3'
     end
   end
 end

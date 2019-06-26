@@ -21,7 +21,7 @@ module MrSystem
       end
 
       def self.authorized_paths
-        Secret[:authorized_paths]
+        Setting[:authorized_paths]
       end
 
       protected

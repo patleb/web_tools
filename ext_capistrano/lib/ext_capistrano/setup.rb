@@ -57,7 +57,7 @@ stages.each do |stage|
         load stage_app_config_path if File.exist?(stage_app_config_path)
       end
 
-      Secret.load(env: stage, app: app, root: fetch(:root))
+      Setting.load(env: stage, app: app, root: fetch(:root))
 
       server fetch(:server), user: fetch(:deployer_name), roles: %i(web app)
     end
