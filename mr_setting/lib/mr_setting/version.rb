@@ -1,3 +1,3 @@
-module MrSecret
+module MrSetting
   VERSION = '0.1.0'
 end

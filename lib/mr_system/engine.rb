@@ -8,7 +8,7 @@ module MrSystem
     # require 'ext_whenever'
     require 'mr_backup'
     require 'mr_notifier'
-    require 'mr_secret'
+    require 'mr_setting'
     # require 'sun_cap'
     # require 'sunzistrano'
 

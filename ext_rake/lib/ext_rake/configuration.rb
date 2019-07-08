@@ -1,4 +1,4 @@
-require 'mr_secret'
+require 'mr_setting'
 
 module ExtRake
   has_config do
@@ -28,10 +28,10 @@ module ExtRake
 
     def db_config
       {
-        host: Secret[:db_host],
-        database: Secret[:db_database],
-        username: Secret[:db_username],
-        password: Secret[:db_password],
+        host: Setting[:db_host],
+        database: Setting[:db_database],
+        username: Setting[:db_username],
+        password: Setting[:db_password],
       }
     end
 

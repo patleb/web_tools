@@ -3,7 +3,7 @@ require 'active_support/json'
 require 'active_support/duration'
 require 'chronic_duration'
 
-module MrSecret::Type
+module MrSetting::Type
   extend ActiveSupport::Concern
 
   class_methods do

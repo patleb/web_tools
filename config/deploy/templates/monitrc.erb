@@ -75,12 +75,12 @@ set statefile /var/lib/monit/state
 #
 # TODO do not send email, append to a file instead in ../shared/events/monit.log
 # TODO or https://app.vagrant-web.test/_async/monit?event=name
-set mailserver <%= Secret[:mail_address] %> port <%= Secret[:mail_port] %>
-<% if Secret[:mail_user_name] -%>
-  username "<%= Secret[:mail_user_name] %>" password "<%= Secret[:mail_password] %>"
+set mailserver <%= Setting[:mail_address] %> port <%= Setting[:mail_port] %>
+<% if Setting[:mail_user_name] -%>
+  username "<%= Setting[:mail_user_name] %>" password "<%= Setting[:mail_password] %>"
   using tlsv12
   with timeout 15 seconds
-  using hostname <%= Secret[:mail_domain] %>
+  using hostname <%= Setting[:mail_domain] %>
 <% end -%>
 # set mailserver mail.bar.baz,               # primary mailserver
 #                backup.bar.baz port 10025,  # backup mailserver on port 10025
@@ -133,13 +133,13 @@ set eventqueue
 ## are expanded at runtime. For example, to override the sender, use:
 #
 set mail-format {
-  from:    <%= Secret[:mail_from] %>
+  from:    <%= Setting[:mail_from] %>
   subject: [<%= fetch(:application).camelize %> <%= fetch(:stage).upcase %>] Monit: $SERVICE - $EVENT
   message: [$SERVICE] Service $EVENT
     Date:         $DATE
     Action:       $ACTION
     Host:         $HOST
-    Application:  <%= Secret[:server] %>
+    Application:  <%= Setting[:server] %>
     Description:  $DESCRIPTION
 }
 #
@@ -154,7 +154,7 @@ set mail-format {
 ## This filter is recommended to avoid getting alerts for trivial cases.
 #
 # set alert your-name@your.domain not on { instance, action }
-<% Secret[:mail_to].each do |mail_to| -%>
+<% Setting[:mail_to].each do |mail_to| -%>
 set alert <%= mail_to %> not on { instance, action, pid }
 <% end -%>
 #

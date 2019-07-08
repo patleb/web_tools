@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_whenever",   version
   s.add_dependency "mr_backup",      version
   s.add_dependency "mr_notifier",    version
-  s.add_dependency "mr_secret",      version
+  s.add_dependency "mr_setting",     version
   s.add_dependency "sun_cap",        version
   s.add_dependency "sunzistrano"
 end

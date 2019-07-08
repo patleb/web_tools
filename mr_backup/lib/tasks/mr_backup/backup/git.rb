@@ -6,7 +6,7 @@ module MrBackup
       end
 
       def self.git_directory
-        Pathname.new(Secret[:backup_git_directory]).expand_path
+        Pathname.new(Setting[:backup_git_directory]).expand_path
       end
 
       protected

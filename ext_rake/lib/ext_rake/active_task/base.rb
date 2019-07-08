@@ -145,7 +145,7 @@ module ActiveTask
       @_environment[:rake_config].each do |ivar, value|
         ExtRake.config.instance_variable_set(ivar, value)
       end
-      Secret.rollback!
+      Setting.rollback!
       @_environment.clear
     end
 

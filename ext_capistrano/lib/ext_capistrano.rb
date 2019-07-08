@@ -1,4 +1,4 @@
-require 'mr_secret'
+require 'mr_setting'
 require 'ext_capistrano/railtie' if defined? Rails
 
 module ExtCapistrano

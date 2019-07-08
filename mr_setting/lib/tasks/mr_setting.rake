@@ -1,9 +1,9 @@
-namespace :mr_secret do
-  desc 'setup secrets.yml, settings.yml, initializers/mr_secret.rb, database.yml and .gitignore files'
+namespace :mr_setting do
+  desc 'setup secrets.yml, settings.yml, initializers/mr_setting.rb, database.yml and .gitignore files'
   task :setup, [:no_master_key, :force] => :environment do |t, args|
-    src, dst = MrSecret.root.join('lib/tasks/templates'), Rails.root
+    src, dst = MrSetting.root.join('lib/tasks/templates'), Rails.root
 
-    ['config/initializers/mr_secret.rb', 'config/settings.yml'].each do |file|
+    ['config/initializers/mr_setting.rb', 'config/settings.yml'].each do |file|
       cp src.join(file), dst.join(file)
     end
 
@@ -26,13 +26,13 @@ namespace :mr_secret do
   end
 end
 
-namespace :secret do
+namespace :setting do
   task :dump, [:env, :app, :file] do |t, args|
     raise 'argument [:app] must be specified' unless (ENV['RAILS_APP'] = args[:app]).present?
     raise 'argument [:file] must be specified' unless (file = args[:file]).present?
     assign_environment! args
 
-    Pathname.new(file).expand_path.write(Secret.to_yaml)
+    Pathname.new(file).expand_path.write(Setting.to_yaml)
     puts "[#{ENV['RAILS_APP']}_#{ENV['RAILS_ENV']}] settings written to file [#{file}]"
   end
 
@@ -41,9 +41,9 @@ namespace :secret do
     assign_environment! args
 
     if ENV['DATA'].present?
-      puts Secret.encrypt(ENV['DATA'])
+      puts Setting.encrypt(ENV['DATA'])
     else
-      puts Secret.encrypt(Pathname.new(args[:file]).expand_path.read)
+      puts Setting.encrypt(Pathname.new(args[:file]).expand_path.read)
     end
   end
 
@@ -51,16 +51,16 @@ namespace :secret do
   task :decrypt, [:env, :key, :file] do |t, args|
     assign_environment! args
 
-    Secret.load
+    Setting.load
     if args[:file].present?
-      Pathname.new(args[:file]).expand_path.write(Secret[args[:key]])
+      Pathname.new(args[:file]).expand_path.write(Setting[args[:key]])
       puts "[#{args[:key]}] key written to file [#{args[:file]}]"
     else
       value =
         if ENV['DATA'].present?
-          Secret.decrypt(ENV['DATA'])
+          Setting.decrypt(ENV['DATA'])
         else
-          Secret[args[:key]]
+          Setting[args[:key]]
         end
       if ENV['ESCAPE'].to_b
         value = value.escape_newlines

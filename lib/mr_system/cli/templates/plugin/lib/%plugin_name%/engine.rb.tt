@@ -2,6 +2,6 @@ require "<%= plugin_name %>/configuration"
 
 module <%= plugin_module %>
   class Engine < ::Rails::Engine
-    # require 'mr_secret'
+    # require 'mr_setting'
   end
 end

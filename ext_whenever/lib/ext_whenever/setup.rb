@@ -1,4 +1,4 @@
-Secret.load(env: @environment)
+Setting.load(env: @environment)
 
 deployer = Dir.pwd.match(/home\/(\w+)\//)[1]
 rbenv_ruby = %{export PATH="/home/#{deployer}/.rbenv/bin:/home/#{deployer}/.rbenv/plugins/ruby-build/bin:$PATH"; eval "$(rbenv init -)"}

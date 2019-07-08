@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
 
   s.add_dependency "whenever", "~> 0.10"
-  s.add_dependency "mr_secret"
+  s.add_dependency "mr_setting"
 end

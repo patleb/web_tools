@@ -1,4 +1,4 @@
-Secret.class_eval do
+Setting.class_eval do
   def self.geoserver_url
     "http#{'s' if self[:geoserver_ssl]}://#{geoserver_server}/geoserver"
   end
