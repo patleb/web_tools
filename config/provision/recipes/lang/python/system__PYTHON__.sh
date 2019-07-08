@@ -9,9 +9,9 @@ ubuntu)
 ;;
 centos)
   PYTHON_VERSION=$(echo $PYTHON_VERSION | tr -d '.')
-  sun.install "python${PYTHON_VERSION}u"
-  sun.install "python${PYTHON_VERSION}u-libs"
-  sun.install "python${PYTHON_VERSION}u-devel"
-  sun.install "python${PYTHON_VERSION}u-pip"
+  sun.install "python${PYTHON_VERSION}"
+  sun.install "python${PYTHON_VERSION}-libs"
+  sun.install "python${PYTHON_VERSION}-devel"
+  sun.install "python${PYTHON_VERSION}-pip"
 ;;
 esac
