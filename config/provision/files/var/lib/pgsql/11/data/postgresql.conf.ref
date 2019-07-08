@@ -478,7 +478,7 @@ log_line_prefix = '%m [%p] '		# special values:
 #log_temp_files = -1			# log temporary files equal or larger
 					# than the specified size in kilobytes;
 					# -1 disables, 0 logs all temp files
-log_timezone = 'UCT'
+log_timezone = 'Etc/UTC'
 
 #------------------------------------------------------------------------------
 # PROCESS TITLE
@@ -589,7 +589,7 @@ log_timezone = 'UCT'
 
 datestyle = 'iso, mdy'
 #intervalstyle = 'postgres'
-timezone = 'UCT'
+timezone = 'Etc/UTC'
 #timezone_abbreviations = 'Default'     # Select the set of available time zone
 					# abbreviations.  Currently, there are
 					#   Default
