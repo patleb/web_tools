@@ -9,25 +9,26 @@ shared:
   mail_address: localhost
   mail_port: 1025
   mail_domain: localhost:3000
-  geoserver_private_url: $METHOD
-  geoserver_private_server: $METHOD
-  geoserver_private_host: 127.0.0.1
-  geoserver_private_port: 8080
+  geoserver_local_url: $METHOD
+  geoserver_local_server: $METHOD
+  geoserver_local_host: localhost
+  geoserver_local_port: 8080
   geoserver_url: $METHOD
   geoserver_host: $ALIAS server_host
-  geoserver_port: 8080
   geoserver_username: admin
   geoserver_password: geoserver
   pgrest_nginx_upstream: $METHOD
   pgrest_nginx_location: $METHOD
+  pgrest_local_url: $METHOD
+  pgrest_local_server: $METHOD
+  pgrest_local_host: localhost
+  pgrest_local_port: 4000
   pgrest_url: $METHOD
-  pgrest_server: $METHOD
+  pgrest_host: $ALIAS server_host
   pgrest_db_uri: $METHOD
   pgrest_db_pool: 10
   pgrest_db_username: authenticator
   pgrest_db_password: not-secret
-  pgrest_server_host: $ALIAS server_host
-  pgrest_server_port: 4000
   pgrest_max_rows: 100
 
 test:
@@ -35,10 +36,14 @@ test:
   server_host: localhost
   server_port: 3000
   deployer_password: test
+  geoserver_port: 8080
+  pgrest_port: 4000
 
 development:
   server_host: localhost
   server_port: 3000
+  geoserver_port: 8080
+  pgrest_port: 4000
 
 vagrant:
   server_host: vagrant-web.test

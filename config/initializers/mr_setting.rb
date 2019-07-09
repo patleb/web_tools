@@ -1,10 +1,14 @@
 Setting.class_eval do
-  def self.geoserver_private_url
-    "http://#{geoserver_private_server}/geoserver"
+  def self.geoserver_local_url
+    "http://#{geoserver_local_server}/geoserver"
   end
 
   def self.geoserver_url
     "http://#{geoserver_server}/geoserver"
+  end
+
+  def self.pgrest_local_url
+    "http://#{pgrest_local_server}"
   end
 
   def self.pgrest_url
@@ -20,7 +24,7 @@ Setting.class_eval do
   def self.pgrest_nginx_upstream
     {
       pgrest_app: <<-UPSTREAM,
-        server #{pgrest_server};
+        server #{pgrest_local_server};
         keepalive 64;
       UPSTREAM
     }
@@ -44,16 +48,10 @@ Setting.class_eval do
     "postgresql://#{user}:#{pwd}@#{self[:db_host] || '127.0.0.1'}:#{self[:db_port] || 5432}/#{self[:db_database]}"
   end
 
-  def self.geoserver_private_server
-    [self[:geoserver_private_host], self[:geoserver_private_port]].compact.join(':')
-  end
-
-  def self.geoserver_server
-    [self[:geoserver_host], self[:geoserver_port]].compact.join(':')
-  end
-
-  def self.pgrest_server
-    [self[:pgrest_server_host], self[:pgrest_server_port]].compact.join(':')
+  %i(geoserver_local geoserver pgrest_local pgrest).each do |name|
+    define_singleton_method "#{name}_server" do
+      [self["#{name}_host"], self["#{name}_port"]].compact.join(':')
+    end
   end
 
   def self.server
