@@ -24,6 +24,7 @@ namespace :load do
     set :nginx_locations,     -> { {} }
     set :nginx_rails,         -> { true }
     set :nginx_deferred,      -> { fetch(:nginx_rails) && fetch(:stage) == :production }
+    set :nginx_skip_ssl,      -> { false }
 
     set :monit_max_swap_size,     -> { '25%' }
     set :monit_max_swap_action,   -> { %{exec "/bin/systemctl restart nginx"} }
