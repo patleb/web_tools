@@ -3,8 +3,8 @@ db-schema = "api"
 db-anon-role = "web_anon"
 db-pool = <%= Setting[:pgrest_db_pool] %>
 
-server-host = "<%= Setting[:pgrest_host] %>"
-server-port = <%= Setting[:pgrest_port] %>
+server-host = "<%= Setting[:pgrest_local_host] %>"
+server-port = <%= Setting[:pgrest_local_port] %>
 
 <%= %{jwt-secret = "#{Setting[:pgrest_jwt_secret]}"} if Setting[:pgrest_jwt_secret].present? %>
 
