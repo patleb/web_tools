@@ -16,4 +16,12 @@ namespace :pgrest do
       end
     end
   end
+
+  desc 'reload PostgREST after deploy'
+  task :reload_after_deploy do
+    on release_roles :all do
+      invoke 'pgrest:reload' if MrSystem.config.with_pgrest
+    end
+  end
+  after 'deploy:publishing', 'pgrest:reload_after_deploy'
 end

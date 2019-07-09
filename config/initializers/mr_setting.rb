@@ -8,7 +8,9 @@ Setting.class_eval do
   end
 
   def self.pgrest_url
-    "http#{'s' if self[:pgrest_server_ssl]}://#{pgrest_server}"
+    url = "http#{'s' if self[:pgrest_server_ssl]}://#{pgrest_server}"
+    url = [url, self[:pgrest_path]].join('/') if self[:pgrest_path].present?
+    url
   end
 
   def self.pgrest_db_uri
