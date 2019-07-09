@@ -1,6 +1,10 @@
 Setting.class_eval do
+  def self.geoserver_private_url
+    "http://#{geoserver_private_server}/geoserver"
+  end
+
   def self.geoserver_url
-    "http#{'s' if self[:geoserver_ssl]}://#{geoserver_server}/geoserver"
+    "http://#{geoserver_server}/geoserver"
   end
 
   def self.pgrest_url
@@ -13,6 +17,10 @@ Setting.class_eval do
 
   def self.database_url(user = self[:db_username], pwd = self[:db_password])
     "postgresql://#{user}:#{pwd}@#{self[:db_host] || '127.0.0.1'}:#{self[:db_port] || 5432}/#{self[:db_database]}"
+  end
+
+  def self.geoserver_private_server
+    [self[:geoserver_private_host], self[:geoserver_private_port]].compact.join(':')
   end
 
   def self.geoserver_server

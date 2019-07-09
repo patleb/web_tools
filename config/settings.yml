@@ -9,7 +9,10 @@ shared:
   mail_address: localhost
   mail_port: 1025
   mail_domain: localhost:3000
-  geoserver_private_url: http://localhost:8080/geoserver
+  geoserver_private_url: $METHOD
+  geoserver_private_server: $METHOD
+  geoserver_private_host: 127.0.0.1
+  geoserver_private_port: 8080
   geoserver_url: $METHOD
   geoserver_host: localhost
   geoserver_port: 8080
