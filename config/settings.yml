@@ -18,6 +18,8 @@ shared:
   geoserver_port: 8080
   geoserver_username: admin
   geoserver_password: geoserver
+  pgrest_nginx_upstream: $METHOD
+  pgrest_nginx_location: $METHOD
   pgrest_url: $METHOD
   pgrest_server: $METHOD
   pgrest_db_uri: $METHOD
