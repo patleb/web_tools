@@ -11,7 +11,7 @@ shared:
   mail_domain: localhost:3000
   geoserver_local_url: $METHOD
   geoserver_local_server: $METHOD
-  geoserver_local_host: localhost
+  geoserver_local_host: 127.0.0.1
   geoserver_local_port: 8080
   geoserver_url: $METHOD
   geoserver_host: $ALIAS server_host
@@ -21,7 +21,7 @@ shared:
   pgrest_nginx_location: $METHOD
   pgrest_local_url: $METHOD
   pgrest_local_server: $METHOD
-  pgrest_local_host: localhost
+  pgrest_local_host: 127.0.0.1
   pgrest_local_port: 4000
   pgrest_url: $METHOD
   pgrest_host: $ALIAS server_host
