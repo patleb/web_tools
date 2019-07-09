@@ -20,7 +20,7 @@ Setting.class_eval do
   def self.pgrest_nginx_upstream
     {
       pgrest_app: <<-UPSTREAM,
-        server #{self[:pgrest_server]};
+        server #{pgrest_server};
         keepalive 64;
       UPSTREAM
     }

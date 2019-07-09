@@ -245,7 +245,8 @@ class Setting
           next
         elsif value.start_with? ALIAS
           alias_name = value.delete_prefix(ALIAS).strip
-          value = memo[alias_name]
+          (@aliases ||= {})[key] = alias_name
+          next
         elsif value.start_with? REMOVE
           (@removed ||= Set.new) << key
           next
@@ -258,6 +259,7 @@ class Setting
   def self.resolve_keywords(settings)
     require_initializers
     @all = settings
+    @aliases&.each{ |key, alias_name| settings[key] = settings[alias_name] }
     @methods&.each{ |key, method_name| settings[key] = send(method_name) unless @removed&.include? key }
     @removed&.each{ |key| settings.delete(key) }
     settings
