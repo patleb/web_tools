@@ -14,6 +14,13 @@ sun.move '/etc/systemd/system/geoserver.service'
   ufw reload
 <% end %>
 
+sun.backup_defaults '/opt/geoserver/data_dir/logs/DEFAULT_LOGGING.properties'
+sun.backup_defaults '/opt/geoserver/data_dir/logs/PRODUCTION_LOGGING.properties'
+rm /opt/geoserver/data_dir/logs/DEFAULT_LOGGING.properties
+mv /opt/geoserver/data_dir/logs/PRODUCTION_LOGGING.properties /opt/geoserver/data_dir/logs/DEFAULT_LOGGING.properties
+
+sun.backup_compare '/opt/geoserver/webapps/geoserver/WEB-INF/web.xml'
+
 systemctl enable geoserver
 systemctl start geoserver
 
