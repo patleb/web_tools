@@ -26,16 +26,6 @@ namespace :deploy do
     end
   end
 
-  desc 'make current path executable'
-  task :make_current_path_executable do
-    on release_roles(:all) do
-      Pathname.new(current_path).ascend.each do |path|
-        execute :sudo, :chmod, '777', path.to_s
-      end
-    end
-  end
-  after 'deploy:symlink:release', 'deploy:make_current_path_executable'
-
   # TODO stop batches (db mutex), wait to finish, continue with passenger-restart, start batches
 
   desc 'Full server deploy after provisioning'

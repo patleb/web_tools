@@ -12,6 +12,8 @@ centos)
   adduser $DEPLOYER_NAME
   echo -e "$DEPLOYER_PWD\n$DEPLOYER_PWD" | sudo passwd $DEPLOYER_NAME
   gpasswd -a $DEPLOYER_NAME wheel
+  setenforce 0
+  sun.backup_move '/etc/selinux/config'
 ;;
 esac
 
