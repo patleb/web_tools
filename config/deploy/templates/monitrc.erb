@@ -76,8 +76,8 @@ set statefile /var/lib/monit/state
 # TODO do not send email, append to a file instead in ../shared/events/monit.log
 # TODO or https://app.vagrant-web.test/_async/monit?event=name
 set mailserver <%= Setting[:mail_address] %> port <%= Setting[:mail_port] %>
-<% if Setting[:mail_user_name] -%>
-  username "<%= Setting[:mail_user_name] %>" password "<%= Setting[:mail_password] %>"
+<% if Setting[:mail_username] -%>
+  username "<%= Setting[:mail_username] %>" password "<%= Setting[:mail_password] %>"
   using tlsv12
   with timeout 15 seconds
   using hostname <%= Setting[:mail_domain] %>

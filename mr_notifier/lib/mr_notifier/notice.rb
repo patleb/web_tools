@@ -16,7 +16,7 @@ class Notice
       address: Setting[:mail_address],
       port: Setting[:mail_port],
       domain: Setting[:mail_domain],
-      user_name: Setting[:mail_user_name],
+      user_name: Setting[:mail_username],
       password: Setting[:mail_password],
       authentication: "plain",
       enable_starttls_auto: true,

@@ -47,7 +47,7 @@ Notifier::Mail.defaults do |mail|
   mail.address              = Setting[:mail_address]
   mail.port                 = Setting[:mail_port]
   mail.domain               = Setting[:mail_domain]
-  mail.user_name            = Setting[:mail_user_name]
+  mail.user_name            = Setting[:mail_username]
   mail.password             = Setting[:mail_password]
   mail.authentication       = "plain"
   mail.encryption           = :starttls
