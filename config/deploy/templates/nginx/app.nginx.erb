@@ -105,8 +105,8 @@ server {
     location '<%= location %>' {
       <%= content %>
 
-      access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location %>.access.log goaccess_log;
-      error_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location %>.error.log;
+      access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location.full_underscore %>.access.log goaccess_log;
+      error_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location.full_underscore %>.error.log;
     }
   <% end %>
 
