@@ -6,7 +6,7 @@
   nginx/htpasswd
   nginx/logrotate
   ssl/ca
-  #{@sun.env.vagrant? ? 'ssl/self_signed' : 'ssl/cerbot'}
+  ssl/self_signed
   lang/ruby/system__RUBY__
   lang/nodejs/system__NODEJS__
   lang/rust/system__RUST__
