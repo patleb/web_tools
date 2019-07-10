@@ -39,6 +39,7 @@ namespace :load do
 
     append :sunzistrano_context, *%i(
       nginx_domain
+      nginx_skip_ssl
     )
 
     set :whenever_every_minute, -> { [] }

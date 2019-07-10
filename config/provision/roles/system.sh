@@ -5,8 +5,8 @@
   nginx/passenger
   nginx/htpasswd
   nginx/logrotate
-  ssl/ca
-  ssl/self_signed
+  #{'ssl/ca' unless @sun.nginx_skip_ssl}
+  #{'ssl/self_signed' unless @sun.nginx_skip_ssl}
   lang/ruby/system__RUBY__
   lang/nodejs/system__NODEJS__
   lang/rust/system__RUST__
