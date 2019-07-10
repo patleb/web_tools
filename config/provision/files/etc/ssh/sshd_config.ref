@@ -160,7 +160,11 @@ AuthorizedKeysFile	.ssh/authorized_keys
 # To disable tunneled clear text passwords, change to no here!
 #PasswordAuthentication yes
 #PermitEmptyPasswords no
+<% if @sun.env.vagrant? -%>
 PasswordAuthentication yes
+<% else -%>
+PasswordAuthentication no
+<% end -%>
 
 # Change to no to disable s/key passwords
 #ChallengeResponseAuthentication yes
@@ -174,7 +178,11 @@ ChallengeResponseAuthentication no
 #KerberosUseKuserok yes
 
 # GSSAPI options
+<% if @sun.env.vagrant? -%>
 GSSAPIAuthentication no
+<% else -%>
+GSSAPIAuthentication yes
+<% end -%>
 GSSAPICleanupCredentials no
 #GSSAPIStrictAcceptorCheck yes
 #GSSAPIKeyExchange no
@@ -235,5 +243,7 @@ Subsystem	sftp	/usr/libexec/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
+<% if @sun.env.vagrant? -%>
 UseDNS no
+<% end -%>
 <% end -%>
