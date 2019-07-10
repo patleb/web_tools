@@ -310,7 +310,7 @@ check filesystem <%= fetch(:monit_filesystem_root) %> with path /
 check process nginx with pidfile /run/nginx.pid
   start program = "/bin/systemctl start nginx"
   stop program = "/bin/systemctl stop nginx"
-  if failed host 127.0.0.1 port 80 then restart
+  if failed host 127.0.0.1 port 80 then alert
 
 ###############################################################################
 ## Includes
