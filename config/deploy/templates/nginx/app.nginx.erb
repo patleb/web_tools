@@ -104,6 +104,9 @@ server {
   <% fetch(:nginx_locations).each do |location, content| %>
     location '<%= location %>' {
       <%= content %>
+
+      access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location %>.access.log goaccess_log;
+      error_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location %>.error.log;
     }
   <% end %>
 
