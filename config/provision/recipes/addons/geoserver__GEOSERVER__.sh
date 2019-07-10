@@ -14,6 +14,11 @@ sun.move '/etc/systemd/system/geoserver.service'
   ufw reload
 <% end %>
 
+# TODO JAI
+# https://geoserver.geo-solutions.it/edu/en/install_run/jai_io_install.html
+# https://docs.geoserver.org/latest/en/user/production/java.html
+# https://github.com/kartoza/docker-geoserver/blob/master/scripts/setup.sh
+# TODO disable unused services https://docs.geoserver.org/latest/en/api/#/latest/en/api/1.0.0/owsservices.yaml
 sun.backup_compare '/opt/geoserver/data_dir/logging.xml'
 sun.backup_compare '/opt/geoserver/webapps/geoserver/WEB-INF/web.xml'
 
