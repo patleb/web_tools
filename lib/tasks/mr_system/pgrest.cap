@@ -5,9 +5,9 @@ namespace :pgrest do
       invoke! 'template:push', 'pgrest', '/opt/pgrest/config'
       execute :sudo, 'chown root:root /opt/pgrest/config'
       execute :sudo, 'chmod 0700 /opt/pgrest/config'
+      invoke 'pgrest:restart'
     end
   end
-  after 'deploy:publishing', 'pgrest:push'
 
   %w[start stop restart reload].each do |action|
     desc "#{action.capitalize} PostgREST"
