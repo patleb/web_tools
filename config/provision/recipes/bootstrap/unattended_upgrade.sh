@@ -6,8 +6,7 @@ ubuntu)
 centos)
   sun.install "yum-cron"
 
-  sun.backup_compare "/etc/yum/yum-cron.conf"
-  sun.move "/etc/yum/yum-cron.conf"
+  sun.backup_move "/etc/yum/yum-cron.conf"
 
   systemctl enable yum-cron
   systemctl start yum-cron

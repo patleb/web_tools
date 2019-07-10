@@ -42,8 +42,7 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
 
     postgresql-$PG_MAJOR-setup initdb
     sun.backup_compare "$PG_CONF_DIR/postgresql.conf"
-    sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
-    sun.move "$PG_CONF_DIR/pg_hba.conf"
+    sun.backup_move "$PG_CONF_DIR/pg_hba.conf"
     chmod 600 "$PG_CONF_DIR/pg_hba.conf"
     chown postgres:postgres "$PG_CONF_DIR/pg_hba.conf"
     echo 'Alias=postgresql.service' >> /usr/lib/systemd/system/postgresql-$PG_MAJOR.service

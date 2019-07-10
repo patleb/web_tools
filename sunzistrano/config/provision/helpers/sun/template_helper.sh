@@ -1,3 +1,8 @@
+sun.backup_move() {
+  sun.backup_compare $1
+  sun.move $1
+}
+
 sun.move() {
   mv "$(sun.template_path $1)" $1
 }

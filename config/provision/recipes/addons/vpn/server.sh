@@ -26,8 +26,7 @@ sun.backup_compile $SERVER_CONF
 sun.backup_compile $CLIENT_CONF
 
 make-cadir $CA_DIR
-sun.backup_compare $CA_VARS
-sun.move $CA_VARS
+sun.backup_move $CA_VARS
 
 mkdir -p $CLIENTS_KEYS
 chmod 700 $CLIENTS_KEYS

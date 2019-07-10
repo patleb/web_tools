@@ -19,8 +19,8 @@ sun.move '/etc/systemd/system/geoserver.service'
 # https://docs.geoserver.org/latest/en/user/production/java.html
 # https://github.com/kartoza/docker-geoserver/blob/master/scripts/setup.sh
 # TODO disable unused services --> /opt/geoserver/data_dir/*.xml
-sun.backup_compare '/opt/geoserver/data_dir/logging.xml'
-sun.backup_compare '/opt/geoserver/webapps/geoserver/WEB-INF/web.xml'
+sun.backup_move '/opt/geoserver/data_dir/logging.xml'
+sun.backup_move '/opt/geoserver/webapps/geoserver/WEB-INF/web.xml'
 
 systemctl enable geoserver
 systemctl start geoserver
