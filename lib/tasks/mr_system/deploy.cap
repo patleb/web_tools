@@ -30,7 +30,7 @@ namespace :deploy do
   task :make_current_path_executable do
     on release_roles(:all) do
       Pathname.new(current_path).ascend.each do |path|
-        execute :sudo, :chmod, 'g+x,o+x', path.to_s
+        execute :sudo, :chmod, 'g+r,g+x,o+r,o+x', path.to_s
       end
     end
   end
