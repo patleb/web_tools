@@ -36,14 +36,14 @@ test:
   server_host: localhost
   server_port: 3000
   deployer_password: test
-  geoserver_port: 8080
-  pgrest_port: 4000
+  geoserver_port: $ALIAS geoserver_local_port
+  pgrest_port: $ALIAS pgrest_local_port
 
 development:
   server_host: localhost
   server_port: 3000
-  geoserver_port: 8080
-  pgrest_port: 4000
+  geoserver_port: $ALIAS geoserver_local_port
+  pgrest_port: $ALIAS pgrest_local_port
 
 vagrant:
   server_host: vagrant-web.test
