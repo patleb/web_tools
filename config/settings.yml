@@ -36,13 +36,17 @@ test:
   server_host: localhost
   server_port: 3000
   deployer_password: test
+  geoserver_local_host: $ALIAS server_host
   geoserver_port: $ALIAS geoserver_local_port
+  pgrest_local_host: $ALIAS server_host
   pgrest_port: $ALIAS pgrest_local_port
 
 development:
   server_host: localhost
   server_port: 3000
+  geoserver_local_host: $ALIAS server_host
   geoserver_port: $ALIAS geoserver_local_port
+  pgrest_local_host: $ALIAS server_host
   pgrest_port: $ALIAS pgrest_local_port
 
 vagrant:
