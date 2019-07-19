@@ -121,8 +121,17 @@ server {
       }
     <% end %>
 
-    <% (fetch(:nginx_public_dirs) + fetch(:nginx_public_files)).each do |root| %>
+    <% fetch(:nginx_public_dirs).each do |root| %>
       location /<%= root %>/ {
+        expires 1M;
+        add_header Cache-Control public;
+        access_log    off;
+        log_not_found off;
+      }
+    <% end %>
+
+    <% fetch(:nginx_public_files).each do |root| %>
+      location /<%= root %> {
         expires 1M;
         add_header Cache-Control public;
         access_log    off;
