@@ -18,6 +18,6 @@ class String
   end
 
   def full_underscore
-    underscore.tr('/', '_').delete_prefix('_')
+    underscore.tr('/', '_').delete_prefix('_').delete_suffix('_')
   end
 end
