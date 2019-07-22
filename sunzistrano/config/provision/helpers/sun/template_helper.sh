@@ -1,10 +1,19 @@
 sun.backup_move() {
   sun.backup_compare $1
-  sun.move $1
+  sun.move $@
 }
 
 sun.move() {
-  mv "$(sun.template_path $1)" $1
+  local dst="$1"
+  mv "$(sun.template_path $dst)" $dst
+  set +u; local permissions=$2; set -u
+  if [[ "${permissions}" ]]; then
+    chmod $permissions $dst
+  fi
+  set +u; local owner=$3; set -u
+  if [[ "${owner}" ]]; then
+    chown $owner $dst
+  fi
 }
 
 sun.backup_compile() {
