@@ -42,8 +42,6 @@ namespace :load do
       nginx_skip_ssl
     )
 
-    set :whenever_every_minute, -> { [] }
-
     append :linked_files, *%w(
       public/503.html
     )

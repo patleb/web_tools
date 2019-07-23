@@ -1,8 +1,10 @@
 namespace :load do
   task :defaults do
-    set :whenever_roles,      -> { :web }
-    set :whenever_identifier, -> { fetch(:deploy_dir) }
+    set :whenever_roles,        -> { :web }
+    set :whenever_identifier,   -> { fetch(:deploy_dir) }
+    set :whenever_every_minute, -> { [] }
 
+    append :gems, 'ext_whenever'
     append :linked_dirs, 'tmp/locks'
   end
 end
@@ -17,4 +19,15 @@ namespace :whenever do
       end
     end
   end
+
+  desc 'Push every_minutes.sh cron script'
+  task :push_every_minute do
+    on release_roles fetch(:whenever_roles) do
+      invoke! 'template:push', 'every_minute.sh', release_path.join('bin', "every_minute.sh")
+      fetch(:whenever_every_minute).each do |script|
+        invoke! 'template:push', "every_minute/#{script}.sh", release_path.join('bin', 'every_minute', "#{script}.sh")
+      end
+    end
+  end
+  after 'git:create_release', 'whenever:push_every_minute'
 end
