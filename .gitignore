@@ -2,7 +2,7 @@
 pkg/
 **/Gemfile.lock
 **/*.gem
-mr_system-*.gem
+mr_backend-*.gem
 Gemfile.lock
 /tmp/*
 .editorconfig

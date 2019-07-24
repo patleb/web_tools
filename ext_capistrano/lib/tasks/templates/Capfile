@@ -33,7 +33,7 @@ install_plugin Capistrano::SCM::Git
 # require "capistrano/rails/assets"
 # require "capistrano/rails/migrations"
 # require "capistrano/passenger"
-require 'mr_system/capistrano'
+require 'mr_backend/capistrano'
 
 # Load custom tasks from `app/tasks` if you have any defined
 Dir.glob("app/tasks/*.cap").each { |r| import r }

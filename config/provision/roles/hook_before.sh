@@ -1,3 +1,3 @@
-<% @sun.role_helpers(Gem.root("mr_system")).each do |file| %>
+<% @sun.role_helpers(Gem.root("mr_backend")).each do |file| %>
   source helpers/<%= file %>
 <% end %>
