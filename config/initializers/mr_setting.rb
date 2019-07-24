@@ -21,6 +21,7 @@ Setting.class_eval do
     database_url(self[:pgrest_db_username], self[:pgrest_db_password])
   end
 
+  # TODO move to settings.yml --> https://stackoverflow.com/questions/3790454/how-do-i-break-a-string-over-multiple-lines
   def self.pgrest_nginx_upstream
     {
       pgrest_app: <<-UPSTREAM,

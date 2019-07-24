@@ -1,5 +1,5 @@
 class EnablePgrest < ActiveRecord::Migration[5.2]
-  def up
+  def up # TODO make sure it's possible to re-run without exceptions
     execute <<-SQL.strip_sql
       CREATE SCHEMA api;
       GRANT USAGE ON SCHEMA api TO public;

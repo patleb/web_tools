@@ -1,0 +1,29 @@
+namespace :profiler do
+  desc 'Start Profiler'
+  task :start, [:matcher] do |t, args|
+    on release_roles :all do
+      within current_path do
+        with rails_env: fetch(:stage) do
+          if (matcher = args[:matcher].to_s).blank?
+            error "cannot start profiler with empty matcher"
+            exit 1
+          end
+          execute Sh.bash("echo '#{matcher}' > '#{current_path.join('tmp/profile.txt')}'")
+          invoke 'passenger:restart'
+        end
+      end
+    end
+  end
+
+  desc 'Stop Profiler'
+  task :stop do
+    on release_roles :all do
+      within current_path do
+        with rails_env: fetch(:stage) do
+          execute :rm, '-f', 'tmp/profile.txt'
+          invoke 'passenger:restart'
+        end
+      end
+    end
+  end
+end

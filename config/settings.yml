@@ -8,7 +8,6 @@ shared:
   mail_from: noreply@notify.example.com
   mail_address: localhost
   mail_port: 1025
-  mail_domain: localhost:3000
   geoserver_local_url: $METHOD
   geoserver_local_server: $METHOD
   geoserver_local_host: 127.0.0.1
@@ -35,6 +34,7 @@ test:
   max_pool_size: 2
   server_host: localhost
   server_port: 3000
+  mail_domain: $ALIAS server
   deployer_password: test
   geoserver_port: $ALIAS geoserver_local_port
   pgrest_port: $ALIAS pgrest_local_port
@@ -42,6 +42,7 @@ test:
 development:
   server_host: localhost
   server_port: 3000
+  mail_domain: $ALIAS server
   geoserver_port: $ALIAS geoserver_local_port
   pgrest_port: $ALIAS pgrest_local_port
 

@@ -22,6 +22,7 @@ module Rake::Task::WithOutput
           puts "#{ExtRake::STARTED} #{name}".blue
           super
         rescue Exception => exception
+          # TODO use MrRescue
           Notice.new.deliver! exception, subject: name do |message|
             puts message
           end

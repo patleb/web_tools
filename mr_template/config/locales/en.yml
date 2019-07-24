@@ -1,0 +1,9 @@
+en:
+  mr_template:
+    browser_upgrade_html: You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.
+    js:
+      :true: "True"
+      :false: "False"
+      confirmation: Are you sure?
+    toggle_navigation: Toggle navigation
+    back_to_site: Back to site

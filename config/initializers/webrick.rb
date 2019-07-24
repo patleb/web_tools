@@ -1,4 +1,4 @@
-if defined?(WEBrick) && (Rails.env.development? || Rails.env.test?) 
+if defined?(WEBrick) && Rails::Env.dev_or_test?
   require 'webrick/httpserver'
   require 'rack/handler/webrick'
 
