@@ -244,8 +244,8 @@ class Setting
           (@methods ||= {})[key] = (method_name.presence || key)
           next
         elsif value.start_with? ALIAS
-          alias_name = value.delete_prefix(ALIAS).strip
-          (@aliases ||= {})[key] = alias_name
+          old_name = value.delete_prefix(ALIAS).strip
+          (@aliases ||= {})[key] = old_name
           next
         elsif value.start_with? REMOVE
           (@removed ||= Set.new) << key
@@ -259,8 +259,15 @@ class Setting
   def self.resolve_keywords(settings)
     require_initializers
     @all = settings
-    @aliases&.each{ |key, alias_name| settings[key] = settings[alias_name] }
+    @aliases&.each{ |key, old_name| settings[key] = settings[old_name] }
     @methods&.each{ |key, method_name| settings[key] = send(method_name) unless @removed&.include? key }
+    @aliases&.each do |key, old_name|
+      if @removed&.include? old_name
+        settings.delete(old_name)
+      else
+        settings[key] = settings[old_name]
+      end
+    end
     @removed&.each{ |key| settings.delete(key) }
     settings
   end
