@@ -8,9 +8,15 @@ class Notice
   BODY_END = '[END]'.freeze
 
   # TODO add throttler
+  # TODO keep messages in a folder and deliver later when the service becomes available
   def deliver!(exception, subject:, before_body: nil, after_body: nil)
-    require "mail"
+    message = <<~TEXT
+      [#{Time.current.utc}]#{BODY_START}
+      #{"#{before_body}\n" if before_body}#{exception.backtrace_log}#{"\n#{after_body}" if after_body}
+      #{BODY_END}
+    TEXT
 
+    require 'mail'
     mail = ::Mail.new
     mail.delivery_method :smtp, {
       address: Setting[:mail_address],
@@ -23,11 +29,6 @@ class Notice
     }
     mail.to   = Setting[:mail_to]
     mail.from = Setting[:mail_from]
-    message = <<~TEXT
-      [#{Time.current.utc}]#{BODY_START}
-      #{"#{before_body}\n" if before_body}#{exception.backtrace_log}#{"\n#{after_body}" if after_body}
-      #{BODY_END}
-    TEXT
     mail.subject   = subject.to_s
     mail.text_part = ::Mail::Part.new do
       content_type 'text/plain; charset=UTF-8'
@@ -48,18 +49,20 @@ class Notice
         </html>
       HTML
     end
+
     if defined?(Rails) && Rails.env.test?
       Mail::TestMailer.new({}).deliver! mail
     else
       mail.deliver! unless MrNotifier.config.skip_notice
     end
-    message
   rescue Errno::ECONNREFUSED => e
-    # TODO keep messages in a folder and deliver later when the service becomes available
     message << <<~TEXT
       #{e.backtrace_log}
     TEXT
   ensure
-    yield message if block_given?
+    if block_given?
+      yield message
+    end
+    return message
   end
 end
