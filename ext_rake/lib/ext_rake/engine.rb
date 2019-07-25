@@ -9,7 +9,6 @@ end
 
 class ExtRake::Railtie < Rails::Engine
   require 'mr_rescue'
-  require 'ext_rake/rake_error'
   require 'ext_rake/rake/task'
 
   config.before_configuration do

@@ -42,7 +42,6 @@ module MrBackend
     # require 'sunzistrano'
 
     require 'mr_backend/configuration'
-    require 'mr_backend/rails_error'
 
     config.before_configuration do |app|
       app.config.cache_store = :global_store if defined? MrGlobal

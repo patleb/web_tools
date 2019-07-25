@@ -1,3 +1,9 @@
+class RakeError < RescueError
+  def self.rescue_class
+    RakeRescue
+  end
+end
+
 module Rake::Task::WithOutput
   extend ActiveSupport::Concern
 
