@@ -60,7 +60,11 @@ class Global < MrRecord
 
     case data_type
     when 'json'
-      data.is_a?(Array) ? data : data.with_indifferent_access
+      if data.is_a? Array
+        data.map!{ |item| item.is_a?(Hash) ? item.with_indifferent_access : item }
+      else
+        data.with_indifferent_access
+      end
     when 'serialized'
       Marshal.load(data) rescue data
     else
