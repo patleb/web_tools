@@ -11,5 +11,6 @@ class CreateMrRescues < ActiveRecord::Migration[5.1]
 
     add_index :mr_rescues, [:type, :exception, :created_at]
     add_index :mr_rescues, [:type, :message]
+    add_index :mr_rescues, [:type, :data], using: :gin
   end
 end
