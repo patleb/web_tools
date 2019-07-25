@@ -5,7 +5,7 @@ class RescueError < ::StandardError
     <<~EOF.strip
       #{RESCUE}[#{name}]
       #{data}
-      #{after_message}
+      #{before_backtrace}
     EOF
   end
 
@@ -17,5 +17,5 @@ class RescueError < ::StandardError
     @data || raise(NotImplementedError)
   end
 
-  def after_message; end
+  def before_backtrace; end
 end
