@@ -5,7 +5,7 @@ require 'open3'
 require 'optparse'
 require 'ext_ruby'
 require 'ext_rake/configuration'
-require 'ext_rake/railtie' if defined? Rails
+require 'ext_rake/engine' if defined? Rails
 require 'mr_notifier'
 
 module ActiveTask

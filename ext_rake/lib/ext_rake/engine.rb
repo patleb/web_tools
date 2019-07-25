@@ -7,14 +7,12 @@ module ExtRake
   DONE =      '[DONE]'.freeze
 end
 
-class ExtRake::Railtie < Rails::Railtie
+class ExtRake::Railtie < Rails::Engine
+  require 'mr_rescue'
+  require 'ext_rake/rake_error'
   require 'ext_rake/rake/task'
 
   config.before_configuration do
     require 'ext_rake/rails/application'
-  end
-
-  rake_tasks do
-    load 'tasks/ext_rake.rake'
   end
 end

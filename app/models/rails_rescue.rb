@@ -1,0 +1,2 @@
+class RailsRescue < Rescue
+end

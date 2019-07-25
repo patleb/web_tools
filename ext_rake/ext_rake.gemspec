@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_ruby", version
   s.add_dependency "mr_notifier", version
   s.add_dependency "mr_setting"
+  s.add_dependency "mr_rescue", version
   # TODO https://github.com/stevehodges/attribute_stats
   # TODO https://github.com/thoughtbot/terrapin
 

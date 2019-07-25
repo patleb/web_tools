@@ -1,6 +1,19 @@
 class RescueError < ::StandardError
   RESCUE = '[RESCUE]'.freeze
 
+  delegate :backtrace, to: :@exception
+  attr_reader :name, :data
+
+  def self.rescue_class
+    Rescue
+  end
+
+  def initialize(exception, data = {})
+    @exception = exception
+    @name = exception.class.name
+    @data = data
+  end
+
   def message
     <<~EOF.strip
       #{RESCUE}[#{name}]
@@ -9,13 +22,7 @@ class RescueError < ::StandardError
     EOF
   end
 
-  def name
-    @name || raise(NotImplementedError)
+  def before_backtrace
+    @exception.message
   end
-
-  def data
-    @data || raise(NotImplementedError)
-  end
-
-  def before_backtrace; end
 end

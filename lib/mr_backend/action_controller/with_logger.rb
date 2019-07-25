@@ -27,8 +27,7 @@ module ActionController::WithLogger
     end
     context << "\n[PREVIOUS_EXCEPTION_COUNT][#{count}]#{previous}"
 
-    # TODO use MrRescue
-    message = Notice.new.deliver!(exception, subject: subject, after_body: context) do |message|
+    message = Notice.new.deliver! RailsError.new(exception), subject: subject, after_body: context do |message|
       Rails.logger.error message
     end
 

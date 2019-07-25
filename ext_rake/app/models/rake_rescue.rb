@@ -1,0 +1,2 @@
+class RakeRescue < Rescue
+end
