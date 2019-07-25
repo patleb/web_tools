@@ -28,7 +28,7 @@ module Rake::Task::WithOutput
           puts "#{ExtRake::STARTED} #{name}".blue
           super
         rescue Exception => exception
-          Notice.new.deliver! RakeError.new(exception), subject: name do |message|
+          Notice.new.deliver! RakeError.new(exception, { name => args&.to_h }), subject: name do |message|
             puts message
           end
         ensure

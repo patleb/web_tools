@@ -8,10 +8,10 @@ class RescueError < ::StandardError
     Rescue
   end
 
-  def initialize(exception, data = {})
+  def initialize(exception, data = nil)
     @exception = exception
     @name = exception.class.name
-    @data = data
+    @data = data || {}
   end
 
   def message

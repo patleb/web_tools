@@ -9,7 +9,7 @@ module ActionController::WithLogger
   IGNORED_PARAMS ||= %w(controller action format).freeze
   OBJECT_INSPECT ||= /(#<[A-Za-z_][A-Za-z0-9_]*:)(0x.+)(>)/.freeze
 
-  def log(exception, subject:, throttle_key: 'mr_backend', throttle_duration: nil)
+  def log(exception, subject:, throttle_key: 'logger', throttle_duration: nil)
     return if Current.log_throttled
 
     exception_message = exception.message.try(:sub, OBJECT_INSPECT, '\1?\3').try(:gsub, /\d+/, '?')
@@ -18,22 +18,14 @@ module ActionController::WithLogger
     return if status[:throttled]
 
     Current.log_throttled = true
-    context = log_context.each_with_object('') do |(type, values), memo|
-      memo << "\n[#{type.to_s.upcase}]\n#{values}\n"
-    end
+    context = log_context
     if status[:previous]
-      count = status[:count]
-      previous_message = status[:previous]['message']
-      previous = [
-        "\n[#{status[:previous]['type']}]",
-        ("[#{previous_message}]" if previous_message.present?)
-      ].join("\n")
+      context.merge! previous_exception: status[:previous].merge(count: status[:count])
     else
-      count, previous = 0, ''
+      context.merge! previous_exception: { count: 0 }
     end
-    context << "\n[PREVIOUS_EXCEPTION_COUNT][#{count}]#{previous}"
 
-    message = Notice.new.deliver! RailsError.new(exception), subject: subject, after_body: context do |message|
+    message = Notice.new.deliver! RailsError.new(exception, context), subject: subject do |message|
       Rails.logger.error message
     end
 
