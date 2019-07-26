@@ -1,0 +1,2 @@
+class JavascriptRescue < Rescue
+end

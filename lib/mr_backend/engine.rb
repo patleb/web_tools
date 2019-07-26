@@ -56,6 +56,7 @@ module MrBackend
       # app.config.i18n.fallbacks = true
 
       if Rails::Env.dev_or_test?
+        $stdout.sync = true # for Foreman
         url_options = Rails::Env.dev_or_test_url_options
         host, port = url_options.values_at(:host, :port)
         app.config.action_controller.asset_host = "#{host}#{":#{port}" if port}"
@@ -87,6 +88,8 @@ module MrBackend
 
     initializer 'mr_backend.append_routes' do |app|
       app.routes.append do
+        resources :javascript_rescues, only: [:create]
+
         match '/' => 'application#healthcheck', via: [:get, :head], as: :base
 
         match '*not_found', via: :all, to: 'application#render_404', format: false
