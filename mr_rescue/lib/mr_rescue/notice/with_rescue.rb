@@ -6,8 +6,7 @@ module Notice::WithRescue
     else
       Rescue.enqueue exception, message
     end
-  ensure
-    return message
+    message
   end
 end
 

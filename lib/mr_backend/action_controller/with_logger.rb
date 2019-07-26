@@ -18,14 +18,17 @@ module ActionController::WithLogger
     return if status[:throttled]
 
     Current.log_throttled = true
-    context = log_context
-    if status[:previous]
-      context.merge! previous_exception: status[:previous].merge(count: status[:count])
-    else
-      context.merge! previous_exception: { count: 0 }
+    unless exception.is_a? RescueError
+      context = log_context
+      if status[:previous]
+        context.merge! previous_exception: status[:previous].merge(count: status[:count])
+      else
+        context.merge! previous_exception: { count: 0 }
+      end
+      exception = RailsError.new(exception, context)
     end
 
-    message = Notice.new.deliver! RailsError.new(exception, context), subject: subject do |message|
+    message = Notice.new.deliver! exception, subject: subject do |message|
       Rails.logger.error message
     end
 
@@ -40,7 +43,6 @@ module ActionController::WithLogger
       params: request.filtered_parameters.except(*IGNORED_PARAMS, controller_name.singularize),
       headers: request.headers.env.select{ |header| header =~ /^HTTP_/ },
       session: session.try(:to_hash) || {},
-      response: { status: response.status },
       host: Process.host.snapshot,
     }.merge!(Process.worker.self_and_siblings.each_with_object({}).with_index{ |(worker, memo), i|
       memo[:"worker_#{i}"] = worker.snapshot if Rails::Env.dev_or_test? && worker.name == 'ruby' # Rubymine

@@ -55,6 +55,7 @@ class Notice
     else
       mail.deliver! unless MrNotifier.config.skip_notice
     end
+    message
   rescue Errno::ECONNREFUSED => e
     message << <<~TEXT
       #{e.backtrace_log}
@@ -63,6 +64,5 @@ class Notice
     if block_given?
       yield message
     end
-    return message
   end
 end
