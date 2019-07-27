@@ -11,7 +11,6 @@ module MrBackend
     require 'date_validator'
     require 'http_accept_language'
     require 'i18n/debug' if Rails.env.development?
-    require 'kaminari'
     require 'monogamy'
     require 'null_logger' if Rails.env.development?
     require 'pg'

@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'date_validator'
   s.add_dependency 'http_accept_language', '~> 2.1'
   s.add_dependency 'i18n-debug', '~> 1.1'
-  s.add_dependency 'kaminari', '>= 0.14', '< 2.0'
   s.add_dependency 'money-rails', '~> 1.9'
   s.add_dependency 'monogamy', '>= 0.0.2'
   s.add_dependency 'null-logger', '~> 0.1'
