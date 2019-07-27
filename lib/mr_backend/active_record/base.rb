@@ -6,10 +6,6 @@ ActiveRecord::Base.class_eval do
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
-  def self.virtual?
-    false
-  end
-
   def self.without_time_zone(&block)
     with_time_zone('UTC', &block)
   end
