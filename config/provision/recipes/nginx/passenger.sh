@@ -27,6 +27,7 @@ centos)
   mkdir -p /etc/nginx/sites-enabled
 
   sun.install "nginx passenger"
+  sun.install "passenger-devel"
 ;;
 esac
 
@@ -34,8 +35,5 @@ sun.backup_compare "/etc/nginx/nginx.conf"
 
 systemctl enable nginx
 systemctl restart nginx
-
-# TODO sudo yum install passenger-devel-6.0.2
-# TODO or... set PASSENGER_DOWNLOAD_NATIVE_SUPPORT_BINARY=0 to disable
 
 # configured with ext_capistrano gem

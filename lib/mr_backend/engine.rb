@@ -17,12 +17,6 @@ module MrBackend
     require 'rails-i18n'
     require 'store_base_sti_class'
     require 'vmstat'
-    require 'mr_backend/action_mailer/smtp_settings'
-    require 'mr_backend/active_support/core_ext'
-    require 'mr_backend/active_support/current_attributes'
-    require 'mr_backend/active_support/dependencies/with_nilable_cache'
-    require 'mr_backend/money_rails'
-    require 'mr_backend/rails/engine'
 
     require 'ext_capistrano'
     # require 'ext_minitest'
@@ -40,7 +34,13 @@ module MrBackend
     # require 'sun_cap'
     # require 'sunzistrano'
 
+    require 'mr_backend/action_mailer/smtp_settings'
+    require 'mr_backend/active_support/core_ext'
+    require 'mr_backend/active_support/current_attributes'
+    require 'mr_backend/active_support/dependencies/with_nilable_cache'
     require 'mr_backend/configuration'
+    require 'mr_backend/money_rails'
+    require 'mr_backend/rails/engine'
 
     config.before_configuration do |app|
       app.config.cache_store = :global_store if defined? MrGlobal
