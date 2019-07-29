@@ -14,7 +14,7 @@ centos)
     systemctl disable firewalld
   fi
   sun.install "fail2ban-systemd"
-  sun.move "etc/fail2ban/action.d/ufw_ssh.conf"
+  sun.move "/etc/fail2ban/action.d/ufw_ssh.conf"
   sun.backup_move "/etc/fail2ban/jail.conf"
 ;;
 esac
