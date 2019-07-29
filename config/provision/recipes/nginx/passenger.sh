@@ -27,6 +27,7 @@ centos)
   mkdir -p /etc/nginx/sites-enabled
 
   sun.install "nginx passenger"
+  sun.install "passenger-devel"
 ;;
 esac
 
