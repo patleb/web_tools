@@ -1,3 +1,6 @@
+# TODO update
+# activerecord-5.2.3/lib/active_record/relation.rb
+# activerecord-5.2.3/lib/active_record/connection_adapters/abstract/database_statements.rb
 module ActiveRecord::Relation::WithReturningColumn
   def update_all(updates, column = nil)
     return super(updates) unless column

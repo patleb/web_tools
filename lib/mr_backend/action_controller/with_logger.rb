@@ -12,6 +12,7 @@ module ActionController::WithLogger
   def log(exception, subject:, throttle_key: 'logger', throttle_duration: nil)
     return if Current.log_throttled
 
+    # TODO allow to log N different messages
     exception_message = exception.message.try(:sub, OBJECT_INSPECT, '\1?\3').try(:gsub, /\d+/, '?')
     throttle_value = { type: exception.class.to_s, message: exception_message }
     status = Throttler.status(key: throttle_key, value: throttle_value, duration: throttle_duration)
@@ -19,13 +20,13 @@ module ActionController::WithLogger
 
     Current.log_throttled = true
     unless exception.is_a? RescueError
-      context = log_context
+      data = log_context
       if status[:previous]
-        context.merge! previous_exception: status[:previous].merge(count: status[:count])
+        data.merge! previous_exception: status[:previous].merge(count: status[:count])
       else
-        context.merge! previous_exception: { count: 0 }
+        data.merge! previous_exception: { count: 0 }
       end
-      exception = RailsError.new(exception, context)
+      exception = RailsError.new(exception, data)
     end
 
     message = Notice.new.deliver! exception, subject: subject do |message|
