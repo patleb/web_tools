@@ -16,6 +16,8 @@ centos)
   sun.install "fail2ban-systemd"
   sun.move "/etc/fail2ban/action.d/ufw_ssh.conf"
   sun.backup_move "/etc/fail2ban/jail.conf"
+  setenforce 0
+  sun.backup_move '/etc/selinux/config'
 ;;
 esac
 
