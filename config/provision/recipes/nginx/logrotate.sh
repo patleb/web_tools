@@ -6,5 +6,6 @@ ubuntu)
 ;;
 centos)
   sun.backup_compile "/etc/logrotate.d/nginx"
+  chmod +rx /var/log/nginx
 ;;
 esac
