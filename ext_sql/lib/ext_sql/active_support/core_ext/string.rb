@@ -7,7 +7,7 @@ class String
     strip.gsub(/(--.*\n|\n)/, ' ').gsub(/\s{2,}/, ' ')
   end
 
-  def compile_sql_command(delimiters = '[]')
+  def compile_sql(delimiters = '[]')
     open, close = delimiters.chars
     open_regex, close_regex = open.escape_regex, close.escape_regex
     result = strip_sql
