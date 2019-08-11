@@ -38,7 +38,7 @@ module Sql
   private_class_method
 
   def self.get_value_cmd(column, variable, record: 'NEW', **)
-    <<-SQL.compile_sql_command
+    <<-SQL.compile_sql
       SELECT ($1).[#{column}] [INTO #{variable}] [USING #{record}]
     SQL
   end
