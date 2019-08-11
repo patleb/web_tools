@@ -4,8 +4,8 @@
   bison
   #{@sun.os.ubuntu? ? 'build-essential'                   : 'gcc gcc-c++ bzip2 patch make automake libtool rpm-build redhat-rpm-config'}
   ca-certificates
-  #{@sun.os.ubuntu? ? 'castxml'                           : ''}
-  clang
+  #{@sun.os.ubuntu? ? ('castxml' if @sun.ruby_cpp)        : ''}
+  #{'clang' if @sun.ruby_cpp}
   git
   #{@sun.os.ubuntu? ? 'dirmngr gnupg'                     : 'pygpgme'}
   #{@sun.os.ubuntu? ? 'imagemagick'                       : 'ImageMagick ImageMagick-devel'}
