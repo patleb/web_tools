@@ -22,6 +22,7 @@ module ActionController
         __send__ "skip_#{callback.kind}_action", name, only: SKIP_CALLBACK_ACTIONS
       end
 
+      # TODO rack https://github.com/rails/rails/pull/23868/files
       rescue_from Exception, with: :render_500 if MrBackend.config.rescue_500
       rescue_from DbTimeout, with: :render_408
     end
