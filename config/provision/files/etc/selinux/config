@@ -5,7 +5,7 @@
 #     permissive - SELinux prints warnings instead of enforcing.
 #     disabled - No SELinux policy is loaded.
 SELINUX=permissive
-# SELINUXTYPE= can take one of three two values:
+# SELINUXTYPE= can take one of three values:
 #     targeted - Targeted processes are protected,
 #     minimum - Modification of targeted policy. Only selected processes are protected.
 #     mls - Multi Level Security protection.
