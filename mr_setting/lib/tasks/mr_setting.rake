@@ -81,5 +81,6 @@ namespace :setting do
     raise 'argument [:env] must be specified' unless (ENV['RAILS_ENV'] = args[:env]).present?
     ENV['RAILS_APP'] ||= ENV['APP']
     ENV['RAILS_ROOT'] ||= ENV['ROOT']
+    # TODO Setting.reload if env, app or root changed and ensure with Setting.rollback!
   end
 end
