@@ -13,6 +13,7 @@ module ActionController::WithLogger
     return if Current.log_throttled
 
     # TODO allow to log N different messages
+    # TODO does not discriminate enough (add option in Exception to sanitize message --> exception.sanitized_message)
     exception_message = exception.message.try(:sub, OBJECT_INSPECT, '\1?\3').try(:gsub, /\d+/, '?')
     throttle_value = { type: exception.class.to_s, message: exception_message }
     status = Throttler.status(key: throttle_key, value: throttle_value, duration: throttle_duration)
