@@ -2,6 +2,7 @@ require 'active_record/connection_adapters/postgresql_adapter'
 require_rel 'postgresql'
 require_rel 'postgresql_adapter'
 
+# TODO https://jetrockets.pro/blog/how-to-store-large-json-in-postgresql-with-rails-attributes-api
 ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.class_eval do
   prepend self::WithTypeMap
 
