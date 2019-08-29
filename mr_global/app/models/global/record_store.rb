@@ -7,6 +7,8 @@ module Global::RecordStore
   included do
     include Global::RecordStore::Expiration
     include Global::RecordStore::Normalization
+
+    self.postgres_exception_to_error = false
   end
 
   class_methods do

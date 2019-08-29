@@ -6,6 +6,10 @@ module ActiveRecord::Base::WithRescuableValidations
   VALUE_TOO_LONG_COUNT = /varying\((?<count>\d+)\)/.freeze
   NOT_NULL_VIOLATION_COLUMN = /column "(\w+)" violates not-null constraint/.freeze
 
+  included do
+    class_attribute :postgres_exception_to_error, instance_writer: false, default: true
+  end
+
   class_methods do
     def has_database_validations
       # TODO define unique/presence/length/blank/restrict_with_error?
@@ -13,20 +17,26 @@ module ActiveRecord::Base::WithRescuableValidations
   end
 
   def create_or_update(*)
-    super
-  rescue ActiveRecord::RecordNotUnique => e
-    _handle_columns_exception(e, RECORD_NOT_UNIQUE_COLUMN, :taken)
-  rescue ActiveRecord::InvalidForeignKey => e
-    _handle_columns_exception(e, INVALID_FOREIGN_KEY_COLUMN, :required)
-  rescue ActiveRecord::ValueTooLong => e
-    _handle_base_exception(e, VALUE_TOO_LONG_COUNT, :too_long, &:to_i)
-  # rescue ActiveRecord::RangeError => e
-  rescue ActiveRecord::NotNullViolation => e
-    _handle_columns_exception(e, NOT_NULL_VIOLATION_COLUMN, :blank)
-  # rescue ActiveRecord::SerializationFailure => e
-  # rescue ActiveRecord::Deadlocked => e
-  # rescue ActiveRecord::LockWaitTimeout => e
-  # rescue ActiveRecord::QueryCanceled => e
+    if postgres_exception_to_error?
+      begin
+        super
+      rescue ActiveRecord::RecordNotUnique => e
+        _handle_columns_exception(e, RECORD_NOT_UNIQUE_COLUMN, :taken)
+      rescue ActiveRecord::InvalidForeignKey => e
+        _handle_columns_exception(e, INVALID_FOREIGN_KEY_COLUMN, :required)
+      rescue ActiveRecord::ValueTooLong => e
+        _handle_base_exception(e, VALUE_TOO_LONG_COUNT, :too_long, &:to_i)
+        # rescue ActiveRecord::RangeError => e
+      rescue ActiveRecord::NotNullViolation => e
+        _handle_columns_exception(e, NOT_NULL_VIOLATION_COLUMN, :blank)
+        # rescue ActiveRecord::SerializationFailure => e
+        # rescue ActiveRecord::Deadlocked => e
+        # rescue ActiveRecord::LockWaitTimeout => e
+        # rescue ActiveRecord::QueryCanceled => e
+      end
+    else
+      super
+    end
   end
 
   private
