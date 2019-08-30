@@ -4,7 +4,7 @@ Setting.class_eval do
   end
 
   def self.geoserver_url
-    "http://#{geoserver_server}/geoserver"
+    ["http://#{geoserver_server}", self[:geoserver_path].presence || 'geoserver'].join('/')
   end
 
   def self.pgrest_local_url
