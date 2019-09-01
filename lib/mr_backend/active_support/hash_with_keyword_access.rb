@@ -4,6 +4,6 @@ class ActiveSupport::HashWithKeywordAccess < ActiveSupport::HashWithIndifferentA
   private
 
   def convert_key(key)
-    key.kind_of?(String) && key.match?(/^_*[a-z]/) ? key.to_sym : key
+    key.kind_of?(String) ? key.to_sym : key
   end
 end
