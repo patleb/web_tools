@@ -8,8 +8,6 @@ require 'mr_setting/type'
 class Setting
   include MrSetting::Type
 
-  DIRECT = /[a-zA-Z_][a-zA-Z0-9_]+/
-  NESTED = /\[[:\[\]a-zA-Z0-9_]+\]/
   CIPHER = 'aes-128-gcm'
   SECRET = '$SECRET'
   METHOD = '$METHOD'
@@ -95,12 +93,12 @@ class Setting
       @app = app
       @root = Pathname.new(root).expand_path
       @types = {}.with_indifferent_access
+      @gems = {}
       secrets, database = rails_secrets_and_database
       settings = extract_yml(:settings, @root)
 
       validate_version! settings['lock']
 
-      @gems = {}
       (settings['gems'] || []).each do |name|
         database.merge! parse_settings_yml(secrets, gem_root(name))
       end
@@ -131,7 +129,7 @@ class Setting
       @env
     elsif ENV['RAILS_ENV']
       ENV['RAILS_ENV']
-    elsif defined? Rails.env
+    elsif defined? Rails
       Rails.env
     else
       nil
@@ -143,8 +141,8 @@ class Setting
       @app
     elsif ENV['RAILS_APP']
       ENV['RAILS_APP']
-    elsif defined? Rails.application.engine_name
-      Rails.application.engine_name.sub(/_application$/, '')
+    elsif defined? Rails
+      Rails.application.name
     else
       nil
     end
@@ -155,7 +153,7 @@ class Setting
       @root
     elsif ENV['RAILS_ROOT']
       ENV['RAILS_ROOT']
-    elsif defined? Rails.root
+    elsif defined? Rails
       Rails.root || ''
     else
       ''
@@ -215,6 +213,7 @@ class Setting
 
     yml = (type == :database) ? YAML.load(ERB.new(gsub_rails_secrets(path, secrets)).result) : YAML.safe_load(path.read)
     @types.merge!(yml['types'] || {})
+    # @gems.concat(yml['gems'] || []) # TODO move to first level --> 'lock' as well
     env_yml = (yml['shared'] || {}).merge!(yml[@env] || {})
     if @app
       app_yml = (yml[@app] || {}).merge!(yml["#{@app}_#{@env}"] || {})
@@ -224,8 +223,8 @@ class Setting
   end
 
   def self.gsub_rails_secrets(path, secrets)
-    path.read.gsub(/<%=\s*Rails\.application\.secrets\.(#{DIRECT})(#{NESTED})?\s*%>/) do |match|
-      eval("secrets[:#{$1}]#{$2}")
+    path.read.gsub(/<%=\s*Rails\.application\.secrets\.([a-zA-Z_][a-zA-Z0-9_]+)\s*%>/) do
+      secrets[$1]
     end
   end
 
