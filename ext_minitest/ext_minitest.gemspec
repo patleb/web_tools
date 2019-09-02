@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'diffy'
   s.add_dependency 'capybara', '>= 2.15'
   s.add_dependency 'selenium-webdriver'
-  s.add_dependency 'chromedriver-helper'
+  s.add_dependency 'webdrivers'
   s.add_dependency 'teaspoon-mocha'
   s.add_dependency 'vcr'
   s.add_dependency 'ext_ruby', version
