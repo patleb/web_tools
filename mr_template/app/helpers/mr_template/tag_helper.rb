@@ -62,6 +62,7 @@ module MrTemplate
       end
     end
 
+    # TODO https://github.com/rails/rails/pull/32125
     def utf8_enforcer_tag
       ''.html_safe
     end

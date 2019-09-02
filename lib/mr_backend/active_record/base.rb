@@ -59,6 +59,7 @@ ActiveRecord::Base.class_eval do
     sizes[table_name]
   end
 
+  # TODO chunk_relation_size_pretty
   def self.sizes(order_by_name = false)
     # TODO include MemoizedAt
     result = connection.exec_query(<<-SQL.strip_sql)

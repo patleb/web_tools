@@ -12,6 +12,7 @@
   tree
 ).each do |package| %>
 
+  # https://github.com/blacksmoke16/oq
   sun.install "<%= package %>"
 
 <% end %>
