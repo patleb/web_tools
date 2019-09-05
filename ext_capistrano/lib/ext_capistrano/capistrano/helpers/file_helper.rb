@@ -29,6 +29,7 @@ module ExtCapistrano
     def upload_erb(server, source, destination)
       compile_erb(source)
       upload_file(server, source, destination)
+      # TODO remove parent directory if it's empty
       FileUtils.rm_f source
     end
 
