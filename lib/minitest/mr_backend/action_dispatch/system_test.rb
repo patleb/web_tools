@@ -1,6 +1,6 @@
 require 'capybara'
 require 'selenium-webdriver'
-require 'chromedriver-helper'
+# TODO require 'chromedriver-helper'
 
 Capybara.server = :webrick
 Capybara.app_host = "http://#{Rails.application.config.action_controller.asset_host}"
