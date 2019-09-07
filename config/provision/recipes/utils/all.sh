@@ -1,5 +1,6 @@
 <% @sun.list_recipes(%W(
   packages
+  htop
   goaccess
   monit
   sysstat

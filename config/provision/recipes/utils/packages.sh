@@ -1,6 +1,5 @@
 <% %W(
   arp-scan
-  htop
   iftop
   iotop
   iptraf
