@@ -50,11 +50,7 @@ module Rake::Task::WithOutput
   end
 
   def skip_ouput?
-    ARGV.include?('--help') \
-      || name == 'environment' \
-      || name.match?(/^(assets|db(?!:pg)|yarn):/) \
-      || !(ENV['CRON'].to_b) \
-      || Rails.env.test?
+    ARGV.include?('--help') || name == 'environment' || !(ENV['RAKE_OUTPUT'].to_b)
   end
 
   def with_db_loggers
