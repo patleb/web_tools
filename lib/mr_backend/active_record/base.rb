@@ -24,6 +24,17 @@ ActiveRecord::Base.class_eval do
     @encoding ||= connection.select_one("SELECT ''::text AS str;").values.first.encoding
   end
 
+  def self.timescaledb?
+    return @timescaledb if defined? @timescaledb
+    @timescaledb = connection.select_value("SELECT TRUE FROM pg_extension WHERE extname = 'timescaledb'").to_b
+  end
+
+  def self.timescaledb_tables
+    @timescaledb_tables ||= timescaledb? ? connection.select_rows(<<-SQL.strip_sql).to_h.with_indifferent_access : {}
+      SELECT table_name AS name, associated_table_prefix AS prefix FROM _timescaledb_catalog.hypertable
+    SQL
+  end
+
   def self.sanitize_matcher(regex)
     like = sanitize_sql_like(regex.source).gsub "\\/", '/'
     like.gsub!('.*', '%')
@@ -83,11 +94,8 @@ ActiveRecord::Base.class_eval do
       SQL
       result = result.each_with_object({}.with_indifferent_access){ |(name, size), h| h[name] = size }
 
-      if connection.select_value("SELECT TRUE FROM pg_extension WHERE extname = 'timescaledb'")
-        hypertables = connection.select_rows(<<-SQL.strip_sql)
-          SELECT table_name AS name, associated_table_prefix AS prefix FROM _timescaledb_catalog.hypertable
-        SQL
-        hypertables.each do |(table_name, prefix)|
+      if timescaledb?
+        timescaledb_tables.each do |table_name, prefix|
           chunks = result.select{ |name, _size| name.start_with? prefix }
           result[table_name] = chunks.values.sum
           result.transform_keys! do |name|
