@@ -2,6 +2,7 @@
   bootstrap/all
   user/deployer
   db/postgres__POSTGRES__
+  db/postgres__POSTGRES__/logrotate
   nginx/passenger
   nginx/htpasswd
   nginx/logrotate

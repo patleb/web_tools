@@ -1,4 +1,3 @@
- # TODO hide htop output
 DEPLOYER_NAME=<%= @sun.deployer_name %>
 DEPLOYER_PATH=/home/$DEPLOYER_NAME
 CONFIG_PATH="$DEPLOYER_PATH/.config/htop/htoprc"
