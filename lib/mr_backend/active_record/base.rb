@@ -1,6 +1,8 @@
 require_rel 'base'
 
 ActiveRecord::Base.class_eval do
+  extend MemoizedAt
+  include MemoizedAt
   include self::WithInheritedTypes
   include self::WithRescuableValidations
 
@@ -20,6 +22,17 @@ ActiveRecord::Base.class_eval do
 
   def self.encoding
     @encoding ||= connection.select_one("SELECT ''::text AS str;").values.first.encoding
+  end
+
+  def self.timescaledb?
+    return @timescaledb if defined? @timescaledb
+    @timescaledb = connection.select_value("SELECT TRUE FROM pg_extension WHERE extname = 'timescaledb'").to_b
+  end
+
+  def self.timescaledb_tables
+    @timescaledb_tables ||= timescaledb? ? connection.select_rows(<<-SQL.strip_sql).to_h.with_indifferent_access : {}
+      SELECT table_name AS name, associated_table_prefix AS prefix FROM _timescaledb_catalog.hypertable
+    SQL
   end
 
   def self.sanitize_matcher(regex)
@@ -47,28 +60,56 @@ ActiveRecord::Base.class_eval do
     result.sql_safe
   end
 
+  def self.pretty_total_size
+    total_size.to_s(:human_size)
+  end
+
   def self.total_size
-    result = connection.exec_query(<<-SQL.strip_sql)
-      SELECT pg_database.datname AS "name", pg_size_pretty(pg_database_size(pg_database.datname)) AS "size"
-      FROM pg_database;
-    SQL
-    result.find{ |entry| entry['name'] == connection_config[:database] }['size']
+    m_access(:total_size, threshold: 300) do
+      result = connection.select_rows(<<-SQL.strip_sql)
+        SELECT pg_database.datname AS name, pg_database_size(pg_database.datname) AS size FROM pg_database
+      SQL
+      result.find{ |(name, _size)| name == connection_config[:database] }.last
+    end
+  end
+
+  def self.pretty_size
+    size.to_s(:human_size)
   end
 
   def self.size
     sizes[table_name]
   end
 
-  # TODO chunk_relation_size_pretty
+  def self.pretty_sizes(*options)
+    sizes(*options).transform_values(&:to_s.with(:human_size))
+  end
+
   def self.sizes(order_by_name = false)
-    # TODO include MemoizedAt
-    result = connection.exec_query(<<-SQL.strip_sql)
-      SELECT relname AS "name", pg_size_pretty(pg_total_relation_size(relid)) AS "size"
-      FROM pg_catalog.pg_statio_user_tables
-      ORDER BY #{order_by_name ? 'name' :'pg_total_relation_size(relid) DESC'};
-    SQL
-    result.each_with_object({}.with_indifferent_access) do |entry, memo|
-      memo[entry['name']] = entry['size']
+    m_access(:sizes, order_by_name, threshold: 300) do
+      result = connection.select_rows(<<-SQL.strip_sql)
+        SELECT relname AS name, pg_total_relation_size(relid) AS size
+        FROM pg_catalog.pg_statio_user_tables
+        ORDER BY #{order_by_name ? 'name' : 'pg_total_relation_size(relid) DESC'};
+      SQL
+      result = result.each_with_object({}.with_indifferent_access){ |(name, size), h| h[name] = size }
+
+      if timescaledb?
+        timescaledb_tables.each do |table_name, prefix|
+          chunks = result.select{ |name, _size| name.start_with? prefix }
+          result[table_name] = chunks.values.sum
+          result.transform_keys! do |name|
+            if chunks.has_key? name
+              "#{table_name}_#{name.delete_prefix("#{prefix}_").to_i}"
+            else
+              name
+            end
+          end
+        end
+        result = result.sort_by(&:last).reverse.to_h.with_indifferent_access
+      end
+
+      result
     end
   end
 

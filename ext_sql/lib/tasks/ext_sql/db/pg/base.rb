@@ -25,6 +25,12 @@ module Db
           db[:username],
           db[:password]
       end
+
+      def run_sql(command)
+        sh <<~CMD, verbose: false
+          psql --quiet -c "#{command}" "#{ExtRake.config.db_url}"
+        CMD
+      end
     end
   end
 end

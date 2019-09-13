@@ -8,7 +8,7 @@ module ExtRake
       class_methods do
         def ignored_errors
           [
-            /pg_restore: (connecting|creating|executing|processing)/,
+            /pg_restore: (connecting|creating|executing|processing|implied)/,
             /Error while PROCESSING TOC/,
             /Error from TOC entry/,
             /ERROR:  must be owner of extension plpgsql/,

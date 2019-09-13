@@ -12,7 +12,7 @@ namespace :nginx do
   desc "Kill nginx"
   task :kill do
     on release_roles :all do
-      execute Sh.kill('nginx', sudo: true)
+      execute Sh.kill('nginx', '-o')
     end
   end
 

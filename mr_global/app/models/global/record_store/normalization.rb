@@ -6,7 +6,7 @@ module Global::RecordStore::Normalization
 
     def normalize_key(key, **)
       # no namespace functionality implemented on purpose --> https://github.com/kickstarter/rack-attack/issues/370
-      expanded_key(key).tr('/', GlobalKey::SEPARATOR)
+      expanded_key(key).full_underscore(GlobalKey::SEPARATOR)
     end
 
     def expanded_key(key)

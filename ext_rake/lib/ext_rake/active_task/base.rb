@@ -53,8 +53,10 @@ module ActiveTask
       run_help = _with_environment do |env|
         with_environment(env) do
           before_run
-          around_run{ _run }
-          after_run
+          unless cancel?
+            around_run{ _run }
+            after_run
+          end
         end
       end
     rescue Exception => exception
@@ -64,12 +66,23 @@ module ActiveTask
       after_ensure(exception) unless run_help
     end
 
+    def cancel?
+      @_cancel
+    end
+
+    def cancel!
+      puts "[#{Time.current.utc}]#{ExtRake::CANCEL}[#{Process.pid}]".red
+      @_cancel = true
+      after_cancel
+    end
+
     protected
 
     def with_environment(env); yield end
     def before_run; end
     def around_run; yield end
     def after_run; end
+    def after_cancel; end
     def before_raise(exception); end
     def after_ensure(exception); end
 
@@ -93,8 +106,9 @@ module ActiveTask
 
     def _run
       _steps.each do |step|
-        puts "[#{Time.current.utc}]#{ExtRake::STEP} #{step}".yellow
-        send step
+        break if cancel?
+        puts "[#{Time.current.utc}]#{ExtRake::STEP}[#{Process.pid}] #{step}".yellow
+        send(step)
       end
     end
 

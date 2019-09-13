@@ -22,9 +22,22 @@ module Db
             skip = options.excludes.split(',').reject(&:blank?).map{ |table| "--exclude-table='#{table}'" }.join(' ')
           end
           name = options.name.presence || 'dump'
+          cmd_options = <<~CMD.squish
+            --host #{host}
+            --username #{user}
+            #{self.class.pg_options}
+            --verbose
+            --no-owner
+            --no-acl
+            --clean
+            --format=c
+            #{only}
+            #{skip}
+            #{db}
+          CMD
           sh <<~CMD, verbose: false
             export PGPASSWORD=#{pwd};
-            pg_dump --host #{host} --username #{user} #{self.class.pg_options} --verbose --no-owner --no-acl --clean --format=c #{only} #{skip} #{db} > #{ExtRake.config.rails_root}/db/#{name}.pg
+            pg_dump #{cmd_options} > #{ExtRake.config.rails_root}/db/#{name}.pg
           CMD
         end
       end

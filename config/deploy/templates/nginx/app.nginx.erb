@@ -32,6 +32,7 @@ server {
 
     passenger_enabled on;
     passenger_app_env <%= fetch(:stage) %>;
+    passenger_env_var RAKE_OUTPUT true;
     <% if ENV['DEVELOPMENT'].to_b %>
       passenger_env_var DEVELOPMENT true;
     <% end %>
