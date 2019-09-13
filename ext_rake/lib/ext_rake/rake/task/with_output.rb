@@ -25,7 +25,7 @@ module Rake::Task::WithOutput
     I18n.with_locale(:en) do
       Time.use_zone('UTC') do
         with_db_loggers do
-          puts "#{ExtRake::STARTED} #{name}".blue
+          puts "#{ExtRake::STARTED}[#{Process.pid}] #{name}".blue
           super
         rescue Exception => exception
           data = { name => args&.to_h, host: Process.host.snapshot }
@@ -33,14 +33,14 @@ module Rake::Task::WithOutput
             puts message
           end
         ensure
-          puts "[#{start}]#{ExtRake::TASK}" if output.exclude? ExtRake::STEP
+          puts "[#{start}]#{ExtRake::TASK}[#{Process.pid}]" if output.exclude? ExtRake::STEP
           finish = Time.current.utc
-          puts "[#{finish}]#{ExtRake::DONE}"
+          puts "[#{finish}]#{ExtRake::DONE}[#{Process.pid}]"
           total = finish - start
           if exception
-            puts "#{ExtRake::FAILED} after #{distance_of_time total.seconds}".red
+            puts "#{ExtRake::FAILED}[#{Process.pid}] after #{distance_of_time total.seconds}".red
           else
-            puts "#{ExtRake::COMPLETED} after #{distance_of_time total.seconds}".green
+            puts "#{ExtRake::COMPLETED}[#{Process.pid}] after #{distance_of_time total.seconds}".green
           end
         end
       end

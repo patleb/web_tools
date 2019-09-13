@@ -5,6 +5,7 @@ module ExtRake
   COMPLETED = '[COMPLETED]'.freeze
   FAILED =    '[FAILED]'.freeze
   DONE =      '[DONE]'.freeze
+  CANCEL =    '[CANCEL]'.freeze
 end
 
 class ExtRake::Railtie < Rails::Engine
