@@ -15,15 +15,15 @@ module Db
         if options.includes.blank?
           raise "comma separated tables must be specified through --includes option"
         end
+
         only = options.includes.split(',').reject(&:blank?).map do |table|
           <<~SQL
             TRUNCATE TABLE #{table};
             SELECT setval(pg_get_serial_sequence('#{table}', 'id'), COALESCE((SELECT MAX(id) + 1 FROM #{table}), 1), false);
           SQL
         end.join(' ').gsub(/\n/, ' ')
-        sh <<~CMD, verbose: false
-          psql --quiet -c "#{only}" "#{ExtRake.config.db_url}"
-        CMD
+
+        run_sql(only)
       end
     end
   end
