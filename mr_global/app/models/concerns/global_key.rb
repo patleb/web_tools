@@ -4,11 +4,11 @@ module GlobalKey
   SEPARATOR = ':'.freeze # ':' makes regexes clearer
 
   def self.start_with(fragments)
-    /^#{fragments.compact.join(SEPARATOR)}#{SEPARATOR}/
+    /^#{fragments.compact.join(SEPARATOR).full_underscore(SEPARATOR)}#{SEPARATOR}/
   end
 
   def self.end_with(fragment)
-    /#{SEPARATOR}#{fragment}$/
+    /#{SEPARATOR}#{fragment.full_underscore(SEPARATOR)}$/
   end
 
   included do
@@ -17,7 +17,7 @@ module GlobalKey
 
   class_methods do
     def global_key(*fragments)
-      [name.underscore, *fragments]
+      [name, *fragments]
     end
 
     def global_key_matcher(*fragments)
