@@ -142,7 +142,7 @@ class Setting
     elsif ENV['RAILS_APP']
       ENV['RAILS_APP']
     elsif defined? Rails
-      Rails.application.name
+      Rails.app
     else
       nil
     end

@@ -10,7 +10,7 @@ module ExtRake
     end
 
     def rails_app
-      ENV['RAILS_APP'] || Rails.application.engine_name.delete_suffix('_application')
+      ENV['RAILS_APP'] || Rails.app
     end
 
     def rails_root
