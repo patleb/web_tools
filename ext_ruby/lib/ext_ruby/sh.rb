@@ -54,7 +54,18 @@ module Sh
   def self.sed_replace(path, old, new, **options)
     inline = 'i' if options[:inline]
     global = 'g' if options[:global]
-    %{sed -r#{inline} -- '#{options[:commands]}s/#{sed_escape(old)}/#{sed_escape(new)}/#{global}' #{path}}
+    sed = %{sed -r#{inline} -- '#{options[:commands]}s/#{sed_escape(old)}/#{sed_escape(new)}/#{global}' #{path}}
+    if options[:ignore]
+      sed
+    else
+      <<~SH.squish
+        if grep -q '#{old}' "#{path}"; then
+          #{sed};
+        else
+          echo 'file "#{path}" does not include "#{old}"' && exit 1;
+        fi
+      SH
+    end
   end
 
   def self.to_regex(regex)
