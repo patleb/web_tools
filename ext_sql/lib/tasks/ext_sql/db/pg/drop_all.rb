@@ -6,9 +6,7 @@ module Db
       end
 
       def psql_drop_all
-        sh <<~CMD, verbose: false
-          psql --quiet -c "DROP OWNED BY CURRENT_USER;" "#{ExtRake.config.db_url}"
-        CMD
+        psql 'DROP OWNED BY CURRENT_USER'
       end
     end
   end

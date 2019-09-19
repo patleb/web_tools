@@ -14,6 +14,7 @@ module Db
         )
       end
 
+      # TODO adapt for single tables --> https://docs.timescale.com/latest/using-timescaledb/backup#pg_dump-pg_restore
       def pg_restore
         with_config do |host, db, user, pwd|
           if options.includes.present?
@@ -47,14 +48,14 @@ module Db
       private
 
       def pre_restore_timescaledb
-        run_sql(<<-SQL.strip_sql)
+        psql(<<-SQL.strip_sql)
           CREATE EXTENSION timescaledb;
           SELECT timescaledb_pre_restore();
         SQL
       end
 
       def post_restore_timescaledb
-        run_sql(<<-SQL.strip_sql)
+        psql(<<-SQL.strip_sql)
           SELECT timescaledb_post_restore();
         SQL
       end

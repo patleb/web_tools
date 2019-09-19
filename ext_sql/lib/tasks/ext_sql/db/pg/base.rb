@@ -26,9 +26,10 @@ module Db
           db[:password]
       end
 
-      def run_sql(command)
+      def psql(command)
+        command_end = ';' unless command.strip.end_with? ';'
         sh <<~CMD, verbose: false
-          psql --quiet -c "#{command}" "#{ExtRake.config.db_url}"
+          psql --quiet -c "#{command}#{command_end}" "#{ExtRake.config.db_url}"
         CMD
       end
     end

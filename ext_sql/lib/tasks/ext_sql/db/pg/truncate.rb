@@ -23,7 +23,7 @@ module Db
           SQL
         end.join(' ').gsub(/\n/, ' ')
 
-        run_sql(only)
+        psql(only)
       end
     end
   end
