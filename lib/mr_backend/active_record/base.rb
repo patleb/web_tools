@@ -2,7 +2,6 @@ require_rel 'base'
 
 ActiveRecord::Base.class_eval do
   extend MemoizedAt
-  include MemoizedAt
   include self::WithInheritedTypes
   include self::WithRescuableValidations
 
