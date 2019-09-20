@@ -173,7 +173,7 @@ class Setting
 
     case type
     when :database
-      yml = YAML.load(ERB.new(gsub_rails_secrets(path)).result)
+      yml = YAML.safe_load(gsub_rails_secrets(path.read), aliases: true)
     when :settings
       yml = YAML.safe_load(path.read)
 
@@ -201,8 +201,8 @@ class Setting
     env_yml.union!(gems_yml || {})
   end
 
-  def self.gsub_rails_secrets(path)
-    path.read.gsub(/<%=\s*Rails\.application\.secrets\.([a-zA-Z_][a-zA-Z0-9_]+)\s*%>/) do
+  def self.gsub_rails_secrets(content)
+    content.gsub(/<%=\s*Rails\.application\.secrets\.([a-zA-Z_][a-zA-Z0-9_]+)\s*%>/) do
       @secrets[$1]
     end
   end
