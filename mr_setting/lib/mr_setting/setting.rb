@@ -94,16 +94,11 @@ class Setting
       @root = Pathname.new(root).expand_path
       @types = {}.with_indifferent_access
       @gems = {}
-      secrets, database = rails_secrets_and_database
+      @secrets = parse_secrets_yml
+      @database = parse_database_yml
       settings = extract_yml(:settings, @root)
-
-      validate_version! settings['lock']
-
-      (settings['gems'] || []).each do |name|
-        database.merge! parse_settings_yml(secrets, gem_root(name))
-      end
-      settings = database.merge! parse_settings_yml(secrets, settings)
-      settings = secrets.merge! settings
+      settings = @database.merge! parse_settings_yml(settings)
+      settings = @secrets.merge! settings
       resolve_keywords(settings)
     end
   end
@@ -160,24 +155,18 @@ class Setting
     end
   end
 
-  def self.rails_secrets_and_database
-    secrets = extract_yml(:secrets, @root).with_indifferent_access
-    database = parse_database_yml(secrets)
-    [secrets, database]
-  end
-
   def self.gem_root(name)
     @gems[name] ||= Gem.root(name) or raise "gem [#{name}] not found"
   end
 
-  def self.encryptor?(secrets)
-    !!encryptor(secrets)
+  def self.encryptor?
+    !!encryptor
   end
 
-  def self.encryptor(secrets = nil)
+  def self.encryptor
     if defined? @encryptor
       @encryptor
-    elsif (key = (secrets || all)[:secret_key_base])
+    elsif (key = (@secrets || all)[:secret_key_base])
       size = ActiveSupport::MessageEncryptor.key_len(CIPHER)
       @encryptor = ActiveSupport::MessageEncryptor.new([key[0...(size*2)]].pack("H*"), cipher: CIPHER)
     else
@@ -185,8 +174,12 @@ class Setting
     end
   end
 
-  def self.parse_database_yml(secrets)
-    yml = extract_yml(:database, @root, secrets)
+  def self.parse_secrets_yml
+    extract_yml(:secrets, @root).with_indifferent_access
+  end
+
+  def self.parse_database_yml
+    yml = extract_yml(:database, @root)
     scope_database_keys(yml)
   end
 
@@ -196,42 +189,60 @@ class Setting
     end
   end
 
-  def self.parse_settings_yml(secrets, root_or_settings)
+  def self.parse_settings_yml(root_or_settings)
     if root_or_settings.is_a? Hash
       settings = root_or_settings
     else
       settings = extract_yml(:settings, root_or_settings)
     end
-
-    gsub_keywords(settings, secrets)
+    gsub_keywords(settings)
   end
 
-  def self.extract_yml(type, root, secrets = nil)
+  def self.extract_yml(type, root)
     path = root.join('config', "#{type}.yml")
 
     return {} unless File.exist?(path)
 
-    yml = (type == :database) ? YAML.load(ERB.new(gsub_rails_secrets(path, secrets)).result) : YAML.safe_load(path.read)
-    @types.merge!(yml['types'] || {})
-    # @gems.concat(yml['gems'] || []) # TODO move to first level --> 'lock' as well
+    case type
+    when :database
+      yml = YAML.load(ERB.new(gsub_rails_secrets(path)).result)
+    when :settings
+      yml = YAML.safe_load(path.read)
+
+      validate_version! yml['lock']
+
+      @types.merge!(yml['types'] || {})
+
+      gems_yml = (yml['gems'] || []).reduce({}) do |gems_yml, name|
+        if @gems.has_key? name
+          gems_yml
+        else
+          gems_yml.merge! parse_settings_yml(gem_root(name))
+        end
+      end
+    else
+      yml = YAML.safe_load(path.read)
+    end
+
     env_yml = (yml['shared'] || {}).merge!(yml[@env] || {})
     if @app
       app_yml = (yml[@app] || {}).merge!(yml["#{@app}_#{@env}"] || {})
       env_yml.merge!(app_yml)
     end
-    env_yml
+
+    env_yml.merge!(gems_yml || {})
   end
 
-  def self.gsub_rails_secrets(path, secrets)
+  def self.gsub_rails_secrets(path)
     path.read.gsub(/<%=\s*Rails\.application\.secrets\.([a-zA-Z_][a-zA-Z0-9_]+)\s*%>/) do
-      secrets[$1]
+      @secrets[$1]
     end
   end
 
-  def self.gsub_keywords(settings, secrets)
+  def self.gsub_keywords(settings)
     settings.each_with_object({}) do |(key, value), memo|
       if value.is_a? String
-        if encryptor?(secrets) && value.start_with?(SECRET)
+        if encryptor? && value.start_with?(SECRET)
           begin
             value = decrypt(value)
           rescue ActiveSupport::MessageEncryptor::InvalidMessage
@@ -279,7 +290,7 @@ class Setting
   end
 
   def self.validate_version!(lock)
-    unless lock == MrSetting::VERSION
+    unless lock.nil? || lock == MrSetting::VERSION
       raise "Setting version [#{MrSetting::VERSION}] is different from locked version [#{lock}]"
     end
   end
