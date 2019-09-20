@@ -13,6 +13,7 @@ module Db
         )
       end
 
+      # TODO clear ar_internal_metadata --> rake task already exists?
       def pg_dump
         with_config do |host, db, user, pwd|
           if options.includes.present?
