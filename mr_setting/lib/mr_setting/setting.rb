@@ -14,46 +14,12 @@ class Setting
   ALIAS  = '$ALIAS'
   REMOVE = '$REMOVE'
 
+  class << self
+    delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, to: :all
+  end
+
   def self.to_yaml
     all.to_hash.to_yaml(line_width: -1).delete_prefix("---\n")
-  end
-
-  def self.[](name)
-    value = all[name]
-    cast(value, @types[name])
-  end
-
-  def self.[]=(name, value)
-    all[name] = value
-  end
-
-  def self.dig(*names)
-    value = all.dig(*names)
-    cast(value, @types.dig(*names))
-  end
-
-  def self.has_key?(name)
-    all.has_key? name
-  end
-  singleton_class.send :alias_method, :key?, :has_key?
-
-  def self.values_at(*names)
-    names.each_with_object([]) do |name, memo|
-      memo << self[name]
-    end
-  end
-
-  def self.slice(*names)
-    names.each_with_object({}.with_indifferent_access) do |name, memo|
-      memo[name] = self[name]
-    end
-  end
-
-  def self.except(*names)
-    names = names.map(&:to_sym)
-    all.each_with_object({}.with_indifferent_access) do |(name, _), memo|
-      memo[name] = self[name] unless names.include? name.to_sym
-    end
   end
 
   def self.type_of(name)
@@ -99,7 +65,9 @@ class Setting
       settings = extract_yml(:settings, @root)
       settings = @database.merge! parse_settings_yml(settings)
       settings = @secrets.merge! settings
-      resolve_keywords(settings)
+      resolve_keywords! settings
+      cast_values! settings
+      settings
     end
   end
 
@@ -217,20 +185,20 @@ class Setting
         if @gems.has_key? name
           gems_yml
         else
-          gems_yml.merge! parse_settings_yml(gem_root(name))
+          gems_yml.union! parse_settings_yml(gem_root(name))
         end
       end
     else
       yml = YAML.safe_load(path.read)
     end
 
-    env_yml = (yml['shared'] || {}).merge!(yml[@env] || {})
+    env_yml = (yml['shared'] || {}).union!(yml[@env] || {})
     if @app
-      app_yml = (yml[@app] || {}).merge!(yml["#{@app}_#{@env}"] || {})
-      env_yml.merge!(app_yml)
+      app_yml = (yml[@app] || {}).union!(yml["#{@app}_#{@env}"] || {})
+      env_yml.union!(app_yml)
     end
 
-    env_yml.merge!(gems_yml || {})
+    env_yml.union!(gems_yml || {})
   end
 
   def self.gsub_rails_secrets(path)
@@ -266,7 +234,13 @@ class Setting
     end
   end
 
-  def self.resolve_keywords(settings)
+  def self.cast_values!(settings)
+    @types.each do |name, type|
+      settings[name] = cast(settings[name], type)
+    end
+  end
+
+  def self.resolve_keywords!(settings)
     require_initializers
     @all = settings
     @aliases&.each{ |key, old_name| settings[key] = settings[old_name] }
@@ -279,7 +253,6 @@ class Setting
       end
     end
     @removed&.each{ |key| settings.delete(key) }
-    settings
   end
 
   def self.require_initializers
