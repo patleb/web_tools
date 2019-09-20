@@ -8,11 +8,11 @@ require 'mr_setting/type'
 class Setting
   include MrSetting::Type
 
-  CIPHER = 'aes-128-gcm'
-  SECRET = '$SECRET'
-  METHOD = '$METHOD'
-  ALIAS  = '$ALIAS'
-  REMOVE = '$REMOVE'
+  CIPHER = 'aes-128-gcm'.freeze
+  SECRET = '$SECRET'.freeze
+  METHOD = '$METHOD'.freeze
+  ALIAS  = '$ALIAS'.freeze
+  REMOVE = '$REMOVE'.freeze
 
   class << self
     delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, to: :all
@@ -218,16 +218,16 @@ class Setting
               "secrets.yml ['secret_key_base'] or settings.yml ['#{key}'] #{SECRET}* is invalid"
           end
         elsif value.start_with? METHOD
-          method_name = value.delete_prefix(METHOD).strip
-          (@methods ||= {})[key] = (method_name.presence || key)
+          (@methods ||= {})[key] = (value.delete_prefix(METHOD).strip.presence || key)
           next
         elsif value.start_with? ALIAS
-          old_name = value.delete_prefix(ALIAS).strip
-          (@aliases ||= {})[key] = old_name
+          (@aliases ||= {})[key] = value.delete_prefix(ALIAS).strip
           next
         elsif value.start_with? REMOVE
           (@removed ||= Set.new) << key
           next
+        elsif key.end_with? Hash::REPLACE
+          (@replaced ||= Set.new) << key
         end
       end
       memo[key] = value
@@ -253,6 +253,7 @@ class Setting
       end
     end
     @removed&.each{ |key| settings.delete(key) }
+    @replaced&.each{ |key| settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) }
   end
 
   def self.require_initializers
