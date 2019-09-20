@@ -168,7 +168,6 @@ class Setting
 
   def self.extract_yml(type, root)
     path = root.join('config', "#{type}.yml")
-
     return {} unless File.exist?(path)
 
     case type
@@ -176,11 +175,8 @@ class Setting
       yml = YAML.safe_load(gsub_rails_secrets(path.read), aliases: true)
     when :settings
       yml = YAML.safe_load(path.read)
-
       validate_version! yml['lock']
-
       @types.merge!(yml['types'] || {})
-
       gems_yml = (yml['gems'] || []).reduce({}) do |gems_yml, name|
         if @gems.has_key? name
           gems_yml
@@ -197,7 +193,6 @@ class Setting
       app_yml = (yml[@app] || {}).union!(yml["#{@app}_#{@env}"] || {})
       env_yml.union!(app_yml)
     end
-
     env_yml.union!(gems_yml || {})
   end
 
