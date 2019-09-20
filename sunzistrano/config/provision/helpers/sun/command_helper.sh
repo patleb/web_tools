@@ -33,6 +33,6 @@ sun.mute() {
   return $?
 }
 
-sun.deploy_path() {
-  echo "$HOME/<%= @sun.DEPLOY_DIR %>"
+sun.provision_path() {
+  echo "$HOME/<%= @sun.PROVISION_DIR %>"
 }

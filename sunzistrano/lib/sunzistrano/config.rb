@@ -3,12 +3,13 @@
 # TODO make all config accessible through $SUN_(config_name) --> will need less ERB
 module Sunzistrano
   class Config < OpenStruct
+    RESERVED_NAMES = %w(lock gems debug sudo reboot)
     LIST_NAME = 'all'
     VARIABLES = /__([A-Z0-9_]+)__/
     DONE_ARG = '$1'
     DONE = "Done [#{DONE_ARG}]"
-    DEPLOY_LOG = 'sun_deploy.log'
-    DEPLOY_DIR = 'sun_deploy'
+    PROVISION_LOG = 'sun_provision.log'
+    PROVISION_DIR = 'sun_provision'
     MANIFEST_LOG = 'sun_manifest.log'
     MANIFEST_DIR = 'sun_manifest'
     DEFAULTS_DIR = 'sun_defaults'
@@ -23,35 +24,32 @@ module Sunzistrano
       Pathname.new(File.expand_path('config/provision.yml'))
     end
 
-    # TODO merge gems, add_recipes, skip_recipes and remote_(files|helpers|recipes|roles)
     def initialize(stage, role, options)
       env, app = stage.split(':', 2)
-      context = { stage: env, application: app }.with_indifferent_access
-      if Gem.loaded_specs['sun_cap']
-        context.merge! Capistrano.config(stage)
-      end
-      @stage, @application, root = context.values_at(:stage, :application, :root)
+      settings = { stage: env, application: app }.with_indifferent_access
+      settings.merge! Capistrano.config(stage) if Gem.loaded_specs['sun_cap']
+      @stage, @application, root = settings.values_at(:stage, :application, :root)
       @role = role
+
       yml = YAML.safe_load(ERB.new(self.class.provision_yml.read).result(binding))
-      role_yml = (yml['shared'] || {}).merge!(yml[@role] || {})
+      role_yml = (yml['shared'] || {}).union!(yml[@role] || {})
       env_yml = (yml[@stage] || {})
-      env_yml.merge!(yml["#{@stage}_#{@role}"] || {})
-      role_yml.merge!(env_yml)
+      env_yml.union!(yml["#{@stage}_#{@role}"] || {})
+      role_yml.union!(env_yml)
       if @application
         app_yml = (yml[@application] || {})
-        app_yml.merge!(yml["#{@application}_#{@role}"] || {})
-        app_yml.merge!(yml["#{@application}_#{@stage}"] || {})
-        app_yml.merge!(yml["#{@application}_#{@stage}_#{@role}"] || {})
-        role_yml.merge!(app_yml)
+        app_yml.union!(yml["#{@application}_#{@role}"] || {})
+        app_yml.union!(yml["#{@application}_#{@stage}"] || {})
+        app_yml.union!(yml["#{@application}_#{@stage}_#{@role}"] || {})
+        role_yml.union!(app_yml)
       end
-      if Gem.loaded_specs['mr_setting']
-        secrets = Setting.load(env: @stage, app: @application, root: root || ENV['RAILS_ROOT'] || '')
-        %i(lock gems).each do |name|
-          role_yml["secrets_#{name}"] = secrets.delete(name)
-        end
-        context.merge! secrets
+
+      settings.merge! Setting.load(env: @stage, app: @application, root: root || ENV['RAILS_ROOT'] || '') if Gem.loaded_specs['mr_setting']
+      settings.union!(role_yml).merge!(role: @role).merge!(options).merge!(yml.slice(*RESERVED_NAMES))
+      settings.each_key do |key|
+        settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) if key.end_with? Hash::REPLACE
       end
-      super(context.merge!(role_yml).merge!(role: @role).merge!(options))
+      super(settings)
     end
 
     def username
@@ -64,6 +62,10 @@ module Sunzistrano
 
     def env
       @_env ||= ActiveSupport::StringInquirer.new(stage.to_s)
+    end
+
+    def app
+      @_app ||= ActiveSupport::StringInquirer.new(application.to_s)
     end
 
     def os

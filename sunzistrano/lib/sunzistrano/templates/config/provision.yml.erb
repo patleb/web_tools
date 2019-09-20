@@ -1,13 +1,14 @@
+lock: <%= Sunzistrano::VERSION %>
+gems:
+  - mr_system
+debug: false
+sudo: true
+reboot: false
+
 shared:
-  lock: <%= Sunzistrano::VERSION %>
-  gems:
-    - mr_system
-  debug: false
   postgres: 11
 
 app:
-  sudo: true
-  reboot: false
   add_recipes:
     - bootstrap/all
     - user/deployer

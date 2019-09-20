@@ -35,7 +35,7 @@ sun.source_recipe() {
     local recipe_start=$(sun.start_time)
     source "recipes/hook_before.sh"
     source "recipes/$name.sh"
-    cd $(sun.deploy_path)
+    cd $(sun.provision_path)
     source "recipes/hook_after.sh"
     sun.elapsed_time $recipe_start
     sun.done "$id"
@@ -74,7 +74,7 @@ sun.elapsed_time() {
 }
 
 sun.ensure() {
-  cd $(sun.deploy_path)
+  cd $(sun.provision_path)
   source roles/hook_ensure.sh
   sun.elapsed_time $ROLE_START
   set +u
@@ -84,6 +84,6 @@ sun.ensure() {
     fi
   fi
   set -u
-  <%= "rm -rf $HOME/#{@sun.DEPLOY_DIR}" unless @sun.debug %>
+  <%= "rm -rf $HOME/#{@sun.PROVISION_DIR}" unless @sun.debug %>
 }
 trap sun.ensure EXIT

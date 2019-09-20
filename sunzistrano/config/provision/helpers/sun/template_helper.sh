@@ -82,5 +82,5 @@ sun.defaults_path() {
 }
 
 sun.template_path() {
-  echo "$(sun.deploy_path)/files/$(echo "$1" | sed 's|^/||')"
+  echo "$(sun.provision_path)/files/$(echo "$1" | sed 's|^/||')"
 }

@@ -3,28 +3,28 @@ module Sunzistrano
   class Cli < Thor
     include Thor::Actions
 
-    desc 'deploy [stage] [role] [--recipe] [--vagrant-name] [--username] [--password]', 'Deploy sunzistrano project'
+    desc 'provision [stage] [role] [--recipe] [--vagrant-name] [--username] [--password]', 'Provision sunzistrano project'
     method_options recipe: :string, vagrant_name: :string, username: :string, password: :string
-    def deploy(stage, role)
-      do_deploy(stage, role)
+    def provision(stage, role = 'system')
+      do_provision(stage, role)
     end
 
-    desc 'rollback [stage] [role] [recipe] [--vagrant-name] [--username] [--password]', 'Rollback sunzistrano recipe'
-    method_options vagrant_name: :string, username: :string, password: :string
-    def rollback(stage, role, recipe)
-      do_deploy(stage, role, recipe: recipe, rollback: true)
+    desc 'rollback [stage] [role] [--recipe] [--vagrant-name] [--username] [--password]', 'Rollback sunzistrano recipe'
+    method_options recipe: :required, vagrant_name: :string, username: :string, password: :string
+    def rollback(stage, role = 'system')
+      do_provision(stage, role, rollback: true)
     end
 
     desc 'compile [stage] [role] [--recipe] [--vagrant-name] [--rollback]', 'Compile sunzistrano project'
     method_options recipe: :string, vagrant_name: :string, rollback: false
-    def compile(stage, role)
+    def compile(stage, role = 'system')
       do_compile(stage, role)
     end
 
-    desc 'download [stage] [role] [path] [--saved]', 'Dowload file meant to be used as .ref template'
-    method_options saved: false
-    def download(stage, role, path)
-      do_download(stage, role, path)
+    desc 'download [stage] [role] [--path] [--saved]', 'Dowload file meant to be used as .ref template'
+    method_options path: :required, saved: false
+    def download(stage, role = 'system')
+      do_download(stage, role)
     end
 
     no_tasks do
@@ -32,12 +32,10 @@ module Sunzistrano
         File.expand_path('../../', __FILE__)
       end
 
-      def do_deploy(stage, role, **custom_options)
+      def do_provision(stage, role, **custom_options)
         do_compile(stage, role, **custom_options)
-
         validate_version!
-
-        send_commands(deploy_cmd)
+        send_commands(provision_cmd)
       end
 
       def do_compile(stage, role, **custom_options)
@@ -47,15 +45,15 @@ module Sunzistrano
         build_role
       end
 
-      def do_download(stage, role, path)
+      def do_download(stage, role)
         load_config(stage, role)
+        path = @sun.path
         ref = Pathname.new(Dir.pwd).expand_path
         ref = ref.join('config', 'provision', 'files', "#{path.delete_prefix('/')}.ref")
         FileUtils.mkdir_p File.dirname(ref)
         if @sun.saved
           path = "/home/#{@sun.username}/#{@sun.DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
         end
-
         unless system download_cmd(path, ref)
           puts "Cannot transfer [#{path}] to [#{ref}]".color(:red).bright
         end
@@ -63,7 +61,6 @@ module Sunzistrano
 
       def load_config(stage, role, **custom_options)
         validate_config_presence!
-
         @sun = Sunzistrano::Config.new(stage, role, **options.symbolize_keys, **custom_options)
       end
 
@@ -93,24 +90,24 @@ module Sunzistrano
         end
 
         files.each do |file|
-          compile_file File.expand_path(file), expand(:deploy, file), force: true
+          compile_file File.expand_path(file), expand(:provision, file), force: true
         end
 
         (@sun.local_files || []).each do |file|
-          compile_file File.expand_path(file), expand(:deploy, "files/local/#{File.basename(file)}"), force: true
+          compile_file File.expand_path(file), expand(:provision, "files/local/#{File.basename(file)}"), force: true
         end
       end
 
       def build_role
         around = %i(before after).each_with_object({}) do |hook, memo|
-          path = expand(:deploy, "role_#{hook}.sh")
+          path = expand(:provision, "role_#{hook}.sh")
           compile_file expand(:root, "role_#{hook}.sh"), path, force: true
           memo[hook] = File.binread(path)
         end
-        content = around[:before] << "\n" << File.binread(expand(:deploy, "roles/#{@sun.role}.sh")) << "\n" << around[:after]
+        content = around[:before] << "\n" << File.binread(expand(:provision, "roles/#{@sun.role}.sh")) << "\n" << around[:after]
 
-        create_file expand(:deploy, "role.sh"), content, force: true
-        compile_file expand(:root, "sun.sh"), expand(:deploy, "sun.sh"), force: true
+        create_file expand(:provision, "role.sh"), content, force: true
+        compile_file expand(:root, "sun.sh"), expand(:provision, "sun.sh"), force: true
       end
 
       def compile_file(*args, **options)
@@ -156,23 +153,23 @@ module Sunzistrano
         end
       end
 
-      def deploy_cmd
+      def provision_cmd
         <<~CMD
-          #{ssh_add_cmd} cd .deploy && tar cz . | #{"sshpass -p #{@sun.password}" if @sun.password} ssh \
+          #{ssh_add_cmd} cd .provision && tar cz . | #{"sshpass -p #{@sun.password}" if @sun.password} ssh \
           -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
           #{@sun.username}@#{@sun.server} \
           #{"-p #{@sun.port}" if @sun.port} \
-          '#{deploy_remote_cmd} '#{'&& (cd .. && rm -rf .deploy) || (cd .. && rm -rf .deploy)' unless @sun.debug}
+          '#{provision_remote_cmd} '#{'&& (cd .. && rm -rf .provision) || (cd .. && rm -rf .provision)' unless @sun.debug}
         CMD
       end
 
-      def deploy_remote_cmd
+      def provision_remote_cmd
         <<~CMD
-          rm -rf ~/#{@sun.DEPLOY_DIR} &&
-          mkdir ~/#{@sun.DEPLOY_DIR} &&
-          cd ~/#{@sun.DEPLOY_DIR} &&
+          rm -rf ~/#{@sun.PROVISION_DIR} &&
+          mkdir ~/#{@sun.PROVISION_DIR} &&
+          cd ~/#{@sun.PROVISION_DIR} &&
           tar xz &&
-          #{'sudo' if @sun.sudo} bash role.sh |& tee -a ~/#{@sun.DEPLOY_LOG}
+          #{'sudo' if @sun.sudo} bash role.sh |& tee -a ~/#{@sun.PROVISION_LOG}
         CMD
       end
 
@@ -205,8 +202,8 @@ module Sunzistrano
         case type
         when :root
           file = Sunzistrano.root.join("config/provision/#{name_of(file)}")
-        when :deploy
-          file = ".deploy/#{name_of(file)}"
+        when :provision
+          file = ".provision/#{name_of(file)}"
         else
           file = "config/provision/#{name_of(file)}"
         end

@@ -32,8 +32,8 @@ xxx.xxx.xxx.xxx api.domain.com
 
 * provision new instances
 
-    $ bundle exec sun deploy production system
-    $ bundle exec sun deploy production:app_api system
+    $ bundle exec sun provision production system
+    $ bundle exec sun provision production:app_api system
 
 * point local machine to old instances ip
 
@@ -98,7 +98,7 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/recognize-expanded-volume-li
 
 Notes
 -----
-sudo cat sun_deploy.log | grep -A 1 -B 1 -e '\(Recipe\|Done\) \['
+sudo cat sun_provision.log | grep -A 1 -B 1 -e '\(Recipe\|Done\) \['
 
 Credits
 -------
