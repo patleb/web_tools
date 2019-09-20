@@ -257,7 +257,7 @@ class Setting
 
   def self.require_initializers
     (@gems.values << @root).each do |root|
-      path = root.join('config/initializers/mr_setting.rb')
+      path = root.join('config/initializers/setting.rb')
       require path.to_s if path.exist?
     end
   end
