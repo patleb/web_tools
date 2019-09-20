@@ -42,6 +42,7 @@ require 'ext_ruby/string'
 require 'ext_ruby/string/inflections'
 require 'ext_ruby/symbol'
 require 'ext_ruby/timeout'
+require 'ext_ruby/uuid'
 
 module ExtRuby
   # Your code goes here...
