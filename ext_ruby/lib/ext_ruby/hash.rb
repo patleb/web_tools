@@ -1,6 +1,8 @@
 class Hash
-  def self.union(_key, old_value, new_value)
-    if old_value.is_a?(Array) && new_value.is_a?(Array)
+  def self.union(key, old_value, new_value)
+    if key.to_s.end_with? '!'
+      new_value
+    elsif old_value.is_a?(Array) && new_value.is_a?(Array)
       old_value | new_value
     elsif old_value.is_a?(Hash) && new_value.is_a?(Hash)
       old_value.merge(new_value)
