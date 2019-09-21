@@ -168,7 +168,7 @@ class Setting
 
   def self.extract_yml(type, root)
     path = root.join('config', "#{type}.yml")
-    return {} unless File.exist?(path)
+    return {} unless path.exist?
 
     case type
     when :database
