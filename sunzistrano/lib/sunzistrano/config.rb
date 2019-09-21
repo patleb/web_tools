@@ -90,7 +90,7 @@ module Sunzistrano
         end
     end
 
-    def role_helpers(root)
+    def list_helpers(root)
       base_dir = Pathname.new(root).join('config/provision/helpers')
       Dir[base_dir.join('**/*.sh').to_s].map do |file|
         Pathname.new(file).relative_path_from(base_dir).to_s

@@ -1,4 +1,4 @@
-<% @sun.role_helpers(Sunzistrano.root).each do |file| %>
+<% @sun.list_helpers(Sunzistrano.root).each do |file| %>
   source helpers/<%= file %>
 <% end %>
 

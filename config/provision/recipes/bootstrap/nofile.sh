@@ -1,3 +1,5 @@
+# TODO fs.file-max = 1000000
+# TODO vm.max_map_count = 2500000
 # /etc/systemd/system/nginx.service.d/nofile.conf
 #
 # [Service]

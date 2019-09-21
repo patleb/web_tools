@@ -90,29 +90,32 @@ module Sunzistrano
         end
 
         files.each do |file|
-          compile_file File.expand_path(file), expand(:provision, file), force: true
+          compile_file File.expand_path(file), expand_path(:provision, file)
         end
 
         (@sun.local_files || []).each do |file|
-          compile_file File.expand_path(file), expand(:provision, "files/local/#{File.basename(file)}"), force: true
+          compile_file File.expand_path(file), expand_path(:provision, "files/local/#{File.basename(file)}")
         end
       end
 
       def build_role
         around = %i(before after).each_with_object({}) do |hook, memo|
-          path = expand(:provision, "role_#{hook}.sh")
-          compile_file expand(:root, "role_#{hook}.sh"), path, force: true
+          path = expand_path(:provision, "role_#{hook}.sh")
+          compile_file expand_path(:root, "role_#{hook}.sh"), path
           memo[hook] = File.binread(path)
         end
-        content = around[:before] << "\n" << File.binread(expand(:provision, "roles/#{@sun.role}.sh")) << "\n" << around[:after]
-
-        create_file expand(:provision, "role.sh"), content, force: true
-        compile_file expand(:root, "sun.sh"), expand(:provision, "sun.sh"), force: true
+        content = around[:before]
+        content << "\n"
+        content << File.binread(expand_path(:provision, "roles/#{@sun.role}.sh"))
+        content << "\n"
+        content << around[:after]
+        create_file expand_path(:provision, "role.sh"), content, force: true
+        compile_file expand_path(:root, "sun.sh"), expand_path(:provision, "sun.sh")
       end
 
-      def compile_file(*args, **options)
+      def compile_file(*args)
         # TODO compare .esh with .ref file for bash/erb unnescaped characters
-        template *args, **options
+        template *args, force: true
         if args[0].to_s.end_with? '.pow'
           compiled_pow = args[1]
           compiled_sh = compiled_pow.sub(/\.pow$/, '.sh')
@@ -121,7 +124,7 @@ module Sunzistrano
       end
 
       def validate_version!
-        unless @sun.lock == Sunzistrano::VERSION
+        unless @sun.lock.nil? || @sun.lock == Sunzistrano::VERSION
           abort "Sunzistrano version [#{Sunzistrano::VERSION}] is different from locked version [#{@sun.lock}]"
         end
       end
@@ -131,7 +134,7 @@ module Sunzistrano
       end
 
       def get_remote_file(file, type)
-        file_path = expand("#{type}/remote/#{File.basename(file)}")
+        file_path = expand_path("#{type}/remote/#{File.basename(file)}")
         return if File.exist? file_path
         get file, file_path
       end
@@ -195,22 +198,22 @@ module Sunzistrano
         File.file?(file) &&
           !file[/\.keep$/] &&
           !file[/\/roles\/(?!(#{@sun.role}|hook_\w+)\.sh)/] &&
-          others.none?{ |f| file.end_with? name_of(f) }
+          others.none?{ |f| file.end_with? basename(f) }
       end
 
-      def expand(type, file = type)
+      def expand_path(type, file = type)
         case type
         when :root
-          file = Sunzistrano.root.join("config/provision/#{name_of(file)}")
+          file = Sunzistrano.root.join("config/provision/#{basename(file)}")
         when :provision
-          file = ".provision/#{name_of(file)}"
+          file = ".provision/#{basename(file)}"
         else
-          file = "config/provision/#{name_of(file)}"
+          file = "config/provision/#{basename(file)}"
         end
         File.expand_path(file)
       end
 
-      def name_of(file)
+      def basename(file)
         file.sub(/.*config\/provision\//, '')
       end
 
