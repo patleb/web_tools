@@ -124,7 +124,7 @@ module Sunzistrano
             esh_text, ref_file = Pathname.new(destination_path).read, Pathname.new(ref_path)
             ref_file.each_line do |line|
               if line.match? /[^\\][`$]/
-                raise "unescaped ` or $ in '#{File.basename(dst)}' file" if esh_text.include? line.strip
+                raise "unescaped ` or $ in '#{basename(src)}' file" if esh_text.include? line.strip
               end
             end
           end

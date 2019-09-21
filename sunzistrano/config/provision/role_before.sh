@@ -46,5 +46,9 @@ centos)
 ;;
 esac
 
+<% @sun.attributes.each do |attribute, value| %>
+  export SUN_<%= attribute.upcase %>=<%= value %>
+<% end %>
+
 sun.setup_progress
 source roles/hook_before.sh

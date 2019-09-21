@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# TODO make all config accessible through $SUN_(config_name) --> will need less ERB
 module Sunzistrano
   class Config < OpenStruct
     RESERVED_NAMES = %w(lock gems debug sudo reboot)
@@ -50,6 +49,10 @@ module Sunzistrano
         settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) if key.end_with? Hash::REPLACE
       end
       super(settings)
+    end
+
+    def attributes
+      to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }
     end
 
     def username
