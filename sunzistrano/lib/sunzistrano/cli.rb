@@ -113,13 +113,21 @@ module Sunzistrano
         compile_file expand_path(:root, "sun.sh"), expand_path(:provision, "sun.sh")
       end
 
-      def compile_file(*args)
-        # TODO compare .esh with .ref file for bash/erb unnescaped characters
-        template *args, force: true
-        if args[0].to_s.end_with? '.pow'
-          compiled_pow = args[1]
-          compiled_sh = compiled_pow.sub(/\.pow$/, '.sh')
-          `powscript --compile #{compiled_pow} > #{compiled_sh}`
+      def compile_file(src, dst)
+        template src, dst, force: true
+        source_path, destination_path = src.to_s, dst.to_s
+        if source_path.end_with? '.pow'
+          `powscript --compile #{destination_path} > #{destination_path.sub(/\.pow$/, '.sh')}`
+        elsif source_path.end_with? '.esh'
+          ref_path = destination_path.sub(/\.esh$/, '.ref')
+          if File.exist? ref_path
+            esh_text, ref_file = Pathname.new(destination_path).read, Pathname.new(ref_path)
+            ref_file.each_line do |line|
+              if line.match? /[^\\][`$]/
+                raise "unescaped ` or $ in '#{File.basename(dst)}' file" if esh_text.include? line.strip
+              end
+            end
+          end
         end
       end
 
