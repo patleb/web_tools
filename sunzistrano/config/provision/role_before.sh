@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 set -u
-<% if @sun.debug == 'trace' %>
-  set -x
-<% end %>
 
 if which apt-get >/dev/null 2>&1; then
   export OS=ubuntu
@@ -28,11 +25,15 @@ fi
 
 source /etc/os-release
 export TERM=linux
-source sun.sh
 
-export ROLE_ID=<%= @sun.role %>
 export ROLE_START=$(sun.start_time)
 export REBOOT_FORCE=false
+
+<% @sun.attributes.each do |attribute, value| %>
+  export SUN_<%= attribute.upcase %>=<%= value %>
+<% end %>
+
+source sun.sh
 
 case "$OS" in
 ubuntu)
@@ -46,9 +47,8 @@ centos)
 ;;
 esac
 
-<% @sun.attributes.each do |attribute, value| %>
-  export SUN_<%= attribute.upcase %>=<%= value %>
-<% end %>
-
 sun.setup_progress
+<% if @sun.debug == 'trace' %>
+  set -x
+<% end %>
 source roles/hook_before.sh
