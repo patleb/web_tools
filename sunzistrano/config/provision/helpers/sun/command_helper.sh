@@ -11,6 +11,10 @@ sun.installed() {
   return $?
 }
 
+sun.uninstall() {
+  sun.mute "$os_package_get -y uninstall $@"
+}
+
 sun.update() {
   sun.mute "$os_package_update"
 }
