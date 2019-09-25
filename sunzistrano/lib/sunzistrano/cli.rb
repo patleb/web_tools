@@ -114,8 +114,9 @@ module Sunzistrano
       end
 
       def compile_file(src, dst)
-        template src, dst, force: true
+        # TODO check for unescaped <% by comparison to .ref file --> example postgresql.conf
         source_path, destination_path = src.to_s, dst.to_s
+        template src, dst, force: true
         if source_path.end_with? '.pow'
           `powscript --compile #{destination_path} > #{destination_path.sub(/\.pow$/, '.sh')}`
         elsif source_path.end_with? '.esh'
@@ -138,7 +139,7 @@ module Sunzistrano
       end
 
       def validate_config_presence!
-        abort_with 'You must have a provision.yml'unless File.exist?(Sunzistrano::Config.provision_yml)
+        abort_with 'You must have a provision.yml'unless Sunzistrano::Config.provision_yml.exist?
       end
 
       def get_remote_file(file, type)
