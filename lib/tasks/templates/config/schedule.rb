@@ -11,10 +11,10 @@ ExtWhenever.setup(self)
 # every :day, at: '5am' do
 #   rake 'every_day'
 # end
-
-every :minute do
-  bash 'every_minute.sh'
-end
+#
+# every :minute do
+#   bash 'every_minute.sh'
+# end
 
 case @environment
 when 'vagrant'
