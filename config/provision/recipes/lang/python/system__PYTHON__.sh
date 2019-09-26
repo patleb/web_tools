@@ -9,6 +9,8 @@ ubuntu)
 ;;
 centos)
   PYTHON_VERSION=$(echo $PYTHON_VERSION | tr -d '.')
+  sun.install "python-devel"
+  sun.install "python-pip"
   sun.install "python${PYTHON_VERSION}"
   sun.install "python${PYTHON_VERSION}-libs"
   sun.install "python${PYTHON_VERSION}-devel"
