@@ -17,6 +17,7 @@ class JavascriptError < RescueError
   end
 end
 
+# TODO https://www.ecalamia.com/blog/show-ip-api-nginx/
 class JavascriptRescuesController < ActionController::API
   def create
     exception = create_class.new(*create_args)
