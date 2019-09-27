@@ -39,8 +39,9 @@ sudo su - $DEPLOYER_NAME << 'EOF'
   RUBY_CONFIGURE_OPTS=$RBENV_OPTIONS rbenv install $RUBY_VERSION
   rbenv global $RUBY_VERSION
   gem install bundler
-
-  echo 'require "irb/ext/save-history"' > /home/$DEPLOYER_NAME/.irbrc
-  echo 'IRB.conf[:SAVE_HISTORY] = 200' >> /home/$DEPLOYER_NAME/.irbrc
-  echo $'IRB.conf[:HISTORY_FILE] = "#{ENV[\'HOME\']}/.irb-history"' >> /home/$DEPLOYER_NAME/.irbrc
+  <% if @sun.rbenv_ruby < '2.7' %>
+    echo 'require "irb/ext/save-history"' > /home/$DEPLOYER_NAME/.irbrc
+    echo 'IRB.conf[:SAVE_HISTORY] = 1000' >> /home/$DEPLOYER_NAME/.irbrc
+    echo $'IRB.conf[:HISTORY_FILE] = "#{ENV[\'HOME\']}/.irb-history"' >> /home/$DEPLOYER_NAME/.irbrc
+  <% end %>
 EOF
