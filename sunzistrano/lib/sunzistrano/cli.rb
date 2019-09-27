@@ -9,14 +9,20 @@ module Sunzistrano
       do_provision(stage, role)
     end
 
+    desc 'specialize [stage] [role] [--recipe] [--vagrant-name] [--username] [--password]', 'Specialize sunzistrano project'
+    method_options recipe: :string, vagrant_name: :string, username: :string, password: :string
+    def specialize(stage, role = 'system')
+      do_provision(stage, role, specialize: true)
+    end
+
     desc 'rollback [stage] [role] [--recipe] [--vagrant-name] [--username] [--password]', 'Rollback sunzistrano recipe'
     method_options recipe: :required, vagrant_name: :string, username: :string, password: :string
     def rollback(stage, role = 'system')
       do_provision(stage, role, rollback: true)
     end
 
-    desc 'compile [stage] [role] [--recipe] [--vagrant-name] [--rollback]', 'Compile sunzistrano project'
-    method_options recipe: :string, vagrant_name: :string, rollback: false
+    desc 'compile [stage] [role] [--recipe] [--vagrant-name] [--rollback] [--specialize]', 'Compile sunzistrano project'
+    method_options recipe: :string, vagrant_name: :string, rollback: false, specialize: false
     def compile(stage, role = 'system')
       do_compile(stage, role)
     end
@@ -114,7 +120,6 @@ module Sunzistrano
       end
 
       def compile_file(src, dst)
-        # TODO check for unescaped <% by comparison to .ref file --> example postgresql.conf
         source_path, destination_path = src.to_s, dst.to_s
         template src, dst, force: true
         if source_path.end_with? '.pow'

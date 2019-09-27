@@ -20,14 +20,18 @@ sun.source_recipe() {
   if [[ ! "${id}" ]]; then
     id=$name
   fi
+  if [[ "<%= @sun.specialize.to_b %>" == true ]]; then
+    name="$name-specialize"
+    id="$id-specialize"
+    if [[ ! -e "recipes/$name.sh" ]]; then
+      return
+    fi
+  fi
   RECIPE_ID="$id"
   if [[ "$name" == */<%= @sun.LIST_NAME %> ]]; then
     source "recipes/$name.sh"
   elif [[ "<%= @sun.rollback.to_b %>" == true ]]; then
-    name=$(echo "$name" | sed -r 's/<%= Sh.sed_escape @sun.VARIABLES %>/-rollback/g')
-    if [[ -e "recipes/$name.sh" ]]; then
-      source "recipes/$name.sh"
-    else
+    if [[ -e "recipes/$name-rollback.sh" ]]; then
       source "recipes/$name-rollback.sh"
     fi
     sun.rollback "$id"
