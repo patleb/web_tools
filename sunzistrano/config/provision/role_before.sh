@@ -30,7 +30,7 @@ export ROLE_START=$(sun.start_time)
 export REBOOT_FORCE=false
 
 <% @sun.attributes.each do |attribute, value| %>
-  export SUN_<%= attribute.upcase %>=<%= value %>
+  export _<%= attribute %>=<%= value %>
 <% end %>
 
 source sun.sh
