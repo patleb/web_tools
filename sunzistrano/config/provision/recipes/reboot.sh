@@ -1,20 +1,20 @@
-if [[ "$REBOOT_FORCE" = false ]]; then
+if [[ "$REBOOT_FORCE" == false ]]; then
   source roles/hook_after.sh
 fi
 
-REBOOT_LINE="<%= @sun.DONE.sub(@sun.DONE_ARG, 'reboot') %>"
-if [[ ! $(grep -Fx "$REBOOT_LINE" "$HOME/<%= @sun.MANIFEST_LOG %>") ]]; then
+REBOOT_LINE='Done [reboot]'
+if [[ ! $(grep -Fx "$REBOOT_LINE" "$HOME/$__MANIFEST_LOG__") ]]; then
   sun.done "reboot"
 fi
 
-<% unless @sun.env.vagrant? -%>
+if [[ "$__STAGE__" != 'vagrant' ]]
   case "$OS" in
   ubuntu)
     echo 'Running "unattended-upgrade"'
     unattended-upgrade -d
   ;;
   esac
-<% end -%>
+fi
 
 sun.ensure
 trap - EXIT

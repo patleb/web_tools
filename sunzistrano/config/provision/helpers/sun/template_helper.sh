@@ -78,7 +78,7 @@ sun.compare_defaults() {
 }
 
 sun.defaults_path() {
-  echo "$HOME/<%= @sun.DEFAULTS_DIR %>/$(echo "$1" | sed 's|/|~|g')"
+  echo "$HOME/$__DEFAULTS_DIR__/$(echo "$1" | sed 's|/|~|g')"
 }
 
 sun.template_path() {

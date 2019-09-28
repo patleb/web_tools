@@ -32,5 +32,5 @@ sun.version_is_smaller() {
 }
 
 sun.manifest_path() {
-  echo "$HOME/<%= @sun.MANIFEST_DIR %>/$1.log"
+  echo "$HOME/$__MANIFEST_DIR__/$1.log"
 }

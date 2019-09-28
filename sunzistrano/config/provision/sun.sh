@@ -3,13 +3,13 @@
 <% end %>
 
 sun.setup_progress() {
-  if [[ -e "$HOME/<%= @sun.MANIFEST_LOG %>" ]]; then
+  if [[ -e "$HOME/$__MANIFEST_LOG__" ]]; then
     echo "Provisioning already started"
   else
     echo "New provisioning"
-    touch "$HOME/<%= @sun.MANIFEST_LOG %>"
-    mkdir "$HOME/<%= @sun.MANIFEST_DIR %>"
-    mkdir "$HOME/<%= @sun.DEFAULTS_DIR %>"
+    touch "$HOME/$__MANIFEST_LOG__"
+    mkdir "$HOME/$__MANIFEST_DIR__"
+    mkdir "$HOME/$__DEFAULTS_DIR__"
   fi
   echo "Started at $(date '+%Y-%m-%d %H:%M:%S')"
 }
@@ -20,7 +20,7 @@ sun.source_recipe() {
   if [[ ! "${id}" ]]; then
     id=$name
   fi
-  if [[ "<%= @sun.specialize.to_b %>" == true ]]; then
+  if [[ "$__SPECIALIZE__" == true ]]; then
     name="$name-specialize"
     id="$id-specialize"
     if [[ ! -e "recipes/$name.sh" ]]; then
@@ -28,9 +28,9 @@ sun.source_recipe() {
     fi
   fi
   RECIPE_ID="$id"
-  if [[ "$name" == */<%= @sun.LIST_NAME %> ]]; then
+  if [[ "$name" == */all ]]; then
     source "recipes/$name.sh"
-  elif [[ "<%= @sun.rollback.to_b %>" == true ]]; then
+  elif [[ "$__ROLLBACK__" == true ]]; then
     if [[ -e "recipes/$name-rollback.sh" ]]; then
       source "recipes/$name-rollback.sh"
     fi
@@ -48,22 +48,17 @@ sun.source_recipe() {
 }
 
 sun.to_be_done() {
-  if [[ ! $(grep -Fx "<%= @sun.DONE %>" "$HOME/<%= @sun.MANIFEST_LOG %>") ]]; then
-    echo "Recipe [<%= @sun.DONE_ARG %>]"
+  if [[ ! $(grep -Fx "Done [$1]" "$HOME/$__MANIFEST_LOG__") ]]; then
+    echo "Recipe [$1]"
     return 0
   else
-    echo "<%= @sun.DONE %>"
+    echo "Done [$1]"
     return 1
   fi
 }
 
 sun.done() {
-  echo "<%= @sun.DONE %>" | tee -a "$HOME/<%= @sun.MANIFEST_LOG %>"
-}
-
-sun.rollback() {
-  echo "Rollback [<%= @sun.DONE_ARG %>]"
-  <%= Sh.delete_line! "$HOME/#{@sun.MANIFEST_LOG}", %{"#{@sun.DONE}"} %>
+  echo "Done [$1]" | tee -a "$HOME/$__MANIFEST_LOG__"
 }
 
 sun.start_time() {
@@ -88,6 +83,13 @@ sun.ensure() {
     fi
   fi
   set -u
-  <%= "rm -rf $HOME/#{@sun.PROVISION_DIR}" unless @sun.debug %>
+  if [[ "$__DEBUG__" == false ]]; then
+    rm -rf $(sun.provision_path)
+  fi
 }
 trap sun.ensure EXIT
+
+sun.rollback() {
+  echo "Rollback [$1]"
+  <%= Sh.delete_line! "$HOME/$__MANIFEST_LOG__", '"Done [$1]"' %>
+}

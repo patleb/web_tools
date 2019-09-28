@@ -3,10 +3,7 @@
 module Sunzistrano
   class Config < OpenStruct
     RESERVED_NAMES = %w(lock gems debug sudo reboot)
-    LIST_NAME = 'all'
     VARIABLES = /__([A-Z0-9_]+)__/
-    DONE_ARG = '$1'
-    DONE = "Done [#{DONE_ARG}]"
     PROVISION_LOG = 'sun_provision.log'
     PROVISION_DIR = 'sun_provision'
     MANIFEST_LOG = 'sun_manifest.log'
@@ -52,7 +49,14 @@ module Sunzistrano
     end
 
     def attributes
-      to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }
+      to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
+         username: username,
+         provision_log: PROVISION_LOG,
+         provision_dir: PROVISION_DIR,
+         manifest_log: MANIFEST_LOG,
+         manifest_dir: MANIFEST_DIR,
+         defaults_dir: DEFAULTS_DIR,
+      )
     end
 
     def username
@@ -114,7 +118,7 @@ module Sunzistrano
       recipes = _merge_recipes *names, base, substract: true
       if recipe.present?
         recipes.select! do |name|
-          name.end_with?("/#{LIST_NAME}") || name == recipe
+          name.end_with?("/all") || name == recipe
         end
       end
       recipes.reject(&:blank?).each do |name|

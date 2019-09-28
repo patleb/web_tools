@@ -38,5 +38,5 @@ sun.mute() {
 }
 
 sun.provision_path() {
-  echo "$HOME/<%= @sun.PROVISION_DIR %>"
+  echo "$HOME/$__PROVISION_DIR__"
 }

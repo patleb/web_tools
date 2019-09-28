@@ -201,7 +201,7 @@ module Sunzistrano
 
       def ssh_add_cmd
         <<~CMD if @sun.pkey.present?
-          if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then \
+          if [[ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]]; then \
             eval $(ssh-agent); \
           fi \
           && ssh-add #{@sun.pkey} 2> /dev/null &&

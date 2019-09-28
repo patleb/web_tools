@@ -40,7 +40,7 @@ ubuntu)
   export DEBIAN_FRONTEND=noninteractive
 ;;
 centos)
-  export HOME=/home/<%= @sun.username %>
+  export HOME=/home/$__USERNAME__
   if ! sun.installed "rpmdevtools"; then
     sun.mute "$os_package_get -y install rpmdevtools"
   fi
@@ -48,7 +48,7 @@ centos)
 esac
 
 sun.setup_progress
-<% if @sun.debug == 'trace' %>
+if [[ "$__DEBUG__" == 'trace' ]]; then
   set -x
-<% end %>
+fi
 source roles/hook_before.sh
