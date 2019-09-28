@@ -26,6 +26,7 @@ shared:
   pgrest_host: $ALIAS server_host
   pgrest_db_uri: $METHOD
   pgrest_db_pool: 10
+  pgrest_db_pool_timeout: 300 # same as Passenger
   pgrest_db_username: authenticator
   pgrest_db_password: not-secret
   pgrest_max_rows: 100
