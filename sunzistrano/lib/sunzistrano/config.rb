@@ -51,6 +51,8 @@ module Sunzistrano
     def attributes
       to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
          username: username,
+         admin_public_key: ->{ admin_public_key },
+         admin_private_key: ->{ admin_private_key },
          provision_log: PROVISION_LOG,
          provision_dir: PROVISION_DIR,
          manifest_log: MANIFEST_LOG,
@@ -76,12 +78,24 @@ module Sunzistrano
     end
 
     def os
-      @_os ||= ActiveSupport::StringInquirer.new(linux_os)
+      @_os ||= ActiveSupport::StringInquirer.new(linux_os || 'ubuntu')
     end
 
     def local_dir
       if local_path.present?
         @_local_dir ||= Pathname.new(local_path).expand_path
+      end
+    end
+
+    def admin_public_key
+      if (key = self[:admin_public_key] || `ssh-keygen -f #{pkey} -y`.strip).present?
+        "'#{key}'"
+      end
+    end
+
+    def admin_private_key
+      if (key = self[:admin_private_key] || `cat #{pkey}`.strip).present?
+        "'#{key}'"
       end
     end
 
