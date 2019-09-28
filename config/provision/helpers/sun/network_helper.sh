@@ -1,15 +1,3 @@
-sun.default_interface() {
-  <%= Sh.default_interface %>
-}
-
-sun.external_ip() {
-  <%= Sh.external_ip %>
-}
-
-sun.internal_ip() {
-  <%= Sh.internal_ip %>
-}
-
 sun.network() {
   local addr=$(sun.ip_to_int $1)
   local mask=$((0xffffffff << (32 -$2)))
@@ -42,4 +30,16 @@ sun.int_to_ip() {
   echo -n $(($(($((${1}/256))/256))%256)).
   echo -n $(($((${1}/256))%256)).
   echo $((${1}%256))
+}
+
+sun.default_interface() {
+  <%= Sh.default_interface %>
+}
+
+sun.external_ip() {
+  <%= Sh.external_ip %>
+}
+
+sun.internal_ip() {
+  <%= Sh.internal_ip %>
 }
