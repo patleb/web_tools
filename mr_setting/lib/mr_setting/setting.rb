@@ -67,7 +67,7 @@ class Setting
       settings = @secrets.merge! settings
       resolve_keywords! settings
       cast_values! settings
-      settings
+      IceNine.deep_freeze! settings
     end
   end
 
