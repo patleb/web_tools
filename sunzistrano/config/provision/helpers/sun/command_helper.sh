@@ -11,8 +11,8 @@ sun.installed() {
   return $?
 }
 
-sun.uninstall() {
-  sun.mute "$os_package_get -y uninstall $@"
+sun.remove() {
+  sun.mute "$os_package_get -y remove $@"
 }
 
 sun.update() {
