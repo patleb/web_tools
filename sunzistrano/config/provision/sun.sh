@@ -21,10 +21,9 @@ sun.source_recipe() {
     id=$name
   fi
   if [[ "$__SPECIALIZE__" == true ]]; then
-    name="$name-specialize"
-    id="$id-specialize"
-    if [[ ! -e "recipes/$name.sh" ]]; then
-      return
+    if [[ -e "recipes/$name-specialize.sh" ]]; then
+      name="$name-specialize"
+      id="$id-specialize"
     fi
   fi
   RECIPE_ID="$id"
