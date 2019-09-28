@@ -9,7 +9,7 @@ sun.install 'dnsmasq'
 
 sun.backup_compile '/etc/dnsmasq.conf'
 sun.backup_defaults '/etc/resolv.conf'
-sun.backup_compile '/etc/dhcp/dhclient.conf'
+sun.backup_move '/etc/dhcp/dhclient.conf'
 
 # no sun.compare_defaults since there are some static IPs
 sun.backup_defaults '/etc/hosts'

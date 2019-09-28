@@ -2,7 +2,7 @@ sun.install "sysstat"
 
 case "$OS" in
 ubuntu)
-  sun.backup_compile '/etc/default/sysstat'
+  sun.backup_move '/etc/default/sysstat'
 ;;
 centos)
   sun.backup_compare '/etc/sysconfig/sysstat'
