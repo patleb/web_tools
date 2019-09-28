@@ -2,7 +2,7 @@
   upgrade__UPGRADE__
   time_locale
   mount
-  swap
+  swap__SWAP_SIZE__
   nofile
   packages
   #{'backports' if @sun.os.ubuntu?}
