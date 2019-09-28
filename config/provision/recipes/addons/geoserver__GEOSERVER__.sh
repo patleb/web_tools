@@ -1,18 +1,18 @@
-GEOSERVER_VERSION=<%= @sun.geoserver || '2.15.0' %>
+__GEOSERVER__=${__GEOSERVER__:-2.15.0}
 
-wget -q "http://sourceforge.net/projects/geoserver/files/GeoServer/$GEOSERVER_VERSION/geoserver-$GEOSERVER_VERSION-bin.zip"
-unzip -q "geoserver-$GEOSERVER_VERSION-bin.zip"
-mv "geoserver-$GEOSERVER_VERSION" /opt/geoserver
+wget -q "http://sourceforge.net/projects/geoserver/files/GeoServer/$__GEOSERVER__/geoserver-$__GEOSERVER__-bin.zip"
+unzip -q "geoserver-$__GEOSERVER__-bin.zip"
+mv "geoserver-$__GEOSERVER__" /opt/geoserver
 
 # https://www.shellhacks.com/systemd-service-file-example/
 sun.move '/etc/systemd/system/geoserver.service'
 
 # https://www.google.ca/search?q=geoserver+behind+nginx&oq=geoserver+behind+nginx
 # proxy through Nginx
-<% if @sun.env.vagrant? %>
+if [[ "$__STAGE__" == 'vagrant' ]]; then
   ufw allow 8080/tcp
   ufw reload
-<% end %>
+fi
 
 # TODO JAI
 # https://geoserver.geo-solutions.it/edu/en/install_run/jai_io_install.html
