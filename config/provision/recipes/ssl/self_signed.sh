@@ -1,6 +1,5 @@
-NGINX_DOMAIN=<%= @sun.nginx_domain %>
-KEY="/etc/nginx/ssl/$NGINX_DOMAIN.server.key"
-CRT="/etc/nginx/ssl/$NGINX_DOMAIN.server.crt"
+KEY="/etc/nginx/ssl/$__NGINX_DOMAIN__.server.key"
+CRT="/etc/nginx/ssl/$__NGINX_DOMAIN__.server.crt"
 
 <% if @sun.ssl_server_key.present? %>
   echo -e '<%= @sun.ssl_server_key.escape_newlines %>' > $KEY
@@ -11,28 +10,28 @@ CRT="/etc/nginx/ssl/$NGINX_DOMAIN.server.crt"
     -new \
     -newkey rsa:4096 \
     -nodes \
-    -keyout $NGINX_DOMAIN.server.key \
-    -out $NGINX_DOMAIN.server.csr \
-    -subj "/C=<%= @sun.ssl_country || 'CA' %>"\
-"/ST=<%= @sun.ssl_state || 'QC' %>"\
-"/L=<%= @sun.ssl_city || 'Quebec' %>"\
-"/O=<%= @sun.ssl_org || 'self-signed' %>"\
-"/CN=*.$NGINX_DOMAIN"
+    -keyout $__NGINX_DOMAIN__.server.key \
+    -out $__NGINX_DOMAIN__.server.csr \
+    -subj "/C=${__SSL_COUNTRY:-CA}"\
+"/ST=${__SSL_STATE__:-QC}"\
+"/L=${__SSL_CITY__:-Quebec}"\
+"/O=${__SSL_ORG__:-self-signed}"\
+"/CN=*.$__NGINX_DOMAIN__"
 
   # New server certificate
   openssl x509 \
     -req \
     -days 7000 \
-    -in $NGINX_DOMAIN.server.csr \
-    -CA /etc/nginx/ssl/$NGINX_DOMAIN.ca.crt \
-    -CAkey /etc/nginx/ssl/$NGINX_DOMAIN.ca.key \
+    -in $__NGINX_DOMAIN__.server.csr \
+    -CA /etc/nginx/ssl/$__NGINX_DOMAIN__.ca.crt \
+    -CAkey /etc/nginx/ssl/$__NGINX_DOMAIN__.ca.key \
     -set_serial 01 \
-    -out $NGINX_DOMAIN.server.crt
-  rm -f $NGINX_DOMAIN.server.csr
+    -out $__NGINX_DOMAIN__.server.crt
+  rm -f $__NGINX_DOMAIN__.server.csr
 
   # Move keys to nginx folder
-  mv $NGINX_DOMAIN.server.key /etc/nginx/ssl/
-  mv $NGINX_DOMAIN.server.crt /etc/nginx/ssl/
+  mv $__NGINX_DOMAIN__.server.key /etc/nginx/ssl/
+  mv $__NGINX_DOMAIN__.server.crt /etc/nginx/ssl/
 
   echo "$KEY should be kept encrypted in your settings.yml"
   <%= Sh.escape_newlines "$KEY" %>
