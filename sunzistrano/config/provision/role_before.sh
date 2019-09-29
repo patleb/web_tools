@@ -38,6 +38,7 @@ source sun.sh
 case "$OS" in
 ubuntu)
   export DEBIAN_FRONTEND=noninteractive
+  # TODO https://help.ubuntu.com/community/RPM/AlienHowto
 ;;
 centos)
   export HOME=/home/$__USERNAME__
