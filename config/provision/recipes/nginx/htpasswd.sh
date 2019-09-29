@@ -1,5 +1,2 @@
-DEPLOYER_NAME=<%= @sun.deployer_name %>
-DEPLOYER_HTPASSWD=<%= @sun.deployer_password %>
-
-echo -n "$DEPLOYER_NAME:" >> /etc/nginx/.htpasswd
-openssl passwd -apr1 "$DEPLOYER_HTPASSWD" >> /etc/nginx/.htpasswd
+echo -n "$__DEPLOYER_NAME__:" >> /etc/nginx/.htpasswd
+openssl passwd -apr1 "$__DEPLOYER_PASSWORD__" >> /etc/nginx/.htpasswd
