@@ -3,27 +3,26 @@
 # https://github.com/reorg/pg_repack
 # https://www.modio.se/scaling-past-the-single-machine.html
 # https://askubuntu.com/questions/732431/how-to-uninstall-specific-versions-of-postgres
-PG_MAJOR="<%= @sun.postgres %>"
 PG_MANIFEST=$(sun.manifest_path 'postgresql')
 
 case "$OS" in
 ubuntu)
-  PG_PACKAGES="postgresql-$PG_MAJOR postgresql postgresql-contrib postgresql-common libpq-dev"
-  PG_CONF_DIR="/etc/postgresql/$PG_MAJOR/main"
+  PG_PACKAGES="postgresql-$__POSTGRES__ postgresql postgresql-contrib postgresql-common libpq-dev"
+  PG_CONF_DIR="/etc/postgresql/$__POSTGRES__/main"
 
   sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
   wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
   sun.update
 
-  PG_VERSION="$(sun.current_version postgresql-$PG_MAJOR)"
+  PG_VERSION="$(sun.current_version postgresql-$__POSTGRES__)"
 ;;
 centos)
-  PG_PACKAGES="postgresql$PG_MAJOR-server postgresql$PG_MAJOR postgresql$PG_MAJOR-contrib postgresql$PG_MAJOR-devel"
-  PG_CONF_DIR="/var/lib/pgsql/$PG_MAJOR/data"
+  PG_PACKAGES="postgresql$__POSTGRES__-server postgresql$__POSTGRES__ postgresql$__POSTGRES__-contrib postgresql$__POSTGRES__-devel"
+  PG_CONF_DIR="/var/lib/pgsql/$__POSTGRES__/data"
 
-  yes | yum localinstall --nogpgcheck "https://yum.postgresql.org/$PG_MAJOR/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+  yes | yum localinstall --nogpgcheck "https://yum.postgresql.org/$__POSTGRES__/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
 
-  PG_VERSION="$(sun.current_version postgresql$PG_MAJOR)"
+  PG_VERSION="$(sun.current_version postgresql$__POSTGRES__)"
 ;;
 esac
 
@@ -37,16 +36,16 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
     sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
   ;;
   centos)
-    echo "export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/pgsql-$PG_MAJOR/bin" >> /etc/environment
-    export PATH="$PATH:/usr/pgsql-$PG_MAJOR/bin"
+    echo "export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/pgsql-$__POSTGRES__/bin" >> /etc/environment
+    export PATH="$PATH:/usr/pgsql-$__POSTGRES__/bin"
 
-    postgresql-$PG_MAJOR-setup initdb
+    postgresql-$__POSTGRES__-setup initdb
     sun.backup_compare "$PG_CONF_DIR/postgresql.conf"
     sun.backup_move "$PG_CONF_DIR/pg_hba.conf"
     chmod 600 "$PG_CONF_DIR/pg_hba.conf"
     chown postgres:postgres "$PG_CONF_DIR/pg_hba.conf"
-    echo 'Alias=postgresql.service' >> /usr/lib/systemd/system/postgresql-$PG_MAJOR.service
-    systemctl enable postgresql-$PG_MAJOR
+    echo 'Alias=postgresql.service' >> /usr/lib/systemd/system/postgresql-$__POSTGRES__.service
+    systemctl enable postgresql-$__POSTGRES__
     systemctl restart postgresql
     sudo su - postgres << EOF
       psql -c "ALTER USER postgres WITH PASSWORD 'postgres'";
@@ -81,13 +80,13 @@ else
   sun.install "$PG_PACKAGES"
   sun.lock "$PG_PACKAGES"
 
-  if [[ "$PG_OLD_MAJOR" != "$PG_MAJOR" ]]; then
+  if [[ "$PG_OLD_MAJOR" != "$__POSTGRES__" ]]; then
     # pg_lsclusters
     sun.backup_compare "$PG_CONF_DIR/postgresql.conf"
     sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
     sudo su - postgres << EOF
-      pg_dropcluster --stop "$PG_MAJOR" main
-      pg_upgradecluster -v "$PG_MAJOR" "$PG_OLD_MAJOR" main
+      pg_dropcluster --stop "$__POSTGRES__" main
+      pg_upgradecluster -v "$__POSTGRES__" "$PG_OLD_MAJOR" main
       pg_dropcluster --stop "$PG_OLD_MAJOR" main
 EOF
   fi

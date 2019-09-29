@@ -1,13 +1,11 @@
 ### References
 # https://hunleyd.github.io/posts/PostgreSQL-logging-strftime-and-you
-PG_MAJOR="<%= @sun.postgres %>"
-
 case "$OS" in
 ubuntu)
-  PG_CONF_DIR="/etc/postgresql/$PG_MAJOR/main"
+  PG_CONF_DIR="/etc/postgresql/$__POSTGRES__/main"
 ;;
 centos)
-  PG_CONF_DIR="/var/lib/pgsql/$PG_MAJOR/data"
+  PG_CONF_DIR="/var/lib/pgsql/$__POSTGRES__/data"
 ;;
 esac
 
