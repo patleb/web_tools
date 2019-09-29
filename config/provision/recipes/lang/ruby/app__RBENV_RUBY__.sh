@@ -1,5 +1,3 @@
-DEPLOYER_NAME=<%= @sun.deployer_name %>
-
 case "$OS" in
 ubuntu)
   sun.install "libjemalloc-dev"
@@ -9,7 +7,7 @@ centos)
 ;;
 esac
 
-sudo su - $DEPLOYER_NAME << 'EOF'
+sudo su - $__DEPLOYER_NAME__ << 'EOF'
   DEPLOYER_NAME=<%= @sun.deployer_name %>
   PLUGINS_PATH=/home/$DEPLOYER_NAME/.rbenv/plugins
   PROFILE=/home/$DEPLOYER_NAME/.bashrc

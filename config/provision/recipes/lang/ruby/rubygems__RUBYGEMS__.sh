@@ -1,8 +1,6 @@
-DEPLOYER_NAME=<%= @sun.deployer_name %>
-
 gem update --system
 
-sudo su - $DEPLOYER_NAME << 'EOF'
+sudo su - $__DEPLOYER_NAME__ << 'EOF'
   RUBY_VERSION=<%= @sun.rbenv_ruby %>
 
   <%= Sh.rbenv_export(@sun.deployer_name) %>

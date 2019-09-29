@@ -1,5 +1,3 @@
-PYTHON_VERSION=<%= @sun.python || '3.6' %>
-
 case "$OS" in
 ubuntu)
   sun.install "python-dev"
@@ -8,7 +6,8 @@ ubuntu)
   sun.install "python3-pip"
 ;;
 centos)
-  PYTHON_VERSION=$(echo $PYTHON_VERSION | tr -d '.')
+  __PYTHON__=${__PYTHON__:-3.6}
+  PYTHON_VERSION=$(echo $__PYTHON__ | tr -d '.')
   sun.install "python-devel"
   sun.install "python-pip"
   sun.install "python${PYTHON_VERSION}"
