@@ -1,12 +1,15 @@
-JAVA_VERSION=<%= @sun.java || '8' %>
+__JAVA__=${__JAVA__:-11}
 
 case "$OS" in
 ubuntu)
-  sun.install "openjdk-$JAVA_VERSION-jdk-headless"
+  sun.install "openjdk-$__JAVA__-jdk-headless"
 ;;
 centos)
-  sun.install "java-1.$JAVA_VERSION.0-openjdk"
-  sun.install "java-1.$JAVA_VERSION.0-openjdk-devel"
+  if sun.version_is_smaller "$__JAVA__" "11"; then
+    __JAVA__="1.$__JAVA__.0"
+  fi
+  sun.install "java-$__JAVA__-openjdk"
+  sun.install "java-$__JAVA__-openjdk-devel"
 ;;
 esac
 

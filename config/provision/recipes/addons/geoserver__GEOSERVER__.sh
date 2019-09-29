@@ -1,4 +1,4 @@
-__GEOSERVER__=${__GEOSERVER__:-2.15.0}
+__GEOSERVER__=${__GEOSERVER__:-2.16.0}
 
 wget -q "http://sourceforge.net/projects/geoserver/files/GeoServer/$__GEOSERVER__/geoserver-$__GEOSERVER__-bin.zip"
 unzip -q "geoserver-$__GEOSERVER__-bin.zip"
