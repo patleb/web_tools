@@ -15,4 +15,4 @@ centos)
 ;;
 esac
 
-sun.backup_compile '/etc/goaccess.conf'
+sun.backup_move '/etc/goaccess.conf'

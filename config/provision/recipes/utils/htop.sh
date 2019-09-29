@@ -1,9 +1,8 @@
-DEPLOYER_NAME=<%= @sun.deployer_name %>
-DEPLOYER_PATH=/home/$DEPLOYER_NAME
+DEPLOYER_PATH=/home/$__DEPLOYER_NAME__
 CONFIG_PATH="$DEPLOYER_PATH/.config/htop/htoprc"
 
 sun.install "htop"
-sudo su - $DEPLOYER_NAME << 'EOF'
+sudo su - $__DEPLOYER_NAME__ << 'EOF'
   bash --rcfile ~/.bashrc -ci 'htop > /dev/null 2>&1'
 EOF
 
