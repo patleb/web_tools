@@ -26,14 +26,17 @@ fi
 source /etc/os-release
 export TERM=linux
 
-export ROLE_START=$(sun.start_time)
-export REBOOT_FORCE=false
-
 <% @sun.attributes.each do |attribute, value| %>
   export __<%= attribute.upcase %>__=<%= value.respond_to?(:call) ? value.call : value %>
 <% end %>
+__ROLLBACK__=${__ROLLBACK__:-false}
+__SPECIALIZE__=${__SPECIALIZE__:-false}
+__DEBUG__=${__DEBUG__:-false}
+__REBOOT__=${__REBOOT__:-false}
 
 source sun.sh
+export ROLE_START=$(sun.start_time)
+export REBOOT_FORCE=false
 
 case "$OS" in
 ubuntu)
