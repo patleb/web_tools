@@ -4,7 +4,7 @@ ubuntu)
   sh -c "echo deb https://oss-binaries.phusionpassenger.com/apt/passenger $UBUNTU_CODENAME main > /etc/apt/sources.list.d/passenger.list"
   sun.update
 
-  sun.install "libnginx-mod-http-passenger"
+  sun.install "nginx-extras libnginx-mod-http-passenger"
 
   sun.backup_compare "/etc/nginx/sites-available/default"
   rm -f /etc/nginx/sites-enabled/default

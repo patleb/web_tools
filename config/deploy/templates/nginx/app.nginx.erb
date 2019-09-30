@@ -115,7 +115,7 @@ server {
     <% %w(assets packs).each do |root| %>
       location /<%= root %>/ {
         gzip_static on;
-        expires 1M;
+        expires max;
         add_header Cache-Control public;
         access_log    off;
         log_not_found off;
@@ -124,7 +124,7 @@ server {
 
     <% fetch(:nginx_public_dirs).each do |root| %>
       location /<%= root %>/ {
-        expires 1M;
+        expires max;
         add_header Cache-Control public;
         access_log    off;
         log_not_found off;
@@ -133,7 +133,7 @@ server {
 
     <% fetch(:nginx_public_files).each do |root| %>
       location /<%= root %> {
-        expires 1M;
+        expires max;
         add_header Cache-Control public;
         access_log    off;
         log_not_found off;

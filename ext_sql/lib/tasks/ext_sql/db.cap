@@ -1,6 +1,6 @@
 namespace :db do
   namespace :pg do
-    def psql(pg_command, sh_rest)
+    def psql(pg_command, sh_rest = nil)
       pg_command_end = ';' unless pg_command.strip.end_with? ';'
       test :sudo, %{-u postgres psql -d postgres -tAc "#{pg_command}#{pg_command_end}"}, sh_rest
     end
