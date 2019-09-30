@@ -5,7 +5,6 @@
   swap__SWAP_SIZE__
   nofile
   packages
-  #{'backports' if @sun.os.ubuntu?}
   #{'unattended_upgrade' if @sun.os.centos?}
   ssh
   firewall

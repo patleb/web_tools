@@ -1,1 +1,1 @@
-curl https://sh.rustup.rs -sSf | sudo sh -s -- -y
+curl https://sh.rustup.rs -sSf | sh -s -- -y

@@ -1,6 +1,6 @@
 case "$OS" in
 ubuntu)
-  sun.install "appstream/xenial-backports" # TODO bionic-backports
+  sun.install "appstream/$UBUNTU_CODENAME-backports"
   appstreamcli refresh --force
 ;;
 esac

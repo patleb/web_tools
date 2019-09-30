@@ -20,7 +20,7 @@ sun.move '/etc/fail2ban/jail.d/openvpn.conf'
 sun.install 'openvpn'
 sun.install 'easy-rsa'
 
-cp /usr/share/doc/openvpn/examples/sample-config-files/server.conf.gz $OPENVPN_DIR/ && sudo gzip -d $SERVER_CONF.gz
+cp /usr/share/doc/openvpn/examples/sample-config-files/server.conf.gz $OPENVPN_DIR/ && gzip -d $SERVER_CONF.gz
 cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf $CLIENT_CONF
 sun.backup_compile $SERVER_CONF
 sun.backup_compile $CLIENT_CONF

@@ -24,7 +24,7 @@ module Sh
   end
 
   def self.escape_newlines(path, **options)
-    gsub(path, /\r?\n/, "\\\\n", **options, commands: ':a;N;$!ba;')
+    gsub(path, /\r?\n/, "\\\\n", **options, ignore: true, commands: ':a;N;$!ba;')
   end
 
   %i(

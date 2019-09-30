@@ -2,7 +2,7 @@ DEPLOYER_PATH=/home/$__DEPLOYER_NAME__
 
 case "$OS" in
 ubuntu)
-  echo "$__DEPLOYER_NAME__:$__DEPLOYER_PASSWORD__" | sudo chpasswd
+  echo "$__DEPLOYER_NAME__:$__DEPLOYER_PASSWORD__" | chpasswd
 ;;
 centos)
   echo -e "$__DEPLOYER_PASSWORD__\n$__DEPLOYER_PASSWORD__" | sudo passwd $__DEPLOYER_NAME__

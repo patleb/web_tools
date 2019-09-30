@@ -11,7 +11,7 @@ ubuntu)
   PG_CONF_DIR="/etc/postgresql/$__POSTGRES__/main"
 
   sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
-  wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+  wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
   sun.update
 
   PG_VERSION="$(sun.current_version postgresql-$__POSTGRES__)"

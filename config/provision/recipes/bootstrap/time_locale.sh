@@ -16,5 +16,9 @@ esac
 
 sun.install "ntp"
 
-systemctl enable ntpd
-systemctl start ntpd
+if systemctl list-unit-files | grep enabled | grep -Fq systemd-timesyncd; then
+  systemctl disable systemd-timesyncd
+fi
+
+systemctl enable ntp
+systemctl start ntp

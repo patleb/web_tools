@@ -3,7 +3,7 @@ DEPLOYER_PATH=/home/$__DEPLOYER_NAME__
 case "$OS" in
 ubuntu)
   adduser $__DEPLOYER_NAME__ --gecos '' --disabled-password
-  echo "$__DEPLOYER_NAME__:$__DEPLOYER_PASSWORD__" | sudo chpasswd
+  echo "$__DEPLOYER_NAME__:$__DEPLOYER_PASSWORD__" | chpasswd
   adduser $__DEPLOYER_NAME__ sudo
 ;;
 centos)
