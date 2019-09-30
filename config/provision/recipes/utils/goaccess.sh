@@ -7,12 +7,14 @@ ubuntu)
   sun.install "libgeoip-dev"
   sun.install "libtokyocabinet-dev"
   sun.install "goaccess"
+
+  sun.backup_move '/etc/goaccess/goaccess.conf'
 ;;
 centos)
   sun.install "geoip-devel"
   sun.install "tokyocabinet-devel"
   sun.install "goaccess"
+
+  sun.backup_move '/etc/goaccess.conf'
 ;;
 esac
-
-sun.backup_move '/etc/goaccess.conf'

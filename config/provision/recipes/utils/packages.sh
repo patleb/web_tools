@@ -3,7 +3,8 @@
   iftop
   iotop
   iptraf
-  iputils
+  iputils-ping
+  iputils-tracepath
   jq
   nethogs
   ngrep
