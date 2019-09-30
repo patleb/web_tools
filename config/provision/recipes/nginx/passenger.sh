@@ -1,22 +1,20 @@
 case "$OS" in
 ubuntu)
-  NGINX_SERVICE_DIR='/etc/systemd/system/nginx.service.d'
-
   sun.mute "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7"
   sh -c "echo deb https://oss-binaries.phusionpassenger.com/apt/passenger $UBUNTU_CODENAME main > /etc/apt/sources.list.d/passenger.list"
   sun.update
 
-  sun.install "nginx-extras"
-  sun.install "passenger"
+  sun.install "libnginx-mod-http-passenger"
 
   sun.backup_compare "/etc/nginx/sites-available/default"
   rm -f /etc/nginx/sites-enabled/default
 
-  # https://stackoverflow.com/questions/42078674/nginx-service-failed-to-read-pid-from-file-run-nginx-pid-invalid-argument/42084804
-  mkdir -p $NGINX_SERVICE_DIR
-  sun.move "$NGINX_SERVICE_DIR/sleep.conf"
+  sun.backup_compare "/etc/nginx/conf.d/mod-http-passenger.conf"
+  rm -f /etc/nginx/conf.d/mod-http-passenger.conf
 
-  systemctl daemon-reload
+  if [ ! -f /etc/nginx/modules-enabled/50-mod-http-passenger.conf ]; then
+    ln -s /usr/share/nginx/modules-available/mod-http-passenger.load /etc/nginx/modules-enabled/50-mod-http-passenger.conf
+  fi
 ;;
 centos)
   curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
