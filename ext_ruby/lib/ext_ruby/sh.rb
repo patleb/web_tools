@@ -16,7 +16,7 @@ module Sh
   end
 
   def self.delete_line(path, value, **options)
-    sub(path, /\n#{sed_escape(value)}/, '', **options, commands: ':r;$!{N;br};')
+    sub(path, value, '', **options, ignore: true, commands: ':r;$!{N;br};')
   end
 
   def self.delete_lines(path, value, **options)
@@ -51,18 +51,29 @@ module Sh
 
   private_class_method
 
-  def self.sed_replace(path, old, new, **options)
+  def self.sed_replace(path, old, new, delimiter: '/', escape: true, ignore: false, **options)
     inline = 'i' if options[:inline]
     global = 'g' if options[:global]
-    sed = %{sed -r#{inline} -- '#{options[:commands]}s/#{sed_escape(old)}/#{sed_escape(new)}/#{global}' #{path}}
-    if options[:ignore]
+    quote = "'"
+    commands = options[:commands]
+    old_was = old
+    old = sed_escape(old)
+    new = sed_escape(new)
+    unless escape
+      quote = '"'
+      commands.gsub!('$', '\$')
+      old.gsub!('\\$', '$')
+      new.gsub!('\\$', '$')
+    end
+    sed = %{sed -r#{inline} -- #{[quote, commands, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
+    if ignore
       sed
     else
       <<~SH.squish
-        if grep -q '#{old}' "#{path}"; then
+        if grep -q '#{old_was}' "#{path}"; then
           #{sed};
         else
-          echo 'file "#{path}" does not include "#{old}"' && exit 1;
+          echo 'file "#{path}" does not include "#{old_was}"' && exit 1;
         fi
       SH
     end

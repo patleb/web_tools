@@ -24,6 +24,7 @@ namespace :load do
     set :rbenv_ruby,          -> { RUBY_VERSION }
     set :rbenv_prefix,        -> { "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec" }
 
+    set :passenger_roles,           -> { :web }
     set :passenger_restart_command, -> { 'rbenv sudo passenger-config restart-app' }
 
     append :sunzistrano_context, *%i(
