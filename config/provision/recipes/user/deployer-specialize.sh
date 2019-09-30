@@ -5,7 +5,7 @@ ubuntu)
   echo "$__DEPLOYER_NAME__:$__DEPLOYER_PASSWORD__" | chpasswd
 ;;
 centos)
-  echo -e "$__DEPLOYER_PASSWORD__\n$__DEPLOYER_PASSWORD__" | sudo passwd $__DEPLOYER_NAME__
+  echo -e "$__DEPLOYER_PASSWORD__\n$__DEPLOYER_PASSWORD__" | passwd $__DEPLOYER_NAME__
 ;;
 esac
 

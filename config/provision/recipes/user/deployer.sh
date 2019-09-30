@@ -8,7 +8,7 @@ ubuntu)
 ;;
 centos)
   adduser $__DEPLOYER_NAME__
-  echo -e "$__DEPLOYER_PASSWORD__\n$__DEPLOYER_PASSWORD__" | sudo passwd $__DEPLOYER_NAME__
+  echo -e "$__DEPLOYER_PASSWORD__\n$__DEPLOYER_PASSWORD__" | passwd $__DEPLOYER_NAME__
   gpasswd -a $__DEPLOYER_NAME__ wheel
 ;;
 esac
