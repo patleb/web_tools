@@ -1,5 +1,14 @@
 __GEOSERVER__=${__GEOSERVER__:-2.16.0}
 
+if [[ -d /opt/geoserver ]]; then
+  systemctl stop geoserver
+  systemctl disable geoserver
+  rm -rf /opt/geoserver
+  rm -f /etc/systemd/system/geoserver.service
+  sun.remove_defaults '/opt/geoserver/data_dir/logging.xml'
+  sun.remove_defaults '/opt/geoserver/webapps/geoserver/WEB-INF/web.xml'
+fi
+
 wget -q "http://sourceforge.net/projects/geoserver/files/GeoServer/$__GEOSERVER__/geoserver-$__GEOSERVER__-bin.zip"
 unzip -q "geoserver-$__GEOSERVER__-bin.zip"
 mv "geoserver-$__GEOSERVER__" /opt/geoserver

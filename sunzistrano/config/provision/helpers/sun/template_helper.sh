@@ -59,6 +59,11 @@ sun.backup_defaults() {
   fi
 }
 
+sun.remove_defaults() {
+  local bkp="$(sun.defaults_path $1)"
+  rm -f $bkp
+}
+
 # bundle exec sun download vagrant system <path> --dev --saved
 sun.compare_defaults() {
   local bkp="$(sun.defaults_path $1)"
