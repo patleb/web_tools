@@ -16,7 +16,7 @@ module Sh
   end
 
   def self.delete_line(path, value, **options)
-    sub(path, value, '', **options, ignore: true, commands: ':r;$!{N;br};')
+    sub(path, value, '', **options, ignore: true, no_newline: true, commands: ':r;$!{N;br};')
   end
 
   def self.delete_lines(path, value, **options)
@@ -51,19 +51,24 @@ module Sh
 
   private_class_method
 
-  def self.sed_replace(path, old, new, delimiter: '/', escape: true, ignore: false, **options)
+  def self.sed_replace(path, old, new, delimiter: '/', escape: true, ignore: nil, no_newline: nil, commands: nil, **options)
     inline = 'i' if options[:inline]
     global = 'g' if options[:global]
     quote = "'"
-    commands = options[:commands]
     old_was = old
     old = sed_escape(old)
     new = sed_escape(new)
     unless escape
       quote = '"'
-      commands.gsub!('$', '\$')
+      commands&.gsub!('$', '\$')
       old.gsub!('\\$', '$')
       new.gsub!('\\$', '$')
+    end
+    case no_newline
+    when :begin, true
+      old = "\\n[^\\n]*#{old}"
+    when :end
+      old = "#{old}[^\\n]*\\n"
     end
     sed = %{sed -r#{inline} -- #{[quote, commands, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
     if ignore
