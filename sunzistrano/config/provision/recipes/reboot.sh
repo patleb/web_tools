@@ -7,7 +7,7 @@ if [[ ! $(grep -Fx "$REBOOT_LINE" "$HOME/$__MANIFEST_LOG__") ]]; then
   sun.done "reboot"
 fi
 
-if [[ "$__STAGE__" != 'vagrant' ]]
+if [[ "$__STAGE__" != 'vagrant' ]]; then
   case "$OS" in
   ubuntu)
     echo 'Running "unattended-upgrade"'
