@@ -1,5 +1,5 @@
-DEPLOYER_NAME=<%= @sun.deployer_name %>
-GO_VERSION=<%= @sun.go || '1.11.4' %>
+DEPLOYER_NAME=<%= sun.deployer_name %>
+GO_VERSION=<%= sun.go || '1.11.4' %>
 PROFILE=/home/$DEPLOYER_NAME/.bashrc
 
 wget -c https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz

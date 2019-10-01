@@ -1,4 +1,4 @@
-<% if @sun.os.ubuntu? -%>
+<% if sun.os.ubuntu? -%>
 #	$OpenBSD: sshd_config,v 1.101 2017/03/14 07:19:07 djm Exp $
 
 # This is the sshd server system-wide configuration file.  See
@@ -121,7 +121,7 @@ Subsystem	sftp	/usr/lib/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
-<% if @sun.env.vagrant? -%>
+<% if sun.env.vagrant? -%>
 UseDNS no
 GSSAPIAuthentication no
 <% end -%>
@@ -190,7 +190,7 @@ AuthorizedKeysFile	.ssh/authorized_keys
 # To disable tunneled clear text passwords, change to no here!
 #PasswordAuthentication yes
 #PermitEmptyPasswords no
-<% if @sun.env.vagrant? -%>
+<% if sun.env.vagrant? -%>
 PasswordAuthentication yes
 <% else -%>
 PasswordAuthentication no
@@ -208,7 +208,7 @@ ChallengeResponseAuthentication no
 #KerberosUseKuserok yes
 
 # GSSAPI options
-<% if @sun.env.vagrant? -%>
+<% if sun.env.vagrant? -%>
 GSSAPIAuthentication no
 <% else -%>
 GSSAPIAuthentication yes
@@ -273,7 +273,7 @@ Subsystem	sftp	/usr/libexec/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
-<% if @sun.env.vagrant? -%>
+<% if sun.env.vagrant? -%>
 UseDNS no
 <% end -%>
 <% end -%>

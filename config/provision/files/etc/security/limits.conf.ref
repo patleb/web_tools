@@ -1,4 +1,4 @@
-<% if @sun.os.ubuntu? -%>
+<% if sun.os.ubuntu? -%>
 # /etc/security/limits.conf
 #
 #Each line describes a limit for a user in the form:

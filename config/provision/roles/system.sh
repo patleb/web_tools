@@ -1,4 +1,4 @@
-<% @sun.role_recipes(*%W(
+<% sun.role_recipes(*%W(
   bootstrap/all
   user/deployer
   db/postgres__POSTGRES__
@@ -6,8 +6,8 @@
   nginx/passenger
   nginx/htpasswd
   nginx/logrotate
-  #{'ssl/ca' unless @sun.nginx_skip_ssl}
-  #{'ssl/self_signed' unless @sun.nginx_skip_ssl}
+  #{'ssl/ca' unless sun.nginx_skip_ssl}
+  #{'ssl/self_signed' unless sun.nginx_skip_ssl}
   lang/ruby/system__RUBY__
   lang/nodejs/system__NODEJS__
   lang/rust/system__RUST__

@@ -4,9 +4,9 @@ CRT="/etc/nginx/ssl/$__NGINX_DOMAIN__.ca.crt"
 mkdir -p /etc/nginx/ssl
 chmod 700 /etc/nginx/ssl
 
-<% if @sun.ssl_ca_key.present? %>
-  echo -e "<%= @sun.ssl_ca_key.escape_newlines %>" > $KEY
-  echo -e "<%= @sun.ssl_ca_crt.escape_newlines %>" > $CRT
+<% if sun.ssl_ca_key.present? %>
+  echo -e "<%= sun.ssl_ca_key.escape_newlines %>" > $KEY
+  echo -e "<%= sun.ssl_ca_crt.escape_newlines %>" > $CRT
 <% else %>
   openssl req \
     -new \

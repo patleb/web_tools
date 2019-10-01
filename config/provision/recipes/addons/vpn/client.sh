@@ -1,7 +1,7 @@
 sun.install 'openvpn'
 
-<% if @sun.vpn_client_ovpn %>
-  echo -e "<%= @sun.vpn_client_ovpn.escape_newlines %>" > /etc/openvpn/<%= @sun.vpn_client_name || "client_#{@sun.stage}" %>.conf
+<% if sun.vpn_client_ovpn %>
+  echo -e "<%= sun.vpn_client_ovpn.escape_newlines %>" > /etc/openvpn/<%= sun.vpn_client_name || "client_#{sun.env}" %>.conf
 <% else %>
   echo 'client.ovpn not available'
   exit 1
@@ -10,5 +10,5 @@ sun.install 'openvpn'
 <%= Sh.sub! '/etc/default/openvpn', '#AUTOSTART="none"', 'AUTOSTART="none"' %>
 
 systemctl daemon-reload
-systemctl stop openvpn@<%= @sun.vpn_client_name || "client_#{@sun.stage}" %>
+systemctl stop openvpn@<%= sun.vpn_client_name || "client_#{sun.env}" %>
 systemctl restart openvpn

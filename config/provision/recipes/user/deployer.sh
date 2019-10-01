@@ -15,7 +15,7 @@ esac
 
 mkdir $DEPLOYER_PATH/.ssh
 chmod 700 $DEPLOYER_PATH/.ssh
-<%= Sh.build_authorized_keys(@sun.deployer_name) %>
+<%= Sh.build_authorized_keys(sun.deployer_name) %>
 chmod 600 $DEPLOYER_PATH/.ssh/authorized_keys
 chown -R $__DEPLOYER_NAME__:$__DEPLOYER_NAME__ $DEPLOYER_PATH
 

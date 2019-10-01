@@ -61,15 +61,15 @@ export KEY_EXPIRE=7000
 # These are the default values for fields
 # which will be placed in the certificate.
 # Don't leave any of these fields blank.
-export KEY_COUNTRY="<%= @sun.vpn_country || 'CA' %>"
-export KEY_PROVINCE="<%= @sun.vpn_state || 'QC' %>"
-export KEY_CITY="<%= @sun.vpn_city || 'Quebec' %>"
-export KEY_ORG="<%= @sun.vpn_org || 'self-signed' %>"
-export KEY_EMAIL="<%= @sun.vpn_email || 'patleb@users.noreply.github.com' %>"
+export KEY_COUNTRY="<%= sun.vpn_country || 'CA' %>"
+export KEY_PROVINCE="<%= sun.vpn_state || 'QC' %>"
+export KEY_CITY="<%= sun.vpn_city || 'Quebec' %>"
+export KEY_ORG="<%= sun.vpn_org || 'self-signed' %>"
+export KEY_EMAIL="<%= sun.vpn_email || 'patleb@users.noreply.github.com' %>"
 export KEY_OU="internal"
 
 # X509 Subject Field
-export KEY_NAME="<%= @sun.vpn_name || 'server' %>"
+export KEY_NAME="<%= sun.vpn_name || 'server' %>"
 
 # PKCS11 Smart Card
 # export PKCS11_MODULE_PATH="/usr/lib/changeme.so"

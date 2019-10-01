@@ -26,7 +26,7 @@ fi
 source /etc/os-release
 export TERM=linux
 
-<% @sun.attributes.each do |attribute, value| %>
+<% sun.attributes.each do |attribute, value| %>
   export __<%= attribute.upcase %>__=<%= value.respond_to?(:call) ? value.call : value %>
 <% end %>
 __ROLLBACK__=${__ROLLBACK__:-false}

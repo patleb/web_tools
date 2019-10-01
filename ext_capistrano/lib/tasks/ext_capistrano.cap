@@ -10,13 +10,13 @@ namespace :load do
     set :os_version,          -> { cap.os.centos? ? '7' : '16.04' } # TODO
     set :format,              -> { :airbrussh }
     set :format_options,      -> { { truncate: false } }
-    set :admin_name,          -> { cap.env.vagrant? ? 'vagrant' : fetch(:os_name) }
+    set :admin_name,          -> { cap.env.vagrant? ? 'vagrant' : cap.os }
     set :deployer_name,       -> { 'deployer' }
-    set :deploy_dir,          -> { "#{fetch(:application)}_#{fetch(:stage)}" }
+    set :deploy_dir,          -> { "#{cap.app}_#{cap.env}" }
     set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
 
     # TODO remove capability to deploy from another root directory --> it makes Gemfile sync to complicated
-    set :root,                -> { ENV['RAILS_ROOT'] || '' } # -> { "../#{fetch(:application)}" }
+    set :root,                -> { ENV['RAILS_ROOT'] || '' } # -> { "../#{cap.app}" }
 
     set :pty,                 -> { true }
 

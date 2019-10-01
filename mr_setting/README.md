@@ -47,7 +47,7 @@ you must specify the environment either by passing it as `env` parameter to `loa
 ```ruby
 require 'mr_setting'
 
-settings = Setting.load(env: fetch(:stage))
+settings = Setting.load(env: cap.env)
 
 settings['name]      # => 'value'
 

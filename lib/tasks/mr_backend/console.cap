@@ -5,7 +5,7 @@ namespace :console do
   task :start, [:my_ip] do |t, args|
     on release_roles :all do
       within current_path do
-        with rails_env: fetch(:stage) do
+        with rails_env: cap.env do
           if (my_ip = args[:my_ip].presence || open('http://whatismyip.akamai.com').read).blank?
             error "cannot start console with empty ip"
             exit 1
@@ -23,7 +23,7 @@ namespace :console do
   task :stop do
     on release_roles :all do
       within current_path do
-        with rails_env: fetch(:stage) do
+        with rails_env: cap.env do
           execute :rm, '-f', 'tmp/console.txt'
           invoke 'nginx:app:push'
           invoke 'nginx:reload'

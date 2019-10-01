@@ -143,7 +143,7 @@ set mailserver <%= Setting[:mail_address] %> port <%= Setting[:mail_port] %>
 #
 set mail-format {
   from:    <%= Setting[:mail_from] %>
-  subject: [<%= fetch(:application).camelize %> <%= fetch(:stage).upcase %>] Monit: $SERVICE - $EVENT
+  subject: [<%= cap.app.camelize %> <%= cap.env.upcase %>] Monit: $SERVICE - $EVENT
   message: [$SERVICE] Service $EVENT
     Date:         $DATE
     Action:       $ACTION

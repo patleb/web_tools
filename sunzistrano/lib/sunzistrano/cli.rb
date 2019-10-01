@@ -55,12 +55,12 @@ module Sunzistrano
 
       def do_download(stage, role)
         load_config(stage, role)
-        path = @sun.path
+        path = sun.path
         ref = Pathname.new(Dir.pwd).expand_path
         ref = ref.join('config', 'provision', 'files', "#{path.delete_prefix('/')}.ref")
         FileUtils.mkdir_p File.dirname(ref)
-        if @sun.saved
-          path = "/home/#{@sun.username}/#{@sun.DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
+        if sun.saved
+          path = "/home/#{sun.username}/#{sun.DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
         end
         unless system download_cmd(path, ref)
           puts "Cannot transfer [#{path}] to [#{ref}]".color(:red).bright
@@ -74,7 +74,7 @@ module Sunzistrano
 
       def copy_remote_files
         %w(files helpers recipes roles).each do |type|
-          (@sun["remote_#{type}"] || []).each do |file|
+          (sun["remote_#{type}"] || []).each do |file|
             get_remote_file(file, type)
           end
         end
@@ -84,8 +84,8 @@ module Sunzistrano
         basenames = "config/provision/{files,helpers,recipes,roles}/**/*"
 
         dirnames = [basenames]
-        dirnames << @sun.local_dir.join(basenames).to_s if @sun.local_dir
-        (@sun.gems || []).each do |name|
+        dirnames << sun.local_dir.join(basenames).to_s if sun.local_dir
+        (sun.gems || []).each do |name|
           next unless (root = Gem.root(name))
           require "#{name}/sunzistrano" rescue nil
           dirnames << root.expand_path.join(basenames).to_s
@@ -101,7 +101,7 @@ module Sunzistrano
           compile_file File.expand_path(file), expand_path(:provision, file)
         end
 
-        (@sun.local_files || []).each do |file|
+        (sun.local_files || []).each do |file|
           compile_file File.expand_path(file), expand_path(:provision, "files/local/#{File.basename(file)}")
         end
       end
@@ -114,7 +114,7 @@ module Sunzistrano
         end
         content = around[:before]
         content << "\n"
-        content << File.binread(expand_path(:provision, "roles/#{@sun.role}.sh"))
+        content << File.binread(expand_path(:provision, "roles/#{sun.role}.sh"))
         content << "\n"
         content << around[:after]
         create_file expand_path(:provision, "role.sh"), content, force: true
@@ -140,8 +140,8 @@ module Sunzistrano
       end
 
       def validate_version!
-        unless @sun.lock.nil? || @sun.lock == Sunzistrano::VERSION
-          abort "Sunzistrano version [#{Sunzistrano::VERSION}] is different from locked version [#{@sun.lock}]"
+        unless sun.lock.nil? || sun.lock == Sunzistrano::VERSION
+          abort "Sunzistrano version [#{Sunzistrano::VERSION}] is different from locked version [#{sun.lock}]"
         end
       end
 
@@ -156,7 +156,7 @@ module Sunzistrano
       end
 
       def send_commands(commands)
-        `ssh-keygen -R #{@sun.server} 2> /dev/null`
+        `ssh-keygen -R #{sun.server} 2> /dev/null`
 
         Open3.popen3(commands) do |stdin, stdout, stderr|
           stdin.close
@@ -174,21 +174,21 @@ module Sunzistrano
 
       def provision_cmd
         <<~CMD
-          #{ssh_add_cmd} cd .provision && tar cz . | #{"sshpass -p #{@sun.password}" if @sun.password} ssh \
+          #{ssh_add_cmd} cd .provision && tar cz . | #{"sshpass -p #{sun.password}" if sun.password} ssh \
           -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
-          #{@sun.username}@#{@sun.server} \
-          #{"-p #{@sun.port}" if @sun.port} \
-          '#{provision_remote_cmd} '#{'&& (cd .. && rm -rf .provision) || (cd .. && rm -rf .provision)' unless @sun.debug}
+          #{sun.username}@#{sun.server} \
+          #{"-p #{sun.port}" if sun.port} \
+          '#{provision_remote_cmd} '#{'&& (cd .. && rm -rf .provision) || (cd .. && rm -rf .provision)' unless sun.debug}
         CMD
       end
 
       def provision_remote_cmd
         <<~CMD
-          rm -rf ~/#{@sun.PROVISION_DIR} &&
-          mkdir ~/#{@sun.PROVISION_DIR} &&
-          cd ~/#{@sun.PROVISION_DIR} &&
+          rm -rf ~/#{sun.PROVISION_DIR} &&
+          mkdir ~/#{sun.PROVISION_DIR} &&
+          cd ~/#{sun.PROVISION_DIR} &&
           tar xz &&
-          #{'sudo' if @sun.sudo} bash role.sh |& tee -a ~/#{@sun.PROVISION_LOG}
+          #{'sudo' if sun.sudo} bash role.sh |& tee -a ~/#{sun.PROVISION_LOG}
         CMD
       end
 
@@ -196,24 +196,24 @@ module Sunzistrano
         <<~CMD
           #{ssh_add_cmd} rsync --rsync-path='sudo rsync' -azvh -e "ssh \
           -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
-          #{"-p #{@sun.port}" if @sun.port}" \
-          #{@sun.username}@#{@sun.server}:#{path} #{ref}
+          #{"-p #{sun.port}" if sun.port}" \
+          #{sun.username}@#{sun.server}:#{path} #{ref}
         CMD
       end
 
       def ssh_add_cmd
-        <<~CMD if @sun.pkey.present?
+        <<~CMD if sun.pkey.present?
           if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then \
             eval $(ssh-agent); \
           fi \
-          && ssh-add #{@sun.pkey} 2> /dev/null &&
+          && ssh-add #{sun.pkey} 2> /dev/null &&
         CMD
       end
 
       def provision?(file, others)
         File.file?(file) &&
           !file[/\.keep$/] &&
-          !file[/\/roles\/(?!(#{@sun.role}|hook_\w+)\.sh)/] &&
+          !file[/\/roles\/(?!(#{sun.role}|hook_\w+)\.sh)/] &&
           others.none?{ |f| file.end_with? basename(f) }
       end
 

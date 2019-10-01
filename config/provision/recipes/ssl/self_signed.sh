@@ -1,9 +1,9 @@
 KEY="/etc/nginx/ssl/$__NGINX_DOMAIN__.server.key"
 CRT="/etc/nginx/ssl/$__NGINX_DOMAIN__.server.crt"
 
-<% if @sun.ssl_server_key.present? %>
-  echo -e '<%= @sun.ssl_server_key.escape_newlines %>' > $KEY
-  echo -e '<%= @sun.ssl_server_crt.escape_newlines %>' > $CRT
+<% if sun.ssl_server_key.present? %>
+  echo -e '<%= sun.ssl_server_key.escape_newlines %>' > $KEY
+  echo -e '<%= sun.ssl_server_crt.escape_newlines %>' > $CRT
 <% else %>
   # New server key and certificate request
   openssl req \

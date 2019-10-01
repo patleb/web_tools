@@ -1,11 +1,11 @@
-<% @sun.list_recipes(%W(
+<% sun.list_recipes(%W(
   upgrade__UPGRADE__
   time_locale
   mount
   swap__SWAP_SIZE__
   nofile
   packages
-  #{'unattended_upgrade' if @sun.os.centos?}
+  #{'unattended_upgrade' if sun.os.centos?}
   ssh
   firewall
   firewall/deny_mail

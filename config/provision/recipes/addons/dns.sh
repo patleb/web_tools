@@ -3,7 +3,7 @@
 
 DNSMASQ_SERVICE_DIR='/etc/systemd/system/dnsmasq.service.d'
 export INTERFACE=$(sun.default_interface)
-export SERVER_NAME=<%= @sun.server %>
+export SERVER_NAME=<%= sun.server %>
 
 sun.install 'dnsmasq'
 
@@ -13,7 +13,7 @@ sun.backup_move '/etc/dhcp/dhclient.conf'
 
 # no sun.compare_defaults since there are some static IPs
 sun.backup_defaults '/etc/hosts'
-<%= Sh.build_hosts(@sun.admin_name, @sun.server) %>
+<%= Sh.build_hosts(sun.admin_name, sun.server) %>
 
 ufw allow domain
 ufw reload

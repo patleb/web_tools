@@ -1,9 +1,9 @@
 gem update --system
 
 sudo su - $__DEPLOYER_NAME__ << 'EOF'
-  RUBY_VERSION=<%= @sun.rbenv_ruby %>
+  RUBY_VERSION=<%= sun.rbenv_ruby %>
 
-  <%= Sh.rbenv_export(@sun.deployer_name) %>
+  <%= Sh.rbenv_export(sun.deployer_name) %>
   <%= Sh.rbenv_init %>
 
   declare -a ruby_versions=$(rbenv versions | cut -d ' ' -f 2-3 | sed -r 's/([ \(]|set|system)//g' | sed '/^\s*$/d')

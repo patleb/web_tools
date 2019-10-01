@@ -14,11 +14,11 @@ namespace :secrets do
   task :push do
     on release_roles fetch(:bundle_roles) do
       yml = YAML.safe_load(ERB.new(Pathname.new(fetch(:root)).join('config', 'secrets.yml').read).result)
-      secrets = (yml['shared'] || {}).merge!(yml[fetch(:stage).to_s] || {})
+      secrets = (yml['shared'] || {}).merge!(yml[cap.env] || {})
       fetch(:secrets_excluded).each do |name|
         secrets.delete name
       end
-      yml = StringIO.new({ fetch(:stage).to_s => secrets }.to_yaml.sub(/^---\n/, ''))
+      yml = StringIO.new({ cap.env => secrets }.to_yaml.sub(/^---\n/, ''))
       upload! yml, "#{shared_path.join('config', 'secrets.yml')}"
     end
   end

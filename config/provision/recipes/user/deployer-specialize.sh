@@ -9,7 +9,7 @@ centos)
 ;;
 esac
 
-<%= Sh.build_authorized_keys(@sun.deployer_name) %>
+<%= Sh.build_authorized_keys(sun.deployer_name) %>
 chmod 600 $DEPLOYER_PATH/.ssh/authorized_keys
 
 echo -e "$__ADMIN_PRIVATE_KEY__" > "$DEPLOYER_PATH/.ssh/id_rsa"

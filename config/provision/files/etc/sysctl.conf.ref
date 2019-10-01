@@ -1,4 +1,4 @@
-<% if @sun.os.ubuntu? -%>
+<% if sun.os.ubuntu? -%>
 #
 # /etc/sysctl.conf - Configuration file for setting system variables
 # See /etc/sysctl.d/ for additional system variables.

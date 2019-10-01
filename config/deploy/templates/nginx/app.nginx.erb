@@ -31,7 +31,7 @@ server {
     root <%= fetch(:deploy_to) %>/current/public;
 
     passenger_enabled on;
-    passenger_app_env <%= fetch(:stage) %>;
+    passenger_app_env <%= cap.env %>;
     passenger_env_var RAKE_OUTPUT true;
     <% if ENV['DEVELOPMENT'].to_b %>
       passenger_env_var DEVELOPMENT true;
@@ -44,7 +44,7 @@ server {
     #
     # location @passenger {
     #   passenger_enabled on;
-    #   passenger_app_env <%= fetch(:stage) %>;
+    #   passenger_app_env <%= cap.env %>;
     #   limit_req zone=per_ip burst=8 nodelay;
     #   limit_req zone=per_server burst=20 nodelay;
     # }

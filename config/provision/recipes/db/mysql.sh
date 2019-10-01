@@ -1,7 +1,7 @@
-DB_NAME=<%= @sun.db_database %>
-DB_USER=<%= @sun.db_username %>
-DB_PWD=<%= @sun.db_password %>
-DB_ROOT_PWD=<%= @sun.mysql_root_password %>
+DB_NAME=<%= sun.db_database %>
+DB_USER=<%= sun.db_username %>
+DB_PWD=<%= sun.db_password %>
+DB_ROOT_PWD=<%= sun.mysql_root_password %>
 
 sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password $DB_ROOT_PWD"
 sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $DB_ROOT_PWD"

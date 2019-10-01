@@ -457,7 +457,7 @@ log_line_prefix = '%m [%p] %q%u@%d '			# special values:
 #log_temp_files = -1			# log temporary files equal or larger
 					# than the specified size in kilobytes;
 					# -1 disables, 0 logs all temp files
-<% if @sun.timezone.nil? || @sun.timezone == 'Etc/UTC' -%>
+<% if sun.timezone.nil? || sun.timezone == 'Etc/UTC' -%>
 log_timezone = 'UTC'
 <% else -%>
 log_timezone = 'localtime'
@@ -557,7 +557,7 @@ stats_temp_directory = '/var/run/postgresql/9.6-main.pg_stat_tmp'
 
 datestyle = 'iso, mdy'
 #intervalstyle = 'postgres'
-<% if @sun.timezone.nil? || @sun.timezone == 'Etc/UTC' -%>
+<% if sun.timezone.nil? || sun.timezone == 'Etc/UTC' -%>
 timezone = 'UTC'
 <% else -%>
 timezone = 'localtime'

@@ -1,4 +1,4 @@
-<% @sun.list_recipes(%W(
+<% sun.list_recipes(%W(
   engine__DOCKER__
   compose__DOCKER_COMPOSE__
   logrotate

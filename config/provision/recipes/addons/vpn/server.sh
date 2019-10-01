@@ -1,4 +1,4 @@
-export VPN_DOMAIN=<%= @sun.vpn_domain %>
+export VPN_DOMAIN=<%= sun.vpn_domain %>
 export INTERFACE=$(sun.default_interface)
 export INTERNAL_IP=$(sun.internal_ip)
 export LOCAL_NETWORK="$(sun.network $INTERNAL_IP 24) $(sun.netmask 24)"
@@ -34,7 +34,7 @@ chmod 700 $CLIENTS_KEYS
 cd $CA_DIR && source $CA_VARS
 ./clean-all
 
-<% unless @sun.vpn_client_ovpn %>
+<% unless sun.vpn_client_ovpn %>
   yes '' | ./build-ca
   ./build-key-server server <<EOF
 
@@ -56,14 +56,14 @@ EOF
   cd $CA_KEYS_DIR
   cp ca.crt ca.key server.crt server.key ta.key dh2048.pem $OPENVPN_DIR
 
-  <%= Sh.create_client_ovpn(name: @sun.vpn_client_name || "client_#{@sun.stage}", linux: true, print: true) %>
+  <%= Sh.create_client_ovpn(name: sun.vpn_client_name || "client_#{sun.env}", linux: true, print: true) %>
 <% end %>
 
 ufw allow openvpn
 ufw reload
 
 systemctl enable openvpn@server
-<% if @sun.vpn_client_ovpn %>
+<% if sun.vpn_client_ovpn %>
   touch /var/log/openvpn.log
 <% else %>
   systemctl start openvpn@server

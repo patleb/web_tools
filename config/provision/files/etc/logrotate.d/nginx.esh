@@ -1,4 +1,4 @@
-<% if @sun.os.ubuntu? -%>
+<% if sun.os.ubuntu? -%>
 /var/log/nginx/*.log {
   weekly
   missingok
