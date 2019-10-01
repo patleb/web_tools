@@ -34,8 +34,6 @@ namespace :deploy do
     nginx:push
     pgrest:push
     deploy:app:push
-    monit:push
-    monit:restart
   )
 
   namespace :app do

@@ -98,7 +98,6 @@ namespace :nginx do
       desc "Push 503.html template"
       task :push do
         on release_roles :all do
-          # TODO add custom message
           invoke! 'template:push', '503.html', shared_path.join('public', '503.html')
         end
       end
