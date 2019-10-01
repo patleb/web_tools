@@ -34,6 +34,11 @@ __SPECIALIZE__=${__SPECIALIZE__:-false}
 __DEBUG__=${__DEBUG__:-false}
 __REBOOT__=${__REBOOT__:-false}
 
+if [[ "$OS" != "$__LINUX_OS__" ]]; then
+  echo "'$OS' != '$__LINUX_OS__'"
+  exit 1
+fi
+
 source sun.sh
 export ROLE_START=$(sun.start_time)
 export REBOOT_FORCE=false

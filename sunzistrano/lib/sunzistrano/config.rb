@@ -50,14 +50,15 @@ module Sunzistrano
 
     def attributes
       to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
-         username: username,
-         admin_public_key: ->{ admin_public_key },
-         admin_private_key: ->{ admin_private_key.escape_newlines },
-         provision_log: PROVISION_LOG,
-         provision_dir: PROVISION_DIR,
-         manifest_log: MANIFEST_LOG,
-         manifest_dir: MANIFEST_DIR,
-         defaults_dir: DEFAULTS_DIR,
+        linux_os: os,
+        username: username,
+        admin_public_key: ->{ admin_public_key },
+        admin_private_key: ->{ admin_private_key.escape_newlines },
+        provision_log: PROVISION_LOG,
+        provision_dir: PROVISION_DIR,
+        manifest_log: MANIFEST_LOG,
+        manifest_dir: MANIFEST_DIR,
+        defaults_dir: DEFAULTS_DIR,
       )
     end
 

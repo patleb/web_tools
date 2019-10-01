@@ -87,5 +87,16 @@ sun.defaults_path() {
 }
 
 sun.template_path() {
-  echo "$(sun.provision_path)/files/$(echo "$1" | sed 's|^/||')"
+  local base="$(sun.provision_path)/files/$(echo "$1" | sed 's|^/||')"
+  local type="$base.$__LINUX_OS__"
+  if [[ -e "$type" ]] || [[ -e "$type.esh" ]] || [[ -e "$type.ref" ]]; then
+    echo "$type"
+    return
+  fi
+  type="$base.$__STAGE__"
+  if [[ -e "$type" ]] || [[ -e "$type.esh" ]] || [[ -e "$type.ref" ]]; then
+    echo "$type"
+    return
+  fi
+  echo $base
 }
