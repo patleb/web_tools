@@ -32,6 +32,7 @@ namespace :deploy do
   task push: %i(
     dns:set_localhost
     nginx:push
+    pgrest:push
     deploy:app:push
     monit:push
     monit:restart
@@ -51,7 +52,6 @@ namespace :deploy do
       db:pg:create_user
       db:pg:create_database
       db:pg:set_superuser
-      pgrest:push
       deploy
       whenever:create_cron_log
     )

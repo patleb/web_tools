@@ -1,15 +1,26 @@
 namespace :pgrest do
   desc 'Export PostgREST configuration file'
   task :push do
+    # TODO scope with :deploy_dir
     on release_roles fetch(:pgrest_roles) do
       invoke! 'template:push', 'pgrest', '/opt/pgrest/config'
       execute :sudo, 'chown root:root /opt/pgrest/config'
       execute :sudo, 'chmod 0700 /opt/pgrest/config'
-      invoke 'pgrest:restart'
     end
   end
 
-  %w[start stop restart reload].each do |action|
+  desc "Reload PostgREST"
+  task :reload do
+    on release_roles fetch(:pgrest_roles) do
+      unless test :sudo, "systemctl reload pgrest"
+        error "Could not reload PostgREST API, trying restart."
+        invoke 'pgrest:restart'
+      end
+    end
+  end
+  after 'deploy:publishing', 'pgrest:reload'
+
+  %w[start stop restart].each do |action|
     desc "#{action.capitalize} PostgREST"
     task action do
       on release_roles fetch(:pgrest_roles) do
@@ -17,5 +28,4 @@ namespace :pgrest do
       end
     end
   end
-  after 'deploy:publishing', 'pgrest:reload'
 end
