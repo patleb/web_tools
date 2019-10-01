@@ -124,7 +124,7 @@ set mailserver <%= Setting[:mail_address] %> port <%= Setting[:mail_port] %>
 ## statement is missing::
 ## --8<--
 ## set mail-format {
-##   from:    Monit <monit@$HOST>
+##   from:    Monit 'monit@$HOST'
 ##   subject: monit alert --  $EVENT $SERVICE
 ##   message: $EVENT Service $SERVICE
 ##                 Date:        $DATE
