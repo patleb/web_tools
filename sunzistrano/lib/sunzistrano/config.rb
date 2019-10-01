@@ -48,6 +48,7 @@ module Sunzistrano
       super(settings)
     end
 
+    # TODO add :os_version
     def attributes
       to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
         linux_os: os,
