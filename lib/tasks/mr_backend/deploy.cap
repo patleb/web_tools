@@ -50,8 +50,8 @@ namespace :deploy do
       db:pg:create_user
       db:pg:create_database
       db:pg:set_superuser
-      deploy
       whenever:create_cron_log
+      deploy
     )
   end
 end
