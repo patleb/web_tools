@@ -93,7 +93,7 @@ class Setting
     elsif ENV['RAILS_ENV']
       ENV['RAILS_ENV']
     elsif defined? Rails
-      Rails.env
+      Rails.env.to_s
     else
       nil
     end
@@ -105,7 +105,7 @@ class Setting
     elsif ENV['RAILS_APP']
       ENV['RAILS_APP']
     elsif defined? Rails
-      Rails.app
+      Rails.app.to_s
     else
       nil
     end
