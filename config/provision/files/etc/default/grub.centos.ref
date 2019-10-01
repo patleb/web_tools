@@ -1,7 +1,13 @@
-GRUB_TIMEOUT=5
+GRUB_TIMEOUT=<%= sun.env.vagrant? ? 5 : 1 %>
 GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
 GRUB_DEFAULT=saved
 GRUB_DISABLE_SUBMENU=true
+<% if sun.env.vagrant? %>
 GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 crashkernel=auto rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet"
+<% else -%>
+GRUB_TERMINAL="serial console"
+GRUB_SERIAL_COMMAND="serial --speed=115200"
+GRUB_CMDLINE_LINUX="console=tty0 crashkernel=auto console=ttyS0,115200"
+<% end -%>
 GRUB_DISABLE_RECOVERY="true"
