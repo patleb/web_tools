@@ -16,7 +16,7 @@ mv postgrest /opt/pgrest/bin
 
 sun.move '/etc/systemd/system/pgrest.service'
 
-if [[ "$__STAGE__" == 'vagrant' ]]; then
+if [[ "$__ENV__" == 'vagrant' ]]; then
   ufw allow 4000/tcp
   ufw reload
 fi

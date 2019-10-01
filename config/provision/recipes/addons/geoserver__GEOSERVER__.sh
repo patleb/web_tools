@@ -18,7 +18,7 @@ sun.move '/etc/systemd/system/geoserver.service'
 
 # https://www.google.ca/search?q=geoserver+behind+nginx&oq=geoserver+behind+nginx
 # proxy through Nginx
-if [[ "$__STAGE__" == 'vagrant' ]]; then
+if [[ "$__ENV__" == 'vagrant' ]]; then
   ufw allow 8080/tcp
   ufw reload
 fi

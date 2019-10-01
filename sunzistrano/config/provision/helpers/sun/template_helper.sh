@@ -93,7 +93,7 @@ sun.template_path() {
     echo "$type"
     return
   fi
-  type="$base.$__STAGE__"
+  type="$base.$__ENV__"
   if [[ -e "$type" ]] || [[ -e "$type.esh" ]] || [[ -e "$type.ref" ]]; then
     echo "$type"
     return
