@@ -1,6 +1,6 @@
 case "$OS" in
 ubuntu)
-  RUBY_VERSION=${__RUBY__:-$(sun.current_version 'ruby-full')}
+  RUBY_VERSION=${__RUBY_SYSTEM__:-$(sun.current_version 'ruby-full')}
   RUBY_MANIFEST=$(sun.manifest_path 'ruby-full')
 
   if [[ ! -s "$RUBY_MANIFEST" ]]; then

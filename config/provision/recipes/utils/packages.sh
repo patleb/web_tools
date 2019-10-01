@@ -3,14 +3,15 @@
   iftop
   iotop
   iptraf
-  iputils-ping
-  iputils-tracepath
+  #{'iputils' if sun.os.centos?}
+  #{'iputils-ping' if sun.os.ubuntu?}
+  #{'iputils-tracepath' if sun.os.ubuntu?}
   jq
   nethogs
   ngrep
   nmap
   tree
-).each do |package| %>
+).reject(&:blank?).each do |package| %>
 
   # https://github.com/blacksmoke16/oq
   sun.install "<%= package %>"
