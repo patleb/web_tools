@@ -1,4 +1,3 @@
-<% if sun.os.ubuntu? -%>
 /var/log/nginx/*.log {
   weekly
   missingok
@@ -17,17 +16,3 @@
     invoke-rc.d nginx rotate >/dev/null 2>&1
   endscript
 }
-<% else -%>
-/var/log/nginx/*log {
-  create 0644 root root
-  weekly
-  rotate 52
-  missingok
-  notifempty
-  compress
-  sharedscripts
-  postrotate
-    /bin/kill -USR1 \`cat /run/nginx.pid 2>/dev/null\` 2>/dev/null || true
-  endscript
-}
-<% end -%>
