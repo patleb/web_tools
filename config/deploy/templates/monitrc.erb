@@ -267,7 +267,7 @@ check system $HOST
 #    if write rate > 500 operations/s for 5 cycles then alert
 #    if service time > 10 milliseconds for 3 times within 5 cycles then alert
 #    group server
-<% unless fetch(:stage) == :vagrant -%>
+<% unless cap.env.vagrant? -%>
 check filesystem <%= fetch(:monit_filesystem_root) %> with path /
   if space usage > <%= fetch(:monit_filesystem_size) %> then <%= fetch(:monit_filesystem_action) %>
 <% end -%>

@@ -23,7 +23,7 @@ namespace :load do
     set :nginx_upstreams,     -> { {} }
     set :nginx_locations,     -> { {} }
     set :nginx_rails,         -> { true }
-    set :nginx_deferred,      -> { fetch(:nginx_rails) && fetch(:stage) == :production }
+    set :nginx_deferred,      -> { fetch(:nginx_rails) && cap.env.production? }
     set :nginx_skip_ssl,      -> { false }
 
     set :monit_max_swap_size,     -> { '25%' }
@@ -33,7 +33,7 @@ namespace :load do
       # command = [fetch(:passenger_restart_command), fetch(:passenger_restart_options)].join(' ')
       # %{exec "/usr/bin/sudo -u #{fetch(:deployer_name)} -H sh -c '/home/#{fetch(:deployer_name)}/.rbenv/bin/#{command}'"}
     # end
-    set :monit_filesystem_root,   -> { fetch(:linux_os) == 'centos' ? 'vda1' : 'xvda1' }
+    set :monit_filesystem_root,   -> { cap.os.centos? ? 'vda1' : 'xvda1' }
     set :monit_filesystem_size,   -> { '80%' }
     set :monit_filesystem_action, -> { 'alert' }
 

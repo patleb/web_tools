@@ -5,7 +5,7 @@
 
 namespace :monit do
   def monitrc
-    fetch(:linux_os) == 'centos' ? '/etc/monitrc' : '/etc/monit/monitrc'
+    cap.os.centos? ? '/etc/monitrc' : '/etc/monit/monitrc'
   end
 
   desc 'Export monit configuration file'

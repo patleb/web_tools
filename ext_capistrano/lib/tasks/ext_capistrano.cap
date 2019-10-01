@@ -7,9 +7,9 @@ namespace :load do
     set :server,              -> { Setting[:server] }
     set :gems,                -> { [] }
     set :linux_os,            -> { 'ubuntu' }
-    set :format,              -> { fetch(:linux_os) == 'centos' ? :pretty : :airbrussh }
+    set :format,              -> { cap.os.centos? ? :pretty : :airbrussh }
     set :format_options,      -> { { truncate: false } }
-    set :admin_name,          -> { fetch(:stage) == :vagrant ? 'vagrant' : fetch(:linux_os) }
+    set :admin_name,          -> { cap.env.vagrant? ? 'vagrant' : fetch(:linux_os) }
     set :deployer_name,       -> { 'deployer' }
     set :deploy_dir,          -> { "#{fetch(:application)}_#{fetch(:stage)}" }
     set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }

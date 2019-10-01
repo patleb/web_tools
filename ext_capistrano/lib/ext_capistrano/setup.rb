@@ -6,6 +6,26 @@ module Capistrano::DSL::Stages::Apps
     def env
       self[:env]
     end
+
+    def app
+      self[:app]
+    end
+
+    def os
+      self[:os]
+    end
+
+    def method_missing(name, *args, &block)
+      if !(value = fetch(name)).nil?
+        value
+      else
+        Setting[name]
+      end
+    end
+
+    def respond_to_missing?(name, include_private = false)
+      !fetch(name).nil? || Setting.has_key?(name)
+    end
   end
 
   def cap
