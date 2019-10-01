@@ -6,10 +6,11 @@ namespace :load do
   task :defaults do
     set :server,              -> { Setting[:server] }
     set :gems,                -> { [] }
-    set :linux_os,            -> { 'ubuntu' }
-    set :format,              -> { cap.os.centos? ? :pretty : :airbrussh }
+    set :os_name,             -> { 'ubuntu' }
+    set :os_version,          -> { cap.os.centos? ? '7' : '16.04' } # TODO
+    set :format,              -> { :airbrussh }
     set :format_options,      -> { { truncate: false } }
-    set :admin_name,          -> { cap.env.vagrant? ? 'vagrant' : fetch(:linux_os) }
+    set :admin_name,          -> { cap.env.vagrant? ? 'vagrant' : fetch(:os_name) }
     set :deployer_name,       -> { 'deployer' }
     set :deploy_dir,          -> { "#{fetch(:application)}_#{fetch(:stage)}" }
     set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
@@ -34,7 +35,7 @@ namespace :load do
       deployer_name
       deploy_dir
       deploy_to
-      linux_os
+      os_name
       rbenv_ruby
       server
       stage

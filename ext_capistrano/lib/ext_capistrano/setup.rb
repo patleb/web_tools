@@ -7,24 +7,18 @@ module Capistrano::DSL::Stages::Apps
       self[:env]
     end
 
-    def app
-      self[:app]
-    end
-
-    def os
-      self[:os]
-    end
-
     def method_missing(name, *args, &block)
       if !(value = fetch(name)).nil?
         value
-      else
+      elsif Setting.has_key? name
         Setting[name]
+      else
+        super
       end
     end
 
     def respond_to_missing?(name, include_private = false)
-      !fetch(name).nil? || Setting.has_key?(name)
+      !fetch(name).nil? || Setting.has_key?(name) || super
     end
   end
 
@@ -32,7 +26,7 @@ module Capistrano::DSL::Stages::Apps
     @_cap ||= Cap.new(
       env: ActiveSupport::StringInquirer.new(fetch(:stage).to_s),
       app: ActiveSupport::StringInquirer.new(fetch(:application).to_s),
-      os: ActiveSupport::StringInquirer.new(fetch(:linux_os).to_s),
+      os: ActiveSupport::StringInquirer.new(fetch(:os_name).to_s),
     )
   end
 

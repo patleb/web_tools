@@ -3,6 +3,8 @@ module Sunzistrano
   class Cli < Thor
     include Thor::Actions
 
+    attr_reader :sun
+
     desc 'provision [stage] [role] [--recipe] [--vagrant-name] [--username] [--password]', 'Provision sunzistrano project'
     method_options recipe: :string, vagrant_name: :string, username: :string, password: :string
     def provision(stage, role = 'system')

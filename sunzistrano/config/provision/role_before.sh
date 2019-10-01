@@ -34,8 +34,8 @@ __SPECIALIZE__=${__SPECIALIZE__:-false}
 __DEBUG__=${__DEBUG__:-false}
 __REBOOT__=${__REBOOT__:-false}
 
-if [[ "$OS" != "$__LINUX_OS__" ]]; then
-  echo "'$OS' != '$__LINUX_OS__'"
+if [[ "$OS" != "$__OS_NAME__" ]]; then
+  echo "'$OS' != '$__OS_NAME__'"
   exit 1
 fi
 

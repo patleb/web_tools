@@ -48,10 +48,9 @@ module Sunzistrano
       super(settings)
     end
 
-    # TODO add :os_version
     def attributes
       to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
-        linux_os: os,
+        os_name: os,
         username: username,
         admin_public_key: ->{ admin_public_key },
         admin_private_key: ->{ admin_private_key.escape_newlines },
@@ -80,7 +79,7 @@ module Sunzistrano
     end
 
     def os
-      @_os ||= ActiveSupport::StringInquirer.new(linux_os || 'ubuntu')
+      @_os ||= ActiveSupport::StringInquirer.new(os_name || 'ubuntu')
     end
 
     def local_dir
