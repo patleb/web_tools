@@ -2,6 +2,20 @@ require "capistrano/doctor"
 require "capistrano/immutable_task"
 
 module Capistrano::DSL::Stages::Apps
+  class Cap < OpenStruct
+    def env
+      self[:env]
+    end
+  end
+
+  def cap
+    @_cap ||= Cap.new(
+      env: ActiveSupport::StringInquirer.new(fetch(:stage).to_s),
+      app: ActiveSupport::StringInquirer.new(fetch(:application).to_s),
+      os: ActiveSupport::StringInquirer.new(fetch(:linux_os).to_s),
+    )
+  end
+
   def stages
     bases = super
     bases + bases.map{ |stage| apps(stage) }.flatten
