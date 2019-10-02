@@ -46,6 +46,10 @@ module Capistrano::DSL::Stages::Apps
   def app_definitions(stage)
     stage_config_path.join(stage, "*.rb")
   end
+
+  def be(*args)
+    execute :bundle, :exec, *args
+  end
 end
 
 extend Capistrano::DSL::Stages::Apps
