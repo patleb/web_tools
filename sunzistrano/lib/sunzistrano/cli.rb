@@ -163,10 +163,12 @@ module Sunzistrano
             stdin.close
             t = Thread.new do
               while (line = stderr.gets)
+                print "[#{server}] "
                 print line.color(:red)
               end
             end
             while (line = stdout.gets)
+              print "[#{server}] "
               print line.color(:green)
             end
             t.join
