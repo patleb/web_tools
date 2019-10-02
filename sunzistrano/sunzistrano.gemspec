@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "sshkit"
   s.add_dependency 'rainbow'
-  s.add_dependency 'bcrypt', '~> 3.1'
+  s.add_dependency 'bcrypt'
   s.add_dependency 'ext_ruby'
+  s.add_dependency 'parallel'
 end

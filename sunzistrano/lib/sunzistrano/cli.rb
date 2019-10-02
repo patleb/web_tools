@@ -43,7 +43,7 @@ module Sunzistrano
       def do_provision(stage, role, **custom_options)
         do_compile(stage, role, **custom_options)
         validate_version!
-        send_commands(provision_cmd)
+        run_provision_cmd
       end
 
       def do_compile(stage, role, **custom_options)
@@ -155,28 +155,45 @@ module Sunzistrano
         get file, file_path
       end
 
-      def send_commands(commands)
-        `ssh-keygen -R #{sun.server} 2> /dev/null`
+      def run_provision_cmd
+        Parallel.each(servers, in_threads: servers.size) do |server|
+          `ssh-keygen -R #{server} 2> /dev/null`
 
-        Open3.popen3(commands) do |stdin, stdout, stderr|
-          stdin.close
-          t = Thread.new do
-            while (line = stderr.gets)
-              print line.color(:red)
+          Open3.popen3(provision_cmd(server)) do |stdin, stdout, stderr|
+            stdin.close
+            t = Thread.new do
+              while (line = stderr.gets)
+                print line.color(:red)
+              end
             end
+            while (line = stdout.gets)
+              print line.color(:green)
+            end
+            t.join
           end
-          while (line = stdout.gets)
-            print line.color(:green)
-          end
-          t.join
         end
       end
 
-      def provision_cmd
+      def servers
+        case sun.server_cluster_provider
+        when 'vagrant'
+          list = `vagrant global-status | grep virtualbox | awk '{ print $2; }'`.lines.map(&:strip)
+          list.select!(&:include?.with(sun.server_cluster_name))
+          list.map!{ |name| `vagrant ssh #{name} -c "hostname -I | cut -d' ' -f2" 2>/dev/null`.strip }
+        when 'openstack'
+          os_vars = Setting.select{ |k, _| k.start_with? 'os_' }.map{ |k, v| "#{k.upcase}='#{v}'" }.join(' ')
+          list = `#{os_vars} openstack --quiet server list | grep '#{sun.os_project_name}' | grep '#{sun.server_cluster_name}' | cut -d'|' -f5 | cut -d'=' -f2`
+          list.lines.map(&:strip)
+        else
+          [sun.server]
+        end
+      end
+
+      def provision_cmd(server)
         <<~CMD
           #{ssh_add_cmd} cd .provision && tar cz . | #{"sshpass -p #{sun.password}" if sun.password} ssh \
           -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
-          #{sun.username}@#{sun.server} \
+          #{sun.username}@#{server} \
           #{"-p #{sun.port}" if sun.port} \
           '#{provision_remote_cmd} '#{'&& (cd .. && rm -rf .provision) || (cd .. && rm -rf .provision)' unless sun.debug}
         CMD
