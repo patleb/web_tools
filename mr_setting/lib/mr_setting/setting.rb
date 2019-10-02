@@ -15,7 +15,7 @@ class Setting
   REMOVE = '$REMOVE'.freeze
 
   class << self
-    delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, to: :all
+    delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, :select, :reject, to: :all
   end
 
   def self.to_yaml
@@ -24,6 +24,13 @@ class Setting
 
   def self.type_of(name)
     all && (@types[name] || :text).to_sym
+  end
+
+  def self.with(**options)
+    reload(**options)
+    yield all
+  ensure
+    rollback!
   end
 
   def self.rollback!
