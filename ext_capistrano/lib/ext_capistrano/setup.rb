@@ -87,7 +87,13 @@ stages.each do |stage|
 
       Setting.load(env: stage, app: app, root: fetch(:root))
 
-      server fetch(:server), user: fetch(:deployer_name), roles: %i(web app)
+      if Gem.loaded_specs['sun_cap'] && Setting[:server_cluster_provider]
+        SunCap.server_cluster.each do |server|
+          server server, user: fetch(:deployer_name), roles: %i(web app)
+        end
+      else
+        server fetch(:server), user: fetch(:deployer_name), roles: %i(web app)
+      end
     end
     configure_scm
     I18n.locale = fetch(:locale, :en)

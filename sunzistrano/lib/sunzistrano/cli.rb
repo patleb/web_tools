@@ -156,38 +156,31 @@ module Sunzistrano
       end
 
       def run_provision_cmd
-        Parallel.each(servers, in_threads: servers.size) do |server|
-          `ssh-keygen -R #{server} 2> /dev/null`
-
-          Open3.popen3(provision_cmd(server)) do |stdin, stdout, stderr|
-            stdin.close
-            t = Thread.new do
-              while (line = stderr.gets)
-                print "[#{server}] "
-                print line.color(:red)
-              end
-            end
-            while (line = stdout.gets)
-              print "[#{server}] "
-              print line.color(:green)
-            end
-            t.join
+        if Gem.loaded_specs['sun_cap'] && sun.server_cluster_provider
+          Parallel.each(SunCap.server_cluster, in_threads: Float::INFINITY) do |server|
+            run_provison_cmd_for(server)
           end
+        else
+          run_provison_cmd_for(sun.server)
         end
       end
 
-      def servers
-        case sun.server_cluster_provider
-        when 'vagrant'
-          list = `vagrant global-status | grep virtualbox | awk '{ print $2; }'`.lines.map(&:strip)
-          list.select!(&:include?.with(sun.server_cluster_name))
-          list.map!{ |name| `vagrant ssh #{name} -c "hostname -I | cut -d' ' -f2" 2>/dev/null`.strip }
-        when 'openstack'
-          os_vars = Setting.select{ |k, _| k.start_with? 'os_' }.map{ |k, v| "#{k.upcase}='#{v}'" }.join(' ')
-          list = `#{os_vars} openstack --quiet server list | grep '#{sun.os_project_name}' | grep '#{sun.server_cluster_name}' | cut -d'|' -f5 | cut -d'=' -f2`
-          list.lines.map(&:strip)
-        else
-          [sun.server]
+      def run_provison_cmd_for(server)
+        `ssh-keygen -R #{server} 2> /dev/null`
+
+        Open3.popen3(provision_cmd(server)) do |stdin, stdout, stderr|
+          stdin.close
+          t = Thread.new do
+            while (line = stderr.gets)
+              print "[#{server}] "
+              print line.color(:red)
+            end
+          end
+          while (line = stdout.gets)
+            print "[#{server}] "
+            print line.color(:green)
+          end
+          t.join
         end
       end
 

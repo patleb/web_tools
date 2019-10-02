@@ -1,3 +1,5 @@
+require 'sun_cap/server_cluster'
+
 module Sunzistrano
   module Capistrano
     def self.config(stage)
