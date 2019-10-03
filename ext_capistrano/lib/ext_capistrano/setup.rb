@@ -50,6 +50,12 @@ module Capistrano::DSL::Stages::Apps
   def be(*args)
     execute :bundle, :exec, *args
   end
+
+  if ENV['BUNDLE_RSYNC']
+    def invoke(task_name, *args)
+      invoke!(task_name, *args)
+    end
+  end
 end
 
 extend Capistrano::DSL::Stages::Apps
