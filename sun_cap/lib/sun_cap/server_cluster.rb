@@ -2,6 +2,8 @@ module SunCap
   class UnsupportedClusterProvider < ::StandardError; end
 
   def self.server_cluster
+    return Setting[:server_cluster] if Setting[:server_cluster].present?
+
     case Setting[:server_cluster_provider]
     when 'vagrant'
       list = `vagrant global-status | grep virtualbox | tr -s [:blank:] | cut -d' ' -f2`.lines.map(&:strip)
