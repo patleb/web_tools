@@ -30,7 +30,7 @@ module ExtCapistrano
       compile_erb(source)
       upload_file(server, source, destination)
       # TODO remove parent directory if it's empty
-      FileUtils.rm_f source
+      FileUtils.rm_f source unless ENV['BUNDLE_RSYNC']
     end
 
     def compile_erb(source)
