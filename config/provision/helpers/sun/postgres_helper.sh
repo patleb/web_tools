@@ -7,3 +7,14 @@ sun.pg_major_version() {
     echo "$(echo ${version[0]} | sed -r 's/^([0-9]+).*/\1/')"
   fi
 }
+
+sun.pg_conf_dir() {
+  case "$OS" in
+  ubuntu)
+    echo "/etc/postgresql/$__POSTGRES__/main"
+  ;;
+  centos)
+    echo "/var/lib/pgsql/$__POSTGRES__/data"
+  ;;
+  esac
+}
