@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'capistrano-rails', '~> 1.1'
   s.add_dependency 'capistrano-rails-console'
   s.add_dependency 'capistrano-passenger'
-  # TODO s.add_dependency 'capistrano-bundle_rsync'
+  s.add_dependency 'capistrano-bundle_rsync'
   s.add_dependency 'mr_setting'
 end
