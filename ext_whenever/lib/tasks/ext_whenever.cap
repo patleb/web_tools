@@ -29,5 +29,9 @@ namespace :whenever do
       end
     end
   end
-  after 'git:create_release', 'whenever:push_every_minute'
+  if ENV['BUNDLE_RSYNC']
+    after 'bundle_rsync:rsync_release', 'whenever:push_every_minute'
+  else
+    after 'git:create_release', 'whenever:push_every_minute'
+  end
 end
