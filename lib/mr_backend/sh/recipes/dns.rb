@@ -16,15 +16,11 @@ module Sh::Dns
   def append_host(id, address, name, **options)
     <<~SH
       #{"if [[ #{options[:if]} ]]; then" if options[:if] }
-        #{delete_host id}
+        sed -ri 'N;N;N;s/# #{id}-start.*# #{id}-end//g' '/etc/hosts'
         echo '# #{id}-start' | tee -a '/etc/hosts'
         echo "#{address}  #{name}" | tee -a '/etc/hosts'
         echo '# #{id}-end' | tee -a '/etc/hosts'
       #{"fi" if options[:if] }
     SH
-  end
-
-  def delete_host(id)
-    "sed -ri 'N;N;N;s/# #{id}-start.*# #{id}-end//g' '/etc/hosts'"
   end
 end
