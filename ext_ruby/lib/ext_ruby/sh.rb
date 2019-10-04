@@ -66,7 +66,7 @@ module Sh
     end
     old = "(\\n[^\\n]*#{old}|#{old}[^\\n]*\\n)" if no_newline
     if delimiter == '%' && (old.include?('%') || new.include?('%'))
-      delimiter = '/|$#;'.chars.find{ |char| old.exclude?(char) && new.exclude?(char) } || delimiter
+      delimiter = '|$#;'.chars.find{ |char| old.exclude?(char) && new.exclude?(char) } || delimiter
     end
     sed = %{sed -r#{inline} -- #{[quote, commands, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
     if ignore
