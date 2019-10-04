@@ -64,7 +64,7 @@ module MrBackend
         app.config.logger = ActiveSupport::Logger.new(app.config.paths['log'].first, 5)
         app.config.logger.formatter = app.config.log_formatter
       else
-        app.config.action_mailer.default_url_options = -> { { host: Setting[:server] } }
+        app.config.action_mailer.default_url_options = -> { { host: Setting[:server_host] } }
       end
 
       if (file = Rails.root.join('tmp/console.txt')).exist? && (ips = file.read.split("\n").reject(&:blank?)).any?

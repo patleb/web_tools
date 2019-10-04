@@ -97,7 +97,7 @@ stages.each do |stage|
 
       Setting.load(env: stage, app: app, root: fetch(:root))
 
-      if Gem.loaded_specs['sun_cap'] && Setting[:server_cluster_provider]
+      if ENV['BUNDLE_RSYNC']
         SunCap.server_cluster.each do |server|
           server server, user: fetch(:deployer_name), roles: %i(web app)
         end

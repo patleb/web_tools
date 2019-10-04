@@ -2,14 +2,16 @@ namespace :dns do
   desc 'set localhost'
   task :set_localhost do
     on release_roles :all do
-      execute Sh.bash(<<-SH, sudo: true)
-        if ! grep -q "127.0.0.1  $(hostname)" '/etc/hosts'; then
-          echo "127.0.0.1  $(hostname)" | tee -a '/etc/hosts'
-        fi
-        if ! grep -q '127.0.0.1  #{fetch(:server)}' '/etc/hosts'; then
-          echo "127.0.0.1  #{fetch(:server)}" | tee -a '/etc/hosts'
-        fi
-      SH
+      if ENV['BUNDLE_RSYNC']
+        execute Sh.bash(<<-SH, sudo: true)
+          #{Sh.append_host 'cap-dns:set_mainhost-server', SunCap.server_master, fetch(:server)}
+        SH
+      else
+        execute Sh.bash(<<-SH, sudo: true)
+          #{Sh.append_host 'cap-dns:set_localhost-hostname', '127.0.0.1', '$(hostname)', if: "'#{fetch(:server)}' != $(hostname)"}
+          #{Sh.append_host 'cap-dns:set_localhost-server', '127.0.0.1', fetch(:server)}
+        SH
+      end
     end
   end
 

@@ -1,17 +1,30 @@
 module Sh::Dns
   def build_hosts(admin_name, server)
     entries = (Setting[:dns_hosts] || []).map{ |name| "$INTERNAL_IP  #{name}" }.join("\\n")
-
-    hosts = '/etc/hosts'
-    hosts_defaults = "/home/#{admin_name}/#{Sunzistrano::Config::DEFAULTS_DIR}/#{hosts.tr('/', '~')}"
+    hosts_defaults = "/home/#{admin_name}/#{Sunzistrano::Config::DEFAULTS_DIR}/#{'~etc~hosts'}"
     <<~SH
       INTERNAL_IP=$(#{Sh.internal_ip})
-      cp '#{hosts_defaults}' '#{hosts}'
-      if ! grep -q $(hostname) '#{hosts}'; then
-        echo "127.0.0.1  $(hostname)" | tee -a '#{hosts}'
-      fi
-      echo "$INTERNAL_IP  #{server}" | tee -a '#{hosts}'
-      echo -e "#{entries}" | tee -a '#{hosts}'
+      cp '#{hosts_defaults}' '/etc/hosts'
+
+      #{append_host 'sh-dns:build_hosts-hostname', '127.0.0.1', '$(hostname)'}
+
+      echo "$INTERNAL_IP  #{server}" | tee -a '/etc/hosts'
+      echo -e "#{entries}" | tee -a '/etc/hosts'
     SH
+  end
+
+  def append_host(id, address, name, **options)
+    <<~SH
+      #{"if [[ #{options[:if]} ]]; then" if options[:if] }
+        #{delete_host id}
+        echo '# #{id}-start' | tee -a '/etc/hosts'
+        echo "#{address}  #{name}" | tee -a '/etc/hosts'
+        echo '# #{id}-end' | tee -a '/etc/hosts'
+      #{"fi" if options[:if] }
+    SH
+  end
+
+  def delete_host(id)
+    "sed -ri 's/# #{id}-start\\n.*# #{id}-end\\n//' '/etc/hosts'"
   end
 end

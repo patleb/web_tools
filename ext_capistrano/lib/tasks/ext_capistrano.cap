@@ -4,7 +4,7 @@ load_rel 'ext_capistrano/**/*.cap'
 
 namespace :load do
   task :defaults do
-    set :server,              -> { Setting[:server] }
+    set :server,              -> { Setting[:server_host] }
     set :gems,                -> { [] }
     set :os_name,             -> { 'ubuntu' }
     set :os_version,          -> { cap.os.centos? ? '7' : '16.04' } # TODO rollback 18.04 --> commits fe59fc92 (2019-09-28 at 3:11 p.m.) to 353b9b77 (2019-09-30 at 6:33 p.m.)
