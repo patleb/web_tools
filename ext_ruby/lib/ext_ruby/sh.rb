@@ -45,8 +45,8 @@ module Sh
     bash ? to_bash_command(command) : command
   end
 
-  def self.escape_regex(value, and_single_quotes = true)
-    value.is_a?(Regexp) ? to_regex(value, and_single_quotes) : to_non_regex(value, and_single_quotes)
+  def self.escape_regex(value)
+    value.is_a?(Regexp) ? to_regex(value) : to_non_regex(value)
   end
 
   private_class_method
@@ -65,12 +65,15 @@ module Sh
       new.gsub!('\\$', '$')
     end
     old = "(\\n[^\\n]*#{old}|#{old}[^\\n]*\\n)" if no_newline
+    if delimiter == '%' && (old.include?('%') || new.include?('%'))
+      delimiter = '/|$#;'.chars.find{ |char| old.exclude?(char) && new.exclude?(char) } || delimiter
+    end
     sed = %{sed -r#{inline} -- #{[quote, commands, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
     if ignore
       sed
     else
       <<~SH.squish
-        if grep -qE '#{escape_regex(old_was, false)}' "#{path}"; then
+        if grep -qP #{[quote, old, quote].join} "#{path}"; then
           #{sed};
         else
           echo 'file "#{path}" does not include "#{old_was}"' && exit 1;
@@ -79,12 +82,12 @@ module Sh
     end
   end
 
-  def self.to_regex(regex, and_single_quotes)
-    and_single_quotes ? regex.source.escape_single_quotes : regex.source
+  def self.to_regex(regex)
+    regex.source.escape_single_quotes
   end
 
-  def self.to_non_regex(string, and_single_quotes)
-    and_single_quotes ? string.escape_single_quotes.escape_regex : string.escape_regex
+  def self.to_non_regex(string)
+    string.escape_single_quotes.escape_regex
   end
 
   def self.to_bash_command(command)
