@@ -64,7 +64,7 @@ module Sh
       old.gsub!('\\$', '$')
       new.gsub!('\\$', '$')
     end
-    old = "(\\n[^\\n]*#{old}|#{old}[^\\n]*\\n)" if no_newline
+    old = "(\\n[^\\n]*#{old}|#{old}[^\\n]*\\n)" if no_newline # TODO doesn't really work --> unit tests
     if delimiter == '%' && (old.include?('%') || new.include?('%'))
       delimiter = '|$#;'.chars.find{ |char| old.exclude?(char) && new.exclude?(char) } || delimiter
     end
