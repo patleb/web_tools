@@ -45,39 +45,32 @@ module Sh
     bash ? to_bash_command(command) : command
   end
 
-  def self.sed_escape(value)
-    value.is_a?(Regexp) ? to_regex(value) : to_non_regex(value)
+  def self.escape_regex(value, and_single_quotes = true)
+    value.is_a?(Regexp) ? to_regex(value, and_single_quotes) : to_non_regex(value, and_single_quotes)
   end
 
   private_class_method
 
-  def self.sed_replace(path, old, new, escape: true, delimiter: nil, ignore: nil, no_newline: nil, commands: nil, **options)
+  def self.sed_replace(path, old, new, escape: true, delimiter: '%', ignore: nil, no_newline: nil, commands: nil, **options)
     inline = 'i' if options[:inline]
     global = 'g' if options[:global]
     quote = "'"
     old_was = old
-    old = sed_escape(old)
-    new = sed_escape(new)
+    old = escape_regex(old)
+    new = escape_regex(new)
     unless escape
       quote = '"'
       commands&.gsub!('$', '\$')
       old.gsub!('\\$', '$')
       new.gsub!('\\$', '$')
-      delimiter ||= '|'
     end
-    delimiter ||= '/'
-    case no_newline
-    when :begin, true
-      old = "\\n[^\\n]*#{old}"
-    when :end
-      old = "#{old}[^\\n]*\\n"
-    end
+    old = "(\\n[^\\n]*#{old}|#{old}[^\\n]*\\n)" if no_newline
     sed = %{sed -r#{inline} -- #{[quote, commands, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
     if ignore
       sed
     else
       <<~SH.squish
-        if grep -q '#{old_was}' "#{path}"; then
+        if grep -qE '#{escape_regex(old_was, false)}' "#{path}"; then
           #{sed};
         else
           echo 'file "#{path}" does not include "#{old_was}"' && exit 1;
@@ -86,12 +79,12 @@ module Sh
     end
   end
 
-  def self.to_regex(regex)
-    regex.source.escape_single_quotes
+  def self.to_regex(regex, and_single_quotes)
+    and_single_quotes ? regex.source.escape_single_quotes : regex.source
   end
 
-  def self.to_non_regex(string)
-    string.escape_single_quotes.escape_regex
+  def self.to_non_regex(string, and_single_quotes)
+    and_single_quotes ? string.escape_single_quotes.escape_regex : string.escape_regex
   end
 
   def self.to_bash_command(command)
