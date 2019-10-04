@@ -25,6 +25,6 @@ module Sh::Dns
   end
 
   def delete_host(id)
-    "sed -ri 's/# #{id}-start\\n.*# #{id}-end\\n//' '/etc/hosts'"
+    "sed -ri 'N;N;N;s/# #{id}-start.*# #{id}-end//g' '/etc/hosts'"
   end
 end
