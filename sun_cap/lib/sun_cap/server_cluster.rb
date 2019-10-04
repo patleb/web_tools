@@ -7,7 +7,7 @@ module SunCap
     case Setting[:server_cluster_provider]
     when 'vagrant'
       list = Pathname.new('/etc/hosts').readlines
-      list.select!{ |line| (line =~ /vagrant-hostmanager-start/ .. line =~ /vagrant-hostmanager-end/) ? true : false }
+      list.select!{ |line| true if (line =~ /vagrant-hostmanager-start/ .. line =~ /vagrant-hostmanager-end/) }
       list[1..-2].select(&:include?.with(Setting[:server_cluster_name])).map(&:split).map(&:first)
     when 'openstack'
       os_vars = Setting.select{ |k, _| k.start_with? 'os_' }.map{ |k, v| "#{k.upcase}='#{v}'" }.join(' ')
