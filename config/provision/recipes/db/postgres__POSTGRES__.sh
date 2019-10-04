@@ -1,4 +1,5 @@
 ### TODO
+# https://github.com/citusdata/pg_auto_failover
 # https://github.com/pgbackrest
 # https://github.com/reorg/pg_repack
 # https://www.modio.se/scaling-past-the-single-machine.html
