@@ -51,7 +51,7 @@ module Sh
 
   private_class_method
 
-  def self.sed_replace(path, old, new, delimiter: '/', escape: true, ignore: nil, no_newline: nil, commands: nil, **options)
+  def self.sed_replace(path, old, new, escape: true, delimiter: nil, ignore: nil, no_newline: nil, commands: nil, **options)
     inline = 'i' if options[:inline]
     global = 'g' if options[:global]
     quote = "'"
@@ -63,7 +63,9 @@ module Sh
       commands&.gsub!('$', '\$')
       old.gsub!('\\$', '$')
       new.gsub!('\\$', '$')
+      delimiter ||= '|'
     end
+    delimiter ||= '/'
     case no_newline
     when :begin, true
       old = "\\n[^\\n]*#{old}"

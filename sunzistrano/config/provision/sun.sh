@@ -90,5 +90,5 @@ trap sun.ensure EXIT
 
 sun.rollback() {
   echo "Rollback [$1]"
-  <%= Sh.delete_line! "$HOME/$__MANIFEST_LOG__", "Done [$1]", delimiter: '|', escape: false %>
+  <%= Sh.delete_line! "$HOME/$__MANIFEST_LOG__", "Done [$1]", escape: false %>
 }

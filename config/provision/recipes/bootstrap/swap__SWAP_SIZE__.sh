@@ -3,7 +3,7 @@ SWAP_NAME=/swap
 
 if [[ $(swapon -s | grep $SWAP_NAME | awk '{ print $1; }') == "$SWAP_NAME" ]]; then
   swapoff -v $SWAP_NAME
-  <%= Sh.delete_line! '/etc/fstab', "$SWAP_NAME", delimiter: '|', escape: false %>
+  <%= Sh.delete_line! '/etc/fstab', "$SWAP_NAME", escape: false %>
   rm -f $SWAP_NAME
 fi
 
