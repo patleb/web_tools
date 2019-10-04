@@ -4,6 +4,7 @@ namespace :dns do
     on release_roles :all do
       if ENV['BUNDLE_RSYNC']
         execute Sh.bash(<<-SH, sudo: true)
+          #{Sh.delete_lines! '/etc/hosts', fetch(:server)}
           #{Sh.append_host 'cap-dns:set_masterhost-server', SunCap.server_master, fetch(:server)}
         SH
       else
