@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = "MrBackend"
   s.license     = "MIT"
 
-  s.files = Dir["{app,bin,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["lib/**/*", "MIT-LICENSE", "README.md"]
 
   s.add_dependency "rails", "~> #{MrBackend::RAILS_VERSION::STRING}"
   s.add_dependency 'active_type', '~> 0.7'
