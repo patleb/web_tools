@@ -1,29 +1,27 @@
 module SunCap
   class UnsupportedClusterProvider < ::StandardError; end
 
-  def self.server_master
-    return Setting[:server_cluster_master_ip] if Setting[:server_cluster_master_ip].present?
-
-    case Setting[:server_cluster_provider]
-    when 'vagrant'
-      vagrant_server_list(Setting[:server_host]).first
-    when 'openstack'
-      openstack_server_list(Setting[:server_cluster_master]).first
+  def self.server_cluster_master
+    if Setting[:server_cluster_master_ip].present?
+      Setting[:server_cluster_master_ip]
     else
-      raise UnsupportedClusterProvider
+      case Setting[:server_cluster_provider]
+      when 'vagrant'   then vagrant_server_list(Setting[:server_host]).first
+      when 'openstack' then openstack_server_list(Setting[:server_cluster_master]).first
+      else raise UnsupportedClusterProvider
+      end
     end
   end
 
   def self.server_cluster
-    return Setting[:server_cluster_ips] if Setting[:server_cluster_ips].present?
-
-    case Setting[:server_cluster_provider]
-    when 'vagrant'
-      vagrant_server_list(Setting[:server_cluster_name])
-    when 'openstack'
-      openstack_server_list(Setting[:server_cluster_name])
+    if Setting[:server_cluster_ips].present?
+      Setting[:server_cluster_ips]
     else
-      raise UnsupportedClusterProvider
+      case Setting[:server_cluster_provider]
+      when 'vagrant'   then vagrant_server_list(Setting[:server_cluster_name])
+      when 'openstack' then openstack_server_list(Setting[:server_cluster_name])
+      else raise UnsupportedClusterProvider
+      end
     end
   end
 
