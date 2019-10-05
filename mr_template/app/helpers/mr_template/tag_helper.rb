@@ -77,6 +77,10 @@ module MrTemplate
 
     def capture(*values, &block)
       if block_given?
+        # TODO wrap block with a list stacks
+        # if within block, push item to queue
+        # else if exit block (ensure), join items from queue, then concat
+        # --> will allow syntax without arrays
         if values.any?
           super
         else
