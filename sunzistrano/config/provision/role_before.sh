@@ -2,6 +2,7 @@
 set -e
 set -u
 
+# TODO use $ID instead from /etc/os-release and use $VERSION_ID
 if which apt-get >/dev/null 2>&1; then
   export OS=ubuntu
   export os_package_get='apt-get'

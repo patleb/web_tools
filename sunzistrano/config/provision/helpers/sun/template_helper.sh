@@ -93,5 +93,10 @@ sun.template_path() {
     echo "$type"
     return
   fi
+#  type="$base.$OS.$__OS_VERSION__"
+#  if [[ -e "$type" ]] || [[ -e "$type.esh" ]] || [[ -e "$type.ref" ]]; then
+#    echo "$type"
+#    return
+#  fi
   echo $base
 }

@@ -1,5 +1,6 @@
 require_rel 'relation'
 
+# TODO https://github.com/jhollinger/occams-record
 ActiveRecord::Relation.class_eval do
   prepend self::WithReturningColumn
 
