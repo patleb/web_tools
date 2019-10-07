@@ -1,3 +1,5 @@
+# https://gist.github.com/yrsdi/7ee60bbf3c62a6c168ff36ac1192aff5
+# https://computingforgeeks.com/how-to-install-latest-go-on-centos-7-ubuntu-18-04/
 DEPLOYER_NAME=<%= sun.deployer_name %>
 GO_VERSION=<%= sun.go || '1.11.4' %>
 PROFILE=/home/$DEPLOYER_NAME/.bashrc
