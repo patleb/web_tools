@@ -1,6 +1,19 @@
-require 'mr_backend/engine'
+require 'ext_capistrano'
+# require 'ext_minitest'
+require 'ext_rake'
+require 'ext_ruby'
+require 'ext_sql'
+# require 'ext_whenever'
+require 'mr_backup'
+require 'mr_core'
+require 'mr_global'
+require 'mr_notifier'
+require 'mr_setting'
+require 'mr_rescue'
+require 'mr_template'
+require 'mr_throttler'
+# require 'sun_cap'
+# require 'sunzistrano'
 
 module MrBackend
-  # --skip-webpack-install --skip-yarn --skip-coffee
-  # rails new example_name --database=postgresql --webpack=vue --skip-sprockets --skip-turbolinks --skip-action-cable --skip-active-storage --skip-action-text --skip-action-mailbox --skip-puma --skip-spring --skip-listen --skip-system-test
 end

@@ -1,0 +1,38 @@
+namespace :dns do
+  desc 'set localhost'
+  task :set_localhost do
+    on release_roles :all do
+      sudo Sh.delete_lines! '/etc/hosts', fetch(:server)
+      if ENV['BUNDLE_RSYNC']
+        sudo Sh.delete_lines! '/etc/hosts', 'cap-dns:set_masterhost-server'
+        execute Sh.bash(<<-SH, sudo: true)
+          #{Sh.append_host 'cap-dns:set_masterhost-server', SunCap.server_cluster_master, fetch(:server)}
+        SH
+      else
+        sudo Sh.delete_lines! '/etc/hosts', 'cap-dns:set_localhost-server'
+        execute Sh.bash(<<-SH, sudo: true)
+          #{Sh.append_host 'cap-dns:set_localhost-server', '127.0.0.1', fetch(:server)}
+          #{Sh.append_host 'cap-dns:set_localhost-hostname', '127.0.0.1', '$(hostname)', if: "'#{fetch(:server)}' != $(hostname)"}
+        SH
+      end
+    end
+  end
+
+  namespace :hosts do
+    desc 'push /etc/hosts defined by :dns_hosts'
+    task :push do
+      on release_roles :all do
+        execute Sh.bash(Sh.build_hosts(fetch(:admin_name), fetch(:server)), sudo: true)
+      end
+    end
+  end
+
+  %w[start stop restart reload].each do |action|
+    desc "#{action.capitalize} dnsmasq service"
+    task action do
+      on release_roles :all do
+        execute :sudo, :systemctl, action, 'dnsmasq'
+      end
+    end
+  end
+end

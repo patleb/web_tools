@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = "MrBackend"
   s.license     = "MIT"
 
-  s.files = Dir["{app,bin,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["lib/**/*", "MIT-LICENSE", "README.md"]
 
   s.add_dependency "rails", "~> #{MrBackend::RAILS_VERSION::STRING}"
   s.add_dependency 'active_type', '~> 0.7'
@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_sql",        version
   s.add_dependency "ext_whenever",   version
   s.add_dependency "mr_backup",      version
+  s.add_dependency "mr_core",        version
   s.add_dependency "mr_global",      version
   s.add_dependency "mr_notifier",    version
   s.add_dependency "mr_setting",     version
