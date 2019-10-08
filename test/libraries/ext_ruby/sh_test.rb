@@ -59,6 +59,13 @@ class ShTest < Minitest::Spec
     end
   end
 
+  describe '.escape_newlines' do
+    it 'should double escape newlines' do
+      expected = lines.join("\n").gsub(/\r?\n/, "\\\\\\\\n")
+      assert_equal expected, output(Sh.escape_newlines file)
+    end
+  end
+
   def output(cmd, before: nil)
     Open3.capture3("#{before}#{cmd}")[0]
   end

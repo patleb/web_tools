@@ -24,7 +24,7 @@ module Sh
   end
 
   def self.escape_newlines(path, **options)
-    gsub(path, /\r?\n/, "\\\\n", **options, ignore: true, commands: ':a;N;$!ba;')
+    gsub(path, /\r?\n/, "\\\\n", **options, ignore: true)
   end
 
   %i(
@@ -51,16 +51,14 @@ module Sh
 
   private_class_method
 
-  def self.sed_replace(path, old, new, escape: true, delimiter: '%', ignore: nil, no_newline: nil, commands: nil, **options)
+  def self.sed_replace(path, old, new, escape: true, delimiter: '%', ignore: nil, no_newline: nil, **options)
     inline = 'i' if options[:inline]
     global = 'g' if options[:global]
     quote = "'"
-    old_was = old
     old = escape_regex(old)
     new = escape_regex(new)
     unless escape
       quote = '"'
-      commands&.gsub!('$', '\$')
       old.gsub!('\\$', '$')
       new.gsub!('\\$', '$')
     end
@@ -68,7 +66,7 @@ module Sh
     if delimiter == '%' && (old.include?('%') || new.include?('%'))
       delimiter = '|$#;'.chars.find{ |char| old.exclude?(char) && new.exclude?(char) } || delimiter
     end
-    sed = %{sed -rz#{inline} -- #{[quote, commands, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
+    sed = %{sed -rz#{inline} -- #{[quote, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
     if ignore
       sed
     else
@@ -76,7 +74,7 @@ module Sh
         if grep -qP #{[quote, old, quote].join} "#{path}"; then
           #{sed};
         else
-          echo 'file "#{path}" does not include "#{old_was.is_a?(Regexp) ? old_was.source : old_was}"' && exit 1;
+          echo 'file "#{path}" does not include "#{old}"' && exit 1;
         fi
       SH
     end
