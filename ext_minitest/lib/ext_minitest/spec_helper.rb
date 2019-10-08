@@ -1,3 +1,3 @@
-require 'ext_ruby/bootsnap'
+require 'ext_ruby/bootsnap/setup'
 require 'minitest/autorun'
 require 'ext_minitest/minitest'
