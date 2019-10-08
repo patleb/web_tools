@@ -7,6 +7,10 @@ class String
     gsub(/'/, '\\x27')
   end
 
+  def unescape_single_quotes
+    gsub('\\x27', "'")
+  end
+
   def escape_newlines
     gsub(/\r?\n/, "\\\\n")
   end
