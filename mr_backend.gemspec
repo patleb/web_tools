@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.files = Dir["lib/**/*", "MIT-LICENSE", "README.md"]
 
   s.add_dependency "rails", "~> #{MrBackend::RAILS_VERSION::STRING}"
+  s.add_dependency 'sprockets', '~> 3.7'
   s.add_dependency 'active_type', '~> 0.7'
   s.add_dependency 'baby_squeel', '~> 1.2'
   s.add_dependency 'date_validator'
