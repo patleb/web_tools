@@ -16,7 +16,7 @@ module Sh::Dns
   def append_host(id, address, name, **options)
     <<~SH
       #{"if [[ #{options[:if]} ]]; then" if options[:if] }
-        sed -ri 'N;N;N;s/# #{id}-start.*# #{id}-end//g' '/etc/hosts'
+        #{Sh.gsub! '/etc/hosts', /# #{id}-start.*# #{id}-end\n/, ''}
         echo '# #{id}-start' | tee -a '/etc/hosts'
         echo "#{address}  #{name}" | tee -a '/etc/hosts'
         echo '# #{id}-end' | tee -a '/etc/hosts'
