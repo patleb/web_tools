@@ -16,7 +16,7 @@ module Sh
   end
 
   def self.delete_line(path, value, **options)
-    sub(path, value, '', **options, ignore: true, no_newline: true, commands: ':r;$!{N;br};')
+    sub(path, value, '', **options, ignore: true, no_newline: true)
   end
 
   def self.delete_lines(path, value, **options)
@@ -64,11 +64,11 @@ module Sh
       old.gsub!('\\$', '$')
       new.gsub!('\\$', '$')
     end
-    old = "(\\n[^\\n]*#{old}|#{old}[^\\n]*\\n)" if no_newline # TODO doesn't really work --> unit tests
+    old = "(\\n[^\\n]*#{old}[^\\n]*|[^\\n]*#{old}[^\\n]*\\n)" if no_newline
     if delimiter == '%' && (old.include?('%') || new.include?('%'))
       delimiter = '|$#;'.chars.find{ |char| old.exclude?(char) && new.exclude?(char) } || delimiter
     end
-    sed = %{sed -r#{inline} -- #{[quote, commands, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
+    sed = %{sed -rz#{inline} -- #{[quote, commands, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
     if ignore
       sed
     else
@@ -76,7 +76,7 @@ module Sh
         if grep -qP #{[quote, old, quote].join} "#{path}"; then
           #{sed};
         else
-          echo 'file "#{path}" does not include "#{old_was}"' && exit 1;
+          echo 'file "#{path}" does not include "#{old_was.is_a?(Regexp) ? old_was.source : old_was}"' && exit 1;
         fi
       SH
     end
