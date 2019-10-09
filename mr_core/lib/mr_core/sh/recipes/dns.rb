@@ -5,7 +5,7 @@ module Sh::Dns
     <<~SH
       INTERNAL_IP=$(#{Sh.internal_ip})
       cp #{hosts_defaults} /etc/hosts
-      #{append_host 'sh-dns-build_hosts-hostname', '127.0.0.1', '$(hostname)'}
+      #{append_host 'sh:dns-build_hosts-hostname', '127.0.0.1', '$(hostname)'}
       echo "$INTERNAL_IP  #{server}" | tee -a /etc/hosts
       echo -e "#{entries}" | tee -a /etc/hosts
     SH
