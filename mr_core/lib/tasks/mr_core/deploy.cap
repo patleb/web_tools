@@ -30,10 +30,10 @@ namespace :deploy do
 
   desc 'Full server deploy after provisioning'
   task push: %i(
-    dns:set_localhost
     nginx:push
     pgrest:push
     deploy:app:push
+    dns:set_localhost
   )
 
   namespace :app do
