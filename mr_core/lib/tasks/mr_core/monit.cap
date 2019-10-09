@@ -17,7 +17,17 @@ namespace :monit do
     end
   end
 
-  %w[start stop restart reload].each do |action|
+  desc "Reload monit"
+  task :reload do
+    on release_roles :all do
+      unless test :sudo, "systemctl reload monit"
+        error "Could not reload Monit, trying restart."
+        invoke 'monit:restart'
+      end
+    end
+  end
+
+  %w[start stop restart].each do |action|
     desc "#{action.capitalize} monit"
     task action do
       on release_roles :all do
