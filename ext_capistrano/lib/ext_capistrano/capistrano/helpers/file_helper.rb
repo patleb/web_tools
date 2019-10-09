@@ -31,8 +31,8 @@ module ExtCapistrano
     end
 
     def compile_erb(source)
-      base_dir = Pathname.new(File.dirname(source)).relative_path_from('tmp')
-      new_file = source.relative_path_from('tmp')
+      base_dir = Pathname.new("tmp/#{File.dirname(source)}")
+      new_file = base_dir.join(File.basename(source))
       FileUtils.mkdir_p base_dir
       File.open(new_file, 'w') do |f|
         source_erb = "#{source}.erb"
