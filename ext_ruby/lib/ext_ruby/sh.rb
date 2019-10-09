@@ -1,12 +1,4 @@
 module Sh
-  def self.bash(cmd, sudo: false, u: true)
-    "tmp=$(mktemp) " \
-      "&& chmod +x $tmp " \
-      "&& echo -e '#{cmd.escape_single_quotes.escape_newlines}' > $tmp " \
-      "&& #{'sudo' if sudo} bash -#{'u' if u}c \"$tmp\" " \
-      "&& rm -f $tmp"
-  end
-
   def self.sub(path, old, new, **options)
     sed_replace(path, old, new, **options)
   end

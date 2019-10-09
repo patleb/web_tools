@@ -3,11 +3,11 @@ namespace :dns do
   task :set_localhost do
     on release_roles :all do
       if ENV['BUNDLE_RSYNC']
-        execute Sh.bash(<<-SH, sudo: true)
+        execute_bash(<<-SH, sudo: true)
           #{Sh.append_host 'cap-dns-set_masterhost-server', SunCap.server_cluster_master, fetch(:server)}
         SH
       else
-        execute Sh.bash(<<-SH, sudo: true)
+        execute_bash(<<-SH, sudo: true)
           #{Sh.append_host 'cap-dns-set_localhost-server', '127.0.0.1', fetch(:server)}
           #{Sh.append_host 'cap-dns-set_localhost-hostname', '127.0.0.1', '$(hostname)', if: "'#{fetch(:server)}' != $(hostname)"}
         SH
@@ -19,7 +19,7 @@ namespace :dns do
     desc 'push /etc/hosts defined by :dns_hosts'
     task :push do
       on release_roles :all do
-        execute Sh.bash(Sh.build_hosts(fetch(:admin_name), fetch(:server)), sudo: true)
+        execute_bash(Sh.build_hosts(fetch(:admin_name), fetch(:server)), sudo: true)
       end
     end
   end

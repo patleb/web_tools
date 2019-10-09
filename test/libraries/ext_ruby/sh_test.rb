@@ -25,15 +25,7 @@ class ShTest < Minitest::Spec
 
     it 'should not escape variables' do
       expected = lines.join("\n").sub('line 0', 'replaced')
-      assert_equal expected, output(Sh.sub(file, '$LINE', 'replaced', escape: false, ignore: true), before: 'LINE="line 0";')
-    end
-
-    it 'should work through Sh.bash' do
-      expected = lines.join("\n").sub("line 0 'end'", 'replaced')
-      cmd = Sh.sub! 'tmp/sub.txt', /line 0 'end'/, 'replaced', escape: false, ignore: true
-      _, stderr, status = bash Sh.bash(cmd), before: "yes | cp -f #{file} tmp/;"
-      assert_equal true, status.success?, stderr
-      assert_equal expected, Pathname.new('tmp/sub.txt').read
+      assert_equal expected, output(Sh.sub(file, '$LINE', 'replaced', escape: false), before: 'LINE="line 0";')
     end
   end
 
@@ -80,10 +72,6 @@ class ShTest < Minitest::Spec
 
   def status(cmd, **_)
     sh(cmd, **_)[2]
-  end
-
-  def bash(cmd, before: nil)
-    Open3.capture3("#{before} bash -c #{Shellwords.escape(cmd)}")
   end
 
   def sh(cmd, before: nil)

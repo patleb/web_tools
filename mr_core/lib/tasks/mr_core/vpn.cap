@@ -4,7 +4,7 @@ namespace :vpn do
     task :create, [:name, :path, :linux] do |t, args|
       on release_roles :all do
         options = { name: args[:name], linux: flag_on?(args, :linux), print: false }
-        execute Sh.bash(Sh.create_client_ovpn(options), sudo: true)
+        execute_bash(Sh.create_client_ovpn(options), sudo: true)
         invoke! 'files:download', "/opt/openvpn_data/clients/keys/#{args[:name]}.ovpn", Pathname.new(args[:path] || '').to_s
       end
     end
@@ -12,7 +12,7 @@ namespace :vpn do
     desc 'revoke client .ovpn key'
     task :revoke, [:name] do |t, args|
       on release_roles :all do
-        execute Sh.bash(Sh.revoke_client_ovpn(name: args[:name]), sudo: true)
+        execute_bash(Sh.revoke_client_ovpn(name: args[:name]), sudo: true)
       end
     end
   end

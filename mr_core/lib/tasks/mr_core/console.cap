@@ -10,7 +10,7 @@ namespace :console do
             error "cannot start console with empty ip"
             exit 1
           end
-          execute Sh.bash("echo '#{my_ip}' > '#{current_path.join('tmp/console.txt')}'")
+          execute_bash("echo '#{my_ip}' > '#{current_path.join('tmp/console.txt')}'")
           ENV['STICKY_SESSIONS'] = 'true'
           invoke 'nginx:app:push'
           invoke 'nginx:reload'

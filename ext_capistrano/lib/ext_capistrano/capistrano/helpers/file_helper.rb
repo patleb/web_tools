@@ -11,31 +11,30 @@ module ExtCapistrano
     end
 
     def send_files(server, root, folder)
-      run_locally { execute "rsync --progress -rutzvh -e 'ssh -p #{fetch(:port, 22)}' #{root}/#{folder} #{server.user}@#{server.hostname}:#{shared_path}/#{root}/" }
+      run_locally{ execute "rsync --progress -rutzvh -e 'ssh -p #{fetch(:port, 22)}' #{root}/#{folder} #{server.user}@#{server.hostname}:#{shared_path}/#{root}/" }
     end
 
     def get_files(server, root, folder)
-      run_locally { execute "rsync --progress -rutzvh -e 'ssh -p #{fetch(:port, 22)}' #{server.user}@#{server.hostname}:#{shared_path}/#{root}/#{folder} ./#{root}/" }
+      run_locally{ execute "rsync --progress -rutzvh -e 'ssh -p #{fetch(:port, 22)}' #{server.user}@#{server.hostname}:#{shared_path}/#{root}/#{folder} ./#{root}/" }
     end
 
     def upload_file(server, source, destination, user: false)
-      run_locally { execute "rsync --rsync-path='sudo rsync' #{"--chown=#{fetch(:deployer_name)}:#{fetch(:deployer_name)}" if user} -azvh -e 'ssh -p #{fetch(:port, 22)}' '#{source}' #{fetch(:deployer_name)}@#{server.hostname}:#{destination}" }
+      run_locally{ execute "rsync --rsync-path='sudo rsync' #{"--chown=#{fetch(:deployer_name)}:#{fetch(:deployer_name)}" if user} -azvh -e 'ssh -p #{fetch(:port, 22)}' '#{source}' #{fetch(:deployer_name)}@#{server.hostname}:#{destination}" }
     end
 
     def download_file(server, source, destination)
-      run_locally { execute "rsync --rsync-path='sudo rsync' -azvh -e 'ssh -p #{fetch(:port, 22)}' #{fetch(:deployer_name)}@#{server.hostname}:#{source} '#{destination}'" }
+      run_locally{ execute "rsync --rsync-path='sudo rsync' -azvh -e 'ssh -p #{fetch(:port, 22)}' #{fetch(:deployer_name)}@#{server.hostname}:#{source} '#{destination}'" }
     end
 
     def upload_erb(server, source, destination)
-      compile_erb(source)
-      upload_file(server, source, destination)
-      # TODO remove parent directory if it's empty
-      FileUtils.rm_f source unless ENV['BUNDLE_RSYNC']
+      upload_file(server, compile_erb(source), destination)
     end
 
     def compile_erb(source)
-      FileUtils.mkdir_p File.dirname(source)
-      File.open(source, 'w') do |f|
+      base_dir = Pathname.new(File.dirname(source)).relative_path_from('tmp')
+      new_file = source.relative_path_from('tmp')
+      FileUtils.mkdir_p base_dir
+      File.open(new_file, 'w') do |f|
         source_erb = "#{source}.erb"
 
         unless File.exist? source_erb
@@ -51,6 +50,7 @@ module ExtCapistrano
 
         f.puts ERB.new(File.read(source_erb), nil, '-').result
       end
+      new_file
     end
   end
 end

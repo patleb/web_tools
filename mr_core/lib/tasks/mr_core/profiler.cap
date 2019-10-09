@@ -8,7 +8,7 @@ namespace :profiler do
             error "cannot start profiler with empty matcher"
             exit 1
           end
-          execute Sh.bash("echo '#{matcher}' > '#{current_path.join('tmp/profile.txt')}'")
+          execute_bash("echo '#{matcher}' > '#{current_path.join('tmp/profile.txt')}'")
           invoke 'passenger:restart'
         end
       end
