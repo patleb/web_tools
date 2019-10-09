@@ -156,13 +156,14 @@ module Sunzistrano
       end
 
       def run_provision_cmd
-        if Gem.loaded_specs['sun_cap'] && sun.server_cluster_provider
+        if sun.server_cluster?
           Parallel.each(SunCap.server_cluster, in_threads: Float::INFINITY) do |server|
             run_provison_cmd_for(server)
           end
         else
           run_provison_cmd_for(sun.server)
         end
+        FileUtils.rm_rf('.provision') unless sun.debug
       end
 
       def run_provison_cmd_for(server)
@@ -190,7 +191,7 @@ module Sunzistrano
           -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
           #{sun.username}@#{server} \
           #{"-p #{sun.port}" if sun.port} \
-          '#{provision_remote_cmd} '#{'&& (cd .. && rm -rf .provision) || (cd .. && rm -rf .provision)' unless sun.debug}
+          '#{provision_remote_cmd}'
         CMD
       end
 

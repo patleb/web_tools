@@ -62,6 +62,10 @@ module Sunzistrano
       )
     end
 
+    def server_cluster?
+      Gem.loaded_specs['sun_cap'] && sun.server_cluster_provider
+    end
+
     def username
       if (value = self[:username]).present?
         value
