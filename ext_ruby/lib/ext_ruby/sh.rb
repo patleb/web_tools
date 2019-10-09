@@ -31,10 +31,10 @@ module Sh
     end
   end
 
-  def self.concat(path, string, unique: false, bash: false)
+  def self.concat(path, string, unique: false)
     command = "echo '#{string}' >> #{path}"
     command = "grep -q -F '#{string}' #{path} || #{command}" if unique
-    bash ? to_bash_command(command) : command
+    command
   end
 
   def self.escape_regex(value)
@@ -78,9 +78,5 @@ module Sh
 
   def self.to_non_regex(string)
     string.escape_single_quotes.escape_regex
-  end
-
-  def self.to_bash_command(command)
-    "bash -c \"#{command}\""
   end
 end

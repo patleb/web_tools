@@ -126,7 +126,7 @@ namespace :nginx do
         on release_roles :all do
           raise "user password cannot be empty" unless (pwd = args[:pwd]).present?
           pwd = `openssl passwd -apr1 "#{pwd}"`.strip
-          execute :sudo, Sh.concat('/etc/nginx/.htpasswd', "#{args[:name]}:#{pwd}", unique: true, bash: true)
+          execute_bash Sh.concat('/etc/nginx/.htpasswd', "#{args[:name]}:#{pwd}", unique: true), sudo: true, u: false
         end
       end
 
