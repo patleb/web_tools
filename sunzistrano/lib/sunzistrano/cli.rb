@@ -185,7 +185,7 @@ module Sunzistrano
         end
       end
 
-      def provision_cmd(server)
+      def provision_cmd(server) # TODO jump host
         <<~CMD
           #{ssh_add_cmd} cd .provision && tar cz . | #{"sshpass -p #{sun.password}" if sun.password} ssh \
           -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \

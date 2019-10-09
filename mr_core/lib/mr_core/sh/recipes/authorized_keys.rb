@@ -3,7 +3,7 @@ module Sh::AuthorizedKeys
     keys = Setting[:authorized_keys]
     raise ':authorized_keys must be present' unless keys.any?
 
-    if (admin_key = Setting[:admin_public_key]).present?
+    if (admin_key = Setting[:admin_public_key]).present? # TODO not working
       keys = [admin_key].concat(keys)
     end
 
