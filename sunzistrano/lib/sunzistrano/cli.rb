@@ -5,20 +5,20 @@ module Sunzistrano
 
     attr_reader :sun
 
-    desc 'provision [stage] [role] [--recipe] [--username] [--password]', 'Provision sunzistrano project'
-    method_options recipe: :string, username: :string, password: :string
+    desc 'provision [stage] [role] [--recipe] [--username]', 'Provision sunzistrano project'
+    method_options recipe: :string, username: :string
     def provision(stage, role = 'system')
       do_provision(stage, role)
     end
 
-    desc 'specialize [stage] [role] [--recipe] [--username] [--password]', 'Specialize sunzistrano project'
-    method_options recipe: :string, username: :string, password: :string
+    desc 'specialize [stage] [role] [--recipe] [--username]', 'Specialize sunzistrano project'
+    method_options recipe: :string, username: :string
     def specialize(stage, role = 'system')
       do_provision(stage, role, specialize: true)
     end
 
-    desc 'rollback [stage] [role] [--recipe] [--username] [--password]', 'Rollback sunzistrano recipe'
-    method_options recipe: :required, username: :string, password: :string
+    desc 'rollback [stage] [role] [--recipe] [--username]', 'Rollback sunzistrano recipe'
+    method_options recipe: :required, username: :string
     def rollback(stage, role = 'system')
       do_provision(stage, role, rollback: true)
     end
@@ -48,7 +48,7 @@ module Sunzistrano
 
       def do_compile(stage, role, **custom_options)
         load_config(stage, role, **custom_options)
-        copy_local_files
+        copy_files
         build_role
       end
 
@@ -71,7 +71,7 @@ module Sunzistrano
         @sun = Sunzistrano::Config.new(stage, role, **options.symbolize_keys, **custom_options)
       end
 
-      def copy_local_files
+      def copy_files
         basenames = "config/provision/{files,helpers,recipes,roles}/**/*"
 
         dirnames = [basenames]
@@ -171,18 +171,17 @@ module Sunzistrano
       end
 
       def provision_cmd(server)
-        <<~CMD
-          #{ssh_add_vagrant} cd .provision && tar cz . | #{"sshpass -p #{sun.password}" if sun.password} ssh \
-          -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
-          #{"#{sun.username}@#{sun.server}" if sun.server_cluster?} \
-          #{sun.username}@#{server} \
-          #{"-p #{sun.port}" if sun.port} \
+        <<~CMD.squish
+          #{ssh_add_vagrant} cd .provision && tar cz . |
+          ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR
+          #{"-o ProxyCommand='ssh -W %h:%p #{sun.username}@#{sun.server}'" if sun.server_cluster?}
+          #{sun.username}@#{server}
           '#{provision_remote_cmd}'
         CMD
       end
 
       def provision_remote_cmd
-        <<~CMD
+        <<~CMD.squish
           rm -rf ~/#{sun.PROVISION_DIR} &&
           mkdir ~/#{sun.PROVISION_DIR} &&
           cd ~/#{sun.PROVISION_DIR} &&
@@ -192,19 +191,18 @@ module Sunzistrano
       end
 
       def download_cmd(path, ref)
-        <<~CMD
-          #{ssh_add_vagrant} rsync --rsync-path='sudo rsync' -azvh -e "ssh \
-          -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
-          #{"-p #{sun.port}" if sun.port}" \
+        <<~CMD.squish
+          #{ssh_add_vagrant} rsync --rsync-path='sudo rsync' -azvh -e
+          "ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR"
           #{sun.username}@#{sun.server}:#{path} #{ref}
         CMD
       end
 
       def ssh_add_vagrant
-        <<~CMD if sun.env.vagrant?
-          if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then \
-            eval $(ssh-agent); \
-          fi \
+        <<~CMD.squish if sun.env.vagrant?
+          if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then
+            eval $(ssh-agent);
+          fi
           && ssh-add #{Sh.vagrant_pkey} 2> /dev/null &&
         CMD
       end
