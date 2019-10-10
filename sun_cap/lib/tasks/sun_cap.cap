@@ -6,34 +6,23 @@ namespace :load do
   end
 end
 
-namespace :sun do
-  desc 'Sun specialize application'
-  task :specialize, [:app] do |t, args|
-    on release_roles :all do
-      within current_path do
-        be :sun, :specialize, "#{cap.env}:#{args[:app]}"
-      end
+namespace :sun_cap do
+  desc 'output capistrano config'
+  task :config do
+    next if (names = fetch(:sunzistrano_context).map(&:to_sym)).empty?
+
+    ENV['RAILS_ROOT'] = Dir.pwd
+    env = Capistrano::Configuration.env
+    values = env.variables.instance_values['values'].each_with_object({}) do |(key, value), memo|
+      value = value.call if value.respond_to?(:call)
+      memo[key] = value
     end
-  end
 
-  namespace :cap do
-    desc 'output capistrano config'
-    task :config do
-      next if (names = fetch(:sunzistrano_context).map(&:to_sym)).empty?
-
-      ENV['RAILS_ROOT'] = Dir.pwd
-      env = Capistrano::Configuration.env
-      values = env.variables.instance_values['values'].each_with_object({}) do |(key, value), memo|
-        value = value.call if value.respond_to?(:call)
-        memo[key] = value
-      end
-
-      values = values.slice(*names).merge!(port: values[:ssh_options].try(:[], :port) || values[:port])
-      output = values.each_with_object('') do |(key, value), output|
-        output << key.to_s << ' ' << value.to_s << "\n"
-      end
-
-      puts output
+    values = values.slice(*names).merge!(port: values[:ssh_options].try(:[], :port) || values[:port])
+    output = values.each_with_object('') do |(key, value), output|
+      output << key.to_s << ' ' << value.to_s << "\n"
     end
+
+    puts output
   end
 end
