@@ -3,6 +3,7 @@ require 'ice_nine'
 
 require 'active_support/concern'
 require 'active_support/core_ext/array/wrap'
+require 'active_support/core_ext/array/grouping'
 require 'active_support/core_ext/class/attribute'
 require 'active_support/core_ext/class/attribute_accessors'
 require 'active_support/core_ext/enumerable'

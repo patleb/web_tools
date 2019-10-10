@@ -1,4 +1,4 @@
-require 'sun_cap/server_cluster'
+require 'sun_cap'
 
 module Sunzistrano
   module Capistrano

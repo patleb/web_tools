@@ -1,3 +1,5 @@
+load_rel 'sun_cap/**/*.cap'
+
 namespace :load do
   task :defaults do
     set :sunzistrano_context, -> { [] }
@@ -26,10 +28,8 @@ namespace :sun do
         memo[key] = value
       end
 
-      output = values.slice(*names).merge!(
-        port: values[:ssh_options].try(:[], :port) || values[:port],
-        pkey: values[:ssh_options].try(:[], :keys).try(:first),
-      ).each_with_object('') do |(key, value), output|
+      values = values.slice(*names).merge!(port: values[:ssh_options].try(:[], :port) || values[:port])
+      output = values.each_with_object('') do |(key, value), output|
         output << key.to_s << ' ' << value.to_s << "\n"
       end
 

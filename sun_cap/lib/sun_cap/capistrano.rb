@@ -1,2 +1,3 @@
-require 'sun_cap/server_cluster'
-load 'tasks/sun.cap'
+require 'sun_cap'
+
+load 'tasks/sun_cap.cap'

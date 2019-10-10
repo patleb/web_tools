@@ -17,5 +17,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir["lib/**/*", "MIT-LICENSE", "README.md"]
 
-  s.add_dependency 'activesupport'
+  s.add_dependency 'mr_setting'
 end

@@ -64,7 +64,6 @@ sun.remove_defaults() {
   rm -f $bkp
 }
 
-# bundle exec sun download vagrant system <path> --dev --saved
 sun.compare_defaults() {
   local bkp="$(sun.defaults_path $1)"
   local ref="$(sun.template_path $1).ref"

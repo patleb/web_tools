@@ -66,6 +66,14 @@ module Sunzistrano
       Gem.loaded_specs['sun_cap'] && server_cluster_provider
     end
 
+    def admin_public_key
+      Gem.loaded_specs['sun_cap'] && Sh.admin_public_key.presence && "'#{Sh.admin_public_key}'"
+    end
+
+    def admin_private_key
+      Gem.loaded_specs['sun_cap'] && Sh.admin_private_key.presence && "'#{Sh.admin_private_key}'"
+    end
+
     def username
       if (value = self[:username]).present?
         value
@@ -90,30 +98,6 @@ module Sunzistrano
       if local_path.present?
         @_local_dir ||= Pathname.new(local_path).expand_path
       end
-    end
-
-    def admin_public_key
-      if (key = self[:admin_public_key] || `ssh-keygen -f #{pkey} -y`.strip).present?
-        "'#{key}'"
-      end
-    end
-
-    def admin_private_key
-      if (key = self[:admin_private_key] || `cat #{pkey}`.strip).present?
-        "'#{key}'"
-      end
-    end
-
-    def pkey
-      @_pkey ||=
-        if env.vagrant?
-          `vagrant ssh-config #{vagrant_name}`.split("\n").drop(1).map(&:strip).each_with_object({}){ |key_value, configs|
-            key, value = key_value.split(' ', 2)
-            configs[key.underscore] = value
-          }['identity_file']
-        else
-          self[:pkey]
-        end
     end
 
     def list_helpers(root)
