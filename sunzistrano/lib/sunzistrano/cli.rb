@@ -185,10 +185,11 @@ module Sunzistrano
         end
       end
 
-      def provision_cmd(server) # TODO jump host
+      def provision_cmd(server)
         <<~CMD
           #{ssh_add_vagrant} cd .provision && tar cz . | #{"sshpass -p #{sun.password}" if sun.password} ssh \
           -o 'StrictHostKeyChecking no' -o LogLevel=ERROR \
+          #{"#{sun.username}@#{sun.server}" if sun.server_cluster?} \
           #{sun.username}@#{server} \
           #{"-p #{sun.port}" if sun.port} \
           '#{provision_remote_cmd}'
