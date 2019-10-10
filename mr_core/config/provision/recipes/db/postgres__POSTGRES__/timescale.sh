@@ -26,6 +26,10 @@ esac
 sun.update
 sun.install "timescaledb-postgresql-$__POSTGRES__"
 sun.lock "timescaledb-postgresql-$__POSTGRES__"
+
+echo "# TIMESCALEDB START" >> "$PG_CONF_DIR/postgresql.conf"
 timescaledb-tune --quiet --yes --dry-run >> "$PG_CONF_DIR/postgresql.conf"
 echo "timescaledb.telemetry_level=off" >> "$PG_CONF_DIR/postgresql.conf"
+echo "# TIMESCALEDB END" >> "$PG_CONF_DIR/postgresql.conf"
+
 systemctl restart postgresql
