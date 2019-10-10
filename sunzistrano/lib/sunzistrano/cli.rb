@@ -48,7 +48,6 @@ module Sunzistrano
 
       def do_compile(stage, role, **custom_options)
         load_config(stage, role, **custom_options)
-        copy_remote_files
         copy_local_files
         build_role
       end
@@ -70,14 +69,6 @@ module Sunzistrano
       def load_config(stage, role, **custom_options)
         validate_config_presence!
         @sun = Sunzistrano::Config.new(stage, role, **options.symbolize_keys, **custom_options)
-      end
-
-      def copy_remote_files
-        %w(files helpers recipes roles).each do |type|
-          (sun["remote_#{type}"] || []).each do |file|
-            get_remote_file(file, type)
-          end
-        end
       end
 
       def copy_local_files
@@ -147,12 +138,6 @@ module Sunzistrano
 
       def validate_config_presence!
         abort_with 'You must have a provision.yml'unless Sunzistrano::Config.provision_yml.exist?
-      end
-
-      def get_remote_file(file, type)
-        file_path = expand_path("#{type}/remote/#{File.basename(file)}")
-        return if File.exist? file_path
-        get file, file_path
       end
 
       def run_provision_cmd
