@@ -97,6 +97,8 @@ stages.each do |stage|
 
       Setting.load(env: stage, app: app, root: fetch(:root))
 
+      # TODO deploy DB server behind proxy server
+      # https://www.randomerrata.com/articles/2015/deploying-via-a-bastion-host-with-capistrano-3/
       if ENV['BUNDLE_RSYNC']
         SunCap.server_cluster.each do |server|
           server server, user: fetch(:deployer_name), roles: %i(web app)
