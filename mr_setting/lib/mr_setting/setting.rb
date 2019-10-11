@@ -200,7 +200,7 @@ class Setting
       app_yml = (yml[@app] || {}).union!(yml["#{@app}_#{@env}"] || {})
       env_yml.union!(app_yml)
     end
-    env_yml.union!(gems_yml || {})
+    (gems_yml || {}).union!(env_yml)
   end
 
   def self.gsub_rails_secrets(content)
