@@ -36,7 +36,7 @@ module SunCap
   def self.openstack_server_list(*filters, state: 'ACTIVE')
     os_vars = Setting.select{ |k, _| k.start_with? 'os_' }.map{ |k, v| "#{k.upcase}='#{v}'" }.join(' ')
     grep = [*filters, state].map{ |filter| "grep '#{filter}'" }
-    list = `#{os_vars} openstack -q server list | #{grep.join(' | ')} | cut -d'|' -f5 | cut -d'=' -f2`
-    list.lines.map(&:strip)
+    list = `#{os_vars} nova list | #{grep.join(' | ')} | cut -d'|' -f7 | cut -d'=' -f2`
+    list.lines.map(&:strip).map(&:split.with(',')).map(&:first)
   end
 end
