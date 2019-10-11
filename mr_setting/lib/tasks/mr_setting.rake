@@ -27,6 +27,10 @@ namespace :mr_setting do
 end
 
 namespace :setting do
+  task :context => :environment do
+    puts "{ env: #{Setting.rails_env}, app: #{Setting.rails_app} }"
+  end
+
   task :dump, [:env, :app, :file] do |t, args|
     raise 'argument [:app] must be specified' unless (ENV['RAILS_APP'] = args[:app]).present?
     raise 'argument [:file] must be specified' unless (file = args[:file]).present?
