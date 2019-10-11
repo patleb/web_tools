@@ -1,3 +1,6 @@
+# TODO jump host
+# https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts
+# https://unix.stackexchange.com/questions/289971/download-with-rsync-through-bastion-jumper-without-ssh-config-changes
 namespace :files do
   desc 'Create directory'
   task :mkdir, [:dst, :sudo] do |t, args|
