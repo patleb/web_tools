@@ -13,7 +13,7 @@ module SunCap
     end
   end
 
-  def self.server_cluster
+  def self.server_cluster # TODO run_locally --> so Openstack credentials don't need to be shared
     if Setting[:server_cluster_ips].present?
       Setting[:server_cluster_ips]
     else

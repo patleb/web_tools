@@ -11,7 +11,7 @@ namespace :load do
     set :format,              -> { :airbrussh }
     set :format_options,      -> { { truncate: false } }
     set :admin_name,          -> { cap.env.vagrant? ? 'vagrant' : cap.os }
-    set :deployer_name,       -> { 'deployer' }
+    set :deployer_name,       -> { Setting[:deployer_name] }
     set :deploy_dir,          -> { "#{cap.app}_#{cap.env}" }
     set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
 
