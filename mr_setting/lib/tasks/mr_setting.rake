@@ -26,6 +26,7 @@ namespace :mr_setting do
   end
 end
 
+# TODO rotate :secret_key_base
 namespace :setting do
   task :context => :environment do
     puts "{ env: #{Setting.rails_env}, app: #{Setting.rails_app} }"
