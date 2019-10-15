@@ -16,6 +16,7 @@ module ExtRake
             /ALTER TABLE.+OWNER TO/,
             /WARNING: errors ignored/,
             /ERROR:.+does not exist/,
+            'Command was: COPY _timescaledb_catalog.telemetry_metadata (key, value) FROM stdin;',
             'ERROR:  unrecognized configuration parameter "idle_in_transaction_session_timeout"',
             'ERROR:  must be owner of extension plpgsql',
             'ERROR:  must be owner of schema public',
@@ -45,7 +46,7 @@ module ExtRake
           memo.gsub! match, "[#{id}]"
         end
         stderr = stderr.strip.split("\n").map(&:strip).select{ |line| ignored_error? line }.join("\n")
-        raise Failed, "[#{cmd}]\n\n#{stderr}"
+        raise Failed, "[\n#{cmd}]\n\n#{stderr}"
       end
 
       def ignored_error?(line)

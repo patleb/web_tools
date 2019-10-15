@@ -49,7 +49,7 @@ module Db
 
       def pre_restore_timescaledb
         psql(<<-SQL.strip_sql)
-          CREATE EXTENSION timescaledb;
+          CREATE EXTENSION IF NOT EXISTS timescaledb;
           SELECT timescaledb_pre_restore();
         SQL
       end
