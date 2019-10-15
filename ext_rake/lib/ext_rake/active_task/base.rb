@@ -226,6 +226,8 @@ module ActiveTask
       case validates
       when :required, :presence
         raise OptionParser::MissingArgument.new(arg_name) if value.blank?
+      when :exist, :exists
+        # TODO file.exists?, ...
       when Hash
         validates.each do |validates, validates_args|
           case validates
