@@ -13,7 +13,7 @@ module Db
 
       def before_run
         super
-        reload_secrets
+        reload_settings
       end
 
       protected

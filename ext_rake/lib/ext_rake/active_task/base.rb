@@ -4,7 +4,6 @@ module ActiveTask
   class Base
     prepend ActiveTask::Helpers
     prepend ActiveTask::Counts
-    include ActiveTask::Validations
 
     EXIT_CODE_HELP = 10
 
@@ -173,7 +172,14 @@ module ActiveTask
         if self.class.protected_args.include? arg_name
           raise "protected argurment [#{arg_name}] cannot be used"
         end
-        parser.on(*arg_options){ |value| @options[arg_name] = value }
+        case arg_options.last
+        when Symbol, Hash
+          validates = arg_options.pop
+        end
+        parser.on(*arg_options) do |value|
+          _validates_arg(validates, arg_name, value)
+          @options[arg_name] = value
+        end
       end
       STEPS_ARGS.except(:step).each do |arg|
         parser.on("--#{arg}=#{arg.to_s.upcase}", Array){ |list| @options[arg] = list }
@@ -213,6 +219,35 @@ module ActiveTask
         raise
       else
         true
+      end
+    end
+
+    def _validates_arg(validates, arg_name, value)
+      case validates
+      when :required, :presence
+        raise OptionParser::MissingArgument.new(arg_name) if value.blank?
+      when Hash
+        validates.each do |validates, validates_args|
+          case validates
+          when :greater_than
+            min = Array.wrap(validates_args).first
+            raise ArgumentError, "--#{arg_name.to_s.dasherize} must be > #{min}" unless value && value > min
+          when :greater_or_equal
+            min = Array.wrap(validates_args).first
+            raise ArgumentError, "--#{arg_name.to_s.dasherize} must be >= #{min}" unless value && value >= min
+          when :less_than
+            max = Array.wrap(validates_args).first
+            raise ArgumentError, "--#{arg_name.to_s.dasherize} must be < #{max}" unless value && value < max
+          when :less_than_or_equal
+            max = Array.wrap(validates_args).first
+            raise ArgumentError, "--#{arg_name.to_s.dasherize} must be <= #{max}" unless value && value <= max
+          when :equal
+            exact = Array.wrap(validates_args).first
+            raise ArgumentError, "--#{arg_name.to_s.dasherize} must == #{exact}" unless value == exact
+          else
+            raise "Unsupported validates '#{validates}'"
+          end
+        end
       end
     end
   end
