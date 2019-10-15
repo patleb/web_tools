@@ -168,16 +168,16 @@ module ActiveTask
       parser = OptionParser.new
 
       parser.banner = "Usage: rake #{task.name} #{'-- [options]' if self.class.args.any?}"
+      validates = []
       self.class.args.each do |arg_name, arg_options|
         if self.class.protected_args.include? arg_name
           raise "protected argurment [#{arg_name}] cannot be used"
         end
         case arg_options.last
         when Symbol, Hash
-          validates = arg_options.pop
+          validates << [arg_name, arg_options.pop]
         end
         parser.on(*arg_options) do |value|
-          _validates_arg(validates, arg_name, value)
           @options[arg_name] = value
         end
       end
@@ -209,6 +209,9 @@ module ActiveTask
 
       args = parser.order!(ARGV){}
       parser.parse! args
+      validates.each do |arg_name, arg_option|
+        _validates_arg(arg_name, arg_option)
+      end
       rails_args.each do |arg, value|
         ENV["RAILS_#{arg.to_s.upcase}"] = value
       end
@@ -222,14 +225,15 @@ module ActiveTask
       end
     end
 
-    def _validates_arg(validates, arg_name, value)
-      case validates
+    def _validates_arg(arg_name, arg_option)
+      value = @options[arg_name]
+      case arg_option
       when :required, :presence
         raise OptionParser::MissingArgument.new(arg_name) if value.blank?
       when :exist, :exists
         # TODO file.exists?, ...
       when Hash
-        validates.each do |validates, validates_args|
+        arg_option.each do |validates, validates_args|
           case validates
           when :greater_than
             min = Array.wrap(validates_args).first
