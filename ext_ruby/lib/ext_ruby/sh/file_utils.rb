@@ -31,9 +31,10 @@ module Sh::FileUtils
     end
   end
 
-  def concat(path, string, unique: false)
-    command = "echo '#{string}' >> #{path}"
-    command = "grep -q -F '#{string}' #{path} || #{command}" if unique
+  def concat(path, string, escape: true, unique: false)
+    quote = escape ? "'" : '"'
+    command = "echo #{quote}#{string}#{quote} >> #{path}"
+    command = "grep -q -F #{quote}#{string}#{quote} #{path} || #{command}" if unique
     command
   end
 
