@@ -251,7 +251,7 @@ module ActiveTask
             exact = Array.wrap(validates_args).first
             raise ArgumentError, "--#{arg_name.to_s.dasherize} must == #{exact}" unless value == exact
           else
-            raise "Unsupported validates '#{validates}'"
+            raise "Unsupported validation '#{validates}'"
           end
         end
       end
