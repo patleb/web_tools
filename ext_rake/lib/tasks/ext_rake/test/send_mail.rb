@@ -7,10 +7,6 @@ module ExtRake
         end
       end
 
-      def self.steps
-        [:send_mail]
-      end
-
       def send_mail
         exception = Message.new
         exception = ::RescueError.new(exception) if Gem.loaded_specs['mr_rescue']

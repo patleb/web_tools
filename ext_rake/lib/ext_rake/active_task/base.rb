@@ -31,7 +31,7 @@ module ActiveTask
     end
 
     def self.steps
-      []
+      [name.demodulize.underscore]
     end
 
     def self.args
