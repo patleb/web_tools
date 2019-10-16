@@ -1,3 +1,4 @@
+# https://www.cybertec-postgresql.com/en/tech-preview-improving-copy-and-bulkloading-in-postgresql-12/
 module Db
   module Pg
     class Dump < Base
