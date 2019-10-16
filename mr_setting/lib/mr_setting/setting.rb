@@ -112,7 +112,7 @@ class Setting
 
   def self.rails_root
     case
-    when @root then @root
+    when @root             then @root
     when ENV['RAILS_ROOT'] then ENV['RAILS_ROOT']
     when defined?(Rails)   then Rails.root || ''
     else ''
