@@ -95,38 +95,27 @@ class Setting
   private_class_method
 
   def self.rails_env
-    if @env
-      @env
-    elsif ENV['RAILS_ENV']
-      ENV['RAILS_ENV']
-    elsif defined? Rails
-      Rails.env.to_s
-    else
-      nil
+    case
+    when @env             then @env
+    when ENV['RAILS_ENV'] then ENV['RAILS_ENV']
+    when defined?(Rails)  then Rails.env.to_s
     end
   end
 
   def self.rails_app
-    if @app
-      @app
-    elsif ENV['RAILS_APP']
-      ENV['RAILS_APP']
-    elsif defined? Rails
-      Rails.app.to_s
-    else
-      nil
+    case
+    when @app             then @app
+    when ENV['RAILS_APP'] then ENV['RAILS_APP']
+    when defined?(Rails)  then Rails.app.to_s
     end
   end
 
   def self.rails_root
-    if @root
-      @root
-    elsif ENV['RAILS_ROOT']
-      ENV['RAILS_ROOT']
-    elsif defined? Rails
-      Rails.root || ''
-    else
-      ''
+    case
+    when @root then @root
+    when ENV['RAILS_ROOT'] then ENV['RAILS_ROOT']
+    when defined?(Rails)   then Rails.root || ''
+    else ''
     end
   end
 
