@@ -30,8 +30,8 @@ export TERM=linux
 <% sun.attributes.each do |attribute, value| %>
   export __<%= attribute.upcase %>__=<%= value.respond_to?(:call) ? value.call : value %>
 <% end %>
-__APP__=$__APPLICATION__
-__ENV__=$__STAGE__
+export __APP__=$__APPLICATION__
+export __ENV__=$__STAGE__
 __ROLLBACK__=${__ROLLBACK__:-false}
 __SPECIALIZE__=${__SPECIALIZE__:-false}
 __DEBUG__=${__DEBUG__:-false}
