@@ -52,8 +52,8 @@ module Sunzistrano
       to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
         os_name: os,
         username: username,
-        admin_public_key: ->{ admin_public_key },
-        admin_private_key: ->{ admin_private_key.escape_newlines },
+        admin_public_key: admin_public_key,
+        admin_private_key: admin_private_key.escape_newlines,
         provision_log: PROVISION_LOG,
         provision_dir: PROVISION_DIR,
         manifest_log: MANIFEST_LOG,
@@ -67,11 +67,11 @@ module Sunzistrano
     end
 
     def admin_public_key
-      Gem.loaded_specs['sun_cap'] && Sh.admin_public_key.presence && "'#{Sh.admin_public_key}'"
+      self[:admin_public_key].presence && "'#{self[:admin_public_key]}'"
     end
 
     def admin_private_key
-      Gem.loaded_specs['sun_cap'] && Sh.admin_private_key.presence && "'#{Sh.admin_private_key}'"
+      self[:admin_private_key].presence && "'#{self[:admin_private_key]}'"
     end
 
     def username

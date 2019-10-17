@@ -5,8 +5,10 @@ namespace :mr_core do
   task :setup do
     src, dst = Gem.root('mr_core').join('lib/tasks/templates'), Rails.root
 
-    cp src.join('config/boot.rb'),     dst.join('config/boot.rb')
-    cp src.join('config/schedule.rb'), dst.join('config/schedule.rb')
+    mkdir dst.join('.vagrant')
+    cp src.join('vagrant/private_key'), dst.join('.vagrant/private_key')
+    cp src.join('config/boot.rb'),      dst.join('config/boot.rb')
+    cp src.join('config/schedule.rb'),  dst.join('config/schedule.rb')
     %w(development staging vagrant).each do |env|
       cp src.join("config/environments/#{env}.rb"), dst.join("config/environments/#{env}.rb")
     end
