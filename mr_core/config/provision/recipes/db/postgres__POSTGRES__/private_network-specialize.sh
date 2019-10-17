@@ -4,6 +4,9 @@ PRIVATE_NETWORK=$(sun.network $INTERNAL_IP $__POSTGRES_PRIVATE_MASK__)/$__POSTGR
 
 <%= Sh.delete_lines! '$(sun.pg_conf_dir)/pg_hba.conf', '$PRIVATE_NETWORK', escape: false %>
 
-ufw delete $(ufw status numbered | grep $PRIVATE_NETWORK | awk '{ print $1; }' | tr '[]' ' ')
+RULE=$(ufw status numbered | grep $PRIVATE_NETWORK | awk '{ print $1; }' | tr '[]' ' ')
+if [[ "$RULE" ]]; then
+  ufw delete $RULE
+fi
 
 source 'recipes/db/postgres__POSTGRES__/private_network.sh'
