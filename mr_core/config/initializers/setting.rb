@@ -1,4 +1,12 @@
 Setting.class_eval do
+  def self.ftp_host_path
+    if defined? Rails
+      "/#{Rails.application.name}/#{Rails.env}"
+    else
+      "/#{rails_app}/#{rails_env}"
+    end
+  end
+
   def self.geoserver_local_url
     "http://#{geoserver_local_server}/geoserver"
   end

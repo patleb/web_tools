@@ -1,7 +1,6 @@
 ### References
 # https://linuxize.com/post/how-to-setup-ftp-server-with-vsftpd-on-centos-7/
 # https://www.digitalocean.com/community/tutorials/how-to-set-up-vsftpd-for-a-user-s-directory-on-ubuntu-16-04
-sun.install "ftp"
 sun.install "vsftpd"
 
 case "$OS" in
@@ -24,9 +23,7 @@ sudo chmod 550 /home/$__DEPLOYER_NAME__/ftp
 sudo chmod 750 /home/$__DEPLOYER_NAME__/ftp/${__APP__}/${__ENV__}
 sudo chown -R $__DEPLOYER_NAME__:$__DEPLOYER_NAME__ /home/$__DEPLOYER_NAME__/ftp
 
-ufw allow 20/tcp
 ufw allow 21/tcp
-ufw allow 30000:31000/tcp
 ufw reload
 
 systemctl enable vsftpd

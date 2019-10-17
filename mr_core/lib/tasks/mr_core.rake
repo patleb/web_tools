@@ -58,22 +58,23 @@ Rake::Task['db:drop'].enhance ['db:drop_pgrest']
 namespace :ftp do
   desc 'Mount FTP drive'
   task :mount => :environment do
-    sh "sudo mkdir -p #{Setting[:ftp_path]}"
-    sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{Setting[:ftp_path]}"
+    sh "sudo mkdir -p #{Setting[:ftp_mount_path]}"
+    sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{Setting[:ftp_mount_path]}"
     options = %W(
       allow_other
+      no_verify_hostname
+      no_verify_peer
       user=#{Setting[:ftp_username]}:#{Setting[:ftp_password]}
     )
-    remote_dir = "/#{Rails.application.name}/#{Rails.env}"
     sh <<~CMD.squish
       sudo curlftpfs -o #{options.join(',')},uid=$(id -u #{Setting[:deployer_name]}),gid=$(id -g #{Setting[:deployer_name]})
-        #{Setting[:ftp_hostname]}:#{remote_dir} #{Setting[:ftp_path]}
+        #{Setting[:ftp_host]}:#{Setting[:ftp_host_path]} #{Setting[:ftp_mount_path]}
     CMD
   end
 
   desc 'Unmount FTP drive'
   task :unmount => :environment do
-    sh "sudo fusermount -u #{Setting[:ftp_path]}"
+    sh "sudo fusermount -u #{Setting[:ftp_mount_path]}"
   end
 end
 
@@ -106,12 +107,12 @@ namespace :ssh do
   namespace :ftp do
     desc 'Mount SSH-FTP drive'
     task :mount, [:server] => :environment do |t, args|
-      Rake::Task['ssh:mount'].invoke(args[:server], Setting[:ftp_path], Setting[:ftp_path])
+      Rake::Task['ssh:mount'].invoke(args[:server], Setting[:ftp_mount_path], Setting[:ftp_mount_path])
     end
 
     desc 'Unmount SSH-FTP drive'
     task :unmount => :environment do
-      Rake::Task['ssh:unmount'].invoke(Setting[:ftp_path])
+      Rake::Task['ssh:unmount'].invoke(Setting[:ftp_mount_path])
     end
   end
 end
