@@ -62,19 +62,21 @@ namespace :ftp do
     sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{Setting[:ftp_mount_path]}"
     options = %W(
       allow_other
-      no_verify_hostname
+      ssl
       no_verify_peer
       user=#{Setting[:ftp_username]}:#{Setting[:ftp_password]}
     )
     sh <<~CMD.squish
-      sudo curlftpfs -o #{options.join(',')},uid=$(id -u #{Setting[:deployer_name]}),gid=$(id -g #{Setting[:deployer_name]})
+      sudo nohup curlftpfs -f -o #{options.join(',')},uid=$(id -u #{Setting[:deployer_name]}),gid=$(id -g #{Setting[:deployer_name]})
         #{Setting[:ftp_host]}:#{Setting[:ftp_host_path]} #{Setting[:ftp_mount_path]}
+        >> /home/#{Setting[:deployer_name]}/curlftpfs.log 2>&1 & sleep 1
+        && echo $! > /home/#{Setting[:deployer_name]}/curlftpfs.pid
     CMD
   end
 
   desc 'Unmount FTP drive'
   task :unmount => :environment do
-    sh "sudo fusermount -u #{Setting[:ftp_mount_path]}"
+    sh "sudo pkill -P $(cat /home/#{Setting[:deployer_name]}/curlftpfs.pid)"
   end
 end
 
