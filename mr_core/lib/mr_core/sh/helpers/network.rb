@@ -25,6 +25,6 @@ module Sh::Network
   end
 
   def internal_ip
-    "ip route get 8.8.8.8 | awk '{print $NF; exit}'"
+    "hostname -I | awk '{print $NF; exit}'"
   end
 end

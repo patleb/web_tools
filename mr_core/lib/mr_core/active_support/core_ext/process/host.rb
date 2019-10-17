@@ -56,7 +56,7 @@ module Process
     end
 
     def private_ip
-      @private_ip ||= Socket.ip_address_list.find{ |addrinfo| addrinfo.ipv4_private? }.ip_address
+      @private_ip ||= Socket.ip_address_list.reverse.find{ |addrinfo| addrinfo.ipv4_private? }.ip_address
     end
 
     def boot_time
