@@ -39,11 +39,11 @@ Vagrant.configure("2") do |config|
       vb.name = '<%= app_name %>'
       vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
     end
-    node.trigger.before :up do |trigger|
-      trigger.run = { inline: "cp -f .vagrant/private_key .vagrant/machines/web/virtualbox/private_key" }
+    node.vm.provision :shell do |server|
+      server.inline = "grep -Fq '#{public_key}' || echo '#{public_key}' >> /home/vagrant/.ssh/authorized_keys"
     end
     node.trigger.after :up do |trigger|
-      trigger.run_remote = { inline: "echo '#{public_key}' > /home/vagrant/.ssh/authorized_keys" }
+      trigger.run = { inline: "cp -f .vagrant/private_key .vagrant/machines/web/virtualbox/private_key" }
     end
     if Vagrant.has_plugin?('vagrant-hostmanager') && subdomains.any?
       node.hostmanager.aliases = subdomains.map do |subdomain|
