@@ -18,9 +18,9 @@ sun.backup_compile $FTP_CONF
 sun.backup_compare $FTP_LIST
 echo $__DEPLOYER_NAME__ >> $FTP_LIST
 
-mkdir -p /home/$__DEPLOYER_NAME__/ftp/${__APP__}/${__ENV__}
+mkdir -p /home/$__DEPLOYER_NAME__/ftp/$__APP__/$__ENV__
 sudo chmod 550 /home/$__DEPLOYER_NAME__/ftp
-sudo chmod 750 /home/$__DEPLOYER_NAME__/ftp/${__APP__}/${__ENV__}
+sudo chmod 750 /home/$__DEPLOYER_NAME__/ftp/$__APP__/$__ENV__
 sudo chown -R $__DEPLOYER_NAME__:$__DEPLOYER_NAME__ /home/$__DEPLOYER_NAME__/ftp
 
 ufw allow 21/tcp
