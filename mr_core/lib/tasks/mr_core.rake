@@ -56,6 +56,35 @@ end
 Rake::Task['db:drop'].enhance ['db:drop_pgrest']
 
 namespace :ftp do
+  def lftp(command, &block)
+    sh("lftp -u '#{Setting[:ftp_username]},#{Setting[:ftp_password]}' #{Setting[:ftp_host]}:#{Setting[:ftp_host_path]} <<-FTP\n#{command}\nFTP", &block)
+  end
+
+  desc 'List files matching the expression'
+  task :list, [:match] => :environment do |t, args|
+    lftp "ls #{args[:match]}"
+  end
+
+  desc 'Download files matching the expression'
+  task :download, [:match] => :environment do |t, args|
+    lftp "mget -c -d #{args[:match]} -O #{Setting[:ftp_mount_path]}"
+  end
+
+  desc 'Upload files matching the expression'
+  task :upload, [:match] => :environment do |t, args|
+    lftp "lcd #{Setting[:ftp_mount_path]}; mput -c -d #{args[:match]}"
+  end
+
+  desc 'Remove files matching the expression'
+  task :remove, [:match] => :environment do |t, args|
+    lftp "mrm -r #{args[:match]}"
+  end
+
+  desc 'Rename file or directory'
+  task :rename, [:old_name, :new_name] => :environment do |t, args|
+    lftp "mv #{args[:old_name]} #{args[:new_name]}"
+  end
+
   desc 'Mount FTP drive'
   task :mount => :environment do
     sh "sudo mkdir -p #{Setting[:ftp_mount_path]}"
