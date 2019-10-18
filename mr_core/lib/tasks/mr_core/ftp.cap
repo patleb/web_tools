@@ -1,0 +1,10 @@
+namespace :ftp do
+  desc 'Create Setting[:ftp_mount_path] directory'
+  task :create_directory do
+    on release_roles :ftp_roles do
+      sudo :mkdir, "-p", "#{Setting[:ftp_mount_path]}"
+      sudo :chown, '-R', "#{fetch(:deployer_name)}:#{fetch(:deployer_name)}", Setting[:ftp_mount_path]
+    end
+  end
+  after 'deploy:publishing', 'ftp:create_directory'
+end

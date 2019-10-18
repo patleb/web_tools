@@ -56,8 +56,8 @@ end
 Rake::Task['db:drop'].enhance ['db:drop_pgrest']
 
 namespace :ftp do
-  def lftp(command, &block)
-    sh("lftp -u '#{Setting[:ftp_username]},#{Setting[:ftp_password]}' #{Setting[:ftp_host]}:#{Setting[:ftp_host_path]} <<-FTP\n#{command}\nFTP", &block)
+  def lftp(command)
+    sh "lftp -u '#{Setting[:ftp_username]},#{Setting[:ftp_password]}' #{Setting[:ftp_host]}:#{Setting[:ftp_host_path]} <<-FTP\n#{command}\nFTP"
   end
 
   desc 'List files matching the expression'
