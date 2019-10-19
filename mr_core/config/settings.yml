@@ -9,6 +9,8 @@ shared:
   mail_address: localhost
   mail_port: 1025
   deployer_name: deployer
+  geoserver_nginx_upstream: $METHOD
+  geoserver_nginx_location: $METHOD
   geoserver_local_url: $METHOD
   geoserver_local_server: $METHOD
   geoserver_local_host: 127.0.0.1

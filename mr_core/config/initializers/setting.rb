@@ -29,7 +29,6 @@ Setting.class_eval do
     database_url(self[:pgrest_db_username], self[:pgrest_db_password])
   end
 
-  # TODO move to settings.yml --> https://stackoverflow.com/questions/3790454/how-do-i-break-a-string-over-multiple-lines
   def self.pgrest_nginx_upstream
     {
       pgrest_app: <<-UPSTREAM,
@@ -49,6 +48,32 @@ Setting.class_eval do
         add_header Content-Location /#{self[:pgrest_path]}/$upstream_http_content_location;
         proxy_set_header Connection "";
         proxy_http_version 1.1;
+      LOCATION
+    }
+  end
+
+  def self.geoserver_nginx_upstream
+    {
+      geoserver_app: <<-UPSTREAM,
+        server #{geoserver_local_server};
+      UPSTREAM
+    }
+  end
+
+  def self.geoserver_nginx_location_wms
+    {
+      "/#{self[:geoserver_path]}/wms" => <<-LOCATION,
+        proxy_pass http://geoserver_app/geoserver/wms;
+        proxy_redirect off;
+  
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-Ip $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+  
+        proxy_connect_timeout 120s;
+        proxy_send_timeout 120s;
+        proxy_read_timeout 120s;
       LOCATION
     }
   end

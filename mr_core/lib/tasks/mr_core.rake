@@ -148,6 +148,26 @@ namespace :ssh do
   end
 end
 
+namespace :geoserver do
+  namespace :workspace do
+    %w(Create Destroy).each do |action|
+      task_name = action.underscore
+
+      desc "#{task_name.humanize} GeoServer workspace"
+      task task_name => :environment do |t|
+        Geoserver::Workspace.const_get(action).new(self, t).run
+      end
+    end
+  end
+end
+
+namespace :vpn do
+  desc "-- [options] VPN Update IP"
+  task :update_ip => :environment do |t|
+    MrCore::Vpn::UpdateIp.new(self, t).run
+  end
+end
+
 namespace :desktop do
   desc "-- [options] Desktop Clean-up Project"
   task :clean_up_project => :environment do |t|
@@ -157,13 +177,6 @@ namespace :desktop do
   desc "-- [options] Desktop Update Application"
   task :update_application => :environment do |t|
     MrCore::Desktop::UpdateApplication.new(self, t).run
-  end
-end
-
-namespace :vpn do
-  desc "-- [options] VPN Update IP"
-  task :update_ip => :environment do |t|
-    MrCore::Vpn::UpdateIp.new(self, t).run
   end
 end
 
