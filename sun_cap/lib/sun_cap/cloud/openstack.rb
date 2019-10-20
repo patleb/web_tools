@@ -3,14 +3,15 @@ module Cloud::Openstack
   class AlreadyDestroyed < ::StandardError; end
   class DoesNotExist < ::StandardError; end
 
-  def openstack_server_create(flavor, network, project, env, app: nil, version: nil, count: 1)
+  def openstack_server_create(flavor, network, project, env, app: nil, version: nil, image: nil, count: 1)
     tag = [project, env, app].compact.join('_')
     keypair = "ssh-#{[project, env].join('-').dasherize}"
-    snapshot = [project, version].compact.join('-')
+    snapshot = [project, version].compact.join('-') unless image
     raise AlreadyCreated if openstack_server_list(tag).present?
     raise DoesNotExist if openstack_flavor_list(flavor).empty?
     raise DoesNotExist if (network = openstack_network_list(network).first).nil?
-    raise DoesNotExist if (snapshot = openstack_snapshot_list(snapshot).first).nil?
+    raise DoesNotExist if !image && (snapshot = openstack_snapshot_list(snapshot).first).nil?
+    raise DoesNotExist if image && (image = openstack_image_list(image).first).nil?
     raise DoesNotExist if (security_group = openstack_security_group_list(project).first).nil?
     raise DoesNotExist if openstack_keypair_list(keypair).empty?
 
@@ -18,9 +19,10 @@ module Cloud::Openstack
       nova boot --poll
         --flavor #{flavor}
         --nic net-id=#{network[:id]}
-        --snapshot #{snapshot[:id]}
         --security-groups #{security_group[:name]}
         --key-name #{keypair}
+        #{"--snapshot #{snapshot[:id]}" if snapshot}
+        #{"--image #{image[:id]}" if image}
         #{"--min-count #{count}" if count && count > 1}
         #{tag}
     CMD
@@ -55,6 +57,10 @@ module Cloud::Openstack
 
   def openstack_network_list(*filters)
     openstack_execute('openstack network list', *filters)
+  end
+
+  def openstack_image_list(*filters)
+    openstack_execute('glance image-list', *filters)
   end
 
   def openstack_snapshot_list(*filters)
