@@ -203,7 +203,7 @@ module Sunzistrano
           if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then
             eval $(ssh-agent);
           fi
-          && ssh-add #{Sh.vagrant_pkey} 2> /dev/null &&
+          && ssh-add .vagrant/private_key 2> /dev/null &&
         CMD
       end
 

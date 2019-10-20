@@ -12,7 +12,7 @@ require 'mr_setting'
 require 'mr_rescue'
 require 'mr_template'
 require 'mr_throttler'
-# require 'sun_cap'
+require 'sun_cap'
 # require 'sunzistrano'
 
 module MrBackend

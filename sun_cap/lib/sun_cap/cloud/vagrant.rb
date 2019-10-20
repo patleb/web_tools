@@ -1,4 +1,4 @@
-module Sh::Vagrant
+module Cloud::Vagrant
   def vagrant_pkey
     vagrant_ssh_config.first.last['identity_file']
   end
@@ -10,5 +10,11 @@ module Sh::Vagrant
         config[key.underscore] = value
       end
     end
+  end
+
+  def vagrant_server_ips(filter)
+    list = Pathname.new('/etc/hosts').readlines
+    list.select!{ |line| true if (line =~ /vagrant-hostmanager-start/ .. line =~ /vagrant-hostmanager-end/) }
+    list[1..-2].select(&:include?.with(filter)).map(&:split).map(&:first)
   end
 end
