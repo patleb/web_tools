@@ -1,5 +1,3 @@
-load_rel 'sun_cap/**/*.cap'
-
 namespace :load do
   task :defaults do
     set :sunzistrano_context, -> { [] }
