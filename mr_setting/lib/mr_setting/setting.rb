@@ -13,6 +13,7 @@ class Setting
   METHOD = '$METHOD'.freeze
   ALIAS  = '$ALIAS'.freeze
   REMOVE = '$REMOVE'.freeze
+  FREED_IVARS = %i(@types @gems @secrets @database @aliases @methods @removed @replaced @types)
 
   class << self
     delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, :select, :reject, to: :all
@@ -74,6 +75,7 @@ class Setting
       settings = @secrets.merge! settings
       resolve_keywords! settings
       cast_values! settings
+      FREED_IVARS.each{ |ivar| remove_instance_variable(ivar) if instance_variable_defined? ivar }
       IceNine.deep_freeze! settings
     end
   end
