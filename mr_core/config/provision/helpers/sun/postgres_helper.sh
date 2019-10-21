@@ -9,12 +9,9 @@ sun.pg_major_version() {
 }
 
 sun.pg_conf_dir() {
-  case "$OS" in
-  ubuntu)
-    echo "/etc/postgresql/$__POSTGRES__/main"
-  ;;
-  centos)
-    echo "/var/lib/pgsql/$__POSTGRES__/data"
-  ;;
-  esac
+  echo $(sun.psql 'SHOW data_directory')
+}
+
+sun.psql() {
+  sudo -u postgres psql -d postgres -tAc "$1"
 }

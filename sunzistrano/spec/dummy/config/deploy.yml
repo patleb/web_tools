@@ -9,15 +9,13 @@ shared:
   ssl_organization: TODO
 
 admin:
-  skip_recipes:
+  reboot: false
+  remove_recipes:
   #   - ssl_ca
   #   - ssl_server
     - backup
     - logrotate
-  add_recipes:
+  append_recipes:
     - logrotate
     - mysql
     - wkhtmltopdf
-  reboot: false
-  remote_recipes:
-    - https://raw.githubusercontent.com/patleb/sunzistrano/master/config/sunzi/recipes/mysql.sh

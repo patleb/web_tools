@@ -23,7 +23,7 @@ module Sunzistrano
     def initialize(stage, role, options)
       env, app = stage.split(':', 2)
       settings = { stage: env, application: app }.with_indifferent_access
-      settings.merge! Capistrano.config(stage) if Gem.loaded_specs['sun_cap']
+      settings.merge! Capistrano.config(stage) if Gem.loaded_specs['sun_cap'] # TODO output errors
       @stage, @application, root = settings.values_at(:stage, :application, :root)
       @role = role
 
@@ -145,9 +145,9 @@ module Sunzistrano
         recipes.map!{ |name| "#{base}/#{name}" }
       end
       if substract
-        recipes - (skip_recipes || []).reject(&:blank?)
+        recipes - (remove_recipes || []).reject(&:blank?)
       else
-        recipes + (add_recipes || []).reject(&:blank?)
+        recipes + (append_recipes || []).reject(&:blank?)
       end
     end
   end

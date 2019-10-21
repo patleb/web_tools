@@ -9,12 +9,12 @@ shared:
   postgres: 11
 
 app:
-  add_recipes:
+  append_recipes:
     - bootstrap/all
     - user/deployer
     - db/postgres__POSTGRES__
     # - reboot
-  skip_recipes:
+  remove_recipes:
   # - bootstrap/firewall/deny_mail
 
 staging:
