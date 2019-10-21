@@ -7,7 +7,6 @@ systemctl stop postgresql
 mkdir -p $NEW_PG_CONF_DIR
 chown -R postgres:postgres $NEW_PG_CONF_DIR
 rsync -ah $OLD_PG_CONF_DIR/ $NEW_PG_CONF_DIR
-rm -rf $OLD_PG_CONF_DIR/
 <%= Sh.delete_lines! '$NEW_PG_CONF_DIR/postgresql.conf', 'data_directory' %>
 echo "data_directory = '$NEW_PG_CONF_DIR'" >> $NEW_PG_CONF_DIR/postgresql.conf
 
