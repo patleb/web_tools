@@ -2,6 +2,7 @@
 # https://github.com/timescale/timescaledb/issues/515
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/tuning_and_optimizing_red_hat_enterprise_linux_for_oracle_9i_and_10g_databases/sect-oracle_9i_and_10g_tuning_guide-setting_shared_memory-setting_shmall_parameter
 PG_CONF_DIR=$(sun.pg_conf_dir)
+PG_CONF="$PG_CONF_DIR/postgresql.conf"
 
 case "$OS" in
 ubuntu)
@@ -27,9 +28,9 @@ sun.update
 sun.install "timescaledb-postgresql-$__POSTGRES__"
 sun.lock "timescaledb-postgresql-$__POSTGRES__"
 
-echo "# TIMESCALEDB START" >> "$PG_CONF_DIR/postgresql.conf"
-timescaledb-tune --quiet --yes --dry-run >> "$PG_CONF_DIR/postgresql.conf"
-echo "timescaledb.telemetry_level=off" >> "$PG_CONF_DIR/postgresql.conf"
-echo "# TIMESCALEDB END" >> "$PG_CONF_DIR/postgresql.conf"
+echo "# TIMESCALEDB START" >> $PG_CONF
+timescaledb-tune --conf-path=$PG_CONF --quiet --yes --dry-run >> $PG_CONF
+echo "timescaledb.telemetry_level=off" >> $PG_CONF
+echo "# TIMESCALEDB END" >> $PG_CONF
 
 systemctl restart postgresql

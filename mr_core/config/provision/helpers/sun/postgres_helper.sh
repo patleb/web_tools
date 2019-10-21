@@ -9,9 +9,11 @@ sun.pg_major_version() {
 }
 
 sun.pg_conf_dir() {
-  echo $(sun.psql 'SHOW data_directory')
+  sun.psql 'SHOW data_directory'
 }
 
 sun.psql() {
-  sudo -u postgres psql -d postgres -tAc "$1"
+  sudo su - postgres << EOF | head -n1
+    psql -d postgres -tAc "$1"
+EOF
 }

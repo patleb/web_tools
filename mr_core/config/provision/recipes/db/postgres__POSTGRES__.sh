@@ -48,9 +48,7 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
     echo 'Alias=postgresql.service' >> /usr/lib/systemd/system/postgresql-$__POSTGRES__.service
     systemctl enable postgresql-$__POSTGRES__
     systemctl restart postgresql
-    sudo su - postgres << EOF
-      psql -c "ALTER USER postgres WITH PASSWORD 'postgres'";
-EOF
+    sun.psql "ALTER USER postgres WITH PASSWORD 'postgres'"
   ;;
   esac
 else

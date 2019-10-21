@@ -1,6 +1,6 @@
 __DATA_DIRECTORY__=${__DATA_DIRECTORY__:-/opt/storage}
-OLD_PG_CONF_DIR=$(sun.pg_conf_dir())
-NEW_PG_CONF_DIR=$__DATA_DIRECTORY__/pg_${__POSTGRES__}_data
+OLD_PG_CONF_DIR=$(sun.pg_conf_dir)
+export NEW_PG_CONF_DIR=$__DATA_DIRECTORY__/pg_${__POSTGRES__}_data
 
 systemctl stop postgresql
 
@@ -13,9 +13,9 @@ echo "data_directory = '$NEW_PG_CONF_DIR'" >> $NEW_PG_CONF_DIR/postgresql.conf
 
 case "$OS" in
 centos)
-  mkdir -p /usr/lib/systemd/system/postgresql-${__POSTGRES__}.service.d
-  rm -f "/usr/lib/systemd/system/postgresql-${__POSTGRES__}.service.d/pg_data.conf"
-  sun.compile "/usr/lib/systemd/system/postgresql-${__POSTGRES__}.service.d/pg_data.conf"
+  mkdir -p /usr/lib/systemd/system/postgresql-$__POSTGRES__.service.d
+  rm -f "/usr/lib/systemd/system/postgresql-$__POSTGRES__.service.d/pg_data.conf"
+  sun.compile "/usr/lib/systemd/system/postgresql-$__POSTGRES__.service.d/pg_data.conf"
   systemctl daemon-reload
 ;;
 esac
