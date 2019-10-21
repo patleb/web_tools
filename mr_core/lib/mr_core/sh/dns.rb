@@ -1,4 +1,5 @@
 module Sh::Dns
+  # TODO make it coherent with cap dns:set_hosts
   def build_hosts(admin_name, server)
     entries = (Setting[:dns_hosts] || []).map{ |name| "$INTERNAL_IP  #{name}" }.join("\\n")
     hosts_defaults = "/home/#{admin_name}/#{Sunzistrano::Config::DEFAULTS_DIR}/#{'~etc~hosts'}"

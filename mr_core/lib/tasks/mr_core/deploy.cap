@@ -33,7 +33,7 @@ namespace :deploy do
     nginx:push
     pgrest:push
     deploy:app:push
-    dns:set_localhost
+    dns:set_hosts
   )
 
   namespace :app do
