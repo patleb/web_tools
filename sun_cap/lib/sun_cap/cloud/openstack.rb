@@ -3,7 +3,7 @@ module Cloud::Openstack
   class AlreadyDestroyed < ::StandardError; end
   class DoesNotExist < ::StandardError; end
 
-  def openstack_server_create(flavor, network, project, env, app: nil, version: nil, count: 1)
+  def openstack_server_create(flavor, network, project, env, app: nil, version: 0, count: 1)
     tag = [project, env, app].compact.join('_')
     keypair = "ssh-#{[project, env].join('-').dasherize}"
     snapshot = [project, version].compact.join('-')
