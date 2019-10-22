@@ -77,7 +77,7 @@ module ActiveTask
 
     protected
 
-    def with_environment(env); yield end
+    def with_environment(env); yield(env) end
     def before_run; end
     def around_run; yield end
     def after_run; end

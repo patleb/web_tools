@@ -7,7 +7,7 @@ module MrBackup
         env[:backup_config] = MrBackup.config.instance_variables.each_with_object({}) do |ivar, memo|
           memo[ivar] = MrBackup.config.instance_variable_get(ivar)
         end
-        yield
+        yield(env)
       ensure
         env[:backup_config].each do |ivar, value|
           MrBackup.config.instance_variable_set(ivar, value)
