@@ -23,9 +23,9 @@ namespace :whenever do
   desc 'Push every_minutes.sh cron script'
   task :push_every_minute do
     on release_roles fetch(:whenever_roles) do
-      invoke! 'template:push', 'every_minute.sh', release_path.join('bin', "every_minute.sh")
+      template_push 'every_minute.sh', release_path.join('bin', "every_minute.sh")
       fetch(:whenever_every_minute).each do |script|
-        invoke! 'template:push', "every_minute/#{script}.sh", release_path.join('bin', 'every_minute', "#{script}.sh")
+        template_push "every_minute/#{script}.sh", release_path.join('bin', 'every_minute', "#{script}.sh")
       end
     end
   end

@@ -12,8 +12,7 @@ namespace :console do
           end
           execute_bash("echo '#{my_ip}' > '#{current_path.join('tmp/console.txt')}'")
           ENV['STICKY_SESSIONS'] = 'true'
-          invoke 'nginx:app:push'
-          invoke 'nginx:reload'
+          nginx_app_push
         end
       end
     end
@@ -25,8 +24,7 @@ namespace :console do
       within current_path do
         with rails_env: cap.env do
           execute :rm, '-f', 'tmp/console.txt'
-          invoke 'nginx:app:push'
-          invoke 'nginx:reload'
+          nginx_app_push
         end
       end
     end

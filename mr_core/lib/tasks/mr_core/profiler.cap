@@ -9,7 +9,7 @@ namespace :profiler do
             exit 1
           end
           execute_bash("echo '#{matcher}' > '#{current_path.join('tmp/profile.txt')}'")
-          invoke 'passenger:restart'
+          nginx_reload
         end
       end
     end
@@ -21,7 +21,7 @@ namespace :profiler do
       within current_path do
         with rails_env: cap.env do
           execute :rm, '-f', 'tmp/profile.txt'
-          invoke 'passenger:restart'
+          nginx_reload
         end
       end
     end

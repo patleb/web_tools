@@ -4,25 +4,20 @@
 # https://bitbucket.org/tildeslash/monit/
 
 namespace :monit do
-  def monitrc
-    cap.os.centos? ? '/etc/monitrc' : '/etc/monit/monitrc'
-  end
-
   desc 'Export monit configuration file'
   task :push do
     on release_roles :all do
-      invoke! 'template:push', 'monitrc', monitrc
-      execute :sudo, "chown root:root #{monitrc}"
-      execute :sudo, "chmod 0700 #{monitrc}"
+      monit_push
     end
   end
+  after 'monit:push', 'monit:reload'
 
   desc "Reload monit"
   task :reload do
     on release_roles :all do
-      unless test :sudo, "systemctl reload monit"
+      unless monit_reload
         error "Could not reload Monit, trying restart."
-        invoke 'monit:restart'
+        monit_restart
       end
     end
   end
@@ -41,8 +36,7 @@ namespace :monit do
     on release_roles :all do
       Setting[:mail_to].each do |mail_to|
         unless test :sudo, "cat #{monitrc} | grep 'set alert #{mail_to} not on'"
-          invoke 'monit:push'
-          invoke 'monit:reload'
+          monit_push
           break
         end
       end

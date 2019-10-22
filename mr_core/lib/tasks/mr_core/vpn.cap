@@ -5,7 +5,7 @@ namespace :vpn do
       on release_roles :all do
         options = { name: args[:name], linux: flag_on?(args, :linux), print: false }
         execute_bash(Sh.create_client_ovpn(options), sudo: true)
-        invoke! 'files:download', "/opt/openvpn_data/clients/keys/#{args[:name]}.ovpn", Pathname.new(args[:path] || '').to_s
+        download_file "/opt/openvpn_data/clients/keys/#{args[:name]}.ovpn", Pathname.new(args[:path] || '').to_s
       end
     end
 
