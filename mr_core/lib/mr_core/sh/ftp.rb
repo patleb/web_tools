@@ -3,12 +3,12 @@ module Sh::Ftp
     ftp "ls #{match}"
   end
 
-  def ftp_download(match)
-    ftp "mget -c -d #{match} -O #{Setting[:ftp_mount_path]}"
+  def ftp_download(match, client_dir = nil)
+    ftp "mget -c -d #{match} -O #{client_dir || Setting[:ftp_mount_path]}"
   end
 
-  def ftp_upload(match)
-    ftp "lcd #{Setting[:ftp_mount_path]}; mput -c -d #{match}"
+  def ftp_upload(match, client_dir = nil)
+    ftp "lcd #{client_dir || Setting[:ftp_mount_path]}; mput -c -d #{match}"
   end
 
   def ftp_remove(match)

@@ -5,13 +5,13 @@ namespace :ftp do
   end
 
   desc 'Download files matching the expression'
-  task :download, [:match] => :environment do |t, args|
-    sh Sh.ftp_download(args[:match])
+  task :download, [:match, :client_dir] => :environment do |t, args|
+    sh Sh.ftp_download(args[:match], args[:client_dir])
   end
 
   desc 'Upload files matching the expression'
-  task :upload, [:match] => :environment do |t, args|
-    sh Sh.ftp_upload(args[:match])
+  task :upload, [:match, :client_dir] => :environment do |t, args|
+    sh Sh.ftp_upload(args[:match], args[:client_dir])
   end
 
   desc 'Remove files matching the expression'
