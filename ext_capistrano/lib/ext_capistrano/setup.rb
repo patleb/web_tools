@@ -55,6 +55,11 @@ module Capistrano::DSL::Stages::Apps
     def invoke(task_name, *args)
       invoke!(task_name, *args)
     end
+
+    def on(hosts, options = {}, &block)
+      limit = (fetch(:bundle_rsync_max_parallels) || hosts.size).to_i
+      super(hosts, { in: :groups, limit: limit }.merge(options), &block)
+    end
   end
 end
 
