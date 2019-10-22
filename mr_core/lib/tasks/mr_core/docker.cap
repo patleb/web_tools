@@ -4,7 +4,7 @@ namespace :docker do
     on release_roles fetch(:docker_roles) do
       template = args[:template].presence || 'Dockerfile'
       execute :mkdir, '-p', release_path.join(fetch(:docker_dir))
-      invoke! 'template:push', template, release_path.join(fetch(:docker_dir), File.basename(template))
+      template_push template, release_path.join(fetch(:docker_dir), File.basename(template))
     end
   end
 
@@ -14,7 +14,7 @@ namespace :docker do
       on release_roles fetch(:docker_roles) do
         template = args[:template].presence || 'docker-compose.yml'
         execute :mkdir, '-p', release_path.join(fetch(:docker_dir))
-        invoke! 'template:push', template, release_path.join(fetch(:docker_dir), File.basename(template))
+        template_push template, release_path.join(fetch(:docker_dir), File.basename(template))
       end
     end
 

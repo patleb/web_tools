@@ -50,17 +50,6 @@ module Capistrano::DSL::Stages::Apps
   def be(*args)
     execute :bundle, :exec, *args
   end
-
-  if ENV['BUNDLE_RSYNC']
-    def invoke(task_name, *args)
-      invoke!(task_name, *args)
-    end
-
-    def on(hosts, options = {}, &block)
-      limit = (fetch(:bundle_rsync_max_parallels) || hosts.size).to_i
-      super(hosts, { in: :groups, limit: limit }.merge(options), &block)
-    end
-  end
 end
 
 extend Capistrano::DSL::Stages::Apps

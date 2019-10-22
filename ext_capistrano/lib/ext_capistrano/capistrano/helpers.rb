@@ -1,5 +1,20 @@
 module ExtCapistrano
-  module FileHelper
+  module Helpers
+    def execute_bash(inline_code, sudo: false, u: true)
+      tmp_file = shared_path.join('tmp', 'bash', "tmp.#{SecureRandom.hex(8)}.sh")
+      upload! StringIO.new(inline_code), tmp_file
+      execute "chmod +x #{tmp_file} && #{'sudo' if sudo} bash -#{'u' if u}c #{tmp_file} && rm -f #{tmp_file}"
+    end
+
+    def template_push(name, destination)
+      raise 'host destination must be specified' unless destination.present?
+      upload_erb "config/deploy/templates/#{name}", destination
+    end
+
+    def template_compile(name)
+      compile_erb "config/deploy/templates/#{name}"
+    end
+
     def remote_file_exist?(full_path, sudo: false)
       cmd =
         if sudo
@@ -26,8 +41,8 @@ module ExtCapistrano
       run_locally{ execute "rsync --rsync-path='sudo rsync' -azvh -e 'ssh -p #{fetch(:port, 22)}' #{fetch(:deployer_name)}@#{server.hostname}:#{source} '#{destination}'" }
     end
 
-    def upload_erb(server, source, destination)
-      upload_file(server, compile_erb(source), destination)
+    def upload_erb(source, destination)
+      upload_file(host, compile_erb(source), destination)
     end
 
     def compile_erb(source)
