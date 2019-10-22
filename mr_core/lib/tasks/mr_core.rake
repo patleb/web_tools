@@ -1,5 +1,4 @@
 require_rel 'mr_core'
-load_rel 'mr_core/**/*.rake'
 
 namespace :mr_core do
   desc 'setup boot.rb, environments, initializers, .gitignore, Gemfile and Vagrantfile files'
