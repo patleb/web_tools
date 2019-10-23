@@ -11,6 +11,7 @@ module Db
           timestamp: ['--[no-]timestamp',    'Add a timestamp in the CSV file name'],
           csv:       ['--[no-]csv',          'Dump as CSV'],
           compress:  ['--[no-]compress',     'Specify if the resulting CSV is compressed (default to true)'],
+          where:     ['--where=WHERE',       'WHERE condition for the COPY command']
         )
       end
 
@@ -32,13 +33,14 @@ module Db
 
       def copy_to
         dump_path.mkpath
+        where = "WHERE #{options.where}" if options.where.present?
         tables = (options.includes.split(',').reject(&:blank?) - options.excludes.split(',').reject(&:blank?)).uniq
         tables.each do |table|
           file = csv_file(table)
           if options.compress
-            psql "\\COPY (SELECT * FROM #{table}) TO PROGRAM 'pigz > #{file}' DELIMITER ',' CSV"
+            psql "\\COPY (SELECT * FROM #{table} #{where}) TO PROGRAM 'pigz > #{file}' DELIMITER ',' CSV"
           else
-            psql "\\COPY (SELECT * FROM #{table}) TO '#{file}' DELIMITER ',' CSV"
+            psql "\\COPY (SELECT * FROM #{table} #{where}) TO '#{file}' DELIMITER ',' CSV"
           end
         end
       end
