@@ -9,6 +9,10 @@ namespace :mr_core do
     cp         src.join('vagrant/private_key'), dst.join('.vagrant/private_key')
     chmod 600, dst.join('.vagrant/private_key')
 
+    %w(cap sun).each do |binstub|
+      cp src.join('bin', binstub), dst.join('bin', binstub)
+    end
+
     cp src.join('config/boot.rb'),     dst.join('config/boot.rb')
     cp src.join('config/schedule.rb'), dst.join('config/schedule.rb')
     %w(development staging vagrant).each do |env|
