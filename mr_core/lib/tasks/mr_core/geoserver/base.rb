@@ -2,6 +2,10 @@ module Geoserver
   class Base < ActiveTask::Base
     class Failed < ::StandardError; end
 
+    def workspace_name
+      @workspace ||= Rails.application.name
+    end
+
     protected
 
     def get(path, params = nil)
