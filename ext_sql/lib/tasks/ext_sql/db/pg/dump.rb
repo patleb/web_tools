@@ -4,12 +4,13 @@ module Db
     class Dump < Base
       def self.args
         super.merge!(
-          name:     ['--name=NAME',         'Dump name (default to dump)'],
-          base_dir: ['--base-dir=BASE_DIR', 'Dump file base directory (default to ENV["RAILS_ROOT"]/db(/dump for CSV))'],
-          includes: ['--includes=INCLUDES', 'Included tables'],
-          excludes: ['--excludes=EXCLUDES', 'Excluded tables'],
-          csv:      ['--[no-]csv',          'Dump as CSV'],
-          compress: ['--[no-]compress',     'Specify if the resulting CSV is compressed (default to true)'],
+          name:      ['--name=NAME',         'Dump file name (default to dump)'],
+          base_dir:  ['--base-dir=BASE_DIR', 'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
+          includes:  ['--includes=INCLUDES', 'Included tables'],
+          excludes:  ['--excludes=EXCLUDES', 'Excluded tables'],
+          timestamp: ['--[no-]timestamp',    'Add a timestamp in the CSV file name'],
+          csv:       ['--[no-]csv',          'Dump as CSV'],
+          compress:  ['--[no-]compress',     'Specify if the resulting CSV is compressed (default to true)'],
         )
       end
 
@@ -24,21 +25,16 @@ module Db
       end
 
       def dump
-        if options.csv
-          copy_to
-        else
-          pg_dump
-        end
+        options.csv ? copy_to : pg_dump
       end
 
       private
 
       def copy_to
-        dump_dir = Pathname.new(options.base_dir).join(options.name)
-        dump_dir.mkpath
+        dump_path.mkpath
         tables = (options.includes.split(',').reject(&:blank?) - options.excludes.split(',').reject(&:blank?)).uniq
         tables.each do |table|
-          file = dump_file(dump_dir, table)
+          file = csv_file(table)
           if options.compress
             psql "\\COPY (SELECT * FROM #{table}) TO PROGRAM 'pigz > #{file}' DELIMITER ',' CSV"
           else
@@ -71,13 +67,29 @@ module Db
           CMD
           sh <<~CMD, verbose: false
             export PGPASSWORD=#{pwd};
-            pg_dump #{cmd_options} > #{options.base_dir}/#{options.name}.pg
+            pg_dump #{cmd_options} > #{pg_file}
           CMD
         end
       end
 
-      def dump_file(dump_dir, table)
-        "#{dump_dir.join(table)}.csv#{'.gz' if options.compress}"
+      def csv_file(table)
+        if options.timestamp
+          loop do
+            file = dump_path.join(table).sub_ext("-#{Time.now.utc.strftime("%Y%m%d%H%M%S")}.csv#{'.gz' if options.compress}")
+            break file unless file.exist?
+            spleep 1
+          end
+        else
+          dump_path.join(table).sub_ext(".csv#{'.gz' if options.compress}")
+        end
+      end
+
+      def pg_file
+        dump_path.sub_ext('.pg')
+      end
+
+      def dump_path
+        @dump_path ||= Pathname.new(options.base_dir).join(options.name).expand_path
       end
     end
   end
