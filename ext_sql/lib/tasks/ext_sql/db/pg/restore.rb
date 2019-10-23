@@ -1,15 +1,16 @@
 module Db
   module Pg
     class Restore < Base
+      CSV_MATCHER = /^([a-z0-9_]+)(-\d{14})?\.csv(\.gz)?$/
+
       def self.args
         super.merge!(
-          name:        ['--name=NAME',         'Dump name (default to dump)'],
-          base_dir:    ['--base-dir=BASE_DIR', 'Dump file base directory (default to ENV["RAILS_ROOT"]/db(/dump for CSV))'],
+          name:        ['--name=NAME',         'Dump file name (default to dump)'],
+          base_dir:    ['--base-dir=BASE_DIR', 'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
           includes:    ['--includes=INCLUDES', 'Included tables'],
           staged:      ['--[no-]staged',       'Force restore in 3 phases (pre-data, data, post-data)'],
           timescaledb: ['--[no-]timescaledb',  'Specify if TimescaleDB is used'],
-          csv:         ['--[no-]csv',          'Dump as CSV'],
-          compress:    ['--[no-]compress',     'Specify if the resulting CSV is compressed (default to true)'],
+          csv:         ['--[no-]csv',          'Restore from CSV'],
         )
       end
 
@@ -18,26 +19,21 @@ module Db
           name: 'dump',
           includes: '',
           base_dir: ExtRake.config.rails_root.join('db'),
-          compress: true,
         }
       end
 
       def restore
-        if options.csv
-          copy_from
-        else
-          pg_restore
-        end
+        options.csv ? copy_from : pg_restore
       end
 
       private
 
       def copy_from
-        dump_dir = Pathname.new(options.base_dir).join(options.name)
         tables = options.includes.split(',').reject(&:blank?).uniq
-        tables.each do |table|
-          file = dump_file(dump_dir, table)
-          if options.compress
+        csv_files.each do |file|
+          table, _timestamp, compress = file.basename.to_s.match(CSV_MATCHER).captures
+          next unless tables.empty? || tables.include?(table)
+          if compress
             psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{file}' CSV"
           else
             psql "\\COPY #{table} FROM '#{file}' CSV"
@@ -65,7 +61,7 @@ module Db
           sections.each do |section|
             cmd = <<~CMD
               export PGPASSWORD=#{pwd};
-              pg_restore #{cmd_options} #{"--section=#{section}" if section} #{options.base_dir}/#{options.name}.pg
+              pg_restore #{cmd_options} #{"--section=#{section}" if section} #{pg_file}
             CMD
             _stdout, stderr, _status = Open3.capture3(cmd)
             notify!(cmd, stderr) if notify?(stderr)
@@ -91,8 +87,18 @@ module Db
         options.staged || options.timescaledb
       end
 
-      def dump_file(dump_dir, table)
-        "#{dump_dir.join(table)}.csv#{'.gz' if options.compress}"
+      def pg_file
+        "#{dump_path}.pg"
+      end
+
+      def csv_files
+        dump_path.children(false)
+          .select{ |file| file.basename.to_s.match? CSV_MATCHER }
+          .map{ |file| dump_path.join(file) }
+      end
+
+      def dump_path
+        @dump_path ||= Pathname.new(options.base_dir).join(options.name).expand_path
       end
     end
   end
