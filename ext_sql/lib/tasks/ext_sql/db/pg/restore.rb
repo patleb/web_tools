@@ -8,6 +8,7 @@ module Db
           name:        ['--name=NAME',         'Dump file name (default to dump)'],
           base_dir:    ['--base-dir=BASE_DIR', 'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
           includes:    ['--includes=INCLUDES', 'Included tables'],
+          excludes:    ['--excludes=EXCLUDES', 'Excluded tables (only for CSV)'],
           staged:      ['--[no-]staged',       'Force restore in 3 phases (pre-data, data, post-data)'],
           timescaledb: ['--[no-]timescaledb',  'Specify if TimescaleDB is used'],
           csv:         ['--[no-]csv',          'Restore from CSV'],
@@ -29,10 +30,15 @@ module Db
       private
 
       def copy_from
-        tables = options.includes.split(',').reject(&:blank?).uniq
+        if options.includes.present?
+          only = options.includes.split(',').reject(&:blank?).uniq
+        end
+        if options.excludes.present?
+          skip = options.excludes.split(',').reject(&:blank?).uniq
+        end
         csv_files.each do |file|
           table, _timestamp, compress = file.basename.to_s.match(CSV_MATCHER).captures
-          next unless tables.empty? || tables.include?(table)
+          next if (only.any? && only.exclude?(table)) || (skip.any? && skip.include?(table))
           if compress
             psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{file}' CSV"
           else
