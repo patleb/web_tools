@@ -38,7 +38,7 @@ module Db
         end
         csv_files.each do |file|
           table, _timestamp, compress = file.basename.to_s.match(CSV_MATCHER).captures
-          next if (only.any? && only.exclude?(table)) || (skip.any? && skip.include?(table))
+          next if (only&.any? && only.exclude?(table)) || (skip&.any? && skip.include?(table))
           if compress
             psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{file}' CSV"
           else
