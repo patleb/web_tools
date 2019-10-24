@@ -9,12 +9,12 @@ module Sh::Ftp
     ftp("cls #{match} --sort=name --size --date --time-style=%Y-%m-%dT%H:%M:%S%z --sortnocase")
   end
 
-  def ftp_download(match, client_dir = nil)
-    ftp "mget -c -d #{match} -O #{client_dir || Setting[:ftp_mount_path]}"
+  def ftp_download(match, client_dir)
+    ftp "mget -c -d #{match} -O #{client_dir}"
   end
 
-  def ftp_upload(match, client_dir = nil)
-    ftp "lcd #{client_dir || Setting[:ftp_mount_path]}; mput -c -d #{match}"
+  def ftp_upload(match, client_dir)
+    ftp "lcd #{client_dir}; mput -c -d #{match}"
   end
 
   def ftp_remove(match)
@@ -26,8 +26,10 @@ module Sh::Ftp
   end
 
   def ftp(command)
-    "lftp -u '#{Setting[:ftp_username]},#{Setting[:ftp_password]}' #{Setting[:ftp_host]}:#{Setting[:ftp_host_path]} <<-FTP\n" \
-      "#{command}\n" \
-    "FTP"
+    <<~SH
+      lftp -u '#{Setting[:ftp_username]},#{Setting[:ftp_password]}' #{Setting[:ftp_host]}:#{Setting[:ftp_host_path]} <<-FTP
+        #{command}
+      FTP
+    SH
   end
 end
