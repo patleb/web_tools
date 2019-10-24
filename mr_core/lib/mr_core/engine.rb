@@ -25,6 +25,7 @@ module MrCore
     require 'mr_core/configuration'
     require 'mr_core/money_rails'
     require 'mr_core/rails/engine'
+    require 'mr_core/sh'
 
     config.before_configuration do |app|
       app.config.cache_store = :global_store if defined? MrGlobal

@@ -22,7 +22,7 @@ module Sh::Ftp
   end
 
   def ftp_rename(old_name, new_name)
-    lftp "mv #{old_name} #{new_name}"
+    ftp "mv #{old_name} #{new_name}"
   end
 
   def ftp(command)

@@ -1,27 +1,27 @@
 namespace :ftp do
   desc 'List files matching the expression'
   task :list, [:match] => :environment do |t, args|
-    sh Sh.ftp_list(args[:match])
+    sh Sh.ftp_list(args[:match]), verbose: false
   end
 
   desc 'Download files matching the expression'
   task :download, [:match, :client_dir] => :environment do |t, args|
-    sh Sh.ftp_download(args[:match], args[:client_dir])
+    sh Sh.ftp_download(args[:match], args[:client_dir]), verbose: false
   end
 
   desc 'Upload files matching the expression'
   task :upload, [:match, :client_dir] => :environment do |t, args|
-    sh Sh.ftp_upload(args[:match], args[:client_dir])
+    sh Sh.ftp_upload(args[:match], args[:client_dir]), verbose: false
   end
 
   desc 'Remove files matching the expression'
   task :remove, [:match] => :environment do |t, args|
-    sh Sh.ftp_remove(args[:match])
+    sh Sh.ftp_remove(args[:match]), verbose: false
   end
 
   desc 'Rename file or directory'
   task :rename, [:old_name, :new_name] => :environment do |t, args|
-    sh Sh.ftp_rename(args[:old_name], args[:new_name])
+    sh Sh.ftp_rename(args[:old_name], args[:new_name]), verbose: false
   end
 
   desc 'Mount FTP drive'
