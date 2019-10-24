@@ -28,6 +28,8 @@ module MrSetting::Type
           DateTime.parse(value)
         when :interval
           ActiveSupport::Duration.build(ChronicDuration.parse(value || '', keep_zero: true))
+        when :pathname
+          Pathname.new(value)
         else
           value
         end
