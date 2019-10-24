@@ -63,7 +63,7 @@ module Sunzistrano
     end
 
     def server_cluster?
-      Gem.loaded_specs['sun_cap'] && server_cluster_name
+      Gem.loaded_specs['sun_cap'] && server_cluster
     end
 
     def admin_public_key
