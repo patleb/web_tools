@@ -2,12 +2,8 @@ namespace :bundler do
   desc 'Set correct ruby version'
   task :set_correct_ruby_version do
     on release_roles :all do
-      within release_path do
-        with rails_env: cap.env do
-          if RUBY_VERSION != fetch(:rbenv_ruby)
-            execute Sh.sub!("#{release_path}/.ruby-version", RUBY_VERSION, fetch(:rbenv_ruby))
-          end
-        end
+      if RUBY_VERSION != fetch(:rbenv_ruby)
+        execute Sh.sub!("#{release_path}/.ruby-version", RUBY_VERSION, fetch(:rbenv_ruby))
       end
     end
   end

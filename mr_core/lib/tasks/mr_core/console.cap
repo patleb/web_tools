@@ -4,17 +4,13 @@ namespace :console do
   desc 'Start Console'
   task :start, [:my_ip] do |t, args|
     on release_roles :all do
-      within current_path do
-        with rails_env: cap.env do
-          if (my_ip = args[:my_ip].presence || open('http://whatismyip.akamai.com').read).blank?
-            error "cannot start console with empty ip"
-            exit 1
-          end
-          execute_bash("echo '#{my_ip}' > '#{current_path.join('tmp/console.txt')}'")
-          ENV['STICKY_SESSIONS'] = 'true'
-          nginx_app_push
-        end
+      if (my_ip = args[:my_ip].presence || open('http://whatismyip.akamai.com').read).blank?
+        error "cannot start console with empty ip"
+        exit 1
       end
+      execute_bash("echo '#{my_ip}' > '#{current_path.join('tmp/console.txt')}'")
+      ENV['STICKY_SESSIONS'] = 'true'
+      nginx_app_push
     end
   end
 
@@ -22,10 +18,8 @@ namespace :console do
   task :stop do
     on release_roles :all do
       within current_path do
-        with rails_env: cap.env do
-          execute :rm, '-f', 'tmp/console.txt'
-          nginx_app_push
-        end
+        execute :rm, '-f', 'tmp/console.txt'
+        nginx_app_push
       end
     end
   end
