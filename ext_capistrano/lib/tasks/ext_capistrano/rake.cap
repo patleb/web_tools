@@ -3,7 +3,7 @@ task :rake do
   if ENV['TASK']
     on release_roles :all do
       within current_path do
-        with rails_env: fetch(:rails_env) do
+        with rails_env: cap.env, rake_output: true do
           execute :rake, ENV['TASK']
         end
       end
