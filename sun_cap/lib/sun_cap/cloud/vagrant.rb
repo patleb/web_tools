@@ -15,6 +15,6 @@ module Cloud::Vagrant
   def vagrant_server_ips(filter)
     list = Pathname.new('/etc/hosts').readlines
     list.select!{ |line| true if (line =~ /vagrant-hostmanager-start/ .. line =~ /vagrant-hostmanager-end/) }
-    list[1..-2].reject(&:blank?).select(&:include?.with(filter)).map(&:split).map(&:first)
+    list[1..-2].select(&:include?.with(filter)).map(&:split).map(&:first)
   end
 end
