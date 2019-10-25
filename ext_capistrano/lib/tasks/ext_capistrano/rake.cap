@@ -2,10 +2,8 @@ desc "Execute a rake task on a remote server"
 task :rake do
   if ENV['TASK']
     on release_roles :all do
-      within current_path do
-        with rails_env: cap.env, rails_app: cap.app, rake_output: true do
-          execute :rake, ENV['TASK']
-        end
+      with_rake do
+        execute :rake, ENV['TASK']
       end
     end
   else

@@ -1,5 +1,14 @@
 module ExtCapistrano
   module Helpers
+    def with_rake(environment = {})
+      environment = environment.merge(rails_env: cap.env, rails_app: cap.app, rake_output: true)
+      within current_path do
+        with environment do
+          yield
+        end
+      end
+    end
+
     def execute_nohup(command)
       filename = command.tr('/ :', '-')
       execute :nohup, "#{command} >> #{filename}.log 2>&1 & sleep 1 && echo $! > #{filename}.pid", pty: false
