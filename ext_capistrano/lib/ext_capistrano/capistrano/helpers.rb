@@ -11,12 +11,12 @@ module ExtCapistrano
 
     def execute_nohup(command)
       filename = command.tr('/ :', '-')
-      execute :nohup, "#{command} >> #{filename}.log 2>&1 & sleep 1 && echo $! > #{filename}.pid", pty: false
+      execute :nohup, "#{command} >> tmp/nohup/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/nohup/#{filename}.pid", pty: false
     end
 
     def kill_nohup(command)
       filename = command.tr('/ :', '-')
-      execute :sudo, :pkill, '-P', "$(cat #{current_path}/#{filename}.pid)"
+      execute :sudo, :pkill, '-P', "$(cat #{current_path}/tmp/nohup/#{filename}.pid)"
     end
 
     def execute_bash(inline_code, sudo: false, u: true)
