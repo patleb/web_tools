@@ -11,11 +11,6 @@ module Db
         ENV['PG_OPTIONS']
       end
 
-      def before_run
-        super
-        reload_settings
-      end
-
       protected
 
       def with_config
