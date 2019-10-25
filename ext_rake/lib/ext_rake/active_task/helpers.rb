@@ -13,7 +13,7 @@ module ActiveTask
 
     protected
 
-    def reload_settings
+    def settings_reload
       Setting.reload
     end
 
