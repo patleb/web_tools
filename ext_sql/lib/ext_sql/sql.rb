@@ -1,4 +1,12 @@
 module Sql
+  def self.slice(name, keys)
+    keys.map{ |key| "'#{key}', #{name}->'#{key}'" }.join(', ')
+  end
+
+  def self.destruct(names)
+    names.map{ |name| "'#{name}', #{name}" }.join(', ')
+  end
+
   def self.value_changed?(variable)
     <<-SQL.strip_sql
       SELECT #{variable}_was IS NULL AND #{variable} IS NOT NULL

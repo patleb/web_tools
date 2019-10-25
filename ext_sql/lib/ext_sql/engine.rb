@@ -1,4 +1,5 @@
 require "ext_sql/configuration"
+require "ext_sql/active_support/core_ext/numeric"
 require "ext_sql/active_support/core_ext/string"
 
 module ExtSql
