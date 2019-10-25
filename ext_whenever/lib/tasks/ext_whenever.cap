@@ -29,7 +29,7 @@ namespace :whenever do
       end
     end
   end
-  if ENV['BUNDLE_RSYNC']
+  if Setting[:server_cluster]
     after 'bundle_rsync:rsync_release', 'whenever:push_every_minute'
   else
     after 'git:create_release', 'whenever:push_every_minute'

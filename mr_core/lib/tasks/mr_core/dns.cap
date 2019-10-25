@@ -2,7 +2,7 @@ namespace :dns do
   desc 'set hosts'
   task :set_hosts do
     on release_roles :all do
-      if ENV['BUNDLE_RSYNC']
+      if Setting[:server_cluster]
         execute_bash(<<-SH, sudo: true)
           #{Sh.delete_lines! '/etc/hosts', fetch(:server)}
           #{Sh.append_host 'cap:dns-set_hosts-cluster_master', Cloud.server_cluster_master, fetch(:server)}
