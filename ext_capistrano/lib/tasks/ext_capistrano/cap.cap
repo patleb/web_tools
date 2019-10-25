@@ -2,7 +2,7 @@ desc 'cap stage:application task[...]'
 task :cap, [:app, :task] do |t, args|
   on release_roles :all do
     within current_path do
-      with rails_env: 'development', git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS'] do
+      with rails_env: 'development', bundle_rsync: true, git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS'] do
         be :cap, "#{cap.env}:#{args[:app]}", args[:task]
       end
     end
