@@ -23,7 +23,7 @@ module Sunzistrano
     def initialize(stage, role, options)
       env, app = stage.split(':', 2)
       settings = { stage: env, application: app }.with_indifferent_access
-      settings.merge! Capistrano.config(stage) if Gem.loaded_specs['sun_cap'] # TODO output errors
+      settings.merge! Capistrano.config(stage) if Gem.loaded_specs['sun_cap']
       @stage, @application, root = settings.values_at(:stage, :application, :root)
       @role = role
 
