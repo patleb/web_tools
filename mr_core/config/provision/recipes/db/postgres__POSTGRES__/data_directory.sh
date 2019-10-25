@@ -1,5 +1,5 @@
 __DATA_DIRECTORY__=${__DATA_DIRECTORY__:-/opt/storage}
-OLD_PG_CONF_DIR=$(sun.pg_conf_dir)
+OLD_PG_CONF_DIR=${OLD_PG_CONF_DIR:-$(sun.pg_conf_dir)}
 export NEW_PG_CONF_DIR=$__DATA_DIRECTORY__/pg_${__POSTGRES__}_data
 
 systemctl stop postgresql

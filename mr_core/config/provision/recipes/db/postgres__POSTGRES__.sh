@@ -5,10 +5,10 @@
 # https://www.modio.se/scaling-past-the-single-machine.html
 # https://askubuntu.com/questions/732431/how-to-uninstall-specific-versions-of-postgres
 PG_MANIFEST=$(sun.manifest_path 'postgresql')
+PG_CONF_DIR=$(sun.pg_default_conf_dir)
 
 case "$OS" in
 ubuntu)
-  PG_CONF_DIR="/etc/postgresql/$__POSTGRES__/main"
   PG_PACKAGES="postgresql-$__POSTGRES__ postgresql postgresql-contrib postgresql-common libpq-dev"
 
   sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
@@ -18,7 +18,6 @@ ubuntu)
   PG_VERSION="$(sun.current_version postgresql-$__POSTGRES__)"
 ;;
 centos)
-  PG_CONF_DIR="/var/lib/pgsql/$__POSTGRES__/data"
   PG_PACKAGES="postgresql$__POSTGRES__-server postgresql$__POSTGRES__ postgresql$__POSTGRES__-contrib postgresql$__POSTGRES__-devel"
 
   yes | yum localinstall --nogpgcheck "https://yum.postgresql.org/$__POSTGRES__/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm"

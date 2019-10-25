@@ -6,7 +6,8 @@ if fdisk -l | grep -Fq $__DATA_PARTITION__; then
     : # do nothing --> already mounted
   else
     mkfs.ext4 $__DATA_PARTITION__
-    mkdir $__DATA_DIRECTORY__
+    rm -rf $__DATA_DIRECTORY__
+    mkdir -p $__DATA_DIRECTORY__
     mount $__DATA_PARTITION__ $__DATA_DIRECTORY__
     echo "$__DATA_PARTITION__    $__DATA_DIRECTORY__    auto    defaults,nofail    0    $__DATA_ORDER__" >> /etc/fstab
   fi
