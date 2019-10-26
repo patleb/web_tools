@@ -24,7 +24,7 @@ module Sunzistrano
       env, app = stage.split(':', 2)
       settings = { stage: env, application: app }.with_indifferent_access
       settings.merge! Capistrano.config(stage) if Gem.loaded_specs['sun_cap']
-      @stage, @application, root = settings.values_at(:stage, :application, :root)
+      @stage, @application = settings.values_at(:stage, :application)
       @role = role
 
       yml = YAML.safe_load(ERB.new(self.class.provision_yml.read).result(binding))
@@ -40,7 +40,7 @@ module Sunzistrano
         role_yml.union!(app_yml)
       end
 
-      settings.merge! Setting.load(env: @stage, app: @application, root: root || ENV['RAILS_ROOT'] || '') if Gem.loaded_specs['mr_setting']
+      settings.merge! Setting.load(env: @stage, app: @application) if Gem.loaded_specs['mr_setting']
       settings.union!(role_yml).merge!(role: @role).merge!(options).merge!(yml.slice(*RESERVED_NAMES))
       settings.each_key do |key|
         settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) if key.end_with? Hash::REPLACE

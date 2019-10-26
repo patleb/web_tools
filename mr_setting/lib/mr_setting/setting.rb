@@ -53,7 +53,7 @@ class Setting
     all(true, **options)
   end
 
-  def self.all(force = false, env: rails_env, app: rails_app, root: rails_root)
+  def self.all(force = false, env: rails_env, app: rails_app)
     if force
       current = instance_variables.reject{ |ivar| ivar.to_s.end_with?('_was') }
       current.each{ |ivar| instance_variable_set("#{ivar}_was", instance_variable_get(ivar)) }
@@ -65,7 +65,7 @@ class Setting
 
       @env = env.to_s
       @app = app
-      @root = Pathname.new(root).expand_path
+      @root = Pathname.new('').expand_path
       @types = {}.with_indifferent_access
       @gems = {}
       @secrets = parse_secrets_yml
@@ -109,15 +109,6 @@ class Setting
     when @app             then @app
     when ENV['RAILS_APP'] then ENV['RAILS_APP']
     when defined?(Rails)  then Rails.app.to_s
-    end
-  end
-
-  def self.rails_root
-    case
-    when @root             then @root
-    when ENV['RAILS_ROOT'] then ENV['RAILS_ROOT']
-    when defined?(Rails)   then Rails.root || ''
-    else ''
     end
   end
 

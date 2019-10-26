@@ -15,9 +15,6 @@ namespace :load do
     set :deploy_dir,          -> { "#{cap.app}_#{cap.env}" }
     set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
 
-    # TODO remove capability to deploy from another root directory --> it makes Gemfile sync to complicated
-    set :root,                -> { ENV['RAILS_ROOT'] || '' } # -> { "../#{cap.app}" }
-
     set :pty,                 -> { true }
 
     set :files_public_dirs,   -> { %w(system images) }
@@ -39,7 +36,6 @@ namespace :load do
       rbenv_ruby
       server
       stage
-      root
     )
 
     append :linked_dirs, *%w(

@@ -13,7 +13,7 @@ namespace :secrets do
   desc 'upload secrets.yml to server'
   task :push do
     on release_roles fetch(:bundle_roles) do
-      yml = YAML.safe_load(ERB.new(Pathname.new(fetch(:root)).join('config', 'secrets.yml').read).result)
+      yml = YAML.safe_load(ERB.new(Pathname.new('config/secrets.yml').read).result)
       secrets = (yml['shared'] || {}).merge!(yml[cap.env.to_s] || {})
       fetch(:secrets_excluded).each do |name|
         secrets.delete name

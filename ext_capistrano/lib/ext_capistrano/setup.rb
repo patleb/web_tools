@@ -83,10 +83,9 @@ stages.each do |stage|
         load app_config_path if File.exist?(app_config_path)
         stage_app_config_path = stage_config_path.join(stage, "#{app}.rb")
         load stage_app_config_path if File.exist?(stage_app_config_path)
-        ENV['RAILS_APP'] = app
       end
 
-      Setting.load(env: stage, app: app, root: fetch(:root))
+      Setting.load(env: stage, app: app)
 
       # TODO deploy DB server behind proxy server
       # https://www.randomerrata.com/articles/2015/deploying-via-a-bastion-host-with-capistrano-3/
