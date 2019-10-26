@@ -1,5 +1,26 @@
 module ExtCapistrano
   module Helpers
+    def execute_cap(stage, task, environment = {})
+      with_cap environment do
+        execute 'bin/cap', stage, task
+      end
+    end
+
+    def with_cap(environment = {})
+      environment = environment.merge(rails_env: 'development', git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS'])
+      within current_path do
+        with environment do
+          yield
+        end
+      end
+    end
+
+    def execute_rake(task, environment = {})
+      with_rake environment do
+        execute 'bin/rake', task
+      end
+    end
+
     def with_rake(environment = {})
       environment = environment.merge(rails_env: cap.env, rails_app: cap.app, rake_output: true)
       within current_path do

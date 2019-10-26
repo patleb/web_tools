@@ -49,12 +49,12 @@ namespace :file do
     end
   end
 
-  namespace :private do
+  namespace :storage do
     desc 'Import private files'
     task :pull do
       on release_roles :all do |host|
         fetch(:files_private_dirs).each do |folder|
-          get_files host, 'private', folder
+          get_files host, 'storage', folder
         end
       end
     end
@@ -63,7 +63,7 @@ namespace :file do
     task :push do
       on release_roles :all do |host|
         fetch(:files_private_dirs).each do |folder|
-          send_files host, 'private', folder
+          send_files host, 'storage', folder
         end
       end
     end

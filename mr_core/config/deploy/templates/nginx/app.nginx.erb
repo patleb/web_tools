@@ -32,6 +32,7 @@ server {
 
     passenger_enabled on;
     passenger_app_env <%= cap.env %>;
+    passenger_env_var RAILS_APP <%= cap.app %>;
     passenger_env_var RAKE_OUTPUT true;
     <% if ENV['DEVELOPMENT'].to_b %>
       passenger_env_var DEVELOPMENT true;

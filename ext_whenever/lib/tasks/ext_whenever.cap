@@ -2,6 +2,7 @@ namespace :load do
   task :defaults do
     set :whenever_roles,        -> { :web }
     set :whenever_identifier,   -> { fetch(:deploy_dir) }
+    set :whenever_variables,    -> { "'environment=#{fetch :whenever_environment}&application=#{fetch :application}'" }
     set :whenever_every_minute, -> { [] }
 
     append :gems, 'ext_whenever'

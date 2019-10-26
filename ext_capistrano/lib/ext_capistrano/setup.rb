@@ -46,10 +46,6 @@ module Capistrano::DSL::Stages::Apps
   def app_definitions(stage)
     stage_config_path.join(stage, "*.rb")
   end
-
-  def be(*args)
-    execute :bundle, :exec, *args
-  end
 end
 
 extend Capistrano::DSL::Stages::Apps
@@ -87,6 +83,7 @@ stages.each do |stage|
         load app_config_path if File.exist?(app_config_path)
         stage_app_config_path = stage_config_path.join(stage, "#{app}.rb")
         load stage_app_config_path if File.exist?(stage_app_config_path)
+        ENV['RAILS_APP'] = app
       end
 
       Setting.load(env: stage, app: app, root: fetch(:root))

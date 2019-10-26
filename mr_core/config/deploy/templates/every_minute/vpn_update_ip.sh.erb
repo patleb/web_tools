@@ -2,5 +2,5 @@ PREVIOUS_IP=$(cat <%= shared_path.join('vpn_ip') %> || :)
 CURRENT_IP=$(<%= Sh.external_ip %>)
 
 if [[ "$CURRENT_IP" != "$PREVIOUS_IP" ]]; then
-  bundle exec rake vpn:update_ip -- --ip=$CURRENT_IP
+  bin/rake vpn:update_ip -- --ip=$CURRENT_IP
 fi

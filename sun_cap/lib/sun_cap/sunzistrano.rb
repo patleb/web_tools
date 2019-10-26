@@ -3,7 +3,8 @@ require 'sun_cap'
 module Sunzistrano
   module Capistrano
     def self.config(stage)
-      stdout, stderr, status = Open3.capture3("bundle exec cap #{stage} sun_cap:config --dry-run")
+      cap = File.file?('bin/cap') ? 'bin/cap' : 'bundle exec cap'
+      stdout, stderr, status = Open3.capture3("#{cap} #{stage} sun_cap:config --dry-run")
       if status.success?
         if stdout.present?
           stdout.lines.each_with_object({}) do |key_value, memo|
