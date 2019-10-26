@@ -14,7 +14,9 @@ namespace :load do
     set :deployer_name,       -> { Setting[:deployer_name] }
     set :deploy_dir,          -> { "#{cap.app}_#{cap.env}" }
     set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
+    set :rails_app,           -> { fetch(:application) }
 
+    set :default_env,         -> { { rails_app: fetch(:rails_app) } }
     set :pty,                 -> { true }
 
     set :files_public_dirs,   -> { %w(system images) }
