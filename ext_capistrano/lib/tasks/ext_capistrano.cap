@@ -49,13 +49,5 @@ namespace :load do
       public/system
       node_modules
     )
-
-    append :mkdirs, *%w(
-      tmp/bash
-      tmp/pids
-      tmp/cache
-      tmp/sockets
-      tmp/nohup
-    )
   end
 end
