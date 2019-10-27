@@ -1,0 +1,5 @@
+namespace :load do
+  task :defaults do
+    append :mkdirs, 'tmp/backups'
+  end
+end

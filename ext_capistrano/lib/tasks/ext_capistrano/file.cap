@@ -16,6 +16,15 @@ namespace :file do
     end
   end
 
+  desc 'Create directories'
+  task :mkdirs do
+    next unless any? :mkdirs
+    on release_roles :all do
+      execute :mkdir, "-p", join_paths(shared_path, fetch(:mkdirs))
+    end
+  end
+  after 'deploy:check:linked_dirs', 'file:mkdirs'
+
   desc 'Download remote file(s)'
   task :download, [:src, :dst] do |t, args|
     on release_roles :all do |host|
