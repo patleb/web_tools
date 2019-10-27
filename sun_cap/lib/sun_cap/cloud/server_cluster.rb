@@ -21,7 +21,7 @@ module Cloud::ServerCluster
       when 'vagrant'   then vagrant_server_ips(Setting[:server_cluster_name])
       when 'openstack' then openstack_server_ips(Setting[:server_cluster_name], 'ACTIVE')
       else raise UnsupportedClusterProvider
-      end
+      end.sort
     end
   end
 end
