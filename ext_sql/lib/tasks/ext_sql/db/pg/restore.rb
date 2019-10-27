@@ -36,13 +36,18 @@ module Db
         if options.excludes.present?
           skip = options.excludes.split(',').reject(&:blank?).uniq
         end
-        csv_files.each do |file|
-          table, _timestamp, compress = file.basename.to_s.match(CSV_MATCHER).captures
+        tables = csv_files.each_with_object({}) do |file, tables|
+          table, timestamp, compress = file.basename.to_s.match(CSV_MATCHER).captures
+          (tables[table] ||= []) << { file: file, time: timestamp, gz: compress }
+        end
+        Parallel.each(tables.keys, in_threads: Parallel.processor_count) do |table|
           next if (only&.any? && only.exclude?(table)) || (skip&.any? && skip.include?(table))
-          if compress
-            psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{file}' CSV"
-          else
-            psql "\\COPY #{table} FROM '#{file}' CSV"
+          tables[table].sort_by{ |csv| csv[:time] }.each do |csv|
+            if csv[:gz]
+              psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{csv[:file]}' CSV"
+            else
+              psql "\\COPY #{table} FROM '#{csv[:file]}' CSV"
+            end
           end
         end
       end
