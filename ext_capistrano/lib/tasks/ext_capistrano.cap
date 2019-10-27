@@ -44,7 +44,11 @@ namespace :load do
       .bundle
       .local_repo
       log
-      tmp
+      tmp/bash
+      tmp/pids
+      tmp/cache
+      tmp/sockets
+      tmp/nohup
       public/packs
       public/system
       node_modules
