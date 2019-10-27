@@ -1,5 +1,0 @@
-namespace :load do
-  task :defaults do
-    append :linked_dirs, 'tmp/backups'
-  end
-end
