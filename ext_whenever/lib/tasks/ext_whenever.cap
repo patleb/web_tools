@@ -6,6 +6,7 @@ namespace :load do
     set :whenever_every_minute, -> { [] }
 
     append :gems, 'ext_whenever'
+    append :linked_dirs, 'tmp/locks'
   end
 end
 
