@@ -3,7 +3,7 @@ namespace :mr_setting do
   task :setup, [:no_master_key, :force] => :environment do |t, args|
     src, dst = MrSetting.root.join('lib/tasks/templates'), Rails.root
 
-    ['config/initializers/setting.rb', 'config/settings.yml'].each do |file|
+    ['config/setting.rb', 'config/settings.yml'].each do |file|
       cp src.join(file), dst.join(file)
     end
 

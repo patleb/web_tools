@@ -73,6 +73,7 @@ class Setting
       settings = extract_yml(:settings, @root)
       settings = @database.merge! parse_settings_yml(settings)
       settings = @secrets.merge! settings
+      require_overrides
       resolve_keywords! settings
       cast_values! settings
       FREED_IVARS.each{ |ivar| remove_instance_variable(ivar) if instance_variable_defined? ivar }
@@ -225,7 +226,6 @@ class Setting
   end
 
   def self.resolve_keywords!(settings)
-    require_initializers
     @all = settings
     @aliases&.each{ |key, old_name| settings[key] = settings[old_name] }
     @methods&.each{ |key, method_name| settings[key] = send(method_name) unless @removed&.include? key }
@@ -240,9 +240,9 @@ class Setting
     @replaced&.each{ |key| settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) }
   end
 
-  def self.require_initializers
+  def self.require_overrides
     (@gems.values << @root).each do |root|
-      path = root.join('config/initializers/setting.rb')
+      path = root.join('config/setting.rb')
       require path.to_s if path.exist?
     end
   end
