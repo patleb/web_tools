@@ -37,17 +37,13 @@ module Db
           skip = options.excludes.split(',').reject(&:blank?).uniq
         end
         tables = csv_files.each_with_object({}) do |file, tables|
-          table, timestamp, compress = file.basename.to_s.match(CSV_MATCHER).captures
-          (tables[table] ||= []) << { file: file, time: timestamp, gz: compress }
+          table, csv = csv_metadata(file)
+          (tables[table] ||= []) << csv
         end
         Parallel.each(tables.keys, in_threads: Parallel.processor_count) do |table|
           next if (only&.any? && only.exclude?(table)) || (skip&.any? && skip.include?(table))
           tables[table].sort_by{ |csv| csv[:time] }.each do |csv|
-            if csv[:gz]
-              psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{csv[:file]}' CSV"
-            else
-              psql "\\COPY #{table} FROM '#{csv[:file]}' CSV"
-            end
+            execute_copy(table, csv)
           end
         end
       end
@@ -110,6 +106,19 @@ module Db
 
       def dump_path
         @dump_path ||= Pathname.new(options.base_dir).join(options.name).expand_path
+      end
+
+      def execute_copy(table, csv)
+        if csv[:gz]
+          psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{csv[:file]}' CSV"
+        else
+          psql "\\COPY #{table} FROM '#{csv[:file]}' CSV"
+        end
+      end
+
+      def csv_metadata(file)
+        table, timestamp, compress = file.basename.to_s.match(CSV_MATCHER).captures
+        [table, { file: file, time: timestamp, gz: compress }]
       end
     end
   end
