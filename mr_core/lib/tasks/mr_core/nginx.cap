@@ -42,6 +42,16 @@ namespace :nginx do
   end
   after 'nginx:push', 'nginx:reload'
 
+  desc 'apply correct ownership to nginx directory on Centos'
+  task :apply_owner do
+    on release_roles :all do
+      if cap.os.centos?
+        execute "sudo chown -R #{fetch(:deployer_name)}:#{fetch(:deployer_name)} /var/lib/nginx"
+      end
+    end
+  end
+  before 'nginx:push', 'nginx:apply_owner'
+
   namespace :app do
     desc 'Enable application (with optional site name)'
     task :enable, [:site] do |t, args|

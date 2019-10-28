@@ -4,7 +4,7 @@ ubuntu)
   chown $__DEPLOYER_NAME__:adm /var/log/nginx
 ;;
 centos)
-  sun.backup_compile "/etc/logrotate.d/nginx"
+  sun.backup_move "/etc/logrotate.d/nginx"
   chmod +rx /var/log/nginx
 ;;
 esac
