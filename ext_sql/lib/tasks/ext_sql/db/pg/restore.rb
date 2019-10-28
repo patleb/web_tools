@@ -11,7 +11,7 @@ module Db
           staged:      ['--[no-]staged',       'Force restore in 3 phases (pre-data, data, post-data)'],
           timescaledb: ['--[no-]timescaledb',  'Specify if TimescaleDB is used'],
           csv:         ['--[no-]csv',          'Restore from CSV'],
-          compress:    ['--[no-]compress',     'Specify if CSV is compressed (default to true)'],
+          compress:    ['--[no-]compress',     'Specify if CSV is compressed'],
         )
       end
 
