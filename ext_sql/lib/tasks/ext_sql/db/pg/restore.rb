@@ -1,14 +1,15 @@
 module Db
   module Pg
     class Restore < Base
-      CSV_MATCHER = /^([a-z0-9_]+)(-\d{14})?\.csv(\.gz)?$/
+      class BadCSVFileName < ::StandardError; end
+
+      CSV_MATCHER = /~([A-Za-z_][A-Za-z0-9_]*)\.csv(\.gz)?$/
 
       def self.args
         super.merge!(
           name:        ['--name=NAME',         'Dump file name (default to dump)'],
           base_dir:    ['--base-dir=BASE_DIR', 'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
           includes:    ['--includes=INCLUDES', 'Included tables'],
-          excludes:    ['--excludes=EXCLUDES', 'Excluded tables (only for CSV)'],
           staged:      ['--[no-]staged',       'Force restore in 3 phases (pre-data, data, post-data)'],
           timescaledb: ['--[no-]timescaledb',  'Specify if TimescaleDB is used'],
           csv:         ['--[no-]csv',          'Restore from CSV'],
@@ -30,21 +31,11 @@ module Db
       private
 
       def copy_from
-        if options.includes.present?
-          only = options.includes.split(',').reject(&:blank?).uniq
-        end
-        if options.excludes.present?
-          skip = options.excludes.split(',').reject(&:blank?).uniq
-        end
-        tables = csv_files.each_with_object({}) do |file, tables|
-          table, csv = csv_metadata(file)
-          (tables[table] ||= []) << csv
-        end
-        Parallel.each(tables.keys, in_threads: Parallel.processor_count) do |table|
-          next if (only&.any? && only.exclude?(table)) || (skip&.any? && skip.include?(table))
-          tables[table].sort_by{ |csv| csv[:time] }.each do |csv|
-            execute_copy(table, csv)
-          end
+        table, compress = csv_file.basename.to_s.match(CSV_MATCHER).captures
+        if compress
+          psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{csv_file}' CSV"
+        else
+          psql "\\COPY #{table} FROM '#{csv_file}' CSV"
         end
       end
 
@@ -98,27 +89,16 @@ module Db
         "#{dump_path}.pg"
       end
 
-      def csv_files
-        dump_path.children(false)
-          .select{ |file| file.basename.to_s.match? CSV_MATCHER }
-          .map{ |file| dump_path.join(file) }
+      def csv_file
+        if dump_path.basename.to_s.match? CSV_MATCHER
+          dump_path
+        else
+          raise BadCSVFileName
+        end
       end
 
       def dump_path
         @dump_path ||= Pathname.new(options.base_dir).join(options.name).expand_path
-      end
-
-      def execute_copy(table, csv)
-        if csv[:gz]
-          psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{csv[:file]}' CSV"
-        else
-          psql "\\COPY #{table} FROM '#{csv[:file]}' CSV"
-        end
-      end
-
-      def csv_metadata(file)
-        table, timestamp, compress = file.basename.to_s.match(CSV_MATCHER).captures
-        [table, { file: file, time: timestamp, gz: compress }]
       end
     end
   end

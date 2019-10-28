@@ -8,7 +8,6 @@ module Db
           base_dir:  ['--base-dir=BASE_DIR', 'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
           includes:  ['--includes=INCLUDES', 'Included tables'],
           excludes:  ['--excludes=EXCLUDES', 'Excluded tables'],
-          timestamp: ['--[no-]timestamp',    'Add a timestamp in the CSV file name'],
           csv:       ['--[no-]csv',          'Dump as CSV'],
           compress:  ['--[no-]compress',     'Specify if the resulting CSV is compressed (default to true)'],
           where:     ['--where=WHERE',       'WHERE condition for the COPY command']
@@ -75,15 +74,7 @@ module Db
       end
 
       def csv_file(table)
-        if options.timestamp
-          loop do
-            file = dump_path.join(table).sub_ext("-#{Time.now.utc.strftime("%Y%m%d%H%M%S")}.csv#{'.gz' if options.compress}")
-            break file unless file.exist?
-            spleep 1
-          end
-        else
-          dump_path.join(table).sub_ext(".csv#{'.gz' if options.compress}")
-        end
+        dump_path.sub_ext("~#{table}.csv#{'.gz' if options.compress}")
       end
 
       def pg_file
