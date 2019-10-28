@@ -1,8 +1,6 @@
 module Db
   module Pg
     class Restore < Base
-      class BadCSVFileName < ::StandardError; end
-
       CSV_MATCHER = /~([A-Za-z_][A-Za-z0-9_]*)\.csv(\.gz)?$/
 
       def self.args
@@ -13,6 +11,7 @@ module Db
           staged:      ['--[no-]staged',       'Force restore in 3 phases (pre-data, data, post-data)'],
           timescaledb: ['--[no-]timescaledb',  'Specify if TimescaleDB is used'],
           csv:         ['--[no-]csv',          'Restore from CSV'],
+          compress:    ['--[no-]compress',     'Specify if CSV is compressed (default to true)'],
         )
       end
 
@@ -31,11 +30,12 @@ module Db
       private
 
       def copy_from
+        tables = options.includes.split(',').reject(&:blank?).uniq
         table, compress = csv_file.basename.to_s.match(CSV_MATCHER).captures
-        if compress
-          psql "\\COPY #{table} FROM PROGRAM 'unpigz -c #{csv_file}' CSV"
+        if options.compress || compress
+          psql "\\COPY #{tables.first || table} FROM PROGRAM 'unpigz -c #{csv_file}' CSV"
         else
-          psql "\\COPY #{table} FROM '#{csv_file}' CSV"
+          psql "\\COPY #{tables.first || table} FROM '#{csv_file}' CSV"
         end
       end
 
@@ -90,11 +90,7 @@ module Db
       end
 
       def csv_file
-        if dump_path.basename.to_s.match? CSV_MATCHER
-          dump_path
-        else
-          raise BadCSVFileName
-        end
+        dump_path
       end
 
       def dump_path
