@@ -29,6 +29,13 @@ module Db
 
       private
 
+      # TODO parallelize
+      # https://github.com/timescale/timescaledb-parallel-copy
+      # http://www.programmersought.com/article/8849706613/
+      # https://www.citusdata.com/blog/2016/06/15/copy-postgresql-distributed-tables
+      # https://citusdata.com/blog/2017/11/08/faster-bulk-loading-in-postgresql-with-copy/
+      # http://www.programmersought.com/article/8849706613/
+      # https://stackoverflow.com/questions/14980048/how-to-decompress-with-pigz
       def copy_from
         tables = options.includes.split(',').reject(&:blank?).uniq
         table, compress = csv_file.basename.to_s.match(CSV_MATCHER).captures

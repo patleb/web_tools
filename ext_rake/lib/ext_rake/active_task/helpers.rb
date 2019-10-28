@@ -30,6 +30,7 @@ module ActiveTask
       end
     end
 
+    # NOTE needed only if using a different Gemfile
     def sh_clean(*cmd, &block)
       Bundler.with_clean_env do
         rake.__send__ :sh, *cmd, &block
