@@ -31,7 +31,7 @@ module Db
       private
 
       def copy_to
-        dump_path.mkpath
+        dump_path.dirname.mkpath
         where = "WHERE #{options.where}" if options.where.present?
         tables = (options.includes.split(',').reject(&:blank?) - options.excludes.split(',').reject(&:blank?)).uniq
         tables.each do |table|
