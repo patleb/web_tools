@@ -1,5 +1,13 @@
 module Rake
   module DSL
+    def run_task(name, *args)
+      Rake::Task[name].invoke(*args)
+    end
+
+    def run_task!(name, *args)
+      Rake::Task[name].invoke!(*args)
+    end
+
     def cap(stage, task, environment = {})
       environment = environment.each_with_object('RAILS_ENV=development') do |(name, value), string|
         string << " #{name.to_s.upcase}=#{value}"
