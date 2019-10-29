@@ -81,7 +81,7 @@ module ActiveTask
     rescue Exception => exception
       result = exception
       @_success = false
-      before_raise(exception)
+      after_rescue(exception)
     ensure
       after_ensure(exception) unless run_help
       return result
@@ -104,7 +104,7 @@ module ActiveTask
     def around_run; yield end
     def after_run; end
     def after_cancel; end
-    def before_raise(exception); end
+    def after_rescue(exception); end
     def after_ensure(exception); end
 
     def puts(obj = '', *arg)
