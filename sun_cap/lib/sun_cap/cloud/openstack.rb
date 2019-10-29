@@ -4,9 +4,10 @@ module Cloud::Openstack
   class DoesNotExist < ::StandardError; end
 
   def openstack_server_create(flavor, network, project, env, app: nil, version: nil, count: 1)
-    tag = [project, env, app].compact.join('_')
+    project_env = [project, env].join('_')
+    tag = [project_env, app].compact.join('_')
     keypair = "ssh-#{[project, env].join('-').dasherize}"
-    image = [project, version].compact.join('-')
+    image = [project_env, version].compact.join('-')
     raise AlreadyCreated if openstack_server_list(tag).present?
     raise DoesNotExist if openstack_flavor_list(flavor).empty?
     raise DoesNotExist if (network = openstack_network_list(network).first).nil?
