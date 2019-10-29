@@ -32,6 +32,7 @@ module Rake::Task::WithOutput
           Notice.new.deliver! RakeError.new(exception, data), subject: name do |message|
             puts message
           end
+          raise
         ensure
           puts "[#{start}]#{ExtRake::TASK}[#{Process.pid}]" if output.exclude? ExtRake::STEP
           finish = Time.current.utc
