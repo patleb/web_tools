@@ -64,6 +64,7 @@ module ActiveTask
     def run!
       result = run
       raise(result) if failed?
+      result
     end
 
     def run
