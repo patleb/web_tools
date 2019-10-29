@@ -42,27 +42,48 @@ module ActiveTask
       {}
     end
 
+    def debug?
+      @_debug
+    end
+
+    def success?
+      @_success
+    end
+
+    def failed?
+      !success?
+    end
+
     def initialize(rake, task, args = {}, **defaults)
-      @debug = ENV['DEBUG'].to_b
       @rake, @task = rake, task
       @options = self.class.defaults.with_indifferent_access.merge!(defaults).merge!(args.to_h)
+      @_debug = ENV['DEBUG'].to_b
+      @_success = true
+    end
+
+    def run!
+      result = run
+      raise(result) if failed?
     end
 
     def run
+      result = nil
       run_help = _with_environment do |env|
         with_environment(env) do
           before_run
           unless cancel?
-            around_run{ _run }
+            around_run{ result = _run }
             after_run
           end
         end
       end
     rescue Exception => exception
+      result = exception
+      @_success = false
       before_raise(exception)
-      raise
     ensure
       after_ensure(exception) unless run_help
+      return result
     end
 
     def cancel?
@@ -104,11 +125,13 @@ module ActiveTask
     private
 
     def _run
+      result = nil
       _steps.each do |step|
         break if cancel?
         puts "[#{Time.current.utc}]#{ExtRake::STEP}[#{Process.pid}] #{step}".yellow
-        send(step)
+        result = send(step)
       end
+      result
     end
 
     def _steps

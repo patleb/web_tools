@@ -27,7 +27,7 @@ namespace :test do
   %w(raise_exception send_mail sleep).each do |name|
     desc "-- [options] Test #{name.humanize}"
     task name.to_sym => :environment do |t|
-      "::ExtRake::Test::#{name.camelize}".constantize.new(self, t).run
+      "::ExtRake::Test::#{name.camelize}".constantize.new(self, t).run!
     end
   end
 end

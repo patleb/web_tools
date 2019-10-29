@@ -5,7 +5,7 @@ namespace :geoserver do
 
       desc "#{task_name.humanize} GeoServer workspace"
       task task_name => :environment do |t|
-        Geoserver::Workspace.const_get(action).new(self, t).run
+        Geoserver::Workspace.const_get(action).new(self, t).run!
       end
     end
   end
