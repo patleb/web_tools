@@ -142,6 +142,7 @@ module Sunzistrano
 
       def run_provision_cmd
         if sun.server_cluster?
+          # TODO should use a connection pooler --> SSHKit?
           Parallel.each(Cloud.server_cluster, in_threads: Float::INFINITY) do |server|
             run_provison_cmd_for(server)
           end
