@@ -142,7 +142,6 @@ module Sunzistrano
 
       def run_provision_cmd
         if sun.server_cluster?
-          # TODO should use a connection pooler --> SSHKit?
           Parallel.each(Cloud.server_cluster, in_threads: Float::INFINITY) do |server|
             run_provison_cmd_for(server)
           end
@@ -153,7 +152,7 @@ module Sunzistrano
       end
 
       def run_provison_cmd_for(server)
-        `ssh-keygen -R #{server} 2> /dev/null`
+        `ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{server} 2> /dev/null`
 
         Open3.popen3(provision_cmd(server)) do |stdin, stdout, stderr|
           stdin.close
