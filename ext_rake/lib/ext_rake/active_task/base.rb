@@ -10,7 +10,7 @@ module ActiveTask
     STEPS_ARGS = IceNine.deep_freeze(%i(
       only
       skip
-      step
+      goto
     ))
     RAILS_ARGS = IceNine.deep_freeze(%i(
       env
@@ -146,9 +146,9 @@ module ActiveTask
         steps.reject!{ |step| step.to_s.in? @options.skip }
       end
 
-      if @options.step.present?
-        steps = steps.take_while{ |step| step.to_s != @options.step }
-        steps << @options.step
+      if @options.goto.present?
+        steps = steps.take_while{ |step| step.to_s != @options.goto }
+        steps << @options.goto
       end
 
       steps
@@ -205,10 +205,10 @@ module ActiveTask
           @options[arg_name] = value
         end
       end
-      STEPS_ARGS.except(:step).each do |arg|
+      STEPS_ARGS.except(:goto).each do |arg|
         parser.on("--#{arg}=#{arg.to_s.upcase}", Array){ |list| @options[arg] = list }
       end
-      parser.on("--step=STEP"){ |value| @options['step'] = value }
+      parser.on("--goto=GOTO"){ |value| @options['goto'] = value }
       RAILS_ARGS.each do |arg|
         parser.on("--#{arg}=RAILS_#{arg.to_s.upcase}"){ |value| rails_args[arg] = value }
       end
