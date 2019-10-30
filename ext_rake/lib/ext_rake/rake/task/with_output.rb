@@ -28,9 +28,12 @@ module Rake::Task::WithOutput
           puts "#{ExtRake::STARTED}[#{Process.pid}] #{name}".blue
           super
         rescue Exception => exception
-          data = { name => args&.to_h, host: Process.host.snapshot }
-          Notice.new.deliver! RakeError.new(exception, data), subject: name do |message|
-            puts message
+          unless Thread.current[:rake_error]
+            Thread.current[:rake_error] = true
+            data = { name => args&.to_h, host: Process.host.snapshot }
+            Notice.new.deliver! RakeError.new(exception, data), subject: name do |message|
+              puts message
+            end
           end
           raise
         ensure
