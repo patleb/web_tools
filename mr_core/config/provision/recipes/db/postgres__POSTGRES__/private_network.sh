@@ -15,4 +15,4 @@ echo "host    all             all             $PRIVATE_NETWORK         md5" >> $
 ufw allow in from $PRIVATE_NETWORK to $INTERNAL_IP port 5432
 ufw reload
 
-systemctl restart postgresql
+sun.pg_restart_force

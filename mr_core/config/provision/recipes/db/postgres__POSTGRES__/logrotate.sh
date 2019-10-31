@@ -7,4 +7,4 @@ log_rotation_size = 0
 log_rotation_age = 7d
 EOF
 
-systemctl restart postgresql
+sun.pg_restart_force

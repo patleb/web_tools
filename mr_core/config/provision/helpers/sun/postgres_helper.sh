@@ -1,3 +1,10 @@
+sun.pg_restart_force() {
+  if ! systemctl restart postgresql; then
+    systemctl reset-failed postgresql
+    systemctl start postgresql
+  fi
+}
+
 sun.pg_major_version() {
   local version="$1"
   IFS='.' read -ra version <<< "$version"

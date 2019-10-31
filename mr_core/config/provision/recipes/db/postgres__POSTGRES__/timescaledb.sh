@@ -33,4 +33,4 @@ timescaledb-tune --conf-path=$PG_CONF --quiet --yes --dry-run >> $PG_CONF
 echo "timescaledb.telemetry_level=off" >> $PG_CONF
 echo "# TIMESCALEDB END" >> $PG_CONF
 
-systemctl restart postgresql
+sun.pg_restart_force
