@@ -19,7 +19,7 @@ module Db
           SQL
         end.join(' ').squish
 
-        psql truncate_tables
+        psql! truncate_tables
       end
     end
   end

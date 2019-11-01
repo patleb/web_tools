@@ -7,6 +7,7 @@
 PG_MANIFEST=$(sun.manifest_path 'postgresql')
 PG_CONF_DIR=$(sun.pg_default_conf_dir)
 
+# TODO specialize with $PG_CONF instead of having to many addon recipes
 case "$OS" in
 ubuntu)
   PG_PACKAGES="postgresql-$__POSTGRES__ postgresql postgresql-contrib postgresql-common libpq-dev"

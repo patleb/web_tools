@@ -13,7 +13,7 @@ module Db
 
       protected
 
-      def with_config
+      def with_db_config
         db = ExtRake.config.db_config
         yield db[:host],
           db[:database],
@@ -21,11 +21,20 @@ module Db
           db[:password]
       end
 
-      def psql(command, *sh_rest)
-        command_end = ';' unless command.strip.end_with? ';'
-        sh(<<~CMD, *sh_rest, verbose: false)
-          psql --quiet -c "#{command}#{command_end}" "#{ExtRake.config.db_url}"
-        CMD
+      def pg_conf_dir
+        @pg_conf_dir ||= Pathname.new(psql!('SHOW data_directory', sudo: true))
+      end
+
+      def psql!(command, *sh_rest, **options)
+        psql(command, *sh_rest, raise_on_exception: true, **options)
+      end
+
+      def psql(command, *sh_rest, raise_on_exception: false, sudo: false)
+        cmd = Sh.psql command, (ExtRake.config.db_url unless sudo)
+        cmd = [cmd].concat(sh_rest).compact.join(' ')
+        stdout, stderr, _status = Open3.capture3(cmd)
+        notify!(cmd, stderr) if raise_on_exception && notify?(stderr)
+        stdout
       end
     end
   end

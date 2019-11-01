@@ -38,14 +38,14 @@ module ExtRake
       protected
 
       def notify?(stderr)
-        stderr.strip.split("\n").lazy.map(&:strip).any?{ |line| ignored_error? line }
+        stderr.lines.lazy.map(&:strip).any?{ |line| ignored_error? line }
       end
 
       def notify!(cmd, stderr)
         cmd = self.class.sanitized_lines.each_with_object(cmd) do |(id, match), memo|
           memo.gsub! match, "[#{id}]"
         end
-        stderr = stderr.strip.split("\n").map(&:strip).select{ |line| ignored_error? line }.join("\n")
+        stderr = stderr.lines.map(&:strip).select{ |line| ignored_error? line }.join("\n")
         raise Failed, "[\n#{cmd}]\n\n#{stderr}"
       end
 
