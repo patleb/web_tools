@@ -41,7 +41,7 @@ module ExtCapistrano
     end
 
     def nohup_basename(command)
-      command.gsub(/[^_\w]/, '-').gsub(/-{2,}/, '-')
+      command.squish.gsub(/[^_\w]/, '-').gsub(/-{2,}/, '-').delete_prefix('-').delete_suffix('-')
     end
 
     def execute_bash(inline_code, sudo: false, u: true)
