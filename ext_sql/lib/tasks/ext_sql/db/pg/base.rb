@@ -1,3 +1,4 @@
+# TODO add docker integration when ExtRake.config.db_url isn't used
 module Db
   module Pg
     class Base < ActiveTask::Base
