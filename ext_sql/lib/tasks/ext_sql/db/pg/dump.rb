@@ -5,7 +5,7 @@ module Db
   module Pg
     class Dump < Base
       def self.args
-        super.merge!(
+        {
           name:      ['--name=NAME',                'Dump file name (default to dump)'],
           base_dir:  ['--base-dir=BASE_DIR',        'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
           includes:  ['--includes=INCLUDES', Array, 'Included tables (only for pg_dump and COPY command)'],
@@ -15,7 +15,7 @@ module Db
           physical:  ['--[no-]physical',            'Use pg_basebackup instead of pg_dump'],
           csv:       ['--[no-]csv',                 'Use COPY command instead of pg_dump'],
           where:     ['--where=WHERE',              'WHERE condition for the COPY command'],
-        )
+        }
       end
 
       def self.defaults

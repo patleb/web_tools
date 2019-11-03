@@ -11,18 +11,18 @@ module Db
       class MismatchedExtension < ::StandardError; end
 
       TABLE = /~[A-Za-z_][A-Za-z0-9_]*/
-      PIGZ = /\.gz/
+      COMPRESS = /\.gz/
       SPLIT = /-\*/
-      MATCHER = /(#{TABLE})?\.(tar|csv|pg)(#{PIGZ})?(#{SPLIT})?$/
+      MATCHER = /(#{TABLE})?\.(tar|csv|pg)(#{COMPRESS})?(#{SPLIT})?$/
 
       def self.args
-        super.merge!(
+        {
           name:        ['--name=NAME',                'Dump file name', :required],
           base_dir:    ['--base-dir=BASE_DIR',        'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
           includes:    ['--includes=INCLUDES', Array, 'Included tables for pg_restore'],
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
           timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
-        )
+        }
       end
 
       def self.defaults
