@@ -37,7 +37,7 @@ module Db
         table, type, compress, split = dump_path.basename.to_s.match(MATCHER).captures
         case type
         when 'tar' then unpack(compress, split)
-        when 'csv' then copy_from(table, compress, split)
+        when 'csv' then copy_from(table.delete_prefix('~'), compress, split)
         when 'pg'  then pg_restore(compress, split)
         else raise MismatchedExtension, type
         end
