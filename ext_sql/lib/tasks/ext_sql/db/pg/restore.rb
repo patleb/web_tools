@@ -22,6 +22,7 @@ module Db
           includes:    ['--includes=INCLUDES', Array, 'Included tables for pg_restore'],
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
           timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
+          pgrest:      ['--[no-]pgrest',              'Specify if PostgREST API is used for pg_restore'],
         }
       end
 
@@ -93,6 +94,7 @@ module Db
             notify!(cmd, stderr) if notify?(stderr)
           end
           post_restore_timescaledb if options.timescaledb
+          post_restore_pgrest if options.pgrest
         end
       end
 
@@ -107,6 +109,13 @@ module Db
         psql! <<-SQL.strip_sql
           SELECT timescaledb_post_restore();
         SQL
+      end
+
+      def post_restore_pgrest
+        psql! <<-SQL.strip_sql
+          DELETE FROM #{ActiveRecord::Base.schema_migrations_table_name} WHERE version = '20010000000820'
+        SQL
+        run_task 'db:migrate'
       end
 
       def staged

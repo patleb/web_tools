@@ -1,12 +1,7 @@
-# TODO add docker integration when ExtRake.config.db_url isn't used
 module Db
   module Pg
     class Base < ActiveTask::Base
       include ExtRake::Pg::Rescuable
-
-      def self.args
-        { db: ['--db=DB', 'DB type (ex.: --db=record would use Record::Base connection'] }
-      end
 
       def self.pg_options
         ENV['PG_OPTIONS']

@@ -10,6 +10,8 @@ class EnablePgcrypto < ActiveRecord::Migration[5.2]
             RETURN encode(digest(value::TEXT, 'md5'), 'hex');
           END;
           $$ LANGUAGE plpgsql IMMUTABLE STRICT PARALLEL SAFE;
+
+          ALTER FUNCTION md5_hex(value ANYELEMENT) SET search_path=public;
         SQL
       end
 

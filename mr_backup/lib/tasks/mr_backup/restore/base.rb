@@ -11,6 +11,10 @@ module MrBackup
         [:run_restore]
       end
 
+      def self.args
+        { db: ['--db=DB', 'DB type (ex.: --db=record would use Record::Base connection'] }
+      end
+
       def self.backup_type
         raise NotImplementedError
       end

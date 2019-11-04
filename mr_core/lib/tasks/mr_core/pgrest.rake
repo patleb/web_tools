@@ -9,5 +9,13 @@ namespace :db do
       end
     end
   end
+
+  desc 'reload pgrest schema cache'
+  task :reload_pgrest => :environment do
+    if Setting[:pgrest_enabled] && Rails::Env.dev_or_test?
+      sh 'kill -s USR1 $(pgrep postgrest) || :'
+    end
+  end
 end
 Rake::Task['db:drop'].enhance ['db:drop_pgrest']
+Rake::Task['db:migrate'].enhance{ Rake::Task['db:reload_pgrest'].invoke }

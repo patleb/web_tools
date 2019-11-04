@@ -16,6 +16,7 @@ module ExtRake
             /ALTER TABLE.+OWNER TO/,
             /WARNING: errors ignored/,
             /ERROR:.+does not exist/,
+            /NOTICE:.+already exists, skipping/,
             'Command was: COPY _timescaledb_catalog.telemetry_metadata (key, value) FROM stdin;',
             'ERROR:  unrecognized configuration parameter "idle_in_transaction_session_timeout"',
             'ERROR:  must be owner of extension plpgsql',
@@ -29,7 +30,7 @@ module ExtRake
 
         def sanitized_lines
           {
-            psql_url: /postgresql:.+:5432/,
+            psql_url: /postgresql:.+:543\d/,
             pg_password: /PGPASSWORD=\w+;/,
           }
         end
@@ -38,18 +39,18 @@ module ExtRake
       protected
 
       def notify?(stderr)
-        stderr.lines.lazy.map(&:strip).any?{ |line| ignored_error? line }
+        stderr.lines.lazy.map(&:strip).any?{ |line| output_error? line }
       end
 
       def notify!(cmd, stderr)
         cmd = self.class.sanitized_lines.each_with_object(cmd) do |(id, match), memo|
           memo.gsub! match, "[#{id}]"
         end
-        stderr = stderr.lines.map(&:strip).select{ |line| ignored_error? line }.join("\n")
+        stderr = stderr.lines.map(&:strip).select{ |line| output_error? line }.join("\n")
         raise Failed, "[\n#{cmd}]\n\n#{stderr}"
       end
 
-      def ignored_error?(line)
+      def output_error?(line)
         line.present? && self.class.ignored_errors.none? do |ignored_error|
           if ignored_error.is_a? Regexp
             line.match ignored_error
