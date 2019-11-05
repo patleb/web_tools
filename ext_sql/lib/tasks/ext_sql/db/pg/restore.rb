@@ -10,10 +10,10 @@ module Db
     class Restore < Base
       class MismatchedExtension < ::StandardError; end
 
-      TABLE = /~[A-Za-z_][A-Za-z0-9_]*/
+      TABLE = /[A-Za-z_][A-Za-z0-9_]*/
       COMPRESS = /\.gz/
       SPLIT = /-\*/
-      MATCHER = /(#{TABLE})?\.(tar|csv|pg)(#{COMPRESS})?(#{SPLIT})?$/
+      MATCHER = /(?:~(#{TABLE}))?\.(tar|csv|pg)(#{COMPRESS})?(#{SPLIT})?$/
 
       def self.args
         {
@@ -37,7 +37,7 @@ module Db
         table, type, compress, split = dump_path.basename.to_s.match(MATCHER).captures
         case type
         when 'tar' then unpack(compress, split)
-        when 'csv' then copy_from(table.delete_prefix('~'), compress, split)
+        when 'csv' then copy_from(table, compress, split)
         when 'pg'  then pg_restore(compress, split)
         else raise MismatchedExtension, type
         end
