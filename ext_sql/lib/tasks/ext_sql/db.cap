@@ -1,7 +1,7 @@
 namespace :db do
   namespace :pg do
     def psql(pg_command, *sh_rest)
-      test Sh.psql(pg_command), *sh_rest
+      test [Sh.psql(pg_command), *sh_rest].join(' ')
     end
 
     desc 'create user'
