@@ -30,7 +30,7 @@ module Db
         cmd = [cmd, *sh_rest].join(' ')
         stdout, stderr, _status = Open3.capture3(cmd)
         notify!(cmd, stderr) if raise_on_exception && notify?(stderr)
-        stdout
+        stdout.strip
       end
     end
   end
