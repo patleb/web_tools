@@ -11,8 +11,9 @@ module Db
           includes:  ['--includes=INCLUDES', Array, 'Included tables (only for pg_dump and COPY command)'],
           excludes:  ['--excludes=EXCLUDES', Array, 'Excluded tables (only for pg_dump and COPY command)'],
           compress:  ['--[no-]compress',            'Compress the dump (default to true)'],
-          split:     ['--[no-]split',               'Compress and split the dump (default to false)'],
+          split:     ['--[no-]split',               'Compress and split the dump (not available for pg_basebackup with -Xstream)'],
           physical:  ['--[no-]physical',            'Use pg_basebackup instead of pg_dump'],
+          stream:    ['--[no-]stream',              'use -Xstream option for pg_basebackup'],
           csv:       ['--[no-]csv',                 'Use COPY command instead of pg_dump'],
           where:     ['--where=WHERE',              'WHERE condition for the COPY command'],
         }
@@ -29,6 +30,7 @@ module Db
       end
 
       # TODO https://www.tecmint.com/generate-verify-check-files-md5-checksum-linux/
+      # TODO check resulting dump size if bigger than minimal size
       def dump
         case
         when options.physical then pg_basebackup
@@ -39,15 +41,22 @@ module Db
 
       private
 
+      # TODO split option for -Xstream
       def pg_basebackup
+        sh "sudo mkdir -p #{dump_path.dirname}"
+        sh "sudo chown postgres:postgres #{dump_path.dirname}"
+        cmd_options = <<-CMD.squish
+          #{self.class.pg_options}
+          -P -v -R -X#{options.stream ? 'stream' : 'fetch'} -cfast -Ft
+        CMD
         output = case
-          when options.split    then split_cmd(tar_file)
-          when options.compress then compress_cmd(tar_file)
-          else tar_file
+          when options.stream   then options.compress ? "#{dump_path} -z" : dump_path
+          when options.split    then "| #{split_cmd(tar_file)}"
+          when options.compress then "| #{compress_cmd(tar_file)}"
+          else "| #{tar_file}"
           end
-        sh "sudo su postgres -c 'mkdir -p #{dump_path.dirname}'"
         sh <<-CMD.squish, verbose: false
-          sudo su postgres -c 'pg_basebackup #{self.class.pg_options} -P -v -R -Xstream -cfast -Z0 -Ft -D- | #{output}'
+          sudo su postgres -c 'pg_basebackup #{cmd_options} #{options.stream ? '-D' : '-Z0 -D-'} #{output}'
         CMD
       end
 
