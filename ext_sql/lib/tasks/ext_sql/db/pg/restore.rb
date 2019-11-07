@@ -46,17 +46,22 @@ module Db
       private
 
       def unpack(split)
-        data_dir = pg_conf_dir
+        data_dir = pg_conf_dir rescue Pathname.new(Pathname.new('tmp/data_dir').read.strip)
+        sh "echo #{data_dir} > tmp/data_dir"
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{data_dir}"
         sh "sudo mkdir -p #{data_dir}"
-        sh "sudo bash -c '#{"cat #{dump_path} |" if split} tar -xvf #{split ? '-' : dump_path} -C #{data_dir}'"
-        # TODO untar inplace
+        sh "sudo bash -c '#{"cat #{dump_path} |" if split} tar --strip-components 1 -C #{data_dir} -xvf #{split ? '-' : dump_path}'"
         compress = data_dir.children(false).any?{ |file| file.extname == '.gz' }
-        base_dir = data_dir.join('base.tar')
-        pg_wal_dir = data_dir.join('pg_wal.tar')
-        # sh "sudo bash -c '#{}'"
-        sh "sudo bash -c 'chown -R postgres:postgres #{data_dir}'"
+        pg_data = compress ? data_dir.join('base.tar.gz') : data_dir.join('base.tar')
+        pg_wal = compress ? data_dir.join('pg_wal.tar.gz') : data_dir.join('pg_wal.tar')
+        sh "sudo tar -C #{data_dir} #{'-z' if compress} -xf #{pg_data}"
+        sh "sudo rm -f #{pg_data}"
+        sh "sudo tar -C #{data_dir.join('pg_wal')} #{'-z' if compress} -xf #{pg_wal}"
+        sh "sudo rm -f #{pg_wal}"
+        sh %{echo "restore_command = ':'" | sudo tee #{data_dir.join('recovery.conf')} > /dev/null}
+        sh "sudo chmod 700 #{data_dir}"
+        sh "sudo chown -R postgres:postgres #{data_dir}"
         sh 'sudo systemctl start postgresql'
       end
 

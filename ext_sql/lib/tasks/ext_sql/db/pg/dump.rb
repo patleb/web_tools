@@ -46,13 +46,13 @@ module Db
         sh "sudo mkdir -p #{dump_path.dirname}"
         sh "sudo chown postgres:postgres #{dump_path.dirname}"
         cmd_options = <<-CMD.squish
-          -P -v -R -Xstream -cfast -Ft
+          -P -v -Xstream -cfast -Ft
           #{self.class.pg_options}
           #{'-z' if options.compress || options.split}
         CMD
         output = <<-CMD.squish
           -D #{dump_path}
-          && tar --remove-files -cvf #{options.split ? '-' : tar_file} #{dump_path}
+          && tar --remove-files -C #{dump_path.dirname} -cvf #{options.split ? '-' : tar_file} #{dump_path.basename}
           #{split_cmd(tar_file) if options.split}
         CMD
         sh <<-CMD.squish
