@@ -18,7 +18,7 @@ module Db
       end
 
       def pg_conf_dir
-        @pg_conf_dir ||= Pathname.new(psql!('SHOW data_directory', sudo: true))
+        @pg_conf_dir ||= Pathname.new(psql! 'SHOW data_directory', sudo: true)
       end
 
       def psql!(command, *sh_rest, **options)
