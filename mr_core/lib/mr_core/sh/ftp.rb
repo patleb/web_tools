@@ -5,8 +5,16 @@ module Sh::Ftp
     end
   end
 
+  def execute_ftp_cat(match)
+    `#{ftp_cat(match)}`.strip
+  end
+
   def ftp_list(match)
-    ftp("cls #{match} --sort=name --size --date --time-style=%Y-%m-%dT%H:%M:%S%z --sortnocase")
+    ftp "cls #{match} --sort=name --size --date --time-style=%Y-%m-%dT%H:%M:%S%z --sortnocase"
+  end
+
+  def ftp_cat(match)
+    ftp "cat #{match}"
   end
 
   def ftp_download(match, client_dir)
