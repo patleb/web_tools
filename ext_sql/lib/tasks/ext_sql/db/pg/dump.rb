@@ -4,6 +4,8 @@
 module Db
   module Pg
     class Dump < Base
+      SPLIT_OPTIONS = '-a 4 -b 2GB'
+
       def self.args
         {
           name:      ['--name=NAME',                'Dump file name (default to dump)'],
@@ -99,9 +101,9 @@ module Db
 
       def split_cmd(file)
         if options.physical
-          "| split -a 4 -b 2GB - #{file}-"
+          "| split #{SPLIT_OPTIONS} - #{file}-"
         else
-          "pigz | split -a 4 -b 2GB - #{file}.gz-"
+          "pigz | split #{SPLIT_OPTIONS} - #{file}.gz-"
         end
       end
 

@@ -36,7 +36,7 @@ module Db
       def restore
         table, type, compress, split = dump_path.basename.to_s.match(MATCHER).captures
         case type
-        when 'tar' then unpack(compress, split)
+        when 'tar' then unpack(split)
         when 'csv' then copy_from(table, compress, split)
         when 'pg'  then pg_restore(compress, split)
         else raise MismatchedExtension, type
@@ -45,17 +45,17 @@ module Db
 
       private
 
-      def unpack(compress, split)
+      def unpack(split)
         data_dir = pg_conf_dir
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{data_dir}"
         sh "sudo mkdir -p #{data_dir}"
-        input = case
-          when split    then "#{unsplit_cmd} |"
-          when compress then "#{uncompress_cmd} |"
-          else nil
-          end
-        sh "sudo bash -c '#{input} tar -xvf #{input ? '-' : dump_path} -C #{data_dir}'"
+        sh "sudo bash -c '#{"cat #{dump_path} |" if split} tar -xvf #{split ? '-' : dump_path} -C #{data_dir}'"
+        # TODO untar inplace
+        compress = data_dir.children(false).any?{ |file| file.extname == '.gz' }
+        base_dir = data_dir.join('base.tar')
+        pg_wal_dir = data_dir.join('pg_wal.tar')
+        # sh "sudo bash -c '#{}'"
         sh "sudo bash -c 'chown -R postgres:postgres #{data_dir}'"
         sh 'sudo systemctl start postgresql'
       end
