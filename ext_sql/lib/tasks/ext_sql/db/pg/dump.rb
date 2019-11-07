@@ -11,9 +11,8 @@ module Db
           includes:  ['--includes=INCLUDES', Array, 'Included tables (only for pg_dump and COPY command)'],
           excludes:  ['--excludes=EXCLUDES', Array, 'Excluded tables (only for pg_dump and COPY command)'],
           compress:  ['--[no-]compress',            'Compress the dump (default to true)'],
-          split:     ['--[no-]split',               'Compress and split the dump (not available for pg_basebackup with -Xstream)'],
+          split:     ['--[no-]split',               'Compress and split the dump'],
           physical:  ['--[no-]physical',            'Use pg_basebackup instead of pg_dump'],
-          stream:    ['--[no-]stream',              'use -Xstream option for pg_basebackup'],
           csv:       ['--[no-]csv',                 'Use COPY command instead of pg_dump'],
           where:     ['--where=WHERE',              'WHERE condition for the COPY command'],
         }
@@ -41,22 +40,21 @@ module Db
 
       private
 
-      # TODO split option for -Xstream
       def pg_basebackup
         sh "sudo mkdir -p #{dump_path.dirname}"
         sh "sudo chown postgres:postgres #{dump_path.dirname}"
         cmd_options = <<-CMD.squish
+          -P -v -R -Xstream -cfast -Ft
           #{self.class.pg_options}
-          -P -v -R -X#{options.stream ? 'stream' : 'fetch'} -cfast -Ft
+          #{'-z' if options.compress || options.split}
         CMD
-        output = case
-          when options.stream   then options.compress ? "#{dump_path} -z" : dump_path
-          when options.split    then "| #{split_cmd(tar_file)}"
-          when options.compress then "| #{compress_cmd(tar_file)}"
-          else "| #{tar_file}"
-          end
+        output = <<-CMD.squish
+          -D #{dump_path}
+          && tar --remove-files -cvf #{tar_file} #{dump_path}
+          #{split_cmd(tar_file) if options.split}
+        CMD
         sh <<-CMD.squish, verbose: false
-          sudo su postgres -c 'pg_basebackup #{cmd_options} #{options.stream ? '-D' : '-Z0 -D-'} #{output}'
+          sudo su postgres -c 'pg_basebackup #{cmd_options} #{output}'
         CMD
       end
 
@@ -100,7 +98,11 @@ module Db
       end
 
       def split_cmd(file)
-        "pigz | split -a 4 -b 2GB - #{file}.gz-"
+        if options.physical
+          "| split -a 4 -b 2GB - #{file}-"
+        else
+          "pigz | split -a 4 -b 2GB - #{file}.gz-"
+        end
       end
 
       def compress_cmd(file)
