@@ -47,7 +47,7 @@ module ExtRake
           memo.gsub! match, "[#{id}]"
         end
         stderr = stderr.lines.map(&:strip).select{ |line| output_error? line }.join("\n")
-        raise Failed, "[\n#{cmd}]\n\n#{stderr}"
+        raise Failed, "[\n#{cmd}\n][\n#{stderr}\n]"
       end
 
       def output_error?(line)

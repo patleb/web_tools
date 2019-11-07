@@ -52,10 +52,10 @@ module Db
         CMD
         output = <<-CMD.squish
           -D #{dump_path}
-          && tar --remove-files -cvf #{tar_file} #{dump_path}
+          && tar --remove-files -cvf #{options.split ? '-' : tar_file} #{dump_path}
           #{split_cmd(tar_file) if options.split}
         CMD
-        sh <<-CMD.squish, verbose: false
+        sh <<-CMD.squish
           sudo su postgres -c 'pg_basebackup #{cmd_options} #{output}'
         CMD
       end
