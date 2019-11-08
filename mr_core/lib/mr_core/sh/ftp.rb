@@ -1,14 +1,4 @@
 module Sh::Ftp
-  def execute_ftp_list(match)
-    `#{ftp_list(match)}`.lines.map(&:strip).map(&:split).map do |columns|
-      { size: columns[0].to_i, time: DateTime.parse(columns[1]), name: columns[2] }.with_indifferent_access
-    end
-  end
-
-  def execute_ftp_cat(match)
-    `#{ftp_cat(match)}`.strip
-  end
-
   def ftp_list(match)
     ftp "cls #{match} --sort=name --size --date --time-style=%Y-%m-%dT%H:%M:%S%z --sortnocase"
   end

@@ -26,6 +26,7 @@ module MrCore
     require 'mr_core/money_rails'
     require 'mr_core/pycall/pyobject_wrapper' if Gem.loaded_specs['pycall']
     require 'mr_core/rails/engine'
+    require 'mr_core/rake/dsl'
     require 'mr_core/sh'
 
     config.before_configuration do |app|
