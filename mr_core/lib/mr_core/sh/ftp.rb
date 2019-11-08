@@ -7,12 +7,12 @@ module Sh::Ftp
     ftp "cat #{match}"
   end
 
-  def ftp_download(match, client_dir)
-    ftp "mget -c -d #{match} -O #{client_dir}"
+  def ftp_download(match, client_dir, **options)
+    ftp "mget -c -d #{match} -O #{client_dir}", **options
   end
 
-  def ftp_upload(match, client_dir)
-    ftp "lcd #{client_dir}; mput -c -d #{match}"
+  def ftp_upload(match, client_dir, **options)
+    ftp "lcd #{client_dir}; mput -c -d #{match}", **options
   end
 
   def ftp_remove(match)
@@ -23,9 +23,9 @@ module Sh::Ftp
     ftp "mv #{old_name} #{new_name}"
   end
 
-  def ftp(command)
+  def ftp(command, sudo: false)
     <<~SH
-      lftp -u '#{Setting[:ftp_username]},#{Setting[:ftp_password]}' #{Setting[:ftp_host]}:#{Setting[:ftp_host_path]} <<-FTP
+      #{'sudo' if sudo} lftp -u '#{Setting[:ftp_username]},#{Setting[:ftp_password]}' #{Setting[:ftp_host]}:#{Setting[:ftp_host_path]} <<-FTP
         #{command}
       FTP
     SH
