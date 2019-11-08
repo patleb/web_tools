@@ -34,6 +34,7 @@ module Db
       end
 
       def restore
+        check_md5
         table, type, compress, split = dump_path.basename.to_s.match(MATCHER).captures
         case type
         when 'tar' then unpack(split)
@@ -44,6 +45,11 @@ module Db
       end
 
       private
+
+      def check_md5
+        md5_file = dump_path.sub(MATCHER, '.md5')
+        sh "sudo md5sum -c #{md5_file}" if md5_file.exist?
+      end
 
       def unpack(split)
         data_dir = pg_conf_dir rescue Pathname.new(Pathname.new('tmp/pg_conf_dir').read.strip)
