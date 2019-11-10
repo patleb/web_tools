@@ -17,6 +17,12 @@ class JavascriptError < RescueError
   end
 end
 
+class PgrestError < JavascriptError
+end
+
+class GeoserverError < JavascriptError
+end
+
 # TODO https://www.ecalamia.com/blog/show-ip-api-nginx/
 class JavascriptRescuesController < ActionController::API
   def create
