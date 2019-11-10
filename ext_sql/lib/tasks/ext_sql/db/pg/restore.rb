@@ -1,10 +1,3 @@
-# TODO parallelize
-# https://github.com/timescale/timescaledb-parallel-copy
-# http://www.programmersought.com/article/8849706613/
-# https://www.citusdata.com/blog/2016/06/15/copy-postgresql-distributed-tables
-# https://citusdata.com/blog/2017/11/08/faster-bulk-loading-in-postgresql-with-copy/
-# http://www.programmersought.com/article/8849706613/
-# https://stackoverflow.com/questions/14980048/how-to-decompress-with-pigz
 module Db
   module Pg
     class Restore < Base
@@ -72,12 +65,22 @@ module Db
       end
 
       def copy_from(table, compress, split)
-        input = case
-          when split    then "PROGRAM '#{unsplit_cmd}'"
-          when compress then "PROGRAM '#{uncompress_cmd}'"
-          else "'#{dump_path}'"
-          end
-        psql! "\\COPY #{table} FROM #{input} CSV"
+        if options.timescaledb
+          # TODO parallelize
+          # https://github.com/timescale/timescaledb-parallel-copy
+          # http://www.programmersought.com/article/8849706613/
+          # https://www.citusdata.com/blog/2016/06/15/copy-postgresql-distributed-tables
+          # https://citusdata.com/blog/2017/11/08/faster-bulk-loading-in-postgresql-with-copy/
+          # http://www.programmersought.com/article/8849706613/
+          # https://stackoverflow.com/questions/14980048/how-to-decompress-with-pigz
+        else
+          input = case
+            when split    then "PROGRAM '#{unsplit_cmd}'"
+            when compress then "PROGRAM '#{uncompress_cmd}'"
+            else "'#{dump_path}'"
+            end
+          psql! "\\COPY #{table} FROM #{input} CSV"
+        end
       end
 
       def pg_restore(compress, split)
