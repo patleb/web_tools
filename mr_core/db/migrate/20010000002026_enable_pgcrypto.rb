@@ -5,19 +5,19 @@ class EnablePgcrypto < ActiveRecord::Migration[5.2]
     reversible do |change|
       change.up do
         execute <<-SQL.strip_sql
-          CREATE OR REPLACE FUNCTION md5_hex(value ANYELEMENT) RETURNS TEXT AS $$
+          CREATE OR REPLACE FUNCTION md5_hex(value ANYELEMENT, scope TEXT DEFAULT '') RETURNS TEXT AS $$
           BEGIN
-            RETURN encode(digest(value::TEXT, 'md5'), 'hex');
+            RETURN scope || encode(digest(value::TEXT, 'md5'), 'hex');
           END;
           $$ LANGUAGE plpgsql IMMUTABLE STRICT PARALLEL SAFE;
 
-          ALTER FUNCTION md5_hex(value ANYELEMENT) SET search_path=public;
+          ALTER FUNCTION md5_hex(value ANYELEMENT, scope TEXT) SET search_path=public;
         SQL
       end
 
       change.down do
         execute <<-SQL.strip_sql
-          DROP FUNCTION IF EXISTS md5_hex(value ANYELEMENT);
+          DROP FUNCTION IF EXISTS md5_hex(value ANYELEMENT, scope TEXT);
         SQL
       end
     end
