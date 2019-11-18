@@ -1,6 +1,6 @@
 desc "Execute a rake task on a remote server"
 task :rake do
-  if ENV['TASK']
+  if ENV['TASK'].present?
     on release_roles :all do
       execute_rake ENV['TASK']
     end
@@ -12,7 +12,7 @@ end
 namespace :rake do
   desc "Execute a rake task on a remote server in background mode"
   task :nohup do
-    if ENV['TASK']
+    if ENV['TASK'].present?
       on release_roles :all do
         with_rake do
           execute_nohup "bin/rake #{ENV['TASK']}"
@@ -26,8 +26,12 @@ namespace :rake do
   namespace :nohup do
     desc "Kill background rake task process"
     task :kill do
-      on release_roles :all do
-        kill_nohup "bin/rake #{ENV['TASK']}"
+      if ENV['TASK'].present?
+        on release_roles :all do
+          kill_nohup "bin/rake #{ENV['TASK']}"
+        end
+      else
+        error "Failed! You need to specify the 'TASK' parameter!", "Usage: cap <stage> rake:nohup:kill TASK=your:task"
       end
     end
   end
