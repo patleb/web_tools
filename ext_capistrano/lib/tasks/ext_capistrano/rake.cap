@@ -8,3 +8,27 @@ task :rake do
     error "Failed! You need to specify the 'TASK' parameter!", "Usage: cap <stage> rake TASK=your:task"
   end
 end
+
+namespace :rake do
+  desc "Execute a rake task on a remote server in background mode"
+  task :nohup do
+    if ENV['TASK']
+      on release_roles :all do
+        with_rake do
+          execute_nohup "bin/rake #{ENV['TASK']}"
+        end
+      end
+    else
+      error "Failed! You need to specify the 'TASK' parameter!", "Usage: cap <stage> rake:nohup TASK=your:task"
+    end
+  end
+
+  namespace :nohup do
+    desc "Kill background rake task process"
+    task :kill do
+      on release_roles :all do
+        kill_nohup "bin/rake #{ENV['TASK']}"
+      end
+    end
+  end
+end
