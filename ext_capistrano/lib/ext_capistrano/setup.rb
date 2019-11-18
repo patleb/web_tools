@@ -90,7 +90,7 @@ stages.each do |stage|
       # TODO deploy DB server behind proxy server
       # https://www.randomerrata.com/articles/2015/deploying-via-a-bastion-host-with-capistrano-3/
       if Setting[:server_cluster]
-        Cloud.server_cluster.each do |server|
+        Cloud.server_cluster_ips.each do |server|
           server server, user: fetch(:deployer_name), roles: %i(web app)
         end
       else

@@ -37,9 +37,13 @@ module Cloud::Openstack
   end
 
   def openstack_server_ips(*filters)
+    openstack_servers(*filters).values
+  end
+
+  def openstack_servers(*filters)
     openstack_server_list(*filters).map do |row|
-      row[:networks].split('=').last.split(',').first
-    end
+      [row[:name], row[:networks].split('=').last.split(',').first]
+    end.sort_by(&:first).to_h
   end
 
   def openstack_server_volumes(*filters)
