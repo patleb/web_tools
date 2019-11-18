@@ -3,7 +3,7 @@ module Db
     class Truncate < Base
       def self.args
         super.merge!(
-          includes: ['--includes=INCLUDES', 'Included tables'],
+          includes: ['--includes=INCLUDES', Array, 'Included tables'],
         )
       end
 
@@ -12,7 +12,7 @@ module Db
           raise "comma separated tables must be specified through --includes option"
         end
 
-        truncate_tables = options.includes.split(',').reject(&:blank?).map do |table|
+        truncate_tables = options.includes.map do |table|
           <<~SQL
             TRUNCATE TABLE #{table};
             SELECT setval(pg_get_serial_sequence('#{table}', 'id'), COALESCE((SELECT MAX(id) + 1 FROM #{table}), 1), false);
