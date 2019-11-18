@@ -65,7 +65,7 @@ module Db
           #{split_cmd(tar_file) if options.split}
         CMD
         sh <<-CMD.squish
-          sudo su postgres -c 'pg_basebackup #{cmd_options} #{output}'
+          cd /tmp && sudo su postgres -c 'pg_basebackup #{cmd_options} #{output}'
         CMD
       end
 
