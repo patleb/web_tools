@@ -1,4 +1,5 @@
 __GEOSERVER__=${__GEOSERVER__:-2.16.0}
+export __GEOSERVER_MAX_SIZE__=${__GEOSERVER_MAX_SIZE__:-2048M}
 
 if [[ -d /opt/geoserver ]]; then
   systemctl stop geoserver
@@ -14,7 +15,7 @@ unzip -q "geoserver-$__GEOSERVER__-bin.zip"
 mv "geoserver-$__GEOSERVER__" /opt/geoserver
 
 # https://www.shellhacks.com/systemd-service-file-example/
-sun.move '/etc/systemd/system/geoserver.service'
+sun.compile '/etc/systemd/system/geoserver.service'
 
 # https://www.google.ca/search?q=geoserver+behind+nginx&oq=geoserver+behind+nginx
 # proxy through Nginx

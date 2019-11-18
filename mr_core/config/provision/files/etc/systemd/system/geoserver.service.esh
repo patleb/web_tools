@@ -6,7 +6,7 @@ Wants=network-online.target
 
 [Service]
 Environment="GEOSERVER_HOME=/opt/geoserver"
-Environment="JAVA_OPTS=-server -Xms756M -Xmx2048M -XX:SoftRefLRUPolicyMSPerMB=36000 -XX:+UseParallelGC -XX:NewRatio=2 -Xrs -XX:PerfDataSamplingInterval=500"
+Environment="JAVA_OPTS=-server -Xms756M -Xmx$__GEOSERVER_MAX_SIZE__ -XX:SoftRefLRUPolicyMSPerMB=36000 -XX:+UseParallelGC -XX:NewRatio=2 -Xrs -XX:PerfDataSamplingInterval=500"
 Type=simple
 ExecStart=/opt/geoserver/bin/startup.sh
 ExecStop=/opt/geoserver/bin/shutdown.sh
