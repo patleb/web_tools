@@ -30,7 +30,7 @@ module Db
         check_md5
         table, type, compress, split = dump_path.basename.to_s.match(MATCHER).captures
         case type
-        when 'tar' then unpack(split)
+        when 'tar' then unpack(compress, split)
         when 'csv' then copy_from(table, compress, split)
         when 'pg'  then pg_restore(compress, split)
         else raise MismatchedExtension, type
@@ -44,20 +44,15 @@ module Db
         sh "sudo md5sum -c #{md5_file}" if md5_file.exist?
       end
 
-      def unpack(split)
+      def unpack(compress, split)
         data_dir = pg_conf_dir rescue Pathname.new(Pathname.new('tmp/pg_conf_dir').read.strip)
         sh "echo #{data_dir} > tmp/pg_conf_dir"
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{data_dir}"
         sh "sudo mkdir -p #{data_dir}"
-        sh "sudo bash -c '#{"cat #{dump_path} |" if split} tar --strip-components 1 -C #{data_dir} -xvf #{split ? '-' : dump_path}'"
-        compress = data_dir.children(false).any?{ |file| file.extname == '.gz' }
-        pg_data = compress ? data_dir.join('base.tar.gz') : data_dir.join('base.tar')
-        pg_wal = compress ? data_dir.join('pg_wal.tar.gz') : data_dir.join('pg_wal.tar')
-        sh "sudo tar -C #{data_dir} #{'-z' if compress} -xf #{pg_data}"
-        sh "sudo rm -f #{pg_data}"
-        sh "sudo tar -C #{data_dir.join('pg_wal')} #{'-z' if compress} -xf #{pg_wal}"
-        sh "sudo rm -f #{pg_wal}"
+        sh "sudo bash -c '#{"cat #{dump_path} |" if split} tar -C #{data_dir} #{'-I pigz' if compress} -xvf #{split ? '-' : dump_path}'"
+        pg_wal = compress ? dump_path.dirname.join('pg_wal.tar.gz') : dump_path.dirname.join('pg_wal.tar')
+        sh "sudo tar -C #{data_dir.join('pg_wal')} #{'-I pigz' if compress} -xf #{pg_wal}"
         sh %{echo "restore_command = ':'" | sudo tee #{data_dir.join('recovery.conf')} > /dev/null}
         sh "sudo chmod 700 #{data_dir}"
         sh "sudo chown -R postgres:postgres #{data_dir}"

@@ -1,7 +1,8 @@
 module Db
   module Pg
     class Dump < Base
-      SPLIT_OPTIONS = '-a 4 -b 2GB'
+      SPLIT_SCALE = Rails.env.vagrant? ? 'GB' : 'MB'
+      SPLIT_SIZE = 2
 
       def self.args
         {
@@ -47,6 +48,7 @@ module Db
           end.to_s
         input << '.gz' if !options.physical && compress?
         input << '-*' if options.split
+        input = "$(ls #{input} | tail -n1)" if options.physical
         sh "md5sum #{input} | sudo tee #{dump_path}.md5 > /dev/null"
         sh "sudo md5sum -c #{dump_path}.md5"
       end
@@ -57,11 +59,10 @@ module Db
         cmd_options = <<-CMD.squish
           -P -v -Xstream -cfast -Ft
           #{self.class.pg_options}
-          #{'-z' if compress?}
+          #{'-z' if compress}
         CMD
         output = <<-CMD.squish
-          -D #{dump_path}
-          && tar --remove-files -C #{dump_path.dirname} -cvf #{options.split ? '-' : tar_file} #{dump_path.basename}
+          -D #{dump_path};
           #{split_cmd(tar_file) if options.split}
         CMD
         sh <<-CMD.squish
@@ -110,9 +111,27 @@ module Db
 
       def split_cmd(file)
         if options.physical
-          "| split #{SPLIT_OPTIONS} - #{file}-"
+          <<-CMD.squish
+            input=#{file};
+            block_size=#{SPLIT_SIZE};
+            split_size=$(echo $block_size "#{'* 1000 ' unless Rails.env.vagrant?}* 1000 * 1000" | bc);
+            file_size=$(stat -c "%s" $input);
+            block_count=$(echo $file_size / $split_size | bc);
+            block_rest=$(echo $file_size % $split_size | bc);
+            [ $block_rest -ne 0 ] && block_count=$(( $block_count + 1 ));
+            echo "Total count: $block_count";
+            while [ $block_count -gt 0 ]; do
+              block_count=$(( $block_count - 1 ));
+              printf "$block_count.";
+              file_name="$input-$(printf %06d $block_count)";
+              offset=$(( block_count * block_size ));
+              dd if="$input" of="$file_name" bs=1#{SPLIT_SCALE} skip=$offset || exit 1;
+              truncate -c -s ${offset}#{SPLIT_SCALE} "$input" || exit 1;
+            done;
+            printf "done";
+          CMD
         else
-          "pigz | split #{SPLIT_OPTIONS} - #{file}.gz-"
+          "pigz | split -a 4 -b #{SPLIT_SIZE}#{SPLIT_SCALE} - #{file}.gz-"
         end
       end
 
@@ -121,7 +140,7 @@ module Db
       end
 
       def tar_file
-        dump_path.sub_ext('.tar')
+        dump_path.join('base.tar')
       end
 
       def csv_file(table)
@@ -132,7 +151,7 @@ module Db
         dump_path.sub_ext('.pg')
       end
 
-      def compress?
+      def compress
         options.compress || options.split
       end
 
