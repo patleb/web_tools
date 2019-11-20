@@ -1,6 +1,7 @@
 <% %W(
   #{sun.os.ubuntu? ? 'apt-transport-https'               : ''}
   autoconf
+  bc
   bison
   #{sun.os.ubuntu? ? 'build-essential'                   : 'gcc gcc-c++ bzip2 patch make automake libtool rpm-build redhat-rpm-config'}
   ca-certificates
@@ -23,6 +24,7 @@
   openssh-server
   openssl
   pigz
+  pv
   #{sun.os.ubuntu? ? 'sqlite3 libsqlite3-dev'            : 'sqlite sqlite-devel'}
   #{sun.os.ubuntu? ? 'software-properties-common'        : ''}
   time
