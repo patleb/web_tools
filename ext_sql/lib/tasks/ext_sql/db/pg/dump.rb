@@ -1,7 +1,7 @@
 module Db
   module Pg
     class Dump < Base
-      SPLIT_SCALE = Rails.env.vagrant? ? 'GB' : 'MB'
+      SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
       SPLIT_SIZE = 2
 
       def self.args
@@ -48,9 +48,9 @@ module Db
           end.to_s
         input << '.gz' if !options.physical && compress?
         input << '-*' if options.split
-        input = "$(ls #{input} | tail -n1)" if options.physical
-        sh "md5sum #{input} | sudo tee #{dump_path}.md5 > /dev/null"
-        sh "sudo md5sum -c #{dump_path}.md5"
+        input = "$(sudo chmod +r #{dump_path} && sudo ls #{input} | tail -n2)" if options.physical
+        sh "sudo md5sum #{input} | sudo tee #{md5_file} > /dev/null"
+        sh "sudo md5sum -c #{md5_file}"
       end
 
       def pg_basebackup
@@ -66,7 +66,7 @@ module Db
           #{split_cmd(tar_file) if options.split}
         CMD
         sh <<-CMD.squish
-          cd /tmp && sudo su postgres -c 'pg_basebackup #{cmd_options} #{output}'
+          cd /tmp && sudo su postgres -c 'set -e; pg_basebackup #{cmd_options} #{output}'
         CMD
       end
 
@@ -118,17 +118,18 @@ module Db
             file_size=$(stat -c "%s" $input);
             block_count=$(echo $file_size / $split_size | bc);
             block_rest=$(echo $file_size % $split_size | bc);
-            [ $block_rest -ne 0 ] && block_count=$(( $block_count + 1 ));
+            [[ "$block_rest" -ne 0 ]] && block_count=$(( $block_count + 1 ));
             echo "Total count: $block_count";
-            while [ $block_count -gt 0 ]; do
+            while [[ "$block_count" -gt 0 ]]; do
               block_count=$(( $block_count - 1 ));
               printf "$block_count.";
               file_name="$input-$(printf %06d $block_count)";
               offset=$(( block_count * block_size ));
-              dd if="$input" of="$file_name" bs=1#{SPLIT_SCALE} skip=$offset || exit 1;
-              truncate -c -s ${offset}#{SPLIT_SCALE} "$input" || exit 1;
+              dd if="$input" of="$file_name" bs=1#{SPLIT_SCALE} skip=$offset > /dev/null 2>&1 || exit 1;
+              truncate -c -s ${offset}#{SPLIT_SCALE} "$input" > /dev/null 2>&1 || exit 1;
             done;
-            printf "done";
+            echo "done";
+            rm -f "$input";
           CMD
         else
           "pigz | split -a 4 -b #{SPLIT_SIZE}#{SPLIT_SCALE} - #{file}.gz-"
@@ -139,8 +140,12 @@ module Db
         "pigz > #{file}.gz"
       end
 
+      def md5_file
+        options.physical ? tar_file.sub(/\.tar(\.gz)?$/, '.md5') : dump_path.sub_ext('.md5')
+      end
+
       def tar_file
-        dump_path.join('base.tar')
+        dump_path.join('base').sub_ext(".tar#{'.gz' if compress}")
       end
 
       def csv_file(table)
