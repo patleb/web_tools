@@ -32,7 +32,7 @@ module ExtCapistrano
 
     def execute_nohup(command)
       filename = nohup_basename(command)
-      execute :nohup, "#{command} >> tmp/nohup/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/nohup/#{filename}.pid", pty: false
+      execute :nohup, "#{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid", pty: false
     end
 
     def kill_nohup(command)
