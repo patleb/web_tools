@@ -50,7 +50,7 @@ module Db
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{data_dir}"
         sh "sudo mkdir -p #{data_dir}"
-        sh "sudo bash -c '#{"cat #{dump_path} |" if split} tar -C #{data_dir} #{'-I pigz' if compress} -xvf #{split ? '-' : dump_path}'"
+        sh "sudo bash -c '#{"cat #{dump_path} |" if split} tar -C #{data_dir} #{'-I pigz' if compress} -xf #{split ? '-' : dump_path}'"
         pg_wal = compress ? dump_path.dirname.join('pg_wal.tar.gz') : dump_path.dirname.join('pg_wal.tar')
         sh "sudo tar -C #{data_dir.join('pg_wal')} #{'-I pigz' if compress} -xf #{pg_wal}"
         sh %{echo "restore_command = ':'" | sudo tee #{data_dir.join('recovery.conf')} > /dev/null}
