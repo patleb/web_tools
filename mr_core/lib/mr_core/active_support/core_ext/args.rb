@@ -1,3 +1,4 @@
+# TODO https://eregon.me/blog/2019/11/10/the-delegation-challenge-of-ruby27.html
 module Args
   AS_ARG = %i(req opt).freeze
   AS_KEYARG = %i(keyreq key).freeze
