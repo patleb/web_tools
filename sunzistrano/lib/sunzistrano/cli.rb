@@ -17,8 +17,9 @@ module Sunzistrano
       do_provision(stage, role, specialize: true)
     end
 
+    # TODO doesn't work for specialize
     desc 'rollback [stage] [role] [--recipe] [--username]', 'Rollback sunzistrano recipe'
-    method_options recipe: :required, username: :string
+    method_options recipe: :required, specialize: false, username: :string
     def rollback(stage, role = 'system')
       do_provision(stage, role, rollback: true)
     end
