@@ -1,3 +1,4 @@
+# TODO yarn/compile locally http://blog.tap349.com/webpack/rails/2018/05/22/webpack-rails-webpacker/#precompile-assets-on-production-server
 Rake::Task['deploy:assets:restore_manifest'].clear_actions
 
 namespace :deploy do
