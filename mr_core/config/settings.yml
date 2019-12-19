@@ -35,6 +35,7 @@ shared:
   pgrest_db_username: authenticator
   pgrest_db_password: not-secret
   pgrest_max_rows: 100
+  pgrest_timeout: 120000
   ftp_mount_path: /opt/ftp_data
   server_cluster_data: /mnt/shared_data
   server_cluster_master_data: /opt/shared_data

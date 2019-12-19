@@ -39,6 +39,7 @@ Setting.class_eval do
   end
 
   def self.pgrest_nginx_location
+    pgrest_timeout = Setting[:pgrest_timeout] / 1000
     {
       "/#{self[:pgrest_path]}/" => <<-LOCATION,
         proxy_pass http://pgrest_app/;
@@ -48,6 +49,10 @@ Setting.class_eval do
         add_header Content-Location /#{self[:pgrest_path]}/$upstream_http_content_location;
         proxy_set_header Connection "";
         proxy_http_version 1.1;
+  
+        proxy_connect_timeout #{pgrest_timeout}s;
+        proxy_send_timeout #{pgrest_timeout}s;
+        proxy_read_timeout #{pgrest_timeout}s;
       LOCATION
     }
   end
