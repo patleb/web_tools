@@ -37,7 +37,7 @@ module ExtCapistrano
 
     def kill_nohup(command)
       filename = nohup_basename(command)
-      execute :sudo, :pkill, '-P', "$(cat #{current_path}/tmp/nohup/#{filename}.pid)"
+      execute :sudo, :pkill, '-P', "$(cat #{current_path}/tmp/pids/#{filename}.pid)"
     end
 
     def nohup_basename(command)
