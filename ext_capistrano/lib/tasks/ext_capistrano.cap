@@ -47,6 +47,8 @@ namespace :load do
       tmp/bash
       tmp/pids
       tmp/cache
+      public/assets
+      public/packs
       node_modules
     )
   end
