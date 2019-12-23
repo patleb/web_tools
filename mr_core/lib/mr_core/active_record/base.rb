@@ -84,12 +84,13 @@ ActiveRecord::Base.class_eval do
     sizes(*options).transform_values(&:to_s.with(:human_size))
   end
 
-  def self.sizes(order_by_name = false)
-    m_access(:sizes, order_by_name, threshold: 300) do
+  def self.sizes(order_by_name: false, indexes: false)
+    m_access(:sizes, order_by_name, indexes, threshold: 300) do
+      size = indexes ? 'pg_indexes_size(relid)' :'pg_total_relation_size(relid)'
       result = connection.select_rows(<<-SQL.strip_sql)
-        SELECT relname AS name, pg_total_relation_size(relid) AS size
+        SELECT relname AS name, #{size} AS size
         FROM pg_catalog.pg_statio_user_tables
-        ORDER BY #{order_by_name ? 'name' : 'pg_total_relation_size(relid) DESC'};
+        ORDER BY #{order_by_name ? 'name' : "#{size} DESC"};
       SQL
       result = result.each_with_object({}.with_indifferent_access){ |(name, size), h| h[name] = size }
 
