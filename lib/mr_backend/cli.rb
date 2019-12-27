@@ -9,6 +9,14 @@ module MrBackend
 
     attr_reader :plugin_name
 
+    desc 'app [name] [--skip-sprockets] [--skip-webpacker]', 'Create new application'
+    method_options skip_sprockets: false, skip_webpacker: false
+    def app(name)
+      @app_name = name
+      @app_path = Pathname.new(name).expand_path
+      do_app(name)
+    end
+
     desc 'plugin [name]', 'Create new library'
     def plugin(name)
       @plugin_name = name
@@ -21,6 +29,29 @@ module MrBackend
 
       def plugin_module
         @plugin_name.camelize
+      end
+
+      def do_app(name)
+        if options[:backend_only]
+          # rails new mr_backend --database=postgresql --skip-webpack-install --skip-javascript --skip-sprockets --skip-turbolinks --skip-puma --skip-spring --skip-listen --skip-system-test --skip-action-cable --skip-active-storage --skip-action-text --skip-action-mailbox
+          run "rails new #{name} --database=postgresql " \
+            '--skip-webpack-install ' \
+            '--skip-javascript ' \
+            '--skip-sprockets ' \
+            '--skip-turbolinks ' \
+            '--skip-puma ' \
+            '--skip-spring ' \
+            '--skip-listen' \
+            '--skip-system-test ' \
+            '--skip-action-cable ' \
+            '--skip-active-storage ' \
+            '--skip-action-text ' \
+            '--skip-action-mailbox '
+        else
+          # TODO
+          mv 'app/assets/images', 'app/javascript'
+          mv 'app/assets/stylesheets', 'app/javascript'
+        end
       end
 
       def do_plugin(name)
