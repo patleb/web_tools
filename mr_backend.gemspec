@@ -43,7 +43,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mr_core",        version
   s.add_dependency "mr_global",      version
   s.add_dependency "mr_notifier",    version
-  s.add_dependency "mr_setting",     version
+  s.add_dependency "mr_setting"
   s.add_dependency "mr_rescue",      version
   s.add_dependency "mr_template",    version
   s.add_dependency "mr_throttler",   version
