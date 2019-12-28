@@ -5,8 +5,8 @@ unless defined? MrBackend::VERSION::STRING
     end
 
     module RAILS_VERSION
-      MAJOR = 5
-      MINOR = 2
+      MAJOR = 6
+      MINOR = 0
       PATCH = 0
 
       STRING = [MAJOR, MINOR, PATCH].compact.join(".")
@@ -14,7 +14,7 @@ unless defined? MrBackend::VERSION::STRING
 
     module VERSION
       MAJOR = 0
-      MINOR = 1
+      MINOR = 2
       PATCH = 0
 
       STRING = [MAJOR, MINOR, PATCH].compact.join(".")
