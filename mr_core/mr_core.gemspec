@@ -31,7 +31,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails-i18n', '~> 5.0'
   s.add_dependency 'rails_select_on_includes'
   s.add_dependency 'rblineprof'
-  s.add_dependency 'store_base_sti_class'
   s.add_dependency 'term-ansicolor'
   s.add_dependency 'web-console'
   s.add_dependency 'vmstat'

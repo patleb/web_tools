@@ -15,7 +15,6 @@ module MrCore
     require 'null_logger' if Rails.env.development?
     require 'pg'
     require 'rails-i18n'
-    require 'store_base_sti_class'
     require 'vmstat'
 
     require 'mr_core/action_mailer/smtp_settings'
@@ -133,6 +132,7 @@ module MrCore
     ActiveSupport.on_load(:active_record) do
       require 'rails_select_on_includes'
       require 'mr_core/active_type'
+      require 'mr_core/active_record/store_base_sti_class'
       require 'mr_core/active_record/connection_adapters/postgresql_adapter'
       require 'mr_core/active_record/base'
       require 'mr_core/active_record/relation'
