@@ -28,5 +28,4 @@ pkg/
 **/*.gem
 mr_backend-*.gem
 Gemfile.lock
-/tmp/*
 .editorconfig
