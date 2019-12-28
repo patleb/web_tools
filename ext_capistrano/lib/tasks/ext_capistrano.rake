@@ -1,5 +1,5 @@
 namespace :ext_capistrano do
-  desc 'setup Capfile, deploy'
+  desc 'setup ExtCapistrano files'
   task :setup do
     src, dst = Gem.root('ext_capistrano').join('lib/tasks/templates'), Rails.root
 

@@ -1,5 +1,5 @@
 namespace :mr_setting do
-  desc 'setup secrets.yml, settings.yml, initializers/mr_setting.rb, database.yml and .gitignore files'
+  desc 'setup MrSetting files'
   task :setup, [:no_master_key, :force] => :environment do |t, args|
     src, dst = MrSetting.root.join('lib/tasks/templates'), Rails.root
 

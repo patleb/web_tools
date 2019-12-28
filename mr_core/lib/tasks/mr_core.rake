@@ -1,7 +1,7 @@
 require_rel 'mr_core'
 
 namespace :mr_core do
-  desc 'setup boot.rb, environments, initializers, .gitignore, Gemfile and Vagrantfile files'
+  desc 'setup MrCore files'
   task :setup do
     src, dst = Gem.root('mr_core').join('lib/tasks/templates'), Rails.root
 

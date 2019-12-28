@@ -1,7 +1,7 @@
 require_rel 'ext_rake'
 
 namespace :ext_rake do
-  desc 'setup app/libraries/.keep, app/tasks/application.rake, lib/.keep and Rakefile'
+  desc 'setup ExtRake files'
   task :setup do
     # TODO https://gist.github.com/metaskills/8691558
     src, dst = Gem.root('ext_rake').join('lib/tasks/templates'), Rails.root
