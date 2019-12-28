@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'monogamy', '>= 0.0.2'
   s.add_dependency 'null-logger', '~> 0.1'
   s.add_dependency 'pg'
-  s.add_dependency 'rails-i18n', '~> 5.0'
+  s.add_dependency 'rails-i18n', "~> #{MrBackend::RAILS_VERSION::MAJOR}.0"
   s.add_dependency 'rails_select_on_includes'
   s.add_dependency 'rblineprof'
   s.add_dependency 'term-ansicolor'
