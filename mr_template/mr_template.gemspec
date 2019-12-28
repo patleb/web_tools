@@ -19,5 +19,4 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'query_diet', '~> 0.6'
   s.add_dependency 'nestive', '~> 0.6'
-  s.add_dependency 'rails5_before_render'
 end

@@ -15,7 +15,6 @@ module MrTemplate
     end
 
     ActiveSupport.on_load(:action_controller_base) do
-      require 'before_render'
       require 'mr_template/action_controller/base'
     end
 
