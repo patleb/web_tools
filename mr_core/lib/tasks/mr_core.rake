@@ -18,7 +18,7 @@ namespace :mr_core do
     %w(development staging vagrant).each do |env|
       cp src.join("config/environments/#{env}.rb"), dst.join("config/environments/#{env}.rb")
     end
-    write dst.join('config/environments/production.rb'), ERB.template(src.join('config/environments/production.rb.erb'), binding)
+    write dst.join('config/environments/production.rb'), template(src.join('config/environments/production.rb.erb'))
 
     %w(content_security_policy cors).each do |init|
       cp src.join("config/initializers/#{init}.rb"), dst.join("config/initializers/#{init}.rb")
@@ -29,7 +29,7 @@ namespace :mr_core do
     end
 
     %w(Gemfile Vagrantfile).each do |file|
-      write dst.join(file), ERB.template(src.join("#{file}.erb"), binding)
+      write dst.join(file), template(src.join("#{file}.erb"))
     end
   end
 

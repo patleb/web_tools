@@ -19,6 +19,10 @@ module Rake
       Pathname.new(dst).write(value)
     end
 
+    def template(src)
+      ERB.template(src, binding)
+    end
+
     def app_name
       Rails.application.name
     end

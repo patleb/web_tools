@@ -10,11 +10,11 @@ namespace :mr_setting do
     ['config/secrets.yml', 'config/secrets.example.yml'].each do |file|
       secret = dst.join(file)
       if flag_on?(args, :force) || !secret.exist?
-        write secret, ERB.template(src.join('config/secrets.yml.erb'), binding)
+        write secret, template(src.join('config/secrets.yml.erb'))
       end
     end
 
-    write dst.join('config/database.yml'), ERB.template(src.join('config/database.yml.erb'), binding)
+    write dst.join('config/database.yml'), template(src.join('config/database.yml.erb'))
 
     gitignore dst, '/config/secrets.yml'
 
