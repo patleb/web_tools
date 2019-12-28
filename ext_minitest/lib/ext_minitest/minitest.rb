@@ -2,6 +2,7 @@
 # http://mattsears.com/articles/2011/12/10/minitest-quick-reference/
 # http://docs.seattlerb.org/minitest/Minitest/Expectations.html
 
+require 'minitest'
 require 'minitest/spec'
 require 'minitest/hooks'
 require 'mocha/minitest'
@@ -16,6 +17,17 @@ require 'minitest/reporters'
 
 Minitest::Reporters.use!
 
+require 'ext_ruby'
+require 'safe_dup'
+require 'safe_clone'
+require 'full_dup'
+require 'full_clone'
+require 'hash_dot'
+require 'to_words'
+require 'chronic'
+require 'cod'
+ENV['MT_NO_EXPECTATIONS'] = true
+require 'ext_minitest/cod'
 require 'ext_minitest/minitest/test'
 require 'ext_minitest/minitest/spec'
 require 'ext_minitest/minitest/assertions'

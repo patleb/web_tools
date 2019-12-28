@@ -1,5 +1,3 @@
-require 'cod'
-
 module Cod
   IOPair.class_eval do
     module WithBinMode

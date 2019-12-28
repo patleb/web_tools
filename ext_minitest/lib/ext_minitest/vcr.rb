@@ -1,5 +1,3 @@
-require 'vcr'
-
 module VCR
   def self.turned_on(options = {})
     turn_on!
