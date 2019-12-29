@@ -1,0 +1,57 @@
+version: "3"
+volumes:
+  geoserver:
+  postgis:
+services:
+  pgrest:
+    image: postgrest/postgrest:v6.0.2
+    container_name: pgrest
+    network_mode: host
+    restart: always
+    depends_on:
+      - postgis
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "5"
+    environment:
+      - PGRST_DB_URI=postgres://authenticator:not-secret@127.0.0.1:5432/mr_backend_development
+      - PGRST_DB_SCHEMA=api
+      - PGRST_DB_ANON_ROLE=web_anon
+      - PGRST_SERVER_PORT=4000
+      - PGRST_MAX_ROWS=100
+  geoserver:
+    image: oscarfonts/geoserver:2.16.0
+    container_name: geoserver
+    volumes:
+      - geoserver:/var/local/geoserver
+    network_mode: host
+    restart: on-failure
+    depends_on:
+      - postgis
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/geoserver/web || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "5"
+  postgis:
+    image: timescale/timescaledb-postgis:latest-pg11
+    container_name: postgis
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - postgis:/var/lib/postgresql/data
+    restart: always
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "5"
+    environment:
+      - POSTGREP_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TIMESCALEDB_TELEMETRY=off
