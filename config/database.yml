@@ -20,6 +20,11 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: 127.0.0.1
+  username: postgres
+  password: postgres
+  # variables:
+  #   statement_timeout: 180000 # ms
 
 development:
   <<: *default
@@ -59,7 +64,13 @@ test:
   <<: *default
   database: mr_backend_test
 
-# As with config/credentials.yml, you never want to store sensitive information,
+vagrant:
+  <<: *default
+  database: mr_backend_vagrant
+  username: vagrant
+  password: vagrant
+
+# As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
 # ever seen by anyone, they now have access to your database.
 #
@@ -76,10 +87,18 @@ test:
 # You can use this database configuration with:
 #
 #   production:
-#     url: <%= ENV['DATABASE_URL'] %>
+#     url: <%%= ENV['DATABASE_URL'] %>
 #
+staging:
+  <<: *default
+  host: <%= Rails.application.secrets.db_host %>
+  database: <%= Rails.application.secrets.db_database %>
+  username: <%= Rails.application.secrets.db_username %>
+  password: <%= Rails.application.secrets.db_password %>
+
 production:
   <<: *default
-  database: mr_backend_production
-  username: mr_backend
-  password: <%= ENV['MR_BACKEND_DATABASE_PASSWORD'] %>
+  host: <%= Rails.application.secrets.db_host %>
+  database: <%= Rails.application.secrets.db_database %>
+  username: <%= Rails.application.secrets.db_username %>
+  password: <%= Rails.application.secrets.db_password %>

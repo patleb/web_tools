@@ -20,6 +20,8 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+/config/secrets.yml
+
 ### AFTER .gitignore ###
 
 mr_backend-*.gem
