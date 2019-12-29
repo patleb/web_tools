@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
 
   s.add_dependency 'actionview'
-  s.add_dependency 'mail', '~> 2.7'
+  s.add_dependency 'mail'
   s.add_dependency 'mr_setting'
   # TODO https://www.imaginarycloud.com/blog/rails-send-emails-with-style/
 end

@@ -19,8 +19,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rake"
   # TODO https://github.com/tessi/malloc_trim
-  s.add_dependency "colorize", "~> 0.8"
-  s.add_dependency "dotiw", "~> 3.1"
+  s.add_dependency "colorize"
+  s.add_dependency "dotiw"
   s.add_dependency "ext_ruby", version
   s.add_dependency "mr_notifier", version
   s.add_dependency "mr_setting"

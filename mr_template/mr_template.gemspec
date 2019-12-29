@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
 
-  s.add_dependency 'query_diet', '~> 0.6'
-  s.add_dependency 'nestive', '~> 0.6'
+  s.add_dependency 'query_diet'
+  s.add_dependency 'nestive'
 end

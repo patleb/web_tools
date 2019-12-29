@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activesupport'
   s.add_dependency 'bootsnap'
-  s.add_dependency 'require_all', '~> 1.4'
+  s.add_dependency 'require_all', '~> 1.5'
   s.add_dependency 'ice_nine'
   s.add_dependency 'oj'
 end

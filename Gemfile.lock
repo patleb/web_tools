@@ -9,6 +9,27 @@ GIT
       polyamorous (~> 2.3.0)
 
 PATH
+  remote: .
+  specs:
+    mr_backend (0.2.0)
+      ext_capistrano (= 0.2.0)
+      ext_minitest (= 0.2.0)
+      ext_rake (= 0.2.0)
+      ext_ruby (= 0.2.0)
+      ext_sql (= 0.2.0)
+      ext_whenever (= 0.2.0)
+      mr_backup (= 0.2.0)
+      mr_core (= 0.2.0)
+      mr_global (= 0.2.0)
+      mr_notifier (= 0.2.0)
+      mr_rescue (= 0.2.0)
+      mr_setting
+      mr_template (= 0.2.0)
+      mr_throttler (= 0.2.0)
+      sun_cap (= 0.2.0)
+      sunzistrano
+
+PATH
   remote: ext_capistrano
   specs:
     ext_capistrano (0.2.0)
@@ -51,8 +72,8 @@ PATH
   remote: ext_rake
   specs:
     ext_rake (0.2.0)
-      colorize (~> 0.8)
-      dotiw (~> 3.1)
+      colorize
+      dotiw
       ext_ruby (= 0.2.0)
       mr_notifier (= 0.2.0)
       mr_rescue (= 0.2.0)
@@ -67,7 +88,7 @@ PATH
       bootsnap
       ice_nine
       oj
-      require_all (~> 1.4)
+      require_all (~> 1.5)
 
 PATH
   remote: ext_sql
@@ -83,7 +104,7 @@ PATH
   specs:
     ext_whenever (0.2.0)
       mr_setting
-      whenever (~> 0.10)
+      whenever
 
 PATH
   remote: mr_backup
@@ -97,21 +118,20 @@ PATH
   remote: mr_core
   specs:
     mr_core (0.2.0)
-      active_type (~> 0.7)
-      baby_squeel (~> 1.2)
+      active_type
+      baby_squeel
       date_validator
-      http_accept_language (~> 2.1)
-      i18n-debug (~> 1.1)
-      money-rails (~> 1.9)
-      monogamy (>= 0.0.2)
+      http_accept_language
+      i18n-debug
+      money-rails
+      monogamy
       mr_setting
-      null-logger (~> 0.1)
+      null-logger
       pg
       rails (~> 6.0.0)
-      rails-i18n (~> 6.0)
+      rails-i18n
       rails_select_on_includes
       rblineprof
-      sprockets (~> 3.7)
       term-ansicolor
       vmstat
       web-console
@@ -126,7 +146,7 @@ PATH
   specs:
     mr_notifier (0.2.0)
       actionview
-      mail (~> 2.7)
+      mail
       mr_setting
 
 PATH
@@ -148,8 +168,8 @@ PATH
   remote: mr_template
   specs:
     mr_template (0.2.0)
-      nestive (~> 0.6)
-      query_diet (~> 0.6)
+      nestive
+      query_diet
 
 PATH
   remote: mr_throttler
@@ -173,27 +193,6 @@ PATH
       parallel
       rainbow
       sshkit
-
-PATH
-  remote: .
-  specs:
-    mr_backend (0.2.0)
-      ext_capistrano (= 0.2.0)
-      ext_minitest (= 0.2.0)
-      ext_rake (= 0.2.0)
-      ext_ruby (= 0.2.0)
-      ext_sql (= 0.2.0)
-      ext_whenever (= 0.2.0)
-      mr_backup (= 0.2.0)
-      mr_core (= 0.2.0)
-      mr_global (= 0.2.0)
-      mr_notifier (= 0.2.0)
-      mr_rescue (= 0.2.0)
-      mr_setting
-      mr_template (= 0.2.0)
-      mr_throttler (= 0.2.0)
-      sun_cap (= 0.2.0)
-      sunzistrano
 
 GEM
   remote: https://rubygems.org/
@@ -234,7 +233,7 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
-    active_type (0.7.5)
+    active_type (1.3.0)
       activerecord (>= 3.2)
     activejob (6.0.2.1)
       activesupport (= 6.0.2.1)
@@ -301,8 +300,8 @@ GEM
       activesupport
     debugger-ruby_core_source (1.3.8)
     diffy (3.3.0)
-    dotiw (3.1.1)
-      actionpack (>= 3)
+    dotiw (4.0.1)
+      actionpack (>= 4)
       i18n
     erubi (1.9.0)
     excon (0.71.1)
@@ -471,7 +470,7 @@ GEM
     safe_yaml (1.0.5)
     shoulda-matchers (4.1.2)
       activesupport (>= 4.2.0)
-    sprockets (3.7.2)
+    sprockets (4.0.0)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
     sprockets-rails (3.2.1)
@@ -507,7 +506,7 @@ GEM
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
-    whenever (0.11.0)
+    whenever (1.0.0)
       chronic (>= 0.6.3)
     zeitwerk (2.2.2)
 
