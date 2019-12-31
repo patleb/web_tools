@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> #{MrBackend::RAILS_VERSION::STRING}"
   s.add_dependency 'active_type'
-  s.add_dependency 'baby_squeel'
+  s.add_dependency 'arel_extensions'
   s.add_dependency 'date_validator'
   s.add_dependency 'http_accept_language'
   s.add_dependency 'i18n-debug'

@@ -7,7 +7,6 @@ end
 module MrCore
   class Engine < ::Rails::Engine
     require 'active_type'
-    require 'baby_squeel' # https://github.com/activerecord-hackery/polyamorous/issues/26
     require 'date_validator'
     require 'http_accept_language'
     require 'i18n/debug' if Rails.env.development?
@@ -130,6 +129,7 @@ module MrCore
     end
 
     ActiveSupport.on_load(:active_record) do
+      require 'arel_extensions'
       require 'rails_select_on_includes'
       require 'mr_core/active_type'
       require 'mr_core/active_record/store_base_sti_class'

@@ -7,6 +7,10 @@ ActiveRecord::Base.class_eval do
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
+  class << self
+    alias_method :attr, :arel_attribute # TODO use method_missing
+  end
+
   def self.without_time_zone(&block)
     with_time_zone('UTC', &block)
   end

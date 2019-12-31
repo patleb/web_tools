@@ -82,7 +82,7 @@ module Global::RecordStore
         end
       when Regexp
         version = normalize_version(**options)
-        where.has{ |t| t.id =~ key_matcher(names, **options) }.find_each.with_object({}).each do |record, memo|
+        where(attr(:id) =~ key_matcher(names, **options)).find_each.with_object({}).each do |record, memo|
           memo[record.id] = record unless record._sync_stale_state(version).stale?
         end
       else
@@ -101,7 +101,7 @@ module Global::RecordStore
       when Regexp then # do nothing
       else raise ArgumentError, "Bad type: `Global#delete_records` requires matcher as Array or Regexp."
       end
-      where.has{ |t| t.id =~ key_matcher(matcher, **options) }.delete_all
+      where(attr(:id) =~ key_matcher(matcher, **options)).delete_all
     end
 
     def update_integer(name, amount, **options)

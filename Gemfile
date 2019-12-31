@@ -25,8 +25,6 @@ group :development do
   gem 'web-console', '>= 3.3.0'
 end
 
-gem 'baby_squeel', github: 'rzane/baby_squeel', branch: 'ar-521' # TODO https://github.com/rzane/baby_squeel/issues/97
-
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
