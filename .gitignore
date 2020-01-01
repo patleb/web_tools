@@ -25,3 +25,4 @@
 ### AFTER .gitignore ###
 
 mr_backend-*.gem
+db/structure.sql
