@@ -1,15 +1,14 @@
 module ActionView::TemplateRenderer::WithPresenter
   private
 
-  def determine_template(options)
-    template = super
-    Current.view = @view
-    c = @view.controller
+  def render_template(view, template, layout_name, locals)
+    Current.view = view
+    c = view.controller
     if c.respond_to? :template_virtual_path
       c.template_virtual_path ||= template.try(:virtual_path)
-      @view.instance_variable_set :@p, c.presenter_class&.new
+      view.instance_variable_set :@p, c.presenter_class&.new
     end
-    template
+    super
   end
 end
 
