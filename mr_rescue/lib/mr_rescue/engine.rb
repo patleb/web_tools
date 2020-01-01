@@ -1,5 +1,3 @@
-require "mr_rescue/rescue_error"
-
 module MrRescue
   class Engine < ::Rails::Engine
     require 'mr_notifier'

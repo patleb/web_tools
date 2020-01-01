@@ -1,9 +1,3 @@
-class RailsError < RescueError
-  def self.rescue_class
-    RailsRescue
-  end
-end
-
 module ActionController::WithLogger
   REQUEST_CONTEXT ||= %i(remote_ip method original_url content_type).freeze
   IGNORED_PARAMS ||= %w(controller action format).freeze

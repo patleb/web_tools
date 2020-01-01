@@ -1,0 +1,2 @@
+class PgrestError < JavascriptError
+end
