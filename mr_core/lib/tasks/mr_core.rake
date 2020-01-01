@@ -20,7 +20,7 @@ namespace :mr_core do
     end
     write dst.join('config/environments/production.rb'), template(src.join('config/environments/production.rb.erb'))
 
-    %w(content_security_policy cors).each do |init|
+    %w(content_security_policy cors zeitwerk).each do |init|
       cp src.join("config/initializers/#{init}.rb"), dst.join("config/initializers/#{init}.rb")
     end
 
