@@ -1,6 +1,7 @@
 module Global::RecordStore::Expiration
   extend ActiveSupport::Concern
 
+  # TODO config.active_record.cache_versioning
   included do
     scope :expired, -> {
       updated_at, expires_at = column(:updated_at), column(:expires_at)

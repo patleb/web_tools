@@ -28,7 +28,10 @@ module MrCore
     require 'mr_core/sh'
 
     config.before_configuration do |app|
-      app.config.cache_store = :global_store if defined? MrGlobal
+      if defined? MrGlobal
+        app.config.active_record.cache_versioning = false
+        app.config.cache_store = :global_store
+      end
       app.config.active_record.schema_format = :sql
       app.config.action_mailer.delivery_method = :smtp
       app.config.action_mailer.smtp_settings = ActionMailer::SmtpSettings.new(Setting)
