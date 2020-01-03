@@ -29,7 +29,7 @@ module MrCore
 
     config.before_configuration do |app|
       if defined? MrGlobal
-        app.config.active_record.cache_versioning = false
+        app.config.active_record.cache_versioning = false # TODO doesn't work, must be added to Rails.root/config/application.rb
         app.config.cache_store = :global_store
       end
       app.config.active_record.schema_format = :sql
