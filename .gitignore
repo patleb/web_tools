@@ -24,5 +24,6 @@
 
 ### AFTER .gitignore ###
 
+.editorconfig
 mr_backend-*.gem
 db/structure.sql
