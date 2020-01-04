@@ -7,55 +7,61 @@ module MrBackend
 
     VARIABLES = /%([a-z0-9_]+)%/
 
-    attr_reader :plugin_name
+    attr_reader :app_path, :app_name, :plugin_path, :plugin_name
 
-    desc 'app [name] [--skip-sprockets] [--skip-webpacker]', 'Create new application'
-    method_options skip_sprockets: false, skip_webpacker: false
-    def app(name)
-      @app_name = name
-      @app_path = Pathname.new(name).expand_path
-      do_app(name)
+    desc 'app [path] [--backend-only]', 'Create new application'
+    method_options backend_only: false
+    def app(path)
+      @app_path = Pathname.new(path).expand_path
+      @app_name = @app_path.basename.to_s
+      create_app
     end
 
     desc 'plugin [name]', 'Create new library'
     def plugin(name)
       @plugin_name = name
       @plugin_path = Pathname.new(name).expand_path
-      do_plugin(name)
+      create_plugin
     end
 
     no_tasks do
-      source_root File.expand_path('../cli/templates/plugin', __FILE__)
+      source_root File.expand_path('../cli/templates', __FILE__)
 
       def plugin_module
         @plugin_name.camelize
       end
 
-      def do_app(name)
+      def create_app
         if options[:backend_only]
           # rails new mr_backend --database=postgresql --skip-webpack-install --skip-javascript --skip-sprockets --skip-turbolinks --skip-puma --skip-spring --skip-listen --skip-system-test --skip-action-cable --skip-active-storage --skip-action-text --skip-action-mailbox
-          run "rails new #{name} --database=postgresql " \
+          run "rails new #{@app_path} --database=postgresql " \
             '--skip-webpack-install ' \
             '--skip-javascript ' \
             '--skip-sprockets ' \
             '--skip-turbolinks ' \
             '--skip-puma ' \
             '--skip-spring ' \
-            '--skip-listen' \
+            '--skip-listen ' \
             '--skip-system-test ' \
             '--skip-action-cable ' \
             '--skip-active-storage ' \
             '--skip-action-text ' \
             '--skip-action-mailbox '
         else
-          # TODO
+          # TODO --webpacker=vue
           mv 'app/assets/images', 'app/javascript'
           mv 'app/assets/stylesheets', 'app/javascript'
         end
+        append_to_file app_path.join('Gemfile') do
+          <<~RB
+            gem 'mr_backend', github: 'patleb/mr_backend'
+            # gem 'mr_backend', path: '~/projects/mr_backend'
+          RB
+        end
       end
 
-      def do_plugin(name)
-        empty_directory name
+      def create_plugin
+        empty_directory(plugin_name)
         template '%plugin_name%.gemspec'
         template 'MIT-LICENSE'
         template 'README.md'
@@ -76,7 +82,7 @@ module MrBackend
       end
 
       def destination(source)
-        source = @plugin_path.join(source)
+        source = plugin_path.join(source)
         source.to_s.gsub(VARIABLES) do |variable|
           variable.gsub!(/(^%|%$)/, '')
           send(variable)
@@ -116,7 +122,7 @@ module MrBackend
 
       def anchor
         @anchor ||= begin
-          lines = Pathname.new('lib/mr_backend/all.rb').readlines
+          lines = Pathname.new('lib/mr_backend.rb').readlines
           index = lines.index{ |line| line.include? "'#{plugin_name}'" }
           before = index < lines.size - 1
           lines.map!{ |line| strip_require(line) }
