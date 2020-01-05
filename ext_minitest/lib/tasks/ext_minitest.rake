@@ -4,9 +4,10 @@ namespace :ext_minitest do
     src, dst = Gem.root('ext_minitest').join('lib/tasks/templates'), Rails.root
 
     ['test/rails_helper.rb', 'test/spec_helper.rb'].each do |file|
-      cp src.join(file), dst.join(file)
+      cp src/file, dst/file
     end
 
-    remove dst.join('test/test_helper.rb') rescue nil
+    remove dst/'test/test_helper.rb' rescue nil
+    keep   dst/'test/cassettes'
   end
 end

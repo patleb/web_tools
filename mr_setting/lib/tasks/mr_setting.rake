@@ -4,23 +4,20 @@ namespace :mr_setting do
     src, dst = MrSetting.root.join('lib/tasks/templates'), Rails.root
 
     ['config/setting.rb', 'config/settings.yml'].each do |file|
-      cp src.join(file), dst.join(file)
+      cp src/file, dst/file
     end
-
     ['config/secrets.yml', 'config/secrets.example.yml'].each do |file|
-      secret = dst.join(file)
+      secret = dst/file
       if flag_on?(args, :force) || !secret.exist?
-        write secret, template(src.join('config/secrets.yml.erb'))
+        write secret, template(src/'config/secrets.yml.erb')
       end
     end
-
-    write dst.join('config/database.yml'), template(src.join('config/database.yml.erb'))
-
+    write     dst/'config/database.yml', template(src/'config/database.yml.erb')
     gitignore dst, '/config/secrets.yml'
 
     if flag_on? args, :no_master_key
       ['config/credentials.yml.enc', 'config/master.key', 'tmp/development_secret.txt'].each do |file|
-        remove dst.join(file) rescue nil
+        remove dst/file rescue nil
       end
     end
   end

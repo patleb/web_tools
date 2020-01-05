@@ -3,6 +3,7 @@ lock "~> 3.11.0"
 
 set :application, "<%= app_name %>"
 set :repo_url, "<%= `git remote -v | head -n1 | awk '{ print $2; }'`.strip %>"
+set :assets_prefix, 'packs'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp

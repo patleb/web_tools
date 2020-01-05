@@ -25,15 +25,19 @@ Vagrant.configure("2") do |config|
     config.hostmanager.manage_host = true
   end
 
-  hostname, ip = 'vagrant-web.test', '<%= free_local_ip %>'
-  subdomains = %w(
-  )
-  public_key = `ssh-keygen -f .vagrant/private_key -y`.strip
+  hostname, ip, public_key = 'vagrant-web.test', '<%= free_local_ip %>', `ssh-keygen -f .vagrant/private_key -y`.strip
+  subdomains = [
+  ]
+  link_dev = false
+  link_paths = [
+    '~/projects/mr_backend',
+  ]
+
   config.vm.define :web, primary: true do |node|
     node.vm.hostname = hostname
     node.vm.network :private_network, ip: ip
     node.vm.provider :virtualbox do |vb|
-      # vb.memory = '512'
+      # vb.memory = '768'
       vb.memory = '1024'
       # vb.memory = '2048'
       vb.name = '<%= app_name %>'
@@ -50,13 +54,15 @@ Vagrant.configure("2") do |config|
         "#{subdomain}.#{hostname}"
       end
     end
-  end
-
-  development_paths = %w(
-  )
-  development_paths.each do |root|
-    if (dir = Pathname.new(root).expand_path).exist?
-      config.vm.synced_folder dir.to_s, dir.to_s
+    if link_dev
+      node.vm.synced_folder './', '/vagrant', owner: 'deployer', group: 'deployer'
+      node.vm.synced_folder './tmp/shared_data', '/opt/shared_data', owner: 'deployer', group: 'deployer'
+      link_paths.each do |root|
+        if (dir = Pathname.new(root).expand_path).exist?
+          user = dir.to_s.match(/home\/(\w+)\//)[1]
+          node.vm.synced_folder dir.to_s, dir.to_s.sub("/home/#{user}/", '/home/deployer/')
+        end
+      end
     end
   end
 

@@ -5,32 +5,79 @@ namespace :mr_core do
   task :setup do
     src, dst = Gem.root('mr_core').join('lib/tasks/templates'), Rails.root
 
-    mkdir      dst.join('.vagrant')
-    cp         src.join('vagrant/private_key'), dst.join('.vagrant/private_key')
-    chmod 600, dst.join('.vagrant/private_key')
+    unless (dst/'.vagrant/private_key').exist?
+      mkdir_p    dst/'.vagrant'
+      cp         src/ 'vagrant/private_key', dst/'.vagrant/private_key'
+      chmod 600, dst/'.vagrant/private_key'
+    end
 
     %w(cap sun).each do |binstub|
-      cp src.join('bin', binstub), dst.join('bin', binstub)
+      cp src/'bin'/binstub, dst/'bin'/binstub
     end
 
-    cp src.join('config/boot.rb'),     dst.join('config/boot.rb')
-    cp src.join('config/schedule.rb'), dst.join('config/schedule.rb')
     %w(development staging vagrant).each do |env|
-      cp src.join("config/environments/#{env}.rb"), dst.join("config/environments/#{env}.rb")
+      cp  src/"config/environments/#{env}.rb", dst/"config/environments/#{env}.rb"
     end
-    write dst.join('config/environments/production.rb'), template(src.join('config/environments/production.rb.erb'))
+    write dst/'config/environments/production.rb', template(src/'config/environments/production.rb.erb')
 
-    %w(content_security_policy cors zeitwerk).each do |init|
-      cp src.join("config/initializers/#{init}.rb"), dst.join("config/initializers/#{init}.rb")
+    %w(
+      content_security_policy
+      cors
+      zeitwerk
+    ).each do |init|
+      cp src/"config/initializers/#{init}.rb", dst/"config/initializers/#{init}.rb"
+    end
+    cp src/'config/schedule.rb', dst/'config/schedule.rb'
+
+    cp      src/'config/provision.yml', dst/'config/provision.yml'
+    mkdir_p dst/'config/provision'
+    %w(files recipes roles).each do |dir|
+      keep  dst/'config/provision'/dir
     end
 
-    %w(/vendor/ruby /.provision/* /.vagrant/* /.vscode/* /.idea/* .editorconfig .generators .rakeTasks).each do |ignore|
+    %w(
+      /vendor/ruby
+      /.vagrant/*
+      *.box
+      /.provision/*
+      /.local_repo/*
+      /.vscode/*
+      /.idea/*
+      .editorconfig
+      .generators
+      .rakeTasks
+      /db/dump*
+    ).each do |ignore|
       gitignore dst, ignore
     end
 
     %w(Gemfile Vagrantfile).each do |file|
-      write dst.join(file), template(src.join("#{file}.erb"))
+      write dst/file, template(src/"#{file}.erb")
     end
+    write dst/'docker-compose.yml', template(src/'docker-compose.yml.erb')
+    cp    src/'Procfile', dst/'Procfile'
+
+    cp      src/'app/mailers/application_mailer.rb', dst/'app/mailers/application_mailer.rb'
+    rmtree  dst/'lib'
+    keep    dst/'lib'
+    keep    dst/'app/libraries'
+    keep    dst/'db/migrate'
+    mkdir_p dst/'doc'
+    cp      src/'doc/todo_list.md', dst/'doc/todo_list.md'
+    keep    dst/'test/migrations'
+
+    cp   src/'app/javascript/packs/application.js', dst/'app/javascript/packs/application.js'
+    cp   src/'config/webpacker.yml', dst/'config/webpacker.yml'
+    %w(environment staging vagrant).each do |env|
+      cp src/"config/webpack/#{env}.js", dst/"config/webpack/#{env}.js"
+    end
+    cp src/'babel.config.js', dst/'babel.config.js'
+    rmtree dst/'app/assets'
+    %w(app config images mixins stylesheets).each do |dir|
+      keep  dst/'app/javascript'/dir
+    end
+    sh 'yarn remove @rails/ujs', verbose: false rescue nil
+    # TODO README.md
   end
 
   def free_local_ip

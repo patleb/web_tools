@@ -1,8 +1,25 @@
 version: "3"
 volumes:
-  geoserver:
   postgis:
+  geoserver:
 services:
+  postgis:
+    image: timescale/timescaledb-postgis:latest-pg11
+    container_name: postgis
+    ports:
+      - 127.0.0.1:5432:5432
+    volumes:
+      - postgis:/var/lib/postgresql/data
+    restart: always
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "5"
+    environment:
+      - POSTGREP_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TIMESCALEDB_TELEMETRY=off
   pgrest:
     image: postgrest/postgrest:v6.0.2
     container_name: pgrest
@@ -38,20 +55,3 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
-  postgis:
-    image: timescale/timescaledb-postgis:latest-pg11
-    container_name: postgis
-    ports:
-      - 127.0.0.1:5432:5432
-    volumes:
-      - postgis:/var/lib/postgresql/data
-    restart: always
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "5"
-    environment:
-      - POSTGREP_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - TIMESCALEDB_TELEMETRY=off
