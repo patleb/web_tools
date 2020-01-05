@@ -20,6 +20,16 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+/vendor/ruby
+/.vagrant/*
+*.box
+/.provision/*
+/.local_repo/*
+/.vscode/*
+/.idea/*
+.generators
+.rakeTasks
+/db/dump*
 /config/secrets.yml
 
 ### AFTER .gitignore ###

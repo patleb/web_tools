@@ -2,7 +2,7 @@ require_rel 'mr_core'
 
 namespace :mr_core do
   desc 'setup MrCore files'
-  task :setup do
+  task :setup, [:backend_only] do |t, args|
     src, dst = Gem.root('mr_core').join('lib/tasks/templates'), Rails.root
 
     unless (dst/'.vagrant/private_key').exist?
@@ -58,7 +58,9 @@ namespace :mr_core do
     cp    src/'Procfile', dst/'Procfile'
 
     cp      src/'app/mailers/application_mailer.rb', dst/'app/mailers/application_mailer.rb'
-    rmtree  dst/'lib'
+    rmtree  dst/'app/assets'
+    rm_rf   dst/'lib/assets*'
+    rm_rf   dst/'lib/tasks*'
     keep    dst/'lib'
     keep    dst/'app/libraries'
     keep    dst/'db/migrate'
@@ -66,17 +68,19 @@ namespace :mr_core do
     cp      src/'doc/todo_list.md', dst/'doc/todo_list.md'
     keep    dst/'test/migrations'
 
-    cp   src/'app/javascript/packs/application.js', dst/'app/javascript/packs/application.js'
-    cp   src/'config/webpacker.yml', dst/'config/webpacker.yml'
-    %w(environment staging vagrant).each do |env|
-      cp src/"config/webpack/#{env}.js", dst/"config/webpack/#{env}.js"
+    unless flag_on? args, :backend_only
+      cp      src/'app/javascript/packs/application.js', dst/'app/javascript/packs/application.js'
+      %w(app config images mixins stylesheets).each do |dir|
+        keep  dst/'app/javascript'/dir
+      end
+      cp   src/'config/webpacker.yml', dst/'config/webpacker.yml'
+      %w(environment staging vagrant).each do |env|
+        cp src/"config/webpack/#{env}.js", dst/"config/webpack/#{env}.js"
+      end
+      cp src/'babel.config.js', dst/'babel.config.js'
+
+      sh 'yarn remove @rails/ujs', verbose: false rescue nil
     end
-    cp src/'babel.config.js', dst/'babel.config.js'
-    rmtree dst/'app/assets'
-    %w(app config images mixins stylesheets).each do |dir|
-      keep  dst/'app/javascript'/dir
-    end
-    sh 'yarn remove @rails/ujs', verbose: false rescue nil
     # TODO README.md
   end
 
