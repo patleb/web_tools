@@ -1,4 +1,31 @@
 PATH
+  remote: ext_webpacker
+  specs:
+    ext_webpacker (0.2.0)
+
+PATH
+  remote: .
+  specs:
+    mr_backend (0.2.0)
+      ext_capistrano (= 0.2.0)
+      ext_minitest (= 0.2.0)
+      ext_rake (= 0.2.0)
+      ext_ruby (= 0.2.0)
+      ext_sql (= 0.2.0)
+      ext_webpacker (= 0.2.0)
+      ext_whenever (= 0.2.0)
+      mr_backup (= 0.2.0)
+      mr_core (= 0.2.0)
+      mr_global (= 0.2.0)
+      mr_notifier (= 0.2.0)
+      mr_rescue (= 0.2.0)
+      mr_setting
+      mr_template (= 0.2.0)
+      mr_throttler (= 0.2.0)
+      sun_cap (= 0.2.0)
+      sunzistrano
+
+PATH
   remote: ext_capistrano
   specs:
     ext_capistrano (0.2.0)
@@ -162,27 +189,6 @@ PATH
       parallel
       rainbow
       sshkit
-
-PATH
-  remote: .
-  specs:
-    mr_backend (0.2.0)
-      ext_capistrano (= 0.2.0)
-      ext_minitest (= 0.2.0)
-      ext_rake (= 0.2.0)
-      ext_ruby (= 0.2.0)
-      ext_sql (= 0.2.0)
-      ext_whenever (= 0.2.0)
-      mr_backup (= 0.2.0)
-      mr_core (= 0.2.0)
-      mr_global (= 0.2.0)
-      mr_notifier (= 0.2.0)
-      mr_rescue (= 0.2.0)
-      mr_setting
-      mr_template (= 0.2.0)
-      mr_throttler (= 0.2.0)
-      sun_cap (= 0.2.0)
-      sunzistrano
 
 GEM
   remote: https://rubygems.org/
@@ -410,8 +416,6 @@ GEM
     rack (2.0.8)
     rack-attack (6.2.2)
       rack (>= 1.0, < 3)
-    rack-proxy (0.6.5)
-      rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (6.0.2.1)
@@ -495,10 +499,6 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    webpacker (4.2.2)
-      activesupport (>= 4.2)
-      rack-proxy (>= 0.6.1)
-      railties (>= 4.2)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
@@ -516,6 +516,7 @@ DEPENDENCIES
   ext_rake!
   ext_ruby!
   ext_sql!
+  ext_webpacker!
   ext_whenever!
   mr_backend!
   mr_backup!
@@ -530,7 +531,6 @@ DEPENDENCIES
   sun_cap!
   sunzistrano!
   tzinfo-data
-  webpacker
 
 BUNDLED WITH
    1.17.2
