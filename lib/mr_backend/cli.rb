@@ -91,12 +91,10 @@ module MrBackend
 
       def add_to_manifests
         require_line = "# require '#{plugin_name}'\n"
-        %w(all).each do |name|
-          path = Pathname.new("lib/mr_backend/#{name}.rb")
-          lines = path.readlines
-          next if lines.include? require_line
-          path.write (lines << require_line).sort_by!{ |line| strip_require(line) }.join
-        end
+        path = Pathname.new("lib/mr_backend.rb")
+        lines = path.readlines
+        return if lines.include? require_line
+        path.write (lines << require_line).sort_by!{ |line| strip_require(line) }.join
       end
 
       def add_to_gemfile
