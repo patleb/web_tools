@@ -7,6 +7,7 @@ namespace :ext_rake do
     src, dst = Gem.root('ext_rake').join('lib/tasks/templates'), Rails.root
 
     mkdir_p dst/'app/tasks'
+    remove  dst/'app/tasks/.keep' rescue nil
     cp      src/'app/tasks/application.rake', dst/'app/tasks/application.rake'
     cp      src/'Rakefile', dst/'Rakefile'
   end

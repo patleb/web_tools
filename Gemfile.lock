@@ -1,9 +1,4 @@
 PATH
-  remote: ext_webpacker
-  specs:
-    ext_webpacker (0.2.0)
-
-PATH
   remote: .
   specs:
     mr_backend (0.2.0)
@@ -94,6 +89,12 @@ PATH
       activesupport
       ext_rake (= 0.2.0)
       sql_query
+
+PATH
+  remote: ext_webpacker
+  specs:
+    ext_webpacker (0.2.0)
+      ext_ruby (= 0.2.0)
 
 PATH
   remote: ext_whenever
