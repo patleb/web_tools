@@ -17,3 +17,9 @@ echo "vm.nr_hugepages = $HUGEPAGES_MAX" >> /etc/sysctl.conf
 echo "*               soft    memlock           $MEMLOCK_MAX" >> /etc/security/limits.conf
 echo "*               hard    memlock           $MEMLOCK_MAX" >> /etc/security/limits.conf
 sysctl -p
+
+<% if sun.disable_thp %>
+  sun.move '/etc/systemd/system/disable_thp.service'
+  systemctl enable disable_thp
+  systemctl start disable_thp
+<% end %>
