@@ -1,3 +1,4 @@
+# TODO more flexible recipe or less dependent on pg_default_url --> doesn't work on new machine
 TIMESCALEDB="timescaledb-postgresql-$__POSTGRES__"
 
 sun.unlock $TIMESCALEDB
