@@ -9,7 +9,7 @@ module ExtRake
         cmd = Sh.psql command, (ExtRake.config.db_url unless sudo)
         cmd = [cmd, *sh_rest].join(' ')
         stdout, stderr, _status = Open3.capture3(cmd)
-        notify!(cmd, stderr) if raise_on_exception && notify?(stderr)
+        notify!(cmd, stderr) if raise_on_exception && respond_to?(:notify?) && notify?(stderr)
         stdout.strip
       end
     end
