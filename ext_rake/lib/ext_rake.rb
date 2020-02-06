@@ -14,6 +14,7 @@ end
 
 module ExtRake
   module Pg
+    autoload :Psql,      'tasks/ext_rake/pg/psql'
     autoload :Rescuable, 'tasks/ext_rake/pg/rescuable'
   end
 

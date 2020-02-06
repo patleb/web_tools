@@ -14,10 +14,13 @@ namespace :db do
       sh Sh.psql 'DROP OWNED BY CURRENT_USER', ExtRake.config.db_url
     end
 
-    # TODO SELECT brin_summarize_new_values('BRIN_Index_Name');
     # https://www.dbrnd.com/2018/04/postgresql-9-5-brin-index-maintenance-using-brin_summarize_new_values-add-new-data-page-in-brin-index/
     # https://www.postgresql.org/docs/11/brin-intro.html
     # https://www.postgresql.org/docs/10/functions-admin.html
+    desc 'BRIN summarize'
+    task :brin_summarize, [:index] => :environment do |t, args|
+      sh Sh.psql "SELECT brin_summarize_new_values('#{args[:index]}')", ExtRake.config.db_url
+    end
 
     desc 'ANALYZE database'
     task :analyze, [:table] => :environment do |t, args|

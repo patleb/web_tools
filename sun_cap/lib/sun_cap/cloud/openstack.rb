@@ -41,9 +41,17 @@ module Cloud::Openstack
   end
 
   def openstack_servers(*filters)
-    openstack_server_list(*filters).map do |row|
+    sort_by_number = true
+    servers = openstack_server_list(*filters).map do |row|
+      sort_by_number &&= row[:name].match?(/\d+$/)
       [row[:name], row[:networks].split('=').last.split(',').first]
-    end.sort_by(&:first).to_h
+    end
+    if sort_by_number
+      servers = servers.sort_by{ |(name, _ip)| name.match(/(\d+)$/)[1].to_i }
+    else
+      servers = servers.sort_by(&:first)
+    end
+    servers.to_h
   end
 
   def openstack_server_volumes(*filters)

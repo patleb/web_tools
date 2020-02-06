@@ -5,6 +5,7 @@ ubuntu)
 ;;
 centos)
   sun.backup_move "/etc/logrotate.d/nginx"
+  chown root:root /etc/logrotate.d/nginx
   chmod +rx /var/log/nginx
 ;;
 esac
