@@ -2,7 +2,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
 require_relative "./../version"
-version = MrBackend::VERSION::STRING
+version = MixBackend::VERSION::STRING
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
@@ -22,9 +22,9 @@ Gem::Specification.new do |s|
   s.add_dependency "colorize"
   s.add_dependency "dotiw"
   s.add_dependency "ext_ruby", version
-  s.add_dependency "mr_notifier", version
-  s.add_dependency "mr_setting"
-  s.add_dependency "mr_rescue", version
+  s.add_dependency "mix_notifier", version
+  s.add_dependency "mix_setting"
+  s.add_dependency "mix_rescue", version
   # TODO https://github.com/stevehodges/attribute_stats
   # TODO https://github.com/thoughtbot/terrapin
 

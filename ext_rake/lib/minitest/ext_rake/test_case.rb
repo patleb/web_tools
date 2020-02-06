@@ -31,7 +31,7 @@ module Rake
       if task_namespace.present?
         namespace = "#{task_namespace}:"
       end
-      "#{namespace}#{base_name.sub(/^(Mr|Ext)([A-Z])/, '\2').sub(/Task$/, '').underscore.tr('/', ':')}"
+      "#{namespace}#{base_name.sub(/^(Mix|Ext)([A-Z])/, '\2').sub(/Task$/, '').underscore.tr('/', ':')}"
     end
   end
 end

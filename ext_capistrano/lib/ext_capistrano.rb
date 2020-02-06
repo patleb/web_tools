@@ -1,4 +1,4 @@
-require 'mr_setting'
+require 'mix_setting'
 require 'ext_capistrano/railtie' if defined? Rails
 
 module ExtCapistrano

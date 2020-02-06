@@ -40,7 +40,7 @@ module Sunzistrano
         role_yml.union!(app_yml)
       end
 
-      settings.merge! Setting.load(env: @stage, app: @application) if Gem.loaded_specs['mr_setting']
+      settings.merge! Setting.load(env: @stage, app: @application) if Gem.loaded_specs['mix_setting']
       settings.union!(role_yml).merge!(role: @role).merge!(options).merge!(yml.slice(*RESERVED_NAMES))
       settings.each_key do |key|
         settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) if key.end_with? Hash::REPLACE

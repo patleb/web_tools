@@ -10,10 +10,10 @@ $LOAD_PATH << source_path
 require_relative './../version'
 
 if ['-v', '--version'].include? ARGV[0]
-  puts MrBackend::VERSION::STRING
+  puts MixBackend::VERSION::STRING
   exit 0
 end
 
-require 'mr_backend/cli'
+require 'mix_backend/cli'
 
-MrBackend::Cli.start
+MixBackend::Cli.start

@@ -8,7 +8,7 @@ module ExtRake
   CANCEL =    '[CANCEL]'.freeze
 
   class Railtie < Rails::Engine
-    require 'mr_rescue'
+    require 'mix_rescue'
     require 'ext_rake/rake/dsl'
     require 'ext_rake/rake/task'
 

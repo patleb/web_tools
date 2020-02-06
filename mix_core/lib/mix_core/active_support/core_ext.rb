@@ -1,0 +1,8 @@
+require "mix_core/active_support/core_ext/args"
+require "mix_core/active_support/core_ext/hash/conversions"
+require "mix_core/active_support/core_ext/hash/keyword_access"
+require "mix_core/active_support/core_ext/numeric/conversions"
+require "mix_core/active_support/core_ext/process"
+require "mix_core/active_support/core_ext/process/snapshot"
+require "mix_core/active_support/core_ext/process/host"
+require "mix_core/active_support/core_ext/process/worker"

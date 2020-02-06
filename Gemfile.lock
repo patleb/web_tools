@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mr_backend (0.2.0)
+    mix_backend (0.2.0)
       ext_capistrano (= 0.2.0)
       ext_minitest (= 0.2.0)
       ext_rake (= 0.2.0)
@@ -9,14 +9,14 @@ PATH
       ext_sql (= 0.2.0)
       ext_webpacker (= 0.2.0)
       ext_whenever (= 0.2.0)
-      mr_backup (= 0.2.0)
-      mr_core (= 0.2.0)
-      mr_global (= 0.2.0)
-      mr_notifier (= 0.2.0)
-      mr_rescue (= 0.2.0)
-      mr_setting
-      mr_template (= 0.2.0)
-      mr_throttler (= 0.2.0)
+      mix_backup (= 0.2.0)
+      mix_core (= 0.2.0)
+      mix_global (= 0.2.0)
+      mix_notifier (= 0.2.0)
+      mix_rescue (= 0.2.0)
+      mix_setting
+      mix_template (= 0.2.0)
+      mix_throttler (= 0.2.0)
       sun_cap (= 0.2.0)
       sunzistrano
 
@@ -31,7 +31,7 @@ PATH
       capistrano-rails (~> 1.1)
       capistrano-rails-console
       capistrano-rbenv (~> 2.0)
-      mr_setting
+      mix_setting
 
 PATH
   remote: ext_minitest
@@ -66,9 +66,9 @@ PATH
       colorize
       dotiw
       ext_ruby (= 0.2.0)
-      mr_notifier (= 0.2.0)
-      mr_rescue (= 0.2.0)
-      mr_setting
+      mix_notifier (= 0.2.0)
+      mix_rescue (= 0.2.0)
+      mix_setting
       rake
 
 PATH
@@ -100,21 +100,21 @@ PATH
   remote: ext_whenever
   specs:
     ext_whenever (0.2.0)
-      mr_setting
+      mix_setting
       whenever
 
 PATH
-  remote: mr_backup
+  remote: mix_backup
   specs:
-    mr_backup (0.2.0)
+    mix_backup (0.2.0)
       ext_backup (~> 5.0.0.beta.2.1)
       ext_rake (= 0.2.0)
       pgslice
 
 PATH
-  remote: mr_core
+  remote: mix_core
   specs:
-    mr_core (0.2.0)
+    mix_core (0.2.0)
       active_type
       arel_extensions
       date_validator
@@ -122,7 +122,7 @@ PATH
       i18n-debug
       money-rails
       monogamy
-      mr_setting
+      mix_setting
       null-logger
       pg
       rails (~> 6.0.0)
@@ -134,52 +134,52 @@ PATH
       web-console
 
 PATH
-  remote: mr_global
+  remote: mix_global
   specs:
-    mr_global (0.2.0)
+    mix_global (0.2.0)
 
 PATH
-  remote: mr_notifier
+  remote: mix_notifier
   specs:
-    mr_notifier (0.2.0)
+    mix_notifier (0.2.0)
       actionview
       mail
-      mr_setting
+      mix_setting
 
 PATH
-  remote: mr_rescue
+  remote: mix_rescue
   specs:
-    mr_rescue (0.2.0)
-      mr_notifier
+    mix_rescue (0.2.0)
+      mix_notifier
 
 PATH
-  remote: mr_setting
+  remote: mix_setting
   specs:
-    mr_setting (0.1.0)
+    mix_setting (0.1.0)
       activesupport
       chronic_duration
       ext_ruby
       inifile
 
 PATH
-  remote: mr_template
+  remote: mix_template
   specs:
-    mr_template (0.2.0)
+    mix_template (0.2.0)
       nestive
       query_diet
 
 PATH
-  remote: mr_throttler
+  remote: mix_throttler
   specs:
-    mr_throttler (0.2.0)
-      mr_global
+    mix_throttler (0.2.0)
+      mix_global
       rack-attack
 
 PATH
   remote: sun_cap
   specs:
     sun_cap (0.2.0)
-      mr_setting
+      mix_setting
 
 PATH
   remote: sunzistrano
@@ -519,15 +519,15 @@ DEPENDENCIES
   ext_sql!
   ext_webpacker!
   ext_whenever!
-  mr_backend!
-  mr_backup!
-  mr_core!
-  mr_global!
-  mr_notifier!
-  mr_rescue!
-  mr_setting!
-  mr_template!
-  mr_throttler!
+  mix_backend!
+  mix_backup!
+  mix_core!
+  mix_global!
+  mix_notifier!
+  mix_rescue!
+  mix_setting!
+  mix_template!
+  mix_throttler!
   ruby-debug-ide
   sun_cap!
   sunzistrano!

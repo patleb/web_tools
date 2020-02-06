@@ -1,4 +1,4 @@
-require 'mr_setting'
+require 'mix_setting'
 
 module ExtRake
   has_config do

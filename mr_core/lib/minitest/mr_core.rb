@@ -1,7 +1,0 @@
-require 'minitest/mr_core/action_controller/test_case'
-require 'minitest/mr_core/action_dispatch/integration_test'
-require 'minitest/mr_core/action_dispatch/system_test'
-require 'minitest/mr_core/action_view/template/error'
-require 'minitest/ext_rake'
-require 'minitest/ext_sql'
-require 'minitest/mr_template'

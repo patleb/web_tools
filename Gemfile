@@ -18,7 +18,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 ### AFTER Gemfile ###
 
-# Declare your gem's dependencies in mr_backend.gemspec.
+# Declare your gem's dependencies in mix_backend.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.
 gemspec
@@ -37,13 +37,13 @@ gem 'ext_ruby', path: './ext_ruby'
 gem 'ext_sql', path: './ext_sql'
 gem 'ext_webpacker', path: './ext_webpacker'
 gem 'ext_whenever', path: './ext_whenever'
-gem 'mr_backup', path: './mr_backup'
-gem 'mr_core', path: './mr_core'
-gem 'mr_global', path: './mr_global'
-gem 'mr_notifier', path: './mr_notifier'
-gem 'mr_setting', path: './mr_setting'
-gem 'mr_rescue', path: './mr_rescue'
-gem 'mr_template', path: './mr_template'
-gem 'mr_throttler', path: './mr_throttler'
+gem 'mix_backup', path: './mix_backup'
+gem 'mix_core', path: './mix_core'
+gem 'mix_global', path: './mix_global'
+gem 'mix_notifier', path: './mix_notifier'
+gem 'mix_setting', path: './mix_setting'
+gem 'mix_rescue', path: './mix_rescue'
+gem 'mix_template', path: './mix_template'
+gem 'mix_throttler', path: './mix_throttler'
 gem 'sun_cap', path: './sun_cap'
 gem 'sunzistrano', path: './sunzistrano'

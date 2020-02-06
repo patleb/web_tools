@@ -1,5 +1,5 @@
 require 'whenever'
-require 'mr_setting'
+require 'mix_setting'
 
 module ExtWhenever
   def self.setup(context)
