@@ -6,7 +6,7 @@ PATH
       ext_minitest (= 0.2.0)
       ext_rake (= 0.2.0)
       ext_ruby (= 0.2.0)
-      ext_sql (= 0.2.0)
+      mix_sql (= 0.2.0)
       ext_webpacker (= 0.2.0)
       ext_whenever (= 0.2.0)
       mix_backup (= 0.2.0)
@@ -82,9 +82,9 @@ PATH
       require_all (~> 1.5)
 
 PATH
-  remote: ext_sql
+  remote: mix_sql
   specs:
-    ext_sql (0.2.0)
+    mix_sql (0.2.0)
       activerecord
       activesupport
       ext_rake (= 0.2.0)
@@ -516,7 +516,7 @@ DEPENDENCIES
   ext_minitest!
   ext_rake!
   ext_ruby!
-  ext_sql!
+  mix_sql!
   ext_webpacker!
   ext_whenever!
   mix_backend!

@@ -1,4 +1,4 @@
-require_rel 'ext_sql'
+require_rel 'mix_sql'
 
 namespace :db do
   namespace :pg do

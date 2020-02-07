@@ -32,13 +32,13 @@ module Sql
   end
 
   def self.debug_var
-    <<-SQL.strip_sql if ExtSql.config.debug?
+    <<-SQL.strip_sql if MixSql.config.debug?
       _debug RECORD;
     SQL
   end
 
   def self.debug_init
-    <<-SQL.strip_sql if ExtSql.config.debug?
+    <<-SQL.strip_sql if MixSql.config.debug?
       _debug = ROW(NULL);
     SQL
   end

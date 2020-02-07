@@ -6,13 +6,13 @@ version = MixBackend::VERSION::STRING
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "ext_sql"
+  s.name        = "mix_sql" # TODO rename to mix_sql
   s.version     = version
   s.authors     = ["Patrice Lebel"]
   s.email       = ["patleb@users.noreply.github.com"]
-  s.homepage    = "https://github.com/patleb/ext_sql"
-  s.summary     = "ExtSql"
-  s.description = "ExtSql"
+  s.homepage    = "https://github.com/patleb/mix_sql"
+  s.summary     = "MixSql"
+  s.description = "MixSql"
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]

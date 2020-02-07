@@ -1,4 +1,4 @@
-load_rel 'ext_sql/**/*.cap'
+load_rel 'mix_sql/**/*.cap'
 
 namespace :load do
   task :defaults do

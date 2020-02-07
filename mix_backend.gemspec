@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_minitest",   version
   s.add_dependency "ext_rake",       version
   s.add_dependency "ext_ruby",       version
-  s.add_dependency "ext_sql",        version
+  s.add_dependency "mix_sql",        version
   s.add_dependency "ext_webpacker",  version
   s.add_dependency "ext_whenever",   version
   s.add_dependency "mix_backup",      version

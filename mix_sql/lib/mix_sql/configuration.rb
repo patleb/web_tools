@@ -1,4 +1,4 @@
-module ExtSql
+module MixSql
   has_config do
     attr_writer :debug
 
