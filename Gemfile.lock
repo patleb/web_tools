@@ -6,7 +6,6 @@ PATH
       ext_minitest (= 0.2.0)
       ext_rake (= 0.2.0)
       ext_ruby (= 0.2.0)
-      mix_sql (= 0.2.0)
       ext_webpacker (= 0.2.0)
       ext_whenever (= 0.2.0)
       mix_backup (= 0.2.0)
@@ -15,6 +14,7 @@ PATH
       mix_notifier (= 0.2.0)
       mix_rescue (= 0.2.0)
       mix_setting
+      mix_sql (= 0.2.0)
       mix_template (= 0.2.0)
       mix_throttler (= 0.2.0)
       sun_cap (= 0.2.0)
@@ -82,15 +82,6 @@ PATH
       require_all (~> 1.5)
 
 PATH
-  remote: mix_sql
-  specs:
-    mix_sql (0.2.0)
-      activerecord
-      activesupport
-      ext_rake (= 0.2.0)
-      sql_query
-
-PATH
   remote: ext_webpacker
   specs:
     ext_webpacker (0.2.0)
@@ -120,9 +111,9 @@ PATH
       date_validator
       http_accept_language
       i18n-debug
+      mix_setting
       money-rails
       monogamy
-      mix_setting
       null-logger
       pg
       rails (~> 6.0.0)
@@ -160,6 +151,15 @@ PATH
       chronic_duration
       ext_ruby
       inifile
+
+PATH
+  remote: mix_sql
+  specs:
+    mix_sql (0.2.0)
+      activerecord
+      activesupport
+      ext_rake (= 0.2.0)
+      sql_query
 
 PATH
   remote: mix_template
@@ -516,7 +516,6 @@ DEPENDENCIES
   ext_minitest!
   ext_rake!
   ext_ruby!
-  mix_sql!
   ext_webpacker!
   ext_whenever!
   mix_backend!
@@ -526,6 +525,7 @@ DEPENDENCIES
   mix_notifier!
   mix_rescue!
   mix_setting!
+  mix_sql!
   mix_template!
   mix_throttler!
   ruby-debug-ide
