@@ -19,17 +19,17 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_minitest",   version
   s.add_dependency "ext_rake",       version
   s.add_dependency "ext_ruby",       version
-  s.add_dependency "mix_sql",        version
   s.add_dependency "ext_webpacker",  version
   s.add_dependency "ext_whenever",   version
-  s.add_dependency "mix_backup",      version
-  s.add_dependency "mix_core",        version
-  s.add_dependency "mix_global",      version
-  s.add_dependency "mix_notifier",    version
+  s.add_dependency "mix_backup",     version
+  s.add_dependency "mix_core",       version
+  s.add_dependency "mix_global",     version
+  s.add_dependency "mix_notifier",   version
   s.add_dependency "mix_setting"
-  s.add_dependency "mix_rescue",      version
-  s.add_dependency "mix_template",    version
-  s.add_dependency "mix_throttler",   version
+  s.add_dependency "mix_sql",        version
+  s.add_dependency "mix_rescue",     version
+  s.add_dependency "mix_template",   version
+  s.add_dependency "mix_throttler",  version
   s.add_dependency "sun_cap",        version
   s.add_dependency "sunzistrano"
 end

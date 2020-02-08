@@ -6,7 +6,7 @@ version = MixBackend::VERSION::STRING
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "mix_sql" # TODO rename to mix_sql
+  s.name        = "mix_sql"
   s.version     = version
   s.authors     = ["Patrice Lebel"]
   s.email       = ["patleb@users.noreply.github.com"]
