@@ -18,7 +18,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 ### AFTER Gemfile ###
 
-# Declare your gem's dependencies in mix_backend.gemspec.
+# Declare your gem's dependencies in web_tools.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.
 gemspec

@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = 'bento/ubuntu-16.04'
   # config.vm.box = 'bento/centos-7.6'
-  # config.vm.box = 'mix_backend'
+  # config.vm.box = 'web_tools'
   # config.vm.box_version = '0'
 
   config.ssh.forward_agent = true
@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
   ]
   link_dev = false
   link_paths = [
-    '~/projects/mix_backend',
+    '~/projects/web_tools',
   ]
 
   config.vm.define :web, primary: true do |node|
@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
       # vb.memory = '768'
       vb.memory = '1024'
       # vb.memory = '2048'
-      vb.name = 'mix_backend'
+      vb.name = 'web_tools'
       vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
     end
     node.vm.provision :shell do |server|

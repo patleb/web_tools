@@ -35,5 +35,5 @@
 ### AFTER .gitignore ###
 
 .editorconfig
-mix_backend-*.gem
+web_tools-*.gem
 db/structure.sql

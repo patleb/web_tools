@@ -32,7 +32,7 @@ services:
         max-size: "10m"
         max-file: "5"
     environment:
-      - PGRST_DB_URI=postgres://authenticator:not-secret@127.0.0.1:5432/mix_backend_development
+      - PGRST_DB_URI=postgres://authenticator:not-secret@127.0.0.1:5432/web_tools_development
       - PGRST_DB_SCHEMA=api
       - PGRST_DB_ANON_ROLE=web_anon
       - PGRST_SERVER_PORT=4000

@@ -1,7 +1,7 @@
 require 'thor'
 require 'active_support/core_ext/string/inflections'
 
-module MixBackend
+module WebTools
   class Cli < Thor
     include Thor::Actions
 
@@ -33,7 +33,7 @@ module MixBackend
 
       def create_app
         if options[:backend_only]
-          # rails new mix_backend --database=postgresql --skip-webpack-install --skip-javascript --skip-sprockets --skip-turbolinks --skip-puma --skip-spring --skip-listen --skip-system-test --skip-action-cable --skip-active-storage --skip-action-text --skip-action-mailbox
+          # rails new web_tools --database=postgresql --skip-webpack-install --skip-javascript --skip-sprockets --skip-turbolinks --skip-puma --skip-spring --skip-listen --skip-system-test --skip-action-cable --skip-active-storage --skip-action-text --skip-action-mailbox
           run "rails new #{@app_path} --database=postgresql " \
             '--skip-webpack-install ' \
             '--skip-javascript ' \
@@ -54,8 +54,8 @@ module MixBackend
         end
         append_to_file app_path.join('Gemfile') do
           <<~RB
-            gem 'mix_backend', github: 'patleb/mix_backend'
-            # gem 'mix_backend', path: '~/projects/mix_backend'
+            gem 'web_tools', github: 'patleb/web_tools'
+            # gem 'web_tools', path: '~/projects/web_tools'
           RB
         end
         # bin/rake ext_capistrano:setup
@@ -97,7 +97,7 @@ module MixBackend
 
       def add_to_manifests
         require_line = "# require '#{plugin_name}'\n"
-        path = Pathname.new("lib/mix_backend.rb")
+        path = Pathname.new("lib/web_tools.rb")
         lines = path.readlines
         return if lines.include? require_line
         path.write (lines << require_line).sort_by!{ |line| strip_require(line) }.join
@@ -111,7 +111,7 @@ module MixBackend
       end
 
       def add_to_gemspec
-        path = Pathname.new('mix_backend.gemspec')
+        path = Pathname.new('web_tools.gemspec')
         lines = path.readlines.select{ |line| line.include?('s.add_dependency') && line.include?('version') }
         gem = "  s.add_dependency \"#{plugin_name}\", "
         return if lines.any?{ |line| line.include? gem }
@@ -126,7 +126,7 @@ module MixBackend
 
       def anchor
         @anchor ||= begin
-          lines = Pathname.new('lib/mix_backend.rb').readlines
+          lines = Pathname.new('lib/web_tools.rb').readlines
           index = lines.index{ |line| line.include? "'#{plugin_name}'" }
           before = index < lines.size - 1
           lines.map!{ |line| strip_require(line) }

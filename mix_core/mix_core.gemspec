@@ -2,7 +2,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
 require_relative "./../version"
-version = MixBackend::VERSION::STRING
+version = WebTools::VERSION::STRING
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
 
-  s.add_dependency "rails", "~> #{MixBackend::RAILS_VERSION::STRING}"
+  s.add_dependency "rails", "~> #{WebTools::RAILS_VERSION::STRING}"
   s.add_dependency 'active_type'
   s.add_dependency 'arel_extensions'
   s.add_dependency 'date_validator'

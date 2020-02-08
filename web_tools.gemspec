@@ -1,16 +1,16 @@
 # Maintain your gem's version:
 require_relative "./version"
-version = MixBackend::VERSION::STRING # TODO rename to mix_backend_ce with MixBackend
+version = WebTools::VERSION::STRING # TODO rename to web_tools_ce with WebTools
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "mix_backend"
+  s.name        = "web_tools"
   s.version     = version
   s.authors     = ["Patrice Lebel"]
   s.email       = ["patleb@users.noreply.github.com"]
-  s.homepage    = "https://github.com/patleb/mix_backend"
-  s.summary     = "MixBackend"
-  s.description = "MixBackend"
+  s.homepage    = "https://github.com/patleb/web_tools"
+  s.summary     = "WebTools"
+  s.description = "WebTools"
   s.license     = "MIT"
 
   s.files = Dir["lib/**/*", "MIT-LICENSE", "README.md"]

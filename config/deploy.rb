@@ -1,7 +1,7 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.11.0"
 
-set :application, "mix_backend"
+set :application, "web_tools"
 set :repo_url, "git@github.com:patleb/mix_system.git"
 set :assets_prefix, 'packs'
 

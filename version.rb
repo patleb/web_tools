@@ -1,5 +1,5 @@
-unless defined? MixBackend::VERSION::STRING
-  module MixBackend
+unless defined? WebTools::VERSION::STRING
+  module WebTools
     def self.gem_version
       Gem::Version.new VERSION::STRING
     end

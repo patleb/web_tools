@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mix_backend (0.2.0)
+    web_tools (0.2.0)
       ext_capistrano (= 0.2.0)
       ext_minitest (= 0.2.0)
       ext_rake (= 0.2.0)
@@ -518,7 +518,6 @@ DEPENDENCIES
   ext_ruby!
   ext_webpacker!
   ext_whenever!
-  mix_backend!
   mix_backup!
   mix_core!
   mix_global!
@@ -532,6 +531,7 @@ DEPENDENCIES
   sun_cap!
   sunzistrano!
   tzinfo-data
+  web_tools!
 
 BUNDLED WITH
    1.17.2
