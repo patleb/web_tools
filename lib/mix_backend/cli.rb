@@ -58,6 +58,12 @@ module MixBackend
             # gem 'mix_backend', path: '~/projects/mix_backend'
           RB
         end
+        # bin/rake ext_capistrano:setup
+        # bin/rake ext_minitest:setup
+        # bin/rake ext_rake:setup
+        # bin/rake ext_webpacker:setup
+        # bin/rake mix_core:setup
+        # bin/rake mix_setting:setup
       end
 
       def create_plugin
