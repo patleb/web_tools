@@ -1,9 +1,9 @@
-class CreateMixGlobals < ActiveRecord::Migration[5.1]
+class CreateLibGlobals < ActiveRecord::Migration[5.1]
   def up
     drop_table :mr_globals if table_exists? :mr_globals
 
-    unless table_exists? :mix_globals
-      create_table :mix_globals, id: false do |t|
+    unless table_exists? :lib_globals
+      create_table :lib_globals, id: false do |t|
         t.primary_key :id, :text
         t.boolean     :expires,   null: false, default: false
         t.datetime    :expires_at
@@ -21,20 +21,20 @@ class CreateMixGlobals < ActiveRecord::Migration[5.1]
         t.timestamps
       end
 
-      add_index :mix_globals, [:expires_at],
-        name: "index_mix_globals_on_expirable_expires_at",
+      add_index :lib_globals, [:expires_at],
+        name: "index_lib_globals_on_expirable_expires_at",
         where: '(expires)'
-      add_index :mix_globals, [:updated_at],
-        name: "index_mix_globals_on_expirable_updated_at",
+      add_index :lib_globals, [:updated_at],
+        name: "index_lib_globals_on_expirable_updated_at",
         where: '(expires)'
-      add_index :mix_globals, [:expires, :updated_at],
-        name: "index_mix_globals_on_permanent_updated_at",
+      add_index :lib_globals, [:expires, :updated_at],
+        name: "index_lib_globals_on_permanent_updated_at",
         where: '(expires = FALSE)'
     end
   end
 
   def down
     drop_table :mr_globals if table_exists? :mr_globals
-    drop_table :mix_globals if table_exists? :mix_globals
+    drop_table :lib_globals if table_exists? :lib_globals
   end
 end

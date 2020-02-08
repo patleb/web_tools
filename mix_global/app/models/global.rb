@@ -1,4 +1,4 @@
-class Global < MixRecord
+class Global < LibRecord
   include self::CacheStore
 
   # TODO add :type to be able to differentiate between Cache usage and others --> and maybe set expirable to true

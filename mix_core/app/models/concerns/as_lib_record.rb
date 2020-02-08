@@ -1,7 +1,7 @@
-module AsMixRecord
+module AsLibRecord
   extend ActiveSupport::Concern
 
   included do
-    self.table_name_prefix = 'mix_'
+    self.table_name_prefix = 'lib_'
   end
 end

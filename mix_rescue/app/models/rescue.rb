@@ -1,4 +1,4 @@
-class Rescue < MixRecord
+class Rescue < LibRecord
   with_options presence: true do
     validates :exception
     validates :message
