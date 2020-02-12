@@ -57,7 +57,7 @@ module Db
         sh "sudo mkdir -p #{dump_path.dirname}"
         sh "sudo chown postgres:postgres #{dump_path.dirname}"
         cmd_options = <<-CMD.squish
-          -P -v -Xstream -cfast -Ft
+          -v -Xstream -cfast -Ft
           #{self.class.pg_options}
           #{'-z' if compress}
         CMD
