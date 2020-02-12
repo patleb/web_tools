@@ -114,7 +114,7 @@ module Db
           <<-CMD.squish
             input=#{file};
             block_size=#{SPLIT_SIZE};
-            split_size=$(echo $block_size "#{'* 1000 ' unless Rails.env.vagrant?}* 1000 * 1000" | bc);
+            split_size=$(echo $block_size "#{'* 1000 ' * split_scale_base}" | bc);
             file_size=$(stat -c "%s" $input);
             block_count=$(echo $file_size / $split_size | bc);
             block_rest=$(echo $file_size % $split_size | bc);
@@ -162,6 +162,16 @@ module Db
 
       def dump_path
         @dump_path ||= Pathname.new(options.base_dir).join(options.name).expand_path
+      end
+
+      def split_scale_base
+        case SPLIT_SCALE
+        when 'B'  then 0
+        when 'KB' then 1
+        when 'MB' then 2
+        when 'GB' then 3
+        when 'TB' then 4
+        end
       end
     end
   end
