@@ -41,7 +41,7 @@ module Db
 
       def check_md5
         md5_file = dump_path.sub(MATCHER, '.md5')
-        sh "sudo md5sum -c #{md5_file}" if md5_file.exist?
+        sh "sudo md5sum -c #{md5_file}" if system("sudo ls #{md5_file}")
       end
 
       def unpack(compress, split)
