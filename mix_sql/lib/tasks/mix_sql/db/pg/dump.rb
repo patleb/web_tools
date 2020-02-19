@@ -3,6 +3,7 @@ module Db
     class Dump < Base
       SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
       SPLIT_SIZE = 2
+      PIGZ_CORES = (Etc.nprocessors - 2) > 0 ? Etc.nprocessors - 2 : 1
 
       def self.args
         {
@@ -44,30 +45,49 @@ module Db
         input = case
           when options.physical then tar_file
           when options.csv      then "#{dump_path}~*.csv"
-          else pg_file
-          end.to_s
-        input << '.gz' if !options.physical && compress?
-        input << '-*' if options.split
-        input = "$(sudo chmod +r #{dump_path} && sudo ls #{input} | tail -n2)" if options.physical
+          else pg_file.to_s
+          end
+        if options.physical
+          input = "$(sudo chmod +r #{dump_path} && sudo find #{input.dirname} -type f -not -name '*.md5' -printf '%p ')"
+        else
+          input << '.gz' if compress?
+          input << '-*' if options.split
+        end
         sh "sudo md5sum #{input} | sudo tee #{md5_file} > /dev/null"
-        sh "sudo md5sum -c #{md5_file}"
       end
 
       def pg_basebackup
-        sh "sudo mkdir -p #{dump_path.dirname}"
-        sh "sudo chown postgres:postgres #{dump_path.dirname}"
-        cmd_options = <<-CMD.squish
-          -v -Xstream -cfast -Ft
-          #{self.class.pg_options}
-          #{'-z' if compress}
-        CMD
-        output = <<-CMD.squish
-          -D #{dump_path};
-          #{split_cmd(tar_file) if options.split}
-        CMD
-        sh <<-CMD.squish
-          cd /tmp && sudo su postgres -c 'set -e; pg_basebackup #{cmd_options} #{output}'
-        CMD
+        pg_receivewal do
+          sh "sudo mkdir -p #{dump_path.dirname}"
+          sh "sudo chown postgres:postgres #{dump_path.dirname}"
+          output = case
+            when options.split    then "-D- | #{split_cmd(tar_file)}"
+            when options.compress then "-D- | #{compress_cmd(tar_file)}"
+            else "-D #{dump_path}"
+            end
+          sh su_postgres "pg_basebackup -v -Xnone -Ft #{self.class.pg_options} #{output}"
+        end
+      end
+
+      def pg_receivewal
+        sh "sudo mkdir -p #{dump_wal_dir}"
+        sh "sudo chown postgres:postgres #{dump_wal_dir}"
+        sh "sudo rm -f #{dump_wal_dir}/*"
+        psql! "SELECT * FROM pg_create_physical_replication_slot('#{options.name}')"
+        pid = spawn su_postgres "pg_receivewal -S #{options.name} -D #{dump_wal_dir}"
+        yield
+      ensure
+        psql! "SELECT pg_switch_wal()"
+        sh "sudo pkill pg_receivewal"
+        Process.kill('TERM', pid)
+        Process.detach(pid)
+        sleep 1 while system("sudo pgrep pg_receivewal")
+        psql! "SELECT * FROM pg_drop_replication_slot('#{options.name}')"
+        if compress
+          sh su_postgres "tar cvf - -C #{dump_wal_dir} . | #{compress_cmd(wal_file)}"
+        else
+          sh su_postgres "tar -cvf #{wal_file} -C #{dump_wal_dir} ."
+        end
       end
 
       def copy_to
@@ -110,42 +130,23 @@ module Db
       end
 
       def split_cmd(file)
-        if options.physical
-          <<-CMD.squish
-            input=#{file};
-            block_size=#{SPLIT_SIZE};
-            split_size=$(echo $block_size "#{'* 1000 ' * split_scale_base}" | bc);
-            file_size=$(stat -c "%s" $input);
-            block_count=$(echo $file_size / $split_size | bc);
-            block_rest=$(echo $file_size % $split_size | bc);
-            [[ "$block_rest" -ne 0 ]] && block_count=$(( $block_count + 1 ));
-            echo "Total count: $block_count";
-            while [[ "$block_count" -gt 0 ]]; do
-              block_count=$(( $block_count - 1 ));
-              printf "$block_count.";
-              file_name="$input-$(printf %06d $block_count)";
-              offset=$(( block_count * block_size ));
-              dd if="$input" of="$file_name" bs=1#{SPLIT_SCALE} skip=$offset > /dev/null 2>&1 || exit 1;
-              truncate -c -s ${offset}#{SPLIT_SCALE} "$input" > /dev/null 2>&1 || exit 1;
-            done;
-            echo "done";
-            rm -f "$input";
-          CMD
-        else
-          "pigz | split -a 4 -b #{SPLIT_SIZE}#{SPLIT_SCALE} - #{file}.gz-"
-        end
+        "pigz -p #{PIGZ_CORES} | split -a 4 -b #{SPLIT_SIZE}#{SPLIT_SCALE} - #{file}.gz-"
       end
 
       def compress_cmd(file)
-        "pigz > #{file}.gz"
+        "pigz -p #{PIGZ_CORES} > #{file}.gz"
       end
 
       def md5_file
-        options.physical ? tar_file.sub(/\.tar(\.gz)?$/, '.md5') : dump_path.sub_ext('.md5')
+        options.physical ? tar_file.sub(/\.tar$/, '.md5') : dump_path.sub_ext('.md5')
       end
 
       def tar_file
-        dump_path.join('base').sub_ext(".tar#{'.gz' if compress}")
+        dump_path.join('base.tar')
+      end
+
+      def wal_file
+        dump_path.join('pg_wal.tar')
       end
 
       def csv_file(table)
@@ -160,18 +161,12 @@ module Db
         options.compress || options.split
       end
 
-      def dump_path
-        @dump_path ||= Pathname.new(options.base_dir).join(options.name).expand_path
+      def dump_wal_dir
+        @dump_wal_dir ||= dump_path.sub_ext('_wal')
       end
 
-      def split_scale_base
-        case SPLIT_SCALE
-        when 'B'  then 0
-        when 'KB' then 1
-        when 'MB' then 2
-        when 'GB' then 3
-        when 'TB' then 4
-        end
+      def dump_path
+        @dump_path ||= Pathname.new(options.base_dir).join(options.name).expand_path
       end
     end
   end

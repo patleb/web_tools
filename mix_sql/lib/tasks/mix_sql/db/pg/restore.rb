@@ -45,7 +45,7 @@ module Db
       end
 
       def unpack(compress, split)
-        data_dir = pg_conf_dir rescue Pathname.new(Pathname.new('tmp/pg_conf_dir').read.strip)
+        data_dir = pg_conf_dir
         sh "echo #{data_dir} > tmp/pg_conf_dir"
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{data_dir}"

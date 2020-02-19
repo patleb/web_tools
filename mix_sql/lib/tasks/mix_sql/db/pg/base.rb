@@ -19,7 +19,17 @@ module Db
       end
 
       def pg_conf_dir
-        @pg_conf_dir ||= Pathname.new(psql! 'SHOW data_directory', sudo: true)
+        @pg_conf_dir ||= begin
+          Pathname.new(psql! 'SHOW data_directory', sudo: true)
+        rescue
+          Pathname.new(Pathname.new('tmp/pg_conf_dir').read.strip)
+        end
+      end
+
+      def su_postgres(cmd)
+        <<-CMD.squish
+          cd /tmp && sudo su postgres -c 'set -e; #{cmd}'
+        CMD
       end
     end
   end
