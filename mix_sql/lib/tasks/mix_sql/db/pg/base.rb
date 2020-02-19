@@ -8,6 +8,11 @@ module Db
         ENV['PG_OPTIONS']
       end
 
+      def sh(*cmd, &block)
+        pg_conf_dir
+        super
+      end
+
       protected
 
       def with_db_config
@@ -20,7 +25,9 @@ module Db
 
       def pg_conf_dir
         @pg_conf_dir ||= begin
-          Pathname.new(psql! 'SHOW data_directory', sudo: true)
+          data_dir = Pathname.new(psql! 'SHOW data_directory', sudo: true)
+          `echo #{data_dir} > tmp/pg_conf_dir`
+          data_dir
         rescue
           Pathname.new(Pathname.new('tmp/pg_conf_dir').read.strip)
         end

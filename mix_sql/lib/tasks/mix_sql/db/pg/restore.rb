@@ -45,7 +45,6 @@ module Db
       end
 
       def unpack(compress, split)
-        sh "echo #{pg_conf_dir} > tmp/pg_conf_dir"
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{pg_conf_dir}"
         sh "sudo mkdir -p #{pg_conf_dir}"
