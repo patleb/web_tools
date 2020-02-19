@@ -44,6 +44,8 @@ module Db
         sh "sudo md5sum -c #{md5_file} > /dev/null" if system("sudo ls #{md5_file}")
       end
 
+      # TODO PITR --> https://www.scalingpostgres.com/tutorials/postgresql-backup-point-in-time-recovery/
+      # TODO check if recovery.conf is actually read by postgres --> chown postgres:postgres
       def unpack(compress, split)
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{pg_conf_dir}"
