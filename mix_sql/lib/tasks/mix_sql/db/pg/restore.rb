@@ -51,8 +51,7 @@ module Db
         sh "sudo rm -rf #{pg_conf_dir}"
         sh "sudo mkdir -p #{pg_conf_dir}"
         sh "sudo bash -c '#{"cat #{dump_path} |" if split} tar -C #{pg_conf_dir} #{'-I pigz' if compress} -xf #{split ? '-' : dump_path}'"
-        pg_wal = compress ? dump_path.dirname.join('pg_wal.tar.gz') : dump_path.dirname.join('pg_wal.tar')
-        sh "sudo tar -C #{pg_conf_dir.join('pg_wal')} #{'-I pigz' if compress} -xf #{pg_wal}"
+        sh "sudo tar -C #{pg_conf_dir.join('pg_wal')} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
         sh %{echo "restore_command = ':'" | sudo tee #{pg_conf_dir.join('recovery.conf')} > /dev/null}
         sh "sudo chmod 700 #{pg_conf_dir}"
         sh "sudo chown -R postgres:postgres #{pg_conf_dir}"
@@ -137,6 +136,10 @@ module Db
 
       def uncompress_cmd
         "unpigz -c #{dump_path}"
+      end
+
+      def wal_file(compress)
+        compress ? dump_path.dirname.join('pg_wal.tar.gz') : dump_path.dirname.join('pg_wal.tar')
       end
 
       def dump_path
