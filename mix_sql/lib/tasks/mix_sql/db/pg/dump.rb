@@ -76,7 +76,6 @@ module Db
         psql! "SELECT * FROM pg_create_physical_replication_slot('#{options.name}')"
         pid = spawn su_postgres "pg_receivewal -S #{options.name} -D #{dump_wal_dir}"
         yield
-      ensure
         psql! "SELECT pg_switch_wal()"
         sh "sudo pkill pg_receivewal"
         Process.kill('TERM', pid)
