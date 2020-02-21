@@ -40,18 +40,26 @@ module Db
       private
 
       def check_md5
-        md5_file = dump_path.sub(MATCHER, '.md5')
-        sh "sudo md5sum -c #{md5_file} > /dev/null" if system("sudo ls #{md5_file}")
+        md5_files = dump_path.sub(MATCHER, '*.md5')
+        if system("sudo ls #{md5_files} > /dev/null")
+          sh "sudo find #{dump_path} -type f -name '*.md5' | sudo parallel --no-notice 'md5sum -c {} > /dev/null'"
+          puts "[#{Time.current.utc}][MD5][#{Process.pid}] checked".yellow
+        end
       end
 
       # TODO PITR --> https://www.scalingpostgres.com/tutorials/postgresql-backup-point-in-time-recovery/
-      # TODO check if recovery.conf is actually read by postgres --> chown postgres:postgres
       def unpack(compress, split)
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{pg_conf_dir}"
         sh "sudo mkdir -p #{pg_conf_dir}"
-        sh "sudo bash -c '#{"cat #{dump_path} |" if split} tar -C #{pg_conf_dir} #{'-I pigz' if compress} -xf #{split ? '-' : dump_path}'"
-        sh "sudo tar -C #{pg_conf_dir.join('pg_wal')} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
+        if split
+          sh "sudo bash -c 'GLOBIGNORE=*.md5; cat #{dump_path} | tar -C #{pg_conf_dir} #{'-I pigz' if compress} -xf -'"
+        else
+          sh "sudo bash -c 'tar -C #{pg_conf_dir} #{'-I pigz' if compress} -xf #{dump_path}'"
+        end
+        if system("sudo ls #{wal_file(compress)} > /dev/null")
+          sh "sudo tar -C #{pg_conf_dir.join('pg_wal')} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
+        end
         sh %{echo "restore_command = ':'" | sudo tee #{pg_conf_dir.join('recovery.conf')} > /dev/null}
         sh "sudo chmod 700 #{pg_conf_dir}"
         sh "sudo chown -R postgres:postgres #{pg_conf_dir}"

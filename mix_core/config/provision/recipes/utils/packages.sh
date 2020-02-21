@@ -10,6 +10,7 @@
   nethogs
   ngrep
   nmap
+  parallel
   tree
 ).reject(&:blank?).each do |package| %>
 

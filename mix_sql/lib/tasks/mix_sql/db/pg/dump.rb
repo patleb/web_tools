@@ -15,6 +15,7 @@ module Db
           split:    ['--[no-]split',               'Compress and split the dump'],
           md5:      ['--[no-]md5',                 'Generate md5 file after successful dump'],
           physical: ['--[no-]physical',            'Use pg_basebackup instead of pg_dump'],
+          wal:      ['--[no-]wal',                 'Use pg_receivewal with pg_basebackup (default to true)'],
           csv:      ['--[no-]csv',                 'Use COPY command instead of pg_dump'],
           where:    ['--where=WHERE',              'WHERE condition for the COPY command'],
         }
@@ -27,6 +28,7 @@ module Db
           includes: [],
           excludes: [],
           compress: true,
+          wal: true,
         }
       end
 
@@ -41,19 +43,18 @@ module Db
 
       private
 
+      # TODO add postgres page checksum
       def generate_md5
-        input = case
-          when options.physical then tar_file
-          when options.csv      then "#{dump_path}~*.csv"
-          else pg_file.to_s
-          end
+        puts "[#{Time.current.utc}][MD5][#{Process.pid}] started".yellow
         if options.physical
-          input = "$(sudo chmod +r #{dump_path} && sudo find #{input.dirname} -type f -not -name '*.md5' -printf '%p ')"
+          input = dump_path
         else
+          input = options.csv ? "#{dump_path}~*.csv" : pg_file.to_s
           input << '.gz' if compress?
           input << '-*' if options.split
         end
-        sh "sudo md5sum #{input} | sudo tee #{md5_file} > /dev/null"
+        sh "sudo chmod +r #{dump_path}", verbose: false
+        sh "sudo find #{input} -type f -not -name '*.md5' | sudo parallel --no-notice 'md5sum {} | sudo tee {}.md5 > /dev/null'"
       end
 
       def pg_basebackup
@@ -70,23 +71,27 @@ module Db
       end
 
       def pg_receivewal
-        sh "sudo mkdir -p #{dump_wal_dir}"
-        sh "sudo chown postgres:postgres #{dump_wal_dir}"
-        sh "sudo rm -f #{dump_wal_dir}/*"
-        psql! "SELECT * FROM pg_create_physical_replication_slot('#{options.name}')"
-        pid = spawn su_postgres "pg_receivewal -S #{options.name} -D #{dump_wal_dir}"
+        if options.wal
+          sh "sudo mkdir -p #{dump_wal_dir}"
+          sh "sudo chown postgres:postgres #{dump_wal_dir}"
+          sh "sudo rm -f #{dump_wal_dir}/*"
+          psql! "SELECT * FROM pg_create_physical_replication_slot('#{options.name}')"
+          pid = spawn su_postgres "pg_receivewal -S #{options.name} -D #{dump_wal_dir}"
+        end
         yield
       ensure
-        psql! "SELECT pg_switch_wal()"
-        sh "sudo pkill pg_receivewal"
-        Process.kill('TERM', pid)
-        Process.detach(pid)
-        sleep 1 while system("sudo pgrep pg_receivewal")
-        psql! "SELECT * FROM pg_drop_replication_slot('#{options.name}')"
-        if compress
-          sh su_postgres "tar cvf - -C #{dump_wal_dir} . | #{compress_cmd(wal_file)}"
-        else
-          sh su_postgres "tar -cvf #{wal_file} -C #{dump_wal_dir} ."
+        if options.wal
+          psql! "SELECT pg_switch_wal()"
+          sh "sudo pkill pg_receivewal"
+          Process.kill('TERM', pid)
+          Process.detach(pid)
+          sleep 1 while system("sudo pgrep pg_receivewal")
+          psql! "SELECT * FROM pg_drop_replication_slot('#{options.name}')"
+          if compress
+            sh su_postgres "tar cvf - -C #{dump_wal_dir} . | #{compress_cmd(wal_file)}"
+          else
+            sh su_postgres "tar -cvf #{wal_file} -C #{dump_wal_dir} ."
+          end
         end
       end
 
@@ -135,10 +140,6 @@ module Db
 
       def compress_cmd(file)
         "pigz -p #{PIGZ_CORES} > #{file}.gz"
-      end
-
-      def md5_file
-        options.physical ? tar_file.sub(/\.tar$/, '.md5') : dump_path.sub_ext('.md5')
       end
 
       def tar_file

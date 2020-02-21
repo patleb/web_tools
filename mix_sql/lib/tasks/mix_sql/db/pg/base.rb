@@ -25,12 +25,16 @@ module Db
 
       def pg_conf_dir
         @pg_conf_dir ||= begin
-          data_dir = Pathname.new(psql! 'SHOW data_directory', sudo: true)
-          `echo #{data_dir} > tmp/pg_conf_dir`
-          data_dir
+          data_dir = psql!('SHOW data_directory', sudo: true).presence || _pg_conf_dir
+          `echo #{data_dir} > tmp/pg_conf_dir` if data_dir.present?
+          Pathname.new(data_dir)
         rescue
-          Pathname.new(Pathname.new('tmp/pg_conf_dir').read.strip)
+          Pathname.new(_pg_conf_dir)
         end
+      end
+
+      def _pg_conf_dir
+        Pathname.new('tmp/pg_conf_dir').read.strip
       end
 
       def su_postgres(cmd)
