@@ -57,6 +57,7 @@ module Db
         sh "sudo find #{input} -type f -not -name '*.md5' | sudo parallel --no-notice 'md5sum {} | sudo tee {}.md5 > /dev/null'"
       end
 
+      # TODO synchronous option
       def pg_basebackup
         pg_receivewal do
           sh "sudo mkdir -p #{dump_path.dirname}"
