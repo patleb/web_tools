@@ -92,7 +92,7 @@ module ActiveTask
     end
 
     def cancel!
-      puts "[#{Time.current.utc}]#{ExtRake::CANCEL}[#{Process.pid}]".red
+      puts_cancel
       @_cancel = true
       after_cancel
     end
@@ -129,7 +129,7 @@ module ActiveTask
       result = nil
       _steps.each do |step|
         break if cancel?
-        puts "[#{Time.current.utc}]#{ExtRake::STEP}[#{Process.pid}] #{step}".yellow
+        puts_step step
         result = send(step)
       end
       result

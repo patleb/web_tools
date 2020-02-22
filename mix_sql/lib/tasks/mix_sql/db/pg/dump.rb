@@ -45,7 +45,7 @@ module Db
 
       # TODO add postgres page checksum
       def generate_md5
-        puts "[#{Time.current.utc}][MD5][#{Process.pid}] started".yellow
+        puts_info '[MD5]', 'started'
         if options.physical
           input = dump_path
         else
@@ -57,7 +57,6 @@ module Db
         sh "sudo find #{input} -type f -not -name '*.md5' | sudo parallel --no-notice 'md5sum {} | sudo tee {}.md5 > /dev/null'"
       end
 
-      # TODO synchronous option
       def pg_basebackup
         pg_receivewal do
           sh "sudo mkdir -p #{dump_path.dirname}"
@@ -67,7 +66,7 @@ module Db
             when options.compress then "-D- | #{compress_cmd(tar_file)}"
             else "-D #{dump_path}"
             end
-          sh su_postgres "pg_basebackup -v -Xnone -Ft #{self.class.pg_options} #{output}"
+          sh su_postgres "pg_basebackup -v -Xnone -cfast -Ft #{self.class.pg_options} #{output}"
         end
       end
 
@@ -77,7 +76,7 @@ module Db
           sh "sudo chown postgres:postgres #{dump_wal_dir}"
           sh "sudo rm -f #{dump_wal_dir}/*"
           psql! "SELECT * FROM pg_create_physical_replication_slot('#{options.name}')"
-          pid = spawn su_postgres "pg_receivewal -S #{options.name} -D #{dump_wal_dir}"
+          pid = spawn su_postgres "pg_receivewal --synchronous -S #{options.name} -D #{dump_wal_dir}"
         end
         yield
       ensure
