@@ -43,7 +43,7 @@ module Db
 
       private
 
-      # TODO add postgres page checksum
+      # TODO add postgres page checksum --> https://postgreshelp.com/postgresql-checksum/
       def generate_md5
         puts_info '[MD5]', 'started'
         if options.physical
