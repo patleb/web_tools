@@ -43,7 +43,7 @@ module Db
         md5_files = dump_path.sub(MATCHER, '*.md5')
         if system("sudo ls #{md5_files} > /dev/null")
           sh "sudo find #{dump_path} -type f -name '*.md5' | sudo parallel --no-notice 'md5sum -c {} > /dev/null'"
-          puts "[#{Time.current.utc}][MD5][#{Process.pid}] checked".yellow
+          puts_info '[MD5]', 'checked'
         end
       end
 
