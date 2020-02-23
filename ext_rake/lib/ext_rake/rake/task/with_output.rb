@@ -62,4 +62,24 @@ module Rake::Task::WithOutput
       ActiveRecord::Base.logger = @_ar_logger
     end
   end
+
+  def puts_started(name)
+    puts "#{ExtRake::STARTED}[#{Process.pid}] #{name}".blue
+  end
+
+  def puts_task(start_time)
+    puts "[#{start_time}]#{ExtRake::TASK}[#{Process.pid}]"
+  end
+
+  def puts_done(finish_time)
+    puts "[#{finish_time}]#{ExtRake::DONE}[#{Process.pid}]"
+  end
+
+  def puts_completed(total_time)
+    puts "#{ExtRake::COMPLETED}[#{Process.pid}] after #{distance_of_time total_time.seconds}".green
+  end
+
+  def puts_failed(total_time)
+    puts "#{ExtRake::FAILED}[#{Process.pid}] after #{distance_of_time total_time.seconds}".red
+  end
 end
