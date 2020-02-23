@@ -58,7 +58,10 @@ module Db
           sh "sudo bash -c 'tar -C #{pg_conf_dir} #{'-I pigz' if compress} -xf #{dump_path}'"
         end
         if system("sudo ls #{wal_file(compress)} > /dev/null")
-          sh "sudo tar -C #{pg_conf_dir.join('pg_wal')} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
+          sh "sudo tar -C #{wal_dir} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
+        end
+        if system("sudo ls #{wal_dir}/*.partial > /dev/null")
+          sh "sudo rename 's/\\.partial$//' #{wal_dir}/*.partial"
         end
         sh %{echo "restore_command = ':'" | sudo tee #{pg_conf_dir.join('recovery.conf')} > /dev/null}
         sh "sudo chmod 700 #{pg_conf_dir}"
@@ -148,6 +151,10 @@ module Db
 
       def wal_file(compress)
         compress ? dump_path.dirname.join('pg_wal.tar.gz') : dump_path.dirname.join('pg_wal.tar')
+      end
+
+      def wal_dir
+        @wal_dir ||= pg_conf_dir.join('pg_wal')
       end
 
       def dump_path
