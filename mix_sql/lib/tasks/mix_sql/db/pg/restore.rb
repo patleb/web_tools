@@ -61,7 +61,7 @@ module Db
           sh "sudo tar -C #{wal_dir} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
         end
         if system("sudo ls #{wal_dir}/*.partial > /dev/null")
-          sh "sudo rename 's/\\.partial$//' #{wal_dir}/*.partial"
+          sh "sudo mmv '#{wal_dir}/*.partial' '#{wal_dir}/#1'"
         end
         sh %{echo "restore_command = ':'" | sudo tee #{pg_conf_dir.join('recovery.conf')} > /dev/null}
         sh "sudo chmod 700 #{pg_conf_dir}"

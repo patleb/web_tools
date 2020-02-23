@@ -21,8 +21,10 @@
   #{sun.os.ubuntu? ? 'libxml2-dev libxml2-utils'         : 'libxml2 libxml2-devel'}
   #{sun.os.ubuntu? ? 'libxslt1-dev'                      : 'libxslt-devel'}
   #{sun.os.ubuntu? ? 'libyaml-dev'                       : 'libyaml-devel'}
+  mmv
   openssh-server
   openssl
+  parallel
   pigz
   pv
   #{sun.os.ubuntu? ? 'sqlite3 libsqlite3-dev'            : 'sqlite sqlite-devel'}
