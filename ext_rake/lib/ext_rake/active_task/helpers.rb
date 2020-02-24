@@ -40,11 +40,11 @@ module ActiveTask
     def puts_downloading(file_name, remainder, total)
       remainder = number_to_human_size remainder
       total = number_to_human_size total
-      puts "Downloading #{file_name}[#{total}] remaining #{remainder}"
+      puts "Downloading #{file_name}[#{Process.pid}][#{total}] remaining #{remainder}"
     end
 
     def puts_step(name)
-      puts_info ExtRake::STEP, name
+      puts "[#{Time.current.utc}]#{ExtRake::STEP}[#{Process.pid}] #{name}".yellow
     end
 
     def puts_cancel
@@ -52,7 +52,7 @@ module ActiveTask
     end
 
     def puts_info(tag, text = nil)
-      puts "[#{Time.current.utc}]#{tag}[#{Process.pid}] #{text}".yellow
+      puts "[#{Time.current.utc}]#{tag}[#{Process.pid}] #{text}"
     end
   end
 end
