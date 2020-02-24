@@ -6,3 +6,12 @@ cp parallel sem
 cp parallel /bin
 cp sem /bin
 mv parallel sem /usr/bin/
+case "$OS" in
+ubuntu)
+  :
+;;
+centos)
+  cp /bin/mktemp /bin/tempfile
+  cp /usr/bin/mktemp /usr/bin/tempfile
+;;
+esac
