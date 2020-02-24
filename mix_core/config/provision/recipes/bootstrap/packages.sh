@@ -24,7 +24,6 @@
   mmv
   openssh-server
   openssl
-  parallel
   pigz
   pv
   #{sun.os.ubuntu? ? 'sqlite3 libsqlite3-dev'            : 'sqlite sqlite-devel'}

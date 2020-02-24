@@ -3,6 +3,7 @@
   htop
   goaccess
   monit
+  parallel
   sysstat
   #{'mailcatcher' if sun.env.vagrant?}
 ), base: 'utils') do |name, id| %>
