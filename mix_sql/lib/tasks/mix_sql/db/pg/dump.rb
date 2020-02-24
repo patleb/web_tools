@@ -4,6 +4,7 @@ module Db
       SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
       SPLIT_SIZE = 2
       PIGZ_CORES = (Etc.nprocessors - 2) > 0 ? Etc.nprocessors - 2 : 1
+      # TODO (Etc.nprocessors / 4.0).ceil instead
 
       def self.args
         {
