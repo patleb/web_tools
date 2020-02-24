@@ -9,6 +9,7 @@ sun.setup_progress() {
     echo "New provisioning"
     touch "$HOME/$__MANIFEST_LOG__"
     mkdir "$HOME/$__MANIFEST_DIR__"
+    mkdir "$HOME/$__METADATA_DIR__"
     mkdir "$HOME/$__DEFAULTS_DIR__"
   fi
   echo "Started at $(date '+%Y-%m-%d %H:%M:%S')"

@@ -8,6 +8,7 @@ module Sunzistrano
     PROVISION_DIR = 'sun_provision'
     MANIFEST_LOG = 'sun_manifest.log'
     MANIFEST_DIR = 'sun_manifest'
+    METADATA_DIR = 'sun_metadata'
     DEFAULTS_DIR = 'sun_defaults'
 
     constants.each do |name|
@@ -58,6 +59,7 @@ module Sunzistrano
         provision_dir: PROVISION_DIR,
         manifest_log: MANIFEST_LOG,
         manifest_dir: MANIFEST_DIR,
+        metadata_dir: METADATA_DIR,
         defaults_dir: DEFAULTS_DIR,
       )
     end

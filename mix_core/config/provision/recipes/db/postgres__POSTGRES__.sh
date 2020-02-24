@@ -51,6 +51,7 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
     sun.psql "ALTER USER postgres WITH PASSWORD 'postgres'"
   ;;
   esac
+  echo $PG_CONF_DIR > $(sun.metadata_path 'pg_conf_dir')
 else
   case "$OS" in
   centos)

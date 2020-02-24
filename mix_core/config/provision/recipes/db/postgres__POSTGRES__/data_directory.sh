@@ -9,6 +9,7 @@ chown -R postgres:postgres $NEW_PG_CONF_DIR
 rsync -ah $OLD_PG_CONF_DIR/ $NEW_PG_CONF_DIR
 <%= Sh.delete_lines! '$NEW_PG_CONF_DIR/postgresql.conf', 'data_directory' %>
 echo "data_directory = '$NEW_PG_CONF_DIR'" >> $NEW_PG_CONF_DIR/postgresql.conf
+echo $NEW_PG_CONF_DIR > $(sun.metadata_path 'pg_conf_dir')
 
 case "$OS" in
 centos)
