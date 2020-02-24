@@ -4,5 +4,7 @@ namespace :load do
   task :defaults do
     set :migration_role, -> { :web }
     set :db_roles,       -> { :web }
+
+    append :linked_files, 'tmp/pg_conf_dir'
   end
 end
