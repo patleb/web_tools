@@ -8,11 +8,6 @@ module Db
         ENV['PG_OPTIONS']
       end
 
-      def sh(*cmd, &block)
-        pg_conf_dir
-        super
-      end
-
       protected
 
       def with_db_config
