@@ -3,7 +3,6 @@ module Db
     class Dump < Base
       SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
       SPLIT_SIZE = 2
-      # PIGZ_CORES = (Etc.nprocessors - 2) > 0 ? Etc.nprocessors - 2 : 1
       PIGZ_CORES = (Etc.nprocessors / 2.0).ceil
 
       def self.args
