@@ -3,8 +3,8 @@ module Db
     class Dump < Base
       SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
       SPLIT_SIZE = 2
-      PIGZ_CORES = (Etc.nprocessors - 2) > 0 ? Etc.nprocessors - 2 : 1
-      # TODO (Etc.nprocessors / 4.0).ceil instead
+      # PIGZ_CORES = (Etc.nprocessors - 2) > 0 ? Etc.nprocessors - 2 : 1
+      PIGZ_CORES = (Etc.nprocessors / 2.0).ceil
 
       def self.args
         {
@@ -34,30 +34,17 @@ module Db
       end
 
       def dump
+        sh "sudo chmod +r #{dump_path}", verbose: false
         case
         when options.physical then pg_basebackup
         when options.csv      then copy_to
         else pg_dump
         end
-        generate_md5 if options.md5
       end
 
       private
 
       # TODO add postgres page checksum --> https://postgreshelp.com/postgresql-checksum/
-      def generate_md5
-        puts_info '[MD5]', 'started'
-        if options.physical
-          input = dump_path
-        else
-          input = options.csv ? "#{dump_path}~*.csv" : pg_file.to_s
-          input << '.gz' if compress?
-          input << '-*' if options.split
-        end
-        sh "sudo chmod +r #{dump_path}", verbose: false
-        sh "sudo find #{input} -type f -not -name '*.md5' | sudo parallel --no-notice 'md5sum {} | sudo tee {}.md5 > /dev/null'"
-      end
-
       def pg_basebackup
         pg_receivewal do
           sh "sudo mkdir -p #{dump_path.dirname}"
@@ -92,6 +79,7 @@ module Db
             sh su_postgres "tar cvf - -C #{dump_wal_dir} . | #{compress_cmd(wal_file)}"
           else
             sh su_postgres "tar -cvf #{wal_file} -C #{dump_wal_dir} ."
+            sh "sudo md5sum #{wal_file} | sudo tee #{wal_file}.md5 > /dev/null" if options.md5
           end
         end
       end
@@ -136,11 +124,18 @@ module Db
       end
 
       def split_cmd(file)
-        "pigz -p #{PIGZ_CORES} | split -a 4 -b #{SPLIT_SIZE}#{SPLIT_SCALE} - #{file}.gz-"
+        if options.md5
+          md5sum = %{tee >(md5sum | cut -d " " -f 1 | tr -d "\\n" > $FILE.md5 && echo " "" $FILE" >> $FILE.md5) > $FILE}
+          md5sum = %{--filter="#{md5sum.gsub(/(["$])/, "\\\\\\1")}"}
+        end
+        "pigz -p #{PIGZ_CORES} | split -a 4 -b #{SPLIT_SIZE}#{SPLIT_SCALE} #{md5sum} - #{file}.gz-"
       end
 
       def compress_cmd(file)
-        "pigz -p #{PIGZ_CORES} > #{file}.gz"
+        if options.md5
+          md5sum = %{| tee >(md5sum | cut -d " " -f 1 | tr -d "\\n" > #{file}.gz.md5 && echo " "" #{file}.gz" >> #{file}.gz.md5)}
+        end
+        "pigz -p #{PIGZ_CORES} #{md5sum} > #{file}.gz"
       end
 
       def tar_file
