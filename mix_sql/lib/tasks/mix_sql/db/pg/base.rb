@@ -19,7 +19,7 @@ module Db
       end
 
       def pg_conf_dir
-        @pg_conf_dir ||= `sudo cat /home/$(id -nu 1000)/sun_metadata/pg_conf_dir`.strip
+        @pg_conf_dir ||= Pathname.new(`sudo cat /home/$(id -nu 1000)/sun_metadata/pg_conf_dir`.strip)
       end
 
       def su_postgres(cmd)
