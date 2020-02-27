@@ -33,7 +33,6 @@ module Db
       end
 
       def dump
-        sh "sudo chmod +r #{dump_path}", verbose: false
         case
         when options.physical then pg_basebackup
         when options.csv      then copy_to
@@ -45,6 +44,7 @@ module Db
 
       # TODO add postgres page checksum --> https://postgreshelp.com/postgresql-checksum/
       def pg_basebackup
+        sh "sudo chmod +r #{dump_path}", verbose: false
         pg_receivewal do
           sh "sudo mkdir -p #{dump_path.dirname}"
           sh "sudo chown postgres:postgres #{dump_path.dirname}"
