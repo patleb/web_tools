@@ -13,6 +13,7 @@ module Db
           name:        ['--name=NAME',                'Dump file name', :required],
           base_dir:    ['--base-dir=BASE_DIR',        'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
           includes:    ['--includes=INCLUDES', Array, 'Included tables for pg_restore'],
+          md5:         ['--[no-]md5',                 'Check md5 files if present (default to true)'],
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
           timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
           pgrest:      ['--[no-]pgrest',              'Specify if PostgREST API is used for pg_restore'],
@@ -23,11 +24,12 @@ module Db
         {
           base_dir: ExtRake.config.rails_root.join('db'),
           includes: [],
+          md5: true,
         }
       end
 
       def restore
-        check_md5
+        check_md5 if options.md5
         table, type, compress, split = dump_path.basename.to_s.match(MATCHER).captures
         case type
         when 'tar' then unpack(compress, split)
