@@ -50,9 +50,5 @@ module ActiveTask
     def puts_cancel
       puts "[#{Time.current.utc}]#{ExtRake::CANCEL}[#{Process.pid}]".red
     end
-
-    def puts_info(tag, text = nil)
-      puts "[#{Time.current.utc}]#{tag}[#{Process.pid}] #{text}"
-    end
   end
 end
