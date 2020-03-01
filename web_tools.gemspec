@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_ruby",       version
   s.add_dependency "ext_webpacker",  version
   s.add_dependency "ext_whenever",   version
+  s.add_dependency "mix_admin",      version
   s.add_dependency "mix_backup",     version
   s.add_dependency "mix_core",       version
   s.add_dependency "mix_global",     version
