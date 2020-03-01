@@ -1,8 +1,8 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.11.0"
+lock "~> 3.12.0"
 
 set :application, "web_tools"
-set :repo_url, "git@github.com:patleb/mix_system.git"
+set :repo_url, "git@github.com:patleb/web_tools.git"
 set :assets_prefix, 'packs'
 
 # Default branch is :master
