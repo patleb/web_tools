@@ -31,6 +31,7 @@ sun.compile() {
   local tmp=$(mktemp)
   echo 'cat <<EOF_COMPILE' > $tmp
   cat $src                 >> $tmp
+  echo ''                  >> $tmp
   echo 'EOF_COMPILE'       >> $tmp
   bash -u $tmp > $dst
   rm -f $tmp
