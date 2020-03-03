@@ -2,6 +2,14 @@
 set -e
 set -u
 
+sun.os_name() {
+  hostnamectl | grep Operating | cut -d ':' -f2 | cut -d ' ' -f2 | tr '[:upper:]' '[:lower:]'
+}
+
+sun.os_version() {
+  hostnamectl | grep Operating | grep -o -E '[0-9]+' | head -n2 | paste -sd '.'
+}
+
 export OS=$(sun.os_name)
 export OS_VERSION=$(sun.os_version)
 case "$OS" in
@@ -20,6 +28,7 @@ centos)
   export os_package_installed='rpm -q'
   export os_package_lock='yum versionlock add'
   export os_package_unlock='yum versionlock delete'
+;;
 *)
   echo "Unsupported OS"
   exit 1

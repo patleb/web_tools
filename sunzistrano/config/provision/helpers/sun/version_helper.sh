@@ -31,14 +31,6 @@ sun.version_is_smaller() {
   esac
 }
 
-sun.os_name () {
-  hostnamectl | grep Operating | cut -d ':' -f2 | cut -d ' ' -f2 | tr '[:upper:]' '[:lower:]'
-}
-
-sun.os_version () {
-  hostnamectl | grep Operating | grep -o -E '[0-9]+' | head -n2 | paste -sd '.'
-}
-
 sun.manifest_path() {
   echo "$HOME/$__MANIFEST_DIR__/$1.log"
 }
