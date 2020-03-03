@@ -1,5 +1,6 @@
 require 'require_all'
 require 'ice_nine'
+require 'sys/uname'
 
 require 'active_support/concern'
 require 'active_support/core_ext/array/wrap'
@@ -42,6 +43,7 @@ require 'ext_ruby/sh'
 require 'ext_ruby/string'
 require 'ext_ruby/string/inflections'
 require 'ext_ruby/symbol'
+require 'ext_ruby/sys/uname'
 require 'ext_ruby/timeout'
 require 'ext_ruby/uuid'
 
