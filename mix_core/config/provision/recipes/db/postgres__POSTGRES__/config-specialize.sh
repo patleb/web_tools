@@ -1,1 +1,1 @@
-source 'recipes/db/postgres__POSTGRES__/conf.sh'
+source 'recipes/db/postgres__POSTGRES__/config.sh'
