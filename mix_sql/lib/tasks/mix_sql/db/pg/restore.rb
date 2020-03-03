@@ -71,6 +71,7 @@ module Db
         sh 'sudo systemctl start postgresql'
       end
 
+      # TODO https://ossc-db.github.io/pg_bulkload/index.html
       def copy_from(table, compress, split)
         if options.timescaledb
           # TODO parallelize
