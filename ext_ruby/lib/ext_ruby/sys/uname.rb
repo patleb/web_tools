@@ -7,26 +7,18 @@ module Sys
 
     def self.os
       @os ||= case
-        when version.match?(UBUNTU_VERSION) then 'ubuntu'
-        when release.match?(CENTOS_VERSION) then 'centos'
+        when version.match?(UBUNTU_VERSION) then ActiveSupport::StringInquirer.new('ubuntu')
+        when release.match?(CENTOS_VERSION) then ActiveSupport::StringInquirer.new('centos')
         else raise UnsupportedOS
         end
     end
 
     def self.os_version
       @os_version ||= case true
-        when ubuntu? then version.match(UBUNTU_VERSION)[1]
-        when centos? then release.match(CENTOS_VERSION)[1]
+        when os.ubuntu? then version.match(UBUNTU_VERSION)[1]
+        when os.centos? then release.match(CENTOS_VERSION)[1]
         else raise UnsupportedOS
         end
-    end
-
-    def self.ubuntu?
-      os == 'ubuntu'
-    end
-
-    def self.centos?
-      os == 'centos'
     end
   end
 end
