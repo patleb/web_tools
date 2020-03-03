@@ -88,14 +88,14 @@ sun.defaults_path() {
 sun.template_path() {
   local base="$(sun.provision_path)/files/$(echo "$1" | sed 's|^/||')"
   local type="$base.$OS"
+  local type_version="$type.$OS_VERSION"
+  if [[ -e "$type_version" ]] || [[ -e "$type_version.esh" ]] || [[ -e "$type_version.ref" ]]; then
+    echo "$type_version"
+    return
+  fi
   if [[ -e "$type" ]] || [[ -e "$type.esh" ]] || [[ -e "$type.ref" ]]; then
     echo "$type"
     return
   fi
-#  type="$base.$OS.$__OS_VERSION__"
-#  if [[ -e "$type" ]] || [[ -e "$type.esh" ]] || [[ -e "$type.ref" ]]; then
-#    echo "$type"
-#    return
-#  fi
   echo $base
 }
