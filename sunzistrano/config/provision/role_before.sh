@@ -2,27 +2,29 @@
 set -e
 set -u
 
-# TODO use $ID instead from /etc/os-release and use $VERSION_ID
-if which apt-get >/dev/null 2>&1; then
-  export OS=ubuntu
+export OS=$(sun.os_name)
+export OS_VERSION=$(sun.os_version)
+case "$OS" in
+ubuntu)
   export os_package_get='apt-get'
   export os_package_update='apt update'
   export os_package_upgrade='apt upgrade'
   export os_package_installed='dpkg -s'
   export os_package_lock='apt-mark hold'
   export os_package_unlock='apt-mark unhold'
-elif which yum >/dev/null 2>&1; then
-  export OS=centos
+;;
+centos)
   export os_package_get='yum'
   export os_package_update='yum clean expire-cache'
   export os_package_upgrade='yum --exclude=kernel* update'
   export os_package_installed='rpm -q'
   export os_package_lock='yum versionlock add'
   export os_package_unlock='yum versionlock delete'
-else
+*)
   echo "Unsupported OS"
   exit 1
-fi
+;;
+esac
 
 source /etc/os-release
 export TERM=linux
@@ -39,6 +41,11 @@ __REBOOT__=${__REBOOT__:-false}
 
 if [[ "$OS" != "$__OS_NAME__" ]]; then
   echo "'$OS' != '$__OS_NAME__'"
+  exit 1
+fi
+
+if [[ "$OS_VERSION" != "$__OS_VERSION__" ]]; then
+  echo "'$OS_VERSION' != '$__OS_VERSION__'"
   exit 1
 fi
 
