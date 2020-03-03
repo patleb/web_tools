@@ -7,6 +7,7 @@
   ca-certificates
   #{sun.os.ubuntu? ? ('castxml' if sun.ruby_cpp)         : ''}
   #{'clang' if sun.ruby_cpp}
+  cmake
   git
   #{sun.os.ubuntu? ? 'dirmngr gnupg'                     : 'pygpgme'}
   #{sun.os.ubuntu? ? 'imagemagick'                       : 'ImageMagick ImageMagick-devel'}
@@ -21,9 +22,11 @@
   #{sun.os.ubuntu? ? 'libxml2-dev libxml2-utils'         : 'libxml2 libxml2-devel'}
   #{sun.os.ubuntu? ? 'libxslt1-dev'                      : 'libxslt-devel'}
   #{sun.os.ubuntu? ? 'libyaml-dev'                       : 'libyaml-devel'}
+  m4
   mmv
   openssh-server
   openssl
+  patch
   pigz
   pv
   #{sun.os.ubuntu? ? 'sqlite3 libsqlite3-dev'            : 'sqlite sqlite-devel'}

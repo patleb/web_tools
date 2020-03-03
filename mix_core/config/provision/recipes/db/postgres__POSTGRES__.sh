@@ -9,7 +9,7 @@ PG_CONF_DIR=$(sun.pg_default_conf_dir)
 
 case "$OS" in
 ubuntu)
-  PG_PACKAGES="postgresql-$__POSTGRES__ postgresql postgresql-contrib postgresql-common libpq-dev"
+  PG_PACKAGES="postgresql-$__POSTGRES__ postgresql postgresql-contrib postgresql-common libpq-dev postgresql-server-dev-$__POSTGRES__"
 
   sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
   wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
