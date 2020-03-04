@@ -14,7 +14,7 @@ class CreateLibRescues < ActiveRecord::Migration[5.1]
 
       add_index :lib_rescues, [:type, :exception]
       add_index :lib_rescues, :created_at
-      add_index :lib_rescues, [:message, :data], using: :gin
+      add_index :lib_rescues, [:message, :data], using: :gist
     end
   end
 
