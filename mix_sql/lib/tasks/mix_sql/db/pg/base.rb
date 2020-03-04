@@ -18,8 +18,8 @@ module Db
           db[:password]
       end
 
-      def pg_conf_dir
-        @pg_conf_dir ||= Pathname.new(`sudo cat /home/$(id -nu 1000)/sun_metadata/pg_conf_dir`.strip)
+      def pg_data_dir
+        @pg_data_dir ||= Pathname.new(`sudo cat /home/$(id -nu 1000)/sun_metadata/pg_data_dir`.strip)
       end
 
       def su_postgres(cmd)

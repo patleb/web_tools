@@ -5,7 +5,9 @@
 # https://www.modio.se/scaling-past-the-single-machine.html
 # https://askubuntu.com/questions/732431/how-to-uninstall-specific-versions-of-postgres
 PG_MANIFEST=$(sun.manifest_path 'postgresql')
-PG_CONF_DIR=$(sun.pg_default_conf_dir)
+PG_DATA_DIR=$(sun.pg_default_data_dir)
+PG_CONFIG_FILE=$(sun.pg_default_config_file)
+PG_HBA_FILE=$(sun.pg_default_hba_file)
 
 case "$OS" in
 ubuntu)
@@ -32,25 +34,25 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
 
   case "$OS" in
   ubuntu)
-    sun.backup_compare "$PG_CONF_DIR/postgresql.conf"
-    sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
+    sun.backup_compare "$PG_CONFIG_FILE"
+    sun.backup_compare "$PG_HBA_FILE"
   ;;
   centos)
     echo "export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/pgsql-$__POSTGRES__/bin" >> /etc/environment
     export PATH="$PATH:/usr/pgsql-$__POSTGRES__/bin"
 
     postgresql-$__POSTGRES__-setup initdb
-    sun.backup_compare "$PG_CONF_DIR/postgresql.conf"
-    sun.backup_move "$PG_CONF_DIR/pg_hba.conf"
-    chmod 600 "$PG_CONF_DIR/pg_hba.conf"
-    chown postgres:postgres "$PG_CONF_DIR/pg_hba.conf"
+    sun.backup_compare "$PG_CONFIG_FILE"
+    sun.backup_move "$PG_HBA_FILE"
+    chmod 600 "$PG_HBA_FILE"
+    chown postgres:postgres "$PG_HBA_FILE"
     echo 'Alias=postgresql.service' >> /usr/lib/systemd/system/postgresql-$__POSTGRES__.service
     systemctl enable postgresql-$__POSTGRES__
     systemctl restart postgresql
     sun.psql "ALTER USER postgres WITH PASSWORD 'postgres'"
   ;;
   esac
-  echo $PG_CONF_DIR > $(sun.metadata_path 'pg_conf_dir')
+  echo $PG_DATA_DIR > $(sun.metadata_path 'pg_data_dir')
 else
   case "$OS" in
   centos)
@@ -81,8 +83,8 @@ else
 
   if [[ "$PG_OLD_MAJOR" != "$__POSTGRES__" ]]; then
     # pg_lsclusters
-    sun.backup_compare "$PG_CONF_DIR/postgresql.conf"
-    sun.backup_compare "$PG_CONF_DIR/pg_hba.conf"
+    sun.backup_compare "$PG_CONFIG_FILE"
+    sun.backup_compare "$PG_HBA_FILE"
     sudo su - postgres << EOF
       pg_dropcluster --stop "$__POSTGRES__" main
       pg_upgradecluster -v "$__POSTGRES__" "$PG_OLD_MAJOR" main

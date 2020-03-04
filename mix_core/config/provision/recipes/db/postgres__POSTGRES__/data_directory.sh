@@ -1,15 +1,17 @@
 __DATA_DIRECTORY__=${__DATA_DIRECTORY__:-/opt/storage}
-OLD_PG_CONF_DIR=${OLD_PG_CONF_DIR:-$(sun.pg_conf_dir)}
-export NEW_PG_CONF_DIR=$__DATA_DIRECTORY__/pg_${__POSTGRES__}_data
+PG_CONFIG_FILE=$(sun.pg_config_file)
+OLD_PG_DATA_DIR=${OLD_PG_DATA_DIR:-$(sun.pg_data_dir)}
+export NEW_PG_DATA_DIR=$__DATA_DIRECTORY__/pg_${__POSTGRES__}_data
 
 systemctl stop postgresql
 
-mkdir -p $NEW_PG_CONF_DIR
-chown -R postgres:postgres $NEW_PG_CONF_DIR
-rsync -ah $OLD_PG_CONF_DIR/ $NEW_PG_CONF_DIR
-<%= Sh.delete_lines! '$NEW_PG_CONF_DIR/postgresql.conf', 'data_directory' %>
-echo "data_directory = '$NEW_PG_CONF_DIR'" >> $NEW_PG_CONF_DIR/postgresql.conf
-echo $NEW_PG_CONF_DIR > $(sun.metadata_path 'pg_conf_dir')
+<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'data_directory =' %>
+echo "data_directory = '$NEW_PG_DATA_DIR'" >> $PG_CONFIG_FILE
+echo $NEW_PG_DATA_DIR > $(sun.metadata_path 'pg_data_dir')
+
+mkdir -p $NEW_PG_DATA_DIR
+chown -R postgres:postgres $NEW_PG_DATA_DIR
+rsync -ah $OLD_PG_DATA_DIR/ $NEW_PG_DATA_DIR
 
 case "$OS" in
 centos)

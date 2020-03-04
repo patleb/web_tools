@@ -52,12 +52,12 @@ module Db
       # TODO PITR --> https://www.scalingpostgres.com/tutorials/postgresql-backup-point-in-time-recovery/
       def unpack(compress, split)
         sh 'sudo systemctl stop postgresql'
-        sh "sudo rm -rf #{pg_conf_dir}"
-        sh "sudo mkdir -p #{pg_conf_dir}"
+        sh "sudo rm -rf #{pg_data_dir}"
+        sh "sudo mkdir -p #{pg_data_dir}"
         if split
-          sh "sudo bash -c 'GLOBIGNORE=*.md5; cat #{dump_path} | tar -C #{pg_conf_dir} #{'-I pigz' if compress} -xf -'"
+          sh "sudo bash -c 'GLOBIGNORE=*.md5; cat #{dump_path} | tar -C #{pg_data_dir} #{'-I pigz' if compress} -xf -'"
         else
-          sh "sudo bash -c 'tar -C #{pg_conf_dir} #{'-I pigz' if compress} -xf #{dump_path}'"
+          sh "sudo bash -c 'tar -C #{pg_data_dir} #{'-I pigz' if compress} -xf #{dump_path}'"
         end
         if system("sudo ls #{wal_file(compress)} > /dev/null")
           sh "sudo tar -C #{wal_dir} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
@@ -65,9 +65,9 @@ module Db
             sh "sudo mmv '#{wal_dir}/*.partial' '#{wal_dir}/#1'"
           end
         end
-        sh %{echo "restore_command = ':'" | sudo tee #{pg_conf_dir.join('recovery.conf')} > /dev/null}
-        sh "sudo chmod 700 #{pg_conf_dir}"
-        sh "sudo chown -R postgres:postgres #{pg_conf_dir}"
+        sh %{echo "restore_command = ':'" | sudo tee #{pg_data_dir.join('recovery.conf')} > /dev/null}
+        sh "sudo chmod 700 #{pg_data_dir}"
+        sh "sudo chown -R postgres:postgres #{pg_data_dir}"
         sh 'sudo systemctl start postgresql'
       end
 
@@ -157,7 +157,7 @@ module Db
       end
 
       def wal_dir
-        @wal_dir ||= pg_conf_dir.join('pg_wal')
+        @wal_dir ||= pg_data_dir.join('pg_wal')
       end
 
       def dump_path
