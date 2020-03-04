@@ -7,15 +7,16 @@ case "$OS" in
 ubuntu)
   FTP_CONF=/etc/vsftpd.conf
   export FTP_LIST=/etc/vsftpd.userlist
+  sun.move $FTP_LIST
 ;;
 centos)
   FTP_CONF=/etc/vsftpd/vsftpd.conf
   export FTP_LIST=/etc/vsftpd/user_list
+  sun.backup_compare $FTP_LIST
 ;;
 esac
 
 sun.backup_compile $FTP_CONF
-sun.backup_compare $FTP_LIST
 echo $__DEPLOYER_NAME__ >> $FTP_LIST
 
 mkdir -p /home/$__DEPLOYER_NAME__/ftp/$__APP__/$__ENV__
