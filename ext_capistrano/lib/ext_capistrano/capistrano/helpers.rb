@@ -32,7 +32,12 @@ module ExtCapistrano
 
     def execute_nohup(command)
       filename = nohup_basename(command)
-      execute :nohup, "#{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid", pty: false
+      execute <<-SH.squish, pty: false
+        #{Sh.rbenv_export(fetch(:deployer_name))}; #{Sh.rbenv_init};
+        export RAILS_ENV=#{cap.env}; export RAILS_APP=#{cap.app}; export RAKE_OUTPUT=true;
+        cd #{current_path};
+        nohup #{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid
+      SH
     end
 
     def kill_nohup(command)
