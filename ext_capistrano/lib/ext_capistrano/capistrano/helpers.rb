@@ -2,7 +2,7 @@ module ExtCapistrano
   module Helpers
     def execute_cap(stage, task, environment = {})
       with_cap environment do
-        execute 'bin/cap', stage, task
+        execute :cap, stage, task
       end
     end
 
@@ -17,7 +17,7 @@ module ExtCapistrano
 
     def execute_rake(task, environment = {})
       with_rake environment do
-        execute 'bin/rake', task
+        execute :rake, task
       end
     end
 
