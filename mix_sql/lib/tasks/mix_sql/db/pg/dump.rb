@@ -44,10 +44,10 @@ module Db
 
       # TODO add postgres page checksum --> https://postgreshelp.com/postgresql-checksum/
       def pg_basebackup
+        sh "sudo mkdir -p #{dump_path}", verbose: false
+        sh "sudo chown -R postgres:postgres #{dump_path}", verbose: false
         sh "sudo chmod +r #{dump_path}", verbose: false
         pg_receivewal do
-          sh "sudo mkdir -p #{dump_path.dirname}"
-          sh "sudo chown postgres:postgres #{dump_path.dirname}"
           output = case
             when options.split    then "-D- | #{split_cmd(tar_file)}"
             when options.compress then "-D- | #{compress_cmd(tar_file)}"
@@ -59,8 +59,8 @@ module Db
 
       def pg_receivewal
         if options.wal
-          sh "sudo mkdir -p #{dump_wal_dir}"
-          sh "sudo chown postgres:postgres #{dump_wal_dir}"
+          sh "sudo mkdir -p #{dump_wal_dir}", verbose: false
+          sh "sudo chown postgres:postgres #{dump_wal_dir}", verbose: false
           sh "sudo rm -f #{dump_wal_dir}/*"
           psql! "SELECT * FROM pg_create_physical_replication_slot('#{options.name}')"
           pid = spawn su_postgres "pg_receivewal --synchronous -S #{options.name} -D #{dump_wal_dir}"
@@ -124,15 +124,17 @@ module Db
 
       def split_cmd(file)
         if options.md5
-          md5sum = %{tee >(md5sum | cut -d " " -f 1 | tr -d "\\n" > $FILE.md5 && echo " "" $FILE" >> $FILE.md5) > $FILE}
+          md5sum = %{echo $(md5sum | cut -d " " -f 1 | tr -d "\\n") " "$FILE > $FILE.md5}
+          md5sum = %{tee >(#{md5sum}) > $FILE}
           md5sum = %{--filter="#{md5sum.gsub(/(["$])/, "\\\\\\1")}"}
         end
-        "pigz -p #{PIGZ_CORES} | split -a 4 -b #{SPLIT_SIZE}#{SPLIT_SCALE} #{md5sum} - #{file}.gz-"
+        "pigz -p #{PIGZ_CORES} | split -d -a 6 -b #{SPLIT_SIZE}#{SPLIT_SCALE} #{md5sum} - #{file}.gz-"
       end
 
       def compress_cmd(file)
         if options.md5
-          md5sum = %{| tee >(md5sum | cut -d " " -f 1 | tr -d "\\n" > #{file}.gz.md5 && echo " "" #{file}.gz" >> #{file}.gz.md5)}
+          md5sum = %{echo $(md5sum | cut -d " " -f 1 | tr -d "\\n") " "#{file}.gz > #{file}.gz.md5}
+          md5sum = %{| tee >(#{md5sum})}
         end
         "pigz -p #{PIGZ_CORES} #{md5sum} > #{file}.gz"
       end

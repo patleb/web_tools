@@ -55,7 +55,8 @@ module Db
         sh "sudo rm -rf #{pg_data_dir}"
         sh "sudo mkdir -p #{pg_data_dir}"
         if split
-          sh "sudo bash -c 'GLOBIGNORE=*.md5; cat #{dump_path} | tar -C #{pg_data_dir} #{'-I pigz' if compress} -xf -'"
+          list_cmd = "find #{dump_path.dirname} -iname #{dump_path.basename} -not -name *.md5"
+          sh "sudo bash -c '#{list_cmd} | sort | xargs cat | tar -C #{pg_data_dir} #{'-I pigz' if compress} -xf -'"
         else
           sh "sudo bash -c 'tar -C #{pg_data_dir} #{'-I pigz' if compress} -xf #{dump_path}'"
         end
