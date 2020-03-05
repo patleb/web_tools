@@ -2,6 +2,10 @@
 # https://stackoverflow.com/questions/37713131/postgresql-sort-by-uuid-v1-timestamp
 class EnableUuidOssp < ActiveRecord::Migration[5.2]
   def change
+    # Example
+    #
+    # t.primary_key :id, :uuid, default: 'uuid_generate_v1mc()'
+    #
     enable_extension 'uuid-ossp'
 
     reversible do |change|
