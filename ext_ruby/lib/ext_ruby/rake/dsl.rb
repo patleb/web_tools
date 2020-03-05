@@ -1,9 +1,9 @@
 module Rake
   module DSL
-    def keep(root)
+    def keep(root, force: false)
       root = Pathname.new(root)
       mkdir_p root
-      touch   root.join('.keep')
+      touch root.join('.keep') if force || root.empty?
     end
 
     def gitignore(root, ignore, verbose: true)
@@ -33,6 +33,10 @@ module Rake
 
     def generate_password
       SecureRandom.hex(16)
+    end
+
+    def puts_info(tag, text = nil)
+      puts "[#{Time.current.utc}]#{tag}[#{Process.pid}] #{text}"
     end
   end
 end

@@ -82,8 +82,4 @@ module Rake::Task::WithOutput
   def puts_failed(total_time)
     puts "#{ExtRake::FAILED}[#{Process.pid}] after #{distance_of_time total_time.seconds}".red
   end
-
-  def puts_info(tag, text = nil)
-    puts "[#{Time.current.utc}]#{tag}[#{Process.pid}] #{text}"
-  end
 end
