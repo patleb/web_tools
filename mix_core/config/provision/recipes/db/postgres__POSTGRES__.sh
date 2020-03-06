@@ -64,17 +64,6 @@ else
   PG_OLD_VERSION=$(tac "$PG_MANIFEST" | grep -m 1 '.')
   PG_OLD_MAJOR=$(sun.pg_major_version "$PG_OLD_VERSION")
 
-  PG_BACKUP="$HOME/postgresql-$PG_OLD_VERSION-backup"
-
-  sudo -u postgres pg_dumpall --clean --quote-all-identifiers > "$PG_BACKUP"
-
-  if [[ -s "$PG_BACKUP" ]]; then
-    echo "pg_dumpall backup available at $PG_BACKUP"
-  else
-    echo "[$PG_BACKUP] is empty"
-    exit 1
-  fi
-
   systemctl stop postgresql
 
   sun.unlock "$PG_PACKAGES"
