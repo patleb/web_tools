@@ -7,19 +7,19 @@ class EnableUnaccent < ActiveRecord::Migration[5.1]
         execute <<-SQL.strip_sql
           CREATE OR REPLACE FUNCTION unaccent_trigger() RETURNS TRIGGER AS $$
           DECLARE
-            column TEXT;
+            column_name TEXT;
             value TEXT;
             value_was TEXT;
             value_changed BOOLEAN = TRUE;
           BEGIN
-            FOREACH column IN ARRAY TG_ARGV LOOP
-              #{execute :get_value_cmd, 'column', 'value'}
+            FOREACH column_name IN ARRAY TG_ARGV LOOP
+              #{Sql.execute :get_value_cmd, 'column_name', 'value'}
               IF TG_OP = 'UPDATE' THEN
-                #{execute :get_value_cmd, 'column', 'value_was', record: 'OLD'}
-                #{value_changed? 'value'}
+                #{Sql.execute :get_value_cmd, 'column_name', 'value_was', record: 'OLD'}
+                #{Sql.value_changed? 'value'}
               END IF;
               IF value_changed AND value IS NOT NULL THEN
-                NEW = NEW #= hstore(column, unaccent(value));
+                NEW = NEW #= hstore(column_name, unaccent(value));
               END IF;
             END LOOP;
 
