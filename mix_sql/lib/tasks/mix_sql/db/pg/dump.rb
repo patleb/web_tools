@@ -62,8 +62,8 @@ module Db
           sh "sudo mkdir -p #{dump_wal_dir}", verbose: false
           sh "sudo chown postgres:postgres #{dump_wal_dir}", verbose: false
           sh "sudo rm -f #{dump_wal_dir}/*"
-          psql! "SELECT * FROM pg_create_physical_replication_slot('#{options.name}')"
-          pid = spawn su_postgres "pg_receivewal --synchronous -S #{options.name} -D #{dump_wal_dir}"
+          psql! "SELECT * FROM pg_create_physical_replication_slot('#{slot_name}')"
+          pid = spawn su_postgres "pg_receivewal --synchronous -S #{slot_name} -D #{dump_wal_dir}"
         end
         yield
       ensure
@@ -73,7 +73,7 @@ module Db
           Process.kill('TERM', pid)
           Process.detach(pid)
           sleep 1 while system("sudo pgrep pg_receivewal")
-          psql! "SELECT * FROM pg_drop_replication_slot('#{options.name}')"
+          psql! "SELECT * FROM pg_drop_replication_slot('#{slot_name}')"
           if compress
             sh su_postgres "tar cvf - -C #{dump_wal_dir} . | #{compress_cmd(wal_file)}"
           else
@@ -157,6 +157,10 @@ module Db
 
       def compress
         options.compress || options.split
+      end
+
+      def slot_name
+        @slot_name ||= dump_path.to_s.full_underscore
       end
 
       def dump_wal_dir
