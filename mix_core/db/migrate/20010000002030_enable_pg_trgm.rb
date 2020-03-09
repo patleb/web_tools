@@ -1,4 +1,4 @@
-class EnablePgTrgm < ActiveRecord::Migration[5.1]
+class EnablePgTrgm < ActiveRecord::Migration[6.0]
   def change
     enable_extension 'pg_trgm'
   end

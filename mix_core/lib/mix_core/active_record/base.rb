@@ -33,8 +33,8 @@ ActiveRecord::Base.class_eval do
   end
 
   def self.timescaledb_tables
-    @timescaledb_tables ||= timescaledb? ? connection.select_rows(<<-SQL.strip_sql).to_h.with_indifferent_access : {}
-      SELECT table_name AS name, associated_table_prefix AS prefix FROM _timescaledb_catalog.hypertable
+    @timescaledb_tables ||= timescaledb? ? connection.select_values(<<-SQL.strip_sql) : []
+      SELECT table_name AS name FROM _timescaledb_catalog.hypertable
     SQL
   end
 
@@ -94,21 +94,14 @@ ActiveRecord::Base.class_eval do
       result = connection.select_rows(<<-SQL.strip_sql)
         SELECT relname AS name, #{size} AS size
         FROM pg_catalog.pg_statio_user_tables
+        WHERE relname NOT LIKE '\_hyper\_%'
         ORDER BY #{order_by_name ? 'name' : "#{size} DESC"};
       SQL
       result = result.each_with_object({}.with_indifferent_access){ |(name, size), h| h[name] = size }
 
       if timescaledb?
-        timescaledb_tables.each do |table_name, prefix|
-          chunks = result.select{ |name, _size| name.start_with? prefix }
-          result[table_name] = chunks.values.sum
-          result.transform_keys! do |name|
-            if chunks.has_key? name
-              "#{table_name}_#{name.delete_prefix("#{prefix}_").to_i}"
-            else
-              name
-            end
-          end
+        timescaledb_tables.each do |name|
+          result[name] = TimescaledbTable.find_by(name: name).total_bytes
         end
         result = result.sort_by(&:last).reverse.to_h.with_indifferent_access
       end

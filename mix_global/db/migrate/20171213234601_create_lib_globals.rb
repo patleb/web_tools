@@ -1,4 +1,4 @@
-class CreateLibGlobals < ActiveRecord::Migration[5.1]
+class CreateLibGlobals < ActiveRecord::Migration[6.0]
   def up
     drop_table :mr_globals if table_exists? :mr_globals
 

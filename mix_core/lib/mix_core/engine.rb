@@ -70,7 +70,9 @@ module MixCore
 
     initializer 'mix_core.append_migrations' do |app|
       append_migrations(app)
-      append_api_migrations(app) if Setting[:pgrest_enabled]
+      append_pgrest_migrations(app) if Setting[:pgrest_enabled]
+      append_postgis_migrations(app) if Setting[:postgis_enabled]
+      append_timescaledb_migrations(app) if Setting[:timescaledb_enabled]
     end
 
     initializer 'mix_core.append_routes' do |app|

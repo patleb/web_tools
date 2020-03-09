@@ -1,5 +1,5 @@
 # TODO allow multiple PostgREST API applications on the same server
-class EnablePgrest < ActiveRecord::Migration[5.2]
+class EnablePgrest < ActiveRecord::Migration[6.0]
   def up
     execute <<-SQL.strip_sql
       CREATE SCHEMA IF NOT EXISTS api;

@@ -1,4 +1,4 @@
-class EnableCitext < ActiveRecord::Migration[5.1]
+class EnableCitext < ActiveRecord::Migration[6.0]
   def change
     enable_extension 'citext'
   end

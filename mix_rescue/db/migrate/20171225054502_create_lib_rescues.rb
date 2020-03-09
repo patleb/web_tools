@@ -1,4 +1,4 @@
-class CreateLibRescues < ActiveRecord::Migration[5.1]
+class CreateLibRescues < ActiveRecord::Migration[6.0]
   def up
     drop_table :mr_rescues if table_exists? :mr_rescues
 

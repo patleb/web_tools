@@ -1,4 +1,4 @@
-class AddHealthcheckFunctionToApiSchema < ActiveRecord::Migration[5.2]
+class AddHealthcheckFunctionToApiSchema < ActiveRecord::Migration[6.0]
   def up
     exec_query <<-SQL.strip_sql
       CREATE OR REPLACE FUNCTION api.healthcheck() RETURNS BOOLEAN AS $$

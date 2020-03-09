@@ -1,4 +1,4 @@
-class SetAuthenticatorStatementTimeout < ActiveRecord::Migration[5.2]
+class SetAuthenticatorStatementTimeout < ActiveRecord::Migration[6.0]
   def up
     pgrest_timeout = Setting[:pgrest_timeout]
     pgrest_timeout = case

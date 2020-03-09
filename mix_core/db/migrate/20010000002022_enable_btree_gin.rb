@@ -1,4 +1,4 @@
-class EnableBtreeGin < ActiveRecord::Migration[5.2]
+class EnableBtreeGin < ActiveRecord::Migration[6.0]
   def change
     enable_extension 'btree_gin'
   end
