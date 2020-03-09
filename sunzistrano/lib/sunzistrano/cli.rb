@@ -173,6 +173,7 @@ module Sunzistrano
 
       def provision_cmd(server)
         <<~CMD.squish
+          #{reset_known_hosts(server)} &&
           #{ssh_add_vagrant} cd .provision && tar cz . |
           ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR
           #{"-o ProxyCommand='ssh -W %h:%p #{sun.username}@#{sun.server}'" if sun.server_cluster?}
@@ -197,6 +198,11 @@ module Sunzistrano
           "ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR"
           #{sun.username}@#{sun.server}:#{path} #{ref}
         CMD
+      end
+
+      def reset_known_hosts(server)
+        ip = `nslookup #{server}`.lines.select{ |line| line.exclude?('#53') && line.start_with?('Address') }.last&.split(':')&.last&.strip
+        [server, ip].compact.map{ |host| %{ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host}} }.join(';')
       end
 
       def ssh_add_vagrant
