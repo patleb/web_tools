@@ -28,19 +28,6 @@ namespace :load do
     set :passenger_roles,           -> { :web }
     set :passenger_restart_command, -> { 'rbenv sudo passenger-config restart-app' }
 
-    append :sunzistrano_context, *%i(
-      admin_name
-      application
-      deployer_name
-      deploy_dir
-      deploy_to
-      os_name
-      os_version
-      rbenv_ruby
-      server
-      stage
-    )
-
     append :linked_dirs, *%w(
       .bundle
       .local_repo

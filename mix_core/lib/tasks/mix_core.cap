@@ -37,11 +37,6 @@ namespace :load do
     set :monit_filesystem_size,   -> { '80%' }
     set :monit_filesystem_action, -> { 'alert' }
 
-    append :sunzistrano_context, *%i(
-      nginx_domain
-      nginx_skip_ssl
-    )
-
     append :linked_files, *%w(
       public/503.html
     )
