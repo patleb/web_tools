@@ -110,7 +110,7 @@ module Sunzistrano
     end
 
     def role_recipes(*names)
-      recipes = _merge_recipes names
+      recipes = merge_recipes names
       if (reboot = recipes.delete('reboot'))
         recipes << reboot
       end
@@ -120,7 +120,7 @@ module Sunzistrano
     end
 
     def list_recipes(*names, base: nil)
-      recipes = _merge_recipes *names, base, substract: true
+      recipes = merge_recipes *names, base, substract: true
       if recipe.present?
         recipes.select! do |name|
           name.end_with?("/all") || name == recipe
@@ -141,7 +141,9 @@ module Sunzistrano
       "'#{segments}'" if has_variables
     end
 
-    def _merge_recipes(names, base = nil, substract: false)
+    private
+
+    def merge_recipes(names, base = nil, substract: false)
       recipes = Array.wrap(names).reject(&:blank?)
       if base
         recipes.map!{ |name| "#{base}/#{name}" }
