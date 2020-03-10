@@ -33,8 +33,8 @@ ActiveRecord::Base.class_eval do
   end
 
   def self.timescaledb_tables
-    @timescaledb_tables ||= timescaledb? ? connection.select_values(<<-SQL.strip_sql) : []
-      SELECT table_name AS name FROM _timescaledb_catalog.hypertable
+    @timescaledb_tables ||= timescaledb? ? connection.select_rows(<<-SQL.strip_sql).to_h.with_indifferent_access : {}
+      SELECT table_name AS name, id FROM _timescaledb_catalog.hypertable
     SQL
   end
 
@@ -100,8 +100,8 @@ ActiveRecord::Base.class_eval do
       result = result.each_with_object({}.with_indifferent_access){ |(name, size), h| h[name] = size }
 
       if timescaledb?
-        timescaledb_tables.each do |name|
-          result[name] = TimescaledbTable.find_by(name: name).total_bytes
+        timescaledb_tables.each do |name, id|
+          result[name] = TimescaledbTable.find(id).total_bytes
         end
         result = result.sort_by(&:last).reverse.to_h.with_indifferent_access
       end

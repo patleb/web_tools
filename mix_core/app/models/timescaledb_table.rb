@@ -1,7 +1,7 @@
 class TimescaledbTable < ActiveRecord::Base
-  self.primary_key = :name
+  self.primary_key = :id
 
-  has_many :chunks, foreign_key: :table_name, class_name: 'TimescaledbChunk'
+  has_many :chunks, foreign_key: :table_id, class_name: 'TimescaledbChunk', inverse_of: :table
 
   def readonly?
     true
