@@ -1,9 +1,7 @@
 class TimescaledbChunk < ActiveRecord::Base
-  self.primary_key = :id
+  include AsTimescaledbView
+
+  MAX_CHUNK_BYTES = Setting[:timescaledb_max_bytes]
 
   belongs_to :table, foreign_key: :table_id, class_name: 'TimescaledbTable'
-
-  def readonly?
-    true
-  end
 end if Setting[:timescaledb_enabled]

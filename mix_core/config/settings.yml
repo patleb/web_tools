@@ -11,6 +11,8 @@ shared:
   mail_address: localhost
   mail_port: 1025
   deployer_name: deployer
+  db_pg_dump_split_size: 2
+  timescaledb_max_bytes: 2_000_000_000
   geoserver_nginx_upstream: $METHOD
   geoserver_nginx_location_wms: $METHOD
   geoserver_local_url: $METHOD
@@ -35,7 +37,7 @@ shared:
   pgrest_db_username: authenticator
   pgrest_db_password: not-secret
   pgrest_max_rows: 100
-  pgrest_timeout: 120000
+  pgrest_timeout: 120_000
   ftp_mount_path: /opt/ftp_data
   server_cluster_data: /mnt/shared_data
   server_cluster_master_data: /opt/shared_data

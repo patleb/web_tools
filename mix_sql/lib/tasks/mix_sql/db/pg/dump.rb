@@ -2,7 +2,7 @@ module Db
   module Pg
     class Dump < Base
       SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
-      SPLIT_SIZE = 2
+      SPLIT_SIZE = Setting[:db_pg_dump_split_size]
       PIGZ_CORES = (Etc.nprocessors / 2.0).ceil
 
       def self.args
