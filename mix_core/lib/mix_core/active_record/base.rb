@@ -27,13 +27,8 @@ ActiveRecord::Base.class_eval do
     @encoding ||= connection.select_one("SELECT ''::text AS str;").values.first.encoding
   end
 
-  def self.timescaledb?
-    return @timescaledb if defined? @timescaledb
-    @timescaledb = connection.select_value("SELECT TRUE FROM pg_extension WHERE extname = 'timescaledb'").to_b
-  end
-
   def self.timescaledb_tables
-    @timescaledb_tables ||= timescaledb? ? connection.select_rows(<<-SQL.strip_sql).to_h.with_indifferent_access : {}
+    @timescaledb_tables ||= Setting[:timescaledb_enabled] ? connection.select_rows(<<-SQL.strip_sql).to_h : {}
       SELECT table_name AS name, id FROM _timescaledb_catalog.hypertable
     SQL
   end
@@ -99,7 +94,7 @@ ActiveRecord::Base.class_eval do
       SQL
       result = result.each_with_object({}.with_indifferent_access){ |(name, size), h| h[name] = size }
 
-      if timescaledb?
+      if Setting[:timescaledb_enabled]
         timescaledb_tables.each do |name, id|
           result[name] = TimescaledbTable.find(id).total_bytes
         end
