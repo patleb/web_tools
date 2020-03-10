@@ -64,7 +64,6 @@ PATH
   remote: ext_rake
   specs:
     ext_rake (0.2.0)
-      colorize
       dotiw
       ext_ruby (= 0.2.0)
       mix_notifier (= 0.2.0)
@@ -77,7 +76,9 @@ PATH
   specs:
     ext_ruby (0.2.0)
       activesupport
+      bcrypt
       bootsnap
+      colorize
       http
       ice_nine
       oj
@@ -197,10 +198,7 @@ PATH
   remote: sunzistrano
   specs:
     sunzistrano (0.1.0)
-      bcrypt
       ext_ruby
-      rainbow
-      sshkit
 
 GEM
   remote: https://rubygems.org/
@@ -485,7 +483,6 @@ GEM
       method_source
       rake (>= 0.8.7)
       thor (>= 0.20.3, < 2.0)
-    rainbow (3.0.0)
     rake (13.0.1)
     rblineprof (0.3.7)
       debugger-ruby_core_source (~> 1.3)

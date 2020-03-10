@@ -9,14 +9,14 @@ module MixCore
     require 'active_type'
     require 'date_validator'
     require 'http_accept_language'
-    require 'i18n/debug' if Rails.env.development?
     require 'monogamy'
-    require 'null_logger' if Rails.env.development?
     require 'pg'
-    require 'pycall' if Setting[:postgis_enabled]
     require 'rails-i18n'
-    require 'rgeo' if Setting[:postgis_enabled]
     require 'vmstat'
+    if Rails.env.development?
+      require 'i18n/debug'
+      require 'null_logger'
+    end
 
     require 'mix_core/action_mailer/smtp_settings'
     require 'mix_core/active_support/core_ext'
@@ -24,12 +24,17 @@ module MixCore
     require 'mix_core/active_support/dependencies/with_nilable_cache'
     require 'mix_core/configuration'
     require 'mix_core/money_rails'
-    require 'mix_core/pycall/pyobject_wrapper' if Gem.loaded_specs['pycall']
     require 'mix_core/rails/engine'
     require 'mix_core/rake/dsl'
     require 'mix_core/sh'
 
     config.before_configuration do |app|
+      if Setting[:postgis_enabled]
+        require 'pycall'
+        require 'rgeo'
+        require 'mix_core/pycall/pyobject_wrapper'
+      end
+
       if defined? MixGlobal
         app.config.active_record.cache_versioning = false # TODO doesn't work, must be added to Rails.root/config/application.rb
         app.config.cache_store = :global_store

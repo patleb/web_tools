@@ -12,11 +12,11 @@ module Sunzistrano
             memo[key] = value unless value.blank? || key == 'DEBUG'
           end
         else
-          puts %{cap #{stage} sun_cap:config => ""}.color(:red).bright
+          puts %{cap #{stage} sun_cap:config => ""}.red
           {}
         end
       else
-        puts stderr.color(:red).bright
+        puts stderr.red
         {}
       end
     end

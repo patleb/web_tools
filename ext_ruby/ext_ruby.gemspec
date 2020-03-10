@@ -18,7 +18,9 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
 
   s.add_dependency 'activesupport'
+  s.add_dependency 'bcrypt'
   s.add_dependency 'bootsnap'
+  s.add_dependency 'colorize'
   s.add_dependency 'ice_nine'
   s.add_dependency 'http'
   s.add_dependency 'oj'

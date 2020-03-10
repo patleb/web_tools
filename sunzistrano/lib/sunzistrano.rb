@@ -1,16 +1,8 @@
-require 'open3'
-require 'ostruct'
-require 'net/ssh'
 require 'thor'
-require 'rainbow'
-# Starting 2.0.0, Rainbow no longer patches string with the color method by default.
-require 'rainbow/version'
-require 'rainbow/ext/string' unless Rainbow::VERSION < '2.0.0'
-require 'bcrypt'
 require 'ext_ruby'
 require 'mix_setting' if Gem.loaded_specs['mix_setting']
 require 'sun_cap/sunzistrano' if Gem.loaded_specs['sun_cap']
-require 'sunzistrano/config'
+require 'sunzistrano/context'
 require 'sunzistrano/cli'
 require 'sunzistrano/version'
 

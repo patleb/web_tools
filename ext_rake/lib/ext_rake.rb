@@ -1,7 +1,4 @@
-require 'rubygems/package'
-require 'colorize'
 require 'dotiw'
-require 'open3'
 require 'optparse'
 require 'ext_ruby'
 require 'ext_rake/configuration'

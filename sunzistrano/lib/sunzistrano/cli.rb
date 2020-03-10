@@ -63,13 +63,13 @@ module Sunzistrano
           path = "/home/#{sun.username}/#{sun.DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
         end
         unless system download_cmd(path, ref)
-          puts "Cannot transfer [#{path}] to [#{ref}]".color(:red).bright
+          puts "Cannot transfer [#{path}] to [#{ref}]".red
         end
       end
 
       def load_config(stage, role, **custom_options)
         validate_config_presence!
-        @sun = Sunzistrano::Config.new(stage, role, **options.symbolize_keys, **custom_options)
+        @sun = Sunzistrano::Context.new(stage, role, **options.symbolize_keys, **custom_options)
       end
 
       def copy_files
@@ -138,7 +138,7 @@ module Sunzistrano
       end
 
       def validate_config_presence!
-        abort_with 'You must have a provision.yml'unless Sunzistrano::Config.provision_yml.exist?
+        abort_with 'You must have a provision.yml'unless Sunzistrano::Context.provision_yml.exist?
       end
 
       def run_provision_cmd
@@ -160,12 +160,12 @@ module Sunzistrano
           t = Thread.new do
             while (line = stderr.gets)
               print "[#{server}] "
-              print line.color(:red)
+              print line.red
             end
           end
           while (line = stdout.gets)
             print "[#{server}] "
-            print line.color(:green)
+            print line.green
           end
           t.join
         end
@@ -238,7 +238,7 @@ module Sunzistrano
       end
 
       def abort_with(text)
-        puts text.color(:red).bright
+        puts text.red
         abort
       end
     end

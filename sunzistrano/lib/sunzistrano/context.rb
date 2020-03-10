@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Sunzistrano
-  class Config < OpenStruct
+  class Context < OpenStruct
     RESERVED_NAMES = %w(lock gems debug sudo reboot)
     VARIABLES = /__([A-Z0-9_]+)__/
     PROVISION_LOG = 'sun_provision.log'

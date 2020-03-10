@@ -16,8 +16,5 @@ Gem::Specification.new do |s|
   s.files         = Dir["{bin,config,lib}/**/*", "MIT-LICENSE", "README.md"]
   s.executables   = ["sun"]
 
-  s.add_dependency "sshkit"
-  s.add_dependency 'rainbow'
-  s.add_dependency 'bcrypt'
   s.add_dependency 'ext_ruby'
 end

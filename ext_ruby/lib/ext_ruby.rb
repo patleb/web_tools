@@ -1,7 +1,12 @@
 require 'require_all'
+require 'bcrypt'
+require 'colorize'
 require 'http'
 require 'ice_nine'
+require 'open3'
+require 'ostruct'
 require 'parallel'
+require 'rubygems/package'
 require 'sys/uname'
 
 require 'active_support/concern'

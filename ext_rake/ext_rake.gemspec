@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rake"
   # TODO https://github.com/tessi/malloc_trim
-  s.add_dependency "colorize"
   s.add_dependency "dotiw"
   s.add_dependency "ext_ruby", version
   s.add_dependency "mix_notifier", version
