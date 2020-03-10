@@ -5,7 +5,7 @@ ubuntu)
   PACKAGE_NAME="postgrest-v$__PGREST__-ubuntu"
 ;;
 centos)
-  PACKAGE_NAME="postgrest-v$__PGREST__-centos7"
+  PACKAGE_NAME="postgrest-v$__PGREST__-centos$OS_VERSION"
 ;;
 esac
 

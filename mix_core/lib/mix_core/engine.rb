@@ -13,7 +13,9 @@ module MixCore
     require 'monogamy'
     require 'null_logger' if Rails.env.development?
     require 'pg'
+    require 'pycall' if Setting[:postgis_enabled]
     require 'rails-i18n'
+    require 'rgeo' if Setting[:postgis_enabled]
     require 'vmstat'
 
     require 'mix_core/action_mailer/smtp_settings'
@@ -134,6 +136,7 @@ module MixCore
     end
 
     ActiveSupport.on_load(:active_record) do
+      require 'activerecord-postgis-adapter' if Setting[:postgis_enabled]
       require 'arel_extensions'
       require 'rails_select_on_includes'
       require 'mix_core/active_type'

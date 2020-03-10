@@ -37,4 +37,4 @@ class SpatialRefSys < ActiveRecord::Base
   def update_projection!(projection)
     update! crs_for(projection)
   end
-end if Setting[:postgis_enabled] && Gem.loaded_specs['pycall']
+end if Setting[:postgis_enabled]

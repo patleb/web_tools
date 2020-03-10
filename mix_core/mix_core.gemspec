@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> #{WebTools::RAILS_VERSION::STRING}"
   s.add_dependency 'active_type'
+  s.add_dependency 'activerecord-postgis-adapter'
   s.add_dependency 'arel_extensions'
   s.add_dependency 'date_validator'
   s.add_dependency 'http_accept_language'
@@ -27,9 +28,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'monogamy'
   s.add_dependency 'null-logger'
   s.add_dependency 'pg'
+  s.add_dependency 'pycall'
   s.add_dependency 'rails-i18n'
   s.add_dependency 'rails_select_on_includes'
   s.add_dependency 'rblineprof'
+  s.add_dependency 'rgeo'
   s.add_dependency 'term-ansicolor'
   s.add_dependency 'web-console'
   s.add_dependency 'vmstat'

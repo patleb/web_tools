@@ -13,6 +13,12 @@
   lang/rust/system__RUST__
   lang/crystal/system__CRYSTAL__
   lang/python/system__PYTHON__
+  db/postgres__POSTGRES__/plpython
+  #{'addons/pgrest__PGREST__' if sun.pgrest_enabled}
+  #{'addons/gdal' if sun.postgis_enabled}
+  #{'addons/pyproj' if sun.postgis_enabled}
+  #{'db/postgres__POSTGRES__/postgis__POSTGIS__' if sun.postgis_enabled}
+  #{'db/postgres__POSTGRES__/timescaledb' if sun.timescaledb_enabled}
   utils/all
   lang/ruby/app__RBENV_RUBY__
 )) do |name, id| %>

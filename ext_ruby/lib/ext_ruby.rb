@@ -1,5 +1,7 @@
 require 'require_all'
+require 'http'
 require 'ice_nine'
+require 'parallel'
 require 'sys/uname'
 
 require 'active_support/concern'

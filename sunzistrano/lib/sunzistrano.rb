@@ -8,7 +8,6 @@ require 'rainbow/version'
 require 'rainbow/ext/string' unless Rainbow::VERSION < '2.0.0'
 require 'bcrypt'
 require 'ext_ruby'
-require 'parallel'
 require 'mix_setting' if Gem.loaded_specs['mix_setting']
 require 'sun_cap/sunzistrano' if Gem.loaded_specs['sun_cap']
 require 'sunzistrano/config'
