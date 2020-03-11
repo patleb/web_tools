@@ -12,7 +12,7 @@ shared:
   mail_port: 1025
   deployer_name: deployer
   db_pg_dump_split_size: 2
-  timescaledb_max_bytes: 2_000_000_000
+  timescaledb_max_bytes: 4_000_000_000
   geoserver_nginx_upstream: $METHOD
   geoserver_nginx_location_wms: $METHOD
   geoserver_local_url: $METHOD
@@ -52,6 +52,7 @@ test:
   pgrest_port: $ALIAS pgrest_local_port
   server_cluster_data: ./tmp/shared_data
   server_cluster_master_data: ./tmp/shared_data
+  timescaledb_max_bytes: 200_000_000
 
 development:
   server_host: localhost
@@ -61,6 +62,7 @@ development:
   pgrest_port: $ALIAS pgrest_local_port
   server_cluster_data: ./tmp/shared_data
   server_cluster_master_data: ./tmp/shared_data
+  timescaledb_max_bytes: 200_000_000
 
 vagrant:
   server_host: vagrant-web.test
@@ -80,6 +82,7 @@ vagrant:
   ftp_password: $ALIAS deployer_password
   ftp_host_path: $METHOD
   server_cluster_provider: vagrant
+  timescaledb_max_bytes: 400_000_000
 
 staging:
 
