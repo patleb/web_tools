@@ -1,2 +1,2 @@
 [Service]
-Environment=PGDATA=$NEW_PG_CONF_DIR
+Environment=PGDATA=$NEW_PG_DATA_DIR
