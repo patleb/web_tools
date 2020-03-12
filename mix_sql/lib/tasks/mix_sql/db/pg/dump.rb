@@ -55,6 +55,7 @@ module Db
             end
           sh su_postgres "pg_basebackup -v -Xnone -cfast -Ft #{self.class.pg_options} #{output}"
         end
+        sh "sudo cp /home/$(id -nu 1000)/sun_manifest/postgresql.log #{dump_path}/manifest.log"
       end
 
       def pg_receivewal
