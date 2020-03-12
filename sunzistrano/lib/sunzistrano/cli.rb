@@ -201,8 +201,7 @@ module Sunzistrano
       end
 
       def reset_known_hosts(server)
-        ip = `nslookup #{server}`.lines.select{ |line| line.exclude?('#53') && line.start_with?('Address') }.last&.split(':')&.last&.strip
-        [server, ip].compact.map{ |host| %{ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host}} }.join(';')
+        `getent hosts #{server}`.squish.split.map{ |host| %{ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host}} }.join(';')
       end
 
       def ssh_add_vagrant
