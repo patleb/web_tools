@@ -35,7 +35,6 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
   sun.lock "$PG_PACKAGES"
 
   if [[ $__PG_CHECKSUMS__ == true ]]; then
-    systemctl stop postgresql
     sudo su - postgres << EOF
       pg_dropcluster --stop "$__POSTGRES__" main
       pg_createcluster --locale "$__LOCALE__.UTF-8" --start "$__POSTGRES__" main -- --data-checksums
