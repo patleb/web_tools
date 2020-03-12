@@ -12,7 +12,6 @@ PG_HBA_FILE=$(sun.pg_default_hba_file)
 
 case "$OS" in
 ubuntu)
-  __PG_CHECKSUMS__=${__PG_CHECKSUMS__:-true}
   PG_PACKAGES="postgresql-$__POSTGRES__ postgresql-server-dev-$__POSTGRES__ postgresql-common libpq-dev"
 
   sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
@@ -34,16 +33,14 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
   sun.install "$PG_PACKAGES"
   sun.lock "$PG_PACKAGES"
 
-  if [[ $__PG_CHECKSUMS__ == true ]]; then
-    sudo su - postgres << EOF
-      pg_dropcluster --stop "$__POSTGRES__" main
-      pg_createcluster --locale "$__LOCALE__.UTF-8" --start "$__POSTGRES__" main -- --data-checksums
-EOF
-    systemctl restart postgresql
-  fi
-
   case "$OS" in
   ubuntu)
+    sudo su - postgres << EOF
+      pg_dropcluster --stop "$__POSTGRES__" main
+      pg_createcluster --locale "$__LOCALE__.UTF-8" --start "$__POSTGRES__" main <%= '-- --data-checksums' unless sun.pg_checksums == false %>
+EOF
+    systemctl restart postgresql
+
     sun.backup_compare "$PG_CONFIG_FILE"
     sun.backup_compare "$PG_HBA_FILE"
   ;;
@@ -52,7 +49,7 @@ EOF
     export PATH="$PATH:/usr/pgsql-$__POSTGRES__/bin"
 
     if [[ -v __PG_CHECKSUMS__ ]] && [[ $__PG_CHECKSUMS__ == true ]]; then
-      echo "postgres initdb checksums is not yet supported on CentOS"
+      echo "postgres initdb checksums is not supported on CentOS"
       exit 1
     else
       postgresql-$__POSTGRES__-setup initdb
@@ -71,7 +68,7 @@ EOF
 else
   case "$OS" in
   centos)
-    echo "postgres upgrade is not yet supported on CentOS"
+    echo "postgres upgrade is not supported on CentOS"
     exit 1
   ;;
   esac
