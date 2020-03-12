@@ -4,6 +4,7 @@
 # https://github.com/reorg/pg_repack
 # https://www.modio.se/scaling-past-the-single-machine.html
 # https://askubuntu.com/questions/732431/how-to-uninstall-specific-versions-of-postgres
+__LOCALE__=${__LOCALE__:-en_US}
 PG_MANIFEST=$(sun.manifest_path 'postgresql')
 PG_DATA_DIR=$(sun.pg_default_data_dir)
 PG_CONFIG_FILE=$(sun.pg_default_config_file)
@@ -11,6 +12,7 @@ PG_HBA_FILE=$(sun.pg_default_hba_file)
 
 case "$OS" in
 ubuntu)
+  __PG_CHECKSUMS__=${__PG_CHECKSUMS__:-true}
   PG_PACKAGES="postgresql-$__POSTGRES__ postgresql-server-dev-$__POSTGRES__ postgresql-common libpq-dev"
 
   sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
@@ -32,6 +34,15 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
   sun.install "$PG_PACKAGES"
   sun.lock "$PG_PACKAGES"
 
+  if [[ $__PG_CHECKSUMS__ == true ]]; then
+    systemctl stop postgresql
+    sudo su - postgres << EOF
+      pg_dropcluster --stop "$__POSTGRES__" main
+      pg_createcluster --locale "$__LOCALE__.UTF-8" --start "$__POSTGRES__" main -- --data-checksums
+EOF
+    systemctl restart postgresql
+  fi
+
   case "$OS" in
   ubuntu)
     sun.backup_compare "$PG_CONFIG_FILE"
@@ -41,7 +52,12 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
     echo "export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/pgsql-$__POSTGRES__/bin" >> /etc/environment
     export PATH="$PATH:/usr/pgsql-$__POSTGRES__/bin"
 
-    postgresql-$__POSTGRES__-setup initdb
+    if [[ -v __PG_CHECKSUMS__ ]] && [[ $__PG_CHECKSUMS__ == true ]]; then
+      echo "postgres initdb checksums is not yet supported on CentOS"
+      exit 1
+    else
+      postgresql-$__POSTGRES__-setup initdb
+    fi
     sun.backup_compare "$PG_CONFIG_FILE"
     sun.backup_move "$PG_HBA_FILE"
     chmod 600 "$PG_HBA_FILE"

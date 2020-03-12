@@ -42,7 +42,6 @@ module Db
 
       private
 
-      # TODO add postgres page checksum --> https://postgreshelp.com/postgresql-checksum/
       def pg_basebackup
         sh "sudo mkdir -p #{dump_path}", verbose: false
         sh "sudo chown -R postgres:postgres #{dump_path}", verbose: false
