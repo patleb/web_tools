@@ -86,6 +86,7 @@ sun.defaults_path() {
   echo "$HOME/$__DEFAULTS_DIR__/$(echo "$1" | sed 's|/|~|g')"
 }
 
+# TODO provider (aws, openstack, etc.)
 sun.template_path() {
   local base="$(sun.provision_path)/files/$(echo "$1" | sed 's|^/||')"
   local type="$base.$OS"
