@@ -5,7 +5,7 @@ class TimescaledbTable < ActiveRecord::Base
 
   def set_next_chunk_size(value)
     self.class.connection.exec_query <<-SQL.strip_sql
-      SELECT set_chunk_time_interval('#{name}', #{value});
+      SELECT set_chunk_time_interval('#{name}', #{value})::TEXT;
     SQL
   end
 end if Setting[:timescaledb_enabled]

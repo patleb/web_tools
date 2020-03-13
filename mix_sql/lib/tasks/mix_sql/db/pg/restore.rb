@@ -43,7 +43,7 @@ module Db
 
       def check_md5
         md5_files = dump_path.sub(MATCHER, '*.md5')
-        if system("sudo ls #{md5_files} > /dev/null")
+        if system("sudo ls #{md5_files}", out: File::NULL, err: File::NULL)
           sh "sudo find #{dump_path} -type f -name '*.md5' | sudo parallel --no-notice 'md5sum -c {} > /dev/null'"
           puts_info '[MD5]', 'checked'
         end
@@ -60,9 +60,9 @@ module Db
         else
           sh "sudo bash -c 'tar -C #{pg_data_dir} #{'-I pigz' if compress} -xf #{dump_path}'"
         end
-        if system("sudo ls #{wal_file(compress)} > /dev/null")
+        if system("sudo ls #{wal_file(compress)}", out: File::NULL, err: File::NULL)
           sh "sudo tar -C #{wal_dir} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
-          if system("sudo ls #{wal_dir}/*.partial > /dev/null")
+          if system("sudo ls #{wal_dir}/*.partial", out: File::NULL, err: File::NULL)
             sh "sudo mmv '#{wal_dir}/*.partial' '#{wal_dir}/#1'"
           end
         end
