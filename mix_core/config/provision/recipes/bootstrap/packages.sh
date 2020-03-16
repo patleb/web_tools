@@ -3,7 +3,7 @@
   autoconf
   bc
   bison
-  #{sun.os.ubuntu? ? 'build-essential'                   : 'gcc gcc-c++ bzip2 patch make automake libtool rpm-build redhat-rpm-config'}
+  #{sun.os.ubuntu? ? 'build-essential'                   : 'gcc gcc-c++ bzip2 make automake libtool rpm-build redhat-rpm-config'}
   ca-certificates
   #{sun.os.ubuntu? ? ('castxml' if sun.ruby_cpp)         : ''}
   #{'clang' if sun.ruby_cpp}
