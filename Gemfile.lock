@@ -18,7 +18,6 @@ PATH
       mix_sql (= 0.2.0)
       mix_template (= 0.2.0)
       mix_throttler (= 0.2.0)
-      sun_cap (= 0.2.0)
       sunzistrano
 
 PATH
@@ -33,6 +32,7 @@ PATH
       capistrano-rails-console
       capistrano-rbenv (~> 2.0)
       mix_setting
+      sunzistrano
 
 PATH
   remote: ext_minitest
@@ -133,6 +133,7 @@ PATH
       rails_select_on_includes
       rblineprof
       rgeo
+      sunzistrano
       term-ansicolor
       vmstat
       web-console
@@ -173,6 +174,7 @@ PATH
       activesupport
       ext_rake (= 0.2.0)
       sql_query
+      sunzistrano
 
 PATH
   remote: mix_template
@@ -189,16 +191,10 @@ PATH
       rack-attack
 
 PATH
-  remote: sun_cap
-  specs:
-    sun_cap (0.2.0)
-      mix_setting
-
-PATH
   remote: sunzistrano
   specs:
     sunzistrano (0.1.0)
-      ext_ruby
+      mix_setting
 
 GEM
   remote: https://rubygems.org/
@@ -275,7 +271,7 @@ GEM
     bootsnap (1.4.6)
       msgpack (~> 1.0)
     builder (3.2.4)
-    capistrano (3.12.0)
+    capistrano (3.12.1)
       airbrussh (>= 1.0.0)
       i18n
       rake (>= 10.0.0)
@@ -508,7 +504,7 @@ GEM
       sprockets (>= 3.0.0)
     sql_query (0.6.0)
       activerecord (>= 3.2)
-    sshkit (1.20.0)
+    sshkit (1.21.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
     sshkit-interactive (0.3.0)
@@ -568,7 +564,6 @@ DEPENDENCIES
   mix_template!
   mix_throttler!
   ruby-debug-ide
-  sun_cap!
   sunzistrano!
   tzinfo-data
   web_tools!

@@ -24,7 +24,7 @@ module Sunzistrano
     def initialize(stage, role, options)
       env, app = stage.split(':', 2)
       settings = { stage: env, application: app }.with_indifferent_access
-      settings.merge! Capistrano.config(stage) if Gem.loaded_specs['sun_cap']
+      settings.merge! capistrano(stage)
       @stage, @application = settings.values_at(:stage, :application)
       @role = role
 
@@ -41,7 +41,7 @@ module Sunzistrano
         role_yml.union!(app_yml)
       end
 
-      settings.merge! Setting.load(env: @stage, app: @application) if Gem.loaded_specs['mix_setting']
+      settings.merge! Setting.load(env: @stage, app: @application)
       settings.union!(role_yml).merge!(role: @role).merge!(options).merge!(yml.slice(*RESERVED_NAMES))
       settings.each_key do |key|
         settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) if key.end_with? Hash::REPLACE
@@ -65,7 +65,7 @@ module Sunzistrano
     end
 
     def server_cluster?
-      Gem.loaded_specs['sun_cap'] && server_cluster
+      server_cluster
     end
 
     def admin_public_key
@@ -152,6 +152,25 @@ module Sunzistrano
         recipes - (remove_recipes || []).reject(&:blank?)
       else
         recipes + (append_recipes || []).reject(&:blank?)
+      end
+    end
+
+    def capistrano(stage)
+      cap = File.file?('bin/cap') ? 'bin/cap' : 'bundle exec cap'
+      stdout, stderr, status = Open3.capture3("#{cap} #{stage} sunzistrano:capistrano --dry-run")
+      if status.success?
+        if stdout.present?
+          stdout.lines.each_with_object({}) do |key_value, memo|
+            key, value = key_value.strip.split(' ', 2).map(&:strip)
+            memo[key] = value unless value.blank? || key == 'DEBUG'
+          end
+        else
+          puts %{cap #{stage} sunzistrano:capistrano => ""}.red
+          {}
+        end
+      else
+        puts stderr.red
+        {}
       end
     end
   end

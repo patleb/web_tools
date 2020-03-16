@@ -16,5 +16,5 @@ Gem::Specification.new do |s|
   s.files         = Dir["{bin,config,lib}/**/*", "MIT-LICENSE", "README.md"]
   s.executables   = ["sun"]
 
-  s.add_dependency 'ext_ruby'
+  s.add_dependency 'mix_setting'
 end

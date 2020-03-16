@@ -18,6 +18,7 @@ module MixCore
       require 'null_logger'
     end
 
+    require 'sunzistrano/context'
     require 'mix_core/action_mailer/smtp_settings'
     require 'mix_core/active_support/core_ext'
     require 'mix_core/active_support/current_attributes'

@@ -1,4 +1,4 @@
-require 'sun_cap/capistrano' if Gem.loaded_specs['sun_cap']
+require 'sunzistrano/capistrano'
 
 require_rel 'capistrano'
 include ExtCapistrano::Helpers

@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'capistrano-passenger'
   s.add_dependency 'capistrano-bundle_rsync'
   s.add_dependency 'mix_setting'
+  s.add_dependency 'sunzistrano'
 end

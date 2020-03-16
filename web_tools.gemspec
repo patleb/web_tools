@@ -31,6 +31,5 @@ Gem::Specification.new do |s|
   s.add_dependency "mix_rescue",     version
   s.add_dependency "mix_template",   version
   s.add_dependency "mix_throttler",  version
-  s.add_dependency "sun_cap",        version
   s.add_dependency "sunzistrano"
 end

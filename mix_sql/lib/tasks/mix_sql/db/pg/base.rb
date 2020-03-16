@@ -19,7 +19,7 @@ module Db
       end
 
       def pg_data_dir
-        @pg_data_dir ||= Pathname.new(`sudo cat /home/$(id -nu 1000)/sun_metadata/pg_data_dir`.strip)
+        @pg_data_dir ||= Pathname.new(`sudo cat /home/$(id -nu 1000)/#{Sunzistrano::Context::METADATA_DIR}/pg_data_dir`.strip)
       end
 
       def su_postgres(cmd)

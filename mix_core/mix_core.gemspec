@@ -37,4 +37,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'web-console'
   s.add_dependency 'vmstat'
   s.add_dependency 'mix_setting'
+  s.add_dependency 'sunzistrano'
 end
