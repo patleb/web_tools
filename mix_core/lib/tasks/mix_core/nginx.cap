@@ -52,6 +52,27 @@ namespace :nginx do
   end
   before 'nginx:push', 'nginx:apply_owner'
 
+  namespace :maintenance do
+    desc "Push 503.html template"
+    task :push do
+      on release_roles :all do
+        template_push '503.html', shared_path.join('public', '503.html')
+      end
+    end
+
+    desc "Enable maintenance mode"
+    task :enable do
+      invoke 'nginx:maintenance:push'
+      ENV['MAINTENANCE'] = 'true'
+      invoke 'nginx:app:push'
+    end
+
+    desc "Disable maintenance mode"
+    task :disable do
+      invoke 'nginx:app:push'
+    end
+  end
+
   namespace :app do
     desc 'Enable application (with optional site name)'
     task :enable, [:site] do |t, args|
@@ -96,42 +117,21 @@ namespace :nginx do
         nginx_app_push
       end
     end
+  end
 
-    namespace :maintenance do
-      desc "Push 503.html template"
-      task :push do
-        on release_roles :all do
-          template_push '503.html', shared_path.join('public', '503.html')
-        end
-      end
-
-      desc "Enable maintenance mode"
-      task :enable do
-        invoke 'nginx:app:maintenance:push'
-        ENV['MAINTENANCE'] = 'true'
-        invoke 'nginx:app:push'
-      end
-
-      desc "Disable maintenance mode"
-      task :disable do
-        invoke 'nginx:app:push'
+  namespace :auth_basic do
+    task :add, [:name, :pwd] do |t, args|
+      on release_roles :all do
+        raise "user password cannot be empty" unless (pwd = args[:pwd]).present?
+        pwd = `openssl passwd -apr1 "#{pwd}"`.strip
+        execute_bash Sh.concat('/etc/nginx/.htpasswd', "#{args[:name]}:#{pwd}", unique: true), sudo: true, u: false
       end
     end
 
-    namespace :auth_basic do
-      task :add, [:name, :pwd] do |t, args|
-        on release_roles :all do
-          raise "user password cannot be empty" unless (pwd = args[:pwd]).present?
-          pwd = `openssl passwd -apr1 "#{pwd}"`.strip
-          execute_bash Sh.concat('/etc/nginx/.htpasswd', "#{args[:name]}:#{pwd}", unique: true), sudo: true, u: false
-        end
-      end
-
-      task :remove, [:name] do |t, args|
-        on release_roles :all do
-          raise "user name cannot be empty" unless (name = args[:name]).present?
-          execute :sudo, Sh.delete_lines!('/etc/nginx/.htpasswd', name)
-        end
+    task :remove, [:name] do |t, args|
+      on release_roles :all do
+        raise "user name cannot be empty" unless (name = args[:name]).present?
+        execute :sudo, Sh.delete_lines!('/etc/nginx/.htpasswd', name)
       end
     end
   end

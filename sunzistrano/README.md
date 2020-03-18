@@ -44,8 +44,8 @@ xxx.xxx.xxx.xxx api.domain.com
 * disable applications
 
     $ bundle exec cap production whenever:clear_crontab
-    $ bundle exec cap production nginx:app:maintenance:enable
-    $ bundle exec cap production:app_api nginx:app:maintenance:enable # or nginx:app:disable if database connections must be closed
+    $ bundle exec cap production nginx:maintenance:enable
+    $ bundle exec cap production:app_api nginx:maintenance:enable # or nginx:app:disable if database connections must be closed
 
 or
 

@@ -46,7 +46,7 @@ namespace :deploy do
       logrotate:push
       nginx:app:push
       nginx:app:enable
-      nginx:app:maintenance:push
+      nginx:maintenance:push
       db:pg:create_user
       db:pg:create_database
       db:pg:set_superuser
