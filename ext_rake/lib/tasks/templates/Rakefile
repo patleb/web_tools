@@ -3,6 +3,6 @@
 
 require_relative 'config/application'
 
-load_rel 'app/tasks/**/*.rake'
-
 Rails.application.all_rake_tasks
+
+load_rel 'app/tasks/**/*.rake'
