@@ -74,13 +74,26 @@ module MixCore
       require 'mix_core/action_dispatch/middleware/iframe'
       app.config.middleware.use ActionDispatch::IFrame
       app.config.middleware.insert_after ActionDispatch::Static, Rack::Deflater if Rails::Env.dev_ngrok?
+
+      %w(libraries tasks).each do |directory|
+        ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/app/#{directory}")
+      end
+
+      unless Setting[:pgrest_enabled]
+        Rails.autoloaders.main.ignore("#{root}/app/models/concerns/timescaledb")
+        Rails.autoloaders.main.ignore("#{root}/app/models/timescaledb")
+      end
+
+      unless Setting[:postgis_enabled]
+        Rails.autoloaders.main.ignore("#{root}/app/models/postgis")
+      end
     end
 
     initializer 'mix_core.append_migrations' do |app|
       append_migrations(app)
-      append_pgrest_migrations(app) if Setting[:pgrest_enabled]
-      append_postgis_migrations(app) if Setting[:postgis_enabled]
-      append_timescaledb_migrations(app) if Setting[:timescaledb_enabled]
+      append_migrations(app, scope: 'pgrest') if Setting[:pgrest_enabled]
+      append_migrations(app, scope: 'postgis') if Setting[:postgis_enabled]
+      append_migrations(app, scope: 'timescaledb') if Setting[:timescaledb_enabled]
     end
 
     initializer 'mix_core.append_routes' do |app|

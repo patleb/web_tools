@@ -23,7 +23,6 @@ namespace :mix_core do
     %w(
       content_security_policy
       cors
-      zeitwerk
     ).each do |init|
       cp src/"config/initializers/#{init}.rb", dst/"config/initializers/#{init}.rb"
     end

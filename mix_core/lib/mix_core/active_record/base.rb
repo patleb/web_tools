@@ -96,7 +96,7 @@ ActiveRecord::Base.class_eval do
 
       if Setting[:timescaledb_enabled]
         timescaledb_tables.each do |name, id|
-          result[name] = TimescaledbTable.find(id).total_bytes
+          result[name] = Timescaledb::Table.find(id).total_bytes
         end
         result = result.sort_by(&:last).reverse.to_h.with_indifferent_access
       end
