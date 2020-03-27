@@ -77,10 +77,6 @@ module MixTemplate
 
     def capture(*values, &block)
       if block_given?
-        # TODO wrap block with a list stacks
-        # if within block, push item to queue
-        # else if exit block (ensure), join items from queue, then concat
-        # --> will allow syntax without arrays
         if values.any?
           super
         else
@@ -117,27 +113,27 @@ module MixTemplate
       h_(*values, &block)
     end
 
-    def with_tag(tag, css_or_text_or_options = nil, text_or_options = nil, options_or_text = nil, &block)
-      unless css_or_text_or_options.nil?
-        case css_or_text_or_options
+    def with_tag(tag, css_or_content_or_options = nil, content_or_options = nil, options_or_content = nil, &block)
+      unless css_or_content_or_options.nil?
+        case css_or_content_or_options
         when ID_CLASSES
-          id_classes = css_or_text_or_options
-          unless text_or_options.nil?
-            case text_or_options
+          id_classes = css_or_content_or_options
+          unless content_or_options.nil?
+            case content_or_options
             when Hash
-              text = options_or_text
-              options = text_or_options
+              content = options_or_content
+              options = content_or_options
             else
-              text = text_or_options
-              options = options_or_text
+              content = content_or_options
+              options = options_or_content
             end
           end
         when Hash
-          text = text_or_options
-          options = css_or_text_or_options
+          content = content_or_options
+          options = css_or_content_or_options
         else
-          text = css_or_text_or_options
-          options = text_or_options
+          content = css_or_content_or_options
+          options = content_or_options
         end
       end
       options = options ? options.dup : {}
@@ -157,12 +153,12 @@ module MixTemplate
 
       escape = options.has_key?(:escape) ? options.delete(:escape) : true
       times = options.delete(:times) if options.has_key? :times
-      text = options.delete(:text) if options.has_key? :text
-      text = h_(&text) if text.is_a? Proc
-      text = h_(&block) if text.nil? && block_given?
-      text = h_(text) if text.is_a? Array
+      content = options.delete(:content) if options.has_key? :content
+      content = h_(&content) if content.is_a? Proc
+      content = h_(&block) if content.nil? && block_given?
+      content = h_(content) if content.is_a? Array
 
-      result = content_tag tag, text, options, escape
+      result = content_tag tag, content, options, escape
       result = [result] * times if times
       result
     end

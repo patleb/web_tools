@@ -1,6 +1,6 @@
 # TODO https://github.com/rails/rails/pull/31251
-html_ '.no-js', lang: Current.locale do[
-  head_ do[
+html_('.no-js', lang: Current.locale) {[
+  head_ {[
     unless Rails::Env.dev_rack_profiling?
       content_for?(:javascripts) ? yield(:javascripts) : [
         javascript_include_tag(current_layout('vendor'), defer: true),
@@ -24,38 +24,38 @@ html_ '.no-js', lang: Current.locale do[
     csp_meta_tag,
     title_{ @page_title },
     browser_upgrade_css
-  ]end,
-  body_(id: module_name) do[
+  ]},
+  body_(id: module_name) {[
     browser_upgrade_html,
     area(:body_begin),
     div_('#js_tag_names', data: { names: MixTemplate::TagHelper.tags }),
     div_('.container-fluid') do
-      div_ '.row' do[
+      div_('.row') {[
         nav_('.navbar.navbar-default.col-sm-3.col-md-2') do
           div_ '.container-fluid' do
-            div_ '.navbar-header' do[
-              button_('.js_menu_toggle.navbar-toggle.collapsed', type: 'button', data: { toggle: 'collapse', target: '#navigation' }) do[
+            div_('.navbar-header') {[
+              button_('.js_menu_toggle.navbar-toggle.collapsed', type: 'button', data: { toggle: 'collapse', target: '#navigation' }) {[
                 span_('.sr-only', t('mix_template.toggle_navigation')),
                 span_('.icon-bar', times: 3)
-              ]end,
+              ]},
               a_('.navbar-brand.pjax', @app_name, href: @root_path),
               div_('#js_page_title', @page_title)
-            ]end
+            ]}
           end
         end,
         div_('#navigation.navbar-collapse.collapse', role: 'navigation') do
-          div_ '.sidebar-nav.col-sm-3.col-md-2' do[
-            area(:sidebar),
-          ]end
+          div_ '.sidebar-nav.col-sm-3.col-md-2' do
+            area(:sidebar)
+          end
         end,
-        div_('#js_page_window.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2') do[
+        div_('#js_page_window.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2') {[
           div_('.js_menu_overlay'),
           div_('#js_pjax_container') do
             yield
           end
-        ]end
-      ]end
+        ]}
+      ]}
     end,
     area(:body_end)
-  ]end
-]end
+  ]}
+]}
