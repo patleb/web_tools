@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'date_validator'
   s.add_dependency 'http_accept_language'
   s.add_dependency 'i18n-debug'
+  s.add_dependency 'jsonb_accessor'
   s.add_dependency 'money-rails'
   s.add_dependency 'monogamy'
   s.add_dependency 'null-logger'

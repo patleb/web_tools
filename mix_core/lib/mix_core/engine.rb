@@ -9,6 +9,7 @@ module MixCore
     require 'active_type'
     require 'date_validator'
     require 'http_accept_language'
+    require 'jsonb_accessor'
     require 'monogamy'
     require 'pg'
     require 'rails-i18n'
