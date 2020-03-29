@@ -1,23 +1,5 @@
 module MixTemplate
   module TagHelper
-    HTML_TAGS = %i(
-      a
-      b body button
-      dd div dl dt
-      em
-      fieldset
-      h1 h2 h3 h4 h5 h6 head hr html
-      i input
-      label legend li link
-      meta
-      nav
-      option
-      p pre
-      script select span strong style
-      table tbody td th thead title tr
-      ul
-    ).freeze
-
     HTML5_TAGS = Set.new(%i(
       a abbr address area article aside audio
       b base bdo blockquote body br button
@@ -40,26 +22,24 @@ module MixTemplate
       var video
       wbr
     ))
-
     ID_CLASSES = /^([#.][A-Za-z_-][A-Za-z0-9_-]*)+$/.freeze
 
-    def self.tags
-      @tags ||= begin
-        if Rails.env.development?
-          MixTemplate.config.html_extra_tags.each do |tag|
-            unless HTML5_TAGS.include? tag
-              Rails.logger.info "Tag <#{tag}> isn't HTML5"
-            end
-          end
+    def method_missing(name, *args, &block)
+      if name.end_with? '_'
+        tag = name.delete_suffix('_')
+        unless HTML5_TAGS.include? tag
+          Rails.logger.info "Tag <#{tag}> isn't HTML5"
         end
-        HTML_TAGS + MixTemplate.config.html_extra_tags
+        define_method name do |*args, &block|
+          with_tag tag, *args, &block
+        end
+      else
+        super
       end
     end
 
-    tags.each do |tag|
-      define_method "#{tag}_" do |*args, &block|
-        with_tag tag, *args, &block
-      end
+    def respond_to_missing?(name, _include_private = false)
+      name.end_with?('_') || super
     end
 
     # TODO https://github.com/rails/rails/pull/32125

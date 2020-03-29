@@ -28,7 +28,6 @@ html_('.no-js', lang: Current.locale) {[
   body_(id: module_name) {[
     browser_upgrade_html,
     area(:body_begin),
-    div_('#js_tag_names', data: { names: MixTemplate::TagHelper.tags }),
     div_('.container-fluid') do
       div_('.row') {[
         nav_('.navbar.navbar-default.col-sm-3.col-md-2') do
