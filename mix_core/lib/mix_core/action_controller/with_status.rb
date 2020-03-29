@@ -48,22 +48,22 @@ module ActionController
 
     def template_status_html(status, title: t("template.#{status}.title"), problem: t("template.#{status}.problem"), solution: t("template.#{status}.solution"))
       helpers.instance_eval do
-        html_ do[
-          head_ do[
+        html_ {[
+          head_ {[
             title_("#{title} (#{t("template.#{status}.status").presence || status})"),
             meta_(name: 'viewport', content: 'width=device-width,initial-scale=1'),
             template_status_css
-          ]end,
+          ]},
           body_('.rails-default-error-page') do
-            div_ '.dialog' do[
-              div_ do[
+            div_('.dialog') {[
+              div_ {[
                 h1_(title),
                 p_(problem)
-              ]end,
+              ]},
               p_(solution)
-            ]end
+            ]}
           end
-        ]end
+        ]}
       end
     end
   end
