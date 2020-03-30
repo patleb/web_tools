@@ -24,6 +24,13 @@ module MixTemplate
     ))
     ID_CLASSES = /^([#.][A-Za-z_-][A-Za-z0-9_-]*)+$/.freeze
 
+    def html_(*args, &block)
+      h_(
+        '<!DOCTYPE html>'.html_safe,
+        with_tag('html', *args, &block)
+      )
+    end
+
     def method_missing(name, *args, &block)
       if name.end_with? '_'
         tag = name.delete_suffix('_')
@@ -33,6 +40,7 @@ module MixTemplate
         define_method name do |*args, &block|
           with_tag tag, *args, &block
         end
+        send(name, *args, &block)
       else
         super
       end
@@ -45,14 +53,6 @@ module MixTemplate
     # TODO https://github.com/rails/rails/pull/32125
     def utf8_enforcer_tag
       ''.html_safe
-    end
-
-    alias_method :old_html_, :html_
-    def html_(*args, &block)
-      h_(
-        '<!DOCTYPE html>'.html_safe,
-        old_html_(*args, &block)
-      )
     end
 
     def capture(*values, &block)
