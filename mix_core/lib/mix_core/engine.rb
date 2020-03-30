@@ -1,5 +1,3 @@
-require 'mix_core/rails/env'
-
 module ActionService
   autoload :Base, 'mix_core/action_service/base'
 end
@@ -23,7 +21,9 @@ module MixCore
     require 'mix_core/action_mailer/smtp_settings'
     require 'mix_core/active_support/core_ext'
     require 'mix_core/active_support/current_attributes'
+    require 'mix_core/active_support/string_inquirer'
     require 'mix_core/active_support/dependencies/with_nilable_cache'
+    require 'mix_core/active_support/lazy_load_hooks/autorun'
     require 'mix_core/configuration'
     require 'mix_core/money_rails'
     require 'mix_core/rails/engine'
@@ -31,6 +31,9 @@ module MixCore
     require 'mix_core/sh'
 
     config.before_configuration do |app|
+      require 'mix_core/rails/application'
+      require 'mix_core/rails/initializable/collection'
+
       if Setting[:postgis_enabled]
         require 'pycall'
         require 'rgeo'
@@ -51,9 +54,9 @@ module MixCore
       app.config.i18n.fallbacks = [:en]
       # app.config.i18n.fallbacks = true
 
-      if Rails::Env.dev_or_test?
+      if Rails.env.dev_or_test?
         $stdout.sync = true # for Foreman
-        url_options = Rails::Env.dev_or_test_url_options
+        url_options = Rails.env.dev_or_test_url_options
         host, port = url_options.values_at(:host, :port)
         app.config.action_controller.asset_host = "#{host}#{":#{port}" if port}"
         app.config.action_mailer.asset_host = app.config.action_controller.asset_host
@@ -72,9 +75,19 @@ module MixCore
     end
 
     config.before_initialize do |app|
+      require 'ext_rails/rails/initializable/initializer'
+
+      if Rails.env.dev_or_test?
+        Rails::Initializable::Initializer.exclude_initializers.merge!(
+          'EmailPrefixer::Railtie' => 'email_prefixer.configure_defaults'
+        )
+      end
+      # TODO Rails 6.0
+      # ActiveStorage.routes_prefix '/storage'
+
       require 'mix_core/action_dispatch/middleware/iframe'
       app.config.middleware.use ActionDispatch::IFrame
-      app.config.middleware.insert_after ActionDispatch::Static, Rack::Deflater if Rails::Env.dev_ngrok?
+      app.config.middleware.insert_after ActionDispatch::Static, Rack::Deflater if Rails.env.dev_ngrok?
 
       %w(libraries tasks).each do |directory|
         ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/app/#{directory}")
@@ -170,6 +183,11 @@ module MixCore
     ActiveSupport.on_load(:action_mailer) do
       require 'mix_core/action_mailer/base'
       require 'mix_core/action_mailer/log_subscriber/with_quiet_info'
+    end
+
+    config.to_prepare do
+      require 'mix_core/active_support/lazy_load_hooks/autoload'
+      ActiveSupport.autoload_hooks
     end
   end
 end

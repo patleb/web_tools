@@ -6,7 +6,7 @@ module MixCore
 
     def params_debug
       return @params_debug if defined? @params_debug
-      @params_debug = Rails::Env.dev_or_test?
+      @params_debug = Rails.env.dev_or_test?
     end
 
     def rescue_500

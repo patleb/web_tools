@@ -14,7 +14,7 @@ module Rack
     CRITICAL = 3
 
     DEFAULT_LOGGER = if defined?(::Rails)
-      if ::Rails::Env.dev_or_test?
+      if ::Rails.env.dev_or_test?
         ::Logger.new(STDOUT)
       else
         ::Logger.new(::Rails.root.join('log/profiler.log'))

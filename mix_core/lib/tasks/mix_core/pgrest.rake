@@ -12,7 +12,7 @@ namespace :db do
 
   desc 'reload pgrest schema cache'
   task :reload_pgrest => :environment do
-    if Setting[:pgrest_enabled] && Rails::Env.dev_or_test?
+    if Setting[:pgrest_enabled] && Rails.env.dev_or_test?
       sh 'kill -s USR1 $(pgrep postgrest) || :'
     end
   end

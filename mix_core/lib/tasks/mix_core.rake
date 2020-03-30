@@ -26,6 +26,7 @@ namespace :mix_core do
     ).each do |init|
       cp src/"config/initializers/#{init}.rb", dst/"config/initializers/#{init}.rb"
     end
+    cp src/'config/boot.rb',     dst/'config/boot.rb'
     cp src/'config/schedule.rb', dst/'config/schedule.rb'
 
     cp      src/'config/provision.yml', dst/'config/provision.yml'

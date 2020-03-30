@@ -1,13 +1,13 @@
 # TODO https://github.com/rails/rails/pull/31251
 html_('.no-js', lang: Current.locale) {[
   head_ {[
-    unless Rails::Env.dev_rack_profiling?
+    unless Rails.env.dev_rack_profiling?
       content_for?(:javascripts) ? yield(:javascripts) : [
         javascript_include_tag(current_layout('vendor'), defer: true),
         javascript_include_tag(current_layout, defer: true),
       ]
     end,
-    unless Rails::Env.dev_rack_profiling?
+    unless Rails.env.dev_rack_profiling?
       content_for?(:stylesheets) ? yield(:stylesheets) : [
         stylesheet_link_tag(current_layout, media: :all),
       ]
