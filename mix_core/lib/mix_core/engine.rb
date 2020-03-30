@@ -75,7 +75,7 @@ module MixCore
     end
 
     config.before_initialize do |app|
-      require 'ext_rails/rails/initializable/initializer'
+      require 'mix_core/rails/initializable/initializer'
 
       if Rails.env.dev_or_test?
         Rails::Initializable::Initializer.exclude_initializers.merge!(
