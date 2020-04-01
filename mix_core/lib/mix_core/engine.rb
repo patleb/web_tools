@@ -68,7 +68,7 @@ module MixCore
         app.config.action_mailer.default_url_options = -> { { host: Setting[:server_host] } }
       end
 
-      if (file = Rails.root.join('tmp/console.txt')).exist? && (ips = file.read.split("\n").reject(&:blank?)).any?
+      if (file = Rails.root.join('tmp/console.txt')).exist? && (ips = file.read.lines.reject(&:blank?)).any?
         require 'web-console'
         app.config.web_console.whitelisted_ips = ips
         app.config.web_console.development_only = false
