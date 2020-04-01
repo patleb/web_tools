@@ -37,7 +37,7 @@ module MixTemplate
         unless HTML5_TAGS.include? tag
           Rails.logger.info "Tag <#{tag}> isn't HTML5"
         end
-        define_method name do |*args, &block|
+        self.class.send(:define_method, name) do |*args, &block|
           with_tag tag, *args, &block
         end
         send(name, *args, &block)
