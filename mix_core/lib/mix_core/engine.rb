@@ -7,6 +7,7 @@ module MixCore
     require 'active_type'
     require 'date_validator'
     require 'discard'
+    require 'email_prefixer'
     require 'http_accept_language'
     require 'jsonb_accessor'
     require 'mail_interceptor' unless Rails.env.production?

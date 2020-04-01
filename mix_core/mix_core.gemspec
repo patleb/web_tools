@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'arel_extensions'
   s.add_dependency 'date_validator'
   s.add_dependency 'discard'
+  s.add_dependency 'email_prefixer'
   s.add_dependency 'http_accept_language'
   s.add_dependency 'i18n-debug'
   s.add_dependency 'jsonb_accessor'
