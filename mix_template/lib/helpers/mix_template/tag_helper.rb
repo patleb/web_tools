@@ -1,6 +1,6 @@
 module MixTemplate
   module TagHelper
-    HTML5_TAGS = Set.new(%i(
+    HTML5_TAGS = Set.new(%w(
       a abbr address area article aside audio
       b base bdo blockquote body br button
       canvas caption cite code col colgroup command
@@ -32,8 +32,8 @@ module MixTemplate
     end
 
     def method_missing(name, *args, &block)
-      if name.end_with? '_'
-        tag = name.delete_suffix('_')
+      if name.to_s.end_with? '_'
+        tag = name.to_s.delete_suffix('_')
         unless HTML5_TAGS.include? tag
           Rails.logger.info "Tag <#{tag}> isn't HTML5"
         end
