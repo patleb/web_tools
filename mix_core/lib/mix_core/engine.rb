@@ -171,6 +171,10 @@ module MixCore
       require 'mix_core/action_controller/base'
     end
 
+    ActiveSupport.on_load(:active_job) do
+      require 'mix_core/active_job/base'
+    end
+
     ActiveSupport.on_load(:active_record) do
       require 'activerecord-postgis-adapter' if Setting[:postgis_enabled]
       require 'arel_extensions'

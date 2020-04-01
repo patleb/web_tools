@@ -1,6 +1,7 @@
 require_rel 'base'
 
 ActionController::Base.class_eval do
+  include ActiveSupport::LazyLoadHooks::Autorun
   include self::WithRescue
   include self::WithContext
 

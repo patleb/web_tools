@@ -1,4 +1,6 @@
 ActiveSupport::CurrentAttributes.class_eval do
+  include ActiveSupport::LazyLoadHooks::Autorun
+
   def self.[](name)
     attributes[name.to_sym]
   end
