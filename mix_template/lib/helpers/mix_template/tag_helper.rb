@@ -55,26 +55,22 @@ module MixTemplate
       ''.html_safe
     end
 
-    def capture(*values, &block)
+    def capture(*args)
       if block_given?
-        if values.any?
-          super
+        value = nil
+        buffer = with_output_buffer { value = yield(*args) }
+        value = buffer.presence || value
+        case value
+        when String
+          ERB::Util.html_escape value
+        when Array
+          capture(value)
         else
-          value = nil
-          buffer = with_output_buffer { value = yield }
-          value = buffer.presence || value
-          case value
-          when String
-            ERB::Util.html_escape value
-          when Array
-            capture(value)
-          else
-            ERB::Util.html_escape value.to_s
-          end
+          ERB::Util.html_escape value.to_s
         end
       else
         super() do
-          values.flatten.each do |value|
+          args.flatten.each do |value|
             concat value
             concat ' ' unless value.blank? || value.no_space?
           end

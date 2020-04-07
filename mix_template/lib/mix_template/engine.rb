@@ -22,16 +22,12 @@ module MixTemplate
       require 'mix_template/action_view/helpers/sanitize_helper'
       require 'mix_template/action_view/helpers/tag_helper/tag_builder/with_data_option'
       require 'mix_template/action_view/template_renderer/with_presenter'
-      require 'helpers/mix_template/form_helper'
-      require 'helpers/mix_template/tag_helper'
-      include MixTemplate::FormHelper
-      include MixTemplate::TagHelper
     end
 
-    initializer 'mix_template.action_view', after: 'nestive.initialize' do
+    initializer 'mix_template.action_view', before: 'nestive.initialize' do
       ActiveSupport.on_load(:action_view) do
-        require 'helpers/mix_template/layout_helper'
-        include MixTemplate::LayoutHelper
+        require 'helpers/mix_template/tag_helper'
+        include MixTemplate::TagHelper
       end
     end
   end
