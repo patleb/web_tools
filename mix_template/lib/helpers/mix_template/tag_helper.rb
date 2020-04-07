@@ -129,7 +129,7 @@ module MixTemplate
 
       escape = options.has_key?(:escape) ? options.delete(:escape) : true
       times = options.delete(:times) if options.has_key? :times
-      content = options.delete(:content) if options.has_key? :content
+      content = options.delete(:text) if options.has_key? :text
       content = h_(&content) if content.is_a? Proc
       content = h_(&block) if content.nil? && block_given?
       content = h_(content) if content.is_a? Array
