@@ -24,10 +24,17 @@ module MixTemplate
       require 'mix_template/action_view/template_renderer/with_presenter'
     end
 
-    initializer 'mix_template.action_view', before: 'nestive.initialize' do
+    initializer 'mix_template.tag_helper', before: 'nestive.initialize' do
       ActiveSupport.on_load(:action_view) do
         require 'helpers/mix_template/tag_helper'
         include MixTemplate::TagHelper
+      end
+    end
+
+    initializer 'mix_template.layout_helper', after: 'nestive.initialize' do
+      ActiveSupport.on_load(:action_view) do
+        require 'helpers/mix_template/layout_helper'
+        include MixTemplate::LayoutHelper
       end
     end
   end

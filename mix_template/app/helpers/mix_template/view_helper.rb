@@ -1,7 +1,15 @@
 module MixTemplate
   module ViewHelper
+    def body_id
+      [current_layout, 'layout'].compact.join('_')
+    end
+
     def current_layout(name = nil)
-      @_current_layout ||= (self.is_a?(ActionController::Base) ? self : controller).send(:_layout, []) || 'application'
+      @_current_layout ||= begin
+        layout_controller = self.is_a?(ActionController::Base) ? self : controller
+        layout_path = layout_controller.send(:_layout, @lookup_context, [:html])&.virtual_path || 'layouts/application'
+        layout_path.delete_prefix('layouts/')
+      end
       name ? @_current_layout.sub(%r{(^|/)application$}, "\\1#{name}") : @_current_layout
     end
 
