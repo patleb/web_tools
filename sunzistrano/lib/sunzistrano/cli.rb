@@ -172,8 +172,9 @@ module Sunzistrano
       end
 
       def provision_cmd(server)
+        reset_known_hosts_cmd = reset_known_hosts(server)
         <<~CMD.squish
-          #{reset_known_hosts(server)} &&
+          #{"#{reset_known_hosts_cmd} &&" if reset_known_hosts_cmd.present?}
           #{ssh_add_vagrant} cd .provision && tar cz . |
           ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR
           #{"-o ProxyCommand='ssh -W %h:%p #{sun.username}@#{sun.server}'" if sun.server_cluster?}
