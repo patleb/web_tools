@@ -1,43 +1,31 @@
 module ExtCapistrano
   module Helpers
     def execute_cap(stage, task, environment = {})
-      environment = environment.merge(rails_env: 'development', git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS'])
-      environment = environment.map do |key,value|
-        key_string = key.is_a?(Symbol) ? key.to_s.upcase : key.to_s
-        escaped_value = value.to_s.gsub(/"/, '\"')
-        %{export #{key_string}="#{escaped_value}";}
-      end.join(' ')
-      execute <<-SH.squish
-        #{Sh.rbenv_export(fetch(:deployer_name))}; #{Sh.rbenv_init};
-        #{environment}
-        cd #{current_path};
-        bin/cap #{stage} #{task}
-      SH
-    end
-
-    def execute_rake(task, environment = {})
-      with_rake environment do
-        execute :rake, task
+      with_ruby(environment.merge(rails_env: 'development', git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS'])) do |context|
+        execute <<-SH.squish
+          #{context}
+          bin/cap #{stage} #{task}
+        SH
       end
     end
 
-    def with_rake(environment = {})
-      environment = environment.merge(rails_env: cap.env, rails_app: cap.app, rake_output: true)
-      within current_path do
-        with environment do
-          yield
-        end
+    def execute_rake(task, environment = {})
+      with_ruby(environment.merge(rake_output: true)) do |context|
+        execute <<-SH.squish
+          #{context}
+          bin/rake #{task}
+        SH
       end
     end
 
     def execute_nohup(command)
-      filename = nohup_basename(command)
-      execute <<-SH.squish, pty: false
-        #{Sh.rbenv_export(fetch(:deployer_name))}; #{Sh.rbenv_init};
-        export RAILS_ENV=#{cap.env}; export RAILS_APP=#{cap.app}; export RAKE_OUTPUT=true;
-        cd #{current_path};
-        nohup #{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid
-      SH
+      with_ruby(rake_output: true) do |context|
+        filename = nohup_basename(command)
+        execute <<-SH.squish, pty: false
+          #{context}
+          nohup #{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid
+        SH
+      end
     end
 
     def kill_nohup(command)
@@ -47,6 +35,13 @@ module ExtCapistrano
 
     def nohup_basename(command)
       command.squish.gsub(/[^_\w]/, '-').gsub(/-{2,}/, '-').delete_prefix('-').delete_suffix('-')
+    end
+
+    def with_ruby(environment = {})
+      environment = { rails_env: cap.env, rails_app: cap.app }.merge(environment).map do |k, v|
+        %{export #{k.is_a?(Symbol) ? k.to_s.upcase : k}="#{v.to_s.gsub(/"/, '\"')}";}
+      end.join(' ')
+      yield "#{Sh.rbenv_export(fetch(:deployer_name))}; #{Sh.rbenv_init}; #{environment} cd #{current_path};"
     end
 
     def execute_bash(inline_code, sudo: false, u: true)

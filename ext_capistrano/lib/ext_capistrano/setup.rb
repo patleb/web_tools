@@ -55,9 +55,6 @@ include Capistrano::DSL::Stages::Apps
 namespace :load do
   task :defaults do
     load "capistrano/defaults.rb"
-
-    SSHKit.config.command_map[:rake] = "bin/rake"
-    SSHKit.config.command_map[:cap] = "bin/cap"
   end
 end
 
