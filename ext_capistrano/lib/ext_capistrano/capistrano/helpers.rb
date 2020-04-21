@@ -1,18 +1,18 @@
 module ExtCapistrano
   module Helpers
     def execute_cap(stage, task, environment = {})
-      with_cap environment do
-        execute :cap, stage, task
-      end
-    end
-
-    def with_cap(environment = {})
       environment = environment.merge(rails_env: 'development', git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS'])
-      within current_path do
-        with environment do
-          yield
-        end
-      end
+      environment = environment.map do |key,value|
+        key_string = key.is_a?(Symbol) ? key.to_s.upcase : key.to_s
+        escaped_value = value.to_s.gsub(/"/, '\"')
+        %{export #{key_string}="#{escaped_value}";}
+      end.join(' ')
+      execute <<-SH.squish
+        #{Sh.rbenv_export(fetch(:deployer_name))}; #{Sh.rbenv_init};
+        #{environment}
+        cd #{current_path};
+        bin/cap #{stage} #{task}
+      SH
     end
 
     def execute_rake(task, environment = {})
