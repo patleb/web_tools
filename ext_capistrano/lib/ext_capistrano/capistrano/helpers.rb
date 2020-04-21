@@ -2,9 +2,7 @@ module ExtCapistrano
   module Helpers
     def execute_cap(stage, task, environment = {})
       with_cap environment do
-        Bundler.with_clean_env do
-          execute :cap, stage, task
-        end
+        execute :cap, stage, task
       end
     end
 
