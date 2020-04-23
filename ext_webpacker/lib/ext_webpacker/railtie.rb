@@ -6,7 +6,7 @@ module ExtWebpacker
       load 'tasks/ext_webpacker.rake'
     end
 
-    initializer 'ext_webpacker.bootstrap', after: 'webpacker.bootstrap' do
+    initializer 'ext_webpacker.bootstrap', before: 'webpacker.proxy' do
       require 'ext_webpacker/webpacker'
     end
   end
