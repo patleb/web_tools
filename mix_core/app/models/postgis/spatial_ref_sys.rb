@@ -1,6 +1,6 @@
 module Postgis
   class SpatialRefSys < ActiveRecord::Base
-    include ActiveSupport::Testing::Stream
+    extend ActiveSupport::Testing::Stream
 
     pyimport :pyproj
     delegate :pyproj, to: :class
