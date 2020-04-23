@@ -4,7 +4,7 @@ ENV["RAILS_ENV"] ||= ENV["RACK_ENV"] || "development"
 ENV["NODE_ENV"]  ||= "development"
 
 require_relative '../config/boot'
-require "webpacker"
+require "ext_webpacker/webpacker"
 require "webpacker/webpack_runner"
 
 APP_ROOT = File.expand_path("..", __dir__)
