@@ -1,5 +1,7 @@
 module Postgis
   class SpatialRefSys < ActiveRecord::Base
+    include ActiveSupport::Testing::Stream
+
     pyimport :pyproj
     delegate :pyproj, to: :class
 
@@ -30,7 +32,7 @@ module Postgis
 
     def self.crs_for(projection)
       cf = projection.symbolize_keys.transform_keys{ |k| CF_KEYS_ALIASES[k] || k }.except(*CF_KEYS_EXCLUDED)
-      crs = pyproj.crs.CRS.from_cf(cf, true)
+      crs = silence_stream(STDERR){ pyproj.crs.CRS.from_cf(cf, true) }
       { srtext: crs.to_wkt, proj4text: crs.to_proj4 }
     end
     delegate :crs_for, to: :class
