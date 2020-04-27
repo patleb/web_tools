@@ -6,7 +6,7 @@ module ExtWebpacker
       prune
       (expected_gems - current_gems).each do |name|
         gem_source_path = Gem.root(name).join(source_path)
-        File.symlink(gem_source_path, source_path.join('gems', name)) if gem_source_path.exist?
+        File.symlink(gem_source_path, source_gems_path.join(name)) if gem_source_path.exist?
       end
     end
 
@@ -29,10 +29,14 @@ module ExtWebpacker
 
     def root_path
       @root_path ||= begin
-        gems_path = Pathname.new(Dir.pwd).join(source_path, 'gems')
+        gems_path = Pathname.new(Dir.pwd).join(source_gems_path)
         gems_path.mkdir unless gems_path.exist?
         gems_path
       end
+    end
+
+    def source_gems_path
+      @source_gems_path ||= source_path.join(default_config['source_gems_path'] || 'gems')
     end
 
     def source_path
