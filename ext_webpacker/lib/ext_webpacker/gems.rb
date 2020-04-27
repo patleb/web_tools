@@ -22,11 +22,11 @@ module ExtWebpacker
     end
 
     def gems_source_path
-      @gems_source_path ||= default_config['gems_source_path'] || 'lib/javascript'
+      @gems_source_path ||= default_config['gems_source_path']
     end
 
     def source_gems_path
-      @source_gems_path ||= source_path.join(default_config['source_gems_path'] || 'gems')
+      @source_gems_path ||= source_path.join(default_config['source_gems_path'])
     end
 
     def source_path
