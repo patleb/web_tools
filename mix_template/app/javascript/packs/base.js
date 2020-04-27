@@ -1,7 +1,7 @@
 // https://www.neontsunami.com/posts/import-whole-directory-in-webpacker
 // https://gist.github.com/rossta/5a9edcd7ba37416f8c6f7ed383200b0d
 import lodash from 'lodash'
-import lru from 'tiny-lru'
+import lru from 'tiny-lru/lib/tiny-lru'
 import axios from 'axios'
 import Chart from 'chart.js'
 import 'chartjs-adapter-date-fns'
