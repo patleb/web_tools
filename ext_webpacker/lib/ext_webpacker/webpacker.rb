@@ -1,4 +1,8 @@
+require "ext_ruby"
+require "ext_webpacker/gems"
 require "webpacker"
+
+ExtWebpacker::Gems.install
 
 class Webpacker::Env
   private
