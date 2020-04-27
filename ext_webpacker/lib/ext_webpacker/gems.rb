@@ -16,7 +16,7 @@ module ExtWebpacker
     end
 
     def current_gems
-      symlinks.map(&:basename)
+      symlinks.map(&:basename).map(&:to_s)
     end
 
     def expected_gems
