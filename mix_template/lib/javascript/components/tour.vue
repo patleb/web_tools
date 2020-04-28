@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import { DEFAULT_CALLBACKS, DEFAULT_OPTIONS, KEYS } from '@@/mix_template/config/tour_defaults'
+  import { DEFAULT_CALLBACKS, DEFAULT_OPTIONS, KEYS } from '@@/mix_template/config/tour/defaults'
 
   export default {
     props: {

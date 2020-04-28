@@ -1,0 +1,8 @@
+fr:
+  js:
+    lang: "Français"
+    tour:
+      button_skip: "Quitter"
+      button_previous: "Précédent"
+      button_next: "Suivant"
+      button_stop: "Terminer"

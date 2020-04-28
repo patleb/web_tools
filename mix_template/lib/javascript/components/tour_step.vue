@@ -35,7 +35,7 @@
 
 <script>
   import { createPopper } from '@popperjs/core'
-  import { DEFAULT_STEP_OPTIONS } from '@@/mix_template/config/tour_defaults'
+  import { DEFAULT_STEP_OPTIONS } from '@@/mix_template/config/tour/defaults'
 
   export default {
     props: {
