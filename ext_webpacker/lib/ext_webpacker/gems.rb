@@ -2,7 +2,10 @@ module ExtWebpacker
   module Gems
     extend self
 
+    class MissingDependency < StandardError; end
+
     def install
+      verify_dependencies!
       source_gems_path.mkdir unless source_gems_path.exist?
       source_gems_path.children.select(&:symlink?).each(&:delete)
       watched_symlinks = gems.map do |(name, path)|
@@ -11,6 +14,17 @@ module ExtWebpacker
         symlink.join("**/*{#{watched_extensions}}").to_s
       end
       Webpacker::Compiler.watched_paths.concat(watched_symlinks)
+    end
+
+    def verify_dependencies!
+      gems.each do |(_name, path)|
+        if (package = path.join('package.yml')).exist?
+          missing_dependencies = YAML.safe_load(package.read)['dependencies'] - package_dependencies
+          unless missing_dependencies.empty?
+            raise MissingDependency, missing_dependencies.join(', ')
+          end
+        end
+      end
     end
 
     def gems
@@ -39,6 +53,10 @@ module ExtWebpacker
 
     def default_config
       @default_config ||= YAML.load(Pathname.new('config/webpacker.yml').read)['default']
+    end
+
+    def package_dependencies
+      @package_dependencies ||= JSON.parse(Pathname.new('package.json').read)['dependencies'].keys
     end
   end
 end
