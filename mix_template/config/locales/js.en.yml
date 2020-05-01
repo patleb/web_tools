@@ -1,8 +1,3 @@
 en:
   js:
     lang: "English"
-    tour:
-      button_skip: "Skip tour"
-      button_previous: "Previous"
-      button_next: "Next"
-      button_stop: "Finish"

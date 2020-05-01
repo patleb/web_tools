@@ -8,6 +8,7 @@ dependencies:
   - 'date-fns'
   - 'epic-spinners'
   - 'lodash'
+  - 'rails-erb-loader'
   - 'resolve-url-loader'
   - 'sass-resources-loader'
   - 'tiny-lru'

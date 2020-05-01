@@ -1,5 +1,5 @@
-import Tour from '../components/tour'
-import TourStep from '../components/tour_step'
+import Tour from '@@/mix_template/components/tour'
+import TourStep from '@@/mix_template/components/tour/step'
 
 // Declare install function executed by Vue.use()
 export function install(Vue) {

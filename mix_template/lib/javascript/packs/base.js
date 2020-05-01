@@ -10,7 +10,7 @@ const consume_js_attribute = (name) => {
   }
 }
 
-import lodash from 'lodash'
+import _ from 'lodash'
 import lru from 'tiny-lru/lib/tiny-lru'
 import axios from 'axios'
 import Chart from 'chart.js'
@@ -33,10 +33,9 @@ Vue.component('AtomSpinner', AtomSpinner)
 
 document.addEventListener('DOMContentLoaded', () => {
   window.$cookies.config(true)
-  window._ = lodash
+  window._ = _
   window.lru = lru
   window.$image = image_path
-
   consume_js_attribute('config')
   consume_js_attribute('locales')
   axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content')

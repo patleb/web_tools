@@ -87,7 +87,7 @@
 <style lang="scss" scoped>
   .tour_step {
     min-width: 160px;
-    background: #50596c; /* #ffc107, #35495e */
+    background: $tour_background_color;
     color: white;
     max-width: 320px;
     border-radius: 3px;
@@ -106,7 +106,7 @@
   }
 
   .tour_step .tour_step_arrow {
-    border-color: #50596c; /* #ffc107, #35495e */
+    border-color: $tour_background_color;
   }
 
   .tour_step_arrow_dark {
@@ -208,7 +208,7 @@
 
     &:hover {
       background-color: rgba(white, 0.95);
-      color: #50596c;
+      color: $tour_background_color;
     }
   }
 </style>
