@@ -60,7 +60,7 @@ module Sunzistrano
         ref = ref.join('config', 'provision', 'files', "#{path.delete_prefix('/')}.ref")
         FileUtils.mkdir_p File.dirname(ref)
         if sun.saved
-          path = "/home/#{sun.username}/#{sun.DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
+          path = "/home/#{sun.username}/#{Sunzistrano::Context::DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
         end
         unless system download_cmd(path, ref)
           puts "Cannot transfer [#{path}] to [#{ref}]".red
@@ -182,11 +182,11 @@ module Sunzistrano
 
       def provision_remote_cmd
         <<~CMD.squish
-          rm -rf ~/#{sun.PROVISION_DIR} &&
-          mkdir ~/#{sun.PROVISION_DIR} &&
-          cd ~/#{sun.PROVISION_DIR} &&
+          rm -rf ~/#{Sunzistrano::Context::PROVISION_DIR} &&
+          mkdir ~/#{Sunzistrano::Context::PROVISION_DIR} &&
+          cd ~/#{Sunzistrano::Context::PROVISION_DIR} &&
           tar xz &&
-          #{'sudo' if sun.sudo} bash role.sh |& tee -a ~/#{sun.PROVISION_LOG}
+          #{'sudo' if sun.sudo} bash role.sh |& tee -a ~/#{Sunzistrano::Context::PROVISION_LOG}
         CMD
       end
 

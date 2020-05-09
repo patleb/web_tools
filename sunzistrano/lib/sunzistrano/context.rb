@@ -11,12 +11,6 @@ module Sunzistrano
     METADATA_DIR = 'sun_metadata'
     DEFAULTS_DIR = 'sun_defaults'
 
-    constants.each do |name|
-      define_method name do
-        self.class.const_get name
-      end
-    end
-
     def self.provision_yml
       Pathname.new(File.expand_path('config/provision.yml'))
     end
