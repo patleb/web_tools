@@ -142,13 +142,19 @@ module Sunzistrano
       end
 
       def run_provision_cmd
-        sun.servers.each do |server|
-          `ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{server} 2> /dev/null`
-        end
+        run_reset_known_hosts
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_provison_cmd_for(server)
         end
         FileUtils.rm_rf('.provision') unless sun.debug
+      end
+
+      def run_reset_known_hosts
+        hosts = sun.servers.map{ |server| `getent hosts #{server}`.squish.split }.flatten.uniq
+        if hosts.any?
+          reset_known_hosts = hosts.map{ |host| %{ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host} 2> /dev/null} }
+          `#{reset_known_hosts.join(';')}`
+        end
       end
 
       def run_provison_cmd_for(server)
@@ -169,9 +175,7 @@ module Sunzistrano
       end
 
       def provision_cmd(server)
-        reset_known_hosts_cmd = reset_known_hosts(server)
         <<~CMD.squish
-          #{"#{reset_known_hosts_cmd} &&" if reset_known_hosts_cmd.present?}
           #{ssh_add_vagrant} cd .provision && tar cz . |
           ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR
           #{"-o ProxyCommand='ssh -W %h:%p #{sun.username}@#{sun.server}'" if sun.server_cluster?}
@@ -196,10 +200,6 @@ module Sunzistrano
           "ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR"
           #{sun.username}@#{sun.server}:#{path} #{ref}
         CMD
-      end
-
-      def reset_known_hosts(server)
-        `getent hosts #{server}`.squish.split.map{ |host| %{ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host}} }.join(';')
       end
 
       def ssh_add_vagrant
