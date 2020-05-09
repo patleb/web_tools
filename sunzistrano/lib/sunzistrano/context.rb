@@ -64,6 +64,10 @@ module Sunzistrano
       )
     end
 
+    def servers
+      @servers ||= server_cluster ? Cloud.server_cluster_ips : [server]
+    end
+
     def server_cluster?
       server_cluster
     end

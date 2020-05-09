@@ -142,19 +142,16 @@ module Sunzistrano
       end
 
       def run_provision_cmd
-        if sun.server_cluster?
-          Parallel.each(Cloud.server_cluster_ips, in_threads: Float::INFINITY) do |server|
-            run_provison_cmd_for(server)
-          end
-        else
-          run_provison_cmd_for(sun.server)
+        sun.servers.each do |server|
+          `ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{server} 2> /dev/null`
+        end
+        Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
+          run_provison_cmd_for(server)
         end
         FileUtils.rm_rf('.provision') unless sun.debug
       end
 
       def run_provison_cmd_for(server)
-        `ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{server} 2> /dev/null`
-
         Open3.popen3(provision_cmd(server)) do |stdin, stdout, stderr|
           stdin.close
           t = Thread.new do
