@@ -40,10 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
   consume_js_attribute('locales')
   axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
-  if ($config.env === 'development') {
-    _.each([Array, Boolean, Number, Object, RegExp, String], (type) => {
-      type.prototype.to_json = function () { return JSON.parse(JSON.stringify(this)) }
-      Object.defineProperty(type.prototype, 'to_json', { enumerable: false })
-    })
-  }
+  _.each([Array, Boolean, Number, Object, RegExp, String], (type) => {
+    type.prototype.to_json = function () { return JSON.parse(JSON.stringify(this)) }
+    Object.defineProperty(type.prototype, 'to_json', { enumerable: false })
+  })
 })

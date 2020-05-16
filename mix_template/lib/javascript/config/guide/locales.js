@@ -1,6 +1,6 @@
 export default {
   en: {
-    tour: {
+    guide: {
       button_skip: "Skip tour",
       button_previous: "Previous",
       button_next: "Next",
@@ -8,7 +8,7 @@ export default {
     }
   },
   fr: {
-    tour: {
+    guide: {
       button_skip: "Quitter",
       button_previous: "Précédent",
       button_next: "Suivant",
