@@ -61,7 +61,7 @@
         }
       },
       next_step: function () {
-        if (this.current_step_i < _.size(this.steps) - 1 && this.current_step_i !== -1) {
+        if (this.current_step_i < _.size(this.steps) - 1) {
           this.current_step_i++
           this.refresh()
           this.on_next_step(this.current_step_i)

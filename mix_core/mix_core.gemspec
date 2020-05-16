@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails_select_on_includes'
   s.add_dependency 'rblineprof'
   s.add_dependency 'rgeo'
+  # s.add_dependency 'sequel-activerecord-adapter'
   s.add_dependency 'term-ansicolor'
   s.add_dependency 'web-console'
   s.add_dependency 'vmstat'
