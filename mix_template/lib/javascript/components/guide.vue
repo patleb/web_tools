@@ -54,17 +54,17 @@
         this.on_start()
       },
       previous_step: function () {
-        if (this.current_step_i > START) {
+        if (!this.is_first) {
           this.current_step_i--
           this.refresh()
-          this.on_previous_step(this.current_step_i)
+          this.on_previous_step()
         }
       },
       next_step: function () {
-        if (this.current_step_i < _.size(this.steps) - 1) {
+        if (!this.is_last) {
           this.current_step_i++
           this.refresh()
-          this.on_next_step(this.current_step_i)
+          this.on_next_step()
         }
       },
       stop: function () {
