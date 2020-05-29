@@ -16,9 +16,9 @@ module ActiveSupport::Cache
       clear
       clear!
     ), to: 'Global'
-  end
 
-  def initialize(options = nil)
-    # TODO
+    def initialize(options = nil)
+      # TODO
+    end
   end
 end
