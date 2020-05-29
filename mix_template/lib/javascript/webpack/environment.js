@@ -22,7 +22,7 @@ case 'development':
   environment.config.merge({ devtool: 'eval-source-map' })
   break
 case 'production':
-  environment.config.merge({ devtool: false })
+  // environment.config.merge({ devtool: false })
   break
 }
 
