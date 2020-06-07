@@ -36,7 +36,7 @@ module ExtWebpacker
     end
 
     def gems_source_path
-      @gems_source_path ||= default_config['gems_source_path']
+      @gems_source_path ||= default_config['gems_source_path'] # TODO remove or set use gems: { name_1: path_1, etc. }
     end
 
     def source_gems_path
