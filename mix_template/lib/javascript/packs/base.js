@@ -40,6 +40,36 @@ document.addEventListener('DOMContentLoaded', () => {
   consume_js_attribute('locales')
   axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
+  window.$rescues = []
+  window.addEventListener('error', function (event) {
+    let rescue = {
+      message: event.message,
+      backtrace: [_.values(_.pick(event, ['filename', 'lineno', 'colno'])).join(':')],
+      data: {}
+    }
+    let rescue_string = JSON.stringify(rescue)
+    if (!_.includes($rescues, rescue_string)) {
+      $rescues.push(rescue_string)
+      axios.post(`${$config.url}/javascript_rescues`, { javascript_rescue: rescue }).catch(() => {})
+    }
+    event.preventDefault()
+    return false
+  })
+
+  Vue.config.errorHandler = (error, vm, info) => {
+    let rescue = {
+      message: `${info}: ${error}`,
+      backtrace: error.stack || [],
+      data: { tag: vm.$el.localName, id: vm.$el.id, class: vm.$el.className }
+    }
+    let rescue_string = JSON.stringify(rescue)
+    if (!_.includes($rescues, rescue_string)) {
+      $rescues.push(rescue_string)
+      axios.post(`${$config.url}/javascript_rescues`, { javascript_rescue: rescue }).catch(() => {})
+    }
+    return false
+  }
+
   _.each([Array, Boolean, Number, Object, RegExp, String], (type) => {
     type.prototype.to_json = function () { return JSON.parse(JSON.stringify(this)) }
     Object.defineProperty(type.prototype, 'to_json', { enumerable: false })

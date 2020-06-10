@@ -5,6 +5,7 @@ class Rescue < LibRecord
   end
 
   def self.enqueue(exception, message = exception.message)
+    # TODO compute md5 without numbers like the throttler, increment counter if md5 already exists
     create!(
       type: sti_name,
       exception: exception.name,

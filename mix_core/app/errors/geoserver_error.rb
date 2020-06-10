@@ -1,2 +1,0 @@
-class GeoserverError < JavascriptError
-end

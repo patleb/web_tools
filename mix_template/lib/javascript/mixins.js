@@ -69,6 +69,22 @@ const mixins = {
 Vue.mixin(mixins)
 
 export default {
+  errorCaptured (error, vm, info) {
+    let rescue = {
+      message: `${info}: ${error}`,
+      backtrace: error.stack || [],
+      data: {
+        tag: vm.$el.localName, id: vm.$el.id, class: vm.$el.className,
+        ...this.$current_size
+      }
+    }
+    let rescue_string = JSON.stringify(rescue)
+    if (!_.includes($rescues, rescue_string)) {
+      $rescues.push(rescue_string)
+      this.$http.post(`${$config.url}/javascript_rescues`, { javascript_rescue: rescue }).catch(() => {})
+    }
+    return false
+  },
   created: function () {
     this.app_params = this.$url_params(window.location.search)
     window.addEventListener('popstate', this.on_popstate)

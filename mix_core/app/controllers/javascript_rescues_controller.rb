@@ -9,7 +9,7 @@ class JavascriptRescuesController < ActionController::API
   private
 
   def create_class
-    ActiveSupport::Dependencies.safe_constantize(create_params[:exception].camelize) || JavascriptError
+    ActiveSupport::Dependencies.safe_constantize((create_params[:exception] || '').camelize) || JavascriptError
   end
 
   def create_args
