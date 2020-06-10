@@ -41,32 +41,30 @@ document.addEventListener('DOMContentLoaded', () => {
   axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
   window.$rescues = []
-  window.addEventListener('error', function (event) {
-    let rescue = {
-      message: event.message,
-      backtrace: [_.values(_.pick(event, ['filename', 'lineno', 'colno'])).join(':')],
-      data: {}
-    }
+  window.$rescue = function (http, rescue) {
     let rescue_string = JSON.stringify(rescue)
     if (!_.includes($rescues, rescue_string)) {
       $rescues.push(rescue_string)
-      axios.post(`${$config.url}/javascript_rescues`, { javascript_rescue: rescue }).catch(() => {})
+      http.post(`${$config.url}/javascript_rescues`, { javascript_rescue: rescue }).catch(() => {})
     }
+  }
+
+  window.addEventListener('error', function (event) {
+    $rescue(axios, {
+      message: event.message,
+      backtrace: [_.values(_.pick(event, ['filename', 'lineno', 'colno'])).join(':')],
+      data: {}
+    })
     event.preventDefault()
     return false
   })
 
   Vue.config.errorHandler = (error, vm, info) => {
-    let rescue = {
+    $rescue(axios, {
       message: `${info}: ${error}`,
       backtrace: error.stack || [],
       data: { tag: vm.$el.localName, id: vm.$el.id, class: vm.$el.className }
-    }
-    let rescue_string = JSON.stringify(rescue)
-    if (!_.includes($rescues, rescue_string)) {
-      $rescues.push(rescue_string)
-      axios.post(`${$config.url}/javascript_rescues`, { javascript_rescue: rescue }).catch(() => {})
-    }
+    })
     return false
   }
 
