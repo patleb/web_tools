@@ -28,6 +28,7 @@
   openssl
   patch
   pigz
+  pssh
   pv
   #{sun.os.ubuntu? ? 'sqlite3 libsqlite3-dev'            : 'sqlite sqlite-devel'}
   #{sun.os.ubuntu? ? 'software-properties-common'        : ''}
