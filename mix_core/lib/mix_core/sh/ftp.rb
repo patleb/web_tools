@@ -10,13 +10,13 @@ module Sh::Ftp
   def ftp_download(match, client_dir, parallel: nil, **options)
     files = Array.wrap(match)
     parallel ||= files.size if files.size > 1
-    ftp "mget -O #{client_dir} #{"-P #{parallel}" if parallel} -c -d #{files.join(' ')}", **options
+    ftp "mget -O #{client_dir} #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c -d #{files.join(' ')}", **options
   end
 
   def ftp_upload(match, client_dir, parallel: nil, **options)
     files = Array.wrap(match)
     parallel ||= files.size if files.size > 1
-    ftp "lcd #{client_dir}; mput #{"-P #{parallel}" if parallel} -c -d #{files.join(' ')}", **options
+    ftp "lcd #{client_dir}; mput #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c -d #{files.join(' ')}", **options
   end
 
   def ftp_remove(match, **options)
