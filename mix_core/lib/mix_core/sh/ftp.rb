@@ -7,12 +7,16 @@ module Sh::Ftp
     ftp "cat #{match}", **options
   end
 
-  def ftp_download(match, client_dir, **options)
-    ftp "mget -c -d #{match} -O #{client_dir}", **options
+  def ftp_download(match, client_dir, parallel: nil, **options)
+    files = Array.wrap(match)
+    parallel ||= files.size if files.size > 1
+    ftp "mget -O #{client_dir} #{"-P #{parallel}" if parallel} -c -d #{files.join(' ')}", **options
   end
 
-  def ftp_upload(match, client_dir, **options)
-    ftp "lcd #{client_dir}; mput -c -d #{match}", **options
+  def ftp_upload(match, client_dir, parallel: nil, **options)
+    files = Array.wrap(match)
+    parallel ||= files.size if files.size > 1
+    ftp "lcd #{client_dir}; mput #{"-P #{parallel}" if parallel} -c -d #{files.join(' ')}", **options
   end
 
   def ftp_remove(match, **options)
