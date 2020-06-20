@@ -79,6 +79,7 @@ vagrant:
   ftp_username: $ALIAS deployer_name
   ftp_password: $ALIAS deployer_password
   ftp_host_path: $METHOD
+  ftp_drive_path: /
   server_cluster_provider: vagrant
 
 staging:

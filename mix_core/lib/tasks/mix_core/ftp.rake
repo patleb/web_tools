@@ -25,7 +25,9 @@ namespace :ftp do
   end
 
   desc 'Mount FTP drive'
-  task :mount => :environment do
+  task :mount, [:user_id, :group_id] => :environment do |t, args|
+    user_id = args[:user_id] || 1001
+    group_id = args[:group_id] || user_id
     sh "sudo mkdir -p #{Setting[:ftp_mount_path]}"
     sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{Setting[:ftp_mount_path]}"
     options = %W(
@@ -36,9 +38,9 @@ namespace :ftp do
       #{'nonempty' if Process.os.ubuntu?}
       user=#{Setting[:ftp_username]}:#{Setting[:ftp_password]}
     ).reject(&:blank?)
-    sh <<~CMD.squish
-      sudo nohup curlftpfs -f -o '#{options.join(',')}',uid=$(id -u #{Setting[:deployer_name]}),gid=$(id -g #{Setting[:deployer_name]})
-        '#{Setting[:ftp_host]}:#{Setting[:ftp_host_path]}' #{Setting[:ftp_mount_path]}
+    sh <<~CMD.squish.gsub('\\', '\\\\\\')
+      sudo nohup curlftpfs -f -o '#{options.join(',')},uid=#{user_id},gid=#{group_id}'
+        '#{Setting[:ftp_host]}:#{Setting[:ftp_drive_path]}' #{Setting[:ftp_mount_path]}
         >> /home/#{Setting[:deployer_name]}/curlftpfs.log 2>&1 & sleep 1
         && echo $! > /home/#{Setting[:deployer_name]}/curlftpfs.pid
     CMD
