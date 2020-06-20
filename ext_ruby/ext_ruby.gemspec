@@ -26,5 +26,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'oj'
   s.add_dependency 'parallel'
   s.add_dependency 'require_all', '~> 1.5'
-  s.add_dependency 'sys-uname'
 end

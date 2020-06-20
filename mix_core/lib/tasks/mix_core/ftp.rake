@@ -32,8 +32,8 @@ namespace :ftp do
       allow_other
       ssl
       no_verify_peer
-      #{'no_verify_hostname' if Sys::Uname.os.ubuntu?}
-      #{'nonempty' if Sys::Uname.os.ubuntu?}
+      #{'no_verify_hostname' if Process.os.ubuntu?}
+      #{'nonempty' if Process.os.ubuntu?}
       user=#{Setting[:ftp_username]}:#{Setting[:ftp_password]}
     ).reject(&:blank?)
     sh <<~CMD.squish
