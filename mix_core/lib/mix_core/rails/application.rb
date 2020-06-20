@@ -2,7 +2,7 @@ Rails::Application.class_eval do
   alias_method :old_initialize!, :initialize!
   def initialize!(group = :default)
     if ENV['RAILS_PROFILE']
-      require 'mr_backend/lineprof'
+      require 'mix_core/lineprof'
 
       thresholds = {
         Rack::Lineprof::CRITICAL => 100,
