@@ -1,7 +1,5 @@
 class CreateLibGlobals < ActiveRecord::Migration[6.0]
   def up
-    drop_table :mr_globals if table_exists? :mr_globals
-
     unless table_exists? :lib_globals
       create_table :lib_globals, id: false do |t|
         t.primary_key :id, :text
@@ -34,7 +32,6 @@ class CreateLibGlobals < ActiveRecord::Migration[6.0]
   end
 
   def down
-    drop_table :mr_globals if table_exists? :mr_globals
     drop_table :lib_globals if table_exists? :lib_globals
   end
 end

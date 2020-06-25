@@ -1,7 +1,5 @@
 class CreateLibRescues < ActiveRecord::Migration[6.0]
   def up
-    drop_table :mr_rescues if table_exists? :mr_rescues
-
     unless table_exists? :lib_rescues
       create_table :lib_rescues do |t|
         t.citext   :type,       null: false
@@ -18,7 +16,6 @@ class CreateLibRescues < ActiveRecord::Migration[6.0]
   end
 
   def down
-    drop_table :mr_rescues if table_exists? :mr_rescues
     drop_table :lib_rescues if table_exists? :lib_rescues
   end
 end
