@@ -3,6 +3,10 @@ class String
     Regexp.new(Regexp.escape(self)).source
   end
 
+  def to_html_single_quotes
+    gsub("'", '&#39;')
+  end
+
   def escape_single_quotes
     gsub(/'/, '\\x27')
   end
