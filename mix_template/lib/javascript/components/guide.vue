@@ -1,41 +1,50 @@
 <template>
-  <div id="guide" class="step" ref="guide">
-    <div v-if="header" class="step_header">
-      <div v-html="header"></div>
-    </div>
+  <div>
+    <div v-show="guide_open" class="step" id="guide" ref="guide">
+      <div v-if="header" class="step_header">
+        <div v-html="header"></div>
+      </div>
 
-    <div class="step_content">
-      <div v-html="content"></div>
-    </div>
+      <div class="step_content">
+        <div v-html="content"></div>
+      </div>
 
-    <div class="step_buttons">
-      <button @click.prevent="skip" v-if="!is_last && button_enabled('button_skip')" class="step_button step_button_skip">
-        {{ $t('guide.button_skip') }}
-      </button>
-      <button @click.prevent="previous_step" v-if="!is_first && button_enabled('button_previous')" class="step_button step_button_previous">
-        {{ $t('guide.button_previous') }}
-      </button>
-      <button @click.prevent="next_step" v-if="!is_last && button_enabled('button_next')" class="step_button step_button_next">
-        {{ $t('guide.button_next') }}
-      </button>
-      <button @click.prevent="finish" v-if="is_last && button_enabled('button_stop')" class="step_button step_button_stop">
-        {{ $t('guide.button_stop') }}
-      </button>
-    </div>
+      <div class="step_buttons">
+        <button @click.prevent="skip" v-if="!is_last && button_enabled('button_skip')" class="step_button step_button_skip">
+          {{ $t('guide.button_skip') }}
+        </button>
+        <button @click.prevent="previous" v-if="!is_first && button_enabled('button_previous')" class="step_button step_button_previous">
+          {{ $t('guide.button_previous') }}
+        </button>
+        <button @click.prevent="next" v-if="!is_last && button_enabled('button_next')" class="step_button step_button_next">
+          {{ $t('guide.button_next') }}
+        </button>
+        <button @click.prevent="finish" v-if="is_last && button_enabled('button_stop')" class="step_button step_button_stop">
+          {{ $t('guide.button_stop') }}
+        </button>
+      </div>
 
-    <div class="step_arrow" :class="{ step_arrow_dark: header }"></div>
+      <div class="step_arrow" :class="{ step_arrow_dark: header }"></div>
+    </div>
   </div>
 </template>
 
 <script>
   import { createPopper } from '@popperjs/core'
 
-  const KEYS = {
-    ARROW_RIGHT: 39,
-    ARROW_LEFT: 37,
-    ESCAPE: 27
-  }
   const START = 0
+  const CURRENT_TOUR = [
+    'current_tour',
+    'current_step_i',
+    'steps',
+    'guide_on_start',
+    'guide_on_previous',
+    'guide_on_next',
+    'guide_on_previous',
+    'guide_on_stop',
+    'guide_on_skip',
+    'guide_on_finish',
+  ]
 
   export default {
     mounted: function () {
@@ -49,62 +58,89 @@
         return _.has(this.enabled_buttons, name) ? this.enabled_buttons[name] : true
       },
       start: function () {
+        document.body.classList.add('current_tour')
         this.current_step_i = START
         this.refresh()
-        this.on_start()
+        this.guide_on_start()
       },
-      previous_step: function () {
-        if (!this.is_first) {
-          this.current_step_i--
-          this.refresh()
-          this.on_previous_step()
-        }
-      },
-      next_step: function () {
+      next: function () {
         if (!this.is_last) {
           this.current_step_i++
           this.refresh()
-          this.on_next_step()
+          this.step_on_next()
+          this.guide_on_next()
         }
       },
-      stop: function () {
-        this.on_stop()
-        this.reset()
+      previous: function () {
+        if (!this.is_first) {
+          this.current_step_i--
+          this.refresh()
+          this.step_on_previous()
+          this.guide_on_previous()
+        }
       },
       skip: function () {
-        this.on_skip()
+        this.step_on_skip()
+        this.guide_on_skip()
         this.stop()
       },
       finish: function () {
-        this.on_finish()
+        this.guide_on_finish()
         this.stop()
       },
+      stop: function () {
+        document.body.classList.remove('current_tour')
+        this.step_on_stop()
+        this.guide_on_stop()
+        this.reset()
+      },
       refresh: function () {
-        this.reset(['current_tour', 'current_step_i', 'steps'])
-        _.each(this.steps[this.current_step_i], (value, name) => { this[name] = value })
-        const target = document.getElementById(this.id)
+        this.reset(CURRENT_TOUR)
+        _.each(this.steps[this.current_step_i], (value, name) => {
+          this[_.startsWith(name, 'on_') ? `step_${name}` : name] = value
+        })
+        let target = this.selector ? document.querySelector(this.selector) : document.getElementById(this.id)
         if (target) {
-          createPopper(target, this.$refs.guide, _.merge({}, $store_defaults.guide.popper_params, this.popper_params))
+          if (this.popper) {
+            this.popper.destroy()
+          }
+          this.$nextTick(() => {
+            this.$nextTick(() => {
+              let popper_params = _.merge({}, $store_defaults.guide.popper_params, this.popper_params)
+              this.popper = createPopper(target, this.$refs.guide, popper_params)
+            })
+          })
         } else {
-          console.log(`Step #id not found: [${this.id}]`)
+          console.log(`Step #id not found: [${this.selector || this.id}]`)
           this.stop()
+          this.popper = null
         }
       },
       reset: function (except = []) {
         _.each(_.omit($store_defaults.guide, except), (value, name) => { this[name] = value })
       },
-      on_keyup: function (e) {
-        switch (e.keyCode) {
-        case KEYS.ARROW_RIGHT:
-          this.next_step()
+      on_keyup: function (event) {
+        if (event.defaultPrevented) {
+          return
+        }
+        switch (event.key) {
+        case "Enter":
+        case "Right":
+        case "ArrowRight":
+          // this.is_last ? this.finish() : this.next()
+          this.next()
           break
-        case KEYS.ARROW_LEFT:
-          this.previous_step()
+        case "Left":
+        case "ArrowLeft":
+          // this.is_first ? this.skip() : this.previous()
+          this.previous()
           break
-        case KEYS.ESCAPE:
+        case "Esc":
+        case "Escape":
           this.stop()
           break
         }
+        event.preventDefault()
       }
     },
     computed: {
@@ -117,10 +153,23 @@
       ...$store_accessors('guide'),
     },
     watch: {
-      current_tour: function (tour) {
-        if (tour) {
-          this.steps = tour.steps
+      current_tour: function (new_tour, old_tour) {
+        if (old_tour) {
+          this.stop()
+        }
+        if (new_tour) {
+          _.each(new_tour, (value, name) => {
+            this[_.startsWith(name, 'on_') ? `guide_${name}` : name] = value
+          })
           this.start()
+        }
+      },
+      id: function (new_id, old_id) {
+        if (old_id) {
+          document.body.classList.remove(`current_step_${old_id}`)
+        }
+        if (new_id) {
+          document.body.classList.add(`current_step_${new_id}`)
         }
       },
     },
@@ -128,6 +177,10 @@
 </script>
 
 <style lang="scss">
+  .current_tour {
+    pointer-events: none;
+  }
+
   #guide {
     pointer-events: auto;
   }
@@ -142,7 +195,7 @@
 <style lang="scss" scoped>
   .step {
     min-width: 160px;
-    background: $guide_background_color;
+    background: $foreground_color;
     color: white;
     max-width: 320px;
     border-radius: 3px;
@@ -161,7 +214,7 @@
   }
 
   .step .step_arrow {
-    border-color: $guide_background_color;
+    border-color: $foreground_color;
   }
 
   .step_arrow_dark {
@@ -258,10 +311,12 @@
     transition: all .2s ease;
     vertical-align: middle;
     white-space: nowrap;
+  }
 
-    &:hover {
+  @media (hover: hover) {
+    .step_button:hover {
       background-color: rgba(255, 255, 255, 0.95);
-      color: $guide_background_color;
+      color: $foreground_color;
     }
   }
 </style>

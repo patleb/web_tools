@@ -1,1 +1,9 @@
-$guide_background_color: #50596c !default;
+@mixin tour_target($id) {
+  .current_tour {
+    &.current_step_#{$id} {
+      [id=#{$id}] {
+        @content;
+      }
+    }
+  }
+}

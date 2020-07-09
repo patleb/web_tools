@@ -1,9 +1,11 @@
 export default {
   guide: {
+    guide_open: true,
     current_tour: null,
     current_step_i: null,
     steps: [],
     id: null,
+    selector: null,
     header: null,
     content: null,
     enabled_buttons: {},
@@ -13,11 +15,15 @@ export default {
       ],
       placement: 'bottom'
     },
-    on_start: () => {},
-    on_previous_step: () => {},
-    on_next_step: () => {},
-    on_stop: () => {},
-    on_skip: () => {},
-    on_finish: () => {},
+    guide_on_start: () => {},
+    guide_on_previous: () => {},
+    guide_on_next: () => {},
+    guide_on_stop: () => {},
+    guide_on_skip: () => {},
+    guide_on_finish: () => {},
+    step_on_previous: () => {},
+    step_on_next: () => {},
+    step_on_stop: () => {},
+    step_on_skip: () => {},
   }
 }
