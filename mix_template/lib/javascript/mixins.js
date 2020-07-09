@@ -2,6 +2,12 @@ import './mixins/current'
 
 const mixins = {
   methods: {
+    $assign: function (name, value) {
+      if (!_.isEqual(this[name], value)) {
+        this[name] = value
+      }
+      return value
+    },
     $store_get: function (scope, name) {
       return this.$store.state[scope][name]
     },
@@ -70,15 +76,17 @@ Vue.mixin(mixins)
 
 export default {
   errorCaptured (error, vm, info) {
-    $rescue(this.$http, {
-      message: `${info}: ${error}`,
-      backtrace: error.stack || [],
-      data: {
-        tag: vm.$el.localName, id: vm.$el.id, class: vm.$el.className,
-        ...this.$current_size
-      }
-    })
-    return false
+    if (process.env.NODE_ENV === 'production') {
+      $rescue(this.$http, {
+        message: `${info}: ${error}`,
+        backtrace: error.stack || [],
+        data: {
+          tag: vm.$el.localName, id: vm.$el.id, class: vm.$el.className,
+          ...this.$current_size
+        }
+      })
+      return false
+    }
   },
   created: function () {
     this.app_params = this.$url_params(window.location.search)

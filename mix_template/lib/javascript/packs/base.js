@@ -49,23 +49,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  window.addEventListener('error', function (event) {
-    $rescue(axios, {
-      message: event.message,
-      backtrace: [_.values(_.pick(event, ['filename', 'lineno', 'colno'])).join(':')],
-      data: {}
+  if (process.env.NODE_ENV === 'production') {
+    window.addEventListener('error', function (event) {
+      $rescue(axios, {
+        message: event.message,
+        backtrace: [_.values(_.pick(event, ['filename', 'lineno', 'colno'])).join(':')],
+        data: {}
+      })
+      event.preventDefault()
+      return false
     })
-    event.preventDefault()
-    return false
-  })
+  }
 
-  Vue.config.errorHandler = (error, vm, info) => {
-    $rescue(axios, {
-      message: `${info}: ${error}`,
-      backtrace: error.stack || [],
-      data: { tag: vm.$el.localName, id: vm.$el.id, class: vm.$el.className }
-    })
-    return false
+  if (process.env.NODE_ENV === 'production') {
+    Vue.config.errorHandler = (error, vm, info) => {
+      $rescue(axios, {
+        message: `${info}: ${error}`,
+        backtrace: error.stack || [],
+        data: {tag: vm.$el.localName, id: vm.$el.id, class: vm.$el.className}
+      })
+      return false
+    }
   }
 
   _.each([Array, Boolean, Number, Object, RegExp, String], (type) => {
