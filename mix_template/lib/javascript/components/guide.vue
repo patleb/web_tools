@@ -188,7 +188,7 @@
 
 <style lang="scss">
   .current_tour {
-    //pointer-events: none;
+    pointer-events: none;
   }
 
   #guide {
