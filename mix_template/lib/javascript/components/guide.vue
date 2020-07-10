@@ -10,8 +10,8 @@
       </div>
 
       <div class="step_buttons">
-        <button @click.prevent="skip" v-if="!is_last && button_enabled('button_skip')" class="step_button step_button_skip">
-          {{ $t('guide.button_skip') }}
+        <button @click.prevent="quit" v-if="!is_last && button_enabled('button_quit')" class="step_button step_button_quit">
+          {{ $t('guide.button_quit') }}
         </button>
         <button @click.prevent="previous" v-if="!is_first && button_enabled('button_previous')" class="step_button step_button_previous">
           {{ $t('guide.button_previous') }}
@@ -42,7 +42,7 @@
     'guide_on_next',
     'guide_on_previous',
     'guide_on_stop',
-    'guide_on_skip',
+    'guide_on_quit',
     'guide_on_finish',
   ]
 
@@ -61,37 +61,37 @@
         document.body.classList.add('current_tour')
         this.current_step_i = START
         this.refresh()
-        this.guide_on_start()
+        this.guide_on_start(this.target)
       },
       next: function () {
         if (!this.is_last) {
           this.current_step_i++
           this.refresh()
-          this.step_on_next()
-          this.guide_on_next()
+          this.step_on_next(this.target)
+          this.guide_on_next(this.target)
         }
       },
       previous: function () {
         if (!this.is_first) {
+          this.step_on_previous(this.target)
+          this.guide_on_previous(this.target)
           this.current_step_i--
           this.refresh()
-          this.step_on_previous()
-          this.guide_on_previous()
         }
       },
-      skip: function () {
-        this.step_on_skip()
-        this.guide_on_skip()
+      quit: function () {
+        this.step_on_quit(this.target)
+        this.guide_on_quit(this.target)
         this.stop()
       },
       finish: function () {
-        this.guide_on_finish()
+        this.guide_on_finish(this.target)
         this.stop()
       },
       stop: function () {
         document.body.classList.remove('current_tour')
-        this.step_on_stop()
-        this.guide_on_stop()
+        this.step_on_stop(this.target)
+        this.guide_on_stop(this.target)
         this.reset()
       },
       refresh: function () {
@@ -99,19 +99,18 @@
         _.each(this.steps[this.current_step_i], (value, name) => {
           this[_.startsWith(name, 'on_') ? `step_${name}` : name] = value
         })
-        let target = this.selector ? document.querySelector(this.selector) : document.getElementById(this.id)
-        if (target) {
+        if (this.target) {
           if (this.popper) {
             this.popper.destroy()
           }
           this.$nextTick(() => {
             this.$nextTick(() => {
               let popper_params = _.merge({}, $store_defaults.guide.popper_params, this.popper_params)
-              this.popper = createPopper(target, this.$refs.guide, popper_params)
+              this.popper = createPopper(this.target, this.$refs.guide, popper_params)
             })
           })
         } else {
-          console.log(`Step #id not found: [${this.selector || this.id}]`)
+          console.log(`Step #id not found: [${this.id}]`)
           this.stop()
           this.popper = null
         }
@@ -132,7 +131,7 @@
           break
         case "Left":
         case "ArrowLeft":
-          // this.is_first ? this.skip() : this.previous()
+          // this.is_first ? this.quit() : this.previous()
           this.previous()
           break
         case "Esc":
@@ -149,6 +148,9 @@
       },
       is_last: function () {
         return this.current_step_i === _.size(this.steps) - 1
+      },
+      target: function () {
+        return document.getElementById(this.id)
       },
       ...$store_accessors('guide'),
     },
@@ -172,13 +174,21 @@
           document.body.classList.add(`current_step_${new_id}`)
         }
       },
+      class: function (new_class, old_class) {
+        if (!_.isEmpty(old_class)) {
+          document.body.classList.remove(old_class)
+        }
+        if (!_.isEmpty(new_class)) {
+          document.body.classList.add(new_class)
+        }
+      }
     },
   }
 </script>
 
 <style lang="scss">
   .current_tour {
-    pointer-events: none;
+    //pointer-events: none;
   }
 
   #guide {

@@ -1,8 +1,16 @@
-@mixin tour_target($id) {
+@mixin tour_target($id, $class: null) {
   .current_tour {
     &.current_step_#{$id} {
-      [id=#{$id}] {
-        @content;
+      @if $class {
+        &.#{$class} {
+          [id=#{$id}] {
+            @content;
+          }
+        }
+      } @else {
+        [id=#{$id}] {
+          @content;
+        }
       }
     }
   }
