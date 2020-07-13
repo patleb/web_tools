@@ -116,6 +116,9 @@ server {
     <% %w(assets packs).each do |root| %>
       location /<%= root %>/ {
         gzip_static on;
+        if_modified_since off;
+        add_header Last-Modified "";
+        etag off;
         expires 1M;
         add_header Cache-Control public;
         access_log    off;
