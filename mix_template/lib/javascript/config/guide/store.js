@@ -1,11 +1,11 @@
 export default {
   guide: {
-    guide_open: true,
     current_tour: null,
     current_step_i: null,
     steps: [],
     id: null,
     class: null,
+    scope: null,
     header: null,
     content: null,
     enabled_buttons: {},

@@ -1,31 +1,29 @@
 <template>
-  <div>
-    <div v-show="guide_open" class="step" id="guide" ref="guide">
-      <div v-if="header" class="step_header">
-        <div v-html="header"></div>
-      </div>
-
-      <div class="step_content">
-        <div v-html="content"></div>
-      </div>
-
-      <div class="step_buttons">
-        <button @click.prevent="quit" v-if="!is_last && button_enabled('button_quit')" class="step_button step_button_quit">
-          {{ $t('guide.button_quit') }}
-        </button>
-        <button @click.prevent="previous" v-if="!is_first && button_enabled('button_previous')" class="step_button step_button_previous">
-          {{ $t('guide.button_previous') }}
-        </button>
-        <button @click.prevent="next" v-if="!is_last && button_enabled('button_next')" class="step_button step_button_next">
-          {{ $t('guide.button_next') }}
-        </button>
-        <button @click.prevent="finish" v-if="is_last && button_enabled('button_stop')" class="step_button step_button_stop">
-          {{ $t('guide.button_stop') }}
-        </button>
-      </div>
-
-      <div class="step_arrow" :class="{ step_arrow_dark: header }"></div>
+  <div class="step" id="guide" ref="guide">
+    <div v-if="header" class="step_header">
+      <div v-html="header"></div>
     </div>
+
+    <div class="step_content">
+      <div v-html="content"></div>
+    </div>
+
+    <div class="step_buttons">
+      <button v-if="!is_last && button_enabled('button_quit')" @click.prevent="quit" class="step_button step_button_quit">
+        {{ $t('guide.button_quit') }}
+      </button>
+      <button v-if="!is_first && button_enabled('button_previous')" @click.prevent="previous" class="step_button step_button_previous">
+        {{ $t('guide.button_previous') }}
+      </button>
+      <button v-if="!is_last && button_enabled('button_next')" @click.prevent="next" class="step_button step_button_next">
+        {{ $t('guide.button_next') }}
+      </button>
+      <button v-if="is_last && button_enabled('button_stop')" @click.prevent="finish" class="step_button step_button_stop">
+        {{ $t('guide.button_stop') }}
+      </button>
+    </div>
+
+    <div class="step_arrow" :class="{ step_arrow_dark: header }"></div>
   </div>
 </template>
 
@@ -110,7 +108,7 @@
             })
           })
         } else {
-          console.log(`Step #id not found: [${this.id}]`)
+          console.log(`Step not found: [${this.id ? `#${this.id}` : `.${this.class}`}]`)
           this.stop()
           this.popper = null
         }
@@ -150,7 +148,7 @@
         return this.current_step_i === _.size(this.steps) - 1
       },
       target: function () {
-        return document.getElementById(this.id)
+        return this.id ? document.getElementById(this.id) : _.first(document.getElementsByClassName(this.class))
       },
       ...$store_accessors('guide'),
     },
@@ -168,18 +166,26 @@
       },
       id: function (new_id, old_id) {
         if (old_id) {
-          document.body.classList.remove(`current_step_${old_id}`)
+          document.body.classList.remove(`step_${old_id}`)
         }
         if (new_id) {
-          document.body.classList.add(`current_step_${new_id}`)
+          document.body.classList.add(`step_${new_id}`)
         }
       },
       class: function (new_class, old_class) {
-        if (!_.isEmpty(old_class)) {
-          document.body.classList.remove(old_class)
+        if (old_class) {
+          document.body.classList.remove(`step_${old_class}`)
         }
-        if (!_.isEmpty(new_class)) {
-          document.body.classList.add(new_class)
+        if (new_class) {
+          document.body.classList.add(`step_${new_class}`)
+        }
+      },
+      scope: function (new_scope, old_scope) {
+        if (old_scope) {
+          document.body.classList.remove(`scope_${old_scope}`)
+        }
+        if (new_scope) {
+          document.body.classList.add(`scope_${new_scope}`)
         }
       }
     },
