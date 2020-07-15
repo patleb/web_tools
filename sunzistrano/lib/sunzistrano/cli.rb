@@ -17,7 +17,6 @@ module Sunzistrano
       do_provision(stage, role, specialize: true)
     end
 
-    # TODO doesn't work for specialize
     desc 'rollback [stage] [role] [--recipe] [--username]', 'Rollback sunzistrano recipe'
     method_options recipe: :required, specialize: false, username: :string
     def rollback(stage, role = 'system')
@@ -149,7 +148,7 @@ module Sunzistrano
         FileUtils.rm_rf('.provision') unless sun.debug
       end
 
-      def run_reset_known_hosts
+      def run_reset_known_hosts # TODO doesn't work --> too fast? --> poll check if host in file, then move to next
         hosts = sun.servers.map{ |server| `getent hosts #{server}`.squish.split }.flatten.uniq
         if hosts.any?
           reset_known_hosts = hosts.map{ |host| %{ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host} 2> /dev/null} }
