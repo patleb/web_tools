@@ -1,4 +1,27 @@
 PATH
+  remote: .
+  specs:
+    web_tools (0.2.0)
+      ext_capistrano (= 0.2.0)
+      ext_minitest (= 0.2.0)
+      ext_rake (= 0.2.0)
+      ext_ruby (= 0.2.0)
+      ext_webpacker (= 0.2.0)
+      ext_whenever (= 0.2.0)
+      mix_admin (= 0.2.0)
+      mix_backup (= 0.2.0)
+      mix_core (= 0.2.0)
+      mix_global (= 0.2.0)
+      mix_notifier (= 0.2.0)
+      mix_rescue (= 0.2.0)
+      mix_setting
+      mix_sql (= 0.2.0)
+      mix_template (= 0.2.0)
+      mix_throttler (= 0.2.0)
+      mix_user (= 0.2.0)
+      sunzistrano
+
+PATH
   remote: ext_capistrano
   specs:
     ext_capistrano (0.2.0)
@@ -62,7 +85,6 @@ PATH
       oj
       parallel
       require_all (~> 1.5)
-      sys-uname
 
 PATH
   remote: ext_webpacker
@@ -187,29 +209,6 @@ PATH
   specs:
     sunzistrano (0.1.0)
       mix_setting
-
-PATH
-  remote: .
-  specs:
-    web_tools (0.2.0)
-      ext_capistrano (= 0.2.0)
-      ext_minitest (= 0.2.0)
-      ext_rake (= 0.2.0)
-      ext_ruby (= 0.2.0)
-      ext_webpacker (= 0.2.0)
-      ext_whenever (= 0.2.0)
-      mix_admin (= 0.2.0)
-      mix_backup (= 0.2.0)
-      mix_core (= 0.2.0)
-      mix_global (= 0.2.0)
-      mix_notifier (= 0.2.0)
-      mix_rescue (= 0.2.0)
-      mix_setting
-      mix_sql (= 0.2.0)
-      mix_template (= 0.2.0)
-      mix_throttler (= 0.2.0)
-      mix_user (= 0.2.0)
-      sunzistrano
 
 GEM
   remote: https://rubygems.org/
@@ -356,7 +355,7 @@ GEM
     ext_fog_aws (0.2.0)
       fog-aws
       mime-types
-    ffi (1.12.2)
+    ffi (1.13.1)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
@@ -552,8 +551,6 @@ GEM
     sshkit-interactive (0.3.0)
       sshkit (~> 1.12)
     sync (0.5.0)
-    sys-uname (1.2.1)
-      ffi (>= 1.0.0)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
     thor (1.0.1)
