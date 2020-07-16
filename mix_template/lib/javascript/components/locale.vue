@@ -29,7 +29,7 @@
       'type',
     ],
     created: function () {
-      this.$i18n.locale = this.$current_params.locale || this.$localStorage.get('locale', navigator.language.substring(0, 2))
+      this.$i18n.locale = this.$current_params.locale || this.$localStorage.get('locale', this.navigator_locale())
     },
     methods: {
       set_locale: function (locale) {
@@ -38,6 +38,10 @@
       },
       pretty_locale: function (locale) {
         return this.$i18n.messages[locale]['lang']
+      },
+      navigator_locale: function () {
+        let locale = navigator.language.substring(0, 2)
+        return _.includes(this.available_locales, locale) ? locale : this.available_locales[0]
       }
     },
     computed: {
