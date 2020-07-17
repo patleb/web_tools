@@ -4,6 +4,8 @@ module ExtWebpacker
 
     class MissingDependency < StandardError; end
 
+    GEMS_SOURCE_PATH = 'lib/javascript'
+
     def install
       verify_dependencies!
       source_gems_path.mkdir unless source_gems_path.exist?
@@ -29,14 +31,10 @@ module ExtWebpacker
 
     def gems
       @gems ||= begin
-        paths = (default_config['gems'] || []).map{ |name| [name, Gem.root(name).join(gems_source_path)] }
+        paths = (default_config['gems'] || []).map{ |name| [name, Gem.root(name).join(GEMS_SOURCE_PATH)] }
         paths.select!{ |(_name, path)| path.exist? }
         paths
       end
-    end
-
-    def gems_source_path
-      @gems_source_path ||= default_config['gems_source_path'] # TODO remove or set use gems: { name_1: path_1, etc. }
     end
 
     def source_gems_path
