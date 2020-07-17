@@ -16,7 +16,7 @@ html_('.no-js', lang: Current.locale) {[
     meta_(charset: 'utf-8'),
     meta_(name: 'viewport', content: 'width=device-width, initial-scale=1, shrink-to-fit=no'),
     meta_(name: 'description', content: @page_description),
-    meta_(name: 'mobile-web-app-capable', content: 'yes', if: MixTemplate.config.web_app_capable),
+    meta_(name: 'mobile-web-app-capable', content: 'yes', if: @page_web_app_capable),
     meta_('http-equiv': 'X-APP-VERSION', content: MixTemplate.config.version),
     csrf_meta_tags,
     csp_meta_tag,
