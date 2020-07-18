@@ -36,9 +36,9 @@ environment.loaders.prepend('erb', erb)
 environment.loaders.prepend('vue', vue)
 environment.loaders.prepend('coffee', coffee)
 environment.loaders.get('sass').use.splice(-1, 0, { loader: 'resolve-url-loader' })
-environment.loaders.get('sass').use.push({ loader: 'sass-resources-loader', options: { resources: global_scss_path() }})
+// environment.loaders.get('sass').use.push({ loader: 'sass-resources-loader', options: { resources: global_scss_path() }})
 environment.config.merge({ resolve: { alias: { '@': source_path, '@@': source_gems_path } } })
 environment.resolvedModules.append('node_modules', path.resolve('node_modules'))
 environment.splitChunks()
 
-module.exports = { environment, process_env: {} }
+module.exports = { environment, global_scss_path, process_env: {} }
