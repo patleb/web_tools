@@ -1,7 +1,7 @@
 module MixTemplate
   module ViewHelper
     def body_id
-      [current_layout, 'layout'].compact.join('_')
+      [current_layout, 'layout'].compact.join('_').full_underscore
     end
 
     def current_layout(name = nil)
