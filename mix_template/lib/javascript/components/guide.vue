@@ -1,11 +1,11 @@
 <template>
   <div class="step" id="guide" ref="guide">
     <div v-if="header" class="step_header">
-      <div v-html="header"></div>
+      <div v-html="_.isFunction(header) ? header() : header"></div>
     </div>
 
     <div class="step_content">
-      <div v-html="content"></div>
+      <div v-html="_.isFunction(content) ? content() : content"></div>
     </div>
 
     <div class="step_buttons">
