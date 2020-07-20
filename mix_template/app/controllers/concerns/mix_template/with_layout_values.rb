@@ -16,6 +16,7 @@ module MixTemplate
     def set_layout_values
       @app_name = @page_title = @page_description = Rails.application.title
       @page_web_app_capable = MixTemplate.config.web_app_capable
+      @page_version = MixTemplate.config.version
     end
   end
 end

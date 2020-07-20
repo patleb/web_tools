@@ -1,3 +1,4 @@
+# TODO https://github.com/rails/rails/pull/31251
 html_('.no-js', lang: Current.locale) {[
   head_ {[
     content_for?(:javascripts) ? yield(:javascripts) : [
@@ -16,8 +17,9 @@ html_('.no-js', lang: Current.locale) {[
     meta_(charset: 'utf-8'),
     meta_(name: 'viewport', content: 'width=device-width, initial-scale=1, shrink-to-fit=no'),
     meta_(name: 'description', content: @page_description),
+    # TODO make sure that navigation is self-sufficient
     meta_(name: 'mobile-web-app-capable', content: 'yes', if: @page_web_app_capable),
-    meta_('http-equiv': 'X-APP-VERSION', content: MixTemplate.config.version),
+    meta_('http-equiv': 'X-APP-VERSION', content: @page_version),
     csrf_meta_tags,
     csp_meta_tag,
     area(:meta_tags),
