@@ -1,4 +1,28 @@
 PATH
+  remote: .
+  specs:
+    web_tools (0.2.0)
+      ext_capistrano (= 0.2.0)
+      ext_minitest (= 0.2.0)
+      ext_rake (= 0.2.0)
+      ext_ruby (= 0.2.0)
+      ext_vue (= 0.2.0)
+      ext_webpacker (= 0.2.0)
+      ext_whenever (= 0.2.0)
+      mix_admin (= 0.2.0)
+      mix_backup (= 0.2.0)
+      mix_core (= 0.2.0)
+      mix_global (= 0.2.0)
+      mix_notifier (= 0.2.0)
+      mix_rescue (= 0.2.0)
+      mix_setting
+      mix_sql (= 0.2.0)
+      mix_template (= 0.2.0)
+      mix_throttler (= 0.2.0)
+      mix_user (= 0.2.0)
+      sunzistrano
+
+PATH
   remote: ext_capistrano
   specs:
     ext_capistrano (0.2.0)
@@ -62,6 +86,11 @@ PATH
       oj
       parallel
       require_all (~> 1.5)
+
+PATH
+  remote: ext_vue
+  specs:
+    ext_vue (0.2.0)
 
 PATH
   remote: ext_webpacker
@@ -186,29 +215,6 @@ PATH
   specs:
     sunzistrano (0.1.0)
       mix_setting
-
-PATH
-  remote: .
-  specs:
-    web_tools (0.2.0)
-      ext_capistrano (= 0.2.0)
-      ext_minitest (= 0.2.0)
-      ext_rake (= 0.2.0)
-      ext_ruby (= 0.2.0)
-      ext_webpacker (= 0.2.0)
-      ext_whenever (= 0.2.0)
-      mix_admin (= 0.2.0)
-      mix_backup (= 0.2.0)
-      mix_core (= 0.2.0)
-      mix_global (= 0.2.0)
-      mix_notifier (= 0.2.0)
-      mix_rescue (= 0.2.0)
-      mix_setting
-      mix_sql (= 0.2.0)
-      mix_template (= 0.2.0)
-      mix_throttler (= 0.2.0)
-      mix_user (= 0.2.0)
-      sunzistrano
 
 GEM
   remote: https://rubygems.org/
@@ -597,6 +603,7 @@ DEPENDENCIES
   ext_minitest!
   ext_rake!
   ext_ruby!
+  ext_vue!
   ext_webpacker!
   ext_whenever!
   mix_admin!

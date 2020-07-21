@@ -34,6 +34,7 @@ gemspec
 gem 'ext_capistrano', path: './ext_capistrano'
 gem 'ext_rake', path: './ext_rake'
 gem 'ext_ruby', path: './ext_ruby'
+gem 'ext_vue', path: './ext_vue'
 gem 'ext_webpacker', path: './ext_webpacker'
 gem 'ext_whenever', path: './ext_whenever'
 gem 'mix_admin', path: './mix_admin'
