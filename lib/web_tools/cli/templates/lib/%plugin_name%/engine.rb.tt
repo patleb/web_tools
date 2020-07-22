@@ -1,7 +1,7 @@
-require "<%= plugin_name %>/configuration"
+require 'ext_ruby'
+require '<%= plugin_name %>/configuration'
 
 module <%= plugin_module %>
   class Engine < ::Rails::Engine
-    # require 'mix_setting'
   end
 end
