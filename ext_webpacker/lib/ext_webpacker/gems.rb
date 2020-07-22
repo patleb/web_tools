@@ -41,7 +41,7 @@ module ExtWebpacker
     end
 
     def gems
-      @gems ||= (default_config['gems'] || [])
+      @gems ||= Set.new(default_config['gems'] || []).merge(['ext_webpacker'])
     end
 
     def source_gems_path
