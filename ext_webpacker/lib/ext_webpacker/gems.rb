@@ -3,6 +3,7 @@ module ExtWebpacker
     extend self
 
     class MissingDependency < StandardError; end
+    class MissingGem < StandardError; end
 
     GEMS_SOURCE_PATH = 'lib/javascript'
 
@@ -10,7 +11,7 @@ module ExtWebpacker
       verify_dependencies!
       source_gems_path.mkdir unless source_gems_path.exist?
       source_gems_path.children.select(&:symlink?).each(&:delete)
-      watched_symlinks = gems.map do |(name, path)|
+      watched_symlinks = dependencies[:gems].map do |(name, path)|
         symlink = source_gems_path.join(name)
         File.symlink(path, symlink)
         symlink.join("**/*{#{watched_extensions}}").to_s
@@ -19,22 +20,28 @@ module ExtWebpacker
     end
 
     def verify_dependencies!
-      gems.each do |(_name, path)|
-        if (package = path.join('package.yml')).exist?
-          missing_dependencies = YAML.safe_load(package.read)['dependencies'] - package_dependencies
-          unless missing_dependencies.empty?
-            raise MissingDependency, missing_dependencies.join(', ')
-          end
+      missing_dependencies = dependencies[:packages] - package_dependencies
+      raise MissingDependency, missing_dependencies.to_a.join(', ') unless missing_dependencies.empty?
+    end
+
+    def dependencies
+      @dependencies ||= gems.each_with_object({ packages: Set.new, gems: Set.new }) do |gem, dependencies|
+        if (package = Gem.root(gem)&.join(GEMS_SOURCE_PATH, 'package.yml'))&.exist?
+          packages, gems = YAML.safe_load(package.read).values_at('packages', 'gems')
         end
-      end
+        missing_gems = []
+        gems = ((gems || []) << gem).map do |name|
+          next (missing_gems << name) unless (path = Gem.root(name))
+          [name, path.join(GEMS_SOURCE_PATH)]
+        end
+        raise MissingGem, missing_gems.join(', ') unless missing_gems.empty?
+        dependencies[:gems].merge(gems)
+        dependencies[:packages].merge(packages || [])
+      end.transform_values(&:to_a)
     end
 
     def gems
-      @gems ||= begin
-        paths = (default_config['gems'] || []).map{ |name| [name, Gem.root(name).join(GEMS_SOURCE_PATH)] }
-        paths.select!{ |(_name, path)| path.exist? }
-        paths
-      end
+      @gems ||= (default_config['gems'] || [])
     end
 
     def source_gems_path
