@@ -31,6 +31,7 @@ gemspec
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
+gem 'ext_bootstrap', path: './ext_bootstrap'
 gem 'ext_capistrano', path: './ext_capistrano'
 gem 'ext_rake', path: './ext_rake'
 gem 'ext_ruby', path: './ext_ruby'

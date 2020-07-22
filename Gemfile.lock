@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     web_tools (0.2.0)
+      ext_bootstrap (= 0.2.0)
       ext_capistrano (= 0.2.0)
       ext_minitest (= 0.2.0)
       ext_rake (= 0.2.0)
@@ -21,6 +22,11 @@ PATH
       mix_throttler (= 0.2.0)
       mix_user (= 0.2.0)
       sunzistrano
+
+PATH
+  remote: ext_bootstrap
+  specs:
+    ext_bootstrap (0.2.0)
 
 PATH
   remote: ext_capistrano
@@ -599,6 +605,7 @@ PLATFORMS
 
 DEPENDENCIES
   debase
+  ext_bootstrap!
   ext_capistrano!
   ext_minitest!
   ext_rake!
