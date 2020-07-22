@@ -1,10 +1,4 @@
 PATH
-  remote: ext_pjax
-  specs:
-    ext_pjax (0.2.0)
-      ext_ruby (= 0.2.0)
-
-PATH
   remote: .
   specs:
     web_tools (0.2.0)
@@ -34,7 +28,6 @@ PATH
   remote: ext_bootstrap
   specs:
     ext_bootstrap (0.2.0)
-      ext_ruby (= 0.2.0)
 
 PATH
   remote: ext_capistrano
@@ -75,6 +68,12 @@ PATH
       to_words
       vcr
       webmock
+
+PATH
+  remote: ext_pjax
+  specs:
+    ext_pjax (0.2.0)
+      ext_ruby (= 0.2.0)
 
 PATH
   remote: ext_rake
