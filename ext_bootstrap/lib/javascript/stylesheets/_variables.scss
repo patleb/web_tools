@@ -1,0 +1,5 @@
+@import '~font-awesome/scss/variables';
+
+$screen_min_width: 320px !default;
+$screen_mini_breakpoint: $screen-xs-min !default;
+$screen_mini_max_size: $screen_mini_breakpoint - 1;

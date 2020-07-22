@@ -16,6 +16,4 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
-
-  # s.add_dependency 'mix_setting', version
 end

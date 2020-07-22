@@ -1,0 +1,33 @@
+@import '~@@/ext_bootstrap/stylesheets/font_awesome/theming';
+
+// No support for ultra small screen
+body {
+  min-width: $screen_min_width;
+  &:before {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+// Keep Datetime Picker over Navbar
+.bootstrap-datetimepicker-widget {
+  z-index: $zindex-navbar-fixed + 1;
+}
+
+@include screen_desktop {
+  body:before {
+    content: 'desktop'
+  }
+}
+
+@include screen_mobile {
+  body:before {
+    content: 'phone'
+  }
+}
+
+@include screen_mini {
+  body:before {
+    content: 'mini'
+  }
+}
