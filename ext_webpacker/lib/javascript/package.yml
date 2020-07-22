@@ -1,0 +1,11 @@
+packages:
+  - 'coffee-loader'
+  - 'coffeescript'
+  - 'core-js'
+  # - 'expose-loader'
+  - 'rails-erb-loader'
+  - 'regenerator-runtime'
+  - 'resolve-url-loader'
+  - 'sass-resources-loader'
+  - 'vue-loader'
+  - 'vue-template-compiler'

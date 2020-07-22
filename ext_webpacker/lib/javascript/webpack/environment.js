@@ -1,4 +1,3 @@
-const fs = require('fs')
 const path = require('path')
 const require_module = (name) => require(path.resolve('node_modules', name))
 
@@ -11,11 +10,6 @@ const coffee =  require('./loaders/coffee')
 
 const source_path = path.resolve(config.source_path)
 const source_gems_path = path.join(source_path, config.source_gems_path)
-const global_scss_path = () => {
-  let file_path = path.join(source_path, 'stylesheets', '_globals.scss')
-  let exists = false; try { exists = fs.existsSync(file_path) } finally {}
-  return exists ? [file_path] : []
-}
 
 switch (process.env.NODE_ENV) {
 case 'development':
@@ -36,9 +30,8 @@ environment.loaders.prepend('erb', erb)
 environment.loaders.prepend('vue', vue)
 environment.loaders.prepend('coffee', coffee)
 environment.loaders.get('sass').use.splice(-1, 0, { loader: 'resolve-url-loader' })
-// environment.loaders.get('sass').use.push({ loader: 'sass-resources-loader', options: { resources: global_scss_path() }})
 environment.config.merge({ resolve: { alias: { '@': source_path, '@@': source_gems_path } } })
 environment.resolvedModules.append('node_modules', path.resolve('node_modules'))
 environment.splitChunks()
 
-module.exports = { environment, global_scss_path, process_env: {} }
+module.exports = { environment, process_env: {} }
