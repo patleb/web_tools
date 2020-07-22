@@ -33,6 +33,7 @@ gemspec
 
 gem 'ext_bootstrap', path: './ext_bootstrap'
 gem 'ext_capistrano', path: './ext_capistrano'
+gem 'ext_pjax', path: './ext_pjax'
 gem 'ext_rake', path: './ext_rake'
 gem 'ext_ruby', path: './ext_ruby'
 gem 'ext_vue', path: './ext_vue'

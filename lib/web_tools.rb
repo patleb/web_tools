@@ -1,6 +1,7 @@
 require 'ext_bootstrap'
 require 'ext_capistrano'
 # require 'ext_minitest'
+require 'ext_pjax'
 require 'ext_rake'
 require 'ext_ruby'
 require 'ext_vue'

@@ -1,10 +1,17 @@
 PATH
+  remote: ext_pjax
+  specs:
+    ext_pjax (0.2.0)
+      ext_ruby (= 0.2.0)
+
+PATH
   remote: .
   specs:
     web_tools (0.2.0)
       ext_bootstrap (= 0.2.0)
       ext_capistrano (= 0.2.0)
       ext_minitest (= 0.2.0)
+      ext_pjax (= 0.2.0)
       ext_rake (= 0.2.0)
       ext_ruby (= 0.2.0)
       ext_vue (= 0.2.0)
@@ -27,6 +34,7 @@ PATH
   remote: ext_bootstrap
   specs:
     ext_bootstrap (0.2.0)
+      ext_ruby (= 0.2.0)
 
 PATH
   remote: ext_capistrano
@@ -97,6 +105,7 @@ PATH
   remote: ext_vue
   specs:
     ext_vue (0.2.0)
+      ext_ruby (= 0.2.0)
 
 PATH
   remote: ext_webpacker
@@ -608,6 +617,7 @@ DEPENDENCIES
   ext_bootstrap!
   ext_capistrano!
   ext_minitest!
+  ext_pjax!
   ext_rake!
   ext_ruby!
   ext_vue!

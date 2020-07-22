@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_bootstrap",  version
   s.add_dependency "ext_capistrano", version
   s.add_dependency "ext_minitest",   version
+  s.add_dependency "ext_pjax",       version
   s.add_dependency "ext_rake",       version
   s.add_dependency "ext_ruby",       version
   s.add_dependency "ext_vue",        version
