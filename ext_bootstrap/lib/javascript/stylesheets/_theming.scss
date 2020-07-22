@@ -22,7 +22,7 @@ body {
 
 @include screen_mobile {
   body:before {
-    content: 'phone'
+    content: 'mobile'
   }
 }
 
