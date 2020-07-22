@@ -104,7 +104,6 @@ PATH
   remote: ext_vue
   specs:
     ext_vue (0.2.0)
-      ext_ruby (= 0.2.0)
 
 PATH
   remote: ext_webpacker

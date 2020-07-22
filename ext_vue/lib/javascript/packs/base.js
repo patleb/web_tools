@@ -37,6 +37,7 @@ import VueAxios from 'vue-axios'
 import VueCookies from 'vue-cookies'
 import Storage from 'vue-web-storage'
 import Chartkick from 'vue-chartkick'
+import * as uiv from 'uiv'
 import { AtomSpinner } from 'epic-spinners'
 
 Vue.use(Vuex)
@@ -46,6 +47,7 @@ Vue.use(VueAxios, axios)
 Vue.use(VueCookies)
 Vue.use(Storage, { prefix: 'app:', drivers: ['session', 'local'] })
 Vue.use(Chartkick.use(Chart))
+Vue.use(uiv)
 Vue.component('AtomSpinner', AtomSpinner)
 
 document.addEventListener('DOMContentLoaded', () => {

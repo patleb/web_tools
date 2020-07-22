@@ -1,0 +1,22 @@
+packages:
+  - '@popperjs/core'
+  - 'axios'
+  - 'chart.js'
+  - 'chartjs-adapter-date-fns'
+  - 'date-fns'
+  - 'epic-spinners'
+  - 'lodash'
+  - 'tiny-lru'
+  - 'uiv'
+  - 'vue'
+  - 'vue-axios'
+  - 'vue-chartjs'
+  - 'vue-chartkick'
+  - 'vue-cookies'
+  - 'vue-i18n'
+  - 'vue-lodash'
+  - 'vue-web-storage'
+  - 'vuex'
+
+gems:
+  - 'ext_bootstrap'
