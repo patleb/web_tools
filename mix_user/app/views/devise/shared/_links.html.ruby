@@ -16,7 +16,7 @@ area(:devise_error_messages) do
   end
 end
 
-div_('.panel.panel-default.col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3') {[
+div_('#devise.panel.panel-default.col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3') {[
   div_('.row.panel-heading') do
     h4_{ area(:devise_title) }
   end,
