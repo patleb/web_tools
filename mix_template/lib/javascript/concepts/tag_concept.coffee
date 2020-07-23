@@ -1,22 +1,27 @@
 class Js.TagConcept
   ID_CLASSES = /^([#.][A-Za-z][A-Za-z0-9_-]*)+$/
-  IGNORED_TAGS = [
-    'body'
-    'head'
-    'html'
-    'link'
-    'meta'
-    'script'
-    'style'
-    'title'
+  HTML_TAGS = [
+    'a'
+    'b', 'button'
+    'dd', 'div', 'dl', 'dt'
+    'em'
+    'fieldset'
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr'
+    'i', 'input'
+    'label', 'legend', 'li'
+    'nav'
+    'option'
+    'p', 'pre'
+    'select', 'span', 'strong'
+    'table', 'tbody', 'td', 'th', 'thead', 'tr'
+    'ul'
   ]
 
   constants: ->
     NAMES: 'ID'
 
   ready_once: =>
-    if (tags = $(@NAMES).data('names'))?.length
-      @define_tags(tags)
+    @define_tags()
 
   #### PRIVATE ####
 
@@ -24,7 +29,7 @@ class Js.TagConcept
     window.h_ = @h_
     window.h_if = @h_if
     window.h_unless = @h_unless
-    tags.except(IGNORED_TAGS).each (tag) =>
+    HTML_TAGS.each (tag) =>
       window["#{tag}_"] ?= (args...) =>
         @with_tag(tag, args...)
       tag$ = "#{tag}$"
