@@ -1,0 +1,8 @@
+@import '~eonasdan-bootstrap-datetimepicker/src/sass/bootstrap-datetimepicker-build';
+@import '~accessible-nprogress/dist/accessible-nprogress';
+@import '~@@/ext_pjax/stylesheets/jquery_ui/slim';
+
+.js_disable {
+  @extend .disabled;
+  pointer-events: none;
+}
