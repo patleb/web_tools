@@ -26,9 +26,7 @@ module ExtWebpacker
 
     def dependencies
       @dependencies ||= gems.each_with_object({ packages: Set.new, gems: Set.new }) do |gem, dependencies|
-        if (package = Gem.root(gem)&.join(GEMS_SOURCE_PATH, 'package.yml'))&.exist?
-          packages, gems = YAML.safe_load(package.read).values_at('packages', 'gems')
-        end
+        packages, gems = packages_gems(gem)
         missing_gems = []
         gems = ((gems || []) << gem).map do |name|
           next (missing_gems << name) unless (path = Gem.root(name))
@@ -37,7 +35,18 @@ module ExtWebpacker
         raise MissingGem, missing_gems.join(', ') unless missing_gems.empty?
         dependencies[:gems].merge(gems)
         dependencies[:packages].merge(packages || [])
-      end.transform_values(&:to_a)
+      end.transform_values(&:to_a).transform_values(&:sort)
+    end
+
+    def packages_gems(gem)
+      if gem && (package = Gem.root(gem)&.join(GEMS_SOURCE_PATH, 'package.yml'))&.exist?
+        packages, gems = YAML.safe_load(package.read).values_at('packages', 'gems')
+        (gems || []).each_with_object([Set.new(packages || []), Set.new(gems || [])]) do |gem, result|
+          packages, gems = packages_gems(gem)
+          result[0].merge(packages || [])
+          result[1].merge(gems || [])
+        end
+      end
     end
 
     def gems
