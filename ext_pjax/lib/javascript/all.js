@@ -8,6 +8,7 @@ import 'jquery.iframe-transport'
 import 'jquery-touch-events'
 import 'eonasdan-bootstrap-datetimepicker'
 
+import '@@/ext_bootstrap/all'
 import '@@/ext_pjax/moment/locales.js.erb'
 import '@@/ext_pjax/jquery_ui/slim'
 import '@@/ext_pjax/env.coffee.erb'
