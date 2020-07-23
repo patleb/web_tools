@@ -20,9 +20,6 @@ import '@@/ext_pjax/cookie'
 import '@@/ext_pjax/concepts'
 import '@@/ext_pjax/concepts/all'
 
-// TODO maybe just lodash?
-// https://bibwild.wordpress.com/2019/08/01/dealing-with-legacy-and-externally-loaded-code-in-webpacker/
-// https://stackoverflow.com/questions/51920575/how-to-make-jquery-available-to-sprockets-using-webpacker
 document.addEventListener('DOMContentLoaded', function () {
   window._ = _
   window.$ = window.jQuery = $
