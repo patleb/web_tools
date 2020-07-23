@@ -1,0 +1,6 @@
+import '@@/mix_template/core_ext/array'
+import '@@/mix_template/core_ext/boolean'
+import '@@/mix_template/core_ext/jquery'
+import '@@/mix_template/core_ext/number'
+import '@@/mix_template/core_ext/string'
+import '@@/mix_template/core_ext/object'

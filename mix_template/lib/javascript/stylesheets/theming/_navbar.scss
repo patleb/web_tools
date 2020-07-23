@@ -1,0 +1,33 @@
+.navbar {
+  margin-bottom: 0;
+  z-index: $zindex-navbar-fixed;
+}
+
+.navbar-brand {
+  padding-top: 12px;
+  padding-left: 0;
+  white-space: nowrap;
+  font-size: 20px;
+}
+
+.navbar-toggle {
+  padding-right: 0;
+  margin-right: 0;
+}
+
+@include screen_desktop {
+  .navbar-collapse {
+    padding-left: 0;
+  }
+}
+
+@include screen_mobile {
+  .navbar-brand {
+    display: none;
+  }
+
+  .navbar-collapse {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

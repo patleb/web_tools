@@ -1,0 +1,10 @@
+.js_menu_overlay {
+  display: none;
+  @include overlay;
+}
+
+@include screen_desktop {
+  .js_menu_overlay {
+    display: none !important;
+  }
+}

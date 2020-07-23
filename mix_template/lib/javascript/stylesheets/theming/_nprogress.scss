@@ -1,0 +1,18 @@
+#nprogress .bar,
+#nprogress .spinner {
+  z-index: 999999;
+}
+
+@include screen_desktop {
+  #nprogress .spinner {
+    top: 15px;
+    right: 13px;
+  }
+}
+
+@include screen_mobile {
+  #nprogress .spinner {
+    top: 15px;
+    right: 50px;
+  }
+}
