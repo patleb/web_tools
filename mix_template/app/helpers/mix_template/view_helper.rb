@@ -7,7 +7,8 @@ module MixTemplate
     def current_layout(name = nil)
       @_current_layout ||= begin
         layout_controller = self.is_a?(ActionController::Base) ? self : controller
-        layout_path = layout_controller.send(:_layout, @lookup_context, [:html])&.virtual_path || 'layouts/application'
+        layout_path = layout_controller.send(:_layout, @lookup_context, [:html])
+        layout_path = (layout_path.is_a?(String) ? layout_path : layout_path&.virtual_path) || 'layouts/application'
         layout_path.delete_prefix('layouts/')
       end
       name ? @_current_layout.sub(%r{(^|/)application$}, "\\1#{name}") : @_current_layout
@@ -17,14 +18,9 @@ module MixTemplate
       query_diet_widget(options) if defined? QueryDiet
     end
 
+    # TODO change pjax history to reload if the current head isn't what it's supposed to be, instead of relying on nonce
     def pjax_recovery
-      script_(type: 'text/javascript') do
-        <<-JS.html_safe
-          if (document.head.inneHTML === ""){
-            window.location.reload();
-          }
-        JS
-      end
+      javascript_tag('if (document.head.inneHTML === "") { window.location.reload() }')
     end
 
     def template_status_css

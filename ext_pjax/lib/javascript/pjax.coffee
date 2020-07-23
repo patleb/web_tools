@@ -210,8 +210,8 @@ class Js.Pjax
       # TODO error handler
 
   @on_success: (data, status, xhr) =>
-    current_version = $('meta[http-equiv="X-PJAX-VERSION"]').attr('content')
-    latest_version = xhr.getResponseHeader('X-PJAX-VERSION')
+    current_version = $('meta[http-equiv="X-APP-VERSION"]').attr('content')
+    latest_version = xhr.getResponseHeader('X-APP-VERSION')
     container = @extract_container(data, xhr)
     container.url = $.parse_location(container.url, hash: @options.hash).href
     return @location_reload(container.url) if current_version && latest_version && current_version != latest_version

@@ -60,7 +60,7 @@ module MixTemplate
     end
 
     def versionize
-      response.set_header('X-PJAX-VERSION', MixTemplate.config.version)
+      response.set_header('X-APP-VERSION', MixTemplate.config.version)
     end
 
     def reset_pjax_query_string
