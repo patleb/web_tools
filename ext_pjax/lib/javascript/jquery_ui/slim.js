@@ -5,7 +5,7 @@ import 'jquery-ui/ui/ie'
 import 'jquery-ui/ui/scroll-parent'
 import 'jquery-ui/ui/widget'
 import 'jquery-ui/ui/widgets/mouse'
-# https://github.com/furf/jquery-ui-touch-punch/issues/299
+// https://github.com/furf/jquery-ui-touch-punch/issues/299
 import 'jquery-ui-touch-punch'
 import 'jquery-ui/ui/widgets/sortable'
 
