@@ -11,6 +11,7 @@ module MixTemplate
 
     def set_root_path
       @root_path = respond_to?(:root_path) ? root_path : '/'
+      @root_pjax = true
     end
 
     def set_layout_values

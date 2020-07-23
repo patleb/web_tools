@@ -8,7 +8,7 @@ extends 'layouts/mix_template/application' do
               span_('.sr-only', t('mix_template.toggle_navigation')),
               span_('.icon-bar', times: 3)
             ]},
-            a_('.navbar-brand.pjax', @app_name, href: @root_path),
+            a_('.navbar-brand', @app_name, href: @root_path, class: ('pjax' if @root_pjax)),
             div_('#js_page_title', @page_title)
           ]}
         end
