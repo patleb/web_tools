@@ -21,5 +21,6 @@ Gem::Specification.new do |s|
   # s.add_dependency 'devise-encryptable', '~> 0.2'
   s.add_dependency 'devise-i18n'
   s.add_dependency 'pundit', '~> 2.1'
+  s.add_dependency 'web-console'
   s.add_dependency 'mix_core', version
 end

@@ -30,6 +30,5 @@ html_('.no-js', lang: Current.locale) {[
     browser_upgrade_html,
     area(:html_data),
     yield,
-    (remote_console if defined? MixUser)
   ]}
 ]}

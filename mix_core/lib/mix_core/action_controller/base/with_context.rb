@@ -27,15 +27,15 @@ module ActionController::Base::WithContext
     set_current_referer
     set_current_value(:locale, I18n.available_locales)
     set_current_value(:time_zone) # TODO be more strict
-    set_current_value(:currency)  # TODO be more strict
+    # set_current_value(:currency)  # TODO be more strict
   end
 
   def with_context
     I18n.with_locale(Current.locale) do
       Time.use_zone(Current.time_zone.presence) do
-        MoneyRails.with_currency(Current.currency) do
+        # MoneyRails.with_currency(Current.currency) do
           yield
-        end
+        # end
       end
     end
   rescue NoMethodError => e
@@ -91,8 +91,8 @@ module ActionController::Base::WithContext
   end
 
   def default_locale
-    locale = cookies["js.locale"] # TODO cookies["js.locale"] --> in frontend
-    locale = locale.presence && I18n.available_locales.find{ |l| l.to_s == cookie_locale }
+    locale = cookies["js.locale"]
+    locale = locale.presence && I18n.available_locales.find{ |l| l.to_s == locale }
     locale = http_accept_language.compatible_language_from(I18n.available_locales) unless locale.present?
     locale
   end

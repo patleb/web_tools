@@ -39,7 +39,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rgeo'
   # s.add_dependency 'sequel-activerecord-adapter'
   s.add_dependency 'term-ansicolor'
-  s.add_dependency 'web-console'
   s.add_dependency 'vmstat'
   s.add_dependency 'mix_setting'
   s.add_dependency 'sunzistrano'

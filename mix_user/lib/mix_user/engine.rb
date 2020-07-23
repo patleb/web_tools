@@ -12,10 +12,19 @@ module MixUser
     require 'pundit'
     require 'mix_core'
 
-    config.before_initialize do
+    config.before_configuration do |app|
+      if (file = Rails.root.join('tmp/console.txt')).exist? && (ips = file.read.lines.reject(&:blank?).map(&:strip)).any?
+        require 'web-console'
+        app.config.web_console.whitelisted_ips = ips
+        app.config.web_console.development_only = false
+      end
+    end
+
+    config.before_initialize do |app|
       unless defined? MixAdmin
         Rails.autoloaders.main.ignore("#{root}/app/models/user_admin.rb")
       end
+      ActiveSupport::Dependencies.autoload_paths.push("#{app.root}/app/policies")
     end
 
     initializer 'mix_user.rack_attack' do

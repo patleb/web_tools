@@ -46,13 +46,13 @@ module MixUser
     end
 
     def remote_console
-      if Current.user.admin?
+      if defined?(::WebConsole) && Current.user.admin?
         console if params[:_remote_console].to_b
       end
     end
 
     def remote_console_link
-      if Current.user.admin?
+      if defined?(::WebConsole) && Current.user.admin?
         a_('Console', href: '?_remote_console=1')
       end
     end

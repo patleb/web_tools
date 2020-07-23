@@ -69,12 +69,6 @@ module MixCore
       else
         app.config.action_mailer.default_url_options = -> { { host: Setting[:server_host] } }
       end
-
-      if (file = Rails.root.join('tmp/console.txt')).exist? && (ips = file.read.lines.reject(&:blank?)).any?
-        require 'web-console'
-        app.config.web_console.whitelisted_ips = ips
-        app.config.web_console.development_only = false
-      end
     end
 
     config.before_initialize do |app|
@@ -92,7 +86,7 @@ module MixCore
       app.config.middleware.use ActionDispatch::IFrame
       app.config.middleware.insert_after ActionDispatch::Static, Rack::Deflater if Rails.env.dev_ngrok?
 
-      %w(libraries tasks).each do |directory|
+      %w(libraries policies tasks).each do |directory|
         ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/app/#{directory}")
       end
 

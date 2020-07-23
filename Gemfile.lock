@@ -160,7 +160,6 @@ PATH
       sunzistrano
       term-ansicolor
       vmstat
-      web-console
 
 PATH
   remote: mix_global
@@ -222,6 +221,7 @@ PATH
       devise-i18n
       mix_core (= 0.2.0)
       pundit (~> 2.1)
+      web-console
 
 PATH
   remote: sunzistrano
