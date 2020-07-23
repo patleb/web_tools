@@ -209,7 +209,7 @@
 </style>
 
 <style lang="scss" scoped>
-  @import '~@@/mix_template/stylesheets/globals';
+  @import '~@@/ext_vue/stylesheets/globals';
 
   .step {
     min-width: 160px;
