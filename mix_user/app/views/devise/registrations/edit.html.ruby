@@ -38,4 +38,4 @@ replace :devise_links do
   end
 end
 
-render 'devise/shared/form'
+render 'devise/shared/links'

@@ -24,4 +24,4 @@ append :devise_form do
   ]}
 end
 
-render 'devise/shared/form'
+render 'devise/shared/links'
