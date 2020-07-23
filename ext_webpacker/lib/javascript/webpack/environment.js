@@ -22,6 +22,8 @@ case 'production':
 
 environment.plugins.prepend('VueLoaderPlugin', new VueLoaderPlugin())
 environment.plugins.prepend('Provide', new webpack.ProvidePlugin({
+  $:       'jquery',
+  jQuery:  'jquery',
   Vue:     ['vue/dist/vue.runtime.esm.js',   'default'],
   Vuex:    ['vuex/dist/vuex.esm.js',         'default'],
   VueI18n: ['vue-i18n/dist/vue-i18n.esm.js', 'default'],

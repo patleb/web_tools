@@ -1,9 +1,9 @@
 import _ from 'lodash'
+import $ from 'jquery'
 import NProgress from 'accessible-nprogress'
 import Cookies from 'js-cookie'
 import jstz from 'jstz'
 import moment from 'moment'
-import 'jquery'
 import 'jquery.iframe-transport'
 import 'jquery-touch-events'
 import 'eonasdan-bootstrap-datetimepicker'
@@ -25,6 +25,7 @@ import '@@/ext_pjax/concepts/all'
 // https://stackoverflow.com/questions/51920575/how-to-make-jquery-available-to-sprockets-using-webpacker
 document.addEventListener('DOMContentLoaded', function () {
   window._ = _
+  window.$ = window.jQuery = $
   window.NProgress = NProgress
   window.Cookies = Cookies
   window.jstz = jstz

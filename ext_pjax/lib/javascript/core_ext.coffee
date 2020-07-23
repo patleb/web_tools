@@ -1,20 +1,23 @@
-Js.prepend_to = (object, name, callback) ->
-  previous = object[name] || -> {}
-  object[name] = ->
-    callback.apply(this, arguments)
-    previous.apply(this, arguments)
+class window.Js
+  @ABORT: 'ABORT'
 
-Js.append_to = (object, name, callback) ->
-  previous = object[name] || -> {}
-  object[name] = ->
-    previous.apply(this, arguments)
-    callback.apply(this, arguments)
+  @prepend_to: (object, name, callback) ->
+    previous = object[name] || -> {}
+    object[name] = ->
+      callback.apply(this, arguments)
+      previous.apply(this, arguments)
 
-Js.decorate = (object, name, callback) ->
-  previous = object[name] || -> {}
-  object[name] = ->
-    this.super = previous
-    callback.apply(this, arguments)
+  @append_to: (object, name, callback) ->
+    previous = object[name] || -> {}
+    object[name] = ->
+      previous.apply(this, arguments)
+      callback.apply(this, arguments)
+
+  @decorate: (object, name, callback) ->
+    previous = object[name] || -> {}
+    object[name] = ->
+      this.super = previous
+      callback.apply(this, arguments)
 
 for type in [Array, Boolean, Function, jQuery, JSON, Number, Object, RegExp, String]
   do (type) ->

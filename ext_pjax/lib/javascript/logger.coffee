@@ -1,11 +1,11 @@
-@console ?= {}
+window.console ?= {}
 for method in ['log', 'trace', 'groupCollapsed', 'groupEnd']
-  console[method] ?= ->
+  window.console[method] ?= ->
 
-if @Logger?
+if window.Logger?
   console.log "ExtPjax Overriding #{this.name}.Logger"
 
-class @Logger
+class window.Logger
   @IGNORED_METHODS: {
     Array:
       includes: true

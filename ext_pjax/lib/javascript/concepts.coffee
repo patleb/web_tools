@@ -1,6 +1,3 @@
-@Js ||= {}
-@Js.ABORT = 'ABORT'
-
 class Js.Concepts
   MODULE = /^(?![A-Z]\w*Concept$)[A-Z]/
   CONCEPT = /Concept$/
