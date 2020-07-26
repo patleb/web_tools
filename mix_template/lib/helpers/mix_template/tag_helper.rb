@@ -50,11 +50,6 @@ module MixTemplate
       name.end_with?('_') || super
     end
 
-    # TODO https://github.com/rails/rails/pull/32125
-    def utf8_enforcer_tag
-      ''.html_safe
-    end
-
     def capture(*args)
       if block_given?
         value = nil
@@ -169,11 +164,13 @@ module MixTemplate
     end
 
     def continue(options)
-      unless (is_true = options.delete(:if)).nil?
+      if options.has_key? :if
+        is_true = options.delete(:if)
         is_true = is_true.() if is_true.is_a? Proc
         return false unless is_true
       end
-      unless (is_true = options.delete(:unless)).nil?
+      if options.has_key? :unless
+        is_true = options.delete(:unless)
         is_true = is_true.() if is_true.is_a? Proc
         return false if is_true
       end

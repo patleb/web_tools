@@ -136,10 +136,12 @@ class Js.TagConcept
       tag.to_s().html_safe(true)
 
   continue: (options = {}) ->
-    if (is_true = options.delete('if'))?
-      is_true = is_true() if is_true.is_a(Function)
+    if options.has_key('if')
+      is_true = options.delete('if')
+      is_true = is_true() if is_true?.is_a(Function)
       return false unless is_true
-    if (is_true = options.delete('unless'))?
-      is_true = is_true() if is_true.is_a(Function)
+    if options.has_key('unless')
+      is_true = options.delete('unless')
+      is_true = is_true() if is_true?.is_a(Function)
       return false if is_true
     true

@@ -7,10 +7,11 @@ module MixUser
       if defined?(MixAdmin) && Current.user.admin?
         css << ' pjax' if controller.try(:admin?)
         path = with_admin_controller(&:authorized_path_for.with(:edit, Current.user.class, Current.user))
-        return unless path
-      else
+      elsif MixUser.config.devise_modules.include? :registerable
         css << ' pjax' unless controller.try(:admin?)
         path = edit_user_path
+      else
+        return
       end
       a_ class: css, href: path do
         span_(Current.user.email)
@@ -46,13 +47,13 @@ module MixUser
     end
 
     def remote_console
-      if defined?(::WebConsole) && Current.user.admin?
+      if defined?(::WebConsole) && Current.user.root?
         console if params[:_remote_console].to_b
       end
     end
 
     def remote_console_link
-      if defined?(::WebConsole) && Current.user.admin?
+      if defined?(::WebConsole) && Current.user.root?
         a_('Console', href: '?_remote_console=1')
       end
     end
