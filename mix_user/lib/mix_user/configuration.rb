@@ -14,7 +14,7 @@ module MixUser
     end
 
     def available_roles
-      @available_roles ||= { root: -1, guest: 0, normal: 1, admin: 2 }
+      @available_roles ||= { guest: 0, normal: 10, admin: 100, root: 1000 }
     end
 
     # Include default devise modules. Others available are:
