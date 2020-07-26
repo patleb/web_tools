@@ -40,7 +40,7 @@ module ActiveSupport::LazyLoadHooks::Autoload
       if !SPECIAL_BASES[base.name] && e.message.match?(/^uninitialized constant #{module_name}$/)
         raise
       end
-      base.parent.const_get(module_name)
+      base.module_parent.const_get(module_name)
     end
 
     private
