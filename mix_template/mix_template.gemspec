@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'query_diet'
   s.add_dependency 'nestive'
+  s.add_dependency 'ext_pjax', version
 end
