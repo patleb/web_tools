@@ -4,8 +4,8 @@ module RailsAdmin
     protect_from_forgery Config.forgery_protection_settings
 
     include ActionView::Helpers::TextHelper
-    include MrTemplate::WithPjax
-    include MrTemplate::WithLayoutValues
+    include MixTemplate::WithPjax
+    prepend MixTemplate::WithLayoutValues
     prepend Main::WithAuthorization
     include Main::WithCollection
     include Main::WithErrors
@@ -88,7 +88,7 @@ module RailsAdmin
     end
 
     def get_pjax_layout
-      pjax_layout 'rails_admin', 'application'
+      pjax_layout 'rails_admin', 'main'
     end
 
     def set_layout_values

@@ -1,4 +1,4 @@
-extends 'layouts/mr_template/application/pjax' do[
+extends 'layouts/mix_template/main/pjax', [
   div_('#js_main_model', data: { model: @abstract_model.to_param }),
   div_('#js_main_action', data: { action: main_action }),
   div_({ id: "#{main_action}_action", class: "#{@abstract_model.param_key}_model" }, [
@@ -8,4 +8,4 @@ extends 'layouts/mr_template/application/pjax' do[
     ]),
     yield
   ])
-]end
+]
