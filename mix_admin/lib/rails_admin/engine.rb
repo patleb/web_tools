@@ -32,12 +32,6 @@ module RailsAdmin
       end
     end
 
-    initializer 'rails_admin.sprockets' do |app|
-      RailsAdmin.config.available_themes.each do |theme|
-        app.config.assets.precompile << "rails_admin/application/#{theme}.css"
-      end
-    end
-
     initializer 'rails_admin.excluded_models' do
       ExtRails.config.excluded_models.merge %w(
         RailsAdmin::Choose

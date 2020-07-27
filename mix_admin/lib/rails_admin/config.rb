@@ -109,8 +109,6 @@ module RailsAdmin
       attr_accessor :default_truncate_length
       attr_accessor :chart_max_rows
       attr_accessor :export_max_rows
-      attr_accessor :available_themes
-      attr_accessor :default_theme
 
       def default_search_operator=(operator)
         if %w(default like starts_with ends_with is =).include? operator
@@ -180,8 +178,6 @@ module RailsAdmin
         @default_truncate_length = 50
         @chart_max_rows = 750_000
         @export_max_rows = 750_000
-        @available_themes = [:paper]
-        @default_theme = :paper
         Actions.reset
       end
 

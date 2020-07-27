@@ -1,9 +1,3 @@
-unless Rails::Env.dev_rack_profiling?
-  content_for :stylesheets do
-    stylesheet_link_tag('rails_admin/application/' << Current.theme, media: :all)
-  end
-end
-
 append :meta do
   meta_ name: 'robots', contents: 'NONE,NOARCHIVE'
 end
@@ -23,7 +17,6 @@ append :sidebar, [
     li_(back_to_site_link),
     li_(locale_select),
     li_(account_select),
-    li_(theme_select),
     li_(remote_console_link),
     li_(logout_link)
   ])

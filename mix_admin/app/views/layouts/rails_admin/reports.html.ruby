@@ -1,7 +1,3 @@
-content_for :stylesheets do
-  stylesheet_link_tag('rails_admin/application/' << Current.theme, media: :all)
-end
-
 # TODO probably won't work
 extends 'layouts/mr_template/report' do[
   div_('#js_i18n_translations', data: { translations: js_i18n('admin.js') }),

@@ -119,10 +119,6 @@ module RailsAdmin
       end
     end
 
-    def theme_select
-      session_select :theme, RailsAdmin.config.available_themes
-    end
-
     def rails_admin_form_for(*args, &block)
       options = args.extract_options!.reverse_merge(builder: FormBuilder)
       options[:html] ||= {}

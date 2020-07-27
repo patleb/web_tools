@@ -23,8 +23,6 @@ module RailsAdmin
     before_action :check_for_cancel
     around_action :use_model_time_zone
 
-    delegate :default_theme, to: 'RailsAdmin.config'
-
     helper_method :main_action, :main_section, :main_fields
 
     def admin?
@@ -67,11 +65,6 @@ module RailsAdmin
     def serve_action(name)
       prepare_action(name)
       send(name)
-    end
-
-    def set_current
-      super
-      set_current_value(:theme, RailsAdmin.config.available_themes)
     end
 
     private
