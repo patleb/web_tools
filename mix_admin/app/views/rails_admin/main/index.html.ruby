@@ -21,7 +21,7 @@ h_(
       end
     end
   end,
-  form_tag(@p.bulk.form_path, method: :post, id: "js_bulk_form", remote: true, class: "form", novalidate: true) do[
+  form_tag(@p.bulk.form_path, method: :post, id: "js_bulk_form", remote: true, class: "form", novalidate: true) {[
     hidden_field_tag(:js_bulk_action),
     p_(if: @p.table.description.present?){ strong_{ @p.table.description } },
     div_('.js_table_wrapper', [
@@ -57,7 +57,7 @@ h_(
             ])
           end,
           tr_ do
-            h_if @p.table.dynamic_columns? do[
+            h_if(@p.table.dynamic_columns?) {[
               td_('.js_bulk_checkbox.hidden-xs'),
               @p.table.fields.map.with_index do |field, i|
                 td_(@p.table.body_options(field, i)) do
@@ -67,11 +67,11 @@ h_(
               td_ do
                 div_ '.js_table_restore_columns.fa.fa-undo'
               end
-            ]end
+            ]}
           end
         ])
       ])
     ]),
     @p.paginate.render
-  ]end
+  ]}
 )

@@ -6,7 +6,7 @@ export_fields = main_fields.select(&:export_visible?)
 
 h_(
   @p.filter_box.render,
-  form_tag(export_path(path_params.with_keyword_access), method: 'post', class: 'form-horizontal') do[
+  form_tag(export_path(path_params.with_keyword_access), method: 'post', class: 'form-horizontal') {[
     input_(name: "file", type: "hidden", value: "true"),
     fieldset_('#js_export_fields', [
       legend_('.js_main_panel', [
@@ -33,16 +33,18 @@ h_(
               export_fields.select{ |f| !f.association? || f.polymorphic? }.map do |field|
                 list = field.virtual? ? 'methods' : 'only'
                 div_ '.checkbox.col-sm-3' do
-                  if field.association? && field.polymorphic?;[
-                    label_({ for: "schema_#{list}_#{field.method_name}" }, [
-                      check_box_tag("schema[#{list}][]", field.method_name, true, id: "schema_#{list}_#{field.method_name}"),
-                      "#{field.label} [id]"
-                    ]),
-                    label_({ for: "schema_#{list}_#{polymorphic_type_column_name = @abstract_model.columns.find{ |c| field.property.foreign_type == c.name }.name}" }, [
-                      check_box_tag("schema[#{list}][]", polymorphic_type_column_name, true, id: "schema_#{list}_#{polymorphic_type_column_name}"),
-                      "#{field.label.upcase_first} [type]"
-                    ])
-                  ]else
+                  if field.association? && field.polymorphic?
+                    [
+                      label_({ for: "schema_#{list}_#{field.method_name}" }, [
+                        check_box_tag("schema[#{list}][]", field.method_name, true, id: "schema_#{list}_#{field.method_name}"),
+                        "#{field.label} [id]"
+                      ]),
+                      label_({ for: "schema_#{list}_#{polymorphic_type_column_name = @abstract_model.columns.find{ |c| field.property.foreign_type == c.name }.name}" }, [
+                        check_box_tag("schema[#{list}][]", polymorphic_type_column_name, true, id: "schema_#{list}_#{polymorphic_type_column_name}"),
+                        "#{field.label.upcase_first} [type]"
+                      ])
+                    ]
+                  else
                     label_({ for: "schema_#{list}_#{field.name}" }, [
                       check_box_tag("schema[#{list}][]", field.name, true, id: "schema_#{list}_#{field.name}"),
                       field.label.upcase_first
@@ -124,5 +126,5 @@ h_(
         ])
       ])
     end
-  ]end
+  ]}
 )

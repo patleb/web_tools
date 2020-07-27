@@ -5,7 +5,7 @@ end
 h_(
   div_('#js_chart_init', data: { init: @p.ordered_charts }),
   @p.filter_box.render,
-  form_tag(@p.chart_form_path, method: :post, class: 'form-horizontal js_chart_form', remote: true) do[
+  form_tag(@p.chart_form_path, method: :post, class: 'form-horizontal js_chart_form', remote: true) {[
     input_(name: "chart", type: "hidden", value: "true"),
     @p.render,
     fieldset_([
@@ -56,5 +56,5 @@ h_(
         ])
       ])
     end
-  ]end
+  ]}
 )

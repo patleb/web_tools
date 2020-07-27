@@ -5,7 +5,7 @@ append :contextual_tabs, [
 
 h_(
   @p.filter_box.render,
-  form_tag(@p.bulk.form_path, method: :post, id: "js_bulk_form", remote: true, class: "form", novalidate: true) do[
+  form_tag(@p.bulk.form_path, method: :post, id: "js_bulk_form", remote: true, class: "form", novalidate: true) {[
     hidden_field_tag(:js_bulk_action),
     hidden_field_tag(:bulkable_type, 'bulkable_trash'),
     div_('.js_table_wrapper', [
@@ -35,5 +35,5 @@ h_(
       ])
     ]),
     @p.paginate.render
-  ]end
+  ]}
 )
