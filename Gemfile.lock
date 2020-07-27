@@ -28,6 +28,7 @@ PATH
   remote: ext_bootstrap
   specs:
     ext_bootstrap (0.2.0)
+      ext_webpacker (= 0.2.0)
 
 PATH
   remote: ext_capistrano
@@ -73,6 +74,7 @@ PATH
   remote: ext_pjax
   specs:
     ext_pjax (0.2.0)
+      ext_bootstrap (= 0.2.0)
       ext_ruby (= 0.2.0)
 
 PATH
@@ -123,6 +125,10 @@ PATH
   remote: mix_admin
   specs:
     mix_admin (0.2.0)
+      amoeba (~> 3.0)
+      mix_global (= 0.2.0)
+      mix_user (= 0.2.0)
+      rails_admin-i18n (~> 1.11)
 
 PATH
   remote: mix_backup
@@ -203,6 +209,7 @@ PATH
   remote: mix_template
   specs:
     mix_template (0.2.0)
+      ext_pjax (= 0.2.0)
       nestive
       query_diet
 
@@ -296,6 +303,8 @@ GEM
       public_suffix (>= 2.0.2, < 5.0)
     airbrussh (1.4.0)
       sshkit (>= 1.6.1, != 1.7.0)
+    amoeba (3.1.0)
+      activerecord (>= 3.2.6)
     ansi (1.5.0)
     arel_extensions (2.0.8)
       activerecord (>= 6.0)
@@ -527,6 +536,7 @@ GEM
     rails-i18n (6.0.0)
       i18n (>= 0.7, < 2)
       railties (>= 6.0.0, < 7)
+    rails_admin-i18n (1.12.0)
     rails_select_on_includes (6.0.1)
       activerecord (>= 6)
     railties (6.0.3.2)

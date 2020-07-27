@@ -1,0 +1,7 @@
+@import "mr_coffee/theming";
+@import "mr_template/theming";
+@import "mr_user/theming";
+#rails_admin {
+  @import "rails_admin/base/theming";
+  @import "rails_admin/custom/theming";
+}

@@ -1,0 +1,32 @@
+.js_table_update_wrapper {
+  cursor: inherit;
+  input {
+    width: 100%;
+    font-size: 1em;
+    outline: none;
+    text-align: inherit;
+
+    &[type=checkbox][value=false]:after {
+      @extend .label-danger;
+      border: none;
+    }
+
+    &[type=checkbox][value=true]:after {
+      @extend .label-success;
+      border: none;
+    }
+  }
+  &.js_done {
+    @include underlined($brand-success, true);
+  }
+  &.js_fail {
+    @include underlined($brand-danger, true);
+  }
+}
+
+.js_table_update_readonly {
+  @include underlined($gray-light);
+  input[readonly] {
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,15 @@
+.no_bulk_menu {
+  @include hidden_bulk_actions;
+}
+
+#bulk_actions {
+  .dropdown-menu {
+    left: auto;
+    right: 0;
+  }
+}
+
+.js_bulk_checkbox {
+  padding-left: 10px;
+  padding-right: 0;
+}

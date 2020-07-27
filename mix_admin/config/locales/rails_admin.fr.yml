@@ -1,0 +1,25 @@
+fr:
+  admin:
+    form:
+      save_and_add_another: "Enregistrer et ajouter un(e) autre"
+      new_model: "nouveau(elle) %{name}"
+    export:
+      csv:
+        encoding_to_help: "Choisissez l'encodage de sortie."
+    navigation:
+      system: Système
+    actions:
+      new:
+        title: "Nouveau(elle) %{model_label}"
+        menu: "Ajouter"
+        breadcrumb: "Nouveau(elle)"
+        link: "Ajouter"
+      edit:
+        link: "Modifier"
+      bulk_delete:
+        bulk_link: "Supprimer"
+      export:
+        link: "Exporter"
+        bulk_link: "Exporter"
+      chart:
+        menu: Charte

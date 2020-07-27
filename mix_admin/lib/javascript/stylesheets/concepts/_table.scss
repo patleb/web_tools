@@ -1,0 +1,220 @@
+/* Table cells behaviour */
+.table {
+  // Cells
+  > thead,
+  > tbody,
+  > tfoot {
+    > tr {
+      > th {
+        border-bottom: 0;
+      }
+    }
+  }
+  .thumbnail {
+    float:left;
+    & + * {
+      clear:left;
+    }
+  }
+
+  td {
+    white-space: nowrap;
+    .js_table_full_content,
+    .js_table_more_content {
+      @include scrollbar;
+      white-space: pre-line;
+      max-width: 320px; // TODO if parent width is bigger, then max-width should not be applied
+      max-height: 480px;
+      overflow: auto;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      display: none;
+    }
+    .js_table_expand_cell {
+      cursor: pointer;
+    }
+    .js_table_collapse_cell {
+      display: none;
+      cursor: pointer;
+    }
+    &.array_type,
+    &.association_type {
+      .js_table_full_content,
+      .js_table_more_content {
+        white-space: pre !important;
+      }
+    }
+    &.serialized_type,
+    &.json_type,
+    &.jsonb_type,
+    &.jsons_type,
+    &.jsonbs_type {
+      .js_table_full_content {
+        @include as_code;
+      }
+    }
+  }
+
+  /* icons */
+  td.table_row_actions {
+    max-width: none;
+    > ul {
+      margin:0;
+      li {
+        display: inline-block;
+      }
+      li:not(:last-child) {
+        margin-right: 5px;
+      }
+      a {
+        vertical-align: baseline;
+        margin-top: 0;
+      }
+    }
+  }
+
+  /* Shrink to content width */
+  th:first-of-type,
+  th:last-of-type {
+    width: 1px;
+    white-space: nowrap;
+  }
+
+  // Force baseline alignment when th are multilines
+  > thead > tr > th {
+    vertical-align: baseline;
+  }
+}
+
+.js_table_wrapper {
+  @include scrollbar;
+  overflow-x: auto;
+}
+
+.js_table_wrapper,
+.js_table_sticky_head {
+  th:nth-of-type(2),
+  td:nth-of-type(2) {
+    padding-left: 10px;
+  }
+}
+
+.js_table_sticky_column,
+.js_table_sticky_column_head {
+  th:first-of-type,
+  td:first-of-type {
+    padding-left: 10px;
+  }
+}
+
+.js_table_sticky_head,
+.js_table_sticky_column,
+.js_table_sticky_column_head {
+  overflow: hidden;
+  position: fixed;
+  @include box-shadow(0 1px 2px rgba(0,0,0,.3));
+  background-color: $navbar-default-bg;
+}
+
+.js_table_sticky_head {
+  @include hidden_bulk_actions;
+  display: none;
+  z-index: $zindex-navbar-fixed + 2;
+  top: 0;
+  padding-top: 4px;
+  > .table {
+    position: relative;
+    margin-bottom: 0;
+    table-layout: fixed;
+  }
+}
+
+.js_table_sticky_column {
+  visibility: hidden;
+  z-index: $zindex-navbar-fixed + 1;
+
+  .js_table_frozen_column {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@include screen_phone {
+  .js_table_sticky_column {
+    position: absolute;
+    margin-top: -$navbar-height;
+
+    .js_table_frozen_column {
+      max-width: 100px;
+    }
+  }
+}
+
+.js_table_sticky_column_head {
+  display: none;
+  z-index: $zindex-navbar-fixed + 3;
+  top: 0;
+  padding-top: 4px;
+}
+
+/* backport of Bootstrap 1.4 table headers */
+.js_table_column_head {
+  margin-left: 1em;
+  text-indent: -0.85rem;
+  &:before {
+    content: "";
+    margin-top: 7px;
+    border-width: 0 4px 4px;
+    border-style: solid;
+    border-color: $text-color transparent;
+    visibility: hidden;
+  }
+
+  &.pjax {
+    cursor: pointer;
+    &:before {
+      visibility: visible;
+      opacity: 0.35;
+    }
+    &:hover:before {
+      opacity: 1;
+    }
+  }
+
+  &.js_table_sort_up {
+    &:before,
+    &:hover:before {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  &.js_table_sort_down {
+    &:before {
+      border-bottom: none;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 4px solid $text-color;
+      visibility: visible;
+      opacity: 1;
+      @include box-shadow(none);
+    }
+  }
+}
+
+.js_table_scroll_up {
+  display: none;
+  position: absolute;
+  right: 5px;
+  font-size: 35px;
+  padding-right: 9px;
+  margin-top: -17px;
+  cursor: pointer;
+}
+
+.js_table_remove_column,
+.js_table_restore_columns {
+  cursor: pointer;
+  padding: 8px;
+}

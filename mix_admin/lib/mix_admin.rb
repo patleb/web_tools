@@ -1,4 +1,4 @@
-require "mix_admin/engine"
+require 'rails_admin'
 
 module MixAdmin
   # Your code goes here...
