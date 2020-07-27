@@ -99,7 +99,7 @@ module MixTemplate
       "<!--[if lt IE 11]><p class='browser_upgrade'>#{t('mix_template.browser_upgrade_html')}</p><![endif]-->".html_safe
     end
 
-    def js_i18n(key = 'mix_template.js')
+    def js_i18n(key = 'application.js')
       (@_js_i18n ||= {})["#{Current.locale}_#{key}"] ||= I18n.t(key)
     end
 

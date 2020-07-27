@@ -37,7 +37,7 @@
         this.$localStorage.set('locale', locale)
       },
       pretty_locale: function (locale) {
-        return this.$i18n.messages[locale]['lang']
+        return this.$i18n.messages[locale].locale.lang
       },
       navigator_locale: function () {
         let locale = navigator.language.substring(0, 2)
