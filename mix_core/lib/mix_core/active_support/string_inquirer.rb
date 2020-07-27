@@ -14,14 +14,6 @@ ActiveSupport::StringInquirer.class_eval do
     @ngrok = development? && ENV['NGROK'].present?
   end
 
-  def dev_rack_profiling?
-    return @dev_rack_profiling if defined? @dev_rack_profiling
-    @dev_rack_profiling =
-      defined?(::Rack::Lineprof) \
-      && Rails.application.middleware.include?(::Rack::Lineprof) \
-      && development?
-  end
-
   def dev_or_test_url_options
     host, port =
       case to_sym
