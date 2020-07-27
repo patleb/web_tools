@@ -7,5 +7,6 @@ en:
   mix_template:
     browser_upgrade_html: You are using an <strong>outdated</strong> browser. Please
       <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.
+    navigation: Navigation
     toggle_navigation: Toggle navigation
     back_to_site: Back to site
