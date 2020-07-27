@@ -1,5 +1,9 @@
 fr:
   admin:
+    js:
+      :true: "Vrai"
+      :false: "Faux"
+      confirmation: Êtes-vous certain?
     form:
       save_and_add_another: "Enregistrer et ajouter un(e) autre"
       new_model: "nouveau(elle) %{name}"
