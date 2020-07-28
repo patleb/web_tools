@@ -8,14 +8,10 @@ module RailsAdmin
   class Engine < Rails::Engine
     isolate_namespace RailsAdmin
 
-    # Initialize engine dependencies on wrapper application
-    Gem.loaded_specs["mix_admin"].dependencies.each do |d|
-      begin
-        require d.name
-      rescue LoadError => e
-        # Put exceptions here.
-      end
-    end
+    require 'rails_admin-i18n'
+    require 'amoeba'
+    require 'mix_global'
+    require 'mix_user'
 
     config.before_configuration do
       require 'rails_admin/active_model/name/with_admin'
