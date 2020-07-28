@@ -13,7 +13,7 @@ sun.backup_move '/etc/dhcp/dhclient.conf'
 
 # no sun.compare_defaults since there are some static IPs
 sun.backup_defaults '/etc/hosts'
-<%= Sh.build_hosts(sun.admin_name, sun.server) %>
+<%= Sh.build_hosts(sun.owner_name, sun.server) %>
 
 ufw allow domain
 ufw reload

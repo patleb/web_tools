@@ -78,7 +78,7 @@ module Sunzistrano
       if (value = self[:username]).present?
         value
       else
-        sudo ? admin_name : deployer_name
+        sudo ? owner_name : deployer_name
       end
     end
 
