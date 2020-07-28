@@ -19,6 +19,7 @@ module RailsAdmin
       require 'rails_admin/active_support/core_ext/module/autoload'
       require 'rails_admin/active_support/core_ext/numeric/conversions'
       require 'rails_admin/active_support/core_ext/object/full_symbolize'
+      require 'rails_admin/active_support/core_ext/array'
       require 'rails_admin/active_support/core_ext/string'
       require 'rails_admin/ooor/base/with_admin' if defined? Ooor::Base
     end
