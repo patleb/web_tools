@@ -1,4 +1,6 @@
 class String
+  include Numeric::Conversions
+
   def to_admin_param(separator = RailsAdmin::NAMESPACE_SEPARATOR)
     split('::').map(&:underscore).join(separator)
   end
