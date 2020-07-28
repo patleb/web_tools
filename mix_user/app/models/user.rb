@@ -24,6 +24,10 @@ class User < MixUser.config.parent_model.constantize
     admin.exists?
   end
 
+  def admin?
+    read_attribute_before_type_cast(:role) >= self.class.roles[:admin]
+  end
+
   def has?(record)
     record.try(:user_id) == id
   end
