@@ -10,6 +10,7 @@ module RailsAdmin
 
     require 'rails_admin-i18n'
     require 'amoeba'
+    require 'kaminari'
     require 'mix_global'
     require 'mix_user'
 

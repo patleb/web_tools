@@ -18,10 +18,11 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
 
   s.add_dependency 'rails_admin-i18n', '~> 1.11'
-  s.add_dependency 'mix_global', version
-  s.add_dependency 'mix_user',   version
   s.add_dependency 'amoeba', '~> 3.0' # TODO https://github.com/moiristo/deep_cloneable
   # TODO s.add_dependency 'prawn'
+  s.add_dependency 'kaminari', '>= 0.14', '< 2.0'
+  s.add_dependency 'mix_global', version
+  s.add_dependency 'mix_user',   version
 
   s.add_development_dependency 'ext_minitest', version
 end

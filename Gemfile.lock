@@ -126,6 +126,7 @@ PATH
   specs:
     mix_admin (0.2.0)
       amoeba (~> 3.0)
+      kaminari (>= 0.14, < 2.0)
       mix_global (= 0.2.0)
       mix_user (= 0.2.0)
       rails_admin-i18n (~> 1.11)
@@ -432,6 +433,18 @@ GEM
       activerecord (>= 5.0)
       activesupport (>= 5.0)
       pg (>= 0.18.1)
+    kaminari (1.2.1)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.2.1)
+      kaminari-activerecord (= 1.2.1)
+      kaminari-core (= 1.2.1)
+    kaminari-actionview (1.2.1)
+      actionview
+      kaminari-core (= 1.2.1)
+    kaminari-activerecord (1.2.1)
+      activerecord
+      kaminari-core (= 1.2.1)
+    kaminari-core (1.2.1)
     loofah (2.6.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
