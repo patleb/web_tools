@@ -6,7 +6,9 @@ ActiveRecord::Base.class_eval do
   include self::WithDiscard
   include self::WithInheritedTypes
   prepend self::WithJsonAttribute
+  include self::WithNullifyBlanks
   include self::WithRescuableValidations
+  include self::WithViableModels
 
   delegate :url_helpers, to: 'Rails.application.routes'
 

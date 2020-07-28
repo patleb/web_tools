@@ -32,7 +32,7 @@ module RailsAdmin
     end
 
     initializer 'rails_admin.excluded_models' do
-      ExtRails.config.excluded_models.merge %w(
+      MixCore.config.excluded_models.merge %w(
         RailsAdmin::Choose
       )
     end
