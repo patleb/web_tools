@@ -10,7 +10,7 @@ module MixUser
     # require 'devise-encryptable'
     require 'devise-i18n'
     require 'pundit'
-    require 'mix_core'
+    require 'mix_template'
 
     config.before_configuration do |app|
       if (file = Rails.root.join('tmp/console.txt')).exist? && (ips = file.read.lines.reject(&:blank?).map(&:strip)).any?

@@ -22,5 +22,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'devise-i18n'
   s.add_dependency 'pundit', '~> 2.1'
   s.add_dependency 'web-console'
-  s.add_dependency 'mix_core', version
+  s.add_dependency 'mix_template', version
 end
