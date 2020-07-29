@@ -17,7 +17,7 @@ module ActiveRecord::Base::WithViableModels
     def viable_models
       @viable_models ||= begin
         included_models = ([Rails.application] + Rails::Engine.subclasses).map do |app|
-          paths = app.config.paths['app/models'].to_a + app.config.paths.eager_load.select(&:end_with?.with('/models'))
+          paths = app.config.paths['app/models'].to_a + app.config.eager_load_paths.select(&:end_with?.with('/models'))
           paths.uniq.map do |load_path|
             Dir.glob(app.root.join(load_path)).map do |load_dir|
               Dir.glob(load_dir + '/**/*.rb').map do |filename|
