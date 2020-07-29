@@ -27,9 +27,8 @@ module RailsAdmin
         end
       end
 
-      # TODO ActiveRecord::PolymorphicModel
       def polymorphic_parents(klass, name)
-        klass.model_types.polymorphic_parents[klass.name][name]
+        ::ActiveRecord::Base.polymorphic_parents[klass.name][name]
       end
     end
 

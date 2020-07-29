@@ -33,5 +33,32 @@ module ActiveRecord::Base::WithViableModels
         end
       end
     end
+
+    def polymorphic_parents
+      @polymorphic_parents ||= begin
+        all = viable_models.each_with_object({}) do |model_name, parents|
+          model = begin
+            ActiveSupport::Dependencies.constantize(model_name)
+          rescue LoadError
+            puts model_name if Rails.env.development?
+            next
+          end
+          next if     model < ::ActiveType::Object
+          next unless model < ::ActiveRecord::Base
+          next if     model.abstract_class?
+          next unless model.connection == connection
+          model.reflect_on_all_associations.each do |association|
+            if association.options[:polymorphic]
+              (parents[model.name] ||= {})[association.name] ||= Set.new
+            elsif (as = association.options[:as])
+              next if association.through_reflection?
+              ((parents[association.klass.name] ||= {})[as.to_sym] ||= Set.new) << model
+            end
+          end
+        end
+        all.each_value{ |associations| associations.transform_values!(&:to_a) }
+        all
+      end
+    end
   end
 end
