@@ -28,7 +28,7 @@ class RailsAdmin::Config::Model::Fields::Enum < RailsAdmin::Config::Model::Field
     end
   end
 
-  register_instance_option :include_blank?, memoize: :locale do
+  register_instance_option :include_blank? do
     enum.to_a.map(&:last).none?(&:blank?)
   end
 

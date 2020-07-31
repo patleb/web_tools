@@ -233,7 +233,7 @@ class RailsAdmin::Config::Model::Fields::Base
   end
 
   # Accessor for field's help text displayed below input field.
-  register_instance_option :help, memoize: :locale do
+  register_instance_option :help do
     readonly? ? false : generic_field_help
   end
 
@@ -268,7 +268,7 @@ class RailsAdmin::Config::Model::Fields::Base
   # Accessor for whether this is field is mandatory.
   #
   # @see RailsAdmin::AbstractModel.columns
-  register_instance_option :required?, memoize: :required_context do
+  register_instance_option :required? do
     next true if property.nil_or_true?(:required?, object) && property.nil?(:default)
     !!([name] + children_fields).uniq.find do |column_name|
       klass.validators_on(column_name).find do |v|
