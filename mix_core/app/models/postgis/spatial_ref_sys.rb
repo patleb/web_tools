@@ -14,7 +14,7 @@ module Postgis
 
     self.primary_key = :srid
 
-    scope :from_projection, ->(projection){ where(crs_for(projection)) }
+    scope :from_projection, -> (projection) { where(crs_for(projection)) }
 
     def self.find_by_projection(projection)
       from_projection(projection).take

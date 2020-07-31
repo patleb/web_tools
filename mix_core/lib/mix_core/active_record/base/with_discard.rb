@@ -6,7 +6,7 @@ module ActiveRecord::Base::WithDiscard
 
     self.discard_column = :deleted_at
 
-    scope :discarded!, ->{ with_discarded.discarded }
+    scope :discarded!, -> { with_discarded.discarded }
   end
 
   class_methods do
