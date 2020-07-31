@@ -23,7 +23,7 @@ class RailsAdmin.MainConcept
   ready: =>
     @model_name = $(@MODEL).data('model')
     @action_name = $(@ACTION).data('action')
-    @model_key = @model_name.underscore()
+    @model_key = @model_name?.underscore()
     ['index', 'chart', 'export', 'trash'].each (name) => @["#{name}_action"] = (@action_name == name)
 
     $(@PANEL).has('i.fa.fa-chevron-right').each$ (panel) ->

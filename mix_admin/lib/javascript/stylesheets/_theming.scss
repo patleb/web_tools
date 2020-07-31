@@ -1,4 +1,22 @@
-@import "../concepts/**/*";
+@import "~@@/ext_bootstrap/stylesheets/theming";
+@import "~@@/ext_bootstrap/stylesheets/bootswatch/paper/theming";
+@import "~@@/mix_user/stylesheets/theming";
+
+@import "~@@/mix_admin/stylesheets/concepts/bulk";
+@import "~@@/mix_admin/stylesheets/concepts/chart";
+@import "~@@/mix_admin/stylesheets/concepts/choose";
+@import "~@@/mix_admin/stylesheets/concepts/export";
+@import "~@@/mix_admin/stylesheets/concepts/filter_box";
+@import "~@@/mix_admin/stylesheets/concepts/paginate";
+@import "~@@/mix_admin/stylesheets/concepts/table";
+@import "~@@/mix_admin/stylesheets/concepts/form/directory_select";
+@import "~@@/mix_admin/stylesheets/concepts/form/modal_form";
+@import "~@@/mix_admin/stylesheets/concepts/form/nested_form";
+@import "~@@/mix_admin/stylesheets/concepts/form/field/datetimepicker";
+@import "~@@/mix_admin/stylesheets/concepts/form/field/file";
+@import "~@@/mix_admin/stylesheets/concepts/form/field/select";
+@import "~@@/mix_admin/stylesheets/concepts/table/create";
+@import "~@@/mix_admin/stylesheets/concepts/table/update";
 
 // TODO https://css-tricks.com/annoying-mobile-double-tap-link-issue/
 
@@ -6,7 +24,7 @@
   padding-top: 5px;
 }
 
-.controls img.preview{
+.controls img.preview {
   max-height: 200px;
   max-width: 300px;
 }
@@ -26,9 +44,11 @@
 .delete_notice {
   display: block;
   margin-top: 10px;
+
   a {
     padding-left: 5px;
   }
+
   ul {
     padding-top: 5px;
   }
@@ -63,6 +83,7 @@ label.input-group-addon {
 .delete {
   cursor: pointer;
   color: $text-color;
+
   &:focus,
   &:hover {
     text-decoration: none;
@@ -73,7 +94,7 @@ label.input-group-addon {
 .form-horizontal {
   /* hide hidden fields controls by default */
   .control-group .hidden_type {
-    display:none;
+    display: none;
   }
 
   .control-group {
@@ -83,7 +104,8 @@ label.input-group-addon {
   }
 
   legend {
-    cursor:pointer;
+    cursor: pointer;
+
     i {
       vertical-align: inherit !important;
     }
@@ -91,15 +113,19 @@ label.input-group-addon {
 
   &.denser {
     margin-top: 30px;
+
     .controls .nav {
       margin: 30px 0 0;
     }
+
     .input-prepend, .input-append {
       margin-bottom: 0px;
+
       label {
         margin-bottom: 0px;
       }
     }
+
     legend {
       margin-bottom: 30px;
     }
@@ -108,15 +134,18 @@ label.input-group-addon {
   /* We want input size to be used, unfixate input width */
   input, textarea {
     width: 100%;
+
     &[type=checkbox] {
       width: auto;
     }
   }
+
   .help-block {
-    clear:left;
+    clear: left;
   }
+
   input[type=file] {
-    display:block;
+    display: block;
   }
 
   /* nested forms */
@@ -151,7 +180,7 @@ label.input-group-addon {
 
   /* triple nesting!*/
   .tab-content .tab-content .tab-content .tab-pane {
-    border-color:lighten(#049cdb, 30%);
+    border-color: lighten(#049cdb, 30%);
     margin-left: 20px;
 
     .form-group {
@@ -160,8 +189,8 @@ label.input-group-addon {
   }
 
   /* totally awesome! nesting on 4 levels! */
-  .tab-content .tab-content .tab-content  .tab-content .tab-pane {
-    border-color:lighten(#049cdb, 40%);
+  .tab-content .tab-content .tab-content .tab-content .tab-pane {
+    border-color: lighten(#049cdb, 40%);
     margin-left: 30px;
 
     .form-group {
@@ -181,13 +210,15 @@ label.input-group-addon {
 /* nested nav */
 .nav {
   .nav-level-1 {
-    padding-left:30px;
+    padding-left: 30px;
   }
+
   .nav-level-2 {
-    padding-left:60px;
+    padding-left: 60px;
   }
+
   .nav-level-3 {
-    padding-left:90px;
+    padding-left: 90px;
   }
 }
 

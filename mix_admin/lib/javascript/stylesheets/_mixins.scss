@@ -1,3 +1,5 @@
+@import "~@@/mix_user/stylesheets/mixins";
+
 @mixin hidden_bulk_actions {
   tr:not(.js_table_create_row) {
     th:first-child:not(.js_table_frozen_column) {

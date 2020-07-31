@@ -5,7 +5,7 @@ module RailsAdmin
 
     include ActionView::Helpers::TextHelper
     include MixTemplate::WithPjax
-    prepend MixTemplate::WithLayoutValues
+    include MixTemplate::WithLayoutValues
     prepend Main::WithAuthorization
     include Main::WithCollection
     include Main::WithErrors
@@ -80,7 +80,7 @@ module RailsAdmin
     end
 
     def authenticate_user!
-      if Rails::Env.dev_or_test? && (user_email = ENV['DEVISE_USER']).present? && !warden.authenticated?(:user)
+      if Rails.env.dev_or_test? && (user_email = ENV['DEVISE_USER']).present? && !warden.authenticated?(:user)
         sign_in User.find_by(email: user_email)
       else
         super
@@ -92,6 +92,7 @@ module RailsAdmin
     end
 
     def set_layout_values
+      super
       main_app_name = Config.main_app_name
       @app_name = main_app_name.is_a?(Proc) ? instance_eval(&main_app_name) : main_app_name
       @app_name ||= 'Rails Admin'

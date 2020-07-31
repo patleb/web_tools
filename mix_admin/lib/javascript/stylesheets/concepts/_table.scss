@@ -140,7 +140,7 @@
   }
 }
 
-@include screen_phone {
+@include screen_mobile {
   .js_table_sticky_column {
     position: absolute;
     margin-top: -$navbar-height;

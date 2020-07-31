@@ -9,19 +9,18 @@ module RailsAdmin
     isolate_namespace RailsAdmin
 
     require 'rails_admin-i18n'
-    require 'amoeba'
     require 'kaminari'
     require 'mix_global'
     require 'mix_user'
+    require 'rails_admin/active_support/concern/with_admin'
+    require 'rails_admin/active_support/core_ext/module/autoload'
+    require 'rails_admin/active_support/core_ext/numeric/conversions'
+    require 'rails_admin/active_support/core_ext/object/full_symbolize'
+    require 'rails_admin/active_support/core_ext/array'
+    require 'rails_admin/active_support/core_ext/string'
 
     config.before_configuration do
       require 'rails_admin/active_model/name/with_admin'
-      require 'rails_admin/active_support/concern/with_admin'
-      require 'rails_admin/active_support/core_ext/module/autoload'
-      require 'rails_admin/active_support/core_ext/numeric/conversions'
-      require 'rails_admin/active_support/core_ext/object/full_symbolize'
-      require 'rails_admin/active_support/core_ext/array'
-      require 'rails_admin/active_support/core_ext/string'
       require 'rails_admin/ooor/base/with_admin' if defined? Ooor::Base
     end
 

@@ -1,5 +1,3 @@
-#= require rails_admin/concepts/form/field_concept/select_remote_element
-
 class RailsAdmin.Form.FieldConcept::SelectMultiRemoteElement extends RailsAdmin.Form.FieldConcept::SelectRemoteElement
   @include RailsAdmin.Form.FieldConcept::SelectMulti
 

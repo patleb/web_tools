@@ -27,7 +27,7 @@ module RailsAdmin
     end
 
     def on_model_not_found(_)
-      unless defined?(MrUser) && @model_name == 'Users'
+      unless defined?(MixUser) && @model_name == 'Users'
         flash[:error] = I18n.t('admin.flash.model_not_found', model: @model_name)
       end
       redirect_to root_path

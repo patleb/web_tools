@@ -1,7 +1,5 @@
-dependencies:
-  - 'coffee-loader'
-  - 'coffeescript'
-  - 'ext_yarn'
-  - 'rails-erb-loader'
-  - 'resolve-url-loader'
-  - 'sass-resources-loader'
+packages:
+  - 'hamsterjs'
+
+gems:
+  - 'mix_user'
