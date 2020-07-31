@@ -5,15 +5,10 @@ module MixTemplate
     included do
       before_action :strip_pjax_param, if: :pjax?
       before_action :strip_pjax_file_params, if: :pjax_file?
-      before_action :after_redirected
+      before_action :after_redirected, if: :pjax?
       after_action  :versionize
 
       layout :get_pjax_layout
-    end
-
-    def redirect_to(*args)
-      super
-      session[:_pjax] = pjax?
     end
 
     protected
@@ -32,12 +27,12 @@ module MixTemplate
 
     def pjax?
       return @_pjax if defined? @_pjax
-      @_pjax = request.headers['X-PJAX'].to_b || (pjax_file? && params[:_pjax].to_b)
+      @_pjax = request.headers['X-PJAX'].to_b || pjax_file?
     end
 
     def pjax_file?
       return @_pjax_file if defined? @_pjax_file
-      @_pjax_file = params[:_pjax_file].to_b
+      @_pjax_file = request.headers['X-PJAX-FILE'].to_b
     end
 
     def strip_pjax_param
@@ -53,10 +48,7 @@ module MixTemplate
     end
 
     def after_redirected
-      if session[:_pjax]
-        @_pjax = session.delete(:_pjax)
-        response.headers['X-PJAX-REDIRECT'] = request.url
-      end
+      response.headers['X-PJAX-REDIRECT'] = request.url
     end
 
     def versionize

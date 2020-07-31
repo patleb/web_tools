@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
       $rescue({
         message: event.message,
         backtrace: [_.values(_.pick(event, ['filename', 'lineno', 'colno'])).join(':')],
-        data: {}
       })
       event.preventDefault()
       return false

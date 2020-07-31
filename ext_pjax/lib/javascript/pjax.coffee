@@ -86,6 +86,7 @@ class Js.Pjax
         files.each (i, file) ->
           for j in [(data.length - 1)..0] by -1
             data.splice(j, 1) if (data[j].name == file.name)
+        (options.headers ||= {})['X-PJAX-FILE'] = true
         data.push(name: '_pjax_file', value: true)
         options.iframe = true
         options.files = files
@@ -246,7 +247,7 @@ class Js.Pjax
     if (redirect = xhr.getResponseHeader('X-PJAX-REDIRECT'))
       @options.request_url = $.parse_location(redirect).href
     container = { url: @options.request_url }
-    return container if /<html/i.test(data) # TODO allow full document if @options.full == true --> find(@CONTAINER)
+    return container if /<html/i.test(data)
     return container unless (contents = $($.parseHTML(data, document))).length
 
     container.contents = contents

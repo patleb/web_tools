@@ -47,7 +47,7 @@ module MixTemplate
     end
 
     def respond_to_missing?(name, _include_private = false)
-      name.end_with?('_') || super
+      name.to_s.end_with?('_') || super
     end
 
     def capture(*args)

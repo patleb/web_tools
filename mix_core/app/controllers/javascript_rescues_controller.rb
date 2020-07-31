@@ -14,7 +14,7 @@ class JavascriptRescuesController < ActionController::API
 
   def create_args
     message, backtrace = create_params.values_at(:message, :backtrace)
-    data = create_params[:data].to_unsafe_h.merge(
+    data = (create_params[:data]&.to_unsafe_h || {}).merge(
       user_ip: request.remote_ip,
       user_agent: request.user_agent,
       host: Process.host.snapshot,

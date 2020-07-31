@@ -1,7 +1,7 @@
 module MixTemplate
   module ViewHelper
     def body_id
-      [current_layout, 'layout'].compact.join('_').full_underscore
+      [current_layout, 'layout'].compact.join('_').full_underscore.sub('_pjax_', '_')
     end
 
     def current_layout(name = nil)
@@ -16,11 +16,6 @@ module MixTemplate
 
     def query_diet(**options)
       query_diet_widget(options) if defined? QueryDiet
-    end
-
-    # TODO change pjax history to reload if the current head isn't what it's supposed to be, instead of relying on nonce
-    def pjax_recovery
-      javascript_tag('if (document.head.inneHTML === "") { window.location.reload() }')
     end
 
     def template_status_css
