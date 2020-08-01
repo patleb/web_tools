@@ -42,7 +42,7 @@ class RailsAdmin::Config::Model::Fields::Enum < RailsAdmin::Config::Model::Field
 
   def parse_value(value)
     return unless value.present?
-    case (type = klass.attribute_types[name.to_s])
+    case klass.attribute_types[name.to_s]
     when ActiveModel::Type::Integer
       value if value.to_i?
     else

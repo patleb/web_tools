@@ -15,7 +15,7 @@ module ActiveRecord::Base::WithDiscard
       if subclass.name && !(subclass <= ActiveType::Object)
         if subclass.default_scopes.none?{ |scope| scope.source_location.include?(__FILE__) }
           discard_scope = -> do
-            if MixCore.config.skip_discard? && column_names.include?(try(:discard_column).to_s)
+            if !MixCore.config.skip_discard? && column_names.include?(try(:discard_column).to_s)
               kept
             else
               all

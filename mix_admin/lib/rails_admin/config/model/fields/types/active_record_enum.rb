@@ -8,7 +8,11 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
   end
 
   register_instance_option :pretty_value do
-    object.send(name)
+    if object.respond_to? "#{enum_method}_i18n"
+      object.send("#{enum_method}_i18n")
+    else
+      object.send(name)
+    end
   end
 
   register_instance_option :multiple? do
@@ -31,7 +35,8 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
   end
 
   def form_value
-    enum[super] || super
+    value = parse_value(super)
+    enum[value] || value
   end
 
   private

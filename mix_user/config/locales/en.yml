@@ -2,3 +2,10 @@ en:
   mix_user:
     log_out: Log out
     admin: Admin
+  activerecord:
+    attributes:
+      user/role:
+        deployer: Deployer
+        admin: Administrator
+        user: User
+        null: Undefined

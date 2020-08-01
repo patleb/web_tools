@@ -4,6 +4,7 @@ module MixUser
     attr_writer :json_attributes
     attr_writer :available_roles
     attr_writer :devise_modules
+    attr_accessor :scramble_on_discard
 
     def parent_model
       @parent_model ||= '::LibRecord'
@@ -14,7 +15,7 @@ module MixUser
     end
 
     def available_roles
-      @available_roles ||= { guest: 0, normal: 10, admin: 100, deployer: 1000 }
+      @available_roles ||= { null: -100, user: 0, admin: 100, deployer: 200 }
     end
 
     # Include default devise modules. Others available are:

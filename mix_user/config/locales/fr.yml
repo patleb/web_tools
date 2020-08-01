@@ -2,3 +2,10 @@ fr:
   mix_user:
     log_out: Se déconnecter
     admin: Admin
+  activerecord:
+    attributes:
+      user/role:
+        deployer: Déployeur
+        admin: Administrateur
+        user: Utilisateur
+        null: Indéfini

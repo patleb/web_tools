@@ -15,7 +15,12 @@ module UserAdmin
           required true
         end
         field :password do
-          required true
+          required{ object.new_record? }
+          visible{ Current.user.has?(object) || object.new_record? }
+        end
+        field :role do
+          enum{ Current.user.visible_roles_i18n }
+          readonly{ Current.user.has? object }
         end
       end
 
@@ -24,7 +29,7 @@ module UserAdmin
         field :email do
           index_value{ primary_key_link }
         end
-        fields :updated_at, :created_at
+        fields :updated_at, :created_at, :confirmed_at, :role
       end
     end
   end

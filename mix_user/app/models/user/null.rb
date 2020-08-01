@@ -2,7 +2,7 @@ class User::Null < ActiveType::NullObject
   attribute :first_name
   attribute :last_name
   attribute :discarded, :boolean, default: proc{ false }
-  attribute :role, default: proc{ 'guest' }
+  attribute :role, default: proc{ 'null' }
 
   alias_attribute :user_id, :id
 

@@ -48,8 +48,7 @@ class DeviseCreateLibUsers < ActiveRecord::Migration[5.1]
     add_index :lib_users, :reset_password_token, unique: true
     add_index :lib_users, :confirmation_token,   unique: true
     add_index :lib_users, :unlock_token,         unique: true
-    add_index :lib_users, :role
-    add_index :lib_users, :json_data,            using: :gin
-    add_index :lib_users, :deleted_at
+    add_index :lib_users, [:role, :updated_at, :deleted_at]
+    add_index :lib_users, :json_data, using: :gin
   end
 end
