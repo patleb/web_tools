@@ -13,7 +13,7 @@ module MixCore
 
     def rescue_500
       return @rescue_500 if defined? @rescue_500
-      @rescue_500 = !Rails.env.test?
+      @rescue_500 = !Rails.env.dev_or_test?
     end
 
     def skip_discard?
