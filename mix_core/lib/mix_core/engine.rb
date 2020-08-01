@@ -109,8 +109,6 @@ module MixCore
 
     initializer 'mix_core.append_routes' do |app|
       app.routes.append do
-        resources :javascript_rescues, only: [:create]
-
         match '/' => 'application#healthcheck', via: [:get, :head], as: :base
 
         match '*not_found', via: :all, to: 'application#render_404', format: false
