@@ -46,10 +46,6 @@ class User < MixUser.config.parent_model.constantize
     record.try(:user_id) == id
   end
 
-  def can?(action, record)
-    # TODO
-  end
-
   def active_for_authentication?
     super && !discarded?
   end
