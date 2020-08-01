@@ -61,7 +61,7 @@ class RailsAdmin::Config::Model::Fields::Array < RailsAdmin::Config::Model::Fiel
 
   # TODO use formatted_value
   def pretty_array
-    value&.compact || []
+    value.try(:compact) || value || []
   end
 
   def export_array

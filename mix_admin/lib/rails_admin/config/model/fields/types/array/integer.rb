@@ -4,7 +4,10 @@ class RailsAdmin::Config::Model::Fields::Array::Integer < RailsAdmin::Config::Mo
   include RailsAdmin::Config::Model::Fields::Integer::Formatter
 
   def pretty_array
-    super.map{ |item| format_integer(item) }
+    if (list = super).is_a? Range
+      list = [list.begin, list.end]
+    end
+    list&.map{ |item| format_integer(item) }
   end
 
   def truncated_value_options

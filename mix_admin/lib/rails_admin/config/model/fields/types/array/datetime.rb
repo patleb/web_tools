@@ -8,7 +8,10 @@ class RailsAdmin::Config::Model::Fields::Array::Datetime < RailsAdmin::Config::M
   end
 
   def value
-    super&.map{ |item| value_in_time_zone(item) }
+    if (list = super).is_a? Range
+      list = [list.begin, list.end]
+    end
+    list&.map{ |item| value_in_time_zone(item) }
   end
 
   def pretty_array
