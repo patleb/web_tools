@@ -1,4 +1,10 @@
 PATH
+  remote: mix_page
+  specs:
+    mix_page (0.2.0)
+      ext_ruby (= 0.2.0)
+
+PATH
   remote: .
   specs:
     web_tools (0.2.0)
@@ -16,6 +22,7 @@ PATH
       mix_core (= 0.2.0)
       mix_global (= 0.2.0)
       mix_notifier (= 0.2.0)
+      mix_page (= 0.2.0)
       mix_rescue (= 0.2.0)
       mix_setting
       mix_sql (= 0.2.0)
@@ -646,6 +653,7 @@ DEPENDENCIES
   mix_core!
   mix_global!
   mix_notifier!
+  mix_page!
   mix_rescue!
   mix_setting!
   mix_sql!
