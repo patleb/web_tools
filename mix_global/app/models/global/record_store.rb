@@ -20,12 +20,12 @@ module Global::RecordStore
         else
           key = normalize_key(name)
           version = normalize_version(name, **options)
-          if (record = where(id: key).take).nil?
+          unless (record = find_by(id: key))
             begin
               record = create! options.slice(:expires, :expires_in).merge!(id: key, version: version, data: yield)
               record.new!
             rescue ActiveRecord::RecordNotUnique
-              record = where(id: key).take!
+              record = find_by!(id: key)
             end
           end
           if record._sync(version, &proc).destroyed?
@@ -65,7 +65,7 @@ module Global::RecordStore
 
     def read_record(name, **options)
       key = normalize_key(name)
-      if (record = where(id: key).take)
+      if (record = find_by(id: key))
         version = normalize_version(name, **options)
         record unless record._sync_stale_state(version).stale?
       end
