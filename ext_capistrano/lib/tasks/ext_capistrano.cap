@@ -28,6 +28,8 @@ namespace :load do
     set :passenger_roles,           -> { :web }
     set :passenger_restart_command, -> { 'rbenv sudo passenger-config restart-app' }
 
+    set :assets_prefix, -> { 'packs' }
+
     append :linked_dirs, *%w(
       .bundle
       .local_repo
