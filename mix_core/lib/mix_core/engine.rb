@@ -36,12 +36,7 @@ module MixCore
     config.before_configuration do |app|
       require 'mix_core/rails/application'
       require 'mix_core/rails/initializable/collection'
-
-      if Setting[:postgis_enabled]
-        require 'pycall'
-        require 'rgeo'
-        require 'mix_core/pycall/pyobject_wrapper'
-      end
+      require 'mix_core/pycall' if Setting[:postgis_enabled]
 
       if defined? MixGlobal
         app.config.active_record.cache_versioning = false # TODO doesn't work, must be added to Rails.root/config/application.rb
