@@ -2,7 +2,7 @@ require './test/spec_helper'
 require 'ext_ruby'
 
 class ShTest < Minitest::Spec
-  let(:file){ Pathname.new('test/fixtures/files/ext_ruby/sub.txt') }
+  let(:file){ Pathname.new('ext_ruby/test/fixtures/files/sub.txt') }
   let(:lines){ [
     "line 0",
     "line 1 'end'",
