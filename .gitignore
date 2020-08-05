@@ -4,12 +4,47 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+
+/public/assets
+.byebug_history
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+/vendor/ruby
+/.vagrant/*
+!/.vagrant/private_key
+*.box
+/.provision/*
+/.local_repo/*
 /.vscode/*
 /.idea/*
-/tmp/*
+.editorconfig
+.generators
+.rakeTasks
+/db/structure.sql
+/db/dump*
+/config/secrets.yml
+/app/javascript/gems
+*.json
+!package.json
 
 ### AFTER .gitignore ###
 
-.editorconfig
 web_tools-*.gem
-db/structure.sql

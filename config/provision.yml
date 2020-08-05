@@ -1,0 +1,24 @@
+lock: 0.1.0
+gems:
+  - mix_core
+sudo: true
+debug: false
+reboot: false # TODO implement as cli flag
+
+shared:
+  postgres: 11
+  postgis: 2.5
+
+system:
+  append_recipes:
+    # - app_packages
+    - reboot
+
+vagrant:
+  swap_size: 0M
+
+staging:
+  swap_size: 2G
+
+production:
+  swap_size: 4G
