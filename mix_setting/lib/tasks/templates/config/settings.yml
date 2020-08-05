@@ -22,8 +22,8 @@ staging:
   mail_domain:
   mail_username:
   mail_password: $SECRET encrypted_secret
-  admin_public_key:
-  admin_private_key: $SECRET encrypted_secret
+  owner_public_key:
+  owner_private_key: $SECRET encrypted_secret
 
 production:
   server_host:
@@ -34,5 +34,5 @@ production:
   mail_domain:
   mail_username:
   mail_password: $SECRET encrypted_secret
-  admin_public_key:
-  admin_private_key: $SECRET encrypted_secret
+  owner_public_key:
+  owner_private_key: $SECRET encrypted_secret

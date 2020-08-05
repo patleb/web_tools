@@ -47,8 +47,8 @@ module Sunzistrano
       to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
         os_name: os,
         username: username,
-        admin_public_key: admin_public_key,
-        admin_private_key: admin_private_key.escape_newlines,
+        owner_public_key: owner_public_key,
+        owner_private_key: owner_private_key.escape_newlines,
         provision_log: PROVISION_LOG,
         provision_dir: PROVISION_DIR,
         manifest_log: MANIFEST_LOG,
@@ -66,12 +66,12 @@ module Sunzistrano
       server_cluster
     end
 
-    def admin_public_key
-      self[:admin_public_key].presence && "'#{self[:admin_public_key]}'"
+    def owner_public_key
+      self[:owner_public_key].presence && "'#{self[:owner_public_key]}'"
     end
 
-    def admin_private_key
-      self[:admin_private_key].presence && "'#{self[:admin_private_key]}'"
+    def owner_private_key
+      self[:owner_private_key].presence && "'#{self[:owner_private_key]}'"
     end
 
     def username
