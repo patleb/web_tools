@@ -9,7 +9,7 @@ module ExtRake
 
       def send_mail
         exception = Message.new
-        exception = ::RescueError.new(exception) if Gem.loaded_specs['mix_rescue']
+        exception = ::RescueError.new(exception) if defined? ::RescueError
         Notice.new.deliver! exception, subject: self.class.name do |message|
           puts message
         end
