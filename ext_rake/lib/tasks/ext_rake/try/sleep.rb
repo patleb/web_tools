@@ -1,5 +1,5 @@
 module ExtRake
-  module Test
+  module Try
     class Sleep < ActiveTask::Base
       def sleep
         Kernel.sleep 5

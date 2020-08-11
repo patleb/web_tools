@@ -1,5 +1,5 @@
 module ExtRake
-  module Test
+  module Try
     class RaiseException < ActiveTask::Base
       def raise_exception
         raise StandardError, 'Exception message'

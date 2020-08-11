@@ -1,5 +1,5 @@
 module ExtRake
-  module Test
+  module Try
     class SendMail < ActiveTask::Base
       class Message < ::StandardError
         def backtrace

@@ -22,11 +22,11 @@ namespace :ext_rake do
   end
 end
 
-namespace :test do
+namespace :try do
   %w(raise_exception send_mail sleep).each do |name|
-    desc "-- [options] Test #{name.humanize}"
+    desc "-- [options] Try #{name.humanize}"
     task name.to_sym => :environment do |t|
-      "::ExtRake::Test::#{name.camelize}".constantize.new(self, t).run!
+      "::ExtRake::Try::#{name.camelize}".constantize.new(self, t).run!
     end
   end
 end
