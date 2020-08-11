@@ -9,7 +9,6 @@ ActiveRecord::Base.maintain_test_schema = false
 # TODO rails runs test through a rake task in another process which calls require_environment! (so env is loaded twice)
 require 'rails/test_help'
 require 'shoulda-matchers'
-require 'minitest-spec-rails/init/mini_shoulda'
 require 'vcr'
 require 'ext_minitest/minitest'
 require 'ext_minitest/vcr'
