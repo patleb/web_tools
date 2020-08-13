@@ -1,7 +1,8 @@
 class RailsAdmin::Config::Model::Fields::Sti < RailsAdmin::Config::Model::Fields::Enum
   register_instance_option :enum do
     klass.self_and_inherited_types.map do |type|
-      [RailsAdmin.model(type).label, type.name]
+      model = RailsAdmin.model(type)
+      [model.abstract_model && model.label || type.name, type.name]
     end
   end
 
