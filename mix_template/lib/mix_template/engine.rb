@@ -38,11 +38,5 @@ module MixTemplate
         include MixTemplate::LayoutHelper
       end
     end
-
-    initializer 'mix_template.append_routes', before: 'mix_core.append_routes' do |app|
-      app.routes.append do
-        resources :javascript_rescues, only: [:create]
-      end
-    end
   end
 end

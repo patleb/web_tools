@@ -7,7 +7,7 @@ class ThrottlerTest < ActiveSupport::TestCase
   describe '.status' do
     describe 'no max duration' do
       before do
-        MixThrottler.config.max_duration = 0.second
+        MixRescue.config.throttler_max_duration = 0.second
         assert_equal({ throttled: false }, throttle)
       end
 
@@ -28,7 +28,7 @@ class ThrottlerTest < ActiveSupport::TestCase
 
     describe 'with 10 seconds max duration' do
       before do
-        MixThrottler.config.max_duration = 10.seconds
+        MixRescue.config.throttler_max_duration = 10.seconds
         assert_equal({ throttled: false }, throttle)
       end
 

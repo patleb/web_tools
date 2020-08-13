@@ -1,8 +1,7 @@
 # TODO https://www.ecalamia.com/blog/show-ip-api-nginx/
 class JavascriptRescuesController < ActionController::API
   def create
-    exception = error_class.new(*create_args)
-    log exception, logger: true
+    log error_class.new(*create_args)
     head :created
   end
 

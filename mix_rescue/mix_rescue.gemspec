@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'actionview'
   s.add_dependency 'mail'
+  s.add_dependency 'rack-attack'
   s.add_dependency 'mix_setting'
+  s.add_dependency 'mix_global'
   # TODO https://www.imaginarycloud.com/blog/rails-send-emails-with-style/
 end

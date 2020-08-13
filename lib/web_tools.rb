@@ -16,7 +16,6 @@ require 'mix_rescue'
 require 'mix_setting'
 require 'mix_sql'
 require 'mix_template'
-require 'mix_throttler'
 # require 'mix_user'
 require 'sunzistrano'
 

@@ -1,7 +1,7 @@
 module Throttler
   PREFIX = 'throttler'.freeze
 
-  def self.status(key:, value:, duration: nil, n: 1)
+  def self.status(key:, value:, duration: nil)
     new_value = normalize(value)
     new_time = Time.current
     throttled = false
@@ -19,7 +19,7 @@ module Throttler
         end
 
         old_time = Time.zone.parse(old_time)
-        if (new_time - old_time).seconds >= (duration || MixThrottler.config.max_duration)
+        if (new_time - old_time).seconds >= (duration || MixRescue.config.throttler_max_duration)
           next { value: old_value, time: new_time.iso8601, count: 1 }
         end
 
