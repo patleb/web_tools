@@ -5,7 +5,11 @@ class RescueError < ::StandardError
   attr_reader :name, :data
 
   def self.rescue_class
-    Rescue
+    if name != 'RescueError' && name.end_with?('Error')
+      ActiveSupport::Dependencies.safe_constantize(name.sub(/Error$/, 'Rescue')) || Rescue
+    else
+      Rescue
+    end
   end
 
   def initialize(exception, data = nil)
