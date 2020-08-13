@@ -81,7 +81,7 @@ module MixCore
       app.config.middleware.use ActionDispatch::IFrame
       app.config.middleware.insert_after ActionDispatch::Static, Rack::Deflater if Rails.env.dev_ngrok?
 
-      %w(libraries policies tasks).each do |directory|
+      %w(libraries tasks).each do |directory|
         ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/app/#{directory}")
       end
 

@@ -21,10 +21,7 @@ module MixUser
     end
 
     config.before_initialize do |app|
-      unless defined? MixAdmin
-        Rails.autoloaders.main.ignore("#{root}/app/models/user_admin.rb")
-      end
-      ActiveSupport::Dependencies.autoload_paths.push("#{app.root}/app/policies")
+      autoload_models_if_admin('User')
     end
 
     initializer 'mix_user.rack_attack' do

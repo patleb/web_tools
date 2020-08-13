@@ -3,9 +3,7 @@ require "mix_global/configuration"
 module MixGlobal
   class Engine < ::Rails::Engine
     config.before_initialize do
-      unless defined? MixAdmin
-        Rails.autoloaders.main.ignore("#{root}/app/models/global_admin.rb")
-      end
+      autoload_models_if_admin('Global')
     end
 
     initializer 'mix_global.append_migrations' do |app|
