@@ -10,6 +10,10 @@ module RescueAdmin
         simple_formatted true
       end
 
+      index do
+        sort_by :updated_at
+      end
+
       exclude_fields :id
     end
   end
