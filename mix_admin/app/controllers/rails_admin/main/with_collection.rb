@@ -1,4 +1,4 @@
-module RailsAdmin::Main::WithCollection
+module RailsAdmin::Main::WithCollection # TODO https://github.com/jcypret/hashid-rails
   def get_objects
     scope = @abstract_model.scoped
     if (auth_scope = policy_scope(@abstract_model))

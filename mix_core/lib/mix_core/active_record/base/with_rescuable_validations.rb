@@ -7,6 +7,7 @@ module ActiveRecord::Base::WithRescuableValidations
   NOT_NULL_VIOLATION_COLUMN = /column "(\w+)" violates not-null constraint/.freeze
 
   included do
+    # TODO default: false and use Current.controller.try(:postgres_exception_to_error?) instead
     class_attribute :postgres_exception_to_error, instance_writer: false, default: true
   end
 
