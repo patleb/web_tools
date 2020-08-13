@@ -8,11 +8,7 @@ module ExtRake
       end
 
       def send_mail
-        exception = Message.new
-        exception = ::RescueError.new(exception) if defined? ::RescueError
-        Notice.new.deliver! exception, subject: self.class.name do |message|
-          puts message
-        end
+        Notice.deliver! RescueError.new(Message.new)
       end
     end
   end

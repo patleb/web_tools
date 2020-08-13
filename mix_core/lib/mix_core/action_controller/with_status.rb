@@ -2,6 +2,9 @@ module ActionController
   module WithStatus
     EXCEPTION_TEMPLATES = [422, 500].freeze
 
+    class RequestTimeoutError < StandardError; end
+    class InternalServerError < StandardError; end
+
     def render_404
       # do not log these errors, they are already in nginx log
       respond_to do |format|
@@ -10,8 +13,8 @@ module ActionController
       end
     end
 
-    def render_408(exception = ActionController::UnknownError.new)
-      log exception, subject: :request_timeout
+    def render_408(exception = RequestTimeoutError.new)
+      log exception
       respond_to do |format|
         format.html do
           self.response_body = nil # make sure that there is no DoubleRenderError
@@ -28,8 +31,8 @@ module ActionController
       end
     end
 
-    def render_500(exception = ActionController::UnknownError.new)
-      log exception, subject: :internal_server_error
+    def render_500(exception = InternalServerError.new)
+      log exception
       respond_to do |format|
         format.html do
           self.response_body = nil # make sure that there is no DoubleRenderError

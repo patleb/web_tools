@@ -1,14 +1,14 @@
 # TODO https://www.ecalamia.com/blog/show-ip-api-nginx/
 class JavascriptRescuesController < ActionController::API
   def create
-    exception = create_class.new(*create_args)
-    log exception, subject: 'Javascript Error', throttle_key: 'javascript'
+    exception = error_class.new(*create_args)
+    log exception, logger: true
     head :created
   end
 
   private
 
-  def create_class
+  def error_class
     ActiveSupport::Dependencies.safe_constantize((create_params[:exception] || '').camelize) || JavascriptError
   end
 

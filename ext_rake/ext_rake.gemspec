@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   # TODO https://github.com/tessi/malloc_trim
   s.add_dependency "dotiw"
   s.add_dependency "ext_ruby", version
-  s.add_dependency "mix_notifier", version
   s.add_dependency "mix_setting"
   s.add_dependency "mix_rescue", version
   # TODO https://github.com/stevehodges/attribute_stats

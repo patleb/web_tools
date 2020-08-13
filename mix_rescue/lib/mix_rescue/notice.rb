@@ -2,14 +2,18 @@ require 'action_view/helpers/text_helper'
 require 'mix_setting'
 
 class Notice
-  include ActionView::Helpers::TextHelper
-
   BODY_START = '[NOTIFICATION]'.freeze
   BODY_END = '[END]'.freeze
 
-  # TODO add throttler
+  include ActionView::Helpers::TextHelper
+
+  def self.deliver!(exception, **options)
+    new.deliver!(exception, **options)
+  end
+
   # TODO keep messages in a folder and deliver later when the service becomes available
-  def deliver!(exception, subject:, before_body: nil, after_body: nil)
+  def deliver!(exception, subject: nil, before_body: nil, after_body: nil, logger: false)
+    subject = [subject, "[#{exception.respond_to?(:name) ? exception.name : exception.class.name}]"].compact.join(' ')
     message = <<~TEXT
       [#{Time.current.utc}]#{BODY_START}
       #{"#{before_body}\n" if before_body}#{exception.backtrace_log}#{"\n#{after_body}" if after_body}
@@ -29,7 +33,7 @@ class Notice
     }
     mail.to   = Setting[:mail_to]
     mail.from = Setting[:mail_from]
-    mail.subject   = subject.to_s
+    mail.subject   = subject
     mail.text_part = ::Mail::Part.new do
       content_type 'text/plain; charset=UTF-8'
       body message.gsub(/\n/, "\r\n")
@@ -50,12 +54,26 @@ class Notice
       HTML
     end
 
-    if defined?(Rails) && Rails.env.test?
-      Mail::TestMailer.new({}).deliver! mail
-    else
-      mail.deliver! unless MixNotifier.config.skip_notice
+    new_error =
+      if exception.class.respond_to? :rescue_class
+        exception.class.rescue_class.enqueue exception, message
+      else
+        Rescue.enqueue exception, message
+      end
+
+    if new_error
+      if logger
+        Rails.logger.error message
+      else
+        puts message
+      end
+
+      if Rails.env.test?
+        Mail::TestMailer.new({}).deliver! mail
+      else
+        mail.deliver! unless MixRescue.config.skip_notice
+      end
     end
-    message
   rescue Errno::ECONNREFUSED => e
     message << <<~TEXT
       #{e.backtrace_log}
@@ -64,5 +82,6 @@ class Notice
     if block_given?
       yield message
     end
+    return message
   end
 end

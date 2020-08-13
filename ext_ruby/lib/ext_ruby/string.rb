@@ -1,4 +1,18 @@
 class String
+  OBJECT_INSPECT ||= /(#<)([^>]+)(>)/.freeze
+  HEXADECIMAL ||= /0x[0-9a-f]+/i.freeze
+  DECIMAL ||= /\d+([.,]\d+)*/.freeze
+
+  def escape_inspect_delimiters(delimiters = '[]')
+    gsub(OBJECT_INSPECT, "#{delimiters[0]}\\2#{delimiters[1]}")
+  end
+
+  def squish_numbers(placeholder = '0')
+    gsub(SecureRandom::UUID, placeholder)
+      .gsub(HEXADECIMAL, placeholder)
+      .gsub(DECIMAL, placeholder)
+  end
+
   def escape_regex
     Regexp.new(Regexp.escape(self)).source
   end

@@ -15,7 +15,6 @@ PATH
       mix_backup (= 0.2.0)
       mix_core (= 0.2.0)
       mix_global (= 0.2.0)
-      mix_notifier (= 0.2.0)
       mix_page (= 0.2.0)
       mix_rescue (= 0.2.0)
       mix_setting
@@ -87,7 +86,6 @@ PATH
     ext_rake (0.2.0)
       dotiw
       ext_ruby (= 0.2.0)
-      mix_notifier (= 0.2.0)
       mix_rescue (= 0.2.0)
       mix_setting
       rake
@@ -177,24 +175,18 @@ PATH
     mix_global (0.2.0)
 
 PATH
-  remote: mix_notifier
-  specs:
-    mix_notifier (0.2.0)
-      actionview
-      mail
-      mix_setting
-
-PATH
   remote: mix_page
   specs:
     mix_page (0.2.0)
-      ext_ruby (= 0.2.0)
+      mix_admin (= 0.2.0)
 
 PATH
   remote: mix_rescue
   specs:
     mix_rescue (0.2.0)
-      mix_notifier
+      actionview
+      mail
+      mix_setting
 
 PATH
   remote: mix_setting
@@ -675,7 +667,6 @@ DEPENDENCIES
   mix_backup!
   mix_core!
   mix_global!
-  mix_notifier!
   mix_page!
   mix_rescue!
   mix_setting!

@@ -1,7 +1,4 @@
 module ActionController
-  class UnknownError < StandardError
-  end
-
   # TODO https://github.com/rails/rails/pull/31129
   # TODO https://github.com/rails/rails/pull/31235/files
   class DbTimeout < ActiveRecord::StatementInvalid

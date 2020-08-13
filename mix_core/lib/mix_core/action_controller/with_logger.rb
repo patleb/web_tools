@@ -1,34 +1,18 @@
 module ActionController::WithLogger
   REQUEST_CONTEXT ||= %i(remote_ip method original_url content_type).freeze
   IGNORED_PARAMS ||= %w(controller action format).freeze
-  OBJECT_INSPECT ||= /(#<[A-Za-z_][A-Za-z0-9_]*:)(0x.+)(>)/.freeze
 
-  def log(exception, subject:, throttle_key: 'logger', throttle_duration: nil)
-    return if Current.log_throttled
+  def log(exception, subject: nil)
+    return if Current.error_logged
 
-    # TODO allow to log N different messages
-    # TODO does not discriminate enough (add option in Exception to sanitize message --> exception.sanitized_message)
-    exception_message = exception.message.try(:sub, OBJECT_INSPECT, '\1?\3').try(:gsub, /\d+/, '?')
-    throttle_value = { type: exception.class.to_s, message: exception_message }
-    status = Throttler.status(key: throttle_key, value: throttle_value, duration: throttle_duration)
-    return if status[:throttled]
-
-    Current.log_throttled = true
+    Current.error_logged = true
     unless exception.is_a? RescueError
-      data = log_context
-      if status[:previous]
-        data.merge! previous_exception: status[:previous].merge(count: status[:count])
-      else
-        data.merge! previous_exception: { count: 0 }
-      end
-      exception = RailsError.new(exception, data)
+      exception = RailsError.new(exception, log_context)
     end
 
-    message = Notice.new.deliver! exception, subject: subject do |message|
-      Rails.logger.error message
-    end
-
+    message = Notice.deliver! exception, subject: subject, logger: true
     yield message if block_given?
+    message
   end
 
   protected

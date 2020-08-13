@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
   s.add_dependency "mix_backup",     version
   s.add_dependency "mix_core",       version
   s.add_dependency "mix_global",     version
-  s.add_dependency "mix_notifier",   version
   s.add_dependency "mix_setting"
   s.add_dependency "mix_sql",        version
   s.add_dependency "mix_page",       version

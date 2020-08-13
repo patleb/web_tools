@@ -1,5 +1,5 @@
 module Throttler
-  PREFIX = 'mix_throttler'.freeze
+  PREFIX = 'throttler'.freeze
 
   def self.status(key:, value:, duration: nil, n: 1)
     new_value = normalize(value)
@@ -8,11 +8,6 @@ module Throttler
     old_value = nil
     old_count = nil
 
-    # if n == 1
-    #   ...
-    # else
-    #   records = Global.read_records(/^#{PREFIX}:#{key}:./) ... or not, just use array of json
-    # end
     record = Global.write_record([PREFIX, key], expires: false) do |record|
       if record.nil?
         { value: new_value, time: new_time.iso8601, count: 1 }

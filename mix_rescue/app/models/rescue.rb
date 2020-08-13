@@ -1,26 +1,26 @@
 class Rescue < LibRecord
+  NEW_ERROR = true
+  OLD_ERROR = false
+
+  self.postgres_exception_to_error = false
+
   with_options presence: true do
     validates :exception
     validates :message
   end
 
   def self.enqueue(exception, message = exception.message)
-    # TODO compute md5 without numbers like the throttler, increment counter if md5 already exists
+    id = Digest.md5_hex(sti_name, exception.name, message.squish_numbers)
     create!(
+      id: id,
       type: sti_name,
       exception: exception.name,
       message: message,
-      data: exception.data
+      data: exception.data,
     )
-  end
-
-  def self.dequeue(exception)
-    super(inheritance_column, :exception, :created_at) do |quoted_type, quoted_exception, quoted_created_at|
-      <<-SQL
-        WHERE #{quoted_type} = '#{sti_name}'
-        AND #{quoted_exception} = '#{exception}'
-        ORDER BY #{quoted_created_at}
-      SQL
-    end
+    NEW_ERROR
+  rescue ActiveRecord::RecordNotUnique
+    increment_counter(:events_count, id, touch: true)
+    OLD_ERROR
   end
 end
