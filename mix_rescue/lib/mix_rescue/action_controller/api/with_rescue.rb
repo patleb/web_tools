@@ -11,3 +11,5 @@ module ActionController::API::WithRescue
     end
   end
 end
+
+ActionController::API.include ActionController::API::WithRescue

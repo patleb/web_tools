@@ -11,3 +11,5 @@ module ActionController::Base::WithRescue
     end
   end
 end
+
+ActionController::Base.include ActionController::Base::WithRescue

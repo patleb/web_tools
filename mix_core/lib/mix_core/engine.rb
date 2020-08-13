@@ -141,13 +141,6 @@ module MixCore
     ActiveSupport.on_load(:action_controller, run_once: true) do
       require 'mix_core/action_dispatch/routing/url_for/with_only_path'
       require 'mix_core/action_controller/parameters'
-      require 'mix_core/action_controller/with_status'
-      require 'mix_core/action_controller/with_errors'
-      require 'mix_core/action_controller/with_logger'
-    end
-
-    ActiveSupport.on_load(:action_controller) do |base|
-      base.include ActionController::WithLogger
     end
 
     ActiveSupport.on_load(:action_controller_api) do

@@ -1,8 +1,7 @@
-require_rel 'base'
+require 'mix_core/action_controller/base/with_context'
 
 ActionController::Base.class_eval do
   include ActiveSupport::LazyLoadHooks::Autorun
-  include self::WithRescue
   include self::WithContext
 
   def params!

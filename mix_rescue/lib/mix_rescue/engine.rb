@@ -23,5 +23,23 @@ module MixRescue
         resources :javascript_rescues, only: [:create]
       end
     end
+
+    ActiveSupport.on_load(:action_controller, run_once: true) do
+      require 'mix_rescue/action_controller/with_status'
+      require 'mix_rescue/action_controller/with_errors'
+      require 'mix_rescue/action_controller/with_logger'
+    end
+
+    ActiveSupport.on_load(:action_controller) do |base|
+      base.include ActionController::WithLogger
+    end
+
+    ActiveSupport.on_load(:action_controller_api) do
+      require 'mix_rescue/action_controller/api/with_rescue'
+    end
+
+    ActiveSupport.on_load(:action_controller_base) do
+      require 'mix_rescue/action_controller/base/with_rescue'
+    end
   end
 end
