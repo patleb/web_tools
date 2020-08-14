@@ -3,6 +3,7 @@ module MixRescue
     attr_writer :rescue_500
     attr_writer :skip_notice
     attr_writer :throttler_max_duration
+    attr_writer :excluded_errors
 
     def rescue_500
       return @rescue_500 if defined? @rescue_500
@@ -20,6 +21,10 @@ module MixRescue
       else
         @throttler_max_duration ||= 4.hours
       end
+    end
+
+    def excluded_errors
+      @excluded_errors ||= Set.new
     end
   end
 end

@@ -1,5 +1,11 @@
 class RescueError < ::StandardError
   RESCUE = '[RESCUE]'.freeze
+  EXCLUDED_ERROR_SUFFIXES = IceNine.deep_freeze(%w(
+    .include.rb
+    .prepend.rb
+    _decorator.rb
+    /base.rb
+  ))
 
   delegate :backtrace, to: :@exception
   attr_reader :name, :data
@@ -10,6 +16,10 @@ class RescueError < ::StandardError
     else
       Rescue
     end
+  end
+
+  def self.viable_errors
+    @viable_errors ||= Rails.viable_names('errors', MixRescue.config.excluded_errors, EXCLUDED_ERROR_SUFFIXES)
   end
 
   def initialize(exception, data = nil)

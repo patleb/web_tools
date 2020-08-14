@@ -15,23 +15,7 @@ module ActiveRecord::Base::WithViableModels
 
   class_methods do
     def viable_models
-      @viable_models ||= begin
-        included_models = ([Rails.application] + Rails::Engine.subclasses).map do |app|
-          paths = app.config.paths['app/models'].to_a + app.config.eager_load_paths.select(&:end_with?.with('/models'))
-          paths.uniq.map do |load_path|
-            Dir.glob(app.root.join(load_path)).map do |load_dir|
-              Dir.glob(load_dir + '/**/*.rb').map do |filename|
-                unless filename.include?('/concerns/') || filename.end_with?(*EXCLUDED_MODEL_SUFFIXES)
-                  filename.delete_prefix("#{app.root.join(load_dir)}/").delete_suffix('.rb').camelize
-                end
-              end.compact
-            end
-          end
-        end.flatten
-        included_models.reject do |model|
-          MixCore.config.excluded_models.include? model
-        end
-      end
+      @viable_models ||= Rails.viable_names('models', MixCore.config.excluded_models, EXCLUDED_MODEL_SUFFIXES)
     end
 
     def polymorphic_parents
