@@ -14,7 +14,6 @@ module MixCore
     require 'monogamy'
     require 'pg'
     require 'rails-i18n'
-    require 'vmstat'
     if Rails.env.development?
       require 'i18n/debug'
       require 'null_logger'
