@@ -8,11 +8,7 @@ class User < MixUser.config.parent_model.constantize
   # TODO validate  :role_allowed, if: :role_changed?
   enum role: MixUser.config.available_roles
 
-  json_attribute MixUser.config.json_attributes.merge(
-    first_name: :string,
-    last_name: :string,
-    login: :string
-  )
+  json_attribute MixUser.config.json_attributes
 
   alias_attribute :user_id, :id
 

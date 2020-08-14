@@ -10,8 +10,12 @@ module MixUser
       @parent_model ||= '::LibRecord'
     end
 
-    def json_attributes
-      @json_attributes ||= {} # must be modified before initialization with ActiveSupport.on_load(:active_record)
+    def json_attributes # must be modified before initialization with ActiveSupport.on_load(:active_record)
+      @json_attributes ||= {
+        first_name: :string,
+        last_name: :string,
+        login: :string
+      }
     end
 
     def available_roles
