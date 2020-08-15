@@ -1,7 +1,29 @@
+class NilClass
+  def upcase_first
+    ''
+  end
+end
+
 class String
   OBJECT_INSPECT ||= /(#<)([^>]+)(>)/.freeze
   HEXADECIMAL ||= /0x[0-9a-f]+/i.freeze
   DECIMAL ||= /\d+([.,]\d+)*/.freeze
+
+  def dehumanize
+    parameterize(separator: '_')
+  end
+
+  def slugify
+    parameterize.dasherize.downcase
+  end
+
+  def titlefy
+    parameterize.humanize.squish.gsub(/([[:word:]]+)/u){ |word| word.downcase.capitalize }
+  end
+
+  def full_underscore(separator = '_')
+    underscore.tr('/', separator).delete_prefix(separator).delete_suffix(separator)
+  end
 
   def escape_inspect_delimiters(delimiters = '[]')
     gsub(OBJECT_INSPECT, "#{delimiters[0]}\\2#{delimiters[1]}")

@@ -28,4 +28,8 @@ class Hash
       merge(*hashes, &self.class.method(:union))
     end
   end
+
+  def pretty_json
+    JSON.pretty_generate(self, indent: '  ', space: ' ', space_before: '')
+  end
 end
