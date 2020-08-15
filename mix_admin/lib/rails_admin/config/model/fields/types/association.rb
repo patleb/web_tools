@@ -142,10 +142,10 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
             i_ ".fa.fa-chevron-#{opened ? 'down' : 'right'}.icon-white"
           end,
           if can_create && inline_add
-            form.link_to_add name, class: "btn btn-info js_nested_form_one #{'soft_hidden' if selected}" do[
+            form.link_to_add(name, class: "btn btn-info js_nested_form_one #{'soft_hidden' if selected}") {[
               i_('.fa.fa-plus.icon-white'),
               wording_for(:link, :new, associated_model.abstract_model)
-            ]end
+            ]}
           end
         ]),
         form.errors_for(self),

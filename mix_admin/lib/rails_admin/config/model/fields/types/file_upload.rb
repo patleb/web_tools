@@ -23,13 +23,13 @@ class RailsAdmin::Config::Model::Fields::FileUpload < RailsAdmin::Config::Model:
           )
         end
       ]),
-      h_if(can_destroy) do[
+      h_if(can_destroy) {[
         a_('.btn.btn-block', { class: ['js_file_remove', will_destroy ? 'btn-danger' : 'btn-info'], href: '#', 'data-toggle': 'button', role: 'button' }, [
           i_('.fa.fa-trash-o.icon-white'),
           t('admin.actions.delete.menu')
         ]),
         form.check_box(delete_method, class: 'hidden')
-      ]end,
+      ]},
       if cache_method
         form.hidden_field(cache_method)
       end

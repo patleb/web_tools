@@ -43,10 +43,10 @@ class RailsAdmin::Config::Model::Fields::Association::HasMany < RailsAdmin::Conf
             i_ ".fa.fa-chevron-#{opened ? 'down' : 'right'}.icon-white"
           end,
           if can_create && inline_add
-            form.link_to_add name, class: 'btn btn-info' do[
+            form.link_to_add(name, class: 'btn btn-info') {[
               i_('.fa.fa-plus.icon-white'),
               wording_for(:link, :new, associated_model.abstract_model)
-            ]end
+            ]}
           end
         ]),
         form.errors_for(self),
