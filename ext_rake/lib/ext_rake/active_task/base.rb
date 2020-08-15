@@ -78,13 +78,15 @@ module ActiveTask
           end
         end
       end
+      ensure_return = true
     rescue Exception => exception
       result = exception
       @_success = false
       after_rescue(exception)
+      ensure_return = true
     ensure
       after_ensure(exception) unless run_help
-      return result
+      return result if ensure_return
     end
 
     def cancel?

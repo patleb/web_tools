@@ -8,7 +8,7 @@ module ExtRake
       end
 
       def send_mail
-        Notice.deliver! RescueError.new(Message.new)
+        Notice.deliver! Message.new
       end
     end
   end

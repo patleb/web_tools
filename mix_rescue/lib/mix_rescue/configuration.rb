@@ -4,6 +4,7 @@ module MixRescue
     attr_writer :skip_notice
     attr_writer :throttler_max_duration
     attr_writer :excluded_errors
+    attr_writer :available_types
 
     def rescue_500
       return @rescue_500 if defined? @rescue_500
@@ -25,6 +26,13 @@ module MixRescue
 
     def excluded_errors
       @excluded_errors ||= Set.new
+    end
+
+    def available_types
+      @available_types ||= {
+        'Rescue' => 0,
+        'JavascriptRescue' => 10,
+      }
     end
   end
 end

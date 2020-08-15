@@ -164,6 +164,8 @@ module MixCore
       require 'mix_core/active_record/base'
       require 'mix_core/active_record/relation'
       require 'mix_core/active_record/tasks/database_tasks/with_single_env'
+
+      MixRescue.config.available_types.merge! 'RailsRescue' => 30
     end
 
     ActiveSupport.on_load(:action_mailer) do

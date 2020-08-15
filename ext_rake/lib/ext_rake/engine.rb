@@ -11,5 +11,9 @@ module ExtRake
     require 'mix_rescue'
     require 'ext_rake/rake/dsl'
     require 'ext_rake/rake/task'
+
+    ActiveSupport.on_load(:active_record) do
+      MixRescue.config.available_types.merge! 'RakeRescue' => 20
+    end
   end
 end

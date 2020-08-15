@@ -54,14 +54,7 @@ class Notice
       HTML
     end
 
-    new_error =
-      if exception.class.respond_to? :rescue_class
-        exception.class.rescue_class.enqueue exception, message
-      else
-        Rescue.enqueue exception, message
-      end
-
-    if new_error
+    if Rescue.enqueue(exception, message)
       if logger
         Rails.logger.error message
       else
@@ -74,14 +67,16 @@ class Notice
         mail.deliver! unless MixRescue.config.skip_notice
       end
     end
+    ensure_return = true
   rescue Errno::ECONNREFUSED => e
     message << <<~TEXT
       #{e.backtrace_log}
     TEXT
+    ensure_return = true
   ensure
     if block_given?
       yield message
     end
-    return message
+    return message if ensure_return
   end
 end
