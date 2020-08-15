@@ -3,7 +3,6 @@ require 'optparse'
 require 'ext_ruby'
 require 'ext_rake/configuration'
 require 'ext_rake/engine' if defined? Rails
-require 'mix_rescue'
 
 module ActiveTask
   autoload :Base, 'ext_rake/active_task/base'
