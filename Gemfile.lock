@@ -13,7 +13,7 @@ PATH
       ext_whenever (= 0.2.0)
       mix_admin (= 0.2.0)
       mix_backup (= 0.2.0)
-      mix_core (= 0.2.0)
+      ext_rails (= 0.2.0)
       mix_global (= 0.2.0)
       mix_page (= 0.2.0)
       mix_rescue (= 0.2.0)
@@ -140,9 +140,9 @@ PATH
       pgslice
 
 PATH
-  remote: mix_core
+  remote: ext_rails
   specs:
-    mix_core (0.2.0)
+    ext_rails (0.2.0)
       active_type
       activerecord-postgis-adapter
       arel_extensions
@@ -659,7 +659,7 @@ DEPENDENCIES
   ext_whenever!
   mix_admin!
   mix_backup!
-  mix_core!
+  ext_rails!
   mix_global!
   mix_page!
   mix_rescue!

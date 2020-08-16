@@ -1,6 +1,6 @@
 lock: 0.1.0
 gems:
-  - mix_core
+  - ext_rails
 sudo: true
 debug: false
 reboot: false # TODO implement as cli flag

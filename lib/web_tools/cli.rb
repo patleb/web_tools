@@ -62,7 +62,7 @@ module WebTools
         # bin/rake ext_minitest:setup
         # bin/rake ext_rake:setup
         # bin/rake ext_webpacker:setup
-        # bin/rake mix_core:setup
+        # bin/rake ext_rails:setup
         # bin/rake mix_setting:setup
       end
 

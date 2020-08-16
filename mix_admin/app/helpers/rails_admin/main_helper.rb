@@ -152,7 +152,7 @@ module RailsAdmin
       'input-group col-xs-8 col-sm-6 col-md-4 col-lg-4 bs_form_row'
     end
 
-    # TODO move to MixCore
+    # TODO move to ExtRails
     def after_nested_form(association, &block)
       @nested_form_associations ||= {}
       @nested_form_callbacks ||= []

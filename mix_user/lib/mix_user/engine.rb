@@ -38,7 +38,7 @@ module MixUser
       append_migrations(app)
     end
 
-    initializer 'mix_user.prepend_routes', before: 'mix_core.append_routes' do |app|
+    initializer 'mix_user.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
         devise_for :users
       end

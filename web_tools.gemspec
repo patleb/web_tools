@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_whenever",   version
   s.add_dependency "mix_admin",      version
   s.add_dependency "mix_backup",     version
-  s.add_dependency "mix_core",       version
+  s.add_dependency "ext_rails",       version
   s.add_dependency "mix_global",     version
   s.add_dependency "mix_setting"
   s.add_dependency "mix_sql",        version

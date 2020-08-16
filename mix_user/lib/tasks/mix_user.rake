@@ -1,5 +1,5 @@
 namespace :mix_user do
-  desc 'setup MixCore files'
+  desc 'setup ExtRails files'
   task :setup do
     src, dst = Gem.root('mix_user').join('lib/tasks/templates'), Rails.root
 
