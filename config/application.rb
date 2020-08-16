@@ -18,7 +18,8 @@ require "rails/test_unit/railtie"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
-require 'mix_admin'
+require 'web_tools/admin'
+require 'web_tools/application'
 
 module WebTools
   class Application < Rails::Application

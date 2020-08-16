@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_whenever",   version
   s.add_dependency "mix_admin",      version
   s.add_dependency "mix_backup",     version
-  s.add_dependency "ext_rails",       version
+  s.add_dependency "ext_rails",      version
   s.add_dependency "mix_global",     version
   s.add_dependency "mix_setting"
   s.add_dependency "mix_sql",        version
@@ -34,5 +34,6 @@ Gem::Specification.new do |s|
   s.add_dependency "mix_rescue",     version
   s.add_dependency "mix_template",   version
   s.add_dependency "mix_user",       version
+  s.add_dependency "mix_web",        version
   s.add_dependency "sunzistrano"
 end

@@ -1,4 +1,4 @@
-unless defined? WebTools::VERSION::STRING
+unless defined? WebTools
   module WebTools
     def self.gem_version
       Gem::Version.new VERSION::STRING

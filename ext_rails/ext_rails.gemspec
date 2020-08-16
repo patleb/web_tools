@@ -1,4 +1,4 @@
-$:.push File.expand_path("../lib", __FILE__)
+$:.push File.expand_path("../lib", __FILE__) # TODO add mix_tools for extra stuff
 
 # Maintain your gem's version:
 require_relative "./../version"
@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> #{WebTools::RAILS_VERSION::STRING}"
   s.add_dependency 'active_type'
   s.add_dependency 'activerecord-postgis-adapter'
+  s.add_dependency 'acts_as_list'
   s.add_dependency 'arel_extensions'
   s.add_dependency 'date_validator'
   s.add_dependency 'discard'

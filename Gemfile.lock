@@ -1,4 +1,10 @@
 PATH
+  remote: mix_page
+  specs:
+    mix_page (0.2.0)
+      ext_ruby (= 0.2.0)
+
+PATH
   remote: .
   specs:
     web_tools (0.2.0)
@@ -6,6 +12,7 @@ PATH
       ext_capistrano (= 0.2.0)
       ext_minitest (= 0.2.0)
       ext_pjax (= 0.2.0)
+      ext_rails (= 0.2.0)
       ext_rake (= 0.2.0)
       ext_ruby (= 0.2.0)
       ext_vue (= 0.2.0)
@@ -13,7 +20,6 @@ PATH
       ext_whenever (= 0.2.0)
       mix_admin (= 0.2.0)
       mix_backup (= 0.2.0)
-      ext_rails (= 0.2.0)
       mix_global (= 0.2.0)
       mix_page (= 0.2.0)
       mix_rescue (= 0.2.0)
@@ -21,6 +27,7 @@ PATH
       mix_sql (= 0.2.0)
       mix_template (= 0.2.0)
       mix_user (= 0.2.0)
+      mix_web (= 0.2.0)
       sunzistrano
 
 PATH
@@ -80,6 +87,35 @@ PATH
       ext_ruby (= 0.2.0)
 
 PATH
+  remote: ext_rails
+  specs:
+    ext_rails (0.2.0)
+      active_type
+      activerecord-postgis-adapter
+      acts_as_list
+      arel_extensions
+      date_validator
+      discard
+      email_prefixer
+      http_accept_language
+      i18n-debug
+      jsonb_accessor
+      mail_interceptor
+      mix_setting
+      money-rails
+      monogamy
+      null-logger
+      pg
+      pycall
+      rails (~> 6.0.0)
+      rails-i18n
+      rails_select_on_includes
+      rblineprof
+      rgeo
+      sunzistrano
+      term-ansicolor
+
+PATH
   remote: ext_rake
   specs:
     ext_rake (0.2.0)
@@ -102,6 +138,7 @@ PATH
       oj
       parallel
       require_all (~> 1.5)
+      vmstat
 
 PATH
   remote: ext_vue
@@ -140,44 +177,9 @@ PATH
       pgslice
 
 PATH
-  remote: ext_rails
-  specs:
-    ext_rails (0.2.0)
-      active_type
-      activerecord-postgis-adapter
-      arel_extensions
-      date_validator
-      discard
-      email_prefixer
-      http_accept_language
-      i18n-debug
-      jsonb_accessor
-      mail_interceptor
-      mix_setting
-      money-rails
-      monogamy
-      null-logger
-      pg
-      pycall
-      rails (~> 6.0.0)
-      rails-i18n
-      rails_select_on_includes
-      rblineprof
-      rgeo
-      sunzistrano
-      term-ansicolor
-      vmstat
-
-PATH
   remote: mix_global
   specs:
     mix_global (0.2.0)
-
-PATH
-  remote: mix_page
-  specs:
-    mix_page (0.2.0)
-      mix_admin (= 0.2.0)
 
 PATH
   remote: mix_rescue
@@ -225,6 +227,12 @@ PATH
       mix_template (= 0.2.0)
       pundit (~> 2.1)
       web-console
+
+PATH
+  remote: mix_web
+  specs:
+    mix_web (0.2.0)
+      ext_ruby (= 0.2.0)
 
 PATH
   remote: sunzistrano
@@ -295,6 +303,8 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
       zeitwerk (~> 2.2, >= 2.2.2)
+    acts_as_list (1.0.1)
+      activerecord (>= 4.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     airbrussh (1.4.0)
@@ -652,6 +662,7 @@ DEPENDENCIES
   ext_capistrano!
   ext_minitest!
   ext_pjax!
+  ext_rails!
   ext_rake!
   ext_ruby!
   ext_vue!
@@ -659,7 +670,6 @@ DEPENDENCIES
   ext_whenever!
   mix_admin!
   mix_backup!
-  ext_rails!
   mix_global!
   mix_page!
   mix_rescue!
@@ -667,6 +677,7 @@ DEPENDENCIES
   mix_sql!
   mix_template!
   mix_user!
+  mix_web!
   ruby-debug-ide
   sunzistrano!
   tzinfo-data

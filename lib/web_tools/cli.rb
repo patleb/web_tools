@@ -97,7 +97,7 @@ module WebTools
 
       def add_to_manifests
         require_line = "# require '#{plugin_name}'\n"
-        path = Pathname.new("lib/web_tools.rb")
+        path = Pathname.new("lib/web_tools/base.rb")
         lines = path.readlines
         return if lines.include? require_line
         path.write (lines << require_line).sort_by!{ |line| strip_require(line) }.join
@@ -126,7 +126,7 @@ module WebTools
 
       def anchor
         @anchor ||= begin
-          lines = Pathname.new('lib/web_tools.rb').readlines
+          lines = Pathname.new('lib/web_tools/base.rb').readlines
           index = lines.index{ |line| line.include? "'#{plugin_name}'" }
           before = index < lines.size - 1
           lines.map!{ |line| strip_require(line) }
