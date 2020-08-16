@@ -1,4 +1,4 @@
-$:.push File.expand_path("../lib", __FILE__) # TODO add mix_tools for extra stuff
+$:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
 require_relative "./../version"
