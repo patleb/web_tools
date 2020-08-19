@@ -4,7 +4,7 @@ class CreateLibRescues < ActiveRecord::Migration[6.0]
       t.primary_key :id, :text
       t.integer     :type,         null: false, default: 0
       t.text        :exception,    null: false
-      t.citext      :message,      null: false
+      t.text        :message,      null: false
       t.jsonb       :data,         null: false, default: {}
       t.bigint      :events_count, null: false, default: 1
 
