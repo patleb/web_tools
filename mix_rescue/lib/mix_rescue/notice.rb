@@ -1,7 +1,7 @@
 require 'action_view/helpers/text_helper'
 require 'mix_setting'
 
-class Notice
+class Notice # TODO https://github.com/excid3/noticed
   BODY_START = '[NOTIFICATION]'.freeze
   BODY_END = '[END]'.freeze
 
