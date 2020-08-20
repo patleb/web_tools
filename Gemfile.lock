@@ -1,7 +1,7 @@
 PATH
-  remote: mix_page
+  remote: mix_translation
   specs:
-    mix_page (0.2.0)
+    mix_translation (0.2.0)
       ext_ruby (= 0.2.0)
 
 PATH
@@ -26,6 +26,7 @@ PATH
       mix_setting
       mix_sql (= 0.2.0)
       mix_template (= 0.2.0)
+      mix_translation (= 0.2.0)
       mix_user (= 0.2.0)
       mix_web (= 0.2.0)
       sunzistrano
@@ -182,6 +183,12 @@ PATH
     mix_global (0.2.0)
 
 PATH
+  remote: mix_page
+  specs:
+    mix_page (0.2.0)
+      mix_admin (= 0.2.0)
+
+PATH
   remote: mix_rescue
   specs:
     mix_rescue (0.2.0)
@@ -313,8 +320,9 @@ GEM
     arel_extensions (2.0.8)
       activerecord (>= 6.0)
     bcrypt (3.1.15)
+    bigdecimal (2.0.0)
     bindex (0.8.1)
-    bootsnap (1.4.7)
+    bootsnap (1.4.8)
       msgpack (~> 1.0)
     builder (3.2.4)
     capistrano (3.14.1)
@@ -514,7 +522,8 @@ GEM
       mini_portile2 (~> 2.4.0)
     null-logger (0.1.7)
     numerizer (0.1.1)
-    oj (3.10.8)
+    oj (3.10.9)
+      bigdecimal (~> 2.0)
     open4 (1.3.4)
     orm_adapter (0.5.0)
     parallel (1.19.2)
@@ -676,6 +685,7 @@ DEPENDENCIES
   mix_setting!
   mix_sql!
   mix_template!
+  mix_translation!
   mix_user!
   mix_web!
   ruby-debug-ide
