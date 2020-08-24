@@ -18,6 +18,10 @@ class PageTemplate < Page
     update! published_at: Time.current.utc
   end
 
+  def published?
+    published_at&.past?
+  end
+
   def unique?
     !view.end_with? MixPage::MULTI_VIEW
   end
@@ -29,16 +33,16 @@ class PageTemplate < Page
 
   alias_method :old_title, :title
   def title(*args)
-    old_title(*args).titlefy
+    old_title(*args)&.titlefy
   end
 
   alias_method :old_description, :description
   def description(*args)
-    old_description(*args).squish
+    old_description(*args)&.squish
   end
 
   def default_title
-    view.split('/').last.delete_suffix(MixPage::MULTI_VIEW)
+    view.split('/').last.delete_suffix(MixPage::MULTI_VIEW) if view
   end
 
   def title_slug(*args)

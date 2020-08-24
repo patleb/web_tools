@@ -12,8 +12,8 @@ class CreateLibPages < ActiveRecord::Migration[6.0]
       t.float      :position,            null: false, limit: 53, default: 0.0
 
       t.integer    :pages_count,         null: false, default: 0
-      t.integer    :page_cells_count,    null: false, default: 0
-      t.integer    :page_contents_count, null: false, default: 0
+      t.integer    :page_sections_count, null: false, default: 0
+      t.integer    :page_fields_count,   null: false, default: 0
 
       t.integer    :type,                null: false
       t.jsonb      :json_data,           null: false, default: {}

@@ -2,14 +2,14 @@
 class Page < LibRecord
   has_userstamp
 
-  has_many :page_cells, dependent: :destroy
-  has_many :page_contents, dependent: :destroy
+  has_many :page_sections, dependent: :destroy
+  has_many :page_fields, dependent: :destroy
 
   # TODO Active Storage
   scope :with_contents, -> { includes([
-    :page_contents,
-    { page_cells: :page_contents },
-    { page_cells: { page_cells: :page_contents } }
+    :page_fields,
+    { page_sections: :page_fields },
+    { page_sections: { page_sections: :page_fields } }
   ]) }
 
   validates :type, exclusion: { in: ['Page'] }

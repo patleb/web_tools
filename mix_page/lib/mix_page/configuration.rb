@@ -3,7 +3,7 @@ module MixPage
     attr_writer :parent_controller
     attr_writer :available_layouts
     attr_writer :available_templates
-    attr_writer :available_contents
+    attr_writer :available_fields
     attr_writer :reserved_words
 
     def parent_controller
@@ -22,10 +22,10 @@ module MixPage
       }
     end
 
-    def available_contents
-      @available_contents ||= {
-        'PageContent' => 0,
-        'PageContentText' => 10,
+    def available_fields
+      @available_fields ||= {
+        'PageField' => 0,
+        'PageFieldText' => 10,
       }
     end
 
