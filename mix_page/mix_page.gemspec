@@ -17,5 +17,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
 
-  s.add_dependency 'ext_ruby', version
+  s.add_dependency 'mix_admin', version
 end
