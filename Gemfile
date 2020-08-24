@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-# gem 'webpacker'
+gem 'webpacker'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
@@ -48,7 +48,6 @@ gem 'mix_sql', path: './mix_sql'
 gem 'mix_page', path: './mix_page'
 gem 'mix_rescue', path: './mix_rescue'
 gem 'mix_template', path: './mix_template'
-gem 'mix_translation', path: './mix_translation'
 gem 'mix_user', path: './mix_user'
 gem 'mix_web', path: './mix_web'
 gem 'sunzistrano', path: './sunzistrano'

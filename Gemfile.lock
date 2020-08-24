@@ -1,10 +1,4 @@
 PATH
-  remote: mix_translation
-  specs:
-    mix_translation (0.2.0)
-      ext_ruby (= 0.2.0)
-
-PATH
   remote: .
   specs:
     web_tools (0.2.0)
@@ -26,7 +20,6 @@ PATH
       mix_setting
       mix_sql (= 0.2.0)
       mix_template (= 0.2.0)
-      mix_translation (= 0.2.0)
       mix_user (= 0.2.0)
       mix_web (= 0.2.0)
       sunzistrano
@@ -685,13 +678,13 @@ DEPENDENCIES
   mix_setting!
   mix_sql!
   mix_template!
-  mix_translation!
   mix_user!
   mix_web!
   ruby-debug-ide
   sunzistrano!
   tzinfo-data
   web_tools!
+  webpacker
 
 BUNDLED WITH
    1.17.2
