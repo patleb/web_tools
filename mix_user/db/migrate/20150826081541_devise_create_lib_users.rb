@@ -2,6 +2,7 @@ class DeviseCreateLibUsers < ActiveRecord::Migration[6.0]
   def change
     create_table :lib_users do |t|
       ## Database authenticatable
+      t.uuid   :uuid,               null: false, default: 'uuid_generate_v1mc()', index: { using: :hash }
       t.string :email,              null: false, default: ""
       t.string :encrypted_password, null: false, default: "", limit: 128
 
