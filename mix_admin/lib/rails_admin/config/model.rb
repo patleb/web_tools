@@ -81,7 +81,7 @@ class RailsAdmin::Config::Model
   end
 
   register_instance_option :navigation_label, memoize: :locale do
-    if (parent_module = klass.parent) != Object
+    if (parent_module = klass.module_parent) != Object
       parent_module.name
     end
   end
