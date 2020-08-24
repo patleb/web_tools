@@ -18,8 +18,8 @@ module MixRescue
       append_migrations(app)
     end
 
-    initializer 'mix_rescue.append_routes', before: 'ext_rails.append_routes' do |app|
-      app.routes.append do
+    initializer 'mix_rescue.prepend_routes', before: 'ext_rails.append_routes' do |app|
+      app.routes.prepend do
         resources :javascript_rescues, only: [:create]
       end
     end

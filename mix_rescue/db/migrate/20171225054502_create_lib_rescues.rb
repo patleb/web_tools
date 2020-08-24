@@ -14,7 +14,7 @@ class CreateLibRescues < ActiveRecord::Migration[6.0]
     add_index :lib_rescues, [:type, :exception, :created_at]
     add_index :lib_rescues, [:exception, :created_at]
     add_index :lib_rescues, :created_at
-    add_index :lib_rescues, :message, using: :gin, opclass: { title: :gin_trgm_ops }
+    add_index :lib_rescues, :message, using: :gist, opclass: { title: :gist_trgm_ops }
   end
 
   def down
