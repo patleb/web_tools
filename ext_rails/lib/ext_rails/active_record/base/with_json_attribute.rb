@@ -40,6 +40,25 @@ module ActiveRecord::Base::WithJsonAttribute
       jsonb_accessor(:json_data, field_types)
     end
 
+    def json_translate(field_types)
+      field_types.each do |field, type|
+        if type.is_a?(Array) && (options = type.last).is_a?(Hash) && options.key?(:default)
+          default = options.delete(:default)
+        end
+
+        json_attribute(Rails.application.config.i18n.available_locales.each_with_object({}) { |locale, json|
+          json.merge! "#{field}_#{locale}": type
+        })
+
+        define_method field do |locale = nil, fallback = nil|
+          locale ||= Current.locale || Rails.application.config.i18n.default_locale
+          send("#{field}_#{locale}") ||
+            send("#{field}_#{fallback || Rails.application.config.i18n.available_locales.except(Rails.application.config.i18n.default_locale).first}") ||
+            (default.is_a?(Proc) ? default.call(self) : default)
+        end
+      end
+    end
+
     def json_column(name)
       "(#{json_key(name)})::#{POSTGRESQL_TYPES[Array.wrap(jsonb_accessors[:json_data][name]).first]}"
     end
