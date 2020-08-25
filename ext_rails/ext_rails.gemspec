@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> #{WebTools::RAILS_VERSION::STRING}"
   s.add_dependency 'active_type'
   s.add_dependency 'activerecord-postgis-adapter'
-  s.add_dependency 'acts_as_list'
   s.add_dependency 'arel_extensions'
   s.add_dependency 'date_validator'
   s.add_dependency 'discard'
