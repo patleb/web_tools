@@ -4,12 +4,14 @@ class Rational
   class LowerOrUpperNegative < ArgumentError; end
   class LowerGreaterOrEqualToUpper < ArgumentError; end
 
-  LO = Rational(0, 1).freeze
-  HI = Float::MAX.rationalize.freeze
-
   def self.intermediate(lower, upper)
-    lower ||= LO
-    upper ||= HI
+    if lower.nil? && upper
+      lower = upper.ceil - 1.0
+      lower <= 0.0 ? lower = 0.0 : (return lower)
+    end
+    if lower && upper.nil?
+      return lower.floor + 1.0
+    end
     lower = lower.rationalize unless lower.is_a? Rational
     upper = upper.rationalize unless upper.is_a? Rational
     raise LowerOrUpperNegative if lower.negative? || upper.negative?
