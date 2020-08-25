@@ -6,8 +6,8 @@ ActiveRecord::Base.class_eval do
   include self::WithDiscard
   include self::WithInheritedTypes
   prepend self::WithJsonAttribute
+  include self::WithList
   include self::WithNullifyBlanks
-  include self::WithPosition
   include self::WithRescuableValidations
   include self::WithViableModels
 
