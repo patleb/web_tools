@@ -90,6 +90,8 @@ module RailsAdmin
           if action.key == :new && @model.create.inline?
             inline_create = true
             '#'
+          elsif action.key == :show_in_app
+            object.to_url
           else
             path_params = {
               action: action.name,

@@ -8,7 +8,7 @@ class RailsAdmin::Config::Actions::ShowInApp < RailsAdmin::Config::Actions::Base
   end
 
   def visible?
-    super && (Current.controller.main_app.url_for(object) rescue false)
+    super && object.respond_to?(:to_url)
   end
 
   def pjax?
