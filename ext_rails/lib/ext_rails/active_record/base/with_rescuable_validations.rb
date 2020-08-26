@@ -1,8 +1,8 @@
 module ActiveRecord::Base::WithRescuableValidations
   extend ActiveSupport::Concern
 
-  RECORD_NOT_UNIQUE_COLUMN = /Key \(([\w\s,]+)\)=\(.*?\) already exists/.freeze
-  INVALID_FOREIGN_KEY_COLUMN = /Key \(([\w\s,]+)\)=\(.*?\) is not present in table/.freeze
+  RECORD_NOT_UNIQUE_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) already exists/.freeze
+  INVALID_FOREIGN_KEY_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) is not present in table/.freeze
   VALUE_TOO_LONG_COUNT = /varying\((?<count>\d+)\)/.freeze
   NOT_NULL_VIOLATION_COLUMN = /column "(\w+)" violates not-null constraint/.freeze
 
@@ -44,7 +44,7 @@ module ActiveRecord::Base::WithRescuableValidations
 
   def _handle_columns_exception(exception, columns_regex, error_type)
     columns = exception.message[columns_regex, 1]
-    columns.split(',').map{ |column| column.split('.').last.strip }.each do |column|
+    columns.split(',').map{ |column| column.gsub('"', '').split('.').last.strip }.each do |column|
       errors.add column.to_sym, error_type
     end
     false
