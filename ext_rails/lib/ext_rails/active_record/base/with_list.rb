@@ -56,7 +56,7 @@ module ActiveRecord::Base::WithList::Position
   private
 
   def list_with_previous_record
-    previous_record = self.class.find(list_previous_record_id)
+    previous_record = self.class.without_default_scope { self.class.base_class.find(list_previous_record_id) }
     old_id = list_previous_record_id
     self.list_previous_record_id = nil
     result = yield(previous_record)
@@ -65,7 +65,7 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_with_next_record
-    next_record = self.class.find(list_next_record_id)
+    next_record = self.class.without_default_scope { self.class.base_class.find(list_next_record_id) }
     old_id = list_next_record_id
     self.list_next_record_id = nil
     result = yield(next_record)
@@ -166,19 +166,23 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_next_record(previous_record)
-    self.class.where(self.class.column(list_column) > previous_record.send(list_column)).order(list_column).first
+    self.class.without_default_scope do
+      self.class.where(self.class.base_class.column(list_column) > previous_record.send(list_column)).order(list_column).first
+    end
   end
 
   def list_previous_record(next_record)
-    self.class.where(self.class.column(list_column) < next_record.send(list_column)).order(list_column).last
+    self.class.without_default_scope do
+      self.class.where(self.class.base_class.column(list_column) < next_record.send(list_column)).order(list_column).last
+    end
   end
 
   def list_last_record
-    self.class.order(list_column).last
+    self.class.without_default_scope { self.class.base_class.order(list_column).last }
   end
 
   def list_first_record
-    self.class.order(list_column).first
+    self.class.without_default_scope { self.class.base_class.order(list_column).first }
   end
 
   def list_between(previous_record, next_record)

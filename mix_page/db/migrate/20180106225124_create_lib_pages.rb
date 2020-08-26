@@ -21,7 +21,7 @@ class CreateLibPages < ActiveRecord::Migration[6.0]
       t.datetime   :published_at
     end
 
-    add_index :lib_pages, [:page_layout_id, :position], unique: true
+    add_index :lib_pages, :position, unique: true
     add_index :lib_pages, [:type, :deleted_at, :position]
   end
 end
