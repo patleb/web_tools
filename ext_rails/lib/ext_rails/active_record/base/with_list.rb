@@ -147,7 +147,7 @@ module ActiveRecord::Base::WithList::Position
       end
     else
       self.class.with_table_lock do
-        list_begin { yield}
+        list_begin { yield }
       end
     end
   end
@@ -160,7 +160,7 @@ module ActiveRecord::Base::WithList::Position
       end
     else
       self.class.with_table_lock do
-        list_begin { yield}
+        list_begin { yield }
       end
     end
   end

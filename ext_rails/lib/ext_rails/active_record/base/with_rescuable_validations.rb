@@ -10,12 +10,6 @@ module ActiveRecord::Base::WithRescuableValidations
     class_attribute :postgres_exception_to_error, instance_writer: false, default: true
   end
 
-  class_methods do
-    def has_database_validations
-      # TODO define unique/presence/length/blank/restrict_with_error?
-    end
-  end
-
   def create_or_update(*)
     if Current.controller.try(:postgres_exception_to_error?) && postgres_exception_to_error?
       begin
