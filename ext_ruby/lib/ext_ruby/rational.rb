@@ -4,6 +4,8 @@ class Rational
   class LowerOrUpperNegative < ArgumentError; end
   class LowerGreaterOrEqualToUpper < ArgumentError; end
 
+  INTERMEDIATE_BEGIN = Rational(1)
+
   def self.intermediate(lower, upper)
     if lower.nil? && upper
       lower = upper.ceil - 1.0

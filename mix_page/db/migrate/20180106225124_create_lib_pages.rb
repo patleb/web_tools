@@ -5,7 +5,7 @@ class CreateLibPages < ActiveRecord::Migration[6.0]
       # TODO cache
       # admin scopes (page_id IS NULL, page_id = p0, page_id = p1, etc. or templates)
       t.uuid       :uuid,                 null: false, default: 'uuid_generate_v1mc()', index: { using: :hash }
-      t.float      :position,             null: false, limit: 53, default: 1.0
+      t.float      :position,             null: false, limit: 53
       t.belongs_to :page_layout,          foreign_key: { to_table: :lib_pages }
       t.integer    :page_templates_count, null: false, default: 0
       t.integer    :page_sections_count,  null: false, default: 0

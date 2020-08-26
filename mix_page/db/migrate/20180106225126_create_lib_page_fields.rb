@@ -3,7 +3,7 @@ class CreateLibPageFields < ActiveRecord::Migration[6.0]
     create_table :lib_page_fields do |t|
       # TODO changes (logidze)
       # TODO active storage --> delete these before deleting content, section or page
-      t.float      :position,     null: false, limit: 53, default: 1.0
+      t.float      :position,     null: false, limit: 53
       t.belongs_to :page,         null: false, foreign_key: { to_table: :lib_pages }
       t.belongs_to :page_section, foreign_key: { to_table: :lib_page_sections }
       t.integer    :key,          null: false

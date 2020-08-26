@@ -202,7 +202,7 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_begin
-    self[list_column] = 1.0
+    self[list_column] = Rational::INTERMEDIATE_BEGIN.to_f
     yield
   end
 end
