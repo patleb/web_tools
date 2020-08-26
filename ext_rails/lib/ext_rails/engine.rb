@@ -158,8 +158,8 @@ module ExtRails
       require 'activerecord-postgis-adapter' if Setting[:postgis_enabled]
       require 'arel_extensions'
       require 'rails_select_on_includes'
+      require 'store_base_sti_class'
       require 'ext_rails/active_type'
-      require 'ext_rails/active_record/store_base_sti_class'
       require 'ext_rails/active_record/connection_adapters/postgis_adapter' if Setting[:postgis_enabled]
       require 'ext_rails/active_record/connection_adapters/postgresql_adapter'
       require 'ext_rails/active_record/base'

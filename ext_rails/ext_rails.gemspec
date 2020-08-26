@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rblineprof'
   s.add_dependency 'rgeo'
   # s.add_dependency 'sequel-activerecord-adapter'
+  s.add_dependency 'store_base_sti_class'
   s.add_dependency 'term-ansicolor'
   s.add_dependency 'mix_setting'
   s.add_dependency 'sunzistrano'
