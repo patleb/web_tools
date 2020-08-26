@@ -1,5 +1,10 @@
 # TODO https://www.ecalamia.com/blog/show-ip-api-nginx/
+# TODO move javascript rescue code in this gem
 class JavascriptRescuesController < ActionController::API
+  include ActionController::RequestForgeryProtection
+
+  protect_from_forgery with: :exception
+
   def create
     log error_class.new(*create_args)
     head :created
