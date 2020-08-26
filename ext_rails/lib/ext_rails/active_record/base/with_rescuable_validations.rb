@@ -7,7 +7,6 @@ module ActiveRecord::Base::WithRescuableValidations
   NOT_NULL_VIOLATION_COLUMN = /column "(\w+)" violates not-null constraint/.freeze
 
   included do
-    # TODO default: false and use Current.controller.try(:postgres_exception_to_error?) instead
     class_attribute :postgres_exception_to_error, instance_writer: false, default: true
   end
 
@@ -18,7 +17,7 @@ module ActiveRecord::Base::WithRescuableValidations
   end
 
   def create_or_update(*)
-    if postgres_exception_to_error?
+    if Current.controller.try(:postgres_exception_to_error?) && postgres_exception_to_error?
       begin
         super
       rescue ActiveRecord::RecordNotUnique => e
@@ -48,9 +47,6 @@ module ActiveRecord::Base::WithRescuableValidations
       errors.add column.to_sym, error_type
     end
     false
-    # TODO better integration with RailsAdmin
-    # ActiveRecord::StaleObjectError
-    # ActiveRecord::NestedAttributes::TooManyRecords
   end
 
   def _handle_base_exception(exception, values_regex, error_type, &block)
