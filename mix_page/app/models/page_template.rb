@@ -1,6 +1,6 @@
 class PageTemplate < Page
   belongs_to :page_layout
-  belongs_to :layout, -> { merge(PageLayout.with_contents) }, optional: true, class_name: 'PageLayout'
+  belongs_to :layout, -> { merge(PageLayout.with_contents) }, class_name: 'PageLayout', foreign_key: 'page_layout_id'
 
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: :unique?
