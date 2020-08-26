@@ -12,8 +12,8 @@ module ActiveRecord::Base::WithList
 
       ### NOTE
       # cannot update position with other attributes --> lock prevents it
-      attribute :list_previous_record_id, :integer
-      attribute :list_next_record_id, :integer
+      attribute :list_previous_id, :integer
+      attribute :list_next_id, :integer
 
       include ActiveRecord::Base::WithList::Position
     end
@@ -24,11 +24,11 @@ module ActiveRecord::Base::WithList::Position
   def create_or_update(*)
     if list_column
       if new_record?
-        if list_previous_record_id
+        if list_previous_id
           list_with_previous_record do |previous_record|
             list_insert_after(previous_record){ super }
           end
-        elsif list_next_record_id
+        elsif list_next_id
           list_with_next_record do |next_record|
             list_insert_before(next_record) { super }
           end
@@ -36,11 +36,11 @@ module ActiveRecord::Base::WithList::Position
           list_push_on_create ? list_push { super } : list_unshift { super }
         end
       else
-        if list_previous_record_id
+        if list_previous_id
           list_with_previous_record do |previous_record|
             list_move_after(previous_record) { super }
           end
-        elsif list_next_record_id
+        elsif list_next_id
           list_with_next_record do |next_record|
             list_move_before(next_record) { super }
           end
@@ -56,21 +56,21 @@ module ActiveRecord::Base::WithList::Position
   private
 
   def list_with_previous_record
-    previous_record = self.class.without_default_scope { self.class.base_class.find(list_previous_record_id) }
-    old_id = list_previous_record_id
-    self.list_previous_record_id = nil
+    previous_record = self.class.without_default_scope { self.class.base_class.find(list_previous_id) }
+    old_id = list_previous_id
+    self.list_previous_id = nil
     result = yield(previous_record)
   ensure
-    self.list_previous_record_id = old_id unless result
+    self.list_previous_id = old_id unless result
   end
 
   def list_with_next_record
-    next_record = self.class.without_default_scope { self.class.base_class.find(list_next_record_id) }
-    old_id = list_next_record_id
-    self.list_next_record_id = nil
+    next_record = self.class.without_default_scope { self.class.base_class.find(list_next_id) }
+    old_id = list_next_id
+    self.list_next_id = nil
     result = yield(next_record)
   ensure
-    self.list_next_record_id = old_id unless result
+    self.list_next_id = old_id unless result
   end
 
   def list_move_between(previous_record, next_record)
