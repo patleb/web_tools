@@ -1,8 +1,9 @@
 class PageTemplate < Page
-  belongs_to :page_layout, -> { merge(PageLayout.with_contents) }, counter_cache: :pages_count
-  belongs_to :page_template, optional: true, counter_cache: :pages_count
-  has_many   :page_templates, dependent: :nullify
+  belongs_to :page_layout, counter_cache: true
+  belongs_to :layout, -> { merge(PageLayout.with_contents) }, optional: true, class_name: 'PageLayout'
 
+  validates :view, presence: true
+  validates :view, uniqueness: { scope: :page_layout_id }, if: :unique?
   validate  :title_slug_exclusion
 
   enum view: MixPage.config.available_templates
@@ -11,8 +12,6 @@ class PageTemplate < Page
     title: [:string, default: ->(record) { record.default_title }],
     description: [:string, default: ->(record) { record.title }]
   )
-
-  alias_attribute :layout, :page_layout
 
   def publish!
     update! published_at: Time.current.utc
@@ -23,13 +22,15 @@ class PageTemplate < Page
   end
 
   def unique?
-    !view.end_with? MixPage::MULTI_VIEW
+    view && !view.end_with?(MixPage::MULTI_VIEW)
   end
 
-  def url(*args)
-   "#{title_slug(*args)}/#{MixPage::URL_SEGMENT}/#{uuid}"
+  def to_url(*args)
+   host = Rails.application.routes.default_url_options[:host]
+   port = Rails.application.routes.default_url_options[:port]
+   protocol = "http#{'s' if Rails.application.config.force_ssl}://"
+   [protocol, host, (':' if port), port, "/#{title_slug(*args)}/#{MixPage::URL_SEGMENT}/#{uuid}"].join
   end
-  alias_method :to_param, :url
 
   alias_method :old_title, :title
   def title(*args)
@@ -46,7 +47,7 @@ class PageTemplate < Page
   end
 
   def title_slug(*args)
-    title(*args).slugify
+    title(*args)&.slugify
   end
 
   def title_slug_exclusion
