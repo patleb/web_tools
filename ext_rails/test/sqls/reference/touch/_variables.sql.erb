@@ -1,0 +1,8 @@
+CREATE OR REPLACE FUNCTION test_variables() RETURNS VOID AS $$
+DECLARE
+  new_updated_at TIMESTAMP;
+  old_updated_at TIMESTAMP = 'now'::timestamp - '1 minute'::interval;
+  updated_at_count INTEGER;
+BEGIN
+END;
+$$ LANGUAGE plpgsql;

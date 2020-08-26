@@ -1,0 +1,19 @@
+<% setup do %>
+  <%= partial 'setup' %>
+  <%= partial 'reference/counter_cache/setup' %>
+
+  <%= Sql.create_counter_cache_trigger 'test_members', 'group', foreign_key: { to_table: 'test_groups', counter_name: 'members_count' } %>
+<% end %>
+
+<% teardown do %>
+  <%= partial 'teardown' %>
+<% end %>
+
+CREATE OR REPLACE FUNCTION test_suite() RETURNS VOID AS $$
+DECLARE
+  <%= partial 'reference/counter_cache/variables' %>
+BEGIN
+  <%= partial 'fixtures' %>
+  <%= partial 'reference/counter_cache/cases' %>
+END;
+$$ LANGUAGE plpgsql;

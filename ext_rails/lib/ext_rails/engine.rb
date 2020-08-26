@@ -163,6 +163,7 @@ module ExtRails
       require 'ext_rails/active_record/connection_adapters/postgis_adapter' if Setting[:postgis_enabled]
       require 'ext_rails/active_record/connection_adapters/postgresql_adapter'
       require 'ext_rails/active_record/base'
+      require 'ext_rails/active_record/migration'
       require 'ext_rails/active_record/relation'
       require 'ext_rails/active_record/tasks/database_tasks/with_single_env'
 

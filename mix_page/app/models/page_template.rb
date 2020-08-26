@@ -1,5 +1,5 @@
 class PageTemplate < Page
-  belongs_to :page_layout, counter_cache: true
+  belongs_to :page_layout
   belongs_to :layout, -> { merge(PageLayout.with_contents) }, optional: true, class_name: 'PageLayout'
 
   validates :view, presence: true

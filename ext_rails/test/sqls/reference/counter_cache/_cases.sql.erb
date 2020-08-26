@@ -1,0 +1,28 @@
+CREATE OR REPLACE FUNCTION test_cases() RETURNS VOID AS $$
+DECLARE
+BEGIN
+  INSERT INTO test_members (id, group_id)
+  VALUES (1, 1), (2, 1);
+
+  SELECT members_count INTO current_count FROM test_groups WHERE id = 1;
+  PERFORM test_assert_true('should increment count on insert', current_count = 2);
+
+  DELETE FROM test_members WHERE id = 2;
+  SELECT members_count INTO current_count FROM test_groups WHERE id = 1;
+  PERFORM test_assert_true('should decrement count on delete', current_count = 1);
+
+  UPDATE test_members SET group_id = 2 WHERE id = 1;
+  SELECT members_count INTO current_count FROM test_groups WHERE id = 1;
+  PERFORM test_assert_true('should decrement count 1 on update fkey', current_count = 0);
+  SELECT members_count INTO current_count FROM test_groups WHERE id = 2;
+  PERFORM test_assert_true('should increment count 2 on update fkey', current_count = 1);
+
+  UPDATE test_members SET group_id = NULL WHERE id = 1;
+  SELECT members_count INTO current_count FROM test_groups WHERE id = 2;
+  PERFORM test_assert_true('should decrement count 2 on update 2 to NULL', current_count = 0);
+
+  UPDATE test_members SET group_id = 1 WHERE id = 1;
+  SELECT members_count INTO current_count FROM test_groups WHERE id = 1;
+  PERFORM test_assert_true('should increment count 1 on update NULL to 1', current_count = 1);
+END;
+$$ LANGUAGE plpgsql;

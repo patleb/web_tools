@@ -1,0 +1,19 @@
+<% setup do %>
+  <%= partial 'setup' %>
+  <%= partial 'reference/touch/setup' %>
+
+  <%= Sql.create_touch_trigger 'test_members', 'group', foreign_key: { to_table: 'test_groups' } %>
+<% end %>
+
+<% teardown do %>
+  <%= partial 'teardown' %>
+<% end %>
+
+CREATE OR REPLACE FUNCTION test_suite() RETURNS VOID AS $$
+DECLARE
+  <%= partial 'reference/touch/variables' %>
+BEGIN
+  <%= partial 'fixtures' %>
+  <%= partial 'reference/touch/cases' %>
+END;
+$$ LANGUAGE plpgsql;

@@ -1,0 +1,41 @@
+CREATE OR REPLACE FUNCTION test_cases() RETURNS VOID AS $$
+DECLARE
+BEGIN
+  UPDATE test_groups SET updated_at = old_updated_at WHERE id = 1;
+  INSERT INTO test_members (id, group_id)
+  VALUES (1, 1), (2, 2);
+
+  SELECT updated_at INTO new_updated_at FROM test_groups WHERE id = 1;
+  PERFORM test_assert_true('should touch group row on insert', new_updated_at > old_updated_at);
+  SELECT COUNT(DISTINCT updated_at) INTO updated_at_count FROM test_groups;
+  PERFORM test_assert_true('should reuse updated_at on multiple inserts', updated_at_count = 1);
+
+  UPDATE test_groups SET updated_at = old_updated_at WHERE id = 2;
+  DELETE FROM test_members WHERE id = 2;
+  SELECT updated_at INTO new_updated_at FROM test_groups WHERE id = 2;
+  PERFORM test_assert_true('should touch group row on delete', new_updated_at > old_updated_at);
+
+  UPDATE test_groups SET updated_at = old_updated_at WHERE id = 1;
+  UPDATE test_members SET some_value = 1 WHERE id = 1;
+  SELECT updated_at INTO new_updated_at FROM test_groups WHERE id = 1;
+  PERFORM test_assert_true('should touch group row on update', new_updated_at > old_updated_at);
+
+  UPDATE test_groups SET updated_at = old_updated_at WHERE id = 1;
+  UPDATE test_groups SET updated_at = old_updated_at WHERE id = 2;
+  UPDATE test_members SET group_id = 2 WHERE id = 1;
+  SELECT updated_at INTO new_updated_at FROM test_groups WHERE id = 1;
+  PERFORM test_assert_true('should touch group row 1 on update fkey', new_updated_at > old_updated_at);
+  SELECT updated_at INTO new_updated_at FROM test_groups WHERE id = 2;
+  PERFORM test_assert_true('should touch group row 2 on update fkey', new_updated_at > old_updated_at);
+
+  UPDATE test_groups SET updated_at = old_updated_at WHERE id = 2;
+  UPDATE test_members SET group_id = NULL WHERE id = 1;
+  SELECT updated_at INTO new_updated_at FROM test_groups WHERE id = 2;
+  PERFORM test_assert_true('should touch group row 2 on update 2 to NULL', new_updated_at > old_updated_at);
+
+  UPDATE test_groups SET updated_at = old_updated_at WHERE id = 1;
+  UPDATE test_members SET group_id = 1 WHERE id = 1;
+  SELECT updated_at INTO new_updated_at FROM test_groups WHERE id = 1;
+  PERFORM test_assert_true('should touch group row 1 on update NULL to 1', new_updated_at > old_updated_at);
+END;
+$$ LANGUAGE plpgsql;
