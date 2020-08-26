@@ -13,9 +13,6 @@ require "maxitest/let_all"
 require "maxitest/pending"
 require "maxitest/static_class_order"
 require 'diffy'
-require 'minitest/reporters'
-
-Minitest::Reporters.use!
 
 require 'ext_ruby'
 require 'safe_dup'

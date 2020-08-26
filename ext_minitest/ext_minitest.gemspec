@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'minitest', '>= 5.11'
   s.add_dependency 'minitest-hooks'
   s.add_dependency 'minitest-spec-rails'
-  s.add_dependency 'minitest-reporters', '>= 1.3'
   s.add_dependency 'minitest-retry'
   s.add_dependency 'maxitest'
   s.add_dependency 'mocha', '>= 1.3'
