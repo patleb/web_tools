@@ -20,4 +20,11 @@ class Page < LibRecord
     'PageLayout'   => 10,
     'PageTemplate' => 20
   }
+
+  attr_readonly *%i(
+    uuid
+    page_templates_count
+    page_sections_count
+    page_fields_count
+  )
 end
