@@ -3,12 +3,14 @@ class PagesController < MixPage.config.parent_controller.constantize
   include MixTemplate::WithLayoutValues
 
   def show
-    if page_exists?
-      load_page
-      if @page.published? || Current.user.admin?
+    load_state
+    if authorized?
+      if redirect?
+        redirect_to @state.to_url, status: :moved_permanently
+      elsif stale_state?
+        # TODO cache
+        load_page
         render layout: @page.layout.view, template: @page.view
-      else
-        render_404
       end
     else
       render_404
@@ -24,11 +26,25 @@ class PagesController < MixPage.config.parent_controller.constantize
     @page_description = @page.description || @page_title
   end
 
-  def page_exists?
-    PageTemplate.exists? uuid: params[:uuid]
+  def authorized?
+    @state && ((@state.kept? && @state.published?) || Current.user.admin?)
+  end
+
+  def redirect?
+    @state.slug != params[:slug]
+  end
+
+  def stale_state?
+    Rails.env.dev_or_test? || stale?(@state, etag: MixTemplate.config.version)
+  end
+
+  def load_state
+    @state = PageTemplate.state_of(params[:uuid])
   end
 
   def load_page
-    @page = PageTemplate.with_contents.find_by! uuid: params[:uuid]
+    scope = Current.user.admin? ? PageTemplate.with_discarded : PageTemplate
+    @page = scope.with_contents.find(@state.uuid)
+    remove_instance_variable(:@state)
   end
 end
