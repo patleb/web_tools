@@ -5,12 +5,13 @@ class User < MixUser.config.parent_model.constantize
 
   scope :visible_roles, -> (user) { where(column(:role) <= roles[user.role]) }
 
-  # TODO validate  :role_allowed, if: :role_changed?
-  enum role: MixUser.config.available_roles
-
   json_attribute MixUser.config.json_attributes
 
   alias_attribute :user_id, :id
+  attr_accessor :as_user
+  alias_method :as_user?, :as_user
+
+  enum role: MixUser.config.available_roles
 
   before_validation :set_login
 
@@ -23,7 +24,7 @@ class User < MixUser.config.parent_model.constantize
   end
 
   def admin?
-    role_i >= self.class.roles[:admin]
+    role_i >= self.class.roles[:admin] && !as_user?
   end
 
   def user?
