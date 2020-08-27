@@ -4,6 +4,7 @@ module MixPage
     attr_writer :available_layouts
     attr_writer :available_templates
     attr_writer :available_fields
+    attr_writer :available_fieldables
     attr_writer :reserved_words
 
     def parent_controller
@@ -27,6 +28,10 @@ module MixPage
         'PageField' => 0,
         'PageFieldText' => 10,
       }
+    end
+
+    def available_fieldables
+      @available_fieldables ||= {}
     end
 
     def reserved_words
