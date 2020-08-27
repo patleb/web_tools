@@ -1,7 +1,7 @@
 class PageField < LibRecord
   belongs_to :page
   belongs_to :page_section, optional: true
-  belongs_to :fieldable, polymorphic: true
+  belongs_to :fieldable, optional: true, polymorphic: true
 
   validates :type, exclusion: { in: ['PageField'] }
 
