@@ -8,7 +8,7 @@ class PageTemplate < Page
   JOIN_LAYOUTS   = arel_table.join(LAYOUTS).on(column(:page_layout_id).eq(LAYOUTS[:id])).join_sources
 
   belongs_to :page_layout
-  belongs_to :layout, -> { merge(PageLayout.with_contents) }, class_name: 'PageLayout', foreign_key: 'page_layout_id'
+  belongs_to :layout, -> { readonly.merge(PageLayout.with_contents) }, class_name: 'PageLayout', foreign_key: 'page_layout_id'
 
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: :unique?
