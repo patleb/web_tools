@@ -7,10 +7,9 @@ class PagesController < MixPage.config.parent_controller.constantize
     if authorized?
       if redirect?
         redirect_to @state.to_url, status: :moved_permanently
-      elsif stale_state?
-        # TODO cache
+      elsif stale_state? # TODO cache
         load_page
-        render layout: @page.layout.view, template: @page.view
+        render layout: @page.layout.view, template: @page.view # TODO pjax
       end
     else
       render_404
@@ -44,7 +43,7 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def load_page
     scope = Current.user.admin? ? PageTemplate.with_discarded : PageTemplate
-    @page = scope.with_contents.find(@state.uuid)
+    @page = scope.with_contents.find_by! uuid: @state.uuid
     remove_instance_variable(:@state)
   end
 end
