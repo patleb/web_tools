@@ -5,7 +5,6 @@ class CreateLibPageFields < ActiveRecord::Migration[6.0]
       t.integer    :type,         null: false
       t.float      :position,     null: false, limit: 53
       t.belongs_to :page,         null: false, foreign_key: { to_table: :lib_pages }
-      t.belongs_to :page_section, foreign_key: { to_table: :lib_page_sections }
       t.integer    :key,          null: false
       t.bigint     :fieldable_id
       t.integer    :fieldable_type
@@ -15,8 +14,8 @@ class CreateLibPageFields < ActiveRecord::Migration[6.0]
     end
 
     add_index :lib_page_fields, :position, unique: true
-    add_index :lib_page_fields, [:page_id, :page_section_id, :key, :position],
-      name: 'index_lib_page_fields_on_page_id_page_section_id_key_position', unique: true
+    add_index :lib_page_fields, [:page_id, :key, :position],
+      name: 'index_lib_page_fields_on_page_id_key_position', unique: true
     add_index :lib_page_fields, [:fieldable_type, :fieldable_id]
   end
 end
