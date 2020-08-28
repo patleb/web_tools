@@ -67,7 +67,7 @@ module MixTemplate
         super() do
           args.flatten.each do |value|
             concat value
-            concat ' ' unless value.blank? || value.no_space?
+            concat ' ' unless value.blank? || value.try(:no_space?)
           end
         end
       end
