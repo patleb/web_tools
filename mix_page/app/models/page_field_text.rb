@@ -1,3 +1,3 @@
-class PageField::Text < PageField
+class PageFieldText < PageField
   json_translate text: :string
 end
