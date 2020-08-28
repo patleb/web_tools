@@ -2,7 +2,7 @@
 # TODO application side --> https://github.com/Shopify/cacheable
 # --> custom solution would be beneficial by reusing mobility for search functionality
 module RailsAdmin::Main
-  class IndexPresenter < BasePresenter
+  class IndexPresenter < RailsAdmin::MainPresenter
     def after_initialize
       initialize_table_presenters
     end

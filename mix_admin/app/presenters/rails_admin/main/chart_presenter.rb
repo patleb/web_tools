@@ -1,5 +1,5 @@
 module RailsAdmin::Main
-  class ChartPresenter < BasePresenter
+  class ChartPresenter < RailsAdmin::MainPresenter
     delegate :refresh_rate, to: :main_section
 
     def render

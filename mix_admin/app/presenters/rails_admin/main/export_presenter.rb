@@ -1,4 +1,4 @@
 module RailsAdmin::Main
-  class ExportPresenter < BasePresenter
+  class ExportPresenter < RailsAdmin::MainPresenter
   end
 end

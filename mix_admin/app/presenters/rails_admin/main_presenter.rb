@@ -1,10 +1,10 @@
-module RailsAdmin::Main
-  class BasePresenter < ActionPresenter::Base[:@abstract_model]
+module RailsAdmin
+  class MainPresenter < ActionPresenter::Base[:@abstract_model]
     attr_reader :params
     attr_reader :bulk, :paginate, :table
 
-    def after_initialize
-      @params = Current.controller.params
+    def params
+      @params ||= Current.controller.params
     end
 
     def filter_box
