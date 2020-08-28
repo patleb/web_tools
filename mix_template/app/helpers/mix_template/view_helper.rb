@@ -4,14 +4,12 @@ module MixTemplate
       [current_layout, 'layout'].compact.join('_').full_underscore.sub('_pjax_', '_')
     end
 
-    def current_layout(name = nil)
+    def current_layout
       @_current_layout ||= begin
-        layout_controller = self.is_a?(ActionController::Base) ? self : controller
+        layout_controller = is_a?(ActionController::Base) ? self : controller
         layout_path = layout_controller.send(:_layout, @lookup_context, [:html])
-        layout_path = (layout_path.is_a?(String) ? layout_path : layout_path&.virtual_path) || 'layouts/application'
-        layout_path.delete_prefix('layouts/')
+        layout_path.is_a?(String) ? layout_path : layout_path.virtual_path
       end
-      name ? @_current_layout.sub(%r{(^|/)application$}, "\\1#{name}") : @_current_layout
     end
 
     def query_diet(**options)
