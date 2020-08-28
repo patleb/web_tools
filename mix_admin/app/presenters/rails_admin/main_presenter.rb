@@ -1,6 +1,5 @@
 module RailsAdmin
   class MainPresenter < ActionPresenter::Base[:@abstract_model]
-    attr_reader :params
     attr_reader :bulk, :paginate, :table
 
     def params
