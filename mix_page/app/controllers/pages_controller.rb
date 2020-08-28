@@ -6,7 +6,7 @@ class PagesController < MixPage.config.parent_controller.constantize
     load_state
     if authorized?
       if redirect?
-        redirect_to @state.to_url, status: :moved_permanently
+        redirect_to @state.to_url, status: redirect_status
       elsif stale_state? # TODO cache
         load_page
         render layout: @page.layout.view, template: @page.view # TODO pjax
@@ -31,6 +31,10 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def redirect?
     @state.slug != params[:slug]
+  end
+
+  def redirect_status
+    @state.slugs.include?(params[:slug]) ? :found : :moved_permanently
   end
 
   def stale_state?

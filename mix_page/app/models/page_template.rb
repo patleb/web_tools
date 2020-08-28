@@ -60,6 +60,10 @@ class PageTemplate < Page
     title(*args)&.slugify
   end
 
+  def slugs
+    I18n.available_locales.map{ |locale| slug(locale) }.compact.uniq
+  end
+
   def slug_exclusion
     I18n.available_locales.each do |locale|
       if MixPage.config.reserved_words.include? slug(locale)
