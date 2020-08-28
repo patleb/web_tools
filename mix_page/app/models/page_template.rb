@@ -7,11 +7,11 @@ class PageTemplate < Page
   MAX_UPDATED_AT = Arel::Nodes::NamedFunction.new('GREATEST', [column(:updated_at), LAYOUTS[:updated_at]], 'updated_at')
   JOIN_LAYOUTS   = arel_table.join(LAYOUTS).on(column(:page_layout_id).eq(LAYOUTS[:id])).join_sources
 
-  belongs_to :page_layout
-  belongs_to :layout, -> { readonly.merge(PageLayout.with_contents) }, class_name: 'PageLayout', foreign_key: 'page_layout_id'
+  belongs_to :page_layout, optional: true
 
+  validates :page_layout_id, presence: true
   validates :view, presence: true
-  validates :view, uniqueness: { scope: :page_layout_id }, if: :unique?
+  validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }
   validate  :slug_exclusion
 
   enum view: MixPage.config.available_templates
@@ -24,6 +24,10 @@ class PageTemplate < Page
   def self.state_of(uuid)
     with_discarded.where(uuid: uuid).joins(JOIN_LAYOUTS)
       .select(:uuid, :view, :json_data, :deleted_at, :published_at, MAX_UPDATED_AT).first
+  end
+
+  def layout
+    @layout ||= PageLayout.with_contents.readonly.find(page_layout_id)
   end
 
   def publish!
