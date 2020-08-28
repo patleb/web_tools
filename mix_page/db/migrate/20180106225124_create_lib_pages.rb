@@ -1,9 +1,6 @@
 class CreateLibPages < ActiveRecord::Migration[6.0]
   def change
     create_table :lib_pages do |t|
-      # TODO changes (logidze)
-      # TODO cache
-      # admin scopes (page_id IS NULL, page_id = p0, page_id = p1, etc. or templates)
       t.integer    :type,                 null: false
       t.uuid       :uuid,                 null: false, default: 'uuid_generate_v1mc()', index: { using: :hash }
       t.float      :position,             null: false, limit: 53
