@@ -1,12 +1,4 @@
-# TODO
-# https://gist.github.com/phlegx/add77d24ebc57f211e8b
-# https://gist.github.com/hadees/cff6af2b53d340b9b4b2
-# http://radar.oreilly.com/2014/05/more-than-enough-arel.html
 class PageTemplate < Page
-  LAYOUTS        = Arel::Table.new(table_name, as: 'layouts')
-  MAX_UPDATED_AT = Arel::Nodes::NamedFunction.new('GREATEST', [column(:updated_at), LAYOUTS[:updated_at]], 'updated_at')
-  JOIN_LAYOUTS   = arel_table.join(LAYOUTS).on(column(:page_layout_id).eq(LAYOUTS[:id])).join_sources
-
   belongs_to :page_layout, optional: true
 
   validates :page_layout_id, presence: true
@@ -22,8 +14,9 @@ class PageTemplate < Page
   )
 
   def self.state_of(uuid)
-    with_discarded.where(uuid: uuid).joins(JOIN_LAYOUTS)
-      .select(:uuid, :view, :json_data, :deleted_at, :published_at, MAX_UPDATED_AT).first
+    layouts = alias_table(:layouts)
+    with_discarded.where(uuid: uuid).joins(join(layouts).on(column(:page_layout_id).eq(layouts[:id])).join_sources)
+      .select(:uuid, :view, :json_data, :deleted_at, :published_at, greatest(:updated_at, layouts[:updated_at])).first
   end
 
   def layout

@@ -3,6 +3,7 @@ require_rel 'base'
 ActiveRecord::Base.class_eval do
   extend MemoizedAt
   include ActiveSupport::LazyLoadHooks::Autorun
+  include self::WithArel
   include self::WithDiscard
   include self::WithInheritedTypes
   prepend self::WithJsonAttribute
@@ -14,7 +15,6 @@ ActiveRecord::Base.class_eval do
   delegate :url_helpers, to: 'Rails.application.routes'
 
   class << self
-    alias_method :column, :arel_attribute
     alias_method :without_default_scope, :evaluate_default_scope
     public :without_default_scope
   end
