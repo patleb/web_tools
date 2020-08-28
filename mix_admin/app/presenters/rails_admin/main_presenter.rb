@@ -14,6 +14,7 @@ module RailsAdmin
       @_choose ||= ChoosePresenter.new
     end
 
+    # TODO move into TablePresenter#after_initialize and define accessors like filter_box/choose --> params?
     def initialize_table_presenters
       params = Current.controller.params.permit(
         :model_name, :scope, :query, :sort, :reverse, *PaginatePresenter::PARAMS, f: {}
