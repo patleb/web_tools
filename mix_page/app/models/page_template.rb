@@ -61,7 +61,7 @@ class PageTemplate < Page
   end
 
   def slug_exclusion
-    Rails.application.config.i18n.available_locales.each do |locale|
+    I18n.available_locales.each do |locale|
       if MixPage.config.reserved_words.include? slug(locale)
         errors.add :title, :exclusion
       end

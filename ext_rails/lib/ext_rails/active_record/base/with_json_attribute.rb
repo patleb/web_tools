@@ -46,14 +46,14 @@ module ActiveRecord::Base::WithJsonAttribute
           default = options.delete(:default)
         end
 
-        json_attribute(Rails.application.config.i18n.available_locales.each_with_object({}) { |locale, json|
+        json_attribute(I18n.available_locales.each_with_object({}) { |locale, json|
           json.merge! "#{field}_#{locale}": type
         })
 
         define_method field do |locale = nil, fallback = nil|
-          locale ||= Current.locale || Rails.application.config.i18n.default_locale
+          locale ||= Current.locale || I18n.default_locale
           send("#{field}_#{locale}") ||
-            send("#{field}_#{fallback || Rails.application.config.i18n.available_locales.except(Rails.application.config.i18n.default_locale).first}") ||
+            send("#{field}_#{fallback || I18n.available_locales.except(I18n.default_locale).first}") ||
             (default.is_a?(Proc) ? default.call(self) : default)
         end
       end
