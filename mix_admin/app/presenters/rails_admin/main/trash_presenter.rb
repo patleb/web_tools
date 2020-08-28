@@ -1,4 +1,4 @@
 module RailsAdmin::Main
-  class TrashPresenter < RailsAdmin::IndexPresenter
+  class TrashPresenter < IndexPresenter
   end
 end
