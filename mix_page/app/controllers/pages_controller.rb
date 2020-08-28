@@ -43,7 +43,7 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def load_page
     scope = Current.user.admin? ? PageTemplate.with_discarded : PageTemplate
-    @page = scope.with_contents.find_by! uuid: @state.uuid
+    @page = scope.with_content.find_by! uuid: @state.uuid
     remove_instance_variable(:@state)
   end
 end

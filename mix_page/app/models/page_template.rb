@@ -20,7 +20,7 @@ class PageTemplate < Page
   end
 
   def layout
-    @layout ||= PageLayout.with_contents.readonly.find(page_layout_id)
+    @layout ||= PageLayout.with_content.readonly.find(page_layout_id)
   end
 
   def publish!

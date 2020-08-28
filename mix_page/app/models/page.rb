@@ -5,7 +5,7 @@ class Page < LibRecord
 
   has_many :page_fields, -> { Current.user.admin? ? with_discarded : all }, dependent: :destroy
 
-  scope :with_contents, -> { includes(:page_fields) } # TODO Active Storage
+  scope :with_content, -> { includes(:page_fields) } # TODO Active Storage
 
   validates :type, exclusion: { in: ['Page'] }
 
