@@ -96,8 +96,8 @@ module MixTemplate
       (@_js_i18n ||= {})["#{Current.locale}_#{key}"] ||= I18n.t(key)
     end
 
-    def render_pjax(path = nil)
-      render template: path || "#{@virtual_path}/pjax"
+    def render_pjax
+      render template: "#{@virtual_path}/pjax"
     end
 
     def back_to_site_link(target_blank = true)
