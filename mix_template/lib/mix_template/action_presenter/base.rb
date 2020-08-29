@@ -31,10 +31,6 @@ module ActionPresenter
       after_initialize
     end
 
-    def to_s(*)
-      respond_to?(:render) ? render : super
-    end
-
     def after_initialize; end
 
     def method_missing(name, *args, &block)
