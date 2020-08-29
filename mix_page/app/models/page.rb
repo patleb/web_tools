@@ -7,10 +7,7 @@ class Page < LibRecord
 
   scope :with_content, -> { includes(:page_fields) } # TODO Active Storage
 
-  validates :type, exclusion: { in: ['Page'] }
-
   enum type: {
-    'Page'         => 0,
     'PageLayout'   => 10,
     'PageTemplate' => 20
   }

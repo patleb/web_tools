@@ -32,8 +32,7 @@ module MixPage
 
     def available_fields
       @available_fields ||= {
-        'PageField' => 0,
-        'PageField::Text' => 10,
+        'PageFieldText' => 10,
       }
     end
 
