@@ -4,6 +4,10 @@ module MixTemplate
       [current_layout, 'layout'].compact.join('_').full_underscore.sub('_pjax_', '_')
     end
 
+    def body_class
+      [template_virtual_path, 'template'].compact.join('_').full_underscore
+    end
+
     def current_layout
       @_current_layout ||= begin
         layout_controller = is_a?(ActionController::Base) ? self : controller

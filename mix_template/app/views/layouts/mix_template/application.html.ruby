@@ -27,7 +27,7 @@ html_('.no-js', lang: Current.locale) {[
     title_{ @page_title },
     browser_upgrade_css
   ]),
-  body_(id: body_id) {[
+  body_(id: body_id, class: body_class) {[
     browser_upgrade_html,
     area(:html_data),
     yield,
