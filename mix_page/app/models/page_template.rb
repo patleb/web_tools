@@ -14,8 +14,10 @@ class PageTemplate < Page
 
   def self.state_of(uuid)
     layouts = alias_table(:layouts)
-    with_discarded.where(uuid: uuid).joins(join(layouts).on(column(:page_layout_id).eq(layouts[:id])).join_sources)
-      .select(:uuid, :view, :json_data, :deleted_at, :published_at, greatest(:updated_at, layouts[:updated_at])).first
+    with_discarded
+      .where(uuid: uuid).joins(join(layouts).on(column(:page_layout_id).eq(layouts[:id])).join_sources)
+      .select(:id, :uuid, :view, :json_data, :deleted_at, :published_at, greatest(:updated_at, layouts[:updated_at]))
+      .first
   end
 
   def layout

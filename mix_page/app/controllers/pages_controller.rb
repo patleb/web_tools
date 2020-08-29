@@ -26,7 +26,11 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def authorized?
-    @state && ((@state.kept? && @state.published?) || Current.user.admin?)
+    @state && (@state.kept? && @state.published? || Current.user.admin? && authorized_path?)
+  end
+
+  def authorized_path?
+    RailsAdmin::MainController.new.authorized_path_for(:show_in_app, @state.class, @state)
   end
 
   def redirect?
@@ -47,7 +51,7 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def load_page
     scope = Current.user.admin? ? PageTemplate.with_discarded : PageTemplate
-    @page = scope.with_content.find_by! uuid: @state.uuid
+    @page = scope.with_content.find(@state.id)
     remove_instance_variable(:@state)
   end
 end
