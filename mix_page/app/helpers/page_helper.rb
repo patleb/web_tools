@@ -38,7 +38,7 @@ module PageHelper
   end
 
   def page_presenter(key, type = nil, layout: false, multi: false)
-    (((@_memoized[key] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
+    ((((@memoized[:page_presenter] ||= {})[key] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
       scope = @page.layout if layout
       scope ||=
         case @virtual_path
