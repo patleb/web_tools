@@ -33,7 +33,7 @@ class RailsAdmin::Config::Model::Fields::Base
   def visible_field?
     returned = true
     (RailsAdmin.config.default_hidden_fields || {}).each do |section_name, fields|
-      section_class = ActiveSupport::Dependencies.constantize("RailsAdmin::Config::Model::Sections::#{section_name.to_s.camelize}")
+      section_class = "RailsAdmin::Config::Model::Sections::#{section_name.to_s.camelize}".to_const!
       next unless section.is_a? section_class
       break (returned = false) if fields.include? name
     end

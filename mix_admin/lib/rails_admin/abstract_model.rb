@@ -20,7 +20,7 @@ module RailsAdmin
       end
 
       def new_if_record_type(model_name)
-        klass = ActiveSupport::Dependencies.constantize(model_name)
+        klass = model_name.to_const!
         if (klass < ::ActiveRecord::Base && !klass.abstract_class?) \
         || (defined?(Ooor::Base) && klass < Ooor::Base)
           new(model_name)
@@ -39,7 +39,7 @@ module RailsAdmin
 
     # do not store a reference to the klass, does not play well with ActiveSupport::Reloader
     def klass
-      ActiveSupport::Dependencies.constantize(@model_name)
+      @model_name.to_const!
     end
 
     def to_s

@@ -52,7 +52,7 @@ module PageHelper
       fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key)] if fields.empty? && create
       unless fields.map!(&:presenter).empty?
         type_name = type || fields.first.object.class.base_class.name
-        ActiveSupport::Dependencies.constantize("#{type_name}ListPresenter").new(list: fields)
+        "#{type_name}ListPresenter".to_const!.new(list: fields)
       end
     else
       field = scope.page_fields.find(&filter)

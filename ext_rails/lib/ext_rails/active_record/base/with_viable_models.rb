@@ -22,7 +22,7 @@ module ActiveRecord::Base::WithViableModels
       @polymorphic_parents ||= begin
         all = viable_models.each_with_object({}) do |model_name, parents|
           model = begin
-            ActiveSupport::Dependencies.constantize(model_name)
+            model_name.to_const!
           rescue LoadError
             puts model_name if Rails.env.development?
             next

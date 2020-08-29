@@ -5,7 +5,7 @@ module ActiveRecord::Base::WithPresenter
     def presenter_class
       @presenter_class ||= begin
         klass = "#{name.camelize}Presenter".to_const
-        klass || ActiveSupport::Dependencies.constantize("#{base_class.name.camelize}Presenter")
+        klass || "#{base_class.name.camelize}Presenter".to_const!
       end
     end
   end
