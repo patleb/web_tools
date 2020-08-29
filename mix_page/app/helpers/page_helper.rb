@@ -38,27 +38,34 @@ module PageHelper
   end
 
   def page_presenter(key, type = nil, create: true, layout: false, multi: false)
-    scope = @page.layout if layout
-    scope ||=
-      case @virtual_path
-      when @page.layout.view, "#{@page.layout.view}/pjax"
-        @page.layout
-      when @page.view
-        @page
+    if (result = (@_memoized ||= {}).dig(key, type, create, layout, multi)).nil?
+      result = ((((@_memoized[key] ||= {})[type] ||= {})[create] ||= {})[layout] ||= {})[multi] = begin
+        scope = @page.layout if layout
+        scope ||=
+          case @virtual_path
+          when @page.layout.view, "#{@page.layout.view}/pjax"
+            @page.layout
+          when @page.view
+            @page
+          end
+        filter = ->(field) { (!type || field.type == type) && field.key == key }
+        if multi
+          fields = scope.page_fields.select(&filter)
+          fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key)] if fields.empty? && create
+          if fields.map!(&:presenter).any?
+            list_presenter_class = type && "#{type}ListPresenter".to_const
+            list_presenter_class ||= "#{fields.first.object.class.base_class.name}".to_const!
+            list_presenter_class.new(list: fields)
+          else
+            false
+          end
+        else
+          field = scope.page_fields.find(&filter)
+          field = scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key) if field.nil? && create
+          field&.presenter || false
+        end
       end
-    filter = ->(field) { (!type || field.type == type) && field.key == key }
-    if multi
-      fields = scope.page_fields.select(&filter)
-      fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key)] if fields.empty? && create
-      unless fields.map!(&:presenter).empty?
-        list_presenter_class = type && "#{type}ListPresenter".to_const
-        list_presenter_class ||= "#{fields.first.object.class.base_class.name}".to_const!
-        list_presenter_class.new(list: fields)
-      end
-    else
-      field = scope.page_fields.find(&filter)
-      field = scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key) if field.nil? && create
-      field&.presenter
     end
+    result == false ? nil : result
   end
 end
