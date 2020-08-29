@@ -1,7 +1,6 @@
 class PageTemplate < Page
-  belongs_to :page_layout, optional: true
+  belongs_to :page_layout
 
-  validates :page_layout_id, presence: true
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }
   validate  :slug_exclusion
