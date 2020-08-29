@@ -11,7 +11,7 @@ module RailsAdmin::Config::Model::Fields
     else
       type_name = "RailsAdmin::Config::Model::Fields::#{type.camelize}"
     end
-    ActiveSupport::Dependencies.safe_constantize(type_name) || raise("Unsupported field datatype '#{type}' #{type_name}")
+    type_name.to_const || raise("Unsupported field datatype '#{type}' #{type_name}")
   end
 
   # Default field factory loads fields based on their property type or

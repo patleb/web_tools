@@ -1,10 +1,10 @@
 module Pundit::PolicyFinder::WithNilableCache
   def scope
-    ActiveSupport::Dependencies.safe_constantize("#{policy}::Scope")
+    "#{policy}::Scope".to_const
   end
 
   def policy
-    object && ActiveSupport::Dependencies.safe_constantize("#{find(object)}#{Pundit::SUFFIX}") || ::ApplicationPolicy
+    object && "#{find(object)}#{Pundit::SUFFIX}".to_const || ::ApplicationPolicy
   end
 
   private

@@ -11,7 +11,7 @@ class RailsAdmin::Config::Model::Fields::ForeignKey < RailsAdmin::Config::Model:
     name = self.name.to_s.delete_suffix('_id').camelize
     if (namespace = abstract_model.model_name.deconstantize).present?
       namespaced_name = "#{namespace}::#{name}"
-      name = namespaced_name if ActiveSupport::Dependencies.safe_constantize(namespaced_name)
+      name = namespaced_name if namespaced_name.to_const
     end
     name
   end

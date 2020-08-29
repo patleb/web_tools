@@ -6,7 +6,7 @@ class RescueError < ::StandardError
 
   def self.rescue_class
     if name != 'RescueError' && name.end_with?('Error')
-      ActiveSupport::Dependencies.safe_constantize(name.sub(/Error$/, 'Rescue')) || Rescue
+      name.sub(/Error$/, 'Rescue').to_const || Rescue
     else
       Rescue
     end

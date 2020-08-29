@@ -9,8 +9,8 @@ module ActiveRecord::Base::WithAdmin
     def inherited(subclass)
       super
       if (model_name = subclass.name)
-        admin_module = ActiveSupport::Dependencies.safe_constantize('Admin')
-        admin_concern = "#{model_name}Admin".safe_constantize
+        admin_module = 'Admin'.to_const
+        admin_concern = "#{model_name}Admin".to_const
         if admin_concern
           subclass.include admin_module if admin_module
           subclass.include admin_concern
