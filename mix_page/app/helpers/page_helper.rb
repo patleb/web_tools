@@ -9,35 +9,35 @@ module PageHelper
     end
 
     define_method "layout_#{name}_presenters" do |key, **options|
-      layout_presenters(key, **options, type: type)
+      layout_presenters(key, type, **options)
     end
 
     define_method "layout_#{name}_presenter" do |key, **options|
-      layout_presenter(key, **options, type: type)
+      layout_presenter(key, type, **options)
     end
 
     define_method "page_#{name}_presenters" do |key, **options|
-      page_presenters(key, **options, type: type)
+      page_presenters(key, type, **options)
     end
 
     define_method "page_#{name}_presenter" do |key, **options|
-      page_presenter(key, **options, type: type)
+      page_presenter(key, type, **options)
     end
   end
 
-  def layout_presenters(key, **options)
-    layout_presenter(key, **options, multi: true)
+  def layout_presenters(*args, **options)
+    layout_presenter(*args, **options, multi: true)
   end
 
-  def layout_presenter(key, **options)
-    page_presenter(key, **options, layout: true)
+  def layout_presenter(*args, **options)
+    page_presenter(*args, **options, layout: true)
   end
 
-  def page_presenters(key, **options)
-    page_presenter(key, **options, multi: true)
+  def page_presenters(*args, **options)
+    page_presenter(*args, **options, multi: true)
   end
 
-  def page_presenter(key, type: nil, create: true, layout: false, multi: false)
+  def page_presenter(key, type = nil, create: true, layout: false, multi: false)
     scope = @page.layout if layout
     scope ||=
       case @virtual_path
@@ -51,8 +51,9 @@ module PageHelper
       fields = scope.page_fields.select(&filter)
       fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key)] if fields.empty? && create
       unless fields.map!(&:presenter).empty?
-        type_name = type || fields.first.object.class.base_class.name
-        "#{type_name}ListPresenter".to_const!.new(list: fields)
+        list_presenter_class = type && "#{type}ListPresenter".to_const
+        list_presenter_class ||= "#{fields.first.object.class.base_class.name}".to_const!
+        list_presenter_class.new(list: fields)
       end
     else
       field = scope.page_fields.find(&filter)
