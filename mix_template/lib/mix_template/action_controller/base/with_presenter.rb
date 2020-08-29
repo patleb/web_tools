@@ -9,6 +9,6 @@ module ActionController::Base::WithPresenter
   def presenter_class
     name = template_virtual_path&.camelize
     klass = name && ActiveSupport::Dependencies.safe_constantize("#{name}Presenter")
-    klass || ActiveSupport::Dependencies.safe_constantize(current_layout.camelize)
+    klass || ActiveSupport::Dependencies.safe_constantize("#{current_layout.camelize}Presenter")
   end
 end

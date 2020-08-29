@@ -1,12 +1,11 @@
 module MixUser
   module ViewHelper
-    # TODO use Pundit consistently instead in views --> remove user_admin and user_logged_in
     def edit_user_link
       return unless Current.user_logged_in?
       css = 'edit_user_link'
       if defined?(MixAdmin) && Current.user.admin?
         css << ' pjax' if controller.try(:admin?)
-        path = with_admin_controller(&:authorized_path_for.with(:edit, Current.user.class, Current.user))
+        path = authorized_path_for(:edit, Current.user.class, Current.user)
       elsif MixUser.config.devise_modules.include? :registerable
         css << ' pjax' unless controller.try(:admin?)
         path = edit_user_path
@@ -64,10 +63,10 @@ module MixUser
       end
     end
 
-    def with_admin_controller
+    def authorized_path_for(*args)
       current_controller = Current.controller
       Current.controller = RailsAdmin::MainController.new unless current_controller.try(:admin?)
-      yield Current.controller
+      Current.controller.authorized_path_for(*args)
     ensure
       Current.controller = current_controller
     end
