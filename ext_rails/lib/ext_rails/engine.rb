@@ -84,7 +84,7 @@ module ExtRails
         ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/app/#{directory}")
       end
 
-      unless Setting[:pgrest_enabled]
+      unless Setting[:timescaledb_enabled]
         Rails.autoloaders.main.ignore("#{root}/app/models/concerns/timescaledb")
         Rails.autoloaders.main.ignore("#{root}/app/models/timescaledb")
       end

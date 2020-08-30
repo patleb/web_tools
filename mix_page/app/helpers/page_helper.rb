@@ -38,7 +38,7 @@ module PageHelper
   end
 
   def page_presenter(key, type = nil, layout: false, multi: false)
-    ((((@memoized[:page_presenter] ||= {})[key] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
+    (((((@memoized ||= {})[:page_presenter] ||= {})[key] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
       scope = @page.layout if layout
       scope ||=
         case @virtual_path
@@ -51,10 +51,10 @@ module PageHelper
       if multi
         fields = scope.page_fields.select(&filter)
         fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key)] if fields.empty?
-        fields.map!(&:presenter).any?
+        fields.map!(&:presenter)
         list_presenter_class = type && "#{type}ListPresenter".to_const
-        list_presenter_class ||= "#{fields.first.object.class.base_class.name}".to_const!
-        list_presenter_class.new(list: fields)
+        list_presenter_class ||= "#{fields.first.object.class.base_class.name}ListPresenter".to_const!
+        list_presenter_class.new(type: type, list: fields)
       else
         field = scope.page_fields.find(&filter)
         field = scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key) if field.nil?
