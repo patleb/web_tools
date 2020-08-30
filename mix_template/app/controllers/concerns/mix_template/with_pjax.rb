@@ -24,7 +24,7 @@ module MixTemplate
 
     def pjax_layout(*current_layout)
       layout_path = current_layout.compact
-      layout_path << 'pjax' if pjax?
+      layout_path << 'pjax' if pjax_layout?
       layout_path.join('/')
     end
 
@@ -42,7 +42,12 @@ module MixTemplate
 
     def pjax_redirect?
       return @_pjax_redirect if defined? @_pjax_redirect
-      @_pjax_redirect = params.delete(:_pjax_redirect).to_b
+      @_pjax_redirect = params.truthy?(:delete, :_pjax_redirect)
+    end
+
+    def pjax_layout?
+      return @_pjax_layout if defined? @_pjax_layout
+      @_pjax_layout = pjax? && params.nil_or_truthy?(:delete, :_pjax_layout)
     end
 
     def strip_pjax_param

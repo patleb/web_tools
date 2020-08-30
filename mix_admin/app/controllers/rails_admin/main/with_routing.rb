@@ -45,7 +45,11 @@ module RailsAdmin::Main::WithRouting
   end
 
   def redirect_to_back(**options)
-    redirect_to(Current.referer.presence || index_path, **options)
+    if Current.referer.blank? || RailsAdmin.path?(Current.referer)
+      redirect_to(Current.referer.presence || index_path, **options)
+    else
+      redirect_to(Rack::Utils.merge_url(Current.referer, params: { _pjax_layout: false }), **options)
+    end
   end
 
   def redirect_to_index(**options)

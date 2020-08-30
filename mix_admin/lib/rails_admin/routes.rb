@@ -23,6 +23,10 @@ module RailsAdmin
       path
     end
 
+    def path?(value)
+      value.match? %r{^#{root_path}(/|$)}
+    end
+
     def add_route(type, action_name = nil, route_fragment = nil)
       case type
       when :base

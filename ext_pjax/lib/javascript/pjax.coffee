@@ -245,11 +245,12 @@ class Js.Pjax
 
   @extract_container: (data, xhr) =>
     if (redirect = xhr.getResponseHeader('X-PJAX-REDIRECT'))
-      @options.request_url = $.parse_location(redirect).href.gsub(/([?&])(_pjax_redirect)=[^&]*/, '')
+      @options.request_url = $.parse_location(redirect).href.gsub(/([?&])(_pjax_redirect|_pjax_layout)=[^&]*/, '')
     container = { url: @options.request_url }
-    return container if /<html[\s>]/i.test(data) # TODO replace the whole document
+    if /<html[\s>]/i.test(data)
+      return @location_reload(container.url) if redirect
+      return container
     return container unless (contents = $($.parseHTML(data))).length
-
     container.contents = contents
     container.title = contents.filter(@TITLE).data('title')?.strip()
     container
