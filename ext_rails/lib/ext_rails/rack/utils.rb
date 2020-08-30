@@ -13,7 +13,7 @@ module Rack::Utils
     port       = nil if [80, 443].include? port
     path     ||= uri.path
 
-    [scheme, '://', hostname, (':' if port), port, ('/' unless path.start_with? '/'), path, query].join
+    [scheme, ('://' if scheme), hostname, (':' if port), port, ('/' unless path.start_with? '/'), path, query].join
   end
   module_function :merge_url
 
