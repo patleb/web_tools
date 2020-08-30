@@ -96,7 +96,7 @@ class Js.Pjax
     options.url = url = button.attr('formaction') || form.attr('action')
     options.data = data
     options.crossDomain = $.is_cross_domain(url)
-    if (pjax = button.data('pjax') || form.data('pjax'))? && pjax == false
+    if button.data('pjax') == false || form.data('pjax') == false
       options.pjax = false
       options.data.push(name: '_pjax', value: false)
 
@@ -187,7 +187,7 @@ class Js.Pjax
     return false if @fire_before_send(xhr, options) == false
 
     url = $.parse_location(options.url)
-    url.search = url.search.gsub(/([?&])(_pjax|_)=[^&]*/, '')
+    url.search = url.search.gsub(/([?&])(_pjax|_pjax_file)=[^&]*/, '')
     url.href = url.href.sub(/\?($|#)/, '$1')
 
     @options.request_url = url.href
@@ -245,10 +245,10 @@ class Js.Pjax
 
   @extract_container: (data, xhr) =>
     if (redirect = xhr.getResponseHeader('X-PJAX-REDIRECT'))
-      @options.request_url = $.parse_location(redirect).href
+      @options.request_url = $.parse_location(redirect).href.gsub(/([?&])(_pjax_redirect)=[^&]*/, '')
     container = { url: @options.request_url }
-    return container if /<html/i.test(data)
-    return container unless (contents = $($.parseHTML(data, document))).length
+    return container if /<html[\s>]/i.test(data) # TODO replace the whole document
+    return container unless (contents = $($.parseHTML(data))).length
 
     container.contents = contents
     container.title = contents.filter(@TITLE).data('title')?.strip()

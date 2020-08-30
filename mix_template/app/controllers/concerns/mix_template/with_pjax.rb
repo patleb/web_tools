@@ -5,10 +5,15 @@ module MixTemplate
     included do
       before_action :strip_pjax_param, if: :pjax?
       before_action :strip_pjax_file_params, if: :pjax_file?
-      before_action :after_redirected, if: :pjax?
+      before_action :after_redirected, if: :pjax_redirect?
       after_action  :versionize
 
       layout :get_pjax_layout
+    end
+
+    def redirect_to(options = {}, response_options = {})
+      options = Rack::Utils.merge_url(options, params: { _pjax_redirect: true }) if pjax?
+      super(options, response_options)
     end
 
     protected
@@ -35,6 +40,11 @@ module MixTemplate
       @_pjax_file = request.headers['X-PJAX-FILE'].to_b
     end
 
+    def pjax_redirect?
+      return @_pjax_redirect if defined? @_pjax_redirect
+      @_pjax_redirect = params.delete(:_pjax_redirect).to_b
+    end
+
     def strip_pjax_param
       params.delete(:_pjax)
       reset_pjax_query_string
@@ -48,7 +58,7 @@ module MixTemplate
     end
 
     def after_redirected
-      response.headers['X-PJAX-REDIRECT'] = request.url
+      response.set_header('X-PJAX-REDIRECT', request.url)
     end
 
     def versionize
