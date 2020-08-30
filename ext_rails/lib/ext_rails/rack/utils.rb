@@ -3,9 +3,9 @@ require 'rack/utils'
 module Rack::Utils
   SESSION_ID = /\A[\da-f]{32}\z/.freeze
 
-  def merge_url(url, params = {}, scheme: nil, hostname: nil, port: nil, path: nil)
+  def merge_url(url, params: {}, scheme: nil, hostname: nil, port: nil, path: nil)
     uri, query_params = parse_url(url)
-    query_params.merge!(params)
+    query_params.union!(params)
     query      = "?#{query_params.to_param}" unless query_params.empty?
     scheme   ||= uri.scheme
     hostname ||= uri.hostname
