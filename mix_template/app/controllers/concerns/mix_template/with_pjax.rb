@@ -6,6 +6,7 @@ module MixTemplate
       before_action :strip_pjax_param, if: :pjax?
       before_action :strip_pjax_file_params, if: :pjax_file?
       before_action :after_redirected, if: :pjax_redirect?
+      before_action :render_pjax_reload, if: :pjax_reload?
       after_action  :versionize
 
       layout :get_pjax_layout

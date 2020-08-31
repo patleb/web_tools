@@ -2,8 +2,6 @@ class PagesController < MixPage.config.parent_controller.constantize
   include MixTemplate::WithPjax
   include MixTemplate::WithLayoutValues
 
-  before_action :render_pjax_reload, if: :pjax_reload?
-
   def show
     load_state
     if authorized?
