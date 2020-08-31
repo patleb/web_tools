@@ -5,6 +5,7 @@ module MixTemplate
     prepended do
       before_action :set_root_path
       before_render :set_layout_values
+      after_action  :versionize
     end
 
     private
@@ -18,6 +19,10 @@ module MixTemplate
       @app_name = @page_title = @page_description = Rails.application.title
       @page_web_app_capable = MixTemplate.config.web_app_capable
       @page_version = MixTemplate.config.version
+    end
+
+    def versionize
+      response.set_header('X-PAGE-VERSION', MixTemplate.config.version)
     end
   end
 end
