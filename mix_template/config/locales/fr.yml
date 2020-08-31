@@ -3,7 +3,6 @@ fr:
     js:
       :true: "Vrai"
       :false: "Faux"
-      confirmation: Êtes-vous certain?
   mix_template:
     browser_upgrade_html: Vous utilisez un navigateur <strong>désuet</strong>. S'il vous plaît, veuillez
       <a href="https://browsehappy.com/">mettre à jour votre navigateur</a> pour améliorer votre expérience et sécurité.

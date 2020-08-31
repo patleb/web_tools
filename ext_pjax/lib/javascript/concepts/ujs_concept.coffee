@@ -2,7 +2,7 @@ class Js.UjsConcept
   document_on: -> [
     'click.continue change.continue submit.continue', '[data-confirm]', (event) ->
       confirm = $(document.activeElement).data('confirm') ? $(event.currentTarget).data('confirm')
-      unless confirm? && confirm != false && window.confirm(I18n?.t('confirmation') || confirm)
+      unless confirm? && confirm != false && window.confirm(I18n.t('confirmation') || confirm)
         event.stopImmediatePropagation()
         false
 

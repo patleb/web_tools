@@ -187,7 +187,7 @@ class Js.Pjax
     return false if @fire_before_send(xhr, options) == false
 
     url = $.parse_location(options.url)
-    url.search = url.search.gsub(/([?&])(_pjax|_pjax_file)=[^&]*/, '')
+    url.search = @strip_pjax_params(url.search)
     url.href = url.href.sub(/\?($|#)/, '$1')
 
     @options.request_url = url.href
@@ -207,8 +207,9 @@ class Js.Pjax
       @on_success(xhr.responseText, status, xhr)
     else if @options.method == 'GET'
       @location_reload(container.url)
-    # else
-      # TODO error handler
+    else
+      $rescue(message: xhr.responseText, backtrace: [], data: { status: xhr.status })
+      Flash.error(I18n.t('error'))
 
   @on_success: (data, status, xhr) =>
     current_version = $('meta[http-equiv="X-PAGE-VERSION"]').attr('content')
@@ -245,7 +246,7 @@ class Js.Pjax
 
   @extract_container: (data, xhr) =>
     if (redirect = xhr.getResponseHeader('X-PJAX-REDIRECT'))
-      @options.request_url = $.parse_location(redirect).href.gsub(/([?&])(_pjax_redirect|_pjax_layout)=[^&]*/, '')
+      @options.request_url = @strip_pjax_params($.parse_location(redirect).href)
     container = { url: @options.request_url }
     if /<html[\s>]/i.test(data)
       return @location_reload(container.url) if redirect
@@ -328,6 +329,9 @@ class Js.Pjax
 
   @fire_scroll: (scroll_to, hash) =>
     $.fire(@container, 'pjax:scroll', [this, scroll_to, hash])
+
+  @strip_pjax_params: (url) ->
+    url.gsub(/[?&]_pjax(_file|_reload)?=[^&]+&?/, '')
 
   cache_push = (uid, value) =>
     @cache_mapping[uid] = value

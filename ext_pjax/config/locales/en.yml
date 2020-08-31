@@ -1,0 +1,5 @@
+en:
+  application:
+    js:
+      confirmation: Are you sure?
+      error: Error

@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var rescue_string = JSON.stringify(rescue)
     if (!_.includes($rescues, rescue_string)) {
       $rescues.push(rescue_string)
-      $.ajax('javascript_rescues', { method: 'POST', data: { javascript_rescue: rescue }})
+      $.ajax('/javascript_rescues', { method: 'POST', data: { javascript_rescue: rescue }})
     }
   }
 

@@ -1,0 +1,5 @@
+fr:
+  application:
+    js:
+      confirmation: Êtes-vous certain?
+      error: Erreur
