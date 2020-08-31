@@ -4,7 +4,7 @@ class CreateLibRescues < ActiveRecord::Migration[6.0]
       t.primary_key :id, :text
       t.integer     :type,         null: false, default: 0
       t.text        :exception,    null: false
-      t.text        :message,      null: false
+      t.text        :message,      null: false, array: true
       t.jsonb       :data,         null: false, default: {}
       t.bigint      :events_count, null: false, default: 1
 
@@ -14,7 +14,7 @@ class CreateLibRescues < ActiveRecord::Migration[6.0]
     add_index :lib_rescues, [:type, :exception, :created_at]
     add_index :lib_rescues, [:exception, :created_at]
     add_index :lib_rescues, :created_at
-    add_index :lib_rescues, :message, using: :gist, opclass: { title: :gist_trgm_ops }
+    add_index :lib_rescues, :message, using: :gin, opclass: { title: :gist_trgm_ops }
   end
 
   def down

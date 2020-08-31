@@ -18,8 +18,8 @@ class Rescue < LibRecord
     end
     message ||= exception.message
     type = exception.class.rescue_class.to_s
-    id = Digest.md5_hex(type, exception.name, message.squish_numbers)
-    create! id: id, type: type, exception: exception.name, message: message, data: exception.data
+    id = Digest.md5_hex(type, exception.name, message.squish_numbers.squish!)
+    create! id: id, type: type, exception: exception.name, message: message.lines, data: exception.data
     NEW_ERROR
   rescue ActiveRecord::RecordNotUnique
     increment_counter(:events_count, id, touch: true)
