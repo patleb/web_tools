@@ -21,6 +21,7 @@ module MixTemplate
     ActiveSupport.on_load(:action_view) do
       require 'mix_template/action_view/helpers/sanitize_helper'
       require 'mix_template/action_view/helpers/tag_helper/tag_builder/with_data_option'
+      require 'mix_template/action_view/helpers/text_helper'
       require 'mix_template/action_view/template_renderer/with_presenter'
       require 'mix_template/query_diet/widget/without_click'
     end
