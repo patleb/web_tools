@@ -11,6 +11,15 @@ module MixTemplate
       layout :get_pjax_layout
     end
 
+    def redirect_to(options = {}, response_options = {})
+      options = Rack::Utils.merge_url(options, params: { _pjax_redirect: true }) if pjax?
+      super(options, response_options)
+    end
+
+    def render_pjax_reload
+      render html: '<html>'.html_safe
+    end
+
     protected
 
     def get_pjax_layout
@@ -29,15 +38,6 @@ module MixTemplate
       pjax? && !pjax_reload?
     end
 
-    def pjax_redirect?
-      pjax? && performed?
-    end
-
-    def pjax_reload?
-      return @_pjax_reload if defined? @_pjax_reload
-      @_pjax_reload = params.delete(:_pjax_reload).to_b
-    end
-
     def pjax?
       return @_pjax if defined? @_pjax
       @_pjax = request.headers['X-PJAX'].to_b || pjax_file?
@@ -46,6 +46,16 @@ module MixTemplate
     def pjax_file?
       return @_pjax_file if defined? @_pjax_file
       @_pjax_file = request.headers['X-PJAX-FILE'].to_b
+    end
+
+    def pjax_redirect?
+      return @_pjax_redirect if defined? @_pjax_redirect
+      @_pjax_redirect = params.truthy?(:delete, :_pjax_redirect)
+    end
+
+    def pjax_reload?
+      return @_pjax_reload if defined? @_pjax_reload
+      @_pjax_reload = params.truthy?(:delete, :_pjax_reload)
     end
 
     def strip_pjax_param
@@ -69,7 +79,7 @@ module MixTemplate
     end
 
     def reset_pjax_query_string
-      request.env['QUERY_STRING'] = request.env['QUERY_STRING'].gsub(/[?&]_pjax(_file|_reload)?=[^&]+&?/, '')
+      request.env['QUERY_STRING'] = request.env['QUERY_STRING'].gsub(/[?&]_pjax(_file|_redirect|_reload)?=[^&]+&?/, '')
       request.env.delete('rack.request.query_string')
       request.env.delete('rack.request.query_hash')
       request.env.delete('action_dispatch.request.query_parameters')
