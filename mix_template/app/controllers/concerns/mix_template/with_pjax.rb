@@ -75,7 +75,7 @@ module MixTemplate
     end
 
     def reset_pjax_query_string
-      request.env['QUERY_STRING'] = request.env['QUERY_STRING'].gsub(/[?&]_pjax(_file|_redirect|_reload)?=[^&]+&?/, '')
+      request.env['QUERY_STRING'] = request.env['QUERY_STRING'].gsub(/_pjax\w*=\w+(&|$)/, '').sub(/\?$/, '')
       request.env.delete('rack.request.query_string')
       request.env.delete('rack.request.query_hash')
       request.env.delete('action_dispatch.request.query_parameters')

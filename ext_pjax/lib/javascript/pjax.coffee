@@ -331,7 +331,7 @@ class Js.Pjax
     $.fire(@container, 'pjax:scroll', [this, scroll_to, hash])
 
   @strip_pjax_params: (url) ->
-    url.gsub(/[?&]_pjax(_file|_redirect|_reload)?=[^&]+&?/, '')
+    url.gsub(/_pjax\w*=\w+(&|$)/, '').sub(/\?$/, '')
 
   cache_push = (uid, value) =>
     @cache_mapping[uid] = value
