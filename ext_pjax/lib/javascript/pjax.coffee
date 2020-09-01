@@ -208,14 +208,16 @@ class Js.Pjax
     else if @options.method == 'GET'
       @location_reload(container.url)
     else
-      $rescue(message: xhr.responseText, backtrace: [], data: { status: xhr.status })
+      $rescue(message: xhr.responseText, backtrace: [], data: {
+        status: xhr.status, method: @options.method, url: container.url
+      })
       Flash.error(I18n.t('error'))
 
   @on_success: (data, status, xhr) =>
     current_version = $('meta[http-equiv="X-PAGE-VERSION"]').attr('content')
     latest_version = xhr.getResponseHeader('X-PAGE-VERSION')
     container = @extract_container(data, xhr)
-    container.url = $.parse_location(container.url, hash: @options.hash).href
+    container.url = $.parse_location(container.url, hash: @options.hash).href unless container.redirect
     return @location_reload(container.url) if current_version && latest_version && current_version != latest_version
     return @location_reload(container.url) unless container.contents
 
@@ -247,10 +249,8 @@ class Js.Pjax
   @extract_container: (data, xhr) =>
     if (redirect = xhr.getResponseHeader('X-PJAX-REDIRECT'))
       @options.request_url = @strip_pjax_params($.parse_location(redirect).href)
-    container = { url: @options.request_url }
-    if /<html[\s>]/i.test(data)
-      return @location_reload(container.url) if redirect
-      return container
+    container = { url: @options.request_url, redirect }
+    return container if /<html[\s>]/i.test(data)
     return container unless (contents = $($.parseHTML(data))).length
     container.contents = contents
     container.title = contents.filter(@TITLE).data('title')?.strip()
