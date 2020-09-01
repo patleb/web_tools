@@ -11,6 +11,7 @@ class Js.PjaxConcept
 
   ready_once: ->
     Js.Pjax.initialize()
+    $('button').attr('disabled', false)
 
   ready: =>
     if (title = $(Js.Pjax.TITLE).data('title'))?.present()

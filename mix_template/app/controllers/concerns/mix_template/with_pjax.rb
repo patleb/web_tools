@@ -9,6 +9,8 @@ module MixTemplate
       before_action :render_pjax_reload, if: :pjax_reload?
 
       layout :get_pjax_layout
+
+      helper_method :pjax?
     end
 
     def redirect_to(options = {}, response_options = {})

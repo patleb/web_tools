@@ -122,6 +122,10 @@ module MixTemplate
         options.delete(:class) if options[:class].blank?
       end
 
+      if tag == 'button' && !pjax? && !options.has_key?(:disabled)
+        options[:disabled] = true
+      end
+
       escape = options.has_key?(:escape) ? options.delete(:escape) : true
       times = options.delete(:times) if options.has_key? :times
       content = options.delete(:text) if options.has_key? :text
