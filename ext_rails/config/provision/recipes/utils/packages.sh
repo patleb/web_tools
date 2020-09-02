@@ -11,6 +11,7 @@
   ngrep
   nmap
   tree
+  ncdu
 ).reject(&:blank?).each do |package| %>
 
   # https://github.com/blacksmoke16/oq
