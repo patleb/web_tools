@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'devise', '~> 4.7'
   # s.add_dependency 'devise-encryptable', '~> 0.2'
   s.add_dependency 'devise-i18n'
+  # TODO https://github.com/ankane/authtrail
   s.add_dependency 'pundit', '~> 2.1'
   s.add_dependency 'web-console'
   s.add_dependency 'mix_template', version
