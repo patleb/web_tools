@@ -15,7 +15,7 @@ module ExtRails
       def check_remote
         sh 'git fetch origin master'
 
-        current_commit, remote_commit = `git rev-parse master origin/master`.split("\n")
+        current_commit, remote_commit = `git rev-parse master origin/master`.lines(chomp: true)
 
         @updated = (current_commit == remote_commit)
       end
@@ -23,7 +23,7 @@ module ExtRails
       def update
         return if @updated
 
-        changes = `git status --porcelain`.split("\n")
+        changes = `git status --porcelain`.lines(chomp: true)
         if changes.size > 1 || (changes.size == 1 && !changes.first.match(GEMFILE_LOCK))
           raise 'Files other than the Gemfile.lock would be overwritten.'
         end

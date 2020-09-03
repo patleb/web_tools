@@ -126,14 +126,16 @@ module MixTemplate
         options[:disabled] = true
       end
 
+      sanitized = options.has_key?(:sanitize) ? options.delete(:sanitize) : false
       escape = options.has_key?(:escape) ? options.delete(:escape) : true
       times = options.delete(:times) if options.has_key? :times
       content = options.delete(:text) if options.has_key? :text
       content = h_(&content) if content.is_a? Proc
       content = h_(&block) if content.nil? && block_given?
       content = h_(content) if content.is_a? Array
+      content = sanitize(content) if sanitized
 
-      result = content_tag tag, content, options, escape
+      result = content_tag tag, content, options, (sanitized ? false : escape)
       result = [result] * times if times
       result
     end

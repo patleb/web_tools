@@ -19,7 +19,9 @@ module MixTemplate
     end
 
     ActiveSupport.on_load(:action_view) do
-      require 'mix_template/action_view/helpers/sanitize_helper'
+      require 'mix_template/action_view/helpers/output_safety_helper'
+      # TODO compare with Loofah use by Rails
+      # require 'mix_template/action_view/helpers/sanitize_helper'
       require 'mix_template/action_view/helpers/tag_helper/tag_builder/with_data_option'
       require 'mix_template/action_view/helpers/text_helper'
       require 'mix_template/action_view/template_renderer/with_presenter'

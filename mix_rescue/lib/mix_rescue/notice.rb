@@ -48,7 +48,7 @@ class Notice # TODO https://github.com/excid3/noticed
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
           </head>
           <body>
-            <p>#{context.simple_format(message, {}, sanitize: true)}</p>
+            <p>#{context.simple_format(message)}</p>
           </body>
         </html>
       HTML

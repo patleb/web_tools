@@ -11,7 +11,7 @@ class RailsAdmin::Config::Model::Fields::OdooOne < RailsAdmin::Config::Model::Fi
     export_format_one
   end
 
-  register_instance_option :simple_formatted?, memoize: true do
+  register_instance_option :separated?, memoize: true do
     true
   end
 

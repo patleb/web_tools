@@ -2,7 +2,7 @@ module RailsAdmin::Main
   module BulkAction
     def bulk_action
       raise Pundit::NotAuthorizedError unless bulk_action?
-      response.headers['X-PJAX-REDIRECT'] = bulk_url
+      response.set_header('X-PJAX-REDIRECT', bulk_url)
       serve_action @bulk_action.to_sym
     end
 

@@ -79,7 +79,7 @@ module RailsAdmin
     end
 
     def help_for(field)
-      field.help.present? ? span_('.help-block.col-sm-10', simple_format(field.help, {}, sanitize: false)) : ''.html_safe
+      field.help.present? ? span_('.help-block.col-sm-10', simple_format(field.help)) : ''.html_safe
     end
 
     def field_for(field)

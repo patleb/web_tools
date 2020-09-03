@@ -8,7 +8,7 @@ class RailsAdmin::Config::Model::Fields::Text < RailsAdmin::Config::Model::Field
   # TODO
   # register_instance_option :formatted_value do
   #   if value.present?
-  #     simple_format(value, {}, sanitize: true)
+  #     simple_format(value)
   #   end
   # end
 

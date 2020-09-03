@@ -140,7 +140,7 @@ module Process
 
     def swap
       m_access(:swap) do
-        swap = IO.read("/proc/swaps").split("\n").second
+        swap = IO.read("/proc/swaps").lines(chomp: true).second
         swap.split.each_with_object({}).with_index do |(value, memo), index|
           memo[SWAP_NAMES[index]] = value
         end
@@ -149,7 +149,7 @@ module Process
 
     def stat
       m_access(:stat) do
-        stat = IO.read("/proc/stat").split("\n").first
+        stat = IO.read("/proc/stat").lines(chomp: true).first
         stat = stat.sub(/^cpu +/, '')
         stat.split.each_with_object({}).with_index do |(value, memo), index|
           memo[STAT_NAMES[index]] = value

@@ -159,11 +159,12 @@ class RailsAdmin::Config::Model::Fields::Base
   # output for pretty printing (show, index, export)
   register_instance_option :pretty_value do
     value = formatted_value
-    if simple_formatted? && value.present?
-      safe_join(value.to_s.strip.split("\n").map{ |para| ERB::Util.html_escape(para) }, pretty_separator)
-    else
-      value
+    if separated?
+      value = safe_join(value.to_s.lines(chomp: true), pretty_separator, sanitize: sanitized?)
+    elsif sanitized?
+      value = sanitize(value)
     end
+    value
   end
 
   register_instance_option :pretty_blank, memoize: :locale do
@@ -182,14 +183,18 @@ class RailsAdmin::Config::Model::Fields::Base
 
   # output for printing in export view (developers beware: no Current.view and no data!)
   register_instance_option :export_value do
-    simple_formatted? ? formatted_value : pretty_value
+    separated ? formatted_value : pretty_value
+  end
+
+  register_instance_option :sanitized?, memoize: true do
+    false
   end
 
   register_instance_option :truncated?, memoize: true do
     false
   end
 
-  register_instance_option :simple_formatted?, memoize: true do
+  register_instance_option :separated?, memoize: true do
     false
   end
 
@@ -206,29 +211,30 @@ class RailsAdmin::Config::Model::Fields::Base
   end
 
   def pretty_separator
-    simple_formatted? ? '<br>'.html_safe : ' '
+    separated ? '<br>'.html_safe : ' '
   end
 
   def truncated_value_options
-    simple_format =
-    { length: section.truncate_length, separator: pretty_separator, fallback: ' ', escape: !simple_formatted? }
+    { length: section.truncate_length, separator: pretty_separator, fallback: ' ', escape: !separated? }
   end
 
   def truncated_value(value = pretty_value.to_s, options = truncated_value_options)
     length, separator, fallback, escape = options.values_at(:length, :separator, :fallback, :escape)
     if length && (less, more = value.partition_at(length, separator: separator, fallback: fallback)) && more.present?
       h_(
-        span_('.js_table_less_content', less, escape: escape),
+        span_('.js_table_less_content', less, escape: escape, sanitize: sanitized?),
         span_('.js_table_expand_cell', ["…", i_('.fa.fa-chevron-right')]),
         span_('.js_table_collapse_cell', [i_('.fa.fa-chevron-down'), ('&nbsp;' * 3).html_safe]),
         if options[:full]
-          div_('.js_table_full_content', value, escape: escape)
+          div_('.js_table_full_content', value, escape: escape, sanitize: sanitized?)
         else
-          div_('.js_table_more_content', more.delete_prefix(separator), escape: escape)
+          div_('.js_table_more_content', more.delete_prefix(separator), escape: escape, sanitize: sanitized?)
         end,
       )
+    elsif sanitized?
+      sanitize(value)
     else
-      value
+      ERB::Util.html_escape(value)
     end
   end
 

@@ -4,14 +4,14 @@ class RailsAdmin::Config::Model::Fields::Array < RailsAdmin::Config::Model::Fiel
   register_instance_option :pretty_value do
     if array_separator
       if array_bullet
-        value = safe_join(pretty_array, array_separator + array_bullet)
+        value = safe_join(pretty_array, array_separator + array_bullet, sanitize: sanitized?)
         value = array_bullet + value if value.present?
         value
       else
-        safe_join(pretty_array, array_separator)
+        safe_join(pretty_array, array_separator, sanitize: sanitized?)
       end
     else
-      to_sentence(pretty_array)
+      to_sentence(pretty_array, sanitize: sanitized?)
     end
   end
 
@@ -90,8 +90,6 @@ class RailsAdmin::Config::Model::Fields::Array < RailsAdmin::Config::Model::Fiel
     else
       length = section.truncate_length
     end
-    value = truncated_value(value, truncated_value_options.merge!(length: length, separator: separator, **options))
-    value = value.html_safe unless options[:escape]
-    value
+    truncated_value(value, truncated_value_options.merge!(length: length, separator: separator, **options))
   end
 end

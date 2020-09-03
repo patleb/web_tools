@@ -27,6 +27,7 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
     [value].flatten.select(&:present?).map do |associated|
       model = polymorphic? ? RailsAdmin.model(associated) : associated_model # perf optimization for non-polymorphic associations
       wording = model.with(object: associated).object_label
+      wording = sanitize(wording) if sanitized?
       if (path = authorized_path_for(:show, model, associated))
         a_ '.pjax', wording, href: path
       elsif (path = authorized_path_for(:edit, model, associated))

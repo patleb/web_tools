@@ -12,7 +12,7 @@ module GlobalAdmin
 
       configure :data do
         visible true
-        simple_formatted true
+        separated true
       end
 
       configure :data_type do

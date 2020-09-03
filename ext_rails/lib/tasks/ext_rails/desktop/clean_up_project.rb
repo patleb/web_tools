@@ -73,7 +73,10 @@ module ExtRails
           if Dir.exist? '.git'
             sh "git permission-reset" rescue nil
             sh "chmod 755 .git"
-            permissions = `ls -laR #{fullpath.join('.git')}`.split("\n").select{ |line| line.match /^(-|d)/ }.map{ |line| line[1...10] }.uniq
+            permissions = `ls -laR #{fullpath.join('.git')}`.lines(chomp: true)
+              .select{ |line| line.match /^(-|d)/ }
+              .map{ |line| line[1...10] }
+              .uniq
             raise 'verify .git folder permissions' unless permissions.all?{ |p| p.in? PERMISSIONS }
             sh "find .git -type d -exec chmod 755 {} \\;"
             sh "find .git -type f -exec chmod 644 {} \\;"

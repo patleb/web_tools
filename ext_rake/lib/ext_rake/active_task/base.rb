@@ -224,7 +224,7 @@ module ActiveTask
       parser.on("--require"){}
 
       parser.on("-h", "--help", task.full_comment.sub('-- [options]', '')) do
-        puts(parser.to_s.split("\n").reject! do |line|
+        puts(parser.to_s.lines(chomp: true).reject! do |line|
           line.match /--(#{self.class.protected_args.join('|')}|$)/
         end.join("\n"))
 
