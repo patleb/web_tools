@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'monogamy'
   s.add_dependency 'null-logger'
   s.add_dependency 'pg'
+  # TODO https://github.com/floere/phony
   s.add_dependency 'pycall'
   s.add_dependency 'rails-i18n'
   s.add_dependency 'rails_select_on_includes'
