@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
 
   s.add_dependency 'mix_admin', version
+  # TODO https://github.com/algolia/frontman
 end
