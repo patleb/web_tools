@@ -17,6 +17,11 @@ module Rack::Utils
   end
   module_function :merge_url
 
+  def parse_root(url)
+    parse_url(url).first
+  end
+  module_function :parse_root
+
   def parse_params(url)
     parse_url(url).last
   end
