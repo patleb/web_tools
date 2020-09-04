@@ -15,6 +15,7 @@ module RailsAdmin::Main::WithRouting
     chart_path
     report_path
   )
+  ERROR_SEPARATOR = '<br>- '.html_safe
 
   included do
     before_action :set_request_format
@@ -99,7 +100,7 @@ module RailsAdmin::Main::WithRouting
     notice = I18n.t('admin.flash.error', name: name, action: I18n.t("admin.actions.#{action}.done")).html_safe
     Array.wrap(@object || @objects).each do |object|
       # TODO check for associations as well (might not have been propagated)
-      notice += '<br>- '.html_safe + safe_join(object.errors.full_messages, '<br>- ') unless object.errors.empty?
+      notice += ERROR_SEPARATOR + safe_join(object.errors.full_messages, ERROR_SEPARATOR) unless object.errors.empty?
     end
     simple_format! notice
   end
