@@ -18,7 +18,7 @@ module RailsAdmin
 
     def on_not_authorized_error(_)
       flash[:error] = I18n.t('admin.flash.not_allowed')
-      redirect_to(main_app.try(:root_path) || '/')
+      redirect_to(Rack::Utils.merge_url(main_app.try(:root_path) || '/', params: { _pjax_reload: true }))
     end
 
     def on_object_not_found(_)
