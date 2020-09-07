@@ -45,10 +45,12 @@
       }
     }
     &.serialized_type,
+    &.code_type,
     &.json_type,
     &.jsonb_type,
     &.jsons_type,
     &.jsonbs_type {
+      .js_table_more_content,
       .js_table_full_content {
         @include as_code;
       }

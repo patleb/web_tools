@@ -252,6 +252,7 @@ label.input-group-addon {
 
 dd {
   &.serialized_type,
+  &.code_type,
   &.json_type,
   &.jsonb_type,
   &.jsons_type,
@@ -261,6 +262,7 @@ dd {
 }
 
 .serialized_type,
+.code_type,
 .json_type,
 .jsonb_type,
 .jsons_type,

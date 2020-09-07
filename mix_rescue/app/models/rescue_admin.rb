@@ -6,8 +6,8 @@ module RescueAdmin
       navigation_label I18n.t('admin.navigation.system')
       weight 999
 
-      configure :message do
-        simple_formatted true
+      configure :message, :code do
+        pretty_value{ value.join }
       end
 
       index do
