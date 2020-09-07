@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails_admin-i18n', '~> 1.11'
   # TODO s.add_dependency 'amoeba', '~> 3.0' # https://github.com/moiristo/deep_cloneable
   # TODO s.add_dependency 'prawn'
-  s.add_dependency 'kaminari', '>= 0.14', '< 2.0'
+  s.add_dependency 'kaminari', '>= 0.14', '< 2.0' # TODO https://github.com/basecamp/geared_pagination
   s.add_dependency 'mix_global', version
   s.add_dependency 'mix_user',   version
 
