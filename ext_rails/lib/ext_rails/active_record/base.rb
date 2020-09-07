@@ -5,7 +5,6 @@ ActiveRecord::Base.class_eval do
   include ActiveSupport::LazyLoadHooks::Autorun
   include self::WithArel
   include self::WithDiscard
-  include self::WithInheritedTypes
   prepend self::WithJsonAttribute
   include self::WithList
   include self::WithNullifyBlanks

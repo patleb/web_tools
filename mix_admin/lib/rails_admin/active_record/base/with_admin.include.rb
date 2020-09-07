@@ -1,25 +1,29 @@
 module ActiveRecord::Base::WithAdmin
   extend ActiveSupport::Concern
 
-  included do
-    class_attribute :rails_admin_blocks
-  end
-
   class_methods do
+    def rails_admin_blocks
+      @rails_admin_blocks
+    end
+
     def inherited(subclass)
       super
       if (model_name = subclass.name)
-        admin_module = 'Admin'.to_const
+        unless subclass.base_class?
+          base_admin_concern = "#{subclass.base_class.name}Admin".to_const
+          if base_admin_concern
+            subclass.base_class.rails_admin_blocks.each{ |block| subclass.rails_admin(&block) }
+          end
+        end
         admin_concern = "#{model_name}Admin".to_const
         if admin_concern
-          subclass.include admin_module if admin_module
           subclass.include admin_concern
         end
       end
     end
 
     def rails_admin(&block)
-      (self.rails_admin_blocks ||= Set.new) << block
+      (@rails_admin_blocks ||= Set.new) << block
       RailsAdmin.model(self, &block)
     end
   end
