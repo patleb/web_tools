@@ -14,7 +14,9 @@ module MixTemplate
     end
 
     def redirect_to(options = {}, response_options = {})
-      options = Rack::Utils.merge_url(options, params: { _pjax_redirect: true }) if pjax?
+      if pjax?
+        (response_options[:params] ||= {}).merge!(_pjax_redirect: true)
+      end
       super(options, response_options)
     end
 

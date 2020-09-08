@@ -49,7 +49,7 @@ module RailsAdmin::Main::WithRouting
     if !pjax? || Current.referer.blank? || RailsAdmin.path?(Current.referer)
       redirect_to(Current.referer.presence || index_path, **options)
     else
-      redirect_to(Rack::Utils.merge_url(Current.referer, params: { _pjax_reload: true }), **options)
+      redirect_to(Current.referer, params: { _pjax_reload: true }, **options)
     end
   end
 
@@ -99,7 +99,6 @@ module RailsAdmin::Main::WithRouting
   def error_notice(name = @model.label, action: @action.key)
     notice = I18n.t('admin.flash.error', name: name, action: I18n.t("admin.actions.#{action}.done")).html_safe
     Array.wrap(@object || @objects).each do |object|
-      # TODO check for associations as well (might not have been propagated)
       notice += ERROR_SEPARATOR + safe_join(object.errors.full_messages, ERROR_SEPARATOR) unless object.errors.empty?
     end
     simple_format! notice
