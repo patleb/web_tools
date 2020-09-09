@@ -4,7 +4,7 @@ class Js.PjaxConcept
 
   document_on: => [
     'pjax:scroll', Js.Pjax.CONTAINER, (event, pjax, scroll_to, hash) =>
-      wrapper = $(Page.WINDOW)
+      wrapper = $(Layout.WINDOW)
       scroll_to += wrapper.scrollTop() if hash
       wrapper.scrollTop(scroll_to)
   ]
@@ -15,6 +15,6 @@ class Js.PjaxConcept
 
   ready: =>
     if (title = $(Js.Pjax.TITLE).data('title'))?.present()
-      $(Page.TITLE).text(title)
+      $(Layout.TITLE).text(title)
     if (body_id = $(@BODY_ID).data('body_id'))?.present()
       $('body').attr(id: body_id)

@@ -18,7 +18,7 @@ extends 'layouts/mix_template/application' do
           area(:sidebar)
         end
       end,
-      div_('#js_page_window.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2', [
+      div_('#js_layout_window.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2', [
         div_('.js_menu_overlay'),
         div_('#js_pjax_container') do
           yield

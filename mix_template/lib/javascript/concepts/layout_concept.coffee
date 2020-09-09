@@ -1,4 +1,4 @@
-class Js.PageConcept
+class Js.LayoutConcept
   global: true
 
   constants: ->

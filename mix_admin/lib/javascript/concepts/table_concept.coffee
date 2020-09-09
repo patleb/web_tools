@@ -41,7 +41,7 @@ class RailsAdmin.TableConcept
 
   document_on: => [
     'click', @SCROLL_UP, =>
-      Page.animate(scrollTop: 0)
+      Layout.animate(scrollTop: 0)
 
     'click', @EXPAND_CELL, (event, target) =>
       @expand_content(target)
@@ -110,7 +110,7 @@ class RailsAdmin.TableConcept
     @sm_sticky_column.trigger('ready')
     @refresh()
 
-    Page.on 'scroll.table', _.throttle(@on_window_scroll)
+    Layout.on 'scroll.table', _.throttle(@on_window_scroll)
     $(window).on 'resize.table', _.throttle(@refresh)
     @table_wrapper.on 'scroll', _.throttle(@on_table_scroll)
 
@@ -121,7 +121,7 @@ class RailsAdmin.TableConcept
     @set_scroll_x()
 
   leave: =>
-    Page.off 'scroll.table'
+    Layout.off 'scroll.table'
     $(window).off 'resize.table'
     @table_wrapper?.off 'scroll'
     @unset_scroll_x()

@@ -34,7 +34,7 @@
   @include scrollbar
 }
 
-#js_page_window {
+#js_layout_window {
   h4 {
     font-size: 1.6rem;
   }
@@ -55,7 +55,7 @@
 }
 
 @include screen_desktop {
-  #js_page_window {
+  #js_layout_window {
     position: absolute;
     top: 0;
     bottom: 0;
