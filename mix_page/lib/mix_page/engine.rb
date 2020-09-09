@@ -14,6 +14,8 @@ module MixPage
     initializer 'mix_page.append_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.append do
         get "/:slug/#{URL_SEGMENT}/:uuid" => 'pages#show', as: :page
+        post "/#{URL_SEGMENT}/:uuid/field" => 'pages#field_create', as: :page_field
+        patch "/#{URL_SEGMENT}/:uuid/field/:id" => 'pages#field_update', as: :edit_page_field
       end
     end
   end

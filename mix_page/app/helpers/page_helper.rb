@@ -1,4 +1,6 @@
 module PageHelper
+  class InvalidVirtualPath < StandardError; end
+
   DEFAULT_TYPE = 'PageFieldText'
 
   MixPage.config.available_fields.each_key do |type|
@@ -46,6 +48,8 @@ module PageHelper
           @page.layout
         when @page.view
           @page
+        else
+          raise InvalidVirtualPath
         end
       filter = ->(field) { (!type || field.type == type) && field.key == key }
       if multi
@@ -54,7 +58,7 @@ module PageHelper
         fields.map!(&:presenter)
         list_presenter_class = type && "#{type}ListPresenter".to_const
         list_presenter_class ||= "#{fields.first.object.class.base_class.name}ListPresenter".to_const!
-        list_presenter_class.new(type: type, list: fields)
+        list_presenter_class.new(page_id: scope.id, type: type, list: fields)
       else
         field = scope.page_fields.find(&filter)
         field = scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key) if field.nil?

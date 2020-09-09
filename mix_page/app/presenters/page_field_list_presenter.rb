@@ -20,9 +20,14 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page, :@virtual_path]
       end,
       li_('.collection_actions', if: Current.user.admin?) do
         ul_ do
-          new_paths.map do |path|
+          available_types.map do |type|
             li_('.new_object') do
-              a_(href: path)
+              form_tag(page_field_path(uuid: @page.uuid), method: :post) {[
+                input_(name: "page_field[type]", type: "hidden", value: type),
+                input_(name: "page_field[page_id]", type: "hidden", value: page_id),
+                input_(name: "page_field[key]", type: "hidden", value: key),
+                button_(type: 'submit'){ "new #{type}" }
+              ]}
             end
           end
         end
@@ -38,11 +43,9 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page, :@virtual_path]
     list[i]&.object&.id
   end
 
-  def new_paths
-    available_types.map{ |type| authorized_path_for(:new, type) }.compact
-  end
-
   def available_types
-    type ? [type] : MixPage.config.available_fields.keys
+    @available_types ||= (type ? [type] : MixPage.config.available_fields.keys).select do |type|
+      authorized_path_for(:new, type)
+    end
   end
 end
