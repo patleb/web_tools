@@ -18,27 +18,27 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def field_create
     field = PageField.new(field_params)
-    return redirect_to_on_not_authorized unless authorized? :new, field
+    return on_not_authorized unless authorized? :new, field
 
     if field.save
-      return redirect_to_on_not_authorized unless authorized? :edit, field
-      redirect_to authorized_path_for(:edit, field)
+      return on_not_authorized unless authorized? :edit, field
+      on_success(field, :edit)
     else
-      redirect_to_on_save_error(field, :new)
+      on_save_error(field, :new)
     end
   end
 
   def field_update
     field = PageField.find(params[:id])
-    return redirect_to_on_not_authorized unless authorized? :edit, field
+    return on_not_authorized unless authorized? :edit, field
 
     if field.update(field_params)
-      redirect_to_on_success(field, :edit)
+      on_success(field, :edit)
     else
-      redirect_to_on_save_error(field, :edit)
+      on_save_error(field, :edit)
     end
   rescue ActiveRecord::RecordNotFound
-    redirect_to_on_field_not_found
+    on_field_not_found
   end
 
   private
@@ -50,20 +50,30 @@ class PagesController < MixPage.config.parent_controller.constantize
     @page_description = @page.description || @page_title
   end
 
-  def redirect_to_on_success(field, action)
-    redirect_to_page flash: { success: success_notice(field, action) }
+  def on_success(field, action)
+    respond_to do |format|
+      format.html { redirect_to authorized_path_for(action, field) }
+      format.json { render json: { flash: { success: success_notice(field, action) } } }
+    end
   end
 
-  def redirect_to_on_not_authorized
-    redirect_to_page flash: { error: I18n.t('admin.flash.not_allowed') }
+  def on_not_authorized
+    handle_save_error I18n.t('admin.flash.not_allowed')
   end
 
-  def redirect_to_on_save_error(field, action)
-    redirect_to_page flash: { error: error_notice(field, action) }
+  def on_save_error(field, action)
+    handle_save_error error_notice(field, action)
   end
 
-  def redirect_to_on_field_not_found
-    redirect_to_page flash: { error: I18n.t('admin.flash.object_not_found', model: 'PageField', id: params[:id]) }
+  def on_field_not_found
+    handle_save_error I18n.t('admin.flash.object_not_found', model: 'PageField', id: params[:id])
+  end
+
+  def handle_save_error(notice)
+    respond_to do |format|
+      format.html { redirect_to_page flash: { error: notice } }
+      format.json { render json: { flash: { error: notice } }, status: :not_acceptable }
+    end
   end
 
   def success_notice(field, action)
