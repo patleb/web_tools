@@ -1,6 +1,6 @@
 import '@@/mix_template/concepts/flash_concept'
+import '@@/mix_template/concepts/layout_concept'
 import '@@/mix_template/concepts/menu_concept'
-import '@@/mix_template/concepts/page_concept'
 import '@@/mix_template/concepts/pjax_concept'
 import '@@/mix_template/concepts/query_diet_concept'
 import '@@/mix_template/concepts/tag_concept'
