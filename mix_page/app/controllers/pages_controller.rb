@@ -98,7 +98,7 @@ class PagesController < MixPage.config.parent_controller.constantize
     render_404 unless @state && authorized?(:show_in_app, @state)
   end
 
-  def authorized_path_for(action, object = @state)
+  def authorized_path_for(action, object)
     current_controller = Current.controller
     Current.controller = RailsAdmin::MainController.new unless current_controller.try(:admin?)
     Current.controller.authorized_path_for(action, object.class, object)
