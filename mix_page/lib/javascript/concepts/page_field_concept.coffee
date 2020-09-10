@@ -8,7 +8,7 @@ class Js.PageFieldConcept
       items: "> #{@ITEM}"
       cursorAt: { top: 52 }
       axis: 'y'
-      update: (event, ui) =>
+      update: (event, ui) ->
         id = ui.item.data('id')
         list_previous_id = ui.item.prev().data('id')
         list_next_id = ui.item.next().data('id')
@@ -17,9 +17,10 @@ class Js.PageFieldConcept
           method: 'PATCH'
           dataType: 'json'
           data: $.form_for(page_field: { list_previous_id, list_next_id })
-          disable: @LIST
+          disable: this
           error: (xhr, status, error) =>
-            if xhr.responseJSON?
-              Flash.render('error', xhr.responseJSON.flash.error)
+            message = if xhr.responseJSON? then xhr.responseJSON.flash.error else I18n.t('error')
+            Flash.render('error', message)
+            $(this).sortable('cancel')
         )
     )
