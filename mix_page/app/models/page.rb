@@ -3,7 +3,7 @@ class Page < LibRecord
   has_userstamp
   has_list
 
-  has_many :page_fields, -> { (Current.user.admin? ? with_discarded : all).order(:position) }, dependent: :destroy
+  has_many :page_fields, -> { order(:position) }, dependent: :destroy
 
   scope :with_content, -> { includes(:page_fields) } # TODO Active Storage
 
