@@ -24,7 +24,7 @@ module ActionView::Helpers::TagHelper::TagBuilder::WithPjaxOption
   end
 
   def pjax?
-    (@view_context.instance_variable_get(:@template_object) || @view_context).pjax?
+    (@view_context.instance_variable_get(:@template_object) || @view_context).try(:pjax?)
   end
 end
 
