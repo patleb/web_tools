@@ -6,14 +6,13 @@ class PageFieldPresenter < ActionPresenter::Base[:@page, :@virtual_path]
       div_('.show_object') do
         yield
       end,
-      ul_('.member_actions', if: Current.user.admin?) {[
-        li_('.edit_object') do
-          a_(href: edit_path){ 'edit' }
-        end,
-        li_('.delete_object') do
-          a_(href: delete_path){ 'delete' }
+      ul_('.member_actions', if: member_actions.any?) do
+        member_actions.map do |action, path|
+          li_(".#{action}_object") do
+            a_(href: path){ action.to_s.humanize }
+          end
         end
-      ]}
+      end
     )
   end
 
@@ -21,11 +20,10 @@ class PageFieldPresenter < ActionPresenter::Base[:@page, :@virtual_path]
     [super(object), super(object.class.base_class)].uniq
   end
 
-  def edit_path
-    admin_path_for(:edit, object)
-  end
-
-  def delete_path
-    admin_path_for(:delete, object)
+  def member_actions
+    @member_actions ||= {
+      edit:   admin_path_for(:edit, object),
+      delete: admin_path_for(:delete, object),
+    }.compact
   end
 end
