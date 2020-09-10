@@ -10,7 +10,7 @@ module RailsAdmin
 
       def initialize(reflection, klass)
         @reflection = reflection
-        @column = klass.columns_hash[reflection.foreign_key]
+        @column = klass.columns_hash[reflection.foreign_key.to_s]
         @klass = klass
       end
 
@@ -64,7 +64,9 @@ module RailsAdmin
       end
 
       def readonly?(_object = nil)
-        (klass.all.instance_eval(&scope).readonly_value if scope.is_a? Proc) || reflection.nested?
+        @klass.readonly_attributes.include?(column.name) ||
+          (klass.all.instance_eval(&scope).readonly_value if scope.is_a? Proc) ||
+          reflection.nested?
       end
     end
   end
