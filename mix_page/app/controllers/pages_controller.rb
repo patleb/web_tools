@@ -95,11 +95,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def authorized_page!
-    render_404 unless authorized? :show_in_app
-  end
-
-  def authorized?(action, object = @state)
-    @state && (@state.kept? && @state.published? || Current.user.admin? && authorized_path_for(action, object))
+    render_404 unless @state && authorized?(:show_in_app, @state)
   end
 
   def authorized_path_for(action, object = @state)
@@ -109,6 +105,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   ensure
     Current.controller = current_controller
   end
+  alias_method :authorized?, :authorized_path_for
 
   def redirect?
     @state.slug != params[:slug]
@@ -131,8 +128,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def load_page
-    scope = Current.user.admin? ? PageTemplate.with_discarded : PageTemplate
-    @page = scope.with_content.find(@state.id)
+    @page = PageTemplate.with_content.find(@state.id)
     remove_instance_variable(:@state)
   end
 end
