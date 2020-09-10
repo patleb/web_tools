@@ -6,15 +6,10 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page, :@virtual_path]
   end
 
   def render(&block)
-    previous_id = nil
-    ul_(class: ["#{key}_presenter", dom_class]) {[
-      list.map.with_index do |presenter, i|
-        if Current.user.admin?
-          current_id = presenter.object.id
-          position = [previous_id, current_id, id_at(i + 1)]
-          previous_id = current_id
-        end
-        li_(class: presenter.dom_class, data: { position: position }) do
+    ul_('.js_page_field_list', class: ["#{key}_presenter", dom_class]) {[
+      list.map do |presenter|
+        id = presenter.object.id if Current.user.admin?
+        li_('.js_page_field_item', class: presenter.dom_class, data: { id: id }) do
           presenter.render(&block)
         end
       end,
@@ -45,7 +40,7 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page, :@virtual_path]
 
   def available_types
     @available_types ||= (type ? [type] : MixPage.config.available_fields.keys).select do |type|
-      authorized_path_for(:new, type)
+      can?(:new, type)
     end
   end
 end

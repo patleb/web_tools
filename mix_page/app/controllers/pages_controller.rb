@@ -18,10 +18,10 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def field_create
     field = PageField.new(field_params)
-    return on_not_authorized unless authorized? :new, field
+    return on_not_authorized unless can? :new, field
 
     if field.save
-      return on_not_authorized unless authorized? :edit, field
+      return on_not_authorized unless can? :edit, field
       on_success(field, :edit)
     else
       on_save_error(field, :new)
@@ -30,7 +30,7 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def field_update
     field = PageField.find(params[:id])
-    return on_not_authorized unless authorized? :edit, field
+    return on_not_authorized unless can? :edit, field
 
     if field.update(field_params)
       on_success(field, :edit)
@@ -52,7 +52,7 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def on_success(field, action)
     respond_to do |format|
-      format.html { redirect_to authorized_path_for(action, field) }
+      format.html { redirect_to admin_path_for(action, field) }
       format.json { render json: { flash: { success: success_notice(field, action) } } }
     end
   end
@@ -95,17 +95,8 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def authorized_page!
-    render_404 unless @state && authorized?(:show_in_app, @state)
+    render_404 unless @state && can?(:show_in_app, @state)
   end
-
-  def authorized_path_for(action, object)
-    current_controller = Current.controller
-    Current.controller = RailsAdmin::MainController.new unless current_controller.try(:admin?)
-    Current.controller.authorized_path_for(action, object.class, object)
-  ensure
-    Current.controller = current_controller
-  end
-  alias_method :authorized?, :authorized_path_for
 
   def redirect?
     @state.slug != params[:slug]

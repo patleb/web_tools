@@ -1,7 +1,6 @@
 class PageFieldTextPresenter < PageFieldPresenter
   def render
-    text = object.text
-    text = yield if text.blank? && block_given?
+    text = block_given? ? yield(object) : object.text
     super{ text }
   end
 end

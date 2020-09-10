@@ -5,7 +5,7 @@ module MixUser
       css = 'edit_user_link'
       if defined?(MixAdmin) && Current.user.admin?
         css << ' pjax' if controller.try(:admin?)
-        path = authorized_path_for(:edit, Current.user.class, Current.user)
+        path = admin_path_for(:edit, Current.user)
       elsif MixUser.config.devise_modules.include? :registerable
         css << ' pjax' unless controller.try(:admin?)
         path = edit_user_path
@@ -61,14 +61,6 @@ module MixUser
       if defined?(MixAdmin) && Current.user.admin?
         link_to t('mix_user.admin'), RailsAdmin.root_path
       end
-    end
-
-    def authorized_path_for(*args)
-      current_controller = Current.controller
-      Current.controller = RailsAdmin::MainController.new unless current_controller.try(:admin?)
-      Current.controller.authorized_path_for(*args)
-    ensure
-      Current.controller = current_controller
     end
   end
 end

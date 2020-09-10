@@ -22,10 +22,10 @@ class PageFieldPresenter < ActionPresenter::Base[:@page, :@virtual_path]
   end
 
   def edit_path
-    authorized_path_for(:edit, object.class, object)
+    admin_path_for(:edit, object)
   end
 
   def delete_path
-    authorized_path_for(:delete, object.class, object)
+    admin_path_for(:delete, object)
   end
 end
