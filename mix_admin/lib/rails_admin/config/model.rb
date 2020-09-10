@@ -10,7 +10,7 @@ class RailsAdmin::Config::Model
   attr_reader :model_name, :abstract_model
   attr_accessor :groups
 
-  delegate :klass, to: :abstract_model
+  delegate :klass, to: :abstract_model, allow_nil: true
 
   def initialize(model_name)
     @model_name = model_name

@@ -42,7 +42,7 @@ module RailsAdmin::Config
       # Thus, sort all blocks to excute for a resource by Proc.source_path,
       # to guarantee that blocks from 'config/initializers' evaluate before
       # blocks defined within a model class.
-      unless @deferred_blocks.empty?
+      unless @deferred_blocks.empty? || @model.klass.nil?
         @model.klass.define_attribute_methods
         @existing_blocks += @deferred_blocks
         @existing_blocks.partition{ |block| block.source_location.first.include? 'config/initializers' }

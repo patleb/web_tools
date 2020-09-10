@@ -7,7 +7,8 @@ class RailsAdmin::Config::Model::Fields::Sti < RailsAdmin::Config::Model::Fields
   end
 
   register_instance_option :pretty_value do
-    RailsAdmin.model(value).label
+    model = RailsAdmin.model(value)
+    model.abstract_model && model.label || value
   end
 
   register_instance_option :multiple? do
