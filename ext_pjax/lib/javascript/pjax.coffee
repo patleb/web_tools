@@ -211,9 +211,6 @@ class Js.Pjax
     else if @options.method == 'GET'
       @location_reload(container.url)
     else
-      $rescue(message: xhr.responseText, backtrace: [], data: {
-        status: xhr.status, method: @options.method, url: container.url
-      })
       Flash.error(I18n.t('error'))
 
   @on_success: (data, status, xhr) =>
