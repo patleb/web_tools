@@ -23,6 +23,9 @@ module MixTemplate
       wbr
     ))
     ID_CLASSES = /^([#.][A-Za-z_-][A-Za-z0-9_-]*)+$/.freeze
+    PJAX_FORM_TAGS = %w(button select textarea input).freeze
+    PJAX_LINK_CLASS = /(^| )pjax( |$)/.freeze
+    PJAX_READY_CLASS = 'pjax_ready'.freeze
 
     def html_(*args, &block)
       h_(
@@ -122,8 +125,9 @@ module MixTemplate
         options.delete(:class) if options[:class].blank?
       end
 
-      if tag == 'button' && !pjax? && !options.has_key?(:disabled)
-        options[:disabled] = true
+      if pjax? && (PJAX_FORM_TAGS.include?(tag) || options[:class]&.match?(PJAX_LINK_CLASS))
+        options[:class] = options[:class] ? options[:class].to_s << ' ' : ''
+        options[:class] << PJAX_READY_CLASS
       end
 
       sanitized = options.has_key?(:sanitize) ? options.delete(:sanitize) : false
