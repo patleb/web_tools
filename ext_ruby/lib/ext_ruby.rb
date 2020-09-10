@@ -52,7 +52,6 @@ require 'ext_ruby/process/worker'
 require 'ext_ruby/process/os'
 require 'ext_ruby/railtie' if defined? Rails
 require 'ext_ruby/rake/dsl'
-require 'ext_ruby/rational'
 require 'ext_ruby/secure_random'
 require 'ext_ruby/sh'
 require 'ext_ruby/string'

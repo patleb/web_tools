@@ -1,7 +1,7 @@
 # TODO subqueries
 # http://joshfrankel.me/blog/constructing-a-sql-select-from-subquery-in-activerecord/
 # https://pganalyze.com/blog/active-record-subqueries-rails
-# TODO ActiveRecord::RecordNotUnique or reshuffle elements (move and replace by integers)
+# TODO Re-Shuffle elements in a cron job (replace by integers from the last at the count value)
 module ActiveRecord::Base::WithList
   extend ActiveSupport::Concern
 
@@ -189,22 +189,22 @@ module ActiveRecord::Base::WithList::Position
 
   def list_between(previous_record, next_record)
     limits = [previous_record.send(list_column), next_record.send(list_column)].sort
-    self[list_column] = Rational.intermediate(*limits).to_f
+    self[list_column] = (limits[1] - limits[0]) / 2.0 + limits[0]
     yield
   end
 
   def list_after(previous_record)
-    self[list_column] = Rational.intermediate(previous_record.send(list_column), nil).to_f
+    self[list_column] = previous_record.send(list_column).floor + 1.0
     yield
   end
 
   def list_before(next_record)
-    self[list_column] = Rational.intermediate(nil, next_record.send(list_column)).to_f
+    self[list_column] = next_record.send(list_column).ceil - 1.0
     yield
   end
 
   def list_begin
-    self[list_column] = Rational::INTERMEDIATE_BEGIN.to_f
+    self[list_column] = 0.0
     yield
   end
 end

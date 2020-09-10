@@ -2,7 +2,7 @@ class CreateLibPageFields < ActiveRecord::Migration[6.0]
   def change
     create_table :lib_page_fields do |t|
       t.integer    :type,         null: false
-      t.float      :position,     null: false, limit: 53
+      t.decimal    :position,     null: false
       t.belongs_to :page,         null: false, foreign_key: { to_table: :lib_pages }
       t.integer    :key,          null: false
       t.bigint     :fieldable_id
