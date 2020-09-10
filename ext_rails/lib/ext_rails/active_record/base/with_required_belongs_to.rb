@@ -5,7 +5,7 @@ module ActiveRecord::Base::WithRequiredBelongsTo
     def belongs_to(name, *, **options)
       unless options.has_key?(:optional) || options.has_key?(:required) || belongs_to_required_by_default
         options[:optional] = true
-        validates "#{name}_id", presence: true
+        validates options[:foreign_key] || "#{name}_id", presence: true
       end
       super
     end
