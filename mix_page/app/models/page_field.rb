@@ -10,4 +10,10 @@ class PageField < LibRecord
   enum type: MixPage.config.available_fields
   enum key: MixPage.config.available_field_keys
   enum fieldable_type: MixPage.config.available_fieldables
+
+  attr_readonly *%i(
+    type
+    page_id
+    key
+  )
 end

@@ -13,6 +13,7 @@ class Page < LibRecord
   }
 
   attr_readonly *%i(
+    type
     uuid
     view
     page_templates_count
