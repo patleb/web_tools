@@ -20,7 +20,7 @@ class User < MixUser.config.parent_model.constantize
   validates :role, presence: true
   validates :role, exclusion: { in: ['null'] }
 
-  def self.visible_role_enum
+  def self.enum_roles
     Current.user.visible_roles
   end
 

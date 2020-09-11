@@ -7,11 +7,12 @@ module RailsAdmin::Config::Model::Fields::Enum::Formatter
     end
 
     register_instance_option :enum_method, memoize: true do
-      method_name = "#{name}_enum"
+      plural_name = name.to_s.pluralize
+      method_name = "enum_#{plural_name}"
       if klass.respond_to?(method_name) || object.respond_to?(method_name)
         method_name
       else
-        name
+        plural_name
       end
     end
 
