@@ -14,8 +14,4 @@ class User::Null < ActiveType::NullObject
   def has?(_record)
     false
   end
-
-  def can?(action, record)
-    # TODO
-  end
 end

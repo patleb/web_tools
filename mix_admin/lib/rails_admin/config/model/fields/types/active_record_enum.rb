@@ -3,16 +3,25 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
     :enum
   end
 
+  register_instance_option :visible_enum_method, memoize: true do
+    method_name = "visible_#{name}_enum"
+    if klass.respond_to?(method_name) || object.respond_to?(method_name)
+      method_name
+    else
+      name.to_s.pluralize
+    end
+  end
+
   register_instance_option :enum do
-    klass.defined_enums[name.to_s]
+    if klass.respond_to? visible_enum_method
+      klass.send(visible_enum_method)
+    else
+      object.send(visible_enum_method)
+    end
   end
 
   register_instance_option :pretty_value do
-    if object.respond_to? "#{enum_method}_i18n"
-      object.send("#{enum_method}_i18n")
-    else
-      object.send(name)
-    end
+    klass.human_attribute_name("#{name}.#{value}", default: value)
   end
 
   register_instance_option :multiple? do

@@ -19,7 +19,6 @@ module UserAdmin
           visible{ Current.user.has?(object) || object.new_record? }
         end
         field :role do
-          enum{ Current.user.visible_roles_i18n }
           readonly{ Current.user.has? object }
         end
       end

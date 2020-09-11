@@ -18,6 +18,11 @@ class User < MixUser.config.parent_model.constantize
   after_discard :scramble_email_and_password
 
   validates :role, presence: true
+  validates :role, exclusion: { in: ['null'] }
+
+  def self.visible_role_enum
+    Current.user.visible_roles
+  end
 
   def self.admin_created?
     admin.exists?
@@ -29,10 +34,6 @@ class User < MixUser.config.parent_model.constantize
 
   def user?
     role_i >= self.class.roles[:user]
-  end
-
-  def visible_roles_i18n
-    visible_roles.map{ |role, i| [self.class.human_attribute_name("role.#{role}"), i] }.to_h
   end
 
   def visible_roles
@@ -49,10 +50,6 @@ class User < MixUser.config.parent_model.constantize
 
   def confirmed?
     !!confirmed_at
-  end
-
-  def role_i18n
-    self.class.human_attribute_name("role.#{role}")
   end
 
   def role_i

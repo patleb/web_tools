@@ -7,11 +7,20 @@ module RailsAdmin::Config::Model::Fields::Enum::Formatter
     end
 
     register_instance_option :enum_method, memoize: true do
-      klass.respond_to?("enum_#{name}") || object.respond_to?("enum_#{name}") ? "enum_#{name}" : name
+      method_name = "#{name}_enum"
+      if klass.respond_to?(method_name) || object.respond_to?(method_name)
+        method_name
+      else
+        name
+      end
     end
 
     register_instance_option :enum do
-      klass.respond_to?(enum_method) ? klass.send(enum_method) : object.send(enum_method)
+      if klass.respond_to? enum_method
+        klass.send(enum_method)
+      else
+        object.send(enum_method)
+      end
     end
   end
 
