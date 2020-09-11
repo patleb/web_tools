@@ -1,6 +1,6 @@
 RailsAdmin::Config::Model::Fields.register_factory do |section, property, fields|
   association = section.abstract_model.associations.find do |a|
-    a.foreign_key == property.name && [:belongs_to, :has_and_belongs_to_many].include?(a.type)
+    [a.foreign_key, a.name].include?(property.name) && [:belongs_to, :has_and_belongs_to_many].include?(a.type)
   end
   if association
     type = "#{association.polymorphic? ? :polymorphic : association.type}_association"

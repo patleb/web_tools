@@ -62,26 +62,14 @@ module RailsAdmin::Config::Model::Fields
   def self.factory(section)
     require_rel 'fields/factories'
 
-    fields = []
+    raise "#{section.model.model_name} isn't visible" if section.abstract_model.nil?
     # Load fields for all properties
-
-    if section.abstract_model.nil?
-      raise "#{section.model.model_name} isn't visible"
-    end
-    section.abstract_model.columns.each do |column|
+    fields = []
+    [section.abstract_model.columns, section.abstract_model.associations].flatten.each do |property|
       # Unless a previous factory has already loaded current field as well
-      next if fields.find{ |f| f.name == column.name }
+      next if fields.find{ |f| f.name == property.name }
       # Loop through factories until one returns true
-      @@factories.find{ |factory| factory.call(section, column, fields) }
-    end
-    # Load fields for all associations (relations)
-    section.abstract_model.associations.each do |association|
-      # :belongs_to are created by factory for belongs_to fields
-      next if [:belongs_to, :has_and_belongs_to_many].include?(association.type)
-      # Unless a previous factory has already loaded current field as well
-      next if fields.find{ |f| f.name == association.name }
-      # Loop through factories until one returns true
-      @@factories.find{ |factory| factory.call(section, association, fields) }
+      @@factories.find{ |factory| factory.call(section, property, fields) }
     end
     fields
   end
