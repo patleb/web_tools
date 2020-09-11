@@ -5,25 +5,25 @@ module PageHelper
 
   MixPage.config.available_fields.each_key do |type|
     if type.start_with? 'PageField'
-      name = type.sub(/^PageField/, 'Page').full_underscore
+      field = type.delete_prefix('PageField').full_underscore
     else
       next
     end
 
-    define_method "layout_#{name}_presenters" do |key, **options|
-      layout_presenters(key, type, **options)
+    define_method "layout_#{field}_presenters" do |name, **options|
+      layout_presenters(name, type, **options)
     end
 
-    define_method "layout_#{name}_presenter" do |key, **options|
-      layout_presenter(key, type, **options)
+    define_method "layout_#{field}_presenter" do |name, **options|
+      layout_presenter(name, type, **options)
     end
 
-    define_method "page_#{name}_presenters" do |key, **options|
-      page_presenters(key, type, **options)
+    define_method "page_#{field}_presenters" do |name, **options|
+      page_presenters(name, type, **options)
     end
 
-    define_method "page_#{name}_presenter" do |key, **options|
-      page_presenter(key, type, **options)
+    define_method "page_#{field}_presenter" do |name, **options|
+      page_presenter(name, type, **options)
     end
   end
 
@@ -39,8 +39,8 @@ module PageHelper
     page_presenter(*args, **options, multi: true)
   end
 
-  def page_presenter(key, type = nil, layout: false, multi: false)
-    (((((@memoized ||= {})[:page_presenter] ||= {})[key] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
+  def page_presenter(name, type = nil, layout: false, multi: false)
+    (((((@memoized ||= {})[:page_presenter] ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
       scope = @page.layout if layout
       scope ||=
         case @virtual_path
@@ -51,17 +51,17 @@ module PageHelper
         else
           raise InvalidVirtualPath
         end
-      filter = ->(field) { (!type || field.type == type) && field.key == key }
+      filter = ->(field) { (!type || field.type == type) && field.name == name }
       if multi
         fields = scope.page_fields.select(&filter)
-        fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key)] if fields.empty?
+        fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, name: name)] if fields.empty?
         fields.map!(&:presenter)
         list_presenter_class = type && "#{type}ListPresenter".to_const
         list_presenter_class ||= "#{fields.first.object.class.base_class.name}ListPresenter".to_const!
         list_presenter_class.new(page_id: scope.id, type: type, list: fields)
       else
         field = scope.page_fields.find(&filter)
-        field = scope.page_fields.create!(type: type || DEFAULT_TYPE, key: key) if field.nil?
+        field = scope.page_fields.create!(type: type || DEFAULT_TYPE, name: name) if field.nil?
         field.presenter
       end
     end

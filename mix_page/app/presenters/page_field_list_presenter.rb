@@ -1,12 +1,12 @@
 class PageFieldListPresenter < ActionPresenter::Base[:@page, :@virtual_path]
-  delegate :key, to: 'list.first.object'
+  delegate :name, to: 'list.first.object'
 
   def after_initialize
     list.each{ |presenter| presenter.list = self }
   end
 
   def render(&block)
-    ul_(class: [('js_page_field_list' if editable_items.any?), "#{key}_presenter", dom_class]) {[
+    ul_(class: [('js_page_field_list' if editable_items.any?), "#{name}_presenter", dom_class]) {[
       list.map do |presenter|
         id = presenter.object.id
         li_('.js_page_field_item', class: presenter.dom_class, data: { id: (id if editable_items.has_key? id) }) do
@@ -19,8 +19,8 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page, :@virtual_path]
             li_(".new_#{type.full_underscore}") do
               form_tag(page_field_path(uuid: @page.uuid), method: :post) {[
                 input_(name: "page_field[type]", type: "hidden", value: type),
+                input_(name: "page_field[name]", type: "hidden", value: name),
                 input_(name: "page_field[page_id]", type: "hidden", value: page_id),
-                input_(name: "page_field[key]", type: "hidden", value: key),
                 button_(type: 'submit'){ "New #{type}" }
               ]}
             end

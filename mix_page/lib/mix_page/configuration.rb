@@ -5,7 +5,7 @@ module MixPage
     attr_writer :available_layouts
     attr_writer :available_templates
     attr_writer :available_fields
-    attr_writer :available_field_keys
+    attr_writer :available_field_names
     attr_writer :available_fieldables
 
     def parent_controller
@@ -13,8 +13,8 @@ module MixPage
     end
 
     def reserved_words
-      @reserved_words ||= Set.new(%w(
-        new edit index session login logout users admin assets packs stylesheets javascripts images
+      @reserved_words ||= Set.new([MixPage::URL_SEGMENT, RailsAdmin.root_path.split('/').reject(&:blank?).first]).merge(%w(
+        admin users javascript_rescues assets packs stylesheets javascripts images new edit index session login logout
       ))
     end
 
@@ -25,9 +25,7 @@ module MixPage
     end
 
     def available_templates
-      @available_templates ||= {
-        'pages/home' => 0,
-      }
+      @available_templates ||= {}
     end
 
     def available_fields
@@ -36,8 +34,8 @@ module MixPage
       }
     end
 
-    def available_field_keys
-      @available_field_keys ||= {}
+    def available_field_names
+      @available_field_names ||= {}
     end
 
     def available_fieldables

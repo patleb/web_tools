@@ -8,12 +8,12 @@ class PageField < LibRecord
   belongs_to :fieldable, optional: true, polymorphic: true
 
   enum type: MixPage.config.available_fields
-  enum key: MixPage.config.available_field_keys
+  enum name: MixPage.config.available_field_names
   enum fieldable_type: MixPage.config.available_fieldables
 
   attr_readonly *%i(
     type
+    name
     page_id
-    key
   )
 end

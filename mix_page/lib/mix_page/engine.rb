@@ -6,6 +6,14 @@ module MixPage
   URL_SEGMENT = 'page'.freeze
   MULTI_VIEW = '_multi'.freeze
 
+  def self.js_routes
+    @js_routes ||= {
+      show: "/__SLUG__/#{URL_SEGMENT}/__UUID__",
+      field_create: "/#{URL_SEGMENT}/__UUID__/field",
+      field_update: "/#{URL_SEGMENT}/__UUID__/field/__ID__",
+    }
+  end
+
   class Engine < ::Rails::Engine
     initializer 'mix_page.append_migrations' do |app|
       append_migrations(app)
