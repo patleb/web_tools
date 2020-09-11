@@ -17,8 +17,7 @@ class User < MixUser.config.parent_model.constantize
 
   after_discard :scramble_email_and_password
 
-  validates :role, presence: true
-  validates :role, exclusion: { in: ['null'] }
+  validates :role, presence: true, exclusion: { in: ['null'] }
 
   def self.enum_roles
     Current.user.visible_roles
