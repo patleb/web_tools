@@ -11,6 +11,7 @@ class Js.PjaxConcept
 
   ready_once: ->
     Js.Pjax.initialize()
+    $('body').addClass('pjax_ready')
 
   ready: =>
     if (title = $(Js.Pjax.TITLE).data('title'))?.present()
