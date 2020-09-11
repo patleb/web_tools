@@ -13,18 +13,18 @@ h_(
   end,
   main_section.visible_groups.map do |group|
     next if (fields = group.visible_fields).empty?
-    next if (values = fields.map{ |f| f.formatted_value.presence }).compact.empty? && RailsAdmin.config.compact_show_view
+    next if (values = fields.map(&:formatted_value)).none?(&:present?) && RailsAdmin.config.compact_show_view
     div_('.fieldset', [
       h4_{ group.label },
       (p_{ group.help } if group.help),
       dl_ do
         fields.map.with_index do |field, index|
-          h_if !values[index].nil? || !RailsAdmin.config.compact_show_view do[
+          h_unless(values[index].blank? && RailsAdmin.config.compact_show_view) {[
             dt_(class: field.css_classes(:term)) do
               span_{ field.label }
             end,
             dd_(class: field.css_classes(:definition)){ field.pretty_value_or_blank }
-          ]end
+          ]}
         end
       end
     ])
