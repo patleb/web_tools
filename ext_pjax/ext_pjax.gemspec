@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'ext_bootstrap', version
+  # TODO https://htmx.org/docs/
 end
