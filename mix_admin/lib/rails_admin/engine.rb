@@ -8,7 +8,6 @@ module RailsAdmin
   class Engine < Rails::Engine
     isolate_namespace RailsAdmin
 
-    require 'rails_admin-i18n'
     require 'kaminari'
     require 'mix_global'
     require 'mix_user'
