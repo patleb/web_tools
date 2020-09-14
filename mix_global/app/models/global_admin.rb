@@ -3,7 +3,7 @@ module GlobalAdmin
 
   included do
     rails_admin do
-      navigation_label I18n.t('admin.navigation.system')
+      navigation_label_i18n_key :system
       navigation_weight 999
 
       configure :id do

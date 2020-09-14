@@ -1,4 +1,7 @@
 fr:
+  adminrecord:
+    navigation_labels:
+      system: Système
   admin:
     js:
       :true: "Vrai"
@@ -10,8 +13,6 @@ fr:
     export:
       csv:
         encoding_to_help: "Choisissez l'encodage de sortie."
-    navigation:
-      system: Système
     misc:
       new: Nouveau(elle)
       discarded: REJETÉ
