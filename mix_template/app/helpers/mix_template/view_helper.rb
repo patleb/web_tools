@@ -97,7 +97,7 @@ module MixTemplate
     end
 
     def js_i18n(*scopes)
-      (@_js_i18n ||= {})["#{Current.locale}_#{scopes.join('_')}"] ||= scopes.each_with_object({}) do |scope, all|
+      (@@js_i18n ||= {})["#{Current.locale}_#{scopes.join('_')}"] ||= scopes.each_with_object({}) do |scope, all|
         all.merge! I18n.t('js', scope: scope)
       end
     end
@@ -116,8 +116,8 @@ module MixTemplate
     end
 
     def back_to_site_path
-      return @_back_to_site_path if defined? @_back_to_site_path
-      @_back_to_site_path = main_app.try(:root_path) || '/'
+      return @@back_to_site_path if defined? @@back_to_site_path
+      @@back_to_site_path = main_app.try(:root_path) || '/'
     end
 
     def locale_select
