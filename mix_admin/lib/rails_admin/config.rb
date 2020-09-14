@@ -100,7 +100,6 @@ module RailsAdmin
 
       # accepts a hash of static links to be shown below the main navigation
       attr_accessor :navigation_static_links
-      attr_accessor :navigation_static_label
 
       # use a specific model as root path
       # ex.: config.root_model_name = 'module_name-model_name'
@@ -171,7 +170,6 @@ module RailsAdmin
         @main_app_name = proc{ Rails.application.title }
         @models = {}
         @navigation_static_links = {}
-        @navigation_static_label = nil
         @parent_controller = '::ActionController::Base'
         @forgery_protection_settings = { with: :exception, prepend: true }
         @root_model_name = defined?(MixUser) ? 'User' : nil

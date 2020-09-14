@@ -7,15 +7,20 @@ class RailsAdmin::Config::Model
   include RailsAdmin::Config::Configurable
   include RailsAdmin::Config::Hideable
 
-  attr_reader :model_name, :abstract_model
+  attr_reader :i18n_key, :model_name, :abstract_model
   attr_accessor :groups
 
   delegate :klass, to: :abstract_model, allow_nil: true
 
   def initialize(model_name)
+    @i18n_key = model_name.underscore
     @model_name = model_name
     @abstract_model = RailsAdmin::AbstractModel.all[model_name]
     @groups = [Fields::Group.new(base, :default).tap{ |g| g.label{ I18n.translate('admin.form.basic_info') } }]
+  end
+
+  def i18n_scope
+    :adminrecord
   end
 
   def object_label
@@ -23,8 +28,12 @@ class RailsAdmin::Config::Model
       object.send(object_label_method).presence \
       || (object.try("#{object_label_method}_was").presence if object.try("#{object_label_method}_changed?")) \
       || object.send(:rails_admin_default_object_label_method)
-    label = "#{label} [REMOVED]" if object&.discarded?
+    label = "#{label} [#{I18n.t('admin.misc.discarded')}]" if object&.discarded?
     label
+  end
+
+  def pluralize(count)
+    count == 1 ? label : label_plural
   end
 
   def navigation_weight
@@ -62,27 +71,24 @@ class RailsAdmin::Config::Model
     abstract_model.pretty_name(count: Float::INFINITY, default: label.pluralize(Current.locale))
   end
 
-  def pluralize(count)
-    count == 1 ? label : label_plural
-  end
-
   register_instance_option :weight, memoize: true do
     0
   end
 
-  # parent node in navigation/breadcrumb
-  register_instance_option :parent, memoize: true do
+  register_instance_option :navigation_parent, memoize: true do
     parent_class = klass.superclass
     if parent_class.respond_to? :extended_record_base_class
       parent_class.extended_record_base_class.to_s
+    elsif parent_class.try(:abstract_class?) || parent_class.in?([Object BasicObject])
+      nil
     else
-      parent_class.to_s.in?(%w(Object BasicObject ActiveRecord::Base)) ? nil : parent_class.to_s
+      parent_class.to_s
     end
   end
 
   register_instance_option :navigation_label, memoize: :locale do
     if (parent_module = klass.module_parent) != Object
-      parent_module.name
+      I18n.t(parent_module.name.underscore, scope: [i18n_scope, :modules], default: parent_module.name.humanize)
     end
   end
 
@@ -91,19 +97,19 @@ class RailsAdmin::Config::Model
   end
 
   register_instance_option :save_label, memoize: :locale do
-    I18n.t("admin.form.save")
+    I18n.t("#{i18n_key}.save", scope: [i18n_scope, :forms], default: I18n.t("admin.form.save"))
   end
 
   register_instance_option :save_and_add_another_label, memoize: :locale do
-    I18n.t("admin.form.save_and_add_another")
+    I18n.t("#{i18n_key}.save_and_add_another", scope: [i18n_scope, :forms], default: I18n.t("admin.form.save_and_add_another"))
   end
 
   register_instance_option :save_and_edit_label, memoize: :locale do
-    I18n.t("admin.form.save_and_edit")
+    I18n.t("#{i18n_key}.save_and_edit", scope: [i18n_scope, :forms], default: I18n.t("admin.form.save_and_edit"))
   end
 
   register_instance_option :cancel_label, memoize: :locale do
-    I18n.t("admin.form.cancel")
+    I18n.t("#{i18n_key}.cancel", scope: [i18n_scope, :forms], default: I18n.t("admin.form.cancel"))
   end
 
   # Act as a proxy for the base section configuration that actually

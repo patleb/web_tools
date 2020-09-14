@@ -8,7 +8,7 @@ append :html_data, [
 
 append :sidebar, [
   ul_('.nav.nav-pills.nav-stacked', [
-    li_('.dropdown-header', t('mix_template.navigation')),
+    li_('.dropdown-header', t('template.navigation')),
     li_(login_link),
     li_(edit_user_link),
     li_(locale_select),

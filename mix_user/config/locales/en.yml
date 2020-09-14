@@ -1,5 +1,5 @@
 en:
-  mix_user:
+  user:
     log_out: Log out
     admin: Admin
   activerecord:

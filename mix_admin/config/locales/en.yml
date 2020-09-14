@@ -58,6 +58,7 @@ en:
       next: "Next &raquo;"
       truncate: "…"
     misc:
+      discarded: REMOVED
       search: "Search"
       remote: "Start typing..."
       filter: "Filter"
@@ -73,8 +74,8 @@ en:
       clear_all: "Clear all"
       up: "Up"
       down: "Down"
-      navigation: "Navigation"
-      navigation_static_label: "Links"
+      navigation_label: "Navigation"
+      static_navigation_label: "Links"
       log_out: "Log out"
       ago: "ago"
       more: "Plus %{count} more %{models_name}"

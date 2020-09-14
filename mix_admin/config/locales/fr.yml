@@ -12,6 +12,8 @@ fr:
         encoding_to_help: "Choisissez l'encodage de sortie."
     navigation:
       system: Système
+    misc:
+      discarded: REJETÉ
     actions:
       new:
         title: "Nouveau(elle) %{model_label}"

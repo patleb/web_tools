@@ -5,7 +5,7 @@ extends 'layouts/mix_template/application' do
         div_ '.container-fluid' do
           div_('.navbar-header', [
             button_('.js_menu_toggle.navbar-toggle.collapsed', type: 'button', data: { toggle: 'collapse', target: '#navigation' }) {[
-              span_('.sr-only', t('mix_template.toggle_navigation')),
+              span_('.sr-only', t('template.toggle_navigation')),
               span_('.icon-bar', times: 3)
             ]},
             a_('.navbar-brand', @app_name, href: @root_path, class: ('pjax' if @root_pjax)),

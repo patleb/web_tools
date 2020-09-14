@@ -93,7 +93,7 @@ module MixTemplate
     end
 
     def browser_upgrade_html
-      "<!--[if lt IE 11]><p class='browser_upgrade'>#{t('mix_template.browser_upgrade_html')}</p><![endif]-->".html_safe
+      "<!--[if lt IE 11]><p class='browser_upgrade'>#{t('template.browser_upgrade_html')}</p><![endif]-->".html_safe
     end
 
     def js_i18n(key = 'application.js')
@@ -107,9 +107,9 @@ module MixTemplate
     def back_to_site_link(target_blank = true)
       return unless back_to_site_path.present?
       if target_blank
-        a_ [t('mix_template.back_to_site'), i_('.fa.fa-external-link.sidebar_external')], href: back_to_site_path, target: '_blank'
+        a_ [t('template.back_to_site'), i_('.fa.fa-external-link.sidebar_external')], href: back_to_site_path, target: '_blank'
       else
-        link_to t('mix_template.back_to_site'), back_to_site_path
+        link_to t('template.back_to_site'), back_to_site_path
       end
     end
 

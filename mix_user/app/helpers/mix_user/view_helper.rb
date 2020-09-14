@@ -25,7 +25,7 @@ module MixUser
     def logout_link
       return unless Current.user_logged_in?
       a_ href: logout_path, data: { method: logout_method } do
-        span_ '.label.label-danger', t('mix_user.log_out')
+        span_ '.label.label-danger', t('user.log_out')
       end
     end
 
@@ -59,7 +59,7 @@ module MixUser
 
     def admin_link
       if defined?(MixAdmin) && Current.user.admin?
-        link_to t('mix_user.admin'), RailsAdmin.root_path
+        link_to t('user.admin'), RailsAdmin.root_path
       end
     end
   end

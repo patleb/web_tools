@@ -22,7 +22,7 @@ module ActionController
         end
         format.any do
           if params[:file]
-            output = "#{t('template.408.title')}: #{t('template.408.problem')} #{t('template.408.solution')}"
+            output = "#{t('rescue.408.title')}: #{t('rescue.408.problem')} #{t('rescue.408.solution')}"
             send_data output, type: 'text/plain', filename: 'request_timeout.txt'
           else
             head :request_timeout
@@ -49,11 +49,11 @@ module ActionController
 
     private
 
-    def template_status_html(status, title: t("template.#{status}.title"), problem: t("template.#{status}.problem"), solution: t("template.#{status}.solution"))
+    def template_status_html(status, title: t("rescue.#{status}.title"), problem: t("rescue.#{status}.problem"), solution: t("rescue.#{status}.solution"))
       helpers.instance_eval do
         html_ {[
           head_ {[
-            title_("#{title} (#{t("template.#{status}.status").presence || status})"),
+            title_("#{title} (#{t("rescue.#{status}.status").presence || status})"),
             meta_(name: 'viewport', content: 'width=device-width,initial-scale=1'),
             template_status_css
           ]},

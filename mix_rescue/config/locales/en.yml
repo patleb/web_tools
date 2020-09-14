@@ -1,5 +1,5 @@
 en:
-  template:
+  rescue:
     default: &template_default
       status: ""
       title: ""

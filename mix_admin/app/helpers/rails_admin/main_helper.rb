@@ -22,12 +22,12 @@ module RailsAdmin
     def main_navigation
       nodes_stack = RailsAdmin.config.visible_models.sort_by(&:navigation_weight)
       model_names = nodes_stack.map{ |m| m.abstract_model.model_name }
-      group_nodes = nodes_stack.group_by(&:parent)
+      group_nodes = nodes_stack.group_by(&:navigation_parent)
 
       nodes_stack.group_by(&:navigation_label).html_map do |navigation_label, nodes|
-        first_nodes = nodes.select{ |n| n.parent.nil? || model_names.exclude?(n.parent) }
+        first_nodes = nodes.select{ |n| n.navigation_parent.nil? || model_names.exclude?(n.navigation_parent) }
         li_stack = main_navigation_stack group_nodes, first_nodes
-        navigation_group li_stack, (navigation_label || t('admin.misc.navigation'))
+        navigation_group li_stack, (navigation_label || t('admin.misc.navigation_label'))
       end
     end
 
@@ -52,7 +52,7 @@ module RailsAdmin
 
     def static_navigation
       li_stack = static_navigation_stack
-      navigation_group li_stack, (RailsAdmin.config.navigation_static_label || t('admin.misc.navigation_static_label'))
+      navigation_group li_stack, t('admin.misc.static_navigation_label')
     end
 
     def static_navigation_stack
