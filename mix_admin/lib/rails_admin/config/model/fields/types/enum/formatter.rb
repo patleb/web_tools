@@ -17,11 +17,15 @@ module RailsAdmin::Config::Model::Fields::Enum::Formatter
     end
 
     register_instance_option :enum do
-      if klass.respond_to? enum_method
-        klass.send(enum_method)
-      else
-        object.send(enum_method)
-      end
+      enum_values
+    end
+  end
+
+  def enum_values
+    if klass.respond_to? enum_method
+      klass.send(enum_method)
+    else
+      object.send(enum_method)
     end
   end
 

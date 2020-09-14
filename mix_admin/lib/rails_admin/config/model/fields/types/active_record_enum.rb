@@ -3,6 +3,17 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
     :enum
   end
 
+  register_instance_option :enum do
+    values = enum_values
+    if values.is_a? Array
+      values.map{ |value| [klass.human_attribute_name("#{name}.#{value}", default: value), value] }
+    else
+      values.each_with_object([]) do |(key, value), all|
+        all << [klass.human_attribute_name("#{name}.#{key}", default: key), value]
+      end
+    end
+  end
+
   register_instance_option :pretty_value do
     klass.human_attribute_name("#{name}.#{value}", default: value)
   end
