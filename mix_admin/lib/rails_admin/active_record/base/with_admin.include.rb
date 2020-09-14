@@ -28,8 +28,8 @@ module ActiveRecord::Base::WithAdmin
     end
   end
 
-  def rails_admin_default_object_label_method
-    new_record? ? "new #{self.class}" : "#{self.class} ##{id}"
+  def rails_admin_object_label
+    new_record? ? "#{I18n.t('admin.misc.new')} #{model_name.human}" : "#{model_name.human} ##{id}"
   end
 
   def safe_send(value)

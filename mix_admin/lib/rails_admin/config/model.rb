@@ -27,7 +27,7 @@ class RailsAdmin::Config::Model
     label =
       object.send(object_label_method).presence \
       || (object.try("#{object_label_method}_was").presence if object.try("#{object_label_method}_changed?")) \
-      || object.send(:rails_admin_default_object_label_method)
+      || object.send(:rails_admin_object_label)
     label = "#{label} [#{I18n.t('admin.misc.discarded')}]" if object&.discarded?
     label
   end
@@ -60,7 +60,7 @@ class RailsAdmin::Config::Model
   # any methods that may have been added to the label_methods array via Configuration.
   # Failing all of these, it'll return the class name followed by the model's id.
   register_instance_option :object_label_method, memoize: true do
-    RailsAdmin.config.label_methods.find{ |method| klass.method_defined? method } || :rails_admin_default_object_label_method
+    RailsAdmin.config.label_methods.find{ |method| klass.method_defined? method } || :rails_admin_object_label
   end
 
   register_instance_option :label, memoize: :locale do
@@ -79,7 +79,7 @@ class RailsAdmin::Config::Model
     parent_class = klass.superclass
     if parent_class.respond_to? :extended_record_base_class
       parent_class.extended_record_base_class.to_s
-    elsif parent_class.try(:abstract_class?) || parent_class.in?([Object BasicObject])
+    elsif parent_class.try(:abstract_class?) || parent_class.in?([Object, BasicObject])
       nil
     else
       parent_class.to_s

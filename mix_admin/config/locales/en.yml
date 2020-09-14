@@ -58,6 +58,7 @@ en:
       next: "Next &raquo;"
       truncate: "…"
     misc:
+      new: New
       discarded: REMOVED
       search: "Search"
       remote: "Start typing..."

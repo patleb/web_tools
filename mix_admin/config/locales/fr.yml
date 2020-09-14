@@ -13,6 +13,7 @@ fr:
     navigation:
       system: Système
     misc:
+      new: Nouveau(elle)
       discarded: REJETÉ
     actions:
       new:
