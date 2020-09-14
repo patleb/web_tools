@@ -3,7 +3,7 @@ append :fonts, [
 ]
 
 append :html_data, [
-  div_('#js_i18n_translations', data: { translations: js_i18n }),
+  div_('#js_i18n_translations', data: { translations: js_i18n(:application, :template, :pjax) }),
 ]
 
 append :sidebar, [

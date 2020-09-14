@@ -7,7 +7,7 @@ append :metas do
 end
 
 append :html_data, [
-  div_('#js_i18n_translations', data: { translations: js_i18n('admin.js') }),
+  div_('#js_i18n_translations', data: { translations: js_i18n(:admin, :template, :pjax) }),
   div_('#js_routes_paths', data: { paths: RailsAdmin.js_routes }),
 ]
 

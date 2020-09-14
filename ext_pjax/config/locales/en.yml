@@ -1,5 +1,5 @@
 en:
-  application:
+  pjax:
     js:
       confirmation: Are you sure?
       error: Error

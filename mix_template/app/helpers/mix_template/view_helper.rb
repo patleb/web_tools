@@ -96,8 +96,10 @@ module MixTemplate
       "<!--[if lt IE 11]><p class='browser_upgrade'>#{t('template.browser_upgrade_html')}</p><![endif]-->".html_safe
     end
 
-    def js_i18n(key = 'application.js')
-      (@_js_i18n ||= {})["#{Current.locale}_#{key}"] ||= I18n.t(key)
+    def js_i18n(*scopes)
+      (@_js_i18n ||= {})["#{Current.locale}_#{scopes.join('_')}"] ||= scopes.each_with_object({}) do |scope, all|
+        all.merge! I18n.t('js', scope: scope)
+      end
     end
 
     def render_pjax

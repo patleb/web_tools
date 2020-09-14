@@ -1,9 +1,8 @@
 en:
-  application:
+  template:
     js:
       :true: "True"
       :false: "False"
-  template:
     browser_upgrade_html: You are using an <strong>outdated</strong> browser. Please
       <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.
     navigation: Navigation
