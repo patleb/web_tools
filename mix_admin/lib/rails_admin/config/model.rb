@@ -68,7 +68,11 @@ class RailsAdmin::Config::Model
   end
 
   register_instance_option :label_plural, memoize: :locale do
-    abstract_model.pretty_name(count: Float::INFINITY, default: label.pluralize(Current.locale))
+    if label != (label_plural = abstract_model.pretty_name(count: Float::INFINITY, default: label))
+      label_plural
+    else
+      label.pluralize(Current.locale)
+    end
   end
 
   register_instance_option :navigation_weight, memoize: true do
