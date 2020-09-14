@@ -2,7 +2,7 @@ class RailsAdmin::Config::Actions::Base
   include RailsAdmin::Config::Proxyable
   include RailsAdmin::Config::Configurable
 
-  register_instance_option :weight, memoize: true do
+  register_instance_option :link_weight, memoize: true do
     0
   end
 
@@ -13,6 +13,10 @@ class RailsAdmin::Config::Actions::Base
   # User should override only custom_key (action name and route fragment change, allows for duplicate actions)
   register_instance_option :custom_key, memoize: true do
     key
+  end
+
+  def weight
+    link_weight
   end
 
   # Should the action be visible

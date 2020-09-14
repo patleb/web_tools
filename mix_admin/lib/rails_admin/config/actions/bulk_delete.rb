@@ -1,5 +1,5 @@
 class RailsAdmin::Config::Actions::BulkDelete < RailsAdmin::Config::Actions::Base
-  register_instance_option :weight, memoize: true do
+  register_instance_option :link_weight, memoize: true do
     100
   end
 

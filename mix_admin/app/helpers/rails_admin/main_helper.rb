@@ -20,7 +20,7 @@ module RailsAdmin
     end
 
     def main_navigation
-      nodes_stack = RailsAdmin.config.visible_models.sort_by(&:navigation_weight)
+      nodes_stack = RailsAdmin.config.visible_models.stable_sort_by(&:weight)
       model_names = nodes_stack.map{ |m| m.abstract_model.model_name }
       group_nodes = nodes_stack.group_by(&:navigation_parent)
 

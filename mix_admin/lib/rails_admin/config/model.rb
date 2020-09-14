@@ -36,8 +36,8 @@ class RailsAdmin::Config::Model
     count == 1 ? label : label_plural
   end
 
-  def navigation_weight
-    "#{(weight + 32768).to_s}#{label.downcase}"
+  def weight
+    "#{(navigation_weight + 32768).to_s}#{label.downcase}"
   end
 
   register_instance_option :visible? do
@@ -71,7 +71,7 @@ class RailsAdmin::Config::Model
     abstract_model.pretty_name(count: Float::INFINITY, default: label.pluralize(Current.locale))
   end
 
-  register_instance_option :weight, memoize: true do
+  register_instance_option :navigation_weight, memoize: true do
     0
   end
 
@@ -87,13 +87,21 @@ class RailsAdmin::Config::Model
   end
 
   register_instance_option :navigation_label, memoize: :locale do
-    I18n.t("#{i18n_key}.navigation_label", scope: [i18n_scope, :navigation_labels], default:
-      if (parent_module = klass.module_parent != Object)
-        I18n.t(parent_module.name.underscore, scope: [i18n_scope, :navigation_labels], default: parent_module.name.humanize)
-      else
-        I18n.t('admin.misc.navigation_label')
-      end
-    )
+    if navigation_label_i18n_key
+      I18n.t(navigation_label_i18n_key, scope: [i18n_scope, :navigation_labels], default: I18n.t('admin.misc.navigation_label'))
+    else
+      I18n.t(i18n_key, scope: [i18n_scope, :navigation_labels], default:
+        if (parent_module = klass.module_parent != Object)
+          I18n.t(parent_module.name.underscore, scope: [i18n_scope, :navigation_labels], default: parent_module.name.humanize)
+        else
+          I18n.t('admin.misc.navigation_label')
+        end
+      )
+    end
+  end
+
+  register_instance_option :navigation_label_i18n_key, memoize: true do
+    nil
   end
 
   register_instance_option :navigation_icon, memoize: true do
