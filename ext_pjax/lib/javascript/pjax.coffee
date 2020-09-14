@@ -27,9 +27,6 @@ class Js.Pjax
         @submit(event)
       else
         @disable_buttons()
-    $('.pjax:not(.pjax_ready)').addClass('pjax_ready')
-    ['button', 'select', 'textarea', 'input'].each (tag) ->
-      $("form[data-remote='true'] #{tag}:not(.pjax_ready)").addClass('pjax_ready')
 
   @reset: (state, options = {}) =>
     @abort_if_pending()
