@@ -87,9 +87,13 @@ class RailsAdmin::Config::Model
   end
 
   register_instance_option :navigation_label, memoize: :locale do
-    if (parent_module = klass.module_parent) != Object
-      I18n.t(parent_module.name.underscore, scope: [i18n_scope, :modules], default: parent_module.name.humanize)
-    end
+    I18n.t("#{i18n_key}.navigation_label", scope: [i18n_scope, :navigation_labels], default:
+      if (parent_module = klass.module_parent != Object)
+        I18n.t(parent_module.name.underscore, scope: [i18n_scope, :navigation_labels], default: parent_module.name.humanize)
+      else
+        I18n.t('admin.misc.navigation_label')
+      end
+    )
   end
 
   register_instance_option :navigation_icon, memoize: true do

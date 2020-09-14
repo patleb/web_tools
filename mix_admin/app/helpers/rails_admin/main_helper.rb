@@ -27,7 +27,7 @@ module RailsAdmin
       nodes_stack.group_by(&:navigation_label).html_map do |navigation_label, nodes|
         first_nodes = nodes.select{ |n| n.navigation_parent.nil? || model_names.exclude?(n.navigation_parent) }
         li_stack = main_navigation_stack group_nodes, first_nodes
-        navigation_group li_stack, (navigation_label || t('admin.misc.navigation_label'))
+        navigation_group li_stack, navigation_label
       end
     end
 
