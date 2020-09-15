@@ -158,8 +158,8 @@ module RailsAdmin
       def reset
         @compact_show_view = true
         @default_hidden_fields = {}
-        @default_hidden_fields[:base] = [:creator_id, :updater_id, :creator, :updater, :lock_version, :json_data, :create_uid, :write_uid]
-        @default_hidden_fields[:edit] = [:id, :created_at, :updated_at, :deleted_at, :create_date, :write_date]
+        @default_hidden_fields[:base] = [:lock_version, :json_data]
+        @default_hidden_fields[:edit] = [:id, :creator_id, :updater_id, :creator, :updater, :created_at, :updated_at, :deleted_at]
         @default_hidden_fields[:show] = @default_hidden_fields[:edit].dup
         @default_items_per_page = 25
         @default_max_items_per_page = 100
