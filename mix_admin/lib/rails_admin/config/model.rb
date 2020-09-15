@@ -51,6 +51,7 @@ class RailsAdmin::Config::Model
   end
 
   # TODO show time zone in list view if specified
+  # https://github.com/onomojo/i18n-timezones
   register_instance_option :time_zone, memoize: true do
     nil
   end
