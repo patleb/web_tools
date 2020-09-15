@@ -27,15 +27,12 @@ module ActionController::Base::WithContext
     set_current_referer
     set_current_value(:locale, I18n.available_locales)
     set_current_value(:time_zone) # TODO be more strict
-    # set_current_value(:currency)  # TODO be more strict
   end
 
   def with_context
     I18n.with_locale(Current.locale) do
       Time.use_zone(Current.time_zone.presence) do
-        # MoneyRails.with_currency(Current.currency) do
-          yield
-        # end
+        yield
       end
     end
   rescue NoMethodError => e
@@ -59,7 +56,7 @@ module ActionController::Base::WithContext
   def set_current_value(name, permitted = [])
     Current[name] ||= begin
       param = "_#{name}"
-      if (current_value = params[param]).present?
+      if (current_value = params.delete(param)).present?
         if permitted.none?{ |value| value.to_s == current_value }
           raise UnpermittedParameterValue.new([param])
         end
@@ -99,9 +96,5 @@ module ActionController::Base::WithContext
 
   def default_time_zone
     Time.find_zone(cookies["js.time_zone"])&.name # TODO be more strict
-  end
-
-  def default_currency
-    Money.default_currency
   end
 end
