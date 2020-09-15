@@ -4,6 +4,8 @@ en:
     admin: Admin
   activerecord:
     attributes:
+      user:
+        role: Role
       user/role:
         deployer: Deployer
         admin: Administrator
