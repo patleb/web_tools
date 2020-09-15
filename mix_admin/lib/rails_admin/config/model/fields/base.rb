@@ -278,7 +278,7 @@ class RailsAdmin::Config::Model::Fields::Base
     next true if property.nil_or_true?(:required?, object) && property.nil?(:default)
     !!([name] + children_fields).uniq.find do |column_name|
       klass.validators_on(column_name).find do |v|
-        next unless !(v.options[:allow_nil] || v.options[:allow_blank])
+        next if     (v.options[:allow_nil] || v.options[:allow_blank])
         next unless [:presence, :numericality, :attachment_presence].include?(v.kind)
         next unless (v.options[:on] == required_context || v.options[:on].blank?)
         (v.options[:if].blank? && v.options[:unless].blank?)
