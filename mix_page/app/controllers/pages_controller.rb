@@ -18,7 +18,7 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def field_create
     field = PageField.new(field_params)
-    return on_not_authorized unless can? :new, field
+    return on_not_authorized unless can? :create, field
 
     if field.save
       return on_not_authorized unless can? :edit, field

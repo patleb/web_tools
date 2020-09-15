@@ -39,6 +39,6 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page, :@virtual_path]
   end
 
   def collection_types
-    @collection_types ||= (type ? [type] : MixPage.config.available_fields.keys).select{ |type| can? :new, type }
+    @collection_types ||= (type ? [type] : MixPage.config.available_fields.keys).select{ |type| can? :create, type }
   end
 end

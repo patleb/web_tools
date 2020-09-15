@@ -30,6 +30,12 @@ module RailsAdmin::Main::WithAuthorization
   end
 
   def authorized_path_for(action, model, object = nil, key = nil)
+    action = case action.to_s
+      when 'create'  then :new
+      when 'update'  then :edit
+      when 'destroy' then :delete
+      else action.to_sym
+    end
     return unless (abstract_model = RailsAdmin::AbstractModel.find(model))
     return unless (action = RailsAdmin.action(action, abstract_model, object))
     if object

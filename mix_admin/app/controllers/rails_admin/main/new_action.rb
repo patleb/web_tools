@@ -1,4 +1,4 @@
-module RailsAdmin::Main # TODO rename actions to Rails standard (create, destroy, update)
+module RailsAdmin::Main
   module NewAction
     def new
       if request.get? # NEW
