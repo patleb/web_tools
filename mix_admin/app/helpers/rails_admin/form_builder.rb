@@ -9,6 +9,7 @@ module RailsAdmin
           unless nested_in
             div_ '.form-group.form-actions', class: ('hidden' if request.variant.modal?) do
               div_('.col-sm-offset-2.col-sm-10', [
+                hidden_field_tag(:_back, redirect_to_back?),
                 if model.save_label?
                   button_('.btn.btn-primary', { class: bs_form_row, type: "submit", name: "_save", data: { disable: :submit } }, [
                     i_('.fa.fa-check.icon-white'),

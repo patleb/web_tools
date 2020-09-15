@@ -11,14 +11,14 @@ module ActionController::WithUser
   end
 
   if defined? MixAdmin
-    def admin_path_for(action, object)
+    def admin_path_for(action, object, **params)
       current_controller = Current.controller
       Current.controller = RailsAdmin::MainController.new unless current_controller.try(:admin?)
       case object
       when Class, String, Symbol
-        Current.controller.authorized_path_for(action, object)
+        Current.controller.authorized_path_for(action, object, **params)
       else
-        Current.controller.authorized_path_for(action, object.class, object)
+        Current.controller.authorized_path_for(action, object.class, object, **params)
       end
     ensure
       Current.controller = current_controller

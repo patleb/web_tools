@@ -28,14 +28,14 @@ module RailsAdmin::Main::WithAuthorization
     super(abstract_model.klass)
   end
 
-  def authorized_path_for(action, model, object = nil, key = nil)
+  def authorized_path_for(action, model, object = nil, key = nil, **params)
     action = authorized_action(action)
     return unless (abstract_model = RailsAdmin::AbstractModel.find(model))
     return unless (action = RailsAdmin.action(action, abstract_model, object))
     if object
-      abstract_model.url_for(action.name, id: object.send(key || abstract_model.primary_key))
+      abstract_model.url_for(action.name, id: object.send(key || abstract_model.primary_key), **params)
     else
-      abstract_model.url_for(action.name)
+      abstract_model.url_for(action.name, **params)
     end
   end
 

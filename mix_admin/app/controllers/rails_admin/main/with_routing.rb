@@ -19,30 +19,39 @@ module RailsAdmin::Main::WithRouting
 
   included do
     before_action :set_request_format
+    before_action :set_redirect_to_back
 
     delegate *VIEW_PATHS, to: :RailsAdmin
 
-    helper_method *CONTROLLER_PATHS, *VIEW_PATHS
+    helper_method *CONTROLLER_PATHS, *VIEW_PATHS, :redirect_to_back?
   end
 
-  def root_path
-    RailsAdmin.root_path
+  def root_path(**params)
+    RailsAdmin.root_path(**params)
   end
 
-  def index_path(params = self.params.permit(:model_name).with_keyword_access)
-    RailsAdmin.index_path(params)
+  def index_path(**params)
+    RailsAdmin.index_path(model_name: self.params[:model_name], **params)
   end
 
-  def trash_path(params = self.params.permit(:model_name).with_keyword_access)
-    RailsAdmin.trash_path(params)
+  def trash_path(**params)
+    RailsAdmin.trash_path(model_name: self.params[:model_name], **params)
   end
 
-  def new_path(params = self.params.permit(:model_name).with_keyword_access)
-    RailsAdmin.new_path(params)
+  def new_path(**params)
+    RailsAdmin.new_path(model_name: self.params[:model_name], **params)
   end
 
-  def edit_path(params = { id: @object.id, **self.params.permit(:model_name).with_keyword_access })
-    RailsAdmin.edit_path(params)
+  def edit_path(**params)
+    RailsAdmin.edit_path(id: @object.id, model_name: self.params[:model_name], **params)
+  end
+
+  def redirect_to_index(**options)
+    redirect_to_back? ? redirect_to_back(**options) : redirect_to(index_path, **options)
+  end
+
+  def redirect_to_back?
+    @redirect_to_back
   end
 
   def redirect_to_back(**options)
@@ -51,10 +60,6 @@ module RailsAdmin::Main::WithRouting
     else
       redirect_to(Current.referer, params: { _pjax_reload: true }, **options)
     end
-  end
-
-  def redirect_to_index(**options)
-    redirect_to(index_path, **options)
   end
 
   def redirect_to_on_cancel(**options)
@@ -73,9 +78,9 @@ module RailsAdmin::Main::WithRouting
   def redirect_to_on_success(name = @model.label, **options)
     notice = success_notice(name)
     if params[:_add_another]
-      redirect_to new_path, **options, flash: { success: notice }
+      redirect_to new_path(_back: redirect_to_back?), **options, flash: { success: notice }
     elsif params[:_add_edit]
-      redirect_to edit_path, **options, flash: { success: notice }
+      redirect_to edit_path(_back: redirect_to_back?), **options, flash: { success: notice }
     else
       redirect_to_back **options, flash: { success: notice }
     end
@@ -105,6 +110,10 @@ module RailsAdmin::Main::WithRouting
   end
 
   private
+
+  def set_redirect_to_back
+    @redirect_to_back = params.delete(:_back).to_b
+  end
 
   def set_request_format
     request.format = case

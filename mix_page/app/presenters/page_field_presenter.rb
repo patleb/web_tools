@@ -22,8 +22,8 @@ class PageFieldPresenter < ActionPresenter::Base[:@page, :@virtual_path]
 
   def member_actions
     @member_actions ||= {
-      edit:   admin_path_for(:edit, object),
-      delete: admin_path_for(:delete, object),
+      edit:   admin_path_for(:edit, object, _back: true),
+      delete: admin_path_for(:delete, object, _back: true),
     }.compact
   end
 end

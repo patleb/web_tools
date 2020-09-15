@@ -52,7 +52,7 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def on_success(field, action)
     respond_to do |format|
-      format.html { redirect_to admin_path_for(action, field) }
+      format.html { redirect_to admin_path_for(action, field), params: { _back: true } }
       format.json { render json: { flash: { success: success_notice(field, action) } } }
     end
   end
