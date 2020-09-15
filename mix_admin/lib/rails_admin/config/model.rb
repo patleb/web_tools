@@ -112,19 +112,19 @@ class RailsAdmin::Config::Model
     nil
   end
 
-  register_instance_option :save_label, memoize: :locale do
+  register_instance_option :save_label?, memoize: :locale do
     I18n.t("#{i18n_key}.save", scope: [i18n_scope, :forms], default: I18n.t("admin.form.save"))
   end
 
-  register_instance_option :save_and_add_another_label, memoize: :locale do
+  register_instance_option :save_and_add_another_label?, memoize: :locale do
     I18n.t("#{i18n_key}.save_and_add_another", scope: [i18n_scope, :forms], default: I18n.t("admin.form.save_and_add_another"))
   end
 
-  register_instance_option :save_and_edit_label, memoize: :locale do
+  register_instance_option :save_and_edit_label?, memoize: :locale do
     I18n.t("#{i18n_key}.save_and_edit", scope: [i18n_scope, :forms], default: I18n.t("admin.form.save_and_edit"))
   end
 
-  register_instance_option :cancel_label, memoize: :locale do
+  register_instance_option :cancel_label?, memoize: :locale do
     I18n.t("#{i18n_key}.cancel", scope: [i18n_scope, :forms], default: I18n.t("admin.form.cancel"))
   end
 

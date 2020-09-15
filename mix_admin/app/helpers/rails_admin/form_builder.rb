@@ -9,26 +9,28 @@ module RailsAdmin
           unless nested_in
             div_ '.form-group.form-actions', class: ('hidden' if request.variant.modal?) do
               div_('.col-sm-offset-2.col-sm-10', [
-                button_('.btn.btn-primary', { class: bs_form_row, type: "submit", name: "_save", data: { disable: :submit } }, [
-                  i_('.fa.fa-check.icon-white'),
-                  model.save_label
-                ]),
-                span_('.extra_buttons', [
-                  if authorized? :new, abstract_model
-                    button_('.btn.btn-info', class: bs_form_row, type: "submit", name: "_add_another", data: { disable: :submit }) do
-                      model.save_and_add_another_label
-                    end
-                  end,
-                  if authorized? :edit, abstract_model
-                    button_('.btn.btn-info', class: bs_form_row, type: "submit", name: "_add_edit", data: { disable: :submit }) do
-                      model.save_and_edit_label
-                    end
-                  end,
+                if model.save_label?
+                  button_('.btn.btn-primary', { class: bs_form_row, type: "submit", name: "_save", data: { disable: :submit } }, [
+                    i_('.fa.fa-check.icon-white'),
+                    model.save_label
+                  ])
+                end,
+                if model.save_and_add_another_label? && authorized?(:new, abstract_model)
+                  button_('.btn.btn-info', class: bs_form_row, type: "submit", name: "_add_another", data: { disable: :submit }) do
+                    model.save_and_add_another_label
+                  end
+                end,
+                if model.save_and_edit_label? && authorized?(:edit, abstract_model)
+                  button_('.btn.btn-info', class: bs_form_row, type: "submit", name: "_add_edit", data: { disable: :submit }) do
+                    model.save_and_edit_label
+                  end
+                end,
+                if model.cancel_label?
                   button_('.btn.btn-default', { class: bs_form_row, type: "submit", name: "_cancel", data: { disable: :submit }, formnovalidate: true }, [
                     i_('.fa.fa-times'),
                     model.cancel_label
                   ])
-                ])
+                end
               ])
             end
           end
