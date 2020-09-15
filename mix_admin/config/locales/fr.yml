@@ -162,7 +162,7 @@ fr:
         col_sep_help: "Laisser vide pour la valeur par défaut ('%{value}')" # value is default_col_sep
     concepts:
       paginate:
-        more: Charger plus
+        more: Plus d'éléments
         per: Par page
       select:
         chose_all: Tous(tes)
