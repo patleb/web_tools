@@ -6,13 +6,13 @@ module RailsAdmin
       && (@object&.persisted? ? @object.id == object&.id : !object&.persisted?)
     end
 
-    def wording_for(label, action = @action, abstract_model = @abstract_model)
+    def wording_for(type, action = @action, abstract_model = @abstract_model)
       model = abstract_model&.model
       object = abstract_model && @object.is_a?(abstract_model.klass) ? @object : nil
       action = RailsAdmin.action(action.to_sym, abstract_model, object) if action.is_a?(Symbol) || action.is_a?(String)
 
       I18n.t(
-        "admin.actions.#{action.i18n_key}.#{label}",
+        "admin.actions.#{action.i18n_key}.#{type}",
         model_label: model&.label,
         model_label_plural: model&.label_plural,
         object_label: (model.with(object: object).object_label if object),

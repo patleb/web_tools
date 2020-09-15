@@ -1,33 +1,170 @@
 fr:
+  errors:
+    attributes:
+      base:
+        dependency_constraints: Ne peut pas être supprimé, les relations doivent d'abord être supprimées (possiblement dans la corbeille).
+        already_modified_html: >
+          A déjà été modifié par quelqu'un d'autre. Si vous souhaitez quand même enregistrer cette version,
+          alors cliquez sur enregistrer. Sinon, veuillez rafraîchir la page (attention: vos modifications seront perdues).
+          Voir la version mise à jour <a href="" target="_blank">ici</a>.
   adminrecord:
     navigation_labels:
       system: Système
   admin:
     js:
-      :true: "Vrai"
-      :false: "Faux"
-      confirmation: Êtes-vous certain?
-    form:
-      save_and_add_another: "Enregistrer et ajouter un(e) autre"
-      new_model: "nouveau(elle) %{name}"
-    export:
-      csv:
-        encoding_to_help: "Choisissez l'encodage de sortie."
+      is_present: Est présent
+      is_blank: Est vide
+      date: Date ...
+      between_and_: Entre le ... et le ...
+      today: Aujourd'hui
+      yesterday: Hier
+      this_week: Cette semaine
+      last_week: La semaine dernière
+      number: Nombre ...
+      contains: Contient
+      is_exactly: Est exactement
+      starts_with: Commence par
+      ends_with: Se termine par
+      too_many_objects: Trop volumineux, utilisez le champ de recherche ci-dessus
+      no_objects: No objects found
+      form_save: Enregistrer
+      form_cancel: Annuler
+      placeholder: Commencer à écrire...
     misc:
       new: Nouveau(elle)
       discarded: REJETÉ
+      remote: Commencer à écrire...
+      search: Recherche
+      filter: Filtre
+      refresh: Rafraîchir
+      show_all: Montrer tout
+      show_all_items: Montrer tous les éléments
+      add_filter: Ajouter un filtre
+      bulk_menu_title: Élements sélectionnés
+      remove: Supprimer
+      add_new: Ajouter
+      chosen: "Choisi %{name}"
+      chose_all: Choisir tout
+      clear_all: Effacer tout
+      up: Monter
+      down: Descendre
+      navigation_label: Navigation
+      static_navigation_label: Liens
+      log_out: Se déconnecter
+      ago: il y a
+      more: "Plus %{count} autre(s) %{models_name}"
+    flash:
+      successful: "%{name} : %{action} avec succès"
+      error: "%{name} : n'a pas pu être %{action}"
+      noaction: Aucune action n'a été effectuée
+      model_not_found: "Le modèle '%{model}' est introuvable"
+      object_not_found: "%{model} avec l'ID '%{id}' est introuvable"
+      not_allowed: Interdit
     actions:
+      index:
+        title: "Liste des %{model_label_plural}"
+        menu: Liste
+      show:
+        title: "Détails pour %{model_label} '%{object_label}'"
+        menu: Voir
+      show_in_app:
+        menu: Voir dans l'application
       new:
         title: "Nouveau(elle) %{model_label}"
-        menu: "Ajouter"
-        breadcrumb: "Nouveau(elle)"
-        link: "Ajouter"
+        menu: Ajouter
+        link: Ajouter
+        done: créé(e)
       edit:
-        link: "Modifier"
+        title: "Modifier %{model_label} '%{object_label}'"
+        menu: Modifier
+        link: Modifier
+        done: mis(e) à jour
+      delete:
+        title: "Supprimer %{model_label} '%{object_label}'"
+        menu: Supprimer
+        link: "Supprimer '%{object_label}'"
+        done: supprimé(e)
       bulk_delete:
-        bulk_link: "Supprimer"
+        title: "Supprimer %{model_label_plural}"
+        menu: Suppression multiple
+        bulk_link: Supprimer
       export:
-        link: "Exporter"
-        bulk_link: "Exporter"
+        title: "Exporter %{model_label_plural}"
+        menu: Exporter
+        bulk_link: Exporter
+        done: exporté(e)s
       chart:
-        menu: Charte
+        title: "Dessiner %{model_label_plural}"
+        menu: Graphique
+        bulk_link: Graphique
+        done: dessiné(e)s
+      trash:
+        title: "Mettre à la corbeille %{model_label_plural}"
+        menu: Corbeille
+        done: mis(e) à la corbeille
+      restore:
+        title: "Restaurer %{model_label_plural}"
+        menu: Restaurer
+        bulk_link: Restaurer
+        done: Restauré(e)
+      clone:
+        menu: Copier
+      choose:
+        done: mis(e) à jour
+    form:
+      trash: Mettre à la corbeille
+      restore: Restaurer
+      cancel: Annuler
+      basic_info: ""
+      required: Obligatoire
+      optional: Optionnel
+      one_char: caractère
+      char_length_up_to: longueur maximale
+      char_length_of: longueur
+      save: Enregistrer
+      save_and_add_another: Enregistrer et ajouter un(e) autre
+      save_and_edit: Enregister et modifier
+      delete: Supprimer
+      all_of_the_following_related_items_will_be_deleted: "Tous les éléments relatifs suivants peuvent être également supprimés ou rendus orphelins:"
+      are_you_sure_you_want_to_delete_the_object: "Êtes-vous sûr(e) de vouloir supprimer ce(tte) %{model_name}"
+      confirmation: Oui, je suis sûr(e)
+      bulk_delete: "Les objets suivants vont être supprimés, ce qui pourrait supprimer ou rendre orphelin certaines de ces dépendances:"
+      new_model: "nouveau(elle) %{name}"
+    chart:
+      field: Champ
+      calculation: Calcul
+      auto_refresh: "Actualisation automatique à(aux) %{rate} seconde(s)"
+      add: Ajouter un graphique
+    choose:
+      saved: Vues enregistrées
+      label: Entrer le libellé de la vue...
+      delete: Supprimer
+      view: Vue
+    export:
+      confirmation: "Exporter vers %{name}"
+      select: Sélectionnez les champs à exporter
+      select_all_fields: Sélectionner tous les champs
+      fields_from: "Champs de %{name}"
+      fields_from_associated: "Champ du (de la) %{name} associé(e)"
+      display: "Affichage %{name}: %{type}"
+      options_for: "Options pour %{name}"
+      empty_value_for_associated_objects: "<empty>"
+      click_to_reverse_selection: Cliquer pour inverser la sélection
+      csv:
+        header_for_root_methods: "%{name}" # 'model' is available
+        header_for_association_methods: "%{name} [%{association}]"
+        encoding_to: Encoder en
+        encoding_to_help: Choisissez l'encodage de sortie.
+        skip_header: Aucun en-tête
+        skip_header_help: Ne pas afficher d'en-tête (pas de description de champ)
+        default_col_sep: ","
+        col_sep: Séparateur de colonne
+        col_sep_help: "Laisser vide pour la valeur par défaut ('%{value}')" # value is default_col_sep
+    concepts:
+      paginate:
+        more: Charger plus
+        per: Par page
+      select:
+        chose_all: Tous(tes)
+        clear_all: Effacer
+        reset: Réinitialiser

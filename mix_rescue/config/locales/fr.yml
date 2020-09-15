@@ -1,0 +1,23 @@
+fr:
+  rescue:
+    default: &template_default
+      status: ""
+      title: ""
+      problem: ""
+      solution: Si vous êtes le propriétaire de l'application, consultez les logs pour plus d'informations.
+    :404:
+      <<: *template_default
+      title: La page que vous recherchez n'existe pas
+      problem: Vous avez peut-être mal saisi l'adresse ou la page a peut-être été déplacée.
+    :408:
+      <<: *template_default
+      title: Délai expiré
+      problem: La requête a pris trop de temps.
+      solution: Veuillez réessayer ou faire une requête plus simple s'il s'agissait d'une requête intensive.
+    :422:
+      <<: *template_default
+      title: Le changement souhaité a été rejeté
+      problem: Peut-être avez-vous essayé de changer quelque chose auquel vous n'aviez pas accès.
+    :500:
+      <<: *template_default
+      title: Nous sommes désolés, une erreur s'est produite
