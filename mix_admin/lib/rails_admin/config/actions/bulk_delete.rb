@@ -12,7 +12,7 @@ class RailsAdmin::Config::Actions::BulkDelete < RailsAdmin::Config::Actions::Bas
   end
 
   def authorization_key
-    :destroy
+    :delete
   end
 
   def bulkable?

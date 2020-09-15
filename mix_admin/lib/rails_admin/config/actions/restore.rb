@@ -12,7 +12,7 @@ class RailsAdmin::Config::Actions::Restore < RailsAdmin::Config::Actions::Base
   end
 
   def authorization_key
-    :destroy
+    :delete
   end
 
   def bulkable_trash?

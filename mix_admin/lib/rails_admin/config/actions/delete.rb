@@ -14,8 +14,4 @@ class RailsAdmin::Config::Actions::Delete < RailsAdmin::Config::Actions::Base
   def http_methods
     [:get, :put, :delete]
   end
-
-  def authorization_key
-    :destroy
-  end
 end

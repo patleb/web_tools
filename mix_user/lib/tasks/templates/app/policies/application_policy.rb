@@ -19,7 +19,7 @@ class ApplicationPolicy < ActionPolicy::Base
     user.admin?
   end
 
-  def destroy?
+  def delete?
     user.admin?
   end
 end

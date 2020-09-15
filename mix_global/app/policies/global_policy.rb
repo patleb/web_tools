@@ -19,7 +19,7 @@ class GlobalPolicy < ApplicationPolicy
     false
   end
 
-  def destroy?
+  def delete?
     user.deployer?
   end
 end

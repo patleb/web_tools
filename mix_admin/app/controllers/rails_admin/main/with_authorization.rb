@@ -18,8 +18,7 @@ module RailsAdmin::Main::WithAuthorization
   # records. It should return a hash of attributes which match what the user
   # is authorized to create.
   def attributes_for(action, abstract_model)
-    model = abstract_model&.klass
-    policy(model).try(:attributes_for, action) || {}
+    policy(abstract_model.klass).try(:attributes_for, action) || {}
   end
 
   # This is called when needing to scope a database query. It is called within the list
@@ -30,12 +29,7 @@ module RailsAdmin::Main::WithAuthorization
   end
 
   def authorized_path_for(action, model, object = nil, key = nil)
-    action = case action.to_s
-      when 'create'  then :new
-      when 'update'  then :edit
-      when 'destroy' then :delete
-      else action.to_sym
-    end
+    action = authorized_action(action)
     return unless (abstract_model = RailsAdmin::AbstractModel.find(model))
     return unless (action = RailsAdmin.action(action, abstract_model, object))
     if object
@@ -47,7 +41,17 @@ module RailsAdmin::Main::WithAuthorization
 
   private
 
+  def authorized_action(action)
+    case action.to_s
+    when 'create'  then :new
+    when 'update'  then :edit
+    when 'destroy' then :delete
+    else action.to_sym
+    end
+  end
+
   def action_for_pundit(action)
+    action = authorized_action(action)
     action[-1, 1] == '?' ? action : "#{action}?"
   end
 end

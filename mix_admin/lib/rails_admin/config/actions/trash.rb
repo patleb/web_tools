@@ -20,7 +20,7 @@ class RailsAdmin::Config::Actions::Trash < RailsAdmin::Config::Actions::Base
   end
 
   def authorization_key
-    :destroy
+    :delete
   end
 
   def searchable?
