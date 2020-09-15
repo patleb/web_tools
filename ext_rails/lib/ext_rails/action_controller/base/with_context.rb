@@ -26,7 +26,7 @@ module ActionController::Base::WithContext
     Current.request_id ||= request.uuid
     set_current_referer
     set_current_value(:locale, I18n.available_locales)
-    set_current_value(:time_zone) # TODO be more strict
+    set_current_value(:time_zone)
   end
 
   def with_context
@@ -95,6 +95,6 @@ module ActionController::Base::WithContext
   end
 
   def default_time_zone
-    Time.find_zone(cookies["js.time_zone"])&.name # TODO be more strict
+    Time.find_zone(cookies["js.time_zone"])&.name
   end
 end
