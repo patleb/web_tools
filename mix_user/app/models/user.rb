@@ -13,7 +13,7 @@ class User < MixUser.config.parent_model.constantize
 
   enum role: MixUser.config.available_roles
 
-  before_validation :set_login
+  before_validation :set_login, if: :email_changed?
 
   after_discard :scramble_email_and_password
 
