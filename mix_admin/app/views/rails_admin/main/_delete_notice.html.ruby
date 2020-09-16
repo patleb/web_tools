@@ -11,7 +11,6 @@ li_('.delete_notice', [
   end,
   ul_ do
     @abstract_model.map_associated_children(object) do |association, children|
-      humanized_association = @abstract_model.klass.human_attribute_name association.name
       count = children.count
       limit = count > 12 ? 10 : count
       h_(
@@ -19,7 +18,7 @@ li_('.delete_notice', [
           child_model = RailsAdmin.model(child)
           wording = child_model.with(object: child).object_label
           li_({ class: dom_class(child) }, [
-            humanized_association.singularize,
+            child.model_name.human,
             if child.id && (action = RailsAdmin.action(:show, child_model.abstract_model, child))
               link_to(wording, child_model.abstract_model.url_for(action.name, id: child.id), class: 'pjax')
             else
@@ -28,7 +27,8 @@ li_('.delete_notice', [
           ])
         end,
         if count > limit
-          li_ t('admin.misc.more', count: count - limit, models_name: humanized_association)
+          model_name = @abstract_model.klass.human_attribute_name(association.name)
+          li_ t('admin.misc.more', count: count - limit, model_name: model_name)
         end
       )
     end

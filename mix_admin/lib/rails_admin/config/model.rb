@@ -24,8 +24,9 @@ class RailsAdmin::Config::Model
   end
 
   def object_label
-    label =
-      object.send(object_label_method).presence \
+    field = visible_fields.find{ |f| f.name == object_label_method }
+    label = (field.with(object: object).pretty_value if field) \
+      || object.send(object_label_method).presence \
       || (object.try("#{object_label_method}_was").presence if object.try("#{object_label_method}_changed?")) \
       || object.send(:rails_admin_object_label)
     label = "#{label} [#{I18n.t('admin.misc.discarded')}]" if object&.discarded?

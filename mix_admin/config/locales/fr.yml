@@ -52,7 +52,7 @@ fr:
       static_navigation_label: Liens
       log_out: Se déconnecter
       ago: il y a
-      more: "Plus %{count} autre(s) %{models_name}"
+      more: "Plus %{count} autre(s) %{model_name}"
     flash:
       successful: "%{name} : %{action} avec succès"
       error: "%{name} : n'a pas pu être %{action}"
