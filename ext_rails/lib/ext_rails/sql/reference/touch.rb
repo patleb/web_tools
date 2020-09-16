@@ -1,4 +1,3 @@
-# TODO option to increment :lock_version as well
 module Sql::Reference::Touch
   extend ActiveSupport::Concern
 

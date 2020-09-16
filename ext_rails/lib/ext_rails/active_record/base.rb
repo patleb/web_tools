@@ -12,6 +12,14 @@ ActiveRecord::Base.class_eval do
   include self::WithRescuableValidations
   include self::WithViableModels
 
+  SKIP_LOCKING = Set.new(%w(
+    id
+    updated_at
+    updater_id
+  ))
+
+  nullify_blanks nullables_only: false
+
   delegate :url_helpers, to: 'Rails.application.routes'
 
   class << self
@@ -154,5 +162,9 @@ ActiveRecord::Base.class_eval do
   def destroyed!
     @destroyed = true
     freeze
+  end
+
+  def locking_enabled?
+    super && changed.any?{ |attribute| SKIP_LOCKING.exclude? attribute }
   end
 end
