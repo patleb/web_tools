@@ -38,51 +38,56 @@ class RailsAdmin::Config::Model::Sections::Base
   end
 
   # Defines a configuration for a field.
-  def field(name, type = nil, add_to_section = true, &block)
-    field = _fields.find{ |f| name == f.name }
+  def field(name, type = nil, add_to_section = true, translated: false, &block)
+    if translated
+      I18n.available_locales.each{ |locale| field("#{name}_#{locale}", type, add_to_section, &block) }
+    else
+      name = name.to_sym
+      field = _fields.find{ |f| name == f.name }
 
-    # some fields are hidden by default (belongs_to keys, has_many associations in list views.)
-    # unhide them if config specifically defines them
-    if field
-      field.show unless field.instance_variable_get("@#{field.name}_registered").is_a?(Proc)
-    end
-    # Specify field as virtual if type is not specifically set and field was not
-    # found in default stack
-    if field.nil? && type.nil?
-      field = (_fields << RailsAdmin::Config::Model::Fields.load(:string).new(self, name, nil)).last
-
-      # Register a custom field type if one is provided and it is different from
-      # one found in default stack
-    elsif type && type != (field.nil? ? nil : field.type)
+      # some fields are hidden by default (belongs_to keys, has_many associations in list views.)
+      # unhide them if config specifically defines them
       if field
-        property = field.property
-        field = _fields[_fields.index(field)] = RailsAdmin::Config::Model::Fields.load(type).new(self, name, property)
-      else
-        property = abstract_model.columns.find{ |c| name == c.name }
-        property ||= abstract_model.associations.find{ |a| name == a.name }
-        field = (_fields << RailsAdmin::Config::Model::Fields.load(type).new(self, name, property)).last
+        field.show unless field.instance_variable_get("@#{field.name}_registered").is_a?(Proc)
       end
-    end
+      # Specify field as virtual if type is not specifically set and field was not
+      # found in default stack
+      if field.nil? && type.nil?
+        field = (_fields << RailsAdmin::Config::Model::Fields.load(:string).new(self, name, nil)).last
 
-    # If field has not been yet defined add some default properties
-    if add_to_section && !field.defined
-      field.defined = true
-      field.weight = _fields.count(&:defined)
-    end
+        # Register a custom field type if one is provided and it is different from
+        # one found in default stack
+      elsif type && type != (field.nil? ? nil : field.type)
+        if field
+          property = field.property
+          field = _fields[_fields.index(field)] = RailsAdmin::Config::Model::Fields.load(type).new(self, name, property)
+        else
+          property = abstract_model.columns.find{ |c| name == c.name }
+          property ||= abstract_model.associations.find{ |a| name == a.name }
+          field = (_fields << RailsAdmin::Config::Model::Fields.load(type).new(self, name, property)).last
+        end
+      end
 
-    # If a block has been given evaluate it and sort fields after that
-    field.instance_eval(&block) if block
-    field
+      # If field has not been yet defined add some default properties
+      if add_to_section && !field.defined
+        field.defined = true
+        field.weight = _fields.count(&:defined)
+      end
+
+      # If a block has been given evaluate it and sort fields after that
+      field.instance_eval(&block) if block
+      field
+    end
   end
 
   # configure a field without adding it.
-  def configure(name, type = nil, &block)
-    field(name, type, false, &block)
+  def configure(name, type = nil, **options, &block)
+    field(name, type, false, **options, &block)
   end
 
   # include fields by name and apply an optionnal block to each (through a call to fields),
   # or include fields by conditions if no field names
-  def include_fields(*field_names, &block)
+  def include_fields(*field_names, **options, &block)
     if field_names.empty?
       _fields.select { |f| f.instance_eval(&block) }.each do |f|
         next if f.defined
@@ -90,15 +95,23 @@ class RailsAdmin::Config::Model::Sections::Base
         f.weight = _fields.count(&:defined)
       end
     else
-      fields(*field_names, &block)
+      fields(*field_names, **options, &block)
     end
   end
 
   # exclude fields by name or by condition (block)
-  def exclude_fields(*field_names, &block)
-    block ||= proc { |f| field_names.include?(f.name) }
-    _fields.each { |f| f.defined = true } if _fields.select(&:defined).empty?
-    _fields.select { |f| f.instance_eval(&block) }.each { |f| f.defined = false }
+  def exclude_fields(*field_names, translated: false, &block)
+    if translated
+      field_names = field_names.map do |field_name|
+        I18n.available_locales.map{ |locale| "#{field_name}_#{locale}" }
+      end.flatten
+      exclude_fields(*field_names, &block)
+    else
+      field_names.map!(&:to_sym)
+      block ||= proc { |f| field_names.include?(f.name) }
+      _fields.each { |f| f.defined = true } if _fields.select(&:defined).empty?
+      _fields.select { |f| f.instance_eval(&block) }.each { |f| f.defined = false }
+    end
   end
 
   # API candy
@@ -115,23 +128,31 @@ class RailsAdmin::Config::Model::Sections::Base
   # were defined.
   #
   # If a block is passed it will be evaluated in the context of each field
-  def fields(*field_names, &block)
-    return all_fields if field_names.empty? && !block
-
-    if field_names.empty?
-      defined = _fields.select(&:defined)
-      defined = _fields if defined.empty?
+  def fields(*field_names, translated: false, &block)
+    if translated
+      field_names = field_names.map do |field_name|
+        I18n.available_locales.map{ |locale| "#{field_name}_#{locale}" }
+      end.flatten
+      fields(*field_names, &block)
     else
-      defined = field_names.map{ |field_name| _fields.find{ |f| f.name == field_name } }
-    end
-    defined.map do |f|
-      raise _undefined_message(defined, field_names) if f.nil?
-      unless f.defined
-        f.defined = true
-        f.weight = _fields.count(&:defined)
+      return all_fields if field_names.empty? && !block
+      field_names.map!(&:to_sym)
+
+      if field_names.empty?
+        defined = _fields.select(&:defined)
+        defined = _fields if defined.empty?
+      else
+        defined = field_names.map{ |field_name| _fields.find{ |f| f.name == field_name } }
       end
-      f.instance_eval(&block) if block
-      f
+      defined.map do |f|
+        raise _undefined_message(defined, field_names) if f.nil?
+        unless f.defined
+          f.defined = true
+          f.weight = _fields.count(&:defined)
+        end
+        f.instance_eval(&block) if block
+        f
+      end
     end
   end
 
