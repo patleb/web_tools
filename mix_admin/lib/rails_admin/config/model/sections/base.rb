@@ -125,6 +125,7 @@ class RailsAdmin::Config::Model::Sections::Base
       defined = field_names.map{ |field_name| _fields.find{ |f| f.name == field_name } }
     end
     defined.map do |f|
+      raise _undefined_message(defined, field_names) if f.nil?
       unless f.defined
         f.defined = true
         f.weight = _fields.count(&:defined)
@@ -172,5 +173,13 @@ class RailsAdmin::Config::Model::Sections::Base
       end
     end
     readonly ? @_ro_fields : (@_fields ||= @_ro_fields.map(&:clone))
+  end
+
+  private
+
+  def _undefined_message(defined, field_names)
+    section_name = self.class.name.demodulize.underscore
+    undefined_fields = field_names.zip(defined).to_h.select{ |_, k| k.nil? }.keys
+    "section '#{section_name}' has undefined fields: #{undefined_fields.map(&:to_sym)}"
   end
 end
