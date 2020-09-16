@@ -53,7 +53,7 @@ module ActiveRecord::Base::WithJsonAttribute
         define_method field do |locale = nil, fallback = nil|
           locale ||= Current.locale || I18n.default_locale
           send("#{field}_#{locale}").presence ||
-            send("#{field}_#{fallback || I18n.available_locales.except(I18n.default_locale).first}").presence ||
+            send("#{field}_#{fallback || I18n.available_locales.except(locale.to_sym).first}").presence ||
             (default.is_a?(Proc) ? default.call(self) : default)
         end
       end

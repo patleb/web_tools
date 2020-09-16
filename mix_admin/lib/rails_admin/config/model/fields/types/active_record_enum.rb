@@ -39,7 +39,7 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
 
   def form_value
     value = parse_value(super)
-    enum[value] || value
+    (!value.nil? && enum[value]) || value
   end
 
   private

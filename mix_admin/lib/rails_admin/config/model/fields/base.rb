@@ -319,7 +319,7 @@ class RailsAdmin::Config::Model::Fields::Base
   end
 
   def editable?
-    !property.nil_or_true?(:readonly?, object)
+    (property && object.new_record?) || !property.nil_or_true?(:readonly?, object)
   end
 
   def association?
