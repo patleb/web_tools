@@ -275,7 +275,8 @@ class RailsAdmin::Config::Model::Fields::Base
   #
   # @see RailsAdmin::AbstractModel.columns
   register_instance_option :required? do
-    next true if property.nil_or_true?(:required?, object) && property.nil?(:default)
+    next false if property.nil?
+    next true  if property.nil_or_true?(:required?, object) && property.nil?(:default)
     !!([name] + children_fields).uniq.find do |column_name|
       klass.validators_on(column_name).find do |v|
         next if     (v.options[:allow_nil] || v.options[:allow_blank])
