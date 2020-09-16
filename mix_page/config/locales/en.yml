@@ -1,0 +1,32 @@
+en:
+  shared_attributes: &shared_attributes
+    creator: Created by
+    updater: Modified by
+    created_at: Created at
+    updated_at: Updated at
+    deleted_at: Deleted at
+  activerecord:
+    attributes:
+      page:
+        <<: *shared_attributes
+        uuid: UUID
+        view: Template
+        page_fields: Contents
+      page_template:
+        title: Title
+        title_fr: Title (french)
+        title_en: Title (english)
+        description: Description
+        description_fr: Description (french)
+        description_en: Description (english)
+        publish: Publish
+        published_at: Published at
+      page_field:
+        <<: *shared_attributes
+        page_template: Page
+        name: Name
+      page_field_text:
+        text: Text
+    models:
+      page: Page
+      page_field_text: Text

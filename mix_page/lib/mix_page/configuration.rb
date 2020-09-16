@@ -4,7 +4,7 @@ module MixPage
     attr_writer :reserved_words
     attr_writer :available_layouts
     attr_writer :available_templates
-    attr_writer :available_fields
+    attr_writer :available_field_types
     attr_writer :available_field_names
     attr_writer :available_fieldables
 
@@ -28,8 +28,8 @@ module MixPage
       @available_templates ||= {}
     end
 
-    def available_fields
-      @available_fields ||= {
+    def available_field_types
+      @available_field_types ||= {
         'PageFieldText' => 10,
       }
     end

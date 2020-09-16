@@ -7,7 +7,7 @@ class PageField < LibRecord
   belongs_to :page_template, foreign_key: :page_id
   belongs_to :fieldable, optional: true, polymorphic: true
 
-  enum type: MixPage.config.available_fields
+  enum type: MixPage.config.available_field_types
   enum name: MixPage.config.available_field_names
   enum fieldable_type: MixPage.config.available_fieldables
 

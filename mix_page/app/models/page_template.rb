@@ -12,6 +12,10 @@ class PageTemplate < Page
     description: [:string, default: ->(record) { record.title }]
   )
 
+  attr_writer :publish
+
+  before_validation :set_published_at, if: :publish_changed?
+
   def self.state_of(uuid)
     layouts = alias_table(:layouts)
     with_discarded
@@ -24,8 +28,12 @@ class PageTemplate < Page
     @layout ||= PageLayout.with_content.readonly.find(page_layout_id)
   end
 
-  def publish!
-    update! published_at: Time.current.utc
+  def publish
+    @publish.nil? ? published? : @publish.to_b
+  end
+
+  def publish_changed?
+    !@publish.nil? && published? != publish
   end
 
   def published?
@@ -71,5 +79,11 @@ class PageTemplate < Page
         errors.add :title, :exclusion
       end
     end
+  end
+
+  private
+
+  def set_published_at
+    self.published_at = publish ? Time.current : nil
   end
 end

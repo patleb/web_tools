@@ -3,7 +3,7 @@ module PageHelper
 
   DEFAULT_TYPE = 'PageFieldText'
 
-  MixPage.config.available_fields.each_key do |type|
+  MixPage.config.available_field_types.each_key do |type|
     if type.start_with? 'PageField'
       field = type.delete_prefix('PageField').full_underscore
     else
