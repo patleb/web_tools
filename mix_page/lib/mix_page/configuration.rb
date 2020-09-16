@@ -2,6 +2,7 @@ module MixPage
   has_config do
     attr_writer :parent_controller
     attr_writer :reserved_words
+    attr_writer :layout
     attr_writer :available_layouts
     attr_writer :available_templates
     attr_writer :available_field_types
@@ -16,6 +17,11 @@ module MixPage
       @reserved_words ||= Set.new([MixPage::URL_SEGMENT, RailsAdmin.root_path.split('/').reject(&:blank?).first]).merge(%w(
         admin users javascript_rescues assets packs stylesheets javascripts images new edit index session login logout
       ))
+    end
+
+    def layout
+      raise "unavailable layout: [#{@layout}]" unless available_layouts.has_key? @layout
+      @layout
     end
 
     def available_layouts

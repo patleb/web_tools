@@ -15,6 +15,7 @@ class PageTemplate < Page
   attr_writer :publish
 
   before_validation :set_published_at, if: :publish_changed?
+  before_validation :set_page_layout, unless: :page_layout_id
 
   def self.state_of(uuid)
     layouts = alias_table(:layouts)
@@ -33,7 +34,7 @@ class PageTemplate < Page
   end
 
   def publish_changed?
-    !@publish.nil? && published? != publish
+    !@publish.nil? && published? != @publish.to_b
   end
 
   def published?
@@ -85,5 +86,9 @@ class PageTemplate < Page
 
   def set_published_at
     self.published_at = publish ? Time.current : nil
+  end
+
+  def set_page_layout
+    self.page_layout = PageLayout.find_or_create_by! view: MixPage.config.layout
   end
 end
