@@ -161,7 +161,6 @@ class RailsAdmin::Config::Model::Sections::Base
     _fields.select { |f| type == f.type }.map! { |f| f.instance_eval(&block) } if block
   end
 
-  # TODO rescue 'defined' in development and show undefined field name
   # Accessor for all fields
   def all_fields
     ((ro_fields = _fields(true)).select(&:defined).presence || ro_fields).map do |f|
