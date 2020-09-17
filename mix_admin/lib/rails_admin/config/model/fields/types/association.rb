@@ -28,13 +28,10 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
       model = polymorphic? ? RailsAdmin.model(associated) : associated_model # perf optimization for non-polymorphic associations
       wording = model.with(object: associated).object_label
       wording = sanitize(wording) if sanitized?
-      if (path = authorized_path_for(:show, model, associated))
-        a_ '.pjax', wording, href: path
-      elsif (path = authorized_path_for(:edit, model, associated))
-        a_ '.pjax', wording, href: path
-      else
-        ERB::Util.html_escape(wording)
-      end
+      path = object.discarded? && authorized_path_for(:trash, model)
+      path ||= authorized_path_for(:show, model, associated)
+      path ||= authorized_path_for(:edit, model, associated)
+      path ? a_('.pjax', wording, href: path) : ERB::Util.html_escape(wording)
     end
   end
 

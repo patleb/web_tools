@@ -6,7 +6,7 @@ module ActiveRecord::Base::WithDiscard
 
     self.discard_column = :deleted_at
 
-    scope :discarded!, -> { with_discarded.discarded }
+    scope :only_discarded, -> { with_discarded.discarded }
   end
 
   class_methods do
@@ -14,24 +14,31 @@ module ActiveRecord::Base::WithDiscard
       super
       if subclass.name && !(subclass <= ActiveType::Object)
         if subclass.default_scopes.none?{ |scope| scope.source_location.include?(__FILE__) }
-          discard_scope = -> do
-            if !ExtRails.config.skip_discard? && column_names.include?(try(:discard_column).to_s)
-              kept
-            else
-              all
-            end
-          end
-          subclass.send(:default_scope, discard_scope)
+          subclass.send(:default_scope) { with_discard ? kept : all }
         end
       end
     end
 
+    def with_discard
+      return @_with_discard if defined? @_with_discard
+      @_with_discard = (!ExtRails.config.skip_discard? && column_names.include?(try(:discard_column).to_s)).to_b
+    end
+    alias_method :with_discard?, :with_discard
+
+    def discard_all
+      all.each(&:discard)
+    end
+
+    def discard_all!
+      all.each(&:discard!)
+    end
+
     def undiscard_all
-      discarded!.each(&:undiscard)
+      only_discarded.each(&:undiscard)
     end
 
     def undiscard_all!
-      discarded!.each(&:undiscard!)
+      only_discarded.each(&:undiscard!)
     end
   end
 end

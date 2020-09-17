@@ -32,7 +32,7 @@ fr:
       placeholder: Commencer à écrire...
     misc:
       new: Nouveau(elle)
-      discarded: REJETÉ
+      discarded: CORBEILLE
       remote: Commencer à écrire...
       search: Recherche
       filter: Filtre

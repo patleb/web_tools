@@ -24,6 +24,7 @@ fr:
       page_field:
         <<: *shared_attributes
         page_template: Page
+        unscoped_page_template: Page
         name: Nom
       page_field_text:
         text: Texte

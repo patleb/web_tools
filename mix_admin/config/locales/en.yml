@@ -32,7 +32,7 @@ en:
       placeholder: Start typing...
     misc:
       new: New
-      discarded: REMOVED
+      discarded: TRASH
       remote: Start typing...
       search: Search
       filter: Filter

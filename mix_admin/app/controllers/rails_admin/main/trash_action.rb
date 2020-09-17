@@ -8,7 +8,7 @@ module RailsAdmin::Main
 
     def trash
       params.delete(:scope)
-      @objects = get_objects.discarded!
+      @objects = get_objects.only_discarded
       set_index_objects
 
       respond_to do |format|

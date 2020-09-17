@@ -19,4 +19,19 @@ class Page < LibRecord
     page_templates_count
     page_fields_count
   )
+
+  after_discard :discard_page_fields
+  before_undiscard :undiscard_page_fields
+
+  private
+
+  def discard_page_fields
+    PageField.without_default_scope { page_fields.discard_all! }
+  end
+
+  def undiscard_page_fields
+    PageField.without_default_scope do
+      page_fields.where(PageField.column(:updated_at) >= updated_at - 1.second).undiscard_all!
+    end
+  end
 end
