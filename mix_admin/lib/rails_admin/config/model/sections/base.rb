@@ -38,7 +38,7 @@ class RailsAdmin::Config::Model::Sections::Base
   end
 
   # Defines a configuration for a field.
-  def field(name, type = nil, add_to_section = true, translated: false, editable: false, &block)
+  def field(name, type = nil, add_to_section = true, translated: false, editable: false, weight: nil, &block)
     if translated
       field(name, type, add_to_section, &block) if translated == :all
       I18n.available_locales.each{ |locale| field!("#{name}_#{locale}", type, add_to_section, &block) }
@@ -72,7 +72,7 @@ class RailsAdmin::Config::Model::Sections::Base
       # If field has not been yet defined add some default properties
       if add_to_section && !field.defined
         field.defined = true
-        field.weight = _fields.count(&:defined)
+        field.weight = weight ? weight : _fields.count(&:defined)
       end
 
       # Force editable behavior
