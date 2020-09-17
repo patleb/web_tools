@@ -4,9 +4,8 @@ class PageField < LibRecord
 
   belongs_to :page
   belongs_to :page_layout, foreign_key: :page_id
-  belongs_to :page_template, foreign_key: :page_id
+  belongs_to :page_template, -> { with_discarded }, foreign_key: :page_id
   belongs_to :fieldable, optional: true, polymorphic: true
-  belongs_to :unscoped_page_template, -> { with_discarded.readonly }, optional: true, foreign_key: :page_id, class_name: 'PageTemplate'
 
   enum type: MixPage.config.available_field_types
   enum name: MixPage.config.available_field_names
