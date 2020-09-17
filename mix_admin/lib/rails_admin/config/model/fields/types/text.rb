@@ -16,8 +16,8 @@ class RailsAdmin::Config::Model::Fields::Text < RailsAdmin::Config::Model::Field
     {
       required: required?,
       maxlength: max_length,
-      cols: '50',
-      rows: '3',
+      cols: 52,
+      rows: [max_length && (max_length / 52.0).ceil, 3].compact.max,
     }
   end
 

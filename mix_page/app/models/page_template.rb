@@ -5,8 +5,8 @@ class PageTemplate < Page
   validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }
   validate  :slug_exclusion
   I18n.available_locales.each do |locale|
-    validates "title_#{locale}", length: { maximum: 160 }
-    validates "description_#{locale}", length: { maximum: 320 }
+    validates "title_#{locale}", length: { maximum: 120 }
+    validates "description_#{locale}", length: { maximum: 360 }
   end
 
   enum view: MixPage.config.available_templates
