@@ -33,6 +33,7 @@ class window.Logger
         console.groupEnd()
       else
         console.log(args...)
+    true
 
   @now: ->
     console.log(new Date(Date.now()))

@@ -109,7 +109,7 @@ class RailsAdmin.FilterBoxConcept
           select_ '.switch-additional-fieldsets.input-sm.form-control', name: operator_name, [
             option_ I18n.t('date'), @option_attributes(operator, 'default', data: { 'additional-fieldset': 'default' })
             option_ I18n.t('between_and_'), @option_attributes(operator, 'between', data: { 'additional-fieldset': 'between' })
-            option_ I18n.t('today', escape: false), @option_attributes(operator, 'today')
+            option_ I18n.t('today', false), @option_attributes(operator, 'today')
             option_ I18n.t('yesterday'), @option_attributes(operator, 'yesterday')
             option_ I18n.t('this_week'), @option_attributes(operator, 'this_week')
             option_ I18n.t('last_week'), @option_attributes(operator, 'last_week')
