@@ -28,6 +28,8 @@ en:
         name: Name
       page_field_text:
         text: Text
+        text_fr: Text (french)
+        text_en: Text (english)
     models:
       page: Page
       page_field_text: Text
