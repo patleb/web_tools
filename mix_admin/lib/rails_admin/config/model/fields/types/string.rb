@@ -6,7 +6,7 @@ class RailsAdmin::Config::Model::Fields::String < RailsAdmin::Config::Model::Fie
   register_instance_option :html_attributes do
     {
       required: required?,
-      maxlength: length,
+      maxlength: max_length,
       size: input_size,
     }
   end
@@ -15,19 +15,26 @@ class RailsAdmin::Config::Model::Fields::String < RailsAdmin::Config::Model::Fie
     [50, length.to_i].reject(&:zero?).min
   end
 
+  def max_length
+    [length, valid_length[:maximum] || nil].compact.min
+  end
+
+  def min_length
+    [0, valid_length[:minimum] || nil].compact.max
+  end
+
   def generic_help
     text = (required? ? I18n.t('admin.form.required') : I18n.t('admin.form.optional')) + '. '
     if valid_length.present? && valid_length[:is].present?
       text += "#{I18n.t('admin.form.char_length_of').capitalize} #{valid_length[:is]}."
     else
-      max_length = [length, valid_length[:maximum] || nil].compact.min
-      min_length = [0, valid_length[:minimum] || nil].compact.max
-      if max_length
+      max, min = max_length, min_length
+      if max
         text +=
-          if min_length == 0
-            "#{I18n.t('admin.form.char_length_up_to').capitalize} #{max_length}."
+          if min == 0
+            "#{I18n.t('admin.form.char_length_up_to').capitalize} #{max}."
           else
-            "#{I18n.t('admin.form.char_length_of').capitalize} #{min_length}-#{max_length}."
+            "#{I18n.t('admin.form.char_length_of').capitalize} #{min}-#{max}."
           end
       end
     end

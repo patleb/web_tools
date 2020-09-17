@@ -1,4 +1,4 @@
-class RailsAdmin::Config::Model::Fields::Text < RailsAdmin::Config::Model::Fields::Base
+class RailsAdmin::Config::Model::Fields::Text < RailsAdmin::Config::Model::Fields::String
   register_instance_option :truncated?, memoize: true do
     true
   end
@@ -15,6 +15,7 @@ class RailsAdmin::Config::Model::Fields::Text < RailsAdmin::Config::Model::Field
   register_instance_option :html_attributes do
     {
       required: required?,
+      maxlength: max_length,
       cols: '50',
       rows: '3',
     }
