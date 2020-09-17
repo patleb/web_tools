@@ -5,17 +5,12 @@ module PageTemplateAdmin
   # TODO datetime picker doesn't switch to french
   included do
     rails_admin do
-      configure :title
-      configure :description
-      configure :title, translated: true do
-        readonly false
-      end
-      configure :description, :text, translated: true do
-        readonly false
-      end
+      configure :title, translated: :all
+      configure :description, :text, translated: :all
 
-      fields :title, :description, translated: true
-      fields :view, :title, :description, :created_at, :updated_at, :published_at
+      fields :view
+      fields :title, :description, translated: :all
+      fields :created_at, :updated_at, :published_at
 
       index do
         sort_by :updated_at

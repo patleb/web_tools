@@ -38,9 +38,10 @@ class RailsAdmin::Config::Model::Sections::Base
   end
 
   # Defines a configuration for a field.
-  def field(name, type = nil, add_to_section = true, translated: false, &block)
+  def field(name, type = nil, add_to_section = true, translated: false, editable: false, &block)
     if translated
-      I18n.available_locales.each{ |locale| field("#{name}_#{locale}", type, add_to_section, &block) }
+      field(name, type, add_to_section, &block) if translated == :all
+      I18n.available_locales.each{ |locale| field!("#{name}_#{locale}", type, add_to_section, &block) }
     else
       name = name.to_sym
       field = _fields.find{ |f| name == f.name }
@@ -74,15 +75,28 @@ class RailsAdmin::Config::Model::Sections::Base
         field.weight = _fields.count(&:defined)
       end
 
+      # Force editable behavior
+      if editable
+        field.readonly false
+      end
+
       # If a block has been given evaluate it and sort fields after that
       field.instance_eval(&block) if block
       field
     end
   end
 
+  def field!(name, type = nil, add_to_section = true, editable: nil, **options, &block)
+    field(name, type, add_to_section, editable: true, **options, &block)
+  end
+
   # configure a field without adding it.
   def configure(name, type = nil, **options, &block)
     field(name, type, false, **options, &block)
+  end
+
+  def configure!(name, type = nil, **options, &block)
+    field!(name, type, false, **options, &block)
   end
 
   # include fields by name and apply an optionnal block to each (through a call to fields),
@@ -102,9 +116,8 @@ class RailsAdmin::Config::Model::Sections::Base
   # exclude fields by name or by condition (block)
   def exclude_fields(*field_names, translated: false, &block)
     if translated
-      field_names = field_names.map do |field_name|
-        I18n.available_locales.map{ |locale| "#{field_name}_#{locale}" }
-      end.flatten
+      exclude_fields(*field_names) if translated == :all
+      field_names = field_names.map{ |name| I18n.available_locales.map{ |locale| "#{name}_#{locale}" } }.flatten
       exclude_fields(*field_names, &block)
     else
       field_names.map!(&:to_sym)
@@ -130,9 +143,8 @@ class RailsAdmin::Config::Model::Sections::Base
   # If a block is passed it will be evaluated in the context of each field
   def fields(*field_names, translated: false, &block)
     if translated
-      field_names = field_names.map do |field_name|
-        I18n.available_locales.map{ |locale| "#{field_name}_#{locale}" }
-      end.flatten
+      fields(*field_names) if translated == :all
+      field_names = field_names.map{ |name| I18n.available_locales.map{ |locale| "#{name}_#{locale}" } }.flatten
       fields(*field_names, &block)
     else
       return all_fields if field_names.empty? && !block
@@ -142,7 +154,7 @@ class RailsAdmin::Config::Model::Sections::Base
         defined = _fields.select(&:defined)
         defined = _fields if defined.empty?
       else
-        defined = field_names.map{ |field_name| _fields.find{ |f| f.name == field_name } }
+        defined = field_names.map{ |name| _fields.find{ |f| f.name == name } }
       end
       defined.map do |f|
         raise _undefined_message(defined, field_names) if f.nil?
