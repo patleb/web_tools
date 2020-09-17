@@ -4,6 +4,8 @@ module RailsAdmin::Config::Model::Fields
   autoload_dir RailsAdmin::Engine.root.join('lib/rails_admin/config/model/fields/types')
 
   def self.load(type)
+    require 'rails_admin/config/model/fields/types/association/aliases'
+    require 'rails_admin/config/model/fields/types/array/aliases'
     require 'rails_admin/config/model/fields/types/aliases'
 
     if (type = type.to_s).end_with? '_association'
