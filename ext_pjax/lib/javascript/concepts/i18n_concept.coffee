@@ -10,5 +10,5 @@ class Js.I18nConcept
     moment.locale(@locale)
     Js.Cookie.set('locale', @locale)
 
-  t: (key) =>
-    @translations[key] || key.humanize()
+  t: (key, options = { escape: true }) =>
+    (if options.escape then @translations[key] else @translations[key]?.html_safe(true)) || key.humanize()
