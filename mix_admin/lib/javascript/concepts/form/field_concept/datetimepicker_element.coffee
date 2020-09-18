@@ -12,3 +12,7 @@ class RailsAdmin.Form.FieldConcept::DatetimepickerElement
 
   constructor: (@input) ->
     @input.datetimepicker @input.data('options')
+
+# TODO https://github.com/Eonasdan/bootstrap-datetimepicker/search?q=destroy&unscoped_q=destroy
+#  leave: =>
+#    @input.destroy()

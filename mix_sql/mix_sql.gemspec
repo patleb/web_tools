@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'sunzistrano'
 
   s.add_development_dependency 'ext_minitest', version
+  # TODO https://github.com/crashtech/torque-postgresql
 end
