@@ -1,7 +1,6 @@
 # TODO, -> { select(... except logidze column) }
 class Page < LibRecord
   has_userstamp
-  has_list
 
   has_many :page_fields, -> { order(:position) }, dependent: :destroy
 
