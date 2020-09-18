@@ -117,7 +117,7 @@ module ActiveTask
       if rake.respond_to? name, true
         rake.__send__(name, *args, &block)
       else
-        raise NoMethodError, "No method '#{name}' for #{self.class} or :rake"
+        raise NoMethodError.new("No method '#{name}' for #{self.class} or :rake", name)
       end
     end
 

@@ -36,7 +36,7 @@ module ActionController::Base::WithContext
       end
     end
   rescue NoMethodError => e
-    render_500 NoMethodError.new "NoMethodError: undefined method `#{e.name}' at #{e.backtrace.first}"
+    render_500 NoMethodError.new("#{e.message}\nat #{e.backtrace.first}", e.name)
   end
 
   def without_time_zone(&block)

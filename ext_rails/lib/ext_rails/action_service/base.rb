@@ -38,7 +38,7 @@ module ActionService
       elsif Current.controller.respond_to? name, true
         Current.controller.__send__(name, *args, &block)
       else
-        raise NoMethodError, "No method '#{name}' for #{self.class} or :locals or Current.controller"
+        raise NoMethodError.new("No method '#{name}' for #{self.class} or :locals or Current.controller", name)
       end
     end
 
