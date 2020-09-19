@@ -3,14 +3,20 @@ class RailsAdmin::Config::Model::Sections::Base
   include RailsAdmin::Config::Proxyable
   include RailsAdmin::Config::Configurable
 
+  attr_reader :section_name, :parent_section_name
   attr_reader :abstract_model
   attr_reader :model
 
   delegate :klass, to: :abstract_model
 
+  ### WARNING
+  # if parent section has been defined and augmented in a later block,
+  # then these changes won't propagate to children sections using the former section
   def initialize(model)
     @model = model
     @abstract_model = model.abstract_model
+    @section_name = self.class.name.demodulize.underscore.to_sym
+    @parent_section_name = self.class.superclass.name.demodulize.underscore.to_sym unless section_name == :base
   end
 
   # Provides accessor and autoregistering of model's description.
@@ -116,14 +122,14 @@ class RailsAdmin::Config::Model::Sections::Base
   # exclude fields by name or by condition (block)
   def exclude_fields(*field_names, translated: false, &block)
     if translated
-      exclude_fields(*field_names) if translated == :all
+      exclude_fields(*field_names, &block) if translated == :all
       field_names = field_names.map{ |name| I18n.available_locales.map{ |locale| "#{name}_#{locale}" } }.flatten
       exclude_fields(*field_names, &block)
     else
       field_names.map!(&:to_sym)
       block ||= proc { |f| field_names.include?(f.name) }
-      _fields.each { |f| f.defined = true } if _fields.select(&:defined).empty?
-      _fields.select { |f| f.instance_eval(&block) }.each { |f| f.defined = false }
+      _fields.each{ |f| f.defined = true } if _fields.select(&:defined).empty?
+      _fields.select{ |f| f.instance_eval(&block) }.each{ |f| f.defined = false }
     end
   end
 
@@ -132,7 +138,7 @@ class RailsAdmin::Config::Model::Sections::Base
   alias_method :include_fields_if, :include_fields
 
   def include_all_fields
-    include_fields_if { true }
+    include_fields_if{ true }
   end
 
   # Returns all field configurations for the model configuration instance. If no fields
@@ -143,7 +149,7 @@ class RailsAdmin::Config::Model::Sections::Base
   # If a block is passed it will be evaluated in the context of each field
   def fields(*field_names, translated: false, &block)
     if translated
-      fields(*field_names) if translated == :all
+      fields(*field_names, &block) if translated == :all
       field_names = field_names.map{ |name| I18n.available_locales.map{ |locale| "#{name}_#{locale}" } }.flatten
       fields(*field_names, &block)
     else
@@ -195,22 +201,22 @@ class RailsAdmin::Config::Model::Sections::Base
     return @_fields if @_fields
     return @_ro_fields if readonly && @_ro_fields
 
-    if self.class == RailsAdmin::Config::Model::Sections::Base
+    if section_name == :base
       @_ro_fields = @_fields = RailsAdmin::Config::Model::Fields.factory(self)
     else
       # model is RailsAdmin::Config::Model, recursion is on Section's classes
-      @_ro_fields ||= begin
-        section = self.class.superclass.to_s.demodulize.underscore
-        model.send(section)._fields(true).clone.freeze
-      end
+      @_ro_fields ||= _parent_fields.clone.freeze
     end
     readonly ? @_ro_fields : (@_fields ||= @_ro_fields.map(&:clone))
   end
 
   private
 
+  def _parent_fields
+    model.send(parent_section_name)._fields(true)
+  end
+
   def _undefined_message(defined, field_names)
-    section_name = self.class.name.demodulize.underscore
     undefined_fields = field_names.zip(defined).to_h.select{ |_, k| k.nil? }.keys
     "section '#{section_name}' has undefined fields: #{undefined_fields.map(&:to_sym)}"
   end
