@@ -28,7 +28,7 @@ module UserAdmin
         field :email do
           index_value{ primary_key_link }
         end
-        fields :updated_at, :created_at, :confirmed_at, :role
+        fields :role, :confirmed_at, :updated_at, :created_at
       end
     end
   end

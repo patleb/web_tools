@@ -14,7 +14,6 @@ class RailsAdmin::Config::Model::Fields::Text < RailsAdmin::Config::Model::Field
 
   register_instance_option :html_attributes do
     {
-      required: required?,
       maxlength: max_length,
       cols: 52,
       rows: [max_length && (max_length / 52.0).ceil, 3].compact.max,
@@ -25,7 +24,7 @@ class RailsAdmin::Config::Model::Fields::Text < RailsAdmin::Config::Model::Field
     div_ class: 'input-group' do
       form.text_area method_name,
         html_attributes.reverse_merge(
-          value: form_value, class: 'form-control', required: required, data: { richtext: false, options: {} }
+          value: form_value, class: 'form-control', required: required
         )
     end
   end

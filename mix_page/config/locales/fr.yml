@@ -2,8 +2,8 @@ fr:
   shared_attributes: &shared_attributes
     creator: Créé par
     updater: Modifié par
-    created_at: Enregistré à
-    updated_at: Date de mise à jour
+    created_at: Créé à
+    updated_at: Modifié à
     deleted_at: Supprimé à
   activerecord:
     attributes:

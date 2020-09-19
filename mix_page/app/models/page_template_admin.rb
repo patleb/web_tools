@@ -10,7 +10,7 @@ module PageTemplateAdmin
 
       fields :view
       fields :title, :description, translated: :all
-      fields :created_at, :updated_at, :published_at
+      fields :published_at, :updated_at, :created_at
 
       index do
         sort_by :updated_at
