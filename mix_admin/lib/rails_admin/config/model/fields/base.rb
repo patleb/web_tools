@@ -435,13 +435,13 @@ class RailsAdmin::Config::Model::Fields::Base
     (default_value if object.new_record? && value.nil?)
   end
 
-  def primary_key_link
+  def primary_key_link(label = self.pretty_value)
     if (path = authorized_path_for(:show, abstract_model, object))
-      a_ '.pjax', pretty_value, href: path
+      a_ '.pjax', label, href: path
     elsif (path = authorized_path_for(:edit, abstract_model, object))
-      a_ '.pjax', pretty_value, href: path
+      a_ '.pjax', label, href: path
     else
-      pretty_value
+      label
     end
   end
 end

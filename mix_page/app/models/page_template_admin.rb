@@ -8,18 +8,16 @@ module PageTemplateAdmin
       configure :title, translated: :all
       configure :description, :text, translated: :all
 
-      fields :view
+      field :view do
+        index_value{ primary_key_link(pretty_value) }
+      end
       fields :title, :description, translated: :all
-      fields :published_at, :updated_at, :created_at
+      fields :published_at, :updated_at, :updater, :created_at, :creator
 
       index do
         sort_by :updated_at
+        frozen_column :view
         exclude_fields :title, :description, translated: true
-      end
-
-      show do
-        include_fields :creator, :updater, :uuid
-        exclude_fields :title, :description
       end
 
       edit do
