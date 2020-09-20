@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@popperjs/core": "^2.0.6",
-    "@rails/webpacker": "^5.1.0",
+    "@rails/webpacker": "^5.2.1",
     "accessible-nprogress": "^2.0.1",
     "axios": "^0.19.0",
     "bootstrap-sass": "^3.4.1",
@@ -32,6 +32,7 @@
     "regenerator-runtime": "^0.13.5",
     "resolve-url-loader": "^3.1.0",
     "sass-resources-loader": "^2.0.3",
+    "suneditor": "^2.33.2",
     "tiny-lru": "^6.0.1",
     "uiv": "^0.32.0",
     "vue": "^2.6.10",

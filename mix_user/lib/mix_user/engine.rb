@@ -8,7 +8,7 @@ module MixUser
   class Engine < ::Rails::Engine
     require 'devise'
     # require 'devise-encryptable'
-    require 'devise-i18n'
+    # require 'devise-i18n'
     require 'pundit'
     require 'mix_template'
 
@@ -62,7 +62,7 @@ module MixUser
 
     config.after_initialize do
       ActiveSupport.on_load(:action_controller_base) do |base|
-        index = base.view_paths.paths.index{ |p| p.to_s.include? '/devise-' }
+        next unless (index = base.view_paths.paths.index{ |p| p.to_s.include? '/devise-' })
         engines = []
         loop do
           if (engine = base.view_paths.pop).nil?
