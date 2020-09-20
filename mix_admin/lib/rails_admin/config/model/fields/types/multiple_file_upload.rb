@@ -58,7 +58,9 @@ class RailsAdmin::Config::Model::Fields::MultipleFileUpload < RailsAdmin::Config
           form.check_box(delete_method, { multiple: true, class: 'soft_hidden' }, attachment.delete_key, nil)
         ])
       end,
-      form.file_field(name, html_attributes.reverse_merge(class: 'js_field_input js_file_multi', multiple: true)),
+      form.file_field(name, html_attributes.reverse_merge(
+        class: 'js_field_input', data: { element: 'file_multi' }, multiple: true)
+      ),
       if cache_method
         form.hidden_field(cache_method)
       end

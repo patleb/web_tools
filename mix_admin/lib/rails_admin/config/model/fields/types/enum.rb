@@ -14,10 +14,14 @@ class RailsAdmin::Config::Model::Fields::Enum < RailsAdmin::Config::Model::Field
         end
         form.select(method_name, collection, { include_blank: include_blank?, selected: selected, object: form.object },
           html_attributes.reverse_merge(
-            class: "js_field_input js_select_multi form-control", multiple: true,
-            data: { config: {
-              required: required?, include_blank: include_blank?, selected: selected, values: values, texts: texts }
-            }
+            class: 'form-control js_field_input',
+            data: {
+              element: 'select_multi',
+              config: {
+                required: required?, include_blank: include_blank?, selected: selected, values: values, texts: texts
+              }
+            },
+            multiple: true
           )
         )
       else

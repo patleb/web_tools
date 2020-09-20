@@ -63,8 +63,8 @@ class RailsAdmin::Config::Model::Fields::Datetime < RailsAdmin::Config::Model::F
       div_('.input-group', [
         form.send(view_helper, method_name, html_attributes.reverse_merge(
           value: form_value,
-          class: 'form-control js_field_input js_datetimepicker',
-          data: { options: datepicker_options }
+          class: 'form-control js_field_input',
+          data: { element: 'datetimepicker', options: datepicker_options }
         )),
         form.label(method_name, class: 'input-group-addon') do
           i_ '.fa.fa-calendar.fa-fw'

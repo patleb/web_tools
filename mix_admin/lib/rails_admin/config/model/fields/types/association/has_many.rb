@@ -98,9 +98,9 @@ class RailsAdmin::Config::Model::Fields::Association::HasMany < RailsAdmin::Conf
       div_(class: bs_form_row) do
         form.select(method_name, collection, { include_blank: include_blank?, selected: selected_ids, object: form.object },
           html_attributes.reverse_merge(
-            class: "js_field_input js_select_multi_remote form-control",
+            class: 'form-control js_field_input',
+            data: { element: 'select_multi_remote', config: config },
             multiple: true,
-            data: { config: config },
           )
         )
       end,

@@ -194,12 +194,8 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
       div_(class: bs_form_row) do
         form.select(method_name, collection, { include_blank: include_blank?, selected: selected_id },
           html_attributes.reverse_merge(
-            class: [
-              'form-control',
-              'js_field_input js_select_remote',
-              ('js_modal_form_editable' if edit_params)
-            ],
-            data: { config: config }
+            class: ['form-control', 'js_field_input', ('js_modal_form_editable' if edit_params)],
+            data: { element: 'select_remote', config: config }
           )
         )
       end,

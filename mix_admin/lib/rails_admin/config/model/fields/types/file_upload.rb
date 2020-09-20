@@ -19,7 +19,9 @@ class RailsAdmin::Config::Model::Fields::FileUpload < RailsAdmin::Config::Model:
               i_('.fa.fa-pencil'),
               t('admin.actions.edit.menu'),
             ]),
-            form.file_field(name, html_attributes.reverse_merge(class: 'hidden js_field_input js_file'))
+            form.file_field(name, html_attributes.reverse_merge(
+              class: 'hidden js_field_input', data: { element: 'file' })
+            )
           )
         end
       ]),
