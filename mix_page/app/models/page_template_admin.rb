@@ -16,7 +16,7 @@ module PageTemplateAdmin
 
       index do
         sort_by :updated_at
-        frozen_column :view
+        frozen_column true
         exclude_fields :title, :description, translated: true
       end
 
