@@ -46,9 +46,7 @@ class RailsAdmin::Config::Model
   end
 
   register_instance_option :discardable?, memoize: true do
-    if (discard_column = klass.try(:discard_column))
-      klass.column_names.include? discard_column.to_s
-    end
+    klass.with_discard?
   end
 
   # TODO show time zone in list view if specified

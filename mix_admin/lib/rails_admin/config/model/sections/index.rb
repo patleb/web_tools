@@ -29,7 +29,7 @@ class RailsAdmin::Config::Model::Sections::Index < RailsAdmin::Config::Model::Se
   end
 
   register_instance_option :sort_by do
-    abstract_model.primary_key
+    klass.column_names.include?('updated_at') ? :updated_at : abstract_model.primary_key
   end
 
   register_instance_option :sort_reverse? do
@@ -53,7 +53,7 @@ class RailsAdmin::Config::Model::Sections::Index < RailsAdmin::Config::Model::Se
   end
 
   register_instance_option :frozen_column?, memoize: true do
-    visible_fields.first&.primary_key?
+    true
   end
 
   register_instance_option :dynamic_columns?, memoize: true do

@@ -24,7 +24,6 @@ module UserAdmin
       end
 
       index do
-        sort_by :updated_at
         field :email do
           index_value{ primary_key_link }
         end

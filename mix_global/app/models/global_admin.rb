@@ -25,7 +25,6 @@ module GlobalAdmin
 
       index do
         scopes [:all, :permanent, :expirable, :ongoing, :expired]
-        sort_by :updated_at
         include_fields :id, :expires, :expires_at, :version, :data_type, :data, :updated_at
       end
 

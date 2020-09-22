@@ -15,8 +15,6 @@ module PageTemplateAdmin
       fields :published_at, :updated_at, :updater, :created_at, :creator
 
       index do
-        sort_by :updated_at
-        frozen_column true
         exclude_fields :title, :description, translated: true
       end
 

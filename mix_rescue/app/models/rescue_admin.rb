@@ -10,10 +10,6 @@ module RescueAdmin
         pretty_value{ value.join }
       end
 
-      index do
-        sort_by :updated_at
-      end
-
       exclude_fields :id
     end
   end
