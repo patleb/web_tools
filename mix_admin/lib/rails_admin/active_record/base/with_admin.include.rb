@@ -3,27 +3,51 @@ module ActiveRecord::Base::WithAdmin
 
   class_methods do
     def rails_admin_blocks
-      @rails_admin_blocks
+      @rails_admin_blocks ||= { before: {}, after: {} }.with_indifferent_access
     end
 
     def inherited(subclass)
       super
       if (model_name = subclass.name)
-        unless subclass.base_class?
-          base_admin_concern = "#{subclass.base_class.name}Admin".to_const
-          if base_admin_concern
-            subclass.base_class.rails_admin_blocks.each{ |block| subclass.rails_admin(&block) }
-          end
+        if "#{subclass.base_class.name}Admin".to_const && !subclass.base_class?
+          has_base_class_admin = true
+          subclass.rails_admin_prepend subclass.base_class, :base_class
         end
-        admin_concern = "#{model_name}Admin".to_const
-        if admin_concern
+        if "#{subclass.superclass.name}Admin".to_const && !subclass.superclass.base_class?
+          has_superclass_admin = true
+          subclass.rails_admin_prepend subclass.superclass, :superclass
+        end
+        if (admin_concern = "#{model_name}Admin".to_const)
           subclass.include admin_concern
+        end
+        if has_base_class_admin
+          subclass.rails_admin_include subclass.base_class, :base_class
+        end
+        if has_superclass_admin
+          subclass.rails_admin_include subclass.superclass, :superclass
         end
       end
     end
 
-    def rails_admin(&block)
-      (@rails_admin_blocks ||= Set.new) << block
+    def rails_admin_prepend(model, name)
+      if model.rails_admin_blocks[:before].has_key? name
+        model.rails_admin_blocks[:before][name].each do |block|
+          rails_admin(name, &block)
+        end
+      end
+    end
+
+    def rails_admin_include(model, name)
+      if model.rails_admin_blocks[:after].has_key? name
+        model.rails_admin_blocks[:after][name].each do |block|
+          rails_admin(name, &block)
+        end
+      end
+    end
+
+    def rails_admin(name = :self, before: true, after: nil, &block)
+      before_or_after = (before && after.blank?) ? :before : :after
+      (rails_admin_blocks[before_or_after][name] ||= SortedSet.new) << block
       RailsAdmin.model(self, &block)
     end
   end

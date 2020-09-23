@@ -5,6 +5,10 @@ en:
     created_at: Created at
     updated_at: Updated at
     deleted_at: Deleted at
+  adminrecord:
+    navigation_labels:
+      page_template: website
+      page_fields: website
   activerecord:
     attributes:
       page:
@@ -26,10 +30,11 @@ en:
         page_template: Page
         unscoped_page_template: Page
         name: Name
-      page_field_text:
+      page_fields/text:
         text: Text
         text_fr: Text (french)
         text_en: Text (english)
     models:
       page: Page
-      page_field_text: Text
+      page_fields/text: Text
+      page_fields/rich_text: Rich text

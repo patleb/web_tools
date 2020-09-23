@@ -1,11 +1,11 @@
 module PageHelper
   class InvalidVirtualPath < StandardError; end
 
-  DEFAULT_TYPE = 'PageFieldText'
+  DEFAULT_TYPE = 'PageFields::Text'
 
   MixPage.config.available_field_types.each_key do |type|
-    if type.start_with? 'PageField'
-      field = type.delete_prefix('PageField').full_underscore
+    if type.start_with? 'PageFields::'
+      field = type.demodulize.underscore
     else
       next
     end

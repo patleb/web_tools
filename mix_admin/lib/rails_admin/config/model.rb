@@ -83,7 +83,7 @@ class RailsAdmin::Config::Model
     parent_class = klass.superclass
     if parent_class.respond_to? :extended_record_base_class
       parent_class.extended_record_base_class.to_s
-    elsif parent_class.try(:abstract_class?) || parent_class.in?([Object, BasicObject])
+    elsif parent_class.in?([Object, BasicObject]) || parent_class.abstract_class?
       nil
     else
       parent_class.to_s
@@ -92,14 +92,14 @@ class RailsAdmin::Config::Model
 
   register_instance_option :navigation_label, memoize: :locale do
     if navigation_label_i18n_key
-      I18n.t(navigation_label_i18n_key, scope: [i18n_scope, :navigation_labels], default: I18n.t('admin.misc.navigation_label'))
+      I18n.t(navigation_label_i18n_key, scope: [i18n_scope, :navigation_labels], default:
+        I18n.t('adminrecord.navigation_labels.object')
+      )
     else
       I18n.t(i18n_key, scope: [i18n_scope, :navigation_labels], default:
-        if (parent_module = klass.module_parent != Object)
-          I18n.t(parent_module.name.underscore, scope: [i18n_scope, :navigation_labels], default: parent_module.name.humanize)
-        else
-          I18n.t('admin.misc.navigation_label')
-        end
+        I18n.t((parent_module = klass.module_parent.name.underscore), scope: [i18n_scope, :navigation_labels], default:
+          parent_module.humanize
+        )
       )
     end
   end
