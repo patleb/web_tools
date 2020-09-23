@@ -57,6 +57,7 @@ module PageHelper
         fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, name: name)] if fields.empty?
         fields.map!(&:presenter)
         list_presenter_class = type && "#{type}ListPresenter".to_const
+        list_presenter_class ||= "#{fields.first.object.class.superclass.name}ListPresenter".to_const
         list_presenter_class ||= "#{fields.first.object.class.base_class.name}ListPresenter".to_const!
         list_presenter_class.new(page_id: scope.id, type: type, list: fields)
       else

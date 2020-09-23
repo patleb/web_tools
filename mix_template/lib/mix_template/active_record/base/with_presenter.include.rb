@@ -5,7 +5,8 @@ module ActiveRecord::Base::WithPresenter
     def presenter_class
       @presenter_class ||= begin
         klass = "#{name.camelize}Presenter".to_const
-        klass || "#{base_class.name.camelize}Presenter".to_const!
+        klass ||= "#{superclass.name.camelize}Presenter".to_const
+        klass ||  "#{base_class.name.camelize}Presenter".to_const!
       end
     end
   end
