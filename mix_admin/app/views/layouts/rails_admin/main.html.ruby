@@ -1,5 +1,12 @@
+append :stylesheets, [
+  stylesheet_link_tag("https://cdn.jsdelivr.net/npm/katex@#{RailsAdmin.config.katex_version}/dist/katex.min.css", media: :all),
+]
+
 append :fonts, [
+  link_(rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: 'anonymous'),
   preload_link_tag_bootswatch_fonts(:paper),
+  preload_link_tag("https://cdn.jsdelivr.net/npm/katex@#{RailsAdmin.config.katex_version}/dist/fonts/KaTeX_Main-Regular.woff2"),
+  preload_link_tag("https://cdn.jsdelivr.net/npm/katex@#{RailsAdmin.config.katex_version}/dist/fonts/KaTeX_Math-Italic.woff2"),
 ]
 
 append :metas do
@@ -7,7 +14,7 @@ append :metas do
 end
 
 append :html_data, [
-  div_('#js_i18n_translations', data: { translations: js_i18n(:admin, :template, :pjax) }),
+  div_('#js_i18n_translations', data: { translations: js_i18n(:pjax, :template, :admin) }),
   div_('#js_routes_paths', data: { paths: RailsAdmin.js_routes }),
 ]
 

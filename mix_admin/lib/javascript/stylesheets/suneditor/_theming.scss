@@ -1,0 +1,13 @@
+@import "suneditor/src/assets/css/suneditor";
+@import "suneditor/src/assets/css/suneditor-contents";
+
+.sun-editor .se-dialog .se-dialog-inner .se-dialog-footer {
+  padding-bottom: 15px;
+}
+
+.sun-editor input {
+  &[type=checkbox],
+  &[type=radio]{
+    border: inherit;
+  }
+}

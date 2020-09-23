@@ -125,7 +125,7 @@ jQuery.define_singleton_methods
     event.which > 1 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
 
   is_submit_key: (event) ->
-    event.which == $.ui.keyCode.ENTER && !$(event.target).is("textarea")
+    event.which == $.ui.keyCode.ENTER && !($(event.target).is("textarea") || event.target.isContentEditable)
 
   csrf_token: ->
     # Up-to-date Cross-Site Request Forgery token

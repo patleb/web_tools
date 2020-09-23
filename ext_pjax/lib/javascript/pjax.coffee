@@ -2,7 +2,7 @@ class Js.Pjax
   @CONTAINER: '#js_pjax_container'
   @TITLE: '#js_pjax_title'
   @VIRTUAL_FILE: 'input:file.js_pjax_virtual_file'
-  @INPUT_FILE: 'input:file:not(.js_pjax_virtual_file)'
+  @INPUT_FILE: 'input:file:not(.js_pjax_virtual_file,.se-input-form)'
   @DISABLE_SUBMIT: '[data-disable="submit"]'
   @DISABLE_CLICK: '[data-disable="click"]'
 
