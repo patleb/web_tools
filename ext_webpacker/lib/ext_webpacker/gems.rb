@@ -10,7 +10,7 @@ module ExtWebpacker
     def install
       verify_dependencies!
       source_gems_path.mkdir unless source_gems_path.exist?
-      source_gems_path.children.select(&:symlink?).each(&:delete)
+      source_gems_path.children.select(&:symlink?).each(&:delete) # TODO skip if 'gems' directory is locked
       watched_symlinks = dependencies[:gems].map do |(name, path)|
         symlink = source_gems_path.join(name)
         File.symlink(path, symlink)
