@@ -10,13 +10,19 @@ class RailsAdmin.Form.FieldConcept::WysiwygElement
       maxWidth : '600px',
       buttonList: [
         ['undo', 'redo'],
+        # ['font', 'fontSize', 'formatBlock'],
+        # ['paragraphStyle'],
         ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript'],
+        # ['fontColor', 'hiliteColor', 'textStyle'],
         ['removeFormat'],
-        ['outdent', 'indent'],
+        ['align', 'outdent', 'indent', 'blockquote'],
+        # ['lineHeight'],
+        ['horizontalRule', 'list', 'table'],
+        ['link', 'image', 'video', 'math'],
+        # ['audio', 'imageGallery'], # You must add the "imageGalleryUrl".
         ['fullScreen', 'showBlocks', 'codeView'],
         # ['preview', 'print'],
-        ['list', 'table'],
-        ['link', 'image', 'math'],
+        # ['save', 'template'],
       ],
     )
     @editor.onChange = (contents, core) =>

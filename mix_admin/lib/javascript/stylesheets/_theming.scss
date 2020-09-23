@@ -21,6 +21,12 @@
 
 // TODO https://css-tricks.com/annoying-mobile-double-tap-link-issue/
 
+#new_action > form, #edit_action > form, #clone_action > form {
+  label {
+    font-weight: bold;
+  }
+}
+
 .contextual_menu {
   padding-top: 5px;
 }
