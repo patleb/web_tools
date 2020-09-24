@@ -161,6 +161,7 @@ module ExtRails
       require 'rails_select_on_includes'
       require 'store_base_sti_class'
       require 'ext_rails/active_type'
+      require 'ext_rails/active_record/associations/builder/belongs_to/with_global_id'
       require 'ext_rails/active_record/connection_adapters/postgis_adapter' if Setting[:postgis_enabled]
       require 'ext_rails/active_record/connection_adapters/postgresql_adapter'
       require 'ext_rails/active_record/base'
