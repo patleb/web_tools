@@ -1,1 +1,0 @@
-class RailsAdmin.Form.PolymorphicSelectConcept

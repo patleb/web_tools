@@ -30,30 +30,3 @@ $(document).ready (content) ->
       image_container.show()
     else
       image_container.hide()
-
-  # polymorphic-association
-
-  content.find('[data-polymorphic]').each ->
-    type_select = $(this)
-    field = type_select.parents('.control-group').first()
-    object_select = field.find('select').last()
-    urls = type_select.data('urls')
-    type_select.on 'change', (e) ->
-      if $(this).val() is ''
-        object_select.html('<option value=""></option>')
-      else
-        $.ajax
-          url: urls[type_select.val()]
-          data:
-            compact: true
-            all: true
-          beforeSend: (xhr) ->
-            xhr.setRequestHeader("Accept", "application/json")
-          success: (data, status, xhr) ->
-            html = $('<option></option>')
-            $(data).each (i, el) ->
-              option = $('<option></option>')
-              option.attr('value', el.id)
-              option.text(el.label)
-              html = html.add(option)
-            object_select.html(html)
