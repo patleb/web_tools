@@ -29,7 +29,7 @@ module ActiveRecord::Base::WithAdmin
       end
     end
 
-    def rails_admin_prepend(model, name)
+    def rails_admin_prepend(model, name = :self)
       if model.rails_admin_blocks[:before].has_key? name
         model.rails_admin_blocks[:before][name].each do |block|
           rails_admin(name, &block)
@@ -37,7 +37,7 @@ module ActiveRecord::Base::WithAdmin
       end
     end
 
-    def rails_admin_include(model, name)
+    def rails_admin_include(model, name = :self)
       if model.rails_admin_blocks[:after].has_key? name
         model.rails_admin_blocks[:after][name].each do |block|
           rails_admin(name, &block)
