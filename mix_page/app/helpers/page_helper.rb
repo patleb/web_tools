@@ -51,7 +51,7 @@ module PageHelper
         else
           raise InvalidVirtualPath
         end
-      filter = ->(field) { (!type || field.type == type) && field.name == name }
+      filter = ->(field) { !field.discarded? && (!type || field.type == type) && field.name == name }
       if multi
         fields = scope.page_fields.select(&filter)
         fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, name: name)] if fields.empty?
