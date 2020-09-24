@@ -6,8 +6,8 @@ class User::Null < ActiveType::NullObject
   attribute :role, default: proc{ 'null' }
 
   alias_attribute :user_id, :id
-  attr_accessor :as_user
-  alias_method :as_user?, :as_user
+  attr_accessor :role_user
+  alias_method :role_user?, :role_user
 
   enum role: MixUser.config.available_roles
 

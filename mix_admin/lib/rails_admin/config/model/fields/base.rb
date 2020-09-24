@@ -436,7 +436,9 @@ class RailsAdmin::Config::Model::Fields::Base
   end
 
   def primary_key_link(label = self.pretty_value)
-    if (path = authorized_path_for(:show, abstract_model, object))
+    if object.try(:discarded?)
+      label
+    elsif (path = authorized_path_for(:show, abstract_model, object))
       a_ '.pjax', label, href: path
     elsif (path = authorized_path_for(:edit, abstract_model, object))
       a_ '.pjax', label, href: path

@@ -1,8 +1,8 @@
 module ActionController::WithUser
   def set_current
-    warden.authenticated?(:user) unless try(:batch?) # TODO or add Devise to BatchController?
+    warden.authenticated?(:user) unless try(:local?)
     Current.user ||= User::Null.new
-    Current.user.as_user = params[:_as_user].present?
+    Current.user.role_user = params[:_role_user].present?
     super
   end
 

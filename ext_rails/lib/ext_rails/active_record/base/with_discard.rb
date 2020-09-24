@@ -9,6 +9,31 @@ module ActiveRecord::Base::WithDiscard
     scope :only_discarded, -> { with_discarded.discarded }
   end
 
+  def discard_all(has_many, raise_on_error = false)
+    discard_name = raise_on_error ? :discard_all! : :discard_all
+    without_default_scope_on_association(has_many) do |association|
+      association.send(discard_name)
+    end
+  end
+
+  def discard_all!(has_many)
+    discard_all(has_many, true)
+  end
+
+  def undiscard_all(has_many, raise_on_error = false)
+    undiscard_name = raise_on_error ? :undiscard_all! : :undiscard_all
+    without_default_scope_on_association(has_many) do |association, klass|
+      if self.class.column_names.include?('updated_at') && klass.column_names.include?('updated_at')
+        association = association.where(klass.column(:updated_at) >= updated_at - 1.second)
+      end
+      association.send(undiscard_name)
+    end
+  end
+
+  def undiscard_all!(has_many)
+    undiscard_all(has_many, true)
+  end
+
   class_methods do
     def inherited(subclass)
       super

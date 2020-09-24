@@ -27,6 +27,13 @@ ActiveRecord::Base.class_eval do
     public :without_default_scope
   end
 
+  def without_default_scope_on_association(name)
+    reflection = self.class.reflect_on_association(name)
+    reflection.klass.without_default_scope do
+      yield(send(name), reflection.klass)
+    end
+  end
+
   def self.without_time_zone(&block)
     with_time_zone('UTC', &block)
   end
