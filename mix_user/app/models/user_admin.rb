@@ -25,9 +25,14 @@ module UserAdmin
 
       index do
         field :email do
+          searchable false
+          queryable false
           index_value{ primary_key_link }
         end
-        fields :role, :confirmed_at, :updated_at, :created_at
+        fields :role, :confirmed_at, :updated_at, :created_at do
+          searchable false
+          queryable false
+        end
       end
     end
   end
