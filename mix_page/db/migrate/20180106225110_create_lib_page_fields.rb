@@ -15,9 +15,8 @@ class CreateLibPageFields < ActiveRecord::Migration[6.0]
     end
 
     add_index :lib_page_fields, :position, unique: true
-    add_index :lib_page_fields, [:page_id, :name, :position],
-      name: 'index_lib_page_fields_on_page_id_name_position', unique: true
-    add_index :lib_page_fields, [:fieldable_type, :fieldable_id]
-    add_index :lib_page_fields, [:type, :deleted_at, :position]
+    add_index :lib_page_fields, [:page_id, :deleted_at, :position], name: 'index_lib_page_fields_on_page_id'
+    add_index :lib_page_fields, [:fieldable_type, :fieldable_id], name: 'index_lib_page_fields_on_fieldable'
+    add_index :lib_page_fields, [:type, :deleted_at, :position], name: 'index_lib_page_fields_on_type'
   end
 end
