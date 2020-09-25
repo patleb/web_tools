@@ -10,7 +10,7 @@ module MixTemplate
 
       layout :get_pjax_layout
 
-      helper_method :pjax?
+      helper_method :pjax?, :pjax
     end
 
     def redirect_to(options = {}, response_options = {})
@@ -46,6 +46,7 @@ module MixTemplate
       return @_pjax if defined? @_pjax
       @_pjax = request.headers['X-PJAX'].to_b || pjax_file?
     end
+    alias_method :pjax, :pjax?
 
     def pjax_file?
       return @_pjax_file if defined? @_pjax_file
