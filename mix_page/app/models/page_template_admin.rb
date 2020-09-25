@@ -19,6 +19,9 @@ module PageTemplateAdmin
       end
 
       edit do
+        configure :view do
+          enum_method :available_views
+        end
         field :publish, :boolean do
           readonly false
         end

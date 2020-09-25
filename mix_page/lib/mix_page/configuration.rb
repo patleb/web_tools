@@ -38,6 +38,7 @@ module MixPage
       @available_field_types ||= {
         'PageFields::Text' => 0,
         'PageFields::RichText' => 10,
+        'PageFields::Link' => 20,
       }
     end
 
@@ -46,7 +47,9 @@ module MixPage
     end
 
     def available_fieldables
-      @available_fieldables ||= {}
+      @available_fieldables ||= {
+        'PageTemplate' => 0
+      }
     end
   end
 end

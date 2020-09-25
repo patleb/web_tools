@@ -27,14 +27,16 @@ fr:
         published_at: Publié à
       page_field:
         <<: *shared_attributes
-        page_template: Page
-        unscoped_page_template: Page
+        page_template: Contexte
         name: Nom
       page_fields/text:
         text: Texte
         text_fr: Texte (français)
         text_en: Texte (anglais)
+      page_fields/link:
+        fieldable: Lien
     models:
       page: Page
       page_fields/text: Texte
       page_fields/rich_text: Texte enrichi
+      page_fields/link: Lien

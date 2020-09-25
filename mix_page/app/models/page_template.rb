@@ -1,5 +1,6 @@
 class PageTemplate < Page
   belongs_to :page_layout
+  has_many   :links, -> { with_discarded }, as: :fieldable, dependent: :destroy, class_name: 'PageFields::Link'
 
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }
@@ -20,6 +21,15 @@ class PageTemplate < Page
 
   before_validation :set_published_at, if: :publish_changed?
   before_validation :set_page_layout, unless: :page_layout_id
+
+  after_discard -> { discard_all! :links }
+  before_undiscard -> { undiscard_all! :links }
+
+  def self.available_views
+    uniques = MixPage.config.available_templates.keys.reject{ |key| key.end_with?(MixPage::MULTI_VIEW) }
+    taken = with_discarded.where(view: uniques).distinct.pluck(:view)
+    MixPage.config.available_templates.reject{ |key, _| key.in? taken }
+  end
 
   def self.state_of(uuid)
     layouts = alias_table(:layouts)
