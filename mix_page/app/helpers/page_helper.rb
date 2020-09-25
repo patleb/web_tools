@@ -27,15 +27,15 @@ module PageHelper
     end
   end
 
-  def layout_presenters(*args, **options)
+  def layout_presenters(*args, multi: nil, **options)
     layout_presenter(*args, **options, multi: true)
   end
 
-  def layout_presenter(*args, **options)
+  def layout_presenter(*args, layout: nil, **options)
     page_presenter(*args, **options, layout: true)
   end
 
-  def page_presenters(*args, **options)
+  def page_presenters(*args, multi: nil, **options)
     page_presenter(*args, **options, multi: true)
   end
 
