@@ -4,7 +4,7 @@ class PageFieldPolicy < ApplicationPolicy
   end
 
   def new?
-    super && !Current.controller.try(:admin?)
+    super && Current.controller_was.try(:pages?)
   end
 
   def show?

@@ -7,13 +7,21 @@ class PagesController < MixPage.config.parent_controller.constantize
   before_action :load_state
   before_action :authorized_page!
 
+  def pages?
+    true
+  end
+
   def show
     if redirect?
       redirect_to_page status: redirect_status
     elsif stale_state? # TODO cache
       load_page
-      render layout: @page.layout.view, template: @page.view # TODO pjax
+      render template: @page.view
     end
+  end
+
+  def index
+    # TODO search
   end
 
   def field_create
@@ -39,6 +47,32 @@ class PagesController < MixPage.config.parent_controller.constantize
     end
   rescue ActiveRecord::RecordNotFound
     on_field_not_found
+  end
+
+  def form_create
+    # TODO user's new form
+  end
+
+  def form_show
+    # TODO user's form
+  end
+
+  def form_update
+    # TODO user's form update
+  end
+
+  def form_destroy
+    # TODO user's form discard
+  end
+
+  def form_index
+    # TODO user's form list
+  end
+
+  protected
+
+  def get_pjax_layout
+    pjax_layout(@page ? @page.layout.view : MixPage.config.layout)
   end
 
   private
