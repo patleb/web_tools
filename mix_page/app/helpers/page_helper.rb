@@ -44,14 +44,14 @@ module PageHelper
       scope = @page.layout if layout
       scope ||=
         case @virtual_path
-        when @page.layout.view, "#{@page.layout.view}/pjax"
+        when "layouts/#{@page.layout.view}", "layouts/#{@page.layout.view}/pjax"
           @page.layout
         when @page.view
           @page
         else
           raise InvalidVirtualPath
         end
-      filter = ->(field) { !field.discarded? && (!type || field.type == type) && field.name == name }
+      filter = ->(field) { (!type || field.type == type) && field.name == name }
       if multi
         fields = scope.page_fields.select(&filter)
         fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, name: name)] if fields.empty?

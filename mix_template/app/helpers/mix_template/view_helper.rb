@@ -98,7 +98,7 @@ module MixTemplate
 
     def js_i18n(*scopes)
       (@@js_i18n ||= {})["#{Current.locale}_#{scopes.join('_')}"] ||= scopes.each_with_object({}) do |scope, all|
-        all.merge! I18n.t('js', scope: scope)
+        all.merge! I18n.t('js', scope: scope, default: {})
       end
     end
 
