@@ -1,5 +1,7 @@
 ### References
 # https://gitlab.com/gitlab-org/gitlab-ee/blob/master/config/initializers/0_as_concern.rb
+# TODO
+# https://github.com/rails/rails/commit/ba2bea5e07de7206c7309b1e8da79d70b71dfa8a
 module Prependable
   def prepend_features(base)
     if base.instance_variable_defined?(:@_dependencies)

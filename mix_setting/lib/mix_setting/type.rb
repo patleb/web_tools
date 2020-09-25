@@ -25,7 +25,7 @@ module MixSetting::Type
         when :decimal
           BigDecimal(value)
         when :datetime
-          DateTime.parse(value)
+          DateTime.parse(value) # TODO DateTime is deprecated in favor of Time
         when :interval
           ActiveSupport::Duration.build(ChronicDuration.parse(value || '', keep_zero: true))
         when :pathname
