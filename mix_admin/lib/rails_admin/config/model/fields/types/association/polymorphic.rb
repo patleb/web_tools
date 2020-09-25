@@ -1,7 +1,12 @@
 class RailsAdmin::Config::Model::Fields::Association::Polymorphic < RailsAdmin::Config::Model::Fields::Association::BelongsTo
   register_instance_option :render do
     selected = value&.to_global_id
-    collection = grouped_options_for_select(associated_collection, selected)
+    collection =
+      if associated_model.size > 1
+        grouped_options_for_select(associated_collection, selected)
+      else
+        associated_collection.first.last
+      end
     div_ class: bs_form_row do
       form.select(method_name, collection, { include_blank: include_blank?, selected: selected },
         html_attributes.reverse_merge(class: 'form-control')
