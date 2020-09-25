@@ -5,7 +5,9 @@ module PageFields::RichTextAdmin
     rails_admin do
       navigation_parent false
 
-      field :text, :wysiwyg, translated: :all
+      field :text, :wysiwyg, translated: :all do
+        searchable false
+      end
     end
   end
 end

@@ -3,7 +3,9 @@ module PageFields::TextAdmin
 
   included do
     rails_admin do
-      field :text, translated: :all
+      field :text, translated: :all do
+        searchable false
+      end
     end
 
     rails_admin :superclass, after: true do
