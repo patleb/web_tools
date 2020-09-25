@@ -65,6 +65,10 @@ module RailsAdmin
 
     protected
 
+    def get_pjax_layout
+      pjax_layout 'rails_admin', 'main'
+    end
+
     # TODO try render without going through determine_template (or a stripped down version) --> might use lower RAM
     def serve_action(name)
       prepare_action(name)
@@ -89,10 +93,6 @@ module RailsAdmin
       else
         super
       end
-    end
-
-    def get_pjax_layout
-      pjax_layout 'rails_admin', 'main'
     end
 
     def set_layout_values
