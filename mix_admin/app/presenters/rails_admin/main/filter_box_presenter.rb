@@ -55,17 +55,25 @@ module RailsAdmin::Main
     end
 
     def no_render?
-      export_action? && current_filters.empty? && current_query.blank?
+      (no_menu? && no_box?) || (export_action? && current_filters.empty? && current_query.blank?)
     end
 
     def no_menu?
       filterables.empty?
     end
 
+    def no_box?
+      queryables.empty?
+    end
+
     private
 
     def filterables
       @_filterables ||= index_fields.select(&:filterable?)
+    end
+
+    def queryables
+      @_queryables ||= index_fields.select(&:queryable?) # TODO for some reason :created_at and :updated_at always present
     end
 
     def form_path

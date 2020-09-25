@@ -9,6 +9,7 @@ module PageFieldAdmin
       end
       fields :page_template, :updated_at, :updater, :created_at, :creator do
         searchable false
+        queryable false
       end
     end
   end

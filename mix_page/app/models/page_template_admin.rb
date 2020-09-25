@@ -19,6 +19,7 @@ module PageTemplateAdmin
       fields :title, :description, translated: :all
       fields :published_at, :updated_at, :updater, :created_at, :creator do
         searchable false
+        queryable false
       end
 
       index do
