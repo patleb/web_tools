@@ -1,29 +1,29 @@
 module PageHelper
-  class InvalidVirtualPath < StandardError; end
+  class PageHelperAlreadyDefined < StandardError; end
 
   DEFAULT_TYPE = 'PageFields::Text'
 
   MixPage.config.available_field_types.each_key do |type|
-    if type.start_with? 'PageFields::'
-      field = type.demodulize.underscore
-    else
-      next
+    field = type.demodulize.underscore
+
+    raise PageHelperAlreadyDefined if respond_to? "layout_#{field}s"
+    define_method "layout_#{field}s" do |name, **options|
+      layout_presenters(name, type, **options)&.render
     end
 
-    define_method "layout_#{field}_presenters" do |name, **options|
-      layout_presenters(name, type, **options)
+    raise PageHelperAlreadyDefined if respond_to? "layout_#{field}"
+    define_method "layout_#{field}" do |name, **options|
+      layout_presenter(name, type, **options)&.render
     end
 
-    define_method "layout_#{field}_presenter" do |name, **options|
-      layout_presenter(name, type, **options)
+    raise PageHelperAlreadyDefined if respond_to? "page_#{field}s"
+    define_method "page_#{field}s" do |name, **options|
+      page_presenters(name, type, **options)&.render
     end
 
-    define_method "page_#{field}_presenters" do |name, **options|
-      page_presenters(name, type, **options)
-    end
-
-    define_method "page_#{field}_presenter" do |name, **options|
-      page_presenter(name, type, **options)
+    raise PageHelperAlreadyDefined if respond_to? "page_#{field}"
+    define_method "page_#{field}" do |name, **options|
+      page_presenter(name, type, **options)&.render
     end
   end
 
@@ -40,17 +40,9 @@ module PageHelper
   end
 
   def page_presenter(name, type = nil, layout: false, multi: false)
+    return unless @page
     (((((@memoized ||= {})[:page_presenter] ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
-      scope = @page.layout if layout
-      scope ||=
-        case @virtual_path
-        when "layouts/#{@page.layout.view}", "layouts/#{@page.layout.view}/pjax"
-          @page.layout
-        when @page.view
-          @page
-        else
-          raise InvalidVirtualPath
-        end
+      scope = layout ? @page.layout : @page
       filter = ->(field) { (!type || field.type == type) && field.name == name }
       if multi
         fields = scope.page_fields.select(&filter)
