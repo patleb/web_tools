@@ -18,7 +18,7 @@ li_('.delete_notice', [
           child_model = RailsAdmin.model(child)
           wording = child_model.with(object: child).object_label
           li_({ class: dom_class(child) }, [
-            child.model_name.human,
+            b_(child.model_name.human),
             if child.id && (action = RailsAdmin.action(:show, child_model.abstract_model, child))
               link_to(wording, child_model.abstract_model.url_for(action.name, id: child.id), class: 'pjax')
             else
