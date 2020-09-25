@@ -78,11 +78,11 @@ module RailsAdmin
     end
 
     def errors_for(field)
-      field.errors.present? ? span_('.help-inline.text-danger', field.errors.to_sentence) : ''.html_safe
+      field.errors.present? ? span_('.help-inline.col-sm-6.text-danger', field.errors.to_sentence) : ''.html_safe
     end
 
     def help_for(field)
-      field.help.present? ? span_('.help-block.col-sm-10', simple_format(field.help)) : ''.html_safe
+      field.help.present? ? span_('.help-block.col-sm-6', simple_format(field.help)) : ''.html_safe
     end
 
     def field_for(field)

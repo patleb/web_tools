@@ -65,7 +65,7 @@ module RailsAdmin
 
       def readonly?(_object = nil)
         @klass.readonly_attributes.include?(column.name) ||
-          (klass.all.instance_eval(&scope).readonly_value if scope.is_a? Proc) ||
+          (klass.all.instance_eval(&scope).readonly_value if !polymorphic? && scope.is_a?(Proc)) ||
           reflection.nested?
       end
     end
