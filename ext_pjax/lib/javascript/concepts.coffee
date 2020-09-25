@@ -26,7 +26,7 @@ class Js.Concepts
     # necessary for having accurate jQuery heights/widths
     retries = 0
     test = setInterval(->
-      if $("head > link[href$='.css']").last().prop('sheet')?.cssRules.length || retries >= 50
+      if $("head > link[rel='stylesheet'][href^='/']").last().prop('sheet')?.cssRules.length || retries >= 50
         Logger.debug("CSS load #{retries * 20} ms")
         clearInterval(test)
         setTimeout(->
