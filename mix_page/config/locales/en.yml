@@ -38,5 +38,5 @@ en:
     models:
       page: Page
       page_fields/text: Text
-      page_fields/rich_text: Rich text
+      page_fields/rich_text: Multimedia text
       page_fields/link: Link

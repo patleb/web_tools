@@ -38,5 +38,5 @@ fr:
     models:
       page: Page
       page_fields/text: Texte
-      page_fields/rich_text: Texte enrichi
+      page_fields/rich_text: Texte multimédia
       page_fields/link: Lien
