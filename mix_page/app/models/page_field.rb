@@ -17,6 +17,10 @@ class PageField < LibRecord
     page_id
   )
 
+  def show?
+    super && (fieldable.nil? || fieldable.show?)
+  end
+
   ### Example for when the association should be on the base class but, in our case, the association is on the children.
   # def fieldable_type=(class_name)
   #    super(class_name.constantize.base_class.to_s)

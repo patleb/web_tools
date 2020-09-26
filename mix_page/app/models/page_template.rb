@@ -31,7 +31,7 @@ class PageTemplate < Page
     MixPage.config.available_templates.reject{ |key, _| key.in? taken }
   end
 
-  def self.state_of(uuid)
+  def self.find_with_state_by_uuid(uuid)
     layouts = alias_table(:layouts)
     with_discarded
       .where(uuid: uuid).joins(join(layouts).on(column(:page_layout_id).eq(layouts[:id])).join_sources)
@@ -39,8 +39,16 @@ class PageTemplate < Page
       .first
   end
 
+  def self.find_with_content(id)
+    with_discarded.with_content.find(id)
+  end
+
   def layout
     @layout ||= PageLayout.with_content.readonly.find(page_layout_id)
+  end
+
+  def show?
+    super && published? || Current.user.admin?
   end
 
   def publish

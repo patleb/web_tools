@@ -43,7 +43,7 @@ module PageHelper
     return unless @page
     (((((@memoized ||= {})[:page_presenter] ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
       scope = layout ? @page.layout : @page
-      filter = ->(field) { (!type || field.type == type) && field.name == name }
+      filter = ->(field) { (!type || field.type == type) && field.name == name && field.show? }
       if multi
         fields = scope.page_fields.select(&filter)
         fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, name: name)] if fields.empty?

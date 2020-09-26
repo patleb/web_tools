@@ -7,6 +7,8 @@ module ActiveRecord::Base::WithDiscard
     self.discard_column = :deleted_at
 
     scope :only_discarded, -> { with_discarded.discarded }
+
+    alias_method :show?, :kept?
   end
 
   def discard_all(has_many, raise_on_error = false)

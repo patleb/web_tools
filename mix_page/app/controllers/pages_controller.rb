@@ -129,7 +129,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def authorized_page!
-    render_404 unless @state && can?(:show_in_app, @state)
+    render_404 unless @state.try(:show?)
   end
 
   def redirect?
@@ -149,11 +149,11 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def load_state
-    @state = PageTemplate.state_of(params[:uuid])
+    @state = PageTemplate.find_with_state_by_uuid(params[:uuid])
   end
 
   def load_page
-    @page = PageTemplate.with_content.find(@state.id)
+    @page = PageTemplate.find_with_content(@state.id)
     remove_instance_variable(:@state)
   end
 end

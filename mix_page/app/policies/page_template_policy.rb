@@ -4,7 +4,7 @@ class PageTemplatePolicy < ApplicationPolicy
   end
 
   def show_in_app?
-    record.kept? && record.published? || user.admin?
+    record.show?
   end
 
   def show?
