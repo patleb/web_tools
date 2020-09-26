@@ -22,6 +22,7 @@ class PageTemplate < Page
   before_validation :set_published_at, if: :publish_changed?
   before_validation :set_page_layout, unless: :page_layout_id
 
+  after_discard -> { update! published_at: nil }
   after_discard -> { discard_all! :links }
   before_undiscard -> { undiscard_all! :links }
 
@@ -48,7 +49,7 @@ class PageTemplate < Page
   end
 
   def show?
-    super && published? || Current.user.admin?
+    super && (published? || Current.user.admin?)
   end
 
   def publish
