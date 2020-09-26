@@ -21,6 +21,12 @@ class Js.UjsConcept
         inputs += "<input name='#{csrf_param}' value='#{csrf_token}' type='hidden' />"
       target = link.attr('target')
       form.attr(target: target) if target
+      (link.data('params') ? {}).each (param_key, param_value) ->
+        if param_value?.is_a(Object)
+          param_value.flatten_keys('][').each (keys, value) ->
+            inputs += "<input name='#{[param_key, '[', keys, ']'].join('')}' value='#{value}' type='hidden' />"
+        else
+          inputs += "<input name='#{param_key}' value='#{param_value}' type='hidden' />"
       form.hide().append(inputs).appendTo('body')
       form.submit()
       false
