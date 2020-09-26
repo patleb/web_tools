@@ -13,20 +13,20 @@ class Js.UjsConcept
     'click', 'a[data-method]', (event) ->
       link = $(event.currentTarget)
       href = link[0].href
-      form = $('<form>', method: 'post', action: href)
-      inputs = "<input name='_method' value='#{link.data('method')}' type='hidden' />"
+      form = form$(method: 'post', action: href)
+      inputs = input_(name: '_method', value: link.data('method'), type: 'hidden')
       csrf_token = $.csrf_token()
       csrf_param = $.csrf_param()
       if csrf_param? && csrf_token? && !$.is_cross_domain(href)
-        inputs += "<input name='#{csrf_param}' value='#{csrf_token}' type='hidden' />"
+        inputs += input_(name: csrf_param, value: csrf_token, type: 'hidden')
       target = link.attr('target')
       form.attr(target: target) if target
       (link.data('params') ? {}).each (param_key, param_value) ->
         if param_value?.is_a(Object)
           param_value.flatten_keys('][').each (keys, value) ->
-            inputs += "<input name='#{[param_key, '[', keys, ']'].join('')}' value='#{value}' type='hidden' />"
+            inputs += input_(name: [param_key, '[', keys, ']'].join(''), value: value, type: 'hidden')
         else
-          inputs += "<input name='#{param_key}' value='#{param_value}' type='hidden' />"
+          inputs += input_(name: param_key, value: param_value, type: 'hidden')
       form.hide().append(inputs).appendTo('body')
       form.submit()
       false

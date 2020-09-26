@@ -5,7 +5,7 @@ class Js.TagConcept
     'b', 'button'
     'dd', 'div', 'dl', 'dt'
     'em'
-    'fieldset'
+    'fieldset', 'form'
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr'
     'i', 'input'
     'label', 'legend', 'li'
