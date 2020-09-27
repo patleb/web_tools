@@ -1,4 +1,5 @@
 class PagesController < MixPage.config.parent_controller.constantize
+  include ActionView::Helpers::TextHelper
   include MixTemplate::WithPjax
   include MixTemplate::WithLayoutValues
 
