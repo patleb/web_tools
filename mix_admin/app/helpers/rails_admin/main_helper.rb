@@ -133,6 +133,7 @@ module RailsAdmin
 
     def delete_buttons(objects)
       div_('.form-group.form-actions.col-sm-12', [
+        hidden_field_tag(:_back, redirect_to_back?),
         button_('.btn.btn-danger', { class: bs_form_row, type: 'submit', data: { disable: :submit } }, [
           i_('.fa.fa-check.icon-white'),
           t('admin.form.delete')
