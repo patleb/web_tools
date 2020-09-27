@@ -83,7 +83,7 @@ class RailsAdmin::Config::Model
     parent_class = klass.superclass
     if parent_class.respond_to? :extended_record_base_class
       parent_class.extended_record_base_class.to_s
-    elsif parent_class.in?([Object, BasicObject]) || parent_class.abstract_class?
+    elsif parent_class.abstract_class?
       nil
     else
       parent_class.to_s

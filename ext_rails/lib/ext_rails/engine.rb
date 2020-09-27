@@ -21,6 +21,7 @@ module ExtRails
 
     require 'sunzistrano/context'
     require 'ext_rails/action_mailer/smtp_settings'
+    require 'ext_rails/active_support/abstract_class'
     require 'ext_rails/active_support/core_ext'
     require 'ext_rails/active_support/lazy_load_hooks/autorun'
     require 'ext_rails/active_support/current_attributes'
