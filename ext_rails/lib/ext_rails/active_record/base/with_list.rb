@@ -169,13 +169,17 @@ module ActiveRecord::Base::WithList::Position
 
   def list_next_record(previous_record)
     self.class.without_default_scope do
-      self.class.where(self.class.base_class.column(list_column) > previous_record.send(list_column)).order(list_column).first
+      self.class.base_class.where(self.class.base_class.column(list_column) > previous_record.send(list_column))
+        .order(list_column)
+        .first
     end
   end
 
   def list_previous_record(next_record)
     self.class.without_default_scope do
-      self.class.where(self.class.base_class.column(list_column) < next_record.send(list_column)).order(list_column).last
+      self.class.base_class.where(self.class.base_class.column(list_column) < next_record.send(list_column))
+        .order(list_column)
+        .last
     end
   end
 
