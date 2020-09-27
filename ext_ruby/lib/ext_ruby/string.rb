@@ -9,6 +9,10 @@ class String
   HEXADECIMAL ||= /0x[0-9a-f]+/i.freeze
   DECIMAL ||= /\d+([.,]\d+)*/.freeze
 
+  def html_blank?
+    gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank?
+  end
+
   def dehumanize
     parameterize(separator: '_')
   end

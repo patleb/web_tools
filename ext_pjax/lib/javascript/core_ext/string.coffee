@@ -32,6 +32,9 @@ String.define_methods
   to_timestamp: ->
     Date.parse(this)
 
+  html_blank: ->
+    this.gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
+
   blank: ->
     _.isEmpty(_.trim(this))
 

@@ -26,7 +26,7 @@ class RailsAdmin.Form.FieldConcept::WysiwygElement
       ],
     )
     @editor.onChange = (contents, core) =>
-      if contents.gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
+      if contents.html_blank()
         @input.val('')
       else
         @input.val(contents)
