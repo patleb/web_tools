@@ -6,7 +6,6 @@ class Js.PageFieldConcept
   ready: =>
     $(@LIST).sortable(
       items: "> #{@ITEM}"
-      cursorAt: { top: 52 }
       axis: 'y'
       update: (event, ui) ->
         id = ui.item.data('id')
