@@ -7,23 +7,23 @@ module PageHelper
     field = type.demodulize.underscore
 
     raise PageHelperAlreadyDefined if respond_to? "layout_#{field}s"
-    define_method "layout_#{field}s" do |name, **options|
-      layout_presenters(name, type, **options)&.render
+    define_method "layout_#{field}s" do |name, **options, &block|
+      layout_presenters(name, type, **options)&.render(&block)
     end
 
     raise PageHelperAlreadyDefined if respond_to? "layout_#{field}"
-    define_method "layout_#{field}" do |name, **options|
-      layout_presenter(name, type, **options)&.render
+    define_method "layout_#{field}" do |name, **options, &block|
+      layout_presenter(name, type, **options)&.render(&block)
     end
 
     raise PageHelperAlreadyDefined if respond_to? "page_#{field}s"
-    define_method "page_#{field}s" do |name, **options|
-      page_presenters(name, type, **options)&.render
+    define_method "page_#{field}s" do |name, **options, &block|
+      page_presenters(name, type, **options)&.render(&block)
     end
 
     raise PageHelperAlreadyDefined if respond_to? "page_#{field}"
-    define_method "page_#{field}" do |name, **options|
-      page_presenter(name, type, **options)&.render
+    define_method "page_#{field}" do |name, **options, &block|
+      page_presenter(name, type, **options)&.render(&block)
     end
   end
 
