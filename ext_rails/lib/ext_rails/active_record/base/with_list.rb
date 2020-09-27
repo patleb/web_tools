@@ -53,6 +53,10 @@ module ActiveRecord::Base::WithList::Position
     end
   end
 
+  def list_changed?
+    send("#{list_column}_changed?") || list_previous_id_changed? || list_next_id_changed?
+  end
+
   private
 
   def list_with_previous_record
