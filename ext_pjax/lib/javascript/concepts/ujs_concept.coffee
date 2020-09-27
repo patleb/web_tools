@@ -10,11 +10,11 @@ class Js.UjsConcept
     'click.continue', '[formnovalidate]', ->
       $(this).closest('form').attr(novalidate: true).data(novalidate: true)
 
-    'click', 'a[data-method]', (event) ->
+    'click', 'a[data-method], [data-href]', (event) ->
       link = $(event.currentTarget)
-      href = link[0].href
+      href = $.parse_location(link).href
       form = form$(method: 'post', action: href)
-      inputs = input_(name: '_method', value: link.data('method'), type: 'hidden')
+      inputs = input_(name: '_method', value: link.data('method') || 'GET', type: 'hidden')
       csrf_token = $.csrf_token()
       csrf_param = $.csrf_param()
       if csrf_param? && csrf_token? && !$.is_cross_domain(href)
