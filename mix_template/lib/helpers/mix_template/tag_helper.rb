@@ -108,6 +108,7 @@ module MixTemplate
         end
       end
       options = options ? options.dup : {}
+      options[:rel] = 'noopener' if tag == 'a'
 
       return '' unless continue(options)
 
