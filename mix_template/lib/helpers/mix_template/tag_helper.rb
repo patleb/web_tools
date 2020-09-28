@@ -85,6 +85,7 @@ module MixTemplate
     end
 
     def with_tag(tag, css_or_content_or_options = nil, content_or_options = nil, options_or_content = nil, &block)
+      tag = tag.to_s
       unless css_or_content_or_options.nil?
         case css_or_content_or_options
         when ID_CLASSES

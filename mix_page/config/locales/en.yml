@@ -1,4 +1,7 @@
 en:
+  page_fields:
+    new: Add
+    edit: "New %{model} to edit"
   shared_attributes: &shared_attributes
     creator: Created by
     updater: Modified by
@@ -35,8 +38,13 @@ en:
         text_en: Text (english)
       page_fields/link:
         fieldable: Link
+      page_fields/title:
+        text: Title
+        text_fr: Title (french)
+        text_en: Title (english)
     models:
       page: Page
       page_fields/text: Text
       page_fields/rich_text: Multimedia text
       page_fields/link: Link
+      page_fields/title: Title

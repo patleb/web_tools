@@ -1,9 +1,15 @@
 module PageFields
   class TextPresenter < PageFieldPresenter
-    def render
-      text = block_given? ? yield(object) : object.text
-      text = 'New text to edit' if text.blank? && can?(:edit, object)
-      super{ text }
+    def html(**options)
+      escape = options.delete(:escape)
+      div_(options) {[
+        text(escape).presence || pretty_blank,
+        pretty_actions(:div),
+      ]}
+    end
+
+    def text(escape = true)
+      escape ? object.text : object.text&.html_safe
     end
   end
 end

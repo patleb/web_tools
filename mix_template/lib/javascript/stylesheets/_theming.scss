@@ -7,6 +7,12 @@
 @import "~@@/mix_template/stylesheets/concepts/menu";
 @import "~@@/mix_template/stylesheets/concepts/pjax";
 
+a, button {
+  &:focus {
+    outline: none !important;
+  }
+}
+
 .alert {
   margin-top: 12px;
   margin-bottom: 6px;

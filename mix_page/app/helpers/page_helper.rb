@@ -7,36 +7,36 @@ module PageHelper
     field = type.demodulize.underscore
 
     raise PageHelperAlreadyDefined if respond_to? "layout_#{field}s"
-    define_method "layout_#{field}s" do |name, **options, &block|
-      layout_presenters(name, type, **options)&.render(&block)
+    define_method "layout_#{field}s" do |name, list_options = {}, item_options = {}, &block|
+      layout_presenters(name, type)&.render(list_options, item_options, &block)
     end
 
     raise PageHelperAlreadyDefined if respond_to? "layout_#{field}"
-    define_method "layout_#{field}" do |name, **options, &block|
-      layout_presenter(name, type, **options)&.render(&block)
+    define_method "layout_#{field}" do |name, **item_options|
+      layout_presenter(name, type)&.render(**item_options)
     end
 
     raise PageHelperAlreadyDefined if respond_to? "page_#{field}s"
-    define_method "page_#{field}s" do |name, **options, &block|
-      page_presenters(name, type, **options)&.render(&block)
+    define_method "page_#{field}s" do |name, list_options = {}, item_options = {}, &block|
+      page_presenters(name, type)&.render(list_options, item_options, &block)
     end
 
     raise PageHelperAlreadyDefined if respond_to? "page_#{field}"
-    define_method "page_#{field}" do |name, **options, &block|
-      page_presenter(name, type, **options)&.render(&block)
+    define_method "page_#{field}" do |name, **item_options|
+      page_presenter(name, type)&.render(**item_options)
     end
   end
 
-  def layout_presenters(*args, multi: nil, **options)
-    layout_presenter(*args, **options, multi: true)
+  def layout_presenters(*args)
+    page_presenter(*args, layout: true, multi: true)
   end
 
-  def layout_presenter(*args, layout: nil, **options)
-    page_presenter(*args, **options, layout: true)
+  def layout_presenter(*args)
+    page_presenter(*args, layout: true, multi: false)
   end
 
-  def page_presenters(*args, multi: nil, **options)
-    page_presenter(*args, **options, multi: true)
+  def page_presenters(*args)
+    page_presenter(*args, layout: false, multi: true)
   end
 
   def page_presenter(name, type = nil, layout: false, multi: false)
