@@ -14,10 +14,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   end
 
   def dom_class
-    [ "#{name}_presenter",
-      super(object),
-      "page_field",
-    ].uniq
+    ["#{name}_presenter", super(object), "page_field"].uniq
   end
 
   def html_list_options
@@ -51,11 +48,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
     return '' unless member_actions.any?
     with_tag(tag, '.page_field_actions') do
       member_actions.map do |action, path|
-        action_options = {
-          class: "#{action}_page_field #{action}_#{object.type.full_underscore} btn btn-default btn-xs",
-          data: { href: path }
-        }
-        button_(action_options) do
+        button_(class: "#{action}_page_field #{action}_#{type.full_underscore} btn btn-default btn-xs", data: { href: path }) do
           i_(class: LINK_ICONS[action])
         end
       end

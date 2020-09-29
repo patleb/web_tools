@@ -6,10 +6,7 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
   end
 
   def dom_class
-    [ "#{name}_presenters",
-      self.class.name.full_underscore.delete_suffix('_presenter'),
-      "page_field_list",
-    ].uniq
+    ["#{name}_presenters", self.class.name.full_underscore.delete_suffix('_presenter'), "page_field_list"].uniq
   end
 
   def html_list_options
@@ -44,16 +41,13 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
       button_('.btn.btn-default.btn-xs.dropdown-toggle', type: 'button', data: { toggle: 'dropdown' }, aria: { haspopup: true, expanded: false }) {[
         i_(class: 'fa fa-plus'),
         span_('.hidden-xs', I18n.t('page_fields.new')),
-        # span_(class: 'caret'),
       ]},
       ul_('.dropdown-menu') do
         types.map do |type|
-          create_options = {
-            href: field_path,
-            data: { method: :post, params: { page_field: { type: type, name: name, page_id: page_id } } }
-          }
           li_(".new_page_field.new_#{type.full_underscore}") do
-            a_(create_options){ type.to_const.model_name.human }
+            a_(href: field_path, data: { method: :post, params: { page_field: { type: type, name: name, page_id: page_id } } }) do
+              type.to_const.model_name.human
+            end
           end
         end
       end
