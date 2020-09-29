@@ -8,7 +8,7 @@ append :html_data, [
 ]
 
 append :sidebar, [
-  area(:layout_links),
+  area(:sidebar_links),
   hr_('.separator'),
   ul_('.nav.nav-pills.nav-stacked', [
     li_(login_link),
