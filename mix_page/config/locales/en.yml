@@ -44,7 +44,7 @@ en:
         text_en: Title (english)
     models:
       page: Page
-      page_fields/text: Text
-      page_fields/rich_text: Multimedia text
+      page_fields/text: Plain text
+      page_fields/rich_text: Text
       page_fields/link: Link
       page_fields/title: Title

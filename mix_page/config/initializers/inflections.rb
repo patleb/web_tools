@@ -1,3 +1,3 @@
 ActiveSupport::Inflector.inflections do |inflect|
-  inflect.irregular 'texte multimédia', 'textes multimédias'
+  inflect.irregular 'texte simple', 'textes simples'
 end

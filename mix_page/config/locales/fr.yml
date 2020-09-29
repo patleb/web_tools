@@ -44,7 +44,7 @@ fr:
         text_en: Titre (anglais)
     models:
       page: Page
-      page_fields/text: Texte
-      page_fields/rich_text: Texte multimédia
+      page_fields/text: Texte simple
+      page_fields/rich_text: Texte
       page_fields/link: Lien
       page_fields/title: Titre
