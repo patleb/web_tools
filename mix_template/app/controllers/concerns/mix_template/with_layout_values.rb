@@ -3,7 +3,7 @@ module MixTemplate
     extend ActiveSupport::Concern
 
     prepended do
-      before_action :set_root_path
+      before_action :set_root_path, unless: :pjax?
       before_render :set_layout_values
       after_action  :versionize
     end

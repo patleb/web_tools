@@ -1,15 +1,16 @@
 module MixPage
   has_config do
-    attr_writer :js_routes
-    attr_writer :reserved_words
-    attr_writer :parent_controller
-    attr_writer :root_path
-    attr_writer :layout
-    attr_writer :available_layouts
-    attr_writer :available_templates
-    attr_writer :available_field_types
-    attr_writer :available_field_names
-    attr_writer :available_fieldables
+    attr_writer   :js_routes
+    attr_writer   :reserved_words
+    attr_writer   :parent_controller
+    attr_accessor :root_path
+    attr_writer   :root_template
+    attr_writer   :layout
+    attr_writer   :available_layouts
+    attr_writer   :available_templates
+    attr_writer   :available_field_types
+    attr_writer   :available_field_names
+    attr_writer   :available_fieldables
 
     def js_routes
       @js_routes ||= MixPage.js_routes
@@ -25,11 +26,15 @@ module MixPage
       @parent_controller ||= '::ActionController::Base'
     end
 
-    def root_path
-      # TODO
+    def root_template
+      return unless @root_template
+      raise "unavailable template: [#{@root_template}]" unless available_templates.has_key? @root_template
+      raise "non-unique template: [#{@root_template}]" if @root_template.end_with? MixPage::MULTI_VIEW
+      @root_template
     end
 
     def layout
+      @layout ||= 'application'
       raise "unavailable layout: [#{@layout}]" unless available_layouts.has_key? @layout
       @layout
     end

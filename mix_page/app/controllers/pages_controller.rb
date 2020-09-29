@@ -1,3 +1,4 @@
+# TODO index (search), form (create, show, update, destroy, index)
 class PagesController < MixPage.config.parent_controller.constantize
   include ActionView::Helpers::TextHelper
   include MixTemplate::WithPjax
@@ -19,10 +20,6 @@ class PagesController < MixPage.config.parent_controller.constantize
       load_page
       render template: @page.view
     end
-  end
-
-  def index
-    # TODO search
   end
 
   def field_create
@@ -50,24 +47,14 @@ class PagesController < MixPage.config.parent_controller.constantize
     on_field_not_found
   end
 
-  def form_create
-    # TODO user's new form
-  end
-
-  def form_show
-    # TODO user's form
-  end
-
-  def form_update
-    # TODO user's form update
-  end
-
-  def form_destroy
-    # TODO user's form discard
-  end
-
-  def form_index
-    # TODO user's form list
+  def root_path
+    if MixPage.config.root_path.present?
+      MixPage.config.root_path
+    elsif (root_page = PageTemplate.find_root_page)&.show?
+      root_page.to_url
+    else
+      main_app.try(:root_path) || '/'
+    end
   end
 
   protected

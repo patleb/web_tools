@@ -32,6 +32,11 @@ class PageTemplate < Page
     MixPage.config.available_templates.reject{ |key, _| key.in? taken }
   end
 
+  def self.find_root_page
+    return unless (view = MixPage.config.root_template)
+    with_discarded.find_by(view: view)
+  end
+
   def self.find_with_state_by_uuid(uuid)
     layouts = alias_table(:layouts)
     with_discarded
