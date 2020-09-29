@@ -3,7 +3,7 @@ class CreateLibPages < ActiveRecord::Migration[6.0]
     create_table :lib_pages do |t|
       t.uuid       :uuid,                 null: false, default: 'uuid_generate_v1mc()', index: { using: :hash }
       t.integer    :type,                 null: false
-      t.integer    :view,                 null: false
+      t.integer    :view,                 null: false, index: true
       t.belongs_to :page_layout,          foreign_key: { to_table: :lib_pages }
       t.integer    :page_templates_count, null: false, default: 0
       t.integer    :page_fields_count,    null: false, default: 0
@@ -16,5 +16,6 @@ class CreateLibPages < ActiveRecord::Migration[6.0]
     end
 
     add_index :lib_pages, [:type, :deleted_at]
+    add_index :lib_pages, :json_data, using: :gin
   end
 end
