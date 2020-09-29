@@ -170,6 +170,9 @@ module ExtRails
       require 'ext_rails/active_record/relation'
       require 'ext_rails/active_record/tasks/database_tasks/with_single_env'
 
+      Rails.backtrace_cleaner.class.send(:remove_const, :APP_DIRS_PATTERN)
+      Rails.backtrace_cleaner.class.const_set(:APP_DIRS_PATTERN, /.+/)
+
       MixRescue.config.available_types.merge! 'RailsRescue' => 30
     end
 
