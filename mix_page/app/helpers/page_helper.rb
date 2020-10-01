@@ -1,8 +1,6 @@
 module PageHelper
   class PageHelperAlreadyDefined < StandardError; end
 
-  DEFAULT_TYPE = 'PageFields::Text'
-
   MixPage.config.available_field_types.each_key do |type|
     field = type.demodulize.underscore
 
@@ -39,24 +37,30 @@ module PageHelper
     page_presenter(*args, layout: false, multi: true)
   end
 
-  def page_presenter(name, type = nil, layout: false, multi: false)
-    return unless @page
+  def page_presenter(name, type, layout: false, multi: false)
+    return unless @page && type.in?(page_field_types)
     (((((@memoized ||= {})[:page_presenter] ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
       scope = layout ? @page.layout : @page
-      filter = ->(field) { (!type || field.type == type) && field.name == name && field.show? }
+      filter = ->(field) { field.type == type && field.name == name && field.show? }
       if multi
         fields = scope.page_fields.select(&filter)
-        fields = [scope.page_fields.create!(type: type || DEFAULT_TYPE, name: name)] if fields.empty?
+        fields = [scope.page_fields.create!(type: type, name: name)] if fields.empty?
         fields.map!(&:presenter)
         list_presenter_class = type && "#{type}ListPresenter".to_const
         list_presenter_class ||= "#{fields.first.object.class.superclass.name}ListPresenter".to_const
         list_presenter_class ||= "#{fields.first.object.class.base_class.name}ListPresenter".to_const!
-        list_presenter_class.new(page_id: scope.id, type: type, list: fields)
+        list_presenter_class.new(page_id: scope.id, types: [type], list: fields)
       else
         field = scope.page_fields.find(&filter)
-        field = scope.page_fields.create!(type: type || DEFAULT_TYPE, name: name) if field.nil?
+        field = scope.page_fields.create!(type: type, name: name) if field.nil?
         field.presenter
       end
     end
+  end
+
+  private
+
+  def page_field_types
+    @page_field_types ||= MixPage.config.available_field_types.keys.select{ |type| can? :create, type }
   end
 end

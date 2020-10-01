@@ -17,6 +17,9 @@ end
 class RailsAdmin::Config::Model::Fields::Jsonb < RailsAdmin::Config::Model::Fields::Json
 end
 
+class RailsAdmin::Config::Model::Fields::Ltree < RailsAdmin::Config::Model::Fields::Base
+end
+
 class RailsAdmin::Config::Model::Fields::Numrange < RailsAdmin::Config::Model::Fields::Array::Decimal
 end
 

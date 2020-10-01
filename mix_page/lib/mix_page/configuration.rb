@@ -52,7 +52,6 @@ module MixPage
     def available_field_types
       @available_field_types ||= {
         'PageFields::Text' => 0,
-        'PageFields::Title' => 30,
         'PageFields::Link' => 20,
         'PageFields::RichText' => 10,
       }

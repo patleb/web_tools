@@ -19,24 +19,21 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
 
   def render(list_options = {}, item_options = {})
     list_options = html_options.with_keyword_access.union!(html_list_options).union!(list_options)
-    types = list_options.delete(:types)
-    types = types.presence ? list_types & types : list_types
-    current_list = list.select{ |presenter| presenter.type.in? types }
     if block_given?
-      yield(current_list, list_options, pretty_actions(types))
+      yield(list, list_options, pretty_actions)
     else
       div_(list_options) {[
-        current_list.map do |presenter|
+        list.map do |presenter|
           div_(presenter.html_list_options) do
             presenter.render(item_options)
           end
         end,
-        pretty_actions(types)
+        pretty_actions
       ]}
     end
   end
 
-  def pretty_actions(types)
+  def pretty_actions
     div_('.dropdown.page_field_list_actions') {[
       button_('.btn.btn-default.btn-xs.dropdown-toggle', type: 'button', data: { toggle: 'dropdown' }, aria: { haspopup: true, expanded: false }) {[
         i_(class: 'fa fa-plus'),
@@ -52,10 +49,6 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
         end
       end
     ]}
-  end
-
-  def list_types
-    @list_types ||= (type ? [type] : MixPage.config.available_field_types.keys).select{ |type| can? :create, type }
   end
 
   def field_path

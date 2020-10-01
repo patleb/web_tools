@@ -17,6 +17,11 @@ class PageField < LibRecord
     page_id
   )
 
+  def self.inherited(subclass)
+    super
+    subclass.send(:default_scope) { rewhere(type: klass.name) } # necessary for superclass usage
+  end
+
   def show?
     super && (fieldable.nil? || fieldable.show?)
   end
