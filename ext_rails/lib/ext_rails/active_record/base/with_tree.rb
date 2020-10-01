@@ -1,26 +1,11 @@
 # TODO
-# x
-#  x
-#   x
-#    x
-# oooox
-# x
-# -x
-# --x
-# ---x
-# ----x
-# --x
-# ---x
-# x cannot be greater than the immediate parent
-# --> on move up/down, previous chidren will need to be adjusted to new parent and current value relative to new parent
-#     sibling = order(:position).where(position > current.position).where(level <= current.level).first
-#
-#     where(id: children_ids).order(:id).update_all(childrens_level + (new_parent_level - old_parent_level))
-#     [parent, current].sort_by(:id).each(&:lock)
-#     current.level = parent.level + 1 if current > parent + 1
-# --> on delete, chidrent will need to be adjusted
-#
-# use Ltree instead https://github.com/zorab47/active_admin-sortable_tree
+# on update, :level cannot be greater than the immediate parent or lesser than 0 (add scope functionality)
+#   - do not modify :level on move within the list or on delete
+#   - modify :level only on move within the same list's :position and use the immediate parent or set at 0 on none
+#   - use cron job to re-adjust :level gaps
+#   - on frontend, use max :level to set possible increment/decrement values
+#   - on frontend, use jquery-ui sortable to move on the x axis with empty divs for increment/decrement values
+#     --> similar to https://github.com/zorab47/active_admin-sortable_tree
 module ActiveRecord::Base::WithTree
   extend ActiveSupport::Concern
 
@@ -28,6 +13,7 @@ module ActiveRecord::Base::WithTree
     def has_tree
       class_attribute :tree_column, instance_writer: false, default: :level
 
+      attribute :tree_parent_id, :integer
       attribute :tree_increment, :integer
       attribute :tree_decrement, :integer
 
