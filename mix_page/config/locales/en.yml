@@ -42,6 +42,13 @@ en:
         text: Title
         text_fr: Title (french)
         text_en: Title (english)
+      page_fields/rich_text:
+        title: Title
+        title_fr: Title (french)
+        title_en: Title (english)
+        subtitle: Subtitle
+        subtitle_fr: Subtitle (french)
+        subtitle_en: Subtitle (english)
     models:
       page: Page
       page_fields/text: Plain text

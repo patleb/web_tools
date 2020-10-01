@@ -6,13 +6,14 @@ module MixUser
       if defined?(MixAdmin) && Current.user.admin?
         css << ' pjax' if controller.try(:admin?)
         path = admin_path_for(:edit, Current.user)
+        title = t('user.admin')
       elsif MixUser.config.devise_modules.include? :registerable
         css << ' pjax' unless controller.try(:admin?)
         path = edit_user_path
       else
         return
       end
-      a_ class: css, href: path do
+      a_ class: css, href: path, title: title do
         span_(Current.user.email)
       end
     end
