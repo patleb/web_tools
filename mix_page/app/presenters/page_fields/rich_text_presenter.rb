@@ -4,16 +4,21 @@ module PageFields
       weight = 1 if weight < 1
       weight = 5 if weight > 5
       div_(options) {[
-        header(weight, :title),
-        header(weight + 1, :subtitle),
+        title(weight),
+        subtitle(weight + 1),
         text(false).presence || p_{ pretty_blank },
         pretty_actions(:div),
       ].compact}
     end
 
-    def header(weight, name)
-      text = object.send(name)
+    def title(weight)
+      text = object.title
       with_tag("h#{weight}"){ text } if text.present?
+    end
+
+    def subtitle(weight)
+      text = object.subtitle
+      with_tag("h#{weight}"){ b_{ text } } if text.present?
     end
   end
 end
