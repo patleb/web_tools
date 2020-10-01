@@ -142,7 +142,14 @@ module MixTemplate
           other_value = available_values.find{ |value| current_value != value.to_s }
           other_label = other_value
         end
-        a_ ".#{name}_select.session_select", other_label.to_s.humanize, href: "?_#{name}=#{other_value}"
+        if name == :locale
+          a_(".#{name}_select.session_select", href: "?_#{name}=#{other_value}", title: I18n.t('template.language')) {[
+            i_('.fa.fa-flag'),
+            other_label.to_s.humanize
+          ]}
+        else
+          a_ ".#{name}_select.session_select", other_label.to_s.humanize, href: "?_#{name}=#{other_value}"
+        end
       else
         other_values = [[current_label.to_s.humanize, ""]]
         if available_values.first.is_a? Enumerable

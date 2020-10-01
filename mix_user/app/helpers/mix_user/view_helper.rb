@@ -13,9 +13,10 @@ module MixUser
       else
         return
       end
-      a_ class: css, href: path, title: title do
+      a_(class: css, href: path, title: title) {[
+        i_('.fa.fa-user'),
         span_(Current.user.email)
-      end
+      ]}
     end
 
     def login_link
