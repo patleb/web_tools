@@ -5,10 +5,10 @@ module PageFields::RichTextAdmin
     rails_admin do
       navigation_parent false
 
-      field :title, translated: :all do
+      field :title, translated: :all, weight: 2 do
         searchable false
       end
-      field :subtitle, translated: :all do
+      field :subtitle, translated: :all, weight: 2 do
         searchable false
       end
       field :text, :wysiwyg, translated: :all do
@@ -18,7 +18,7 @@ module PageFields::RichTextAdmin
 
     rails_admin :superclass, after: true do
       index do
-        exclude_fields :title, :subtitle, translated: :all
+        exclude_fields :title, :subtitle, translated: true
       end
 
       edit do

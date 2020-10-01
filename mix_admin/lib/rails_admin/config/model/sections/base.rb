@@ -46,8 +46,8 @@ class RailsAdmin::Config::Model::Sections::Base
   # Defines a configuration for a field.
   def field(name, type = nil, add_to_section = true, translated: false, editable: false, weight: nil, &block)
     if translated
-      field(name, type, add_to_section, &block) if translated == :all
-      I18n.available_locales.each{ |locale| field!("#{name}_#{locale}", type, add_to_section, &block) }
+      field(name, type, add_to_section, weight: weight, &block) if translated == :all
+      I18n.available_locales.each{ |locale| field!("#{name}_#{locale}", type, add_to_section, weight: weight, &block) }
     else
       name = name.to_sym
       field = _fields.find{ |f| name == f.name }
