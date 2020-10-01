@@ -1,5 +1,6 @@
 class PageFieldPresenter < ActionPresenter::Base[:@page]
   LINK_ICONS = {
+    sort:   'fa fa-arrows-v',
     edit:   'fa fa-pencil',
     delete: 'fa fa-trash-o fa-fw'
   }
@@ -18,7 +19,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   end
 
   def html_list_options
-    editable ? { class: ['js_page_field_item'], data: { id: id } } : {}
+    list && editable ? { class: ['js_page_field_item'], data: { id: id } } : {}
   end
 
   def html_options
@@ -46,12 +47,20 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
 
   def pretty_actions(tag = :div)
     return '' unless member_actions.any?
-    with_tag(tag, '.page_field_actions') do
+    with_tag(tag, '.page_field_actions') {[
+      sort_action,
       member_actions.map do |action, path|
         button_(class: "#{action}_page_field #{action}_#{type.full_underscore} btn btn-default btn-xs", data: { href: path }) do
           i_(class: LINK_ICONS[action])
         end
       end
+    ]}
+  end
+
+  def sort_action
+    return unless list && editable?
+    span_(class: "js_page_field_sort sort_page_field sort_#{type.full_underscore}") do
+      i_(class: LINK_ICONS[:sort])
     end
   end
 

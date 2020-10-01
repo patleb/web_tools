@@ -2,11 +2,19 @@ class Js.PageFieldConcept
   constants: ->
     LIST: 'CLASS'
     ITEM: 'CLASS'
+    SORT: 'CLASS'
+
+  document_on: => [
+    'click', @SORT, (event, target) =>
+      event.preventDefault()
+  ]
 
   ready: =>
     $(@LIST).sortable(
       items: "> #{@ITEM}"
       axis: 'y'
+      handle: @SORT
+      cursor: 'grabbing'
       update: (event, ui) ->
         id = ui.item.data('id')
         list_previous_id = ui.item.prev().data('id')

@@ -2,6 +2,14 @@
 @import "~@@/ext_bootstrap/stylesheets/bootswatch/paper/theming";
 @import "~@@/mix_user/stylesheets/theming";
 
+.sort_page_field {
+  margin-left: -15px;
+  padding-left: 15px;
+  padding-right: 10px;
+  cursor: grab;
+  color: $text-color;
+}
+
 .edit_page_field,
 .delete_page_field {
   vertical-align: baseline;
