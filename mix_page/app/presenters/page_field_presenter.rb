@@ -15,7 +15,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   end
 
   def dom_class
-    ["#{name}_presenter", super(object), "page_field"].uniq
+    ["presenter_#{name}", super(object), "page_field"].uniq
   end
 
   def html_list_options

@@ -6,7 +6,7 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
   end
 
   def dom_class
-    ["#{name}_presenters", self.class.name.full_underscore.delete_suffix('_presenter'), "page_field_list"].uniq
+    ["presenters_#{name}", self.class.name.full_underscore.delete_suffix('_presenter'), "page_field_list"].uniq
   end
 
   def html_list_options
