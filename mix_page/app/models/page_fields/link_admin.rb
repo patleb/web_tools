@@ -7,8 +7,16 @@ module PageFields::LinkAdmin
     rails_admin do
       navigation_parent false
 
-      field :fieldable, weight: 3 do
+      field :fieldable, weight: 2 do
         searchable false
+      end
+    end
+
+    rails_admin :superclass, after: true do
+      edit do
+        configure :page_template do
+          self.weight = 1
+        end
       end
     end
   end
