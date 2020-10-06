@@ -7,6 +7,7 @@ module PageTemplateAdmin
     rails_admin do
       configure :title, translated: :all do
         searchable false
+        index_value{ primary_key_link(pretty_value) }
       end
       configure :description, :text, translated: :all do
         searchable false
@@ -14,7 +15,6 @@ module PageTemplateAdmin
 
       field :view do
         searchable false
-        index_value{ primary_key_link(pretty_value) }
       end
       fields :title, :description, translated: :all
       fields :published_at, :updated_at, :updater, :created_at, :creator do
@@ -23,7 +23,9 @@ module PageTemplateAdmin
       end
 
       index do
-        exclude_fields :title, :description, translated: true
+        exclude_fields :view
+        exclude_fields :title, translated: true
+        exclude_fields :description, translated: :all
       end
 
       edit do
