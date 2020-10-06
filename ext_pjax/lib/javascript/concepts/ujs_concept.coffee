@@ -10,7 +10,7 @@ class Js.UjsConcept
     'click.continue', '[formnovalidate]', ->
       $(this).closest('form').attr(novalidate: true).data(novalidate: true)
 
-    'click', 'a[data-method], [data-href]', (event) ->
+    'click', 'a[data-method], [data-href]:not(.pjax)', (event) ->
       link = $(event.currentTarget)
       href = $.parse_location(link).href
       form = form$(method: 'post', action: href)

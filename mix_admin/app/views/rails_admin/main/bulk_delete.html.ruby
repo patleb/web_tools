@@ -1,7 +1,7 @@
 path_params = { model_name: @abstract_model.to_param, bulk_ids: @objects.map(&:id) }
 
 h_(
-  h4_('.col-sm-12', t('admin.form.bulk_delete')),
+  h5_('.col-sm-12', t('admin.form.bulk_delete')),
   ul_('.col-sm-12') do
     render partial: "delete_notice", collection: @objects
   end,

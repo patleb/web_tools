@@ -15,7 +15,7 @@ h_(
     next if (fields = group.visible_fields).empty?
     next if (values = fields.map(&:formatted_value)).none?(&:present?) && RailsAdmin.config.compact_show_view
     div_('.fieldset', [
-      h4_{ group.label },
+      h5_{ group.label },
       (p_{ group.help } if group.help),
       dl_ do
         fields.map.with_index do |field, index|

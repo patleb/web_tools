@@ -1,10 +1,10 @@
 body:not(.pjax_ready) {
   a[data-method], [data-href], .pjax {
-    pointer-events: none;
+    pointer-events: none !important;
   }
   form[data-remote='true'] {
     button, select, textarea, input {
-      pointer-events: none;
+      pointer-events: none !important;
     }
   }
 }

@@ -18,7 +18,7 @@ end
 
 div_('#devise.panel.panel-default.col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3') {[
   div_('.row.panel-heading') do
-    h4_{ area(:devise_title) }
+    h5_{ area(:devise_title) }
   end,
   div_('.row.panel-body') do
     area(:devise_form)

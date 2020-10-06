@@ -1,7 +1,7 @@
 path_params = { model_name: @abstract_model.to_param, id: @object.id }
 
 h_(
-  h4_('.col-sm-12', [
+  h5_('.col-sm-12', [
     t("admin.form.are_you_sure_you_want_to_delete_the_object", model_name: @abstract_model.pretty_name.downcase),
     '&ldquo;'.html_safe.no_space!,
     strong_{ @model.with(object: @object).object_label }.no_space!,
