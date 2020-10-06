@@ -56,21 +56,22 @@ module ActionController::Base::WithContext
   def set_current_value(name, permitted = [])
     Current[name] ||= begin
       param = "_#{name}"
+      js_name = "js.#{name}"
       if (current_value = params.delete(param)).present?
         if permitted.none?{ |value| value.to_s == current_value }
           raise UnpermittedParameterValue.new([param])
         end
         if session?
-          session[name] = current_value
+          cookies[js_name] = current_value
         else
           current_value
         end
       else
         if session?
-          if (current_value = session[name]).present? && permitted.none?{ |value| value.to_s == current_value }
-            session[name] = get_current_value_default(name)
+          if (current_value = cookies[js_name]).present? && permitted.none?{ |value| value.to_s == current_value }
+            cookies[js_name] = get_current_value_default(name)
           else
-            session[name] ||= get_current_value_default(name)
+            cookies[js_name] ||= get_current_value_default(name)
           end
         else
           get_current_value_default(name)
@@ -82,19 +83,14 @@ module ActionController::Base::WithContext
   private
 
   def get_current_value_default(name)
+    return unless respond_to?("default_#{name}", true)
     if (value = send("default_#{name}")).present?
       value.to_s
     end
   end
 
   def default_locale
-    locale = cookies["js.locale"]
-    locale = locale.presence && I18n.available_locales.find{ |l| l.to_s == locale }
-    locale = http_accept_language.compatible_language_from(I18n.available_locales) unless locale.present?
-    locale
-  end
-
-  def default_time_zone
-    Time.find_zone(cookies["js.time_zone"])&.name
+    locale = I18n.available_locales.find{ |l| l.to_s == locale }
+    locale.presence || http_accept_language.compatible_language_from(I18n.available_locales)
   end
 end

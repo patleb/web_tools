@@ -29,11 +29,12 @@
       'type',
     ],
     created: function () {
-      this.$i18n.locale = this.$current_params.locale || this.$localStorage.get('locale', this.navigator_locale())
+      this.$i18n.locale = this.$current_params.locale || this.$cookies.get('js.locale') || this.$localStorage.get('locale', this.navigator_locale())
     },
     methods: {
       set_locale: function (locale) {
         this.$i18n.locale = locale
+        this.$cookies.set('js.locale', locale)
         this.$localStorage.set('locale', locale)
       },
       pretty_locale: function (locale) {
