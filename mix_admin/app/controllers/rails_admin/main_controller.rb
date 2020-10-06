@@ -3,9 +3,6 @@ module RailsAdmin
     prepend_before_action :authenticate_user!
     protect_from_forgery Config.forgery_protection_settings
 
-    include ActionView::Helpers::TextHelper
-    include MixTemplate::WithPjax
-    include MixTemplate::WithLayoutValues
     prepend Main::WithAuthorization
     include Main::WithCollection
     include Main::WithErrors

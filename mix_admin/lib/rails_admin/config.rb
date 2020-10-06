@@ -172,7 +172,7 @@ module RailsAdmin
         @main_app_name = proc{ Rails.application.title }
         @models = {}
         @navigation_static_links = {}
-        @parent_controller = '::ActionController::Base'
+        @parent_controller = 'TemplatesController'
         @forgery_protection_settings = { with: :exception, prepend: true }
         @root_model_name = defined?(MixUser) ? 'User' : nil
         @default_truncate_length = 50

@@ -1,7 +1,7 @@
 module PageFields
   class LinkPresenter < TextPresenter
     def dom_class
-      super.push "link_#{view&.full_underscore}"
+      super.push "link_#{object.view&.full_underscore}"
     end
 
     def html(**options)

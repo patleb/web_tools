@@ -11,8 +11,8 @@ module MixTemplate
     def current_layout
       @_current_layout ||= begin
         layout_controller = is_a?(ActionController::Base) ? self : controller
-        layout_path = layout_controller.send(:_layout, @lookup_context, [:html])
-        layout_path.is_a?(String) ? layout_path : layout_path.virtual_path
+        layout_path = layout_controller.send(:_layout, @lookup_context || @_lookup_context, [:html])
+        (layout_path.is_a?(String) ? layout_path : layout_path.virtual_path).delete_prefix('layouts/')
       end
     end
 

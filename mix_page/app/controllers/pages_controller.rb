@@ -1,9 +1,5 @@
 # TODO index (search), form (create, show, update, destroy, index)
 class PagesController < MixPage.config.parent_controller.constantize
-  include ActionView::Helpers::TextHelper
-  include MixTemplate::WithPjax
-  include MixTemplate::WithLayoutValues
-
   ERROR_SEPARATOR = RailsAdmin::Main::WithRouting::ERROR_SEPARATOR
 
   before_action :load_state
@@ -16,7 +12,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   def show
     if redirect?
       redirect_to_page status: redirect_status
-    elsif stale_state? # TODO cache
+    elsif stale_state? # TODO cache https://vitobotta.com/2020/10/04/full-page-caching-in-rails-part-2-memcached-and-middleware/
       load_page
       render template: @page.view
     end

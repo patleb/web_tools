@@ -4,7 +4,7 @@ module ActionController::Base::WithContext
   class UnpermittedParameterValue < ::ActionController::UnpermittedParameters; end
 
   included do
-    before_action :set_current
+    prepend_before_action :set_current
     around_action :with_context
   end
 

@@ -1,9 +1,14 @@
 module MixTemplate
   has_config do
+    attr_writer :parent_controller
     attr_writer :web_app_capable
     attr_writer :version
     attr_writer :version_path
     attr_writer :chart_options
+
+    def parent_controller
+      @parent_controller ||= '::ActionController::Base'
+    end
 
     def web_app_capable
       return @web_app_capable if defined? @web_app_capable

@@ -23,7 +23,7 @@ module MixPage
     end
 
     def parent_controller
-      @parent_controller ||= '::ActionController::Base'
+      @parent_controller ||= 'TemplatesController'
     end
 
     def root_template

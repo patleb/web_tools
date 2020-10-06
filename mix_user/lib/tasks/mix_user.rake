@@ -10,8 +10,13 @@ end
 
 namespace :user do
   desc 'create user'
-  task :create, [:email, :password, :role] => :environment do |t, args|
-    User.create!(email: args[:email], password: args[:password], password_confirmation: args[:password], role: args[:role])
+  task :create, [:email, :password, :role, :confirmed] => :environment do |t, args|
+    attributes = { email: args[:email], password: args[:password], password_confirmation: args[:password], role: args[:role] }
+    if flag_on? args, :confirmed
+      User.create! attributes.merge(confirmed_at: Time.current)
+    else
+      User.create! attributes
+    end
   end
 
   desc 'List policies with their actions'
