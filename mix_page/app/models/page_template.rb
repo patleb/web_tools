@@ -91,7 +91,8 @@ class PageTemplate < Page
   end
 
   def default_title
-    view.split('/').last.delete_suffix(MixPage::MULTI_VIEW) if view
+    return unless view
+    self.class.human_attribute_name("view.#{view}", default: view.split('/').last.delete_suffix(MixPage::MULTI_VIEW))
   end
 
   def slug(*args)

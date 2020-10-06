@@ -22,7 +22,7 @@ class String
   end
 
   def titlefy
-    parameterize.humanize.squish.gsub(/([[:word:]]+)/u){ |word| word.downcase.capitalize }
+    humanize.squish.gsub(/([[:word:]]+)/u){ |word| word.downcase.capitalize }
   end
 
   def full_underscore(separator = '_')
