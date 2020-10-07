@@ -7,7 +7,8 @@ module PageFields
     def html(**options)
       options = options ? options.dup : {}
       title = text.presence || pretty_blank
-      a_(href: url, class: [('pjax' if url), options.delete(:class)], title: title, **options) {[
+      css_classes = ['js_page_link', "js_page_link_model_#{object.uuid}", ('pjax' if url), options.delete(:class)]
+      a_(href: url, class: css_classes, title: title, **options) {[
         pretty_actions(:span),
         title,
       ]}
