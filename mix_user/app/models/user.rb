@@ -8,8 +8,6 @@ class User < MixUser.config.parent_model.constantize
   json_attribute MixUser.config.json_attributes
 
   alias_attribute :user_id, :id
-  attr_accessor :role_user
-  alias_method :role_user?, :role_user
 
   enum role: MixUser.config.available_roles
 
@@ -28,7 +26,7 @@ class User < MixUser.config.parent_model.constantize
   end
 
   def admin?
-    role_i >= self.class.roles[:admin] && !role_user?
+    role_i >= self.class.roles[:admin]
   end
 
   def user?

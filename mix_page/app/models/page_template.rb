@@ -54,6 +54,10 @@ class PageTemplate < Page
     @layout ||= PageLayout.with_content.readonly.find(page_layout_id)
   end
 
+  def template
+    "pages/#{view}"
+  end
+
   def show?
     super && (published? || Current.user.admin?)
   end
@@ -83,7 +87,7 @@ class PageTemplate < Page
 
   alias_method :old_title, :title
   def title(*args)
-    old_title(*args)&.titlefy
+    old_title(*args)&.humanize
   end
 
   alias_method :old_description, :description
@@ -93,7 +97,7 @@ class PageTemplate < Page
 
   def default_title
     return unless view
-    self.class.human_attribute_name("view.#{view}", default: view.split('/').last.delete_suffix(MixPage::MULTI_VIEW))
+    self.class.human_attribute_name("view.#{view}", default: view.delete_suffix(MixPage::MULTI_VIEW).humanize)
   end
 
   def slug(*args)

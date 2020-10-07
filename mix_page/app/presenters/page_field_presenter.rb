@@ -35,8 +35,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   end
 
   def editable
-    return @editable if defined? @editable
-    @editable = can?(:edit, object)
+    member_actions[:edit]
   end
   alias_method :editable?, :editable
 
@@ -66,8 +65,8 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
 
   def member_actions
     @member_actions ||= {
-      edit:   admin_path_for(:edit, object, _back: true),
-      delete: admin_path_for(:delete, object, _back: true),
-    }.compact
+      edit:   !Current.user_role? && admin_path_for(:edit, object, _back: true),
+      delete: !Current.user_role? && admin_path_for(:delete, object, _back: true),
+    }.reject{ |_, v| v.blank? }
   end
 end

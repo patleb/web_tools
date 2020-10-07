@@ -4,4 +4,8 @@ class PageLayout < Page
   enum view: MixPage.config.available_layouts
 
   validates :view, uniqueness: true, if: :view_changed?
+
+  def template
+    "layouts/#{view}"
+  end
 end

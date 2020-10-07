@@ -21,10 +21,6 @@ class String
     parameterize.dasherize.downcase
   end
 
-  def titlefy
-    humanize.squish.gsub(/([[:word:]]+)/u){ |word| word.downcase.capitalize }
-  end
-
   def full_underscore(separator = '_')
     underscore.tr('/', separator).delete_prefix(separator).delete_suffix(separator)
   end

@@ -26,7 +26,7 @@ module ActionController::Base::WithContext
     Current.request_id ||= request.uuid
     set_current_referer
     set_current_value(:locale, I18n.available_locales)
-    set_current_value(:time_zone)
+    set_current_value(:time_zone) # TODO define the 38 unique time zones excluding UTC
   end
 
   def with_context
@@ -35,7 +35,7 @@ module ActionController::Base::WithContext
         yield
       end
     end
-  rescue NoMethodError => e
+  rescue NoMethodError => e # prevent infinite loop
     render_500 NoMethodError.new("#{e.message}\nat #{e.backtrace.first}", e.name)
   end
 
@@ -52,7 +52,6 @@ module ActionController::Base::WithContext
     Current.referer ||= session[:referer]
   end
 
-  # TODO unit tests --> too much branches
   def set_current_value(name, permitted = [])
     Current[name] ||= begin
       param = "_#{name}"

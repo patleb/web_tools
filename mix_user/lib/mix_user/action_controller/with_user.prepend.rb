@@ -2,7 +2,7 @@ module ActionController::WithUser
   def set_current
     warden.authenticated?(:user) unless try(:local?)
     Current.user ||= User::Null.new
-    Current.user.role_user = params[:_role_user].present?
+    set_current_value(:user_role, %w(true false))
     super
   end
 

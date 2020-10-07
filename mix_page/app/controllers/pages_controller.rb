@@ -15,7 +15,7 @@ class PagesController < MixPage.config.parent_controller.constantize
       redirect_to_page status: redirect_status
     elsif stale_state? # TODO cache https://vitobotta.com/2020/10/04/full-page-caching-in-rails-part-2-memcached-and-middleware/
       load_page
-      render template: @page.view
+      render template: @page.template
     end
   end
 
@@ -50,7 +50,7 @@ class PagesController < MixPage.config.parent_controller.constantize
     elsif (root_page = PageTemplate.find_root_page)&.show?
       root_page.to_url
     else
-      main_app.try(:root_path) || '/'
+      app_root_path
     end
   end
 

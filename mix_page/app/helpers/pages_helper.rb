@@ -1,25 +1,25 @@
-module PageHelper
-  class PageHelperAlreadyDefined < StandardError; end
+module PagesHelper
+  class HelperAlreadyDefined < StandardError; end
 
   MixPage.config.available_field_types.each_key do |type|
     field = type.demodulize.underscore
 
-    raise PageHelperAlreadyDefined if respond_to? "layout_#{field}s"
+    raise HelperAlreadyDefined if respond_to? "layout_#{field}s"
     define_method "layout_#{field}s" do |name, list_options = {}, item_options = {}, &block|
       layout_presenters(name, type)&.render(list_options, item_options, &block)
     end
 
-    raise PageHelperAlreadyDefined if respond_to? "layout_#{field}"
+    raise HelperAlreadyDefined if respond_to? "layout_#{field}"
     define_method "layout_#{field}" do |name, **item_options|
       layout_presenter(name, type)&.render(**item_options)
     end
 
-    raise PageHelperAlreadyDefined if respond_to? "page_#{field}s"
+    raise HelperAlreadyDefined if respond_to? "page_#{field}s"
     define_method "page_#{field}s" do |name, list_options = {}, item_options = {}, &block|
       page_presenters(name, type)&.render(list_options, item_options, &block)
     end
 
-    raise PageHelperAlreadyDefined if respond_to? "page_#{field}"
+    raise HelperAlreadyDefined if respond_to? "page_#{field}"
     define_method "page_#{field}" do |name, **item_options|
       page_presenter(name, type)&.render(**item_options)
     end
@@ -54,6 +54,20 @@ module PageHelper
         field = scope.page_fields.find(&filter)
         field = scope.page_fields.create!(type: type, name: name) if field.nil?
         field.presenter
+      end
+    end
+  end
+
+  def preview_link
+    if defined?(MixAdmin) && Current.controller.try(:pages?)
+      if Current.user_role?
+        a_ href: "?_user_role=false" do
+          span_ '.label.label-danger', t('user.quit_preview')
+        end
+      elsif Current.user.admin?
+        a_ href: "?_user_role=true" do
+          span_ '.label.label-primary', t('user.enter_preview')
+        end
       end
     end
   end
