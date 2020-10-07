@@ -26,7 +26,7 @@ class TemplatesController < MixTemplate.config.parent_controller.constantize
   protected
 
   def get_pjax_layout
-    try(:skip_pjax_layout?) ? nil : pjax_layout('application')
+    pjax_layout('application') unless try(:skip_pjax?)
   end
 
   def pjax_layout(*current_layout)
@@ -63,23 +63,23 @@ class TemplatesController < MixTemplate.config.parent_controller.constantize
 
   def pjax?
     return @_pjax if defined? @_pjax
-    @_pjax = request.headers['X-PJAX'].to_b || pjax_file?
+    @_pjax = !try(:skip_pjax?) && (request.headers['X-PJAX'].to_b || pjax_file?)
   end
   alias_method :pjax, :pjax?
 
   def pjax_file?
     return @_pjax_file if defined? @_pjax_file
-    @_pjax_file = request.headers['X-PJAX-FILE'].to_b
+    @_pjax_file = !try(:skip_pjax?) && request.headers['X-PJAX-FILE'].to_b
   end
 
   def pjax_redirect?
     return @_pjax_redirect if defined? @_pjax_redirect
-    @_pjax_redirect = params.truthy?(:delete, :_pjax_redirect)
+    @_pjax_redirect = !try(:skip_pjax?) && params.truthy?(:delete, :_pjax_redirect)
   end
 
   def pjax_reload?
     return @_pjax_reload if defined? @_pjax_reload
-    @_pjax_reload = params.truthy?(:delete, :_pjax_reload)
+    @_pjax_reload = !try(:skip_pjax?) && params.truthy?(:delete, :_pjax_reload)
   end
 
   def strip_pjax_param
