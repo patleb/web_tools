@@ -1,4 +1,5 @@
 # TODO index (search), form (create, show, update, destroy, index)
+# https://dba.stackexchange.com/questions/206616/optimize-a-trigram-search-with-custom-sort-order
 class PagesController < MixPage.config.parent_controller.constantize
   ERROR_SEPARATOR = RailsAdmin::Main::WithRouting::ERROR_SEPARATOR
 
@@ -133,7 +134,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def load_state
-    @state = PageTemplate.find_with_state_by_uuid(params[:uuid])
+    @state = PageTemplate.find_with_state_by_uuid_or_view(params[:uuid], params[:slug])
   end
 
   def load_page

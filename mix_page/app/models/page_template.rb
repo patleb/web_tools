@@ -37,10 +37,11 @@ class PageTemplate < Page
     with_discarded.find_by(view: view)
   end
 
-  def self.find_with_state_by_uuid(uuid)
+  def self.find_with_state_by_uuid_or_view(uuid, slug)
+    conditions =  uuid.present? ? { uuid: uuid } : { view: slug.tr('-', '/') }
     layouts = alias_table(:layouts)
     with_discarded
-      .where(uuid: uuid).joins(join(layouts).on(column(:page_layout_id).eq(layouts[:id])).join_sources)
+      .where(conditions).joins(join(layouts).on(column(:page_layout_id).eq(layouts[:id])).join_sources)
       .select(:id, :uuid, :view, :json_data, :deleted_at, :published_at, greatest(:updated_at, layouts[:updated_at]))
       .first
   end
