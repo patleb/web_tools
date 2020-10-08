@@ -4,7 +4,7 @@ require 'mix_admin'
 
 module MixPage
   URL_SEGMENT = 'page'.freeze
-  MULTI_VIEW = '_multi'.freeze
+  MULTI_VIEW = %r{[/_]multi$}
 
   def self.js_routes
     @js_routes ||= {

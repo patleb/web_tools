@@ -1,6 +1,10 @@
 module ActiveRecord::Base::WithPresenter
   extend ActiveSupport::Concern
 
+  included do
+    delegate :render, to: :presenter
+  end
+
   class_methods do
     def presenter_class
       @presenter_class ||= begin

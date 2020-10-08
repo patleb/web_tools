@@ -27,7 +27,7 @@ class PageTemplate < Page
   before_undiscard -> { undiscard_all! :links }
 
   def self.available_views
-    uniques = MixPage.config.available_templates.keys.reject{ |key| key.end_with?(MixPage::MULTI_VIEW) }
+    uniques = MixPage.config.available_templates.keys.reject{ |key| key.match?(MixPage::MULTI_VIEW) }
     taken = with_discarded.where(view: uniques).distinct.pluck(:view)
     MixPage.config.available_templates.reject{ |key, _| key.in? taken }
   end
@@ -75,7 +75,7 @@ class PageTemplate < Page
   end
 
   def unique?
-    view && !view.end_with?(MixPage::MULTI_VIEW)
+    view && !view.match?(MixPage::MULTI_VIEW)
   end
 
   def to_url(*args)
@@ -97,7 +97,7 @@ class PageTemplate < Page
 
   def default_title
     return unless view
-    self.class.human_attribute_name("view.#{view}", default: view.delete_suffix(MixPage::MULTI_VIEW).humanize)
+    self.class.human_attribute_name("view.#{view}", default: view.sub(MixPage::MULTI_VIEW, '').humanize)
   end
 
   def slug(*args)

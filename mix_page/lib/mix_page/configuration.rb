@@ -29,7 +29,7 @@ module MixPage
     def root_template
       return unless @root_template
       raise "unavailable template: [#{@root_template}]" unless available_templates.has_key? @root_template
-      raise "non-unique template: [#{@root_template}]" if @root_template.end_with? MixPage::MULTI_VIEW
+      raise "non-unique template: [#{@root_template}]" if @root_template.match? MixPage::MULTI_VIEW
       @root_template
     end
 

@@ -1,6 +1,6 @@
 module PageFields
   class Link < Text
-    delegate :to_url, :title, :view, :uuid, to: :fieldable, allow_nil: true
+    delegate :title, :view, :uuid, :to_url, to: :fieldable, allow_nil: true
 
     json_translate text: [:string, default: ->(record) { record.title }]
 
