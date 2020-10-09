@@ -1,6 +1,6 @@
-class Js.PageLinkConcept
+class Js.SidebarConcept # TODO extract to MixTemplate with RailsAdmin.SidebarConcept
   constants: =>
-    MODEL: ''
+    PAGE: ''
     ACTIVE: 'active'
     ACTIVE_WRAPPER: => ".nav.nav-pills li.#{@ACTIVE}"
 
@@ -10,7 +10,7 @@ class Js.PageLinkConcept
       active_href = $.strip_origin active_link.attr('href')
       link_href = $.strip_origin target.attr('href')
       if link_href != active_href
-        if target.hasClass(@MODEL)
+        if target.hasClass(@PAGE)
           active_link.parent().removeClass(@ACTIVE)
           target.parent().addClass(@ACTIVE)
         # back button cache: pjax does not blur elements outside the container
@@ -19,4 +19,4 @@ class Js.PageLinkConcept
 
   ready: =>
     $(@ACTIVE_WRAPPER).removeClass(@ACTIVE)
-    $(".#{@MODEL}_#{Page.uuid}").parent().addClass(@ACTIVE)
+    $(".#{@PAGE}_#{Page.uuid}").parent().addClass(@ACTIVE)

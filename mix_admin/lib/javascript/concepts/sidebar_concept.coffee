@@ -1,4 +1,4 @@
-class RailsAdmin.PjaxConcept
+class RailsAdmin.SidebarConcept
   constants: =>
     MODEL: ''
     ACTIVE: 'active'

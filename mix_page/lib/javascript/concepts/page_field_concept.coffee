@@ -16,9 +16,17 @@ class Js.PageFieldConcept
       handle: @SORT
       cursor: 'grabbing'
       update: (event, ui) ->
-        id = ui.item.data('id')
-        list_previous_id = ui.item.prev().data('id')
-        list_next_id = ui.item.next().data('id')
+        [previous, current, next] = [ui.item.prev(), ui.item, ui.item.next()]
+        [previous_parent, current_parent, next_parent] = [previous.data('parent'), current.data('parent'), next.data('parent')]
+        is_previous_item = current_parent == next_parent
+        is_next_item = previous.data('last') && previous_parent == current_parent
+        is_last_item = current.data('level') == 0 && !next_parent?
+        unless current.data('last') && (is_previous_item || is_next_item || is_last_item)
+          $(this).sortable('cancel')
+          return
+        id = current.data('id')
+        list_previous_id = current.prevAll("[data-parent='#{current_parent}']:first").data('id')
+        list_next_id = current.nextAll("[data-parent='#{current_parent}']:first").data('id')
         $.ajax(
           url: Routes.url_for('field_update', uuid: Page.uuid, id: id)
           method: 'PATCH'

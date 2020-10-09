@@ -37,8 +37,8 @@ module RailsAdmin
         title = node.label_plural.upcase_first
         url = node.abstract_model.url_for(:index)
         h_(
-          li_(".js_pjax_model_#{node.abstract_model.to_param}", title: title) do
-            a_('.js_pjax_model.pjax', { href: url, class: ("nav-level-#{level}" if level > 0) }, [
+          li_(".js_sidebar_model_#{node.abstract_model.to_param}", title: title) do
+            a_('.js_sidebar_model.pjax', { href: url, class: ("nav-level-#{level}" if level > 0) }, [
               if node.navigation_icon
                 i_ class: node.navigation_icon
               end,

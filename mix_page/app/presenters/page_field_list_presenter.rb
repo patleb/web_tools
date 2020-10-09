@@ -5,6 +5,17 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
     list.each{ |presenter| presenter.list = self }
   end
 
+  def list
+    @list ||= begin
+      nodes_stack = super
+      group_nodes = nodes_stack.group_by(&:parent_name)
+      flat_nodes = []
+      first_nodes = nodes_stack.reject(&:parent_name)
+      list_stack group_nodes, flat_nodes, first_nodes
+      flat_nodes
+    end
+  end
+
   def dom_class
     ["presenters_#{name}", self.class.name.full_underscore.delete_suffix('_presenter'), "page_field_list"].uniq
   end
@@ -54,5 +65,17 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
 
   def field_path
     @field_path ||= page_field_path(uuid: @page.uuid)
+  end
+
+  private
+
+  def list_stack(group_nodes, flat_nodes, nodes, level = 0)
+    nodes.map do |node|
+      next_nodes = group_nodes[node.node_name] || []
+      node.level = level
+      node.last = next_nodes.empty?
+      flat_nodes << node
+      list_stack(group_nodes, flat_nodes, next_nodes, level + 1)
+    end
   end
 end

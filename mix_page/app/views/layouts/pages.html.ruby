@@ -12,7 +12,6 @@ append :sidebar, [
   hr_('.separator'),
   ul_('.nav.nav-pills.nav-stacked', [
     li_(preview_link),
-    li_(admin_link),
     li_(login_link),
     li_(edit_user_link),
     li_(locale_select),

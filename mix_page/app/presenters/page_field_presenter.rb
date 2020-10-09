@@ -6,6 +6,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   }
 
   attr_accessor :list
+  attr_writer   :level, :last
 
   delegate :i18n_scope, to: :class
   delegate :id, :name, :type, to: :object
@@ -14,12 +15,29 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
     @i18n_scope ||= [:page_fields, :presenter]
   end
 
+  def level
+    @level || 0
+  end
+
+  def last?
+    @last || false
+  end
+
+  def parent_name
+    nil
+  end
+
+  def node_name
+    :_unrelated
+  end
+
   def dom_class
     ["presenter_#{name}", super(object), "page_field"].uniq
   end
 
   def html_list_options
-    list && editable ? { class: ['js_page_field_item'], data: { id: id } } : {}
+    return {} unless list && editable
+    { class: ["js_page_field_item"], data: { id: id, level: level, parent: parent_name || :_unrelated, last: last? } }
   end
 
   def html_options

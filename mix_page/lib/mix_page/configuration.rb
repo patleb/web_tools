@@ -4,7 +4,7 @@ module MixPage
     attr_writer   :reserved_words
     attr_writer   :parent_controller
     attr_accessor :root_path
-    attr_writer   :root_template
+    attr_accessor :root_template
     attr_writer   :layout
     attr_writer   :available_layouts
     attr_writer   :available_templates
@@ -26,17 +26,8 @@ module MixPage
       @parent_controller ||= 'TemplatesController'
     end
 
-    def root_template
-      return unless @root_template
-      raise "unavailable template: [#{@root_template}]" unless available_templates.has_key? @root_template
-      raise "non-unique template: [#{@root_template}]" if @root_template.match? MixPage::MULTI_VIEW
-      @root_template
-    end
-
     def layout
       @layout ||= 'application'
-      raise "unavailable layout: [#{@layout}]" unless available_layouts.has_key? @layout
-      @layout
     end
 
     def available_layouts

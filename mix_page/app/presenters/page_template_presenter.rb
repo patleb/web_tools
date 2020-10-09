@@ -1,4 +1,6 @@
 class PageTemplatePresenter < ActionPresenter::Base
+  TITLE_OPTIONS = %i(weight only_text)
+
   def dom_class
     super(object)
   end
@@ -7,25 +9,25 @@ class PageTemplatePresenter < ActionPresenter::Base
     { class: [dom_class] }
   end
 
-  def render(weight: 4, **options)
-    weight = 1 if weight < 1
-    weight = 5 if weight > 5
+  def render(**options)
     options = html_options.with_keyword_access.union!(options)
     if block_given?
-      div_(options) {[
-        pretty_title(weight),
+      div_(options.except(*TITLE_OPTIONS)) {[
+        pretty_title(options.slice(*TITLE_OPTIONS)),
         yield
       ]}
     else
-      pretty_title(weight, options)
+      pretty_title(**options)
     end
   end
 
-  def pretty_title(weight, **options)
+  def pretty_title(weight: 4, only_text: false, **options)
+    weight = 1 if weight < 1
+    weight = 5 if weight > 5
     text = object.title
     with_tag("h#{weight}", **options){[
       span_{ text.presence || pretty_blank },
-      a_(class: "edit_#{dom_class}", href: edit_action, if: edit_action){ i_('.fa.fa-edit') },
+      a_(class: "edit_#{dom_class}", href: edit_action, if: !only_text && edit_action){ i_('.fa.fa-edit') },
     ]}
   end
 

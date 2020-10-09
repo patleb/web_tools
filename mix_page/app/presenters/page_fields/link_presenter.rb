@@ -2,28 +2,33 @@ module PageFields
   class LinkPresenter < TextPresenter
     delegate :view, :uuid, :to_url, to: :object
 
+    def sidebar_classes
+      ['js_sidebar', "js_sidebar_page_#{uuid}", "nav-level-#{level}"]
+    end
+
     def dom_class
       super.push "link_#{view&.full_underscore}"
     end
 
+    def parent_name
+      return @parent_name if defined? @parent_name
+      @parent_name = view&.include?('/') ? view.sub(%r{/\w+$}, '') : super
+    end
+
+    def node_name
+      view || super
+    end
+
     def html(**options)
       options = options ? options.dup : {}
+      url = to_url
       title = text.presence || pretty_blank
-      css_classes = ['js_page_link', "js_page_link_model_#{uuid}", ('pjax' if url), options.delete(:class)]
+      css_classes = Array.wrap(options.delete(:class))
+      css_classes << 'pjax' if url
       a_(href: url, class: css_classes, title: title, **options) {[
         pretty_actions(:span),
         title,
       ]}
-    end
-
-    def url
-      return @url if defined? @url
-      @url = to_url
-    end
-
-    def parent_link
-      return unless (parts = view&.split('/') || []).size > 1
-
     end
   end
 end
