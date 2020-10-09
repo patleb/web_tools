@@ -37,7 +37,10 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
 
   def html_list_options
     return {} unless list && editable
-    { class: ["js_page_field_item"], data: { id: id, level: level, parent: parent_name || :_unrelated, last: last? } }
+    {
+      class: ["js_page_field_item"],
+      data: { id: id, level: level, last: last?, parent: parent_name || :_unrelated, node: node_name }
+    }
   end
 
   def html_options
