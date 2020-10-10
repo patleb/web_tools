@@ -6,7 +6,7 @@ class RailsAdmin::Config::Model::Fields::Enum < RailsAdmin::Config::Model::Field
   register_instance_option :render do
     collection = enum
     selected = form_value
-    div_ class: bs_form_row do
+    div_('.input-group') do
       if multiple?
         values, texts = collection.each_with_object([[], []]) do |(text, value), memo|
           memo[0] << (value || text)

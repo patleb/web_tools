@@ -193,7 +193,7 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
     collection, selected_id, new_params, edit_params, abstract_model, config = filtering_options
     field_id = form.dom_id(self)
     h_(
-      div_(class: bs_form_row) do
+      div_('.input-group') do
         form.select(method_name, collection, { include_blank: include_blank?, selected: selected_id },
           html_attributes.reverse_merge(
             class: ['form-control', 'js_field_input', ('js_modal_form_editable' if edit_params)],

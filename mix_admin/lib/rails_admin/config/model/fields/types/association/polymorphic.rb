@@ -7,7 +7,7 @@ class RailsAdmin::Config::Model::Fields::Association::Polymorphic < RailsAdmin::
       else
         associated_collection.first.last
       end
-    div_ class: bs_form_row do
+    div_('.input-group') do
       form.select(method_name, collection, { include_blank: include_blank?, selected: selected },
         html_attributes.reverse_merge(class: 'form-control')
       )
