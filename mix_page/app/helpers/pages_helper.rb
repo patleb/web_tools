@@ -1,27 +1,64 @@
 module PagesHelper
-  class HelperAlreadyDefined < StandardError; end
+  class TypeAlreadyInUse < StandardError; end
 
-  MixPage.config.available_field_types.each_key do |type|
-    field = type.demodulize.underscore
+  TYPES_MAPPING = MixPage.config.available_field_types.keys.each_with_object({}) do |name, types|
+    type = name.demodulize.underscore
+    raise TypeAlreadyInUse if types.has_key? type
+    types[type] = type
+  end
 
-    raise HelperAlreadyDefined if respond_to? "layout_#{field}s"
-    define_method "layout_#{field}s" do |name, list_options = {}, item_options = {}, &block|
-      layout_presenters(name, type)&.render(list_options, item_options, &block)
+  # For the type PageFields::Link, method_missing could define the following helpers:
+  # ----
+  # layout_link_presenters(name)
+  # layout_link_presenter(name)
+  # ----
+  # page_link_presenters(name)
+  # page_link_presenter(name)
+  # ----
+  # layout_links(name, list_options = {}, item_options = {}, &block)
+  # layout_link(name, item_options = {})
+  # ----
+  # page_links(name, list_options = {}, item_options = {}, &block)
+  # page_link(name, item_options = {})
+  #
+  def method_missing(name, *args, &block)
+    if (options = page_helper_options(name))
+      type = TYPES_MAPPING[options.delete[:type]]
+      if options.delete(:render)
+        if options[:multi]
+          self.class.send(:define_method, name) do |name, list_options = {}, item_options = {}, &block|
+            page_presenter(name, type, **options)&.render(list_options, item_options, &block)
+          end
+        else
+          self.class.send(:define_method, name)do |name, **item_options|
+            page_presenter(name, type, **options)&.render(**item_options)
+          end
+        end
+      else
+        self.class.send(:define_method, name) do |name|
+          page_presenter(name, type, **options)
+        end
+      end
+      send(name, *args, &block)
+    else
+      super
     end
+  end
 
-    raise HelperAlreadyDefined if respond_to? "layout_#{field}"
-    define_method "layout_#{field}" do |name, **item_options|
-      layout_presenter(name, type)&.render(**item_options)
-    end
+  def respond_to_missing?(name, _include_private = false)
+    !!page_helper_options(name) || super
+  end
 
-    raise HelperAlreadyDefined if respond_to? "page_#{field}s"
-    define_method "page_#{field}s" do |name, list_options = {}, item_options = {}, &block|
-      page_presenters(name, type)&.render(list_options, item_options, &block)
-    end
-
-    raise HelperAlreadyDefined if respond_to? "page_#{field}"
-    define_method "page_#{field}" do |name, **item_options|
-      page_presenter(name, type)&.render(**item_options)
+  def page_helper_options(name)
+    type = name.to_s
+    if (type.delete_prefix!('layout_') && (layout = true)) || (type.delete_prefix!('page_') && !(layout = false))
+      case true
+      when type.delete_suffix!('_presenters') then multi = true;  render = false
+      when type.delete_suffix!('_presenter')  then multi = false; render = false
+      when type.delete_suffix!('s')           then multi = true;  render = true
+      else                                         multi = false; render = true
+      end
+      { type: type, layout: layout, multi: multi, render: render } if TYPES_MAPPING.has_key? type
     end
   end
 
@@ -37,7 +74,7 @@ module PagesHelper
     page_presenter(*args, layout: false, multi: true)
   end
 
-  def page_presenter(name, type, layout: false, multi: false)
+  def page_presenter(name, type, layout: false, multi: false) # TODO allow multiple types
     return unless @page && type.in?(page_field_types)
     (((((@memoized ||= {})[:page_presenter] ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
       scope = layout ? @page.layout : @page
@@ -55,6 +92,18 @@ module PagesHelper
         field = scope.page_fields.create!(type: type, name: name) if field.nil?
         field.presenter
       end
+    end
+  end
+
+  def page_next(name)
+    with_layout_links(name) do |links, index|
+      links[index + 1]
+    end
+  end
+
+  def page_previous(name)
+    with_layout_links(name) do |links, index|
+      links[index - 1]
     end
   end
 
@@ -76,5 +125,11 @@ module PagesHelper
 
   def page_field_types
     @page_field_types ||= MixPage.config.available_field_types.keys.select{ |type| can? :create, type }
+  end
+
+  def with_layout_links(name)
+    links = layout_link_presenters(name)&.list || []
+    index = links.index{ |presenter| presenter.object.fieldable_id == @page.id } || links.size
+    yield(links, index)
   end
 end
