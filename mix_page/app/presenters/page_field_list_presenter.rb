@@ -50,7 +50,7 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
     div_('.dropup.page_field_list_actions') {[
       button_('.btn.btn-default.btn-xs.dropdown-toggle', type: 'button', data: { toggle: 'dropdown' }, aria: { haspopup: true, expanded: false }) {[
         i_(class: 'fa fa-plus'),
-        span_('.hidden-xs', I18n.t('page_fields.new')),
+        span_('.hidden-xs', I18n.t('page_fields.create')),
       ]},
       ul_('.dropdown-menu') do
         types.map do |type|

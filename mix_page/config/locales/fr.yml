@@ -1,7 +1,7 @@
 fr:
   page_fields:
-    new: Ajouter
-    edit: "Nouveau %{model} à modifier"
+    edit: "Nouveau(elle) %{model} à modifier"
+    create: Ajouter
   shared_attributes: &shared_attributes
     creator: Créé par
     updater: Modifié par

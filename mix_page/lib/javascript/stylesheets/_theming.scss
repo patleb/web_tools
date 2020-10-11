@@ -2,9 +2,11 @@
 @import "~@@/ext_bootstrap/stylesheets/bootswatch/paper/theming";
 @import "~@@/mix_user/stylesheets/theming";
 
-.edit_page_template {
-  margin-left: 5px;
-  vertical-align: middle;
+.page_template_actions {
+  a {
+    margin-left: 5px;
+    vertical-align: middle;
+  }
 }
 
 .sort_page_field {

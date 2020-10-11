@@ -1,4 +1,8 @@
 class PageTemplatePresenter < ActionPresenter::Base
+  LINK_ICONS = {
+    edit:   'fa fa-edit',
+    create: 'fa fa-plus-square-o'
+  }
   TITLE_OPTIONS = %i(weight only_text)
 
   def dom_class
@@ -27,16 +31,31 @@ class PageTemplatePresenter < ActionPresenter::Base
     text = object.title
     with_tag("h#{weight}", **options){[
       span_{ text.presence || pretty_blank },
-      a_(class: "edit_#{dom_class}", href: edit_action, if: !only_text && edit_action){ i_('.fa.fa-edit') },
+      (pretty_actions unless only_text),
     ]}
   end
 
   def pretty_blank
+    return '' unless member_actions[:edit]
     I18n.t('page_fields.edit', model: object.model_name.human.downcase)
   end
 
-  def edit_action
-    return @edit_action if defined? @edit_action
-    @edit_action = !Current.user_role? && admin_path_for(:edit, object, _back: true)
+  def pretty_actions(tag = :span)
+    return '' unless member_actions.any?
+    with_tag(tag, '.page_template_actions') do
+      pretty_model = object.model_name.human.downcase
+      member_actions.map do |action, path|
+        a_(class: "#{action}_#{dom_class}", href: path, title: I18n.t("page_fields.#{action}", model: pretty_model)) do
+          i_(class: LINK_ICONS[action])
+        end
+      end
+    end
+  end
+
+  def member_actions
+    @member_actions ||= {
+      edit:   !Current.user_role? && admin_path_for(:edit, object, _back: true),
+      create: !Current.user_role? && admin_path_for(:create, object, _back: true),
+    }.reject{ |_, v| v.blank? }
   end
 end
