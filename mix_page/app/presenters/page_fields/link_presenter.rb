@@ -2,17 +2,18 @@ module PageFields
   class LinkPresenter < TextPresenter
     delegate :view, :uuid, :to_url, to: :object
 
-    def dom_class
-      super.push "link_#{view&.full_underscore}"
-    end
-
-    def parent_name
-      return @parent_name if defined? @parent_name
-      @parent_name = view&.include?('/') ? view.sub(%r{/\w+$}, '') : super
+    def viable_parent_names
+      @viable_parent_names ||= (view&.split('/') || [])[0..-2].each_with_object([]) do |segment, names|
+        names << [names.last, segment].compact.join('/')
+      end.reverse
     end
 
     def node_name
-      view || super
+      view
+    end
+
+    def dom_class
+      super.push "link_#{view&.full_underscore}"
     end
 
     def html(sidebar: false, **options)
@@ -24,8 +25,8 @@ module PageFields
       css_classes.concat(['js_sidebar', "js_sidebar_page_#{uuid}", "nav-level-#{level}"]) if sidebar
       a_(href: url, class: css_classes, title: title, **options) {[
         pretty_actions(:span),
-        i_('.fa.fa-chevron-down.js_sidebar_toggle', if: sidebar && !last?),
-        title,
+        i_('.fa.fa-chevron-down.js_sidebar_toggle', if: sidebar && !editable? && !last?),
+        span_{ title },
       ]}
     end
   end

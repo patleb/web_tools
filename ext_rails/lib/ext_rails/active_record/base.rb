@@ -16,6 +16,8 @@ ActiveRecord::Base.class_eval do
     id
     updated_at
     updater_id
+    position
+    parent_id
   ))
 
   nullify_blanks nullables_only: false

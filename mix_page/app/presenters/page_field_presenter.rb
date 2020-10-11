@@ -1,45 +1,48 @@
 class PageFieldPresenter < ActionPresenter::Base[:@page]
   LINK_ICONS = {
-    sort:   'fa fa-arrows-v',
     edit:   'fa fa-pencil',
     delete: 'fa fa-trash-o fa-fw'
   }
 
-  attr_accessor :list
-  attr_writer   :level, :last
+  attr_accessor :list, :parent_node, :parent_name
+  attr_writer   :level, :children_count
 
-  delegate :i18n_scope, to: :class
-  delegate :id, :name, :type, to: :object
+  delegate :id, :name, :type, :position, :parent_id, to: :object
 
-  def self.i18n_scope
-    @i18n_scope ||= [:page_fields, :presenter]
+  def viable_parent_names
+    []
+  end
+
+  def node_name
+    nil
   end
 
   def level
     @level || 0
   end
 
+  def children_count
+    @children_count || 0
+  end
+
   def last?
-    @last || false
+    children_count == 0
   end
 
-  def parent_name
-    nil
-  end
-
-  def node_name
-    :_unrelated
+  def close?
+    children_count > MixPage.config.max_children_count
   end
 
   def dom_class
-    ["presenter_#{name}", super(object), "page_field"].uniq
+    ["presenter_#{name}", super(object), 'page_field'].uniq
   end
 
   def html_list_options
-    return {} unless list && editable
+    data = { node: (node_name || :_unrelated), close: close? }
+    return { data: data } unless list && editable?
     {
-      class: ["js_page_field_item"],
-      data: { id: id, level: level, last: last?, parent: parent_name || :_unrelated, node: node_name }
+      class: ['js_page_field_item'],
+      data: data.merge!(id: id, parent: (parent_name || :_unrelated), level: level, last: last?)
     }
   end
 
@@ -78,16 +81,24 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   end
 
   def sort_action
-    return unless list && editable?
+    return unless list && editable? && last? && (parent_node.nil? || parent_node.children_count > 1)
     span_(class: "js_page_field_sort sort_page_field sort_#{type.full_underscore}") do
-      i_(class: LINK_ICONS[:sort])
+      i_(class: 'fa fa-arrows-v')
     end
   end
 
   def member_actions
-    @member_actions ||= {
-      edit:   !Current.user_role? && admin_path_for(:edit, object, _back: true),
-      delete: !Current.user_role? && admin_path_for(:delete, object, _back: true),
-    }.reject{ |_, v| v.blank? }
+    @member_actions ||= MixPage.config.member_actions.each_with_object({}) do |action, all|
+      path = !Current.user_role? && admin_path_for(action, object, _back: true)
+      all[action] = path if path
+    end
+  end
+
+  def sync_position(previous_node)
+    if (previous_position = previous_node&.position)
+      if previous_position > position
+        object.update! list_previous_id: previous_node.object.id
+      end
+    end
   end
 end

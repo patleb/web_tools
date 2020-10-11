@@ -4,6 +4,7 @@ class CreateLibPageFields < ActiveRecord::Migration[6.0]
       t.integer    :type,         null: false
       t.integer    :name,         null: false
       t.decimal    :position,     null: false, index: { unique: true }
+      t.belongs_to :parent,       foreign_key: { to_table: :lib_page_fields }
       t.belongs_to :page,         null: false, foreign_key: { to_table: :lib_pages }, index: false
       t.bigint     :fieldable_id
       t.integer    :fieldable_type

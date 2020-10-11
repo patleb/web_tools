@@ -6,6 +6,7 @@ class PageField < LibRecord
   belongs_to :page_layout, -> { with_discarded }, foreign_key: :page_id
   belongs_to :page_template, -> { with_discarded }, foreign_key: :page_id
   belongs_to :fieldable, -> { with_discarded }, optional: true, polymorphic: true
+  belongs_to :parent, -> { with_discarded }, optional: true, class_name: 'PageField'
 
   enum type: MixPage.config.available_field_types
   enum name: MixPage.config.available_field_names

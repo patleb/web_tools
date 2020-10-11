@@ -7,10 +7,11 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
 
   def list
     @list ||= begin
-      nodes_stack = super
-      group_nodes = nodes_stack.group_by(&:parent_name)
+      nodes = super
+      list_sync_parents(nodes)
+      group_nodes = nodes.group_by(&:parent_name)
       flat_nodes = []
-      first_nodes = nodes_stack.reject(&:parent_name)
+      first_nodes = group_nodes.delete(nil)
       list_stack group_nodes, flat_nodes, first_nodes
       flat_nodes
     end
@@ -69,13 +70,27 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
 
   private
 
+  def list_sync_parents(nodes)
+    names_mapping = nodes.each_with_object({}){ |n, names| names[n.node_name] = n }
+    nodes.each do |node|
+      if node.node_name
+        node.parent_name = node.viable_parent_names.find{ |name| names_mapping[name] }
+        node.parent_node = names_mapping[node.parent_name]
+      end
+      if node.parent_node&.id != node.parent_id
+        node.object.update! parent: node.parent_node&.object
+      end
+    end
+  end
+
   def list_stack(group_nodes, flat_nodes, nodes, level = 0)
     nodes.map do |node|
       next_nodes = group_nodes[node.node_name] || []
       node.level = level
-      node.last = next_nodes.empty?
+      node.sync_position(flat_nodes.last)
       flat_nodes << node
-      list_stack(group_nodes, flat_nodes, next_nodes, level + 1)
+      node.children_count += list_stack(group_nodes, flat_nodes, next_nodes, level + 1)
     end
+    nodes.size + nodes.sum(&:children_count)
   end
 end

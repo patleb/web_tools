@@ -21,15 +21,24 @@ class Js.SidebarConcept # TODO extract to MixTemplate with RailsAdmin.SidebarCon
       @toggle(target)
   ]
 
+  ready_once: =>
+    $(@TOGGLE).reverse_each$ (target) =>
+      li = target.closest('li')
+      active_children = li.nextAll("[data-node^='#{li.data('node')}/']").children(".#{@PAGE}_#{Page.uuid}")
+      if li.data('close') && active_children.length == 0
+        @toggle(target)
+
   ready: =>
     $(@ACTIVE_WRAPPER).removeClass(@ACTIVE)
     $(".#{@PAGE}_#{Page.uuid}").parent().addClass(@ACTIVE)
-    $(@TOGGLE).each$ (target) =>
-      if target.data('close')
-        @toggle(target)
 
   toggle: (target) =>
     li = target.closest('li')
-    children = li.nextAll("[data-node^='#{li.data('node')}/']")
+    node = li.data('node')
+    hidden_by = "#{@TOGGLE_CLASS}_by_#{node.full_underscore()}"
+    if target.hasClass('fa-chevron-down')
+      children = li.nextAll("[data-node^='#{node}/']:visible").addClass(hidden_by)
+    else
+      children = li.nextAll(".#{hidden_by}")
     children.toggle()
     target.toggleClass(['fa-chevron-down', 'fa-chevron-right'])

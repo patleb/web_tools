@@ -4,5 +4,8 @@ class Js.PageConcept
   constants: ->
     UUID: 'ID'
 
+  ready_once: =>
+    @uuid = $(@UUID).data('uuid')
+
   ready: =>
     @uuid = $(@UUID).data('uuid')

@@ -172,6 +172,11 @@ jQuery.define_methods
       f_item_index_self($(item), index, self)
     this.to_a().each(f)
 
+  reverse_each$: (f_item_index_self) ->
+    f = (item, index, self) ->
+      f_item_index_self($(item), index, self)
+    this.to_a().reverse().each(f)
+
   clone_template: (handler = null) ->
     clone = this.children().first().clone()
     handler(clone) if handler?

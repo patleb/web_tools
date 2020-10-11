@@ -4,7 +4,7 @@ module PagesHelper
   TYPES_MAPPING = MixPage.config.available_field_types.keys.each_with_object({}) do |name, types|
     type = name.demodulize.underscore
     raise TypeAlreadyInUse if types.has_key? type
-    types[type] = type
+    types[type] = name
   end
 
   # For the type PageFields::Link, method_missing could define the following helpers:
@@ -23,7 +23,7 @@ module PagesHelper
   #
   def method_missing(name, *args, &block)
     if (options = page_helper_options(name))
-      type = TYPES_MAPPING[options.delete[:type]]
+      type = TYPES_MAPPING[options.delete(:type)]
       if options.delete(:render)
         if options[:multi]
           self.class.send(:define_method, name) do |name, list_options = {}, item_options = {}, &block|
@@ -51,8 +51,9 @@ module PagesHelper
 
   def page_helper_options(name)
     type = name.to_s
-    if (type.delete_prefix!('layout_') && (layout = true)) || (type.delete_prefix!('page_') && !(layout = false))
-      case true
+    layout = !!type.delete_prefix!('layout_')
+    if layout || type.delete_prefix!('page_')
+      case
       when type.delete_suffix!('_presenters') then multi = true;  render = false
       when type.delete_suffix!('_presenter')  then multi = false; render = false
       when type.delete_suffix!('s')           then multi = true;  render = true

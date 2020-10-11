@@ -97,7 +97,7 @@ class PageTemplate < Page
 
   def default_title
     return unless view
-    self.class.human_attribute_name("view.#{view}", default: view.sub(MixPage::MULTI_VIEW, '').humanize)
+    self.class.human_attribute_name("view.#{view}", default: view.sub(MixPage::MULTI_VIEW, '').tr('/', ' ').humanize)
   end
 
   def slug(*args)

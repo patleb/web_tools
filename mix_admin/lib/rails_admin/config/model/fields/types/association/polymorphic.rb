@@ -45,7 +45,10 @@ class RailsAdmin::Config::Model::Fields::Association::Polymorphic < RailsAdmin::
 
   def associated_collection
     associated_model.map do |model|
-      [model.label, model.abstract_model.all.map{ |o| [model.with(object: o).object_label, o.to_global_id] }]
+      [
+        model.label,
+        model.abstract_model.all.map{ |o| [model.with(object: o).object_label, o.to_global_id] }.sort_by(&:first)
+      ]
     end
   end
 

@@ -11,6 +11,8 @@ module MixPage
     attr_writer   :available_field_types
     attr_writer   :available_field_names
     attr_writer   :available_fieldables
+    attr_writer   :member_actions
+    attr_writer   :max_children_count
 
     def js_routes
       @js_routes ||= MixPage.js_routes
@@ -56,6 +58,14 @@ module MixPage
       @available_fieldables ||= {
         'PageTemplate' => 0
       }
+    end
+
+    def member_actions
+      @member_actions ||= %i(edit delete)
+    end
+
+    def max_children_count
+      @max_children_count || Float::INFINITY
     end
   end
 end
