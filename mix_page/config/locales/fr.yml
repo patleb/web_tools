@@ -1,6 +1,9 @@
 fr:
+  page_template:
+    edit: "%{model} à modifier"
+    create: "Ajouter %{model}"
   page_fields:
-    edit: "Nouveau(elle) %{model} à modifier"
+    edit: "Nouveau %{model} à modifier"
     create: Ajouter
   shared_attributes: &shared_attributes
     creator: Créé par

@@ -1,4 +1,7 @@
 en:
+  page_template:
+    edit: "%{model} to edit"
+    create: "Add %{model}"
   page_fields:
     edit: "New %{model} to edit"
     create: Add
