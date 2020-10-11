@@ -24,6 +24,9 @@ module ActionController::WithUser
       Current.controller = Current.controller_was
       Current.controller_was = nil
     end
-    alias_method :can?, :admin_path_for
+
+    def can?(*args)
+      !!admin_path_for(*args)
+    end
   end
 end

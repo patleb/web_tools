@@ -13,7 +13,7 @@ module PageFields::LinkAdmin
     end
 
     rails_admin :superclass, after: true do
-      edit do
+      edit do # TODO allow to create page in modal (not support for polymorphic association at the moment)
         configure :page_template do
           self.weight = 1
         end
