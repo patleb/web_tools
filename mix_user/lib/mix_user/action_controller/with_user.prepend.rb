@@ -6,6 +6,10 @@ module ActionController::WithUser
     super
   end
 
+  def default_user_role
+    false
+  end
+
   def current_user
     Current.user
   end

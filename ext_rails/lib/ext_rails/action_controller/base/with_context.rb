@@ -26,7 +26,7 @@ module ActionController::Base::WithContext
     Current.request_id ||= request.uuid
     set_current_referer
     set_current_value(:locale, I18n.available_locales)
-    set_current_value(:time_zone) # TODO define the 38 unique time zones excluding UTC
+    set_current_value(:time_zone)
   end
 
   def with_context
@@ -82,7 +82,6 @@ module ActionController::Base::WithContext
   private
 
   def get_current_value_default(name)
-    return unless respond_to?("default_#{name}", true)
     if (value = send("default_#{name}")).present?
       value.to_s
     end
@@ -91,5 +90,9 @@ module ActionController::Base::WithContext
   def default_locale
     locale = I18n.available_locales.find{ |l| l.to_s == locale }
     locale.presence || http_accept_language.compatible_language_from(I18n.available_locales)
+  end
+
+  def default_time_zone
+    Time.find_zone(cookies["js.time_zone"])&.name
   end
 end
