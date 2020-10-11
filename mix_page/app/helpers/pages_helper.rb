@@ -50,7 +50,7 @@ module PagesHelper
   end
 
   def page_helper_options(name)
-    type = name.to_s
+    type = name.to_s.dup
     layout = !!type.delete_prefix!('layout_')
     if layout || type.delete_prefix!('page_')
       case
