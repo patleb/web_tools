@@ -39,6 +39,6 @@ class Js.SidebarConcept # TODO extract to MixTemplate with RailsAdmin.SidebarCon
     if target.hasClass('fa-chevron-down')
       children = li.nextAll("[data-node^='#{node}/']:visible").addClass(hidden_by)
     else
-      children = li.nextAll(".#{hidden_by}")
+      children = li.nextAll(".#{hidden_by}").removeClass(hidden_by)
     children.toggle()
     target.toggleClass(['fa-chevron-down', 'fa-chevron-right'])
