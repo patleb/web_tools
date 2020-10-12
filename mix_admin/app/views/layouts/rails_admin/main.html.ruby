@@ -23,9 +23,9 @@ append :sidebar, [
   ul_('.nav.nav-pills.nav-stacked', static_navigation),
   hr_('.separator'),
   ul_('.nav.nav-pills.nav-stacked', [
-    li_(back_to_site_link),
     li_(login_link),
     li_(edit_user_link),
+    li_(back_to_site_link),
     li_(locale_select),
     li_(remote_console_link),
     li_(logout_link)
