@@ -144,15 +144,18 @@ module TemplatesHelper
   end
 
   def back_to_site_link(target_blank = false)
+    site_path = MixPage.root_path if defined? MixPage
+    site_path ||= app_root_path
     if target_blank
-      a_(href: app_root_path, target: '_blank') {[
+      a_(href: site_path, target: '_blank') {[
         t('template.back_to_site'),
         i_('.fa.fa-external-link.sidebar_external')
       ]}
     else
-      a_ href: app_root_path do
-        span_ '.label.label-primary', t('template.back_to_site')
-      end
+      a_(href: site_path) {[
+        i_('.fa.fa-reply'),
+        t('template.back_to_site'),
+      ]}
     end
   end
 

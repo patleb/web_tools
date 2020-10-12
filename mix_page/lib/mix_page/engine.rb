@@ -14,6 +14,14 @@ module MixPage
     }
   end
 
+  def self.root_path
+    if MixPage.config.root_path.present?
+      MixPage.config.root_path
+    elsif (root_page = PageTemplate.find_root_page)&.show?
+      root_page.to_url
+    end
+  end
+
   class Engine < ::Rails::Engine
     initializer 'mix_page.append_migrations' do |app|
       append_migrations(app)

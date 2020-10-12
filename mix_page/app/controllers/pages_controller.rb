@@ -45,13 +45,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def root_path
-    if MixPage.config.root_path.present?
-      MixPage.config.root_path
-    elsif (root_page = PageTemplate.find_root_page)&.show?
-      root_page.to_url
-    else
-      app_root_path
-    end
+    MixPage.root_path || app_root_path
   end
 
   protected
