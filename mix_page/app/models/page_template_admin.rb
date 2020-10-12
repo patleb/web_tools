@@ -23,6 +23,12 @@ module PageTemplateAdmin
       end
 
       index do
+        configure :updater do
+          sortable false
+        end
+        configure :creator do
+          sortable false
+        end
         exclude_fields :view
         exclude_fields :title, translated: true
         exclude_fields :description, translated: :all

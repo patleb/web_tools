@@ -11,6 +11,13 @@ module PageFieldAdmin
         searchable false
         queryable false
       end
+      # TODO find why sort doesn't work
+      configure :updater do
+        sortable false
+      end
+      configure :creator do
+        sortable false
+      end
     end
   end
 end
