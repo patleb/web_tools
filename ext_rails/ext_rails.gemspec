@@ -21,9 +21,13 @@ Gem::Specification.new do |s|
   s.add_dependency 'active_type'
   s.add_dependency 'activerecord-postgis-adapter'
   s.add_dependency 'arel_extensions'
+  # https://github.com/DmitryTsepelev/ar_lazy_preload
   s.add_dependency 'date_validator'
   s.add_dependency 'discard'
   s.add_dependency 'email_prefixer'
+  # https://github.com/jrochkind/faster_s3_url
+  # https://www.reddit.com/r/ruby/comments/j365oy/what_surprised_us_in_postgresqlschema_based/
+  # https://www.reddit.com/r/rails/comments/j2xzir/does_hosting_streaming_video_get_pretty_expensive/
   s.add_dependency 'http_accept_language'
   s.add_dependency 'i18n-debug'
   s.add_dependency 'jsonb_accessor'
