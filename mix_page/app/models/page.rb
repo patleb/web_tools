@@ -4,7 +4,7 @@ class Page < LibRecord
 
   has_many :page_fields, -> { order(:position) }, dependent: :destroy
 
-  scope :with_content, -> { includes(page_fields: [:parent, :fieldable]) }
+  scope :with_content, -> { includes(page_fields: :fieldable) }
 
   enum type: {
     'PageLayout'   => 10,
