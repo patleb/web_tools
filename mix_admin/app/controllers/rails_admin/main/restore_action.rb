@@ -1,6 +1,6 @@
 module RailsAdmin::Main
   module RestoreAction
-    def restore
+    def restore # TODO add member action
       if params[:bulk_ids].present? && (@objects = get_objects).present?
         processed = @objects.map(&:undiscard)
 
