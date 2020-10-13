@@ -21,7 +21,7 @@ class RailsAdmin::Config::Model::Fields::Association::BelongsTo < RailsAdmin::Co
 
   register_instance_option :visible? do
     unless section.is_a? RailsAdmin::Config::Model::Sections::Nested
-      visible_field? && associated_model.visible?
+      visible_association?
     end
   end
 

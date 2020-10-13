@@ -31,6 +31,7 @@ class RailsAdmin::Config::Model::Fields::Base
   end
 
   def visible_field?
+    return false unless property.nil_or_true?(:visible?, object)
     returned = true
     (RailsAdmin.config.default_hidden_fields || {}).each do |section_name, fields|
       section_class = "RailsAdmin::Config::Model::Sections::#{section_name.to_s.camelize}".to_const!
@@ -40,9 +41,8 @@ class RailsAdmin::Config::Model::Fields::Base
     returned
   end
 
-  # TODO should be the base non-configurable and use everywhere visible_field?
   register_instance_option :visible? do
-    property.nil_or_true?(:visible?, object) && visible_field?
+    visible_field?
   end
 
   register_instance_option :index_visible? do

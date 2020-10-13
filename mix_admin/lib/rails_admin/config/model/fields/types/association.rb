@@ -44,11 +44,15 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
     truncated_value(value, options)
   end
 
+  def visible_association?
+    associated_model.visible? && visible_field?
+  end
+
   # Accessor whether association is visible or not. By default
   # association checks whether the child model is excluded in
   # configuration or not.
   register_instance_option :visible? do
-    associated_model.visible? && visible_field?
+    visible_association?
   end
 
   # use the association name as a key, not the association key anymore!

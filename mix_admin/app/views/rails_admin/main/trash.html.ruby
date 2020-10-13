@@ -8,6 +8,7 @@ h_(
   form_tag(@p.bulk.form_path, method: :post, id: "js_bulk_form", remote: true, class: "form", novalidate: true) {[
     hidden_field_tag(:js_bulk_action),
     hidden_field_tag(:bulkable_type, 'bulkable_trash'),
+    p_(if: @p.table.description.present?){ strong_{ @p.table.description } },
     div_('.js_table_wrapper', [
       table_('.table.table-condensed.table-striped', @p.table.options, [
         thead_ do

@@ -8,7 +8,7 @@ class RailsAdmin::Config::Actions::Trash < RailsAdmin::Config::Actions::Base
   end
 
   def visible?
-    abstract_model.model.discardable? && super
+    abstract_model.model.discardable? && authorized?(:index, abstract_model, object) && super
   end
 
   def collection?

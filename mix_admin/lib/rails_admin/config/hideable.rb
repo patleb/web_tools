@@ -12,11 +12,6 @@ module RailsAdmin
         visible block ? proc { false == instance_eval(&block) } : false
       end
       alias_method :hidden, :hide
-
-      # Writer to show field.
-      def show(&block)
-        visible block || true
-      end
     end
   end
 end

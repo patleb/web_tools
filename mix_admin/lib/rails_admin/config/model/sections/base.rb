@@ -52,11 +52,6 @@ class RailsAdmin::Config::Model::Sections::Base
       name = name.to_sym
       field = _fields.find{ |f| name == f.name }
 
-      # some fields are hidden by default (belongs_to keys, has_many associations in list views.)
-      # unhide them if config specifically defines them
-      if field
-        field.show unless field.instance_variable_get("@#{field.name}_registered").is_a?(Proc)
-      end
       # Specify field as virtual if type is not specifically set and field was not
       # found in default stack
       if field.nil? && type.nil?
@@ -78,7 +73,12 @@ class RailsAdmin::Config::Model::Sections::Base
       # If field has not been yet defined add some default properties
       if add_to_section && !field.defined
         field.defined = true
-        field.weight = weight ? weight : _fields.count(&:defined)
+        field.weight = _fields.count(&:defined)
+      end
+
+      # Force weight value
+      if weight
+        field.weight = weight
       end
 
       # Force editable behavior
