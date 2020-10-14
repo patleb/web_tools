@@ -10,7 +10,7 @@ module PageFields::TextAdmin
 
     rails_admin :superclass, after: true do
       index do
-        exclude_fields :text, translated: :all
+        exclude_fields :text, translated: true
       end
 
       edit do

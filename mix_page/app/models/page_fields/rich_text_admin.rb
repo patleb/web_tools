@@ -3,12 +3,15 @@ module PageFields::RichTextAdmin
 
   included do
     rails_admin do
-      navigation_parent false
+      listable false
 
-      field :title, translated: :all, weight: 1 do
+      configure :name do
+        index_value{ primary_key_link(pretty_value) }
+      end
+      field :title, translated: :all do
         searchable false
       end
-      field :subtitle, translated: :all, weight: 1 do
+      field :subtitle, translated: :all do
         searchable false
       end
       field :text, :wysiwyg, translated: :all do
@@ -18,13 +21,11 @@ module PageFields::RichTextAdmin
 
     rails_admin :superclass, after: true do
       index do
+        exclude_fields :text
         exclude_fields :title, :subtitle, translated: true
       end
 
       edit do
-        configure :page_template do
-          self.weight = 1
-        end
         exclude_fields :title, :subtitle
       end
     end

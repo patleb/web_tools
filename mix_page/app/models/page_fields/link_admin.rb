@@ -5,19 +5,24 @@ module PageFields::LinkAdmin
     rails_admin_prepend PageFields::Text
 
     rails_admin do
-      navigation_parent false
-
-      field :fieldable, weight: 2 do
+      field :parent, weight: -1 do
         searchable false
+        pretty_value{ value&.text }
       end
-      configure :parent do
-        pretty_value{ value&.title }
+      configure :text, weight: 0 do
+        index_value do
+          primary_key_link(pretty_value || I18n.t('page_fields.edit', model: object.model_name.human.downcase))
+        end
       end
     end
 
     rails_admin :superclass, after: true do
+      index do
+        field :fieldable, weight: 1
+      end
+
       edit do
-        configure :page_template, weight: 1
+        field :fieldable, weight: 4
       end
     end
   end

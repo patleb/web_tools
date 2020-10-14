@@ -161,8 +161,8 @@ module RailsAdmin
         @compact_show_view = true
         @default_hidden_fields = {}
         @default_hidden_fields[:base] = [:json_data, :deleted_at, :position]
-        @default_hidden_fields[:show] = [:id, :created_at, :updated_at]
-        @default_hidden_fields[:edit] = @default_hidden_fields[:show] + [:creator_id, :updater_id, :creator, :updater]
+        @default_hidden_fields[:show] = [:id, :created_at, :updated_at, :creator_id, :updater_id]
+        @default_hidden_fields[:edit] = @default_hidden_fields[:show].dup
         @default_items_per_page = 25
         @default_max_items_per_page = 100
         @default_search_operator = 'default'

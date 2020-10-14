@@ -13,15 +13,13 @@ module ActiveRecord::Associations::Builder::BelongsTo::WithGlobalId
     end
 
     def define_global_id_methods(mixin, name)
-      mixin.class_eval <<-CODE, __FILE__, __LINE__ + 1
-        def #{name}_global_id
-          #{name}.try(:to_global_id)
-        end
+      mixin.define_method "#{name}_global_id" do
+        send(name).to_global_id
+      end
 
-        def #{name}_global_id=(global_id)
-          self.#{name} = GlobalID::Locator.locate(global_id) if global_id.present?
-        end
-      CODE
+      mixin.define_method "#{name}_global_id=" do |global_id|
+        send("#{name}=", global_id.present? ? GlobalID::Locator.locate(global_id) : nil)
+      end
     end
   end
 end

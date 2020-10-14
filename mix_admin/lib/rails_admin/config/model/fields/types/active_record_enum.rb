@@ -15,7 +15,7 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
   end
 
   register_instance_option :pretty_value do
-    klass.human_attribute_name("#{name}.#{value}", default: value)
+    klass.human_attribute_name("#{name}.#{value}", default: value.humanize)
   end
 
   register_instance_option :multiple? do

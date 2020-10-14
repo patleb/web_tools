@@ -33,6 +33,13 @@ RailsAdmin::Config::Model::Fields.register_factory do |section, property, fields
       child_column.filterable(false)
     end
 
+    if [:creator_id, :updater_id, :creator, :updater].include?(property.name)
+      field.readonly true
+    end
+
     field.children_fields child_columns.map(&:name)
+    true
+  else
+    false
   end
 end

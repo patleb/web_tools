@@ -147,11 +147,11 @@ class RailsAdmin::Config::Model::Sections::Base
   # were defined.
   #
   # If a block is passed it will be evaluated in the context of each field
-  def fields(*field_names, translated: false, &block)
+  def fields(*field_names, translated: false, weight: nil, &block)
     if translated
-      fields(*field_names, &block) if translated == :all
+      fields(*field_names, weight: weight, &block) if translated == :all
       field_names = field_names.map{ |name| I18n.available_locales.map{ |locale| "#{name}_#{locale}" } }.flatten
-      fields(*field_names, &block)
+      fields(*field_names, weight: weight, &block)
     else
       return all_fields if field_names.empty? && !block
       field_names.map!(&:to_sym)
@@ -162,12 +162,13 @@ class RailsAdmin::Config::Model::Sections::Base
       else
         defined = field_names.map{ |name| _fields.find{ |f| f.name == name } }
       end
-      defined.map do |f|
+      defined.map.with_index do |f, i|
         raise _undefined_message(defined, field_names) if f.nil?
         unless f.defined
           f.defined = true
           f.weight = _fields.count(&:defined)
         end
+        f.weight = weight + i if weight
         f.instance_eval(&block) if block
         f
       end

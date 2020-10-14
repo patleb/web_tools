@@ -6,7 +6,7 @@ module PageFields
 
     with_options on: :update, unless: :list_changed? do
       validates :fieldable, presence: true
-      validates :fieldable_type, inclusion: { in: ['PageTemplate'] }
+      validates :fieldable_type, inclusion: { in: [nil, 'PageTemplate'] }
       I18n.available_locales.each do |locale|
         validates "text_#{locale}", length: { maximum: 120 }
       end
