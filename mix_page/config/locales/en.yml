@@ -41,7 +41,6 @@ en:
         text_en: Text (english)
       page_fields/link:
         fieldable: Link
-      page_fields/title:
         text: Title
         text_fr: Title (french)
         text_en: Title (english)
@@ -57,4 +56,3 @@ en:
       page_fields/text: Plain text
       page_fields/rich_text: Text
       page_fields/link: Link
-      page_fields/title: Title
