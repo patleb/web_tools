@@ -3,6 +3,7 @@ require 'rails_admin/abstract_model'
 
 require 'rails_admin/config/configurable'
 require 'rails_admin/config/hideable'
+require 'rails_admin/config/inspectable'
 require 'rails_admin/config/proxyable'
 
 require 'rails_admin/config/actions'

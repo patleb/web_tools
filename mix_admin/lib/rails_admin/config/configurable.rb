@@ -5,6 +5,8 @@ module RailsAdmin
     module Configurable
       def self.included(base)
         base.send :extend, ClassMethods
+        base.send :include, Proxyable
+        base.send :include, Inspectable
       end
 
       def has_option?(name) # rubocop:disable PredicateName
@@ -22,7 +24,7 @@ module RailsAdmin
         self.class.register_deprecated_instance_option(option_name, replacement_option_name, scope, &custom_error)
       end
 
-    private
+      private
 
       def with_recurring(option_name, value_proc, default_proc)
         # Track recursive invocation with an instance variable. This prevents run-away recursion

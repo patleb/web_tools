@@ -1,5 +1,4 @@
 class RailsAdmin::Config::Model::Fields::Base
-  include RailsAdmin::Config::Proxyable
   include RailsAdmin::Config::Configurable
   include RailsAdmin::Config::Hideable
 

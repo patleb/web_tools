@@ -3,7 +3,6 @@ class RailsAdmin::Config::Model
   require_relative 'model/fields'
   require_relative 'model/sections'
 
-  include RailsAdmin::Config::Proxyable
   include RailsAdmin::Config::Configurable
   include RailsAdmin::Config::Hideable
 

@@ -1,5 +1,4 @@
 class RailsAdmin::Config::Actions::Base
-  include RailsAdmin::Config::Proxyable
   include RailsAdmin::Config::Configurable
 
   register_instance_option :link_weight, memoize: true do

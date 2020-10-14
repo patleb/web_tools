@@ -1,6 +1,5 @@
 class RailsAdmin::Config::Model::Fields::MultipleFileUpload < RailsAdmin::Config::Fields::Base
   class AbstractAttachment
-    include RailsAdmin::Config::Proxyable
     include RailsAdmin::Config::Configurable
 
     attr_reader :value

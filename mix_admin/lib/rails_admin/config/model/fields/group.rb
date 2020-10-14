@@ -1,6 +1,5 @@
 # A container for groups of fields in edit views
 class RailsAdmin::Config::Model::Fields::Group
-  include RailsAdmin::Config::Proxyable
   include RailsAdmin::Config::Configurable
   include RailsAdmin::Config::Hideable
 

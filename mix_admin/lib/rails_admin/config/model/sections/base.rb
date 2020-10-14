@@ -1,6 +1,5 @@
 # Configuration of the show view for a new object
 class RailsAdmin::Config::Model::Sections::Base
-  include RailsAdmin::Config::Proxyable
   include RailsAdmin::Config::Configurable
 
   attr_reader :section_name, :parent_section_name
