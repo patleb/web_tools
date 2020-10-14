@@ -26,6 +26,9 @@ class PageTemplate < Page
   after_discard -> { discard_all! :links }
   before_undiscard -> { undiscard_all! :links }
 
+  # NOTE has_many polymorhic association not implemented in admin and field name is only available in actual pages
+  # accepts_nested_attributes_for :links
+
   def self.available_views
     uniques = MixPage.config.available_templates.keys.reject{ |key| key.match?(MixPage::MULTI_VIEW) }
     taken = with_discarded.where(view: uniques).distinct.pluck(:view)
