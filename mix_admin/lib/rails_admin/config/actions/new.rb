@@ -1,6 +1,6 @@
 class RailsAdmin::Config::Actions::New < RailsAdmin::Config::Actions::Base
   register_instance_option :link_weight, memoize: true do
-    30
+    40
   end
 
   register_instance_option :link_icon, memoize: true do

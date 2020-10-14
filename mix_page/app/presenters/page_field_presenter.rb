@@ -97,7 +97,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   def sync_position(previous_node)
     if (previous_position = previous_node&.position)
       if previous_position > position
-        object.update! list_previous_id: previous_node.object.id
+        object.update! list_prev_id: previous_node.object.id
       end
     end
   end

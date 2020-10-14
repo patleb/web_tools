@@ -49,6 +49,10 @@ class RailsAdmin::Config::Model
     klass.discardable?
   end
 
+  register_instance_option :listable?, memoize: true do
+    klass.listable?
+  end
+
   # TODO show time zone in list view if specified
   # https://github.com/onomojo/i18n-timezones
   register_instance_option :time_zone, memoize: true do

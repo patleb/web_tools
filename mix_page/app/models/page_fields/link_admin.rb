@@ -10,13 +10,14 @@ module PageFields::LinkAdmin
       field :fieldable, weight: 2 do
         searchable false
       end
+      configure :parent do
+        pretty_value{ value&.title }
+      end
     end
 
     rails_admin :superclass, after: true do
-      edit do # TODO allow to create page in modal (not support for polymorphic association at the moment)
-        configure :page_template do
-          self.weight = 1
-        end
+      edit do
+        configure :page_template, weight: 1
       end
     end
   end

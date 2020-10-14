@@ -15,7 +15,8 @@ class CreateLibPageFields < ActiveRecord::Migration[6.0]
       t.datetime   :deleted_at
     end
 
-    add_index :lib_page_fields, [:parent_id, :deleted_at], name: 'index_lib_page_fields_on_parent_id'
+    add_index :lib_page_fields, [:parent_id, :deleted_at],
+      name: 'index_lib_page_fields_on_parent_id', order: { parent_id: 'NULLS FIRST' }
     add_index :lib_page_fields, [:page_id, :deleted_at, :position], name: 'index_lib_page_fields_on_page_id'
     add_index :lib_page_fields, [:fieldable_type, :fieldable_id, :deleted_at], name: 'index_lib_page_fields_on_fieldable'
     add_index :lib_page_fields, [:type, :deleted_at, :position], name: 'index_lib_page_fields_on_type'

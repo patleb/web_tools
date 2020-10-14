@@ -1,0 +1,21 @@
+.js_sort_handle {
+  text-align: center;
+  cursor: grab;
+
+  i {
+    margin-right: 5px;
+  }
+}
+
+.js_sort_item {
+  &.js_done {
+    .js_sort_handle {
+      color: $brand-success;
+    }
+  }
+  &.js_fail {
+    .js_sort_handle {
+      color: $brand-danger;
+    }
+  }
+}

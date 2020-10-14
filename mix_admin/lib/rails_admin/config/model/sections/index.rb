@@ -29,11 +29,21 @@ class RailsAdmin::Config::Model::Sections::Index < RailsAdmin::Config::Model::Se
   end
 
   register_instance_option :sort_by do
-    klass.column_names.include?('updated_at') ? :updated_at : abstract_model.primary_key
+    if sort_action?
+      if klass.list_parent_column
+        klass.quote_columns(klass.list_parent_column, klass.list_column).join(' NULLS FIRST, ')
+      else
+        klass.list_column
+      end
+    elsif klass.column_names.include?('updated_at')
+      :updated_at
+    else
+      abstract_model.primary_key
+    end
   end
 
   register_instance_option :sort_reverse? do
-    true # By default show latest first
+    !sort_action? # By default show latest first
   end
 
   register_instance_option :sort_paginate do

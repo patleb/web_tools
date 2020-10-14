@@ -1,7 +1,7 @@
 class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model::Fields::Base
   autoload_dir RailsAdmin::Engine.root.join('lib/rails_admin/config/model/fields/types/association')
 
-  delegate :foreign_key, :polymorphic?, to: :property
+  delegate :foreign_key, :polymorphic?, :list_parent?, to: :property
 
   register_instance_option :pretty_value do
     safe_join(pretty_association, association_separator)

@@ -3,7 +3,12 @@ RailsAdmin::Config::Model::Fields.register_factory do |section, property, fields
     [a.foreign_key, a.name].include?(property.name) && [:belongs_to, :has_and_belongs_to_many].include?(a.type)
   end
   if association
-    type = "#{association.polymorphic? ? :polymorphic : association.type}_association"
+    type = case
+      when association.polymorphic? then :polymorphic
+      when association.list_parent? then :list_parent
+      else association.type
+      end
+    type = "#{type}_association"
     field = RailsAdmin::Config::Model::Fields.load(type).new(section, association.name, association)
     fields << field
 

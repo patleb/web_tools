@@ -17,6 +17,7 @@ class RailsAdmin.PaginateConcept
           @update_bulk_form(data)
           RailsAdmin.Table.CreateConcept.ready_again()
           RailsAdmin.TableConcept.ready_again()
+          RailsAdmin.SortConcept.ready_again() if Main.sort_action
       )
 
     'change', @MAX, (event, target) ->

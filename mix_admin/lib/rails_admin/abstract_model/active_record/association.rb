@@ -3,7 +3,7 @@ module RailsAdmin
     class Association
       attr_reader :column, :reflection
 
-      delegate :options, :scope, :polymorphic?, to: :reflection
+      delegate :options, :scope, :polymorphic?, :list_parent?, to: :reflection
       delegate :polymorphic_parents, to: 'RailsAdmin::AbstractModel'
 
       delegate_missing_to :column

@@ -64,6 +64,9 @@ fr:
       index:
         title: "Liste des %{model_label_plural}"
         menu: Liste
+      sort:
+        title: "Liste triée des %{model_label_plural}"
+        menu: Trier
       show:
         title: "Détails pour %{model_label} '%{object_label}'"
         menu: Voir

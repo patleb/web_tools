@@ -64,6 +64,9 @@ en:
       index:
         title: "List of %{model_label_plural}"
         menu: List
+      sort:
+        title: "Sorted list of %{model_label_plural}"
+        menu: Sort
       show:
         title: "Details for %{model_label} '%{object_label}'"
         menu: Show

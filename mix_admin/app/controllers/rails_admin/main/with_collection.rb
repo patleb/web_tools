@@ -31,7 +31,7 @@ module RailsAdmin::Main::WithCollection # TODO https://github.com/jcypret/hashid
 
     column = begin
       if field.nil? || (sortable = field.sortable) == true # use params[:sort] on the base table
-        %{"#{@abstract_model.table_name}"."#{params[:sort]}"}
+        params[:sort]&.include?('.') ? params[:sort] : %{"#{@abstract_model.table_name}"."#{params[:sort]}"}
       elsif sortable == false # use default sort, asked field is not sortable
         %{"#{@abstract_model.table_name}"."#{section.sort_by}"}
       elsif (sortable.is_a?(String) || sortable.is_a?(Symbol)) && sortable.to_s.include?('.') # just provide sortable, don't do anything smart

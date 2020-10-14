@@ -103,7 +103,7 @@ class PagesController < MixPage.config.parent_controller.constantize
     @field_params ||= if request.post?
       params.require(:page_field).permit(:type, :name, :page_id)
     else
-      params.require(:page_field).permit(:list_previous_id, :list_next_id)
+      params.require(:page_field).permit(:list_prev_id, :list_next_id)
     end
   end
 

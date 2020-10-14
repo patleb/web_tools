@@ -14,7 +14,7 @@ module RailsAdmin::Main
     end
 
     def head_options(field, i)
-      if field.sortable
+      if !sort_action? && field.sortable
         selected = (sort == field.name.to_s)
         path_params = params.merge(sort: field.name)
         if selected

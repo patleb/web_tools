@@ -12,10 +12,33 @@ module ActiveRecord::Base::WithList
 
       ### NOTE
       # cannot update position with other attributes --> lock prevents it
-      attribute :list_previous_id, :integer
+      attribute :list_prev_id, :integer
       attribute :list_next_id, :integer
 
       include ActiveRecord::Base::WithList::Position
+    end
+
+    def belongs_to(name, *, **options)
+      if options.has_key?(:list_parent)
+        if !options.has_key?(:class_name) && options[:list_parent].is_a?(Class)
+          options[:class_name] = options[:list_parent].name
+          options[:list_parent] = true
+        end
+        if options[:list_parent] && !(options.has_key?(:optional) || options.has_key?(:required))
+          options[:optional] = true
+        end
+      end
+      super
+    end
+
+    def listable?
+      return @_listable if defined? @_listable
+      @_listable = self < ActiveRecord::Base::WithList::Position
+    end
+
+    def list_parent_column
+      return @_list_parent_column if defined? @_list_parent_column
+      @_list_parent_column = reflect_on_all_associations(:belongs_to).find(&:list_parent?).foreign_key
     end
   end
 end
@@ -24,9 +47,9 @@ module ActiveRecord::Base::WithList::Position
   def create_or_update(*)
     if list_column
       if new_record?
-        if list_previous_id
-          list_with_previous_record do |previous_record|
-            list_insert_after(previous_record){ super }
+        if list_prev_id
+          list_with_prev_record do |prev_record|
+            list_insert_after(prev_record){ super }
           end
         elsif list_next_id
           list_with_next_record do |next_record|
@@ -36,9 +59,9 @@ module ActiveRecord::Base::WithList::Position
           list_push_on_create ? list_push { super } : list_unshift { super }
         end
       else
-        if list_previous_id
-          list_with_previous_record do |previous_record|
-            list_move_after(previous_record) { super }
+        if list_prev_id
+          list_with_prev_record do |prev_record|
+            list_move_after(prev_record) { super }
           end
         elsif list_next_id
           list_with_next_record do |next_record|
@@ -54,23 +77,23 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_changed?
-    send("#{list_column}_changed?") || list_previous_id_changed? || list_next_id_changed?
+    send("#{list_column}_changed?") || list_prev_id_changed? || list_next_id_changed?
   end
 
   private
 
-  def list_with_previous_record
+  def list_with_prev_record
     clear_attribute_changes [:list_next_id]
-    previous_record = self.class.without_default_scope { self.class.base_class.find(list_previous_id) }
-    old_id = list_previous_id
-    self.list_previous_id = nil
-    result = yield(previous_record)
+    prev_record = self.class.without_default_scope { self.class.base_class.find(list_prev_id) }
+    old_id = list_prev_id
+    self.list_prev_id = nil
+    result = yield(prev_record)
   ensure
-    self.list_previous_id = old_id unless result
+    self.list_prev_id = old_id unless result
   end
 
   def list_with_next_record
-    clear_attribute_changes [:list_previous_id]
+    clear_attribute_changes [:list_prev_id]
     next_record = self.class.without_default_scope { self.class.base_class.find(list_next_id) }
     old_id = list_next_id
     self.list_next_id = nil
@@ -79,35 +102,35 @@ module ActiveRecord::Base::WithList::Position
     self.list_next_id = old_id unless result
   end
 
-  def list_move_between(previous_record, next_record)
+  def list_move_between(prev_record, next_record)
     id = send(self.class.primary_key)
-    return yield if previous_record.send(self.class.primary_key) == id || next_record.send(self.class.primary_key) == id
+    return yield if prev_record.send(self.class.primary_key) == id || next_record.send(self.class.primary_key) == id
     self.class.transaction do
-      [previous_record, self, next_record].sort_by{ |record| record.send(self.class.primary_key) }.each(&:lock!)
-      list_between(previous_record, next_record) { yield }
+      [prev_record, self, next_record].sort_by{ |record| record.send(self.class.primary_key) }.each(&:lock!)
+      list_between(prev_record, next_record) { yield }
     end
   end
 
-  def list_move_after(previous_record)
-    return yield if previous_record.send(self.class.primary_key) == send(self.class.primary_key)
-    next_record = list_next_record(previous_record)
+  def list_move_after(prev_record)
+    return yield if prev_record.send(self.class.primary_key) == send(self.class.primary_key)
+    next_record = list_next_record(prev_record)
     if next_record
       return yield if next_record.send(self.class.primary_key) == send(self.class.primary_key)
-      list_move_between(previous_record, next_record) { yield }
+      list_move_between(prev_record, next_record) { yield }
     else
       self.class.transaction do
-        [previous_record, self].sort_by{ |record| record.send(self.class.primary_key) }.each(&:lock!)
-        list_after(previous_record) { yield }
+        [prev_record, self].sort_by{ |record| record.send(self.class.primary_key) }.each(&:lock!)
+        list_after(prev_record) { yield }
       end
     end
   end
 
   def list_move_before(next_record)
     return yield if next_record.send(self.class.primary_key) == send(self.class.primary_key)
-    previous_record = list_previous_record(next_record)
-    if previous_record
-      return yield if previous_record.send(self.class.primary_key) == send(self.class.primary_key)
-      list_move_between(previous_record, next_record) { yield }
+    prev_record = list_prev_record(next_record)
+    if prev_record
+      return yield if prev_record.send(self.class.primary_key) == send(self.class.primary_key)
+      list_move_between(prev_record, next_record) { yield }
     else
       self.class.transaction do
         [self, next_record].sort_by{ |record| record.send(self.class.primary_key) }.each(&:lock!)
@@ -116,28 +139,28 @@ module ActiveRecord::Base::WithList::Position
     end
   end
 
-  def list_insert_between(previous_record, next_record)
+  def list_insert_between(prev_record, next_record)
     self.class.transaction do
-      [previous_record, next_record].sort_by{ |record| record.send(self.class.primary_key) }.each(&:lock!)
-      list_between(previous_record, next_record) { yield }
+      [prev_record, next_record].sort_by{ |record| record.send(self.class.primary_key) }.each(&:lock!)
+      list_between(prev_record, next_record) { yield }
     end
   end
 
-  def list_insert_after(previous_record)
-    next_record = list_next_record(previous_record)
+  def list_insert_after(prev_record)
+    next_record = list_next_record(prev_record)
     if next_record
-      list_insert_between(previous_record, next_record) { yield }
+      list_insert_between(prev_record, next_record) { yield }
     else
-      previous_record.with_lock do
-        list_after(previous_record) { yield }
+      prev_record.with_lock do
+        list_after(prev_record) { yield }
       end
     end
   end
 
   def list_insert_before(next_record)
-    previous_record = list_previous_record(next_record)
-    if previous_record
-      list_insert_between(previous_record, next_record) { yield }
+    prev_record = list_prev_record(next_record)
+    if prev_record
+      list_insert_between(prev_record, next_record) { yield }
     else
       next_record.with_lock do
         list_before(next_record) { yield }
@@ -146,10 +169,10 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_push
-    previous_record = list_last_record
-    if previous_record
-      previous_record.with_lock do
-        list_after(previous_record) { yield }
+    prev_record = list_last_record
+    if prev_record
+      prev_record.with_lock do
+        list_after(prev_record) { yield }
       end
     else
       self.class.with_table_lock do
@@ -171,15 +194,15 @@ module ActiveRecord::Base::WithList::Position
     end
   end
 
-  def list_next_record(previous_record)
+  def list_next_record(prev_record)
     self.class.without_default_scope do
-      self.class.base_class.where(self.class.base_class.column(list_column) > previous_record.send(list_column))
+      self.class.base_class.where(self.class.base_class.column(list_column) > prev_record.send(list_column))
         .order(list_column)
         .first
     end
   end
 
-  def list_previous_record(next_record)
+  def list_prev_record(next_record)
     self.class.without_default_scope do
       self.class.base_class.where(self.class.base_class.column(list_column) < next_record.send(list_column))
         .order(list_column)
@@ -195,14 +218,14 @@ module ActiveRecord::Base::WithList::Position
     self.class.without_default_scope { self.class.base_class.order(list_column).first }
   end
 
-  def list_between(previous_record, next_record)
-    limits = [previous_record.send(list_column), next_record.send(list_column)].sort
+  def list_between(prev_record, next_record)
+    limits = [prev_record.send(list_column), next_record.send(list_column)].sort
     self[list_column] = (limits[1] - limits[0]) / 2.0 + limits[0]
     yield
   end
 
-  def list_after(previous_record)
-    self[list_column] = previous_record.send(list_column).floor + 1.0
+  def list_after(prev_record)
+    self[list_column] = prev_record.send(list_column).floor + 1.0
     yield
   end
 
