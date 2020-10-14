@@ -20,8 +20,9 @@ h_(
           ])
         end,
         tbody_('.js_sort_list', [
+          div_('#js_sort_columns', data: { columns: @p.table.sort_action_columns }),
           @objects.map do |object|
-            tr_('.js_sort_item', @p.table.row_options(object).union!(data: { id: object.id, parent: object.try(:parent_id) }), [
+            tr_('.js_sort_item', @p.table.row_sort_options(object), [
               td_('.js_sort_handle') do
                 i_(class: 'fa fa-arrows-v')
               end,

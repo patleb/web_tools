@@ -35,11 +35,22 @@ module RailsAdmin::Main
       }
     end
 
+    def row_sort_options(object)
+      columns = sort_action_columns.each_with_object({}) do |column, values|
+        values[column] = object.try(column)
+      end
+      row_options(object).union! data: { id: object.id, columns: columns }
+    end
+
     def row_options(object)
       {
         class: ["#{@abstract_model.param_key}_row", index_section.with(object: object).row_css_class],
         data: { name: @abstract_model.param_key }
       }
+    end
+
+    def sort_action_columns
+      index_section.sort_action_columns[0..-2]
     end
 
     def body_options(field, i)

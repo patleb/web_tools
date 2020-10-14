@@ -20,6 +20,10 @@ module PageFieldAdmin
     end
 
     rails_admin :base_class, after: true do
+      index do
+        sort_action_columns{ ['name'].concat(sort_action_columns) }
+      end
+
       edit do
         fields :updater, :creator, weight: 100
       end

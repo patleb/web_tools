@@ -3,8 +3,10 @@ class RailsAdmin.SortConcept
     LIST: 'CLASS'
     ITEM: 'CLASS'
     HANDLE: 'CLASS'
+    COLUMNS: 'ID'
 
   ready: =>
+    columns = $(@COLUMNS).data('columns')
     $(@LIST).sortable(
       items: "> #{@ITEM}"
       axis: 'y'
@@ -12,9 +14,11 @@ class RailsAdmin.SortConcept
       cursor: 'grabbing'
       update: (event, ui) ->
         [prev, current, next] = [ui.item.prev(), ui.item, ui.item.next()]
-        [prev_parent, current_parent, next_parent] = [prev.data('parent'), current.data('parent'), next.data('parent')]
-        is_prev_item = current_parent == next_parent
-        is_next_item = prev_parent == current_parent
+        prev_columns = columns.map (column) -> prev.data('columns')[column]
+        current_columns = columns.map (column) -> current.data('columns')[column]
+        next_columns = columns.map (column) -> next.data('columns')[column]
+        is_prev_item = current_columns.eql(next_columns)
+        is_next_item = prev_columns.eql(current_columns)
         unless is_prev_item || is_next_item
           $(this).sortable('cancel')
           return

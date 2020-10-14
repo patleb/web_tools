@@ -30,11 +30,7 @@ class RailsAdmin::Config::Model::Sections::Index < RailsAdmin::Config::Model::Se
 
   register_instance_option :sort_by do
     if sort_action?
-      if klass.list_parent_column
-        klass.quote_columns(klass.list_parent_column, klass.list_column).join(' NULLS FIRST, ')
-      else
-        klass.list_column
-      end
+      klass.quote_columns(*sort_action_columns).join(' NULLS FIRST, ')
     elsif klass.column_names.include?('updated_at')
       :updated_at
     else
@@ -48,6 +44,10 @@ class RailsAdmin::Config::Model::Sections::Index < RailsAdmin::Config::Model::Se
 
   register_instance_option :sort_paginate do
     [abstract_model.primary_key.to_sym]
+  end
+
+  register_instance_option :sort_action_columns do
+    [klass.list_parent_column, klass.list_column].compact
   end
 
   register_instance_option :scopes do
