@@ -45,7 +45,7 @@ class RailsAdmin::Config::Model::Fields::Association::HasMany < RailsAdmin::Conf
           if can_create && inline_add
             form.link_to_add(name, class: 'btn btn-info') {[
               i_('.fa.fa-plus.icon-white'),
-              wording_for(:link, :new, associated_model.abstract_model)
+              wording_for(:link, :new, abstract_model)
             ]}
           end
         ]),
@@ -82,7 +82,7 @@ class RailsAdmin::Config::Model::Fields::Association::HasMany < RailsAdmin::Conf
                     f.span_ ".btn.btn-sm.btn-#{is_template ? 'default' : 'danger'}", f.i_('.fa.fa-trash-o')
                   end
                 end,
-                f.generate(section: :nested, model: associated_model, nested_in: self)
+                f.generate(section: :nested, model: model, nested_in: self)
               )
             end
           end
