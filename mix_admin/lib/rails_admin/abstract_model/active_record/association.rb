@@ -31,7 +31,7 @@ module RailsAdmin
       end
 
       def primary_key
-        (options[:primary_key] || reflection.klass.primary_key)&.to_sym unless polymorphic?
+        polymorphic? ? :to_global_id : (options[:primary_key] || reflection.klass.primary_key)&.to_sym
       end
 
       def foreign_key

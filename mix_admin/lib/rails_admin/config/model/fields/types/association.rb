@@ -1,7 +1,7 @@
 class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model::Fields::Base
   autoload_dir RailsAdmin::Engine.root.join('lib/rails_admin/config/model/fields/types/association')
 
-  delegate :foreign_key, :polymorphic?, :list_parent?, to: :property
+  delegate :foreign_key, :foreign_type, :polymorphic?, :list_parent?, to: :property
 
   register_instance_option :pretty_value do
     safe_join(pretty_association, association_separator)
@@ -131,7 +131,7 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
   end
 
   def render_nested
-    model = associated_model
+    model = polymorphic? ? associated_model.first : associated_model
     abstract_model = model.abstract_model
     selected = selected_object(abstract_model) || form.object.send(name)
     can_create, can_destroy = !nested_options[:update_only], nested_options[:allow_destroy]
@@ -226,7 +226,7 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
   end
 
   def filtering_options
-    model = associated_model
+    model = polymorphic? ? associated_model.first : associated_model
     abstract_model = model.abstract_model
 
     if (selected = selected_object(abstract_model))

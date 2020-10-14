@@ -34,6 +34,6 @@ class RailsAdmin::Config::Model::Fields::Association::BelongsTo < RailsAdmin::Co
   end
 
   def method_name
-    nested_options ? "#{name}_attributes".to_sym : property.foreign_key
+    nested_options ? "#{name}_attributes".to_sym : foreign_key
   end
 end
