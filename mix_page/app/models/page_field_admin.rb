@@ -18,6 +18,7 @@ module PageFieldAdmin
       configure :creator do
         sortable false
       end
+      field :lock_version
     end
   end
 end

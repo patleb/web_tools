@@ -12,7 +12,6 @@ module PageTemplateAdmin
       configure :description, :text, translated: :all do
         searchable false
       end
-
       field :view do
         searchable false
       end
@@ -21,6 +20,7 @@ module PageTemplateAdmin
         searchable false
         queryable false
       end
+      field :lock_version
 
       index do
         configure :updater do
