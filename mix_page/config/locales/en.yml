@@ -1,4 +1,7 @@
 en:
+  page_paginate:
+    prev: Previous
+    next: Next
   page_template:
     edit: "%{model} to edit"
     create: "Add %{model}"

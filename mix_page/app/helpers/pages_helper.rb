@@ -77,6 +77,7 @@ module PagesHelper
 
   def page_presenter(name, type, layout: false, multi: false) # TODO allow multiple types
     return unless @page && type.in?(page_field_types)
+    name = name.to_s
     (((((@memoized ||= {})[:page_presenter] ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
       scope = layout ? @page.layout : @page
       filter = ->(field) { field.type == type && field.name == name && field.show? }
@@ -97,14 +98,28 @@ module PagesHelper
   end
 
   def page_next(name)
+    page_next_presenter(name)&.render {[
+      span_{ t('page_paginate.next') },
+      i_('.fa.fa-chevron-circle-right')
+    ]}
+  end
+
+  def page_prev(name)
+    page_prev_presenter(name)&.render {[
+      i_('.fa.fa-chevron-circle-left'),
+      span_{ t('page_paginate.prev') }
+    ]}
+  end
+
+  def page_next_presenter(name)
     with_layout_links(name) do |links, index|
       links[index + 1]
     end
   end
 
-  def page_previous(name)
+  def page_prev_presenter(name)
     with_layout_links(name) do |links, index|
-      links[index - 1]
+      links[index - 1] if index > 0
     end
   end
 

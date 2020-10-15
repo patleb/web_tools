@@ -54,8 +54,8 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
     raise NotImplementedError
   end
 
-  def render(**item_options)
-    html(html_options.with_keyword_access.union!(item_options))
+  def render(**item_options, &block)
+    html(html_options.with_keyword_access.union!(item_options), &block)
   end
 
   def editable

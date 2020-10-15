@@ -1,10 +1,10 @@
 module PageFields
   class TextPresenter < PageFieldPresenter
-    def html(**options)
+    def html(only_text: false, **options)
       escape = options.delete(:escape)
       div_(options) {[
         text(escape).presence || pretty_blank,
-        pretty_actions(:div),
+        (pretty_actions(:div) unless only_text),
       ]}
     end
 
