@@ -11,7 +11,7 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
       values.each_with_object([]) do |(key, value), all|
         all << [klass.human_attribute_name("#{name}.#{key}", default: key), value]
       end
-    end
+    end.sort_by(&:first)
   end
 
   register_instance_option :pretty_value do
