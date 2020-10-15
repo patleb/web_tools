@@ -18,26 +18,18 @@ module ActiveRecord::Base::WithJsonAttribute
 
   prepended do
     class_attribute :jsonb_accessors
-    class_attribute :jsonb_accessors_defaults
 
-    after_initialize :initialize_jsonb_accessors_defaults
-
-    delegate :json_column, :json_key, to: :class
-  end
-
-  def initialize_jsonb_accessors_defaults
-    if jsonb_accessors_defaults&.key? :json_data
-      jsonb_accessors_defaults[:json_data].each do |field, default|
-        next unless send(field).nil?
-        value = default.is_a?(Proc) ? default.call : default
-        send("#{field}=", value)
-      end
-    end
+    delegate :json_attribute?, :json_column, :json_key, to: :class
   end
 
   class_methods do
     def json_attribute(field_types)
       jsonb_accessor(:json_data, field_types)
+    end
+
+    def json_attribute?(name)
+      return false unless jsonb_accessors
+      jsonb_accessors[:json_data].has_key? name
     end
 
     def json_translate(field_types)
@@ -70,14 +62,25 @@ module ActiveRecord::Base::WithJsonAttribute
     def jsonb_accessor(jsonb_attribute, field_types)
       self.jsonb_accessors ||= {}.with_indifferent_access
       self.jsonb_accessors[jsonb_attribute] ||= {}.with_indifferent_access
-      field_types.each do |field, type|
+      defaults = field_types.each_with_object({}.with_indifferent_access) do |(field, type), defaults|
         next unless type.is_a?(Array) && (options = type.last).is_a?(Hash) && options.key?(:default)
-        self.jsonb_accessors_defaults ||= {}.with_indifferent_access
-        self.jsonb_accessors_defaults[jsonb_attribute] ||= {}.with_indifferent_access
-        self.jsonb_accessors_defaults[jsonb_attribute][field] = options.delete(:default)
+        defaults[field] = options.delete(:default)
       end
       self.jsonb_accessors[jsonb_attribute].merge! field_types
+
       super
+
+      field_types.each_key do |field|
+        next unless defaults.has_key? field
+        default = defaults[field]
+        define_method field do
+          if (value = read_attribute(field)).nil?
+            (default.is_a?(Proc) ? default.call(self) : default)
+          else
+            value
+          end
+        end
+      end
     end
   end
 end

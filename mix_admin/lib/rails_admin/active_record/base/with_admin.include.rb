@@ -57,7 +57,7 @@ module ActiveRecord::Base::WithAdmin
   end
 
   def safe_send(value)
-    if has_attribute?(value)
+    if !json_attribute?(value) && has_attribute?(value)
       self[value]
     else
       send(value)

@@ -2,12 +2,13 @@ module UsersHelper
   def edit_user_link
     return unless Current.user_logged_in?
     css = 'edit_user_link'
-    if defined?(MixAdmin) && !Current.user_role? && Current.user.admin?
-      css << ' pjax' if controller.try(:admin?)
+    admin_controller = controller.try(:admin?)
+    if defined?(MixAdmin) && !(Current.user_role? && !admin_controller) && Current.user.admin?
+      css << ' pjax' if admin_controller
       path = admin_path_for(:edit, Current.user)
       title = t('user.admin')
     elsif MixUser.config.devise_modules.include? :registerable
-      css << ' pjax' unless controller.try(:admin?)
+      css << ' pjax' unless admin_controller
       path = edit_user_path
     else
       return

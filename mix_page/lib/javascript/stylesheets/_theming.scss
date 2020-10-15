@@ -36,6 +36,12 @@
 }
 
 .sidebar-nav {
+  .inactive {
+    @extend .dropdown-header;
+    font-weight: inherit;
+    text-transform: inherit;
+  }
+
   > .nav-stacked > li > a {
     &.nav-level-1 {
       .sort_page_field {

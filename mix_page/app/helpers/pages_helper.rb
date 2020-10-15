@@ -98,14 +98,14 @@ module PagesHelper
   end
 
   def page_next(name)
-    page_next_presenter(name)&.render {[
+    page_next_presenter(name)&.render(class: ['page_next']) {[
       span_{ t('page_paginate.next') },
       i_('.fa.fa-chevron-circle-right')
     ]}
   end
 
   def page_prev(name)
-    page_prev_presenter(name)&.render {[
+    page_prev_presenter(name)&.render(class: ['page_prev']) {[
       i_('.fa.fa-chevron-circle-left'),
       span_{ t('page_paginate.prev') }
     ]}
@@ -113,13 +113,13 @@ module PagesHelper
 
   def page_next_presenter(name)
     with_layout_links(name) do |links, index|
-      links[index + 1]
+      links[(index + 1)..-1].find(&:active)
     end
   end
 
   def page_prev_presenter(name)
     with_layout_links(name) do |links, index|
-      links[index - 1] if index > 0
+      links[0..(index - 1)].reverse.find(&:active) if index > 0
     end
   end
 

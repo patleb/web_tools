@@ -43,6 +43,7 @@ fr:
         text_fr: Texte (français)
         text_en: Texte (anglais)
       page_fields/link:
+        active: Actif
         fieldable: Lien
         text: Titre
         text_fr: Titre (français)
