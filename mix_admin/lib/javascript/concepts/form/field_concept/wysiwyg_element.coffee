@@ -8,6 +8,10 @@ class RailsAdmin.Form.FieldConcept::WysiwygElement
       height : 'auto',
       minHeight: '400px',
       maxWidth : '600px',
+      videoResizing: false,
+      videoRatioShow: false,
+      videoWidth: '480px',
+      videoHeight: '270px',
       buttonList: [
         ['undo', 'redo'],
         # ['font', 'fontSize', 'formatBlock'],

@@ -2,12 +2,40 @@
 @import "~@@/ext_bootstrap/stylesheets/bootswatch/paper/theming";
 @import "~@@/mix_user/stylesheets/theming";
 
-.se-image-container {
-  img {
+.page_fields_rich_text {
+  table, .katex {
+    @include scrollbar;
     max-width: 100%;
+    overflow-x: auto;
+    display: block;
+    white-space: nowrap;
   }
-  figcaption {
-    font-style: italic;
+}
+
+.se-image-container {
+  figure {
+    max-width: 100%;
+
+    img {
+      max-width: 100%;
+    }
+
+    figcaption {
+      font-style: italic;
+    }
+  }
+}
+
+.se-video-container {
+  padding: 20px;
+
+  figure {
+    padding-bottom: 0 !important;
+    max-width: 100%;
+
+    iframe {
+      max-width: 100%;
+    }
   }
 }
 
