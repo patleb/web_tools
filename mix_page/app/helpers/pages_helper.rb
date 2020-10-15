@@ -97,6 +97,10 @@ module PagesHelper
     end
   end
 
+  def page_paginate(name)
+    [page_prev(name), page_next(name)].compact.join(' | ').html_safe
+  end
+
   def page_next(name)
     page_next_presenter(name)&.render(class: ['page_next']) {[
       span_{ t('page_paginate.next') },
