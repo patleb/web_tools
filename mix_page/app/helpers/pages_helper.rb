@@ -98,7 +98,9 @@ module PagesHelper
   end
 
   def page_paginate(name)
-    [page_prev(name), page_next(name)].compact.join(' | ').html_safe
+    div_(".page_paginate.page_paginate_#{name}") do
+      [page_prev(name), page_next(name)].compact.join(' | ').html_safe
+    end
   end
 
   def page_next(name)
