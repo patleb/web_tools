@@ -14,9 +14,7 @@ module PageFields::LinkAdmin
           primary_key_link(pretty_value || I18n.t('page_fields.edit', model: object.model_name.human.downcase))
         end
       end
-      field :active, :boolean do
-        readonly false
-      end
+      field! :active, :boolean
     end
 
     rails_admin :superclass, after: true do
