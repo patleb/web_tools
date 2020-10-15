@@ -1,7 +1,3 @@
-append :fonts, [
-  preload_link_tag_bootswatch_fonts(:paper),
-]
-
 append :html_data, [
   div_('#js_i18n_translations', data: { translations: js_i18n(:pjax, :template, :page) }),
   div_('#js_routes_paths', data: { paths: MixPage.config.js_routes }),

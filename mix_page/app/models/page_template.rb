@@ -5,6 +5,7 @@ class PageTemplate < Page
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }
   validate  :slug_exclusion
+  validate  :slug_scoped_by_locale
   I18n.available_locales.each do |locale|
     validates "title_#{locale}", length: { maximum: 120 }
     validates "description_#{locale}", length: { maximum: 360 }
@@ -116,6 +117,12 @@ class PageTemplate < Page
       if MixPage.config.reserved_words.include? slug(locale)
         errors.add :title, :exclusion
       end
+    end
+  end
+
+  def slug_scoped_by_locale
+    if I18n.available_locales.size != slugs.size
+      errors.add :title, :taken
     end
   end
 

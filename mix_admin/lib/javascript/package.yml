@@ -1,7 +1,6 @@
 packages:
   - 'hamsterjs'
   - 'suneditor'
-  - 'katex'
 
 gems:
   - 'mix_user'

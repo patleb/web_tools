@@ -110,8 +110,6 @@ module RailsAdmin
       attr_accessor :chart_max_rows
       attr_accessor :export_max_rows
 
-      attr_accessor :katex_version
-
       def default_search_operator=(operator)
         if %w(default like starts_with ends_with is =).include? operator
           @default_search_operator = operator
@@ -179,7 +177,6 @@ module RailsAdmin
         @default_truncate_length = 50
         @chart_max_rows = 750_000
         @export_max_rows = 750_000
-        @katex_version = '0.12.0'
         Actions.reset
       end
 

@@ -2,6 +2,15 @@
 @import "~@@/ext_bootstrap/stylesheets/bootswatch/paper/theming";
 @import "~@@/mix_user/stylesheets/theming";
 
+.se-image-container {
+  img {
+    max-width: 100%;
+  }
+  figcaption {
+    font-style: italic;
+  }
+}
+
 .page_template_actions {
   a {
     margin-left: 5px;

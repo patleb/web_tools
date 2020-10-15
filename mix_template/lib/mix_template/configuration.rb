@@ -4,6 +4,8 @@ module MixTemplate
     attr_writer :web_app_capable
     attr_writer :version
     attr_writer :version_path
+    attr_writer :theme
+    attr_writer :katex_version
     attr_writer :chart_options
 
     def parent_controller
@@ -21,6 +23,14 @@ module MixTemplate
 
     def version_path
       @version_path ||= Rails.root.join('REVISION')
+    end
+
+    def theme
+      @theme ||= :paper
+    end
+
+    def katex_version
+      @katex_version ||= '0.12.0'
     end
 
     def chart_options

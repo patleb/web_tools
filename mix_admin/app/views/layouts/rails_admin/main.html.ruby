@@ -1,14 +1,3 @@
-append :stylesheets, [
-  stylesheet_link_tag("https://cdn.jsdelivr.net/npm/katex@#{RailsAdmin.config.katex_version}/dist/katex.min.css", media: :all),
-]
-
-append :fonts, [
-  link_(rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: 'anonymous'),
-  preload_link_tag_bootswatch_fonts(:paper),
-  preload_link_tag("https://cdn.jsdelivr.net/npm/katex@#{RailsAdmin.config.katex_version}/dist/fonts/KaTeX_Main-Regular.woff2"),
-  preload_link_tag("https://cdn.jsdelivr.net/npm/katex@#{RailsAdmin.config.katex_version}/dist/fonts/KaTeX_Math-Italic.woff2"),
-]
-
 append :metas do
   meta_ name: 'robots', contents: 'NONE,NOARCHIVE'
 end

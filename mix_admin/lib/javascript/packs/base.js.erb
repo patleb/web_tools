@@ -5,7 +5,6 @@ import Hamster from 'hamsterjs'
 import suneditor from 'suneditor'
 import { <%= I18n.available_locales.join(', ') %> } from 'suneditor/src/lang'
 import plugins from 'suneditor/src/plugins'
-import katex from 'katex'
 
 import '@@/mix_admin/all'
 
@@ -15,5 +14,4 @@ document.addEventListener('DOMContentLoaded', function () {
   window.Chartkick = Chartkick
   window.Hamster = Hamster
   window.suneditor = { create: suneditor.create, lang: { <%= I18n.available_locales.join(', ') %> }, plugins }
-  window.katex = katex
 })
