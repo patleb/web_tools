@@ -119,13 +119,13 @@ module PagesHelper
 
   def page_next_presenter(name)
     with_layout_links(name) do |links, index|
-      links[(index + 1)..-1].find(&:active)
+      links[(index + 1)..-1].find(&:active) if index && index < links.size - 1
     end
   end
 
   def page_prev_presenter(name)
     with_layout_links(name) do |links, index|
-      links[0..(index - 1)].reverse.find(&:active) if index > 0
+      links[0..(index - 1)].reverse.find(&:active) if index && index > 0
     end
   end
 
@@ -151,7 +151,7 @@ module PagesHelper
 
   def with_layout_links(name)
     links = layout_link_presenters(name)&.list || []
-    index = links.index{ |presenter| presenter.object.fieldable_id == @page.id } || links.size
+    index = links.index{ |presenter| presenter.object.fieldable_id == @page.id }
     yield(links, index)
   end
 end
