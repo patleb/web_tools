@@ -14,11 +14,11 @@ module MixPage
     }
   end
 
-  def self.root_path(locale = nil)
+  def self.root_path
     if MixPage.config.root_path.present?
       MixPage.config.root_path
     elsif (root_page = PageTemplate.find_root_page)&.show?
-      root_page.to_url(locale)
+      root_page.to_url
     end
   end
 
