@@ -5,7 +5,7 @@ class PageTemplate < Page
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }
   validate  :slug_exclusion
-  validate  :slug_scoped_by_locale
+  # TODO validate  :slug_scoped_by_locale
   I18n.available_locales.each do |locale|
     validates "title_#{locale}", length: { maximum: 120 }
     validates "description_#{locale}", length: { maximum: 360 }
