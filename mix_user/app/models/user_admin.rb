@@ -25,14 +25,14 @@ module UserAdmin
 
       index do
         field :email do
-          searchable false
-          queryable false
           index_value{ primary_key_link }
         end
-        fields :role, :confirmed_at, :updated_at, :created_at do
+        # TODO should be able to filter by enum
+        field :role do
           searchable false
           queryable false
         end
+        fields :confirmed_at, :updated_at, :created_at
       end
     end
   end

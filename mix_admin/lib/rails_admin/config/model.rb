@@ -104,7 +104,7 @@ class RailsAdmin::Config::Model
           parent_module.humanize
         )
       )
-    end
+    end.upcase
   end
 
   register_instance_option :navigation_label_i18n_key, memoize: true do
