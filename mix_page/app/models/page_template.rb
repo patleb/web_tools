@@ -5,7 +5,7 @@ class PageTemplate < Page
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }
   validate  :slug_exclusion
-  # TODO validate  :slug_scoped_by_locale
+  validate  :slug_scoped_by_locale
   I18n.available_locales.each do |locale|
     validates "title_#{locale}", length: { maximum: 120 }
     validates "description_#{locale}", length: { maximum: 360 }
@@ -22,6 +22,8 @@ class PageTemplate < Page
 
   before_validation :set_published_at, if: :publish_changed?
   before_validation :set_page_layout, unless: :page_layout_id
+
+  after_create :create_sidebar_link unless MixPage.config.skip_sidebar_link
 
   after_discard -> { update! published_at: nil }
   after_discard -> { discard_all! :links }
@@ -134,5 +136,9 @@ class PageTemplate < Page
 
   def set_page_layout
     self.page_layout = PageLayout.find_or_create_by! view: MixPage.config.layout
+  end
+
+  def create_sidebar_link
+    PageFields::Link.create! page_id: page_layout_id, name: :sidebar_links, fieldable: self
   end
 end

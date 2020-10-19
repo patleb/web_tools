@@ -13,6 +13,7 @@ module MixPage
     attr_writer   :available_fieldables
     attr_writer   :member_actions
     attr_writer   :max_children_count
+    attr_accessor :skip_sidebar_link
 
     def js_routes
       @js_routes ||= MixPage.js_routes

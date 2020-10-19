@@ -7,6 +7,14 @@ module PagesHelper
     types[type] = name
   end
 
+  def layout_sidebar
+    layout_links(:sidebar_links, sidebar: true)
+  end
+
+  def paginate_sidebar
+    page_paginate(:sidebar_links)
+  end
+
   # For the type PageFields::Link, method_missing could define the following helpers:
   # ----
   # layout_link_presenters(name)
