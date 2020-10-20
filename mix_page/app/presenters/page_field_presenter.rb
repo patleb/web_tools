@@ -64,13 +64,11 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   alias_method :editable?, :editable
 
   def pretty_blank
-    return unless editable?
-    I18n.t('page_fields.edit', model: object.model_name.human.downcase)
+    I18n.t('page_fields.edit', model: object.model_name.human.downcase) if editable?
   end
 
   def pretty_actions(tag = :div)
-    return unless member_actions.any?
-    with_tag(tag, '.page_field_actions') {[
+    with_tag(tag, '.page_field_actions', if: member_actions.any?) {[
       sort_action,
       member_actions.map do |action, path|
         button_(class: "#{action}_page_field #{action}_#{type.full_underscore} btn btn-default btn-xs", data: { href: path }) do

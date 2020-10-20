@@ -84,7 +84,7 @@ module PagesHelper
   end
 
   def page_presenter(name, type, layout: false, multi: false) # TODO allow multiple types
-    return unless @page && type.in?(page_field_types)
+    return unless @page
     name = name.to_s
     (((((@memoized ||= {})[:page_presenter] ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
       scope = layout ? @page.layout : @page
@@ -138,24 +138,19 @@ module PagesHelper
   end
 
   def preview_link
-    if defined?(MixAdmin) && Current.controller.try(:pages?)
-      if Current.user_role?
-        a_ href: "?_user_role=false" do
-          span_ '.label.label-danger', t('user.quit_preview')
-        end
-      elsif Current.user.admin?
-        a_ href: "?_user_role=true" do
-          span_ '.label.label-primary', t('user.enter_preview')
-        end
+    return unless defined?(MixAdmin) && Current.user.admin? && Current.controller.try(:pages?)
+    if Current.user_role?
+      a_ href: "?_user_role=false" do
+        span_ '.label.label-danger', t('user.quit_preview')
+      end
+    else
+      a_ href: "?_user_role=true" do
+        span_ '.label.label-primary', t('user.enter_preview')
       end
     end
   end
 
   private
-
-  def page_field_types
-    @page_field_types ||= MixPage.config.available_field_types.keys.select{ |type| can? :create, type }
-  end
 
   def with_layout_links(name)
     links = layout_link_presenters(name)&.list || []

@@ -17,6 +17,10 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
     end
   end
 
+  def types
+    @types ||= super.select{ |type| !Current.user_role? && can?(:create, type) }
+  end
+
   def dom_class
     ["presenters_#{name}", self.class.name.full_underscore.delete_suffix('_presenter'), "page_field_list"].uniq
   end
@@ -46,8 +50,7 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
   end
 
   def pretty_actions
-    return unless !Current.user_role? && can?(:edit, list.first.object)
-    div_('.dropup.page_field_list_actions') {[
+    div_('.dropup.page_field_list_actions', if: types.any?) {[
       button_('.btn.btn-default.btn-xs.dropdown-toggle', type: 'button', data: { toggle: 'dropdown' }, aria: { haspopup: true, expanded: false }) {[
         i_(class: 'fa fa-plus'),
         span_('.hidden-xs', I18n.t('page_fields.create')),
