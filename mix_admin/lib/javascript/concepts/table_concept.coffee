@@ -145,9 +145,6 @@ class RailsAdmin.TableConcept
     @on_table_scroll()
     true
 
-  table_body_rows: =>
-    @table_wrapper.find("tbody > tr.#{Main.model_key}_row")
-
   table_head_names: (table_head = @table_head()) =>
     table_head.find(@COLUMN_HEAD).map$((th) -> th.data('name'))
 
@@ -249,7 +246,7 @@ class RailsAdmin.TableConcept
       when 'decimal', 'float'                      then 'to_f'
       else                                              'to_s'
     name = head.data('name')
-    rows = @table_body_rows()
+    rows = @table_wrapper.find("tbody > tr.#{Main.model_key}_row")
     values = rows.each_with_object [], (row, memo, i) =>
       cell = row.find("#{@COLUMN}_#{name}")
       row.removeClass(@PAGINATE_SEPARATOR).detach()
@@ -262,7 +259,13 @@ class RailsAdmin.TableConcept
       head.addClass(@SORT_UP)
       values.reverse()
     table_body = @table_wrapper.find('tbody')
-    values.each ([value, i]) -> table_body.prepend(rows[i])
+    if @has_first_frozen
+      sticky_rows = @sticky_column().find("tbody > tr.#{Main.model_key}_row")
+      sticky_rows.each$ (row) => row.removeClass(@PAGINATE_SEPARATOR).detach()
+      sticky_table_body = @sticky_column().find('tbody')
+    values.each ([value, i]) =>
+      table_body.prepend(rows[i])
+      sticky_table_body.prepend(sticky_rows[i]) if @has_first_frozen
 
   remove_column: (name) =>
     $("#{@COLUMN}_#{name}").remove()
