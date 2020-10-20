@@ -64,12 +64,12 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   alias_method :editable?, :editable
 
   def pretty_blank
-    return '' unless editable?
+    return unless editable?
     I18n.t('page_fields.edit', model: object.model_name.human.downcase)
   end
 
   def pretty_actions(tag = :div)
-    return '' unless member_actions.any?
+    return unless member_actions.any?
     with_tag(tag, '.page_field_actions') {[
       sort_action,
       member_actions.map do |action, path|

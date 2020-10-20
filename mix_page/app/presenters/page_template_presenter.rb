@@ -36,12 +36,12 @@ class PageTemplatePresenter < ActionPresenter::Base
   end
 
   def pretty_blank
-    return '' unless member_actions[:edit]
+    return unless member_actions[:edit]
     I18n.t('page_template.edit', model: object.model_name.human)
   end
 
   def pretty_actions(tag = :span)
-    return '' unless member_actions.any?
+    return unless member_actions.any?
     with_tag(tag, '.page_template_actions') do
       member_actions.map do |action, path|
         title = I18n.t("page_template.#{action}", model: object.model_name.human)

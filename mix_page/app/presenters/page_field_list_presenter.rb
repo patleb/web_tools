@@ -46,7 +46,7 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
   end
 
   def pretty_actions
-    return '' unless !Current.user_role? && can?(:edit, list.first.object)
+    return unless !Current.user_role? && can?(:edit, list.first.object)
     div_('.dropup.page_field_list_actions') {[
       button_('.btn.btn-default.btn-xs.dropdown-toggle', type: 'button', data: { toggle: 'dropdown' }, aria: { haspopup: true, expanded: false }) {[
         i_(class: 'fa fa-plus'),
