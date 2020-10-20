@@ -26,8 +26,8 @@ module RailsAdmin::Main::WithRouting
     helper_method *CONTROLLER_PATHS, *VIEW_PATHS, :redirect_to_back?
   end
 
-  def root_path(**params)
-    RailsAdmin.root_path(**params)
+  def root_path
+    admin_root_path
   end
 
   def index_path(**params)

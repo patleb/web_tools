@@ -42,7 +42,7 @@ class TemplatesController < MixTemplate.config.parent_controller.constantize
   end
 
   def set_root_path
-    @root_path = respond_to?(:root_path) ? root_path : '/'
+    @root_path = respond_to?(:root_path) ? root_path : app_root_path
   end
 
   def set_layout_values

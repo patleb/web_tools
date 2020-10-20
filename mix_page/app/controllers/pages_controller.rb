@@ -45,7 +45,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def root_path
-    MixPage.root_path || app_root_path
+    pages_root_path
   end
 
   protected
