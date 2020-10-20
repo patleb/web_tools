@@ -91,6 +91,7 @@ fr:
         title: "Supprimer %{model_label_plural}"
         menu: Suppression multiple
         bulk_link: Supprimer
+        done: supprimé(e)
       export:
         title: "Exporter %{model_label_plural}"
         menu: Exporter

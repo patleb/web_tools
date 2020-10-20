@@ -90,6 +90,7 @@ en:
         title: "Delete %{model_label_plural}"
         menu: Multiple delete
         bulk_link: Delete
+        done: deleted
       export:
         title: "Export %{model_label_plural}"
         menu: Export

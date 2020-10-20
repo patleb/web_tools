@@ -145,6 +145,9 @@ class RailsAdmin.TableConcept
     @on_table_scroll()
     true
 
+  table_body_rows: =>
+    @table_wrapper.find("tbody > tr.#{Main.model_key}_row")
+
   table_head_names: (table_head = @table_head()) =>
     table_head.find(@COLUMN_HEAD).map$((th) -> th.data('name'))
 
@@ -246,7 +249,7 @@ class RailsAdmin.TableConcept
       when 'decimal', 'float'                      then 'to_f'
       else                                              'to_s'
     name = head.data('name')
-    rows = @table_wrapper.find("tbody > tr.#{Main.model_key}_row")
+    rows = @table_body_rows()
     values = rows.each_with_object [], (row, memo, i) =>
       cell = row.find("#{@COLUMN}_#{name}")
       row.removeClass(@PAGINATE_SEPARATOR).detach()
