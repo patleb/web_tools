@@ -46,13 +46,13 @@ module ActionController::Base::WithContext
   def set_current_referer
     if request.get? && request.referer.present?
       if (uri = URI.parse(request.referer)).host == request.host && ((path = uri.path) != request.path)
-        if !defined?(MixUser) || path.exclude?('/users/')
+        unless defined?(MixUser) && path.start_with?('/users/')
           session[:referer] = path
         end
       end
     end
     Current.referer ||= session[:referer]
-    Current.referer ||= send(:get_root_path) if respond_to? :get_root_path, true
+    Current.referer ||= send(:get_root_path) if respond_to?(:get_root_path, true)
   end
 
   def set_current_value(name, permitted = [])
