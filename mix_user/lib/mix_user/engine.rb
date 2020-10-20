@@ -20,7 +20,7 @@ module MixUser
       end
     end
 
-    config.before_initialize do |app|
+    config.before_initialize do
       autoload_models_if_admin('User')
     end
 
@@ -54,10 +54,6 @@ module MixUser
           user: :string
         )
       end if defined? MixBatch
-    end
-
-    ActiveSupport.on_load(:action_controller_base) do
-      require 'mix_user/action_controller/base/with_user_helpers'
     end
 
     config.after_initialize do
