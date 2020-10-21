@@ -1,7 +1,10 @@
 module RailsAdmin::Main
   class FilterBoxPresenter < ActionPresenter::Base[:@abstract_model]
     delegate :query, to: :index_section
-    alias_method :query?, :query
+
+    def query?
+      query.present? && queryables.any?
+    end
 
     def render
       return if no_render?
