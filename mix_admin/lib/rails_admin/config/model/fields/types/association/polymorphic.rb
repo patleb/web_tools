@@ -20,7 +20,7 @@ class RailsAdmin::Config::Model::Fields::Association::Polymorphic < RailsAdmin::
     false
   end
 
-  register_instance_option :searchable do
+  register_instance_option :searchable, memoize: true do
     false
   end
 
@@ -38,7 +38,7 @@ class RailsAdmin::Config::Model::Fields::Association::Polymorphic < RailsAdmin::
         model.label,
         model.abstract_model.all.map{ |o| [model.with(object: o).object_label, o.to_global_id] }.sort_by(&:first)
       ]
-    end.sort_by(&:first)
+    end
   end
 
   def selected_id
