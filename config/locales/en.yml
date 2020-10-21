@@ -31,5 +31,15 @@
 
 en:
   application:
-    js:
-      hello: "Hello world"
+    copyright: "©%{year} Copyright, WebTools"
+  page_sidebar:
+    sidebar_links: Website
+  activerecord:
+    attributes:
+      page/view:
+        home: Home
+        generic_multi: Generic template
+      page_field/name:
+        sidebar_links: Sidebar
+        page_list_texts: List of pages texts
+        page_texts: Page texts

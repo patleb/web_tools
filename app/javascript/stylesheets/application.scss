@@ -1,3 +1,12 @@
+@import "~@/stylesheets/variables";
 @import "~@@/mix_page/stylesheets/variables";
 @import "~@@/mix_page/stylesheets/mixins";
 @import "~@@/mix_page/stylesheets/theming";
+
+.footer {
+  margin-bottom: 20px;
+
+  .page_paginate, .copyright {
+    text-align: center;
+  }
+}

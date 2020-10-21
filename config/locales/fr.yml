@@ -1,4 +1,14 @@
 fr:
   application:
-    js:
-      hello: "Allo monde"
+    copyright: "©%{year} Tous droits réservés, WebTools"
+  page_sidebar:
+    sidebar_links: Site web
+  activerecord:
+    attributes:
+      page/view:
+        home: Accueil
+        generic_multi: Modèle générique
+      page_field/name:
+        sidebar_links: Barre latérale
+        page_list_texts: Textes de la liste de pages
+        page_texts: Textes de la page
