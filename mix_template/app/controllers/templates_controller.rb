@@ -99,7 +99,7 @@ class TemplatesController < MixTemplate.config.parent_controller.constantize
   end
 
   def reset_pjax_query_string
-    request.env['QUERY_STRING'] = request.env['QUERY_STRING'].gsub(/_pjax\w*=\w+(&|$)/, '').sub(/\?$/, '')
+    request.env['QUERY_STRING'] = request.env['QUERY_STRING'].gsub(/_pjax\w*=\w+(&|$)/, '').sub(/[?&]$/, '')
     request.env.delete('rack.request.query_string')
     request.env.delete('rack.request.query_hash')
     request.env.delete('action_dispatch.request.query_parameters')
