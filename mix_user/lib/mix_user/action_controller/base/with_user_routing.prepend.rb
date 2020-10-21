@@ -1,6 +1,6 @@
 module ActionController::Base::WithUserRouting
   def after_sign_out_path_for(*)
-    if defined?(MixAdmin) && Current.referer.match?(%r{^#{RailsAdmin.root_path}(/|$|\?)})
+    if Current.referer.blank? || (defined?(MixAdmin) && RailsAdmin.path?(Current.referer))
       get_root_path
     else
       Current.referer

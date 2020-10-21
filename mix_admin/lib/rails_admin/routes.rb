@@ -20,7 +20,7 @@ module RailsAdmin
 
     def path?(value)
       if value.start_with? '/'
-        value.match? %r{^#{root_path}(/|$)}
+        value.match? %r{^#{root_path}(/|$|\?)}
       elsif value.start_with? 'http'
         uri = Rack::Utils.parse_root(value)
         uri.hostname == _host ? path?(uri.path) : false
