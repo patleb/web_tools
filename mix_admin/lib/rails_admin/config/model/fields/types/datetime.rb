@@ -19,6 +19,10 @@ class RailsAdmin::Config::Model::Fields::Datetime < RailsAdmin::Config::Model::F
     value_in_time_zone(super)
   end
 
+  register_instance_option :queryable, memoize: true do
+    false
+  end
+
   register_instance_option :formatted_value do
     if (time = value)
       pretty_format_datetime(time)
