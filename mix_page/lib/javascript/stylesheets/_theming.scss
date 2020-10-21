@@ -51,8 +51,12 @@
   margin-left: -15px;
   padding-left: 4px;
   padding-right: 2px;
-  cursor: grab;
+  cursor: pointer;
   color: $text-color;
+
+  i {
+    display: inline;
+  }
 }
 
 .js_sidebar_toggle {
