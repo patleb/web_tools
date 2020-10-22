@@ -146,7 +146,7 @@ class RailsAdmin.FilterBoxConcept
             style: "display:#{if operator == 'between' then 'inline-block' else 'none'};"
           )
         )
-      when 'enum', 'sti' # TODO active_record_enum not working for _present
+      when 'enum', 'sti'
         multiple = value.is_a(Array)
         control = h_(
           select_ '.select-one.input-sm.form-control',

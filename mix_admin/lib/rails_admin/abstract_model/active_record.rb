@@ -78,9 +78,15 @@ module RailsAdmin
         filters_dump.each do |_, filter_dump|
           wb = WhereBuilder.new(scope)
           field = fields.find{ |f| f.name == field_name.to_sym }
-          value = parse_field_value(field, filter_dump[:v])
+          value, operator = filter_dump[:v], filter_dump[:o]
+          case field.type
+          when :enum
+            operator = value if operator.nil? && %w(_blank _present _null _not_null).include?(value)
+          else
+            value = parse_field_value(field, value)
+          end
 
-          wb.add(field, value, (filter_dump[:o] || 'default'))
+          wb.add(field, value, (operator || 'default'))
           # AND current filter statements to other filter statements
           scope = wb.build
         end

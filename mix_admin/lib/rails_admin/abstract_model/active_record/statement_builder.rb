@@ -113,15 +113,15 @@ module RailsAdmin
       end
     end
 
+    ### NOTE
+    # ActiveRecord::Base::WithNullifyBlanks used
     def unary_operators
-      case @type
-      when :boolean
-        boolean_unary_operators
-      when :integer, :decimal, :float, :foreign_key
-        numeric_unary_operators
-      else
-        generic_unary_operators
-      end
+      {
+        '_blank' => ["#{@column} IS NULL"],
+        '_present' => ["#{@column} IS NOT NULL"],
+        '_null' => ["#{@column} IS NULL"],
+        '_not_null' => ["#{@column} IS NOT NULL"],
+      }
     end
 
     def range_filter(min, max)
@@ -137,27 +137,6 @@ module RailsAdmin
     def column_for_value(value)
       ["#{@column} = ?", value]
     end
-
-    def generic_unary_operators
-      {
-        '_blank' => ["#{@column} IS NULL OR #{@column} = ''"],
-        '_present' => ["#{@column} IS NOT NULL AND #{@column} != ''"],
-        '_null' => ["#{@column} IS NULL"],
-        '_not_null' => ["#{@column} IS NOT NULL"],
-        '_empty' => ["#{@column} = ''"],
-        '_not_empty' => ["#{@column} != ''"],
-      }
-    end
-
-    def boolean_unary_operators
-      generic_unary_operators.merge(
-        '_blank' => ["#{@column} IS NULL"],
-        '_empty' => ["#{@column} IS NULL"],
-        '_present' => ["#{@column} IS NOT NULL"],
-        '_not_empty' => ["#{@column} IS NOT NULL"],
-      )
-    end
-    alias_method :numeric_unary_operators, :boolean_unary_operators
 
     private
 

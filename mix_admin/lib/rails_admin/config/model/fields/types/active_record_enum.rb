@@ -23,9 +23,13 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
   end
 
   def parse_search(value)
-    value = value.slugify
-    enum.each_with_object([]) do |(text_value, db_value), values|
-      values << db_value if text_value.slugify.include? value
+    if value.to_i?
+      parse_value(value)
+    else
+      value = value.slugify
+      enum.each_with_object([]) do |(text_value, db_value), values|
+        values << db_value if text_value.slugify.include? value
+      end
     end
   end
 
