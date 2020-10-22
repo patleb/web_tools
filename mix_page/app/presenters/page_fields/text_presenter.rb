@@ -3,8 +3,8 @@ module PageFields
     def html(only_text: false, **options)
       escape = options.delete(:escape)
       div_(options) {[
-        text(escape).presence || pretty_blank,
         (pretty_actions(:div) unless only_text),
+        text(escape).presence || pretty_blank,
       ]}
     end
 

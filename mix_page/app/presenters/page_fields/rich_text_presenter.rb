@@ -4,10 +4,10 @@ module PageFields
       weight = 1 if weight < 1
       weight = 5 if weight > 5
       div_(options) {[
+        (pretty_actions(:div) unless only_text),
         title(weight),
         subtitle(weight + 1),
         text(false).presence || p_{ pretty_blank },
-        (pretty_actions(:div) unless only_text),
       ].compact}
     end
 
