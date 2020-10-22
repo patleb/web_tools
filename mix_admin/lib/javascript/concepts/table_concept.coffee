@@ -58,7 +58,7 @@ class RailsAdmin.TableConcept
       $.pjax.reload()
 
     'pjax:click', @COLUMN_HEAD, (event, pjax, options, target) =>
-      return unless $(@ALL_LOADED).length
+      return unless !target.hasClass('enum_type') && $(@ALL_LOADED).length
       @sort_column(target)
       false
 
