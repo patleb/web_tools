@@ -2,6 +2,12 @@ class RailsAdmin.Form.FieldConcept
   constants: ->
     INPUT: 'CLASS'
 
+  document_on: => [
+    'pjax:clone', Js.Pjax.CONTAINER, (event, pjax, contents) =>
+      contents.each$ (content) =>
+        content.find_all(@INPUT).remove()
+  ]
+
   ready: =>
     return unless (fields = $(@INPUT)).length
 
