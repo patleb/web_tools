@@ -8,6 +8,7 @@ module RailsAdmin
     end
 
     def add(field, value, operator)
+      value = field.parse_search(value)
       field.searchable_columns.flatten.each do |column_infos|
         # TODO if from same column, then OR statements instead of 'where'
         builder = AbstractModel::ActiveRecord::StatementBuilder.new(column_infos[:column], column_infos[:type], value, operator)

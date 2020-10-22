@@ -19,7 +19,7 @@ class RailsAdmin::Config::Model::Fields::Datetime < RailsAdmin::Config::Model::F
     value_in_time_zone(super)
   end
 
-  register_instance_option :queryable, memoize: true do
+  register_instance_option :queryable?, memoize: true do
     false
   end
 

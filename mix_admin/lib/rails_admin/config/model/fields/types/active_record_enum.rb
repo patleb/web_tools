@@ -11,7 +11,7 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
       values.each_with_object([]) do |(key, value), all|
         all << [klass.human_attribute_name("#{name}.#{key}", default: key), value]
       end
-    end.sort_by(&:first)
+    end
   end
 
   register_instance_option :pretty_value do
@@ -22,8 +22,11 @@ class RailsAdmin::Config::Model::Fields::ActiveRecordEnum < RailsAdmin::Config::
     false
   end
 
-  register_instance_option :queryable do
-    false
+  def parse_search(value)
+    value = value.slugify
+    enum.each_with_object([]) do |(text_value, db_value), values|
+      values << db_value if text_value.slugify.include? value
+    end
   end
 
   def parse_value(value)
