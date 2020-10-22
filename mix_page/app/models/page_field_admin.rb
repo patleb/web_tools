@@ -8,6 +8,7 @@ module PageFieldAdmin
       field :lock_version
       field :name do
         searchable false
+        queryable false
       end
       fields :page_template do
         searchable false
