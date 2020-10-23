@@ -151,6 +151,12 @@
       max-width: 100px;
     }
   }
+
+  .js_table_sticky_column_head {
+    .js_table_frozen_column {
+      max-width: 100px;
+    }
+  }
 }
 
 .js_table_sticky_column_head {
@@ -158,6 +164,12 @@
   z-index: $zindex-navbar-fixed + 3;
   top: 0;
   padding-top: 4px;
+
+  .js_table_frozen_column {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 /* backport of Bootstrap 1.4 table headers */
