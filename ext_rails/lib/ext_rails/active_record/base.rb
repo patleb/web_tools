@@ -24,6 +24,8 @@ ActiveRecord::Base.class_eval do
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
+  alias_method :decrypted, :read_attribute_before_type_cast
+
   class << self
     alias_method :without_default_scope, :evaluate_default_scope
     public :without_default_scope
