@@ -5,7 +5,8 @@ class RailsAdmin.Form.FieldConcept
   document_on: => [
     'pjax:clone', Js.Pjax.CONTAINER, (event, pjax, contents) =>
       contents.each$ (content) =>
-        content.find_all(@INPUT).remove()
+        content.find_all('.sun-editor').remove()
+        # TODO do the same with datetimepicker
   ]
 
   ready: =>
