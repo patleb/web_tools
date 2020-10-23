@@ -59,25 +59,27 @@ module ActiveRecord::Base::WithJsonAttribute
       "json_data->'#{name}'"
     end
 
-    def json_accessor(jsonb_attribute, field_types)
+    def json_accessor(json_column, field_types)
       self.json_accessors ||= {}.with_indifferent_access
-      self.json_accessors[jsonb_attribute] ||= {}.with_indifferent_access
+      self.json_accessors[json_column] ||= {}.with_indifferent_access
       defaults = field_types.each_with_object({}.with_indifferent_access) do |(name, type), defaults|
         next unless type.is_a?(Array) && (options = type.last).is_a?(Hash) && options.key?(:default)
         defaults[name] = options.delete(:default)
       end
-      self.json_accessors[jsonb_attribute].merge! field_types
+      self.json_accessors[json_column].merge! field_types
 
       field_types.each do |name, type|
         attribute name, *type
       end
 
+      attribute json_column, :jsonb, default: {}.with_indifferent_access
+
       accessors = Module.new do
         field_types.each_key do |name|
           define_method "#{name}=" do |value|
             super(value)
-            values = (public_send(jsonb_attribute) || {}).with_indifferent_access.merge(name => public_send(name))
-            write_attribute(jsonb_attribute, values)
+            values = (public_send(json_column) || {}).with_indifferent_access.merge(name => public_send(name))
+            write_attribute(json_column, values)
           end
 
           next unless defaults.has_key? name
@@ -92,24 +94,24 @@ module ActiveRecord::Base::WithJsonAttribute
           end
         end
 
-        define_method "#{jsonb_attribute}=" do |new_values|
-          old_values = public_send(jsonb_attribute)
+        define_method "#{json_column}=" do |new_values|
+          old_values = public_send(json_column)
           new_values = (new_values || {}).with_indifferent_access
           values = old_values.merge! new_values
-          write_attribute(jsonb_attribute, values)
+          write_attribute(json_column, values)
           new_values.each do |name, value|
             write_attibute(name, value)
           end
           values
         end
 
-        define_method jsonb_attribute do
+        define_method json_column do
           (super() || {}).with_indifferent_access
         end
 
-        define_method "initialize_#{jsonb_attribute}" do
-          return unless has_attribute? jsonb_attribute
-          (public_send(jsonb_attribute) || {}).each do |name, value|
+        define_method "initialize_#{json_column}" do
+          return unless has_attribute? json_column
+          (public_send(json_column) || {}).each do |name, value|
             next unless has_attribute? name
             write_attribute(name, value)
             clear_attribute_change(name) if persisted?
@@ -118,7 +120,7 @@ module ActiveRecord::Base::WithJsonAttribute
       end
       include accessors
 
-      after_initialize :"initialize_#{jsonb_attribute}"
+      after_initialize :"initialize_#{json_column}"
     end
   end
 end
