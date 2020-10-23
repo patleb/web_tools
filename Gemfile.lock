@@ -92,7 +92,6 @@ PATH
       email_prefixer
       http_accept_language
       i18n-debug
-      jsonb_accessor
       mail_interceptor
       mix_setting
       money-rails
@@ -238,8 +237,7 @@ PATH
   remote: mix_web
   specs:
     mix_web (0.2.0)
-      acme-client (~> 2.0.0)
-      ext_rails (= 0.2.0)
+      ext_ruby (= 0.2.0)
 
 PATH
   remote: sunzistrano
@@ -449,10 +447,6 @@ GEM
     ice_nine (0.11.2)
     inifile (3.0.0)
     ipaddress (0.8.3)
-    jsonb_accessor (1.1.0)
-      activerecord (>= 5.0)
-      activesupport (>= 5.0)
-      pg (>= 0.18.1)
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
@@ -618,7 +612,7 @@ GEM
       tins (~> 1.0)
     thor (1.0.1)
     thread_safe (0.3.6)
-    tins (1.25.0)
+    tins (1.26.0)
       sync
     to_words (1.1.1)
     tzinfo (1.2.7)

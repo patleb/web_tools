@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
   # https://www.reddit.com/r/rails/comments/j2xzir/does_hosting_streaming_video_get_pretty_expensive/
   s.add_dependency 'http_accept_language'
   s.add_dependency 'i18n-debug'
-  s.add_dependency 'jsonb_accessor'
   s.add_dependency 'mail_interceptor'
   s.add_dependency 'money-rails'
   s.add_dependency 'monogamy'
