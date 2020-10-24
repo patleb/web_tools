@@ -2,6 +2,7 @@
 module ActiveRecord::Base::WithJsonAttribute
   extend ActiveSupport::Concern
 
+  # TODO array support
   POSTGRESQL_TYPES = {
     big_integer: 'BIGINT',
     boolean: 'BOOLEAN',
@@ -17,9 +18,9 @@ module ActiveRecord::Base::WithJsonAttribute
   }.with_indifferent_access
 
   prepended do
-    class_attribute :json_accessors
+    class_attribute :json_accessors, instance_accessor: false, instance_predicate: false
 
-    delegate :json_attribute?, :json_column, :json_key, to: :class
+    delegate :json_attribute?, :json_key, to: :class
   end
 
   class_methods do
@@ -51,35 +52,34 @@ module ActiveRecord::Base::WithJsonAttribute
       end
     end
 
-    def json_column(name)
-      "(#{json_key(name)})::#{POSTGRESQL_TYPES[Array.wrap(json_accessors[:json_data][name]).first]}"
+    def json_key(name, operator = nil)
+      key = "#{quote_column(:json_data)}->>'#{name}'"
+      key = "(#{key})::#{POSTGRESQL_TYPES[Array.wrap(json_accessors[:json_data][name]).first]}"
+      key = "#{key} #{operator} ?" if operator.present?
+      key
     end
 
-    def json_key(name)
-      "json_data->'#{name}'"
-    end
-
-    def json_accessor(json_column, field_types)
+    def json_accessor(column, field_types)
       self.json_accessors ||= {}.with_indifferent_access
-      self.json_accessors[json_column] ||= {}.with_indifferent_access
+      self.json_accessors[column] ||= {}.with_indifferent_access
       defaults = field_types.each_with_object({}.with_indifferent_access) do |(name, type), defaults|
         next unless type.is_a?(Array) && (options = type.last).is_a?(Hash) && options.key?(:default)
         defaults[name] = options.delete(:default)
       end
-      self.json_accessors[json_column].merge! field_types
+      self.json_accessors[column].merge! field_types
 
       field_types.each do |name, type|
         attribute name, *type
       end
 
-      attribute json_column, :jsonb, default: {}.with_indifferent_access
+      attribute column, :jsonb, default: {}.with_indifferent_access
 
       accessors = Module.new do
         field_types.each_key do |name|
           define_method "#{name}=" do |value|
             super(value)
-            values = (public_send(json_column) || {}).with_indifferent_access.merge(name => public_send(name))
-            write_attribute(json_column, values)
+            values = (public_send(column) || {}).with_indifferent_access.merge(name => public_send(name))
+            write_attribute(column, values)
           end
 
           next unless defaults.has_key? name
@@ -94,24 +94,24 @@ module ActiveRecord::Base::WithJsonAttribute
           end
         end
 
-        define_method "#{json_column}=" do |new_values|
-          old_values = public_send(json_column)
+        define_method "#{column}=" do |new_values|
+          old_values = public_send(column)
           new_values = (new_values || {}).with_indifferent_access
           values = old_values.merge! new_values
-          write_attribute(json_column, values)
+          write_attribute(column, values)
           new_values.each do |name, value|
             write_attibute(name, value)
           end
           values
         end
 
-        define_method json_column do
+        define_method column do
           (super() || {}).with_indifferent_access
         end
 
-        define_method "initialize_#{json_column}" do
-          return unless has_attribute? json_column
-          (public_send(json_column) || {}).each do |name, value|
+        define_method "initialize_#{column}" do
+          return unless has_attribute? column
+          (public_send(column) || {}).each do |name, value|
             next unless has_attribute? name
             write_attribute(name, value)
             clear_attribute_change(name) if persisted?
@@ -120,7 +120,7 @@ module ActiveRecord::Base::WithJsonAttribute
       end
       include accessors
 
-      after_initialize :"initialize_#{json_column}"
+      after_initialize :"initialize_#{column}"
     end
   end
 end
