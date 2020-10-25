@@ -77,7 +77,7 @@ module RailsAdmin
     end
 
     def _scheme
-      @_scheme ||= "http#{'s' if Rails.application.config.force_ssl}"
+      @_scheme ||= "http#{'s' if Setting[:server_ssl]}"
     end
   end
 end

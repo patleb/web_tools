@@ -12,7 +12,7 @@ Setting.class_eval do
   end
 
   def self.geoserver_url
-    url = "http#{'s' if Rails.application.config.force_ssl}://#{geoserver_server}"
+    url = "http#{'s' if self[:server_ssl]}://#{geoserver_server}"
     url = [url, self[:geoserver_path].presence || 'geoserver'].join('/')
     url
   end
@@ -22,7 +22,7 @@ Setting.class_eval do
   end
 
   def self.pgrest_url
-    url = "http#{'s' if Rails.application.config.force_ssl}://#{pgrest_server}"
+    url = "http#{'s' if self[:server_ssl]}://#{pgrest_server}"
     url = [url, self[:pgrest_path]].join('/') if self[:pgrest_path].present?
     url
   end

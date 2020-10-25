@@ -87,7 +87,7 @@ class PageTemplate < Page
   def to_url(*args)
    host = Rails.application.routes.default_url_options[:host]
    port = Rails.application.routes.default_url_options[:port]
-   protocol = "http#{'s' if Rails.application.config.force_ssl}://"
+   protocol = "http#{'s' if Setting[:server_ssl]}://"
    [protocol, host, (':' if port), port, "/#{slug(*args)}/#{MixPage::URL_SEGMENT}/#{uuid}"].join
   end
 
