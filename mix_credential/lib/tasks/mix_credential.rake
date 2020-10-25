@@ -10,9 +10,16 @@ namespace :credential do
     task :renew => :environment do
       next unless (credential = Credentials::LetsEncrypt.find_renewable)
       credential.renew
-      nginx_ssl_path = "/etc/nginx/ssl/#{credential.server_host}"
-      sh "sudo echo -e '#{credential.decrypted(:key).escape_newlines}' > #{nginx_ssl_path}.server.key", verbose: false
-      sh "sudo echo -e '#{credential.decrypted(:crt).escape_newlines}' > #{nginx_ssl_path}.server.crt", verbose: false
+      run_task 'credential:lets_encrypt:apply'
+    end
+
+    desc 'Apply certificate'
+    task :apply => :environment do
+      credential = Credentials::LetsEncrypt.find_current!
+      nginx_ssl_path = "/etc/nginx/ssl/#{credential.server_host}.server"
+      sh "echo '#{credential.decrypted(:key).escape_newlines}' | sudo tee #{nginx_ssl_path}.key > /dev/null"
+      sh "sudo chmod 600 #{nginx_ssl_path}.key"
+      sh "echo '#{credential.decrypted(:crt).escape_newlines}' | sudo tee #{nginx_ssl_path}.crt > /dev/null"
       sh "sudo systemctl reload nginx", verbose: false
     end
 
