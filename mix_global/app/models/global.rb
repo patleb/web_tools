@@ -58,14 +58,7 @@ class Global < LibRecord
   def cast(data)
     return data unless data
 
-    case data_type
-    when 'json'
-      if data.is_a? Array
-        data.map!{ |item| item.is_a?(Hash) ? item.with_indifferent_access : item }
-      else
-        data.with_indifferent_access
-      end
-    when 'serialized'
+    if data_type == 'serialized'
       Marshal.load(data) rescue data
     else
       data
