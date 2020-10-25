@@ -14,7 +14,7 @@ module MixCredential
 
     initializer 'mix_credential.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
-        get "/#{ACME_CHALLENGE}/:token" => 'credentials#show', type: 'LetsEncrypt'
+        get "/#{ACME_CHALLENGE}/:token" => 'credentials#show', type: 'Credentials::LetsEncrypt'
       end
     end
   end
