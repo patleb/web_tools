@@ -21,7 +21,7 @@ CRT="/etc/nginx/ssl/$__NGINX_DOMAIN__.server.crt"
   # New server certificate
   openssl x509 \
     -req \
-    -days 7000 \
+    -days 7299 \
     -in $__NGINX_DOMAIN__.server.csr \
     -CA /etc/nginx/ssl/$__NGINX_DOMAIN__.ca.crt \
     -CAkey /etc/nginx/ssl/$__NGINX_DOMAIN__.ca.key \
