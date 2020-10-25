@@ -33,10 +33,10 @@ CRT="/etc/nginx/ssl/$__SERVER_HOST__.server.crt"
   mv $__SERVER_HOST__.server.key /etc/nginx/ssl/
   mv $__SERVER_HOST__.server.crt /etc/nginx/ssl/
 
-  echo "$KEY should be kept encrypted in your settings.yml"
+  echo "$KEY should be kept encrypted in your settings.yml as :ssl_server_key"
   <%= Sh.escape_newlines "$KEY" %>
   echo ''
-  echo "$CRT should be kept in your settings.yml"
+  echo "$CRT should be kept in your settings.yml as :ssl_server_crt"
   <%= Sh.escape_newlines "$CRT" %>
   echo ''
 <% end %>

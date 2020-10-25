@@ -26,10 +26,10 @@ chmod 700 /etc/nginx/ssl
   mv $__SERVER_HOST__.ca.key /etc/nginx/ssl/
   mv $__SERVER_HOST__.ca.crt /etc/nginx/ssl/
 
-  echo "$KEY should be kept encrypted in your settings.yml"
+  echo "$KEY should be kept encrypted in your settings.yml as :ssl_ca_key"
   <%= Sh.escape_newlines "$KEY" %>
   echo ''
-  echo "$CRT should be kept in your settings.yml"
+  echo "$CRT should be kept in your settings.yml as :ssl_ca_crt"
   <%= Sh.escape_newlines "$CRT" %>
   echo ''
 <% end %>
