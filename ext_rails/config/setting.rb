@@ -12,7 +12,9 @@ Setting.class_eval do
   end
 
   def self.geoserver_url
-    ["http://#{geoserver_server}", self[:geoserver_path].presence || 'geoserver'].join('/')
+    url = "http#{'s' if Rails.application.config.force_ssl}://#{geoserver_server}"
+    url = [url, self[:geoserver_path].presence || 'geoserver'].join('/')
+    url
   end
 
   def self.pgrest_local_url
@@ -20,7 +22,7 @@ Setting.class_eval do
   end
 
   def self.pgrest_url
-    url = "http#{'s' if self[:pgrest_ssl]}://#{pgrest_server}"
+    url = "http#{'s' if Rails.application.config.force_ssl}://#{pgrest_server}"
     url = [url, self[:pgrest_path]].join('/') if self[:pgrest_path].present?
     url
   end
@@ -43,13 +45,13 @@ Setting.class_eval do
     {
       "/#{self[:pgrest_path]}/" => <<-LOCATION,
         proxy_pass http://pgrest_app/;
-  
+
         default_type application/json;
         proxy_hide_header Content-Location;
         add_header Content-Location /#{self[:pgrest_path]}/$upstream_http_content_location;
         proxy_set_header Connection "";
         proxy_http_version 1.1;
-  
+
         proxy_connect_timeout #{pgrest_timeout}s;
         proxy_send_timeout #{pgrest_timeout}s;
         proxy_read_timeout #{pgrest_timeout}s;
@@ -70,12 +72,12 @@ Setting.class_eval do
       "/#{self[:geoserver_path]}/wms" => <<-LOCATION,
         proxy_pass http://geoserver_app/geoserver/wms;
         proxy_redirect off;
-  
+
         proxy_set_header Host $host;
         proxy_set_header X-Real-Ip $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-  
+
         proxy_connect_timeout 120s;
         proxy_send_timeout 120s;
         proxy_read_timeout 120s;
