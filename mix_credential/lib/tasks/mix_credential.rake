@@ -24,7 +24,7 @@ namespace :credential do
     end
 
     desc 'Revoke certificate'
-    task :revoke, :environment do
+    task :revoke => :environment do
       credential = Credentials::LetsEncrypt.find_current!
       credential.revoke
     end

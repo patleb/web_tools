@@ -57,7 +57,9 @@ module Credentials
     alias_method :renew, :create
 
     def revoke
-      acme.revoke(certificate: decrypted(:crt))
+      if acme.revoke certificate: decrypted(:crt)
+        update! expires_at: Time.current
+      end
     end
 
     def server_host
@@ -88,6 +90,10 @@ module Credentials
         acme_order.reload
       end
       update! crt: acme_order.certificate, expires_at: 90.days.from_now
+    end
+
+    def not_after
+      OpenSSL::X509::Certificate.new(decrypted(:crt).split("\n\n").first).not_after
     end
 
     private
