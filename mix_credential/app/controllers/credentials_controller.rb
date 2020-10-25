@@ -4,7 +4,7 @@ class CredentialsController < ActionController::API
   protect_from_forgery with: :exception
 
   def show
-    record = credential_class.find_by_token! params[:token]
+    record = credential_class.select(:challenge).find_by_token! params[:token]
     render plain: record.challenge
   rescue ActiveRecord::RecordNotFound
     head :not_found
