@@ -60,6 +60,10 @@ module Credentials
       acme.revoke(certificate: decrypted(:crt))
     end
 
+    def server_host
+      @server_host ||= id.split('/').first
+    end
+
     protected
 
     def create_challenge
@@ -102,10 +106,6 @@ module Credentials
         private_key = OpenSSL::PKey::RSA.new(Setting[:owner_private_key])
         Acme::Client.new(kid: kid, private_key: private_key, directory: directory, bad_nonce_retry: 5)
       end
-    end
-
-    def server_host
-      @server_host ||= id.split('/').first
     end
   end
 end
