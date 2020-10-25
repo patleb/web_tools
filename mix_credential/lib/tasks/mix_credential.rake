@@ -11,6 +11,12 @@ namespace :lets_encrypt do
     credential&.renew
   end
 
+  desc 'Revoke certificate'
+  task :revoke, :environment do
+    credential = LetsEncrypt.current_host.take!
+    credential.revoke
+  end
+
   desc 'Apply certificate'
   task :apply => :environment do
     # TODO nginx recipe

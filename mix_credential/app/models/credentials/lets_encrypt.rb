@@ -48,6 +48,10 @@ module Credentials
     end
     alias_method :renew, :create
 
+    def revoke
+      acme.revoke(certificate: decrypted(:crt))
+    end
+
     protected
 
     def create_challenge
