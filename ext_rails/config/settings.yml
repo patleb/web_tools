@@ -63,6 +63,7 @@ development:
   server_cluster_master_data: ./tmp/shared_data
 
 vagrant:
+  server_ssl: true
   server_host: vagrant-web.test
   min_instances: 2
   mail_domain: notify.vagrant-web.test
