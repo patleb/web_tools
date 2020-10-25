@@ -4,7 +4,7 @@ module MixCredential
 
     def available_types
       @available_types ||= {
-        'LetsEncrypt' => 10,
+        'Credentials::LetsEncrypt' => 10,
       }
     end
   end
