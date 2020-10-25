@@ -1,2 +1,0 @@
-class RailsError < RescueError
-end

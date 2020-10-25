@@ -4,6 +4,12 @@ autoload :Notice,    'mix_rescue/notice'
 autoload :Throttler, 'mix_rescue/throttler'
 
 module MixRescue
+  def self.js_routes
+    @js_routes ||= {
+      rescue: '/rescues/javascripts',
+    }
+  end
+
   class Engine < ::Rails::Engine
     require 'rack/attack'
     require 'mix_global'
@@ -20,7 +26,9 @@ module MixRescue
 
     initializer 'mix_rescue.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
-        resources :javascript_rescues, only: [:create]
+        namespace :rescues do
+          resources :javascripts, only: [:create]
+        end
       end
     end
 

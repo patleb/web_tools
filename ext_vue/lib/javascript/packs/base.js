@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.$image = image_path
   consume_js_attribute('config')
   consume_js_attribute('locales')
+  consume_js_attribute('routes')
   axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
 
   window.$rescues = []
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let rescue_string = JSON.stringify(rescue)
     if (!_.includes($rescues, rescue_string)) {
       $rescues.push(rescue_string)
-      http.post(`${$config.url}/javascript_rescues`, { javascript_rescue: rescue }).catch(() => {})
+      http.post($routes.rescue, { rescues_javascript: rescue }).catch(() => {})
     }
   }
 
@@ -93,6 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   _.each([Array, Boolean, Number, Object, RegExp, String], (type) => {
     type.prototype.to_json = function () { return JSON.parse(JSON.stringify(this)) }
-    Object.defineProperty(type.prototype, 'to_json', { enumerable: false })
+    Object.defineProperty(type.prototype, 'to_json', { enumerable: false })
   })
 })

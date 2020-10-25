@@ -31,7 +31,7 @@ module MixRescue
     def available_types
       @available_types ||= {
         'Rescue' => 0,
-        'JavascriptRescue' => 10,
+        'Rescues::Javascript' => 10,
       }
     end
   end

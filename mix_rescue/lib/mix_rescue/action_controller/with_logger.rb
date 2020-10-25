@@ -7,7 +7,7 @@ module ActionController::WithLogger
 
     Current.error_logged = true
     unless exception.is_a? RescueError
-      exception = RailsError.new(exception, log_context)
+      exception = Rescues::RailsError.new(exception, log_context)
     end
 
     message = Notice.deliver! exception, subject: subject, logger: true

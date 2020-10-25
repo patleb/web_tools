@@ -20,9 +20,18 @@ module MixPage
     end
 
     def reserved_words
-      @reserved_words ||= Set.new([MixPage::URL_SEGMENT, RailsAdmin.root_path.split('/').reject(&:blank?).first]).merge(%w(
-        admin users javascript_rescues assets packs stylesheets javascripts images new edit index session login logout
-      ))
+      @reserved_words ||= begin
+        known_segments = [
+          MixPage::URL_SEGMENT,
+          RailsAdmin.root_path,
+          MixRescue.js_routes[:rescue],
+        ].map do |path|
+          path.split('/').reject(&:blank?).first
+        end
+        Set.new(known_segments).merge(%w(
+          page admin rescues users assets packs stylesheets javascripts images new edit index session login logout
+        ))
+      end
     end
 
     def parent_controller

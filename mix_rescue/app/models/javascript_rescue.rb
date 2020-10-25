@@ -1,2 +1,0 @@
-class JavascriptRescue < Rescue
-end

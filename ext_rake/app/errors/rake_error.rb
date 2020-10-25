@@ -1,2 +1,0 @@
-class RakeError < RescueError
-end
