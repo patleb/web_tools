@@ -1,5 +1,5 @@
-KEY="/etc/nginx/ssl/$__NGINX_DOMAIN__.ca.key"
-CRT="/etc/nginx/ssl/$__NGINX_DOMAIN__.ca.crt"
+KEY="/etc/nginx/ssl/$__SERVER_HOST__.ca.key"
+CRT="/etc/nginx/ssl/$__SERVER_HOST__.ca.crt"
 
 mkdir -p /etc/nginx/ssl
 chmod 700 /etc/nginx/ssl
@@ -14,16 +14,16 @@ chmod 700 /etc/nginx/ssl
     -days 7300 \
     -nodes \
     -x509 \
-    -keyout $__NGINX_DOMAIN__.ca.key \
-    -out $__NGINX_DOMAIN__.ca.crt \
+    -keyout $__SERVER_HOST__.ca.key \
+    -out $__SERVER_HOST__.ca.crt \
     -subj "/C=${__SSL_COUNTRY__:-CA}"\
 "/ST=${__SSL_STATE__:-QC}"\
 "/L=${__SSL_CITY__:-Quebec}"\
 "/O=${__SSL_ORG__:-self-signed}"\
-"/CN=$__NGINX_DOMAIN__"
+"/CN=$__SERVER_HOST__"
 
-  mv $__NGINX_DOMAIN__.ca.key /etc/nginx/ssl/
-  mv $__NGINX_DOMAIN__.ca.crt /etc/nginx/ssl/
+  mv $__SERVER_HOST__.ca.key /etc/nginx/ssl/
+  mv $__SERVER_HOST__.ca.crt /etc/nginx/ssl/
 
   echo "$KEY should be kept encrypted in your settings.yml"
   <%= Sh.escape_newlines "$KEY" %>

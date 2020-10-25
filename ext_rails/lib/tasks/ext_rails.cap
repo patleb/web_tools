@@ -14,7 +14,6 @@ namespace :load do
       favicon.png
       robots.txt
     ) }
-    set :nginx_domain,        -> { fetch(:server).split('.').last(2).join('.') }
     set :nginx_satisfy,       -> { false }
     set :nginx_denied_ips,    -> { [] }
     set :nginx_allowed_ips,   -> { [] }
