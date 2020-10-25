@@ -13,7 +13,7 @@ namespace :lets_encrypt do
 
   desc 'Revoke certificate'
   task :revoke, :environment do
-    credential = LetsEncrypt.current_host.take!
+    credential = LetsEncrypt.find_current!
     credential.revoke
   end
 

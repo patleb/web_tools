@@ -23,7 +23,15 @@ module Credentials
     end
 
     def self.find_or_initialize(kid = nil)
-      current_host.take || new(kid: kid).initialize_account
+      find_current || new(kid: kid).initialize_account
+    end
+
+    def self.find_current
+      current_host.take
+    end
+
+    def self.find_current!
+      current_host.take!
     end
 
     def self.find_renewable
