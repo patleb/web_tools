@@ -1,8 +1,8 @@
 namespace :credential do
   namespace :lets_encrypt do
     desc 'Create certificate'
-    task :create, [:kid] => :environment do |t, args|
-      credential = Credentials::LetsEncrypt.find_or_initialize(args[:kid])
+    task :create => :environment do
+      credential = Credentials::LetsEncrypt.find_or_initialize
       credential.create
     end
 

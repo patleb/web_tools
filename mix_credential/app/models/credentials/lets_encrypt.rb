@@ -22,8 +22,8 @@ module Credentials
       "#{Setting[:server_host]}/#{ACME_CHALLENGE}"
     end
 
-    def self.find_or_initialize(kid = nil)
-      find_current || new(kid: kid).initialize_account
+    def self.find_or_initialize
+      find_current || new.initialize_account
     end
 
     def self.find_current
