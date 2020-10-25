@@ -160,6 +160,11 @@ module Sunzistrano
         if stdout.present?
           stdout.lines.each_with_object({}) do |key_value, memo|
             key, value = key_value.strip.split(' ', 2).map(&:strip)
+            if %w(true false).include?(value)
+              value = value.to_b
+            elsif value.to_i?
+              value = value.to_i
+            end
             memo[key] = value unless value.blank? || key == 'DEBUG'
           end
         else

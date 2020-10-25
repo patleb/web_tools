@@ -21,8 +21,6 @@
   #{'db/postgres__POSTGRES__/timescaledb' if sun.timescaledb_enabled}
   utils/all
   lang/ruby/app__RBENV_RUBY__
-)) do |name, id| %>
-
+)) do |name, id| -%>
   sun.source_recipe "<%= name %>" <%= id %>
-
-<% end %>
+<% end -%>

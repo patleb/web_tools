@@ -5,8 +5,6 @@
   postgres
   ctop__DOCKER_CTOP__
   portainer
-), base: 'docker') do |name, id| %>
-
+), base: 'docker') do |name, id| -%>
   sun.source_recipe "<%= name %>" <%= id %>
-
-<% end %>
+<% end -%>
