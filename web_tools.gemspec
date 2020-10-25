@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mix_sql",         version
   s.add_dependency "mix_page",        version
   s.add_dependency "mix_rescue",      version
+  s.add_dependency "mix_system",      version
   s.add_dependency "mix_template",    version
   s.add_dependency "mix_user",        version
   s.add_dependency "mix_web",         version
