@@ -35,6 +35,8 @@ CRT="/etc/nginx/ssl/$__SERVER_HOST__.server.crt"
 
   echo "$KEY should be kept encrypted in your settings.yml"
   <%= Sh.escape_newlines "$KEY" %>
+  echo ''
   echo "$CRT should be kept in your settings.yml"
   <%= Sh.escape_newlines "$CRT" %>
+  echo ''
 <% end %>

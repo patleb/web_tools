@@ -8,6 +8,7 @@ chmod 700 /etc/nginx/ssl
   echo -e "<%= sun.ssl_ca_key.escape_newlines %>" > $KEY
   echo -e "<%= sun.ssl_ca_crt.escape_newlines %>" > $CRT
 <% else %>
+  openssl rand -writerand /home/$__OWNER_NAME__/.rnd
   openssl req \
     -new \
     -newkey rsa:4096 \
@@ -27,6 +28,8 @@ chmod 700 /etc/nginx/ssl
 
   echo "$KEY should be kept encrypted in your settings.yml"
   <%= Sh.escape_newlines "$KEY" %>
+  echo ''
   echo "$CRT should be kept in your settings.yml"
   <%= Sh.escape_newlines "$CRT" %>
+  echo ''
 <% end %>
