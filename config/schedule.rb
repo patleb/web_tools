@@ -15,10 +15,6 @@ ExtWhenever.setup(self)
 # every :minute do
 #   bash 'every_minute.sh'
 # end
-#
-# Testing
-# -------
-# sudo run-parts /var/spool/cron/crontabs --regex='^deployer$'
 
 case @environment
 when 'vagrant'
