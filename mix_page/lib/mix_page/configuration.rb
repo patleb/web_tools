@@ -29,7 +29,7 @@ module MixPage
           path.split('/').reject(&:blank?).first
         end
         Set.new(known_segments).merge(%w(
-          page admin rescues users assets packs stylesheets javascripts images new edit index session login logout
+          page admin rescues users assets packs stylesheets javascripts images new show edit index session login logout
         ))
       end
     end
