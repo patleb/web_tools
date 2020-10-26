@@ -72,6 +72,8 @@ module ActiveRecord::Base::WithJsonAttribute
         attribute name, *type
       end
 
+      attribute column, :jsonb, default: {}.with_indifferent_access
+
       accessors = Module.new do
         field_types.each_key do |name|
           define_method "#{name}=" do |value|
