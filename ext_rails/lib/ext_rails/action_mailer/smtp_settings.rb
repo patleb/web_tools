@@ -16,7 +16,7 @@ module ActionMailer
         mail_username
         mail_password
       )).to_h.transform_keys!{ |key|
-        key.to_s.sub(/^mail_/, '').to_sym
+        key.to_s.sub(/^mail_/, '').sub('user', 'user_').to_sym
       }.merge!(
         authentication: :plain,
         enable_starttls_auto: true
