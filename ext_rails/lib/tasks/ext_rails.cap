@@ -23,7 +23,7 @@ namespace :load do
     set :nginx_locations,     -> { {} }
     set :nginx_rails,         -> { true }
     set :nginx_deferred,      -> { fetch(:nginx_rails) && cap.env.production? }
-    set :nginx_skip_ssl,      -> { Setting[:server_ssl] }
+    set :nginx_skip_ssl,      -> { !Setting[:server_ssl] }
 
     set :monit_max_swap_size,     -> { '25%' }
     set :monit_max_swap_action,   -> { 'alert' } # { %{exec "/bin/systemctl restart nginx"} }
