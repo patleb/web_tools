@@ -72,8 +72,6 @@ module ActiveRecord::Base::WithJsonAttribute
         attribute name, *type
       end
 
-      attribute column, :jsonb, default: {}.with_indifferent_access
-
       accessors = Module.new do
         field_types.each_key do |name|
           define_method "#{name}=" do |value|
@@ -97,7 +95,7 @@ module ActiveRecord::Base::WithJsonAttribute
         define_method "#{column}=" do |new_values|
           new_values = (new_values || {}).with_indifferent_access.slice(*self.class.json_accessors[column].keys)
           nil_values = public_send(column).except(*new_values.keys)
-          write_attribute(column, new_values)
+          super(new_values)
           nil_values.each_key do |name|
             write_attribute(name, nil)
           end

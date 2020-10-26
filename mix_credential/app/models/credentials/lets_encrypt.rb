@@ -13,10 +13,7 @@ module Credentials
       crt: :encrypted,
     )
 
-    after_initialize do
-      self.id ||= self.class.default_id
-      self.key ||= OpenSSL::PKey::RSA.new(4096).to_s
-    end
+    after_initialize :set_defaults
 
     def self.default_id
       "#{Setting[:server_host]}/#{ACME_CHALLENGE}"
@@ -112,6 +109,12 @@ module Credentials
         private_key = OpenSSL::PKey::RSA.new(Setting[:owner_private_key])
         Acme::Client.new(kid: kid, private_key: private_key, directory: directory, bad_nonce_retry: 5)
       end
+    end
+
+    def set_defaults
+      return unless has_attribute? :json_data
+      self.id ||= self.class.default_id
+      self.key ||= OpenSSL::PKey::RSA.new(4096).to_s
     end
   end
 end
