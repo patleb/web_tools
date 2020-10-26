@@ -1,13 +1,58 @@
 @import "suneditor/src/assets/css/suneditor";
 @import "suneditor/src/assets/css/suneditor-contents";
 
-.sun-editor .se-dialog .se-dialog-inner .se-dialog-footer {
-  padding-bottom: 15px;
-}
+.sun-editor {
+  .se-dialog .se-dialog-inner {
+    .se-dialog-footer {
+      padding-bottom: 15px;
+    }
 
-.sun-editor input {
-  &[type=checkbox],
-  &[type=radio]{
-    border: inherit;
+    .se-dialog-form {
+      .se-math-preview > span {
+        box-shadow: inset 0 -2px 0 $brand-primary;
+      }
+
+      a {
+        color: $link-color;
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+          color: $link-hover-color;
+          text-decoration: $link-hover-decoration;
+        }
+      }
+    }
+  }
+
+  input,
+  textarea,
+  select {
+    border-radius: inherit;
+
+    &[type=checkbox],
+    &[type=radio] {
+      border: inherit;
+      box-shadow: none;
+    }
+
+    &[type=text],
+    &[type=file],
+    &.se-input-select {
+      &:focus {
+        border-color: $gray-light;
+        box-shadow: inset 0 -2px 0 $brand-primary;
+      }
+    }
+
+    &.se-input-select {
+      background-color: $dropdown-bg;
+    }
+  }
+
+  .se-btn-primary {
+    @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+    color: $body-bg !important;
+    box-shadow: none !important;
   }
 }
