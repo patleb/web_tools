@@ -127,7 +127,7 @@ class PagesController < MixPage.config.parent_controller.constantize
     return true unless pjax?
     return true if Rails.env.dev_or_test?
     return true if !Current.user_role? && Current.user.admin?
-    stale? @state, etag: MixTemplate.config.version
+    stale? @state, etag: MixTemplate.config.version, template: @state.template
   end
 
   def load_state
