@@ -1,6 +1,7 @@
 types:
   mail_to: emails
   mail_interceptors: emails
+  server_ssl: boolean
   server_cluster_data: pathname
   server_cluster_master_data: pathname
 
