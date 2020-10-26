@@ -5,7 +5,7 @@ area(:devise_error_messages) do
       resource: resource.class.model_name.human.downcase
     )
     div_('.devise-bs.alert.alert-danger.alert-block') {[
-      button_('.close', '&times;', false, type: 'button', data: { dismiss: 'alert' }),
+      button_('.close', '&times;', escape: false, type: 'button', data: { dismiss: 'alert' }),
       h5_('.alert-title', sentence.capitalize),
       ul_ do
         resource.errors.full_messages.map do |msg|
