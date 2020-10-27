@@ -1,12 +1,10 @@
 module PageFields
   class RichText < Text
     json_translate title: :string
-    json_translate subtitle: :string
 
     with_options on: :update, unless: :list_changed? do
       I18n.available_locales.each do |locale|
         validates "title_#{locale}", length: { maximum: 120 }
-        validates "subtitle_#{locale}", length: { maximum: 120 }
       end
     end
 

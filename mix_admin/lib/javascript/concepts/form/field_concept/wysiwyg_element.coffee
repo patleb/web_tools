@@ -19,8 +19,8 @@ class RailsAdmin.Form.FieldConcept::WysiwygElement
         ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript'],
         # ['fontColor', 'hiliteColor', 'textStyle'],
         ['removeFormat'],
-        ['align', 'outdent', 'indent', 'blockquote'],
-        # ['lineHeight'],
+        ['outdent', 'indent', 'blockquote'],
+        # ['align', 'lineHeight'],
         ['horizontalRule', 'list', 'table'],
         ['link', 'image', 'video', 'math'],
         # ['audio', 'imageGallery'], # You must add the "imageGalleryUrl".
