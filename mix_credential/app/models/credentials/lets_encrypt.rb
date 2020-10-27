@@ -90,7 +90,7 @@ module Credentials
     end
 
     def not_after
-      OpenSSL::X509::Certificate.new(decrypted(:crt).split("\n\n").first).not_after
+      @not_after ||= OpenSSL::X509::Certificate.new(decrypted(:crt).split("\n\n").first).not_after
     end
 
     private
