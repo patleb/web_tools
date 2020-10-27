@@ -92,7 +92,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def error_notice(field, action)
-    admin_error_notice(field.class.model_name.human, action, field)
+    admin_error_notice(field, field.class.model_name.human, action)
   end
 
   def field_params

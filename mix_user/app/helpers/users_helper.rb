@@ -1,4 +1,23 @@
 module UsersHelper
+  def devise_flash_messages
+    return if resource.errors.empty?
+    flash[:error] = admin_error_notice(resource, resource.model_name.human)
+  end
+
+  def devise_error_messages
+    return if resource.errors.empty?
+    sentence = I18n.t('errors.messages.not_saved', count: resource.errors.count, resource: resource.class.model_name.human.downcase)
+    div_('.devise-bs.alert.alert-danger.alert-block') {[
+      button_('.close', '&times;', escape: false, type: 'button', data: { dismiss: 'alert' }),
+      h5_('.alert-title', sentence.capitalize),
+      ul_ do
+        resource.errors.full_messages.map do |msg|
+          li_ msg
+        end
+      end
+    ]}
+  end
+
   def edit_user_link
     return unless Current.user_logged_in?
     css = 'edit_user_link'

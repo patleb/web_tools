@@ -101,7 +101,7 @@ module RailsAdmin::Main::WithRouting
   end
 
   def error_notice(name = @model.label, action: @action.key)
-    admin_error_notice(name, action, @object || @objects)
+    admin_error_notice(@object || @objects, name, action)
   end
 
   private
