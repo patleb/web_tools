@@ -1,1 +1,7 @@
 @import "~bootswatch/paper/bootswatch";
+
+a, button, .btn {
+  &:focus {
+    outline: none !important;
+  }
+}
