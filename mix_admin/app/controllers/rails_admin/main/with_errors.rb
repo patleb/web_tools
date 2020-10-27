@@ -54,7 +54,7 @@ module RailsAdmin
         flash[:error] = exception.message
         redirect_to_back
       else
-        response.headers['X-Status-Reason'] = exception.message
+        response.set_header('X-Status-Reason', exception.message)
         head 413
       end
     end
