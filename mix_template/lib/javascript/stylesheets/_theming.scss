@@ -7,7 +7,7 @@
 @import "~@@/mix_template/stylesheets/concepts/menu";
 @import "~@@/mix_template/stylesheets/concepts/pjax";
 
-a, button {
+a, button, .btn {
   &:focus {
     outline: none !important;
   }
