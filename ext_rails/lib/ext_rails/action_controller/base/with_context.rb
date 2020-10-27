@@ -36,7 +36,7 @@ module ActionController::Base::WithContext
       end
     end
   rescue NoMethodError => e # prevent infinite loop
-    render_500 NoMethodError.new("NoMethodError: undefined method\nat #{e.backtrace.first}", e.name)
+    render_500 NoMethodError.new("NoMethodError: undefined method '#{e.corrections.first}'\nat #{e.backtrace.first}", e.name)
   end
 
   def without_time_zone(&block)
