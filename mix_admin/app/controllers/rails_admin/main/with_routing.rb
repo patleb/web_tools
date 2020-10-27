@@ -97,7 +97,7 @@ module RailsAdmin::Main::WithRouting
   end
 
   def success_notice(name = @model.label, action: @action.key)
-    admin_succes_notice(name, action)
+    admin_success_notice(name, action)
   end
 
   def error_notice(name = @model.label, action: @action.key)
