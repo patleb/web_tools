@@ -88,11 +88,11 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def success_notice(field, action)
-    admin_success_notice(field.class.name, action)
+    admin_success_notice(field.class.model_name.human, action)
   end
 
   def error_notice(field, action)
-    admin_error_notice(field.class.name, action, field)
+    admin_error_notice(field.class.model_name.human, action, field)
   end
 
   def field_params
