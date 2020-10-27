@@ -11,6 +11,7 @@ module PageFieldAdmin
         queryable false
       end
       fields :page_template do
+        index_value{ strip_tags(index_value) }
         searchable false
         queryable false
       end
