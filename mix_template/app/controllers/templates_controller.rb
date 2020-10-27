@@ -1,6 +1,8 @@
 class TemplatesController < MixTemplate.config.parent_controller.constantize
   include ActionView::Helpers::TextHelper
 
+  ERROR_SEPARATOR = '<br>- '
+
   before_action :strip_pjax_param, if: :pjax?
   before_action :strip_pjax_file_params, if: :pjax_file?
   before_action :after_redirected, if: :pjax_redirect?
@@ -33,6 +35,22 @@ class TemplatesController < MixTemplate.config.parent_controller.constantize
     layout_path = current_layout.compact
     layout_path << 'pjax' if pjax_layout?
     layout_path.join('/')
+  end
+
+  if defined? MixAdmin
+    def admin_success_notice(name, action)
+      I18n.t('admin.flash.successful', name: name, action: I18n.t("admin.actions.#{action}.done"))
+    end
+    helper_method :admin_success_notice
+
+    def admin_error_notice(name, action, objects)
+      notice = I18n.t('admin.flash.error', name: name, action: I18n.t("admin.actions.#{action}.done"))
+      Array.wrap(objects).each do |object|
+        notice += ERROR_SEPARATOR + object.errors.full_messages.join(ERROR_SEPARATOR) unless object.errors.empty?
+      end
+      simple_format! notice
+    end
+    helper_method :admin_error_notice
   end
 
   private

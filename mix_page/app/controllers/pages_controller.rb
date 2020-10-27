@@ -1,8 +1,6 @@
 # TODO index (search), form (create, show, update, destroy, index)
 # https://dba.stackexchange.com/questions/206616/optimize-a-trigram-search-with-custom-sort-order
 class PagesController < MixPage.config.parent_controller.constantize
-  ERROR_SEPARATOR = RailsAdmin::Main::WithRouting::ERROR_SEPARATOR
-
   before_action :load_state
   before_action :authorized_page!
 
@@ -90,13 +88,11 @@ class PagesController < MixPage.config.parent_controller.constantize
   end
 
   def success_notice(field, action)
-    I18n.t('admin.flash.successful', name: field.class.name, action: I18n.t("admin.actions.#{action}.done"))
+    admin_success_notice(field.class.name, action)
   end
 
   def error_notice(field, action)
-    notice = I18n.t('admin.flash.error', name: field.class.name, action: I18n.t("admin.actions.#{action}.done")).html_safe
-    notice += ERROR_SEPARATOR + safe_join(field.errors.full_messages, ERROR_SEPARATOR) unless field.errors.empty?
-    simple_format! notice
+    admin_error_notice(field.class.name, action, field)
   end
 
   def field_params
