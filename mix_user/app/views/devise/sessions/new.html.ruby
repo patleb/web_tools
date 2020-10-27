@@ -1,5 +1,3 @@
-purge :devise_error_messages
-
 append :devise_title do
   t('.sign_in')
 end

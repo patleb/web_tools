@@ -1,21 +1,3 @@
-area(:devise_error_messages) do
-  if resource.errors.any?
-    sentence = I18n.t('errors.messages.not_saved',
-      count: resource.errors.count,
-      resource: resource.class.model_name.human.downcase
-    )
-    div_('.devise-bs.alert.alert-danger.alert-block') {[
-      button_('.close', '&times;', escape: false, type: 'button', data: { dismiss: 'alert' }),
-      h5_('.alert-title', sentence.capitalize),
-      ul_ do
-        resource.errors.full_messages.map do |msg|
-          li_ msg
-        end
-      end
-    ]}
-  end
-end
-
 div_('#devise.panel.panel-default.col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3') {[
   div_('.row.panel-heading') do
     h5_{ area(:devise_title) }

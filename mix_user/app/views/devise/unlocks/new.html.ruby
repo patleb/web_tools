@@ -1,3 +1,5 @@
+devise_flash_messages
+
 append :devise_title do
   t('.resend_unlock_instructions')
 end
