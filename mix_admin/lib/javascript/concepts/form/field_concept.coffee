@@ -9,6 +9,10 @@ class RailsAdmin.Form.FieldConcept
         # TODO do the same with datetimepicker
   ]
 
+  ready_once: ->
+    # TODO still have the bug --> happens when quitting pjax
+    $rescue_skipped.push '[SUNEDITOR.create.fail] The ID of the suneditor you are trying to create already exists'
+
   ready: =>
     return unless (fields = $(@INPUT)).length
 

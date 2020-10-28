@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
   window.$image = image_path
 
   window.$rescues = []
+  window.$rescue_skipped = []
   window.$rescue = function (rescue) {
     var rescue_string = JSON.stringify(rescue)
     if (!_.includes($rescues, rescue_string)) {
@@ -33,10 +34,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (process.env.NODE_ENV === 'production') {
     window.addEventListener('error', function (event) {
-      $rescue({
-        message: event.message,
-        backtrace: [_.values(_.pick(event, ['filename', 'lineno', 'colno'])).join(':')],
-      })
+      if (_.find($rescue_skipped, function (string) { return _.includes(event.message, string) })) {
+        console.log(event.message)
+      } else {
+        $rescue({
+          message: event.message,
+          backtrace: [_.values(_.pick(event, ['filename', 'lineno', 'colno'])).join(':')],
+        })
+      }
       event.preventDefault()
       return false
     })
