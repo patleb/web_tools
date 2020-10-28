@@ -17,39 +17,36 @@
   }
 
   .se-image-container {
+    padding: 20px 0;
     min-width: 100% !important;
 
     > figure {
       margin: auto !important;
       width: inherit !important;
+      max-width: 1200px;
+
+      img {
+        max-width: 100%;
+      }
+
+      figcaption {
+        font-style: italic;
+      }
     }
   }
-}
 
-.se-image-container {
-  figure {
-    max-width: 100%;
+  .se-video-container {
+    padding: 20px 0;
+    text-align: center;
 
-    img {
+    figure {
+      padding-bottom: 0 !important;
+      margin: auto !important;
       max-width: 100%;
-    }
 
-    figcaption {
-      font-style: italic;
-    }
-  }
-}
-
-.se-video-container {
-  padding: 20px;
-  text-align: center;
-
-  figure {
-    padding-bottom: 0 !important;
-    max-width: 100%;
-
-    iframe {
-      max-width: 100%;
+      iframe {
+        max-width: 100%;
+      }
     }
   }
 }

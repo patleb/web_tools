@@ -4,8 +4,7 @@
 .sun-editor {
   .se-controller .se-btn-group {
     [data-command=mirror],
-    [data-command=rotate],
-    // [data-command=revert],
+    [data-command=revert],
     ._se_resizing_align_button {
       display: none;
     }
