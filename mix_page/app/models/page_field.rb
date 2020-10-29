@@ -27,6 +27,14 @@ class PageField < LibRecord
     super && (fieldable.nil? || fieldable.show?)
   end
 
+  def rails_admin_object_label
+    rails_admin_object_label_values.compact.uniq.join(' - ')
+  end
+
+  def rails_admin_object_label_values
+    [page_template&.title, self.class.human_attribute_name("name.#{name}", default: name)]
+  end
+
   ### Example for when the association should be on the base class but, in our case, the association is on the children.
   # def fieldable_type=(class_name)
   #    super(class_name.constantize.base_class.to_s)

@@ -11,7 +11,6 @@ module PageFieldAdmin
         queryable false
       end
       fields :page_template do
-        index_value{ strip_tags(index_value) }
         searchable false
         queryable false
       end
@@ -24,6 +23,10 @@ module PageFieldAdmin
     rails_admin :base_class, after: true do
       index do
         sort_action_columns{ ['page_id', 'name'].concat(sort_action_columns) }
+        field :rails_admin_object_label, weight: 0 do
+          index_value{ primary_key_link(index_value) }
+        end
+        exclude_fields :page_template, :name
       end
 
       edit do

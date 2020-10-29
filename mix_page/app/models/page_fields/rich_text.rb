@@ -15,5 +15,9 @@ module PageFields
         end
       end
     end
+
+    def rails_admin_object_label_values
+      super << title
+    end
   end
 end

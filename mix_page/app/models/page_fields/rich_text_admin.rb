@@ -19,7 +19,7 @@ module PageFields::RichTextAdmin
     rails_admin :superclass, after: true do
       index do
         exclude_fields :text
-        exclude_fields :title, translated: true
+        exclude_fields :title, translated: :all
       end
 
       edit do

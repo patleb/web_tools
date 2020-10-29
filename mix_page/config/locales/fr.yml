@@ -36,6 +36,7 @@ fr:
         published_at: Publié à
       page_field:
         <<: *shared_attributes
+        rails_admin_object_label: Étiquette
         page_template: Contexte
         name: Nom
       page_fields/text:

@@ -19,9 +19,8 @@ module PageFields::LinkAdmin
 
     rails_admin :superclass, after: true do
       index do
-        field :fieldable, weight: 1 do
-          index_value{ strip_tags(index_value) }
-        end
+        field :fieldable, weight: 1
+        exclude_fields :text
       end
 
       edit do

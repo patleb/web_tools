@@ -12,5 +12,9 @@ module PageFields
         validates "text_#{locale}", length: { maximum: 120 }
       end
     end
+
+    def rails_admin_object_label_values
+      super << title
+    end
   end
 end
