@@ -138,7 +138,7 @@ class RailsAdmin.TableConcept
     sort_head_timeout = null
 
   refresh: =>
-    return unless Main.index_action || Main.trash_action
+    return unless Main.index_action || Main.trash_action || Main.sort_action
     @update_sticky_head()
     @on_window_scroll()
     @update_sticky_column_height()
