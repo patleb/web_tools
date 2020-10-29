@@ -56,7 +56,7 @@ class RailsAdmin.FilterBoxConcept
 
     'click', @CLEAR, (event, target) =>
       $(@INPUT).val("")
-      if Main.index_action || Main.trash_action
+      if Main.index_action || Main.trash_action || Main.sort_action
         $(@CONTAINER).html("")
         target.parents("form").submit()
 
