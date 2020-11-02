@@ -39,6 +39,12 @@ en:
       page/view:
         home: Home
         generic_multi: Generic template
+        list: List
+        list/tree: Tree
+        list/tree/leaf: Leaf
+        list/multi: List page
+        list/tree/multi: Tree page
+        list/tree/leaf/multi: Leaf page
       page_field/name:
         sidebar_links: Sidebar
         page_list_texts: List of pages texts

@@ -7,8 +7,10 @@ MixPage.configure do |config|
     'home' => 10,
     'list' => 20,
     'list/tree' => 30,
+    'list/tree/leaf' => 40,
     'list/multi' => 25,
     'list/tree/multi' => 35,
+    'list/tree/leaf/multi' => 45,
   )
   config.available_field_names.merge!(
     'sidebar_links' => 0,
