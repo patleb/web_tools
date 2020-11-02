@@ -1,14 +1,32 @@
 @import '~bootstrap-sass/assets/stylesheets/bootstrap/mixins';
 @import '~font-awesome/scss/mixins';
 
-@mixin screen_desktop {
+@mixin screen_app_desktop {
   @media screen and (min-width: $grid-float-breakpoint) and (min-height: $screen_mini_breakpoint) {
     @content;
   }
 }
 
-@mixin screen_mobile {
+@mixin screen_app_mobile {
   @media screen and (max-width: $grid-float-breakpoint-max), screen and (max-height: $screen_mini_max_size) {
+    @content;
+  }
+}
+
+@mixin screen_app_mini {
+  @media screen and (max-width: $screen_mini_max_size) {
+    @content;
+  }
+}
+
+@mixin screen_desktop {
+  @media screen and (min-width: $grid-float-breakpoint) {
+    @content;
+  }
+}
+
+@mixin screen_mobile {
+  @media screen and (max-width: $grid-float-breakpoint-max) {
     @content;
   }
 }

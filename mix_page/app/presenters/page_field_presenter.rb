@@ -63,12 +63,17 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   end
   alias_method :editable?, :editable
 
+  def sortable?
+    return @sortable if defined? @sortable
+    @sortable = list && editable? && last? && (parent_node.nil? || parent_node.children_count > 1)
+  end
+
   def pretty_blank
     I18n.t('page_fields.edit', model: object.model_name.human.downcase) if editable?
   end
 
   def pretty_actions(tag = :div)
-    with_tag(tag, '.page_field_actions', if: member_actions.any?) {[
+    with_tag(tag, ".page_field_actions.#{'un' unless sortable?}sortable_page_field", if: member_actions.any?) {[
       sort_action,
       member_actions.map do |action, path|
         button_(class: "#{action}_page_field #{action}_#{type.full_underscore} btn btn-default btn-xs", data: { href: path }) do
@@ -79,7 +84,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   end
 
   def sort_action
-    return unless list && editable? && last? && (parent_node.nil? || parent_node.children_count > 1)
+    return unless sortable?
     span_(class: "js_page_field_sort sort_page_field sort_#{type.full_underscore}") do
       i_(class: 'fa fa-arrows-v')
     end

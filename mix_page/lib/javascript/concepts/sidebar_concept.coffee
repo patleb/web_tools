@@ -31,11 +31,13 @@ class Js.SidebarConcept # TODO extract to MixTemplate with RailsAdmin.SidebarCon
   ready: =>
     $(@ACTIVE_WRAPPER).removeClass(@ACTIVE)
     $(".#{@PAGE}_#{Page.uuid}").parent().addClass(@ACTIVE)
+    # TODO if current page is active, but parent is closed, then open the parent + scroll to
 
   toggle: (target) =>
     li = target.closest('li')
     node = li.data('node')
     hidden_by = "#{@TOGGLE_CLASS}_by_#{node.full_underscore()}"
+    target = target.find('i') unless target.is('i')
     if target.hasClass('fa-chevron-down')
       children = li.nextAll("[data-node^='#{node}/']:visible").addClass(hidden_by)
     else

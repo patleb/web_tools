@@ -30,6 +30,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    user-select: none;
 
     // TODO add title attribute to navbar title which uses ellipsis
     // &:hover {
