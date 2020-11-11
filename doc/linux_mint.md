@@ -328,5 +328,7 @@ vagrant plugin install vagrant-hostmanager
 sudo pip3 install --upgrade cython
 sudo pip3 install python-openstackclient matplotlib
 sudo pip3 install pyproj==1.9.6
-sudo apt-get install -y python3-psycopg2 python3-numpy python3-tk python3-netcdf4 gdal-bin libgdal-dev ncview
+sudo apt-get install -y python3-psycopg2 python3-numpy python3-tk python3-netcdf4 netcdf-bin gdal-bin libgdal-dev ncview
 ```
+
+# TODO https://www.reddit.com/r/programming/comments/js5go2/90_frequently_used_linux_commands/
