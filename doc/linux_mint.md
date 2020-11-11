@@ -115,6 +115,7 @@ sudo chown root:root /etc/sudoers.d/$USER
 - Edit / Preferences / Queue / Active torrents [16 actives = (12 + 4)]
 - Edit / Preferences / Interface / System tray / Minimize to tray on close [true], Enable application indicator [false]
 - Edit / Preferences / Other / Associate Magnet links with Deluge [true]
+- ~/.config/deluge/gtkui.conf --> "ntf_tray_blink": false
 
 ## Rubymine
 
