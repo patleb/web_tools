@@ -327,8 +327,9 @@ vagrant plugin install vagrant-hostmanager
 
 ```bash
 sudo pip3 install --upgrade cython
-sudo pip3 install python-openstackclient matplotlib
-sudo pip3 install pyproj==1.9.6
+sudo pip3 install python-openstackclient
+sudo pip3 install matplotlib==3.2.1
+sudo pip3 install pyproj==2.6.1
 sudo apt-get install -y python3-psycopg2 python3-numpy python3-tk python3-netcdf4 netcdf-bin gdal-bin libgdal-dev ncview
 ```
 
