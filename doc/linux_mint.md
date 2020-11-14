@@ -271,20 +271,6 @@ echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/source
 sudo apt update && sudo apt-get -y install yarn
 ```
 
-## QGIS
-
-```bash
-sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
-wget -O - https://qgis.org/downloads/qgis-2019.gpg.key | gpg --import
-gpg --fingerprint 51F523511C7028C3
-gpg --export --armor 51F523511C7028C3 | sudo apt-key add -
-sudo apt update && sudo apt-get -y install qgis python-qgis
-```
-
-### QGIS pip3 troubleshoot
-
-- https://stackoverflow.com/questions/47955397/pip3-error-namespacepath-object-has-no-attribute-sort
-
 ## Ruby
 
 ```bash
@@ -314,6 +300,16 @@ echo 'alias be="bundle exec "' >> ~/.bashrc
 
 - Preferences / Profiles / Scrolling / Infinite Scrollback [true]
 
+```bash
+vi $HOME/.config/terminator/config
+...
+    [[[window0]]]
+      parent = ""
+      type = Window
+      size = 1320, 800
+...
+```
+
 ## VirtualBox + Vagrant
 
 - https://www.virtualbox.org/wiki/Downloads
@@ -323,14 +319,65 @@ echo 'alias be="bundle exec "' >> ~/.bashrc
 vagrant plugin install vagrant-hostmanager
 ```
 
-## Python GIS + Openstack
+## Openstack Client
+
+```bash
+sudo pip3 install python-openstackclient
+```
+
+## Python GIS
 
 ```bash
 sudo pip3 install --upgrade cython
-sudo pip3 install python-openstackclient
 sudo pip3 install matplotlib==3.2.1
 sudo pip3 install pyproj==2.6.1
 sudo apt-get install -y python3-psycopg2 python3-numpy python3-tk python3-netcdf4 netcdf-bin gdal-bin libgdal-dev ncview
 ```
+
+## QGIS
+
+```bash
+sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+wget -O - https://qgis.org/downloads/qgis-2019.gpg.key | gpg --import
+gpg --fingerprint 51F523511C7028C3
+gpg --export --armor 51F523511C7028C3 | sudo apt-key add -
+sudo apt update && sudo apt-get -y install qgis python-qgis
+```
+
+### QGIS pip3 troubleshoot
+
+- https://stackoverflow.com/questions/47955397/pip3-error-namespacepath-object-has-no-attribute-sort
+
+## Webcamoid
+
+```
+sudo apt-get install -y linux-generic dkms v4l-utils
+v4l2-ctl --list-devices
+...
+git clone git@github.com:webcamoid/akvcam.git
+cd akvcam/src
+make
+VERSION=1.1.1
+sudo mkdir -p /usr/src/akvcam-${VERSION}
+sudo cp -ar * /usr/src/akvcam-${VERSION}
+sudo dkms install akvcam/${VERSION}
+cd ..
+sudo mkdir -p /etc/akvcam
+sudo cp share/config_example.ini /etc/akvcam/config.ini
+sudo chmod -vf 644 /etc/akvcam/config.ini
+echo akvcam | sudo tee /etc/modules-load.d/akvcam.conf
+...
+# download at https://webcamoid.github.io/
+cd ~/Downloads
+chmod +x webcamoid-installer-*
+./webcamoid-installer-*
+...
+# reset settings
+rm -rf ~/.config/Webcamoid
+```
+
+Download and install [https://zoom.us/download?os=linux](Zoom)
+
+## Portainer (TODO)
 
 # TODO https://www.reddit.com/r/programming/comments/js5go2/90_frequently_used_linux_commands/
