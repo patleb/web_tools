@@ -10,13 +10,13 @@ module ExtWebpacker
     def install
       verify_dependencies!
       source_gems_path.mkdir unless source_gems_path.exist?
-      source_gems_path.children.select(&:symlink?).each(&:delete) # TODO skip if 'gems' directory is locked
-      watched_symlinks = dependencies[:gems].map do |(name, path)|
-        symlink = source_gems_path.join(name)
-        File.symlink(path, symlink)
-        symlink.join("**/*{#{watched_extensions}}").to_s
+      source_gems_path.children.select(&:symlink?).each(&:delete.with(false))
+      watched_symlinks = dependencies[:gems].map do |(gem_name, gem_path)|
+        path = source_gems_path.join(gem_name)
+        path.symlink(gem_path, false)
+        path.join("**/*{#{watched_extensions}}").to_s
       end
-      Webpacker::Compiler.watched_paths.concat(watched_symlinks)
+      Webpacker::Compiler.watched_paths.concat(watched_symlinks) # TODO additional_paths
     end
 
     def verify_dependencies!
@@ -63,6 +63,10 @@ module ExtWebpacker
 
     def watched_extensions
       @watched_extensions ||= default_config['extensions'].join(',')
+    end
+
+    def additional_paths
+      @additional_paths ||= default_config['additional_paths']
     end
 
     def default_config
