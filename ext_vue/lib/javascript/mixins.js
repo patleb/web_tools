@@ -41,6 +41,9 @@ const mixins = {
     },
     $to_date: function (value) {
       if (value) {
+        if (_.isPlainObject(value) && _.has(value, 'year')) {
+          return value
+        }
         let [year, month, day] = value.toString().split('-').map(v => +(v))
         return { year, month, day }
       }
