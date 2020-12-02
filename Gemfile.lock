@@ -1,4 +1,33 @@
 PATH
+  remote: .
+  specs:
+    web_tools (0.2.0)
+      ext_bootstrap (= 0.2.0)
+      ext_capistrano (= 0.2.0)
+      ext_minitest (= 0.2.0)
+      ext_pjax (= 0.2.0)
+      ext_rails (= 0.2.0)
+      ext_rake (= 0.2.0)
+      ext_ruby (= 0.2.0)
+      ext_vue (= 0.2.0)
+      ext_webpacker (= 0.2.0)
+      ext_whenever (= 0.2.0)
+      mix_admin (= 0.2.0)
+      mix_backup (= 0.2.0)
+      mix_credential (= 0.2.0)
+      mix_file (= 0.2.0)
+      mix_global (= 0.2.0)
+      mix_page (= 0.2.0)
+      mix_rescue (= 0.2.0)
+      mix_setting
+      mix_sql (= 0.2.0)
+      mix_system (= 0.2.0)
+      mix_template (= 0.2.0)
+      mix_user (= 0.2.0)
+      mix_web (= 0.2.0)
+      sunzistrano
+
+PATH
   remote: ext_bootstrap
   specs:
     ext_bootstrap (0.2.0)
@@ -149,6 +178,12 @@ PATH
       ext_rails (= 0.2.0)
 
 PATH
+  remote: mix_file
+  specs:
+    mix_file (0.2.0)
+      ext_ruby (= 0.2.0)
+
+PATH
   remote: mix_global
   specs:
     mix_global (0.2.0)
@@ -158,6 +193,7 @@ PATH
   specs:
     mix_page (0.2.0)
       mix_admin (= 0.2.0)
+      mix_file (= 0.2.0)
 
 PATH
   remote: mix_rescue
@@ -223,34 +259,6 @@ PATH
   specs:
     sunzistrano (0.1.0)
       mix_setting
-
-PATH
-  remote: .
-  specs:
-    web_tools (0.2.0)
-      ext_bootstrap (= 0.2.0)
-      ext_capistrano (= 0.2.0)
-      ext_minitest (= 0.2.0)
-      ext_pjax (= 0.2.0)
-      ext_rails (= 0.2.0)
-      ext_rake (= 0.2.0)
-      ext_ruby (= 0.2.0)
-      ext_vue (= 0.2.0)
-      ext_webpacker (= 0.2.0)
-      ext_whenever (= 0.2.0)
-      mix_admin (= 0.2.0)
-      mix_backup (= 0.2.0)
-      mix_credential (= 0.2.0)
-      mix_global (= 0.2.0)
-      mix_page (= 0.2.0)
-      mix_rescue (= 0.2.0)
-      mix_setting
-      mix_sql (= 0.2.0)
-      mix_system (= 0.2.0)
-      mix_template (= 0.2.0)
-      mix_user (= 0.2.0)
-      mix_web (= 0.2.0)
-      sunzistrano
 
 GEM
   remote: https://rubygems.org/
@@ -676,6 +684,7 @@ DEPENDENCIES
   mix_admin!
   mix_backup!
   mix_credential!
+  mix_file!
   mix_global!
   mix_page!
   mix_rescue!
