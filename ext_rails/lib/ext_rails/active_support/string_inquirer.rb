@@ -13,19 +13,4 @@ ActiveSupport::StringInquirer.class_eval do
     return @ngrok if defined? @ngrok
     @ngrok = development? && ENV['NGROK'].present?
   end
-
-  def dev_or_test_url_options
-    host, port =
-      case to_sym
-      when :development
-        if dev_ngrok?
-          ["#{ENV['NGROK']}.ngrok.io", nil]
-        else
-          ['localhost', 3000]
-        end
-      when :test
-        ['127.0.0.1', 3333]
-      end
-    { host: host, port: port }
-  end
 end

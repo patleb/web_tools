@@ -1,4 +1,4 @@
-# https://github.com/rails/rails/issues/2686
+# TODO Rails 6.1 merged --> https://github.com/rails/rails/issues/2686
 
 module ActionMailer::Base::WithAttachmentFix
   def mail(headers = {}, &block)

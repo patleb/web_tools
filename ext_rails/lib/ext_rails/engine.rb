@@ -7,9 +7,7 @@ module ExtRails
     require 'active_type'
     require 'date_validator'
     require 'discard'
-    require 'email_prefixer'
     require 'http_accept_language'
-    require 'mail_interceptor' unless Rails.env.production?
     require 'monogamy'
     require 'pg'
     require 'rails-i18n'
@@ -19,7 +17,6 @@ module ExtRails
     end
 
     require 'sunzistrano/context'
-    require 'ext_rails/action_mailer/smtp_settings'
     require 'ext_rails/active_support/abstract_class'
     require 'ext_rails/active_support/core_ext'
     require 'ext_rails/active_support/lazy_load_hooks/autorun'
@@ -30,6 +27,7 @@ module ExtRails
     require 'ext_rails/money_rails'
     require 'ext_rails/rack/utils'
     require 'ext_rails/rails/engine'
+    require 'ext_rails/rails/initializable/initializer'
     require 'ext_rails/rake/dsl'
     require 'ext_rails/sh'
 
@@ -43,8 +41,6 @@ module ExtRails
         app.config.cache_store = :global_store
       end
       app.config.active_record.schema_format = :sql
-      app.config.action_mailer.delivery_method = :smtp
-      app.config.action_mailer.smtp_settings = ActionMailer::SmtpSettings.new(Setting)
       app.config.action_view.embed_authenticity_token_in_remote_forms = true
       # app.config.active_record.time_zone_aware_attributes = false
       app.config.i18n.default_locale = :fr
@@ -54,29 +50,18 @@ module ExtRails
 
       if Rails.env.dev_or_test?
         $stdout.sync = true # for Foreman
-        url_options = Rails.env.dev_or_test_url_options
-        host, port = url_options.values_at(:host, :port)
+        host, port = Setting[:default_url_options].values_at(:host, :port)
         app.config.action_controller.asset_host = "#{host}#{":#{port}" if port}"
         app.config.action_mailer.asset_host = app.config.action_controller.asset_host
-        app.config.action_mailer.default_url_options = url_options
         app.config.logger = ActiveSupport::Logger.new(app.config.paths['log'].first, 5)
         app.config.logger.formatter = app.config.log_formatter
-      else
-        app.config.action_mailer.default_url_options = -> { { host: Setting[:server_host] } }
       end
     end
 
     config.before_initialize do |app|
-      require 'ext_rails/rails/initializable/initializer'
-
-      if Rails.env.dev_or_test?
-        Rails::Initializable::Initializer.exclude_initializers.merge!(
-          'EmailPrefixer::Railtie' => 'email_prefixer.configure_defaults'
-        )
-      end
+      app.routes.default_url_options = Setting[:default_url_options]
       # TODO Rails 6.0
       # ActiveStorage.routes_prefix '/storage'
-
       require 'ext_rails/action_dispatch/middleware/iframe'
       app.config.middleware.use ActionDispatch::IFrame
       app.config.middleware.insert_after ActionDispatch::Static, Rack::Deflater if Rails.env.dev_ngrok?
@@ -108,14 +93,6 @@ module ExtRails
 
         match '*not_found', via: :all, to: 'application#render_404', format: false
       end
-    end
-
-    initializer 'ext_rails.default_url_options', before: 'action_mailer.set_configs' do |app|
-      default_url_options = app.config.action_mailer.default_url_options
-      if default_url_options.respond_to? :call
-        app.config.action_mailer.default_url_options = default_url_options.call
-      end
-      app.routes.default_url_options = app.config.action_mailer.default_url_options
     end
 
     initializer 'ext_rails.i18n' do
@@ -177,11 +154,6 @@ module ExtRails
       Rails.backtrace_cleaner.class.const_set(:APP_DIRS_PATTERN, /.+/)
 
       MixRescue.config.available_types.merge! 'Rescues::Rails' => 30
-    end
-
-    ActiveSupport.on_load(:action_mailer) do
-      require 'ext_rails/action_mailer/base'
-      require 'ext_rails/action_mailer/log_subscriber/with_quiet_info'
     end
 
     config.to_prepare do

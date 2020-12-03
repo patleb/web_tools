@@ -1,4 +1,19 @@
 Setting.class_eval do
+  def self.default_url_options
+    case Rails.env.to_sym
+    when :development
+      if Rails.env.dev_ngrok?
+        { host: "#{ENV['NGROK']}.ngrok.io" }
+      else
+        { host: self[:server_host], port: self[:server_port] }
+      end
+    when :test
+      { host: '127.0.0.1', port: 3333 }
+    else
+      { host: self[:server_host] }
+    end
+  end
+
   def self.ftp_host_path
     if defined? Rails
       "/#{Rails.application.name}/#{Rails.env}"
