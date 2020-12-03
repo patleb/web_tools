@@ -1,4 +1,10 @@
 PATH
+  remote: mix_email
+  specs:
+    mix_email (0.2.0)
+      ext_ruby (= 0.2.0)
+
+PATH
   remote: .
   specs:
     web_tools (0.2.0)
@@ -15,6 +21,7 @@ PATH
       mix_admin (= 0.2.0)
       mix_backup (= 0.2.0)
       mix_credential (= 0.2.0)
+      mix_email (= 0.2.0)
       mix_file (= 0.2.0)
       mix_global (= 0.2.0)
       mix_page (= 0.2.0)
@@ -684,6 +691,7 @@ DEPENDENCIES
   mix_admin!
   mix_backup!
   mix_credential!
+  mix_email!
   mix_file!
   mix_global!
   mix_page!
