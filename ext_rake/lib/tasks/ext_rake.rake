@@ -23,7 +23,7 @@ namespace :ext_rake do
 end
 
 namespace :try do
-  %w(raise_exception send_mail sleep).each do |name|
+  %w(raise_exception send_notice sleep).each do |name|
     desc "-- [options] Try #{name.humanize}"
     task name.to_sym => :environment do |t|
       "::ExtRake::Try::#{name.camelize}".constantize.new(self, t).run!

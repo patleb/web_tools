@@ -1,13 +1,13 @@
 module ExtRake
   module Try
-    class SendMail < ActiveTask::Base
+    class SendNotice < ActiveTask::Base
       class Message < ::StandardError
         def backtrace
           ['Notification']
         end
       end
 
-      def send_mail
+      def send_notice
         Notice.deliver! Message.new
       end
     end
