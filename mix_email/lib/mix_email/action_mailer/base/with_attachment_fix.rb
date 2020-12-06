@@ -2,10 +2,10 @@
 
 module ActionMailer::Base::WithAttachmentFix
   def mail(headers = {}, &block)
-    super
+    mail = super
 
     # do nothing if we have no actual attachments
-    return if @_message.parts.select { |p| p.attachment? && !p.inline? }.none?
+    return mail if @_message.parts.select { |p| p.attachment? && !p.inline? }.none?
 
     mail = Mail.new
 
@@ -21,6 +21,7 @@ module ActionMailer::Base::WithAttachmentFix
 
     @_message = mail
     wrap_delivery_behavior!(delivery_method.to_sym)
+    mail
   end
 end
 

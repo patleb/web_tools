@@ -4,7 +4,6 @@ require 'mix_email/configuration'
 module MixEmail
   class Engine < ::Rails::Engine
     require 'email_prefixer'
-    require 'mail_interceptor' unless Rails.env.production?
     require 'mix_email/action_mailer/smtp_settings'
 
     config.before_configuration do |app|
