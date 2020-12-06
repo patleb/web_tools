@@ -50,7 +50,7 @@ module ActiveTask
       @_success
     end
 
-    def failed?
+    def failure?
       !success?
     end
 
@@ -63,7 +63,7 @@ module ActiveTask
 
     def run!
       result = run
-      raise(result) if failed?
+      raise(result) if failure?
       result
     end
 
