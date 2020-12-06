@@ -152,8 +152,6 @@ module ExtRails
 
       Rails.backtrace_cleaner.class.send(:remove_const, :APP_DIRS_PATTERN)
       Rails.backtrace_cleaner.class.const_set(:APP_DIRS_PATTERN, /.+/)
-
-      MixRescue.config.available_types.merge! 'Rescues::Rails' => 30
     end
 
     config.to_prepare do
