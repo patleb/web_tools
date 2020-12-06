@@ -24,6 +24,7 @@ RailsAdmin.configure do |config|
 
   config.included_models = %w(
     Global
+    Email
     PageTemplate
     PageField
     PageFields::%

@@ -11,5 +11,8 @@ class CreateLibEmails < ActiveRecord::Migration[6.0]
 
       t.timestamps
     end
+
+    add_index :lib_emails, [:created_at, :mailer, :sent, :from, :to, :cc, :bcc, :subject],
+      name: 'index_lib_emails_on_header', using: :gin
   end
 end
