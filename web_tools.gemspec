@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mix_email",       version
   s.add_dependency "mix_file",        version
   s.add_dependency "mix_global",      version
+  s.add_dependency "mix_server",      version
   s.add_dependency "mix_setting"
   s.add_dependency "mix_sql",         version
   s.add_dependency "mix_page",        version
