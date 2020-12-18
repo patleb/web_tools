@@ -6,6 +6,7 @@ types:
   server_cluster_master_data: pathname
 
 shared:
+  default_url_options: $METHOD
   server: $METHOD
   max_pool_size: 6
   mail_to: admin@notify.example.com
