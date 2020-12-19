@@ -1,12 +1,12 @@
 require 'pathname'
 
 module Pathname::WithoutRaise
-  def delete(raise_on_exception = true)
-    raise_on_exception ? super() : _delete
+  def delete(raise_on_no_entry = true)
+    raise_on_no_entry ? super() : _delete
   end
 
-  def symlink(origin, raise_on_exception = true)
-    raise_on_exception ? _symlink!(origin) : _symlink(origin)
+  def symlink(origin, raise_on_exist = true)
+    raise_on_exist ? _symlink!(origin) : _symlink(origin)
   end
 
   private
