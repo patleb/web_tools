@@ -59,7 +59,6 @@ module ExtRails
     end
 
     config.before_initialize do |app|
-      app.routes.default_url_options = Setting[:default_url_options]
       # TODO Rails 6.0
       # ActiveStorage.routes_prefix '/storage'
       require 'ext_rails/action_dispatch/middleware/iframe'
@@ -95,6 +94,10 @@ module ExtRails
       end
     end
 
+    initializer 'ext_rails.default_url_options' do |app|
+      app.routes.default_url_options = Setting[:default_url_options]
+    end
+
     initializer 'ext_rails.i18n' do
       if defined? I18n::Debug
         unless ExtRails.config.i18n_debug
@@ -116,6 +119,7 @@ module ExtRails
     end
 
     ActiveSupport.on_load(:action_controller, run_once: true) do
+      require 'ext_rails/action_dispatch/journey/formatter/with_params_fix'
       require 'ext_rails/action_dispatch/routing/url_for/with_only_path'
       require 'ext_rails/action_controller/parameters'
     end
