@@ -44,7 +44,7 @@ class PageTemplate < Page
   end
 
   def self.find_with_state_by_uuid_or_view(uuid, slug)
-    conditions =  uuid.present? ? { uuid: uuid } : { view: slug.tr('-', '/') }
+    conditions =  uuid.present? ? { uuid: UUID.expand(uuid) } : { view: slug.tr('-', '/') }
     layouts = alias_table(:layouts)
     with_discarded
       .where(conditions).joins(join(layouts).on(column(:page_layout_id).eq(layouts[:id])).join_sources)
@@ -54,6 +54,10 @@ class PageTemplate < Page
 
   def self.find_with_content(id)
     with_discarded.with_content.find(id)
+  end
+
+  def uuid
+    UUID.shorten(self[:uuid])
   end
 
   def layout
