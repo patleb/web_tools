@@ -25,9 +25,38 @@
 UUID = Struct.new(:raw_bytes)
 
 class UUID
+  BASE = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'.freeze
+  BASE_SIZE = BASE.size
+  CHAR_INDEX = BASE.chars.each_with_object({}).with_index{ |(char, result), i| result[char] = i }.freeze
+
   private_class_method :new
 
   class << self
+    def shorten(uuid)
+      return '' if uuid.blank?
+      return uuid unless uuid.match? SecureRandom::UUID
+      integer = uuid.split('-').join.to_i(16)
+      result = []
+      while integer > 0
+        modulo = integer % BASE_SIZE
+        result.unshift(BASE[modulo])
+        integer = (integer - modulo) / BASE_SIZE
+      end
+      result.join
+    end
+
+    def expand(short_uuid)
+      return UUID::NIL.to_s if short_uuid.blank?
+      return short_uuid if short_uuid.match? SecureRandom::UUID
+      base = 1
+      uuid = short_uuid.chars.reverse.reduce(0) do |result, char|
+        result += CHAR_INDEX[char] * base
+        base *= BASE_SIZE
+        result
+      end.to_s(16).rjust(32, '0')
+      [uuid[0..7], uuid[8..11], uuid[12..15], uuid[16..19], uuid[20..31]].join('-')
+    end
+
     def mask(v, str)
       nstr = str.bytes.to_a
       version = [0, 16, 32, 48, 64, 80][v]
