@@ -13,6 +13,10 @@ class String
     gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank?
   end
 
+  def simplify
+    ActiveSupport::Inflector.transliterate(self, ' ', locale: :en).squish
+  end
+
   def dehumanize
     parameterize(separator: '_')
   end
