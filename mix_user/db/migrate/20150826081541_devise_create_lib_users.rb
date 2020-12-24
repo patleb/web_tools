@@ -3,14 +3,14 @@ class DeviseCreateLibUsers < ActiveRecord::Migration[6.0]
     create_table :lib_users do |t|
       ## Database authenticatable
       t.uuid   :uuid,               null: false, default: 'uuid_generate_v1mc()', index: { using: :hash }
-      t.string :email,              null: false, default: ""
+      t.string :email,              null: false, default: "", index: { unique: true }
       t.string :encrypted_password, null: false, default: "", limit: 128
 
       # Encryptable
       t.string :password_salt,      null: false, default: "", limit: 128
 
       ## Recoverable
-      t.string   :reset_password_token
+      t.string   :reset_password_token, index: { unique: true }
       t.datetime :reset_password_sent_at
 
       ## Rememberable
@@ -24,32 +24,27 @@ class DeviseCreateLibUsers < ActiveRecord::Migration[6.0]
       t.inet     :last_sign_in_ip
 
       ## Confirmable
-      t.string   :confirmation_token
+      t.string   :confirmation_token, index: { unique: true }
       t.datetime :confirmed_at
       t.datetime :confirmation_sent_at
       t.string   :unconfirmed_email # Only if using reconfirmable
 
       ## Lockable
       t.integer  :failed_attempts, default: 0, null: false # Only if lock strategy is :failed_attempts
-      t.string   :unlock_token # Only if unlock strategy is :email or :both
+      t.string   :unlock_token, index: { unique: true } # Only if unlock strategy is :email or :both
       t.datetime :locked_at
 
       ## Role
       t.integer :role, null: false, default: 0
 
       ## Data
-      t.jsonb :json_data, null: false, default: {}
+      t.jsonb :json_data, null: false, default: {}, index: { using: :gin }
 
       t.userstamps
-      t.timestamps
+      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
       t.datetime :deleted_at
     end
 
-    add_index :lib_users, :email,                unique: true
-    add_index :lib_users, :reset_password_token, unique: true
-    add_index :lib_users, :confirmation_token,   unique: true
-    add_index :lib_users, :unlock_token,         unique: true
     add_index :lib_users, [:role, :updated_at, :deleted_at]
-    add_index :lib_users, :json_data, using: :gin
   end
 end

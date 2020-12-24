@@ -11,7 +11,7 @@ class CreateLibPageFields < ActiveRecord::Migration[6.0]
       t.jsonb      :json_data,     null: false, default: {}, index: { using: :gin }
       t.integer    :lock_version,  null: false, default: 0
       t.userstamps
-      t.timestamps
+      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
       t.datetime   :deleted_at
     end
 

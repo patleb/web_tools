@@ -8,7 +8,7 @@ class CreateLibCredentials < ActiveRecord::Migration[6.0]
       t.datetime    :expires_at
       t.jsonb       :json_data, null: false, default: {}, index: { using: :gin }
 
-      t.timestamps
+      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
     end
 
     add_index :lib_credentials, [:type, :updated_at]

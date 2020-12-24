@@ -9,7 +9,7 @@ class CreateLibEmails < ActiveRecord::Migration[6.0]
       t.string  :bcc
       t.string  :subject, null: false
 
-      t.timestamps
+      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
     end
 
     add_index :lib_emails, [:created_at, :mailer, :sent, :from, :to, :cc, :bcc, :subject],
