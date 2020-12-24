@@ -6,11 +6,13 @@ require 'chronic_duration'
 module MixSetting::Type
   extend ActiveSupport::Concern
 
+  CSV_OR_EMAILS = %w(csv emails)
+
   class_methods do
     def cast(value, type)
       type = type.to_s
-      if type == 'emails'
-        value&.split(/[\s,;]/)&.reject(&:blank?)
+      if type.in? CSV_OR_EMAILS
+        value&.split(/[\s\t,;]/)&.reject(&:blank?)
       elsif type.end_with? 's'
         type = type.chop
         (value || '').split(',').map!{ |element| cast(element.strip, type) }
@@ -24,8 +26,8 @@ module MixSetting::Type
           value.to_i
         when :decimal
           BigDecimal(value)
-        when :datetime
-          DateTime.parse(value) # TODO DateTime is deprecated in favor of Time
+        when :datetime, :time
+          Time.parse(value)
         when :interval
           ActiveSupport::Duration.build(ChronicDuration.parse(value || '', keep_zero: true))
         when :pathname
