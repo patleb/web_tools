@@ -10,14 +10,14 @@ module RailsAdmin::Main
         respond_to do |format|
           format.json.file do
             json = without_time_zone{ @objects.to_json(@schema) }
-            send_data json, filename: "#{params[:model_name]}_#{DateTime.now.strftime('%Y-%m-%d_%Hh%Mm%S')}.json"
+            send_data json, filename: "#{params[:model_name]}_#{Time.current.strftime('%Y-%m-%d_%Hh%Mm%S')}.json"
           end
           format.json.none { render json: without_time_zone{ @objects.to_json(@schema) } }
 
           # TODO xml doesn't work
           format.xml.file do
             xml = without_time_zone{ @objects.to_xml(@schema) }
-            send_data xml, filename: "#{params[:model_name]}_#{DateTime.now.strftime('%Y-%m-%d_%Hh%Mm%S')}.xml"
+            send_data xml, filename: "#{params[:model_name]}_#{Time.current.strftime('%Y-%m-%d_%Hh%Mm%S')}.xml"
           end
           format.xml.none { render xml: without_time_zone{ @objects.to_xml(@schema) } }
 
@@ -27,7 +27,7 @@ module RailsAdmin::Main
             variant.file do
               send_data csv,
                 type: "text/csv; charset=#{encoding}; #{'header=present' if header}",
-                disposition: "attachment; filename=#{params[:model_name]}_#{DateTime.now.strftime('%Y-%m-%d_%Hh%Mm%S')}.csv"
+                disposition: "attachment; filename=#{params[:model_name]}_#{Time.current.strftime('%Y-%m-%d_%Hh%Mm%S')}.csv"
             end
             variant.none do
               # TODO https://coderwall.com/p/kad56a/streaming-large-data-responses-with-rails

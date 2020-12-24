@@ -133,12 +133,12 @@ module Process
     end
 
     def uptime
-      (Time.current - start_time).ceil(3)
+      (Time.now - start_time).ceil(3)
     end
 
     def cpu_usage
       working = stat.values_at(:utime, :stime, :cutime, :cstime).sum(&:to_i) / host.hertz
-      ((working / (Time.current - start_time)) / host.cpu_count).ceil(6)
+      ((working / (Time.now - start_time)) / host.cpu_count).ceil(6)
     end
 
     def ram_used_mb

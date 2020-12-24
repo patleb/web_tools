@@ -60,11 +60,11 @@ module Process
     end
 
     def boot_time
-      @boot_time ||= Time.current - IO.read("/proc/uptime").split.first.to_f
+      @boot_time ||= Time.now - IO.read("/proc/uptime").split.first.to_f
     end
 
     def uptime
-      (Time.current - boot_time).ceil(3)
+      (Time.now - boot_time).ceil(3)
     end
 
     def cpu_count
