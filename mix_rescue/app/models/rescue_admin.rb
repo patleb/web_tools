@@ -6,10 +6,7 @@ module RescueAdmin
       navigation_label_i18n_key :system
       navigation_weight 999
 
-      configure :message, :code do
-        pretty_value{ value.join }
-      end
-
+      configure :message, :code
       exclude_fields :id
     end
   end
