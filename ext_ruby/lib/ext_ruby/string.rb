@@ -14,7 +14,7 @@ class String
   end
 
   def simplify
-    ActiveSupport::Inflector.transliterate(self, ' ', locale: :en).squish
+    ActiveSupport::Inflector.transliterate(self, ' ', locale: :en).squish.downcase
   end
 
   def dehumanize
