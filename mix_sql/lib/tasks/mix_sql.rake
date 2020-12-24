@@ -1,6 +1,10 @@
 require_rel 'mix_sql'
 
 namespace :db do
+  task :force_environment_set => :environment do
+    Rake::Task['environment:set'].invoke rescue nil
+  end
+
   namespace :pg do
     %w(dump restore truncate).each do |name|
       desc "-- [options] #{name.humanize}"
@@ -35,3 +39,4 @@ namespace :db do
     end
   end
 end
+Rake::Task['db:drop'].enhance ['db:force_environment_set']
