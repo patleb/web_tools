@@ -36,7 +36,7 @@ module Rake
     end
 
     def puts_info(tag, text = nil)
-      puts "[#{Time.current.utc}]#{tag}[#{Process.pid}] #{text}"
+      puts "[#{Time.current.utc}][#{tag.full_underscore.upcase}][#{Process.pid}] #{text}"
     end
   end
 end
