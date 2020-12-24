@@ -8,7 +8,7 @@ class Global < LibRecord
   # }
 
   enum data_type: {
-    text:       0,
+    string:      0,
     json:       10,
     boolean:    20,
     integer:    30,
@@ -45,7 +45,7 @@ class Global < LibRecord
     when Float, BigDecimal       then 'decimal'
     when Date, Time, DateTime    then 'datetime'
     when ActiveSupport::Duration then 'interval'
-    when String, Symbol, nil     then 'text'
+    when String, Symbol, nil     then 'string'
     else                              'serialized'
     end
   end
