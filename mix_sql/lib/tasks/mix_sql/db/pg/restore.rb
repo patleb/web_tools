@@ -92,8 +92,6 @@ module Db
         end
       end
 
-      # TODO https://dba.stackexchange.com/questions/23000/disable-constraints-before-using-pg-restore-exe
-      # PG_OPTIONS='--disable-triggers --data-only' rake db:pg:restore -- --name=dump.pg.gz
       def pg_restore(compress, split)
         only = options.includes.reject(&:blank?)
         with_db_config do |host, db, user, pwd|
