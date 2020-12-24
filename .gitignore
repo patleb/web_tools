@@ -40,6 +40,7 @@ yarn-debug.log*
 .rakeTasks
 /db/structure.sql
 /db/dump*
+/db/*.pg.gz
 /config/secrets.yml
 /app/javascript/gems
 *.json
