@@ -14,7 +14,26 @@ class String
   end
 
   def simplify
-    ActiveSupport::Inflector.transliterate(self, ' ', locale: :en).squish.downcase
+    string = ActiveSupport::Inflector.transliterate(self, ' ', locale: :en)
+    string.gsub! /[^\w\s]+/, ' '
+    string.squish!
+    string.downcase!
+    string
+  end
+
+  def trigrams
+    simplify.split.each_with_object(SortedSet.new) do |word, result|
+      "  #{word} ".chars.each_cons(3).map do |chars|
+        result << chars.join
+      end
+    end
+  end
+
+  def similarity(other)
+    left = trigrams
+    right = other.trigrams
+    return 0.0 if left.empty? && right.empty?
+    (left & right).size / (left | right).size.to_f
   end
 
   def dehumanize
@@ -22,7 +41,7 @@ class String
   end
 
   def slugify
-    parameterize.dasherize.downcase
+    parameterize.dasherize
   end
 
   def full_underscore(separator = '_')
@@ -34,9 +53,10 @@ class String
   end
 
   def squish_numbers(placeholder = '0')
-    gsub(SecureRandom::UUID, placeholder)
-      .gsub(HEXADECIMAL, placeholder)
-      .gsub(DECIMAL, placeholder)
+    string = gsub(SecureRandom::UUID, placeholder)
+    string.gsub!(HEXADECIMAL, placeholder)
+    string.gsub!(DECIMAL, placeholder)
+    string
   end
 
   def escape_regex
