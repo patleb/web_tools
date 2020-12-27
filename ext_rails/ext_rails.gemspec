@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> #{WebTools::RAILS_VERSION::STRING}"
   s.add_dependency 'active_type'
-  s.add_dependency 'activerecord-postgis-adapter'
   s.add_dependency 'arel_extensions'
   # TODO https://github.com/janko/sequel-activerecord_connection
   # TODO https://github.com/GeorgeKaraszi/ActiveRecordExtended
@@ -42,7 +41,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rails-i18n'
   s.add_dependency 'rails_select_on_includes'
   s.add_dependency 'rblineprof'
-  s.add_dependency 'rgeo'
   # s.add_dependency 'sequel-activerecord-adapter'
   # TODO https://github.com/gocardless/statesman
   s.add_dependency 'store_base_sti_class'

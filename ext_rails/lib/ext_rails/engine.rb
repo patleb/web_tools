@@ -34,7 +34,7 @@ module ExtRails
     config.before_configuration do |app|
       require 'ext_rails/rails/application'
       require 'ext_rails/rails/initializable/collection'
-      require 'ext_rails/pycall' if Setting[:postgis_enabled]
+      require 'ext_rails/pycall'
 
       if defined? MixGlobal
         app.config.active_record.cache_versioning = false # TODO doesn't work, must be added to Rails.root/config/application.rb
@@ -73,16 +73,11 @@ module ExtRails
         Rails.autoloaders.main.ignore("#{root}/app/models/concerns/timescaledb")
         Rails.autoloaders.main.ignore("#{root}/app/models/timescaledb")
       end
-
-      unless Setting[:postgis_enabled]
-        Rails.autoloaders.main.ignore("#{root}/app/models/postgis")
-      end
     end
 
     initializer 'ext_rails.append_migrations' do |app|
       append_migrations(app)
       append_migrations(app, scope: 'pgrest') if Setting[:pgrest_enabled]
-      append_migrations(app, scope: 'postgis') if Setting[:postgis_enabled]
       append_migrations(app, scope: 'timescaledb') if Setting[:timescaledb_enabled]
     end
 
@@ -137,14 +132,12 @@ module ExtRails
     end
 
     ActiveSupport.on_load(:active_record) do
-      require 'activerecord-postgis-adapter' if Setting[:postgis_enabled]
       require 'arel_extensions'
       require 'rails_select_on_includes'
       require 'store_base_sti_class'
       require 'ext_rails/active_type'
       require 'ext_rails/active_record/associations/builder/belongs_to/with_global_id'
       require 'ext_rails/active_record/associations/builder/belongs_to/with_list'
-      require 'ext_rails/active_record/connection_adapters/postgis_adapter' if Setting[:postgis_enabled]
       require 'ext_rails/active_record/connection_adapters/postgresql_adapter'
       require 'ext_rails/active_record/base'
       require 'ext_rails/active_record/migration'
