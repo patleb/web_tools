@@ -7,17 +7,18 @@ module Db
 
       def self.args
         {
-          name:     ['--name=NAME',                'Dump file name (default to dump)'],
-          base_dir: ['--base-dir=BASE_DIR',        'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
-          includes: ['--includes=INCLUDES', Array, 'Included tables (only for pg_dump and COPY command)'],
-          excludes: ['--excludes=EXCLUDES', Array, 'Excluded tables (only for pg_dump and COPY command)'],
-          compress: ['--[no-]compress',            'Compress the dump (default to true)'],
-          split:    ['--[no-]split',               'Compress and split the dump'],
-          md5:      ['--[no-]md5',                 'Generate md5 file after successful dump'],
-          physical: ['--[no-]physical',            'Use pg_basebackup instead of pg_dump'],
-          wal:      ['--[no-]wal',                 'Use pg_receivewal with pg_basebackup (default to true)'],
-          csv:      ['--[no-]csv',                 'Use COPY command instead of pg_dump'],
-          where:    ['--where=WHERE',              'WHERE condition for the COPY command'],
+          name:       ['--name=NAME',                'Dump file name (default to dump)'],
+          base_dir:   ['--base-dir=BASE_DIR',        'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
+          includes:   ['--includes=INCLUDES', Array, 'Included tables (only for pg_dump and COPY command)'],
+          excludes:   ['--excludes=EXCLUDES', Array, 'Excluded tables (only for pg_dump and COPY command)'],
+          compress:   ['--[no-]compress',            'Compress the dump (default to true)'],
+          split:      ['--[no-]split',               'Compress and split the dump'],
+          md5:        ['--[no-]md5',                 'Generate md5 file after successful dump'],
+          physical:   ['--[no-]physical',            'Use pg_basebackup instead of pg_dump'],
+          wal:        ['--[no-]wal',                 'Use pg_receivewal with pg_basebackup (default to true)'],
+          csv:        ['--[no-]csv',                 'Use COPY command instead of pg_dump'],
+          where:      ['--where=WHERE',              'WHERE condition for the COPY command'],
+          pg_options: ['--pg_options=PG_OPTIONS',    'Extra options'],
         }
       end
 
@@ -52,7 +53,7 @@ module Db
             when options.compress then "-D- | #{compress_cmd(tar_file)}"
             else "-D #{dump_path}"
             end
-          sh su_postgres "pg_basebackup -v -Xnone -cfast -Ft #{self.class.pg_options} #{output}"
+          sh su_postgres "pg_basebackup -v -Xnone -cfast -Ft #{pg_options} #{output}"
         end
         sh "sudo cp /home/$(id -nu 1000)/#{Sunzistrano::Context::MANIFEST_DIR}/postgresql.log #{dump_path}/manifest.log"
       end
@@ -94,7 +95,7 @@ module Db
             when options.compress then "PROGRAM '#{compress_cmd(file)}'"
             else "'#{file}'"
             end
-          psql! "\\COPY (SELECT * FROM #{table} #{where}) TO #{output} DELIMITER ',' CSV #{self.class.pg_options}"
+          psql! "\\COPY (SELECT * FROM #{table} #{where}) TO #{output} DELIMITER ',' CSV #{pg_options}"
         end
       end
 
@@ -105,7 +106,7 @@ module Db
         with_db_config do |host, db, user, pwd|
           cmd_options = <<-CMD.squish
             --host #{host} --username #{user} --verbose --no-owner --no-acl --clean --format=c --compress=0
-            #{self.class.pg_options}
+            #{pg_options}
             #{only.map{ |table| "--table='#{table}'" }.join(' ')}
             #{skip.map{ |table| "--exclude-table='#{table}'" }.join(' ')}
             #{db}

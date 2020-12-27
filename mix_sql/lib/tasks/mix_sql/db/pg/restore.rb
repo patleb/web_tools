@@ -17,6 +17,7 @@ module Db
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
           timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
           pgrest:      ['--[no-]pgrest',              'Specify if PostgREST API is used for pg_restore'],
+          pg_options:  ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
         }
       end
 
@@ -97,7 +98,7 @@ module Db
         with_db_config do |host, db, user, pwd|
           cmd_options = <<~CMD.squish
             --host #{host} --username #{user} --verbose --no-owner --no-acl
-            #{self.class.pg_options}
+            #{pg_options}
             #{only.map{ |table| "--table='#{table}'" }.join(' ')}
             --dbname #{db}
           CMD

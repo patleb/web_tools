@@ -236,7 +236,9 @@ module ActiveTask
       args = parser.order!(ARGV){}
       parser.parse! args
       validates.each do |arg_name, arg_option|
-        _validates_arg(arg_name, arg_option)
+        Array.wrap(arg_option).each do |option|
+          _validates_arg(arg_name, option)
+        end
       end
       rails_args.each do |arg, value|
         ENV["RAILS_#{arg.to_s.upcase}"] = value
@@ -257,7 +259,7 @@ module ActiveTask
       when :required, :presence
         raise OptionParser::MissingArgument.new(arg_name) if value.blank?
       when :exist, :exists
-        # TODO file.exists?, ...
+        raise ArgumentError, "--#{arg_name.to_s.dasherize} must exist" unless value.blank? || File.exist?(value)
       when Hash
         arg_option.each do |validates, validates_args|
           case validates

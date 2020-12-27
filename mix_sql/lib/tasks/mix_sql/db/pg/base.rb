@@ -8,6 +8,10 @@ module Db
         ENV['PG_OPTIONS']
       end
 
+      def pg_options
+        "#{self.class.pg_options} #{options.pg_options}"
+      end
+
       protected
 
       def with_db_config
