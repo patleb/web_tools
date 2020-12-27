@@ -1,35 +1,71 @@
 module MixGeo
   class CreateIps < ActiveTask::Base
-    GEOLITE2_CSV = 'geolite2-city-ipv4.csv'
-    TMP_GEOLITE2_FOLDER = 'tmp/geolite2-city'
-    TMP_GEOLITE2_CSV = "#{TMP_GEOLITE2_FOLDER}/#{GEOLITE2_CSV}"
-    GIT_GEOLITE2_FOLDER = 'https://raw.githubusercontent.com/sapics/ip-location-db/master/geolite2-city'
-    GEM_GEOLITE2_CSV = Gem.root('ip_location_db').join('geolite2-city', GEOLITE2_CSV).to_s
-    GEM_GEOLITE2_VERSION = Gem.loaded_specs['ip_location_db'].version.to_s
+    class PathWithoutVersion < ::ArgumentError; end
+    class PathInvalid < ::ArgumentError; end
 
-    # TODO fetch from https://github.com/sapics/ip-location-db instead and run as weekly cronjob
+    GEO_TABLES           = ['lib_geo_ips', 'lib_geo_cities', 'lib_geo_states', 'lib_geo_countries']
+    GEOLITE2_CSV         = 'geolite2-city-ipv4.csv'
+    TMP_GEOLITE2_FOLDER  = 'tmp/geolite2'
+    TMP_GEOLITE2_CSV     = "#{TMP_GEOLITE2_FOLDER}/#{GEOLITE2_CSV}"
+    TMP_GEOLITE2_CSV_GZ  = "#{TMP_GEOLITE2_CSV}.gz"
+    TMP_GEOLITE2_PREFIX  = "#{TMP_GEOLITE2_FOLDER}-ipv4-"
+    GIT_GEOLITE2_CSV_GZ  = "https://raw.githubusercontent.com/sapics/ip-location-db/master/geolite2-city/#{GEOLITE2_CSV}.gz"
+    GIT_GEOLITE2_VERSION = "https://raw.githubusercontent.com/sapics/ip-location-db/master/geolite2-city/package.json"
+    GEM_GEOLITE2_CSV     = Gem.root('ip_location_db').join('geolite2-city', GEOLITE2_CSV).to_s
+    GEM_GEOLITE2_CSV_GZ  = "#{GEM_GEOLITE2_CSV}.gz"
+
+    def self.args
+      {
+        remote:  ['--[no-]remote',     'Use the remote CSV from Github'],
+        path:    ['--path=PATH',       'Use the local CSV under the directory specified', :exist],
+        version: ['--version=VERSION', 'The version of the CSV specified by --path (required)']
+      }
+    end
+
     def self.steps
       [
-        # :verify_version,
-        # :remove_old_data
+        :prepare_csv_file,
+        :truncate_tables,
         :create_countries_and_states,
         :extract_csv_and_split,
         :create_cities_and_ips,
+        :save_version
       ]
     end
 
-    def verify_version
-      new_version = Gem::Version.new(JSON.parse(open("#{GIT_GEOLITE2_FOLDER}/package.json"))['version'])
-      old_version = Gem::Version.new((ActiveRecord::InternalMetadata[:geolite2_version] ||= GEM_GEOLITE2_VERSION))
-      if new_version > old_version
-        # Truncate tables
-        mkdir_p TMP_GEOLITE2_FOLDER, verbose: false
-        # IO.copy_stream(open("#{GEOLITE2_GIT_FOLDER}/#{GEOLITE2_CSV}.gz"), "#{TMP_GEOLITE2_FOLDER}/#{GEOLITE2_CSV}.gz")
-        # TODO modify GEOLITE2_CITY to a method or ivar
-        puts_info "VERSION", "New GeoLite2 version [#{new_version}] downloaded in #{TMP_GEOLITE2_FOLDER} folder"
+    def prepare_csv_file
+      mkdir_p TMP_GEOLITE2_FOLDER, verbose: false
+      version_was = Gem::Version.new((ActiveRecord::InternalMetadata[:geolite2_version] || '0.0.0'))
+      if options.remote
+        @version = Gem::Version.new(JSON.parse(open(GIT_GEOLITE2_VERSION))['version'])
+        if @version > version_was
+          IO.copy_stream(open(GIT_GEOLITE2_CSV_GZ), TMP_GEOLITE2_CSV_GZ)
+          puts_info 'VERSION', "New GeoLite2 version [#{@version}] downloaded in #{TMP_GEOLITE2_FOLDER} folder"
+          @csv_file  = TMP_GEOLITE2_CSV
+          @gzip_file = TMP_GEOLITE2_CSV_GZ
+        end
+      elsif options.path.present?
+        raise PathWithoutVersion unless options.version.present?
+        @version = Gem::Version.new(options.version)
+        @csv_file  = "#{options.path}/#{GEOLITE2_CSV}"
+        @gzip_file = "#{@csv_file}.gz"
+        raise PathInvalid unless File.exist? @gzip_file
       else
-        sh 'unpigz', '--keep', "#{GEM_GEOLITE2_CSV}.gz", '-c', TMP_GEOLITE2_FOLDER, verbose: false
+        @version   = Gem.loaded_specs['ip_location_db'].version
+        @csv_file  = GEM_GEOLITE2_CSV
+        @gzip_file = GEM_GEOLITE2_CSV_GZ
       end
+
+      if @version > version_was
+        remove_tmp_files
+      else
+        puts_info 'VERSION', 'GeoLite2 is already up-to-date'
+        cancel!
+      end
+    end
+
+    def truncate_tables
+      Db::Pg::Truncate.new(rake, task, includes: GEO_TABLES).run!
     end
 
     def create_countries_and_states
@@ -50,9 +86,8 @@ module MixGeo
     end
 
     def extract_csv_and_split
-      remove_tmp_files
-      sh 'unpigz', '--keep', "#{GEM_GEOLITE2_CSV}.gz", verbose: false
-      sh 'split', '-l', '100000', '-d', '--additional-suffix', '.csv', GEM_GEOLITE2_CSV, tmp_files_prefix, verbose: false
+      sh 'unpigz', '--keep', @gzip_file, verbose: false
+      sh 'split', '-l', '100000', '-d', '--additional-suffix', '.csv', @csv_file, TMP_GEOLITE2_PREFIX, verbose: false
     end
 
     def create_cities_and_ips
@@ -98,22 +133,22 @@ module MixGeo
         ips.finalize
       end
       GeoIp.insert_all! MixGeo.config.extra_ips
+    end
+
+    def save_version
       remove_tmp_files
+      ActiveRecord::InternalMetadata[:geolite2_version] = @version.to_s
     end
 
     private
 
     def remove_tmp_files
-      sh 'rm', '--force', GEM_GEOLITE2_CSV, verbose: false
+      sh 'rm', '--force', @csv_file, verbose: false
       tmp_files_glob.each{ |file| File.delete(file) }
     end
 
     def tmp_files_glob
-      Dir.glob("#{tmp_files_prefix}*")
-    end
-
-    def tmp_files_prefix
-      "#{TMP_GEOLITE2_FOLDER}-ipv4-"
+      Dir.glob("#{TMP_GEOLITE2_PREFIX}*")
     end
   end
 end
