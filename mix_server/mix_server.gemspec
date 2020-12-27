@@ -20,3 +20,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'user_agent_parser'
 end
+# TODO bring non ext_rails elements like geoserver, pgrest, sunzistrano, etc.
