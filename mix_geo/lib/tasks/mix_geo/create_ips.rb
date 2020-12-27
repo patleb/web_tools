@@ -1,17 +1,5 @@
 module MixGeo
   class CreateIps < ActiveTask::Base
-    SUPPORTED_COUNTRIES = ['US', 'CA']
-    EXTRA_COUNTRIES = [
-      { id: 916, code: 'XA', name: 'Host' },
-      { id: 917, code: 'XB', name: 'Private Network' },
-      { id: 926, code: 'XK', name: 'Kosovo' },
-    ]
-    EXTRA_IPS = [
-      { ip_first: '127.0.0.0',   ip_last: '127.255.255.255', country_code: 'XA', geo_country_id: 916, latitude: 0.0, longitude: 0.0 },
-      { ip_first: '10.0.0.0',    ip_last: '10.255.255.255',  country_code: 'XB', geo_country_id: 917, latitude: 0.0, longitude: 0.0 },
-      { ip_first: '172.16.0.0',  ip_last: '172.31.255.255',  country_code: 'XB', geo_country_id: 917, latitude: 0.0, longitude: 0.0 },
-      { ip_first: '192.168.0.0', ip_last: '192.168.255.255', country_code: 'XB', geo_country_id: 917, latitude: 0.0, longitude: 0.0 },
-    ]
     GEOLITE2_CSV = 'geolite2-city-ipv4.csv'
     TMP_GEOLITE2_FOLDER = 'tmp/geolite2-city'
     TMP_GEOLITE2_CSV = "#{TMP_GEOLITE2_FOLDER}/#{GEOLITE2_CSV}"
@@ -45,7 +33,7 @@ module MixGeo
     end
 
     def create_countries_and_states
-      @countries, states = EXTRA_COUNTRIES.dup, []
+      @countries, states = MixGeo.config.extra_countries.dup, []
       ISO3166::Country.countries.each do |country|
         country_code, country_id = country.alpha2.upcase, country.number
         country.states.each do |code, state|
@@ -53,7 +41,7 @@ module MixGeo
           state_code = [state_code_prefix, state_code].join unless state_code.start_with? state_code_prefix
           state_names = [state.name, Array.wrap(state.unofficial_names), state.translations['en']].flatten.compact.uniq
           states << { code: state_code, names: state_names, country_code: country_code, geo_country_id: country_id }
-        end if country_code.in?(SUPPORTED_COUNTRIES)
+        end if country_code.in?(MixGeo.config.supported_countries)
         @countries << { id: country_id, code: country_code, name: country.name }
       end
       GeoCountry.insert_all! @countries
@@ -83,7 +71,7 @@ module MixGeo
           state_search = [country_code, state_code, state_alt].compact
           state_id = states_ids[state_search]
           state_code = states_codes[state_id]
-          if state_id.nil? && state_search.size > 1 && country_code.in?(SUPPORTED_COUNTRIES)
+          if state_id.nil? && state_search.size > 1 && country_code.in?(MixGeo.config.supported_countries)
             state_record = GeoState.find_by_similarity(*state_search)
             state_id = states_ids[state_search] = state_record.id
             state_code = states_codes[state_id] = state_record.code
@@ -109,7 +97,7 @@ module MixGeo
         end
         ips.finalize
       end
-      GeoIp.insert_all! EXTRA_IPS
+      GeoIp.insert_all! MixGeo.config.extra_ips
       remove_tmp_files
     end
 
