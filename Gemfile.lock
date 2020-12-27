@@ -31,7 +31,6 @@ PATH
       mix_system (= 0.2.0)
       mix_template (= 0.2.0)
       mix_user (= 0.2.0)
-      mix_web (= 0.2.0)
       sunzistrano
 
 PATH
@@ -254,12 +253,6 @@ PATH
       mix_template (= 0.2.0)
       pundit (~> 2.1)
       web-console
-
-PATH
-  remote: mix_web
-  specs:
-    mix_web (0.2.0)
-      ext_ruby (= 0.2.0)
 
 PATH
   remote: sunzistrano
@@ -701,7 +694,6 @@ DEPENDENCIES
   mix_system!
   mix_template!
   mix_user!
-  mix_web!
   ruby-debug-ide
   sunzistrano!
   tzinfo-data
