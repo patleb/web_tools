@@ -27,4 +27,8 @@ module Sh::Network
   def internal_ip
     "hostname -I | awk '{print $NF; exit}'"
   end
+
+  def mac_address
+    "cat /sys/class/net/*/address | head -n1"
+  end
 end
