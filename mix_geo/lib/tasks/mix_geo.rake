@@ -1,7 +1,7 @@
 require_rel 'mix_geo'
 
 namespace :geo do
-  desc 'import geo ips' # takes about 6 minutes on 8 cores or 20 minutes on 1 core
+  desc 'import geo ips' # takes about 2m40s on 8 cores (GeoIp: 279 MB including 110 MB of indexes)
   task :import_ips => :environment do |t|
     MixGeo::CreateIps.new(self, t).run!
   end
