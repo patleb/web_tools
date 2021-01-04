@@ -1,7 +1,5 @@
 class GeoState < LibRecord
   belongs_to :geo_country
-  has_many   :geo_cities
-  has_many   :geo_ips
   has_many   :searches, as: :searchable, dependent: :destroy
 
   def self.find_by_similarity(country, *tokens)
