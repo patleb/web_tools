@@ -1,14 +1,14 @@
 module Throttler
   PREFIX = 'throttler'.freeze
 
-  def self.status(key:, value:, duration: nil)
+  def self.status(key:, value: nil, duration: nil)
     new_value = normalize(value)
     new_time = Time.current
     throttled = false
     old_value = nil
     old_count = nil
 
-    record = Global.write_record([PREFIX, key], expires: false) do |record|
+    record = Global.write_record([PREFIX, key].flatten, expires: false) do |record|
       if record.nil?
         { value: new_value, time: new_time.iso8601, count: 1 }
       else
@@ -49,7 +49,7 @@ module Throttler
     case value
     when Symbol
       value.to_s
-    when String, Array
+    when String, Array, nil
       value
     when Hash
       value.deep_stringify_keys
