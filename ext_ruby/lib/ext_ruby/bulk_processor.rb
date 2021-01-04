@@ -13,13 +13,13 @@ class BulkProcessor < Array
     super()
   end
 
-  def process
+  def process(*args)
     return if size < max_size
-    process!
+    process! *args
   end
 
-  def process!
-    processor.call(self) unless empty?
+  def process!(*args)
+    processor.call(self, *args) unless empty?
     clear
   end
   alias_method :finalize, :process!
