@@ -62,6 +62,7 @@ module ActiveRecord::Base::WithJsonAttribute
     def json_accessor(column, field_types)
       self.json_accessors ||= {}.with_indifferent_access
       self.json_accessors[column] ||= {}.with_indifferent_access
+      field_types = Array.wrap(field_types).map{ |name| [name, :string] }.to_h unless field_types.is_a? Hash
       defaults = field_types.each_with_object({}.with_indifferent_access) do |(name, type), defaults|
         next unless type.is_a?(Array) && (options = type.last).is_a?(Hash) && options.key?(:default)
         defaults[name] = options.delete(:default)
