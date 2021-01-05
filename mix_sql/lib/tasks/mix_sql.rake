@@ -2,7 +2,7 @@ require_rel 'mix_sql'
 
 namespace :db do
   task :force_environment_set => :environment do
-    Rake::Task['environment:set'].invoke rescue nil
+    Rake::Task['db:environment:set'].invoke rescue nil
   end
 
   namespace :pg do
@@ -39,4 +39,4 @@ namespace :db do
     end
   end
 end
-Rake::Task['db:drop'].enhance ['db:force_environment_set']
+Rake::Task['db:drop'].prerequisites.unshift('db:force_environment_set')
