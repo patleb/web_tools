@@ -54,7 +54,7 @@ class Notice # TODO https://github.com/excid3/noticed
       HTML
     end
 
-    if Rescue.enqueue(exception, message)
+    if Log.rescue(exception, message)
       if logger
         Rails.logger.error message
       else

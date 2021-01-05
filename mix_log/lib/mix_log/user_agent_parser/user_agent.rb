@@ -13,7 +13,7 @@ UserAgentParser::UserAgent.class_eval do
     browser[:os] = browser[:os].values_at(:family, :version).compact
     browser[:v] = browser.delete(:version)
     browser[:name] = browser.delete(:family)
-    browser.compact!
+    browser.reject!{ |_, v| v.blank? }
     browser
   end
 end

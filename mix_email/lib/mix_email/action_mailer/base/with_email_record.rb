@@ -1,14 +1,13 @@
 class EmailRecord
   class Interceptor
     def self.delivering_email(message)
-      Email.create_from_header! message
+      Log.email(message)
     end
   end
 
   class Observer
     def self.delivered_email(message)
-      email = Email.find_by_header! message
-      email.update! sent: true
+      Log.email(message, sent: true)
     end
   end
 end

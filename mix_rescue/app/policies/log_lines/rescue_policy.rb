@@ -1,4 +1,4 @@
-class RescuePolicy < ApplicationPolicy
+class LogLines::RescuePolicy < ApplicationPolicy
   def index?
     user.deployer?
   end

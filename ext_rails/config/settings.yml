@@ -48,6 +48,7 @@ test:
   max_pool_size: 2
   server_host: localhost
   server_port: 3000
+  server_provider: localhost
   mail_domain: $ALIAS server
   deployer_password: test
   geoserver_port: $ALIAS geoserver_local_port
@@ -58,6 +59,7 @@ test:
 development:
   server_host: localhost
   server_port: 3000
+  server_provider: localhost
   mail_domain: $ALIAS server
   geoserver_port: $ALIAS geoserver_local_port
   pgrest_port: $ALIAS pgrest_local_port
@@ -67,6 +69,7 @@ development:
 vagrant:
   server_ssl: true
   server_host: vagrant-web.test
+  server_provider: vagrant
   min_instances: 2
   mail_domain: notify.vagrant-web.test
   owner_public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLigqEXHfI0eRaBbWWm9OpiKMPYzNPydaaotNtVso1o/w6w3BS/eVYenn25FxKap6XPXU0l9R//RqwuTxNpW8VDQUVDHM50ipnzkD4O8jheRdrtTbUEQ920iMuXLiy6nZgeiUF5FEu/2WKIHFvFKwQrUIx9SGKgsFNVIADV5BNgT+8XYenkQjZK3BAnb4/TKiLY3vx4/N4I0kobxbLySkRu3Mb1SYgRdtXMAjJ7nqQ6seetB0TH75FbG/qxCqfwuTsqG57dYuJvIbDx41hbpF8uGKnwQeyDdg0OWpcnxSinctddE8fxfEGvfmp/wcb0LuoBC186f4MXCg+U5w2hgsF

@@ -13,15 +13,12 @@ module MixRescue
   class Engine < ::Rails::Engine
     require 'rack/attack'
     require 'mix_global'
+    require 'mix_log'
 
     config.before_initialize do |app|
-      autoload_models_if_admin('Rescue')
+      autoload_models_if_admin('LogLines::Rescue')
 
       app.config.middleware.use Rack::Attack
-    end
-
-    initializer 'mix_rescue.append_migrations' do |app|
-      append_migrations(app)
     end
 
     initializer 'mix_rescue.prepend_routes', before: 'ext_rails.append_routes' do |app|
@@ -30,6 +27,10 @@ module MixRescue
           resources :javascripts, only: [:create]
         end
       end
+    end
+
+    ActiveSupport.on_load(:active_record) do
+      MixLog.config.available_types.merge! 'LogLines::Rescue' => 100
     end
 
     ActiveSupport.on_load(:action_controller, run_once: true) do

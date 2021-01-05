@@ -18,10 +18,10 @@ http {
   # https://www.scalyr.com/community/guides/an-in-depth-guide-to-nginx-metrics
   # https://nginx.org/en/docs/http/ngx_http_core_module.html#variables
   # TODO make 3 log types: filter_log, system_log, assets_log
-  log_format goaccess_log '$remote_addr - $remote_user [$time_local] '
+  log_format mix_server_access_log '$remote_addr - $remote_user [$time_local] '
     '"$request" $status $body_bytes_sent '
     '"$http_referer" "$http_user_agent" '
-    '$upstream_response_time $pipe $request_time - $scheme - $gzip_ratio';
+    '$request_time $pipe - $scheme - $gzip_ratio';
 
   ##
   # Basic Settings
@@ -73,7 +73,7 @@ http {
   # Logging Settings
   ##
 
-  access_log /var/log/nginx/access.log goaccess_log;
+  access_log /var/log/nginx/access.log mix_server_access_log;
   error_log /var/log/nginx/error.log;
 
   ##

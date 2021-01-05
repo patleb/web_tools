@@ -4,10 +4,6 @@ class RescueError < ::StandardError
   delegate :backtrace, to: :@exception
   attr_reader :name, :data
 
-  def self.rescue_class
-    name.delete_suffix('Error').to_const || Rescue
-  end
-
   def initialize(exception, data = nil)
     @exception = exception
     @name = exception.class.name

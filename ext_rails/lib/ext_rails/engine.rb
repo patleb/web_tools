@@ -11,7 +11,6 @@ module ExtRails
     require 'monogamy'
     require 'pg'
     require 'rails-i18n'
-    require 'user_agent_parser'
     if Rails.env.development?
       require 'i18n/debug'
       require 'null_logger'
@@ -31,7 +30,6 @@ module ExtRails
     require 'ext_rails/rails/initializable/initializer'
     require 'ext_rails/rake/dsl'
     require 'ext_rails/sh'
-    require 'ext_rails/user_agent_parser/user_agent'
 
     config.before_configuration do |app|
       require 'ext_rails/rails/application'
@@ -151,8 +149,6 @@ module ExtRails
 
       Rails.backtrace_cleaner.class.send(:remove_const, :APP_DIRS_PATTERN)
       Rails.backtrace_cleaner.class.const_set(:APP_DIRS_PATTERN, /.+/)
-
-      ::USER_AGENT_PARSER = UserAgentParser::Parser.new
     end
 
     config.to_prepare do

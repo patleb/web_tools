@@ -1,4 +1,4 @@
-class EmailPolicy < ApplicationPolicy
+class LogLines::EmailPolicy < ApplicationPolicy
   def index?
     user.deployer?
   end

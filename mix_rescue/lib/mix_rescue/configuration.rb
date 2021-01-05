@@ -4,7 +4,6 @@ module MixRescue
     attr_writer :skip_notice
     attr_writer :throttler_max_duration
     attr_writer :excluded_errors
-    attr_writer :available_types
 
     def rescue_500
       return @rescue_500 if defined? @rescue_500
@@ -20,18 +19,12 @@ module MixRescue
       if @throttler_max_duration.is_a? Proc
         @throttler_max_duration.call
       else
-        @throttler_max_duration ||= 4.hours
+        @throttler_max_duration ||= Float::INFINITY.hours
       end
     end
 
     def excluded_errors
       @excluded_errors ||= Set.new
-    end
-
-    def available_types
-      @available_types ||= {
-        'Rescue' => 0,
-      }
     end
   end
 end

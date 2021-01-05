@@ -1,4 +1,4 @@
-module EmailAdmin
+module LogLines::RescueAdmin
   extend ActiveSupport::Concern
 
   included do
@@ -6,10 +6,7 @@ module EmailAdmin
       navigation_label_i18n_key :system
       navigation_weight 999
 
-      index do
-        sort_by :id
-      end
-
+      configure :message, :code
       exclude_fields :id
     end
   end

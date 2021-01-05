@@ -88,7 +88,7 @@ server {
   # Logging Settings
   ##
 
-  access_log /var/log/nginx/<%= fetch(:deploy_dir) %>.access.log goaccess_log;
+  access_log /var/log/nginx/<%= fetch(:deploy_dir) %>.access.log mix_server_access_log;
   error_log /var/log/nginx/<%= fetch(:deploy_dir) %>.error.log;
 
   # SSL configuration
@@ -107,7 +107,7 @@ server {
     location '<%= location %>' {
       <%= content %>
 
-      access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location.full_underscore %>.access.log goaccess_log;
+      access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location.full_underscore %>.access.log mix_server_access_log;
       error_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location.full_underscore %>.error.log;
     }
   <% end %>
