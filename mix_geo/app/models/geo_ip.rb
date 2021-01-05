@@ -1,8 +1,4 @@
 class GeoIp < LibRecord
-  class InvalidIpFormat < ::StandardError; end
-
-  IP_FORMAT = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/
-
   belongs_to :geo_city, optional: true
 
   alias_attribute :ip, :id
@@ -12,12 +8,11 @@ class GeoIp < LibRecord
   end
 
   def self.select_by_ips(ips)
-    raise InvalidIpFormat unless ips.all?(&:match?.with(IP_FORMAT))
-    connection.exec_query <<-SQL.strip_sql
-      SELECT lib_geo_ips.* FROM UNNEST(ARRAY['#{ips.join("','")}']::INET[]) ips(ip)
+    connection.exec_query(sanitize_sql_array([<<-SQL.strip_sql, ips]))
+      SELECT #{table_name}.* FROM UNNEST(ARRAY[?]::INET[]) ips(ip)
         LEFT JOIN LATERAL (
-          SELECT lib_geo_ips.* FROM lib_geo_ips WHERE id <= ip ORDER BY id DESC LIMIT 1
-        ) lib_geo_ips ON TRUE
+          SELECT #{table_name}.* FROM #{table_name} WHERE id <= ip ORDER BY id DESC LIMIT 1
+        ) #{table_name} ON TRUE
     SQL
   end
 end
