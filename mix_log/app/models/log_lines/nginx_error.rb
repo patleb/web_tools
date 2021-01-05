@@ -63,13 +63,13 @@ module LogLines
       else
         raise IncompatibleLogLine
       end
-      message_hash = Digest.md5_hex(message.squish_numbers.squish!)
+      hash_id = Digest.md5_hex(message.squish_numbers.squish!)
       json_data = {
         level: LEVELS[level],
         pid: pid&.to_i,
       }.compact
 
-      { message: message, message_hash: message_hash, created_at: created_at, json_data: json_data }
+      { created_at: created_at, hash_id: hash_id, message: message, json_data: json_data }
     end
   end
 end

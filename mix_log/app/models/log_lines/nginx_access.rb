@@ -86,12 +86,12 @@ module LogLines
         pipe: pipe == 'p', # called from localhost with http-rb and keep-alive
         gzip: gzip == '-' ? nil : gzip.to_f,
       }.reject{ |_, v| v.blank? }
-      message_hash = json_data.values_at(:method, :path, :params)
-      message_hash[-1] = message_hash.last&.sort_by(&:first)
-      message_hash = message_hash.join(' ').squish_numbers.squish!.presence
-      message_hash = Digest.md5_hex(message_hash) if message_hash
+      hash_id = json_data.values_at(:method, :path, :params)
+      hash_id[-1] = hash_id.last&.sort_by(&:first)
+      hash_id = hash_id.join(' ').squish_numbers.squish!.presence
+      hash_id = Digest.md5_hex(hash_id) if hash_id
 
-      { created_at: created_at, message_hash: message_hash, json_data: json_data }
+      { created_at: created_at, hash_id: hash_id, json_data: json_data }
     end
 
     def self.finalize(*)
