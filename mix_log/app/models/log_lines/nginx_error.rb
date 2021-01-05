@@ -47,7 +47,7 @@ module LogLines
     )
     enum level: LEVELS
 
-    def self.parse(line, **)
+    def self.parse(line)
       if (values = line.match(ERROR))
         created_at, level, pid, message = values.captures
         created_at = Time.strptime("#{created_at} UTC", "%Y/%m/%d %H:%M:%S %z").utc

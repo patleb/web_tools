@@ -40,7 +40,7 @@ module LogLines
       gzip: :float,
     )
 
-    def self.push_all(log_id, lines, *args)
+    def self.push_all(log_id, lines)
       ips = lines.map{ |line| line.dig(:json_data, :ip) }
       GeoIp.select_by_ips(ips).pluck('country_code', 'state_code').each_with_index do |(country, state), i|
         lines[i][:json_data][:country] = country
@@ -52,7 +52,7 @@ module LogLines
     # 142 MB unziped logs (226K rows) -->  167 MB (- 36 MB idx) in 3 minutes
     #   without parameters            -->  122 MB (- 31 MB idx)
     #   without parameters + browser  -->  100 MB (- 28 MB idx)
-    def self.parse(line, geo_ip: false, browser: true, parameters: true, **)
+    def self.parse(line, geo_ip: false, browser: true, parameters: true)
       raise IncompatibleLogLine unless (values = line.match(ACCESS))
 
       ip, user, created_at, request, status, bytes, referer, user_agent, upstream_time, pipe, time, https, gzip = values.captures
@@ -94,7 +94,7 @@ module LogLines
       { created_at: created_at, hash_id: hash_id, json_data: json_data }
     end
 
-    def self.finalize(*)
+    def self.finalize
       @_browsers = nil
     end
 

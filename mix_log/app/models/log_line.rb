@@ -9,19 +9,19 @@ class LogLine < LibRecord
     raise NotImplementedError
   end
 
-  def self.push_all(log_id, lines, *args)
+  def self.push_all(log_id, lines)
     lines.each{ |line| line[:log_id] = log_id }
-    insert_all(lines, *args)
+    insert_all(lines)
   end
 
-  def self.parse(*)
+  def self.parse(line)
     raise NotImplementedError
   end
 
-  def self.finalize(*)
+  def self.finalize
   end
 
-  def self.insert_all(attributes, **options)
+  def self.insert_all(attributes, **)
     attributes.each{ |row| row[:type] = name }
     super
   end

@@ -10,9 +10,7 @@ module MixLog
     end
 
     def self.defaults
-      {
-        parallel: true
-      }
+      { parallel: true }
     end
 
     def extract_logs

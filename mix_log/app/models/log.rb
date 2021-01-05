@@ -38,16 +38,16 @@ class Log < LibRecord
     log_lines_type.to_const!.push(id, *args)
   end
 
-  def push_all(*args)
-    log_lines_type.to_const!.push_all(id, *args)
+  def push_all(lines)
+    log_lines_type.to_const!.push_all(id, lines)
   end
 
-  def parse(*args)
-    log_lines_type.to_const!.parse(*args)
+  def parse(line)
+    log_lines_type.to_const!.parse(line)
   end
 
-  def finalize(*args)
-    log_lines_type.to_const!.finalize(*args)
+  def finalize
+    log_lines_type.to_const!.finalize
   end
 
   def current_file
