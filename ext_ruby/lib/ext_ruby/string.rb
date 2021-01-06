@@ -7,7 +7,7 @@ end
 class String
   OBJECT_INSPECT ||= /(#<)([^>]+)(>)/.freeze
   HEXADECIMAL ||= /0x[0-9a-f]+/i.freeze
-  DECIMAL ||= /[-+]?\d+([.,]\d+)*/.freeze
+  DECIMAL ||= /[-+]?(\d+([.,]\d+)*|infinity)/i.freeze
 
   def html_blank?
     gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank?
