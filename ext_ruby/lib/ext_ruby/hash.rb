@@ -32,4 +32,10 @@ class Hash
   def pretty_json
     JSON.pretty_generate(self, indent: '  ', space: ' ', space_before: '')
   end
+
+  def pretty_hash
+    sort_by(&:first).to_h
+      .deep_transform_keys{ |key| key.is_a?(String) && key.match?(/^\w+$/) ? key.to_sym : key }.to_s
+      .gsub(/:(\w+)=>/, '\1: ')
+  end
 end
