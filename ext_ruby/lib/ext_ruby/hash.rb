@@ -35,7 +35,36 @@ class Hash
 
   def pretty_hash
     sort_by(&:first).to_h
-      .deep_transform_keys{ |key| key.is_a?(String) && key.match?(/^\w+$/) ? key.to_sym : key }.to_s
+      .deep_transform_keys{ |key| _pretty_hash_key(key) }
+      .deep_transform_values{ |value| _pretty_hash_value(value) }
+      .to_s
       .gsub(/:(\w+)=>/, '\1: ')
+  end
+
+  private
+
+  def _pretty_hash_key(key)
+    if key.is_a? String
+      case
+      when key.to_i?                    then key.to_i
+      when key.match?(/^\w+$/)          then key.to_sym
+      else key
+      end
+    else
+      key
+    end
+  end
+
+  def _pretty_hash_value(value)
+    if value.is_a? String
+      case
+      when value.to_f?                    then value.to_f
+      when value.to_i?                    then value.to_i
+      when value.match?(/^(true|false)$/) then value.to_b
+      else value
+      end
+    else
+      value
+    end
   end
 end
