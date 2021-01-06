@@ -52,7 +52,7 @@ class String
     gsub(OBJECT_INSPECT, "#{delimiters[0]}\\2#{delimiters[1]}")
   end
 
-  def squish_numbers(placeholder = '0')
+  def squish_numbers(placeholder = '*')
     string = gsub(SecureRandom::UUID, placeholder)
     string.gsub!(HEXADECIMAL, placeholder)
     string.gsub!(DECIMAL, placeholder)
