@@ -22,10 +22,6 @@ module RailsAdmin
 
     helper_method :main_action, :main_section, :main_fields
 
-    def postgres_exception_to_error?
-      true
-    end
-
     def admin?
       true
     end

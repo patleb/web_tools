@@ -1,6 +1,4 @@
 class Server < LibRecord
-  self.postgres_exception_to_error = false
-
   enum provider: MixServer.config.available_providers
 
   def self.current
