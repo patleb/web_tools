@@ -90,8 +90,6 @@ module MixLog
         MixLog.config.available_paths.map do |path|
           raise AccessDenied unless system("sudo chmod +r #{path}*")
           Log.find_or_create_by! server: Server.current, path: path
-        rescue ActiveRecord::RecordNotUnique
-          retry
         end
       end
     end

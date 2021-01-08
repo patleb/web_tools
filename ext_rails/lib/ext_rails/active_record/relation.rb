@@ -3,6 +3,7 @@ require_rel 'relation'
 # TODO https://github.com/jhollinger/occams-record
 # TODO https://docs.timescale.com/v0.9/using-timescaledb/reading-data#approximate-row-count
 ActiveRecord::Relation.class_eval do
+  prepend self::WithAtomicOperations
   prepend self::WithReturningColumn
 
   def count_estimate

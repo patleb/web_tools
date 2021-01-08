@@ -5,6 +5,10 @@
 module ActiveRecord::Base::WithList
   extend ActiveSupport::Concern
 
+  prepended do
+    self.skip_locking_attributes += ['position', 'parent_id']
+  end
+
   class_methods do
     def has_list
       class_attribute :list_column, instance_writer: false, default: :position

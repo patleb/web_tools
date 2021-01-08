@@ -3,6 +3,8 @@ module ActiveRecord::Base::WithUser
 
   included do
     class_attribute :record_userstamps, default: true
+
+    self.skip_locking_attributes += ['updater_id']
   end
 
   def initialize_dup(other)

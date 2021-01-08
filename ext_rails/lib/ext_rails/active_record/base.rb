@@ -1,9 +1,12 @@
 require_rel 'base'
 
 ActiveRecord::Base.class_eval do
+  cattr_accessor :skip_locking_attributes, instance_writer: false, default: Set.new(['id', 'updated_at'])
+
   extend MemoizedAt
   include ActiveSupport::LazyLoadHooks::Autorun
   include self::WithArel
+  prepend self::WithCreateState
   include self::WithDiscard
   prepend self::WithJsonAttribute
   include self::WithNullifyBlanks
@@ -11,14 +14,6 @@ ActiveRecord::Base.class_eval do
   prepend self::WithList
   include self::WithRescuableValidations
   include self::WithViableModels
-
-  SKIP_LOCKING = Set.new(%w(
-    id
-    updated_at
-    updater_id
-    position
-    parent_id
-  ))
 
   nullify_blanks nullables_only: false
 
@@ -160,22 +155,12 @@ ActiveRecord::Base.class_eval do
     attributes.with_indifferent_access.except!(*methods.flatten)
   end
 
-  def new?
-    # TODO id.nil? or !persisted?
-    @_new
-  end
-
-  def new!
-    @_new = true
-    self
+  def locking_enabled?
+    super && changed.any?{ |attribute| skip_locking_attributes.exclude? attribute }
   end
 
   def destroyed!
     @destroyed = true
     freeze
-  end
-
-  def locking_enabled?
-    super && changed.any?{ |attribute| SKIP_LOCKING.exclude? attribute }
   end
 end
