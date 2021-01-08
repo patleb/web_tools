@@ -1,7 +1,8 @@
 require_rel 'base'
 
 ActiveRecord::Base.class_eval do
-  cattr_accessor :skip_locking_attributes, instance_writer: false, default: Set.new(['id', 'updated_at'])
+  class_attribute :skip_locking_attributes, instance_writer: false, instance_predicate: false,
+    default: Set.new(['id', 'updated_at'])
 
   extend MemoizedAt
   include ActiveSupport::LazyLoadHooks::Autorun

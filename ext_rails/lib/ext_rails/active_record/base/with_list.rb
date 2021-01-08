@@ -6,7 +6,7 @@ module ActiveRecord::Base::WithList
   extend ActiveSupport::Concern
 
   prepended do
-    self.skip_locking_attributes += ['position', 'parent_id']
+    self.skip_locking_attributes += ['position']
   end
 
   class_methods do
