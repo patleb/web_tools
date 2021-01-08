@@ -18,13 +18,8 @@ module Global::RecordStore
         else
           key = normalize_key(name)
           version = normalize_version(name, **options)
-          unless (record = find_by(id: key))
-            begin
-              record = create! options.slice(:expires, :expires_in).merge!(id: key, version: version, data: yield)
-              record.new!
-            rescue ActiveRecord::RecordNotUnique
-              record = find_by!(id: key)
-            end
+          record = find_or_create_by! id: key do |record|
+            record.assign_attributes options.slice(:expires, :expires_in).merge!(id: key, version: version, data: yield)
           end
           if record._sync(version, &proc).destroyed?
             fetch_record(key, version: version, **options, &proc)
