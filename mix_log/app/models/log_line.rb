@@ -26,6 +26,7 @@ class LogLine < LibRecord
     end
     id = insert(line).pluck('id').first
     log_label.log_line_id = id if log_label
+    log_label || id
   end
 
   def self.push_all(log, lines)
