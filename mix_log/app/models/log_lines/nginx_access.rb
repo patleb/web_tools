@@ -22,7 +22,6 @@ module LogLines
       (100...400) => :info,
       404         => :warn, # not found
       406         => :warn, # not acceptable
-      444         => :warn, # discarded
       499         => :warn, # client disconnected
       (400...500) => :error,
       (500...600) => :fatal,
