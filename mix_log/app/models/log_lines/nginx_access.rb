@@ -97,10 +97,10 @@ module LogLines
         pipe: pipe == 'p', # called from localhost with http-rb and keep-alive
         gzip: gzip == '-' ? nil : gzip.to_f,
       }.reject{ |_, v| v.blank? }
-      is_access_log = log.path&.end_with?('/access.log')
+      global_log = log.path&.end_with?('/access.log')
       path = json_data[:path]&.downcase || ''
       path = path.delete_suffix('/') unless path == '/'
-      if is_access_log || status == 404 || path.end_with?('/wp-admin', '/allowurl.txt', '.php')
+      if global_log || status == 404 || path.end_with?('/wp-admin', '/allowurl.txt', '.php')
         method, path, params = nil, '*', nil
       end
       path_tiny = path.match?(ACME_CHALLENGE) ? path.sub(ACME_CHALLENGE, '/\1/*') : squish(path)
@@ -109,7 +109,7 @@ module LogLines
         params = json_data[:params]&.pretty_hash || ''
         params_tiny = squish(params)
       end
-      level = is_access_log ? :info : ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
+      level = global_log ? :info : ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
       label = {
         text_hash: [status, method, path_tiny, params_tiny].present_join(' '),
         text_tiny: [status, method, path_tiny, pjax].present_join(' '),
