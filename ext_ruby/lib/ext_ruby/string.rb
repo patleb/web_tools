@@ -9,6 +9,7 @@ class String
   HEXADECIMAL ||= /0x[0-9a-f]+/i.freeze
   MD5_HEX ||= /[0-9a-f]{32}/i.freeze
   DECIMAL ||= /[-+]?(\d+(\.\d+)*(e[-+]?\d+)?|infinity)/i.freeze
+  UUID ||= /[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}/i.freeze
 
   def html_blank?
     gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank?
@@ -54,7 +55,7 @@ class String
   end
 
   def squish_numbers(placeholder = '*')
-    string = gsub(SecureRandom::UUID, placeholder)
+    string = gsub(UUID, placeholder)
     string.gsub!(HEXADECIMAL, placeholder)
     string.gsub!(MD5_HEX, placeholder)
     string.gsub!(DECIMAL, placeholder)
