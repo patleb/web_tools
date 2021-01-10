@@ -13,7 +13,8 @@ module LogLines
     def self.push(log, message, sent: nil)
       json_data = { mailer: mailer(message), **header(message), sent: sent }
       text = json_data[:subject]
-      label = { text_hash: text, text_tiny: text, text: text, level: :info }
+      text_tiny = squish(text)
+      label = { text_tiny: text_tiny, text: text, level: :info }
       super(log, label: label, json_data: json_data)
     end
 

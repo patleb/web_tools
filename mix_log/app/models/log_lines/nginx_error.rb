@@ -74,7 +74,7 @@ module LogLines
       else
         text_tiny = squish(text)
       end
-      label = { text_hash: text_tiny, text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
+      label = { text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
       json_data = { level: levels[level], pid: pid&.to_i }.compact
 
       { created_at: created_at, label: label, json_data: json_data }
