@@ -1,8 +1,7 @@
 class Log < LibRecord
-  self.postgres_exception_to_error = false
-
   belongs_to :server
   has_many   :log_lines
+  has_many   :log_labels
 
   enum log_lines_type: MixLog.config.available_types
 
@@ -15,8 +14,6 @@ class Log < LibRecord
 
   def self.db_log(db_type)
     (@db_log ||= {})[db_type] ||= find_or_create_by! server: Server.current, log_lines_type: db_type
-  rescue ActiveRecord::RecordNotUnique
-    retry
   end
 
   def self.db_types
@@ -35,15 +32,15 @@ class Log < LibRecord
   end
 
   def push(*args)
-    log_lines_type.to_const!.push(id, *args)
+    log_lines_type.to_const!.push(self, *args)
   end
 
   def push_all(lines)
-    log_lines_type.to_const!.push_all(id, lines)
+    log_lines_type.to_const!.push_all(self, lines)
   end
 
   def parse(line)
-    log_lines_type.to_const!.parse(line)
+    log_lines_type.to_const!.parse(self, line)
   end
 
   def finalize

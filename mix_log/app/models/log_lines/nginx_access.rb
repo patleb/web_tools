@@ -18,6 +18,17 @@ module LogLines
       "(#{HTTP_REFERER})"\s"(#{HTTP_USER_AGENT})"\s
       (#{REQUEST_TIME})\s(#{PIPE})\s(#{REQUEST_TIME}\s)?-\s(#{SCHEME})\s-\s(#{GZIP_RATIO})
     }x
+    ACCESS_LEVELS = {
+      (100...400) => :info,
+      404         => :warn, # not found
+      406         => :warn, # not acceptable
+      444         => :warn, # discarded
+      499         => :warn, # client disconnected
+      (400...500) => :error,
+      (500...600) => :fatal,
+    }
+
+    ACME_CHALLENGE = %r{/(#{::ACME_CHALLENGE})/([\w-]+)}
 
     INVALID_URI = OpenStruct.new(path: nil)
 
@@ -40,7 +51,7 @@ module LogLines
       gzip: :float,
     )
 
-    def self.push_all(log_id, lines)
+    def self.push_all(log, lines)
       ips = lines.map{ |line| line.dig(:json_data, :ip) }
       GeoIp.select_by_ips(ips).pluck('country_code', 'state_code').each_with_index do |(country, state), i|
         lines[i][:json_data][:country] = country
@@ -49,15 +60,16 @@ module LogLines
       super
     end
 
-    # 142 MB unziped logs (226K rows) -->  167 MB (- 36 MB idx) in 3 minutes
+    # 142 MB unziped logs (226K rows) -->  167 MB (- 36 MB idx) in around 3 minutes
     #   without parameters            -->  122 MB (- 31 MB idx)
     #   without parameters + browser  -->  100 MB (- 28 MB idx)
-    def self.parse(line, geo_ip: false, browser: true, parameters: true)
+    def self.parse(log, line, geo_ip: false, browser: true, parameters: true)
       raise IncompatibleLogLine unless (values = line.match(ACCESS))
 
       ip, user, created_at, request, status, bytes, referer, user_agent, upstream_time, pipe, time, https, gzip = values.captures
       geo_ip = geo_ip ? GeoIp.find_by_ip(ip) : nil
       created_at = Time.strptime(created_at, "%d/%b/%Y:%H:%M:%S %z").utc
+      status, bytes = status.to_i, bytes.to_i
       method, path, protocol = request.split(' ')
       method = nil unless path
       method, path, protocol = nil, method, path unless protocol
@@ -77,21 +89,36 @@ module LogLines
         ssl: https == 'https',
         method: method,
         path: uri.path,
-        params: (params&.except(*MixLog.config.filter_parameters) if parameters),
-        status: status.to_i,
-        bytes: bytes.to_i,
+        params: (params&.except(*MixLog.config.filter_parameters)&.reject{ |k,v| k.nil? && v.nil? } if parameters),
+        status: status,
+        bytes: bytes,
         time: time,
         referer: referer,
         browser: (_browsers(user_agent) if browser),
         pipe: pipe == 'p', # called from localhost with http-rb and keep-alive
         gzip: gzip == '-' ? nil : gzip.to_f,
       }.reject{ |_, v| v.blank? }
-      hash_id = json_data.values_at(:method, :path, :params)
-      hash_id[-1] = hash_id.last&.sort_by(&:first)
-      hash_id = hash_id.join(' ').squish_numbers.squish!.presence
-      hash_id = Digest.md5_hex(hash_id) if hash_id
+      is_access_log = log.path&.end_with?('/access.log')
+      path = json_data[:path]&.downcase || ''
+      path = path.delete_suffix('/') unless path == '/'
+      if is_access_log || status == 404 || path.end_with?('/wp-admin', '/allowurl.txt', '.php')
+        method, path, params = nil, '*', nil
+      end
+      path_tiny = path.match?(ACME_CHALLENGE) ? path.sub(ACME_CHALLENGE, '/\1/*') : squish(path)
+      if method
+        pjax = json_data[:params]&.any?{ |k,_| k.start_with? '_pjax' } ? 'pjax' : nil
+        params = json_data[:params]&.pretty_hash || ''
+        params_tiny = squish(params)
+      end
+      level = is_access_log ? :info : ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
+      label = {
+        text_hash: [status, method, path_tiny, params_tiny].present_join(' '),
+        text_tiny: [status, method, path_tiny, pjax].present_join(' '),
+        text: [status, method, path, params].present_join(' '),
+        level: level
+      }
 
-      { created_at: created_at, hash_id: hash_id, json_data: json_data }
+      { created_at: created_at, label: label, json_data: json_data }
     end
 
     def self.finalize

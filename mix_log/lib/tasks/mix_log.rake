@@ -9,7 +9,7 @@ namespace :log do
   desc 'dump log tables' # 3.6 MB
   task :dump_tables => :environment do |t|
     name = "log_#{Log.maximum(:updated_at).utc.iso8601.tr('-T:Z', '')}"
-    Db::Pg::Dump.new(self, t, name: name, includes: ['lib_logs', 'lib_log_lines']).run!
+    Db::Pg::Dump.new(self, t, name: name, includes: ['lib_logs', 'lib_log_labels', 'lib_log_lines']).run!
   end
 
   desc 'restore log tables'
