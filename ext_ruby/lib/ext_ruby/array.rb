@@ -1,4 +1,8 @@
 class Array
+  def present_join(separator=$,)
+    reject(&:blank?).join(separator)
+  end
+
   def except(*values)
     self - values
   end
