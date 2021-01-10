@@ -88,7 +88,7 @@ module LogLines
         ssl: https == 'https',
         method: method,
         path: uri.path,
-        params: (params&.except(*MixLog.config.filter_parameters)&.reject{ |k,v| k.nil? && v.nil? } if parameters),
+        params: (params&.except(*MixLog.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if parameters),
         status: status,
         bytes: bytes,
         time: time,
@@ -105,7 +105,7 @@ module LogLines
       end
       path_tiny = path.match?(ACME_CHALLENGE) ? path.sub(ACME_CHALLENGE, '/\1/*') : squish(path)
       if method
-        pjax = json_data[:params]&.any?{ |k,_| k.start_with? '_pjax' } ? 'pjax' : nil
+        pjax = json_data[:params]&.any?{ |k, _| k.start_with? '_pjax' } ? 'pjax' : nil
         params = json_data[:params]&.pretty_hash || ''
         params_tiny = squish(params)
       end
