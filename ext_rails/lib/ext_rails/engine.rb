@@ -147,6 +147,7 @@ module ExtRails
       require 'ext_rails/active_record/type/json/with_indifferent_access'
       require 'ext_rails/active_record/type/encrypted'
 
+      ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables = Rails.env.test?
       Rails.backtrace_cleaner.class.send(:remove_const, :APP_DIRS_PATTERN)
       Rails.backtrace_cleaner.class.const_set(:APP_DIRS_PATTERN, /.+/)
     end
