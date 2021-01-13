@@ -166,5 +166,5 @@ server {
 <% end %>
 
 <% if fetch(:nginx_rails) %>
-  passenger_pre_start http://<%= fetch(:server) %>;
+  passenger_pre_start http<%= 's' unless fetch(:nginx_skip_ssl) %>://<%= fetch(:server) %>;
 <% end %>
