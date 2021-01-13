@@ -58,7 +58,7 @@ module MixLog
       @known_errors ||= HashWithIndifferentAccess.new(
         warn: [
           'SSL routines:tls_early_post_process_client_hello:version too low',
-          'SSL routines:tls_early_post_process_client_hello:unsupported protocol'
+          'SSL routines:tls_early_post_process_client_hello:unsupported protocol',
         ],
         info: [
           '[passenger_native_support.so] trying to compile for the current user',
@@ -68,7 +68,6 @@ module MixLog
           '[passenger_native_support.so] successfully loaded',
           'details saved to: /tmp/passenger-error-',
           /^ID: \w+$/,
-          'Security update check failed: server temporarily unavailable, try again later (next check in 24 hours)',
         ]
       )
     end
