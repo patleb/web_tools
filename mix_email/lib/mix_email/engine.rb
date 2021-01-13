@@ -24,7 +24,7 @@ module MixEmail
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixLog.config.available_types.merge! 'LogLines::Email' => 110
+      MixLog.config.available_types['LogLines::Email'] = 110
     end
 
     ActiveSupport.on_load(:action_mailer) do

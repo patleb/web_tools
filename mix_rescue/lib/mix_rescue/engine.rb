@@ -30,7 +30,7 @@ module MixRescue
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixLog.config.available_types.merge! 'LogLines::Rescue' => 100
+      MixLog.config.available_types['LogLines::Rescue'] = 100
     end
 
     ActiveSupport.on_load(:action_controller, run_once: true) do
