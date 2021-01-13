@@ -27,8 +27,6 @@ module LogLines
       (500...600) => :fatal,
     }
 
-    ACME_CHALLENGE = %r{/(#{::ACME_CHALLENGE})/([\w-]+)}
-
     INVALID_URI = OpenStruct.new(path: nil)
 
     json_attribute(
@@ -50,23 +48,13 @@ module LogLines
       gzip: :float,
     )
 
-    def self.push_all(log, lines)
-      ips = lines.map{ |line| line.dig(:json_data, :ip) }
-      GeoIp.select_by_ips(ips).pluck('country_code', 'state_code').each_with_index do |(country, state), i|
-        lines[i][:json_data][:country] = country
-        lines[i][:json_data][:state] = state if state
-      end
-      super
-    end
-
     # 142 MB unziped logs (226K rows) -->  167 MB (- 36 MB idx) in around 3 minutes
     #   without parameters            -->  122 MB (- 31 MB idx)
     #   without parameters + browser  -->  100 MB (- 28 MB idx)
-    def self.parse(log, line, geo_ip: false, browser: true, parameters: true)
+    def self.parse(log, line, browser: true, parameters: true)
       raise IncompatibleLogLine unless (values = line.match(ACCESS))
 
       ip, user, created_at, request, status, bytes, referer, user_agent, upstream_time, pipe, time, https, gzip = values.captures
-      geo_ip = geo_ip ? GeoIp.find_by_ip(ip) : nil
       created_at = Time.strptime(created_at, "%d/%b/%Y:%H:%M:%S %z").utc
       status, bytes = status.to_i, bytes.to_i
       method, path, protocol = request.split(' ')
@@ -81,8 +69,6 @@ module LogLines
       time ||= upstream_time == '-' ? nil : upstream_time.to_f
       json_data = {
         ip: ip,
-        country: geo_ip&.country_code,
-        state: geo_ip&.state_code,
         user: user == '-' ? nil : user,
         http: http == 0.0 ? nil : http,
         ssl: https == 'https',
@@ -103,7 +89,12 @@ module LogLines
       if global_log || status == 404 || path.end_with?('/wp-admin', '/allowurl.txt', '.php')
         method, path, params = nil, '*', nil
       end
-      path_tiny = path.match?(ACME_CHALLENGE) ? path.sub(ACME_CHALLENGE, '/\1/*') : squish(path)
+      regex, replacement = MixLog.config.ided_paths.find{ |regex, _replacement| path.match? regex }
+      if regex
+        path_tiny = squish(path.gsub(regex, replacement))
+      else
+        path_tiny = squish(path)
+      end
       if method
         pjax = json_data[:params]&.any?{ |k, _| k.start_with? '_pjax' } ? 'pjax' : nil
         params = json_data[:params]&.pretty_hash || ''

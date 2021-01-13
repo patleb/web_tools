@@ -17,5 +17,9 @@ module MixCredential
         get "/#{ACME_CHALLENGE}/:token" => 'credentials#show', type: 'Credentials::LetsEncrypt'
       end
     end
+
+    ActiveSupport.on_load(:active_record) do
+      MixLog.config.ided_paths[%r{/(#{ACME_CHALLENGE})/([\w-]+)}] = '/\1/*'
+    end
   end
 end

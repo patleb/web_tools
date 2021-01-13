@@ -21,9 +21,20 @@ module MixGeo
       require 'activerecord-postgis-adapter' if Setting[:postgis_enabled]
       require 'mix_geo/active_record/connection_adapters/postgis_adapter' if Setting[:postgis_enabled]
 
-      MixSearch.config.available_types.merge!(
-        'GeoState' => 10
+      MixLog.config.filter_parameters += %w(
+        CRS
+        SRS
+        TILED
+        STYLES
+        TRANSPARENT
+        REQUEST
+        SERVICE
+        VERSION
+        FORMAT
+        FORMAT_OPTIONS
+        HEIGHT
       )
+      MixSearch.config.available_types['GeoState'] = 10
     end
   end
 end

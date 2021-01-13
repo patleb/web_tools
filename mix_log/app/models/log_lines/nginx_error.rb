@@ -39,14 +39,6 @@ module LogLines
       'App'   => 'ruby',
     }
 
-    IDED_TEXTS = [
-      %r{(SSL_do_handshake\(\) failed \(SSL: error:)(\w+)},
-      %r{(ID: )(\w+)},
-      %r{(details saved to: /tmp/passenger-error-)(\w+)},
-      %r{(Cannot checkout session because a spawning error occurred\. The identifier of the error is )(\w+)},
-      %r{(/tmp/passenger_native_support-)(\w+)},
-    ]
-
     json_attribute(
       level: :integer,
       pid: :integer,
@@ -69,11 +61,16 @@ module LogLines
       else
         raise IncompatibleLogLine
       end
-      if (regex = IDED_TEXTS.find{ |regex| text.match? regex })
-        text_tiny = squish(text.sub(regex, '\1*'))
+      regex, replacement = MixLog.config.ided_errors.find{ |regex, _replacement| text.match? regex }
+      if regex
+        text_tiny = squish(text.gsub(regex, replacement))
       else
         text_tiny = squish(text)
       end
+      known_level, _ = MixLog.config.known_errors.find do |_level, errors|
+        errors.find{ |e| e.is_a?(Regexp) ? text.match?(e) : text.include?(e) }
+      end
+      level = known_level || level
       label = { text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
       json_data = { level: levels[level], pid: pid&.to_i }.compact
 
