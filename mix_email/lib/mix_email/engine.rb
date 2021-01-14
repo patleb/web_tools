@@ -1,5 +1,4 @@
 require 'ext_rails'
-require 'mix_email/configuration'
 
 module MixEmail
   class Engine < ::Rails::Engine
