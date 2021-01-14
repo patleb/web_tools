@@ -18,7 +18,7 @@ class LogLine < LibRecord
     log_label = nil
     with_label(line.delete(:label)) do |text_hash, text_tiny, text, level|
       log_label = LogLabel.find_or_create_by! log_id: log_id, level: level, text_hash: text_hash do |record|
-        record..assign_attributes(text_tiny: text_tiny, text: text, log_lines_type: name)
+        record.assign_attributes(text_tiny: text_tiny, text: text, log_lines_type: name)
       end
       line[:log_label_id] = log_label.id
     end
