@@ -21,6 +21,13 @@ class Module
       self
     end
 
+    define_singleton_method :with do |&block|
+      old_config = config.deep_dup
+      block.call(config)
+    ensure
+      class_variable_set(:@@config, old_config)
+    end
+
     const_set :Configuration, Class.new(&configuration)
   end
 end
