@@ -20,10 +20,18 @@ module ActiveRecord::Base::WithJsonAttribute
   prepended do
     class_attribute :json_accessors, instance_accessor: false, instance_predicate: false
 
-    delegate :json_attribute?, :json_key, to: :class
+    delegate :json_attribute?, to: :class
   end
 
   class_methods do
+    def where_json(attributes, operator: '=')
+      types = json_accessors[:json_data].slice(*attributes.keys)
+      scopes = attributes.with_indifferent_access.slice(*types.keys).each_with_object([]) do |(name, value), result|
+        result << where(json_key(name, operator), value)
+      end
+      scopes.reduce(&:merge)
+    end
+
     def json_attribute(field_types)
       json_accessor(:json_data, field_types)
     end
