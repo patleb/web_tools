@@ -17,9 +17,7 @@ module MixEmail
       autoload_models_if_admin('LogLines::Email')
 
       if Rails.env.dev_or_test?
-        Rails::Initializable::Initializer.exclude_initializers.merge!(
-          'EmailPrefixer::Railtie' => 'email_prefixer.configure_defaults'
-        )
+        Rails::Initializable::Initializer.exclude_initializers['EmailPrefixer::Railtie'] = 'email_prefixer.configure_defaults'
       end
     end
 

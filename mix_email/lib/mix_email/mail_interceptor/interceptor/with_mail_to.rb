@@ -17,5 +17,6 @@ module MailInterceptor::Interceptor::WithMailTo
 end
 
 MailInterceptor::Interceptor.prepend MailInterceptor::Interceptor::WithMailTo
-
-ActionMailer::Base.register_interceptor(MailInterceptor::Interceptor.new)
+interceptor = MailInterceptor::Interceptor.new
+ActionMailer::Base.register_interceptor(interceptor)
+ActionMailer::Base.register_preview_interceptor(interceptor)
