@@ -82,7 +82,7 @@ module LogLines
         browser: (_browsers(user_agent) if browser),
         pipe: pipe == 'p', # called from localhost with http-rb and keep-alive
         gzip: gzip == '-' ? nil : gzip.to_f,
-      }.reject{ |_, v| v.blank? }
+      }
       global_log = log.path&.end_with?('/access.log')
       path = json_data[:path]&.downcase || ''
       path = path.delete_suffix('/') unless path == '/'

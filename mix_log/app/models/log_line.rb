@@ -13,6 +13,7 @@ class LogLine < LibRecord
 
   def self.push(log, line)
     line[:log_id] = log_id = log.id
+    line[:json_data].reject!{ |_, v| v.blank? }
     log_label = nil
     with_label(line.delete(:label)) do |text_hash, text_tiny, text, level|
       log_label = LogLabel.find_or_create_by! log_id: log_id, level: level, text_hash: text_hash do |record|
@@ -29,6 +30,7 @@ class LogLine < LibRecord
     log_id = log.id
     lines.each do |line|
       line[:log_id] = log_id
+      line[:json_data].reject!{ |_, v| v.blank? }
       line[:log_label_id] = nil
     end
     texts = lines.each_with_object([]).with_index do |(line, result), i|

@@ -11,7 +11,7 @@ module LogLines
     )
 
     def self.push(log, message, sent: nil)
-      json_data = { mailer: mailer(message), **header(message), sent: sent }.reject{ |_, v| v.blank? }
+      json_data = { mailer: mailer(message), **header(message), sent: sent }
       text = json_data[:subject]
       label = { text_tiny: squish(text), text: text, level: :info }
       super(log, label: label, json_data: json_data)

@@ -72,7 +72,7 @@ module LogLines
       end
       level = known_level || level
       label = { text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
-      json_data = { level: levels[level], pid: pid&.to_i }.compact
+      json_data = { level: levels[level], pid: pid&.to_i }
 
       { created_at: created_at, label: label, json_data: json_data }
     end
