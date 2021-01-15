@@ -1,18 +1,14 @@
 module ActionController::WithLogger
-  REQUEST_CONTEXT ||= %i(remote_ip method original_url content_type).freeze
+  REQUEST_CONTEXT ||= %i(remote_ip method path content_type).freeze
   IGNORED_PARAMS ||= %w(controller action format).freeze
 
   def log(exception, subject: nil)
     return if Current.error_logged
 
     Current.error_logged = true
-    unless exception.is_a? RescueError
-      exception = Rescues::RailsError.new(exception, log_context)
-    end
+    exception = Rescues::RailsError.new(exception, data: log_context) unless exception.is_a? RescueError
 
-    message = Notice.deliver! exception, subject: subject, logger: true
-    yield message if block_given?
-    message
+    Notice.deliver! exception, subject: subject
   end
 
   protected

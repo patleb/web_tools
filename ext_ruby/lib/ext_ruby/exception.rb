@@ -5,7 +5,6 @@ class Exception
     puts e.backtrace_log
   end
 
-  # TODO 2.6 Exception#full_message
   def backtrace_log(n = 20)
     log = ["[#{self.class}]"]
     log << message if message != self.class.to_s

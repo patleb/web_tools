@@ -1,22 +1,17 @@
 module LogLines
   class Rescue < LogLine
-    THROTTLER_KEY_PREFIX = 'log_lines_rescue'
+    json_attribute(
+      error: :string,
+      exception: :string,
+      data: :json,
+    )
 
-    json_attribute :exception
-
-    def self.push(log_id, exception, message = nil, throttle: true)
-      exception = RescueError.new(exception) unless exception.is_a? RescueError
-      message ||= exception.message
-      exception = exception.name
-      hash_id = Digest.md5_hex(exception, message.squish_numbers.squish!)
-
-      insert log_id: log_id, hash_id: hash_id, message: message, json_data: { exception: exception }
-
-      if throttle
-        !Throttler.status(key: [THROTTLER_KEY_PREFIX, hash_id])[:throttled]
-      else
-        true
-      end
+    def self.push(log, exception, data: nil)
+      exception = RescueError.new(exception, data: data) unless exception.is_a? RescueError
+      text = exception.backtrace_log
+      json_data = { error: exception.class.name, exception: exception.name, data: exception.data }
+      label = { text_tiny: squish(text), text: text, level: :error }
+      super(log, label: label, json_data: json_data)
     end
   end
 end

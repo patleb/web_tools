@@ -24,8 +24,7 @@ module Rake::Task::WithOutput
         rescue Exception => exception
           unless Thread.current[:rake_error]
             Thread.current[:rake_error] = true
-            data = { name => args&.to_h, host: Process.host.snapshot }
-            Notice.deliver! Rescues::RakeError.new(exception, data), subject: name
+            Notice.deliver! Rescues::RakeError.new(exception, data: { task: name, args: args&.to_h }), subject: name
           end
           raise
         ensure

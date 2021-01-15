@@ -11,8 +11,6 @@ class LogLine < LibRecord
     type
   )
 
-  # TODO send notification from here instead with monitor level check and if already alerted
-  # TODO if in dev/test mode, output into the logs as well
   def self.push(log, line)
     line[:log_id] = log_id = log.id
     log_label = nil

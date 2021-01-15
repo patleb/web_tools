@@ -4,21 +4,18 @@ class RescueError < ::StandardError
   delegate :backtrace, to: :@exception
   attr_reader :name, :data
 
-  def initialize(exception, data = nil)
+  def initialize(exception = self, data: nil)
     @exception = exception
     @name = exception.class.name
     @data = data || {}
+    @message = exception.message if exception.message != @name
   end
 
   def message
     <<~EOF.strip
       #{RESCUE}[#{name}]
       #{data.pretty_json}
-      #{before_backtrace}
+      #{@message}
     EOF
-  end
-
-  def before_backtrace
-    @exception.message
   end
 end
