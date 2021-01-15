@@ -1,9 +1,8 @@
 require './test/rails_helper'
 
 class MainMailerTest < ActionMailer::TestCase
-  let(:subject){ 'Healthcheck' }
-
   it 'should send healthcheck email and log events' do
+    subject = 'Healthcheck'
     email = MainMailer.healthcheck
     assert_emails(1){ email.deliver_now }
     assert_equal [Setting[:mail_from]], email.from
