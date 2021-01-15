@@ -19,11 +19,6 @@ module ActionController::WithLogger
       params: request.filtered_parameters.except(*IGNORED_PARAMS, controller_name.singularize),
       headers: request.headers.env.select{ |header| header =~ /^HTTP_/ },
       session: session.try(:to_hash) || {},
-      host: Process.host.snapshot,
-    }.merge!(Process.worker.self_and_siblings.each_with_object({}).with_index{ |(worker, memo), i|
-      if !Rails.env.dev_or_test? || (Rails.env.dev_or_test? && worker.name == 'ruby') # Rubymine
-        memo[:"worker_#{i}"] = worker.snapshot
-      end
-    })
+    }
   end
 end
