@@ -1,4 +1,3 @@
-# TODO https://www.ecalamia.com/blog/show-ip-api-nginx/
 module Rescues
   class JavascriptsController < ActionController::API
     include ActionController::RequestForgeryProtection

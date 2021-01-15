@@ -65,7 +65,7 @@ class LogLine < LibRecord
   def self.with_label(label)
     return unless label && (label = label.values_at(:text_hash, :text_tiny, :text, :level)).last(2).all?(&:present?)
     text_hash, text_tiny, text, level = label
-    text_tiny ||= text
+    text_tiny ||= squish(text)
     text_hash ||= text_tiny
     yield Digest.md5_hex(text_hash), text_tiny[0...256], text, LogLabel.levels[level]
   end
