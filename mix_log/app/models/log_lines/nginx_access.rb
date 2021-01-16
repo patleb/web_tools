@@ -51,7 +51,7 @@ module LogLines
     # 142 MB unziped logs (226K rows) -->  167 MB (- 36 MB idx) in around 3 minutes
     #   without parameters            -->  122 MB (- 31 MB idx)
     #   without parameters + browser  -->  100 MB (- 28 MB idx)
-    def self.parse(log, line, browser: true, parameters: true)
+    def self.parse(log, line, browser: true, parameters: true, **)
       raise IncompatibleLogLine unless (values = line.match(ACCESS))
 
       ip, user, created_at, request, status, bytes, referer, user_agent, upstream_time, pipe, time, https, gzip = values.captures

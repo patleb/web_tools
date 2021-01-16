@@ -1,5 +1,5 @@
 module MixLog
-  class ExtractLogs < ActiveTask::Base
+  class Extract < ActiveTask::Base
     class AccessDenied < ::StandardError; end
 
     def self.args
@@ -13,7 +13,7 @@ module MixLog
       { parallel: true }
     end
 
-    def extract_logs
+    def extract
       block = proc do |log|
         if options.current
           next if (file = log.current_file).mtime.to_i > log.last_line_at.to_i
@@ -41,13 +41,13 @@ module MixLog
         IO.popen("unpigz -c #{path}", 'rb') do |io|
           until io.eof?
             next if (line = io.gets).blank?
-            last_created_at, last_line_i = process_line(log, line, lines, last_created_at, last_line_i)
+            last_created_at, last_line_i = process_line(log, line, lines, last_created_at, last_line_i, last_line_at)
           end
         end
       else
         File.foreach(path, chomp: true) do |line|
           next if line.blank?
-          last_created_at, last_line_i = process_line(log, line, lines, last_created_at, last_line_i)
+          last_created_at, last_line_i = process_line(log, line, lines, last_created_at, last_line_i, last_line_at)
         end
       end
       lines.finalize(last_line_i)
@@ -59,13 +59,14 @@ module MixLog
       end
     end
 
-    def process_line(log, line, lines, last_created_at, last_line_i)
+    def process_line(log, line, lines, last_created_at, last_line_i, last_line_at)
       if last_line_i < log.last_line_i
         last_line_i += 1
       else
-        lines << log.parse(line) # line.force_encoding('utf-8')
-        lines.last[:created_at] = last_created_at = normalize_timestamp(lines.last[:created_at], last_created_at)
+        lines << (line = log.parse(line, mtime: last_line_at)) # line.force_encoding('utf-8')
+        line[:created_at] = last_created_at = normalize_timestamp(line[:created_at], last_created_at)
         last_line_i += 1
+        lines.pop if line[:filtered]
         lines.process(last_line_i)
       end
       [last_created_at, last_line_i]

@@ -11,6 +11,7 @@ module MixLog
       @available_types ||= { # is it necessary... or only nginx and auth is useful
         'LogLines::NginxAccess' => 10,
         'LogLines::NginxError'  => 20,
+        'LogLines::Syslog' => 30,
         # auth: 0, # ssh access, or sudo last, lastlog (binary) wtmp (binary)
         # kern: 0, # reboot, crash, etc.
         # syslog: 0, # timestamp|host|program[pid]|text

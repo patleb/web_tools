@@ -51,7 +51,7 @@ class LogLine < LibRecord
     insert_all(lines)
   end
 
-  def self.parse(log, line)
+  def self.parse(log, line, **)
     raise NotImplementedError
   end
 

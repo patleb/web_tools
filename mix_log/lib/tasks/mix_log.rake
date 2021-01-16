@@ -3,7 +3,7 @@ require_rel 'mix_log'
 namespace :log do
   desc 'extract server logs'
   task :extract => :environment do |t|
-    MixLog::ExtractLogs.new(self, t).run!
+    MixLog::Extract.new(self, t).run!
   end
 
   desc 'dump log tables' # 3.6 MB
