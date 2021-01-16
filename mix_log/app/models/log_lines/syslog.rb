@@ -16,7 +16,7 @@ module LogLines
 
       created_at, program, pid, message = values.captures
       created_at = Time.strptime("#{mtime.year} #{created_at} UTC", "%Y %b %e %H:%M:%S %z").utc
-      created_at = created_at.change(year: mtime.year - 1) if created_at.month == 12 && mtime.month == 1
+      created_at = created_at.change(year: mtime.year - 1) if created_at.month == 12 && mtime.month < 12
       return { created_at: created_at, filtered: true } unless program == 'CRON'
 
       raise IncompatibleLogLine unless (values = message.match(CRON))
