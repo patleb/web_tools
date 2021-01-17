@@ -19,7 +19,7 @@ http {
   # https://nginx.org/en/docs/http/ngx_http_core_module.html#variables
   # TODO make 3 log types: filter_log, system_log, assets_log
   log_format mix_server_access_log '$remote_addr - $remote_user [$time_local] '
-    '"$request" $status $body_bytes_sent '
+    '"$request" $status $bytes_sent '
     '"$http_referer" "$http_user_agent" '
     '$request_time $pipe - $scheme - $gzip_ratio';
 

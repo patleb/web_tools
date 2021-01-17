@@ -1,11 +1,11 @@
 module LogLines
   class NginxAccess < LogLine
-    REMOTE_ADDR     = /\d{1,3}(?:\.\d{1,3}){3}/
+    REMOTE_ADDR     = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}/
     REMOTE_USER     = /[-\w]+/
     TIME_LOCAL      = %r{\d{1,2}/\w{3}/\d{4}(?::\d{2}){3} [+-]\d{4}}
     REQUEST         = /[^"]*/
     STATUS          = /\d{3}/
-    BODY_BYTES_SENT = /\d+/
+    BYTES_SENT      = /\d+/
     HTTP_REFERER    = /[^"]+/
     HTTP_USER_AGENT = /[^"]+/
     PIPE            = /[p.]/
@@ -14,7 +14,7 @@ module LogLines
     GZIP_RATIO      = /[-\d.]+/
     ACCESS = %r{
       (#{REMOTE_ADDR})\s-\s(#{REMOTE_USER})\s\[(#{TIME_LOCAL})\]\s
-      "(#{REQUEST})"\s(#{STATUS})\s(#{BODY_BYTES_SENT})\s
+      "(#{REQUEST})"\s(#{STATUS})\s(#{BYTES_SENT})\s
       "(#{HTTP_REFERER})"\s"(#{HTTP_USER_AGENT})"\s
       (#{REQUEST_TIME})\s(#{PIPE})\s(#{REQUEST_TIME}\s)?-\s(#{SCHEME})\s-\s(#{GZIP_RATIO})
     }x
