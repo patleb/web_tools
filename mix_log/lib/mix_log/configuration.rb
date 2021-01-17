@@ -11,11 +11,8 @@ module MixLog
       @available_types ||= { # is it necessary... or only nginx and auth is useful
         'LogLines::NginxAccess' => 10,
         'LogLines::NginxError'  => 20,
-        'LogLines::Syslog' => 30,
-        # auth: 0, # ssh access, or sudo last, lastlog (binary) wtmp (binary)
-        # kern: 0, # reboot, crash, etc.
-        # syslog: 0, # timestamp|host|program[pid]|text
-        # ufw
+        'LogLines::Syslog'      => 30,
+        'LogLines::Auth'        => 40,
         # fail2ban: 0,
         #
         # monit: 0, --> keep monit, just improve the integration (it's not worth it to rewrite in Ruby)
@@ -32,8 +29,11 @@ module MixLog
 
     def available_paths
       @available_paths ||= [
+        log_path(:nginx, :access),
+        log_path(:nginx, :error),
         nginx_log_path(:access),
         nginx_log_path(:error),
+        log_path(:syslog),
       ]
     end
 
@@ -73,16 +73,25 @@ module MixLog
       )
     end
 
-    def nginx_log_path(type, location = nil)
-      log_path("nginx/#{deploy_dir}#{"_#{location.full_underscore}" if location}.#{type}")
+    def nginx_log_path(*type, name)
+      type = type.first
+      name = "#{deploy_dir}#{"_#{type.full_underscore}" if type}.#{name}"
+      log_path(:nginx, name)
     end
 
-    def log_path(type)
-      "#{base_dir}/#{type}.log"
+    def log_path(*dirs, name)
+      name = name.to_s.end_with?('log') ? name : "#{name}.log"
+      path = [base_dir].concat(dirs) << name
+      path.join('/')
     end
 
     def base_dir
-      @base_dir ||= Rails.env.dev_or_test? ? 'tmp/log' : '/var/log'
+      @base_dir ||=
+        case Rails.env.to_sym
+        when :test        then Gem.root('mix_log').join('test/fixtures/files/log').to_s
+        when :development then 'tmp/log'
+        else                   '/var/log'
+        end
     end
 
     def deploy_dir
