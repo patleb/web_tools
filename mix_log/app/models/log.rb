@@ -1,5 +1,5 @@
 class Log < LibRecord
-  FS_TYPE = %r{(\w+)/(?:\w+\.)?(?:(\w+)\.log|(\w+log))}
+  FS_TYPE = %r{(\w+)/(?:\w+\.)?(?:(\w+)\.log|(\w+log))$}
 
   belongs_to :server
   has_many   :log_lines
