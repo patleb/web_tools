@@ -13,7 +13,7 @@ module MixLog
         'LogLines::NginxError'  => 20,
         'LogLines::Syslog'      => 30,
         'LogLines::Auth'        => 40,
-        # fail2ban: 0,
+        'LogLines::Fail2ban'    => 50,
         #
         # monit: 0, --> keep monit, just improve the integration (it's not worth it to rewrite in Ruby)
         # sysstat: 0, --> needs sysstat installed in dev (actually, might be worth it to rewrite in Ruby and reuse like monit)
@@ -34,6 +34,8 @@ module MixLog
         nginx_log_path(:access),
         nginx_log_path(:error),
         log_path(:syslog),
+        log_path(:auth),
+        log_path(:fail2ban),
       ]
     end
 
