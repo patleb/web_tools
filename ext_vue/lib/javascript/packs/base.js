@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
   consume_js_attribute('config')
   consume_js_attribute('locales')
   consume_js_attribute('routes')
-  axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+  axios.defaults.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').content
 
   window.$rescues = []
   window.$rescue = function (http, rescue) {
