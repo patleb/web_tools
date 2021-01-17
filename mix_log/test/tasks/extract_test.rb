@@ -16,6 +16,8 @@ module MixLog
         assert_equal [0, 1], timestamps.map(&:strftime.with('%6N')).map(&:to_i)
 
         ensure_rotate = rotate_files(log_path)
+        log = Log.first
+        log.update! line_i: 1
 
         run_task
         timestamps = LogLine.order(:created_at).map(&:created_at)

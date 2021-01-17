@@ -29,35 +29,41 @@ module MixLog
     private
 
     def process(log, file)
-      lines = BulkProcessor.new(1000) do |batch|
+      lines = BulkProcessor.new(1000) do |batch, line_i|
         log.push_all(batch)
+        log.update! line_i: line_i
       end
-      last_created_at, mtime = nil, file.mtime.utc
+      last_created_at, line_i, mtime = nil, 0, file.mtime.utc
 
       if (path = file.to_s).end_with? '.gz'
         IO.popen("unpigz -c #{path}", 'rb') do |io|
           until io.eof?
             next if (line = io.gets).blank?
-            last_created_at = process_line(log, line, lines, last_created_at, mtime)
+            last_created_at, line_i = process_line(log, line, lines, last_created_at, line_i, mtime)
           end
         end
       else
         File.foreach(path, chomp: true) do |line|
           next if line.blank?
-          last_created_at = process_line(log, line, lines, last_created_at, mtime)
+          last_created_at, line_i = process_line(log, line, lines, last_created_at, line_i, mtime)
         end
       end
-      lines.finalize
+      lines.finalize(line_i)
 
-      log.update! mtime: mtime
+      log.update! line_i: 0, mtime: mtime
     end
 
-    def process_line(log, line, lines, last_created_at, mtime)
-      lines << (line = log.parse(line, mtime: mtime)) # line.force_encoding('utf-8')
-      line[:created_at] = last_created_at = normalize_timestamp(line[:created_at], last_created_at)
-      lines.pop if line[:filtered]
-      lines.process
-      last_created_at
+    def process_line(log, line, lines, last_created_at, line_i, mtime)
+      if line_i < log.line_i
+        line_i += 1
+      else
+        lines << (line = log.parse(line, mtime: mtime)) # line.force_encoding('utf-8')
+        line[:created_at] = last_created_at = normalize_timestamp(line[:created_at], last_created_at)
+        line_i += 1
+        lines.pop if line[:filtered]
+        lines.process(line_i)
+      end
+      [last_created_at, line_i]
     end
 
     def normalize_timestamp(created_at, last_created_at)

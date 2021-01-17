@@ -1,3 +1,4 @@
+Dec  5 05:00:01 soundscape-atlas-production CRON[15785]: (root) CMD (   test -x /etc/cron.daily/popularity-contest && /etc/cron.daily/popularity-contest --crond)
 Dec  5 06:35:01 soundscape-atlas-production CRON[17187]: (root) CMD (command -v debian-sa1 > /dev/null && debian-sa1 1 1)
 Jan  5 06:57:38 soundscape-atlas-production systemd[1]: Starting Daily apt upgrade and clean activities...
 Jan  5 07:05:01 soundscape-atlas-production CRON[20745]: (root) CMD (command -v debian-sa1 > /dev/null && debian-sa1 1 1)
