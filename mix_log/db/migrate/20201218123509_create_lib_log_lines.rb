@@ -10,5 +10,10 @@ class CreateLibLogLines < ActiveRecord::Migration[6.0]
 
     add_index :lib_log_lines, [:created_at, :type, :log_id, :log_label_id, :json_data], using: :gin,
       name: 'index_lib_log_lines_on_columns'
+
+    if Rails.env.test?
+      remove_foreign_key :lib_log_lines, :lib_logs, column: :log_id
+      remove_foreign_key :lib_log_lines, :lib_log_labels, column: :log_label_id
+    end
   end
 end

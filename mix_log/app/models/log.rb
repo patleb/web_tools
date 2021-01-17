@@ -49,10 +49,6 @@ class Log < LibRecord
     log_lines_type.to_const!.finalize
   end
 
-  def current_file
-    Pathname(path)
-  end
-
   def rotated_files
     Pathname.glob("#{path}.*").sort_by(&:mtime) # older files first
   end
