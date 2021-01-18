@@ -1,0 +1,30 @@
+Jan  4 06:32:34 soundscape-atlas-production CRON[23737]: pam_unix(cron:session): session closed for user root
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Accepted publickey for deployer from 24.50.71.128 port 56216 ssh2: RSA SHA256:Eoa80Y0CCyKjujc/KbER1vXM+i58j78hihmYcwG05M4
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Accepted publickey for ubuntu from 24.50.71.128 port 58753 ssh2: RSA SHA256:5X19eF/zKf+27MP6a+uBXaTuy5AZWiiH61sajw5jfng
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Disconnected from user deployer 24.50.71.128 port 56216
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: pam_unix(sshd:session): session closed for user deployer
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: pam_unix(sshd:session): session opened for user deployer by (uid=0)
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Received disconnect from 24.50.71.128 port 56216:11: disconnected by user
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Bad protocol version identification '' from 141.134.106.82 port 43947
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Bad protocol version identification 'GET / HTTP/1.1' from 191.247.123.120 port 59340
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Connection closed by 75.130.227.27 port 57134 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Connection closed by authenticating user root 141.134.106.82 port 48958 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Connection closed by invalid user  139.162.122.110 port 36200 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Connection reset by 92.118.160.25 port 40767 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Did not receive identification string from 104.208.243.157 port 58772
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Disconnected from 40.76.16.51 port 52544 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Disconnected from authenticating user root 111.68.98.152 port 40490 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Disconnected from invalid user test 35.204.166.214 port 48844 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Disconnecting authenticating user root 220.133.35.92 port 52505: Too many authentication failures [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Disconnecting invalid user admin 220.133.35.92 port 52707: Too many authentication failures [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: error: maximum authentication attempts exceeded for invalid user admin from 220.133.35.92 port 52707 ssh2 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: error: maximum authentication attempts exceeded for root from 220.133.35.92 port 52505 ssh2 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: error: Received disconnect from 24.50.71.128 port 46697:14: No supported authentication methods available [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Invalid user  from 139.162.122.110 port 36200
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Received disconnect from 111.68.98.152 port 40490:11: Bye Bye [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Received disconnect from 220.133.35.92 port 52631:11: disconnected by user [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: "Received disconnect from 35.204.166.214 port 35558:11: Normal Shutdown, Thank you for playing [preauth]"
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Unable to negotiate with 34.219.42.179 port 49414: no matching host key type found. Their offer: ecdsa-sha2-nistp384 [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Unable to negotiate with 34.219.42.179 port 52302: no matching host key type found. Their offer: ssh-dss [preauth]
+Jan  4 06:32:34 soundscape-atlas-production sshd[24692]: Server listening on 0.0.0.0 port 22.
+Jan  4 06:32:34 soundscape-atlas-production CRON[23737]: pam_unix(cron:session): session closed for user root
