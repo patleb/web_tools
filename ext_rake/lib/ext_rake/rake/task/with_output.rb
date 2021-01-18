@@ -22,10 +22,7 @@ module Rake::Task::WithOutput
           puts_started name
           super
         rescue Exception => exception
-          unless Thread.current[:rake_error]
-            Thread.current[:rake_error] = true
-            Notice.deliver! Rescues::RakeError.new(exception, data: { task: name, args: args&.to_h }), subject: name
-          end
+          Notice.deliver! Rescues::RakeError.new(exception, data: { task: name, args: args&.to_h }), subject: name
           raise
         ensure
           puts_task start if output.exclude? ExtRake::STEP

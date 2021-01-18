@@ -13,8 +13,8 @@ class RescueError < ::StandardError
 
   def message
     <<~EOF.strip
-      #{RESCUE}[#{name}]
-      #{data.pretty_json}
+      #{RESCUE}[#{@name}]
+      #{@data.pretty_json}
       #{@message}
     EOF
   end

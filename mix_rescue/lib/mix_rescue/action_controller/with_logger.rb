@@ -1,24 +1,13 @@
 module ActionController::WithLogger
-  REQUEST_CONTEXT ||= %i(remote_ip method path content_type).freeze
-  IGNORED_PARAMS ||= %w(controller action format).freeze
-
   def log(exception, subject: nil)
     return if Current.error_logged
 
     Current.error_logged = true
-    exception = Rescues::RailsError.new(exception, data: log_context) unless exception.is_a? RescueError
-
+    unless exception.is_a? RescueError
+      exception = Rescues::RailsError.new(exception, data: Rack::Utils.log_context(request))
+    end
     Notice.deliver! exception, subject: subject
-  end
-
-  protected
-
-  def log_context
-    {
-      request: REQUEST_CONTEXT.each_with_object({}){ |attr, memo| memo[attr] = request.send(attr) },
-      params: request.filtered_parameters.except(*IGNORED_PARAMS, controller_name.singularize),
-      headers: request.headers.env.select{ |header| header =~ /^HTTP_/ },
-      session: session.try(:to_hash) || {},
-    }
+  rescue Exception => e
+    Log.rescue(e)
   end
 end

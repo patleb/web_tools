@@ -17,7 +17,7 @@ module LogLines
     end
 
     def self.mailer(message)
-      message.delivery_handler.name
+      message.delivery_handler&.name
     end
 
     def self.header(message)

@@ -14,8 +14,11 @@ module MixRescue
     require 'rack/attack'
     require 'mix_global'
     require 'mix_log'
+    require 'mix_rescue/rack/utils'
 
     config.before_initialize do |app|
+      require 'mix_rescue/action_dispatch/middleware/exception_interceptor'
+
       autoload_models_if_admin('LogLines::Rescue')
 
       app.config.middleware.use Rack::Attack
