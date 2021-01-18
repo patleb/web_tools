@@ -14,7 +14,8 @@ namespace :log do
 
   desc 'restore log tables'
   task :restore_tables, [:version] => :environment do |t, args|
-    name = "log_#{args[:version]}.pg.gz"
-    Db::Pg::Restore.new(self, t, name: name, pg_options: '--disable-triggers --data-only').run!
+    file = "db/log_#{args[:version]}.pg.gz"
+    file = File.exist?(file) ? file : Dir.glob('db/log_*.pg.gz').sort.last
+    Db::Pg::Restore.new(self, t, name: File.basename(file), pg_options: '--disable-triggers --data-only').run!
   end
 end

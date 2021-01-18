@@ -14,8 +14,9 @@ namespace :geo do
 
   desc 'restore geo tables' # takes about 35 seconds
   task :restore_tables, [:version] => :environment do |t, args|
-    name = "geo_#{args[:version].tr('.', '-')}.pg.gz"
-    Db::Pg::Restore.new(self, t, name: name, pg_options: '--disable-triggers --data-only').run!
+    file = "db/geo_#{args[:version]&.tr('.', '-')}.pg.gz"
+    file = File.exist?(file) ? file : Dir.glob('db/geo_*.pg.gz').sort.last
+    Db::Pg::Restore.new(self, t, name: File.basename(file), pg_options: '--disable-triggers --data-only').run!
     ActiveRecord::InternalMetadata[:geolite2_version] = args[:version]
     GeoState.all.each(&:update_searches)
   end
