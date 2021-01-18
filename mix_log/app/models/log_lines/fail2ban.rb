@@ -25,12 +25,12 @@ module LogLines
     def self.parse(log, line, **)
       raise IncompatibleLogLine unless (values = line.match(FAIL2BAN))
 
-      created_at, pid, level, program, message = values.captures
+      created_at, pid, level, program, text = values.captures
       created_at = Time.strptime("#{created_at} UTC", "%Y-%m-%d %H:%M:%S %z").utc
       return { created_at: created_at, filtered: true } unless program == 'sshd' && FILTERED_LEVELS.exclude?(level)
 
-      json_data = { pid: pid.to_i, ip: message[FAIL2BAN_IP] }
-      label = { text: message, level: FAIL2BAN_LEVELS[level] }
+      json_data = { pid: pid.to_i, ip: text[FAIL2BAN_IP] }
+      label = { text: text, level: FAIL2BAN_LEVELS[level] }
 
       { created_at: created_at, label: label, json_data: json_data }
     end

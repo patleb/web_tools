@@ -20,31 +20,31 @@ module LogLines
     )
 
     def self.parse(log, line, mtime:)
-      created_at, program, pid, message = rsyslog_parse(line, mtime)
+      created_at, program, pid, text = rsyslog_parse(line, mtime)
       return { created_at: created_at, filtered: true } unless program == 'sshd'
 
-      if (values = message.match(CLIENT_AUTH))
+      if (values = text.match(CLIENT_AUTH))
         user, ip, port, key = values.captures
         level = :info
-        text_tiny = message.sub("user #{user}", 'user *').sub(/ #{KEY}$/, ' *')
-      elsif (values = message.match(CLIENT_EXIT))
+        text_tiny = text.sub("user #{user}", 'user *').sub(/ #{KEY}$/, ' *')
+      elsif (values = text.match(CLIENT_EXIT))
         user, ip, port = values.captures
         level = :info
-        text_tiny = message
-      elsif (values = message.match(SERVER_AUTH))
+        text_tiny = text
+      elsif (values = text.match(SERVER_AUTH))
         port = values.captures.first
         level = :error
-        text_tiny = message.sub("::", '*')
-      elsif (values = message.match(INVALID_AUTH))
+        text_tiny = text.sub("::", '*')
+      elsif (values = text.match(INVALID_AUTH))
         user, ip, port = values.captures
         level = :warn
-        text_tiny = user ? message.sub("user #{user}", 'user *') : message
+        text_tiny = user ? text.sub("user #{user}", 'user *') : text
       else
         raise IncompatibleLogLine
       end
 
       json_data = { user: user, pid: pid, ip: ip, port: port&.to_i, key: key }
-      label = { text: message, text_tiny: squish(text_tiny), level: level }
+      label = { text: text, text_tiny: squish(text_tiny), level: level }
 
       { created_at: created_at, label: label, json_data: json_data }
     end
