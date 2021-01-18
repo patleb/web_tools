@@ -102,9 +102,9 @@ module LogLines
       end
       level = global_log ? :info : ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
       label = {
-        text_hash: [status, method, path_tiny, params_tiny].present_join(' '),
-        text_tiny: [status, method, path_tiny, pjax].present_join(' '),
-        text: [status, method, path, params].present_join(' '),
+        text_hash: [status, method, path_tiny, params_tiny].join!(' '),
+        text_tiny: [status, method, path_tiny, pjax].join!(' '),
+        text: [status, method, path, params].join!(' '),
         level: level
       }
 

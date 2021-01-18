@@ -1,5 +1,5 @@
 class Array
-  def present_join(separator=$,)
+  def join!(separator=$,)
     reject(&:blank?).join(separator)
   end
 
