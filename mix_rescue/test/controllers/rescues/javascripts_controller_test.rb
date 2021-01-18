@@ -5,8 +5,11 @@ module Rescues
     it 'should raise on CSRF error' do
       MixRescue.with do |config|
         config.rescue_500 = false
-        assert_raise(ActionController::InvalidAuthenticityToken) do
-          post '/rescues/javascripts', as: :json
+        assert_emails(1) do
+          assert_raise(ActionController::InvalidAuthenticityToken) do
+            post '/rescues/javascripts', as: :json
+          end
+          assert_equal true, LogLabel.where('text_tiny LIKE ?', '%RackError%').take.alerted?
         end
       end
     end
