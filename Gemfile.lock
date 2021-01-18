@@ -13,7 +13,6 @@ PATH
       ext_minitest (= 0.2.0)
       ext_pjax (= 0.2.0)
       ext_rails (= 0.2.0)
-      ext_rake (= 0.2.0)
       ext_ruby (= 0.2.0)
       ext_vue (= 0.2.0)
       ext_webpacker (= 0.2.0)
@@ -25,12 +24,14 @@ PATH
       mix_file (= 0.2.0)
       mix_geo (= 0.2.0)
       mix_global (= 0.2.0)
+      mix_log (= 0.2.0)
       mix_page (= 0.2.0)
       mix_rescue (= 0.2.0)
       mix_search (= 0.2.0)
       mix_server (= 0.2.0)
       mix_setting
       mix_sql (= 0.2.0)
+      mix_task (= 0.2.0)
       mix_template (= 0.2.0)
       mix_user (= 0.2.0)
       sunzistrano
@@ -95,14 +96,11 @@ PATH
   specs:
     ext_rails (0.2.0)
       active_type
-      activerecord-postgis-adapter
       arel_extensions
       date_validator
       discard
-      email_prefixer
       http_accept_language
       i18n-debug
-      mail_interceptor
       mix_setting
       money-rails
       monogamy
@@ -113,20 +111,10 @@ PATH
       rails-i18n
       rails_select_on_includes
       rblineprof
-      rgeo
       store_base_sti_class
       sunzistrano
       term-ansicolor
-
-PATH
-  remote: ext_rake
-  specs:
-    ext_rake (0.2.0)
-      dotiw
-      ext_ruby (= 0.2.0)
-      mix_rescue (= 0.2.0)
-      mix_setting
-      rake
+      user_agent_parser
 
 PATH
   remote: ext_ruby
@@ -175,7 +163,7 @@ PATH
   specs:
     mix_backup (0.2.0)
       ext_backup (~> 5.0.0.beta.2.1)
-      ext_rake (= 0.2.0)
+      mix_task (= 0.2.0)
       pgslice
 
 PATH
@@ -186,15 +174,44 @@ PATH
       ext_rails (= 0.2.0)
 
 PATH
+  remote: mix_email
+  specs:
+    mix_email (0.2.0)
+      email_prefixer
+      ext_rails (= 0.2.0)
+      mail_interceptor
+      mix_log (= 0.2.0)
+
+PATH
   remote: mix_file
   specs:
     mix_file (0.2.0)
       ext_ruby (= 0.2.0)
+      fastimage
+      image_processing (~> 1.10)
+      marcel
+      shrine (~> 3.3)
+
+PATH
+  remote: mix_geo
+  specs:
+    mix_geo (0.2.0)
+      activerecord-postgis-adapter
+      countries (= 3.0.1)
+      ext_ruby (= 0.2.0)
+      ip_location_db (= 2.2.2020121618)
+      rgeo
 
 PATH
   remote: mix_global
   specs:
     mix_global (0.2.0)
+
+PATH
+  remote: mix_log
+  specs:
+    mix_log (0.2.0)
+      ext_ruby (= 0.2.0)
 
 PATH
   remote: mix_page
@@ -210,8 +227,21 @@ PATH
       actionview
       mail
       mix_global
+      mix_log (= 0.2.0)
       mix_setting
       rack-attack
+
+PATH
+  remote: mix_search
+  specs:
+    mix_search (0.2.0)
+      ext_ruby (= 0.2.0)
+
+PATH
+  remote: mix_server
+  specs:
+    mix_server (0.2.0)
+      ext_ruby (= 0.2.0)
 
 PATH
   remote: mix_setting
@@ -228,9 +258,19 @@ PATH
     mix_sql (0.2.0)
       activerecord
       activesupport
-      ext_rake (= 0.2.0)
+      mix_task (= 0.2.0)
       sql_query
       sunzistrano
+
+PATH
+  remote: mix_task
+  specs:
+    mix_task (0.2.0)
+      dotiw
+      ext_ruby (= 0.2.0)
+      mix_rescue (= 0.2.0)
+      mix_setting
+      rake
 
 PATH
   remote: mix_template
@@ -396,7 +436,7 @@ GEM
     email_prefixer (1.2.0)
       rails (>= 4.0)
     erubi (1.9.0)
-    excon (0.78.0)
+    excon (0.78.1)
     ext_backup (5.0.0.beta.2.1)
       excon
       ext_fog_aws
@@ -417,7 +457,7 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
-    fog-aws (3.6.7)
+    fog-aws (3.7.0)
       fog-core (~> 2.1)
       fog-json (~> 1.1)
       fog-xml (~> 0.1)
@@ -672,7 +712,6 @@ DEPENDENCIES
   ext_minitest!
   ext_pjax!
   ext_rails!
-  ext_rake!
   ext_ruby!
   ext_vue!
   ext_webpacker!
@@ -687,6 +726,7 @@ DEPENDENCIES
   mix_rescue!
   mix_setting!
   mix_sql!
+  mix_task!
   mix_template!
   mix_user!
   ruby-debug-ide

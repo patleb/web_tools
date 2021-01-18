@@ -60,10 +60,10 @@ module WebTools
         end
         # bin/rake ext_capistrano:setup
         # bin/rake ext_minitest:setup
-        # bin/rake ext_rake:setup
         # bin/rake ext_webpacker:setup
         # bin/rake ext_rails:setup
         # bin/rake mix_setting:setup
+        # bin/rake mix_task:setup
       end
 
       def create_plugin

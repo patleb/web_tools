@@ -29,13 +29,13 @@ module MixBackup
       end
 
       def self.backup_root
-        ExtRake.config.rails_root.join('config', 'backup')
+        MixTask.config.rails_root.join('config', 'backup')
       end
 
       def before_run
         super
         MixBackup.config.s3_versionned = options.s3_versionned
-        ExtRake.config.db = options.db
+        MixTask.config.db = options.db
       end
 
       def sudo
@@ -45,9 +45,9 @@ module MixBackup
       def backup_env
         [
           "BUNDLE_GEMFILE=#{self.class.gemfile}",
-          "RAILS_ENV=#{ExtRake.config.rails_env}",
-          "RAILS_APP=#{ExtRake.config.rails_app}",
-          "RAILS_ROOT=#{ExtRake.config.rails_root}",
+          "RAILS_ENV=#{MixTask.config.rails_env}",
+          "RAILS_APP=#{MixTask.config.rails_app}",
+          "RAILS_ROOT=#{MixTask.config.rails_root}",
           "MODEL=#{options.model}",
           "S3_VERSIONNED=#{options.s3_versionned}",
           "DB=#{options.db}",

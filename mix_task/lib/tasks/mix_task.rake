@@ -1,10 +1,10 @@
-require_rel 'ext_rake'
+require_rel 'mix_task'
 
-namespace :ext_rake do
-  desc 'setup ExtRake files'
+namespace :mix_task do
+  desc 'setup MixTask files'
   task :setup do
     # TODO https://gist.github.com/metaskills/8691558
-    src, dst = Gem.root('ext_rake').join('lib/tasks/templates'), Rails.root
+    src, dst = Gem.root('mix_task').join('lib/tasks/templates'), Rails.root
 
     mkdir_p dst/'app/tasks'
     remove  dst/'app/tasks/.keep' rescue nil
@@ -26,7 +26,7 @@ namespace :try do
   %w(raise_exception sleep).each do |name|
     desc "-- [options] Try #{name.humanize}"
     task name.to_sym => :environment do |t|
-      "::ExtRake::Try::#{name.camelize}".constantize.new(self, t).run!
+      "::MixTask::Try::#{name.camelize}".constantize.new(self, t).run!
     end
   end
 end

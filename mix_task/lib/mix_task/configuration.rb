@@ -1,6 +1,6 @@
 require 'mix_setting'
 
-module ExtRake
+module MixTask
   has_config do
     attr_accessor :keep_install_migrations
     attr_writer :db

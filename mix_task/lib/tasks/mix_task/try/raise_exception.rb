@@ -1,4 +1,4 @@
-module ExtRake
+module MixTask
   module Try
     class RaiseException < ActiveTask::Base
       def raise_exception

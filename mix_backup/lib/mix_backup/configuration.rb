@@ -1,4 +1,4 @@
-require 'ext_rake/configuration'
+require 'mix_task/configuration'
 
 module MixBackup
   has_config do
@@ -29,12 +29,12 @@ module MixBackup
     end
 
     def log_dir
-      ExtRake.config.shared_dir.join('log')
+      MixTask.config.shared_dir.join('log')
     end
 
     # TODO make it more flexible --> so a different mount point could be used
     def backup_dir
-      ExtRake.config.shared_dir.join('tmp', 'backups')
+      MixTask.config.shared_dir.join('tmp', 'backups')
     end
 
     def backup_meta_file(model)

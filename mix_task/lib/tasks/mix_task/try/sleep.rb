@@ -1,4 +1,4 @@
-module ExtRake
+module MixTask
   module Try
     class Sleep < ActiveTask::Base
       def sleep

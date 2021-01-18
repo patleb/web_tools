@@ -1,8 +1,8 @@
 module Db
   module Pg
     class Base < ActiveTask::Base
-      include ExtRake::Pg::Psql
-      include ExtRake::Pg::Rescuable
+      include MixTask::Pg::Psql
+      include MixTask::Pg::Rescuable
 
       def self.pg_options
         ENV['PG_OPTIONS']
@@ -15,7 +15,7 @@ module Db
       protected
 
       def with_db_config
-        db = ExtRake.config.db_config
+        db = MixTask.config.db_config
         yield db[:host],
           db[:database],
           db[:username],

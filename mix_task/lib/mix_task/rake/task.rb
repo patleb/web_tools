@@ -1,5 +1,5 @@
 require 'rake/task'
-require 'ext_rake/rake/task/with_output'
+require 'mix_task/rake/task/with_output'
 
 Rake::Task.class_eval do
   prepend self::WithOutput

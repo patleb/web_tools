@@ -9,7 +9,7 @@ module ExtRails
         end
 
         def vpn_client_name
-          Setting[:vpn_client_name] || "client_#{ExtRake.config.rails_env}"
+          Setting[:vpn_client_name] || "client_#{MixTask.config.rails_env}"
         end
       end
 

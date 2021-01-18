@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activesupport'
   s.add_dependency 'activerecord'
   s.add_dependency 'sql_query'
-  s.add_dependency 'ext_rake', version
+  s.add_dependency 'mix_task', version
   s.add_dependency 'sunzistrano'
 
   s.add_development_dependency 'ext_minitest', version

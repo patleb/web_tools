@@ -1,4 +1,4 @@
-module ExtRake
+module MixTask
   module Pg
     module Rescuable
       extend ActiveSupport::Concern

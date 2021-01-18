@@ -54,7 +54,7 @@ Notifier::Mail.defaults do |mail|
 end
 
 Database::PostgreSQL.defaults do |db|
-  db_config = ExtRake.config.db_config
+  db_config = MixTask.config.db_config
   db.name               = db_config[:database]
   db.username           = db_config[:username]
   db.password           = db_config[:password]

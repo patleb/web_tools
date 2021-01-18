@@ -6,13 +6,13 @@ version = WebTools::VERSION::STRING
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "ext_rake"
+  s.name        = "mix_task"
   s.version     = version
   s.authors     = ["Patrice Lebel"]
   s.email       = ["patleb@users.noreply.github.com"]
-  s.homepage    = "https://github.com/patleb/ext_rake"
-  s.summary     = "ExtRake"
-  s.description = "ExtRake"
+  s.homepage    = "https://github.com/patleb/mix_task"
+  s.summary     = "MixTask"
+  s.description = "MixTask"
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]

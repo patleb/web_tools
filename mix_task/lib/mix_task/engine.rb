@@ -1,4 +1,4 @@
-module ExtRake
+module MixTask
   STARTED = '[STARTED]'.freeze
   SUCCESS = '[SUCCESS]'.freeze
   FAILURE = '[FAILURE]'.freeze
@@ -7,8 +7,8 @@ module ExtRake
 
   class Engine < Rails::Engine
     require 'mix_rescue'
-    require 'ext_rake/rake/dsl'
-    require 'ext_rake/rake/task'
+    require 'mix_task/rake/dsl'
+    require 'mix_task/rake/task'
 
     config.before_initialize do
       autoload_models_if_admin('LogLines::Task')

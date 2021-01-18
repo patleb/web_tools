@@ -30,7 +30,7 @@ module MixBackup
       end
 
       def remove_old_partition
-        ExtRake.config.db_adapter.connection.exec_query("DROP TABLE #{partition}")
+        MixTask.config.db_adapter.connection.exec_query("DROP TABLE #{partition}")
       end
 
       def partition

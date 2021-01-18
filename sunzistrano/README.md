@@ -55,14 +55,14 @@ or
 
 * backup important files
 
-    $ bundle exec cap production rake TASK='ext_rake:backup -- --model=app_logs'
-    $ bundle exec cap production rake TASK='ext_rake:backup -- --model=sys_logs'
+    $ bundle exec cap production rake TASK='mix_task:backup -- --model=app_logs'
+    $ bundle exec cap production rake TASK='mix_task:backup -- --model=sys_logs'
     $ bundle exec cap production files:download[~/app_admin_production/shared/tmp/backups/.data/model_name/S3.yml,tmp/S3.yml]
 
 or
 
-    $ RAILS_ENV=production bundle exec rake ext_rake:backup -- --model=app_logs
-    $ RAILS_ENV=production bundle exec rake ext_rake:backup -- --model=sys_logs
+    $ RAILS_ENV=production bundle exec rake mix_task:backup -- --model=app_logs
+    $ RAILS_ENV=production bundle exec rake mix_task:backup -- --model=sys_logs
     $ download shared/log and shared/tmp/backups/.data/model_name/S3.yml
 
 TODO: app_logs/sys_logs backup for sub application (ex.: production:app_api)

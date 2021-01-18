@@ -40,7 +40,7 @@ module ExtRails
           },
           hosted_zone_id: dns_zone.id
         )
-        ExtRake.config.shared_dir.join('vpn_ip').write(@ip)
+        MixTask.config.shared_dir.join('vpn_ip').write(@ip)
       end
 
       protected

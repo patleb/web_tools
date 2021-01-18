@@ -8,7 +8,7 @@ Rails::Application.class_eval do
       Rake::TaskManager.record_task_metadata = true
       Rails.application.load_tasks
       tasks = Rake.application.instance_variable_get('@tasks')
-      unless ExtRake.config.keep_install_migrations
+      unless MixTask.config.keep_install_migrations
         tasks.each do |t|
           if (task_name = t.first).end_with? ':install:migrations'
             tasks.delete(task_name)

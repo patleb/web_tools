@@ -1,7 +1,7 @@
 module MixBackup
   module Restore
     class Base < Base
-      include ExtRake::Pg::Rescuable
+      include MixTask::Pg::Rescuable
 
       class NoTarFile < ::StandardError; end
       class NoWindowsSupport < ::StandardError; end
@@ -22,7 +22,7 @@ module MixBackup
       def before_run
         super
         MixBackup.config.s3_versionned = options.s3_versionned
-        ExtRake.config.db = options.db
+        MixTask.config.db = options.db
         @restored = false
       end
 

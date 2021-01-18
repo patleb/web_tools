@@ -139,12 +139,12 @@ module ActiveTask
 
     def puts_step(name)
       Log.task(name)
-      puts "[#{Time.current.utc}]#{ExtRake::STEP}[#{Process.pid}] #{name}".yellow
+      puts "[#{Time.current.utc}]#{MixTask::STEP}[#{Process.pid}] #{name}".yellow
     end
 
     def puts_cancel
       Log.task(:cancel)
-      puts "[#{Time.current.utc}]#{ExtRake::CANCEL}[#{Process.pid}]".red
+      puts "[#{Time.current.utc}]#{MixTask::CANCEL}[#{Process.pid}]".red
     end
 
     # NOTE needed only if using a different Gemfile
@@ -207,8 +207,8 @@ module ActiveTask
         locale: I18n.locale,
         time_zone: Time.zone,
       }
-      @_environment[:rake_config] = ExtRake.config.instance_variables.each_with_object({}) do |ivar, memo|
-        memo[ivar] = ExtRake.config.instance_variable_get(ivar)
+      @_environment[:rake_config] = MixTask.config.instance_variables.each_with_object({}) do |ivar, memo|
+        memo[ivar] = MixTask.config.instance_variable_get(ivar)
       end
 
       yield(@_environment) unless (run_help = _parse_args)
@@ -223,7 +223,7 @@ module ActiveTask
       I18n.locale = rails_config[:locale]
       Time.zone = rails_config[:time_zone]
       @_environment[:rake_config].each do |ivar, value|
-        ExtRake.config.instance_variable_set(ivar, value)
+        MixTask.config.instance_variable_set(ivar, value)
       end
       Setting.rollback!
       @_environment.clear

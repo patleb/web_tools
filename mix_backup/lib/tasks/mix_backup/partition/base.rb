@@ -60,11 +60,11 @@ module MixBackup
       end
 
       def backup_retired_table
-        sh "pg_dump -c -Fc -t #{options.table}_retired #{ExtRake.config.db_url} > db/#{options.table}_retired.dump", verbose: false
+        sh "pg_dump -c -Fc -t #{options.table}_retired #{MixTask.config.db_url} > db/#{options.table}_retired.dump", verbose: false
       end
 
       def drop_retired_table
-        ExtRake.config.db_adapter.connection.exec_query("DROP TABLE #{options.table}_retired")
+        MixTask.config.db_adapter.connection.exec_query("DROP TABLE #{options.table}_retired")
       end
     end
   end

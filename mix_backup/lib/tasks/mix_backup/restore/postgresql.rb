@@ -32,19 +32,19 @@ module MixBackup
           raise NoWindowsSupport if options.pg_restore
 
           backup = extract_path.join("PostgreSQL.sql")
-          %{#{drop_all} psql #{self.class.pg_options || '--quiet'} "#{ExtRake.config.db_url}" < "#{backup}"}
+          %{#{drop_all} psql #{self.class.pg_options || '--quiet'} "#{MixTask.config.db_url}" < "#{backup}"}
         else
           backup = extract_path.join("PostgreSQL.sql.gz")
           if options.pg_restore
-            %{#{drop_all} zcat "#{backup}" | pg_restore #{self.class.pg_options} -d "#{ExtRake.config.db_url}"}
+            %{#{drop_all} zcat "#{backup}" | pg_restore #{self.class.pg_options} -d "#{MixTask.config.db_url}"}
           else
-            %{#{drop_all} zcat "#{backup}" | psql #{self.class.pg_options || '--quiet'} "#{ExtRake.config.db_url}"}
+            %{#{drop_all} zcat "#{backup}" | psql #{self.class.pg_options || '--quiet'} "#{MixTask.config.db_url}"}
           end
         end
       end
 
       def drop_all_cmd
-        %{psql --quiet -c "DROP OWNED BY CURRENT_USER;" "#{ExtRake.config.db_url}"}
+        %{psql --quiet -c "DROP OWNED BY CURRENT_USER;" "#{MixTask.config.db_url}"}
       end
 
       def analyse
