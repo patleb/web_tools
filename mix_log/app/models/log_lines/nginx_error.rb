@@ -39,11 +39,7 @@ module LogLines
       'App'   => 'ruby',
     }
 
-    json_attribute(
-      level: :integer,
-      pid: :integer,
-    )
-    enum level: ERROR_LEVELS.transform_values.with_index{ |_, i| i }
+    json_attribute pid: :integer
 
     def self.parse(log, line, **)
       if (values = line.match(ERROR))
@@ -72,7 +68,7 @@ module LogLines
       end
       level = known_level || level
       label = { text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
-      json_data = { level: levels[level], pid: pid&.to_i }
+      json_data = { pid: pid&.to_i }
 
       { created_at: created_at, label: label, json_data: json_data }
     end

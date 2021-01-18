@@ -11,6 +11,14 @@ module LogLines
     SERVER_AUTH  = /Server listening on .* port (#{PORT})/
     INVALID_AUTH = /(?:user (#{USER}) )?(?:from )?(#{IP}) port (#{PORT})/i
 
+    json_attribute(
+      pid: :integer,
+      ip: :string,
+      port: :integer,
+      user: :string,
+      key: :string,
+    )
+
     def self.parse(log, line, mtime:)
       created_at, program, pid, message = rsyslog_parse(line, mtime)
       return { created_at: created_at, filtered: true } unless program == 'sshd'
