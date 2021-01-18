@@ -1,10 +1,5 @@
-require_rel '**/*.rb'
-
 module ActiveTask
   class Base
-    prepend ActiveTask::Helpers
-    prepend ActiveTask::Counts
-
     EXIT_CODE_HELP = 10
 
     STEPS_ARGS = IceNine.deep_freeze(%i(
@@ -42,6 +37,28 @@ module ActiveTask
       {}
     end
 
+    def self.track_count_of(*methods)
+      methods.each do |name|
+        method_count = "#{name}_count"
+        method_count_ivar = "@#{method_count}"
+
+        attr_reader method_count
+
+        with_count = const_defined?(:WithCount) ? const_get(:WithCount) : const_set(:WithCount, Module.new)
+        with_count.module_eval do
+          define_method name do |*args, &block|
+            count = instance_variable_get(method_count_ivar)
+            instance_variable_set(method_count_ivar, count += 1)
+            super(*args, &block)
+          end
+        end
+      end
+    end
+
+    def settings_reload
+      Setting.reload
+    end
+
     def debug?
       @_debug
     end
@@ -59,6 +76,13 @@ module ActiveTask
       @options = self.class.defaults.with_indifferent_access.merge!(defaults).merge!(args.to_h)
       @_debug = ENV['DEBUG'].to_b
       @_success = true
+      if self.class.const_defined? :WithCount
+        with_count = self.class.const_get(:WithCount)
+        self.class.prepend with_count
+        with_count.instance_methods.each do |name|
+          instance_variable_set("@#{name}_count", 0)
+        end
+      end
     end
 
     def run!
@@ -111,6 +135,23 @@ module ActiveTask
 
     def puts(obj = '', *arg)
       task.puts(obj, *arg)
+    end
+
+    def puts_step(name)
+      Log.task(name)
+      puts "[#{Time.current.utc}]#{ExtRake::STEP}[#{Process.pid}] #{name}".yellow
+    end
+
+    def puts_cancel
+      Log.task(:cancel)
+      puts "[#{Time.current.utc}]#{ExtRake::CANCEL}[#{Process.pid}]".red
+    end
+
+    # NOTE needed only if using a different Gemfile
+    def sh_clean(*cmd, &block)
+      Bundler.with_clean_env do
+        rake.__send__ :sh, *cmd, &block
+      end
     end
 
     def method_missing(name, *args, &block)

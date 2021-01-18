@@ -2,37 +2,59 @@ module Rake::Task::WithOutput
   extend ActiveSupport::Concern
 
   prepended do
+    include ActionView::Helpers::DateHelper
+    include ActionView::Helpers::NumberHelper
+
     attr_accessor :output
   end
 
   def puts(obj = '', *arg)
+    return super unless rake_ouput?
+
     self.output ||= ''
     self.output << ERB::Util.html_escape(obj) << "\n"
     super
   end
 
-  def execute(args = nil)
-    return super if skip_ouput?
+  def puts_started(args)
+    Log.task(name, args: args.to_h.merge(argv: ARGV.except(name, '--')).reject{ |_, v| v.blank? })
+    puts "[#{Time.current.utc}]#{ExtRake::STARTED}[#{Process.pid}] #{name}".blue
+  end
 
-    start = Time.current.utc
+  def puts_success(total)
+    Log.task(name, time: total)
+    puts "[#{Time.current.utc}]#{ExtRake::SUCCESS}[#{Process.pid}] #{name}: #{distance_of_time total}".green
+  end
+
+  def puts_failure(exception)
+    Notice.deliver! Rescues::RakeError.new(exception, data: { task: name, pid: Process.pid }), subject: name
+    puts "[#{Time.current.utc}]#{ExtRake::FAILURE}[#{Process.pid}] #{name}".red
+  end
+
+  def puts_downloading(file_name, remainder, total)
+    remainder = number_to_human_size remainder
+    total = number_to_human_size total
+    puts "Downloading #{file_name}[#{Process.pid}][#{total}] remaining #{remainder}"
+  end
+
+  def execute(args = nil)
+    return super unless rake_ouput?
+
+    started_at = Time.current.utc
     self.output = ''
     I18n.with_locale(:en) do
       Time.use_zone('UTC') do
         with_db_loggers do
-          puts_started name
+          puts_started args
           super
         rescue Exception => exception
-          Notice.deliver! Rescues::RakeError.new(exception, data: { task: name, args: args&.to_h }), subject: name
           raise
         ensure
-          puts_task start if output.exclude? ExtRake::STEP
-          finish = Time.current.utc
-          puts_done finish
-          total = finish - start
           if exception
-            puts_failed total
+            puts_failure exception
           else
-            puts_completed total
+            total = (Time.current.utc - started_at).seconds.round(3)
+            puts_success total
           end
         end
       end
@@ -41,8 +63,8 @@ module Rake::Task::WithOutput
     output.dup
   end
 
-  def skip_ouput?
-    ARGV.include?('--help') || name == 'environment' || !(ENV['RAKE_OUTPUT'].to_b)
+  def rake_ouput?
+    ARGV.exclude?('--help') && name != 'environment' && ENV['RAKE_OUTPUT'].to_b
   end
 
   def with_db_loggers
@@ -55,25 +77,5 @@ module Rake::Task::WithOutput
     if Rails.env.development?
       ActiveRecord::Base.logger = @_ar_logger
     end
-  end
-
-  def puts_started(name)
-    puts "#{ExtRake::STARTED}[#{Process.pid}] #{name}".blue
-  end
-
-  def puts_task(start_time)
-    puts "[#{start_time}]#{ExtRake::TASK}[#{Process.pid}]"
-  end
-
-  def puts_done(finish_time)
-    puts "[#{finish_time}]#{ExtRake::DONE}[#{Process.pid}]"
-  end
-
-  def puts_completed(total_time)
-    puts "#{ExtRake::COMPLETED}[#{Process.pid}] after #{distance_of_time total_time.seconds}".green
-  end
-
-  def puts_failed(total_time)
-    puts "#{ExtRake::FAILED}[#{Process.pid}] after #{distance_of_time total_time.seconds}".red
   end
 end
