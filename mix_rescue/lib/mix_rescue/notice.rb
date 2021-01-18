@@ -4,7 +4,7 @@ require 'mix_setting'
 # TODO https://github.com/excid3/noticed
 class Notice
   BODY_START = '[NOTIFICATION]'.freeze
-  BODY_END = '[END]'.freeze
+  BODY_END   = '[END]'.freeze
 
   include ActionView::Helpers::TextHelper
 
