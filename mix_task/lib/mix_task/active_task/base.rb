@@ -118,7 +118,7 @@ module ActiveTask
     end
 
     def cancel!
-      puts_cancel
+      puts_cancel if task.rake_ouput?
       @_cancel = true
       after_cancel
     end
@@ -172,7 +172,7 @@ module ActiveTask
       result = nil
       _steps.each do |step|
         break if cancel?
-        puts_step step
+        puts_step step if task.rake_ouput?
         result = send(step)
       end
       result
