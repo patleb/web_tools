@@ -6,6 +6,7 @@ module LogLines
     REQUEST         = /[^"]*/
     STATUS          = /\d{3}/
     BYTES_SENT      = /\d+/
+    REQUEST_LENGTH  = /\d+/
     HTTP_REFERER    = /[^"]+/
     HTTP_USER_AGENT = /[^"]+/
     PIPE            = /[p.]/
@@ -15,7 +16,7 @@ module LogLines
     PID             = /\d+/
     ACCESS = %r{
       (#{REMOTE_ADDR})\s-\s(#{REMOTE_USER})\s\[(#{TIME_LOCAL})\]\s
-      "(#{REQUEST})"\s(#{STATUS})\s(#{BYTES_SENT})\s
+      "(#{REQUEST})"\s(#{STATUS})\s(#{BYTES_SENT})\s(#{REQUEST_LENGTH}\s)?
       "(#{HTTP_REFERER})"\s"(#{HTTP_USER_AGENT})"\s
       (#{REQUEST_TIME})\s(#{PIPE})\s(#{REQUEST_TIME}\s)?-\s(#{SCHEME})\s-\s(#{GZIP_RATIO})(?:-\s(#{PID}))?
     }x
@@ -41,7 +42,8 @@ module LogLines
       path: :string,
       params: :json,
       status: :integer,
-      bytes: :integer,
+      bytes_in: :integer,
+      bytes_out: :integer,
       time: :float,
       referer: :string,
       browser: :json,
@@ -55,9 +57,8 @@ module LogLines
     def self.parse(log, line, browser: true, parameters: true, **)
       raise IncompatibleLogLine unless (values = line.match(ACCESS))
 
-      ip, user, created_at, request, status, bytes, referer, user_agent, upstream_time, pipe, time, https, gzip, pid = values.captures
+      ip, user, created_at, request, status, bytes_out, bytes_in, referer, user_agent, upstream_time, pipe, time, https, gzip, pid = values.captures
       created_at = Time.strptime(created_at, "%d/%b/%Y:%H:%M:%S %z").utc
-      status, bytes = status.to_i, bytes.to_i
       method, path, protocol = request.split(' ')
       method = nil unless path
       method, path, protocol = nil, method, path unless protocol
@@ -76,8 +77,9 @@ module LogLines
         method: method,
         path: uri.path,
         params: (params&.except(*MixLog.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if parameters),
-        status: status,
-        bytes: bytes,
+        status: (status = status.to_i),
+        bytes_in: bytes_in&.to_i,
+        bytes_out: bytes_out.to_i,
         time: time,
         referer: referer,
         browser: (_browsers(user_agent) if browser),
