@@ -89,7 +89,6 @@ server {
   ##
 
   access_log /var/log/nginx/<%= fetch(:deploy_dir) %>.access.log mix_server_access_log;
-  error_log /var/log/nginx/<%= fetch(:deploy_dir) %>.error.log;
 
   # SSL configuration
   #
@@ -108,30 +107,25 @@ server {
       <%= content %>
 
       access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location.full_underscore %>.access.log mix_server_access_log;
-      error_log /var/log/nginx/<%= fetch(:deploy_dir) %>_<%= location.full_underscore %>.error.log;
     }
   <% end %>
 
   <% if fetch(:nginx_rails) %>
-    <% %w(assets packs).each do |root| %>
-      location /<%= root %>/ {
-        gzip_static on;
-        if_modified_since off;
-        add_header Last-Modified "";
-        etag off;
-        expires 1M;
-        add_header Cache-Control public;
-        access_log    off;
-        log_not_found off;
-      }
-    <% end %>
+    location /packs/ {
+      gzip_static on;
+      if_modified_since off;
+      add_header Last-Modified "";
+      etag off;
+      expires 1M;
+      add_header Cache-Control public;
+      access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_packs.access.log mix_server_access_log;
+    }
 
     <% fetch(:nginx_public_dirs).each do |root| %>
       location /<%= root %>/ {
         expires 1M;
         add_header Cache-Control public;
-        access_log    off;
-        log_not_found off;
+        access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_public.access.log mix_server_access_log;
       }
     <% end %>
 
@@ -139,8 +133,7 @@ server {
       location /<%= root %> {
         expires 1M;
         add_header Cache-Control public;
-        access_log    off;
-        log_not_found off;
+        access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_public.access.log mix_server_access_log;
       }
     <% end %>
   <% end %>

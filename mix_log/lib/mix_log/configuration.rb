@@ -19,20 +19,16 @@ module MixLog
         # sysstat: 0, --> needs sysstat installed in dev (actually, might be worth it to rewrite in Ruby and reuse like monit)
         #
         # postgres
-        #
-        # TODO cron: 0, # add directly to ext_whenever instead (or only in rake tasks?)
-        # rack: 0, # add rescue to Rack and/or add only FATAL level log parsing (might be better if can't connect to postgres)
-        #   --> action_dispatch/middleware/debug_exceptions.rb
-        # rake: 0, # add directly to ext_rake instead (or only on start and finish/error?)
       }
     end
 
     def available_paths
       @available_paths ||= [
+        nginx_log_path(:access),
+        nginx_log_path(:packs, :access),
+        nginx_log_path(:public, :access),
         log_path(:nginx, :access),
         log_path(:nginx, :error),
-        nginx_log_path(:access),
-        nginx_log_path(:error),
         log_path(:syslog),
         log_path(:auth),
         log_path(:fail2ban),
