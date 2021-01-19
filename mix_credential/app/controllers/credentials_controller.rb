@@ -1,8 +1,4 @@
 class CredentialsController < ActionController::API
-  include ActionController::RequestForgeryProtection
-
-  protect_from_forgery with: :exception
-
   def show
     record = credential_class.select(:challenge).find_by_token! params[:token]
     render plain: record.challenge
