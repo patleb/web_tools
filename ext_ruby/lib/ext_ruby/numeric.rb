@@ -46,13 +46,23 @@ end
 
 class Numeric
   B_PER_MB = BigDecimal(1_048_576).freeze
+  B_PER_GB = BigDecimal(1_073_741_824).freeze
   KB_PER_MB = BigDecimal(1_024).freeze
+  KB_PER_GB = BigDecimal(1_048_576).freeze
 
   def bytes_to_mb
     self / B_PER_MB
   end
 
+  def bytes_to_gb
+    self / B_PER_GB
+  end
+
   def kbytes_to_mb
     self / KB_PER_MB
+  end
+
+  def kbytes_to_gb
+    self / KB_PER_GB
   end
 end
