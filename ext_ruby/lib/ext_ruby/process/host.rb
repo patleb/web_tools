@@ -1,5 +1,3 @@
-# TODO add io bandwidth / number of connections
-
 module Process
   class Host
     include Snapshot
@@ -33,21 +31,23 @@ module Process
       cpu_count
       cpu_usage
       cpu_load
-      ram_total_mb
-      ram_used_mb
-      swap_total_mb
-      swap_used_mb
-      fs_total_mb
-      fs_used_mb
+      ram_total_gb
+      ram_used_gb
+      swap_total_gb
+      swap_used_gb
+      fs_total_gb
+      fs_used_gb
     ).freeze
     SNAPSHOT_DIFF = %i(
       uptime
       cpu_usage
       cpu_load
-      ram_used_mb
-      swap_used_mb
-      fs_used_mb
+      ram_used_gb
+      swap_used_gb
+      fs_used_gb
     ).freeze
+    BYTES_IN = 0
+    BYTES_OUT = 8
 
     delegate :cpu, :memory, :disk, :load_average, to: :Vmstat
 
@@ -80,8 +80,8 @@ module Process
       m_access(:load_average){ load_average.to_a.map{ |avg| avg / cpu_count } }
     end
 
-    def cpu_load_high?
-      cpu_load.any?{ |avg| avg > RISKY_LOAD_AVG }
+    def cpu_load_high?(threshold = RISKY_LOAD_AVG)
+      cpu_load.any?{ |avg| avg > threshold }
     end
 
     def cpu_load_increasing?
@@ -94,40 +94,40 @@ module Process
       (min_1 < min_5) || (min_1 < min_15)
     end
 
-    def ram_available_mb
-      m_access(:memory).available_bytes.bytes_to_mb.to_f.floor(3)
+    def ram_available_gb
+      m_access(:memory).available_bytes.bytes_to_gb.to_f.floor(3)
     end
 
-    def ram_total_mb
-      m_access(:memory).total_bytes.bytes_to_mb.to_f.ceil(3)
+    def ram_total_gb
+      m_access(:memory).total_bytes.bytes_to_gb.to_f.ceil(3)
     end
 
-    def ram_used_mb
-      (ram_total_mb - ram_available_mb).ceil(3)
+    def ram_used_gb
+      (ram_total_gb - ram_available_gb).ceil(3)
     end
 
-    def swap_available_mb
-      (swap_total_mb - swap_used_mb).floor(3)
+    def swap_available_gb
+      (swap_total_gb - swap_used_gb).floor(3)
     end
 
-    def swap_total_mb
-      BigDecimal(swap[:size]).kbytes_to_mb.to_f.ceil(3)
+    def swap_total_gb
+      BigDecimal(swap[:size]).kbytes_to_gb.to_f.ceil(3)
     end
 
-    def swap_used_mb
-      BigDecimal(swap[:used]).kbytes_to_mb.to_f.ceil(3)
+    def swap_used_gb
+      BigDecimal(swap[:used]).kbytes_to_gb.to_f.ceil(3)
     end
 
-    def fs_available_mb
-      m_access(:disk, "/").available_bytes.bytes_to_mb.to_f.floor
+    def fs_available_gb(path = '/')
+      m_access(:disk, path).available_bytes.bytes_to_gb.to_f.floor(3)
     end
 
-    def fs_total_mb
-      m_access(:disk, "/").total_bytes.bytes_to_mb.to_f.ceil
+    def fs_total_gb(path = '/')
+      m_access(:disk, path).total_bytes.bytes_to_gb.to_f.ceil(3)
     end
 
-    def fs_used_mb
-      (fs_total_mb - fs_available_mb).ceil
+    def fs_used_gb(path = '/')
+      (fs_total_gb(path) - fs_available_gb(path)).ceil(3)
     end
 
     def pagesize
@@ -154,6 +154,29 @@ module Process
         stat.split.each_with_object({}).with_index do |(value, memo), index|
           memo[STAT_NAMES[index]] = value
         end
+      end
+    end
+
+    def ethernet
+      networks.find{ |k, _| k.start_with? 'en' }&.last
+    end
+
+    def wifi
+      networks.find{ |k, _| k.start_with? 'wl' }&.last
+    end
+
+    def networks
+      m_access(:networks) do
+        IO.read("/proc/net/dev").lines(chomp: true).drop(2)
+          .map{ |line| line.split(':') }.to_h
+          .transform_values{ |v| %i(in out).zip(v.split.values_at(BYTES_IN, BYTES_OUT).map(&:to_i)).to_h }
+          .transform_keys(&:squish)
+      end
+    end
+
+    def open_files
+      m_access(:open_files) do
+        Rake::FileList["/proc/*"].grep(%r{^/proc/\d+$}).sum{ |file| Rake::FileList["#{file}/fd/*"].size }
       end
     end
   end

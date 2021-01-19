@@ -78,16 +78,14 @@ module Process
       ram_used_mb
     ).freeze
 
-    cattr_reader :host do
-      Process.host
-    end
+    cattr_reader :host, default: Process.host
     attr_reader :pid
 
     def self.all(nohup: false)
       m_access(:all, (:nohup if nohup), threshold: 1.0) do
-        Dir.foreach("/proc").each_with_object([]) do |file, result|
-          worker = new(file.to_i)
-          next if worker.ppid == PID[:dead]
+        Dir.each_child("/proc").each_with_object([]) do |file, result|
+          next if (pid = file.to_i) == PID[:none]
+          next if (worker = new(pid)).ppid == PID[:dead]
           next if nohup && worker.ppid != PID[:init]
           result << worker
         end
@@ -102,13 +100,13 @@ module Process
       self.class.new(ppid)
     end
 
-    def self_and_siblings
-      [self].concat siblings
+    def pool
+      [self].concat(siblings.select{ |sibling| sibling.name == name })
     end
 
     def siblings
       m_access(:siblings, threshold: 1.0) do
-        Dir.foreach("/proc").each_with_object([]) do |file, result|
+        Dir.each_child("/proc").each_with_object([]) do |file, result|
           next if (sibling_pid = file.to_i).in? [PID[:none], PID[:init], pid, ppid]
           if [(sibling = self.class.new(sibling_pid)).ppid, ppid].exclude? PID[:init]
             next if sibling.ppid != ppid
@@ -177,13 +175,17 @@ module Process
         stat.split.each_with_object({}).with_index do |(value, memo), index|
           memo[STAT_NAMES[index]] = value
         end
+      rescue
+        { ppid: PID[:dead], starttime: -host.hertz, rss: BigDecimal(0) }
       end
-    rescue
-      {
-        ppid: PID[:dead],
-        starttime: -host.hertz,
-        rss: BigDecimal(0),
-      }
+    end
+
+    def open_files
+      m_access(:open_files) do
+        Rake::FileList["/proc/#{@pid}/fd/*"].size
+      rescue
+        0
+      end
     end
   end
 end

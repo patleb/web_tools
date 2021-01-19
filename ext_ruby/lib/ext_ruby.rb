@@ -7,6 +7,7 @@ require 'ice_nine'
 require 'open3'
 require 'ostruct'
 require 'parallel'
+require 'rake/file_list'
 require 'rubygems/package'
 require 'vmstat'
 
