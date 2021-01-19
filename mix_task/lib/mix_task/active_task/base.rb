@@ -138,13 +138,13 @@ module ActiveTask
     end
 
     def puts_step(name)
-      Log.task(name)
+      Log.task("+#{name}")
       puts "[#{Time.current.utc}]#{MixTask::STEP}[#{Process.pid}] #{name}".yellow
     end
 
     def puts_cancel
-      Log.task(:cancel)
-      puts "[#{Time.current.utc}]#{MixTask::CANCEL}[#{Process.pid}]".red
+      Log.task('-cancel')
+      puts "[#{Time.current.utc}]#{MixTask::CANCEL}[#{Process.pid}]".magenta
     end
 
     # NOTE needed only if using a different Gemfile

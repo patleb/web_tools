@@ -12,11 +12,12 @@ module LogLines
     REQUEST_TIME    = /[-\d.]+/
     SCHEME          = /https?/
     GZIP_RATIO      = /[-\d.]+/
+    PID             = /\d+/
     ACCESS = %r{
       (#{REMOTE_ADDR})\s-\s(#{REMOTE_USER})\s\[(#{TIME_LOCAL})\]\s
       "(#{REQUEST})"\s(#{STATUS})\s(#{BYTES_SENT})\s
       "(#{HTTP_REFERER})"\s"(#{HTTP_USER_AGENT})"\s
-      (#{REQUEST_TIME})\s(#{PIPE})\s(#{REQUEST_TIME}\s)?-\s(#{SCHEME})\s-\s(#{GZIP_RATIO})
+      (#{REQUEST_TIME})\s(#{PIPE})\s(#{REQUEST_TIME}\s)?-\s(#{SCHEME})\s-\s(#{GZIP_RATIO})(?:-\s(#{PID}))?
     }x
     ACCESS_LEVELS = {
       (100...400) => :info,
@@ -54,7 +55,7 @@ module LogLines
     def self.parse(log, line, browser: true, parameters: true, **)
       raise IncompatibleLogLine unless (values = line.match(ACCESS))
 
-      ip, user, created_at, request, status, bytes, referer, user_agent, upstream_time, pipe, time, https, gzip = values.captures
+      ip, user, created_at, request, status, bytes, referer, user_agent, upstream_time, pipe, time, https, gzip, pid = values.captures
       created_at = Time.strptime(created_at, "%d/%b/%Y:%H:%M:%S %z").utc
       status, bytes = status.to_i, bytes.to_i
       method, path, protocol = request.split(' ')
@@ -108,7 +109,7 @@ module LogLines
         level: level
       }
 
-      { created_at: created_at, label: label, json_data: json_data }
+      { created_at: created_at, process_id: pid&.to_i, label: label, json_data: json_data }
     end
 
     def self.finalize

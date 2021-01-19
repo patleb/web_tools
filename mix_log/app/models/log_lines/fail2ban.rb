@@ -17,10 +17,7 @@ module LogLines
     FILTERED_LEVELS = %w(INFO DEBUG)
     FAIL2BAN_IP     = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}/
 
-    json_attribute(
-      pid: :integer,
-      ip: :string,
-    )
+    json_attribute :ip
 
     def self.parse(log, line, **)
       raise IncompatibleLogLine unless (values = line.match(FAIL2BAN))
@@ -29,10 +26,10 @@ module LogLines
       created_at = Time.strptime("#{created_at} UTC", "%Y-%m-%d %H:%M:%S %z").utc
       return { created_at: created_at, filtered: true } unless program == 'sshd' && FILTERED_LEVELS.exclude?(level)
 
-      json_data = { pid: pid.to_i, ip: text[FAIL2BAN_IP] }
+      json_data = { ip: text[FAIL2BAN_IP] }
       label = { text: text, level: FAIL2BAN_LEVELS[level] }
 
-      { created_at: created_at, label: label, json_data: json_data }
+      { created_at: created_at, process_id: pid.to_i, label: label, json_data: json_data }
     end
   end
 end

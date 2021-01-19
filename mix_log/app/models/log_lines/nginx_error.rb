@@ -2,11 +2,11 @@ module LogLines
   class NginxError < LogLine
     TIME          = %r{\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}}
     LEVEL         = /\w*/
-    PROCESS_ID    = /\d+/
+    PID           = /\d+/
     THREAD_ID     = /\d+/
     CONNECTION_ID = /\d+/
     MESSAGE       = /.+/
-    ERROR         = /(#{TIME}) \[(#{LEVEL})\] (#{PROCESS_ID})##{THREAD_ID}: (?:\*#{CONNECTION_ID} )?(#{MESSAGE})/
+    ERROR         = /(#{TIME}) \[(#{LEVEL})\] (#{PID})##{THREAD_ID}: (?:\*#{CONNECTION_ID} )?(#{MESSAGE})/
     ERROR_LEVELS  = {
       'debug'  => :debug,
       'info'   => :info,
@@ -24,8 +24,8 @@ module LogLines
     P_THREAD_ID    = /\w+/
     P_LOCATION     = %r{[\w/.:-]+}
     P_MESSAGE      = /[^:]+/
-    P_NGINX        = %r{\[ (#{P_LEVEL}) (#{P_TIME})\.\d+ (#{PROCESS_ID})/T#{P_THREAD_ID} (#{P_LOCATION}) \]: (#{MESSAGE})}
-    P_ERROR        = %r{(Error|App) (#{PROCESS_ID} )?(#{P_MESSAGE}): (#{MESSAGE})}
+    P_NGINX        = %r{\[ (#{P_LEVEL}) (#{P_TIME})\.\d+ (#{PID})/T#{P_THREAD_ID} (#{P_LOCATION}) \]: (#{MESSAGE})}
+    P_ERROR        = %r{(Error|App) (#{PID} )?(#{P_MESSAGE}): (#{MESSAGE})}
     P_ERROR_LEVELS = {
       'D3'    => 'debug',
       'D2'    => 'debug',
@@ -38,8 +38,6 @@ module LogLines
       'C'     => 'crit',
       'App'   => 'ruby',
     }
-
-    json_attribute pid: :integer
 
     def self.parse(log, line, **)
       if (values = line.match(ERROR))
@@ -68,9 +66,8 @@ module LogLines
       end
       level = known_level || level
       label = { text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
-      json_data = { pid: pid&.to_i }
 
-      { created_at: created_at, label: label, json_data: json_data }
+      { created_at: created_at, process_id: pid&.to_i, label: label }
     end
   end
 end

@@ -27,7 +27,7 @@ module Rake::Task::WithOutput
   end
 
   def puts_failure(exception)
-    Notice.deliver! Rescues::RakeError.new(exception, data: { task: name, pid: Process.pid }), subject: name
+    Notice.deliver! Rescues::RakeError.new(exception, data: { task: name }), subject: name
     puts "[#{Time.current.utc}]#{MixTask::FAILURE}[#{Process.pid}] #{name}".red
   end
 

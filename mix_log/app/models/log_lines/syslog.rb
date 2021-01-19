@@ -6,10 +6,7 @@ module LogLines
     CMD  = /.+/
     CRON = /\((#{USER})\) CMD \((#{CMD})\)$/
 
-    json_attribute(
-      pid: :integer,
-      user: :string,
-    )
+    json_attribute :user
 
     def self.parse(log, line, mtime:)
       created_at, program, pid, message = rsyslog_parse(line, mtime)
@@ -18,10 +15,10 @@ module LogLines
       raise IncompatibleLogLine unless (values = message.match(CRON))
 
       user, text = values.captures
-      json_data = { user: user, pid: pid }
+      json_data = { user: user }
       label = { text: text.strip, level: :info }
 
-      { created_at: created_at, label: label, json_data: json_data }
+      { created_at: created_at, process_id: pid, label: label, json_data: json_data }
     end
   end
 end
