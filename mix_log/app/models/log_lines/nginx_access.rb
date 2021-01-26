@@ -59,7 +59,7 @@ module LogLines
 
       ip, user, created_at, request, status, bytes_out, bytes_in, referer, user_agent, upstream_time, pipe, time, https, gzip, pid = values.captures
       created_at = Time.strptime(created_at, "%d/%b/%Y:%H:%M:%S %z").utc
-      method, path, protocol = request.split(' ')
+      method, path, protocol = request.split
       method = nil unless path
       method, path, protocol = nil, method, path unless protocol
       http = protocol&.split('/')&.last&.to_f
