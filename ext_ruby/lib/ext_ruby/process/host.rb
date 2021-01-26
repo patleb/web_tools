@@ -217,7 +217,7 @@ module Process
     end
 
     def network
-      networks_mb.find{ |k, _| k.start_with? 'en', 'eth', 'wl' }&.last
+      networks_mb.find{ |k, _| k.start_with? 'en', 'eth', 'wl' }.last
     end
 
     def networks_mb
