@@ -85,30 +85,31 @@ module Process
     end
 
     def cpu_usage
-      return unless snapshot?
       return 0.0 if (total = cpu_total).zero?
       (cpu_work / total).ceil(6)
     end
 
     def cpu_total
-      return unless snapshot?
       cpu_work + cpu_idle + cpu_steal
     end
 
     def cpu_work
-      return unless snapshot?
-      (cpu.values_at(*WORK_TIMES).sum - snapshot[:cpu].values_at(*WORK_TIMES).sum) / (hertz * cpu_count)
+      time = cpu.values_at(*WORK_TIMES).sum
+      time -= snapshot[:cpu].values_at(*WORK_TIMES).sum if snapshot?
+      time / (hertz * cpu_count)
     end
 
     def cpu_idle
-      return unless snapshot?
-      (cpu.values_at(*IDLE_TIMES).sum - snapshot[:cpu].values_at(*IDLE_TIMES).sum) / (hertz * cpu_count)
+      time = cpu.values_at(*IDLE_TIMES).sum
+      time -= snapshot[:cpu].values_at(*IDLE_TIMES).sum if snapshot?
+      time / (hertz * cpu_count)
     end
 
     # https://scoutapm.com/blog/understanding-cpu-steal-time-when-should-you-be-worried
     def cpu_steal
-      return unless snapshot?
-      (cpu[:steal] - snapshot.dig(:cpu, :steal)) / (hertz * cpu_count)
+      time = cpu[:steal]
+      time -= snapshot.dig(:cpu, :steal) if snapshot?
+      time / (hertz * cpu_count)
     end
 
     def cpu_load
@@ -212,8 +213,7 @@ module Process
     end
 
     def network_usage
-      return unless snapshot?
-      network.map.with_index{ |value, i| (value - snapshot.dig(:network, i)).ceil(6) }
+      snapshot ? network.map.with_index{ |value, i| (value - snapshot.dig(:network, i)).ceil(6) } : network
     end
 
     def network

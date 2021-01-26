@@ -7,13 +7,10 @@ module Process
     def snapshot
       @_snapshot
     end
+    alias_method :snapshot?, :snapshot
 
     def snapshot!
       @_snapshot = build_snapshot
-    end
-
-    def snapshot?
-      !!@_snapshot
     end
 
     def build_snapshot
