@@ -45,24 +45,29 @@ class BigDecimal
 end
 
 class Numeric
+  B_PER_KB = BigDecimal(1_024).freeze
   B_PER_MB = BigDecimal(1_048_576).freeze
   B_PER_GB = BigDecimal(1_073_741_824).freeze
   KB_PER_MB = BigDecimal(1_024).freeze
   KB_PER_GB = BigDecimal(1_048_576).freeze
 
-  def bytes_to_mb
-    self / B_PER_MB
+  def bytes_to_kb(precision = 3)
+    (self / B_PER_KB).to_f.ceil(precision)
   end
 
-  def bytes_to_gb
-    self / B_PER_GB
+  def bytes_to_mb(precision = 3)
+    (self / B_PER_MB).to_f.ceil(precision)
   end
 
-  def kbytes_to_mb
-    self / KB_PER_MB
+  def bytes_to_gb(precision = 3)
+    (self / B_PER_GB).to_f.ceil(precision)
   end
 
-  def kbytes_to_gb
-    self / KB_PER_GB
+  def kbytes_to_mb(precision = 3)
+    (self / KB_PER_MB).to_f.ceil(precision)
+  end
+
+  def kbytes_to_gb(precision = 3)
+    (self / KB_PER_GB).to_f.ceil(precision)
   end
 end

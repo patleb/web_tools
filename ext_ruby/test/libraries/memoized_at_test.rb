@@ -17,20 +17,21 @@ class MemoizedAtTest < ActiveSupport::TestCase
     it 'should memoize until threshold passed' do
       previous = subject.access_time
       assert_equal subject.access_time, previous
-      travel_to (MemoizedAt::ACCESS_THRESHOLD + 1).seconds.from_now do
+      travel_to (ExtRuby.config.memoized_at_threshold + 1).seconds.from_now do
         current = subject.access_time
         refute_equal current, previous
         assert_equal subject.access_time, current
       end
     end
 
-    it 'should continue to memoized when touch is used' do
+    it 'should not memoize when force is used' do
       previous = subject.access_time
-      travel_to (MemoizedAt::ACCESS_THRESHOLD - 1).seconds.from_now do
-        current = subject.access_time(touch: true)
-        assert_equal current, previous
+      travel_to (ExtRuby.config.memoized_at_threshold - 1).seconds.from_now do
+        current = subject.access_time(force: true)
+        refute_equal current, previous
       end
-      travel_to (MemoizedAt::ACCESS_THRESHOLD + 1).seconds.from_now do
+      previous = subject.access_time
+      travel_to (ExtRuby.config.memoized_at_threshold + 1).seconds.from_now do
         current = subject.access_time
         assert_equal current, previous
       end

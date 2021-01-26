@@ -1,17 +1,13 @@
-# TODO add possibility to have several thresholds defined by conditions
 module MemoizedAt
-  ACCESS_THRESHOLD = 5.0
-
-  def m_access(name, *constants, threshold: ACCESS_THRESHOLD, touch: false)
+  def m_access(name, *constants, threshold: ExtRuby.config.memoized_at_threshold, force: false)
     @m_access_at ||= {}
     @m_access_cache ||= {}
     access_key = m_access_key(name, constants)
-    if !@m_access_cache.has_key?(access_key) || (Time.now - @m_access_at[access_key]) > threshold
+    if force || !@m_access_cache.has_key?(access_key) || (Time.now - @m_access_at[access_key]) > threshold
       value = @m_access_cache[access_key] = block_given? ? yield : send(name, *constants)
       @m_access_at[access_key] = Time.now
     else
       value = @m_access_cache[access_key]
-      @m_access_at[access_key] = Time.now if touch
     end
     value
   end

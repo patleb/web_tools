@@ -1,31 +1,29 @@
 module Process
   module Snapshot
+    def snapshot_namespace
+      @snapshot_namespace ||= self.class.name.demodulize.underscore
+    end
+
     def snapshot
-      self.class.const_get(:SNAPSHOT).each_with_object({}) do |attr, memo|
-        memo[attr] =
-          case attr.to_s
-          when /_time$/
-            send(attr).utc
-          else
-            send(attr)
-          end
-      end
+      @_snapshot
     end
 
     def snapshot!
-      @_snapshot = snapshot
+      @_snapshot = build_snapshot
     end
 
-    def snapshot_diff(old_snapshot = @_snapshot)
-      return unless old_snapshot
-      new_snapshot = snapshot
-      new_snapshot.slice(*self.class.const_get(:SNAPSHOT_DIFF)).each_with_object({}) do |(attr, value), memo|
+    def snapshot?
+      !!@_snapshot
+    end
+
+    def build_snapshot
+      ExtRuby.config.send("#{snapshot_namespace}_snapshot").each_with_object(created_at: Time.now) do |attr, memo|
         memo[attr] =
-          case value
-          when Array
-            value.map.with_index{ |v, i| (v - old_snapshot[attr][i]).ceil(3) }
+          case attr.to_s
+          when /_(time|at)$/
+            send(attr).utc
           else
-            (value - old_snapshot[attr]).ceil(3)
+            send(attr)
           end
       end
     end
