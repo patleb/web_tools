@@ -100,7 +100,7 @@ module Process
     end
 
     def cpu_usage
-      (cpu[:time] / uptime).ceil(6)
+      ((cpu[:time] / uptime) / host.cpu_count).ceil(6)
     end
 
     def cpu
