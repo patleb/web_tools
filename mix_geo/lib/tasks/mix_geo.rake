@@ -16,8 +16,9 @@ namespace :geo do
   task :restore_tables, [:version] => :environment do |t, args|
     file = "db/geo_#{args[:version]&.tr('.', '-')}.pg.gz"
     file = File.exist?(file) ? file : Dir.glob('db/geo_*.pg.gz').sort.last
-    Db::Pg::Restore.new(self, t, name: File.basename(file), pg_options: '--disable-triggers --data-only').run!
-    ActiveRecord::InternalMetadata[:geolite2_version] = args[:version]
+    file = File.basename(file)
+    Db::Pg::Restore.new(self, t, name: file, pg_options: '--disable-triggers --data-only').run!
+    ActiveRecord::InternalMetadata[:geolite2_version] = file[/[\d-]+/].tr('-', '.')
     GeoState.all.each(&:update_searches)
   end
 end
