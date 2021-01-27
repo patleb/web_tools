@@ -1,14 +1,14 @@
 module LogLines
   class NginxAccess < LogLine
     REMOTE_ADDR     = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}/
-    REMOTE_USER     = /[-\w]+/
+    REMOTE_USER     = /[-\w.]+/
     TIME_LOCAL      = %r{\d{1,2}/\w{3}/\d{4}(?::\d{2}){3} [+-]\d{4}}
     REQUEST         = /[^"]*/
     STATUS          = /\d{3}/
     BYTES_SENT      = /\d+/
     REQUEST_LENGTH  = /\d+/
     HTTP_REFERER    = /[^"]+/
-    HTTP_USER_AGENT = /[^"]+/
+    HTTP_USER_AGENT = /[^"]*/
     PIPE            = /[p.]/
     REQUEST_TIME    = /[-\d.]+/
     SCHEME          = /https?/
@@ -82,7 +82,7 @@ module LogLines
         bytes_out: bytes_out.to_i,
         time: time,
         referer: referer,
-        browser: (_browsers(user_agent) if browser),
+        browser: (_browsers(user_agent) if user_agent.present? && browser),
         pipe: pipe == 'p', # called from localhost with http-rb and keep-alive
         gzip: gzip == '-' ? nil : gzip.to_f,
       }
