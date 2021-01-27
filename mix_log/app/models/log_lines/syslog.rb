@@ -18,7 +18,7 @@ module LogLines
       json_data = { user: user }
       label = { text: text.strip, level: :info }
 
-      { created_at: created_at, process_id: pid, label: label, json_data: json_data }
+      { created_at: created_at, pid: pid, label: label, json_data: json_data }
     end
   end
 end

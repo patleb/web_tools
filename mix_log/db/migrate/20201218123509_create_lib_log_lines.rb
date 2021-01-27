@@ -5,11 +5,11 @@ class CreateLibLogLines < ActiveRecord::Migration[6.0]
       t.integer    :type,       null: false
       t.belongs_to :log,        null: false, index: false, foreign_key: { to_table: :lib_logs }
       t.belongs_to :log_label,  index: false, foreign_key: { to_table: :lib_log_labels }
-      t.integer    :process_id
+      t.integer    :pid
       t.jsonb      :json_data,  null: false, default: {}
     end
 
-    add_index :lib_log_lines, [:created_at, :type, :log_id, :log_label_id, :process_id, :json_data], using: :gin,
+    add_index :lib_log_lines, [:created_at, :type, :log_id, :log_label_id, :pid, :json_data], using: :gin,
       name: 'index_lib_log_lines_on_columns'
 
     if Rails.env.test?

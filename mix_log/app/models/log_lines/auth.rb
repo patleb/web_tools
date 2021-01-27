@@ -45,7 +45,7 @@ module LogLines
       json_data = { user: user, ip: ip, port: port&.to_i, key: key }
       label = { text: text, text_tiny: squish(text_tiny), level: level }
 
-      { created_at: created_at, process_id: pid, label: label, json_data: json_data }
+      { created_at: created_at, pid: pid, label: label, json_data: json_data }
     end
   end
 end

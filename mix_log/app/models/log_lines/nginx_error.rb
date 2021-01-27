@@ -67,7 +67,7 @@ module LogLines
       level = known_level || level
       label = { text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
 
-      { created_at: created_at, process_id: pid&.to_i, label: label }
+      { created_at: created_at, pid: pid&.to_i, label: label }
     end
   end
 end

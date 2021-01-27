@@ -111,7 +111,7 @@ module LogLines
         level: level
       }
 
-      { created_at: created_at, process_id: pid&.to_i, label: label, json_data: json_data }
+      { created_at: created_at, pid: pid&.to_i, label: label, json_data: json_data }
     end
 
     def self.finalize

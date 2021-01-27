@@ -9,10 +9,8 @@ class LogLine < LibRecord
   attr_readonly *%i(
     created_at
     type
-    process_id
+    pid
   )
-
-  alias_attribute :pid, :process_id
 
   def self.push(log, line)
     line[:log_id] = log_id = log.id

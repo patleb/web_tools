@@ -29,7 +29,7 @@ module LogLines
       json_data = { ip: text[FAIL2BAN_IP] }
       label = { text: text, level: FAIL2BAN_LEVELS[level] }
 
-      { created_at: created_at, process_id: pid.to_i, label: label, json_data: json_data }
+      { created_at: created_at, pid: pid.to_i, label: label, json_data: json_data }
     end
   end
 end
