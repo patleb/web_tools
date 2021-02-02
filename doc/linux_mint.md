@@ -353,7 +353,7 @@ sudo apt update && sudo apt-get -y install qgis python-qgis
 ## Webcamoid
 
 ```
-sudo apt-get install -y linux-generic dkms v4l-utils
+sudo apt-get install -y dkms v4l-utils
 v4l2-ctl --list-devices
 ...
 git clone git@github.com:webcamoid/akvcam.git
@@ -379,6 +379,13 @@ rm -rf ~/.config/Webcamoid
 ```
 
 Download and install [https://zoom.us/download?os=linux](Zoom)
+
+## VSCode
+
+Download and install [https://code.visualstudio.com/docs/setup/linux](VSCode)
+
+- https://code.visualstudio.com/docs/supporting/faq#_how-to-disable-telemetry-reporting
+- https://code.visualstudio.com/docs/editor/settings-sync
 
 ## Portainer (TODO)
 
