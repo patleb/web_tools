@@ -69,13 +69,13 @@ ActiveRecord::Base.class_eval do
   end
 
   def self.quote_column(name)
-    table, column = name.to_s.split('.', 2)
+    name, type = name.to_s.split('::')
+    table, column = name.split('.', 2)
     if column
       table = connection.quote_table_name(table)
     else
       column, table = table, quoted_table_name
     end
-    column, type = column.split('::')
     result = [table, connection.quote_column_name(column)].join('.')
     result = [result, type].join('::') if type
     result.sql_safe
