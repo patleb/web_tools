@@ -1,5 +1,38 @@
 class Array
-  def join!(separator=$,)
+  def average(init = 0, &block)
+    return 0.0 if empty?
+    total = sum(init, &block)
+    total / size.to_d
+  end
+
+  def stddev
+    Math.sqrt(variance)
+  end
+
+  def variance
+    return 0.0 if empty?
+    mean = average
+    total = map{ |v| (v - mean) ** 2 }.reduce(&:+)
+    total / size.to_d
+  end
+
+  def median(&block)
+    percentile(0.5, &block)
+  end
+
+  def percentile(bucket, &block)
+    sorted = map(&block).sort
+    last_i = sorted.size - 1
+    upper_i = bucket.to_f * last_i
+    lower_i = upper_i.floor
+    if lower_i == last_i
+      sorted.last
+    else
+      sorted[lower_i] + (upper_i % 1) * (sorted[lower_i + 1] - sorted[lower_i])
+    end
+  end
+
+  def join!(separator = $,)
     reject(&:blank?).join(separator)
   end
 

@@ -1,8 +1,8 @@
-# TODO https://api.rubyonrails.org/classes/ActiveRecord/Store.html
+# TODO https://github.com/guyboertje/arel-pg-json
 module ActiveRecord::Base::WithJsonAttribute
   extend ActiveSupport::Concern
 
-  # TODO array support
+  POSTGRESQL_JSON_ACCESSORS = %w(->> #>>)
   POSTGRESQL_TYPES = {
     big_integer: 'BIGINT',
     boolean: 'BOOLEAN',
@@ -24,14 +24,6 @@ module ActiveRecord::Base::WithJsonAttribute
   end
 
   class_methods do
-    def where_json(attributes, operator: '=')
-      types = json_accessors[:json_data].slice(*attributes.keys)
-      scopes = attributes.with_indifferent_access.slice(*types.keys).each_with_object([]) do |(name, value), result|
-        result << where(json_key(name, operator), value)
-      end
-      scopes.reduce(&:merge)
-    end
-
     def json_attribute(field_types)
       json_accessor(:json_data, field_types)
     end
@@ -60,12 +52,20 @@ module ActiveRecord::Base::WithJsonAttribute
       end
     end
 
-    def json_key(name, operator = nil)
-      key = "#{quote_column(:json_data)}->>'#{name}'"
-      key = "(#{key})::#{POSTGRESQL_TYPES[Array.wrap(json_accessors[:json_data][name]).first]}"
-      key = "#{key} #{operator} ?" if operator.present?
-      key
+    def json_key(name, as: nil, cast: nil)
+      name, *keys = Array.wrap(name)
+      return name unless json_attribute? name
+      if keys.present?
+        key = "#{quote_column(:json_data)}#>>'{#{name},#{keys.join(',')}}'"
+        key = "(#{key})::#{POSTGRESQL_TYPES[cast || :text]}"
+      else
+        key = "#{quote_column(:json_data)}->>'#{name}'"
+        key = "(#{key})::#{POSTGRESQL_TYPES[cast || Array.wrap(json_accessors[:json_data][name]).first]}"
+      end
+      return "#{key} AS #{as == true ? name : as}".sql_safe if as.present?
+      key.sql_safe
     end
+    alias_method :jk, :json_key
 
     def json_accessor(column, field_types)
       self.json_accessors ||= {}.with_indifferent_access
@@ -125,6 +125,11 @@ module ActiveRecord::Base::WithJsonAttribute
       include accessors
 
       after_initialize :"initialize_#{column}"
+    end
+
+    def quote_column(name)
+      return name if name.is_a?(Arel::Nodes::SqlLiteral) || POSTGRESQL_JSON_ACCESSORS.any?{ |op| name.to_s.include? op }
+      super
     end
   end
 end
