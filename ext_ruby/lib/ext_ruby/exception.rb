@@ -1,8 +1,15 @@
 class Exception
-  def self.wtf?
+  def self.wtf
     yield
   rescue => e
     puts e.backtrace_log
+  end
+
+  def self.wtf!
+    yield
+  rescue => e
+    puts e.backtrace_log
+    raise
   end
 
   def backtrace_log(n = 20)
@@ -13,5 +20,9 @@ class Exception
 end
 
 def wtf(&block)
-  Exception.wtf?(&block)
+  Exception.wtf(&block)
+end
+
+def wtf!(&block)
+  Exception.wtf!(&block)
 end
