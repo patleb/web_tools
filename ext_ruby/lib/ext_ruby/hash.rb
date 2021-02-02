@@ -33,6 +33,10 @@ class Hash
     JSON.pretty_generate(self, indent: '  ', space: ' ', space_before: '')
   end
 
+  def pretty_hash!
+    pretty_hash.presence
+  end
+
   def pretty_hash
     sort_by(&:first).to_h
       .deep_transform_keys{ |key| _pretty_hash_key(key) }
