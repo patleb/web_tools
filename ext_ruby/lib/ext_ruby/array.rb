@@ -1,16 +1,17 @@
 class Array
   def average(init = 0, &block)
-    return 0.0 if empty?
+    return if empty?
     total = sum(init, &block)
     total / size.to_d
   end
 
   def stddev
+    return if empty?
     Math.sqrt(variance)
   end
 
   def variance
-    return 0.0 if empty?
+    return if empty?
     mean = average
     total = map{ |v| (v - mean) ** 2 }.reduce(&:+)
     total / size.to_d
@@ -21,6 +22,7 @@ class Array
   end
 
   def percentile(bucket, &block)
+    return if empty?
     sorted = map(&block).sort
     last_i = sorted.size - 1
     upper_i = bucket.to_f * last_i
