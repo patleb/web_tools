@@ -58,8 +58,8 @@ module Process
 
     def children
       m_access(:children) do
-        host.pids.each_with_object([]) do |child_pid, memo|
-          next if (child = self.class.new(child_pid)).ppid != pid
+        self.class.all.each_with_object([]) do |worker, memo|
+          next if worker.ppid != pid
           memo << child
         end
       end
@@ -71,14 +71,14 @@ module Process
 
     def siblings
       m_access(:siblings) do
-        host.pids.each_with_object([]) do |sibling_pid, memo|
-          next if sibling_pid.in? [PID_INIT, pid, ppid]
-          if [(sibling = self.class.new(sibling_pid)).ppid, ppid].exclude? PID_INIT
-            next if sibling.ppid != ppid
+        self.class.all.each_with_object([]) do |worker, memo|
+          next if worker.pid.in? [PID_INIT, pid, ppid]
+          if [worker.ppid, ppid].exclude? PID_INIT
+            next if worker.ppid != ppid
           else
-            next if sibling.cmdline != cmdline
+            next if worker.cmdline != cmdline
           end
-          memo << sibling
+          memo << worker
         end
       end
     end
