@@ -2,7 +2,7 @@ class Array
   def average(init = 0, &block)
     return if empty?
     total = sum(init, &block)
-    total / size.to_d
+    total / size.to_f
   end
 
   def stddev
@@ -14,16 +14,16 @@ class Array
     return if empty?
     mean = average
     total = map{ |v| (v - mean) ** 2 }.reduce(&:+)
-    total / size.to_d
+    total / size.to_f
   end
 
-  def median(&block)
-    percentile(0.5, &block)
+  def median
+    percentile(0.5)
   end
 
-  def percentile(bucket, &block)
+  def percentile(bucket)
     return if empty?
-    sorted = map(&block).sort
+    sorted = sort
     last_i = sorted.size - 1
     upper_i = bucket.to_f * last_i
     lower_i = upper_i.floor

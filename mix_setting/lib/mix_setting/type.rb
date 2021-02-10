@@ -19,7 +19,7 @@ module MixSetting::Type
       else
         case type&.to_sym
         when :json
-          ActiveSupport::JSON.decode(value).with_indifferent_access
+          ActiveSupport::JSON.decode(value).with_keyword_access
         when :boolean
           value.to_b
         when :integer

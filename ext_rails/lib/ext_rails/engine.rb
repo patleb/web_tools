@@ -145,7 +145,7 @@ module ExtRails
       require 'ext_rails/active_record/reflection/belongs_to_reflection/with_list'
       require 'ext_rails/active_record/relation'
       require 'ext_rails/active_record/tasks/database_tasks/with_single_env'
-      require 'ext_rails/active_record/type/json/with_indifferent_access'
+      require 'ext_rails/active_record/type/json/with_keyword_access'
       require 'ext_rails/active_record/type/encrypted'
       require 'ext_rails/groupdate'
 

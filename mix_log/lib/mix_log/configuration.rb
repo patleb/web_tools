@@ -54,7 +54,7 @@ module MixLog
     end
 
     def known_errors
-      @known_errors ||= HashWithIndifferentAccess.new(
+      @known_errors ||= HashWithKeywordAccess.new(
         warn: [
           'SSL routines:tls_early_post_process_client_hello:version too low',
           'SSL routines:tls_early_post_process_client_hello:unsupported protocol',

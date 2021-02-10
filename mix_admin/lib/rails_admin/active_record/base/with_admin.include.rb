@@ -3,7 +3,7 @@ module ActiveRecord::Base::WithAdmin
 
   class_methods do
     def rails_admin_blocks
-      @rails_admin_blocks ||= { before: {}, after: {} }.with_indifferent_access
+      @rails_admin_blocks ||= { before: {}, after: {} }.with_keyword_access
     end
 
     def inherited(subclass)

@@ -25,6 +25,10 @@ ActiveRecord::Base.class_eval do
   class << self
     alias_method :without_default_scope, :evaluate_default_scope
     public :without_default_scope
+
+    def scope(name, body, &block)
+      super if name.match?(/^[a-z_][a-z0-9_]*$/)
+    end
   end
 
   def without_default_scope_on_association(name)
@@ -115,13 +119,13 @@ ActiveRecord::Base.class_eval do
         WHERE relname NOT LIKE '\_hyper\_%'
         ORDER BY #{order_by_name ? 'name' : "#{size} DESC"};
       SQL
-      result = result.each_with_object({}.with_indifferent_access){ |(name, size), h| h[name] = size }
+      result = result.each_with_object({}.with_keyword_access){ |(name, size), h| h[name] = size }
 
       if Setting[:timescaledb_enabled]
         timescaledb_tables.each do |name, id|
           result[name] = Timescaledb::Table.find(id).total_bytes
         end
-        result = result.sort_by(&:last).reverse.to_h.with_indifferent_access
+        result = result.sort_by(&:last).reverse.to_h.with_keyword_access
       end
 
       result
@@ -153,7 +157,7 @@ ActiveRecord::Base.class_eval do
   end
 
   def except(*methods)
-    attributes.with_indifferent_access.except!(*methods.flatten)
+    attributes.with_keyword_access.except!(*methods.flatten)
   end
 
   def locking_enabled?

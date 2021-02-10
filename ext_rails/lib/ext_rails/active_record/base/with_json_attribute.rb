@@ -15,7 +15,7 @@ module ActiveRecord::Base::WithJsonAttribute
     string: 'TEXT',
     text: 'TEXT',
     time: 'TIME',
-  }.with_indifferent_access
+  }.with_keyword_access
 
   prepended do
     class_attribute :json_accessors, instance_accessor: false, instance_predicate: false
@@ -68,10 +68,10 @@ module ActiveRecord::Base::WithJsonAttribute
     alias_method :jk, :json_key
 
     def json_accessor(column, field_types)
-      self.json_accessors ||= {}.with_indifferent_access
-      self.json_accessors[column] ||= {}.with_indifferent_access
+      self.json_accessors ||= {}.with_keyword_access
+      self.json_accessors[column] ||= {}.with_keyword_access
       field_types = Array.wrap(field_types).map{ |name| [name, :string] }.to_h unless field_types.is_a? Hash
-      defaults = field_types.each_with_object({}.with_indifferent_access) do |(name, type), defaults|
+      defaults = field_types.each_with_object({}.with_keyword_access) do |(name, type), defaults|
         next unless type.is_a?(Array) && (options = type.last).is_a?(Hash) && options.key?(:default)
         defaults[name] = options.delete(:default)
       end
@@ -102,7 +102,7 @@ module ActiveRecord::Base::WithJsonAttribute
         end
 
         define_method "#{column}=" do |new_values|
-          new_values = (new_values || {}).with_indifferent_access.slice(*self.class.json_accessors[column].keys)
+          new_values = (new_values || {}).with_keyword_access.slice(*self.class.json_accessors[column].keys)
           nil_values = public_send(column).except(*new_values.keys)
           super(new_values)
           nil_values.each_key do |name|

@@ -36,7 +36,7 @@ module RailsAdmin::Main
     def prepare(field, calculation)
       @calculation = calculation.try(:to_sym)
 
-      field_param = Rack::Utils.parse_nested_query(field).with_indifferent_access
+      field_param = Rack::Utils.parse_nested_query(field).with_keyword_access
       schema = field_param[:schema].slice(:except, :include, :methods, :only).to_h.full_symbolize
 
       return unless (method = schema[:only] || schema[:methods])

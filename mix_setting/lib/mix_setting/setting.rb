@@ -66,7 +66,7 @@ class Setting
       @env = env.to_s
       @app = app
       @root = Pathname.new('').expand_path
-      @types = {}.with_indifferent_access
+      @types = {}.with_keyword_access
       @gems = {}
       @secrets = parse_secrets_yml
       @database = parse_database_yml
@@ -133,7 +133,7 @@ class Setting
   end
 
   def self.parse_secrets_yml
-    extract_yml(:secrets, @root).with_indifferent_access
+    extract_yml(:secrets, @root).with_keyword_access
   end
 
   def self.parse_database_yml

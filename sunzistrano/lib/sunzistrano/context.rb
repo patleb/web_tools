@@ -17,7 +17,7 @@ module Sunzistrano
 
     def initialize(stage, role, options)
       env, app = stage.split(':', 2)
-      settings = { stage: env, application: app }.with_indifferent_access
+      settings = { stage: env, application: app }.with_keyword_access
       settings.merge! capistrano(stage)
       @stage, @application = settings.values_at(:stage, :application)
       @role = role

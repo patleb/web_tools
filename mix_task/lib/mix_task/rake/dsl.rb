@@ -9,7 +9,7 @@ module Rake
     end
 
     def cap_task(task_name, environment = {})
-      environment = environment.with_indifferent_access
+      environment = environment.with_keyword_access
       stage = [environment.delete(:env).presence || Rails.env, environment.delete(:app)].compact.join(':')
       environment = environment.each_with_object('RAILS_ENV=development') do |(name, value), string|
         string << " #{name.to_s.upcase}=#{value}"

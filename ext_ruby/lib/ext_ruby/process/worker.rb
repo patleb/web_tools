@@ -21,7 +21,7 @@ module Process
       19 => :threads,
       21 => :start_time,
     }.freeze
-    PROCESS_STATES = HashWithIndifferentAccess.new(
+    PROCESS_STATES = HashWithKeywordAccess.new(
       R: :running,
       S: :sleeping,
       D: :disk_sleep,

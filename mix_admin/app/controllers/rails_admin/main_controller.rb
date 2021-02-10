@@ -49,7 +49,7 @@ module RailsAdmin
     end
 
     def model_cookie
-      @model_cookie ||= ActiveSupport::JSON.decode(cookies["js.#{params[:model_name]}"] || '{}').with_indifferent_access
+      @model_cookie ||= ActiveSupport::JSON.decode(cookies["js.#{params[:model_name]}"] || '{}').with_keyword_access
     end
 
     def clear_model_cookie
