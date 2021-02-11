@@ -8,7 +8,6 @@ module ExtRails
     require 'date_validator'
     require 'discard'
     require 'http_accept_language'
-    require 'groupdate'
     require 'monogamy'
     require 'pg'
     require 'rails-i18n'
@@ -147,7 +146,6 @@ module ExtRails
       require 'ext_rails/active_record/tasks/database_tasks/with_single_env'
       require 'ext_rails/active_record/type/json/with_keyword_access'
       require 'ext_rails/active_record/type/encrypted'
-      require 'ext_rails/groupdate'
 
       ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables = Rails.env.test?
       Rails.backtrace_cleaner.class.send(:remove_const, :APP_DIRS_PATTERN)

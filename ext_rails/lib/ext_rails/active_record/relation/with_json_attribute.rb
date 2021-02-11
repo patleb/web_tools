@@ -14,29 +14,37 @@ module ActiveRecord::Relation::WithJsonAttribute
   def where(*args)
     return super unless (attributes = args.first).is_a?(Hash) && attributes.present?
     scopes = attributes.each_with_object([]) do |(name, value), result|
-      operator, value = extract_operator(value)
-      result << super("#{json_key(name)} #{operator} #{value.is_a?(Array) ? '(?)' : '?'}", value)
+      if json_attribute? name
+        operator, value = extract_operator(value)
+        result << super("#{json_key(name)} #{operator} #{value.is_a?(Array) ? '(?)' : '?'}", value)
+      else
+        result << super(name => value)
+      end
     end
     scopes.reduce(&:merge)
   end
 
   def where_not(*args)
     return super unless (attributes = args.first).is_a?(Hash) && attributes.present?
-    attributes = attributes.transform_values do |value|
-      operator, value = extract_operator(value)
-      operator = case operator
-        when /^(=|~\*?)$/  then "!#{$1}"
-        when /^!(=|~\*?)$/ then $1
-        when '<'           then '>='
-        when '>'           then '<='
-        when '<='          then '>'
-        when '>='          then '<'
-        when 'IS'          then 'IS NOT'
-        when 'IS NOT'      then 'IS'
-        when /^NOT (\w+)$/ then $1
-        else "NOT #{operator.upcase}"
-        end
-      [operator, value]
+    attributes = attributes.each_with_object({}) do |(name, value), result|
+      if json_attribute? name
+        operator, value = extract_operator(value)
+        operator = case operator
+          when /^(=|~\*?)$/  then "!#{$1}"
+          when /^!(=|~\*?)$/ then $1
+          when '<'           then '>='
+          when '>'           then '<='
+          when '<='          then '>'
+          when '>='          then '<'
+          when 'IS'          then 'IS NOT'
+          when 'IS NOT'      then 'IS'
+          when /^NOT (\w+)$/ then $1
+          else "NOT #{operator.upcase}"
+          end
+        result[name] = [operator, value]
+      else
+        result[name] = value
+      end
     end
     where(attributes)
   end

@@ -45,6 +45,6 @@ ActiveRecord::Base.class_eval do
   class << self
     delegate :select_without, :where_not, :order_group, :count_estimate, to: :all
     delegate :stddev, :variance, :median, :percentile, to: :all
-    delegate :order_group_calculate, :calculate_from, :calculate_multi, to: :all
+    delegate :group_by_period, :order_group_calculate, :calculate_from, :calculate_multi, to: :all
   end
 end

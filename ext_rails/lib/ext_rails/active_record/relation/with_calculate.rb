@@ -1,6 +1,12 @@
 module ActiveRecord::Relation::WithCalculate
   SELECT_FROM = /^SELECT (.+?)(?= FROM)/
 
+  def group_by_period(period, reverse: nil, **opts)
+    group_clause, where_clause = group_by_period_clauses(period, **opts)
+    relation = reverse.nil? ? self : order(column_alias_for(group_clause.dup).downcase => (reverse ? :desc : :asc))
+    relation.where(*where_clause).group(group_clause)
+  end
+
   def order_group_calculate(*columns, operation, column, reverse: true, **opts)
     order("1 #{reverse ? 'DESC' : 'ASC'}").order_group(*columns, **opts).calculate(operation, column)
   end
@@ -54,6 +60,38 @@ module ActiveRecord::Relation::WithCalculate
   end
 
   private
+
+  def group_by_period_clauses(period, column: :created_at, seconds: nil, time_range: nil)
+    column = klass.quote_column(column)
+    group_clause = case period
+      when :minute_of_hour then "EXTRACT(MINUTE FROM #{column})::INTEGER"
+      when :hour_of_day    then "EXTRACT(HOUR FROM #{column})::INTEGER"
+      when :day_of_week    then "EXTRACT(DOW FROM #{column})::INTEGER"
+      when :day_of_month   then "EXTRACT(DAY FROM #{column})::INTEGER"
+      when :day_of_year    then "EXTRACT(DOY FROM #{column})::INTEGER"
+      when :month_of_year  then "EXTRACT(MONTH FROM #{column})::INTEGER"
+      when :week           then "(DATE_TRUNC('day', #{column} - INTERVAL '1 day' * ((13 + EXTRACT(DOW FROM #{column})::INTEGER) % 7)))"
+      when :custom         then ["TO_TIMESTAMP(FLOOR(EXTRACT(EPOCH FROM #{column}) / ?) * ?)", seconds, seconds]
+      else                      ["DATE_TRUNC(?, #{column})", period]
+      end
+    group_clause = group_clause.is_a?(Array) ? sanitize_sql_array(group_clause) : group_clause
+    where_clause = case time_range
+      when Range
+        if time_range.end
+          op = time_range.exclude_end? ? "<" : "<="
+          if time_range.begin
+            ["#{column} >= ? AND #{column} #{op} ?", time_range.begin, time_range.end]
+          else
+            ["#{column} #{op} ?", time_range.end]
+          end
+        else
+          ["#{column} >= ?", time_range.begin]
+        end
+      else
+        ["#{column} IS NOT NULL"]
+      end
+    [group_clause, where_clause]
+  end
 
   def perform_calculation(operation, column, arg = nil)
     case (operation = operation.to_s)

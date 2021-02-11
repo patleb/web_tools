@@ -15,6 +15,7 @@ module ActiveRecord::Base::WithJsonAttribute
     string: 'TEXT',
     text: 'TEXT',
     time: 'TIME',
+    interval: 'INTERVAL',
   }.with_keyword_access
 
   prepended do
@@ -30,7 +31,7 @@ module ActiveRecord::Base::WithJsonAttribute
 
     def json_attribute?(name)
       return false unless json_accessors
-      json_accessors[:json_data].has_key? name
+      json_accessors[:json_data].has_key? Array.wrap(name).first
     end
 
     def json_translate(field_types)
@@ -53,8 +54,8 @@ module ActiveRecord::Base::WithJsonAttribute
     end
 
     def json_key(name, as: nil, cast: nil)
-      name, *keys = Array.wrap(name)
       return name unless json_attribute? name
+      name, *keys = Array.wrap(name)
       if keys.present?
         key = "#{quote_column(:json_data)}#>>'{#{name},#{keys.join(',')}}'"
         key = "(#{key})::#{POSTGRESQL_TYPES[cast || :text]}"
@@ -62,7 +63,7 @@ module ActiveRecord::Base::WithJsonAttribute
         key = "#{quote_column(:json_data)}->>'#{name}'"
         key = "(#{key})::#{POSTGRESQL_TYPES[cast || Array.wrap(json_accessors[:json_data][name]).first]}"
       end
-      return "#{key} AS #{as == true ? name : as}".sql_safe if as.present?
+      return "#{key} AS #{as == true ? [name, *keys].join('_') : as}".sql_safe if as.present?
       key.sql_safe
     end
     alias_method :jk, :json_key
