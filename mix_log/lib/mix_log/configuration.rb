@@ -2,6 +2,7 @@ module MixLog
   has_config do
     attr_writer :available_types
     attr_writer :available_paths
+    attr_writer :available_rollups
     attr_writer :filter_parameters
     attr_writer :ided_paths
     attr_writer :ided_errors
@@ -33,6 +34,12 @@ module MixLog
         log_path(:auth),
         log_path(:fail2ban),
       ]
+    end
+
+    def available_rollups
+      @available_rollups ||= {
+        'LogRollups::NginxAccess' => 10,
+      }
     end
 
     def filter_parameters

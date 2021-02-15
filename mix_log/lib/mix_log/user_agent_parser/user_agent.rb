@@ -1,3 +1,5 @@
+UA = %i(name version os_name os_version hw_brand hw_model).map.with_index{ |k, i| [k, i] }.to_h
+
 UserAgentParser::UserAgent.class_eval do
   def browser
     browser = to_h
@@ -9,11 +11,14 @@ UserAgentParser::UserAgent.class_eval do
     when [device[:brand], device[:model]].join(' '), device[:model], device[:brand]
       device.delete(:family)
     end
-    browser[:hw] = device.values_at(:brand, :model).compact.uniq
-    browser[:os] = browser[:os].values_at(:family, :version).compact
+    browser[:hw] = device.values_at(:brand, :model).uniq
+    browser[:os] = browser[:os].values_at(:family, :version)
     browser[:v] = browser.delete(:version)
     browser[:name] = browser.delete(:family)
-    browser.reject!{ |_, v| v.blank? }
     browser
+  end
+
+  def browser_array
+    browser.values_at(:name, :v, :os, :hw).flatten
   end
 end

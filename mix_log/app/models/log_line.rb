@@ -1,6 +1,8 @@
 class LogLine < LibRecord
   class IncompatibleLogLine < ::StandardError; end
 
+  self.primary_key = :created_at # so #find_each will work, but must be scoped by :log_id
+
   belongs_to :log
   belongs_to :log_label
 
@@ -11,6 +13,27 @@ class LogLine < LibRecord
     type
     pid
   )
+
+  def self.rollups!(scope = :from_last)
+    rollups_class_name = "LogRollups::#{name.demodulize}"
+    rollups_class = rollups_class_name.to_const!
+    rows = case scope
+      when :all, true
+        rollups
+      when :from_last, false, nil
+        period_at = rollups_class.order(period: :desc, period_at: :desc).pick(:period_at)
+        period_at ? where(column(:created_at) >= period_at).rollups : rollups
+      when Symbol
+        send(scope).rollups
+      end
+    rows.each{ |row| row[:type] = rollups_class_name }
+    rollups_class.upsert_all(rows, unique_by: 'index_lib_log_rollups_on_groups', returning: false) if rows.any?
+    rows
+  end
+
+  def self.rollups
+    raise NotImplementedError
+  end
 
   def self.push(log, line)
     line[:log_id] = log_id = log.id

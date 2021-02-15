@@ -28,8 +28,21 @@ module LogLines
       (400...500) => :error,
       (500...600) => :fatal,
     }
-
     INVALID_URI = OpenStruct.new(path: nil)
+    PERIODS = %i(year month week day hour)
+    ROLLUPS_JSON_DATA = %i(
+      requests
+      pjax
+      time_min
+      time_max
+      time_avg
+      time_std
+      time_med
+      bytes_out
+      bytes_in
+      users
+      hours
+    ).map.with_index{ |v, i| [v, i] }.to_h
 
     json_attribute(
       ip: :string,
@@ -49,7 +62,148 @@ module LogLines
       browser: :json,
       pipe: :boolean,
       gzip: :float,
+      format: :string,
+      pjax: :boolean,
     )
+
+    scope :unique_users,  -> { select(user).distinct.where_not(browser: nil) }
+    scope :referers,      -> { where_not(referer: nil).where_not(referer: ['LIKE', '/%']) }
+    scope :root,          -> { where(path: '/') }
+    scope :api,           -> { where(path: ['~', '^/api/.+']) }
+    scope :page,          -> { where(path: ['~', "^/[\\w-]+/#{MixPage::URL_SEGMENT}/"]) }
+    scope :admin,         -> { where(path: ['~', "^#{RailsAdmin.js_routes[:root]}(/|$)"]) }
+    scope :geoserver_wms, -> { where(path: "#{Setting[:geoserver_path]}/wms") }
+    scope :pgrest_rpc,    -> (name = '%') { where(path: ['LIKE', "#{Setting[:pgrest_path]}/rpc/#{name}"]) }
+    scope :pjax,          -> { where(pjax: true) }
+    scope :success,       -> { where(status: ['>=', 200]).where(status: ['<', 300]) }
+
+    def self.user
+      @user ||= "#{json_key(:ip)} || ' ' || #{json_key(:browser, cast: :text)}".sql_safe
+    end
+
+    def self.path
+      @path ||= "#{json_key(:method)} || ' ' || #{json_key(:path)}".sql_safe
+    end
+
+    def self.requests_begin_at
+      success.order(:created_at).pick(:created_at).utc
+    end
+
+    def self.requests_end_at
+      success.order(created_at: :desc).pick(:created_at).utc
+    end
+
+    def self.total_requests
+      success.requests_by(path)
+    end
+
+    def self.total_mbytes_out
+      success.sum(:bytes_out).bytes_to_mb
+    end
+
+    def self.total_mbytes_in
+      success.sum(:bytes_in).bytes_to_mb
+    end
+
+    def self.total_referers
+      success.referers.requests_by(:referer)
+    end
+
+    def self.average_users(period = :week)
+      from = success.unique_users.group_by_period(period)
+      calculate_from(:average, from, :count, user).ceil
+    end
+
+    def self.average_mbytes_out(period = :week)
+      from = success.group_by_period(period).where_not(bytes_out: nil)
+      calculate_from(:average, from, :sum, :bytes_out).bytes_to_mb
+    end
+
+    def self.average_mbytes_in(period = :week)
+      from = success.group_by_period(period).where_not(bytes_in: nil)
+      calculate_from(:average, from, :sum, :bytes_in).bytes_to_mb
+    end
+
+    def self.average_time(period = :week)
+      from = success.group_by_period(period).where_not(time: nil)
+      calculate_from(:average, from, :average, :time).to_f.ceil(3)
+    end
+
+    def self.users_by(*args)
+      unique_users.requests_by(*args)
+    end
+
+    def self.mbytes_out_by(field, operation = :sum)
+      requests_by(field, operation, :bytes_out).transform_values(&:bytes_to_mb)
+    end
+
+    def self.mbytes_in_by(field, operation = :sum)
+      requests_by(field, operation, :bytes_in).transform_values(&:bytes_to_mb)
+    end
+
+    def self.time_by(field, operation = :average)
+      requests_by(field, operation, :time).transform_values{ |v| v.to_f.ceil(3) }
+    end
+
+    def self.requests_by(period_or_field, operation = :count, name = nil)
+      case period_or_field
+      when *PERIODS  then success.group_by_period(period_or_field, reverse: true).calculate(operation, name)
+      when :browser  then success.top_group_calculate([:browser, UA[:name]], operation, column: name)
+      when :platform then success.top_group_calculate([:browser, UA[:os_name]], operation, column: name)
+      when :status   then top_group_calculate(period_or_field, operation, column: name)
+      else                success.top_group_calculate(period_or_field, operation, column: name)
+      end
+    end
+
+    def self.rollups
+      operations = [
+        [:count], [:count, :pjax],
+        *%i(minimum maximum average stddev median).map{ |operation| [operation, :time] },
+        [:sum, :bytes_out], [:sum, :bytes_in],
+      ]
+      ceil = ->(row) do
+        %i(time_avg time_std).each{ |name| row[ROLLUPS_JSON_DATA[name]] = row[ROLLUPS_JSON_DATA[name]].ceil(3) }
+        row
+      end
+      result = %i(week day).each_with_object({}) do |period, result|
+        result[[period, :period]] = success.group_by_period(period).calculate(operations).transform_values! &ceil
+        success.unique_users.group_by_period(period).count.each do |period_at, users|
+          result[[period, :period]][period_at] << users
+        end
+      end
+      result[[:week, :path]] = success.group_by_period(:week).order_group(path).calculate(operations).transform_values! &ceil
+      result[[:week, :status]] = group_by_period(:week).order_group(:status).count
+      result[[:week, :referer]] = success.referers.group_by_period(:week).order_group(:referer).count
+      [:format, :country, :state, [:browser, UA[:name]], [:browser, UA[:os_name]]].each do |field|
+        result[[:week, field]] = success.where_not(field => nil).group_by_period(:week).order_group(field).count
+      end
+      hours = success.group_by_period(:hour).count
+      (days = result[[:day, :period]]).each do |day, row|
+        row << (0...24).map{ |hour| hours[day + hour.hours] || 0 }
+      end
+      result[[:week, :period]].each do |week, row|
+        row << (0...24).map{ |hour| (0..7).sum{ |day| (days[week + day.days] || [[]]).last[hour] || 0 } }
+      end
+      result.each_with_object([]) do |(key, values), result|
+        period, group_name = key
+        group_name = case group_name
+          when [:browser, UA[:name]]    then :browser
+          when [:browser, UA[:os_name]] then :platform
+          else group_name
+          end
+        result.concat(values.map do |group_key, json_data|
+          period_at, group_value = Array.wrap(group_key)
+          json_data = Array.wrap(json_data)
+          {
+            group_name: group_name,
+            group_value: group_value || '',
+            period: 1.send(period),
+            period_at: period_at,
+            json_data: ROLLUPS_JSON_DATA.keys.first(json_data.size).zip(json_data).to_h
+          }
+        end)
+      end
+    end
 
     # 142 MB unziped logs (226K rows) -->  167 MB (- 36 MB idx) in around 3 minutes
     #   without parameters            -->  122 MB (- 31 MB idx)
@@ -64,6 +218,8 @@ module LogLines
       method, path, protocol = nil, method, path unless protocol
       http = protocol&.split('/')&.last&.to_f
       uri, params = (Rack::Utils.parse_url(path) rescue [INVALID_URI, nil])
+      path = uri.path&.downcase || ''
+      path = path.delete_suffix('/') unless path == '/'
       referer_uri, _referer_params = (Rack::Utils.parse_url(referer) rescue [INVALID_URI, nil]) unless referer == '-'
       referer_host = referer_uri&.hostname
       referer = [(referer_host if referer_host != Setting[:server_host]), referer_uri&.path].compact.join
@@ -75,20 +231,19 @@ module LogLines
         http: http == 0.0 ? nil : http,
         ssl: https == 'https',
         method: method,
-        path: uri.path,
+        path: path,
         params: (params&.except(*MixLog.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if parameters),
         status: (status = status.to_i),
         bytes_in: bytes_in&.to_i,
         bytes_out: bytes_out.to_i,
         time: time,
         referer: referer,
-        browser: (_browsers(user_agent) if user_agent.present? && browser),
+        browser: (_browsers(user_agent) if browser && user_agent.present? && user_agent != '-'),
         pipe: pipe == 'p', # called from localhost with http-rb and keep-alive
         gzip: gzip == '-' ? nil : gzip.to_f,
+        format: path.split('.', 2)[1],
       }
       global_log = log.path&.end_with?('/access.log')
-      path = json_data[:path]&.downcase || ''
-      path = path.delete_suffix('/') unless path == '/'
       if global_log || status == 404 || path.end_with?('/wp-admin', '/allowurl.txt', '.php')
         method, path, params = nil, '*', nil
       end
@@ -99,8 +254,9 @@ module LogLines
         path_tiny = squish(path)
       end
       if method
-        pjax = json_data[:params]&.any?{ |k, _| k.start_with? '_pjax' } ? 'pjax' : nil
-        params = json_data[:params]&.pretty_hash || ''
+        pjax = json_data[:params]&.any?{ |k, _| k.match? /^_pjax/ } ? 'pjax' : nil
+        json_data[:pjax] = pjax.present?
+        params = json_data[:params]&.pretty_hash!('')
         params_tiny = squish(params)
       end
       level = global_log ? :info : ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
@@ -119,7 +275,10 @@ module LogLines
     end
 
     def self._browsers(user_agent)
-      (@_browsers ||= {})[user_agent] ||= USER_AGENT_PARSER.parse(user_agent).browser
+      (@_browsers ||= {})[user_agent] ||= begin
+        ua = USER_AGENT_PARSER.parse(user_agent).browser_array
+        ua.all?(&:nil?) ? [] : ua
+      end
     end
   end
 end
