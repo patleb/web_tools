@@ -107,7 +107,7 @@ module MixGeo
             end
             if city
               cities_size_was = cities.size
-              city = { name: city, state_code: state_code, country_code: country_code }
+              city = { name: city, state_code: state_code || '', country_code: country_code }
               cities << city
               if cities.size > cities_size_was
                 cities_ids[city] = GeoCity.insert(city).pluck('id').first

@@ -12,7 +12,7 @@ class Log < LibRecord
     path
   )
 
-  before_create :initialize_log_lines_type, if: :path
+  before_create :initialize_log_lines_type, if: -> { path.present? }
 
   def self.db_log(db_type)
     (@db_log ||= {})[db_type] ||= find_or_create_by! server: Server.current, log_lines_type: db_type
