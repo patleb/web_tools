@@ -1,7 +1,6 @@
 class LogRollups::NginxAccess < LogRollup
   json_attribute(
     requests: :integer,
-    pjax: :integer,
     time_min: :float,
     time_max: :float,
     time_avg: :float,
@@ -18,10 +17,9 @@ class LogRollups::NginxAccess < LogRollup
     path: 10,
     status: 20,
     referer: 30,
-    format: 40,
-    country: 50,
-    state: 60,
-    browser: 70,
-    platform: 80,
+    country: 40,
+    state: 50,
+    browser: 60,
+    platform: 70,
   }
 end

@@ -32,7 +32,6 @@ module LogLines
     PERIODS = %i(year month week day hour)
     ROLLUPS_JSON_DATA = %i(
       requests
-      pjax
       time_min
       time_max
       time_avg
@@ -62,8 +61,6 @@ module LogLines
       browser: :json,
       pipe: :boolean,
       gzip: :float,
-      format: :string,
-      pjax: :boolean,
     )
 
     scope :unique_users,  -> { select(user).distinct.where_not(browser: nil) }
@@ -74,15 +71,10 @@ module LogLines
     scope :admin,         -> { where(path: ['~', "^#{RailsAdmin.js_routes[:root]}(/|$)"]) }
     scope :geoserver_wms, -> { where(path: "#{Setting[:geoserver_path]}/wms") }
     scope :pgrest_rpc,    -> (name = '%') { where(path: ['LIKE', "#{Setting[:pgrest_path]}/rpc/#{name}"]) }
-    scope :pjax,          -> { where(pjax: true) }
     scope :success,       -> { where(status: ['>=', 200]).where(status: ['<', 300]) }
 
     def self.user
       @user ||= "#{json_key(:ip)} || ' ' || #{json_key(:browser, cast: :text)}".sql_safe
-    end
-
-    def self.path
-      @path ||= "#{json_key(:method)} || ' ' || #{json_key(:path)}".sql_safe
     end
 
     def self.requests_begin_at
@@ -94,7 +86,7 @@ module LogLines
     end
 
     def self.total_requests
-      success.requests_by(path)
+      success.joins(:log_label).requests_by(:text_tiny)
     end
 
     def self.total_mbytes_out
@@ -157,7 +149,7 @@ module LogLines
 
     def self.rollups
       operations = [
-        [:count], [:count, :pjax],
+        [:count],
         *%i(minimum maximum average stddev median).map{ |operation| [operation, :time] },
         [:sum, :bytes_out], [:sum, :bytes_in],
       ]
@@ -166,15 +158,17 @@ module LogLines
         row
       end
       result = %i(week day).each_with_object({}) do |period, result|
-        result[[period, :period]] = success.group_by_period(period).calculate(operations).transform_values! &ceil
+        result[[period, :period]] = success.group_by_period(period).calculate(operations).transform_values!(&ceil)
         success.unique_users.group_by_period(period).count.each do |period_at, users|
           result[[period, :period]][period_at] << users
         end
       end
-      result[[:week, :path]] = success.group_by_period(:week).order_group(path).calculate(operations).transform_values! &ceil
+      result[[:week, :path]] = success.group_by_period(:week).joins(:log_label).order_group(:text_tiny).calculate(operations)
+        .transform_values!(&ceil)
+        .transform_keys!{ |(week, text_tiny)| [week, text_tiny.sub(/^2\d\d /, '')] }
       result[[:week, :status]] = group_by_period(:week).order_group(:status).count
       result[[:week, :referer]] = success.referers.group_by_period(:week).order_group(:referer).count
-      [:format, :country, :state, [:browser, UA[:name]], [:browser, UA[:os_name]]].each do |field|
+      [:country, :state, [:browser, UA[:name]], [:browser, UA[:os_name]]].each do |field|
         result[[:week, field]] = success.where_not(field => nil).group_by_period(:week).order_group(field).count
       end
       hours = success.group_by_period(:hour).count
@@ -241,28 +235,22 @@ module LogLines
         browser: (_browsers(user_agent) if browser && user_agent.present? && user_agent != '-'),
         pipe: pipe == 'p', # called from localhost with http-rb and keep-alive
         gzip: gzip == '-' ? nil : gzip.to_f,
-        format: path.split('.', 2)[1],
       }
       global_log = log.path&.end_with?('/access.log')
       if global_log || status == 404 || path.end_with?('/wp-admin', '/allowurl.txt', '.php')
         method, path, params = nil, '*', nil
       end
       regex, replacement = MixLog.config.ided_paths.find{ |regex, _replacement| path.match? regex }
-      if regex
-        path_tiny = squish(path.gsub(regex, replacement))
-      else
-        path_tiny = squish(path)
-      end
+      path_tiny = regex ? squish(path.gsub(regex, replacement)) : squish(path)
       if method
-        pjax = json_data[:params]&.any?{ |k, _| k.match? /^_pjax/ } ? 'pjax' : nil
-        json_data[:pjax] = pjax.present?
         params = json_data[:params]&.pretty_hash!('')
         params_tiny = squish(params)
       end
+      text_tiny = [status, method, path_tiny].join!(' ')
       level = global_log ? :info : ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
       label = {
-        text_hash: [status, method, path_tiny, params_tiny].join!(' '),
-        text_tiny: [status, method, path_tiny, pjax].join!(' '),
+        text_hash: [text_tiny, params_tiny].join!(' '),
+        text_tiny: text_tiny,
         text: [status, method, path, params].join!(' '),
         level: level
       }

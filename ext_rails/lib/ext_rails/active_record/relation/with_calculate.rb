@@ -28,7 +28,7 @@ module ActiveRecord::Relation::WithCalculate
       else
         ["#{column} IS NOT NULL"]
       end
-    relation = order(column_alias_for(group_clause.dup).downcase => (reverse ? :desc : :asc))
+    relation = order(column_alias_for(group_clause.to_s.dup).downcase => (reverse ? :desc : :asc))
     relation.where(*where_clause).group(group_clause)
   end
 
@@ -96,7 +96,7 @@ module ActiveRecord::Relation::WithCalculate
   end
 
   def group_values_as
-    group_values.map{ |field| "#{field} AS #{column_alias_for(field.dup).downcase}".sql_safe }
+    group_values.map{ |field| "#{field} AS #{column_alias_for(field.to_s.dup).downcase}".sql_safe }
   end
 
   private

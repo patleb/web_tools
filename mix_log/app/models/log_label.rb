@@ -14,7 +14,7 @@ class LogLabel < LibRecord
 
   attr_accessor :log_line_id
 
-  # TODO NginxAccess[status, method, path, pjax] --> SELECT * FROM UNNEST((regexp_split_to_array(text_tiny, ' '))[1:4])
+  # TODO NginxAccess[status, method, path] --> SELECT * FROM UNNEST((regexp_split_to_array(text_tiny, ' '))[1:3])
 
   def self.select_by_hashes(log_id, levels, hashes)
     connection.exec_query(sanitize_sql_array([<<-SQL.strip_sql, hashes, levels, log_id]))
