@@ -28,7 +28,7 @@ Setting.class_eval do
 
   def self.geoserver_url
     url = "http#{'s' if self[:server_ssl]}://#{geoserver_server}"
-    url = [url, self[:geoserver_path].presence || 'geoserver'].join('/')
+    url = [url, self[:geoserver_path].presence || '/geoserver'].join
     url
   end
 
@@ -38,7 +38,7 @@ Setting.class_eval do
 
   def self.pgrest_url
     url = "http#{'s' if self[:server_ssl]}://#{pgrest_server}"
-    url = [url, self[:pgrest_path]].join('/') if self[:pgrest_path].present?
+    url = [url, self[:pgrest_path]].join if self[:pgrest_path].present?
     url
   end
 
@@ -58,12 +58,12 @@ Setting.class_eval do
   def self.pgrest_nginx_location
     pgrest_timeout = Setting[:pgrest_timeout] / 1000
     {
-      "/#{self[:pgrest_path]}/" => <<-LOCATION,
+      "#{self[:pgrest_path]}/" => <<-LOCATION,
         proxy_pass http://pgrest_app/;
 
         default_type application/json;
         proxy_hide_header Content-Location;
-        add_header Content-Location /#{self[:pgrest_path]}/$upstream_http_content_location;
+        add_header Content-Location #{self[:pgrest_path]}/$upstream_http_content_location;
         proxy_set_header Connection "";
         proxy_http_version 1.1;
 
@@ -84,7 +84,7 @@ Setting.class_eval do
 
   def self.geoserver_nginx_location_wms
     {
-      "/#{self[:geoserver_path]}/wms" => <<-LOCATION,
+      "#{self[:geoserver_path]}/wms" => <<-LOCATION,
         proxy_pass http://geoserver_app/geoserver/wms;
         proxy_redirect off;
 
