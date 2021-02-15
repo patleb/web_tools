@@ -1,6 +1,6 @@
 class Hash
   REPLACE = '!'.freeze
-  KEYWORD = /^[a-z_]\w+$/i.freeze
+  KEYWORD = /^[a-z_]\w*$/i.freeze
 
   def self.union(key, old_value, new_value)
     if key.to_s.end_with? REPLACE
@@ -40,7 +40,7 @@ class Hash
   end
 
   def pretty_hash
-    sort_by(&:first).to_h.cast.to_s.gsub(/:(\w+)=>/, '\1: ')
+    sort_by{ |k, _| k.to_s }.to_h.cast.to_s.gsub(/:(\w+)=>/, '\1: ')
   end
 
   def cast!
