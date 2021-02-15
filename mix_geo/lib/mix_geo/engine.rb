@@ -1,6 +1,7 @@
 require 'ext_ruby'
 require 'countries'
 require 'rgeo'
+require 'reversed'
 require 'mix_geo/configuration'
 require 'mix_geo/countries/country'
 
