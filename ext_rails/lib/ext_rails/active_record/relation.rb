@@ -16,9 +16,9 @@ ActiveRecord::Relation.class_eval do
     where.not(*args)
   end
 
-  def order_group(*columns, reverse: false, distinct: nil, min: nil, null: nil)
-    relation = reverse ? order(columns.map{ |column| [column, :desc] }.to_h) : order(*columns)
-    relation = relation.where_not(columns.map{ |column| [column, nil] }.to_h) unless null
+  def order_group(*columns, reverse: false, distinct: nil, min: nil)
+    aliases = columns.map{ |field| column_alias_for(field.to_s.dup).downcase }
+    relation = reverse ? order(aliases.map{ |column| [column, :desc] }.to_h) : order(*aliases)
     relation = relation.group(*columns)
     if min
       if distinct
@@ -45,6 +45,6 @@ ActiveRecord::Base.class_eval do
   class << self
     delegate :select_without, :where_not, :order_group, :count_estimate, to: :all
     delegate :stddev, :variance, :median, :percentile, to: :all
-    delegate :group_by_period, :order_group_calculate, :calculate_from, :calculate_multi, to: :all
+    delegate :group_by_period, :top_group_calculate, :calculate_from, :calculate_multi, to: :all
   end
 end

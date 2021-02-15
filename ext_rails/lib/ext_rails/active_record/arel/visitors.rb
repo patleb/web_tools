@@ -22,7 +22,7 @@ module Arel
       end
 
       def visit_Arel_Nodes_Percentile(o, collector)
-        collector << "PERCENTILE_CONT(#{o.percentile}) WITHIN GROUP (ORDER BY "
+        collector << "PERCENTILE_#{o.discrete ? 'DISC' : 'CONT'}(#{o.percentile}) WITHIN GROUP (ORDER BY "
         collector = inject_join(o.expressions, collector, ", ") << ")"
         if o.alias
           collector << " AS "

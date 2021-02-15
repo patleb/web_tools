@@ -1,8 +1,8 @@
 module Arel
   module Nodes
     class Median < Arel::Nodes::Percentile
-      def initialize(expr, aliaz = nil)
-        super(expr, 0.5, aliaz)
+      def initialize(expr, discrete = false, aliaz = nil)
+        super(expr, 0.5, discrete, aliaz)
       end
     end
   end

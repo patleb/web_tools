@@ -59,16 +59,16 @@ module ActiveRecord::Relation::WithJsonAttribute
   end
 
   def order_group(*attributes, distinct: nil, **opts)
-    if json_accessors && distinct
-      super(*attributes, distinct: json_key(distinct), **opts)
+    if json_accessors
+      super(*attributes.map{ |name| json_key(name) }, distinct: json_key(distinct), **opts)
     else
       super
     end
   end
 
-  def calculate_from(operation, from_operation, from_column = '*', from, **opts)
+  def calculate_from(operation, from, from_operation, from_column = '*', **opts)
     if json_accessors && from_column && from_column != '*'
-      super(operation, from_operation, json_key(from_column), from, **opts)
+      super(operation, from, from_operation, json_key(from_column), **opts)
     else
       super
     end
@@ -76,15 +76,15 @@ module ActiveRecord::Relation::WithJsonAttribute
 
   def calculate_multi(columns)
     if json_accessors
-      super(columns.map{ |(operation, column, arg)| [operation, json_key(column), arg].compact })
+      super(columns.map{ |(operation, column, *args)| [operation, json_key(column), *args] })
     else
       super
     end
   end
 
-  def calculate(operation, column = nil, arg = nil)
+  def calculate(operation, column = nil, *args)
     if json_accessors && column
-      super(operation, json_key(column), arg)
+      super(operation, json_key(column), *args)
     else
       super
     end
