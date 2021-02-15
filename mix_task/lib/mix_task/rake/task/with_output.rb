@@ -38,7 +38,18 @@ module Rake::Task::WithOutput
   end
 
   def execute(args = nil)
-    return super unless rake_ouput?
+    unless rake_ouput?
+      if ENV['RAKE_PROFILE']
+        require 'ext_rails/lineprof'
+        result = nil
+        Lineprof.profile(%r{#{ENV['RAKE_PROFILE']}}) do
+          result = super
+        end
+        return result
+      else
+        return super
+      end
+    end
 
     started_at = Time.current.utc
     self.output = ''
