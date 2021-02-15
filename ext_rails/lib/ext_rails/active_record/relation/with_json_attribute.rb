@@ -58,9 +58,9 @@ module ActiveRecord::Relation::WithJsonAttribute
     json_accessors ? super(*attributes.map{ |name| json_key(name) }) : super
   end
 
-  def order_group(*attributes, distinct: nil, **opts)
+  def order_group(*attributes, **opts)
     if json_accessors
-      super(*attributes.map{ |name| json_key(name) }, distinct: json_key(distinct), **opts)
+      super(*attributes.map{ |name| json_key(name) }, **opts)
     else
       super
     end

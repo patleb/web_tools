@@ -16,21 +16,10 @@ ActiveRecord::Relation.class_eval do
     where.not(*args)
   end
 
-  def order_group(*columns, reverse: false, distinct: nil, min: nil)
+  def order_group(*columns, reverse: false)
     aliases = columns.map{ |field| column_alias_for(field.to_s.dup).downcase }
     relation = reverse ? order(aliases.map{ |column| [column, :desc] }.to_h) : order(*aliases)
-    relation = relation.group(*columns)
-    if min
-      if distinct
-        distinct = distinct.is_a?(Arel::Nodes::SqlLiteral) ? distinct : klass.quote_column(distinct)
-        count = "COUNT(DISTINCT #{distinct}) >= ?"
-      else
-        count = "COUNT(*) >= ?"
-      end
-      relation = relation.having(count, min.to_i)
-    end
-    relation = relation.distinct if distinct
-    relation
+    relation.group(*columns)
   end
 
   def count_estimate
