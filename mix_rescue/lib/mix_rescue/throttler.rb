@@ -18,7 +18,7 @@ module Throttler
           next { value: new_value, time: new_time.iso8601, count: 1 }
         end
 
-        old_time = Time.zone.parse(old_time)
+        old_time = Time.parse(old_time)
         if (new_time - old_time).seconds >= (duration || MixRescue.config.throttler_max_duration)
           next { value: old_value, time: new_time.iso8601, count: 1 }
         end
