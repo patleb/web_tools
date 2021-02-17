@@ -49,11 +49,11 @@ module MixUser
       require 'mix_user/orm_adapter/active_record'
       require 'mix_user/pundit/policy_finder'
 
-      MixBatch.configure do |config|
-        config.json_attributes.merge!(
-          user: :string
-        )
-      end if defined? MixBatch
+      if defined? MixJob
+        MixJob.configure do |config|
+          config.json_attributes[:user] = :string
+        end
+      end
     end
 
     config.after_initialize do
