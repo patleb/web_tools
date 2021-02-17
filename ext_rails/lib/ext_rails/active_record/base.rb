@@ -147,6 +147,16 @@ ActiveRecord::Base.class_eval do
     uncached{ find_by_sql(query).first }
   end
 
+  if Rails.env.test?
+    def self.now_sql
+      connection.quote(connection.type_cast(Time.current.utc))
+    end
+  else
+    def self.now_sql
+      'CURRENT_TIMESTAMP'
+    end
+  end
+
   # TODO integrate with RailsAdmin
   def can_destroy?
     self.class.reflect_on_all_associations.all? do |assoc|
