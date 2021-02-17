@@ -61,4 +61,20 @@ class Array
   def intersperse(element)
     flat_map{ |e| [e, element] }.tap(&:pop)
   end
+
+  def unsplat
+    if size == 1 && first.is_a?(Array)
+      first
+    else
+      self
+    end
+  end
+
+  def unsplat!
+    if size == 1 && first.is_a?(Array)
+      replace(first)
+    else
+      self
+    end
+  end
 end
