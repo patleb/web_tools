@@ -24,6 +24,7 @@ module ExtRails
     require 'ext_rails/active_support/string_inquirer'
     require 'ext_rails/active_support/dependencies/with_nilable_cache'
     require 'ext_rails/configuration'
+    require 'ext_rails/http'
     require 'ext_rails/money_rails'
     require 'ext_rails/rack/utils'
     require 'ext_rails/rails/engine'
