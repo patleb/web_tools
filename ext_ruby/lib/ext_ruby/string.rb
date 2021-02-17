@@ -5,14 +5,22 @@ class NilClass
 end
 
 class String
-  OBJECT_INSPECT ||= /(#<)([^>]+)(>)/.freeze
-  HEXADECIMAL ||= /0x[0-9a-f]+/i.freeze
-  MD5_HEX ||= /[0-9a-f]{32}/i.freeze
-  DECIMAL ||= /[-+]?(\d+(\.\d+)*(e[-+]?\d+)?|infinity)/i.freeze
-  UUID ||= /[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}/i.freeze
+  NIL_VALUE = /([(\[{,] *)(nil)( *[,\]})])/.freeze
+  NULL_VALUE = '\1null\3'.freeze
+  HTML_BLANK = /(<\/?p>|&nbsp;|<br>)/.freeze
+  OBJECT_INSPECT = /(#<)([^>]+)(>)/.freeze
+  HEXADECIMAL = /0x[0-9a-f]+/i.freeze
+  MD5_HEX = /[0-9a-f]{32}/i.freeze
+  DECIMAL = /[-+]?(\d+(\.\d+)*(e[-+]?\d+)?|infinity)/i.freeze
+  UUID = /[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}/i.freeze
+
+  def to_args
+    args = gsub(NIL_VALUE, NULL_VALUE).gsub(NIL_VALUE, NULL_VALUE)
+    YAML.safe_load args
+  end
 
   def html_blank?
-    gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank?
+    gsub(HTML_BLANK, '').blank?
   end
 
   def simplify
