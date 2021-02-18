@@ -2,6 +2,10 @@ class LogLabel < LibRecord
   belongs_to :log
   has_many   :log_lines
 
+  class << self
+    undef_method :warn # defined in Kernel
+  end
+
   enum level: {
     debug:   0,
     info:    1,
