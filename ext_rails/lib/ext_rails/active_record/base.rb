@@ -31,6 +31,16 @@ ActiveRecord::Base.class_eval do
     end
   end
 
+  def self.with_raw_connection
+    with_connection do |ar_conn|
+      yield ar_conn.raw_connection, ar_conn
+    end
+  end
+
+  def self.with_connection(&block)
+    connection_pool.with_connection(&block)
+  end
+
   def without_default_scope_on_association(name)
     reflection = self.class.reflect_on_association(name)
     reflection.klass.without_default_scope do
