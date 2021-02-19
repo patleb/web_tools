@@ -1,5 +1,8 @@
 module ActiveTask
   class Base
+    include ActionView::Helpers::DateHelper
+    include ActionView::Helpers::NumberHelper
+
     EXIT_CODE_HELP = 10
 
     STEPS_ARGS = IceNine.deep_freeze(%i(
@@ -53,10 +56,6 @@ module ActiveTask
           end
         end
       end
-    end
-
-    def settings_reload
-      Setting.reload
     end
 
     def debug?
@@ -132,10 +131,6 @@ module ActiveTask
     def after_cancel; end
     def after_rescue(exception); end
     def after_ensure(exception); end
-
-    def puts(obj = '', *arg)
-      task.puts(obj, *arg)
-    end
 
     def puts_step(name)
       Log.task("+#{name}")
