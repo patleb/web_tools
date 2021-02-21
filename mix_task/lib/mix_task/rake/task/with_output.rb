@@ -64,7 +64,7 @@ module Rake::Task::WithOutput
           if exception
             puts_failure exception
           else
-            total = (Time.current.utc - started_at).seconds.round(3)
+            total = (Time.current.utc - started_at).seconds.ceil(3)
             puts_success total
           end
         end

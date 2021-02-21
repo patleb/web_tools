@@ -38,7 +38,8 @@ module Rake
     end
 
     def puts_info(tag, text = nil)
-      puts "[#{Time.current.utc}][#{tag.full_underscore.upcase}][#{Process.pid}] #{text}"
+      tag = "[#{tag}]" unless tag.start_with?('[') && tag.end_with?(']')
+      puts "[#{Time.current.utc}]#{tag.full_underscore.upcase}[#{Process.pid}] #{text}"
     end
 
     def sudo_ls(path)

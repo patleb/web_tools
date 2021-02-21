@@ -18,7 +18,7 @@ module LogLines
       (#{REMOTE_ADDR})\s-\s(#{REMOTE_USER})\s\[(#{TIME_LOCAL})\]\s
       "(#{REQUEST})"\s(#{STATUS})\s(#{BYTES_SENT})\s(#{REQUEST_LENGTH}\s)?
       "(#{HTTP_REFERER})"\s"(#{HTTP_USER_AGENT})"\s
-      (#{REQUEST_TIME})\s(#{PIPE})\s(#{REQUEST_TIME}\s)?-\s(#{SCHEME})\s-\s(#{GZIP_RATIO})(?:-\s(#{PID}))?
+      (#{REQUEST_TIME})(?:\s#{PIPE})?\s(#{REQUEST_TIME}\s)?-\s(#{SCHEME})\s-\s(#{GZIP_RATIO})(?:-\s(#{PID}))?
     }x
     ACCESS_LEVELS = {
       (100...400) => :info,
@@ -59,7 +59,6 @@ module LogLines
       time: :float,
       referer: :string,
       browser: :json,
-      pipe: :boolean,
       gzip: :float,
     )
 
@@ -205,7 +204,7 @@ module LogLines
     def self.parse(log, line, browser: true, parameters: true, **)
       raise IncompatibleLogLine unless (values = line.match(ACCESS))
 
-      ip, user, created_at, request, status, bytes_out, bytes_in, referer, user_agent, upstream_time, pipe, time, https, gzip, pid = values.captures
+      ip, user, created_at, request, status, bytes_out, bytes_in, referer, user_agent, upstream_time, time, https, gzip, pid = values.captures
       created_at = Time.strptime(created_at, "%d/%b/%Y:%H:%M:%S %z").utc
       method, path, protocol = request.split
       method = nil unless path
@@ -233,7 +232,6 @@ module LogLines
         time: time,
         referer: referer,
         browser: (_browsers(user_agent) if browser && user_agent.present? && user_agent != '-'),
-        pipe: pipe == 'p', # called from localhost with http-rb and keep-alive
         gzip: gzip == '-' ? nil : gzip.to_f,
       }
       global_log = log.path&.end_with?('/access.log')
