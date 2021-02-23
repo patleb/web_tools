@@ -44,7 +44,6 @@ Gem::Specification.new do |s|
   # s.add_dependency 'sequel-activerecord-adapter'
   # TODO https://github.com/gocardless/statesman
   s.add_dependency 'store_base_sti_class'
-  s.add_dependency 'term-ansicolor'
   s.add_dependency 'mix_setting'
   s.add_dependency 'sunzistrano'
   s.add_dependency 'user_agent_parser'

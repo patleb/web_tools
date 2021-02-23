@@ -7,7 +7,7 @@ Minitest::Test.class_eval do
 
   alias_method :run_without_timeout, :run
   def run(&block)
-    if defined?(Debugger) || (seconds = defined?(run_timeout) ? run_timeout : 1) == false
+    if (seconds = defined?(run_timeout) ? run_timeout : 1) == false
       run_without_timeout(&block)
     else
       Timeout.timeout(seconds){ run_without_timeout(&block) }

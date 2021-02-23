@@ -43,7 +43,6 @@ yarn-debug.log*
 /db/*.pg.gz
 /config/secrets.yml
 /app/javascript/gems
-*.json
 !package.json
 
 ### AFTER .gitignore ###

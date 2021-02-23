@@ -63,7 +63,7 @@ class ThreadGroup
     end
 
     def timeout(seconds, *args, kill_on_expired: false, **options)
-      return if defined? Debugger
+      return if ENV['DEBUGGER_HOST']
       raise TimeoutInvalid if !seconds.is_a?(Numeric) || (seconds <= 0)
       raise TimeoutKillPeriodInvalid if kill_on_expired.is_a?(Numeric) && kill_on_expired <= 0
 

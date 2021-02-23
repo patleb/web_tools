@@ -42,7 +42,7 @@ module ActiveTask
 
     def self.track_count_of(*methods)
       methods.each do |name|
-        method_count = "#{name}_count"
+        method_count = track_count_as(name)
         method_count_ivar = "@#{method_count}"
 
         attr_reader method_count
@@ -50,12 +50,18 @@ module ActiveTask
         with_count = const_defined?(:WithCount) ? const_get(:WithCount) : const_set(:WithCount, Module.new)
         with_count.module_eval do
           define_method name do |*args, &block|
-            count = instance_variable_get(method_count_ivar)
-            instance_variable_set(method_count_ivar, count += 1)
+            instance_variable_get("#{method_count_ivar}_mutex").synchronize do
+              count = instance_variable_get(method_count_ivar)
+              instance_variable_set(method_count_ivar, count += 1)
+            end
             super(*args, &block)
           end
         end
       end
+    end
+
+    def self.track_count_as(name)
+      "#{name.to_s.sub(/[!?]$/, '')}_count"
     end
 
     def debug?
@@ -79,7 +85,9 @@ module ActiveTask
         with_count = self.class.const_get(:WithCount)
         self.class.prepend with_count
         with_count.instance_methods.each do |name|
-          instance_variable_set("@#{name}_count", 0)
+          method_count_ivar = "@#{self.class.track_count_as(name)}"
+          instance_variable_set("#{method_count_ivar}_mutex", Mutex.new)
+          instance_variable_set(method_count_ivar, 0)
         end
       end
     end
