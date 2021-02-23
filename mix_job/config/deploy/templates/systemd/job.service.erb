@@ -1,0 +1,21 @@
+[Unit]
+Description=Background worker
+After=network.target
+
+[Service]
+User=<%= fetch(:deployer_name) %>
+WorkingDirectory=<%= fetch(:deploy_to) %>/current
+Environment="RAILS_ENV=<%= cap.env %>"
+Environment="RAILS_APP=<%= cap.app %>"
+Environment="RAKE_OUTPUT=true"
+ExecStart=/bin/bash -lc 'exec bin/rake job:watch -- --queue=<%= fetch(:job_queue_name) %> >> <%= fetch(:deploy_to) %>/current/log/job.log 2>&1'
+Restart=always
+StandardInput=null
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=<%= fetch(:job_service) %>
+KillMode=mixed
+TimeoutStopSec=infinity
+
+[Install]
+WantedBy=multi-user.target

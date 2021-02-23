@@ -41,6 +41,9 @@ module ExtRails
         app.config.active_record.cache_versioning = false # TODO doesn't work, must be added to Rails.root/config/application.rb
         app.config.cache_store = :global_store
       end
+      if defined? MixJob
+        app.config.active_job.queue_adapter = :job
+      end
       app.config.active_record.schema_format = :sql
       app.config.action_view.embed_authenticity_token_in_remote_forms = true
       # app.config.active_record.time_zone_aware_attributes = false

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="iso8859-1"?>
+<info version="3">
+  <passenger_version>6.0.4</passenger_version>
+  <group_count>1</group_count>
+  <process_count>1</process_count>
+  <max>6</max>
+  <capacity_used>1</capacity_used>
+  <get_wait_list_size>0</get_wait_list_size>
+  <supergroups>
+    <supergroup>
+      <name>/home/deployer/web_tools_test/current (staging)</name>
+      <state>READY</state>
+      <get_wait_list_size>0</get_wait_list_size>
+      <capacity_used>1</capacity_used>
+      <group default="true">
+        <name>/home/deployer/web_tools_test/current (staging)</name>
+        <component_name>/home/deployer/web_tools_test/current (staging)</component_name>
+        <app_root>/home/deployer/web_tools_test/current</app_root>
+        <app_type>ruby</app_type>
+        <environment>staging</environment>
+        <uuid>LDdSC921p0lTakqdxHsi</uuid>
+        <enabled_process_count>1</enabled_process_count>
+        <disabling_process_count>0</disabling_process_count>
+        <disabled_process_count>0</disabled_process_count>
+        <capacity_used>1</capacity_used>
+        <get_wait_list_size>0</get_wait_list_size>
+        <disable_wait_list_size>0</disable_wait_list_size>
+        <processes_being_spawned>0</processes_being_spawned>
+        <life_status>ALIVE</life_status>
+        <user>deployer</user>
+        <uid>1001</uid>
+        <group>deployer</group>
+        <gid>1001</gid>
+        <options>
+          <app_root>/home/deployer/web_tools_test/current</app_root>
+          <app_group_name>/home/deployer/web_tools_test/current (staging)</app_group_name>
+          <app_type>ruby</app_type>
+          <start_command>/home/deployer/.rbenv/shims/ruby /usr/share/passenger/helper-scripts/rack-loader.rb</start_command>
+          <startup_file>/home/deployer/web_tools_test/current/config.ru</startup_file>
+          <log_level>3</log_level>
+          <start_timeout>90000</start_timeout>
+          <environment>staging</environment>
+          <base_uri>/</base_uri>
+          <spawn_method>smart</spawn_method>
+          <default_user>nobody</default_user>
+          <default_group>nogroup</default_group>
+          <restart_dir>tmp</restart_dir>
+          <integration_mode>nginx</integration_mode>
+          <ruby>/home/deployer/.rbenv/shims/ruby</ruby>
+          <python>python</python>
+          <nodejs>node</nodejs>
+          <debugger>false</debugger>
+          <api_key>nig8p5Yeed23He9m</api_key>
+          <min_processes>1</min_processes>
+          <max_processes>0</max_processes>
+          <max_preloader_idle_time>300</max_preloader_idle_time>
+          <max_out_of_band_work_instances>1</max_out_of_band_work_instances>
+        </options>
+        <processes>
+          <process>
+            <pid>18079</pid>
+            <sticky_session_id>1383077303</sticky_session_id>
+            <gupid>199c846-1zV1bfZHp5</gupid>
+            <concurrency>1</concurrency>
+            <sessions>0</sessions>
+            <busyness>0</busyness>
+            <processed>9</processed>
+            <spawner_creation_time>1611329644158544</spawner_creation_time>
+            <spawn_start_time>1611329646325614</spawn_start_time>
+            <spawn_end_time>1611329646417569</spawn_end_time>
+            <last_used>1612934906540855</last_used>
+            <last_used_desc>13d 10h 50m 5s ago</last_used_desc>
+            <uptime>32d 0h 44m 25s</uptime>
+            <life_status>ALIVE</life_status>
+            <enabled>ENABLED</enabled>
+            <has_metrics>true</has_metrics>
+            <cpu>0</cpu>
+            <rss>188144</rss>
+            <pss>184202</pss>
+            <private_dirty>175572</private_dirty>
+            <swap>0</swap>
+            <real_memory>175572</real_memory>
+            <vmsize>1329492</vmsize>
+            <process_group_id>24230</process_group_id>
+            <command>Passenger AppPreloader: /home/deployer/web_tools_test/current (forking...)</command>
+          </process>
+        </processes>
+      </group>
+    </supergroup>
+  </supergroups>
+</info>

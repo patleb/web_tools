@@ -1,0 +1,385 @@
+# TODO helpers for tmp/jobs/actions with Cron jobs and Incron watchers
+# https://layerci.com/blog/postgres-is-the-answer/
+module MixJob
+  class Watch < ActiveTask::Base
+    # TERM --> by System Monitor
+    # INT  --> by Ctrl-C / IDE
+    # HUP  --> by Closing Terminal
+    SHUTDOWN_SIGNALS = IceNine.deep_freeze(ENV['DEBUGGER_HOST'] ? %w(HUP TERM): %w(HUP INT TERM))
+    SHUTDOWN_SIGNAL  = 'TERM'.freeze
+    INSPECT_SIGNAL   = 'USR1'.freeze
+    EXECUTE_SIGNAL   = 'USR2'.freeze
+    SIGNALS = IceNine.deep_freeze(
+      SHUTDOWN_SIGNALS.map{ |signal| [signal, :shutdown] }.to_h.merge!(
+        INSPECT_SIGNAL => :inspect,
+        EXECUTE_SIGNAL => :execute,
+      )
+    )
+    INSPECT  = '[INSPECT]'.freeze
+    SHUTDOWN = '[SHUTDOWN]'.freeze
+    ACTION   = '[ACTION]'.freeze
+    WAIT     = 'tmp/jobs/wait.txt'.freeze
+    ACTIONS  = 'tmp/jobs/actions'.freeze
+
+    track_count_of :on_signal
+    track_count_of :on_request
+    track_count_of :on_response
+    track_count_of :on_listen
+    track_count_of :on_poll
+    track_count_of :execute
+    track_count_of :execute_error!
+    track_count_of :perform
+    track_count_of :perform_error!
+    track_count_of :job_dequeue
+
+    def self.steps
+      %i(
+        check_wait_file
+        restore_signals
+        setup_trapping
+        setup_signaling
+        setup_requesting
+        setup_responding
+        setup_listening
+        setup_polling
+        wait_for_termination
+      )
+    end
+
+    def self.args
+      {
+        queue:           ['--queue=QUEUE',                              'Queue name processed (default to "default")'],
+        listen_timeout:  ['--listen-timeout=LISTEN_TIMEOUT',   Float,   'Timeout in seconds when blocking on listen', greater_than: 0],
+        poll_interval:   ['--poll-interval=POLL_INTERVAL',     Float,   'Polling interval in seconds',                greater_than: 0],
+        server_interval: ['--server-interval=SERVER_INTERVAL', Float,   'Check interval for HTTP calls restoration',  greater_than: 0],
+        max_pool_size:   ['--max-pool-size=MAX_POOL_SIZE',     Integer, 'Maximum number of HTTP clients',             greater_or_equal: 1],
+        keep_jobs:       ['--keep-jobs=KEEP_JOBS',             Integer, 'Number of jobs to keep for inspection',      greater_or_equal: 0],
+      }
+    end
+
+    def self.defaults
+      max_pool_size = (Setting[:max_pool_size] / 2) - 1
+      max_pool_size = 1 if max_pool_size < 1
+      {
+        queue:           ActiveJob::Base.default_queue_name,
+        listen_timeout:  1,
+        poll_interval:   10,
+        server_interval: 5,
+        max_pool_size:   max_pool_size,
+        keep_jobs:       0
+      }
+    end
+
+    protected
+
+    def before_run
+      STDOUT.sync = true
+      $task_snapshot = proc{ snapshot }
+      @signals = Queue.new
+      @requests = Queue.new
+      @responses = Queue.new
+      @clients = Queue.new
+      @jobs = []
+      @job = nil
+      @waited = nil
+      @perform_error = nil
+      @dequeue_mutex = Mutex.new
+      # thread groups must be defined after context initialization, otherwise they'll use their own
+      @executor = ThreadGroup.new(4)
+      @dispatcher = ThreadGroup.new(options.max_pool_size)
+    end
+
+    def around_run
+      I18n.with_locale(:en) do
+        Time.use_zone('UTC') do
+          Rails.application.reloader.wrap do
+            ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+              yield
+            end
+          end
+        end
+      end
+    end
+
+    def check_wait_file
+      start = Time.current
+      sleep 1 while File.exist? WAIT
+      @waited = (Time.current - start).to_i
+    end
+
+    def wait_for_termination
+      @executor.wait_for_termination
+    end
+
+    def restore_signals
+      actions.each{ @signals << :execute }
+    end
+
+    def setup_trapping
+      SIGNALS.each do |signal, symbol|
+        trap(signal) do
+          @signals << symbol
+        end
+      end
+    end
+
+    def setup_signaling
+      post(name: 'signal') do
+        until thread_shuttingdown?
+          on_signal @signals.pop
+          Thread.pass
+        end
+      end
+    end
+
+    def setup_requesting
+      @dispatcher.post_all(name: 'request') do
+        client_ready!
+        HTTP.no_ssl_client do |http|
+          until thread_shuttingdown?
+            @responses << on_request(http, @requests.pop)
+          end
+        end
+      end
+    end
+
+    def setup_responding
+      post(name: 'response') do
+        until thread_shuttingdown?
+          on_response @responses.pop
+        end
+      end
+    end
+
+    def setup_listening
+      post(name: 'listen', priority: 1) do |pg_conn|
+        channel = pg_conn.escape_identifier Job::NOTIFY_CHANNEL
+        pg_conn.exec("LISTEN #{channel}")
+
+        yield if block_given? # for testing
+
+        until thread_shuttingdown?
+          pg_conn.wait_for_notify(options.listen_timeout) do |_channel, _pid, message|
+            queue_name, scheduled_at = Job.parse_notification(message)
+            if queue_name == options.queue && scheduled_at.past?
+              on_listen
+            end
+          end
+        end
+      ensure
+        pg_conn.exec("UNLISTEN #{channel}")
+        Thread.pass until pg_conn.notifies.nil?
+      end
+    end
+
+    def setup_polling
+      post(name: 'poll') do
+        until thread_shuttingdown?
+          on_poll
+          sleep(options.poll_interval)
+        end
+      end
+    end
+
+    private
+
+    def snapshot
+      {
+        time: Time.current.utc,
+        thread: Thread.current[:name],
+        waited: @waited,
+        shutdown: @executor.shuttingdown?,
+        signals: @signals.size,
+        actions: actions.size,
+        clients: @clients.size,
+        on_signal: on_signal_count,
+        on_request: on_request_count,
+        on_response: on_response_count,
+        on_listen: on_listen_count,
+        on_poll: on_poll_count,
+        execute: execute_count,
+        execute_error: execute_error_count,
+        perform: perform_count,
+        perform_error: perform_error_count,
+        job_dequeue: job_dequeue_count,
+        job: job_snapshot,
+      }
+    end
+
+    def on_signal(signal)
+      case signal
+      when :shutdown then shutdown
+      when :inspect  then puts inspect
+      when :execute  then execute
+      end
+    end
+
+    def shutdown
+      puts_info SHUTDOWN
+      until @dispatcher.shutdown?
+        @dispatcher.shutdown!
+        Thread.pass
+      end
+      @executor.shutdown!
+    end
+
+    def inspect
+      <<~EOF.strip
+        #{INSPECT}[#{self.class.name}]
+        #{snapshot}
+        #{@jobs.join("\n") if options.keep_jobs > 0}
+      EOF
+    end
+
+    def execute
+      started_at = Time.current.utc
+      file = actions.first
+      action = file.readlines.first.strip
+      klass, meth, args = extract_ruby_call(action)
+      klass.public_send(meth, *args)
+    rescue Exception => exception
+      execute_error!
+    ensure
+      file&.delete
+      if exception
+        puts_action_failure action, exception
+      else
+        total = (Time.current.utc - started_at).seconds.ceil(3)
+        puts_action_success action, total
+      end
+    end
+
+    def execute_error!
+      # use for count
+    end
+
+    def on_request(http, request)
+      begin
+        response = http.post(request[:url], json: { job: request[:data] }).flush
+        response = Jobs::RejectedError.new(response, request) unless response.status.job_accepted?
+      rescue Exception => exception
+        response = JobError.new(exception, data: request)
+      end
+      unless response.is_a? HTTP::Response
+        perform_error!
+        Thread.pass
+      end
+      response
+    ensure
+      client_ready!
+    end
+
+    def on_response(response)
+      if response.is_a? HTTP::Response
+        # do nothing
+      else
+        Notice.deliver! response
+      end
+    end
+
+    def on_listen
+      until thread_shuttingdown?
+        break unless dequeue
+      end
+    end
+
+    def on_poll
+      until thread_shuttingdown?
+        break unless dequeue
+      end
+    end
+
+    def dequeue
+      if @dequeue_mutex.try_lock
+        if client_available? && job_dequeue
+          client_busy!
+          perform
+          performed = true
+        end
+        @dequeue_mutex.unlock
+      end
+      performed
+    end
+
+    def job_dequeue
+      if perform_error?
+        until thread_shuttingdown? || server_available?
+          sleep(options.server_interval)
+        end
+        @perform_error = false
+      else
+        @job = Job.dequeue
+      end
+    end
+
+    def perform
+      @requests << @job.request
+      case options.keep_jobs
+      when 0          then return
+      when @jobs.size then @jobs.shift
+      end
+      @jobs << { time: Time.current.utc, thread: Thread.current[:name] }.with_keyword_access.merge!(job_snapshot)
+    end
+
+    def perform_error?
+      @perform_error
+    end
+
+    def perform_error!
+      @perform_error = true
+    end
+
+    def server_available?
+      Process.passenger.available?(threshold: options.server_interval)
+    end
+
+    def client_available?
+      @clients.size > 0
+    end
+
+    def client_ready!
+      @clients << true
+    end
+
+    def client_busy!
+      @clients.pop
+    end
+
+    def job_snapshot
+      @job ? { type: @job.class.name }.merge!(@job.except(:json_data)) : {}
+    end
+
+    def puts_action_success(action, total)
+      Log.job_watch_action(action, total)
+      puts "[#{Time.current.utc}]#{MixTask::SUCCESS}[#{Process.pid}]#{ACTION} #{action}: #{distance_of_time total}".green
+    end
+
+    def puts_action_failure(action, exception)
+      Notice.deliver! JobError.new(exception, data: { action: action })
+      puts "[#{Time.current.utc}]#{MixTask::FAILURE}[#{Process.pid}]#{ACTION} #{action}".red
+    end
+
+    def actions
+      Pathname.new(ACTIONS).children.sort_by(&:mtime)
+    end
+
+    def extract_ruby_call(action)
+      klass, meth, args = action.partition(/\.\w+/)
+      meth.delete_prefix! '.'
+      args.delete_prefix! '('; args.delete_suffix! ')'
+      [klass.to_const!, meth.to_sym, "[#{args}]".to_args]
+    end
+
+    def post(*args)
+      @executor.post(*args) do
+        Rails.application.reloader.wrap do
+          ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+            ActiveRecord::Base.with_raw_connection do |pg_conn, ar_conn|
+              ar_conn.cache{ yield pg_conn }
+            end
+          end
+        end
+      end
+    end
+  end
+end
