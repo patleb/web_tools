@@ -1,14 +1,13 @@
 module Rack
   class Lineprof
     class Source
-
       attr_reader :file_name, :raw_samples, :options
 
-      def initialize file_name, raw_samples, **options
+      def initialize(file_name, raw_samples, **options)
         @file_name, @raw_samples, @options = file_name, raw_samples, options
       end
 
-      def format colorize = true
+      def format(colorize = true)
         return nil if samples.empty?
 
         formatted = file_name.sub(Dir.pwd + '/', '') + "\n"
@@ -16,10 +15,9 @@ module Rack
         prev_line = samples.first.line - 1
         samples.each do |sample|
           if sample.line != prev_line + 1
-            formatted << color.intense_black(' ' * 14 + '.' * 7) + "\n"
+            formatted << (' ' * 14 + '.' * 7).black + "\n"
           end
           prev_line = sample.line
-
           formatted << sample.format
         end
 
@@ -48,7 +46,7 @@ module Rack
             threshold = thresholds.invert.detect { |th, _| ms > th }
             level = threshold ? threshold.last : CONTEXT
 
-            next unless code = source_lines[line - 1]
+            next unless (code = source_lines[line - 1])
             parsed << Sample.new(ms, calls, line, code, level)
           end
 
@@ -64,12 +62,8 @@ module Rack
 
       private
 
-      def color
-        Term::ANSIColor
-      end
-
       def context
-        options.fetch :context, 2
+        options.fetch(:context, 2)
       end
 
       def thresholds
@@ -79,7 +73,6 @@ module Rack
           NOMINAL  => 0.2
         }.merge(options.fetch :thresholds, {})
       end
-
     end
   end
 end

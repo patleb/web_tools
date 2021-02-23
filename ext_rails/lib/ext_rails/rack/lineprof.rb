@@ -1,6 +1,5 @@
 require 'rblineprof'
 require 'logger'
-require 'term/ansicolor'
 
 module Rack
   class Lineprof
@@ -25,12 +24,12 @@ module Rack
 
     attr_reader :app, :options
 
-    def initialize app, **options
+    def initialize(app, **options)
       @app, @options = app, options
     end
 
-    def call env
-      request = Rack::Request.new env
+    def call(env)
+      request = Rack::Request.new(env)
       matcher = request.params['lineprof'] || options[:profile]
       logger  = options[:logger] || DEFAULT_LOGGER
 
@@ -39,18 +38,16 @@ module Rack
       response = nil
       profile = lineprof(%r{#{matcher}}) { response = @app.call env }
 
-      logger.error Term::ANSIColor.blue("\n[Rack::Lineprof] #{'=' * 63}") + "\n\n" + format_profile(profile) + "\n"
+      logger.error "\n[Rack::Lineprof] #{'=' * 63}".blue + "\n\n" + format_profile(profile) + "\n"
 
       response
     end
 
-    def format_profile profile
+    def format_profile(profile)
       sources = profile.map do |filename, samples|
         Source.new filename, samples, options
       end
-
       sources.map(&:format).compact.join "\n"
     end
-
   end
 end

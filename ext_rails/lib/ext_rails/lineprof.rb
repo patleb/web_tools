@@ -9,7 +9,7 @@ class Lineprof
       value  = nil
       result = lineprof(filename) { value = block.call }
 
-      puts Term::ANSIColor.blue("\n[Lineprof] #{'=' * 70}")
+      puts "\n[Lineprof] #{'=' * 70}".blue
       puts "\n#{format(result, **options)}\n"
       value
     end

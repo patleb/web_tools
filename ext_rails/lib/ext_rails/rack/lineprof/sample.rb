@@ -1,8 +1,8 @@
 module Rack
   class Lineprof
-    class Sample < Struct.new :ms, :calls, :line, :code, :level
+    class Sample < Struct.new(:ms, :calls, :line, :code, :level)
 
-      def format colorize = true
+      def format(colorize = true)
         formatted = if level == CONTEXT
           sprintf "               | % 3i  %s", line, code
         else
@@ -13,22 +13,15 @@ module Rack
 
         case level
         when CRITICAL
-          color.red formatted
+          formatted.red
         when WARNING
-          color.yellow formatted
+          formatted.yellow
         when NOMINAL
-          color.white formatted
+          formatted.white
         else # CONTEXT
-          color.intense_black formatted
+          formatted.black
         end
       end
-
-      private
-
-      def color
-        Term::ANSIColor
-      end
-
     end
   end
 end
