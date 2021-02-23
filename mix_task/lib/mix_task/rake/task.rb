@@ -5,6 +5,7 @@ Rake::Task.class_eval do
   prepend self::WithOutput
 
   def invoke!(*args)
+    reenable if @already_invoked
     invoke(*args)
   ensure
     reenable
