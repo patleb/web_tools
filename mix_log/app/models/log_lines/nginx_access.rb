@@ -77,11 +77,11 @@ module LogLines
     end
 
     def self.requests_begin_at
-      success.order(:created_at).pick(:created_at).utc
+      success.order(:created_at).pick(:created_at)&.utc
     end
 
     def self.requests_end_at
-      success.order(created_at: :desc).pick(:created_at).utc
+      success.order(created_at: :desc).pick(:created_at)&.utc
     end
 
     def self.total_requests
