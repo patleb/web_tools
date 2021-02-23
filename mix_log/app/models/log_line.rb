@@ -4,7 +4,7 @@ class LogLine < LibRecord
   self.primary_key = :created_at # so #find_each will work, but must be scoped by :log_id
 
   belongs_to :log
-  belongs_to :log_label
+  belongs_to :log_message
 
   enum type: MixLog.config.available_types
 
@@ -38,16 +38,16 @@ class LogLine < LibRecord
   def self.push(log, line)
     line[:log_id] = log_id = log.id
     line[:json_data]&.reject!{ |_, v| v.blank? }
-    log_label = nil
-    with_label(line.delete(:label)) do |text_hash, text_tiny, text, level|
-      log_label = LogLabel.find_or_create_by! log_id: log_id, level: level, text_hash: text_hash do |record|
+    log_message = nil
+    with_message(line.delete(:message)) do |text_hash, text_tiny, text, level|
+      log_message = LogMessage.find_or_create_by! log_id: log_id, level: level, text_hash: text_hash do |record|
         record.assign_attributes(text_tiny: text_tiny, text: text, log_lines_type: name)
       end
-      line[:log_label_id] = log_label.id
+      line[:log_message_id] = log_message.id
     end
     id = insert(line).pluck('id').first
-    log_label.log_line_id = id if log_label
-    log_label || id
+    log_message.log_line_id = id if log_message
+    log_message || id
   end
 
   def self.push_all(log, lines)
@@ -55,10 +55,10 @@ class LogLine < LibRecord
     lines.each do |line|
       line[:log_id] = log_id
       line[:json_data]&.reject!{ |_, v| v.blank? }
-      line[:log_label_id] = nil
+      line[:log_message_id] = nil
     end
     texts = lines.each_with_object([]).with_index do |(line, result), i|
-      with_label(line.delete(:label)) do |text_hash, text_tiny, text, level|
+      with_message(line.delete(:message)) do |text_hash, text_tiny, text, level|
         result << {
           text_hash: text_hash, text_tiny: text_tiny, text: text,
           log_id: log_id, log_lines_type: name, level: level,
@@ -66,11 +66,11 @@ class LogLine < LibRecord
         }
       end
     end
-    LogLabel.insert_all(texts.map(&:except.with(:line_i)).uniq(&:values_at.with(:text_hash, :level)))
+    LogMessage.insert_all(texts.map(&:except.with(:line_i)).uniq(&:values_at.with(:text_hash, :level)))
     levels = texts.map(&:[].with(:level))
     hashes = texts.map(&:[].with(:text_hash))
-    LogLabel.select_by_hashes(log_id, levels, hashes).pluck('id').each_with_index do |id, i|
-      lines[texts[i][:line_i]][:log_label_id] = id
+    LogMessage.select_by_hashes(log_id, levels, hashes).pluck('id').each_with_index do |id, i|
+      lines[texts[i][:line_i]][:log_message_id] = id
     end
     insert_all(lines)
   end
@@ -86,12 +86,12 @@ class LogLine < LibRecord
     text.squish_numbers.squish!
   end
 
-  def self.with_label(label)
-    return unless label && (label = label.values_at(:text_hash, :text_tiny, :text, :level)).last(2).all?(&:present?)
-    text_hash, text_tiny, text, level = label
+  def self.with_message(message)
+    return unless message && (message = message.values_at(:text_hash, :text_tiny, :text, :level)).last(2).all?(&:present?)
+    text_hash, text_tiny, text, level = message
     text_tiny ||= squish(text)
     text_hash ||= text_tiny
-    yield Digest.md5_hex(text_hash), text_tiny[0...256], text, LogLabel.levels[level]
+    yield Digest.md5_hex(text_hash), text_tiny[0...256], text, LogMessage.levels[level]
   end
 
   def self.insert_all(attributes, **)

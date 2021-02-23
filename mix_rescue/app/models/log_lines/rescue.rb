@@ -11,8 +11,8 @@ module LogLines
         exception = RescueError.new(exception, data: data)
       end
       json_data = { error: exception.class.name, exception: exception.name, data: exception.data }
-      label = { text: exception.backtrace_log, level: :error }
-      super(log, pid: Process.pid, label: label, json_data: json_data)
+      message = { text: exception.backtrace_log, level: :error }
+      super(log, pid: Process.pid, message: message, json_data: json_data)
     end
   end
 end

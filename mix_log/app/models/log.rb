@@ -3,7 +3,7 @@ class Log < LibRecord
 
   belongs_to :server
   has_many   :log_lines
-  has_many   :log_labels
+  has_many   :log_messages
 
   enum log_lines_type: MixLog.config.available_types
 

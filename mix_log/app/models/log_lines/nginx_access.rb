@@ -85,7 +85,7 @@ module LogLines
     end
 
     def self.total_requests
-      success.joins(:log_label).requests_by(:text_tiny)
+      success.joins(:log_message).requests_by(:text_tiny)
     end
 
     def self.total_mbytes_out
@@ -162,7 +162,8 @@ module LogLines
           result[[period, :period]][period_at] << users
         end
       end
-      result[[:week, :path]] = success.group_by_period(:week).joins(:log_label).order_group(:text_tiny).calculate(operations)
+      result[[:week, :path]] = success.group_by_period(:week).joins(:log_message).order_group(:text_tiny)
+        .calculate(operations)
         .transform_values!(&ceil)
         .transform_keys!{ |(week, text_tiny)| [week, text_tiny.sub(/^2\d\d /, '')] }
       result[[:week, :status]] = group_by_period(:week).order_group(:status).count
@@ -246,14 +247,14 @@ module LogLines
       end
       text_tiny = [status, method, path_tiny].join!(' ')
       level = global_log ? :info : ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
-      label = {
+      message = {
         text_hash: [text_tiny, params_tiny].join!(' '),
         text_tiny: text_tiny,
         text: [status, method, path, params].join!(' '),
         level: level
       }
 
-      { created_at: created_at, pid: pid&.to_i, label: label, json_data: json_data }
+      { created_at: created_at, pid: pid&.to_i, message: message, json_data: json_data }
     end
 
     def self.finalize

@@ -65,9 +65,9 @@ module LogLines
         errors.find{ |e| e.is_a?(Regexp) ? text.match?(e) : text.include?(e) }
       end
       level = known_level || level
-      label = { text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
+      message = { text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
 
-      { created_at: created_at, pid: pid&.to_i, label: label }
+      { created_at: created_at, pid: pid&.to_i, message: message }
     end
   end
 end

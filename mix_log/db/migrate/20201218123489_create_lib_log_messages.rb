@@ -1,6 +1,6 @@
-class CreateLibLogLabels < ActiveRecord::Migration[6.0]
+class CreateLibLogMessages < ActiveRecord::Migration[6.0]
   def change
-    create_table :lib_log_labels do |t|
+    create_table :lib_log_messages do |t|
       t.string     :text_hash,       null: false
       t.citext     :text_tiny,       null: false
       t.citext     :text,            null: false
@@ -14,12 +14,12 @@ class CreateLibLogLabels < ActiveRecord::Migration[6.0]
       t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
     end
 
-    add_index :lib_log_labels, [:text_tiny, :log_id, :log_lines_type, :level, :monitor, :alerted, :updated_at],
-      using: :gin, name: 'index_lib_log_labels_on_columns'
-    add_index :lib_log_labels, [:text_hash, :log_id, :level], unique: true
+    add_index :lib_log_messages, [:text_tiny, :log_id, :log_lines_type, :level, :monitor, :alerted, :updated_at],
+      using: :gin, name: 'index_lib_log_messages_on_columns'
+    add_index :lib_log_messages, [:text_hash, :log_id, :level], unique: true
 
     if Rails.env.test?
-      remove_foreign_key :lib_log_labels, :lib_logs, column: :log_id
+      remove_foreign_key :lib_log_messages, :lib_logs, column: :log_id
     end
   end
 end

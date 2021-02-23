@@ -11,7 +11,7 @@ module MixLog
 
         run_task
         timestamps = LogLine.all.map(&:created_at)
-        assert_equal 2, LogLabel.count
+        assert_equal 2, LogMessage.count
         assert_equal [2021, 2021], timestamps.map(&:year)
         assert_equal [0, 1], timestamps.map(&:strftime.with('%6N')).map(&:to_i)
 
@@ -21,7 +21,7 @@ module MixLog
 
         run_task
         timestamps = LogLine.order(:created_at).map(&:created_at)
-        assert_equal 3, LogLabel.count
+        assert_equal 3, LogMessage.count
         assert_equal [2020, 2021, 2021, 2021], timestamps.map(&:year)
         assert_equal log_time, Log.first.mtime
       ensure

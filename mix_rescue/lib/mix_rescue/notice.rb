@@ -17,8 +17,8 @@ class Notice
     unless exception.is_a? RescueError
       exception = RescueError.new(exception, data: data)
     end
-    log_label = Log.rescue(exception)
-    return if log_label.alerted?
+    log_message = Log.rescue(exception)
+    return if log_message.alerted?
 
     subject = [subject, "[#{exception.name}]"].compact.join(' ')
     message = <<~TEXT
@@ -63,7 +63,7 @@ class Notice
     else
       mail.deliver! unless MixRescue.config.skip_notice
     end
-    log_label.toggle! :alerted
+    log_message.toggle! :alerted
   rescue Exception => e
     Log.rescue(e)
   end

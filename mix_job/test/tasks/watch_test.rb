@@ -58,7 +58,7 @@ module MixJob
       mock_request(:server_error).to_return(status: [500, 'Internal Server Error'])
       mock_request(:client_error).to_timeout
       ActionMailer::Base.deliveries.clear
-      [Job, Server, Log, LogLine, LogLabel].each(&:delete_all)
+      [Job, Server, Log, LogLine, LogMessage].each(&:delete_all)
       [MixJob::Watch::ACTIONS].each do |path|
         Pathname.new(path).children.each(&:delete)
       end
@@ -66,7 +66,7 @@ module MixJob
 
     after do
       assert_equal false, Job.exists?
-      [Server, Log, LogLine, LogLabel].each(&:delete_all)
+      [Server, Log, LogLine, LogMessage].each(&:delete_all)
       [MixJob::Watch::ACTIONS].each do |path|
         assert_equal 0, Pathname.new(path).children.size
       end

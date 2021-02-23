@@ -18,7 +18,7 @@ module LogLines
       MixLog.with do |config|
         log_path = config.log_path(:nginx, 'web_tools.access')
         config.available_paths = [log_path]
-        Rake::Task['log:extract'].invoke
+        Rake::Task['log:extract'].invoke!
         assert_equal Time.new(2021, 1, 19, 15, 3, 37, 0), LogLines::NginxAccess.requests_begin_at
         assert_equal Time.new(2021, 2, 2, 22, 15, 13, 0), LogLines::NginxAccess.requests_end_at
         assert_equal 6,     LogLines::NginxAccess.total_requests.values.sum

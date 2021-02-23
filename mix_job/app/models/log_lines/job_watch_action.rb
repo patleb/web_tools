@@ -7,8 +7,8 @@ module LogLines
 
     def self.push(log, action, time)
       json_data = { action: action, time: time }
-      label = { text: action, level: :info }
-      super(log, pid: Process.pid, label: label, json_data: json_data)
+      message = { text: action, level: :info }
+      super(log, pid: Process.pid, message: message, json_data: json_data)
     end
   end
 end

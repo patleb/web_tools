@@ -9,7 +9,7 @@ module Rescues
           assert_raise(ActionController::InvalidAuthenticityToken) do
             post '/rescues/javascripts', as: :json
           end
-          assert_equal true, LogLabel.where('text_tiny LIKE ?', '%RackError%').take.alerted?
+          assert_equal true, LogMessage.where('text_tiny LIKE ?', '%RackError%').take.alerted?
         end
       end
     end
@@ -27,7 +27,7 @@ module Rescues
           }
           post '/rescues/javascripts', params: params, as: :json
           assert_response :created
-          assert_equal true, LogLabel.where('text_tiny LIKE ?', '%JavascriptError%').take.alerted?
+          assert_equal true, LogMessage.where('text_tiny LIKE ?', '%JavascriptError%').take.alerted?
 
           post '/rescues/javascripts', params: params, as: :json
           assert_response :created

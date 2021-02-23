@@ -27,9 +27,9 @@ module LogLines
       return { created_at: created_at, filtered: true } unless program == 'sshd' && FILTERED_LEVELS.exclude?(level)
 
       json_data = { ip: text[FAIL2BAN_IP] }
-      label = { text: text, level: FAIL2BAN_LEVELS[level] }
+      message = { text: text, level: FAIL2BAN_LEVELS[level] }
 
-      { created_at: created_at, pid: pid.to_i, label: label, json_data: json_data }
+      { created_at: created_at, pid: pid.to_i, message: message, json_data: json_data }
     end
   end
 end

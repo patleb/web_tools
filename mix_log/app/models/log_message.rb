@@ -1,4 +1,4 @@
-class LogLabel < LibRecord
+class LogMessage < LibRecord
   belongs_to :log
   has_many   :log_lines
 
