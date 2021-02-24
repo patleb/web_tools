@@ -8,6 +8,10 @@ ExtWhenever.setup(self)
 #   rake 'every_month'
 # end
 #
+# every :week do
+#   runner 'EveryWeekJob.perform_later'
+# end
+#
 # every :day, at: '5am' do
 #   rake 'every_day'
 # end
