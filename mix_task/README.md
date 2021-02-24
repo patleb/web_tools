@@ -14,4 +14,3 @@ bin/rails db:environment:set RAILS_ENV=development && bundle exec rake db:drop d
 bundle exec rake mix_task:pg_restore
 ```
 
-This project rocks and uses MIT-LICENSE.

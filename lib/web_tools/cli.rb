@@ -69,7 +69,7 @@ module WebTools
       def create_plugin
         empty_directory(plugin_name)
         template '%plugin_name%.gemspec'
-        template 'MIT-LICENSE'
+        template 'LICENSE'
         template 'README.md'
         template 'lib/%plugin_name%.rb'
         template "lib/%plugin_name%/configuration.rb"

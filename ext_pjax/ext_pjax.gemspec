@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/ext_pjax"
   s.summary     = "ExtPjax"
   s.description = "ExtPjax"
-  s.license     = "MIT"
+  s.licenses    = ["GPL-3.0", "MIT"]
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'ext_bootstrap', version

@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/mix_page"
   s.summary     = "MixPage"
   s.description = "MixPage"
-  s.license     = "MIT"
+  s.license     = "GPL-3.0"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'mix_admin', version
   # TODO https://github.com/algolia/frontman

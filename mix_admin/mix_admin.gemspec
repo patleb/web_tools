@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/mix_admin"
   s.summary     = 'Admin for Rails'
   s.description = 'RailsAdmin is a Rails engine that provides an easy-to-use interface for managing your data.'
-  s.license     = "MIT"
+  s.licenses    = ["GPL-3.0", "MIT"]
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   # TODO s.add_dependency 'amoeba', '~> 3.0' # https://github.com/moiristo/deep_cloneable
   # TODO s.add_dependency 'prawn'

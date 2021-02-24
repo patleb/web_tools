@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/ext_whenever"
   s.summary     = "ExtWhenever"
   s.description = "ExtWhenever"
-  s.license     = "MIT"
+  s.license     = "GPL-3.0"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency "whenever"
   s.add_dependency "mix_setting"

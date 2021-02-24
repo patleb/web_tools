@@ -11,9 +11,9 @@ Gem::Specification.new do |s|
   s.homepage      = 'http://github.com/patleb/sunzistrano'
   s.summary       = %q{Server provisioning utility for minimalists}
   s.description   = %q{Server provisioning utility for minimalists}
-  s.license       = 'MIT'
+  s.licenses      = ["GPL-3.0", "MIT"]
 
-  s.files         = Dir["{bin,config,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files         = Dir["{bin,config,lib}/**/*", "LICENSE", "README.md"]
   s.executables   = ["sun"]
 
   s.add_dependency 'mix_setting'

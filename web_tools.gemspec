@@ -11,9 +11,9 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/web_tools"
   s.summary     = "WebTools"
   s.description = "WebTools"
-  s.license     = "MIT"
+  s.license     = "GPL-3.0"
 
-  s.files = Dir["lib/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["lib/**/*", "LICENSE", "README.md"]
 
   s.add_dependency "ext_bootstrap",   version
   s.add_dependency "ext_capistrano",  version

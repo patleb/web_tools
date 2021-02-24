@@ -161,7 +161,3 @@ shared:
 ### Alias
 
 The alias `all` is available as an alternative to `with` if the name is more appropriate to the context.
-
-### License
-
-This project rocks and uses MIT-LICENSE.

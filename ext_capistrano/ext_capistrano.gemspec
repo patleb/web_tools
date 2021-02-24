@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/ext_capistrano"
   s.summary     = "ExtCapistrano"
   s.description = "ExtCapistrano"
-  s.license     = "MIT"
+  s.license     = "GPL-3.0"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency "capistrano", "~> 3.6"
   s.add_dependency 'capistrano-rbenv', '~> 2.0'

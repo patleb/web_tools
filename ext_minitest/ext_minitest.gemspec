@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/ext_minitest"
   s.summary     = "ExtMinitest"
   s.description = "ExtMinitest"
-  s.license     = "MIT"
+  s.license     = "GPL-3.0"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'minitest', '>= 5.11'
   s.add_dependency 'minitest-hooks'

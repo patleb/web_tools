@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/mix_template"
   s.summary     = "MixTemplate"
   s.description = "MixTemplate"
-  s.license     = "MIT"
+  s.license     = "GPL-3.0"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'query_diet', '~> 0.6.2' # TODO https://github.com/makandra/query_diet/commit/445debd96e17365fae4c55d849a462db0163c7f4
   s.add_dependency 'nestive'
