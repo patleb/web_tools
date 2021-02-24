@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency "mix_credential",  version
   s.add_dependency "mix_email",       version
   s.add_dependency "mix_file",        version
+  s.add_dependency "mix_flash",       version
   s.add_dependency "mix_geo",         version
   s.add_dependency "mix_global",      version
   s.add_dependency "mix_search",      version

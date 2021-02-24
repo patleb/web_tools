@@ -5,6 +5,12 @@ PATH
       ext_ruby (= 0.2.0)
 
 PATH
+  remote: mix_flash
+  specs:
+    mix_flash (0.2.0)
+      ext_ruby (= 0.2.0)
+
+PATH
   remote: .
   specs:
     web_tools (0.2.0)
@@ -22,6 +28,7 @@ PATH
       mix_credential (= 0.2.0)
       mix_email (= 0.2.0)
       mix_file (= 0.2.0)
+      mix_flash (= 0.2.0)
       mix_geo (= 0.2.0)
       mix_global (= 0.2.0)
       mix_log (= 0.2.0)
@@ -752,6 +759,8 @@ DEPENDENCIES
   mix_credential!
   mix_email!
   mix_file!
+  mix_flash!
+  mix_geo!
   mix_global!
   mix_page!
   mix_rescue!
