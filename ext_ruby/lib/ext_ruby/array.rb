@@ -66,7 +66,7 @@ class Array
     if size == 1 && first.is_a?(Array)
       first
     else
-      self
+      dup
     end
   end
 
