@@ -1,4 +1,16 @@
-class Object
+module Boolean
+  def cast
+    self
+  end
+end
+
+class Numeric
+  def cast
+    self
+  end
+end
+
+class Symbol
   def cast
     self
   end
@@ -7,6 +19,7 @@ end
 class String
   def cast
     case
+    when blank?                   then nil
     when to_f?                    then to_f
     when to_i?                    then to_i
     when match?(/^(true|false)$/) then to_b
@@ -17,15 +30,15 @@ end
 
 class Array
   def cast
-    map(&:cast)
+    map{ |v| v&.cast }
   end
 end
 
 class Hash
-  KEYWORD = /^[a-z_]\w*$/i.freeze
+  KEYWORD = /^[a-z_][a-z0-9_]*$/.freeze
 
   def cast
-    deep_transform_keys{ |key| _cast_key(key) }.transform_values(&:cast)
+    deep_transform_keys{ |key| _cast_key(key) }.transform_values{ |v| v&.cast }
   end
 
   private

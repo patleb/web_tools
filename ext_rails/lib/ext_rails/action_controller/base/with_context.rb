@@ -87,7 +87,7 @@ module ActionController::Base::WithContext
   private
 
   def default_current_value(name)
-    send("default_#{name}").cast
+    send("default_#{name}")&.cast
   end
 
   def default_locale
