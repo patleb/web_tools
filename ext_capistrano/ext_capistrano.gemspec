@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/ext_capistrano"
   s.summary     = "ExtCapistrano"
   s.description = "ExtCapistrano"
-  s.license     = "GPL-3.0"
+  s.license     = "AGPL-3.0"
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 

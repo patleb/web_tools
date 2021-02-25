@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/mix_credential"
   s.summary     = "MixCredential"
   s.description = "MixCredential"
-  s.licenses    = ["GPL-3.0", "MIT"]
+  s.licenses    = ["AGPL-3.0", "MIT"]
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
