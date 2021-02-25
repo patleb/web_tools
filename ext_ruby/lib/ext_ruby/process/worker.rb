@@ -21,7 +21,7 @@ module Process
       19 => :threads,
       21 => :start_time,
     }.freeze
-    PROCESS_STATES = HashWithKeywordAccess.new(
+    PROCESS_STATES = {
       R: :running,
       S: :sleeping,
       D: :disk_sleep,
@@ -31,7 +31,7 @@ module Process
       Z: :zombie,
       P: :parked,
       I: :idle,
-    ).freeze
+    }.with_keyword_access.freeze
     PID_DEAD = -1
     PID_INIT = 1
 

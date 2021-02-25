@@ -61,7 +61,7 @@ module MixLog
     end
 
     def known_errors
-      @known_errors ||= HashWithKeywordAccess.new(
+      @known_errors ||= {
         warn: [
           'SSL routines:tls_early_post_process_client_hello:version too low',
           'SSL routines:tls_early_post_process_client_hello:unsupported protocol',
@@ -75,7 +75,7 @@ module MixLog
           'details saved to: /tmp/passenger-error-',
           /^ID: \w+$/,
         ]
-      )
+      }.with_keyword_access
     end
 
     def nginx_log_path(*type, name)
