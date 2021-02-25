@@ -176,8 +176,12 @@ ActiveRecord::Base.class_eval do
     end
   end
 
+  def slice(*methods)
+    methods.unsplat.map!{ |method| [method, public_send(method)] }.to_h.with_keyword_access
+  end
+
   def except(*methods)
-    attributes.with_keyword_access.except!(*methods.flatten)
+    slice(*attributes_names.except!(methods.unsplat.map!(:to_s)))
   end
 
   def locking_enabled?
