@@ -142,6 +142,21 @@ ActiveRecord::Base.class_eval do
     end
   end
 
+  def self.dequeue_all(*columns, limit: nil)
+    pk = "#{quoted_table_name}.#{quoted_primary_key}"
+    query = <<-SQL.strip_sql
+      DELETE FROM #{quoted_table_name}
+      WHERE #{pk} IN (
+        SELECT #{pk} FROM #{quoted_table_name}
+        #{ yield(*quote_columns(*columns)) }
+        FOR UPDATE SKIP LOCKED
+        #{"LIMIT #{limit}" if limit}
+      )
+      RETURNING *;
+    SQL
+    uncached{ find_by_sql(query) }
+  end
+
   def self.dequeue(*columns)
     pk = "#{quoted_table_name}.#{quoted_primary_key}"
     query = <<-SQL.strip_sql
@@ -181,7 +196,7 @@ ActiveRecord::Base.class_eval do
   end
 
   def except(*methods)
-    slice(*attributes_names.except!(methods.unsplat.map!(:to_s)))
+    slice(*attribute_names.except(*methods.unsplat.map!(&:to_s)))
   end
 
   def locking_enabled?
