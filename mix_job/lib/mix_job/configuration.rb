@@ -23,9 +23,9 @@ module MixJob
     end
 
     def available_queues
-      @available_queues ||= HashWithIndifferentAccess.new(
+      @available_queues ||= {
         ActiveJob::Base.default_queue_name => 0,
-      )
+      }.with_indifferent_access
     end
   end
 end
