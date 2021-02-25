@@ -3,13 +3,12 @@ module Current::WithUser
 
   included do
     attribute :user
-    attribute :user_logged_in
-    attribute :user_role
+    attribute :as_user
 
-    alias_method :user_logged_in?, :user_logged_in
+    alias_method :as_user?, :as_user
 
-    def user_role?
-      user_role == 'true'
+    def logged_in?
+      user && user.id > ActiveType::NullObject::ID
     end
   end
 end

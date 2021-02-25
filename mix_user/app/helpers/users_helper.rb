@@ -19,10 +19,10 @@ module UsersHelper
   end
 
   def edit_user_link
-    return unless Current.user_logged_in?
+    return unless Current.logged_in?
     css = 'edit_user_link'
     admin_controller = controller.try(:admin?)
-    if defined?(MixAdmin) && !(Current.user_role? && !admin_controller) && Current.user.admin?
+    if defined?(MixAdmin) && !(Current.as_user? && !admin_controller) && Current.user.admin?
       css << ' pjax' if admin_controller
       path = admin_path_for(:edit, Current.user)
       title = t('user.admin')
@@ -39,14 +39,14 @@ module UsersHelper
   end
 
   def login_link
-    return if Current.user_logged_in?
+    return if Current.logged_in?
     a_ '.pjax', href: login_path do
       span_ '.label.label-primary', t('devise.sessions.new.sign_in')
     end
   end
 
   def logout_link
-    return unless Current.user_logged_in?
+    return unless Current.logged_in?
     a_ href: logout_path, data: { method: logout_method } do
       span_ '.label.label-danger', t('user.log_out')
     end

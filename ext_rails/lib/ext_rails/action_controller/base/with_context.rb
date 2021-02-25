@@ -55,42 +55,43 @@ module ActionController::Base::WithContext
     Current.referer ||= send(:get_root_path) if respond_to?(:get_root_path, true)
   end
 
-  def set_current_value(name, permitted = [])
+  def set_current_value(name, allowed_values = nil)
     Current[name] ||= begin
       param = "_#{name}"
       js_name = "js.#{name}"
-      if (current_value = params.delete(param)).present?
-        if permitted.none?{ |value| value.to_s == current_value }
+      if (value = params.delete(param)).present?
+        value = value.cast
+        if allowed_values&.none?{ |v| v == value }
           raise UnpermittedParameterValue.new([param])
-        end
-        if session?
-          cookies[js_name] = current_value
+        elsif session?
+          cookies[js_name] = value
         else
-          current_value
+          value
+        end
+      elsif session?
+        if (value = cookies[js_name]).present?
+          value = value.cast
+          if allowed_values&.none?{ |v| v == value }
+            raise UnpermittedParameterValue.new([param])
+          end
+          value
+        else
+          cookies[js_name] = default_current_value(name)
         end
       else
-        if session?
-          if (current_value = cookies[js_name]).present? && permitted.none?{ |value| value.to_s == current_value }
-            cookies[js_name] = get_current_value_default(name)
-          else
-            cookies[js_name] ||= get_current_value_default(name)
-          end
-        else
-          get_current_value_default(name)
-        end
+        default_current_value(name)
       end
     end
   end
 
   private
 
-  def get_current_value_default(name)
-    if (value = send("default_#{name}")).present?
-      value.to_s
-    end
+  def default_current_value(name)
+    send("default_#{name}").cast
   end
 
   def default_locale
+    locale = cookies["js.locale"]
     locale = I18n.available_locales.find{ |l| l.to_s == locale }
     locale.presence || http_accept_language.compatible_language_from(I18n.available_locales)
   end

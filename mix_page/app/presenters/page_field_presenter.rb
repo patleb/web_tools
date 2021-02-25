@@ -92,7 +92,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
 
   def member_actions
     @member_actions ||= MixPage.config.member_actions.each_with_object({}) do |action, all|
-      path = !Current.user_role? && admin_path_for(action, object, _back: true)
+      path = !Current.as_user? && admin_path_for(action, object, _back: true)
       all[action] = path if path
     end
   end

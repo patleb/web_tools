@@ -3,8 +3,6 @@ require 'orm_adapter/adapters/active_record'
 OrmAdapter::ActiveRecord.class_eval do
   def get(id)
     Current.user = get_unscoped.where(id: id).take
-    Current.user_logged_in = Current.user.present?
-    Current.user
   end
 
   def find_first(options = {})
