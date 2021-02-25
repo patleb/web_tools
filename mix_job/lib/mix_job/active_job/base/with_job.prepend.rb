@@ -7,6 +7,10 @@ module ActiveJob::Base::WithJob
   end
 
   class_methods do
+    def context
+      @context ||= %i(locale timezone session_id request_id)
+    end
+
     def deserialize(job_data)
       job = job_data["job_class"].to_const!.new
       job.deserialize(job_data)
@@ -31,5 +35,15 @@ module ActiveJob::Base::WithJob
     super
     self.session_id = job_data["session_id"]
     self.request_id = job_data["request_id"]
+  end
+
+  def perform_now
+    old_attributes = Current.attributes.dup
+    self.class.context.each do |attribute|
+      Current[attribute] = send(attribute)
+    end
+    super
+  ensure
+    Current.attributes = old_attributes
   end
 end
