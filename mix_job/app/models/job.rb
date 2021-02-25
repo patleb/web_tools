@@ -3,6 +3,7 @@ class Job < LibRecord
 
   alias_attribute :provider_job_id, :id
   alias_attribute :enqueued_at, :created_at
+  alias_attribute :time_zone, :timezone
 
   json_attribute MixJob.config.json_attributes
 
