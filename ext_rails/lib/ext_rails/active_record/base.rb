@@ -60,6 +60,13 @@ ActiveRecord::Base.class_eval do
     self.time_zone_aware_attributes = old_value
   end
 
+  def self.with_setting(value)
+    transaction do
+      connection.exec_query "SET LOCAL #{name} = '#{value}';"
+      yield
+    end
+  end
+
   def self.encoding
     @encoding ||= connection.select_one("SELECT ''::text AS str;").values.first.encoding
   end

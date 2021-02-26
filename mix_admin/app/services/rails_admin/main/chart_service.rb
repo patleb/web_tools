@@ -107,8 +107,7 @@ module RailsAdmin::Main
       end
 
       if (work_mem = @section.work_mem)
-        model.transaction do
-          model.connection.exec_query("SET LOCAL work_mem = '#{work_mem}MB'")
+        model.with_setting("#{work_mem}MB") do
           query.send(@calculation, field_name)
         end
       else
