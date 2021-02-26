@@ -41,7 +41,7 @@ class DeviseCreateLibUsers < ActiveRecord::Migration[6.0]
       t.jsonb :json_data, null: false, default: {}, index: { using: :gin }
 
       t.userstamps
-      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
+      t.timestamps
       t.datetime :deleted_at
     end
 

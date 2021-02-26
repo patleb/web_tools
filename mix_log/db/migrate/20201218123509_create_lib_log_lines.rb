@@ -1,7 +1,7 @@
 class CreateLibLogLines < ActiveRecord::Migration[6.0]
   def change
     create_table :lib_log_lines, id: false do |t|
-      t.datetime   :created_at,  null: false, precision: 6, default: -> { 'CURRENT_TIMESTAMP' }
+      t.timestamp  :created_at,  null: false
       t.integer    :type,        null: false
       t.belongs_to :log,         null: false, index: false, foreign_key: { to_table: :lib_logs }
       t.belongs_to :log_message, index: false, foreign_key: { to_table: :lib_log_messages }

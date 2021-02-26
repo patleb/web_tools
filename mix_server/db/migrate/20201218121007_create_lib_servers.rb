@@ -4,7 +4,7 @@ class CreateLibServers < ActiveRecord::Migration[6.0]
       t.integer    :provider,   null: false
       t.inet       :private_ip, null: false
       t.jsonb      :json_data,  null: false, default: {}, index: { using: :gin }
-      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
+      t.timestamps
       t.datetime   :deleted_at
     end
 

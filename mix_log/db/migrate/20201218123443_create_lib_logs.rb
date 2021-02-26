@@ -7,7 +7,7 @@ class CreateLibLogs < ActiveRecord::Migration[6.0]
       t.datetime   :mtime,           null: false, default: Time.at(0)
       t.integer    :log_lines_type,  null: false
       t.bigint     :log_lines_count, null: false, default: 0
-      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
+      t.timestamps
     end
 
     add_index :lib_logs, [:server_id, :path, :log_lines_type], unique: true

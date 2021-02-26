@@ -10,7 +10,7 @@ class CreateLibPages < ActiveRecord::Migration[6.0]
       t.jsonb      :json_data,            null: false, default: {}, index: { using: :gin }
       t.integer    :lock_version,         null: false, default: 0
       t.userstamps
-      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
+      t.timestamps
       t.datetime   :deleted_at
       t.datetime   :published_at
     end

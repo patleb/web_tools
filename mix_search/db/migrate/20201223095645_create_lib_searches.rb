@@ -7,7 +7,7 @@ class CreateLibSearches < ActiveRecord::Migration[6.0]
       t.bigint     :searchable_id,   null: false
       t.integer    :searchable_type, null: false
 
-      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
+      t.timestamps
     end
 
     add_index :lib_searches, [:search_word_id, :occurrences],

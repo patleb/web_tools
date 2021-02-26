@@ -15,7 +15,7 @@ class CreateLibGlobals < ActiveRecord::Migration[6.0]
       t.interval    :interval
       t.binary      :serialized
 
-      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
+      t.timestamps
     end
 
     add_index :lib_globals, [:expires_at],

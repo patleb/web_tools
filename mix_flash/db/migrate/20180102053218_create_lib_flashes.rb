@@ -5,7 +5,7 @@ class CreateLibFlashes < ActiveRecord::Migration[6.0]
       t.string     :session_id, null: false
       t.jsonb      :messages,   null: false
 
-      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
+      t.timestamps
     end
 
     add_index :lib_flashes, [:user_id, :session_id, :updated_at]

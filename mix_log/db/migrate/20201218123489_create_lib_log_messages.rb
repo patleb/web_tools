@@ -11,7 +11,7 @@ class CreateLibLogMessages < ActiveRecord::Migration[6.0]
       t.boolean    :monitor # nil --> based on level, false --> never, true --> always
       t.boolean    :alerted,         null: false, default: false
       t.citext     :notes
-      t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
+      t.timestamps
     end
 
     add_index :lib_log_messages, [:text_tiny, :log_id, :log_lines_type, :level, :monitor, :alerted, :updated_at],
