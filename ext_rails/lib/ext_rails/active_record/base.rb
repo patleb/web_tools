@@ -196,7 +196,7 @@ ActiveRecord::Base.class_eval do
   end
 
   def except(*methods)
-    slice(*attribute_names.except(*methods.unsplat.map!(&:to_s)))
+    slice(attribute_names.except(*methods.unsplat.map!(&:to_s)))
   end
 
   def locking_enabled?
