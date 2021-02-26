@@ -1,4 +1,3 @@
-# TODO, -> { select(... except logidze column) }
 class Page < LibRecord
   has_userstamp
 
