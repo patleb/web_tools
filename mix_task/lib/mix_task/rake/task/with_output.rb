@@ -8,12 +8,12 @@ module Rake::Task::WithOutput
     attr_accessor :output
   end
 
-  def puts_out(obj = '', *arg)
+  def puts(obj = '', *arg)
     if rake_ouput?
       self.output ||= ''
       self.output << ERB::Util.html_escape(obj) << "\n"
     end
-    puts(obj, *arg)
+    super
   end
 
   def puts_started(args)
