@@ -8,6 +8,10 @@ module ExtMinitest
       end
     end
 
+    config.before_configuration do
+      RoutesLazyRoutes.eager_load! if defined? RoutesLazyRoutes
+    end
+
     rake_tasks do
       load 'tasks/ext_minitest.rake'
     end
