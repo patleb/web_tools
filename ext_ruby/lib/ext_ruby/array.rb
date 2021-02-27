@@ -64,7 +64,7 @@ class Array
 
   def unsplat
     if size == 1 && first.is_a?(Array)
-      first
+      first.dup
     else
       dup
     end
