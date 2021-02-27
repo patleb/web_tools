@@ -1,3 +1,5 @@
+require 'routes_lazy_routes'
+
 module ActionService
   autoload :Base, 'ext_rails/action_service/base'
 end
