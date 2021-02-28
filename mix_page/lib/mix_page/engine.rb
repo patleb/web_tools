@@ -1,4 +1,4 @@
-require 'ext_ruby'
+require 'mix_log'
 require 'mix_page/configuration'
 require 'mix_admin'
 
@@ -33,6 +33,10 @@ module MixPage
         post "/#{URL_SEGMENT}/:uuid/field" => 'pages#field_create', as: :page_field
         patch "/#{URL_SEGMENT}/:uuid/field/:id" => 'pages#field_update', as: :edit_page_field
       end
+    end
+
+    ActiveSupport.on_load(:active_record) do
+      MixLog.config.ided_paths[%r{/(#{URL_SEGMENT})/([\w-]+)}] = '/\1/*'
     end
   end
 end
