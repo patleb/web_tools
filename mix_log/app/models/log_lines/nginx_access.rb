@@ -67,7 +67,7 @@ module LogLines
     scope :root,          -> { where(path: '/') }
     scope :api,           -> { where(path: ['~', '^/api/.+']) }
     scope :page,          -> { where(path: ['~', "^/[\\w-]+/#{MixPage::URL_SEGMENT}/"]) }
-    scope :admin,         -> { where(path: ['~', "^#{RailsAdmin.js_routes[:root]}(/|$)"]) }
+    scope :admin,         -> { where(path: ['~', "^#{RailsAdmin.routes[:root]}(/|$)"]) }
     scope :geoserver_wms, -> { where(path: "#{Setting[:geoserver_path]}/wms") }
     scope :pgrest_rpc,    -> (name = '%') { where(path: ['LIKE', "#{Setting[:pgrest_path]}/rpc/#{name}"]) }
     scope :success,       -> { where(status: ['>=', 200]).where(status: ['<', 300]) }

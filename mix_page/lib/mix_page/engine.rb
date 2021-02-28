@@ -6,8 +6,8 @@ module MixPage
   URL_SEGMENT = 'page'.freeze
   MULTI_VIEW = %r{[/_]multi$}
 
-  def self.js_routes
-    @js_routes ||= {
+  def self.routes
+    @routes ||= {
       show: "/__SLUG__/#{URL_SEGMENT}/__UUID__",
       field_create: "/#{URL_SEGMENT}/__UUID__/field",
       field_update: "/#{URL_SEGMENT}/__UUID__/field/__ID__",

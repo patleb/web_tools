@@ -55,8 +55,8 @@ module RailsAdmin
       end
     end
 
-    def js_routes
-      @js_routes ||= methods.grep(/_path$/).each_with_object({}) do |name, routes|
+    def routes
+      @routes ||= methods.grep(/_path$/).each_with_object({}) do |name, routes|
         params = method_keyargs(name)
         params = params.each_with_object({}) do |key, args|
           args[key] = "__#{key.to_s.upcase}__"

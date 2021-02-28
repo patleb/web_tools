@@ -4,7 +4,7 @@ end
 
 append :html_data, [
   div_('#js_i18n_translations', data: { translations: js_i18n(:pjax, :template, :admin) }),
-  div_('#js_routes_paths', data: { paths: MixRescue.js_routes.merge(RailsAdmin.js_routes) }),
+  div_('#js_routes_paths', data: { paths: MixRescue.routes.merge(RailsAdmin.routes) }),
 ]
 
 append :sidebar, [

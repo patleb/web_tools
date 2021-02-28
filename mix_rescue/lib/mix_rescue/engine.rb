@@ -4,8 +4,8 @@ autoload :Notice,    'mix_rescue/notice'
 autoload :Throttler, 'mix_rescue/throttler'
 
 module MixRescue
-  def self.js_routes
-    @js_routes ||= {
+  def self.routes
+    @routes ||= {
       rescue: '/rescues/javascripts',
     }
   end

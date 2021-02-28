@@ -16,7 +16,7 @@ module MixPage
     attr_accessor :skip_sidebar_link
 
     def js_routes
-      @js_routes ||= MixPage.js_routes
+      @js_routes ||= MixPage.routes
     end
 
     def reserved_words
@@ -24,7 +24,7 @@ module MixPage
         known_segments = [
           MixPage::URL_SEGMENT,
           RailsAdmin.root_path,
-          MixRescue.js_routes[:rescue],
+          MixRescue.routes[:rescue],
         ].map do |path|
           path.split('/').reject(&:blank?).first
         end
