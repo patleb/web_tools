@@ -97,3 +97,14 @@ namespace :gem do
     end
   end
 end
+
+namespace :tmp do
+  desc 'truncate log'
+  task :truncate_log, [:suffix] => :environment do |t, args|
+    if (suffix = args[:suffix]).present?
+      sh "truncate -s 0 log/#{Rails.env}.log#{suffix}"
+    else
+      sh "truncate -s 0 log/#{Rails.env}.log"
+    end
+  end
+end
