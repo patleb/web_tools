@@ -1,6 +1,8 @@
 class Flash < LibRecord
   class MustBeLoggedIn < ::StandardError; end
 
+  belongs_to :user
+
   validates :session_id, format: { with: Rack::Utils::SESSION_ID }
   validates :messages, presence: true
 
