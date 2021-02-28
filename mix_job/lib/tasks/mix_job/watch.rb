@@ -72,6 +72,10 @@ module MixJob
 
     protected
 
+    def puts(*args)
+      super(*args, output: false)
+    end
+
     def before_run
       STDOUT.sync = true
       $task_snapshot = proc{ snapshot }

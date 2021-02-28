@@ -140,8 +140,8 @@ module ActiveTask
     def after_rescue(exception); end
     def after_ensure(exception); end
 
-    def puts(obj = '', *arg)
-      task.puts(obj, *arg)
+    def puts(obj = '', *arg, **options)
+      task.puts(obj, *arg, **options)
     end
 
     def puts_step(name)
