@@ -14,7 +14,6 @@ module ActiveJob::Base::WithJob
     def deserialize(job_data)
       job = job_data["job_class"].to_const!.new
       job.deserialize(job_data)
-      Current.job = job
     end
   end
 
