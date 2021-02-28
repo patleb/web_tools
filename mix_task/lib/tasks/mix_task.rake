@@ -3,7 +3,7 @@ require_rel 'mix_task'
 namespace :task do
   desc 'create available tasks'
   task :create => :environment do
-    MixTask.config.available_names.each do |name, _|
+    MixTask.config.available_names.each_key do |name|
       Task.find_or_create_by! name: name
     end
   end
