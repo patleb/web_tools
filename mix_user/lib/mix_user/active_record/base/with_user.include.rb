@@ -33,7 +33,7 @@ module ActiveRecord::Base::WithUser
     end
 
     def current_user
-      Current.user
+      Current.user if Current.logged_in?
     end
 
     private
