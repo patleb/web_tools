@@ -46,7 +46,9 @@ class TemplatesController < MixTemplate.config.parent_controller.constantize
     def admin_error_notice(objects, name, action = nil)
       notice = action ? I18n.t('admin.flash.error', name: name, action: I18n.t("admin.actions.#{action}.done")) : name
       Array.wrap(objects).each do |object|
-        notice += ERROR_SEPARATOR + object.errors.full_messages.join(ERROR_SEPARATOR) unless object.errors.empty?
+        unless object.errors.empty?
+          notice += MixTemplate::ERROR_SEPARATOR + object.errors.full_messages.join(MixTemplate::ERROR_SEPARATOR)
+        end
       end
       simple_format! notice
     end

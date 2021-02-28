@@ -5,6 +5,8 @@ module ActionPresenter
 end
 
 module MixTemplate
+  ERROR_SEPARATOR = '<br>- '
+
   class Engine < ::Rails::Engine
     require 'query_diet' if Rails.env.development?
     require 'nestive'
