@@ -12,6 +12,7 @@ module ExtRails
     require 'http_accept_language'
     require 'monogamy'
     require 'pg'
+    require 'stateful_enum'
     require 'rails-i18n'
     if Rails.env.development?
       require 'i18n/debug'

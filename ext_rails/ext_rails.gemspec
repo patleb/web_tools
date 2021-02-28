@@ -20,8 +20,10 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> #{WebTools::RAILS_VERSION::STRING}"
   s.add_dependency 'active_type'
   s.add_dependency 'arel_extensions'
+  # TODO Rails 6.1 check constraint for non-empty arrays or https://github.com/on-site/active_record-postgres-constraints
   # TODO https://github.com/janko/sequel-activerecord_connection
   # TODO https://github.com/GeorgeKaraszi/ActiveRecordExtended
+  # https://github.com/delonnewman/activerecord-setops
   # https://github.com/westonganger/active_snapshot
   # https://github.com/DmitryTsepelev/ar_lazy_preload
   s.add_dependency 'date_validator'
@@ -44,6 +46,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'routes_lazy_routes'
   # s.add_dependency 'sequel-activerecord-adapter'
   # TODO https://github.com/gocardless/statesman
+  # TODO https://github.com/doctolib/safe-pg-migrations
+  s.add_dependency "stateful_enum"
   s.add_dependency 'store_base_sti_class'
   s.add_dependency 'mix_setting'
   s.add_dependency 'sunzistrano'
