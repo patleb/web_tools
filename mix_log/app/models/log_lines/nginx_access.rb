@@ -66,7 +66,7 @@ module LogLines
     scope :referers,      -> { where_not(referer: nil).where_not(referer: ['LIKE', '/%']) }
     scope :root,          -> { where(path: '/') }
     scope :api,           -> { where(path: ['~', '^/api/.+']) }
-    scope :page,          -> { where(path: ['~', "^/[\\w-]+/#{MixPage::URL_SEGMENT}/"]) }
+    scope :pages,         -> { where(path: ['~', "^/[\\w-]+/#{MixPage::URL_SEGMENT}/"]) }
     scope :admin,         -> { where(path: ['~', "^#{RailsAdmin.routes[:root]}(/|$)"]) }
     scope :geoserver_wms, -> { where(path: "#{Setting[:geoserver_path]}/wms") }
     scope :pgrest_rpc,    -> (name = '%') { where(path: ['LIKE', "#{Setting[:pgrest_path]}/rpc/#{name}"]) }
