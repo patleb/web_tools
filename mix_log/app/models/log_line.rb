@@ -1,4 +1,4 @@
-class LogLine < LibRecord
+class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.html
   class IncompatibleLogLine < ::StandardError; end
 
   self.primary_key = :created_at # so #find_each will work, but must be scoped by :log_id
@@ -91,7 +91,7 @@ class LogLine < LibRecord
     text_hash, text_tiny, text, level = message
     text_tiny ||= squish(text)
     text_hash ||= text_tiny
-    yield Digest.md5_hex(text_hash), text_tiny[0...256], text, LogMessage.levels[level]
+    yield Digest.sha1_hex(text_hash), text_tiny[0...256], text, LogMessage.levels[level]
   end
 
   def self.insert_all(attributes, **)
