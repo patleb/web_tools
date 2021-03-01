@@ -1,8 +1,6 @@
 class TemplatesController < MixTemplate.config.parent_controller.constantize
   include ActionView::Helpers::TextHelper
 
-  ERROR_SEPARATOR = '<br>- '
-
   before_action :strip_pjax_param, if: :pjax?
   before_action :strip_pjax_file_params, if: :pjax_file?
   before_action :after_redirected, if: :pjax_redirect?
