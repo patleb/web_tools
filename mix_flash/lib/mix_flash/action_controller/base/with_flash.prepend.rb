@@ -7,25 +7,26 @@ module ActionController::Base::WithFlash
   FLASH_SEPARATOR = '<br>'
 
   prepended do
-    after_action :flash_later, if: -> { Current.flash_later? }
+    after_action :set_flash_later, if: -> { Current.flash_later? }
   end
 
   def render(*args)
     return super unless session? && session[:flash_later].to_b
 
-    Flash.dequeue_all.each do |flash_later|
-      flash_later.messages.each do |type, message|
+    flashes = Flash.dequeue_all
+    flashes.each do |record|
+      record.messages.each do |type, message|
         (flash.now[type.to_sym] ||= '') << message << FLASH_SEPARATOR
       end
     end
-    session.delete(:flash_later)
+    session.delete(:flash_later) unless flashes.empty?
 
     super
   end
 
   private
 
-  def flash_later
+  def set_flash_later
     session[:flash_later] = true
   end
 end
