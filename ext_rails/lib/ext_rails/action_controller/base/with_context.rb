@@ -25,7 +25,7 @@ module ActionController::Base::WithContext
     Current.session_id ||= session.try(:id)
     Current.request_id ||= request.uuid
     set_current_referer
-    set_current_value(:locale, I18n.available_locales)
+    set_current_value(:locale, I18n.available_locales.map(&:to_s))
     set_current_value(:time_zone)
   end
 
