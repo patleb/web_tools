@@ -1,8 +1,8 @@
-module JobsController::WithFlash
+module ActiveJob::Base::WithFlash
   extend ActiveSupport::Concern
 
   included do
-    after_action :save_flash, if: -> { Current.flash? }
+    after_perform :save_flash, if: -> { Current.flash? }
   end
 
   private
