@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'minitest', '>= 5.11'
-  s.add_dependency 'minitest-hooks'
   s.add_dependency 'minitest-spec-rails'
   s.add_dependency 'minitest-retry'
   s.add_dependency 'maxitest'

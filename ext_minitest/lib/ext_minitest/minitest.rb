@@ -4,9 +4,9 @@
 
 require 'minitest'
 require 'minitest/spec'
-require 'minitest/hooks'
 require 'mocha/minitest'
 require 'webmock/minitest'
+require 'maxitest/vendor/around'
 require 'maxitest/threads'
 require "maxitest/let_bang"
 require "maxitest/let_all"

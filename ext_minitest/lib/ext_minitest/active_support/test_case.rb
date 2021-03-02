@@ -6,7 +6,6 @@ ActiveSupport::TestCase.class_eval do
   # fixtures :all
 
   # Add more helper methods to be used by all tests here...
-  include Minitest::Hooks
 
   let(:base_name){ $test.class.name.match(/^([\w:]+)Test(?:$|::)/)[1] }
 
