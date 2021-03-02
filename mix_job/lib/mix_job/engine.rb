@@ -33,5 +33,9 @@ module MixJob
     ActiveSupport.on_load(:active_record) do
       MixLog.config.available_types['LogLines::JobWatchAction'] = 130
     end
+
+    ActiveSupport.on_load(:action_mailer) do
+      require 'mix_job/action_mailer/base'
+    end
   end
 end
