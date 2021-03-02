@@ -1,5 +1,13 @@
-admin:
+deployer:
   id: 1
+  email: deployer@example.com
+  encrypted_password: <%= User.new.send(:password_digest, 'password') %>
+  confirmed_at: <%= Time.current %>
+  role: deployer
+  json_data: { first_name: "User", last_name: "Deployer" }
+
+admin:
+  id: 2
   email: admin@example.com
   encrypted_password: <%= User.new.send(:password_digest, 'password') %>
   confirmed_at: <%= Time.current %>
@@ -7,7 +15,7 @@ admin:
   json_data: { first_name: "User", last_name: "Admin" }
 
 normal:
-  id: 2
+  id: 3
   email: user@example.com
   encrypted_password: <%= User.new.send(:password_digest, 'password') %>
   confirmed_at: <%= Time.current %>
