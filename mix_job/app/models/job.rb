@@ -54,7 +54,7 @@ class Job < LibRecord
   end
 
   def data
-    attributes = except(:json_data, :scheduled_at, :created_at, :enqueued_at).compact!
+    attributes = except(:json_data, :scheduled_at, :created_at, :enqueued_at).compact
     attributes[:provider_job_id] = attributes.delete(:id)
     attributes
   end
