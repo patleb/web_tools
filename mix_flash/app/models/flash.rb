@@ -20,10 +20,10 @@ class Flash < LibRecord
 
   def self.dequeue_all
     return [] unless Current.logged_in?
-    super(:user_id, :session_id, :updated_at, limit: 10) do |user_id, session_id, updated_at|
+    super(:user_id, :session_id, :updated_at) do |user_id, session_id, updated_at|
       <<-SQL
         WHERE #{user_id} = #{Current.user.id}
-          AND #{session_id} = '#{Current.session_id}'
+          AND #{session_id} = '#{Rails.env.test? ? $test.session_id : Current.session_id}'
         ORDER BY #{updated_at}
       SQL
     end
