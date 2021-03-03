@@ -1,0 +1,41 @@
+en:
+  admin:
+    help:
+      task:
+        arguments: separated by comma ','
+    form:
+      task:
+        save: Run
+        save_and_edit: Run and see
+
+  task:
+    flash:
+      success_html: "Task <a href='%{path}' class='pjax'>%{name}</a> successfully executed"
+      failure_html: "Task <a href='%{path}' class='pjax'>%{name}</a> terminated with:"
+    email:
+      success: "Task '%{name}' successfully executed in %{duration}"
+      failure: "Task '%{name}' terminated with: %{errors}"
+
+  activerecord:
+    attributes:
+      task:
+        name: Name
+        parameters: Parameters
+        arguments: Values
+        state: Status
+        duration_avg: Avg. Duration
+        output: Output
+        updater: User
+        notify: Notify
+        _perform: Execute
+    errors:
+      models:
+        task:
+          attributes:
+            base:
+              already_running: Already running
+              failure: Failure
+              cancelled: Cancelled
+              unknown: The result status couldn't be inferred by the output
+    models:
+      task: Task

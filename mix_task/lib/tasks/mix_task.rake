@@ -1,11 +1,9 @@
 require_rel 'mix_task'
 
 namespace :task do
-  desc 'create available tasks'
+  desc 'create available tasks (and delete invalid ones)'
   task :create => :environment do
-    MixTask.config.available_names.each_key do |name|
-      Task.find_or_create_by! name: name
-    end
+    Task.delete_or_create_all
   end
 end
 
