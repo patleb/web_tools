@@ -1,7 +1,7 @@
 ActionView::Template::Error.class_eval do
   alias_method :old_message, :message
   def message
-    [old_message, "#{file_name}:#{line_number}"].concat(annoted_source_code).join("\n")
+    [old_message, "#{file_name}:#{line_number}"].concat(source_extract(4)).join("\n")
   end
 
   module WithInitializedLineNumber
