@@ -120,9 +120,12 @@ module ExtRails
       end
     end
 
-    ActiveSupport.on_load(:action_controller, run_once: true) do
+    ActiveSupport.on_load(:action_dispatch_response) do
       require 'ext_rails/action_dispatch/journey/formatter/with_params_fix'
       require 'ext_rails/action_dispatch/routing/url_for/with_only_path'
+    end
+
+    ActiveSupport.on_load(:action_controller, run_once: true) do
       require 'ext_rails/action_controller/parameters'
     end
 
