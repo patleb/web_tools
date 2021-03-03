@@ -167,7 +167,7 @@ class RailsAdmin::Config::Model::Fields::Base
   end
 
   register_instance_option :pretty_blank, memoize: :locale do
-    ' - '.html_safe
+    '-'.html_safe
   end
 
   register_instance_option :index_value do
