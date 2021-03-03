@@ -23,6 +23,7 @@ fr:
         parameters: Paramètres
         arguments: Valeurs
         state: Statut
+        updated_at: Modifié à
         duration_avg: Durée moy.
         output: Sortie
         updater: Utilisateur

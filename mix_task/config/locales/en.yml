@@ -23,6 +23,7 @@ en:
         parameters: Parameters
         arguments: Values
         state: Status
+        updated_at: Updated at
         duration_avg: Avg. Duration
         output: Output
         updater: User

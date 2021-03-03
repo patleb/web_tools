@@ -19,6 +19,10 @@ module TaskAdmin
       configure :state do
         readonly true
       end
+      configure :updated_at do
+        readonly true
+        visible true
+      end
       configure :duration_avg
       configure :output, :code do
         readonly true
@@ -30,7 +34,7 @@ module TaskAdmin
         readonly false
       end
 
-      include_fields :name, :parameters, :arguments, :state, :duration_avg, :output, :updater, :notify, :_perform
+      include_fields :name, :parameters, :arguments, :state, :updated_at, :duration_avg, :output, :updater, :notify, :_perform
 
       index do
         exclude_fields :_perform
