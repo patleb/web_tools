@@ -1,4 +1,13 @@
 module Minitest::Assertions
+  alias_method :assert_equal_without_nil, :assert_equal
+  def assert_equal(exp, act, msg = nil)
+    if exp.nil?
+      assert_nil(act, msg)
+    else
+      assert_equal_without_nil(exp, act, msg)
+    end
+  end
+
   def assert_until(*equal, sleep: nil)
     location = caller_location
     expected = equal.first if equal.any?
