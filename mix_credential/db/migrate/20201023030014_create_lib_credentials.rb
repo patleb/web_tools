@@ -1,7 +1,7 @@
 class CreateLibCredentials < ActiveRecord::Migration[6.0]
   def change
     create_table :lib_credentials, id: false do |t|
-      t.primary_key :id, :text
+      t.primary_key :id, :string
       t.integer     :type,      null: false
       t.string      :token
       t.string      :challenge
