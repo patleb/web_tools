@@ -1,10 +1,7 @@
+# TODO compare https://github.com/taxjar/persisted_cache
 # TODO https://github.com/github/github-ds
-module Global::CacheStore
+module GlobalCache
   extend ActiveSupport::Concern
-
-  included do
-    include Global::RecordStore
-  end
 
   # TODO missing some instance methods: #value, #mismatched?, #size, #compressed?
   class_methods do
