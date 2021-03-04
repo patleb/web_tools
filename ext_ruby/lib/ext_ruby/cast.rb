@@ -21,6 +21,7 @@ class String
     case
     when blank?                   then nil
     when to_f?                    then to_f
+    when to_d?                    then to_d
     when to_i?                    then to_i
     when match?(/^(true|false)$/) then to_b
     else self
