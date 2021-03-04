@@ -27,6 +27,7 @@ class Global < LibRecord
   scope :expirable, -> { where(expires: true) }
   scope :permanent, -> { where(expires: false) }
 
+  validates :id, length: { maximum: 2712 }
   validates :expires_at, date: { after: proc{ 1.second.from_now }, before: proc{ future_expires_at }, allow_blank: true }
 
   after_initialize :set_data
