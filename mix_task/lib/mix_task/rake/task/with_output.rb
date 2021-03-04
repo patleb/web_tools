@@ -51,7 +51,7 @@ module Rake::Task::WithOutput
       end
     end
 
-    started_at = Time.current.utc
+    started_at = Concurrent.monotonic_time
     self.output = ''
     I18n.with_locale(:en) do
       Time.use_zone('UTC') do
@@ -64,7 +64,7 @@ module Rake::Task::WithOutput
           if exception
             puts_failure exception
           else
-            total = (Time.current.utc - started_at).seconds.ceil(3)
+            total = (Concurrent.monotonic_time - started_at).seconds.ceil(3)
             puts_success total
           end
         end

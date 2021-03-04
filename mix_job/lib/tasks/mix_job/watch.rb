@@ -236,7 +236,7 @@ module MixJob
     end
 
     def execute
-      started_at = Time.current.utc
+      started_at = Concurrent.monotonic_time
       file = actions.first
       action = file.readlines.first.strip
       klass, meth, args = extract_ruby_call(action)
@@ -248,7 +248,7 @@ module MixJob
       if exception
         puts_action_failure action, exception
       else
-        total = (Time.current.utc - started_at).seconds.ceil(3)
+        total = (Concurrent.monotonic_time - started_at).seconds.ceil(3)
         puts_action_success action, total
       end
     end

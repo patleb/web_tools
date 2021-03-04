@@ -90,7 +90,7 @@ class Task < LibRecord
   end
 
   def perform_now
-    started_at = Time.current.utc
+    started_at = Concurrent.monotonic_time
     self.output = Parallel.map([[name, arguments]], in_processes: 1) do |(name, arguments)|
       String.try(:disable_colorization=, true)
       ARGV.clear
@@ -106,7 +106,7 @@ class Task < LibRecord
     when output.include?(MixTask::CANCEL)  then set_error_state :cancelled
     when result.include?(MixTask::SUCCESS)
       durations.shift until durations.size < MixTask.config.durations_max_size
-      self.durations << (Time.current.utc - started_at).seconds.ceil(3)
+      self.durations << (Concurrent.monotonic_time - started_at).seconds.ceil(3)
       self.state = :success
     else
       set_error_state :unknown
