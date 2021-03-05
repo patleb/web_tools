@@ -1,5 +1,3 @@
-# TODO config.active_record.cache_versioning
-# TODO for tests, use MemoryStore and compare outputs and keys
 class Global < LibRecord
   include GlobalCache
 
@@ -56,7 +54,6 @@ class Global < LibRecord
     MixGlobal.config.touch_in
   end
 
-  # TODO select('COALESCE(...)' AS data)
   def self.fetch_record(name, **options)
     options = options.reverse_merge expires: true
     if block_given?
@@ -115,18 +112,18 @@ class Global < LibRecord
     case names
     when Array
       keys = names.map{ |element| normalize_key(element) }
-      where(id: keys).find_each.with_object({}).each do |record, memo|
+      where(id: keys).find_each.with_object({}.with_keyword_access) do |record, memo|
         key = record.id
         version = normalize_version(names[keys.index(key)], **options)
         memo[key] = record unless record._sync_stale_state(version).stale?
       end
-    when Regexp
+    when String, Regexp
       version = normalize_version(**options)
-      where(column(:id).matches key_matcher(names, **options)).find_each.with_object({}).each do |record, memo|
+      where(column(:id).matches key_matcher(names, **options)).find_each.with_object({}.with_keyword_access) do |record, memo|
         memo[record.id] = record unless record._sync_stale_state(version).stale?
       end
     else
-      raise ArgumentError, "Bad type: `Global#read_records` requires names as Array or Regexp."
+      raise ArgumentError, "Bad type: `Global#read_records` requires names as Array, String or Regexp."
     end
   end
 
@@ -137,9 +134,9 @@ class Global < LibRecord
 
   def self.delete_records(matcher, **options)
     case matcher
-    when Array  then matcher = GlobalKey.start_with(matcher)
-    when Regexp then # do nothing
-    else raise ArgumentError, "Bad type: `Global#delete_records` requires matcher as Array or Regexp."
+    when Array          then matcher = GlobalKey.start_with(matcher)
+    when String, Regexp then # do nothing
+    else raise ArgumentError, "Bad type: `Global#delete_records` requires matcher as Array, String or Regexp."
     end
     where(column(:id).matches key_matcher(matcher, **options)).delete_all
   end
@@ -179,14 +176,12 @@ class Global < LibRecord
 
   def self.expanded_key(key)
     return key.cache_key.to_s if key.respond_to? :cache_key
-
     case key
     when Array
       key = (key.size > 1) ? key.map{ |element| expanded_key(element) } : key.first
     when Hash
       key = key.sort_by{ |k, _| k.to_s }.map{ |k, v| "#{k}=#{v}" }
     end
-
     key.to_param
   end
 
@@ -203,8 +198,10 @@ class Global < LibRecord
   end
 
   def self.key_matcher(pattern, **)
-    regex = pattern.source.tr('/', GlobalKey::SEPARATOR)
-    if !regex.start_with?('^') || regex.in?(['', '^', '$']) || regex.exclude?(GlobalKey::SEPARATOR)
+    regex = pattern.is_a?(Regexp) ? pattern.source : pattern
+    regex = "^#{regex}" unless regex.start_with? '^'
+    regex = regex.tr('/', GlobalKey::SEPARATOR)
+    if regex == '^' || regex.exclude?(GlobalKey::SEPARATOR)
       raise ArgumentError, "Bad value: `Global#key_matcher` pattern /#{regex}/ matches too much."
     end
     sanitize_matcher /#{regex}/
@@ -219,7 +216,7 @@ class Global < LibRecord
   end
 
   def expired?
-    expirable? && (self.class.future_expires_at(from: updated_at).past? || expires_at&.past?)
+    expirable? && (self.class.future_expires_at(from: updated_at).past? || expires_at&.past?).to_b
   end
 
   def expired_touch?
@@ -238,7 +235,6 @@ class Global < LibRecord
     end
   end
 
-  # TODO doesn't seems to work well (Rack::Attack) --> unit tests
   def expires_in=(value)
     if value && !@freeze_expires
       self.expires = true
@@ -272,11 +268,8 @@ class Global < LibRecord
 
   def _sync(version)
     return self if new?
-
     _sync_stale_state(version)
-
     return self if destroyed?
-
     if changed?
       with_lock do
         update! data: yield
@@ -284,7 +277,6 @@ class Global < LibRecord
         destroyed!
       end
     end
-
     self
   end
 
@@ -296,7 +288,6 @@ class Global < LibRecord
     else
       self.version = version
     end
-
     self
   end
 
@@ -310,7 +301,7 @@ class Global < LibRecord
     when Float, BigDecimal       then 'decimal'
     when Date, Time, DateTime    then 'datetime'
     when ActiveSupport::Duration then 'interval'
-    when String, Symbol, nil     then 'string'
+    when String, nil             then 'string'
     else                              'serialized'
     end
   end

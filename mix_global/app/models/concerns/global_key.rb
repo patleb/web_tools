@@ -1,7 +1,7 @@
 module GlobalKey
   extend ActiveSupport::Concern
 
-  SEPARATOR = ':'.freeze # ':' makes regexes clearer
+  SEPARATOR = ':'.freeze # ':' makes regexes clearer (must be one char only)
 
   def self.start_with(fragments)
     /^#{fragments.compact.join(SEPARATOR).full_underscore(SEPARATOR)}#{SEPARATOR}/

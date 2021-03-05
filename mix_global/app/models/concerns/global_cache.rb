@@ -1,9 +1,11 @@
+# TODO config.active_record.cache_versioning
 # TODO compare https://github.com/taxjar/persisted_cache
 # TODO https://github.com/github/github-ds
 module GlobalCache
   extend ActiveSupport::Concern
 
   # TODO missing some instance methods: #value, #mismatched?, #size, #compressed?
+  # TODO compression
   class_methods do
     def exist?(name, **options)
       read_record(name, **options).present?
@@ -39,7 +41,7 @@ module GlobalCache
     end
 
     def write_multi(hash, **options)
-      hash.each_with_object({}) do |(name, value), memo|
+      hash.each_with_object({}.with_keyword_access) do |(name, value), memo|
         record = write_record(name, value, **options)
         memo[record.id] = value
       end
