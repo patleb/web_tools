@@ -6,7 +6,7 @@ class EnableUnaccent < ActiveRecord::Migration[6.0]
     reversible do |change|
       change.up do
         execute <<-SQL.strip_sql
-          CREATE OR REPLACE FUNCTION unaccent_trigger() RETURNS TRIGGER AS $$
+          CREATE OR REPLACE FUNCTION unaccent_text() RETURNS TRIGGER AS $$
           DECLARE
             column_name TEXT;
             value TEXT;
@@ -32,7 +32,7 @@ class EnableUnaccent < ActiveRecord::Migration[6.0]
 
       change.down do
         execute <<-SQL.strip_sql
-          DROP FUNCTION IF EXISTS unaccent_trigger();
+          DROP FUNCTION IF EXISTS unaccent_text();
         SQL
       end
     end

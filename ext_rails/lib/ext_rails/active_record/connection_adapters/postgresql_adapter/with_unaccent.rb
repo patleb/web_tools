@@ -3,7 +3,7 @@ module ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::WithUnaccent
     exec_query <<-SQL.strip_sql
       CREATE TRIGGER #{unaccent_trigger_name(table, columns)}
         BEFORE INSERT OR UPDATE ON #{table}
-        FOR EACH ROW EXECUTE FUNCTION unaccent_trigger('#{columns.join("', '")}');
+        FOR EACH ROW EXECUTE FUNCTION unaccent_text('#{columns.join("', '")}');
     SQL
   end
 
