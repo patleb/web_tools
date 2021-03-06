@@ -2,6 +2,9 @@ load_rel 'ext_rails/**/*.cap'
 
 namespace :load do
   task :defaults do
+    set :migration_role, -> { :web }
+    set :db_roles,       -> { :web }
+
     set :docker_dir, -> { 'docker' }
 
     append :gems, 'ext_rails'

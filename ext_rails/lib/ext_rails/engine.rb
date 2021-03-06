@@ -18,6 +18,9 @@ module ExtRails
       require 'i18n/debug'
       require 'null_logger'
     end
+    if Rails.env.dev_or_test?
+      require 'sql_query'
+    end
 
     require 'sunzistrano/context'
     require 'ext_rails/active_support/abstract_class'
@@ -84,6 +87,7 @@ module ExtRails
 
     initializer 'ext_rails.append_migrations' do |app|
       append_migrations(app)
+      append_migrations(app, scope: 'pgunit') if Rails.env.dev_or_test?
       append_migrations(app, scope: 'pgrest') if Setting[:pgrest_enabled]
       append_migrations(app, scope: 'timescaledb') if Setting[:timescaledb_enabled]
     end

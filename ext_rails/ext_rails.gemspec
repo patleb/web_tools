@@ -47,6 +47,9 @@ Gem::Specification.new do |s|
   # s.add_dependency 'sequel-activerecord-adapter'
   # TODO https://github.com/gocardless/statesman
   # TODO https://github.com/doctolib/safe-pg-migrations
+  s.add_dependency 'sql_query'
+  # TODO https://github.com/crashtech/torque-postgresql
+  # TODO https://github.com/teoljungberg/fx
   s.add_dependency "stateful_enum"
   s.add_dependency 'store_base_sti_class'
   s.add_dependency 'mix_setting'
