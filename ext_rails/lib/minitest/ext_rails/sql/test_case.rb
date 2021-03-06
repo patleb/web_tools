@@ -1,3 +1,5 @@
+require 'sql_query'
+
 module Sql
   class TestCase < ActiveSupport::TestCase
     MIGRATIONS_DIRNAME = 'db/migrate'.freeze

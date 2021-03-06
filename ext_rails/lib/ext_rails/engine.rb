@@ -18,9 +18,6 @@ module ExtRails
       require 'i18n/debug'
       require 'null_logger'
     end
-    if Rails.env.dev_or_test?
-      require 'sql_query'
-    end
 
     require 'sunzistrano/context'
     require 'ext_rails/active_support/abstract_class'
