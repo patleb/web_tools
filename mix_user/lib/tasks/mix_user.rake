@@ -1,13 +1,3 @@
-namespace :mix_user do
-  desc 'setup ExtRails files'
-  task :setup do
-    src, dst = Gem.root('mix_user').join('lib/tasks/templates'), Rails.root
-
-    mkdir_p dst/'app/policies'
-    cp      src/'app/policies/application_policy.rb', dst/'app/policies/application_policy.rb'
-  end
-end
-
 namespace :user do
   desc 'create user'
   task :create, [:email, :password, :role, :confirmed] => :environment do |t, args|
