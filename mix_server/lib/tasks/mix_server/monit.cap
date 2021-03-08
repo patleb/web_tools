@@ -6,7 +6,7 @@
 namespace :monit do
   desc 'Export monit configuration file'
   task :push do
-    on release_roles :all do
+    on release_roles fetch(:monit_roles) do
       monit_push
     end
   end
@@ -14,7 +14,7 @@ namespace :monit do
 
   desc "Reload monit"
   task :reload do
-    on release_roles :all do
+    on release_roles fetch(:monit_roles) do
       unless monit_reload
         error "Could not reload Monit, trying restart."
         monit_restart
@@ -25,7 +25,7 @@ namespace :monit do
   %w[start stop restart].each do |action|
     desc "#{action.capitalize} monit"
     task action do
-      on release_roles :all do
+      on release_roles fetch(:monit_roles) do
         execute :sudo, "systemctl #{action} monit"
       end
     end
@@ -33,7 +33,7 @@ namespace :monit do
 
   desc 'Check mail users'
   task :check_mail_users do
-    on release_roles :all do
+    on release_roles fetch(:monit_roles) do
       Setting[:mail_to].each do |mail_to|
         unless test :sudo, "cat #{monitrc} | grep 'set alert #{mail_to} not on'"
           monit_push
