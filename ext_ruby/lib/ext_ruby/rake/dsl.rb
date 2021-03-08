@@ -53,6 +53,10 @@ module Rake
       "#{network}.#{rand(2..254)}"
     end
 
+    def git_repo
+      `git remote -v | head -n1 | awk '{ print $2; }'`.strip
+    end
+
     def sudo_ls(path)
       `sudo ls --full-time -t #{path}.* | grep #{path}`.lines(chomp: true).map do |line|
         row = LS_HEADERS.zip(line.split).to_h
