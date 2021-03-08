@@ -38,6 +38,7 @@ set :repo_url, "git@github.com:patleb/web_tools.git"
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
 
+set :job_roles, :all
 # set :pgrest_roles, :all
 
 # set :nginx_upstreams, -> {

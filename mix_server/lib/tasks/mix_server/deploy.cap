@@ -26,8 +26,6 @@ namespace :deploy do
     end
   end
 
-  # TODO stop batches (db mutex), wait to finish, continue with passenger-restart, start batches
-
   desc 'Full server deploy after provisioning'
   task push: %i(
     nginx:push
@@ -52,6 +50,7 @@ namespace :deploy do
       db:pg:set_superuser
       whenever:create_cron_log
       deploy
+      job:push
     )
   end
 end
