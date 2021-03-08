@@ -1,28 +1,3 @@
-namespace :mix_setting do
-  desc 'setup MixSetting files'
-  task :setup, [:no_master_key, :force] => :environment do |t, args|
-    src, dst = MixSetting.root.join('lib/tasks/templates'), Rails.root
-
-    ['config/setting.rb', 'config/settings.yml'].each do |file|
-      cp src/file, dst/file
-    end
-    ['config/secrets.yml', 'config/secrets.example.yml'].each do |file|
-      secret = dst/file
-      if flag_on?(args, :force) || !secret.exist?
-        write secret, template(src/'config/secrets.yml.erb')
-      end
-    end
-    write     dst/'config/database.yml', template(src/'config/database.yml.erb')
-    gitignore dst, '/config/secrets.yml'
-
-    if flag_on? args, :no_master_key
-      ['config/credentials.yml.enc', 'config/master.key', 'tmp/development_secret.txt'].each do |file|
-        remove dst/file rescue nil
-      end
-    end
-  end
-end
-
 # TODO rotate :secret_key_base
 namespace :setting do
   task :context => :environment do
