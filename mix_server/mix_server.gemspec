@@ -19,4 +19,3 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'ext_ruby', version
 end
-# TODO bring non ext_rails elements like geoserver, pgrest, sunzistrano, etc.

@@ -32,21 +32,12 @@ module ExtRails
     require 'ext_rails/rack/utils'
     require 'ext_rails/rails/engine'
     require 'ext_rails/rails/initializable/initializer'
-    require 'ext_rails/rake/dsl'
-    require 'ext_rails/sh'
 
     config.before_configuration do |app|
       require 'ext_rails/rails/application'
       require 'ext_rails/rails/initializable/collection'
       require 'ext_rails/pycall'
 
-      if defined? MixGlobal
-        app.config.active_record.cache_versioning = false # TODO doesn't work, must be added to Rails.root/config/application.rb
-        app.config.cache_store = :global_store
-      end
-      if defined? MixJob
-        app.config.active_job.queue_adapter = :job
-      end
       app.config.active_record.schema_format = :sql
       app.config.action_view.embed_authenticity_token_in_remote_forms = true
       # app.config.active_record.time_zone_aware_attributes = false
@@ -85,7 +76,6 @@ module ExtRails
     initializer 'ext_rails.append_migrations' do |app|
       append_migrations(app)
       append_migrations(app, scope: 'pgunit') if Rails.env.dev_or_test?
-      append_migrations(app, scope: 'pgrest') if Setting[:pgrest_enabled]
       append_migrations(app, scope: 'timescaledb') if Setting[:timescaledb_enabled]
     end
 

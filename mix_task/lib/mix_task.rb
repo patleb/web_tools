@@ -13,8 +13,4 @@ module MixTask
     autoload :Psql,      'tasks/mix_task/pg/psql'
     autoload :Rescuable, 'tasks/mix_task/pg/rescuable'
   end
-
-  module Vpn
-    autoload :Connect, 'tasks/mix_task/vpn/connect'
-  end
 end

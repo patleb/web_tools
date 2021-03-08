@@ -56,6 +56,7 @@ Vagrant.configure("2") do |config|
     end
     if link_dev
       node.vm.synced_folder './', '/vagrant', owner: 'deployer', group: 'deployer'
+      # node.vm.synced_folder './tmp/shared_data', '/opt/shared_data', owner: 'deployer', group: 'deployer'
       link_paths.each do |root|
         if (dir = Pathname.new(root).expand_path).exist?
           user = dir.to_s.match(/home\/(\w+)\//)[1]

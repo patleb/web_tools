@@ -3,12 +3,8 @@ require 'mail_interceptor'
 module MailInterceptor::Interceptor::WithMailTo
   def initialize(options = {})
     options[:forward_emails_to] ||=
-      if defined?(Preference)
-        if Preference.has_key? :mail_interceptors
-          Preference[:mail_interceptors]
-        else
-          Preference[:mail_to]
-        end
+      if defined?(Preference) && Preference.has_key?(:mail_to)
+        Preference[:mail_to]
       else
         Setting[:mail_to]
       end

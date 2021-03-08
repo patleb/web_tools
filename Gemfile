@@ -11,10 +11,15 @@ group :development, :test do
   gem 'debase'
 
   gem 'ext_minitest', path: './ext_minitest'
+  # gem 'ext_minitest', github: 'patleb/web_tools'
+  # gem 'ext_minitest', path: '~/projects/web_tools'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+# gem 'web_tools', github: 'patleb/web_tools'
+# gem 'web_tools', path: '~/projects/web_tools'
 
 ### AFTER Gemfile ###
 

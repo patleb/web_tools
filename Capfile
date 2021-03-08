@@ -34,7 +34,7 @@ require "ext_capistrano/scm/git"
 # require "capistrano/rails/assets"
 # require "capistrano/rails/migrations"
 # require "capistrano/passenger"
-require 'ext_rails/capistrano'
+require 'mix_server/capistrano'
 
 # Load custom tasks from `app/tasks` if you have any defined
 Dir.glob("app/tasks/*.cap").each { |r| import r }

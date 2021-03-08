@@ -1,5 +1,7 @@
 require 'mix_server/engine'
 
 module MixServer
-  # Your code goes here...
+  module Vpn
+    autoload :Connect, 'tasks/mix_server/vpn/connect'
+  end
 end

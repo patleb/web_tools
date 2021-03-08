@@ -9,6 +9,10 @@ end
 
 module MixJob
   class Engine < ::Rails::Engine
+    config.before_configuration do |app|
+      app.config.active_job.queue_adapter = :job
+    end
+
     config.before_initialize do
       autoload_models_if_admin('Job')
     end

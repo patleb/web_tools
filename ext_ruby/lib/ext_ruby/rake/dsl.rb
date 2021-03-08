@@ -42,6 +42,17 @@ module Rake
       puts "[#{Time.current.utc}]#{tag.full_underscore.upcase}[#{Process.pid}] #{text}"
     end
 
+    def free_local_ip
+      require 'socket'
+      network = ''
+      networks = [''].concat Socket.getifaddrs.map{ |i| i.addr.ip_address.sub(/\.\d+$/, '') if i.addr.ipv4? }.compact
+      loop do
+        break unless networks.include?(network)
+        network = "192.168.#{rand(4..254)}"
+      end
+      "#{network}.#{rand(2..254)}"
+    end
+
     def sudo_ls(path)
       `sudo ls --full-time -t #{path}.* | grep #{path}`.lines(chomp: true).map do |line|
         row = LS_HEADERS.zip(line.split).to_h
