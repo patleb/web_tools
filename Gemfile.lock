@@ -172,7 +172,6 @@ PATH
   remote: mix_email
   specs:
     mix_email (0.2.0)
-      email_prefixer
       ext_rails (= 0.2.0)
       mail_interceptor
       mix_log (= 0.2.0)
@@ -433,8 +432,6 @@ GEM
     dotiw (5.2.0)
       activesupport
       i18n
-    email_prefixer (1.2.0)
-      rails (>= 4.0)
     erubi (1.9.0)
     excon (0.78.1)
     ext_backup (5.0.0.beta.2.1)

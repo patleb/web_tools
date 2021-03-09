@@ -19,6 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'ext_rails', version
   s.add_dependency 'mix_log', version
-  s.add_dependency 'email_prefixer'
   s.add_dependency 'mail_interceptor'
 end

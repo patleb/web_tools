@@ -2,7 +2,6 @@ require 'ext_rails'
 
 module MixEmail
   class Engine < ::Rails::Engine
-    require 'email_prefixer'
     require 'mix_email/action_mailer/smtp_settings'
     require 'mix_log'
 
@@ -14,10 +13,6 @@ module MixEmail
 
     config.before_initialize do
       autoload_models_if_admin('LogLines::Email')
-
-      if Rails.env.dev_or_test?
-        Rails::Initializable::Initializer.exclude_initializers['EmailPrefixer::Railtie'] = 'email_prefixer.configure_defaults'
-      end
     end
 
     ActiveSupport.on_load(:active_record) do
