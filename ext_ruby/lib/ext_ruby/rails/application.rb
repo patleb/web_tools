@@ -1,3 +1,10 @@
+class AppStringInquirer < ActiveSupport::StringInquirer
+  def base?
+    return @base if defined? @base
+    @base = Rails.app == Rails.application.name
+  end
+end
+
 Rails::Application.class_eval do
   def name
     @_name ||= engine_name.delete_suffix('_application')
@@ -22,11 +29,11 @@ end
 
 module Rails
   def self.app
-    @_app ||= ActiveSupport::StringInquirer.new(ENV["RAILS_APP"].presence || ENV["RACK_APP"].presence || application.name)
+    @_app ||= AppStringInquirer.new(ENV["RAILS_APP"].presence || ENV["RACK_APP"].presence || application.name)
   end
 
   def self.app=(application)
-    @_app = ActiveSupport::StringInquirer.new(application)
+    @_app = AppStringInquirer.new(application)
   end
 
   def self.viable_names(type, excluded_names = Set.new, excluded_suffixes = [])

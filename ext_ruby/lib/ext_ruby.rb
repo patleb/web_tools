@@ -57,9 +57,11 @@ require 'ext_ruby/process/snapshot'
 require 'ext_ruby/process/host'
 require 'ext_ruby/process/worker'
 require 'ext_ruby/process/os'
-require 'ext_ruby/process/passenger' if defined? Rails
-require 'ext_ruby/railtie' if defined? Rails
-require 'ext_ruby/rake/dsl' if defined? Rails
+if defined? Rails
+  require 'ext_ruby/process/passenger'
+  require 'ext_ruby/railtie'
+  require 'ext_ruby/rake/dsl'
+end
 require 'ext_ruby/secure_random'
 require 'ext_ruby/sh'
 require 'ext_ruby/string'
