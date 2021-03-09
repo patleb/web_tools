@@ -7,7 +7,7 @@ module Rescues
         config.rescue_500 = false
         assert_emails(1) do
           assert_raise(ActionController::InvalidAuthenticityToken) do
-            post '/rescues/javascripts', as: :json
+            post '/_rescues/javascripts', as: :json
           end
           assert_equal true, LogMessage.where('text_tiny LIKE ?', '%RackError%').take.alerted?
         end
@@ -25,11 +25,11 @@ module Rescues
               data: { text: 'Text' },
             }
           }
-          post '/rescues/javascripts', params: params, as: :json
+          post '/_rescues/javascripts', params: params, as: :json
           assert_response :created
           assert_equal true, LogMessage.where('text_tiny LIKE ?', '%JavascriptError%').take.alerted?
 
-          post '/rescues/javascripts', params: params, as: :json
+          post '/_rescues/javascripts', params: params, as: :json
           assert_response :created
           assert_equal 2, Global.read_multi(/^rack:attack:/).values.first
         end

@@ -6,7 +6,7 @@ autoload :Throttler, 'mix_rescue/throttler'
 module MixRescue
   def self.routes
     @routes ||= {
-      rescue: '/rescues/javascripts',
+      rescue: '/_rescues/javascripts',
     }
   end
 
@@ -26,9 +26,7 @@ module MixRescue
 
     initializer 'mix_rescue.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
-        namespace :rescues do
-          resources :javascripts, only: [:create]
-        end
+        post '/_rescues/javascripts' => 'rescues/javascripts#create', as: :rescues_javascripts
       end
     end
 

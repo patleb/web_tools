@@ -17,7 +17,7 @@ module MixServer
         # https://github.com/ianheggie/health_check
         # https://github.com/lbeder/health-monitor-rails
         # https://github.com/sportngin/okcomputer
-        get '_information/ip' => 'servers/information#show_ip'
+        get '_information/ip' => 'servers/information#show_ip', as: :information_ip
       end
     end
   end
