@@ -80,7 +80,7 @@ module MixLog
 
     def nginx_log_path(*type, name)
       type = type.first
-      name = "#{deploy_dir}#{"_#{type.full_underscore}" if type}.#{name}"
+      name = "#{deploy_dir}#{"_#{type.to_s.full_underscore}" if type}.#{name}"
       log_path(:nginx, name)
     end
 
