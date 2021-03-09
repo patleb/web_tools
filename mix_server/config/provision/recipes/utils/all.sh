@@ -1,8 +1,6 @@
 <% sun.list_recipes(%W(
   packages
   htop
-  goaccess
-  monit
   parallel
   sysstat
   #{'mailcatcher' if sun.env.vagrant?}
