@@ -1,6 +1,6 @@
 Setting.class_eval do
   def self.default_url_options
-    case Rails.env.to_sym
+    case @env.to_sym
     when :development
       if Rails.env.dev_ngrok?
         { host: "#{ENV['NGROK']}.ngrok.io" }

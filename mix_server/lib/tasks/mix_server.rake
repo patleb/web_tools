@@ -1,1 +1,1 @@
-# require_rel 'mix_server'
+require_rel 'mix_server'
