@@ -1,6 +1,6 @@
-class CreateLibCredentials < ActiveRecord::Migration[6.0]
+class CreateLibCertificates < ActiveRecord::Migration[6.0]
   def change
-    create_table :lib_credentials, id: false do |t|
+    create_table :lib_certificates, id: false do |t|
       t.primary_key :id, :string
       t.integer     :type,      null: false
       t.string      :token
@@ -11,6 +11,6 @@ class CreateLibCredentials < ActiveRecord::Migration[6.0]
       t.timestamps
     end
 
-    add_index :lib_credentials, [:type, :updated_at]
+    add_index :lib_certificates, [:type, :updated_at]
   end
 end

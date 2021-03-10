@@ -13,7 +13,7 @@ PATH
       ext_whenever (= 0.2.0)
       mix_admin (= 0.2.0)
       mix_backup (= 0.2.0)
-      mix_credential (= 0.2.0)
+      mix_certificate (= 0.2.0)
       mix_email (= 0.2.0)
       mix_file (= 0.2.0)
       mix_flash (= 0.2.0)
@@ -162,9 +162,9 @@ PATH
       pgslice
 
 PATH
-  remote: mix_credential
+  remote: mix_certificate
   specs:
-    mix_credential (0.2.0)
+    mix_certificate (0.2.0)
       acme-client (~> 2.0.0)
       ext_rails (= 0.2.0)
 
@@ -447,7 +447,7 @@ GEM
     ext_fog_aws (0.2.0)
       fog-aws
       mime-types
-    faraday (1.1.0)
+    faraday (1.2.0)
       multipart-post (>= 1.2, < 3)
       ruby2_keywords
     ffi (1.13.1)
@@ -722,7 +722,7 @@ DEPENDENCIES
   ext_whenever!
   mix_admin!
   mix_backup!
-  mix_credential!
+  mix_certificate!
   mix_email!
   mix_file!
   mix_flash!

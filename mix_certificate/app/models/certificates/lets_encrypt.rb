@@ -1,5 +1,5 @@
-module Credentials
-  class LetsEncrypt < Credential
+module Certificates
+  class LetsEncrypt < Certificate
     class InvalidEnv < ::StandardError; end
     class InvalidStatus < ::StandardError; end
 
