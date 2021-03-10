@@ -1,3 +1,5 @@
+require "active_support/dependencies"
+
 module ActiveSupport::Dependencies::WithProfile
   def require_or_load(file_name, const_path = nil)
     if ENV['RAILS_PROFILE']
