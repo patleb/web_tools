@@ -5,6 +5,10 @@ module Sunzistrano
 
     attr_reader :sun
 
+    def self.exit_on_failure?
+      true
+    end
+
     desc 'provision [stage] [role] [--recipe] [--username]', 'Provision sunzistrano project'
     method_options recipe: :string, username: :string
     def provision(stage, role = 'system')
