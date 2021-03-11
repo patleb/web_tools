@@ -15,8 +15,8 @@ export OS_VERSION=$(sun.os_version)
 case "$OS" in
 ubuntu)
   export os_package_get='apt-get'
-  export os_package_update='apt update'
-  export os_package_upgrade='apt upgrade'
+  export os_package_update='apt-get update'
+  export os_package_upgrade='apt-get upgrade'
   export os_package_installed='dpkg -s'
   export os_package_lock='apt-mark hold'
   export os_package_unlock='apt-mark unhold'
@@ -61,6 +61,7 @@ fi
 source sun.sh
 export ROLE_START=$(sun.start_time)
 export REBOOT_FORCE=false
+export HOME=/home/$__USERNAME__
 
 case "$OS" in
 ubuntu)
@@ -69,7 +70,6 @@ ubuntu)
   # TODO https://help.ubuntu.com/community/RPM/AlienHowto
 ;;
 centos)
-  export HOME=/home/$__USERNAME__
   if ! sun.installed "rpmdevtools"; then
     sun.mute "$os_package_get -y install rpmdevtools"
   fi

@@ -38,6 +38,7 @@ module Sunzistrano
       settings.merge! Setting.load(env: @stage, app: @application)
       settings.union!(role_yml).merge!(role: @role).merge!(options).merge!(yml.slice(*RESERVED_NAMES))
       settings.each_key do |key|
+        key = key.to_s
         settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) if key.end_with? Hash::REPLACE
       end
       super(settings)
