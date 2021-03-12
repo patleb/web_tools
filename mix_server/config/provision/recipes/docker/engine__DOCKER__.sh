@@ -7,7 +7,7 @@ DOCKER_MANIFEST=$(sun.manifest_path 'docker-ce')
 
 if [[ ! -s "$DOCKER_MANIFEST" ]]; then
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-  add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $UBUNTU_CODENAME stable"
+  add-apt-repository "deb [arch=$ARCH] https://download.docker.com/linux/ubuntu $UBUNTU_CODENAME stable"
   sun.update
 
   systemctl disable lxcfs

@@ -14,8 +14,9 @@ case "$OS" in
 ubuntu)
   PG_PACKAGES="postgresql-$__POSTGRES__ postgresql-server-dev-$__POSTGRES__ postgresql-common libpq-dev"
 
-  sh -c "echo 'deb http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' >> /etc/apt/sources.list.d/pgdg.list"
+  sh -c "echo 'deb [arch=$ARCH] http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
   wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
+  add-apt-repository ppa:timescale/timescaledb-ppa
   sun.update
 
   PG_VERSION="$(sun.current_version postgresql-$__POSTGRES__)"
@@ -32,6 +33,7 @@ esac
 if [[ ! -s "$PG_MANIFEST" ]]; then
   sun.install "$PG_PACKAGES"
   sun.lock "$PG_PACKAGES"
+  sun.install "timescaledb-tools"
 
   case "$OS" in
   ubuntu)

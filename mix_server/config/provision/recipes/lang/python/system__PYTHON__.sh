@@ -1,7 +1,5 @@
 case "$OS" in
 ubuntu)
-  sun.install "python-dev"
-  sun.install "python-pip"
   sun.install "python3-dev"
   sun.install "python3-pip"
 ;;

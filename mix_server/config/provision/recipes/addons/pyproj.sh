@@ -1,6 +1,7 @@
 case "$OS" in
 ubuntu)
-  pip3 install pyproj==2.6.1
+  # TODO upgrade
+  sudo -H pip3 install pyproj==2.6.1
 ;;
 centos)
   __PYTHON__=${__PYTHON__:-3.6}

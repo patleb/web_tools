@@ -1,6 +1,7 @@
+# TODO upgrade
 #  case "$OS" in
 #  ubuntu)
-#    pip3 install matplotlib==3.2.1
+#    sudo -H pip3 install matplotlib==3.2.1
 #    sun.install "python3-tk"
 #    sun.install "python3-numpy"
 #    sun.install "python3-netcdf4"

@@ -1,7 +1,7 @@
 case "$OS" in
 ubuntu)
   sun.mute "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7"
-  sh -c "echo deb https://oss-binaries.phusionpassenger.com/apt/passenger $UBUNTU_CODENAME main > /etc/apt/sources.list.d/passenger.list"
+  sh -c "echo deb [arch=$ARCH] https://oss-binaries.phusionpassenger.com/apt/passenger $UBUNTU_CODENAME main > /etc/apt/sources.list.d/passenger.list"
   sun.update
 
   sun.install "nginx-extras libnginx-mod-http-passenger"

@@ -1,4 +1,3 @@
-# TODO libvips >= 8.6
 <% %W(
   #{sun.os.ubuntu? ? 'apt-transport-https'               : ''}
   autoconf
@@ -14,12 +13,11 @@
   #{sun.os.ubuntu? ? 'imagemagick'                       : 'ImageMagick ImageMagick-devel'}
   #{sun.os.ubuntu? ? 'libcurl4-openssl-dev'              : 'libcurl-devel'}
   #{sun.os.ubuntu? ? 'libffi-dev'                        : 'libffi-devel'}
-  #{sun.os.ubuntu? ? 'libgdbm5 libgdbm-dev'              : 'gdbm-devel'}
+  #{sun.os.ubuntu? ? 'libgdbm6 libgdbm-dev'              : 'gdbm-devel'}
   #{sun.os.ubuntu? ? 'libgmp-dev'                        : 'gmp-devel'}
   #{sun.os.ubuntu? ? 'libncurses5-dev'                   : 'ncurses-devel'}
   #{sun.os.ubuntu? ? 'libreadline-dev'                   : 'readline readline-devel'}
   #{sun.os.ubuntu? ? 'libssl-dev'                        : 'openssl-devel'}
-  #{sun.os.ubuntu? ? 'libvips libvips-dev libvips-tools' : 'vips vips-devel vips-tools'}
   #{sun.os.ubuntu? ? 'libxml2-dev libxml2-utils'         : 'libxml2 libxml2-devel'}
   #{sun.os.ubuntu? ? 'libxslt1-dev'                      : 'libxslt-devel'}
   #{sun.os.ubuntu? ? 'libyaml-dev'                       : 'libyaml-devel'}

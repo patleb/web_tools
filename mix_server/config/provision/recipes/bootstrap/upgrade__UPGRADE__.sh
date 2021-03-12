@@ -1,6 +1,7 @@
 case "$OS" in
 ubuntu)
   sun.mute "dpkg --configure -a"
+  sun.install "linux-headers-$(uname -r)"
 ;;
 centos)
   yes | yum localinstall --nogpgcheck https://centos7.iuscommunity.org/ius-release.rpm

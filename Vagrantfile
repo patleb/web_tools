@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = 'bento/ubuntu-18.04'
+  config.vm.box = 'bento/ubuntu-20.04'
   # config.vm.box = 'bento/centos-7.6'
   # config.vm.box = 'web_tools'
   # config.vm.box_version = '0'
@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
   ]
   link_dev = false
   link_paths = [
-    # '~/projects/web_tools',
+    # '~/Desktop/tools/web_tools',
   ]
 
   config.vm.define :web, primary: true do |node|
@@ -46,8 +46,11 @@ Vagrant.configure("2") do |config|
     node.vm.provision :shell do |server|
       server.inline = "grep -Fq '#{public_key}' || echo '#{public_key}' >> /home/vagrant/.ssh/authorized_keys"
     end
-    node.trigger.after :up do |trigger|
+    node.trigger.before :up do |trigger|
       trigger.run = { inline: "cp -f .vagrant/private_key .vagrant/machines/web/virtualbox/private_key" }
+    end
+    node.trigger.after :up do |trigger|
+      # trigger.run_remote = { inline: 'sudo service ntp stop; sudo ntpd -gq; sudo service ntp start' }
     end
     if Vagrant.has_plugin?('vagrant-hostmanager') && subdomains.any?
       node.hostmanager.aliases = subdomains.map do |subdomain|
@@ -56,7 +59,8 @@ Vagrant.configure("2") do |config|
     end
     if link_dev
       node.vm.synced_folder './', '/vagrant', owner: 'deployer', group: 'deployer'
-      # node.vm.synced_folder './tmp/shared_data', '/opt/shared_data', owner: 'deployer', group: 'deployer'
+      # node.vm.synced_folder './tmp/shared_data', '/opt/shared_data', owner: 'deployer', group: 'deployer' # cluster
+      # node.vm.synced_folder './tmp/shared_data', '/mnt/shared_data', owner: 'deployer', group: 'deployer' # master
       link_paths.each do |root|
         if (dir = Pathname.new(root).expand_path).exist?
           user = dir.to_s.match(/home\/(\w+)\//)[1]
@@ -80,8 +84,11 @@ Vagrant.configure("2") do |config|
       node.vm.provision :shell do |server|
         server.inline = "grep -Fq '#{public_key}' || echo '#{public_key}' >> /home/vagrant/.ssh/authorized_keys"
       end
-      node.trigger.after :up do |trigger|
+      node.trigger.before :up do |trigger|
         trigger.run = { inline: "cp -f .vagrant/private_key .vagrant/machines/compute-#{i}/virtualbox/private_key" }
+      end
+      node.trigger.after :up do |trigger|
+        # trigger.run_remote = { inline: 'sudo service ntp stop; sudo ntpd -gq; sudo service ntp start' }
       end
       if link_dev == :all
         node.vm.synced_folder './', '/vagrant', owner: 'deployer', group: 'deployer'

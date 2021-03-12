@@ -67,6 +67,7 @@ case "$OS" in
 ubuntu)
   export DEBIAN_FRONTEND=noninteractive
   export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+  export ARCH=$(dpkg --print-architecture)
   # TODO https://help.ubuntu.com/community/RPM/AlienHowto
 ;;
 centos)
