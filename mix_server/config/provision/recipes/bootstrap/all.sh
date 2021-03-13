@@ -5,7 +5,6 @@
   swap__SWAP_SIZE__
   nofile
   packages
-  #{'unattended_upgrade' if sun.os.centos?}
   ssh
   firewall
   firewall/deny_mail

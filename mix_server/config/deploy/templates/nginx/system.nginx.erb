@@ -1,12 +1,8 @@
-<% if cap.os.centos? %>
-  user <%= fetch(:deployer_name) %> <%= fetch(:deployer_name) %>;
-<% end %>
+# user <%= fetch(:deployer_name) %> <%= fetch(:deployer_name) %>;
 worker_processes auto;
 worker_rlimit_nofile 4096;
 pid /run/nginx.pid;
-<% unless cap.os.centos? %>
-  include /etc/nginx/modules-enabled/*.conf;
-<% end %>
+include /etc/nginx/modules-enabled/*.conf;
 
 events {
   worker_connections 1024;
@@ -41,7 +37,7 @@ http {
   open_file_cache_min_uses 1;
   open_file_cache_errors on;
 
-  # server_names_hash_bucket_size 64;
+  server_names_hash_bucket_size 64;
   # server_name_in_redirect off;
 
   include /etc/nginx/mime.types;
@@ -58,7 +54,7 @@ http {
   # https://medium.com/@mvuksano/how-to-properly-configure-your-nginx-for-tls-564651438fe0
   # https://mozilla.github.io/server-side-tls/ssl-config-generator/
   # https://www.linode.com/docs/web-servers/nginx/nginx-ssl-and-tls-deployment-best-practices
-  ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
   ssl_prefer_server_ciphers on;
   ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA';
   # ssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
@@ -89,15 +85,7 @@ http {
   gzip_comp_level 5;
   gzip_buffers 16 8k;
   gzip_http_version 1.1;
-  gzip_types
-    text/plain
-    text/css
-    text/xml
-    text/javascript
-    application/json
-    application/javascript
-    application/xml
-    application/xml+rss;
+  gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 
   ##
   # Phusion Passenger config
@@ -105,12 +93,7 @@ http {
   # Uncomment it if you installed passenger or passenger-enterprise
   ##
 
-  <% if cap.os.centos? %>
-    passenger_root /usr/share/ruby/vendor_ruby/phusion_passenger/locations.ini;
-    passenger_instance_registry_dir /var/run/passenger-instreg;
-  <% else %>
-    passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
-  <% end %>
+  passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
   passenger_ruby /home/<%= fetch(:deployer_name) %>/.rbenv/shims/ruby;
   passenger_pool_idle_time 300;
   passenger_min_instances <%= Setting[:min_instances] || 1 %>;
@@ -159,7 +142,6 @@ http {
 
   include /etc/nginx/conf.d/*.conf;
   include /etc/nginx/sites-enabled/*;
-  server_names_hash_bucket_size 64;
 }
 
 

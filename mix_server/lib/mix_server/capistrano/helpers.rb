@@ -38,7 +38,7 @@ module MixServer
     end
 
     def monitrc
-      cap.os.centos? ? '/etc/monitrc' : '/etc/monit/monitrc'
+      '/etc/monit/monitrc'
     end
 
     def url_for(path, **params)

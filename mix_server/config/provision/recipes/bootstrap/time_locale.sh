@@ -11,21 +11,11 @@ if systemctl list-unit-files | grep enabled | grep -Fq systemd-timesyncd; then
   systemctl disable systemd-timesyncd
 fi
 
-case "$OS" in
-ubuntu)
-  export LANGUAGE=$LC
-  export LANG=$LC
-  export LC_ALL=$LC
-  sun.mute "locale-gen $__LOCALE__ $LC"
-  sun.mute "dpkg-reconfigure locales"
+export LANGUAGE=$LC
+export LANG=$LC
+export LC_ALL=$LC
+sun.mute "locale-gen $__LOCALE__ $LC"
+sun.mute "dpkg-reconfigure locales"
 
-  systemctl enable ntp
-  systemctl start ntp
-;;
-centos)
-  sun.mute "localectl set-locale LANG=$LC"
-
-  systemctl enable ntpd
-  systemctl start ntpd
-;;
-esac
+systemctl enable ntp
+systemctl start ntp

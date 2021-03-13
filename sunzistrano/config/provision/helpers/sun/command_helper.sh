@@ -17,18 +17,7 @@ sun.remove() {
 
 sun.update() {
   if [[ ! -z "$@" ]]; then
-    case "$OS" in
-    ubuntu)
-      sun.mute "$os_package_update"
-    ;;
-    centos)
-      if [[ "$@" == 'all' ]]; then
-        sun.mute "yum update -y"
-      else
-        sun.mute "yum update -y $@"
-      fi
-    ;;
-    esac
+    sun.mute "$os_package_update"
   else
     sun.mute "$os_package_update"
   fi

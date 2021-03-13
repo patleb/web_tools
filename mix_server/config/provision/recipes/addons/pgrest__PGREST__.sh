@@ -1,13 +1,5 @@
 __PGREST__=${__PGREST__:-6.0.2}
-
-case "$OS" in
-ubuntu)
-  PACKAGE_NAME="postgrest-v$__PGREST__-ubuntu"
-;;
-centos)
-  PACKAGE_NAME="postgrest-v$__PGREST__-centos$OS_VERSION"
-;;
-esac
+PACKAGE_NAME="postgrest-v$__PGREST__-ubuntu"
 
 wget -q "https://github.com/PostgREST/postgrest/releases/download/v$__PGREST__/$PACKAGE_NAME.tar.xz"
 tar Jxf "$PACKAGE_NAME.tar.xz"

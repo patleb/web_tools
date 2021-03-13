@@ -1,26 +1,26 @@
 <% %W(
-  #{sun.os.ubuntu? ? 'apt-transport-https'               : ''}
+  apt-transport-https
   autoconf
   bc
   bison
-  #{sun.os.ubuntu? ? 'build-essential'                   : 'gcc gcc-c++ bzip2 make automake libtool rpm-build redhat-rpm-config'}
+  build-essential
   ca-certificates
-  #{sun.os.ubuntu? ? ('castxml' if sun.ruby_cpp)         : ''}
+  #{'castxml' if sun.ruby_cpp}
   #{'clang' if sun.ruby_cpp}
   cmake
   git
-  #{sun.os.ubuntu? ? 'dirmngr gnupg'                     : 'pygpgme'}
-  #{sun.os.ubuntu? ? 'imagemagick'                       : 'ImageMagick ImageMagick-devel'}
-  #{sun.os.ubuntu? ? 'libcurl4-openssl-dev'              : 'libcurl-devel'}
-  #{sun.os.ubuntu? ? 'libffi-dev'                        : 'libffi-devel'}
-  #{sun.os.ubuntu? ? 'libgdbm6 libgdbm-dev'              : 'gdbm-devel'}
-  #{sun.os.ubuntu? ? 'libgmp-dev'                        : 'gmp-devel'}
-  #{sun.os.ubuntu? ? 'libncurses5-dev'                   : 'ncurses-devel'}
-  #{sun.os.ubuntu? ? 'libreadline-dev'                   : 'readline readline-devel'}
-  #{sun.os.ubuntu? ? 'libssl-dev'                        : 'openssl-devel'}
-  #{sun.os.ubuntu? ? 'libxml2-dev libxml2-utils'         : 'libxml2 libxml2-devel'}
-  #{sun.os.ubuntu? ? 'libxslt1-dev'                      : 'libxslt-devel'}
-  #{sun.os.ubuntu? ? 'libyaml-dev'                       : 'libyaml-devel'}
+  dirmngr gnupg
+  imagemagick
+  libcurl4-openssl-dev
+  libffi-dev
+  libgdbm6 libgdbm-dev
+  libgmp-dev
+  libncurses5-dev
+  libreadline-dev
+  libssl-dev
+  libxml2-dev libxml2-utils
+  libxslt1-dev
+  libyaml-dev
   m4
   mmv
   openssh-server
@@ -29,13 +29,11 @@
   pigz
   pssh
   pv
-  #{sun.os.ubuntu? ? 'sqlite3 libsqlite3-dev'            : 'sqlite sqlite-devel'}
-  #{sun.os.ubuntu? ? 'software-properties-common'        : ''}
+  sqlite3 libsqlite3-dev
+  software-properties-common
   time
   whois
-  #{sun.os.ubuntu? ? ''                                  : 'yum-utils'}
-  #{sun.os.ubuntu? ? ''                                  : 'yum-versionlock'}
-  #{sun.os.ubuntu? ? 'zlib1g-dev'                        : 'zlib zlib-devel'}
+  zlib1g-dev
 ).reject(&:blank?).each do |package| %>
 
   sun.install "<%= package %>"

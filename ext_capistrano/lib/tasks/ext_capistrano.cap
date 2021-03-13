@@ -7,7 +7,7 @@ namespace :load do
     set :server,              -> { Setting[:server_host] }
     set :gems,                -> { [] }
     set :os_name,             -> { 'ubuntu' }
-    set :os_version,          -> { cap.os.centos? ? 7 : 20.04 }
+    set :os_version,          -> { 20.04 }
     set :format,              -> { :airbrussh }
     set :format_options,      -> { { truncate: false } }
     set :owner_name,          -> { cap.env.vagrant? ? 'vagrant' : cap.os }

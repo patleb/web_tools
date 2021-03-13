@@ -5,21 +5,5 @@
 
 sun.install "fail2ban"
 
-case "$OS" in
-ubuntu)
-  # TODO
-;;
-centos)
-  if systemctl list-unit-files | grep enabled | grep -Fq firewalld; then
-    systemctl disable firewalld
-  fi
-  sun.install "fail2ban-systemd"
-  sun.move "/etc/fail2ban/action.d/ufw_ssh.conf"
-  sun.backup_move "/etc/fail2ban/jail.conf"
-  setenforce 0
-  sun.backup_move '/etc/selinux/config'
-;;
-esac
-
 systemctl enable fail2ban
 systemctl start fail2ban

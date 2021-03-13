@@ -1,7 +1,7 @@
 module Process
   class UnsupportedOS < ::StandardError; end
 
-  SUPPORTED_OS = %w(ubuntu linuxmint centos)
+  SUPPORTED_OS = %w(ubuntu linuxmint)
 
   def self.os
     @os ||= SUPPORTED_OS.include?(os_release[:id]) ? ActiveSupport::StringInquirer.new(os_release[:id]) : raise(UnsupportedOS)

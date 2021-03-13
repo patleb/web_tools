@@ -8,11 +8,4 @@ echo -e "$__OWNER_PRIVATE_KEY__" > $HOME/.ssh/id_rsa
 chmod 600 $HOME/.ssh/id_rsa
 chown -R $__OWNER_NAME__:$__OWNER_NAME__ $HOME/.ssh
 
-case "$OS" in
-ubuntu)
-  systemctl restart ssh
-;;
-centos)
-  systemctl restart sshd
-;;
-esac
+systemctl restart ssh

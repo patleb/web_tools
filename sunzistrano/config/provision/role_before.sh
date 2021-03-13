@@ -21,14 +21,6 @@ ubuntu)
   export os_package_lock='apt-mark hold'
   export os_package_unlock='apt-mark unhold'
 ;;
-centos)
-  export os_package_get='yum'
-  export os_package_update='yum clean expire-cache'
-  export os_package_upgrade='yum --exclude=kernel* update'
-  export os_package_installed='rpm -q'
-  export os_package_lock='yum versionlock add'
-  export os_package_unlock='yum versionlock delete'
-;;
 *)
   echo "Unsupported OS"
   exit 1
@@ -63,19 +55,10 @@ export ROLE_START=$(sun.start_time)
 export REBOOT_FORCE=false
 export HOME=/home/$__USERNAME__
 
-case "$OS" in
-ubuntu)
-  export DEBIAN_FRONTEND=noninteractive
-  export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
-  export ARCH=$(dpkg --print-architecture)
-  # TODO https://help.ubuntu.com/community/RPM/AlienHowto
-;;
-centos)
-  if ! sun.installed "rpmdevtools"; then
-    sun.mute "$os_package_get -y install rpmdevtools"
-  fi
-;;
-esac
+export DEBIAN_FRONTEND=noninteractive
+export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+export ARCH=$(dpkg --print-architecture)
+# TODO https://help.ubuntu.com/community/RPM/AlienHowto
 
 sun.setup_progress
 if [[ "$__DEBUG__" == 'trace' ]]; then

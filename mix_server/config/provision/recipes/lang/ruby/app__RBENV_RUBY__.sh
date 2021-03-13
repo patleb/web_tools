@@ -1,11 +1,4 @@
-case "$OS" in
-ubuntu)
-  sun.install "libjemalloc-dev"
-;;
-centos)
-  sun.install "jemalloc jemalloc-devel"
-;;
-esac
+sun.install "libjemalloc-dev"
 
 sudo su - $__DEPLOYER_NAME__ << 'EOF'
   DEPLOYER_NAME=<%= sun.deployer_name %>

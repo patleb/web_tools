@@ -1,17 +1,8 @@
 DEPLOYER_PATH=/home/$__DEPLOYER_NAME__
 
-case "$OS" in
-ubuntu)
-  adduser $__DEPLOYER_NAME__ --gecos '' --disabled-password
-  echo "$__DEPLOYER_NAME__:$__DEPLOYER_PASSWORD__" | chpasswd
-  adduser $__DEPLOYER_NAME__ sudo
-;;
-centos)
-  adduser $__DEPLOYER_NAME__
-  echo -e "$__DEPLOYER_PASSWORD__\n$__DEPLOYER_PASSWORD__" | passwd $__DEPLOYER_NAME__
-  gpasswd -a $__DEPLOYER_NAME__ wheel
-;;
-esac
+adduser $__DEPLOYER_NAME__ --gecos '' --disabled-password
+echo "$__DEPLOYER_NAME__:$__DEPLOYER_PASSWORD__" | chpasswd
+adduser $__DEPLOYER_NAME__ sudo
 
 mkdir $DEPLOYER_PATH/.ssh
 chmod 700 $DEPLOYER_PATH/.ssh

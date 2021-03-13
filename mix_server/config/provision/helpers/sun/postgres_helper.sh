@@ -16,14 +16,7 @@ sun.pg_major_version() {
 }
 
 sun.pg_default_hba_file() {
-  case "$OS" in
-  ubuntu)
-    echo "/etc/postgresql/$__POSTGRES__/main/pg_hba.conf"
-  ;;
-  centos)
-    echo "/var/lib/pgsql/$__POSTGRES__/data/pg_hba.conf"
-  ;;
-  esac
+  echo "/etc/postgresql/$__POSTGRES__/main/pg_hba.conf"
 }
 
 sun.pg_hba_file() {
@@ -31,14 +24,7 @@ sun.pg_hba_file() {
 }
 
 sun.pg_default_config_file() {
-  case "$OS" in
-  ubuntu)
-    echo "/etc/postgresql/$__POSTGRES__/main/postgresql.conf"
-  ;;
-  centos)
-    echo "/var/lib/pgsql/$__POSTGRES__/data/postgresql.conf"
-  ;;
-  esac
+  echo "/etc/postgresql/$__POSTGRES__/main/postgresql.conf"
 }
 
 sun.pg_config_file() {
@@ -46,14 +32,7 @@ sun.pg_config_file() {
 }
 
 sun.pg_default_data_dir() {
-  case "$OS" in
-  ubuntu)
-    echo "/var/lib/postgresql/$__POSTGRES__/main"
-  ;;
-  centos)
-    echo "/var/lib/pgsql/$__POSTGRES__/data"
-  ;;
-  esac
+  echo "/var/lib/postgresql/$__POSTGRES__/main"
 }
 
 sun.pg_data_dir() {

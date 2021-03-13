@@ -1,20 +1,10 @@
 ### References
-# https://linuxize.com/post/how-to-setup-ftp-server-with-vsftpd-on-centos-7/
 # https://www.digitalocean.com/community/tutorials/how-to-set-up-vsftpd-for-a-user-s-directory-on-ubuntu-16-04
-sun.install "vsftpd"
+FTP_CONF=/etc/vsftpd.conf
+export FTP_LIST=/etc/vsftpd.userlist
 
-case "$OS" in
-ubuntu)
-  FTP_CONF=/etc/vsftpd.conf
-  export FTP_LIST=/etc/vsftpd.userlist
-  sun.move $FTP_LIST
-;;
-centos)
-  FTP_CONF=/etc/vsftpd/vsftpd.conf
-  export FTP_LIST=/etc/vsftpd/user_list
-  sun.backup_compare $FTP_LIST
-;;
-esac
+sun.install "vsftpd"
+sun.move $FTP_LIST
 
 sun.backup_compile $FTP_CONF
 echo $__DEPLOYER_NAME__ >> $FTP_LIST

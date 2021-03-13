@@ -4,15 +4,6 @@ MEMLOCK_MAX=$((THIRD_OF_MEM * 1024)) # KB
 
 sun.install "libhugetlbfs"
 
-case "$OS" in
-ubuntu)
-  :
-;;
-centos)
-  sun.install "libhugetlbfs-utils"
-;;
-esac
-
 echo "vm.nr_hugepages = $HUGEPAGES_MAX" >> /etc/sysctl.conf
 echo "*               soft    memlock           $MEMLOCK_MAX" >> /etc/security/limits.conf
 echo "*               hard    memlock           $MEMLOCK_MAX" >> /etc/security/limits.conf

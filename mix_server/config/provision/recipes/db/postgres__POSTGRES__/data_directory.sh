@@ -16,14 +16,5 @@ if fdisk -l | grep -Fq $__DATA_PARTITION__; then
   chown -R postgres:postgres $NEW_PG_DATA_DIR
   rsync -ah $OLD_PG_DATA_DIR/ $NEW_PG_DATA_DIR
 
-  case "$OS" in
-  centos)
-    mkdir -p /usr/lib/systemd/system/postgresql-$__POSTGRES__.service.d
-    rm -f "/usr/lib/systemd/system/postgresql-$__POSTGRES__.service.d/pg_data.conf"
-    sun.compile "/usr/lib/systemd/system/postgresql-$__POSTGRES__.service.d/pg_data.conf"
-    systemctl daemon-reload
-  ;;
-  esac
-
   systemctl start postgresql
 fi

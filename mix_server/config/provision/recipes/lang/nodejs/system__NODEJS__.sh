@@ -1,16 +1,8 @@
 __NODEJS__=${__NODEJS__:-14}
 
-case "$OS" in
-ubuntu)
-  curl -sL https://deb.nodesource.com/setup_$__NODEJS__.x | bash -
-  curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-  echo "deb [arch=$ARCH] https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-;;
-centos)
-  curl -sL https://rpm.nodesource.com/setup_$__NODEJS__.x | bash -
-  curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
-;;
-esac
+curl -sL https://deb.nodesource.com/setup_$__NODEJS__.x | bash -
+curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+echo "deb [arch=$ARCH] https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 sun.update
 sun.install "nodejs"
