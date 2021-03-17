@@ -49,8 +49,7 @@ module ExtRails
       if Rails.env.dev_or_test?
         $stdout.sync = true # for Foreman
         host, port = Setting[:default_url_options].values_at(:host, :port)
-        app.config.action_controller.asset_host = "#{host}#{":#{port}" if port}"
-        app.config.action_mailer.asset_host = app.config.action_controller.asset_host
+        app.config.asset_host = "#{host}#{":#{port}" if port}"
         app.config.logger = ActiveSupport::Logger.new(app.config.paths['log'].first, 5)
         app.config.logger.formatter = app.config.log_formatter
       end

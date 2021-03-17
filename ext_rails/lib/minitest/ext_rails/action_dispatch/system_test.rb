@@ -3,7 +3,7 @@ require 'selenium-webdriver'
 # TODO require 'chromedriver-helper'
 
 Capybara.server = :webrick
-Capybara.app_host = "http://#{Rails.application.config.action_controller.asset_host}"
+Capybara.app_host = "http://#{Rails.application.config.asset_host}"
 url_options = Rails.application.config.action_mailer.default_url_options
 Capybara.server_host, Capybara.server_port = url_options.values_at(:host, :port)
 
