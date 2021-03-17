@@ -1,8 +1,14 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
+ruby File.read('.ruby-version').strip
+
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'webpacker'
+gem 'webpacker', '~> 5.0'
+
+# Use Active Storage variant
+# gem 'image_processing', '~> 1.2'
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
@@ -13,6 +19,12 @@ group :development, :test do
   gem 'ext_minitest', path: './ext_minitest'
   # gem 'ext_minitest', github: 'patleb/web_tools'
   # gem 'ext_minitest', path: '~/projects/web_tools'
+end
+
+group :development do
+  # Display performance information such as SQL time and flame graphs for each request in your browser.
+  # Can be configured to work on production as well see: https://github.com/MiniProfiler/rack-mini-profiler/blob/master/README.md
+  # gem 'rack-mini-profiler', '~> 2.0'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

@@ -38,7 +38,7 @@ class RailsAdmin::Config::Model::Fields::MultipleFileUpload < RailsAdmin::Config
     end
   end
 
-  def initialize(*args)
+  def initialize(...)
     super
     @attachment_configurations = []
   end

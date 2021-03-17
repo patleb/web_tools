@@ -14,7 +14,7 @@ module ActiveRecord::Relation::WithReturningColumn
 
     stmt = Arel::UpdateManager.new
     stmt.table(arel.join_sources.empty? ? table : arel.source)
-    stmt.key = arel_attribute(primary_key)
+    stmt.key = table[primary_key]
     stmt.take(arel.limit)
     stmt.offset(arel.offset)
     stmt.order(*arel.orders)
@@ -24,7 +24,7 @@ module ActiveRecord::Relation::WithReturningColumn
       if klass.locking_enabled? &&
         !updates.key?(klass.locking_column) &&
         !updates.key?(klass.locking_column.to_sym)
-        attr = arel_attribute(klass.locking_column)
+        attr = table[klass.locking_column]
         updates[attr.name] = _increment_attribute(attr)
       end
       stmt.set _substitute_values(updates)

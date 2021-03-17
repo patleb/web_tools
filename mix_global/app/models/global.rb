@@ -2,6 +2,7 @@ class Global < LibRecord
   include GlobalCache
 
   attribute :data
+  attribute :interval, :interval # TODO remove in Rails 7.0
 
   enum data_type: {
     string:      0,
@@ -54,7 +55,7 @@ class Global < LibRecord
     MixGlobal.config.touch_in
   end
 
-  def self.fetch_record(name, **options)
+  def self.fetch_record(name, **options, &block)
     options = options.reverse_merge expires: true
     if block_given?
       if options.delete(:force)
@@ -65,8 +66,8 @@ class Global < LibRecord
         record = find_or_create_by! id: key do |record|
           record.assign_attributes options.slice(:expires, :expires_in).merge!(id: key, version: version, data: yield)
         end
-        if record._sync(version, &proc).destroyed?
-          fetch_record(key, version: version, **options, &proc)
+        if record._sync(version, &block).destroyed?
+          fetch_record(key, version: version, **options, &block)
         end
         record
       end
@@ -81,9 +82,9 @@ class Global < LibRecord
   # - new record --> record.nil?
   # - skip write --> throw :skip_write
   # - rollback   --> throw :abort
-  def self.write_record(name, value = nil, **options)
+  def self.write_record(name, value = nil, **options, &block)
     options = options.reverse_merge expires: true
-    block = block_given? ? proc : proc{ value }
+    block = proc{ value } unless block_given?
     record = fetch_record(name, **options, &block)
     unless record.new?
       record.with_lock do

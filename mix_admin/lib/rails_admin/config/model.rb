@@ -133,8 +133,8 @@ class RailsAdmin::Config::Model
 
   # Act as a proxy for the base section configuration that actually
   # store the configurations.
-  def method_missing(name, *args, &block)
-    base.with(bindings).__send__(name, *args, &block)
+  def method_missing(...)
+    base.with(bindings).__send__(...)
   end
 
   def respond_to_missing?(name, _include_private = false)

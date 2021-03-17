@@ -28,13 +28,13 @@ class Log < LibRecord
   end
 
   db_types.each do |db_type|
-    define_singleton_method db_type.demodulize.underscore do |*args|
-      db_log(db_type).push(*args)
+    define_singleton_method db_type.demodulize.underscore do |*args, **options, &block|
+      db_log(db_type).push(*args, **options, &block)
     end
   end
 
-  def push(*args)
-    log_lines_type.to_const!.push(self, *args)
+  def push(*args, **options, &block)
+    log_lines_type.to_const!.push(self, *args, **options, &block)
   end
 
   def push_all(lines)

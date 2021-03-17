@@ -138,7 +138,7 @@ module PagesHelper
   end
 
   def preview_link
-    return unless defined?(MixAdmin) && Current.user.admin? && Current.controller.try(:pages?)
+    return unless defined?(MixAdmin) && Current.user.admin? && !Current.controller.try(:admin?)
     if Current.as_user?
       a_ href: "?_as_user=false" do
         span_ '.label.label-danger', t('user.quit_preview')

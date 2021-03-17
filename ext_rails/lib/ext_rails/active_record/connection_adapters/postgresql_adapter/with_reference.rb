@@ -15,12 +15,12 @@ module ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::WithReference
     exec_query Sql.drop_touch
   end
 
-  def add_touch(*args)
-    exec_query Sql.create_touch_trigger(*args)
+  def add_touch(...)
+    exec_query Sql.create_touch_trigger(...)
   end
 
-  def remove_touch(*args)
-    exec_query Sql.drop_touch_trigger(*args)
+  def remove_touch(...)
+    exec_query Sql.drop_touch_trigger(...)
   end
 
   def create_function_counter_cache
@@ -31,11 +31,11 @@ module ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::WithReference
     exec_query Sql.drop_counter_cache
   end
 
-  def add_counter_cache(*args)
-    exec_query Sql.create_counter_cache_trigger(*args)
+  def add_counter_cache(...)
+    exec_query Sql.create_counter_cache_trigger(...)
   end
 
-  def remove_counter_cache(*args)
-    exec_query Sql.drop_counter_cache_trigger(*args)
+  def remove_counter_cache(...)
+    exec_query Sql.drop_counter_cache_trigger(...)
   end
 end

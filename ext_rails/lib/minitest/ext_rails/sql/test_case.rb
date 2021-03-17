@@ -23,7 +23,7 @@ module Sql
     class TestQuery < ::SqlQuery
       include Minitest::Assertions
 
-      def initialize(*)
+      def initialize(...)
         super
         @name = @sql_filename.to_s.gsub(/\W/, '_')
       end

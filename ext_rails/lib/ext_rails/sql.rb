@@ -19,9 +19,9 @@ module Sql
     SQL
   end
 
-  def self.execute(name, *args, **options)
+  def self.execute(...)
     <<-SQL.strip_sql
-      EXECUTE #{send(name, *args, **options)};
+      EXECUTE #{send(...)};
     SQL
   end
 

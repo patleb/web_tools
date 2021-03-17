@@ -3,7 +3,7 @@ module PageFields
     def html(only_text: false, weight: 5, **options)
       weight = 1 if weight < 1
       weight = 5 if weight > 5
-      div_(options) {[
+      div_(**options) {[
         (pretty_actions(:div) unless only_text),
         title(weight),
         text(false).presence || p_{ pretty_blank },

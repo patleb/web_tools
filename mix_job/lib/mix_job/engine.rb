@@ -11,6 +11,16 @@ module MixJob
   class Engine < ::Rails::Engine
     config.before_configuration do |app|
       app.config.active_job.queue_adapter = :job
+      app.config.active_record.queues.destroy = :default
+      app.config.action_mailer.deliver_later_queue_name = :default
+      if app.config.respond_to? :active_storage
+        app.config.active_storage.queues.analysis = :default
+        app.config.active_storage.queues.purge = :default
+      end
+      if app.config.respond_to? :action_mailbox
+        app.config.action_mailbox.queues.incineration = :default
+        app.config.action_mailbox.queues.routing = :default
+      end
     end
 
     config.before_initialize do
@@ -36,10 +46,6 @@ module MixJob
 
     ActiveSupport.on_load(:active_record) do
       MixLog.config.available_types['LogLines::JobWatchAction'] = 130
-    end
-
-    ActiveSupport.on_load(:action_mailer) do
-      require 'mix_job/action_mailer/base'
     end
   end
 end

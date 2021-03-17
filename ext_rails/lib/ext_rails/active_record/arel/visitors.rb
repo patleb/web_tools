@@ -1,12 +1,5 @@
 module Arel
   module Visitors
-    DepthFirst.class_eval do
-      private
-
-      alias :visit_Arel_Nodes_Median     :function
-      alias :visit_Arel_Nodes_Percentile :function
-    end
-
     Dot.class_eval do
       private
 

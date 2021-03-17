@@ -1,10 +1,10 @@
 module ActiveRecord::Base::WithCreateState
-  def create_or_update(*)
+  def create_or_update(...)
     @_new = false
     super
   end
 
-  def _create_record(*)
+  def _create_record(...)
     result = super
     new! if result
     result

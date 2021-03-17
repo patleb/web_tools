@@ -4,7 +4,7 @@ module ActiveRecord::Base::WithRescuableValidations
   VALUE_TOO_LONG_COUNT = /varying\((?<count>\d+)\)/.freeze
   NOT_NULL_VIOLATION_COLUMN = /column "(\w+)" violates not-null constraint/.freeze
 
-  def save(*)
+  def save(...)
     super
   rescue ActiveRecord::RecordNotUnique => e
     _handle_columns_exception(e, RECORD_NOT_UNIQUE_COLUMN, :taken)

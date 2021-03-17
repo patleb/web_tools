@@ -1,4 +1,6 @@
 class User::Null < ActiveType::NullObject
+  enum role: MixUser.config.available_roles
+
   MixUser.config.json_attributes.each do |name, type|
     attribute name, type
   end
@@ -7,9 +9,11 @@ class User::Null < ActiveType::NullObject
 
   alias_attribute :user_id, :id
 
-  enum role: MixUser.config.available_roles
-
   def has?(_record)
     false
+  end
+
+  def role_for_database
+    self.class.roles[:null]
   end
 end

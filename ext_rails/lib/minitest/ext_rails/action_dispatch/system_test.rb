@@ -16,8 +16,8 @@ ActionDispatch::SystemTestCase.class_eval do
 
   after do
     if (log_lines = page.driver.browser.manage.logs.get(:browser)).present?
-      warnings = log_lines.select{ |error| error.level == 'WARNING' }.map(&:message)
-      errors = log_lines.select{ |error| error.level == 'SEVERE' }.map(&:message)
+      warnings = log_lines.select_map{ |error| error.message if error.level == 'WARNING' }
+      errors = log_lines.select_map{ |error| error.message if error.level == 'SEVERE' }
       puts warnings.join.unescape_newlines if warnings.any?
       if errors.any?
         puts errors.join.unescape_newlines

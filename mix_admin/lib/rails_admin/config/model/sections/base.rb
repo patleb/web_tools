@@ -37,9 +37,7 @@ class RailsAdmin::Config::Model::Sections::Base
 
   # Reader for groups that are marked as visible
   def visible_groups
-    model.groups.map{ |g| g.section = self; g.with(bindings) }.select(&:visible?).select do |g| # rubocop:disable Semicolon
-      g.visible_fields.present?
-    end
+    model.groups.map{ |g| g.section = self; g.with(bindings) }.select{ |g| g.visible? && g.visible_fields.present? }
   end
 
   # Defines a configuration for a field.
@@ -176,7 +174,7 @@ class RailsAdmin::Config::Model::Sections::Base
 
   # Defines configuration for fields by their type.
   def fields_of_type(type, &block)
-    _fields.select { |f| type == f.type }.map! { |f| f.instance_eval(&block) } if block
+    _fields.select_map{ |f| f.instance_eval(&block) if type == f.type } if block
   end
 
   # Accessor for all fields

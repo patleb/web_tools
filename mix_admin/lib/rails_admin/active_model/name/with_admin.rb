@@ -6,7 +6,7 @@ module ActiveModel::Name::WithAdmin
     alias_method :admin_param_key, :singular
   end
 
-  def initialize(*)
+  def initialize(...)
     super
     @admin_param = @name.to_admin_param
   end

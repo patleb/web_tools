@@ -1,5 +1,6 @@
 ### REFERENCES
 # https://github.com/rubiety/nilify_blanks/blob/master/lib/nilify_blanks.rb
+# TODO https://github.com/rmm5t/strip_attributes
 
 module ActiveRecord::Base::WithNullifyBlanks
   extend ActiveSupport::Concern
@@ -21,7 +22,7 @@ module ActiveRecord::Base::WithNullifyBlanks
       if subclass.name \
       && instance_variable_get(:@_nullify_blanks_options) \
       && !subclass.instance_variable_get(:@_nullify_blanks_options)
-        subclass.nullify_blanks @_nullify_blanks_options
+        subclass.nullify_blanks **@_nullify_blanks_options
       end
     end
 
@@ -38,7 +39,7 @@ module ActiveRecord::Base::WithNullifyBlanks
       end
 
       descendants.each do |subclass|
-        subclass.nullify_blanks @_nullify_blanks_options
+        subclass.nullify_blanks **@_nullify_blanks_options
       end
     end
 
@@ -62,9 +63,9 @@ module ActiveRecord::Base::WithNullifyBlanks
           if options[:only]
             options[:only].clone
           elsif options[:nullables_only] == false
-            columns.select{ |c| options[:types].include?(c.type) && c.default.nil? }.map(&:name).map(&:to_s)
+            columns.select_map{ |c| c.name.to_s if options[:types].include?(c.type) && c.default.nil? }
           else
-            columns.select(&:null).select{ |c| options[:types].include?(c.type) }.map(&:name).map(&:to_s)
+            columns.select_map{ |c| c.name.to_s if c.null && options[:types].include?(c.type) }
           end
 
         self.nullify_blanks_columns -= options[:except] if options[:except]

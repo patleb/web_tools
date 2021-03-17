@@ -5,7 +5,7 @@ h_(
   ul_('.col-sm-12') do
     render partial: "delete_notice", collection: @objects
   end,
-  form_tag(bulk_delete_path(path_params), method: :delete, remote: true) do
+  form_tag(bulk_delete_path(**path_params), method: :delete, remote: true) do
     delete_buttons(@objects)
   end
 )

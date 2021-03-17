@@ -1,3 +1,10 @@
-# See http://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
 User-agent: *
-Disallow: /
+Disallow: /admin/
+Disallow: /users/
+Disallow: /page/
+Disallow: /rails/active_storage/
+Disallow: /.well-known/
+Disallow: /_jobs/
+Disallow: /_rescues/
+Disallow: /_information/

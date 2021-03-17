@@ -85,7 +85,7 @@ module MixLog
     end
 
     def log_path(*dirs, name)
-      name = name.to_s.end_with?('log') ? name : "#{name}.log"
+      name = name.end_with?('log') ? name : "#{name}.log"
       path = [base_dir].concat(dirs) << name
       path.join('/')
     end

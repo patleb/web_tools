@@ -7,7 +7,7 @@ module Capistrano::DSL::Stages::Apps
       self[:env]
     end
 
-    def method_missing(name, *args, &block)
+    def method_missing(name, *args, **options, &block)
       if !(value = fetch(name)).nil?
         value
       elsif Setting.has_key? name

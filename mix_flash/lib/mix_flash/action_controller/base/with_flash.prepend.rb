@@ -10,7 +10,7 @@ module ActionController::Base::WithFlash
     after_action :set_flash_later, if: -> { Current.flash_later? }
   end
 
-  def render(*args)
+  def render(...)
     return super unless session? && session[:flash_later].to_b
 
     flashes = Flash.dequeue_all

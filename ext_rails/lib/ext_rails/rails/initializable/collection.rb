@@ -1,5 +1,5 @@
 module Rails::Initializable::Collection::FasterCompare
-  def initialize(*)
+  def initialize(...)
     super
     @select_before = {}; each{ |i| (@select_before[i.before] ||= []) << i }
     @select_name = {}; each{ |i| (@select_name[i.name] ||= []) << i }

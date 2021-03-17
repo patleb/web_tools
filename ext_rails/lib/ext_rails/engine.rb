@@ -57,8 +57,6 @@ module ExtRails
     end
 
     config.before_initialize do |app|
-      # TODO Rails 6.0
-      # ActiveStorage.routes_prefix '/storage'
       require 'ext_rails/action_dispatch/middleware/iframe'
       app.config.middleware.use ActionDispatch::IFrame
       app.config.middleware.insert_after ActionDispatch::Static, Rack::Deflater if Rails.env.dev_ngrok?
@@ -71,6 +69,8 @@ module ExtRails
         Rails.autoloaders.main.ignore("#{root}/app/models/concerns/timescaledb")
         Rails.autoloaders.main.ignore("#{root}/app/models/timescaledb")
       end
+
+      ENV["BACKTRACE"] = true
     end
 
     initializer 'ext_rails.append_migrations' do |app|
@@ -149,8 +149,6 @@ module ExtRails
       require 'ext_rails/active_record/type/encrypted'
 
       ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables = Rails.env.test?
-      Rails.backtrace_cleaner.class.send(:remove_const, :APP_DIRS_PATTERN)
-      Rails.backtrace_cleaner.class.const_set(:APP_DIRS_PATTERN, /.+/)
     end
 
     config.to_prepare do

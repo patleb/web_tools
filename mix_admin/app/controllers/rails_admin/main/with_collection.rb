@@ -6,18 +6,18 @@ module RailsAdmin::Main::WithCollection # TODO https://github.com/jcypret/hashid
     end
     section = @model.index
     fields = section.visible_fields # TODO use select(&:index_visible?) - removed if there is no filters + query
-    eager_load = fields.select{ |f| f.respond_to?(:eager_load?) && f.eager_load? }.map{ |f| f.property.name }
-    left_joins = fields.select{ |f| f.respond_to?(:left_joins?) && f.left_joins? }.map{ |f| f.property.name }
+    eager_load = fields.select_map{ |f| f.property.name if f.respond_to?(:eager_load?) && f.eager_load? }
+    left_joins = fields.select_map{ |f| f.property.name if f.respond_to?(:left_joins?) && f.left_joins? }
     options = {}
     options.merge!(include: eager_load) unless eager_load.empty?
     options.merge!(left_join: left_joins) unless left_joins.empty?
     options.merge!(distinct: true) if fields.any?{ |f| f.respond_to?(:distinct?) && f.distinct? }
     options.merge!(get_sort_hash(section, fields))
-    options.merge!(get_page_hash(section, options[:sort])) if !(params[:all] || params[:bulk_ids])
+    options.merge!(get_page_hash(section, options[:sort])) unless params[:all] || params[:bulk_ids]
     options.merge!(query: params[:query]) if params[:query].present?
     options.merge!(filters: params[:f]) if params[:f].present?
     options.merge!(bulk_ids: params[:bulk_ids]) if params[:bulk_ids]
-    @abstract_model.all(scope, options)
+    @abstract_model.all(scope, **options)
   end
 
   private

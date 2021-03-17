@@ -6,7 +6,7 @@ Minitest::Spec::DSL.class_eval do
   end
   alias_method :xcontext, :xdescribe
 
-  def xit(*args, &block)
+  def xit(...)
     # do nothing
   end
   alias_method :xshould, :xit

@@ -120,8 +120,8 @@ module LogLines
       calculate_from(:average, from, :average, :time).to_f.ceil(3)
     end
 
-    def self.users_by(*args)
-      unique_users.requests_by(*args)
+    def self.users_by(...)
+      unique_users.requests_by(...)
     end
 
     def self.mbytes_out_by(field, operation = :sum)

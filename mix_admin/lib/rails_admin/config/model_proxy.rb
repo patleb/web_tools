@@ -53,8 +53,8 @@ module RailsAdmin::Config
       @model
     end
 
-    def method_missing(method, *args, &block)
-      model.__send__(method, *args, &block)
+    def method_missing(...)
+      model.__send__(...)
     end
 
     def respond_to_missing?(method, _include_private = false)

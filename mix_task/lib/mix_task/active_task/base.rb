@@ -49,12 +49,12 @@ module ActiveTask
 
         with_count = const_defined?(:WithCount) ? const_get(:WithCount) : const_set(:WithCount, Module.new)
         with_count.module_eval do
-          define_method name do |*args, &block|
+          define_method name do |*args, **options, &block|
             instance_variable_get("#{method_count_ivar}_mutex").synchronize do
               count = instance_variable_get(method_count_ivar)
               instance_variable_set(method_count_ivar, count += 1)
             end
-            super(*args, &block)
+            super(*args, **options, &block)
           end
         end
       end
@@ -161,9 +161,9 @@ module ActiveTask
       end
     end
 
-    def method_missing(name, *args, &block)
+    def method_missing(name, *args, **options, &block)
       if rake.respond_to? name, true
-        rake.__send__(name, *args, &block)
+        rake.__send__(name, *args, **options, &block)
       else
         raise NoMethodError.new("No method '#{name}' for #{self.class} or :rake", name)
       end

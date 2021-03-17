@@ -141,7 +141,7 @@ module MixJob
         client_ready!
         HTTP.no_ssl_client do |http|
           until thread_shuttingdown?
-            @responses << on_request(http, @requests.pop)
+            @responses << on_request(http, **@requests.pop)
           end
         end
       end
@@ -239,8 +239,8 @@ module MixJob
       started_at = Concurrent.monotonic_time
       file = actions.first
       action = file.readlines.first.strip
-      klass, meth, args = extract_ruby_call(action)
-      klass.public_send(meth, *args)
+      klass, meth, args, opts = extract_ruby_call(action)
+      klass.public_send(meth, *args, **opts)
     rescue Exception => exception
       execute_error!
     ensure
@@ -257,7 +257,7 @@ module MixJob
       # use for count
     end
 
-    def on_request(http, request)
+    def on_request(http, **request)
       begin
         response = http.post(request[:url], json: { job: request[:data] }).flush
         response = Jobs::RejectedError.new(response, request) unless response.status.job_accepted?
@@ -371,11 +371,12 @@ module MixJob
       klass, meth, args = action.partition(/\.\w+/)
       meth.delete_prefix! '.'
       args.delete_prefix! '('; args.delete_suffix! ')'
-      [klass.to_const!, meth.to_sym, "[#{args}]".to_args]
+      args = "[#{args}]".to_args
+      [klass.to_const!, meth.to_sym, args, args.extract_options!.symbolize_keys!]
     end
 
-    def post(*args)
-      @executor.post(*args) do
+    def post(**options)
+      @executor.post(**options) do
         Rails.application.reloader.wrap do
           ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
             ActiveRecord::Base.with_raw_connection do |pg_conn, ar_conn|

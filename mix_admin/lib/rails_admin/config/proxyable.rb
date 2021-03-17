@@ -26,11 +26,11 @@ module RailsAdmin
         Proxy.new(self, bindings)
       end
 
-      def method_missing(name, *args, &block)
+      def method_missing(name, *args, **options, &block)
         if Current.view.respond_to? name
-          Current.view.public_send(name, *args, &block)
+          Current.view.public_send(name, *args, **options, &block)
         elsif Current.controller.respond_to? name, true
-          Current.controller.__send__(name, *args, &block)
+          Current.controller.__send__(name, *args, **options, &block)
         else
           raise NoMethodError.new("No method '#{name}' for #{self.class} or Current.view or Current.controller", name)
         end
@@ -58,10 +58,10 @@ module RailsAdmin
           self
         end
 
-        def method_missing(name, *args, &block)
+        def method_missing(name, *args, **options, &block)
           old_bindings = @object.instance_variable_get(:@bindings)
           @object.instance_variable_set(:@bindings, @bindings)
-          @object.__send__(name, *args, &block)
+          @object.__send__(name, *args, **options, &block)
         ensure
           @object.instance_variable_set(:@bindings, old_bindings)
         end

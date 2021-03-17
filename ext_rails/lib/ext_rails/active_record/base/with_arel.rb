@@ -5,13 +5,11 @@
 module ActiveRecord::Base::WithArel
   extend ActiveSupport::Concern
 
-  included do
-    class << self
-      alias_method :column, :arel_attribute
-    end
-  end
-
   class_methods do
+    def column(name, table = arel_table)
+      table[name]
+    end
+
     def alias_table(alias_name, table_name = self.table_name)
       Arel::Table.new(table_name, as: alias_name.to_s)
     end
@@ -20,21 +18,21 @@ module ActiveRecord::Base::WithArel
       arel_table.join(table.is_a?(ActiveRecord::Base) ? table.arel_table : table)
     end
 
-    def greatest(*args, **options)
-      with_columns_and_as(args, options) do |columns, as|
+    def greatest(*columns, **options)
+      with_columns_as(columns, **options) do |columns, as|
         Arel::Nodes::NamedFunction.new('GREATEST', columns, as)
       end
     end
 
-    def least(*args, **options)
-      with_columns_and_as(args, options) do |columns, as|
+    def least(*columns, **options)
+      with_columns_as(columns, **options) do |columns, as|
         Arel::Nodes::NamedFunction.new('LEAST', columns, as)
       end
     end
 
     private
 
-    def with_columns_and_as(columns, as: nil)
+    def with_columns_as(columns, as: nil)
       columns = columns.map do |attr|
         case attr
         when String, Symbol

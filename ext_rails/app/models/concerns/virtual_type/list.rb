@@ -59,7 +59,7 @@ module VirtualType
       end
     end
 
-    def method_missing(method, *args, &block)
+    def method_missing(...)
       self
     end
 

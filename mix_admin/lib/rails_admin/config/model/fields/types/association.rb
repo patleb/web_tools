@@ -24,7 +24,8 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
   end
 
   def pretty_association
-    [value].flatten.select(&:present?).map do |associated|
+    [value].flatten.select_map do |associated|
+      next unless associated.present?
       model = polymorphic? ? RailsAdmin.model(associated) : associated_model # perf optimization for non-polymorphic associations
       wording = model.with(object: associated).object_label
       wording = sanitize(wording) if sanitized?

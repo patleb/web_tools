@@ -1,4 +1,5 @@
 require './test/rails_helper'
+require 'action_controller/metal/request_forgery_protection'
 
 module Rescues
   class JavascriptsControllerTest < ActionDispatch::IntegrationTest

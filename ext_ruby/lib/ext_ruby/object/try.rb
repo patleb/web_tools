@@ -2,44 +2,44 @@ module ActiveSupport
   module Tryable
     # true         => true
     # nil || false => false
-    def true?(*a, &b)
-      try(*a, &b) == true
+    def true?(...)
+      try(...) == true
     end
 
     # truthy       => true
     # nil || falsy => false
-    def truthy?(*a, &b)
-      try(*a, &b).to_b
+    def truthy?(...)
+      try(...).to_b
     end
 
     # false       => true
     # nil || true => false
-    def false?(*a, &b)
-      try(*a, &b) == false
+    def false?(...)
+      try(...) == false
     end
 
     # nil || falsy => true
     # truthy       => false
-    def falsy?(*a, &b)
-      !truthy?(*a, &b)
+    def falsy?(...)
+      !truthy?(...)
     end
 
     # nil || true => true
     # false       => false
-    def nil_or_true?(*a, &b)
-      !false?(*a, &b)
+    def nil_or_true?(...)
+      !false?(...)
     end
 
     # nil || truthy => true
     # !nil && falsy => false
-    def nil_or_truthy?(*a, &b)
-      (result = try(*a, &b)).nil? || result.to_b
+    def nil_or_truthy?(...)
+      (result = try(...)).nil? || result.to_b
     end
 
     # nil || false => true
     # true         => false
-    def nil_or_false?(*a, &b)
-      !true?(*a, &b)
+    def nil_or_false?(...)
+      !true?(...)
     end
 
     # nil || falsy => true
@@ -48,56 +48,56 @@ module ActiveSupport
 
     # nil           => true
     # false || true => false
-    def nil?(*a, &b)
-      a.empty? ? super : try(*a, &b).nil?
+    def nil?(*a, **o, &b)
+      a.empty? ? super : try(*a, **o, &b).nil?
     end
 
     # false || true => true
     # nil           => false
-    def not_nil?(*a, &b)
-      !nil?(*a, &b)
+    def not_nil?(...)
+      !nil?(...)
     end
   end
 end
 
 class NilClass
-  def true?(*)
+  def true?(...)
     false
   end
 
-  def truthy?(*)
+  def truthy?(...)
     false
   end
 
-  def false?(*)
+  def false?(...)
     false
   end
 
-  def falsy?(*)
+  def falsy?(...)
     true
   end
 
-  def nil_or_true?(*)
+  def nil_or_true?(...)
     true
   end
 
-  def nil_or_truthy?(*)
+  def nil_or_truthy?(...)
     true
   end
 
-  def nil_or_false?(*)
+  def nil_or_false?(...)
     true
   end
 
-  def nil_or_falsy?(*)
+  def nil_or_falsy?(...)
     true
   end
 
-  def nil?(*)
+  def nil?(...)
     true
   end
 
-  def not_nil?(*)
+  def not_nil?(...)
     false
   end
 end

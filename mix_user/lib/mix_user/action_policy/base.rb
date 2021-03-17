@@ -9,8 +9,7 @@ module ActionPolicy
     def self.actions
       @_actions ||= begin
         index = public_instance_methods.index(:record)
-        methods = public_instance_methods.each_with_index.select{ |_, i| i < index }.map(&:first)
-        methods.select{ |m| m.to_s.end_with? '?' }
+        public_instance_methods.each_with_index.select_map{ |m, i| m if i < index && m.end_with?('?') }
       end
     end
 
@@ -27,8 +26,8 @@ module ActionPolicy
       @roles ||= user.class.roles.keys
     end
 
-    def method_missing(name, *args, &block)
-      if name.to_s.end_with? '?'
+    def method_missing(name, *args, **options, &block)
+      if name.end_with? '?'
         self.class.send(:define_method, name) do
           false
         end
@@ -39,7 +38,7 @@ module ActionPolicy
     end
 
     def respond_to_missing?(name, _include_private = false)
-      name.to_s.end_with?('?') || super
+      name.end_with?('?') || super
     end
 
     class Scope

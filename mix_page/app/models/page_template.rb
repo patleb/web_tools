@@ -88,21 +88,21 @@ class PageTemplate < Page
     view && !view.match?(MixPage::MULTI_VIEW)
   end
 
-  def to_url(*args)
+  def to_url(...)
    host = Rails.application.routes.default_url_options[:host]
    port = Rails.application.routes.default_url_options[:port]
    protocol = "http#{'s' if Setting[:server_ssl]}://"
-   [protocol, host, (':' if port), port, "/#{slug(*args)}/#{MixPage::URL_SEGMENT}/#{uuid}"].join
+   [protocol, host, (':' if port), port, "/#{slug(...)}/#{MixPage::URL_SEGMENT}/#{uuid}"].join
   end
 
   alias_method :old_title, :title
-  def title(*args)
-    old_title(*args)&.humanize
+  def title(...)
+    old_title(...)&.humanize
   end
 
   alias_method :old_description, :description
-  def description(*args)
-    old_description(*args)&.squish
+  def description(...)
+    old_description(...)&.squish
   end
 
   def default_title
@@ -110,8 +110,8 @@ class PageTemplate < Page
     self.class.human_attribute_name("view.#{view}", default: view.sub(MixPage::MULTI_VIEW, '').tr('/', ' ').humanize)
   end
 
-  def slug(*args)
-    title(*args)&.slugify
+  def slug(...)
+    title(...)&.slugify
   end
 
   def slugs

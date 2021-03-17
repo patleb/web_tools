@@ -9,6 +9,7 @@ require 'ostruct'
 require 'parallel'
 require 'rake/file_list'
 require 'rubygems/package'
+require 'sorted_set'
 require 'vmstat'
 
 require 'active_support/concern'

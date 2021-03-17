@@ -47,7 +47,7 @@ module ActiveRecord::Base::WithAdmin
 
     def rails_admin(name = :self, before: true, after: nil, &block)
       before_or_after = (before && after.blank?) ? :before : :after
-      (rails_admin_blocks[before_or_after][name] ||= SortedSet.new) << block
+      (rails_admin_blocks[before_or_after][name] ||= Set.new) << block
       RailsAdmin.model(self, &block)
     end
   end

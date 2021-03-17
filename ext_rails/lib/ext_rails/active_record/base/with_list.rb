@@ -2,6 +2,7 @@
 # http://joshfrankel.me/blog/constructing-a-sql-select-from-subquery-in-activerecord/
 # https://pganalyze.com/blog/active-record-subqueries-rails
 # TODO Re-Shuffle elements in a cron job (replace by integers from the last at the count value)
+# TODO generalize with as separate ltree table for levels
 module ActiveRecord::Base::WithList
   extend ActiveSupport::Concern
 
@@ -48,7 +49,7 @@ module ActiveRecord::Base::WithList
 end
 
 module ActiveRecord::Base::WithList::Position
-  def create_or_update(*)
+  def create_or_update(...)
     if list_column
       if new_record?
         if list_prev_id

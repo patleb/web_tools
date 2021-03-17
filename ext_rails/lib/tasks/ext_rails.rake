@@ -1,5 +1,9 @@
 require_rel 'ext_rails'
 
+task :routes do
+  puts `rails routes`
+end
+
 namespace :db do
   task :force_environment_set => :environment do
     Rake::Task['db:environment:set'].invoke rescue nil

@@ -1,7 +1,7 @@
 path_params = params.permit(:model_name, :scope, :query, :sort, :reverse, bulk_ids: [], f: {}).merge(all: true)
 guessed_encoding = @abstract_model.klass.encoding
 encoding_options = options_for_select(Encoding.name_list.sort, guessed_encoding)
-separator_options = options_for_select({ "comma ,": ',', "semicolon ;": ';', 'tabs': "'\t'" }, ',')
+separator_options = options_for_select({ "comma ,": ',', "semicolon ;": ';', 'tabs': "'\t'" }, ',') # TODO translate
 export_fields = main_fields.select(&:export_visible?)
 
 h_(
@@ -30,7 +30,8 @@ h_(
           end,
           div_('.controls') do
             div_('.row') do
-              export_fields.select{ |f| !f.association? || f.polymorphic? }.map do |field|
+              export_fields.select_map do |field|
+                next unless !field.association? || field.polymorphic?
                 list = field.virtual? ? 'methods' : 'only'
                 div_ '.checkbox.col-sm-3' do
                   if field.association? && field.polymorphic?
@@ -56,7 +57,8 @@ h_(
           end
         ])
       end,
-      export_fields.select{ |f| f.association? && !f.polymorphic? }.map do |field|
+      export_fields.select_map do |field|
+        next unless field.association? && !field.polymorphic?
         div_ '.form-group.control-group' do
           div_('.col-sm-12', [
             div_('.js_export_select_all.well.well-sm', title: t('admin.export.click_to_reverse_selection')) do

@@ -165,11 +165,11 @@ module RailsAdmin
       Current.view.instance_variable_get(:@model)
     end
 
-    def method_missing(name, *args, &block)
+    def method_missing(name, *args, **options, &block)
       if Current.view.respond_to? name
-        Current.view.public_send(name, *args, &block)
+        Current.view.public_send(name, *args, **options, &block)
       elsif Current.controller.respond_to? name, true
-        Current.controller.__send__(name, *args, &block)
+        Current.controller.__send__(name, *args, **options, &block)
       else
         raise NoMethodError.new("No method '#{name}' for #{self.class} or Current.view or Current.controller", name)
       end

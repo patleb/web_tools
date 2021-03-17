@@ -4,11 +4,11 @@ module Args
   AS_KEYARG = %i(keyreq key).freeze
 
   def method_args(name)
-    method(name).parameters.select{ |arg| AS_ARG.include? arg.first }.map(&:last)
+    method(name).parameters.select_map{ |arg| arg.last if AS_ARG.include? arg.first }
   end
 
   def method_keyargs(name)
-    method(name).parameters.select{ |arg| AS_KEYARG.include? arg.first }.map(&:last)
+    method(name).parameters.select_map{ |arg| arg.last if AS_KEYARG.include? arg.first }
   end
 end
 

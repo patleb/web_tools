@@ -123,7 +123,7 @@ module ActiveRecord::Relation::WithCalculate
     end
   end
 
-  def type_cast_calculated_value(value, type, operation = nil)
+  def type_cast_calculated_value(value, operation = nil)
     case operation
     when 'stddev', 'variance', 'median', 'percentile' then value&.respond_to?(:to_d) ? value.to_d : value
     else super

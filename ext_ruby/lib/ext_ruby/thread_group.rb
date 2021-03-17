@@ -89,18 +89,18 @@ class ThreadGroup
       end
     end
 
-    def post_all(*args, &block)
-      @max_length.times{ add(*args, &block) }
+    def post_all(...)
+      @max_length.times{ add(...) }
       self
     end
 
-    def add(*args, &block)
+    def add(*args, **options, &block)
       raise MaxThreadsReached if remaining_capacity == 0
 
       if args.first.is_a? Thread
         super args.first
       else
-        super thread(*args, &block)
+        super thread(*args, **options, &block)
       end
 
       @largest_length = length if length > largest_length

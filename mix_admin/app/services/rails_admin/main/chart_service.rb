@@ -136,7 +136,7 @@ module RailsAdmin::Main
           else
             method, *args = Array.wrap(map)
             query.map do |group_by_value|
-              group_by_value[1] = group_by_value[1].send(method, *args)
+              group_by_value[1] = group_by_value[1].send(method, *args, **args.extract_options!)
               group_by_value
             end
         end

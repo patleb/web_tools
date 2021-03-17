@@ -38,10 +38,10 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
     if block_given?
       yield(list, list_options, pretty_actions)
     else
-      div_(list_options) {[
+      div_(**list_options) {[
         list.map do |presenter|
-          div_(presenter.html_list_options) do
-            presenter.render(item_options)
+          div_(**presenter.html_list_options) do
+            presenter.render(**item_options)
           end
         end,
         pretty_actions

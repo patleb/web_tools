@@ -12,8 +12,8 @@ ActiveRecord::Relation.class_eval do
     select(*(column_names - fields.map(&:to_s)))
   end
 
-  def where_not(*args)
-    where.not(*args)
+  def where_not(...)
+    where.not(...)
   end
 
   def order_group(*columns, reverse: false)

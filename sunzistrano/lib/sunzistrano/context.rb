@@ -15,7 +15,7 @@ module Sunzistrano
       Pathname.new(File.expand_path('config/provision.yml'))
     end
 
-    def initialize(stage, role, options)
+    def initialize(stage, role, **options)
       env, app = stage.split(':', 2)
       settings = { stage: env, application: app }.with_keyword_access
       settings.merge! capistrano(stage)
@@ -38,8 +38,7 @@ module Sunzistrano
       settings.merge! Setting.load(env: @stage, app: @application)
       settings.union!(role_yml).merge!(role: @role).merge!(options).merge!(yml.slice(*RESERVED_NAMES))
       settings.each_key do |key|
-        key = key.to_s
-        settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) if key.end_with? Hash::REPLACE
+        settings[key.to_s.delete_suffix(Hash::REPLACE)] = settings.delete(key) if key.end_with? Hash::REPLACE
       end
       super(settings)
     end

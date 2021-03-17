@@ -55,4 +55,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'mix_setting'
   s.add_dependency 'sunzistrano'
   s.add_dependency 'user_agent_parser'
+  s.add_dependency 'webrick'
 end

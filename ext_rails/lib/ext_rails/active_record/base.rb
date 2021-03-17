@@ -123,8 +123,8 @@ ActiveRecord::Base.class_eval do
     sizes[table_name]
   end
 
-  def self.pretty_sizes(*options)
-    sizes(*options).transform_values(&:to_s.with(:human_size))
+  def self.pretty_sizes(**options)
+    sizes(**options).transform_values(&:to_s.with(:human_size))
   end
 
   def self.sizes(order_by_name: false, indexes: false)

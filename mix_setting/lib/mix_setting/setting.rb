@@ -16,7 +16,7 @@ class Setting
   FREED_IVARS = %i(@types @gems @secrets @database @aliases @methods @removed @replaced @types)
 
   class << self
-    delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, :select, :reject, to: :all
+    delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, :select, :select_map, :reject, to: :all
   end
 
   def self.to_yaml
@@ -38,7 +38,7 @@ class Setting
     if @all_was
       previous = []
       current  = []
-      instance_variables.each{ |ivar| ivar.to_s.end_with?('_was') ? previous << ivar : current << ivar }
+      instance_variables.each{ |ivar| ivar.end_with?('_was') ? previous << ivar : current << ivar }
       current.each{ |ivar| instance_variable_set(ivar, instance_variable_get("#{ivar}_was")) }
       previous.each{ |ivar| instance_variable_set(ivar, nil) }
     end
@@ -55,7 +55,7 @@ class Setting
 
   def self.all(force = false, env: rails_env, app: rails_app)
     if force
-      current = instance_variables.reject{ |ivar| ivar.to_s.end_with?('_was') }
+      current = instance_variables.reject{ |ivar| ivar.end_with?('_was') }
       current.each{ |ivar| instance_variable_set("#{ivar}_was", instance_variable_get(ivar)) }
       current.each{ |ivar| instance_variable_set(ivar, nil) }
       remove_instance_variable(:@encryptor) if instance_variable_defined? :@encryptor

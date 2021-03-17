@@ -91,7 +91,7 @@ module Cloud::Openstack
   private
 
   def openstack_context
-    Setting.select{ |k, _| k.start_with? 'os_' }.map{ |k, v| "#{k.upcase}='#{v}'" }.join(' ')
+    Setting.select_map{ |k, v| "#{k.upcase}='#{v}'" if k.start_with? 'os_' }.join(' ')
   end
 
   def openstack_rows(lines, *filters)

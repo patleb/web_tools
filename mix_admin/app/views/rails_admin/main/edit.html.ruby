@@ -1,7 +1,7 @@
 modal = request.variant.modal?
 path_params = { model_name: @abstract_model.to_param, id: @object.id, modal: (true if modal) }
 form_options = {
-  url: edit_path(path_params),
+  url: edit_path(**path_params),
   as: @abstract_model.param_key,
   html: {
     method: "put",

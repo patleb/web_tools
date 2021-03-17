@@ -55,7 +55,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   end
 
   def render(**item_options, &block)
-    html(html_options.with_keyword_access.union!(item_options), &block)
+    html(**html_options.with_keyword_access.union!(item_options), &block)
   end
 
   def editable

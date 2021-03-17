@@ -1,6 +1,12 @@
 require './test/rails_helper'
 
 class MainMailerTest < ActionMailer::TestCase
+  before(:all) do
+    LogLine.delete_all
+    LogMessage.delete_all
+    Log.delete_all
+  end
+
   it 'should send healthcheck email and log events' do
     subject = 'Healthcheck'
     email = MainMailer.healthcheck

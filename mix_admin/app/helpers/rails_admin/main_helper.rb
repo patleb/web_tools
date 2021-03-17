@@ -102,7 +102,7 @@ module RailsAdmin
               filter_box_shared = true
               path_params[:scope] = params[:scope]
             end
-            RailsAdmin.url_for(path_params)
+            RailsAdmin.url_for(**path_params)
           end
         wording = wording_for(:menu, action)
         li_classes = ['icon', "#{action.key}_#{parent}_link"]

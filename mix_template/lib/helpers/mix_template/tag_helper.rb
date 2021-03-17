@@ -32,7 +32,7 @@ module MixTemplate
     end
 
     def method_missing(name, *args, &block)
-      if name.to_s.end_with? '_'
+      if name.end_with? '_'
         tag = name.to_s.delete_suffix('_')
         unless HTML5_TAGS.include? tag
           Rails.logger.info "Tag <#{tag}> isn't HTML5"
@@ -47,7 +47,7 @@ module MixTemplate
     end
 
     def respond_to_missing?(name, _include_private = false)
-      name.to_s.end_with?('_') || super
+      name.end_with?('_') || super
     end
 
     def capture(*args)

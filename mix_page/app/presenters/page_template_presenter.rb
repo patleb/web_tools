@@ -16,8 +16,8 @@ class PageTemplatePresenter < ActionPresenter::Base
   def render(**options)
     options = html_options.with_keyword_access.union!(options)
     if block_given?
-      div_(options.except(*TITLE_OPTIONS)) {[
-        pretty_title(options.slice(*TITLE_OPTIONS)),
+      div_(**options.except(*TITLE_OPTIONS)) {[
+        pretty_title(**options.slice(*TITLE_OPTIONS)),
         yield
       ]}
     else

@@ -32,11 +32,11 @@ module ActionService
 
     def after_initialize; end
 
-    def method_missing(name, *args, &block)
+    def method_missing(name, *args, **options, &block)
       if @_locals.has_key? name
         @_locals[name]
       elsif Current.controller.respond_to? name, true
-        Current.controller.__send__(name, *args, &block)
+        Current.controller.__send__(name, *args, **options, &block)
       else
         raise NoMethodError.new("No method '#{name}' for #{self.class} or :locals or Current.controller", name)
       end

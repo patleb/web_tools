@@ -44,7 +44,7 @@ module MixJob
     let(:good_actions){ [
       'MixJob::ActionTest.nothing',
       'MixJob::ActionTest.args(null, yes, no, on, off, anystring)',
-      'MixJob::ActionTest.args 1.0, { a: 2, b: [ 0, nil ] }, "c"',
+      'MixJob::ActionTest.args 1.0, "c", { a: 2, b: [ 0, nil ] }',
     ] }
     let(:bad_actions){ {
       'MixJob::ActionTest.error' => StandardError,

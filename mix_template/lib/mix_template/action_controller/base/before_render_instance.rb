@@ -1,5 +1,5 @@
 module ActionController::Base::BeforeRenderInstance
-  def render(*args, &blk)
+  def render(...)
     run_callbacks :render do
       super
     end

@@ -1,8 +1,6 @@
 class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.html
   class IncompatibleLogLine < ::StandardError; end
 
-  self.primary_key = :created_at # so #find_each will work, but must be scoped by :log_id
-
   belongs_to :log
   belongs_to :log_message
 

@@ -11,7 +11,7 @@ h_(
   ul_('.col-sm-12') do
     render partial: "delete_notice", object: @object
   end,
-  form_for(@object, url: delete_path(path_params), method: :delete, remote: true) do
+  form_for(@object, url: delete_path(**path_params), method: :delete, remote: true) do
     delete_buttons([@object])
   end
 )

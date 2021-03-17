@@ -13,6 +13,7 @@ class Task < LibRecord
     unknown: 5,
   }
 
+  attribute :durations, :interval, array: true # TODO remove in Rails 7.0
   attribute :_perform, :boolean
   attribute :_from_later, :boolean
 
@@ -102,9 +103,9 @@ class Task < LibRecord
     end.first
     result = output.lines.reject(&:blank?).last
     case
-    when result.include?(MixTask::FAILURE) then set_error_state :failure
-    when output.include?(MixTask::CANCEL)  then set_error_state :cancelled
-    when result.include?(MixTask::SUCCESS)
+    when result&.include?(MixTask::FAILURE) then set_error_state :failure
+    when output&.include?(MixTask::CANCEL)  then set_error_state :cancelled
+    when result&.include?(MixTask::SUCCESS)
       durations.shift until durations.size < MixTask.config.durations_max_size
       self.durations << (Concurrent.monotonic_time - started_at).seconds.ceil(3)
       self.state = :success

@@ -79,7 +79,8 @@ module ActiveRecord::Base::WithJsonAttribute
       self.json_accessors[column].merge! field_types
 
       field_types.each do |name, type|
-        attribute name, *type
+        options = type.is_a?(Array) ? type.extract_options! : {}
+        attribute name, *type, **options
       end
 
       accessors = Module.new do
@@ -123,7 +124,7 @@ module ActiveRecord::Base::WithJsonAttribute
           end
         end
       end
-      include accessors
+      include accessors # TODO test if could be called several times
 
       after_initialize :"initialize_#{column}"
     end

@@ -15,7 +15,7 @@ module Rails::Initializable::Initializer::SkippedInitializers
     end
   end
 
-  def run(*args)
+  def run(...)
     unless skip_run?
       if ENV['RAILS_PROFILE']
         if (result = Benchmark.realtime{ super }) > 0.05
