@@ -30,9 +30,9 @@ Rails.application.config.content_security_policy do |policy|
   else
     policy.connect_src :self, *urls
     if defined? WebConsole
-      policy.script_src  :self, :https, :unsafe_inline
+      policy.script_src  :self, :https, :unsafe_eval, :unsafe_inline
     else
-      policy.script_src  :self, :https
+      policy.script_src  :self, :https, :unsafe_eval
     end
   end
 end
