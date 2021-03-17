@@ -4,7 +4,7 @@ namespace :console do
   desc 'Start Console'
   task :start, [:my_ip] do |t, args|
     on release_roles :all do
-      if (my_ip = args[:my_ip].presence || open('http://whatismyip.akamai.com').read).blank?
+      if (my_ip = args[:my_ip].presence || URI.open('http://whatismyip.akamai.com').read).blank?
         error "cannot start console with empty ip"
         exit 1
       end
