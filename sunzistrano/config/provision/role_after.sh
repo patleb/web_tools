@@ -1,6 +1,8 @@
-source roles/hook_after.sh
+if [[ "$REBOOT_RECIPE" == false ]]; then
+  source roles/hook_after.sh
+fi
 
 if [[ "$__REBOOT__" == true ]]; then
-  REBOOT_FORCE=true
+  export REBOOT_FORCE=true
   source recipes/reboot.sh
 fi

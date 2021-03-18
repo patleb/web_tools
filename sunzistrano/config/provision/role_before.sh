@@ -35,10 +35,10 @@ export TERM=linux
 <% end %>
 export __APP__=$__APPLICATION__
 export __ENV__=$__STAGE__
-__ROLLBACK__=${__ROLLBACK__:-false}
-__SPECIALIZE__=${__SPECIALIZE__:-false}
-__DEBUG__=${__DEBUG__:-false}
-__REBOOT__=${__REBOOT__:-false}
+export __ROLLBACK__=${__ROLLBACK__:-false}
+export __SPECIALIZE__=${__SPECIALIZE__:-false}
+export __DEBUG__=${__DEBUG__:-false}
+export __REBOOT__=${__REBOOT__:-false}
 
 if [[ "$OS" != "$__OS_NAME__" ]]; then
   echo "'$OS' != '$__OS_NAME__'"
@@ -52,6 +52,7 @@ fi
 
 source sun.sh
 export ROLE_START=$(sun.start_time)
+export REBOOT_RECIPE=false
 export REBOOT_FORCE=false
 export HOME=/home/$__USERNAME__
 

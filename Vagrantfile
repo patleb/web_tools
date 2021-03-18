@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
   # config.vm.box_version = '0'
 
   config.ssh.forward_agent = true
-  config.ssh.password = "vagrant"
+  # config.ssh.password = "vagrant"
 
   if Vagrant.has_plugin? 'vagrant-hostmanager'
     config.hostmanager.enabled = true

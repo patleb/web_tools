@@ -1,3 +1,4 @@
+export REBOOT_RECIPE=true
 if [[ "$REBOOT_FORCE" == false ]]; then
   source roles/hook_after.sh
 fi

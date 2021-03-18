@@ -39,10 +39,12 @@ sun.source_recipe() {
     local recipe_start=$(sun.start_time)
     source "recipes/hook_before.sh"
     source "recipes/$name.sh"
-    cd $(sun.provision_path)
-    source "recipes/hook_after.sh"
-    sun.elapsed_time $recipe_start
-    sun.done "$id"
+    if [[ "$RECIPE_ID" != 'reboot' ]]; then
+      cd $(sun.provision_path)
+      source "recipes/hook_after.sh"
+      sun.elapsed_time $recipe_start
+      sun.done "$id"
+    fi
   fi
   unset RECIPE_ID
 }
