@@ -1,12 +1,14 @@
 module ActiveJob
   module QueueAdapters
-    class JobAdapter
+    class JobAdapter < AsyncAdapter
       def enqueue(job)
+        return super if MixJob.config.async?
         job_data = job.serialize.symbolize_keys!
         Job.enqueue job_data
       end
 
       def enqueue_at(job, timestamp)
+        return super if MixJob.config.async?
         job_data = job.serialize.symbolize_keys!.merge! scheduled_at: Time.at(timestamp)
         Job.enqueue job_data
       end

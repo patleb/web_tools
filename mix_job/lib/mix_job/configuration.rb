@@ -1,8 +1,13 @@
 module MixJob
   has_config do
+    attr_writer :async
     attr_writer :parent_controller
     attr_writer :json_attributes
     attr_writer :available_queues
+
+    def async?
+      @async
+    end
 
     def parent_controller
       @parent_controller ||= '::ActionController::API'
