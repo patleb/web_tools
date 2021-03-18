@@ -39,6 +39,7 @@ module WebTools
 
     # config.i18n.default_locale = :en
     config.active_record.cache_versioning = false
+    config.cache_store = :global_store
 
     # initializer 'application.libraries' do
     #   require_relative '../app/libraries/some_override.rb'
