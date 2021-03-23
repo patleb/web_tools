@@ -4,6 +4,7 @@ __PG_HUGE_PAGES__=${__PG_HUGE_PAGES__:-try}
 # __PG_PORT__=${__PG_PORT__:-5432}
 __PG_MAX_CONNECTIONS__=${__PG_MAX_CONNECTIONS__:-100}
 __PG_MAX_LOCKS_PER_TRANSACTION__=${__PG_MAX_LOCKS_PER_TRANSACTION__:-64}
+__PG_LOG_MIN_DURATION__=${__PG_LOG_MIN_DURATION__:-2000}
 PG_CONFIG_FILE=$(sun.pg_config_file)
 
 <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'synchronous_commit =' %>
@@ -23,5 +24,11 @@ echo "max_connections = $__PG_MAX_CONNECTIONS__" >> "$PG_CONFIG_FILE"
 
 <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'max_locks_per_transaction =' %>
 echo "max_locks_per_transaction = $__PG_MAX_LOCKS_PER_TRANSACTION__" >> "$PG_CONFIG_FILE"
+
+<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'shared_preload_libraries =' %>
+echo "shared_preload_libraries = 'pg_stat_statements<%= ',timescaledb' if sun.timescaledb_enabled %>'" >> "$PG_CONFIG_FILE"
+
+<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'log_min_duration_statement =' %>
+echo "log_min_duration_statement = $__PG_LOG_MIN_DURATION__" >> "$PG_CONFIG_FILE"
 
 sun.pg_restart_force
