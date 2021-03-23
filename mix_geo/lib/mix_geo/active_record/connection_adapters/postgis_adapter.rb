@@ -21,6 +21,9 @@ module ActiveRecord
       ActiveRecord::Type.register(:uuid, PostgreSQLAdapter::OID::Uuid, adapter: :postgis)
       ActiveRecord::Type.register(:vector, PostgreSQLAdapter::OID::Vector, adapter: :postgis)
       ActiveRecord::Type.register(:xml, PostgreSQLAdapter::OID::Xml, adapter: :postgis)
+
+      ActiveRecord::Type.register(:regclass, PostgreSQLAdapter::OID::Regclass, adapter: :postgis)
+      ActiveRecord::Type.register(:xid, PostgreSQLAdapter::OID::Xid, adapter: :postgis)
     end
   end
 end
