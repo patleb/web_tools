@@ -1,7 +1,7 @@
 class CreateTimescaledbTables < ActiveRecord::Migration[6.0]
   def up
     execute <<-SQL.strip_sql
-      CREATE VIEW timescaledb_tables AS
+      CREATE OR REPLACE VIEW timescaledb_tables AS
         SELECT id, table_name AS name,
           COALESCE(total_bytes, 0) AS total_bytes,
           COALESCE(table_bytes, 0) AS table_bytes,
