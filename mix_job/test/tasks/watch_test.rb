@@ -131,3 +131,5 @@ module MixJob
     end
   end
 end
+
+Minitest::Retry.use! retry_count: 0
