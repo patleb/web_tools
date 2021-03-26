@@ -1,6 +1,11 @@
 require_rel 'mix_log'
 
 namespace :log do
+  desc 'cleanup old log partitions'
+  task :cleanup => :environment do |t|
+    MixLog::Cleanup.new(self, t).run!
+  end
+
   desc 'extract server logs'
   task :extract => :environment do |t|
     MixLog::Extract.new(self, t).run!

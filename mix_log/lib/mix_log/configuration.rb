@@ -1,5 +1,9 @@
 module MixLog
+  class UnsupportedInterval < ::StandardError; end
+
   has_config do
+    attr_writer :partition_interval
+    attr_writer :partition_oldest
     attr_writer :available_types
     attr_writer :available_paths
     attr_writer :available_rollups
@@ -7,6 +11,23 @@ module MixLog
     attr_writer :ided_paths
     attr_writer :ided_errors
     attr_writer :known_errors
+
+    def partition_interval_type
+      @partition_interval_type ||= case partition_interval
+        when 1.month then :month
+        when 1.week  then :week
+        when 1.day   then :day
+        else raise UnsupportedInterval
+        end
+    end
+
+    def partition_interval
+      @partition_interval ||= 1.week
+    end
+
+    def partition_oldest
+      @partition_oldest ||= 1.year
+    end
 
     def available_types
       @available_types ||= { # is it necessary... or only nginx and auth is useful
