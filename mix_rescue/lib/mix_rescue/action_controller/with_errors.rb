@@ -3,7 +3,7 @@ module ActionController
   # TODO https://github.com/rails/rails/pull/31235/files
   class DbTimeout < ActiveRecord::StatementInvalid
     def self.===(exception)
-      exception.message =~ /PG::QueryCanceled/
+      exception.message.match? /PG::QueryCanceled/
     end
   end
 
