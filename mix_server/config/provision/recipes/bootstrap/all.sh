@@ -1,4 +1,5 @@
 <% sun.list_recipes(%W(
+  empty_file
   upgrade__UPGRADE__
   time_locale
   mount
