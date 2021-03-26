@@ -131,7 +131,7 @@ class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.h
     connection.exec_query("CREATE TABLE #{partition[:name]} PARTITION OF #{table_name} FOR VALUES FROM ('#{partition[:from]}') TO ('#{partition[:to]}')")
     m_clear(:partitions)
   rescue DuplicatePartition
-    # do nothing
+    m_clear(:partitions)
   end
 
   def self.drop_partition(date)
