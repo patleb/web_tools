@@ -1,5 +1,5 @@
 module LogLines
-  module Rsyslog
+  module WithRsyslog
     extend ActiveSupport::Concern
 
     TIME    = /[A-Z][a-z]{2}\s+\d+ \d{2}:\d{2}:\d{2}/

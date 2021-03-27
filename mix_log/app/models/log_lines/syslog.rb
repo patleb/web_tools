@@ -1,6 +1,6 @@
 module LogLines
   class Syslog < LogLine
-    include Rsyslog
+    include WithRsyslog
 
     USER = /\w+/
     CMD  = /.+/
