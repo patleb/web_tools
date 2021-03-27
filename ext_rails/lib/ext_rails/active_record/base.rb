@@ -102,6 +102,12 @@ ActiveRecord::Base.class_eval do
     result.sql_safe
   end
 
+  def self.shared_buffers
+    @shared_buffers ||= connection.select_value(<<-SQL.strip_sql)
+      SELECT setting::BIGINT * pg_size_bytes(unit) AS bytes FROM pg_settings WHERE name = 'shared_buffers'
+    SQL
+  end
+
   def self.pretty_total_size
     total_size.to_s(:human_size)
   end
