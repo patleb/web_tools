@@ -1,6 +1,4 @@
 class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.html
-  prepend LogLines::WithPartition
-
   class IncompatibleLogLine < ::StandardError; end
 
   belongs_to :log
@@ -46,9 +44,11 @@ class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.h
       end
       line[:log_message_id] = log_message.id
     end
-    id = insert(line).pluck('id').first
-    log_message.log_line_id = id if log_message
-    log_message || id
+    id = insert!(line).pluck('id').first
+    Log.increment_counter(:log_lines_count, log_id)
+    LogMessage.increment_counter(:log_lines_count, log_message.id)
+    log_message.log_line_id = id
+    log_message
   end
 
   def self.push_all(log, lines)
@@ -70,10 +70,15 @@ class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.h
     LogMessage.insert_all(texts.map(&:except.with(:line_i)).uniq(&:values_at.with(:text_hash, :level)))
     levels = texts.map(&:[].with(:level))
     hashes = texts.map(&:[].with(:text_hash))
-    LogMessage.select_by_hashes(log_id, levels, hashes).pluck('id').each_with_index do |id, i|
+    log_messages = LogMessage.select_by_hashes(log_id, levels, hashes).pluck('id')
+    log_messages.each_with_index do |id, i|
       lines[texts[i][:line_i]][:log_message_id] = id
     end
-    insert_all(lines)
+    insert_all!(lines)
+    Log.update_counters(log_id, log_lines_count: lines.size)
+    log_messages.tally.each do |id, count|
+      LogMessage.update_counters(id, log_lines_count: count)
+    end
   end
 
   def self.parse(log, line, **)
@@ -88,7 +93,9 @@ class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.h
   end
 
   def self.with_message(message)
-    return unless message && (message = message.values_at(:text_hash, :text_tiny, :text, :level)).last(2).all?(&:present?)
+    unless message && (message = message.values_at(:text_hash, :text_tiny, :text, :level)).last(2).all?(&:present?)
+      raise IncompatibleLogLine
+    end
     text_hash, text_tiny, text, level = message
     text_tiny ||= squish(text)
     text_hash ||= text_tiny
@@ -97,16 +104,16 @@ class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.h
 
   def self.insert_all!(attributes, **)
     attributes.each{ |row| row[:type] = name }
-    super
+    with_partition(attributes, column: :created_at, size: MixLog.config.partition_size){ super }
   end
 
   def self.insert_all(attributes, **)
     attributes.each{ |row| row[:type] = name }
-    super
+    with_partition(attributes, column: :created_at, size: MixLog.config.partition_size){ super }
   end
 
   def self.upsert_all(attributes, **)
     attributes.each{ |row| row[:type] = name }
-    super
+    with_partition(attributes, column: :created_at, size: MixLog.config.partition_size){ super }
   end
 end

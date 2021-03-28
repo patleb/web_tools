@@ -3,11 +3,11 @@ module MixLog
     class IntervalMismatch < ::StandardError; end
 
     def cleanup
-      past_dates, current_dates = LogLine.partitions_dates.partition{ |date| date < dates.first }
+      past_dates, current_dates = LogLine.partitions_buckets.partition{ |date| date < dates.first }
       raise IntervalMismatch if (current_dates - dates).any?
 
       past_dates.each do |date|
-        LogLine.drop_partition(date)
+        LogLine.drop_partition(date, size: MixLog.config.partition_size)
       end
     end
 
@@ -15,10 +15,10 @@ module MixLog
 
     def dates
       @dates ||= begin
-        interval = MixLog.config.partition_interval_type
-        started_at = MixLog.config.partition_oldest.ago.utc.send("beginning_of_#{interval}")
-        continue_at = Time.current.utc.send("beginning_of_#{interval}") + MixLog.config.partition_interval
-        (started_at.to_i..continue_at.to_i).step(MixLog.config.partition_interval).map{ |s| Time.at(s).utc }
+        interval = 1.send(MixLog.config.partition_size)
+        started_at = MixLog.config.partitions_total_size.ago.utc.send("beginning_of_#{MixLog.config.partition_size}")
+        continue_at = Time.current.utc.send("beginning_of_#{MixLog.config.partition_size}") + interval
+        (started_at.to_i..continue_at.to_i).step(interval).map{ |s| Time.at(s).utc }
       end
     end
   end
