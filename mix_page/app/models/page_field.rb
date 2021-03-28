@@ -1,4 +1,4 @@
-class PageField < LibRecord
+class PageField < LibMainRecord
   self.skip_locking_attributes += ['parent_id']
 
   has_userstamp

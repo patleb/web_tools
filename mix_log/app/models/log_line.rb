@@ -1,4 +1,4 @@
-class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.html
+class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observability.html
   class IncompatibleLogLine < ::StandardError; end
 
   belongs_to :log

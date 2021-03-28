@@ -1,4 +1,4 @@
-class LogMessage < LibRecord
+class LogMessage < LibMainRecord
   belongs_to :log
   has_many   :log_lines
 

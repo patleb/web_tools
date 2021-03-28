@@ -1,4 +1,4 @@
-class LogRollup < LibRecord
+class LogRollup < LibMainRecord
   enum type: MixLog.config.available_rollups
 
   attribute :period, :interval # TODO remove in Rails 7.0

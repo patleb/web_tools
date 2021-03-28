@@ -1,4 +1,4 @@
-class Server < LibRecord
+class Server < LibMainRecord
   enum provider: MixServer.config.available_providers
 
   def self.current

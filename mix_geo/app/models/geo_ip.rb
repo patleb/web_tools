@@ -1,4 +1,4 @@
-class GeoIp < LibRecord
+class GeoIp < LibMainRecord
   belongs_to :geo_city, optional: true
 
   alias_attribute :ip, :id

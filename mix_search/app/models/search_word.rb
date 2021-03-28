@@ -1,4 +1,4 @@
-class SearchWord < LibRecord
+class SearchWord < LibMainRecord
   has_many :searches
 
   # AND condition is implicit by the spaces in the token

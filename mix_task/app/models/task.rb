@@ -1,4 +1,4 @@
-class Task < LibRecord
+class Task < LibMainRecord
   include ActionView::Helpers::DateHelper
 
   has_userstamp

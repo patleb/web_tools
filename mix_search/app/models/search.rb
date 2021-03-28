@@ -1,4 +1,4 @@
-class Search < LibRecord
+class Search < LibMainRecord
   belongs_to :search_word
   belongs_to :searchable, polymorphic: true
 

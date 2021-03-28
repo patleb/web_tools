@@ -1,4 +1,4 @@
-class Log < LibRecord
+class Log < LibMainRecord
   FS_TYPE = %r{(\w+)/(?:\w+\.)?(?:(\w+)\.log|(\w+log))$}
 
   belongs_to :server

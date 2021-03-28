@@ -7,7 +7,7 @@ module MixUser
     attr_accessor :scramble_on_discard
 
     def parent_model
-      @parent_model ||= '::LibRecord'
+      @parent_model ||= '::LibMainRecord'
     end
 
     def json_attributes # must be modified before initialization with ActiveSupport.on_load(:active_record)

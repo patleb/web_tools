@@ -1,2 +1,2 @@
-class GeoCity < LibRecord
+class GeoCity < LibMainRecord
 end

@@ -1,4 +1,4 @@
-class Flash < LibRecord
+class Flash < LibMainRecord
   class MustBeLoggedIn < ::StandardError; end
 
   belongs_to :user

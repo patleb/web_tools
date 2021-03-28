@@ -1,4 +1,4 @@
-class GeoState < LibRecord
+class GeoState < LibMainRecord
   belongs_to :geo_country
   has_many   :searches, as: :searchable, dependent: :destroy
 

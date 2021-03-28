@@ -1,4 +1,4 @@
-class Page < LibRecord
+class Page < LibMainRecord
   has_userstamp
 
   has_many :page_fields, -> { order(:position) }, dependent: :destroy
