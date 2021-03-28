@@ -17,9 +17,5 @@ class CreateLibLogMessages < ActiveRecord::Migration[6.0]
     add_index :lib_log_messages, [:text_tiny, :log_id, :log_lines_type, :level, :monitor, :alerted, :updated_at],
       using: :gin, name: 'index_lib_log_messages_on_columns'
     add_index :lib_log_messages, [:text_hash, :log_id, :level], unique: true
-
-    if Rails.env.test?
-      remove_foreign_key :lib_log_messages, :lib_logs, column: :log_id
-    end
   end
 end

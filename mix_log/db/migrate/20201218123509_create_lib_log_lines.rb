@@ -23,16 +23,11 @@ class CreateLibLogLines < ActiveRecord::Migration[6.0]
     end
 
     change_table :lib_log_lines do |t|
-      t.integer      :type,        null: false
-      if Rails.env.test?
-        t.belongs_to :log,         null: false, index: false, foreign_key: false
-        t.belongs_to :log_message, index: false, foreign_key: false
-      else
-        t.belongs_to :log,         null: false, index: false, foreign_key: { to_table: :lib_logs }
-        t.belongs_to :log_message, index: false, foreign_key: { to_table: :lib_log_messages }
-      end
-      t.integer      :pid
-      t.jsonb        :json_data,   null: false, default: {}
+      t.integer    :type,        null: false
+      t.belongs_to :log,         null: false,  index: false, foreign_key: { to_table: :lib_logs }
+      t.belongs_to :log_message, index: false, foreign_key: { to_table: :lib_log_messages }
+      t.integer    :pid
+      t.jsonb      :json_data,   null: false, default: {}
     end
 
     add_index :lib_log_lines, [:created_at, :type, :log_id, :log_message_id, :pid, :json_data], using: :gin,

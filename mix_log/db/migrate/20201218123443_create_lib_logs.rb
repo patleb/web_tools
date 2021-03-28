@@ -11,9 +11,5 @@ class CreateLibLogs < ActiveRecord::Migration[6.0]
     end
 
     add_index :lib_logs, [:server_id, :path, :log_lines_type], unique: true
-
-    if Rails.env.test?
-      remove_foreign_key :lib_logs, :lib_servers, column: :server_id
-    end
   end
 end
