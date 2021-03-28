@@ -1,4 +1,4 @@
-class LibMainRecord < LibRecord
+class LibMainRecord < ActiveRecord::Main
   self.abstract_class = true
-  establish_main_connection
+  self.table_name_prefix = 'lib_'
 end
