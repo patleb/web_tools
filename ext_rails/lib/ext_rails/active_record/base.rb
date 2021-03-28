@@ -17,6 +17,8 @@ ActiveRecord::Base.class_eval do
   include self::WithRescuableValidations
   include self::WithViableModels
 
+  self.belongs_to_required_by_default = false
+
   nullify_blanks nullables_only: false
 
   delegate :url_helpers, to: 'Rails.application.routes'
@@ -30,6 +32,19 @@ ActiveRecord::Base.class_eval do
     def scope(name, body, &block)
       super if name.match?(/^[a-z_][a-z0-9_]*$/)
     end
+  end
+
+  def self.establish_main_connection
+    env = :"main_#{Rails.env}"
+    keys = %i(host port database username)
+    main_config = ActiveRecord::Base.configurations.resolve(env).configuration_hash.slice(*keys)
+    default_config = ActiveRecord::Base.configurations.resolve(Rails.env.to_sym).configuration_hash.slice(*keys)
+    main_host, default_host = main_config.delete(:host), default_config.delete(:host)
+    return establish_connection(env) unless main_config == default_config
+    return if main_host == default_host
+    return establish_connection(env) unless Host.domains.has_key? :server
+    return if Host.domains[:server].find{ |name, _ip| name == main_host }&.last == default_host
+    establish_connection(env)
   end
 
   def self.with_raw_connection

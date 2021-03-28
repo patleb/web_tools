@@ -17,6 +17,6 @@ module Cloud::Vagrant
   end
 
   def vagrant_servers(filter)
-    Host.domains[:vagrant].select{ |name, _| name.include? filter }
+    Host.domains[:vagrant].select{ |name, _ip| name.include? filter }
   end
 end

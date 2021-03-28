@@ -103,3 +103,21 @@ production: &production
   database: <%= Rails.application.secrets.db_database %>
   username: <%= Rails.application.secrets.db_username %>
   password: <%= Rails.application.secrets.db_password %>
+
+main_development:
+  <<: *development
+
+main_test:
+  <<: *test
+
+main_vagrant:
+  <<: *vagrant
+  host: vagrant-web.test
+
+main_staging:
+  <<: *staging
+  # host: test-example.com
+
+main_production:
+  <<: *production
+  # host: example.com
