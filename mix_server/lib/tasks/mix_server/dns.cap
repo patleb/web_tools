@@ -5,12 +5,12 @@ namespace :dns do
       if Setting[:server_cluster]
         execute_bash(<<-SH, sudo: true)
           #{Sh.delete_lines! '/etc/hosts', fetch(:server)}
-          #{Sh.append_host 'cap:dns-set_hosts-cluster_master', Cloud.server_cluster_master, fetch(:server)}
+          #{Sh.append_host Hosts::CLUSTER_MASTER, Cloud.server_cluster_master, fetch(:server)}
         SH
       else
         execute_bash(<<-SH, sudo: true)
-          #{Sh.append_host 'cap:dns-set_hosts-server', '127.0.0.1', fetch(:server)}
-          #{Sh.append_host 'cap:dns-set_hosts-hostname', '127.0.0.1', '$(hostname)', if: "'#{fetch(:server)}' != $(hostname)"}
+          #{Sh.append_host Hosts::SERVER, '127.0.0.1', fetch(:server)}
+          #{Sh.append_host Hosts::HOSTNAME, '127.0.0.1', '$(hostname)', if: "'#{fetch(:server)}' != $(hostname)"}
         SH
       end
     end

@@ -17,8 +17,6 @@ module Cloud::Vagrant
   end
 
   def vagrant_servers(filter)
-    list = Pathname.new('/etc/hosts').readlines
-    list.select!{ |line| true if (line =~ /vagrant-hostmanager-start/ .. line =~ /vagrant-hostmanager-end/) }
-    list[1..-2].select(&:include?.with(filter)).map(&:split).map{ |(ip, name)| [name, ip] }.sort_by(&:first).to_h
+    Host.domains[:vagrant].select{ |name, _| name.include? filter }
   end
 end
