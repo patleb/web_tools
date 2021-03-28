@@ -45,8 +45,8 @@ class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.h
       line[:log_message_id] = log_message.id
     end
     id = insert!(line).pluck('id').first
-    Log.increment_counter(:log_lines_count, log_id)
-    LogMessage.increment_counter(:log_lines_count, log_message.id)
+    Log.increment_counter(:log_lines_count, log_id, touch: true)
+    LogMessage.increment_counter(:log_lines_count, log_message.id, touch: true)
     log_message.log_line_id = id
     log_message
   end
@@ -75,9 +75,9 @@ class LogLine < LibRecord # TODO https://pgdash.io/blog/postgres-observability.h
       lines[texts[i][:line_i]][:log_message_id] = id
     end
     insert_all!(lines)
-    Log.update_counters(log_id, log_lines_count: lines.size)
+    Log.update_counters(log_id, log_lines_count: lines.size, touch: true)
     log_messages.tally.each do |id, count|
-      LogMessage.update_counters(id, log_lines_count: count)
+      LogMessage.update_counters(id, log_lines_count: count, touch: true)
     end
   end
 
