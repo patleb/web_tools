@@ -27,7 +27,7 @@ module ActiveRecord::Base::WithPartition
 
     def create_partition(key, table = table_name, **options)
       partition = partition_for(key, table, **options)
-      return if partitions.include? partition[:name]
+      return if partitions(table).include? partition[:name]
       connection.exec_query(<<-SQL.strip_sql)
         CREATE TABLE #{partition[:name]} PARTITION OF #{table}
           FOR VALUES FROM ('#{partition[:from]}') TO ('#{partition[:to]}')
@@ -50,16 +50,19 @@ module ActiveRecord::Base::WithPartition
       end
     end
 
-    def partitions_buckets
-      partitions.map do |name|
-        if (date = name[/\d{4}_\d{2}_\d{2}$/])
-          Time.find_zone('UTC').parse(date.dasherize).utc
-        else
-          name[/\d{10}$/].to_i
+    def partitions_buckets(table = table_name)
+      m_access(:partitions_buckets, table) do
+        partitions(table).map do |name|
+          if (date = name[/\d{4}_\d{2}_\d{2}$/])
+            Time.find_zone('UTC').parse(date.dasherize).utc
+          else
+            name[/\d{10}$/].to_i
+          end
         end
       end
     end
 
+    # TODO variable size
     def partition_for(key, table = table_name, size:)
       case key
       when Integer
