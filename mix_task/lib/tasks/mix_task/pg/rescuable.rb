@@ -17,7 +17,7 @@ module MixTask
             /WARNING: errors ignored/,
             /ERROR:.+does not exist/,
             /NOTICE:.+already exists, skipping/,
-            'Command was: COPY _timescaledb_catalog.telemetry_metadata (key, value) FROM stdin;',
+            /Command was: (COPY|ALTER TABLE|CREATE INDEX)/,
             'ERROR:  unrecognized configuration parameter "idle_in_transaction_session_timeout"',
             'ERROR:  must be owner of extension plpgsql',
             'ERROR:  must be owner of schema public',
