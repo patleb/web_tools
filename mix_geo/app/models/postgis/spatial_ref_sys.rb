@@ -17,7 +17,7 @@ module Postgis
     scope :from_projection, -> (projection) { where(crs_for(projection)) }
 
     def self.find_by_projection(projection)
-      from_projection(projection).take
+      from_projection(projection).order(:srid).take
     end
 
     def self.projection_exists?(projection)
