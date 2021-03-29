@@ -104,7 +104,7 @@ module ActiveRecord::Base::WithPartition
       else
         raise UnsupportedPartitionBucket, "key: [#{key}]"
       end
-      { name: "#{table}_#{to}", from: from, to: to }
+      { name: "#{table}_#{from}", from: from, to: to }
     end
   end
 end
