@@ -1,6 +1,4 @@
 module MixLog
-  class UnsupportedInterval < ::StandardError; end
-
   has_config do
     attr_writer :partition_size
     attr_writer :partitions_total_size

@@ -6,7 +6,6 @@ class ReferenceTest < Sql::TestCase
     '20010000002222_enable_pg_touch' => ExtRails::Engine.root,
     '20180106225120_add_triggers_to_lib_pages' => MixPage::Engine.root,
     '20180106225130_add_triggers_to_lib_page_fields' => MixPage::Engine.root,
-    '20201220104057_add_triggers_to_lib_log_lines' => MixLog::Engine.root,
     '20201224095685_add_triggers_to_lib_searches' => MixSearch::Engine.root,
   }
   self.sql_root = 'ext_rails/test/sqls'

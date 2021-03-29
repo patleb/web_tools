@@ -17,8 +17,6 @@ ActiveRecord::Base.class_eval do
   include self::WithRescuableValidations
   include self::WithViableModels
 
-  self.belongs_to_required_by_default = false
-
   nullify_blanks nullables_only: false
 
   delegate :url_helpers, to: 'Rails.application.routes'

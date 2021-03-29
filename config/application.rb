@@ -38,6 +38,7 @@ module WebTools
     config.generators.system_tests = nil
 
     # config.i18n.default_locale = :en
+    config.active_record.belongs_to_required_by_default = false
     config.active_record.cache_versioning = false
     config.cache_store = :global_store
 
