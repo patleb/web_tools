@@ -19,8 +19,11 @@ module MixGeo
     end
 
     ActiveSupport.on_load(:active_record) do
-      require 'activerecord-postgis-adapter' if Setting[:postgis_enabled]
-      require 'mix_geo/active_record/connection_adapters/postgis_adapter' if Setting[:postgis_enabled]
+      if Setting[:postgis_enabled]
+        require 'activerecord-postgis-adapter'
+        require 'mix_geo/active_record/connection_adapters/postgis_adapter'
+        require 'mix_geo/active_record/migration/with_raster'
+      end
 
       MixLog.config.filter_parameters += %w(
         CRS
