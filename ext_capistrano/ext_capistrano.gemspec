@@ -17,10 +17,10 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency "capistrano", "~> 3.6"
-  s.add_dependency 'capistrano-rbenv', '~> 2.0'
-  s.add_dependency 'capistrano-bundler', '~> 1.1'
-  s.add_dependency 'capistrano-rails', '~> 1.1'
+  s.add_dependency "capistrano", "~> 3.16"
+  s.add_dependency 'capistrano-rbenv', '~> 2.2'
+  s.add_dependency 'capistrano-bundler', '~> 2.0'
+  s.add_dependency 'capistrano-rails', '~> 1.6'
   s.add_dependency 'capistrano-rails-console'
   s.add_dependency 'capistrano-passenger'
   s.add_dependency 'capistrano-bundle_rsync'
