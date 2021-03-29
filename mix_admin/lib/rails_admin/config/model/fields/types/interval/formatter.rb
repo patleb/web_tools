@@ -9,13 +9,13 @@ module RailsAdmin::Config::Model::Fields::Interval::Formatter
     def format_interval(value = self.value)
       case pretty_format
       when :long
-        value&.to_days
+        value&.pretty_days
       when :short
-        value&.to_hours
+        value&.pretty_hours
       when :ceil
-        value&.to_days(ceil: true)
+        value&.pretty_days(ceil: true)
       when :floor
-        value&.to_hours(ceil: true)
+        value&.pretty_hours(ceil: true)
       else
         value.to_s
       end

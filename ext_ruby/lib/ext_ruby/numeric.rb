@@ -70,4 +70,17 @@ class Numeric
   def kbytes_to_gb(precision = 3)
     (self / KB_PER_GB).to_f.ceil(precision)
   end
+
+  def to_hours
+    mm, ss = self.divmod(60)
+    ss = ss.ceil
+    hh, mm = mm.divmod(60)
+    [hh, mm, ss]
+  end
+
+  def to_days
+    hh, mm, ss = to_hours
+    dd, hh = hh.divmod(24)
+    [dd, hh, mm, ss]
+  end
 end
