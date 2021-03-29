@@ -3,23 +3,12 @@
 # also, if there was a default for :created_at, it could be null on insert and defaults aren't used for uniqueness check
 class CreateLibLogLines < ActiveRecord::Migration[6.0]
   def change
-    if Rails.env.test?
-      create_table :lib_log_lines, id: false do |t|
-        t.timestamp :created_at, null: false, default: nil
-      end
-    else
-      reversible do |change|
-        change.up do
-          exec_query <<-SQL.strip_sql
-            CREATE TABLE lib_log_lines (
-              created_at TIMESTAMP(6) NOT NULL
-            ) PARTITION BY RANGE (created_at);
-          SQL
-        end
-        change.down do
-          exec_query "DROP TABLE lib_log_lines CASCADE;"
-        end
-      end
+    create_table_sql do
+      <<-SQL
+        CREATE TABLE lib_log_lines (
+          created_at TIMESTAMP(6) NOT NULL
+        ) PARTITION BY RANGE (created_at);
+      SQL
     end
 
     change_table :lib_log_lines do |t|
