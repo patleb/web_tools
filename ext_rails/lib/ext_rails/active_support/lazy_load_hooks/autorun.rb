@@ -4,7 +4,13 @@ module ActiveSupport::LazyLoadHooks::Autorun
   extend ActiveSupport::Concern
 
   SKIPPED_HOOKS = IceNine.deep_freeze(
-    active_storage_blob: true
+    active_storage_attachment: true,
+    active_storage_blob: true,
+    active_storage_record: true,
+    action_text_rich_text: true,
+    action_text_record: true,
+    action_mailbox_inbound_email: true,
+    action_mailbox_record: true,
   )
 
   class_methods do
