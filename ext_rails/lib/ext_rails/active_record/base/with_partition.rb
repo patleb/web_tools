@@ -17,26 +17,33 @@ module ActiveRecord::Base::WithPartition
   end
 
   TIME_PARTITION_BUCKETS = %i(month week day)
+  TIME = /\d{4}_\d{2}_\d{2}$/
+  NUMBER = /\d{10}$/
 
   class_methods do
     def with_partition(attributes, table = table_name, column:, **options)
       yield
     rescue MissingPartition
-      attributes.each{ |row| create_partition(row[column], table, **options) }
+      attributes.each{ |row| create_partition_for(row[column], table, **options) }
       retry
     end
 
     def create_all_partitions(buckets, table = table_name, size: nil)
       size ||= partition_size(buckets)
-      buckets.each{ |key| create_partition(key, table, size: size) }
+      buckets.each{ |key| create_partition_for(key, table, size: size) }
     end
 
     def drop_all_partitions(buckets, table = table_name, size: nil)
       size ||= partition_size(buckets)
-      buckets.each{ |key| drop_partition(key, table, size: size) }
+      buckets.each{ |key| drop_partition_for(key, table, size: size) }
     end
 
-    def create_partition(key, table = table_name, **options)
+    def drop_partition(name)
+      connection.exec_query("DROP TABLE IF EXISTS #{name}")
+      @_partitions[partition_table(name)] = nil
+    end
+
+    def create_partition_for(key, table = table_name, **options)
       partition = partition_for(key, table, **options)
       return if partitions(table).include? partition[:name]
       connection.exec_query(<<-SQL.strip_sql)
@@ -48,7 +55,7 @@ module ActiveRecord::Base::WithPartition
       @_partitions[table] = nil
     end
 
-    def drop_partition(key, table = table_name, **options)
+    def drop_partition_for(key, table = table_name, **options)
       connection.exec_query("DROP TABLE IF EXISTS #{partition_for(key, table, **options)[:name]}")
       @_partitions[table] = nil
     end
@@ -68,11 +75,19 @@ module ActiveRecord::Base::WithPartition
     end
 
     def partition_bucket(name)
-      if (date = name[/\d{4}_\d{2}_\d{2}$/])
+      if (date = name[TIME])
         Time.find_zone('UTC').parse(date.dasherize).utc
       else
-        name[/\d{10}$/].to_i
+        name[NUMBER].to_i
       end
+    end
+
+    def partition_table(name)
+      name.sub(/_(#{TIME}|#{NUMBER})/, '')
+    end
+
+    def partition_empty?(name)
+      connection.select_value("SELECT count(*) FROM (SELECT 1 FROM #{name} LIMIT 1) AS t") != 1
     end
 
     def partition_size(buckets)
