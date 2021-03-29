@@ -1,5 +1,13 @@
 namespace :nginx do
-  %w(start stop restart reload).each do |action|
+  desc "Reload nginx service"
+  task :reload do
+    on release_roles :all do
+      try_nginx_reload
+    end
+  end
+  before "nginx:reload", 'nginx:configtest'
+
+  %w(start stop restart).each do |action|
     desc "#{action.capitalize} nginx service"
     task action do
       on release_roles :all do
@@ -74,7 +82,7 @@ namespace :nginx do
             site_enabled = "/etc/nginx/sites-enabled/#{site}"
             execute :sudo, :ln, '-nfs', site_available, site_enabled
           end
-          nginx_reload
+          try_nginx_reload
         end
       end
     end
@@ -88,7 +96,7 @@ namespace :nginx do
             site_enabled = "/etc/nginx/sites-enabled/#{site}"
             execute :sudo, :rm, '-f', site_enabled
           end
-          nginx_reload
+          try_nginx_reload
         end
       end
     end
@@ -104,7 +112,12 @@ namespace :nginx do
     desc 'Remove nginx app configuration file'
     task :remove do
       on release_roles :all do
-        nginx_app_push
+        if test("[ -f /etc/nginx/sites-available/#{fetch(:deploy_dir)} ]")
+          within '/etc/nginx/sites-available' do
+            execute :sudo, :rm, '-f', fetch(:deploy_dir)
+          end
+          try_nginx_reload
+        end
       end
     end
   end

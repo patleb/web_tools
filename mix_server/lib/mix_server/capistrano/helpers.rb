@@ -1,34 +1,36 @@
 module MixServer
   module Helpers
-    def pgrest_restart
-      execute :sudo, "systemctl restart pgrest"
-    end
-
     def pgrest_reload
       test :sudo, "systemctl reload pgrest"
     end
 
-    %w(start stop restart reload).each do |action|
+    def pgrest_restart
+      execute :sudo, "systemctl restart pgrest"
+    end
+
+    def try_nginx_reload
+      unless nginx_reload
+        error "Could not reload Nginx, trying restart."
+        nginx_restart
+      end
+    end
+
+    def nginx_reload
+      test :sudo, "systemctl reload nginx"
+    end
+
+    %w(start stop restart).each do |action|
       define_method "nginx_#{action}" do
         execute :sudo, :systemctl, action, 'nginx'
       end
     end
 
-    def nginx_app_push
-      if test("[ -f /etc/nginx/sites-available/#{fetch(:deploy_dir)} ]")
-        within '/etc/nginx/sites-available' do
-          execute :sudo, :rm, '-f', fetch(:deploy_dir)
-        end
-        nginx_reload
-      end
+    def monit_reload
+      test :sudo, "systemctl reload monit"
     end
 
     def monit_restart
       execute :sudo, "systemctl restart monit"
-    end
-
-    def monit_reload
-      test :sudo, "systemctl reload monit"
     end
 
     def monit_push

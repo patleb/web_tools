@@ -22,8 +22,8 @@ namespace :deploy do
     on release_roles(:all) do
       execute :rm, '-f', current_path
       execute :ln, '-s', "$(ls -dt #{releases_path}/* | head -1)", current_path
-      nginx_app_push
     end
+    invoke 'nginx:app:push'
   end
 
   desc 'Full server deploy after provisioning'

@@ -10,8 +10,8 @@ namespace :console do
       end
       execute_bash("echo '#{my_ip}' > '#{current_path.join('tmp/console.txt')}'")
       ENV['STICKY_SESSIONS'] = 'true'
-      nginx_app_push
     end
+    invoke 'nginx:app:push'
   end
 
   desc 'Stop Console'
@@ -19,8 +19,8 @@ namespace :console do
     on release_roles :all do
       within current_path do
         execute :rm, '-f', 'tmp/console.txt'
-        nginx_app_push
       end
     end
+    invoke 'nginx:app:push'
   end
 end
