@@ -5,21 +5,22 @@ module MixLog
     def cleanup
       past_dates, current_dates = LogLine.partitions_buckets.partition{ |date| date < dates.first }
       raise IntervalMismatch if (current_dates - dates).any?
-
-      past_dates.each do |date|
-        LogLine.drop_partition(date, size: MixLog.config.partition_size)
-      end
+      LogLine.drop_all_partitions(past_dates, size: size)
     end
 
     private
 
     def dates
       @dates ||= begin
-        interval = 1.send(MixLog.config.partition_size)
-        started_at = MixLog.config.partitions_total_size.ago.utc.send("beginning_of_#{MixLog.config.partition_size}")
-        continue_at = Time.current.utc.send("beginning_of_#{MixLog.config.partition_size}") + interval
+        interval = 1.send(size)
+        started_at = MixLog.config.partitions_total_size.ago.utc.send("beginning_of_#{size}")
+        continue_at = Time.current.utc.send("beginning_of_#{size}") + interval
         (started_at.to_i..continue_at.to_i).step(interval).map{ |s| Time.at(s).utc }
       end
+    end
+
+    def size
+      MixLog.config.partition_size
     end
   end
 end

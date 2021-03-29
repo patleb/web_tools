@@ -7,6 +7,7 @@ module Db
       COMPRESS = /\.gz/
       SPLIT = /-\*/
       MATCHER = /(?:~(#{TABLE}))?\.(tar|csv|pg)(#{COMPRESS})?(#{SPLIT})?$/
+      PARTITION = /TABLE public (#{TABLE})_(\d{4}_\d{2}_\d{2}|\d{10}) /
 
       def self.args
         {
@@ -15,6 +16,8 @@ module Db
           includes:    ['--includes=INCLUDES', Array, 'Included tables for pg_restore'],
           md5:         ['--[no-]md5',                 'Check md5 files if present (default to true)'],
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
+          data_only:   ['--[no-]data-only',           'Load only data with disabled triggers for pg_restore'],
+          data_size:   ['--data-size=DATA_SIZE',      'Specify the partition size (used with :data_only option)'],
           timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
           pgrest:      ['--[no-]pgrest',              'Specify if PostgREST API is used for pg_restore'],
           pg_options:  ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
@@ -94,10 +97,12 @@ module Db
       end
 
       def pg_restore(compress, split)
+        output = ''
         only = options.includes.reject(&:blank?)
         with_db_config do |host, db, user, pwd|
           cmd_options = <<~CMD.squish
             --host #{host} --username #{user} --verbose --no-owner --no-acl
+            #{'--disable-triggers --data-only' if options.data_only}
             #{pg_options}
             #{only.map{ |table| "--table='#{table}'" }.join(' ')}
             --dbname #{db}
@@ -109,16 +114,40 @@ module Db
             end
           pre_restore_timescaledb if options.timescaledb
           sections = staged ? %w(pre-data data post-data) : [false]
+          sections.unshift('list') if options.data_only
           sections.each do |section|
+            section = case section
+              when false  then nil
+              when 'list' then '--list'
+              else "--section=#{section}"
+              end
             cmd = <<~CMD
               export PGPASSWORD=#{pwd};
-              #{input} pg_restore #{cmd_options} #{"--section=#{section}" if section} #{dump_path if input.nil?}
+              #{input} pg_restore #{cmd_options} #{section} #{dump_path if input.nil?}
             CMD
-            _stdout, stderr, _status = Open3.capture3(cmd)
-            notify!(cmd, stderr) if notify?(stderr)
+            stdout, stderr, _status = Open3.capture3(cmd)
+            if section == '--list'
+              notify!(cmd, stderr) if notify?(stderr)
+              list_restore(stdout, only)
+            else
+              output << stdout
+              notify!(cmd, stderr) if notify?(stderr)
+            end
           end
           post_restore_timescaledb if options.timescaledb
           post_restore_pgrest if options.pgrest
+          output
+        end
+      end
+
+      def list_restore(output, only)
+        partitions = output.lines.select_map{ |line| line.match(PARTITION)&.captures }
+        partitions = partitions.each_with_object({}) do |(table, bucket), list|
+          next if only.any? && only.exclude?(table)
+          (list[table] ||= []) << ActiveRecord::Base.partition_bucket(bucket)
+        end
+        partitions.each do |table, buckets|
+          ActiveRecord::Base.create_all_partitions(buckets, table, size: options.data_size.presence)
         end
       end
 

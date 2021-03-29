@@ -19,7 +19,7 @@ namespace :log do
   desc 'dump log tables' # 3.6 MB
   task :dump_tables => :environment do |t|
     name = "log_#{Log.maximum(:updated_at).utc.iso8601.tr('-T:Z', '')}"
-    tables = ['lib_logs', 'lib_log_messages', 'lib_log_lines', 'lib_log_rollups']
+    tables = ['lib_servers', 'lib_logs', 'lib_log_messages', 'lib_log_lines*', 'lib_log_rollups']
     Db::Pg::Dump.new(self, t, name: name, includes: tables).run!
   end
 
@@ -27,6 +27,7 @@ namespace :log do
   task :restore_tables, [:version] => :environment do |t, args|
     file = "db/log_#{args[:version]}.pg.gz"
     file = File.exist?(file) ? file : Dir.glob('db/log_*.pg.gz').sort.last
-    Db::Pg::Restore.new(self, t, name: File.basename(file), pg_options: '--disable-triggers --data-only').run!
+    name = File.basename(file)
+    Db::Pg::Restore.new(self, t, name: name, data_only: true).run!
   end
 end
