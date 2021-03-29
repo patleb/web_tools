@@ -41,7 +41,6 @@ Gem::Specification.new do |s|
   # TODO https://github.com/floere/phony
   s.add_dependency 'pycall'
   s.add_dependency 'rails-i18n'
-  s.add_dependency 'rails_select_on_includes'
   s.add_dependency 'rblineprof'
   s.add_dependency 'routes_lazy_routes'
   # s.add_dependency 'sequel-activerecord-adapter'

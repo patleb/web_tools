@@ -132,7 +132,7 @@ module ExtRails
     end
 
     ActiveSupport.on_load(:active_record) do
-      require 'rails_select_on_includes'
+      # TODO https://stackoverflow.com/questions/41399788/use-rails-select-to-add-not-overwrite-selected-attributes
       require 'store_base_sti_class'
       require 'ext_rails/active_type'
       require 'ext_rails/active_record/associations/builder/belongs_to/with_global_id'
