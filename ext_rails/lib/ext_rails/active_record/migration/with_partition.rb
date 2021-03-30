@@ -12,7 +12,7 @@ module ActiveRecord::Migration::WithPartition
       end
       change.down do
         table = sql.match(TABLE).captures[0]
-        exec_query "DROP TABLE IF EXISTS #{table}#{' CASCADE' if partitioned};"
+        exec_query "DROP TABLE IF EXISTS #{table}#{' CASCADE' if partitioned}"
       end
     end
   end

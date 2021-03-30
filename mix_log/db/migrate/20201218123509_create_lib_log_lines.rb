@@ -3,13 +3,7 @@
 # also, if there was a default for :created_at, it could be null on insert and defaults aren't used for uniqueness check
 class CreateLibLogLines < ActiveRecord::Migration[6.0]
   def change
-    create_table_sql do
-      <<-SQL
-        CREATE TABLE lib_log_lines (
-          created_at TIMESTAMP(6) NOT NULL
-        ) PARTITION BY RANGE (created_at);
-      SQL
-    end
+    create_table_sql{ "CREATE TABLE lib_log_lines (created_at TIMESTAMP(6) NOT NULL) PARTITION BY RANGE (created_at)" }
 
     change_table :lib_log_lines do |t|
       t.integer    :type,        null: false
