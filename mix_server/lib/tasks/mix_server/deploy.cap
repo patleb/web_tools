@@ -49,8 +49,21 @@ namespace :deploy do
       db:pg:create_database
       db:pg:set_superuser
       whenever:create_cron_log
-      deploy
-      job:push
-    )
+    ) do
+      old_assets_role = fetch(:assets_roles)
+      old_job_role = fetch(:job_roles)
+      set :assets_roles, false
+      set :job_roles, false
+      invoke 'deploy'
+      set :job_roles, old_job_role
+      invoke 'job:push'
+      invoke! 'job:restart'
+      set :assets_roles, old_assets_role
+      invoke! 'deploy:assets:precompile'
+      invoke! 'deploy:assets:backup_manifest'
+    ensure
+      set :assets_roles, old_assets_role
+      set :job_roles, old_job_role
+    end
   end
 end

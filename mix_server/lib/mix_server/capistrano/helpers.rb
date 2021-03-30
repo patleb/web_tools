@@ -8,10 +8,10 @@ module MixServer
       execute :sudo, "systemctl restart pgrest"
     end
 
-    def try_nginx_reload
+    def nginx_reload!
       unless nginx_reload
-        error "Could not reload Nginx, trying restart."
-        nginx_restart
+        error "Could not reload Nginx, trying start."
+        nginx_start
       end
     end
 
@@ -43,10 +43,10 @@ module MixServer
       '/etc/monit/monitrc'
     end
 
-    def url_for(path, **params)
+    def url_for(path, ssl: true, **params)
       path = path[0] == '/' ? path[1..-1] : path
       params = params.any? ? "?#{params.to_param}" : ''
-      "https://#{fetch(:server)}/#{path}#{params}"
+      "http#{'s' if ssl}://#{fetch(:server)}/#{path}#{params}"
     end
   end
 end

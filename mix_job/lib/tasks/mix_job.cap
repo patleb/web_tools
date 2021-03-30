@@ -12,7 +12,7 @@ namespace :load do
 end
 
 namespace :job do
-  %w[start stop restart reload].each do |action|
+  %w[start stop restart].each do |action|
     desc "#{action.capitalize} job service"
     task action do
       on release_roles fetch(:job_roles) do
@@ -20,23 +20,26 @@ namespace :job do
       end
     end
   end
-  after 'deploy:restart', 'job:reload'
+  after 'deploy:restart', 'job:restart'
 
   desc 'Export job systemd service file'
   task :push do
     on release_roles fetch(:job_roles) do
-      invoke! 'template:push', 'systemd/job.service', "/etc/systemd/system/#{fetch(:job_service)}.service"
+      service_file = "/etc/systemd/system/#{fetch(:job_service)}.service"
+      template_push 'systemd/job.service', service_file
+      execute :sudo, :chown, 'root:root', service_file
+      execute :sudo, :chmod, '0644', service_file
       execute :sudo, :systemctl, 'enable', fetch(:job_service)
       execute :sudo, :systemctl, 'daemon-reload'
       execute :mkdir, '-p', shared_path.join('tmp/jobs/actions')
     end
   end
-  after 'job:push', 'job:reload'
+  after 'job:push', 'job:restart'
 
   desc 'Remove job systemd service file'
   task :remove do
+    invoke 'job:stop'
     on release_roles fetch(:job_roles) do
-      invoke 'job:stop'
       execute :sudo, :systemctl, 'disable', fetch(:job_service)
       execute :sudo, :rm, '-f', "/etc/systemd/system/#{fetch(:job_service)}.service"
       execute :sudo, :systemctl, 'daemon-reload'

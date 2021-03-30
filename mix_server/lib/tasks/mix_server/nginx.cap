@@ -2,7 +2,7 @@ namespace :nginx do
   desc "Reload nginx service"
   task :reload do
     on release_roles :all do
-      try_nginx_reload
+      nginx_reload!
     end
   end
   before "nginx:reload", 'nginx:configtest'
@@ -82,7 +82,7 @@ namespace :nginx do
             site_enabled = "/etc/nginx/sites-enabled/#{site}"
             execute :sudo, :ln, '-nfs', site_available, site_enabled
           end
-          try_nginx_reload
+          nginx_reload!
         end
       end
     end
@@ -96,7 +96,7 @@ namespace :nginx do
             site_enabled = "/etc/nginx/sites-enabled/#{site}"
             execute :sudo, :rm, '-f', site_enabled
           end
-          try_nginx_reload
+          nginx_reload!
         end
       end
     end
@@ -116,7 +116,7 @@ namespace :nginx do
           within '/etc/nginx/sites-available' do
             execute :sudo, :rm, '-f', fetch(:deploy_dir)
           end
-          try_nginx_reload
+          nginx_reload!
         end
       end
     end

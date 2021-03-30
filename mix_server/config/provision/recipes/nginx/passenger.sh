@@ -14,6 +14,9 @@ if [ ! -f /etc/nginx/modules-enabled/50-mod-http-passenger.conf ]; then
   ln -s /usr/share/nginx/modules-available/mod-http-passenger.load /etc/nginx/modules-enabled/50-mod-http-passenger.conf
 fi
 
+# https://bugs.launchpad.net/ubuntu/+source/perl/+bug/1897561
+rm -f /etc/nginx/modules-enabled/50-mod-http-perl.conf
+
 sun.backup_compare "/etc/nginx/nginx.conf"
 
 systemctl enable nginx
