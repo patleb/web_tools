@@ -1,6 +1,6 @@
 module ActiveType
   class NullObject < Object
-    ID = 0.freeze
+    ID = -1.freeze
 
     attribute :id, default: ID
 

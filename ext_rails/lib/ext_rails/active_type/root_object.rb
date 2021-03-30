@@ -1,6 +1,6 @@
 module ActiveType
   class RootObject < Object
-    ID = -1.freeze
+    ID = -2.freeze
 
     attribute :id, default: ID
 
