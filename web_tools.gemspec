@@ -26,12 +26,13 @@ Gem::Specification.new do |s|
   s.add_dependency "mix_admin",       version
   s.add_dependency "mix_backup",      version
   s.add_dependency "ext_rails",       version
-  s.add_dependency "mix_certificate",  version
+  s.add_dependency "mix_certificate", version
   s.add_dependency "mix_email",       version
   s.add_dependency "mix_file",        version
   s.add_dependency "mix_flash",       version
   s.add_dependency "mix_geo",         version
   s.add_dependency "mix_global",      version
+  s.add_dependency "mix_rpc",         version
   s.add_dependency "mix_search",      version
   s.add_dependency "mix_server",      version
   s.add_dependency "mix_setting"

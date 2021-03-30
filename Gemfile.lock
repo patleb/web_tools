@@ -23,6 +23,7 @@ PATH
       mix_log (= 0.2.0)
       mix_page (= 0.2.0)
       mix_rescue (= 0.2.0)
+      mix_rpc (= 0.2.0)
       mix_search (= 0.2.0)
       mix_server (= 0.2.0)
       mix_setting
@@ -235,6 +236,12 @@ PATH
       mix_log (= 0.2.0)
       mix_setting
       rack-attack
+
+PATH
+  remote: mix_rpc
+  specs:
+    mix_rpc (0.2.0)
+      ext_ruby (= 0.2.0)
 
 PATH
   remote: mix_search
@@ -741,6 +748,7 @@ DEPENDENCIES
   mix_log!
   mix_page!
   mix_rescue!
+  mix_rpc!
   mix_search!
   mix_server!
   mix_setting!
