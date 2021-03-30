@@ -91,6 +91,7 @@ module MixJob
       # thread groups must be defined after context initialization, otherwise they'll use their own
       @executor = ThreadGroup.new(4)
       @dispatcher = ThreadGroup.new(options.max_pool_size)
+      mkdir_p 'tmp/jobs/actions' if Rails.env.dev_or_test?
     end
 
     def around_run
