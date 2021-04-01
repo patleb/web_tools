@@ -8,7 +8,7 @@ module ExtRails
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
-      @sql_debug = Rails.env.development? || Rails.env.test? if defined? Rails
+      @sql_debug = Rails.env.dev_or_test? if defined? Rails
     end
 
     def params_debug?
