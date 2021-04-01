@@ -103,6 +103,10 @@ module ExtRails
       end
     end
 
+    initializer 'ext_rails.cookies' do |app|
+      app.config.session_store :cookie_store, key: "_#{Rails.application.name}_session", expire_after: 2.years
+    end
+
     initializer 'ext_rails.rack_lineprof' do |app|
       if (file = Rails.root.join('tmp/profile.txt')).exist? && (matcher = file.readlines.first&.strip).present?
         require 'ext_rails/rack_lineprof'

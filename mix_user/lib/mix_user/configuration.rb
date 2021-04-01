@@ -28,12 +28,12 @@ module MixUser
     end
 
     # Include default devise modules. Others available are:
-    # :lockable, :timeoutable and :omniauthable
+    # :lockable, :timeoutable, :rememberable and :omniauthable
     # :encryptable
     def devise_modules
       @devise_modules ||= [
         :confirmable, :database_authenticatable, :registerable,
-        :recoverable, :rememberable, :trackable, :validatable
+        :recoverable, :trackable, :validatable
       ]
     end
   end
