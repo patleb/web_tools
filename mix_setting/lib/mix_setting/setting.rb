@@ -8,7 +8,7 @@ require 'mix_setting/type'
 class Setting
   include MixSetting::Type
 
-  CIPHER = 'aes-128-gcm'.freeze
+  CIPHER = 'aes-256-gcm'.freeze
   SECRET = '$SECRET'.freeze
   METHOD = '$METHOD'.freeze
   ALIAS  = '$ALIAS'.freeze
@@ -126,7 +126,7 @@ class Setting
       @encryptor
     elsif (key = (@secrets || all)[:secret_key_base])
       size = ActiveSupport::MessageEncryptor.key_len(CIPHER)
-      @encryptor = ActiveSupport::MessageEncryptor.new([key[0...(size*2)]].pack("H*"), cipher: CIPHER)
+      @encryptor = ActiveSupport::MessageEncryptor.new([key[0...(size * 2)]].pack("H*"), cipher: CIPHER)
     else
       @encryptor = false
     end

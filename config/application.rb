@@ -25,6 +25,8 @@ module WebTools
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
+    # Rails 7.0 https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#key-generator-digest-class-changing-to-use-sha256
+    config.active_support.hash_digest_class = OpenSSL::Digest::SHA256
 
     # Configuration for the application, engines, and railties goes here.
     #
