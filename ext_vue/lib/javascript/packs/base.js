@@ -51,7 +51,9 @@ Vue.use(uiv)
 Vue.component('AtomSpinner', AtomSpinner)
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.$cookies.config(true)
+  let session = true
+  let secure = (window.location.protocol === 'https:')
+  window.$cookies.config(session, null, null, secure)
   window._ = _
   window.lru = lru
   window.$image = image_path
