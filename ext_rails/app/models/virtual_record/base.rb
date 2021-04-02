@@ -1,4 +1,3 @@
-# TODO doesn't work with GlobalID
 module VirtualRecord
   class Base < ActiveType::Object
     self.primary_key = :id
@@ -31,7 +30,7 @@ module VirtualRecord
         else
           item(id) || all.where(id: id).first
         end
-      object || raise(::ActiveRecord::RecordNotFound)
+      object || raise(ActiveRecord::RecordNotFound)
     end
 
     def self.all
