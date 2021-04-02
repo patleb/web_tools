@@ -45,7 +45,7 @@ module Rpc
         it 'should return :not_acceptable with an error message' do
           post '/rpc/functions/healthcheck', params: { rpc_function: {} }, as: :json
           assert_response :not_acceptable
-          assert_equal true, ActiveSupport::JSON.decode(response.body).dig('flash', 'error').present?
+          assert_equal true, ActiveSupport::JSON.decode(response.body)['error'].present?
         end
       end
     end
