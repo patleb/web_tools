@@ -1,32 +1,30 @@
 # TODO doesn't work with GlobalID
-
-module VirtualType
-  extend ActiveSupport::Concern
-
-  included do
-    list_context = self
-    list_class = Class.new(VirtualType::List) do
-      define_method :klass do
-        list_context
-      end
-      alias_method :model, :klass
-
-      def model_name
-        klass.name
-      end
-    end
-    const_set(:List, list_class)
-
-    attribute :id
+module VirtualRecord
+  class Base < ActiveType::Object
     self.primary_key = :id
-  end
 
-  class_methods do
-    def encoding
+    ar_attribute :id
+
+    def self.inherited(subclass)
+      super
+      relation_class = Class.new(VirtualRecord::Relation) do
+        define_method :klass do
+          subclass
+        end
+        alias_method :model, :klass
+
+        def model_name
+          klass.name
+        end
+      end
+      subclass.const_set(:Relation, relation_class)
+    end
+
+    def self.encoding
       "UTF-8"
     end
 
-    def find(id)
+    def self.find(id)
       object =
         if loaded?
           all.where(id: id).first || item(id)
@@ -36,30 +34,30 @@ module VirtualType
       object || raise(::ActiveRecord::RecordNotFound)
     end
 
-    def all
+    def self.all
       (Current.virtual_types ||= {})[name] ||= begin
         list = self.list.map do |item|
           item = new(item) if item.is_a? Hash
           item.instance_variable_set(:@new_record, false)
           item
         end
-        self::List.new(list)
+        self::Relation.new(list)
       end
     end
 
-    def list
+    def self.list
       raise NotImplementedError
     end
 
-    def item(id)
+    def self.item(id)
       nil
     end
 
-    def virtual?
+    def self.virtual?
       true
     end
 
-    def loaded?
+    def self.loaded?
       (Current.virtual_types ||= {}).has_key? name
     end
   end

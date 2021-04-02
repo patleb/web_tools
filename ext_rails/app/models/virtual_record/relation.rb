@@ -1,5 +1,5 @@
-module VirtualType
-  class List < Kaminari::PaginatableArray
+module VirtualRecord
+  class Relation < Kaminari::PaginatableArray
     TABLE    = /(?:"?(\w+)"?\.)/.freeze
     COLUMN   = /"?(\w+)"?/.freeze
     OPERATOR = /(<=|>=|<|>)/.freeze
