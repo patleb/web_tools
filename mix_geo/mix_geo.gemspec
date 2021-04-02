@@ -17,10 +17,11 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
+  # TODO https://github.com/loureirorg/city-state
+  # TODO https://github.com/carmen-ruby/carmen
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'countries', '3.0.1'
   s.add_dependency 'ip_location_db', '2.2.2020121618'
   s.add_dependency 'rgeo'
   s.add_dependency 'activerecord-postgis-adapter'
-  s.add_dependency 'reversed'
 end

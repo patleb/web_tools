@@ -125,6 +125,7 @@ PATH
       oj
       parallel
       require_all (~> 1.5)
+      reversed
       sorted_set
       vmstat
 
@@ -198,7 +199,6 @@ PATH
       countries (= 3.0.1)
       ext_ruby (= 0.2.0)
       ip_location_db (= 2.2.2020121618)
-      reversed
       rgeo
 
 PATH
