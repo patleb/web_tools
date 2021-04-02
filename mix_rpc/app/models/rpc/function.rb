@@ -3,6 +3,8 @@ module Rpc
     RPC_FUNCTION = 'CREATE FUNCTION rpc.'
     RPC_RETURNS  = /\) RETURNS .+$/
     RPC_DEFAULT  = / DEFAULT (ARRAY\[[^\]]+\]|[^,]+)/
+    PG_EXCEPTION = /^PG::\w+: /
+    QUERY_MARKER = /LINE 1:/
     ERROR_MARKER = / \^/
 
     attribute :args, :array
@@ -47,7 +49,7 @@ module Rpc
       end
       self.result = select_function("SELECT rpc.#{id}(#{values.join(',')})")
     rescue ActiveRecord::StatementInvalid => e
-      errors.add :base, e.message.squish.sub(ERROR_MARKER, '')
+      errors.add :base, e.message.squish.sub(PG_EXCEPTION, '').sub(QUERY_MARKER, 'QUERY:').sub(ERROR_MARKER, '')
     end
 
     private
