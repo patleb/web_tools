@@ -34,22 +34,14 @@ module Rpc
       end.transform_values(&:to_a)
     end
 
-    def permitted_attributes
-      args.map do |name:, array: nil, hash: nil|
-        case
-        when array then { name => [] }
-        when hash  then { name => {} }
-        else name
-        end
-      end
-    end
-
     def call
-      values = args.select_map do |name:, array: nil, hash: nil|
-        break unless params.has_key? name
+      permit = true
+      values = args.select_map do |arg|
+        name = arg[:name]
+        next permit = false unless permit && params.has_key?(name)
         case
-        when array then "ARRAY[#{params[name].map{ |item| quote(item) }.join(',')}]"
-        when hash  then quote(params[name].to_json)
+        when arg[:array] then "ARRAY[#{params[name].map{ |item| quote(item) }.join(',')}]"
+        when arg[:hash]  then quote(params[name].to_json)
         else quote(params[name])
         end
       end

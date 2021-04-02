@@ -5,7 +5,7 @@ module Rpc
     protect_from_forgery with: :exception
 
     def call
-      function.update! params: call_params
+      function.update! params: params[:rpc_function].to_unsafe_h
       render json: function.result
     rescue ActiveRecord::RecordInvalid
       render json: { flash: { error: function.errors.full_messages } }, status: :not_acceptable
@@ -14,10 +14,6 @@ module Rpc
     end
 
     private
-
-    def call_params
-      params[:rpc_function].permit(*function.permitted_attributes)
-    end
 
     def function
       @function ||= Rpc::Function.find(params[:id])
