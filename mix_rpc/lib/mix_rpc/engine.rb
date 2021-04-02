@@ -2,6 +2,12 @@ require 'ext_ruby'
 require 'mix_rpc/configuration'
 
 module MixRpc
+  def self.routes
+    @routes ||= {
+      rpc: '/rpc/functions/__ID__',
+    }
+  end
+
   class Engine < ::Rails::Engine
     initializer 'mix_rpc.append_migrations' do |app|
       append_migrations(app)
