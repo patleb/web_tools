@@ -31,7 +31,7 @@ module Postgis
     end
 
     def self.create_projection!(srid, projection)
-      create! srid: srid, auth_name: 'unknown', auth_srid: srid, **crs_for(projection)
+      create! srid: srid, auth_name: 'none', auth_srid: srid, **crs_for(projection)
     end
 
     def self.crs_for(projection)
