@@ -59,10 +59,6 @@ module VirtualRecord
       nil
     end
 
-    def self.virtual?
-      true
-    end
-
     def self.loaded?
       (Current.virtual_types ||= {}).has_key? name
     end
