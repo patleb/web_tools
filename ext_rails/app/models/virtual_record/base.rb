@@ -19,6 +19,13 @@ module VirtualRecord
       subclass.const_set(:Relation, relation_class)
     end
 
+    def self.ar_connection(type = :main)
+      case type
+      when :main then ActiveRecord::Main.connection
+      when :base then ActiveRecord::Base.connection
+      end
+    end
+
     def self.encoding
       "UTF-8"
     end

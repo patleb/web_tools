@@ -55,11 +55,11 @@ module Rpc
     private
 
     def select_function(sql)
-      ActiveRecord::Main.connection.select_value(self.class.sanitize_sql(sql), "#{self.class.name} Call")
+      self.class.ar_connection.select_value(self.class.sanitize_sql(sql), "#{self.class.name} Call")
     end
 
     def quote(value)
-      ActiveRecord::Main.connection.quote(value)
+      self.class.ar_connection.quote(value)
     end
   end
 end
