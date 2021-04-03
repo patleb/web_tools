@@ -7,12 +7,21 @@ module Rpc
     QUERY_MARKER = /LINE 1:/
     HINT_MARKER  = / \^/
 
+    attribute :schema, default: 'rpc'
     attribute :args, :array
     attribute :params, :hash
     attribute :result, :hash
-    attribute :schema, default: 'rpc'
+
+    alias_method :call!, :update!
 
     validate :call
+
+    def self.call!(schema: 'rpc', id:, args:, params: {})
+      function = new(schema: schema, id: id, args: args)
+      function.instance_variable_set(:@new_record, false)
+      function.call! params: params
+      function.result
+    end
 
     def self.list
       return [] unless MixRpc.config.yml_path.exist?

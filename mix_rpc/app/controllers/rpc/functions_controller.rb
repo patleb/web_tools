@@ -5,7 +5,7 @@ module Rpc
     protect_from_forgery with: :exception
 
     def call
-      function.update! params: params[:rpc_function].to_unsafe_h
+      function.call! params: params[:rpc_function].to_unsafe_h
       render json: function.result
     rescue ActiveRecord::RecordInvalid
       render json: { error: function.errors.full_messages.first }, status: :not_acceptable
