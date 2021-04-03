@@ -10,6 +10,7 @@ module Rpc
     attribute :args, :array
     attribute :params, :hash
     attribute :result, :hash
+    attribute :schema, default: 'rpc'
 
     validate :call
 
@@ -47,7 +48,7 @@ module Rpc
         else quote(params[name])
         end
       end
-      self.result = select_function("SELECT rpc.#{id}(#{values.join(',')})")
+      self.result = select_function("SELECT #{schema}.#{id}(#{values.join(',')})")
     rescue ActiveRecord::StatementInvalid => e
       errors.add :base, e.message.squish.sub(PG_EXCEPTION, '').sub(QUERY_MARKER, 'QUERY:').sub(HINT_MARKER, '')
     end
