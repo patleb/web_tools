@@ -7,7 +7,7 @@ class CreateAddHealthcheckToRpcSchema < ActiveRecord::Migration[6.1]
             BEGIN
               RETURN TRUE;
             END;
-          $$ LANGUAGE plpgsql IMMUTABLE;
+          $$ LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER;
         SQL
       end
       change.down do
