@@ -46,6 +46,17 @@ module Rpc
       end.transform_values(&:to_a)
     end
 
+    def self.error_to_json(message)
+      message = message.split('ERROR: ', 2).last
+      message, hint = message.split(' HINT: ', 2)
+      message, details = message.split(' QUERY: ', 2)
+      { message: message, details: details, hint: hint }.compact
+    end
+
+    def error_message
+      self.class.error_to_json(errors.full_messages.first)
+    end
+
     def call
       permit = true
       values = args.select_map do |arg|

@@ -8,7 +8,7 @@ module Rpc
       function.call! params: params[:rpc_function].to_unsafe_h
       render json: function.result
     rescue ActiveRecord::RecordInvalid
-      render json: { error: function.errors.full_messages.first }, status: :not_acceptable
+      render json: function.error_message, status: :not_acceptable
     rescue ActiveRecord::RecordNotFound
       head :not_found
     end
