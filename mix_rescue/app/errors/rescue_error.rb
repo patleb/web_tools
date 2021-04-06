@@ -1,14 +1,14 @@
 class RescueError < ::StandardError
   RESCUE = '[RESCUE]'.freeze
 
-  delegate :backtrace, to: :@exception
-  attr_reader :name, :data
+  attr_reader :name, :backtrace, :data
 
   def initialize(exception = self, data: nil)
     @exception = exception
-    @name = exception.class.name
-    @data = data || {}
-    @message ||= exception.message if exception.message != @name
+    @name      ||= exception.class.name
+    @backtrace ||= exception.backtrace
+    @data      ||= data || {}
+    @message   ||= exception.message if exception.message != @name
   end
 
   def message

@@ -5,9 +5,5 @@ module Jobs
       @name = "HTTP::#{reason.gsub(/\s|-|'/, '')}"
       @data = request
     end
-
-    def backtrace
-      caller_locations.drop(3)
-    end
   end
 end
