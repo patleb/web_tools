@@ -12,6 +12,7 @@ end
 module Rpc
   class FunctionsControllerTest < ActionDispatch::IntegrationTest
     self.file_fixture_path = Gem.root('mix_rpc').join('test/fixtures/files').to_s
+    self.use_transactional_tests = false
 
     let(:sql){ false }
 
@@ -45,7 +46,7 @@ module Rpc
         it 'should return :not_acceptable with an error message' do
           post '/rpc/functions/healthcheck', params: { rpc_function: {} }, as: :json
           assert_response :not_acceptable
-          assert_equal true, ActiveSupport::JSON.decode(response.body)['message'].present?
+          assert_includes LogMessage.first.text, ActiveSupport::JSON.decode(response.body)['error']
         end
       end
     end

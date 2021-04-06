@@ -46,15 +46,19 @@ module Rpc
       end.transform_values(&:to_a)
     end
 
-    def self.error_to_json(message)
+    def self.error_hash(message)
       message = message.split('ERROR: ', 2).last
       message, hint = message.split(' HINT: ', 2)
-      message, details = message.split(' QUERY: ', 2)
-      { message: message, details: details, hint: hint }.compact
+      error, query = message.split(' QUERY: ', 2)
+      { error: error, query: query, hint: hint }.compact
+    end
+
+    def error_hash
+      self.class.error_hash(error_message)
     end
 
     def error_message
-      self.class.error_to_json(errors.full_messages.first)
+      errors.full_messages.first
     end
 
     def call
