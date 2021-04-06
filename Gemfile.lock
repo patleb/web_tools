@@ -21,6 +21,7 @@ PATH
       mix_global (= 0.2.0)
       mix_job (= 0.2.0)
       mix_log (= 0.2.0)
+      mix_monitor (= 0.2.0)
       mix_page (= 0.2.0)
       mix_rescue (= 0.2.0)
       mix_rpc (= 0.2.0)
@@ -217,6 +218,12 @@ PATH
   remote: mix_log
   specs:
     mix_log (0.2.0)
+      ext_ruby (= 0.2.0)
+
+PATH
+  remote: mix_monitor
+  specs:
+    mix_monitor (0.2.0)
       ext_ruby (= 0.2.0)
 
 PATH
@@ -746,6 +753,7 @@ DEPENDENCIES
   mix_global!
   mix_job!
   mix_log!
+  mix_monitor!
   mix_page!
   mix_rescue!
   mix_rpc!

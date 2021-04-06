@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby File.read('.ruby-version').strip
+ruby File.read('.ruby-version').strip # TODO 2.7.3
 
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '~> 5.0'
@@ -70,6 +70,7 @@ gem 'mix_server', path: './mix_server'
 gem 'mix_setting', path: './mix_setting'
 gem 'mix_job', path: './mix_job'
 gem 'mix_log', path: './mix_log'
+gem 'mix_monitor', path: './mix_monitor'
 gem 'mix_page', path: './mix_page'
 gem 'mix_rescue', path: './mix_rescue'
 gem 'mix_task', path: './mix_task'
