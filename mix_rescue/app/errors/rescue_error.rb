@@ -8,7 +8,7 @@ class RescueError < ::StandardError
     @exception = exception
     @name = exception.class.name
     @data = data || {}
-    @message = exception.message if exception.message != @name
+    @message ||= exception.message if exception.message != @name
   end
 
   def message
