@@ -2,12 +2,6 @@ require './test/rails_helper'
 
 module MixLog
   class ExtractTest < Rake::TestCase
-    before(:all) do
-      LogLine.delete_all
-      LogMessage.delete_all
-      Log.delete_all
-    end
-
     it 'should extract syslog files' do
       MixLog.with do |config|
         log_path, log_time = config.log_path(:syslog), Time.new(2021, 1, 2, 0, 0, 0, 0)
