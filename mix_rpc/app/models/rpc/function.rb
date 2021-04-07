@@ -4,7 +4,7 @@ module Rpc
     RPC_RETURNS  = /\) RETURNS .+$/
     RPC_DEFAULT  = / DEFAULT (ARRAY\[[^\]]+\]|[^,]+)/
     PG_EXCEPTION = /^PG::\w+: /
-    QUERY_MARKER = /LINE 1:/
+    STATEMENT    = /LINE \d+:/
     HINT_MARKER  = / \^/
 
     attribute :schema, default: 'rpc'
@@ -49,8 +49,8 @@ module Rpc
     def self.error_hash(message)
       message = message.split('ERROR: ', 2).last
       message, hint = message.split(' HINT: ', 2)
-      error, query = message.split(' QUERY: ', 2)
-      { error: error, query: query, hint: hint }.compact
+      error, statement = message.split(' STATEMENT: ', 2)
+      { error: error, statement: statement, hint: hint }.compact
     end
 
     def error_hash
@@ -74,7 +74,7 @@ module Rpc
       end
       self.result = select_function("SELECT #{schema}.#{id}(#{values.join(',')})")
     rescue ActiveRecord::StatementInvalid => e
-      errors.add :base, e.message.squish.sub(PG_EXCEPTION, '').sub(QUERY_MARKER, 'QUERY:').sub(HINT_MARKER, '')
+      errors.add :base, e.message.squish.sub(PG_EXCEPTION, '').sub(STATEMENT, 'STATEMENT:').sub(HINT_MARKER, '')
     end
 
     private
