@@ -1,34 +1,57 @@
-__PG_SYNCHRONOUS_COMMIT__=${__PG_SYNCHRONOUS_COMMIT__:-on}
-__PG_FSYNC__=${__PG_FSYNC__:-on}
-__PG_HUGE_PAGES__=${__PG_HUGE_PAGES__:-try}
-# __PG_PORT__=${__PG_PORT__:-5432}
-__PG_MAX_CONNECTIONS__=${__PG_MAX_CONNECTIONS__:-100}
-__PG_MAX_LOCKS_PER_TRANSACTION__=${__PG_MAX_LOCKS_PER_TRANSACTION__:-64}
-__PG_LOG_MIN_DURATION__=${__PG_LOG_MIN_DURATION__:-2000}
 PG_CONFIG_FILE=$(sun.pg_config_file)
 
-<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'synchronous_commit =' %>
-echo "synchronous_commit = $__PG_SYNCHRONOUS_COMMIT__" >> "$PG_CONFIG_FILE"
+<% %w(
+  synchronous_commit
+  fsync
+  huge_pages
+  max_locks_per_transaction
+  max_connections
+  shared_buffers
+  effective_cache_size
+  maintenance_work_mem
+  checkpoint_completion_target
+  wal_buffers
+  default_statistics_target
+  random_page_cost
+  effective_io_concurrency
+  work_mem
+  min_wal_size
+  max_wal_size
+  max_worker_processes
+  max_parallel_workers_per_gather
+  max_parallel_workers
+  max_parallel_maintenance_workers
+).each do |config| -%>
+  __PG_<%= config.upcase %>__=${__PG_<%= config.upcase %>__:-nil}
 
-<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'fsync =' %>
-echo "fsync = $__PG_FSYNC__" >> "$PG_CONFIG_FILE"
+  if [[ "$__PG_<%= config.upcase %>__" != 'nil' ]]; then
+    <%= Sh.delete_lines! '$PG_CONFIG_FILE', '<%= config %> =' %>
+    echo "<%= config %> = $__PG_<%= config.upcase %>__" >> "$PG_CONFIG_FILE"
+  fi
+<% end -%>
 
-<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'huge_pages =' %>
-echo "huge_pages = $__PG_HUGE_PAGES__" >> "$PG_CONFIG_FILE"
+if [[ ! -z "$(sun.shared_preload_libraries)" ]]; then
+  <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'shared_preload_libraries =' %>
+  echo "shared_preload_libraries = '$(sun.shared_preload_libraries)'" >> "$PG_CONFIG_FILE"
+fi
 
-<%# Sh.delete_lines! '$PG_CONFIG_FILE', 'port =' %>
-# echo "port = $__PG_PORT__" >> "$PG_CONFIG_FILE"
+<% if sun.pgstats_enabled -%>
+  __PG_LOG_MIN_DURATION__=${__PG_LOG_MIN_DURATION__:-2000}
+  __PG_STAT_STATEMENTS_TRACK__=${__PG_STAT_STATEMENTS_TRACK__:-all}
+  __PG_STAT_STATEMENTS_MAX__=${__PG_STAT_STATEMENTS_MAX__:-10000}
+  __PG_TRACK_ACTIVITY_QUERY_SIZE__=${__PG_TRACK_ACTIVITY_QUERY_SIZE__:-2048}
 
-<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'max_connections =' %>
-echo "max_connections = $__PG_MAX_CONNECTIONS__" >> "$PG_CONFIG_FILE"
+  <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'log_min_duration_statement =' %>
+  echo "log_min_duration_statement = $__PG_LOG_MIN_DURATION__" >> "$PG_CONFIG_FILE"
 
-<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'max_locks_per_transaction =' %>
-echo "max_locks_per_transaction = $__PG_MAX_LOCKS_PER_TRANSACTION__" >> "$PG_CONFIG_FILE"
+  <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'pg_stat_statements.track =' %>
+  echo "pg_stat_statements.track = $__PG_STAT_STATEMENTS_TRACK__" >> "$PG_CONFIG_FILE"
 
-<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'shared_preload_libraries =' %>
-echo "shared_preload_libraries = 'pg_stat_statements<%= ',timescaledb' if sun.timescaledb_enabled %>'" >> "$PG_CONFIG_FILE"
+  <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'pg_stat_statements.max =' %>
+  echo "pg_stat_statements.max = $__PG_STAT_STATEMENTS_MAX__" >> "$PG_CONFIG_FILE"
 
-<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'log_min_duration_statement =' %>
-echo "log_min_duration_statement = $__PG_LOG_MIN_DURATION__" >> "$PG_CONFIG_FILE"
+  <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'track_activity_query_size =' %>
+  echo "track_activity_query_size = $__PG_TRACK_ACTIVITY_QUERY_SIZE__" >> "$PG_CONFIG_FILE"
+<% end -%>
 
 sun.pg_restart_force

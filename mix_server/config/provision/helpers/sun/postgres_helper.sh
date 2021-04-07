@@ -1,3 +1,7 @@
+sun.shared_preload_libraries() {
+  echo '<%= { pg_stat_statements: sun.pgstats_enabled, timescaledb: sun.timescaledb_enabled }.select{ |_, v| v }.keys.join(',') %>'
+}
+
 sun.pg_restart_force() {
   if ! systemctl restart postgresql; then
     systemctl reset-failed postgresql
