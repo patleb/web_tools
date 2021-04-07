@@ -1,6 +1,6 @@
 module ActionController::WithUser
   def set_current
-    Current.user ||= warden.user(:user) unless try(:local?)
+    Current.user ||= warden.user(:user) unless local?
     Current.user ||= User::Null.new
     set_current_value(:as_user, [true, false])
     super
