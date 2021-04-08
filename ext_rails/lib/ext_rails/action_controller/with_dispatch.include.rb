@@ -14,10 +14,9 @@ module ActionController::WithDispatch
 
         controller_name = "#{path_params[:controller].underscore.camelize}Controller"
         controller      = controller_name.to_const!
-        action          = path_params[:action] || 'index'
+        action        ||= path_params[:action] || 'index'
       else
         controller  = url_or_controller
-        path_params = params
       end
       request_env = {
         'rack.input' => '',
@@ -38,7 +37,7 @@ module ActionController::WithDispatch
         'action_dispatch.request.query_parameters' => query_params,
         'action_dispatch.request.request_parameters' => request_params,
         'action_dispatch.request.path_parameters' => path_params,
-        'action_dispatch.request.parameters' => params.merge!(request_params).merge!(path_params),
+        'action_dispatch.request.parameters' => params.merge!(request_params).merge!(path_params || {}),
       }.compact
       request_env['rack.session'] = session if session
       request = ActionDispatch::Request.new(request_env)
