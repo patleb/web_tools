@@ -41,13 +41,15 @@ module VirtualRecord
       if query.nil?
         self
       elsif query.is_a? Hash
-        column, value = query.first
-        value = cast_value(column, value)
-        if value.is_a? Array
-          self.class.new(select{ |item| value.include? item.public_send(column) })
-        else
-          self.class.new([find{ |item| item.public_send(column) == value }].compact)
+        result = query.reduce(self) do |memo, (column, value)|
+          value = cast_value(column, value)
+          if value.is_a? Array
+            memo.select{ |item| value.include? item.public_send(column) }
+          else
+            [memo.find{ |item| item.public_send(column) == value }].compact
+          end
         end
+        self.class.new(result)
       elsif params.empty?
         self
       elsif (compare = query.match(COMPARE))
