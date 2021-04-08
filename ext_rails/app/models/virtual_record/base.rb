@@ -5,9 +5,9 @@ module VirtualRecord
     ar_attribute :id
 
     class << self
-      delegate :first, :last, :take, :count, :count_estimate, :size,
-        :exists?, :all?, :any?, :empty?, :none?, :one?,
-        :where, :order, :reorder, :reverse_order, to: :all
+      delegate :first, :last, :take, :count, :count_estimate, :size, to: :all
+      delegate :exists?, :all?, :any?, :empty?, :none?, :one?, to: :all
+      delegate :where, :order, :reorder, :reverse_order, to: :all
     end
 
     def self.inherited(subclass)
