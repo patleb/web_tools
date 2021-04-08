@@ -9,6 +9,7 @@ module VirtualRecord
     class_attribute :to_types
 
     alias_method :count_estimate, :size
+    alias_method :exists?, :any?
 
     def initialize(original_array = [], limit: original_array.size, offset: nil, total_count: nil, padding: nil)
       super
@@ -30,10 +31,11 @@ module VirtualRecord
       self.class.new(reverse)
     end
 
-    def reorder(*args)
+    def order(*args)
       attribute = args.first.sub(TABLE, '').tr('"', '').to_sym
       self.class.new(sort_by(&attribute))
     end
+    alias_method :reorder, :order
 
     def where(query = nil, *params)
       if query.nil?
@@ -77,7 +79,7 @@ module VirtualRecord
         value
       else
         to_type = (self.to_types ||= {})[column.to_sym] ||=
-          case first.public_send(column)
+          case first&.public_send(column)
           when Integer        then :to_i
           when BigDecimal     then :to_d
           when Float          then :to_f
