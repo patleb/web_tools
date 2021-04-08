@@ -26,7 +26,7 @@ ActiveRecord::Relation.class_eval do
     return 0 if none? # values[:extending]&.include? ActiveRecord::NullRelation
 
     sql = limit(nil).offset(nil).reorder(nil).to_sql
-    connection.exec_query("EXPLAIN #{sql}").first["QUERY PLAN"].match(/rows=(\d+)/)[1].to_i
+    connection.select_value("SELECT count_estimate(#{connection.quote(sql)})")
   end
 end
 
