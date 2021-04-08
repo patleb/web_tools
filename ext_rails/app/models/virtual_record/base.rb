@@ -47,14 +47,16 @@ module VirtualRecord
     end
 
     def self.all
-      (Current.virtual_types ||= {})[name] ||= begin
-        list = self.list.map do |item|
-          item = new(item) if item.is_a? Hash
-          item.instance_variable_set(:@new_record, false)
-          item
-        end
-        self::Relation.new(list)
+      (Current.virtual_types ||= {})[name] ||= all!
+    end
+
+    def self.all!
+      list = self.list.map do |item|
+        item = new(item) if item.is_a? Hash
+        item.instance_variable_set(:@new_record, false)
+        item
       end
+      self::Relation.new(list)
     end
 
     def self.list
