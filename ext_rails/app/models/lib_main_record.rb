@@ -1,4 +1,5 @@
 class LibMainRecord < ActiveRecord::Main
+  include AsLibRecord
+
   self.abstract_class = true
-  self.table_name_prefix = 'lib_'
 end
