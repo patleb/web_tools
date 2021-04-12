@@ -77,4 +77,16 @@ class Array
       self
     end
   end
+
+  def negs
+    map{ |x| -x }
+  end
+
+  def subs
+    transpose.map{ |x| x.reduce(:-) }
+  end
+
+  def adds
+    transpose.map(&:sum)
+  end
 end
