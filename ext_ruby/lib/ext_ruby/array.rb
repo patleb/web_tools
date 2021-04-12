@@ -82,11 +82,19 @@ class Array
     map{ |x| -x }
   end
 
-  def subs
-    transpose.map{ |x| x.reduce(:-) }
+  def muls(value)
+    map{ |x| x * value }
   end
 
-  def adds
-    transpose.map(&:sum)
+  def divs(value)
+    map{ |x| x / value }
+  end
+
+  def subs(*others)
+    (others.empty? ? self : [self, *others]).transpose.map{ |x| x.reduce(:-) }
+  end
+
+  def adds(*others)
+    (others.empty? ? self : [self, *others]).transpose.map(&:sum)
   end
 end
