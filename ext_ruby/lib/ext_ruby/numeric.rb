@@ -51,6 +51,10 @@ class Numeric
   KB_PER_MB = BigDecimal(1_024).freeze
   KB_PER_GB = BigDecimal(1_048_576).freeze
 
+  def sign
+    self <=> 0
+  end
+
   def bytes_to_kb(precision = 3)
     (self / B_PER_KB).to_f.ceil(precision)
   end
