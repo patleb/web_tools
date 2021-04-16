@@ -6,16 +6,18 @@ version = WebTools::VERSION::STRING
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "mix_monitor"
+  s.name        = "mix_check"
   s.version     = version
   s.authors     = ["Patrice Lebel"]
   s.email       = ["patleb@users.noreply.github.com"]
-  s.homepage    = "https://github.com/patleb/mix_monitor"
-  s.summary     = "MixMonitor"
-  s.description = "MixMonitor"
+  s.homepage    = "https://github.com/patleb/mix_check"
+  s.summary     = "MixCheck"
+  s.description = "MixCheck"
   s.license     = "AGPL-3.0"
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
+  s.add_dependency 'pghero'
+  s.add_dependency 'pg_query'
 end

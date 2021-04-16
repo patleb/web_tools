@@ -14,6 +14,7 @@ PATH
       mix_admin (= 0.2.0)
       mix_backup (= 0.2.0)
       mix_certificate (= 0.2.0)
+      mix_check (= 0.2.0)
       mix_email (= 0.2.0)
       mix_file (= 0.2.0)
       mix_flash (= 0.2.0)
@@ -21,7 +22,6 @@ PATH
       mix_global (= 0.2.0)
       mix_job (= 0.2.0)
       mix_log (= 0.2.0)
-      mix_monitor (= 0.2.0)
       mix_page (= 0.2.0)
       mix_rescue (= 0.2.0)
       mix_rpc (= 0.2.0)
@@ -173,6 +173,14 @@ PATH
       ext_rails (= 0.2.0)
 
 PATH
+  remote: mix_check
+  specs:
+    mix_check (0.2.0)
+      ext_ruby (= 0.2.0)
+      pg_query
+      pghero
+
+PATH
   remote: mix_email
   specs:
     mix_email (0.2.0)
@@ -218,12 +226,6 @@ PATH
   remote: mix_log
   specs:
     mix_log (0.2.0)
-      ext_ruby (= 0.2.0)
-
-PATH
-  remote: mix_monitor
-  specs:
-    mix_monitor (0.2.0)
       ext_ruby (= 0.2.0)
 
 PATH
@@ -496,6 +498,7 @@ GEM
     full_dup (1.0.2)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    google-protobuf (3.15.7)
     hash_dot (2.5.0)
     hashdiff (1.0.1)
     http (4.4.1)
@@ -586,6 +589,10 @@ GEM
     orm_adapter (0.5.0)
     parallel (1.20.1)
     pg (1.2.3)
+    pg_query (2.0.3)
+      google-protobuf (~> 3.15.5)
+    pghero (2.8.1)
+      activerecord (>= 5)
     pgslice (0.4.7)
       pg (>= 0.18.2)
       thor
@@ -746,6 +753,7 @@ DEPENDENCIES
   mix_admin!
   mix_backup!
   mix_certificate!
+  mix_check!
   mix_email!
   mix_file!
   mix_flash!
@@ -753,7 +761,6 @@ DEPENDENCIES
   mix_global!
   mix_job!
   mix_log!
-  mix_monitor!
   mix_page!
   mix_rescue!
   mix_rpc!

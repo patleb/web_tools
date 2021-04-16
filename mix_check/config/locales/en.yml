@@ -1,0 +1,54 @@
+en:
+  activerecord:
+    errors:
+      models:
+        checks/postgres/query:
+          attributes:
+            query:
+              denied: ANALYZE denied
+              params: can't explain queries with bind parameters
+  checks:
+    postgres:
+      replication_slot_html: >
+        Inactive replication slots can cause a lot of disk space to be consumed. For each, run:
+        <pre><code>SELECT pg_drop_replication_slot('slot_name');</code></pre>
+      query_long_html: >
+        We recommend setting a statement timeout on all non-superusers with:
+        <pre><code>ALTER ROLE &lt;user&gt; SET statement_timeout TO '60s';</code></pre>
+      query_slow: >
+        Slow Queries. Slow queries take 20 ms or more on average and have been called at least 100 times.
+      connection_html: >
+        High Number of Connections.
+        <a href="http://www.craigkerstiens.com/2014/05/22/on-connection-pooling/" target="_blank" rel="noopener">Use connection pooling</a>
+        for better performance.
+        <a href="https://wiki.postgresql.org/wiki/PgBouncer" target="_blank" rel="noopener">PgBouncer</a> is a solid option.
+      connection_idle: >
+        High Number of Connections Idle in Transaction. Avoid opening transactions and doing work outside the database.
+      transaction_html: >
+        Vacuuming Needed. The database <strong>will shutdown</strong> when there are fewer than 1,000,000 transactions left.
+        <a href="https://www.postgresql.org/docs/current/static/routine-vacuuming.html#VACUUM-FOR-WRAPAROUND" target="_blank" rel="noopener">Read more</a>.
+        Try <a href="https://blog.2ndquadrant.com/autovacuum-tuning-basics/" target="_blank" rel="noopener">tuning autovacuum</a> -
+        specifically autovacuum_vacuum_cost_limit. If that doesn’t work, for each table, run:
+        <pre><code>VACUUM FREEZE VERBOSE table;</code></pre>
+      sequence: >
+        Columns Near Overflow. Consider changing columns to bigint to support a larger range of values.
+      cache_html: &cache_html >
+        Low Cache Hit Rate.
+        The cache hit rate <a href="https://devcenter.heroku.com/articles/understanding-postgres-data-caching" target="_blank" rel="noopener">should be above 99%</a>
+        in most cases.  You can often increase this by adding more memory.
+      cache_index_html: *cache_html
+      cache_table_html: *cache_html
+      constraint_html: >
+        Invalid Constraints. These constraints are marked as <code>NOT VALID</code>. You should validate them.
+        <pre><code>ALTER TABLE "schema_name.table_name" VALIDATE CONSTRAINT "constraint_name";</code></pre>
+      index_invalid_html: >
+        Invalid Indexes. These indexes exist, but can’t be used. You should recreate them.
+        <pre><code>DROP INDEX CONCURRENTLY "schema_name.index_name"; CREATE INDEX CONCURRENTLY "schema_name.index_name" ON ... USING ...;</code></pre>
+      index_duplicate: >
+        Duplicate Indexes. These indexes exist, but aren’t needed. Remove them with a migration for faster writes.
+      index_unused: >
+        Unused Indexes. Unused indexes cause unnecessary overhead. Remove them with a migration for faster writes.
+      index_bloat_html: >
+        Indexes can become <a href="https://www.compose.com/articles/postgresql-bloat-origins-monitoring-and-managing/" target="_blank" rel="noopener">bloated over time</a>.
+        Recreate them to remove bloat. For each index, run:
+        <pre><code>CREATE INDEX CONCURRENTLY new_index ...; ANALYZE table; DROP INDEX CONCURRENTLY index; ANALYZE table; ALTER INDEX new_index RENAME TO index;</code></pre>
