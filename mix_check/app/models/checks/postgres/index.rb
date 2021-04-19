@@ -14,17 +14,16 @@ module Checks
       attribute :total_bytes, :integer
 
       def self.list
-        duplicate_indexes = db.duplicate_indexes(indexes: Database.indexes)
-        unused_indexes = db.unused_indexes(max_scans: 0)
-        bloated_indexes = db.index_bloat
+        duplicate_indexes = db.duplicate_indexes(indexes: Database.indexes).each_with_object({}) do |row, memo|
+          memo[row[:unneeded_index][:name]] = true
+          memo[row[:covering_index][:name]] = true
+        end
+        unused_indexes = db.unused_indexes(max_scans: 0).map{ |row| [row[:index], true] }.to_h
+        bloated_indexes = db.index_bloat.map{ |row| [row.delete(:index), row] }.to_h
         Database.indexes.map do |row|
           id = row[:name]
           invalid = !row[:valid] && !row[:creating]
-          duplicate = duplicate_indexes.any? do |unneeded_index:, covering_index:|
-            unneeded_index[:name] == id || covering_index[:name] == id
-          end
-          unused = unused_indexes.any?{ |unused_index| unused_index[:index] == id }
-          bloated = bloated_indexes.find{ |bloated_index| bloated_index[:index] == id }
+          duplicate, unused, bloated = duplicate_indexes[id], unused_indexes[id], bloated_indexes[id]
           bloat_bytes, total_bytes = bloated.values_at(:bloat_bytes, :index_bytes) if bloated
           {
             id: id, valid: !invalid, distinct: !duplicate, used: !unused, compact: !bloated,
