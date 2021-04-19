@@ -5,26 +5,26 @@ module Checks
       attribute :uptime, :float
       attribute :wal_size, :integer
       attribute :wal_growth, :integer
-      attribute :safe, :boolean
-      attribute :valid, :boolean
-      attribute :cache_table, :float
-      attribute :cache_index, :float
+      attribute :buffers, :boolean
+      attribute :checksum, :boolean
+      attribute :table_cache, :float
+      attribute :index_cache, :float
 
       def self.list
         [{
           id: db_name, size: total_size.to_bytes, uptime: uptime, wal_size: wal_size, wal_growth: wal_growth,
-          safe: !written_too_many_buffers?, valid: !checksum_failed?,
-          cache_table: ((db.table_hit_rate || 0) * 100.0).to_f.ceil(2),
-          cache_index: ((db.index_hit_rate || 0) * 100.0).to_f.ceil(2),
+          buffers: !written_too_many_buffers?, checksum: !checksum_failed?,
+          table_cache: ((db.table_hit_rate || 0) * 100.0).to_f.ceil(2),
+          index_cache: ((db.index_hit_rate || 0) * 100.0).to_f.ceil(2),
         }]
       end
 
       def self.issues
-        { cache_index: first.bad_hit_rate?(:index) }
+        { index_cache: first.bad_hit_rate?(:index) }
       end
 
       def self.warnings
-        { cache_table: first.bad_hit_rate?(:table) }
+        { table_cache: first.bad_hit_rate?(:table) }
       end
 
       def self.db_name
@@ -66,6 +66,7 @@ module Checks
 
       def self.reset_stat_bgwriter
         ar_connection.exec_query("SELECT pg_stat_reset_shared('bgwriter')::TEXT")
+        true
       end
 
       # reset_stat_database once resolved
@@ -79,10 +80,11 @@ module Checks
 
       def self.reset_stat_database
         ar_connection.exec_query("SELECT pg_stat_reset()::TEXT")
+        true
       end
 
       def bad_hit_rate?(type)
-        send("cache_#{type}") < self.class.db.cache_hit_rate_threshold.to_f
+        send("#{type}_cache") < self.class.db.cache_hit_rate_threshold.to_f
       end
     end
   end

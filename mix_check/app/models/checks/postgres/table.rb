@@ -13,11 +13,13 @@ module Checks
       attribute       :weekly_bytes, :integer
 
       def self.list
-        tables = db.maintenance_info.map! do |row|
+        tables = db.maintenance_info.select_map do |row|
+          next unless public? row, :schema
           row.tap do |item|
             item[:last_vacuum] = [item.delete(:last_autovacuum), item[:last_vacuum]].compact.max
             item[:last_analyze] = [item.delete(:last_autoanalyze), item[:last_analyze]].compact.max
-            item[:vacuum_fraction] = item.delete(:dead_rows).to_f / item.delete(:live_rows)
+            vacuum_fraction = item.delete(:dead_rows).to_f / item.delete(:live_rows)
+            item[:vacuum_fraction] = vacuum_fraction.nan? ? 0.0 : vacuum_fraction
           end
         end
         tables_stats = db.table_stats(table: tables.map(&:[].with(:table)))
@@ -34,7 +36,7 @@ module Checks
           next unless public? row, :schemaname
           next unless row[:type] == 'table'
           next unless row[:bloat] >= 10.0
-          next unless (bloat_bytes = row[:waste].to_bytes).bytes_to_mb > 100.0
+          next unless (bloat_bytes = row[:waste].to_bytes).bytes_to_mb > 50.0
           memo[row[:object_name]] = { bloat_bytes: bloat_bytes }
         end
         tables.zip(tables_stats, daily_growth || [], weekly_growth || []).map do |(table, stats, daily, weekly)|

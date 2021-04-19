@@ -6,8 +6,7 @@ module MixCheck
   class Engine < ::Rails::Engine
     config.before_configuration do
       ENV["PGHERO_CONFIG_PATH"] = root.join('config/pghero.yml').to_s
-      require 'pghero'
-      require 'mix_check/pghero/methods/space/with_full_size'
+      require 'mix_check/pghero'
     end
 
     config.before_initialize do

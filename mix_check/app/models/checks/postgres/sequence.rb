@@ -3,14 +3,14 @@ module Checks
     class Sequence < Base
       attribute :table
       attribute :column
-      attribute :max_value, :integer
       attribute :last_value, :integer
+      attribute :max_value, :integer
 
       def self.list
         db.sequences.select_map do |row|
           next unless public?(row, :table_schema)
           next unless row[:readable]
-          { id: row[:sequence], **row.slice(:table, :column, :max_value, :last_value) }
+          { id: row[:sequence], **row.slice(:table, :column, :last_value, :max_value) }
         end
       end
 
