@@ -1,7 +1,6 @@
 module Checks
   module Postgres
     class Index < Base
-      attribute :schema
       attribute :table
       attribute :columns, :array
       attribute :using
@@ -15,11 +14,10 @@ module Checks
       attribute :total_bytes, :integer
 
       def self.list
-        indexes = database_indexes
-        duplicate_indexes = database.duplicate_indexes(indexes: indexes)
-        unused_indexes = database.unused_indexes(max_scans: 0)
-        bloated_indexes = database.index_bloat
-        indexes.map do |row|
+        duplicate_indexes = db.duplicate_indexes(indexes: Database.indexes)
+        unused_indexes = db.unused_indexes(max_scans: 0)
+        bloated_indexes = db.index_bloat
+        Database.indexes.map do |row|
           id = row[:name]
           invalid = !row[:valid] && !row[:creating]
           duplicate = duplicate_indexes.any? do |unneeded_index:, covering_index:|
@@ -31,7 +29,7 @@ module Checks
           {
             id: id, valid: !invalid, distinct: !duplicate, used: !unused, compact: !bloated,
             bloat_bytes: bloat_bytes, total_bytes: total_bytes,
-            **row.slice(:schema, :table, :columns, :using, :unique, :primary)
+            **row.slice(:table, :columns, :using, :unique, :primary)
           }
         end
       end

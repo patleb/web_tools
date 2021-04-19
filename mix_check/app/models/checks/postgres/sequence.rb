@@ -1,15 +1,16 @@
 module Checks
   module Postgres
     class Sequence < Base
-      attribute :schema
       attribute :table
       attribute :column
       attribute :max_value, :integer
       attribute :last_value, :integer
 
       def self.list
-          database.sequences.select{ |s| s[:readable] }.map do |row|
-          { id: row[:sequence], schema: row[:table_schema], **row.slice(:table, :column, :max_value, :last_value) }
+        db.sequences.select_map do |row|
+          next unless public?(row, :table_schema)
+          next unless row[:readable]
+          { id: row[:sequence], **row.slice(:table, :column, :max_value, :last_value) }
         end
       end
 

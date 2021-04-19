@@ -4,10 +4,10 @@ module Checks
       attribute :value
 
       def self.list
-        { version: database.server_version }.merge!(
-          database.settings,
-          database.vacuum_settings,
-          database.autovacuum_settings
+        { version: db.server_version }.merge!(
+          db.settings,
+          db.vacuum_settings,
+          db.autovacuum_settings
         ).map do |(name, value)|
           { id: name.to_s, value: value }
         end

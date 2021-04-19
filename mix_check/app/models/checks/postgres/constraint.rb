@@ -1,14 +1,13 @@
 module Checks
   module Postgres
     class Constraint < Base
-      attribute :schema
       attribute :table
-      attribute :referenced_schema
       attribute :referenced_table
 
       def self.list
-        database.invalid_constraints.map do |row|
-          { id: row.delete(:name), **row }
+        db.invalid_constraints.select_map do |row|
+          next unless public? row, :schema, :referenced_schema
+          { id: row[:name], **row.slice(:table, :referenced_table) }
         end
       end
 

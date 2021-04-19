@@ -4,7 +4,7 @@ module Checks
       attribute :active, :boolean
 
       def self.list
-        database.replication_slots.map do |row|
+        db.replication_slots.map do |row|
           { id: row[:slot_name], active: row[:active] }
         end
       end

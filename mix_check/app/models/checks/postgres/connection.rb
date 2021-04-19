@@ -6,7 +6,7 @@ module Checks
       attribute :total, :integer
 
       def self.list
-        database.connections.group_by{ |c| c.slice(:state, :source, :user, :ip, :database) }.map do |k, v|
+        db.connections.group_by{ |c| c.slice(:state, :source, :user, :ip, :database) }.map do |k, v|
           id = {
             "[#{k[:state]}]"   => k[:state],
             "#{k[:source]}://" => k[:source],
@@ -19,7 +19,7 @@ module Checks
       end
 
       def self.issues
-        { connection: total >= database.total_connections_threshold, connection_idle: idle >= 100 }
+        { connection: total >= db.total_connections_threshold, connection_idle: idle >= 100 }
       end
 
       def self.stats
@@ -36,7 +36,7 @@ module Checks
 
       # NOTE might need to restart passenger and job:watch
       def self.kill_all
-        database.kill_all
+        db.kill_all
       end
 
       def idle?

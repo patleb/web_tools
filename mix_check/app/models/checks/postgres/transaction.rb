@@ -1,13 +1,13 @@
 module Checks
   module Postgres
     class Transaction < Base
-      attribute       :schema
       alias_attribute :table, :id
       attribute       :left, :integer
 
       def self.list
-        database.transaction_id_danger(threshold: 1_500_000_000).each do |row|
-          { id: row[:table], schema: row[:schema], left: row[:transactions_left] }
+        db.transaction_id_danger(threshold: 1_500_000_000).select_map do |row|
+          next unless public? row, :schema
+          { id: row[:table], left: row[:transactions_left] }
         end
       end
 

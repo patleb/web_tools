@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'pghero'
   s.add_dependency 'pg_query'
+  s.add_dependency 'ruby-pg-extras'
 end

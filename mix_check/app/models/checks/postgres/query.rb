@@ -29,11 +29,11 @@ module Checks
 
       def self.list
         if ::Setting[:pgstats_enabled]
-          slow_queries = database.query_stats(
+          slow_queries = db.query_stats(
             historical: true,
             start_at: 24.hours.ago,
-            min_calls: database.slow_query_calls.to_i,
-            min_average_time: database.slow_query_ms.to_f
+            min_calls: db.slow_query_calls.to_i,
+            min_average_time: db.slow_query_ms.to_f
           ).map do |row|
             {
               id: row[:query_hash], slow: true, duration_ms: row[:average_time],
@@ -41,10 +41,10 @@ module Checks
             }
           end
         end
-        long_queries = database.running_queries.select_map do |row|
+        long_queries = db.running_queries.select_map do |row|
           next unless row[:state]
           walsender, autovacuum = row[:backend_type] == WALSENDER, row[:query].starts_with?(AUTOVACUUM)
-          long = !walsender && !autovacuum && (row[:duration_ms] / 1000.0).to_i > database.long_running_query_sec
+          long = !walsender && !autovacuum && (row[:duration_ms] / 1000.0).to_i > db.long_running_query_sec
           {
             id: row.delete(:pid), walsender: walsender, autovacuum: autovacuum, long: long,
             **row.slice(:user, :source, :state, :waiting, :query, :duration_ms, :started_at)
@@ -82,18 +82,18 @@ module Checks
 
       def self.vacuum_progress
         m_access(:vacuum_progress) do
-          database.vacuum_progress.index_by{ |q| q[:pid] }
+          db.vacuum_progress.index_by{ |q| q[:pid] }
         end
       end
 
       def self.suggested_indexes
         slow_queries = all.select_map{ |item| item.query if item.slow? }
-        suggested_indexes_by_query = database.suggested_indexes_by_query(queries: slow_queries, indexes: database_indexes)
-        database.suggested_indexes(suggested_indexes_by_query: suggested_indexes_by_query, indexes: database_indexes)
+        suggested_indexes_by_query = db.suggested_indexes_by_query(queries: slow_queries, indexes: Database.indexes)
+        db.suggested_indexes(suggested_indexes_by_query: suggested_indexes_by_query, indexes: Database.indexes)
       end
 
       def explain
-        if walsender? || autovacuum? || self.class.database.filter_data
+        if walsender? || autovacuum? || self.class.db.filter_data
           errors.add :query, :denied
           return
         end
@@ -105,7 +105,7 @@ module Checks
           errors.add :query, :denied
           return
         end
-        self.explanation = self.class.database.explain("#{prefix}#{query}")
+        self.explanation = self.class.db.explain("#{prefix}#{query}")
       rescue ActiveRecord::StatementInvalid => e
         if e.message.include? BIND_ERROR
           errors.add :query, :params
@@ -115,7 +115,7 @@ module Checks
       end
 
       def kill
-        self.class.database.kill(id) unless slow?
+        self.class.db.kill(id) unless slow?
       end
       alias_method :destroy, :kill
 
