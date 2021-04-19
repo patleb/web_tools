@@ -13,6 +13,16 @@ class String
   MD5_HEX = /[0-9a-f]{32}/i.freeze
   DECIMAL = /[-+]?(\d+(\.\d+)*(e[-+]?\d+)?|infinity)/i.freeze
   UUID = /[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}/i.freeze
+  BYTES = {
+    'BYTE' => 1, 'BYTES' => 1, 'KB' => 1024, 'MB' => 1024**2, 'GB' => 1024**3, 'TB' => 1024**4, 'PB' => 1024**5,
+    'OCTET' => 1, 'OCTETS' => 1, 'KO' => 1024, 'MO' => 1024**2, 'GO' => 1024**3, 'TO' => 1024**4, 'PO' => 1024**5,
+  }
+
+  def to_bytes
+    value, units = upcase.split
+    value = value.tr(',', '.') if BYTES.has_key?(units) && units.include?('O')
+    (value.cast * BYTES[units]).to_i
+  end
 
   def to_args
     args = gsub(NIL_VALUE, NULL_VALUE).gsub(NIL_VALUE, NULL_VALUE)
