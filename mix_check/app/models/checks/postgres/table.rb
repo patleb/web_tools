@@ -2,6 +2,7 @@ module Checks
   module Postgres
     class Table < Base
       alias_attribute :table, :id
+      attribute       :index_usage, :float
       attribute       :last_vacuum, :datetime
       attribute       :last_analyze, :datetime
       attribute       :vacuum_fraction, :float
@@ -39,11 +40,17 @@ module Checks
           next unless (bloat_bytes = row[:waste].to_bytes).bytes_to_mb > 50.0
           memo[row[:object_name]] = { bloat_bytes: bloat_bytes }
         end
+        missing_indexes = db.missing_indexes.each_with_object({}) do |row, memo|
+          next unless public? row, :schema
+          percent = row[:percent_of_times_index_used]
+          memo[row[:table]] = percent == 'Insufficient data' ? nil : percent.to_f.ceil(2)
+        end
         tables.zip(tables_stats, daily_growth || [], weekly_growth || []).map do |(table, stats, daily, weekly)|
           id, table = table[:table], table.merge(stats, daily || {}, weekly || {})
           bloat_bytes = bloated_tables[id]
           {
-            id: id, compact: bloat_bytes.nil?, bloat_bytes: bloat_bytes, total_bytes: table[:size_bytes],
+            id: id, index_usage: missing_indexes[id],
+            compact: bloat_bytes.nil?, bloat_bytes: bloat_bytes, total_bytes: table[:size_bytes],
             **table.slice(:last_vacuum, :last_analyze, :vacuum_fraction, :estimated_rows, :daily_bytes, :weekly_bytes)
           }
         end
