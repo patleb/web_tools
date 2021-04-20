@@ -16,7 +16,6 @@ module MixCheck
 
     initializer 'mix_check.append_migrations' do |app|
       append_migrations(app)
-      append_migrations(app, scope: 'pgstats') if Setting[:pgstats_enabled]
     end
   end
 end
