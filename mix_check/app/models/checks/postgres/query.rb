@@ -21,6 +21,9 @@ module Checks
       attribute :autovacuum, :boolean
       attribute :long, :boolean
       attribute :slow, :boolean
+      attribute :blocking, :boolean
+      attribute :blocked, :boolean
+      attribute :lock_mode
       attribute :analyze, :boolean
       attribute :visualize, :boolean
       attribute :explanation
@@ -41,6 +44,10 @@ module Checks
             }
           end
         end
+        blocked_queries, blocking_queries = db.blocked_queries.map.each_with_object([{}, {}]) do |row, memo|
+          memo[0][row[:blocked_pid]] = row[:blocked_mode]
+          memo[1][row[:blocking_pid]] = row[:blocking_mode]
+        end
         long_queries = db.running_queries.select_map do |row|
           next unless row[:state]
           walsender, autovacuum = row[:backend_type] == WALSENDER, row[:query].starts_with?(AUTOVACUUM)
@@ -50,7 +57,14 @@ module Checks
             **row.slice(:user, :source, :state, :waiting, :query, :duration_ms, :started_at)
           }
         end
-        (slow_queries || []).concat(long_queries)
+        (slow_queries || []).concat(long_queries).map! do |row|
+          pid = row[:id]
+          case
+          when (lock_mode = blocked_queries[pid])  then row.merge! blocked: true, lock_mode: lock_mode
+          when (lock_mode = blocking_queries[pid]) then row.merge! blocking: true, lock_mode: lock_mode
+          else row
+          end
+        end
       end
 
       def self.issues
