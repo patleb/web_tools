@@ -2,15 +2,15 @@ module Checks
   module Postgres
     class Table < Base
       alias_attribute :table, :id
-      attribute       :compact, :boolean
-      attribute       :bloat_bytes, :integer
       attribute       :last_vacuum, :datetime
       attribute       :last_analyze, :datetime
       attribute       :vacuum_fraction, :float
       attribute       :estimated_rows, :integer
-      attribute       :size_bytes, :integer
       attribute       :daily_bytes, :integer
       attribute       :weekly_bytes, :integer
+      attribute       :compact, :boolean
+      attribute       :bloat_bytes, :integer
+      attribute       :total_bytes, :integer
 
       def self.list
         tables = db.maintenance_info.select_map do |row|
@@ -43,14 +43,14 @@ module Checks
           id, table = table[:table], table.merge(stats, daily || {}, weekly || {})
           bloat_bytes = bloated_tables[id]
           {
-            id: id, compact: bloat_bytes.nil?, bloat_bytes: bloat_bytes,
-            **table.slice(:last_vacuum, :last_analyze, :vacuum_fraction, :estimated_rows, :size_bytes, :daily_bytes, :weekly_bytes)
+            id: id, compact: bloat_bytes.nil?, bloat_bytes: bloat_bytes, total_bytes: table[:size_bytes],
+            **table.slice(:last_vacuum, :last_analyze, :vacuum_fraction, :estimated_rows, :daily_bytes, :weekly_bytes)
           }
         end
       end
 
       def self.stats
-        { table: all.map{ |item| [item.id, item.slice(:size_bytes, :daily_bytes, :weekly_bytes)] }.to_h }
+        { table: all.map{ |item| [item.id, item.slice(:total_bytes, :daily_bytes, :weekly_bytes)] }.to_h }
       end
 
       def bloat?
