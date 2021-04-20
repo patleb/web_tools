@@ -25,6 +25,45 @@ module Checks
         db.send(:select_all, sql, **options)
       end
 
+      ### STATEMENTS (38)
+      # (ruby-pg-extras) :all_locks
+      # (pgmonitor)      :archive_command_status
+      # (ruby-pg-extras) :bloat
+      # (ruby-pg-extras) :blocking
+      # (ruby-pg-extras) :cache_hit
+      # (pgmonitor)      :connection_stats
+      # (pgmonitor)      :data_checksum_failure
+      # (pgmonitor)      :database_locks
+      # (pgmonitor)      :database_size
+      # (ruby-pg-extras) :db_settings
+      # (ruby-pg-extras) :extensions
+      # (ruby-pg-extras) :index_cache_hit
+      # (ruby-pg-extras) :index_size
+      # (ruby-pg-extras) :index_usage
+      # (pgmonitor)      :is_in_recovery
+      # (ruby-pg-extras) :kill_all
+      # (ruby-pg-extras) :locks
+      # (ruby-pg-extras) :mandelbrot
+      # (pgmonitor)      :postgresql_version
+      # (pgmonitor)      :postmaster_runtime (deprecated)
+      # (pgmonitor)      :postmaster_uptime
+      # (ruby-pg-extras) :records_rank
+      # (pgmonitor)      :replication_lag
+      # (pgmonitor)      :replication_lag_size
+      # (pgmonitor)      :replication_slots
+      # (ruby-pg-extras) :seq_scans
+      # (pgmonitor)      :settings_gauge
+      # (pgmonitor)      :settings_pending_restart
+      # (pgmonitor)      :stat_bgwriter
+      # (pgmonitor)      :stat_database
+      # (ruby-pg-extras) :table_cache_hit
+      # (ruby-pg-extras) :table_indexes_size
+      # (ruby-pg-extras) :table_size
+      # (ruby-pg-extras) :total_index_size
+      # (ruby-pg-extras) :total_table_size
+      # (pgmonitor)      :transaction_wraparound
+      # (ruby-pg-extras) :vacuum_stats
+      # (pgmonitor)      :wal_activity
       def self.statements
         @@statements ||= begin
           pgmonitor_path = MixCheck::Engine.root.join('vendor/pgmonitor/exporter/postgres')
