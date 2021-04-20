@@ -4,6 +4,7 @@ cat >> "$(sun.pg_config_file)" << EOF
 logging_collector = on
 log_directory = '/var/log/postgresql/postgresql-$__POSTGRES__-main'
 log_filename = 'postgresql-%W.log'
+log_file_mode = 0644
 log_truncate_on_rotation = on
 log_rotation_size = 0
 log_rotation_age = 7d
