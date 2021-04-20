@@ -3,6 +3,7 @@
   user/deployer
   db/postgres__POSTGRES__
   db/postgres__POSTGRES__/logrotate
+  #{'db/postgres__POSTGRES__/pg_repack' if sun.pgrepack_enabled}
   nginx/passenger
   nginx/htpasswd
   nginx/logrotate
@@ -17,7 +18,6 @@
   #{'db/postgres__POSTGRES__/postgis__POSTGIS__' if sun.postgis_enabled}
   #{'db/postgres__POSTGRES__/timescaledb' if sun.timescaledb_enabled}
   #{'db/postgres__POSTGRES__/tune' unless sun.timescaledb_enabled}
-  #{'db/postgres__POSTGRES__/pg_repack' if sun.pgrepack_enabled}
   utils/all
   lang/ruby/app__RBENV_RUBY__
 )) do |name, id| -%>
