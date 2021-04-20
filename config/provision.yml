@@ -6,8 +6,8 @@ debug: false
 reboot: false # TODO implement as cli flag
 
 shared:
-  postgres: 11
-  postgis: 2.5
+  postgres: 13
+  postgis: 3
 
 system:
   append_recipes:
