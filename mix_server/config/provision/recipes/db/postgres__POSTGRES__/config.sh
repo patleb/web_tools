@@ -25,7 +25,7 @@ PG_CONFIG_FILE=$(sun.pg_config_file)
   __PG_<%= config.upcase %>__=${__PG_<%= config.upcase %>__:-nil}
 
   if [[ "$__PG_<%= config.upcase %>__" != 'nil' ]]; then
-    <%= Sh.delete_lines! '$PG_CONFIG_FILE', '<%= config %> =' %>
+    <%= Sh.delete_lines! '$PG_CONFIG_FILE', "#{config} =" %>
     echo "<%= config %> = $__PG_<%= config.upcase %>__" >> "$PG_CONFIG_FILE"
   fi
 <% end -%>
