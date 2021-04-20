@@ -20,6 +20,7 @@ module Checks
         end
         unused_indexes = db.unused_indexes(max_scans: 0).map{ |row| [row[:index], true] }.to_h
         bloated_indexes = db.index_bloat.map{ |row| [row.delete(:index), row] }.to_h
+        size_of_indexes = exec_statement(:index_size).map(&:values_at.with(:name, :size)).to_h
         Database.indexes.map do |row|
           id = row[:name]
           invalid = !row[:valid] && !row[:creating]
@@ -27,7 +28,7 @@ module Checks
           bloat_bytes, total_bytes = bloated.values_at(:bloat_bytes, :index_bytes) if bloated
           {
             id: id, valid: !invalid, distinct: !duplicate, used: !unused, compact: !bloated,
-            bloat_bytes: bloat_bytes, total_bytes: total_bytes,
+            bloat_bytes: bloat_bytes, total_bytes: total_bytes || size_of_indexes[id].to_bytes,
             **row.slice(:table, :columns, :using, :unique, :primary)
           }
         end
