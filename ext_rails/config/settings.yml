@@ -9,6 +9,8 @@ shared:
   mail_from: noreply@notify.example.com
   mail_address: localhost
   mail_port: 1025
+  pgstats_enabled: true
+  pgrepack_enabled: true
   db_pg_dump_split_size: 2
 
 test:
