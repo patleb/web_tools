@@ -8,6 +8,14 @@ module VirtualRecord
       delegate :first, :last, :take, :count, :count_estimate, :size, to: :all
       delegate :exists?, :all?, :any?, :empty?, :none?, :one?, to: :all
       delegate :where, :order, :reorder, :reverse_order, to: :all
+
+      def scope(name, body)
+        raise ArgumentError, "The scope body needs to be callable." unless body.respond_to? :call
+        return unless name.match? /^[a-z_][a-z0-9_]*$/
+        singleton_class.define_method(name) do |*args|
+          body.call(*args)
+        end
+      end
     end
 
     def self.inherited(subclass)
