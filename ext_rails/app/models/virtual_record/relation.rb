@@ -58,7 +58,7 @@ module VirtualRecord
         self.class.new(select{ |item| item.public_send(column).public_send(operator, value) })
       else
         search = params.last.gsub(/(^%|%$)/, '').downcase
-        attributes = query.gsub(TABLE, '').gsub(/(ILIKE|=) \?/, '').tr('(")', '').split('OR').map(&:strip)
+        attributes = query.gsub(TABLE, '').gsub(/ (I?LIKE|=) \?/i, ' ').tr('(")', '').split('OR').map(&:strip)
         self.class.new(select{ |item| attributes.any?{ |attr| item.send(attr).to_s.downcase.include?(search) } })
       end
     end
