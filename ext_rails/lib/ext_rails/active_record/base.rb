@@ -75,9 +75,13 @@ ActiveRecord::Base.class_eval do
     self.time_zone_aware_attributes = old_value
   end
 
-  def self.with_setting(value)
+  def self.with_timeout(time_ms, &block)
+    with_setting('statement_timeout', time_ms, &block)
+  end
+
+  def self.with_setting(name, value)
     transaction do
-      connection.exec_query "SET LOCAL #{name} = '#{value}';"
+      connection.exec_query "SET LOCAL #{name} = #{connection.quote(value)};"
       yield
     end
   end
