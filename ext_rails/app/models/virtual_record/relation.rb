@@ -6,8 +6,6 @@ module VirtualRecord
     VALUE    = /'?([^']+)'?/.freeze
     COMPARE  = /^\s*#{TABLE}?#{COLUMN}\s*#{OPERATOR}\s*#{VALUE}\s*$/.freeze
 
-    class_attribute :to_types
-
     alias_method :count_estimate, :size
     alias_method :exists?, :any?
 
@@ -77,20 +75,8 @@ module VirtualRecord
       case value
       when Array
         value.map{ |item| cast_value(column, item) }
-      when nil
-        value
       else
-        to_type = (self.to_types ||= {})[column.to_sym] ||=
-          case first&.public_send(column)
-          when Integer        then :to_i
-          when BigDecimal     then :to_d
-          when Float          then :to_f
-          when Boolean        then :to_b
-          when DateTime, Time then :to_time
-          when Date           then :to_date
-          else                     :to_s
-          end
-        value.public_send(to_type)
+        klass.virtual_columns_hash[column.to_s].type_cast(value)
       end
     end
   end
