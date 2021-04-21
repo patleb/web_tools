@@ -5,8 +5,7 @@ module Checks
       attribute :referenced_table
 
       def self.list
-        db.invalid_constraints.select_map do |row|
-          next unless public? row, :schema, :referenced_schema
+        db.invalid_constraints.map do |row|
           { id: row[:name], **row.slice(:table, :referenced_table) }
         end
       end

@@ -2,20 +2,20 @@ module Checks
   module Postgres
     class Table < Base
       alias_attribute :table, :id
-      attribute       :index_usage, :float
       attribute       :last_vacuum, :datetime
       attribute       :last_analyze, :datetime
       attribute       :vacuum_fraction, :float
       attribute       :estimated_rows, :integer
       attribute       :daily_bytes, :integer
       attribute       :weekly_bytes, :integer
-      attribute       :compact, :boolean
+      attribute       :unused, :boolean
       attribute       :bloat_bytes, :integer
       attribute       :total_bytes, :integer
+      attribute       :cache_usage, :float
+      attribute       :index_usage, :float
 
       def self.list
-        tables = db.maintenance_info.select_map do |row|
-          next unless public? row, :schema
+        tables = db.maintenance_info.map do |row|
           row.tap do |item|
             item[:last_vacuum] = [item.delete(:last_autovacuum), item[:last_vacuum]].compact.max
             item[:last_analyze] = [item.delete(:last_autoanalyze), item[:last_analyze]].compact.max
@@ -41,16 +41,16 @@ module Checks
           memo[row[:object_name]] = { bloat_bytes: bloat_bytes }
         end
         missing_indexes = db.missing_indexes.each_with_object({}) do |row, memo|
-          next unless public? row, :schema
-          percent = row[:percent_of_times_index_used]
-          memo[row[:table]] = percent == 'Insufficient data' ? nil : percent.to_f.ceil(2)
+          next if (percent = row[:percent_of_times_index_used]) == 'Insufficient data'
+          memo[row[:table]] = percent.to_f.ceil(2)
         end
+        unused_tables = db.unused_tables.map{ |row| [row[:table], true] }.to_h
+        table_caching = db.table_caching.map{ |row| [row[:table], row[:hit_rate].to_f.ceil(2)] }.to_h
         tables.zip(tables_stats, daily_growth || [], weekly_growth || []).map do |(table, stats, daily, weekly)|
           id, table = table[:table], table.merge(stats, daily || {}, weekly || {})
-          bloat_bytes = bloated_tables[id]
           {
-            id: id, index_usage: missing_indexes[id],
-            compact: bloat_bytes.nil?, bloat_bytes: bloat_bytes, total_bytes: table[:size_bytes],
+            id: id, cache_usage: table_caching[id], index_usage: missing_indexes[id], unused: !!unused_tables[id],
+            bloat_bytes: bloated_tables[id], total_bytes: table[:size_bytes],
             **table.slice(:last_vacuum, :last_analyze, :vacuum_fraction, :estimated_rows, :daily_bytes, :weekly_bytes)
           }
         end
@@ -61,7 +61,7 @@ module Checks
       end
 
       def bloat?
-        !compact?
+        !!bloat_bytes
       end
     end
   end

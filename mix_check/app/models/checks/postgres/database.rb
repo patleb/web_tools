@@ -12,7 +12,7 @@ module Checks
 
       def self.list
         [{
-          id: db_name, size: total_size.to_bytes, uptime: uptime, wal_size: wal_size, wal_growth: wal_growth,
+          id: db_name, size: total_size, uptime: uptime, wal_size: wal_size, wal_growth: wal_growth,
           buffers: !written_too_many_buffers?, checksum: !checksum_failed?,
           table_cache: ((db.table_hit_rate || 0) * 100.0).to_f.ceil(2),
           index_cache: ((db.index_hit_rate || 0) * 100.0).to_f.ceil(2),
@@ -32,7 +32,7 @@ module Checks
       end
 
       def self.indexes
-        m_access(:indexes){ db.indexes.select{ |row| public? row, :schema } }
+        m_access(:indexes){ db.indexes }
       end
 
       def self.total_size

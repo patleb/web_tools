@@ -9,8 +9,8 @@ module Checks
         db.send(:connection_model).connection
       end
 
-      def self.public?(row, *schema_keys)
-        row.values_at(*schema_keys).all?{ |schema| schema == 'public' }
+      def self.public?(row, schema_key)
+        row[schema_key] == 'public'
       end
 
       def self.exec_statement(name, one: false)

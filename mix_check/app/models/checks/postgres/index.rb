@@ -6,12 +6,12 @@ module Checks
       attribute :using
       attribute :unique, :boolean
       attribute :primary, :boolean
-      attribute :valid, :boolean
-      attribute :distinct, :boolean
-      attribute :used, :boolean
-      attribute :compact, :boolean
+      attribute :invalid, :boolean
+      attribute :duplicate, :boolean
+      attribute :unused, :boolean
       attribute :bloat_bytes, :integer
       attribute :total_bytes, :integer
+      attribute :cache_usage, :float
 
       def self.list
         duplicate_indexes = db.duplicate_indexes(indexes: Database.indexes).each_with_object({}) do |row, memo|
@@ -19,16 +19,16 @@ module Checks
           memo[row[:covering_index][:name]] = true
         end
         unused_indexes = db.unused_indexes(max_scans: 0).map{ |row| [row[:index], true] }.to_h
-        bloated_indexes = db.index_bloat.map{ |row| [row.delete(:index), row] }.to_h
-        size_of_indexes = exec_statement(:index_size).map(&:values_at.with(:name, :size)).to_h
+        bloated_indexes = db.index_bloat.map(&:values_at.with(:index, :bloat_bytes)).to_h
+        relation_sizes = db.relation_sizes(:index).map(&:values_at.with(:relation, :size_bytes)).to_h
+        index_caching = db.index_caching.map{ |row| [row[:index], row[:hit_rate].to_f.ceil(2)] }.to_h
         Database.indexes.map do |row|
           id = row[:name]
           invalid = !row[:valid] && !row[:creating]
-          duplicate, unused, bloated = duplicate_indexes[id], unused_indexes[id], bloated_indexes[id]
-          bloat_bytes, total_bytes = bloated.values_at(:bloat_bytes, :index_bytes) if bloated
+          duplicate, unused, bloat_bytes = duplicate_indexes[id], unused_indexes[id], bloated_indexes[id]
           {
-            id: id, valid: !invalid, distinct: !duplicate, used: !unused, compact: !bloated,
-            bloat_bytes: bloat_bytes, total_bytes: total_bytes || size_of_indexes[id].to_bytes,
+            id: id, cache_usage: index_caching[id], invalid: invalid, duplicate: !!duplicate, unused: !!unused,
+            bloat_bytes: bloat_bytes, total_bytes: relation_sizes[id],
             **row.slice(:table, :columns, :using, :unique, :primary)
           }
         end
@@ -50,20 +50,8 @@ module Checks
         { index: all.select_map{ |item| [item.id, { size: item.total_bytes, bloat: item.bloat_bytes }] if item.bloat? }.to_h }
       end
 
-      def invalid?
-        !valid?
-      end
-
-      def duplicate?
-        !distinct?
-      end
-
-      def unused?
-        !used?
-      end
-
       def bloat?
-        !compact?
+        !!bloat_bytes
       end
     end
   end

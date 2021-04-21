@@ -4,6 +4,12 @@ class NilClass
   end
 end
 
+class Integer
+  def to_bytes
+    self
+  end
+end
+
 class String
   NIL_VALUE = /([(\[{,] *)(nil)( *[,\]})])/.freeze
   NULL_VALUE = '\1null\3'.freeze

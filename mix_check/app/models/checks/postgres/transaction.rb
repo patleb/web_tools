@@ -5,8 +5,7 @@ module Checks
       attribute       :left, :integer
 
       def self.list
-        db.transaction_id_danger(threshold: 1_500_000_000).select_map do |row|
-          next unless public? row, :schema
+        db.transaction_id_danger(threshold: 1_500_000_000).map do |row|
           { id: row[:table], left: row[:transactions_left] }
         end
       end

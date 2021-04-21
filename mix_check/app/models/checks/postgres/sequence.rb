@@ -8,7 +8,6 @@ module Checks
 
       def self.list
         db.sequences.select_map do |row|
-          next unless public?(row, :table_schema)
           next unless row[:readable]
           { id: row[:sequence], **row.slice(:table, :column, :last_value, :max_value) }
         end
