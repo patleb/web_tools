@@ -15,7 +15,7 @@ ActiveType::Object.class_eval do
       default = default.nil? ? nil : default.to_s
       attribute name, default: proc{ default }
       define_method "#{name}_for_database" do
-        self.class.send(name.to_s.pluralize)[default]
+        self.class.send(name.to_s.pluralize)[self[:role]]
       end
     end
   end

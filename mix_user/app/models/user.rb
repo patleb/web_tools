@@ -50,7 +50,7 @@ class User < MixUser.config.parent_model.constantize
   end
 
   def role_i
-    read_attribute_before_type_cast(:role)
+    read_attribute_before_type_cast(:role).to_i
   end
 
   protected
