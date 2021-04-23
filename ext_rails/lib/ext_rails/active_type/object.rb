@@ -3,20 +3,37 @@ ActiveType::Object.class_eval do
     def ar_attribute(name, *args)
       options = args.extract_options!
       type = args.first
+
       super(name, type, **options.dup)
+
       attr_readonly(name)
       type = :array if options.delete(:array)
       attribute(name, type, options)
     end
 
-    def attr_enum(default: nil, **definition)
-      enum(definition)
-      name, _values = definition.first
-      default = default.nil? ? nil : default.to_s
+    def enum(default: nil, **definition)
+      raise 'multiple definitions are not supported' if definition.size > 1
+      name, values = definition.first
+      raise 'only hash enum is supported' unless values.is_a? Hash
+      default = default.to_s if default.is_a? Symbol
+
+      super(definition)
+
       attribute name, default: proc{ default }
       define_method "#{name}_for_database" do
         self.class.send(name.to_s.pluralize)[self[:role]]
       end
+      values.each_key do |key|
+        singleton_class.define_method(key) do
+          key = key.to_s if key.is_a? Symbol
+          where(name => key)
+        end
+      end
     end
+  end
+
+  def write_virtual_attribute(name, value)
+    value = value.to_s if value.is_a? Symbol
+    super
   end
 end

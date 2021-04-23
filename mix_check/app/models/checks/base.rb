@@ -1,15 +1,5 @@
 module Checks
   class Base < VirtualRecord::Base
-    def self.issues
-      {}
-    end
-
-    def self.warnings
-      {}
-    end
-
-    def self.stats
-      {}
-    end
+    enum level: LogMessage.levels.slice(:info, :warn, :error), default: :info
   end
 end
