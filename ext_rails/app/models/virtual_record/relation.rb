@@ -57,12 +57,18 @@ module VirtualRecord
       else
         search = params.last.gsub(/(^%|%$)/, '').downcase
         attributes = query.gsub(TABLE, '').gsub(/ (I?LIKE|=) \?/i, ' ').tr('(")', '').split('OR').map(&:strip)
-        self.class.new(select{ |item| attributes.any?{ |attr| item.send(attr).to_s.downcase.include?(search) } })
+        self.class.new(select{ |item| attributes.any?{ |attr| item.public_send(attr).to_s.downcase.include?(search) } })
       end
     end
 
-    def method_missing(...)
-      self
+    def method_missing(name, *args, **options, &block)
+      if klass.respond_to? name
+        klass.use(self) do
+          klass.public_send(name, *args, **options, &block)
+        end
+      else
+        self
+      end
     end
 
     def respond_to_missing?(method, _include_private = false)

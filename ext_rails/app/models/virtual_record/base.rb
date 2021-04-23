@@ -67,6 +67,14 @@ module VirtualRecord
       self::Relation.new(list)
     end
 
+    def self.use(relation)
+      old_all = all
+      (Current.virtual_types ||= {})[name] = relation
+      yield
+    ensure
+      (Current.virtual_types ||= {})[name] = old_all
+    end
+
     def self.list
       raise NotImplementedError
     end
