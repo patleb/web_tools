@@ -6,7 +6,6 @@ ActiveType::Object.class_eval do
 
       super(name, type, **options.dup)
 
-      attr_readonly(name)
       type = :array if options.delete(:array)
       attribute(name, type, options)
     end
@@ -24,8 +23,8 @@ ActiveType::Object.class_eval do
         self.class.send(name.to_s.pluralize)[self[:role]]
       end
       values.each_key do |key|
+        key = key.to_s if key.is_a? Symbol
         singleton_class.define_method(key) do
-          key = key.to_s if key.is_a? Symbol
           where(name => key)
         end
       end
