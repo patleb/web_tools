@@ -73,10 +73,10 @@ module VirtualRecord
 
     def self.use(relation)
       old_all = all
-      (Current.virtual_types ||= {})[name] = relation
+      Current.virtual_types[name] = relation
       yield
     ensure
-      (Current.virtual_types ||= {})[name] = old_all
+      Current.virtual_types[name] = old_all if old_all
     end
 
     def self.list
