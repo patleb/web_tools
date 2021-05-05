@@ -1,5 +1,12 @@
 ActiveType::Object.class_eval do
   class << self
+    def virtual_association_names
+      virtual_columns_hash.select_map do |name, options|
+        next unless options.instance_variable_get(:@type_caster).instance_variable_get(:@type) == :object
+        name
+      end
+    end
+
     def ar_attribute(name, *args)
       options = args.extract_options!
       type = args.first
