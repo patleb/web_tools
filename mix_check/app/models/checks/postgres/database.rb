@@ -1,16 +1,17 @@
 module Checks
   module Postgres
     class Database < Base
-      attribute :size, :integer
-      attribute :uptime, :float
-      attribute :wal_size, :integer
-      attribute :wal_growth, :integer
-      attribute :write_heavy, :boolean
-      attribute :corrupted, :boolean
-      attribute :last_bgwriter_reset, :datetime
-      attribute :last_stats_reset, :datetime
-      attribute :table_cache, :float
-      attribute :index_cache, :float
+      alias_attribute :name, :id
+      attribute       :size, :integer
+      attribute       :uptime, :float
+      attribute       :wal_size, :integer
+      attribute       :wal_growth, :integer
+      attribute       :write_heavy, :boolean
+      attribute       :corrupted, :boolean
+      attribute       :last_bgwriter_reset, :datetime
+      attribute       :last_stats_reset, :datetime
+      attribute       :table_cache, :float
+      attribute       :index_cache, :float
 
       nests_many :connections,             default: proc { Connection.all }
       nests_many :indexes,                 default: proc { Index.all }
@@ -48,16 +49,6 @@ module Checks
         }]
       end
 
-      def self.log_lines
-        all.map do |row|
-          {
-            error: row.error?, warning: row.warning?,
-            connections: row.connections_total, queries: row.queries.duration_ms,
-            **row.slice(:id, :size, :wal_size, :write_heavy, :corrupted)
-          }
-        end
-      end
-
       def self.settings
         m_access(:settings) do
           { version: db.server_version }.merge!(
@@ -81,11 +72,11 @@ module Checks
       end
 
       def self.capture
-        last_query_at = PgHero::QueryStats.order(captured_at: :desc).pick(:captured_at)
+        last_query_at = PgHero::QueryStats.where(database: db_name).order(captured_at: :desc).pick(:captured_at)
         if last_query_at.nil? || last_query_at >= 5.minutes.ago
           PgHero.capture_query_stats
         end
-        last_space_at = PgHero::SpaceStats.order(captured_at: :desc).pick(:captured_at)
+        last_space_at = PgHero::SpaceStats.where(database: db_name).order(captured_at: :desc).pick(:captured_at)
         if last_space_at.nil? || last_space_at >= 1.day.ago
           PgHero.capture_space_stats
         end
