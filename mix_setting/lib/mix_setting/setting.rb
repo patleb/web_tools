@@ -53,7 +53,7 @@ class Setting
     all(true, **options)
   end
 
-  def self.all(force = false, env: rails_env, app: rails_app)
+  def self.all(force = false, env: rails_env, app: rails_app, freeze: true)
     if force
       current = instance_variables.reject{ |ivar| ivar.end_with?('_was') }
       current.each{ |ivar| instance_variable_set("#{ivar}_was", instance_variable_get(ivar)) }
@@ -77,7 +77,7 @@ class Setting
       resolve_keywords! settings
       cast_values! settings
       FREED_IVARS.each{ |ivar| remove_instance_variable(ivar) if instance_variable_defined? ivar }
-      IceNine.deep_freeze! settings
+      freeze ? IceNine.deep_freeze!(settings) : settings
     end
   end
 
