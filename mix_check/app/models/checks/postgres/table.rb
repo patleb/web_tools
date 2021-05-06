@@ -50,7 +50,7 @@ module Checks
         table_caching = db.table_caching.map{ |row| [row[:table], row[:hit_rate].to_f.ceil(2)] }.to_h
         tables.zip(tables_stats, daily_growth || [], weekly_growth || []).map do |(table, stats, daily, weekly)|
           id, table = table[:table], table.merge(stats, daily || {}, weekly || {})
-          unused, bloat_bytes, cache_hit = !!unused_tables[id], bloated_tables[id] || 0, table_caching[id]
+          unused, bloat_bytes, cache_hit = !!unused_tables[id], bloated_tables[id], table_caching[id]
           {
             id: id, unused: unused, bloat_bytes: bloat_bytes, total_bytes: table[:size_bytes],
             cache_hit: cache_hit, index_usage: index_usage[id],
@@ -60,7 +60,7 @@ module Checks
       end
 
       def self.bloat_bytes
-        sum(&:bloat_bytes)
+        sum{ |row| row.bloat_bytes || 0 }
       end
 
       def self.total_bytes
@@ -72,7 +72,7 @@ module Checks
       end
 
       def warning?
-        unused? || bloat?
+        unused? || bloat? || missing_indexes?
       end
 
       def bloat?
@@ -81,6 +81,10 @@ module Checks
 
       def bad_cache_hit_rate?
         cache_hit < db.cache_hit_rate_threshold
+      end
+
+      def missing_indexes?
+        estimated_rows >= 10000 && index_usage && index_usage < 95
       end
 
       def analyze

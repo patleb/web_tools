@@ -1,4 +1,12 @@
 namespace :check do
+  task :capture => :environment do
+    Checks::Postgres::Database.capture
+  end
+
+  task :cleanup => :environment do
+    Checks::Postgres::Database.cleanup
+  end
+
   task :suggested_indexes => :environment do
     indexes = Checks::Postgres::Query.suggested_indexes.map do |index|
       if index[:using] && index[:using] != "btree"

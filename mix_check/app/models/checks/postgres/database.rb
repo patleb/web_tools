@@ -75,6 +75,22 @@ module Checks
         db.reset_stats
       end
 
+      def self.capture
+        last_query_at = PgHero::QueryStats.order(captured_at: :desc).pick(:captured_at)
+        if last_query_at.nil? || last_query_at >= 5.minutes.ago
+          PgHero.capture_query_stats
+        end
+        last_space_at = PgHero::SpaceStats.order(captured_at: :desc).pick(:captured_at)
+        if last_space_at.nil? || last_space_at >= 1.day.ago
+          PgHero.capture_space_stats
+        end
+      end
+
+      def self.cleanup
+        PgHero.clean_query_stats
+        PgHero.clean_space_stats
+      end
+
       def error?
         !valid?
       end

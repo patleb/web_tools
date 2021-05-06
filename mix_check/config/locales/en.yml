@@ -19,7 +19,7 @@ en:
         We recommend setting a statement timeout on all non-superusers with:
         <pre><code>ALTER ROLE &lt;user&gt; SET statement_timeout TO '60s';</code></pre>
       queries_slow: >
-        Slow Queries. Slow queries take 2000 ms or more on average and have been called at least 10 times.
+        Slow Queries. Slow queries take 2000 ms or more on average and have been called at least 2 times.
       connections_html: >
         High Number of Connections.
         <a href="http://www.craigkerstiens.com/2014/05/22/on-connection-pooling/" target="_blank" rel="noopener">Use connection pooling</a>

@@ -25,7 +25,7 @@ module Checks
         db_indexes.map do |row|
           id = row[:name]
           not_valid = !row[:valid] && !row[:creating]
-          duplicate, unused, bloat_bytes = duplicate_indexes[id], unused_indexes[id], bloated_indexes[id] || 0
+          duplicate, unused, bloat_bytes = duplicate_indexes[id], unused_indexes[id], bloated_indexes[id]
           cache_hit = index_caching[id]
           {
             id: id, not_valid: not_valid, duplicate: !!duplicate, unused: !!unused,
@@ -37,7 +37,7 @@ module Checks
       end
 
       def self.bloat_bytes
-        sum(&:bloat_bytes)
+        sum{ |row| row.bloat_bytes || 0 }
       end
 
       def self.total_bytes
