@@ -35,6 +35,7 @@ class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observabili
 
   def self.push(log, line)
     line[:created_at] ||= Time.current.utc
+    line[:pid] ||= Process.pid
     line[:log_id] = log_id = log.id
     line[:json_data]&.reject!{ |_, v| v.blank? }
     log_message = nil

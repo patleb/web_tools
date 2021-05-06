@@ -12,7 +12,7 @@ module LogLines
       end
       json_data = { error: exception.class.name, exception: exception.name, data: exception.data }
       message = { text: exception.backtrace_log, level: :error }
-      super(log, pid: Process.pid, message: message, json_data: json_data)
+      super(log, message: message, json_data: json_data)
     end
   end
 end
