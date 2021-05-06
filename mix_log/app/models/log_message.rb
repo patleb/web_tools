@@ -29,4 +29,8 @@ class LogMessage < LibMainRecord
       ORDER BY i
     SQL
   end
+
+  def self.last_updated_at(db_type, text_tiny:)
+    where(log: Log.db_log(db_type)).where('text_tiny LIKE ?', text_tiny).order(updated_at: :desc).pick(:updated_at)
+  end
 end

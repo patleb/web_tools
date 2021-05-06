@@ -49,6 +49,10 @@ module Checks
         }]
       end
 
+      def self.current
+        first
+      end
+
       def self.settings
         m_access(:settings) do
           { version: db.server_version }.merge!(
@@ -73,13 +77,19 @@ module Checks
 
       def self.capture
         last_query_at = PgHero::QueryStats.where(database: db_name).order(captured_at: :desc).pick(:captured_at)
-        if last_query_at.nil? || last_query_at >= 5.minutes.ago
+        if last_query_at.nil? || last_query_at < (5.minutes - 30.seconds).ago
           PgHero.capture_query_stats
         end
         last_space_at = PgHero::SpaceStats.where(database: db_name).order(captured_at: :desc).pick(:captured_at)
-        if last_space_at.nil? || last_space_at >= 1.day.ago
+        if last_space_at.nil? || last_space_at < (1.day - 30.seconds).ago
           PgHero.capture_space_stats
         end
+        last_updated_at = LogMessage.last_updated_at('LogLines::Database', text_tiny: "#{db_name}%")
+        if last_updated_at.nil? || last_updated_at < (Setting[:check_log_interval] - 30.seconds).ago
+          Log.database(current)
+        end
+      ensure
+        reset
       end
 
       def self.cleanup

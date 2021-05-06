@@ -45,7 +45,7 @@ module Checks
         if Setting[:pgstats_enabled]
           historical_queries = db.query_stats(
             historical: true,
-            start_at: Setting[:check_log_interval].ago,
+            start_at: (Setting[:check_log_interval] + 30.seconds).ago,
             min_calls: db.slow_query_calls.to_i,
             min_average_time: db.slow_query_ms.to_f
           ).select_map do |row|
