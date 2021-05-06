@@ -3,10 +3,6 @@ module Checks
     class Base < Checks::Base
       delegate :db, to: :class
 
-      def self.log?
-        db_host == '127.0.0.1'
-      end
-
       def self.db
         PgHero.primary_database
       end

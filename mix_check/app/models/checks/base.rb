@@ -1,13 +1,5 @@
 module Checks
   class Base < VirtualRecord::Base
-    def self.log?
-      true
-    end
-
-    def self.log_lines
-      raise NotImplementedError
-    end
-
     def self.validates(attribute, **options)
       return super unless options[:check]
       check_name = :"#{attribute}_check"
