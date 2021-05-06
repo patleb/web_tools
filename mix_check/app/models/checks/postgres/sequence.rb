@@ -13,12 +13,8 @@ module Checks
         end
       end
 
-      def self.issues
-        { sequence: any?(&:danger?) }
-      end
-
-      def self.stats
-        { sequence: all.select_map{ |item| [item.id, { left: item.left } ] if item.danger? }.to_h }
+      def error?
+        danger?
       end
 
       def danger?

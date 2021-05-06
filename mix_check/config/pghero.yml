@@ -13,22 +13,22 @@ databases:
   #   url: <%%= ENV["OTHER_DATABASE_URL"] %>
 
 # Minimum time for long running queries
-long_running_query_sec: <%= Setting[:pghero_long_running_query_sec] %> # 60
+long_running_query_sec: <%= Setting[:check_long_running_query_sec] %> # 60
 
 # Minimum average time for slow queries
-slow_query_ms: <%= Setting[:pghero_slow_query_ms] %> # 20
+slow_query_ms: <%= Setting[:check_slow_query_ms] %> # 20
 
 # Minimum calls for slow queries
-slow_query_calls: <%= Setting[:pghero_slow_query_calls] %> # 100
+slow_query_calls: <%= Setting[:check_slow_query_calls] %> # 100
 
 # Minimum connections for high connections warning
-total_connections_threshold: <%= Setting[:pghero_total_connections_threshold] %> # 500
+total_connections_threshold: <%= Setting[:check_total_connections_threshold] %> # 500
 
 # Statement timeout for explain
-explain_timeout_sec: <%= Setting[:pghero_explain_timeout_sec] %> # 10
+explain_timeout_sec: <%= Setting[:check_explain_timeout_sec] %> # 10
 
 # Time zone (defaults to app time zone)
-time_zone: <%= Setting[:pghero_time_zone] %> # "Pacific Time (US & Canada)"
+time_zone: <%= Setting[:check_time_zone] %> # "Pacific Time (US & Canada)"
 
 # Basic authentication
 # username: admin
@@ -43,4 +43,9 @@ time_zone: <%= Setting[:pghero_time_zone] %> # "Pacific Time (US & Canada)"
 # aws_region: us-east-1
 
 # Filter data from queries (experimental)
-# filter_data: true
+filter_data: <%= Setting[:check_filter_data] %> # true
+
+# Undocumented
+capture_query_stats: <%= Setting[:check_capture_query_stats] %> # true
+cache_hit_rate_threshold: <%= Setting[:check_cache_hit_rate_threshold] %> # 99
+index_bloat_bytes: <%= Setting[:check_index_bloat_bytes] %> # 104857600

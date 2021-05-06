@@ -19,12 +19,4 @@ class Check < VirtualRecord::Base
   def self.i18n_details(name, scope:)
     I18n.t("#{name}_html", scope: scope, default: I18n.t(name, scope: scope))
   end
-
-  def self.issues
-    where(type: 'issue')
-  end
-
-  def self.warnings
-    where(type: 'warning')
-  end
 end

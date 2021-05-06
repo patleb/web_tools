@@ -1,16 +1,42 @@
 module Checks
   module Postgres
     class Base < Checks::Base
+      delegate :db, to: :class
+
+      def self.log?
+        db_host == '127.0.0.1'
+      end
+
       def self.db
         PgHero.primary_database
+      end
+
+      def self.db_name
+        @@db_name ||= db.send(:connection_model).connection_db_config.configuration_hash[:database]
+      end
+
+      def self.db_user
+        @@db_user ||= db.send(:connection_model).connection_db_config.configuration_hash[:username]
+      end
+
+      def self.db_host
+        @@db_host ||= db.send(:connection_model).connection_db_config.configuration_hash[:host]
+      end
+
+      def self.db_indexes
+        m_access(:db_indexes){ db.indexes }
       end
 
       def self.ar_connection
         db.send(:connection_model).connection
       end
 
-      def self.public?(row, schema_key)
+      def self.public?(row, schema_key = :schema)
         row[schema_key] == 'public'
+      end
+
+      def self.owner?(row)
+        row[:user] == db_user
       end
 
       def self.exec_statement(name, one: false)

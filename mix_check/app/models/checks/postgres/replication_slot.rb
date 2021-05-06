@@ -1,24 +1,23 @@
 module Checks
   module Postgres
     class ReplicationSlot < Base
-      attribute :active, :boolean
+      attribute :inactive, :boolean
+
+      scope :inactive, -> { where(inactive: true) }
+      scope :active,   -> { where(inactive: false) }
 
       def self.list
         db.replication_slots.map do |row|
-          { id: row[:slot_name], active: row[:active] }
+          { id: row[:slot_name], inactive: !row[:active] }
         end
       end
 
-      def self.issues
-        { replication_slot: any?(&:inactive?) }
+      def error?
+        inactive?
       end
 
-      def self.inactive
-        where(active: false)
-      end
-
-      def inactive?
-        !active?
+      def active?
+        !inactive?
       end
     end
   end

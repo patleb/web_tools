@@ -1,6 +1,6 @@
 module Checks
   module Postgres
-    class Constraint < Base
+    class InvalidConstraint < Base
       attribute :table
       attribute :referenced_table
 
@@ -10,8 +10,8 @@ module Checks
         end
       end
 
-      def self.issues
-        { constraint: any? }
+      def error?
+        true
       end
     end
   end
