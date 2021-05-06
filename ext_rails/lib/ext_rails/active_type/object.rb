@@ -1,10 +1,14 @@
 ActiveType::Object.class_eval do
   class << self
-    def virtual_association_names
+    def nested_attribute_names
       virtual_columns_hash.select_map do |name, options|
         next unless options.instance_variable_get(:@type_caster).instance_variable_get(:@type) == :object
         name
       end
+    end
+
+    def attribute_names
+      virtual_columns_hash.keys
     end
 
     def ar_attribute(name, *args)

@@ -40,10 +40,6 @@ module VirtualRecord
       end
     end
 
-    def self.attribute_names
-      virtual_columns_hash.keys
-    end
-
     def self.encoding
       "UTF-8"
     end
