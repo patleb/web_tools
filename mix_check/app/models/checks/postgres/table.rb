@@ -5,6 +5,7 @@ module Checks
       attribute       :last_vacuum, :datetime
       attribute       :last_analyze, :datetime
       attribute       :vacuum_fraction, :float
+      attribute       :vacuum_threshold, :float
       attribute       :estimated_rows, :integer
       attribute       :daily_bytes, :integer
       attribute       :weekly_bytes, :integer
@@ -42,6 +43,10 @@ module Checks
           next unless (bloat_bytes = row[:waste].to_bytes) >= Setting[:check_table_bloat_bytes]
           memo[row[:object_name]] = { bloat_bytes: bloat_bytes }
         end
+        vacuum_thresholds = exec_statement(:vacuum_stats).each_with_object({}) do |row, memo|
+          next unless public? row
+          memo[row[:table]] = row[:autovacuum_threshold].to_f
+        end
         index_usage = db.index_usage.each_with_object({}) do |row, memo|
           next if (percent = row[:percent_of_times_index_used]) == 'Insufficient data'
           memo[row[:table]] = percent.to_f.ceil(2)
@@ -53,7 +58,7 @@ module Checks
           unused, bloat_bytes, cache_hit = !!unused_tables[id], bloated_tables[id], table_caching[id]
           {
             id: id, unused: unused, bloat_bytes: bloat_bytes, total_bytes: table[:size_bytes],
-            cache_hit: cache_hit, index_usage: index_usage[id],
+            cache_hit: cache_hit, index_usage: index_usage[id], vacuum_threshold: vacuum_thresholds[id],
             **table.slice(:last_vacuum, :last_analyze, :vacuum_fraction, :estimated_rows, :daily_bytes, :weekly_bytes)
           }
         end
