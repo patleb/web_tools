@@ -83,6 +83,10 @@ module VirtualRecord
       nil
     end
 
+    def self.reset
+      (Current.virtual_types ||= {})[name] = nil
+    end
+
     def self.loaded?
       (Current.virtual_types ||= {}).has_key? name
     end
