@@ -60,7 +60,12 @@ module Checks
 
       def self.settings
         m_access(:settings) do
-          { version: db.server_version }.merge!(db.settings, db.vacuum_settings, db.autovacuum_settings).symbolize_keys
+          { version: db.server_version }.merge!(
+            db.settings,
+            db.vacuum_settings,
+            db.autovacuum_settings,
+            db.send(:fetch_settings, %i(effective_io_concurrency random_page_cost))
+          ).symbolize_keys
         end
       end
 
