@@ -7,6 +7,8 @@ types:
   server_cluster_master_data: pathname
 
 shared:
+  postgres: 13
+  postgis: 3
   max_pool_size: 6
   deployer_name: deployer
   geoserver_nginx_upstream: $METHOD
