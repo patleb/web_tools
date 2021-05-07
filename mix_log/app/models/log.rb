@@ -1,5 +1,5 @@
 class Log < LibMainRecord
-  FS_TYPE = %r{(\w+)/(?:\w+\.)?(?:(\w+)\.log|(\w+log))$}
+  FS_TYPE = %r{(?:/log|/(\w+)|)/(?:\w+\.)?(?:(\w+)\.log|(\w+log))$}
 
   belongs_to :server
   has_many   :log_lines
@@ -24,7 +24,7 @@ class Log < LibMainRecord
   end
 
   def self.fs_type(path)
-    "LogLines::#{path.match(FS_TYPE).captures.except('log').uniq.join('_').camelize}"
+    "LogLines::#{path.match(FS_TYPE).captures.join('_').camelize}"
   end
 
   db_types.each do |db_type|
