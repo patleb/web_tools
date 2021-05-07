@@ -20,13 +20,12 @@ module Checks
         end
       end
 
-      def error?
+      def wraparound?
         !autovacuum?
       end
 
-      def warning?
-        autovacuum?
-      end
+      alias_method :wraparound_error?, :wraparound?
+      alias_method :autovacuum_warning?, :autovacuum?
     end
   end
 end

@@ -13,10 +13,6 @@ module Checks
         end
       end
 
-      def error?
-        danger?
-      end
-
       def danger?
         last_value && (last_value / max_value.to_f > 0.9)
       end
@@ -24,6 +20,8 @@ module Checks
       def left
         last_value && (max_value - last_value)
       end
+
+      alias_method :danger_error?, :danger?
     end
   end
 end

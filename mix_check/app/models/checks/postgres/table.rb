@@ -76,16 +76,8 @@ module Checks
         sum(&:estimated_rows)
       end
 
-      def warning?
-        unused? || bloat? || missing_indexes?
-      end
-
       def bloat?
         !!bloat_bytes
-      end
-
-      def bad_cache_hit_rate?
-        cache_hit < db.cache_hit_rate_threshold
       end
 
       def missing_indexes?
@@ -101,6 +93,10 @@ module Checks
       ensure
         $stderr = old_stderr
       end
+
+      alias_method :unused_warning?, :unused?
+      alias_method :bloat_warning?, :bloat?
+      alias_method :missing_indexes_warning?, :missing_indexes?
     end
   end
 end

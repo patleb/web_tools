@@ -12,13 +12,11 @@ module Checks
         end
       end
 
-      def error?
-        inactive?
-      end
-
       def active?
         !inactive?
       end
+
+      alias_method :inactive_error?, :inactive?
     end
   end
 end

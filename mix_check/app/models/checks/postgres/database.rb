@@ -1,3 +1,4 @@
+# TODO https://habr.com/en/company/postgrespro/blog/494464/
 module Checks
   module Postgres
     class Database < Base
@@ -6,7 +7,6 @@ module Checks
       attribute       :uptime, :float
       attribute       :wal_size, :integer
       attribute       :wal_growth, :integer
-      attribute       :write_heavy, :boolean
       attribute       :corrupted, :boolean
       attribute       :last_bgwriter_reset, :datetime
       attribute       :last_stats_reset, :datetime
@@ -37,14 +37,12 @@ module Checks
         table_cache = ((db.table_hit_rate || 0) * 100.0).to_f.ceil(2)
         index_cache = ((db.index_hit_rate || 0) * 100.0).to_f.ceil(2)
         corrupted = exec_statement(:data_checksum_failure).find{ |row| row[:dbname] == db_name }[:count].to_i > 0
-        write_heavy, last_bgwriter = exec_statement(:stat_bgwriter, one: true).values_at(:maxwritten_clean, :stats_reset)
-        write_heavy = write_heavy > 0
         wal_size, wal_growth = exec_statement(:wal_activity, one: true).values_at(:total_size_bytes, :last_5_min_size_bytes)
         [{
           id: db_name, size: db.database_size, uptime:  exec_statement(:postmaster_uptime, one: true)[:seconds],
-          wal_size: wal_size.to_i, wal_growth: wal_growth.to_i,
-          write_heavy: write_heavy, corrupted: corrupted,
-          last_bgwriter_reset: last_bgwriter, last_stats_reset: db.last_stats_reset_time,
+          wal_size: wal_size.to_i, wal_growth: wal_growth.to_i, corrupted: corrupted,
+          last_bgwriter_reset: exec_statement(:stat_bgwriter, one: true)[:stats_reset],
+          last_stats_reset: db.last_stats_reset_time,
           table_cache: table_cache, index_cache: index_cache,
         }]
       end
@@ -100,14 +98,6 @@ module Checks
         return unless capture?
         PgHero.clean_query_stats
         PgHero.clean_space_stats
-      end
-
-      def error?
-        !valid?
-      end
-
-      def warning?
-        super || nested_warning? || write_heavy?
       end
 
       def index_cache_warning?

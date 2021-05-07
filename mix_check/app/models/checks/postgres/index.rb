@@ -44,21 +44,14 @@ module Checks
         sum(&:total_bytes)
       end
 
-      def error?
-        not_valid?
-      end
-
-      def warning?
-        duplicate? || unused? || bloat? || bad_cache_hit_rate?
-      end
-
       def bloat?
         !!bloat_bytes
       end
 
-      def bad_cache_hit_rate?
-        cache_hit < db.cache_hit_rate_threshold
-      end
+      alias_method :not_valid_error?, :not_valid?
+      alias_method :duplicate_warning?, :duplicate?
+      alias_method :unused_warning?, :unused?
+      alias_method :bloat_warning?, :bloat?
     end
   end
 end

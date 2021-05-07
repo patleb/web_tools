@@ -109,10 +109,6 @@ module Checks
         self.class.vacuum_progress.dig(id, :phase) unless historical?
       end
 
-      def warning?
-        long_running?
-      end
-
       def explain
         if self.class.db.filter_data
           errors.add :query, :denied
@@ -134,6 +130,8 @@ module Checks
           errors.add :query, e.message
         end
       end
+
+      alias_method :long_running_warning?, :long_running?
     end
   end
 end
