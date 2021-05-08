@@ -32,7 +32,7 @@ module LogLines
         text_tiny = text
       elsif (values = text.match(SERVER_AUTH))
         port = values.captures.first
-        level = :error
+        level = :error # server restart
         text_tiny = text.sub("::", '*')
       elsif (values = text.match(INVALID_AUTH))
         user, ip, port = values.captures
