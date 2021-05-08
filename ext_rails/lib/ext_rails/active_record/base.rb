@@ -75,8 +75,14 @@ ActiveRecord::Base.class_eval do
     self.time_zone_aware_attributes = old_value
   end
 
-  def self.with_timeout(time_ms, &block)
-    with_setting('statement_timeout', time_ms, &block)
+  def self.with_timeout(time_ms, lock_ms = nil, &block)
+    if lock_ms
+      with_setting('statement_timeout', time_ms) do
+        with_setting('lock_timeout', lock_ms, &block)
+      end
+    else
+      with_setting('statement_timeout', time_ms, &block)
+    end
   end
 
   def self.with_setting(name, value)
