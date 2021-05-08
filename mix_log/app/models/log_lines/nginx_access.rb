@@ -41,7 +41,7 @@ module LogLines
       bytes_in
       users
       hours
-    ).map.with_index{ |v, i| [v, i] }.to_h
+    ).map.with_index.to_h
 
     json_attribute(
       ip: :string,
@@ -156,46 +156,35 @@ module LogLines
         %i(time_avg time_std).each{ |name| row[ROLLUPS_JSON_DATA[name]] = row[ROLLUPS_JSON_DATA[name]].ceil(3) }
         row
       end
-      result = %i(week day).each_with_object({}) do |period, result|
+      groups = %i(week day).each_with_object({}) do |period, result|
         result[[period, :period]] = success.group_by_period(period).calculate(operations).transform_values!(&ceil)
         success.unique_users.group_by_period(period).count.each do |period_at, users|
           result[[period, :period]][period_at] << users
         end
       end
-      result[[:week, :path]] = success.group_by_period(:week).joins(:log_message).order_group(:text_tiny)
+      groups[[:week, :path]] = success.group_by_period(:week).joins(:log_message).order_group(:text_tiny)
         .calculate(operations)
         .transform_values!(&ceil)
         .transform_keys!{ |(week, text_tiny)| [week, text_tiny.sub(/^2\d\d /, '')] }
-      result[[:week, :status]] = group_by_period(:week).order_group(:status).count
-      result[[:week, :referer]] = success.referers.group_by_period(:week).order_group(:referer).count
+      groups[[:week, :status]] = group_by_period(:week).order_group(:status).count
+      groups[[:week, :referer]] = success.referers.group_by_period(:week).order_group(:referer).count
       [:country, :state, [:browser, UA[:name]], [:browser, UA[:os_name]]].each do |field|
-        result[[:week, field]] = success.where_not(field => nil).group_by_period(:week).order_group(field).count
+        groups[[:week, field]] = success.where_not(field => nil).group_by_period(:week).order_group(field).count
       end
       hours = success.group_by_period(:hour).count
-      (days = result[[:day, :period]]).each do |day, row|
+      (days = groups[[:day, :period]]).each do |day, row|
         row << (0...24).map{ |hour| hours[day + hour.hours] || 0 }
       end
-      result[[:week, :period]].each do |week, row|
+      groups[[:week, :period]].each do |week, row|
         row << (0...24).map{ |hour| (0..7).sum{ |day| (days[week + day.days] || [[]]).last[hour] || 0 } }
       end
-      result.each_with_object([]) do |(key, values), result|
-        period, group_name = key
+      groups.transform_keys! do |(period, group_name)|
         group_name = case group_name
           when [:browser, UA[:name]]    then :browser
           when [:browser, UA[:os_name]] then :platform
           else group_name
           end
-        result.concat(values.map do |group_key, json_data|
-          period_at, group_value = Array.wrap(group_key)
-          json_data = Array.wrap(json_data)
-          {
-            group_name: group_name,
-            group_value: group_value || '',
-            period: 1.send(period),
-            period_at: period_at,
-            json_data: ROLLUPS_JSON_DATA.keys.first(json_data.size).zip(json_data).to_h
-          }
-        end)
+        [period, group_name]
       end
     end
 

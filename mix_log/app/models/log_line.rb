@@ -13,9 +13,12 @@ class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observabili
   )
 
   def self.rollups!(scope = :from_last)
+    raise NotImplementedError unless const_defined? :ROLLUPS_JSON_DATA
+    rollups_json_data = const_get(:ROLLUPS_JSON_DATA)
+    rollups_json_data = rollups_json_data.keys if rollups_json_data.is_a? Hash
     rollups_class_name = "LogRollups::#{name.demodulize}"
     rollups_class = rollups_class_name.to_const!
-    rows = case scope
+    groups = case scope
       when :all, true
         rollups
       when :from_last, false, nil
@@ -24,6 +27,20 @@ class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observabili
       when Symbol
         send(scope).rollups
       end
+    rows = groups.each_with_object([]) do |(key, values), result|
+      period, group_name = key
+      result.concat(values.map do |group_key, json_data|
+        period_at, group_value = Array.wrap(group_key)
+        json_data = Array.wrap(json_data)
+        {
+          group_name: group_name,
+          group_value: group_value || '',
+          period: 1.send(period),
+          period_at: period_at,
+          json_data: rollups_json_data.first(json_data.size).zip(json_data).to_h
+        }
+      end)
+    end
     rows.each{ |row| row[:type] = rollups_class_name }
     rollups_class.upsert_all(rows, unique_by: 'index_lib_log_rollups_on_groups', returning: false) if rows.any?
     rows
