@@ -16,7 +16,7 @@ module Checks
       attribute       :query
       attribute       :long_running, :boolean
       attribute       :historical, :boolean
-      attribute       :duration_ms, :float
+      attribute       :duration, :float
       attribute       :started_at, :datetime
       attribute       :total_percent, :float
       attribute       :calls, :integer
@@ -36,7 +36,7 @@ module Checks
           next unless row[:state]
           next unless owner?(row) && !(autovacuum?(row) || walsender?(row))
           pids[row[:pid]] = true
-          { id: row[:pid], **row.slice(:query, :source, :state, :waiting, :started_at, :duration_ms) }
+          { id: row[:pid], **row.slice(:query, :source, :state, :waiting, :started_at), duration: row[:duration_ms] }
         end
         blocked_queries, blocking_queries = db.blocked_queries.map.each_with_object([{}, {}]) do |row, memo|
           memo[0][row[:blocked_pid]] = row[:blocked_mode]
@@ -52,11 +52,11 @@ module Checks
             next unless owner?(row) && !autovacuum?(row)
             id = row[:query_hash]
             id = "##{id}" if pids[id]
-            { id: id, **row.slice(:query, :total_percent, :calls), duration_ms: row[:average_time], historical: true }
+            { id: id, **row.slice(:query, :total_percent, :calls), duration: row[:average_time], historical: true }
           end
         end
         (historical_queries || []).concat(queries).map! do |row|
-          row[:long_running] = (row[:duration_ms] / 1000.0).to_i > db.long_running_query_sec
+          row[:long_running] = (row[:duration] / 1000.0).to_i > db.long_running_query_sec
           case
           when (lock_mode = blocked_queries[row[:id]])  then row.merge! blocked: true, lock_mode: lock_mode
           when (lock_mode = blocking_queries[row[:id]]) then row.merge! blocking: true, lock_mode: lock_mode
@@ -87,8 +87,8 @@ module Checks
         end
       end
 
-      def self.duration_ms
-        historical.slow.average(&:duration_ms)
+      def self.duration
+        historical.slow.average(&:duration)
       end
 
       # NOTE might need to restart passenger and job:watch

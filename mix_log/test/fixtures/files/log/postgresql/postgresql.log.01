@@ -1,0 +1,27 @@
+2021-04-20 01:40:12.000 UTC [47] LOG:  starting PostgreSQL 13.2 (Debian 13.2-1.pgdg100+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 8.3.0-6) 8.3.0, 64-bit
+2021-04-20 01:40:12.000 UTC [47] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2021-04-20 01:40:12.000 UTC [48] LOG:  database system was shut down at 2021-04-20 01:40:12 UTC
+2021-04-20 01:40:12.000 UTC [47] LOG:  database system is ready to accept connections
+2021-04-20 01:40:15.000 UTC [47] LOG:  received fast shutdown request
+2021-04-20 01:40:15.000 UTC [47] LOG:  aborting any active transactions
+2021-04-20 01:40:15.000 UTC [47] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+2021-04-20 01:40:15.000 UTC [49] LOG:  shutting down
+2021-04-20 01:40:16.000 UTC [47] LOG:  database system is shut down
+2021-04-20 01:40:16.000 UTC [95] LOG:  database system was shut down at 2021-04-20 01:40:15 UTC
+2021-04-20 01:40:16.000 UTC [1] LOG:  database system is ready to accept connections
+2021-04-20 01:40:44.000 UTC [102] FATAL:  database "web_tools_development" does not exist
+2021-04-20 01:41:33.000 UTC [96] LOG:  checkpoint starting: immediate force wait flush-all
+2021-04-20 01:41:33.000 UTC [96] LOG:  checkpoint complete: wrote 206 buffers (1.3%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.004 s, sync=0.034 s, total=0.071 s; sync files=96, longest=0.005 s, average=0.001 s; distance=19494 kB, estimate=19494 kB
+2021-04-20 01:41:33.000 UTC [96] LOG:  checkpoint starting: immediate force wait
+2021-04-20 01:41:33.000 UTC [96] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.007 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=17545 kB
+2021-04-20 01:41:33.000 UTC [105] LOG:  duration: 135.892 ms  statement: CREATE DATABASE "web_tools_development" ENCODING = 'unicode'
+2021-04-20 01:41:34.000 UTC [110] LOG:  duration: 20.780 ms  statement: SELECT p.tableoid, p.oid, p.proname, p.prolang, p.pronargs, p.proargtypes, p.prorettype, (SELECT pg_catalog.array_agg(acl ORDER BY row_n) FROM (SELECT acl, row_n FROM pg_catalog.unnest(coalesce(p.proacl,pg_catalog.acldefault('f',p.proowner))) WITH ORDINALITY AS perm(acl,row_n) WHERE NOT EXISTS ( SELECT 1 FROM pg_catalog.unnest(coalesce(pip.initprivs,pg_catalog.acldefault('f',p.proowner))) AS init(init_acl) WHERE acl = init_acl)) as foo) AS proacl, (SELECT pg_catalog.array_agg(acl ORDER BY row_n) FROM (SELECT acl, row_n FROM pg_catalog.unnest(coalesce(pip.initprivs,pg_catalog.acldefault('f',p.proowner))) WITH ORDINALITY AS initp(acl,row_n) WHERE NOT EXISTS ( SELECT 1 FROM pg_catalog.unnest(coalesce(p.proacl,pg_catalog.acldefault('f',p.proowner))) AS permp(orig_acl) WHERE acl = orig_acl)) as foo) AS rproacl, NULL AS initproacl, NULL AS initrproacl, p.pronamespace, (SELECT rolname FROM pg_catalog.pg_roles WHERE oid = p.proowner) AS rolname FROM pg_proc p LEFT JOIN pg_init_privs pip ON (p.oid = pip.objoid AND pip.classoid = 'pg_proc'::regclass AND pip.objsubid = 0) WHERE p.prokind <> 'a'
+	  AND NOT EXISTS (SELECT 1 FROM pg_depend WHERE classid = 'pg_proc'::regclass AND objid = p.oid AND deptype = 'i')
+2021-04-20 01:41:35.000 UTC [110] LOG:  duration: 20.142 ms  statement: SELECT proretset, prosrc, probin, pg_catalog.pg_get_function_arguments(oid) AS funcargs, pg_catalog.pg_get_function_identity_arguments(oid) AS funciargs, pg_catalog.pg_get_function_result(oid) AS funcresult, array_to_string(protrftypes, ' ') AS protrftypes, prokind, provolatile, proisstrict, prosecdef, proleakproof, proconfig, procost, prorows, prosupport, proparallel, (SELECT lanname FROM pg_catalog.pg_language WHERE oid = prolang) AS lanname FROM pg_catalog.pg_proc WHERE oid = '19828'::pg_catalog.oid
+2021-04-20 01:46:33.000 UTC [96] LOG:  checkpoint starting: time
+2021-04-20 01:49:03.000 UTC [96] LOG:  checkpoint complete: wrote 1767 buffers (10.8%); 0 WAL file(s) added, 0 removed, 1 recycled; write=149.794 s, sync=0.030 s, total=149.851 s; sync files=181, longest=0.003 s, average=0.001 s; distance=15295 kB, estimate=17320 kB
+2021-04-20 02:51:14.000 UTC [9804] LOG:  redirecting log output to logging collector process
+2021-04-20 02:51:14.000 UTC [9804] HINT:  Future log output will appear in directory "/var/log/postgresql/postgresql-13-main".
+2021-04-20 02:51:14.000 UTC [9806] LOG:  database system was shut down at 2021-04-20 02:51:10 UTC
+2021-04-20 02:51:15.000 UTC [9804] LOG:  database system is ready to accept connections
+2021-04-20 02:51:15.000 UTC [9818] [unknown]@[unknown] LOG:  incomplete startup packet

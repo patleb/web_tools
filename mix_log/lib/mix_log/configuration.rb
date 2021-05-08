@@ -19,18 +19,21 @@ module MixLog
     end
 
     def available_types
-      @available_types ||= { # is it necessary... or only nginx and auth is useful
+      @available_types ||= {
         'LogLines::NginxAccess' => 10,
         'LogLines::NginxError'  => 20,
         'LogLines::Syslog'      => 30,
         'LogLines::Auth'        => 40,
         'LogLines::Fail2ban'    => 50,
+        'LogLines::Postgresql'  => 60,
         #
         # monit: 0, --> keep monit, just improve the integration (it's not worth it to rewrite in Ruby)
         # sysstat: 0, --> needs sysstat installed in dev (actually, might be worth it to rewrite in Ruby and reuse like monit)
-        #
-        # postgres
       }
+    end
+
+    def add_available_path(...)
+      available_paths << log_path(...)
     end
 
     def available_paths
@@ -43,6 +46,7 @@ module MixLog
         log_path(:syslog),
         log_path(:auth),
         log_path(:fail2ban),
+        log_path("postgresql/postgresql-#{Setting[:postgres]}-main/postgresql")
       ]
     end
 
