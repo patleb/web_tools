@@ -4,9 +4,13 @@ class User::Null < ActiveType::NullObject
   MixUser.config.json_attributes.each do |name, type|
     attribute name, type
   end
-  attribute :discarded, :boolean, default: proc{ false }
 
   alias_attribute :user_id, :id
+
+  def discarded
+    false
+  end
+  alias_method :discarded?, :discarded
 
   def has?(_record)
     false
