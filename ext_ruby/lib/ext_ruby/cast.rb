@@ -16,6 +16,12 @@ class Symbol
   end
 end
 
+class Time
+  def cast
+    self
+  end
+end
+
 class String
   def cast
     case
