@@ -136,7 +136,7 @@ module Process
           case line
           when /^cpu /      then line.split(' ', TIMES.size + 1).drop(1).each_with_index{ |v, i| memo[TIMES[i]] = v.to_i }
           when /^cpu\d+/    then memo[:size] = @cpu_count ? @cpu_count : memo[:size] + 1
-          when /^btime/     then memo[:boot] = @boot_time ? @boot_time : Time.at(line.split.last.to_i)
+          when /^btime/     then memo[:boot] = @boot_time ? @boot_time : Time.at(line.split.last.to_i).utc
           when /^processes/ then memo[:pids] = line.split.last.to_i
           end
         end

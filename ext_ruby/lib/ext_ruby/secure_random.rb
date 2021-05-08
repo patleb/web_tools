@@ -2,7 +2,7 @@ module SecureRandom
   UUID = /\A[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\z/i.freeze
 
   def self.uuid_v1_to_timestamp(uuid)
-    Time.at((uuid_v1_to_100nsecs(uuid).to_d - 122_192_928_000_000_000) / 10_000_000)
+    Time.at((uuid_v1_to_100nsecs(uuid).to_d - 122_192_928_000_000_000) / 10_000_000).utc
   end
 
   def self.uuid_v1_to_100nsecs(uuid)

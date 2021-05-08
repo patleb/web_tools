@@ -14,7 +14,7 @@ module Process
     end
 
     def build_snapshot
-      ExtRuby.config.send("#{snapshot_namespace}_snapshot").each_with_object(created_at: Time.now) do |attr, memo|
+      ExtRuby.config.send("#{snapshot_namespace}_snapshot").each_with_object(created_at: Time.now.utc) do |attr, memo|
         memo[attr] =
           case attr.to_s
           when /_(time|at)$/

@@ -114,7 +114,7 @@ module Process
           memo[name] = case name
             when :comm       then comm
             when :state      then PROCESS_STATES[value]
-            when :start_time then host.boot_time + (value.to_f / host.hertz)
+            when :start_time then (host.boot_time + (value.to_f / host.hertz)).round(6)
             when /time$/     then value.to_f
             else                  value.to_i
             end
