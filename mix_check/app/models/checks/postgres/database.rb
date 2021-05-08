@@ -79,11 +79,11 @@ module Checks
 
       def self.capture
         return unless capture?
-        last_query_at = PgHero::QueryStats.where(database: db_name).order(captured_at: :desc).pick(:captured_at)
+        last_query_at = PgHero::QueryStats.where(database: 'primary').order(captured_at: :desc).pick(:captured_at)
         if last_query_at.nil? || last_query_at < (5.minutes - 30.seconds).ago
           PgHero.capture_query_stats
         end
-        last_space_at = PgHero::SpaceStats.where(database: db_name).order(captured_at: :desc).pick(:captured_at)
+        last_space_at = PgHero::SpaceStats.where(database: 'primary').order(captured_at: :desc).pick(:captured_at)
         if last_space_at.nil? || last_space_at < (1.day - 30.seconds).ago
           PgHero.capture_space_stats
         end
