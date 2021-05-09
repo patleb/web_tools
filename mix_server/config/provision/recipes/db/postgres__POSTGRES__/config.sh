@@ -1,4 +1,8 @@
 PG_CONFIG_FILE=$(sun.pg_config_file)
+__PG_LOG_MIN_MESSAGES__=${__PG_LOG_MIN_MESSAGES__:-error}
+
+<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'log_min_messages =' %>
+echo "log_min_messages = $__PG_LOG_MIN_MESSAGES__" >> "$PG_CONFIG_FILE"
 
 <% %w(
   synchronous_commit
