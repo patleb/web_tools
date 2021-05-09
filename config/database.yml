@@ -23,8 +23,8 @@ default: &default
   host: 127.0.0.1
   username: postgres
   password: postgres
-   variables:
-     statement_timeout: 120000 # ms
+  variables:
+    statement_timeout: 120000 # ms
 
 development: &development
   <<: *default
