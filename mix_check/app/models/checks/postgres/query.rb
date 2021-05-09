@@ -45,7 +45,7 @@ module Checks
         if Setting[:pgstats_enabled]
           historical_queries = db.query_stats(
             historical: true,
-            start_at: (Setting[:check_log_interval] + 30.seconds).ago,
+            start_at: (Setting[:check_database_interval] + 30.seconds).ago,
             min_calls: db.slow_query_calls.to_i,
             min_average_time: db.slow_query_ms.to_f
           ).select_map do |row|
@@ -81,7 +81,7 @@ module Checks
 
       def self.suggested_indexes
         Setting.with(freeze: false) do |setting|
-          setting[:check_log_interval] = 24.hours
+          setting[:check_database_interval] = 24.hours
           suggested_indexes_by_query = db.suggested_indexes_by_query(queries: historical.map(&:query), indexes: db_indexes)
           db.suggested_indexes(suggested_indexes_by_query: suggested_indexes_by_query, indexes: db_indexes)
         end

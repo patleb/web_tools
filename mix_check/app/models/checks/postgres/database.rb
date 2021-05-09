@@ -88,7 +88,7 @@ module Checks
           PgHero.capture_space_stats
         end
         last_updated_at = LogMessage.last_updated_at('LogLines::Database', text_tiny: "#{db_name}%")
-        if last_updated_at.nil? || last_updated_at < (Setting[:check_log_interval] - 30.seconds).ago
+        if last_updated_at.nil? || last_updated_at < (Setting[:check_database_interval] - 30.seconds).ago
           Log.database(current)
           reset
         end
