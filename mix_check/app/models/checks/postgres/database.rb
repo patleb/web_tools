@@ -12,6 +12,8 @@ module Checks
       attribute       :last_stats_reset, :datetime
       attribute       :table_cache, :float
       attribute       :index_cache, :float
+      attribute       :temp_files, :integer
+      attribute       :temp_bytes, :integer
 
       nests_many :connections,             default: proc { Connection.all }
       nests_many :indexes,                 default: proc { Index.all }
@@ -44,6 +46,7 @@ module Checks
           last_bgwriter_reset: exec_statement(:stat_bgwriter, one: true)[:stats_reset],
           last_stats_reset: db.last_stats_reset_time,
           table_cache: table_cache, index_cache: index_cache,
+          **exec_statement(:stat_database, one: true).slice(:temp_files, :temp_bytes),
         }]
       end
 
