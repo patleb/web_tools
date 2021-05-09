@@ -39,14 +39,14 @@ module Checks
         table_cache = ((db.table_hit_rate || 0) * 100.0).to_f.ceil(2)
         index_cache = ((db.index_hit_rate || 0) * 100.0).to_f.ceil(2)
         corrupted = exec_statement(:data_checksum_failure).find{ |row| row[:dbname] == db_name }[:count].to_i > 0
-        wal_size, wal_growth = exec_statement(:wal_activity, one: true).values_at(:total_size_bytes, :last_5_min_size_bytes)
+        wal_size, wal_growth = exec_statement_one(:wal_activity).values_at(:total_size_bytes, :last_5_min_size_bytes)
         [{
-          id: db_name, size: db.database_size, uptime:  exec_statement(:postmaster_uptime, one: true)[:seconds],
+          id: db_name, size: db.database_size, uptime:  exec_statement_one(:postmaster_uptime)[:seconds],
           wal_size: wal_size.to_i, wal_growth: wal_growth.to_i, corrupted: corrupted,
-          last_bgwriter_reset: exec_statement(:stat_bgwriter, one: true)[:stats_reset],
+          last_bgwriter_reset: exec_statement_one(:stat_bgwriter)[:stats_reset],
           last_stats_reset: db.last_stats_reset_time,
           table_cache: table_cache, index_cache: index_cache,
-          **exec_statement(:stat_database, one: true).slice(:temp_files, :temp_bytes),
+          **exec_statement_one(:stat_database).slice(:temp_files, :temp_bytes),
         }]
       end
 

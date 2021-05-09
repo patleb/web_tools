@@ -35,6 +35,10 @@ module Checks
         row[:user] == db_user
       end
 
+      def self.exec_statement_one(name)
+        exec_statement(name, one: true)
+      end
+
       def self.exec_statement(name, one: false)
         one ? select_one(statements[name]) : select_all(statements[name])
       end
