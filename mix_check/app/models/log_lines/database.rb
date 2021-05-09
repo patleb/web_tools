@@ -12,6 +12,7 @@ module LogLines
       wal_size: :integer,
       connections: :integer,
       errors: :json,
+      warnings: :json,
     )
 
     def self.rollups
@@ -27,10 +28,11 @@ module LogLines
       level = :error if row.error?
       json_data = {
         connections: row.connections_total,
-        errors: row.errors.attribute_names,
+        errors: row.error_names(false),
+        warnings: row.warning_names(false),
         **row.slice(:name, :size, :wal_size)
       }
-      message = { text: json_data.values_at(:name, :errors).join!(' '), level: level }
+      message = { text: [json_data[:name], (json_data[:errors] + json_data[:warnings]).uniq].join!(' '), level: level }
       super(log, message: message, json_data: json_data)
     end
   end
