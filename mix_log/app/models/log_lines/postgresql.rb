@@ -1,9 +1,12 @@
+### References
+# https://pganalyze.com/docs/log-insights/setup/tuning-log-config-settings
+# https://pganalyze.com/blog/postgresql-log-monitoring-101-deadlocks-checkpoints-blocked-queries
 module LogLines
   class Postgresql < LogLine
     TIMESTAMP    = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d{3})? UTC/
     ANCHOR       = /^(#{TIMESTAMP}) \[(\d+)\](?: \[\w+\]@\[\w+\])? \w+: +/
     CHECKPOINT   = /#{ANCHOR}checkpoint (starting|complete): (.+)/
-    CHECKPOINTS  = /#{ANCHOR}(checkpoints are occurring too frequently) \((\d+) seconds? apart\)/
+    CHECKPOINTS  = /#{ANCHOR}(checkpoints are occurring too frequently) \((\d+) seconds? apart\)/ # max_wal_size
     SHUTDOWN     = /#{ANCHOR}(database system .+)(?:; last known up)? at(?: log time)? (#{TIMESTAMP})/
     READY        = /#{ANCHOR}(database system is ready) to accept/
     LOCK_WAIT    = /#{ANCHOR}(could not obtain lock) on(?: row in)? relation "([^"]+)"/

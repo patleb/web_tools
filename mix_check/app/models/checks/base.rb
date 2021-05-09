@@ -1,3 +1,6 @@
+# TODO
+# https://pgdash.io/features
+# https://pganalyze.com/docs
 module Checks
   class Base < VirtualRecord::Base
     def self.validates(attribute, **options)
