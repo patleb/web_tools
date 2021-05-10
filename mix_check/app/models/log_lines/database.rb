@@ -25,10 +25,10 @@ module LogLines
     def self.push(log, row)
       level = :info
       level = :warn if row.warning?
-      level = :error if row.error?
+      level = :error if row.issue?
       json_data = {
         connections: row.connections_total,
-        issues: row.error_names(false),
+        issues: row.issue_names(false),
         warnings: row.warning_names(false),
         **row.slice(:name, :size, :wal_size)
       }

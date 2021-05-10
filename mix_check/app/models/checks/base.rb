@@ -49,7 +49,7 @@ module Checks
       has_issue = :"#{issue}?"
       if self.class.send("ar_#{issue}s?")
         send(has_issue)
-        names = send("#{issue}s").attribute_names
+        names = errors.attribute_names
         nested_names = names & self.class.nested_attribute_names.map(&:to_sym)
         names = names - nested_names
       else

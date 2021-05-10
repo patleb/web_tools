@@ -12,6 +12,19 @@ class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observabili
     pid
   )
 
+  def self.last_records(**conditions)
+    query = where(log: Log.db_log(name))
+    query = where(**conditions) if conditions.present?
+    query.order(created_at: :desc)
+  end
+
+  def self.last_messages(text_tiny: nil, **conditions)
+    query = LogMessage.where(log: Log.db_log(name))
+    query = query.where('text_tiny LIKE ?', text_tiny) if text_tiny
+    query = query.where(**conditions) if conditions.present?
+    query.order(updated_at: :desc)
+  end
+
   def self.rollups!(scope = :from_last)
     raise NotImplementedError unless const_defined? :ROLLUPS_JSON_DATA
     rollups_json_data = const_get(:ROLLUPS_JSON_DATA)
