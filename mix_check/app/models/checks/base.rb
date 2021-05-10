@@ -7,25 +7,25 @@ module Checks
       return super unless options[:check]
       check_name = :"#{attribute}_check"
       define_method check_name do
-        if send(attribute).error?
+        if send(attribute).issue?
           errors.add(attribute, :check_error)
         end
       end
       validate check_name
     end
 
-    def self.ar_errors?
+    def self.ar_issues?
       __callbacks[:validate].any? do |callback|
         callback.filter.is_a?(ActiveModel::Validator) || callback.filter.end_with?('_check')
       end
     end
 
-    def self.error?
-      any?(&:error?)
+    def self.issue?
+      any?(&:issue?)
     end
 
-    def self.error_predicates
-      @error_predicates ||= instance_methods.select(&:end_with?.with('_error?'))
+    def self.issue_predicates
+      @issue_predicates ||= instance_methods.select(&:end_with?.with('_issue?'))
     end
 
     def self.ar_warnings?
@@ -40,30 +40,30 @@ module Checks
       @warning_predicates ||= instance_methods.select(&:end_with?.with('_warning?'))
     end
 
-    def error?
-      self.class.ar_errors? ? !valid? : self.class.error_predicates.any?{ |error| send(error) }
+    def issue?
+      self.class.ar_issues? ? !valid? : self.class.issue_predicates.any?{ |issue| send(issue) }
     end
 
-    def error_names(expand = true, warning: false)
-      error = warning ? :warning : :error
-      has_error = :"#{error}?"
-      if self.class.send("ar_#{error}s?")
-        send(has_error)
-        names = send("#{error}s").attribute_names
+    def issue_names(expand = true, warning: false)
+      issue = warning ? :warning : :issue
+      has_issue = :"#{issue}?"
+      if self.class.send("ar_#{issue}s?")
+        send(has_issue)
+        names = send("#{issue}s").attribute_names
         nested_names = names & self.class.nested_attribute_names.map(&:to_sym)
         names = names - nested_names
       else
-        names = self.class.send("#{error}_predicates").except(:"nested_#{error}?").select_map do |name|
+        names = self.class.send("#{issue}_predicates").except(:"nested_#{issue}?").select_map do |name|
           next unless send(name)
-          name.to_s.delete_suffix("_#{error}?").to_sym
+          name.to_s.delete_suffix("_#{issue}?").to_sym
         end
-        nested_names = self.class.nested_attribute_names.select_map{ |name| send(name).send(has_error) && name.to_sym }
+        nested_names = self.class.nested_attribute_names.select_map{ |name| send(name).send(has_issue) && name.to_sym }
       end
       if expand
-        error_names = "#{error}_names"
+        issue_names = "#{issue}_names"
         names.concat(
           nested_names.map do |name|
-            { name => Array.wrap(send(name)).select(&has_error).map{ |row| { row[:id] => row.send(error_names) } } }
+            { name => Array.wrap(send(name)).select(&has_issue).map{ |row| { row[:id] => row.send(issue_names) } } }
           end
         )
       else
@@ -72,8 +72,8 @@ module Checks
       names
     end
 
-    def nested_error?
-      self.class.nested_attribute_names.any?{ |name| send(name).error? }
+    def nested_issue?
+      self.class.nested_attribute_names.any?{ |name| send(name).issue? }
     end
 
     def warning?
@@ -81,7 +81,7 @@ module Checks
     end
 
     def warning_names(expand = true)
-      error_names(expand, warning: true)
+      issue_names(expand, warning: true)
     end
 
     def nested_warning?

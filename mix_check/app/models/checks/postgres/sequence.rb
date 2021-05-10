@@ -21,7 +21,7 @@ module Checks
         last_value && (max_value - last_value)
       end
 
-      alias_method :danger_error?, :danger?
+      alias_method :danger_issue?, :danger?
     end
   end
 end

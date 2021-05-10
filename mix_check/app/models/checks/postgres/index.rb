@@ -48,7 +48,7 @@ module Checks
         !!bloat_bytes
       end
 
-      alias_method :not_valid_error?, :not_valid?
+      alias_method :not_valid_issue?, :not_valid?
       alias_method :duplicate_warning?, :duplicate?
       alias_method :unused_warning?, :unused?
       alias_method :bloat_warning?, :bloat?

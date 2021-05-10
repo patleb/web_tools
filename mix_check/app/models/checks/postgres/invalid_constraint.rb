@@ -10,7 +10,7 @@ module Checks
         end
       end
 
-      def error?
+      def issue?
         true
       end
     end

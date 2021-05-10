@@ -24,7 +24,7 @@ module Checks
         !autovacuum?
       end
 
-      alias_method :wraparound_error?, :wraparound?
+      alias_method :wraparound_issue?, :wraparound?
       alias_method :autovacuum_warning?, :autovacuum?
     end
   end

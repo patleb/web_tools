@@ -16,7 +16,7 @@ module Checks
         !inactive?
       end
 
-      alias_method :inactive_error?, :inactive?
+      alias_method :inactive_issue?, :inactive?
     end
   end
 end
