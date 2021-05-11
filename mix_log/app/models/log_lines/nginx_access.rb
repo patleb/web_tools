@@ -88,12 +88,12 @@ module LogLines
       success.joins(:log_message).requests_by(:text_tiny)
     end
 
-    def self.total_mbytes_out
-      success.sum(:bytes_out).bytes_to_mb
+    def self.total_bytes_out
+      success.sum(:bytes_out)
     end
 
-    def self.total_mbytes_in
-      success.sum(:bytes_in).bytes_to_mb
+    def self.total_bytes_in
+      success.sum(:bytes_in)
     end
 
     def self.total_referers
@@ -105,14 +105,14 @@ module LogLines
       calculate_from(:average, from, :count, user).ceil
     end
 
-    def self.average_mbytes_out(period = :week)
+    def self.average_bytes_out(period = :week)
       from = success.group_by_period(period).where_not(bytes_out: nil)
-      calculate_from(:average, from, :sum, :bytes_out).bytes_to_mb
+      calculate_from(:average, from, :sum, :bytes_out).ceil
     end
 
-    def self.average_mbytes_in(period = :week)
+    def self.average_bytes_in(period = :week)
       from = success.group_by_period(period).where_not(bytes_in: nil)
-      calculate_from(:average, from, :sum, :bytes_in).bytes_to_mb
+      calculate_from(:average, from, :sum, :bytes_in).ceil
     end
 
     def self.average_time(period = :week)
@@ -124,12 +124,12 @@ module LogLines
       unique_users.requests_by(...)
     end
 
-    def self.mbytes_out_by(field, operation = :sum)
-      requests_by(field, operation, :bytes_out).transform_values(&:bytes_to_mb)
+    def self.bytes_out_by(field, operation = :sum)
+      requests_by(field, operation, :bytes_out)
     end
 
-    def self.mbytes_in_by(field, operation = :sum)
-      requests_by(field, operation, :bytes_in).transform_values(&:bytes_to_mb)
+    def self.bytes_in_by(field, operation = :sum)
+      requests_by(field, operation, :bytes_in)
     end
 
     def self.time_by(field, operation = :average)
