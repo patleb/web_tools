@@ -16,8 +16,8 @@ module ExtRuby
     def host_snapshot
       @host_snapshot ||= %i(
         cpu
-        memory_gb
-        disks_gb
+        memory
+        disks
         network
         sockets
       )
@@ -26,7 +26,7 @@ module ExtRuby
     def worker_snapshot
       @worker_snapshot ||= %i(
         cpu
-        memory_mb
+        memory
         inodes
       )
     end

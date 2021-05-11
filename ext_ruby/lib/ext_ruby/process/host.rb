@@ -148,11 +148,11 @@ module Process
     end
 
     def ram_total
-      memory_gb[:ram_total]
+      memory[:ram_total]
     end
 
     def ram_used
-      memory_gb[:ram_used]
+      memory[:ram_used]
     end
 
     def swap_usage
@@ -160,14 +160,14 @@ module Process
     end
 
     def swap_total
-      memory_gb[:swap_total]
+      memory[:swap_total]
     end
 
     def swap_used
-      memory_gb[:swap_used]
+      memory[:swap_used]
     end
 
-    def memory_gb
+    def memory
       m_access(:memory) do
         memory = File.readlines("/proc/meminfo").each_with_object({}) do |line, memo|
           type = case line
@@ -180,7 +180,7 @@ module Process
         end
         memory[:ram_used] = memory[:ram_total] - memory.delete(:ram_free)
         memory[:swap_used] = memory[:swap_total] - memory.delete(:swap_free)
-        memory.transform_values!(&:kbytes_to_gb)
+        memory.transform_values!(&:kb_to_bytes)
         File.readlines("/proc/vmstat").each_with_object(memory) do |line, memo|
           type = case line
             when /^pgpgin /  then :ram_in
@@ -188,12 +188,12 @@ module Process
             when /^pswpin /  then :swap_in
             when /^pswpout / then :swap_out
             end
-          memo[type] = (line.split.second.to_i * pagesize).bytes_to_gb if type
+          memo[type] = (line.split.second.to_i * pagesize) if type
         end
       end
     end
 
-    def disks_gb
+    def disks
       m_access(:disks) do
         File.readlines("/proc/diskstats").each_with_object({}) do |line, memo|
           fields = line.split.drop(2)
@@ -203,9 +203,9 @@ module Process
           path = mounts[name]
           disk = disk(path)
           memo[path] = {
-            fs_total: disk.total_bytes.bytes_to_gb,
-            fs_used: (disk.total_bytes - disk.available_bytes).bytes_to_gb,
-            io_size: [reads, writes].map{ |v| (v * BYTES_PER_SECTOR).bytes_to_gb },
+            fs_total: disk.total_bytes,
+            fs_used: (disk.total_bytes - disk.available_bytes),
+            io_size: [reads, writes].map{ |v| (v * BYTES_PER_SECTOR) },
             io_time: (io_ticks / 1000.0).ceil(3)
           }
         end
@@ -217,16 +217,15 @@ module Process
     end
 
     def network
-      networks_mb.find{ |k, _| k.start_with? 'en', 'eth', 'wl' }.last
+      networks.find{ |k, _| k.start_with? 'en', 'eth', 'wl' }.last
     end
 
-    def networks_mb
+    def networks
       m_access(:networks) do
         File.readlines("/proc/net/dev").drop(2)
           .map{ |line| line.split(':') }.to_h
           .transform_values{ |v| v.split.values_at(NETWORK_BYTES_IN, NETWORK_BYTES_OUT).map(&:to_i) }
           .reject{ |_, v| v.all?(&:zero?) }
-          .transform_values{ |v| v.map{ |bytes| bytes.bytes_to_mb } }
           .transform_keys(&:squish)
       end
     end

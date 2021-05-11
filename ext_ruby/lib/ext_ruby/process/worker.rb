@@ -128,28 +128,28 @@ module Process
     end
 
     def ram_used
-      memory_mb[:ram_used]
+      memory[:ram_used]
     end
 
     def swap_used
-      memory_mb[:swap_used]
+      memory[:swap_used]
     end
 
-    def memory_mb
+    def memory
       m_access(:memory) do
         memory = File.readlines("/proc/#{@pid}/smaps_rollup").each_with_object({}) do |line, memo|
           type = case line
             when /^Rss:/  then :ram_used
             when /^Swap:/ then :swap_used
             end
-          memo[type] = line.split.second.to_i.kbytes_to_mb if type
+          memo[type] = line.split.second.to_i.kb_to_bytes if type
         end
         File.readlines("/proc/#{@pid}/io").each_with_object(memory) do |line, memo|
           type = case line
             when /^read_bytes:/  then :total_in
             when /^write_bytes:/ then :total_out
             end
-          memo[type] = line.split(': ').last.to_i.bytes_to_mb if type
+          memo[type] = line.split(': ').last.to_i if type
         end
       rescue Errno::ENOENT
         { ram_used: 0.0, swap_used: 0.0 }
