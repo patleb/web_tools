@@ -12,10 +12,18 @@ class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observabili
     pid
   )
 
+  def self.last_record(...)
+    last_records(...).first
+  end
+
   def self.last_records(**conditions)
     query = where(log: Log.db_log(name))
     query = where(**conditions) if conditions.present?
     query.order(created_at: :desc)
+  end
+
+  def self.last_message(...)
+    last_messages(...)
   end
 
   def self.last_messages(text_tiny: nil, **conditions)
