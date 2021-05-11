@@ -50,29 +50,46 @@ class Numeric
   B_PER_GB = BigDecimal(1_073_741_824).freeze
   KB_PER_MB = BigDecimal(1_024).freeze
   KB_PER_GB = BigDecimal(1_048_576).freeze
+  MB_PER_GB = BigDecimal(1_024).freeze
 
   def sign
     self <=> 0
   end
 
+  def kb_to_bytes
+    (self * B_PER_KB).to_i
+  end
+
+  def mb_to_bytes
+    (self * B_PER_MB).to_i
+  end
+
+  def gb_to_bytes
+    (self * B_PER_GB).to_i
+  end
+
   def bytes_to_kb(precision = 3)
-    (self / B_PER_KB).to_f.ceil(precision)
+    precision ? (self / B_PER_KB).to_f.ceil(precision) : (self / B_PER_KB).ceil
   end
 
   def bytes_to_mb(precision = 3)
-    (self / B_PER_MB).to_f.ceil(precision)
+    precision ? (self / B_PER_MB).to_f.ceil(precision) : (self / B_PER_MB).ceil
   end
 
   def bytes_to_gb(precision = 3)
-    (self / B_PER_GB).to_f.ceil(precision)
+    precision ? (self / B_PER_GB).to_f.ceil(precision) : (self / B_PER_GB).ceil
   end
 
-  def kbytes_to_mb(precision = 3)
-    (self / KB_PER_MB).to_f.ceil(precision)
+  def kb_to_mb(precision = 3)
+    precision ? (self / KB_PER_MB).to_f.ceil(precision) : (self / KB_PER_MB).ceil
   end
 
-  def kbytes_to_gb(precision = 3)
-    (self / KB_PER_GB).to_f.ceil(precision)
+  def kb_to_gb(precision = 3)
+    precision ? (self / KB_PER_GB).to_f.ceil(precision) : (self / KB_PER_GB).ceil
+  end
+
+  def mb_to_gb(precision = 3)
+    precision ? (self / MB_PER_GB).to_f.ceil(precision) : (self / MB_PER_GB).ceil
   end
 
   def to_hours
