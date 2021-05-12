@@ -193,6 +193,12 @@ module Process
       end
     end
 
+    def disks_inodes
+      m_access(:disks_inodes) do
+        `df --output=target,ipcent`.lines.drop(1).map(&:split).to_h.transform_values(&:to_i).slice(*disks.keys)
+      end
+    end
+
     def disks
       m_access(:disks) do
         File.readlines("/proc/diskstats").each_with_object({}) do |line, memo|
@@ -264,10 +270,6 @@ module Process
       m_access(:pids) do
         Rake::FileList["/proc/*"].map{ |file| File.basename(file).to_i }.reject(&:zero?)
       end
-    end
-
-    def inodes_count
-      inodes.size
     end
 
     def inodes
