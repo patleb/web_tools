@@ -112,7 +112,7 @@ module Process
           next unless STAT_NAMES.has_key? i
           name = STAT_NAMES[i]
           memo[name] = case name
-            when :comm       then comm
+            when :name       then comm
             when :state      then PROCESS_STATES[value]
             when :start_time then (host.boot_time + (value.to_f / host.hertz)).round(6)
             when /time$/     then value.to_f
