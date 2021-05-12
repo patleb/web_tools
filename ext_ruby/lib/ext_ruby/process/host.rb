@@ -233,8 +233,8 @@ module Process
     def sockets(pid: true, worker: false)
       if pid || worker
         pids = inodes.slice(*sockets(pid: false).keys).each_with_object({}) do |(inode, pid), memo|
-          memo[pid] = sockets(pid: false)[inode]
-        end
+          (memo[pid] ||= Set.new) << sockets(pid: false)[inode]
+        end.transform_values!(&:to_a)
         return worker ? pids.transform_keys{ |pid| Process::Worker.new(pid) } : pids
       end
       m_access(:sockets) do
