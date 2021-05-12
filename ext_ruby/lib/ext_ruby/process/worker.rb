@@ -185,19 +185,19 @@ module Process
     end
 
     def cwd
-      @cwd ||= File.readlink("/proc/#{@pid}/cwd") rescue ''
+      @cwd ||= File.readlink("/proc/#{@pid}/cwd") rescue nil
     end
 
     def exe
-      @exe ||= File.readlink("/proc/#{@pid}/exe") rescue ''
+      @exe ||= File.readlink("/proc/#{@pid}/exe") rescue nil
     end
 
     def root
-      @root ||= File.readlink("/proc/#{@pid}/root") rescue ''
+      @root ||= File.readlink("/proc/#{@pid}/root") rescue nil
     end
 
     def cmdline
-      @cmdline ||= File.read("/proc/#{@pid}/cmdline").split("\0") rescue []
+      @cmdline ||= File.read("/proc/#{@pid}/cmdline").split("\0").join(' ') rescue nil
     end
 
     def env
