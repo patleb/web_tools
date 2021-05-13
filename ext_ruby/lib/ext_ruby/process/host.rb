@@ -95,20 +95,20 @@ module Process
 
     def cpu_work
       time = cpu.values_at(*WORK_TIMES).sum
-      time -= snapshot[:cpu].values_at(*WORK_TIMES).sum if snapshot?
+      time -= snapshot[:cpu_work] if snapshot?
       (time / (hertz * cpu_count)).ceil(3)
     end
 
     def cpu_idle
       time = cpu.values_at(*IDLE_TIMES).sum
-      time -= snapshot[:cpu].values_at(*IDLE_TIMES).sum if snapshot?
+      time -= snapshot[:cpu_idle] if snapshot?
       (time / (hertz * cpu_count)).ceil(3)
     end
 
     # https://scoutapm.com/blog/understanding-cpu-steal-time-when-should-you-be-worried
     def cpu_steal
       time = cpu[:steal]
-      time -= snapshot.dig(:cpu, :steal) if snapshot?
+      time -= snapshot[:cpu_steal] if snapshot?
       (time / (hertz * cpu_count)).ceil(3)
     end
 
