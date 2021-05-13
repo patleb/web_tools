@@ -138,7 +138,7 @@ class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observabili
     text_hash, text_tiny, text, level = message
     text_tiny ||= squish(text)
     text_hash ||= text_tiny
-    yield Digest.sha1_hex(text_hash), text_tiny[0...256], text, LogMessage.levels[level]
+    yield Digest.sha256_hex(text_hash), text_tiny[0...256], text, LogMessage.levels[level]
   end
 
   def self.insert_all!(attributes, **)
