@@ -15,11 +15,14 @@ module ExtRuby
 
     def host_snapshot
       @host_snapshot ||= %i(
-        cpu
+        boot_time
+        cpu_pids
+        cpu_work
+        cpu_idle
+        cpu_steal
         memory
         disks
         network
-        sockets
       )
     end
 

@@ -68,10 +68,6 @@ module Process
       @private_ip ||= Socket.ip_address_list.reverse.find{ |addrinfo| addrinfo.ipv4_private? }.ip_address
     end
 
-    def processes
-      cpu[:pids]
-    end
-
     def uptime
       (Time.now - boot_time).ceil(3)
     end
@@ -82,6 +78,10 @@ module Process
 
     def cpu_count
       @cpu_count ||= cpu[:size]
+    end
+
+    def cpu_pids
+      cpu[:pids]
     end
 
     def cpu_usage
@@ -96,20 +96,20 @@ module Process
     def cpu_work
       time = cpu.values_at(*WORK_TIMES).sum
       time -= snapshot[:cpu].values_at(*WORK_TIMES).sum if snapshot?
-      time / (hertz * cpu_count)
+      (time / (hertz * cpu_count)).ceil(3)
     end
 
     def cpu_idle
       time = cpu.values_at(*IDLE_TIMES).sum
       time -= snapshot[:cpu].values_at(*IDLE_TIMES).sum if snapshot?
-      time / (hertz * cpu_count)
+      (time / (hertz * cpu_count)).ceil(3)
     end
 
     # https://scoutapm.com/blog/understanding-cpu-steal-time-when-should-you-be-worried
     def cpu_steal
       time = cpu[:steal]
       time -= snapshot.dig(:cpu, :steal) if snapshot?
-      time / (hertz * cpu_count)
+      (time / (hertz * cpu_count)).ceil(3)
     end
 
     def cpu_load
@@ -286,7 +286,7 @@ module Process
     end
 
     def hertz
-      @hertz ||= Process.clock_getres(:TIMES_BASED_CLOCK_PROCESS_CPUTIME_ID, :hertz)
+      @hertz ||= Process.clock_getres(:TIMES_BASED_CLOCK_PROCESS_CPUTIME_ID, :hertz).to_d
     end
   end
 end
