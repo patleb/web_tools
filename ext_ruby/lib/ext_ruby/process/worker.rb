@@ -150,7 +150,7 @@ module Process
             end
           memo[type] = line.split(': ').last.to_i if type
         end
-      rescue Errno::ENOENT
+      rescue Errno::ENOENT, Errno::EACCES
         { ram_used: 0.0, swap_used: 0.0 }
       end
     end
@@ -196,7 +196,7 @@ module Process
     end
 
     def cmdline
-      @cmdline ||= File.read("/proc/#{@pid}/cmdline").split("\0").join(' ') rescue nil
+      @cmdline ||= File.read("/proc/#{@pid}/cmdline").split("\0").join(' ').squish rescue nil
     end
 
     def env
