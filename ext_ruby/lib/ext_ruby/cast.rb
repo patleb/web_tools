@@ -42,7 +42,7 @@ class Array
 end
 
 class Hash
-  KEYWORD = /^[a-z_][a-z0-9_]*[!?]?$/.freeze
+  KEYWORD = /^[a-z_][a-z0-9_]*[!?]?$/i.freeze
 
   def cast
     deep_transform_keys{ |key| _cast_key(key) }.transform_values{ |v| v&.cast }
