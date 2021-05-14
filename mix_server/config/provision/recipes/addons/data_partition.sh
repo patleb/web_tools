@@ -1,5 +1,4 @@
 __DATA_PARTITION__=${__DATA_PARTITION__:-/dev/vdc}
-__DATA_DIRECTORY__=${__DATA_DIRECTORY__:-/opt/storage}
 __DATA_ORDER__=${__DATA_ORDER__:-3}
 if fdisk -l | grep -Fq $__DATA_PARTITION__; then
   if df -h | grep -Fq $__DATA_PARTITION__; then
