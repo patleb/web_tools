@@ -54,10 +54,6 @@ module Checks
         db_host == '127.0.0.1'
       end
 
-      def self.current
-        first
-      end
-
       def self.settings
         m_access(:settings) do
           { version: db.server_version }.merge!(

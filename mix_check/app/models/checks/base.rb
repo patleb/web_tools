@@ -1,8 +1,13 @@
-# TODO
-# https://pgdash.io/features
-# https://pganalyze.com/docs
 module Checks
   class Base < VirtualRecord::Base
+    def self.current
+      first
+    end
+
+    def self.counter_value(new_value, old_value)
+      (new_value < old_value) ? new_value : new_value - old_value
+    end
+
     def self.validates(attribute, **options)
       return super unless options[:check]
       check_name = :"#{attribute}_check"

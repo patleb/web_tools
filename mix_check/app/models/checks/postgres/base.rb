@@ -1,3 +1,6 @@
+# TODO
+# https://pgdash.io/features
+# https://pganalyze.com/docs
 module Checks
   module Postgres
     class Base < Checks::Base
