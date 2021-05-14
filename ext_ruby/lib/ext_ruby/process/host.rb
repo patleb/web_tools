@@ -116,18 +116,14 @@ module Process
       m_access(:load_average){ load_average.to_a.map{ |avg| avg / cpu_count } }
     end
 
-    def cpu_load_high?
-      cpu_load.any?{ |avg| avg > ExtRuby.config.cpu_load_threshold }
-    end
-
     def cpu_load_increasing?
       min_1, min_5, min_15 = cpu_load
-      (min_1 > min_5) && (min_1 > min_15)
+      (min_1 > min_5) && (min_5 > min_15)
     end
 
     def cpu_load_decreasing?
       min_1, min_5, min_15 = cpu_load
-      (min_1 < min_5) || (min_1 < min_15)
+      (min_1 < min_5) && (min_5 < min_15)
     end
 
     def cpu
