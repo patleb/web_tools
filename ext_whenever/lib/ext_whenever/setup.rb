@@ -11,5 +11,7 @@ rake = "/home/#{deployer}/.rbenv/bin/rbenv sudo bin/rake"
 runner = "/home/#{deployer}/.rbenv/bin/rbenv sudo bin/rails runner"
 
 job_type :rake,   "#{context} #{flock} nice -n 19 #{rake} :task --silent :output"
+job_type :rake!,  "#{context} #{flock} #{rake} :task --silent :output"
+job_type :runner, "#{context} #{flock} nice -n 19 #{runner} ':task' :output"
+job_type :runner!, "#{context} #{flock} #{runner} ':task' :output"
 job_type :bash,   "#{context} #{flock} bash -e -u bin/:task :output"
-job_type :runner, "#{context} #{flock} #{runner} ':task' :output"
