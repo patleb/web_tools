@@ -12,7 +12,7 @@ module Checks
       return super unless options[:check]
       check_name = :"#{attribute}_check"
       define_method check_name do
-        if send(attribute).issue?
+        if send(attribute)&.issue?
           errors.add(attribute, :check_error)
         end
       end
@@ -62,7 +62,7 @@ module Checks
           next unless send(name)
           name.to_s.delete_suffix("_#{issue}?").to_sym
         end
-        nested_names = self.class.nested_attribute_names.select_map{ |name| send(name).send(has_issue) && name.to_sym }
+        nested_names = self.class.nested_attribute_names.select_map{ |name| send(name)&.send(has_issue) && name.to_sym }
       end
       if expand
         issue_names = "#{issue}_names"
@@ -78,7 +78,7 @@ module Checks
     end
 
     def nested_issue?
-      self.class.nested_attribute_names.any?{ |name| send(name).issue? }
+      self.class.nested_attribute_names.any?{ |name| send(name)&.issue? }
     end
 
     def warning?
@@ -90,7 +90,7 @@ module Checks
     end
 
     def nested_warning?
-      self.class.nested_attribute_names.any?{ |name| send(name).warning? }
+      self.class.nested_attribute_names.any?{ |name| send(name)&.warning? }
     end
   end
 end

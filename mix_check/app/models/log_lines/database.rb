@@ -27,10 +27,10 @@ module LogLines
       level = :warn if row.warning?
       level = :error if row.issue?
       json_data = {
+        **row.slice(:name, :size, :wal_size),
         connections: row.connections_total,
         issues: row.issue_names(false),
         warnings: row.warning_names(false),
-        **row.slice(:name, :size, :wal_size)
       }
       message = { text: [json_data[:name], (json_data[:issues] + json_data[:warnings]).uniq].join!(' '), level: level }
       super(log, message: message, json_data: json_data)

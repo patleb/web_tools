@@ -29,7 +29,7 @@ module Checks
           id: host.private_ip,
           cpu_count: host.cpu_count,
           disk_total: host.disks[Disk.disk_path][:fs_total],
-          storage_total: host.disks[Storage.disk_path][:fs_total],
+          storage_total: host.disks.dig(Storage.disk_path, :fs_total) || 0,
           memory_total: host.ram_total,
           swap_total: host.swap_total,
         }]
