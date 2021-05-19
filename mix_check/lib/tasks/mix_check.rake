@@ -1,12 +1,16 @@
 namespace :check do
+  desc 'capture monitoring/performance'
   task :capture => :environment do
+    Checks::Linux::Host.capture
     Checks::Postgres::Database.capture
   end
 
+  desc 'cleanup old monitoring/performance records'
   task :cleanup => :environment do
     Checks::Postgres::Database.cleanup
   end
 
+  desc 'database suggested indexes'
   task :suggested_indexes => :environment do
     indexes = Checks::Postgres::Query.suggested_indexes.map do |index|
       if index[:using] && index[:using] != "btree"

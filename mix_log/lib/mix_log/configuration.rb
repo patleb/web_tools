@@ -26,9 +26,6 @@ module MixLog
         'LogLines::Auth'        => 40,
         'LogLines::Fail2ban'    => 50,
         'LogLines::Postgresql'  => 60,
-        #
-        # monit: 0, --> keep monit, just improve the integration (it's not worth it to rewrite in Ruby)
-        # sysstat: 0, --> needs sysstat installed in dev (actually, might be worth it to rewrite in Ruby and reuse like monit)
       }
     end
 
