@@ -156,10 +156,13 @@ module LogLines
       groups[[:week, :period]].each do |week, row|
         row << (0...24).map{ |hour| (0..7).sum{ |day| (days[week + day.days] || [[]]).last[hour] || 0 } }
       end
-      groups.transform_values! do |rows|
-        rows.map!.with_index do |value, i|
-          next value.ceil(3) if rollups_type(i) == :float
-          value
+      groups.transform_values! do |group|
+        group.transform_values! do |rows|
+          next rows unless rows.is_a? Array
+          rows.map!.with_index do |value, i|
+            next value.ceil(3) if rollups_type(i) == :float
+            value
+          end
         end
       end
       groups.transform_keys! do |(period, group_name)|
