@@ -6,6 +6,18 @@ module MixServer
     require 'mix_server/rake/dsl'
     require 'mix_server/sh'
 
+    config.before_initialize do
+      if defined? PhusionPassenger
+        PhusionPassenger.on_event(:starting_worker_process) do |_forked|
+          Log.worker
+        end
+
+        PhusionPassenger.on_event(:stopping_worker_process) do
+          Log.worker(stop: true)
+        end
+      end
+    end
+
     initializer 'mix_server.append_migrations' do |app|
       append_migrations(app)
       append_migrations(app, scope: 'pgrest') if Setting[:pgrest_enabled]
@@ -19,6 +31,10 @@ module MixServer
         # https://github.com/sportngin/okcomputer
         get '_information/ip' => 'servers/information#show_ip', as: :information_ip
       end
+    end
+
+    ActiveSupport.on_load(:active_record) do
+      MixLog.config.available_types['LogLines::Worker'] = 150
     end
   end
 end

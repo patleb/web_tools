@@ -3,10 +3,11 @@ module LogLines
     json_attribute(
       action: :string,
       time: :float,
+      ram: :integer,
     )
 
     def self.push(log, action, time)
-      json_data = { action: action, time: time }
+      json_data = { action: action, time: time, ram: Process.worker.ram_used }
       message = { text: action, level: :info }
       super(log, message: message, json_data: json_data)
     end
