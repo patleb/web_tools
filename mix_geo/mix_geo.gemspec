@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   # TODO https://github.com/carmen-ruby/carmen
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'countries', '3.0.1'
-  s.add_dependency 'ip_location_db', '2.2.2020121618'
+  # s.add_dependency 'ip_location_db', '2.2.2020121618'
   s.add_dependency 'rgeo'
   s.add_dependency 'activerecord-postgis-adapter'
 end

@@ -208,7 +208,6 @@ PATH
       activerecord-postgis-adapter
       countries (= 3.0.1)
       ext_ruby (= 0.2.0)
-      ip_location_db (= 2.2.2020121618)
       rgeo
 
 PATH
@@ -434,8 +433,8 @@ GEM
     date_validator (0.11.0)
       activemodel (>= 3)
       activesupport (>= 3)
-    debase (2.3.0)
-      debase-ruby_core_source (~> 0.10.10)
+    debase (0.2.4.1)
+      debase-ruby_core_source (>= 0.10.2)
     debase-ruby_core_source (0.10.12)
     debugger-ruby_core_source (1.3.8)
     devise (4.8.0)
@@ -499,8 +498,8 @@ GEM
       fog-core
       nokogiri (>= 1.5.11, < 2.0.0)
     formatador (0.2.5)
-    full_clone (1.0.2)
-    full_dup (1.0.2)
+    full_clone (1.0.3)
+    full_dup (1.0.3)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     google-protobuf (3.15.8)
@@ -522,7 +521,6 @@ GEM
     i18n_data (0.10.0)
     ice_nine (0.11.2)
     inifile (3.0.0)
-    ip_location_db (2.2.2020121618)
     ipaddress (0.8.3)
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
@@ -667,15 +665,15 @@ GEM
     routes_lazy_routes (0.4.1)
       actionpack
       railties
-    ruby-debug-ide (2.3.0)
-      debase (~> 2.3.0)
+    ruby-debug-ide (0.7.2)
+      rake (>= 0.8.1)
     ruby-pg-extras (1.6.0)
       pg
       terminal-table
     ruby2_keywords (0.0.4)
     rubyzip (2.3.0)
-    safe_clone (1.0.2)
-    safe_dup (1.0.2)
+    safe_clone (1.0.3)
+    safe_dup (1.0.3)
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
@@ -789,7 +787,7 @@ DEPENDENCIES
   webpacker (~> 5.0)
 
 RUBY VERSION
-   ruby 2.7.1p83
+   ruby 2.7.3p183
 
 BUNDLED WITH
    2.1.4

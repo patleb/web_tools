@@ -12,10 +12,14 @@ module MixGeo
 
     def self.args
       {
-        remote:  ['--[no-]remote',     'Use the remote CSV from Github'],
+        remote:  ['--[no-]remote',     'Use the remote CSV from Github (default to true)'],
         path:    ['--path=PATH',       'Use the local CSV under the directory specified', :exist],
         version: ['--version=VERSION', 'The version of the CSV specified by --path (required)']
       }
+    end
+
+    def self.defaults
+      { remote: true }
     end
 
     def self.steps
