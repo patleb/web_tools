@@ -2,7 +2,7 @@ module Checks
   module Linux
     class Disk < Base
       alias_attribute :path, :id
-      attribute       :size, :integer
+      attribute       :used, :integer
       attribute       :reads, :integer
       attribute       :writes, :integer
       attribute       :inodes_usage, :float
@@ -10,7 +10,7 @@ module Checks
       def self.list
         return [] unless (disk = host.disks[disk_path])
         [{
-          id: disk_path, size: disk[:fs_used],
+          id: disk_path, used: disk[:fs_used],
           reads: counter_value(disk[:io_size][0], snapshot[:io_size][0]),
           writes: counter_value(disk[:io_size][1], snapshot[:io_size][1]),
           inodes_usage: host.disks_inodes[disk_path].to_f,
@@ -25,8 +25,12 @@ module Checks
         '/'
       end
 
+      def total
+        self.class.host.disks.dig(self.class.disk_path, :fs_total) || 0
+      end
+
       def usage
-        self.class.usage(size, self.class.host.disks[self.class.disk_path][:fs_total])
+        self.class.usage(used, total)
       end
 
       def usage_issue?

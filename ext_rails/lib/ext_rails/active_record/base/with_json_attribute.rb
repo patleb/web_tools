@@ -25,6 +25,10 @@ module ActiveRecord::Base::WithJsonAttribute
   end
 
   class_methods do
+    def json_attributes
+      json_accessors[:json_data]
+    end
+
     def json_attribute(field_types)
       json_accessor(:json_data, field_types)
     end

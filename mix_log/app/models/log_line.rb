@@ -1,4 +1,5 @@
-class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observability.html
+# TODO https://pgdash.io/blog/postgres-observability.html
+class LogLine < LibMainRecord
   class IncompatibleLogLine < ::StandardError; end
 
   belongs_to :log
@@ -23,7 +24,7 @@ class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observabili
   end
 
   def self.last_message(...)
-    last_messages(...)
+    last_messages(...).first
   end
 
   def self.last_messages(text_tiny: nil, **conditions)
@@ -33,12 +34,8 @@ class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observabili
     query.order(updated_at: :desc)
   end
 
-  def self.rollups!(scope = :from_last)
-    raise NotImplementedError unless const_defined? :ROLLUPS_JSON_DATA
-    rollups_json_data = const_get(:ROLLUPS_JSON_DATA)
-    rollups_json_data = rollups_json_data.keys if rollups_json_data.is_a? Hash
-    rollups_class_name = "LogRollups::#{name.demodulize}"
-    rollups_class = rollups_class_name.to_const!
+  # :rollups groups must have their json_data keys in the same order/positions as :rollups_keys
+  def self.rollups!(scope = :from_last, dry_run: false)
     groups = case scope
       when :all, true
         rollups
@@ -58,17 +55,39 @@ class LogLine < LibMainRecord # TODO https://pgdash.io/blog/postgres-observabili
           group_value: group_value || '',
           period: 1.send(period),
           period_at: period_at,
-          json_data: rollups_json_data.first(json_data.size).zip(json_data).to_h
+          json_data: rollups_keys.first(json_data.size).zip(json_data).to_h
         }
       end)
     end
     rows.each{ |row| row[:type] = rollups_class_name }
-    rollups_class.upsert_all(rows, unique_by: 'index_lib_log_rollups_on_groups', returning: false) if rows.any?
+    unless dry_run || rows.empty?
+      rollups_class.upsert_all(rows, unique_by: 'index_lib_log_rollups_on_groups', returning: false) if rows.any?
+    end
     rows
   end
 
   def self.rollups
     raise NotImplementedError
+  end
+
+  def self.rollups_type(i)
+    Array.wrap(rollups_types[rollups_keys[i]]).first
+  end
+
+  def self.rollups_keys
+    @rollups_keys ||= rollups_types.keys
+  end
+
+  def self.rollups_types
+    rollups_class.json_attributes
+  end
+
+  def self.rollups_class
+    rollups_class_name.to_const!
+  end
+
+  def self.rollups_class_name
+    @rollups_class_name ||= "LogRollups::#{name.demodulize}"
   end
 
   def self.push(log, line)

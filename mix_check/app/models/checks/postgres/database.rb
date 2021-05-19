@@ -86,7 +86,7 @@ module Checks
         if last_space_at.nil? || last_space_at < (1.day - 30.seconds).ago
           PgHero.capture_space_stats
         end
-        last_updated_at = LogLines::Database.last_messages(text_tiny: "#{db_name}%").pick(:updated_at)
+        last_updated_at = LogLines::Database.last_message(text_tiny: db_name).pick(:updated_at)
         if last_updated_at.nil? || last_updated_at < (Setting[:check_database_interval] - 30.seconds).ago
           Log.database(current)
           reset

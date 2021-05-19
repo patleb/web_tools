@@ -3,11 +3,6 @@ module Checks
   module Linux
     class Host < Base
       alias_attribute :ip, :id
-      attribute       :cpu_count, :integer
-      attribute       :disk_total, :integer
-      attribute       :storage_total, :integer
-      attribute       :memory_total, :integer
-      attribute       :swap_total, :integer
 
       nests_one  :cpu,      default: proc { Cpu.current }
       nests_one  :disk,     default: proc { Disk.current }
@@ -18,6 +13,11 @@ module Checks
       nests_one  :ruby,     default: proc { Ruby.current }
       nests_many :sockets,  default: proc { Socket.all }
 
+      delegate_to :cpu, :count, prefix: true
+      delegate_to :disk, :total, prefix: true
+      delegate_to :storage, :total, prefix: true
+      delegate_to :memory, :ram_total, :swap_total
+
       validates :cpu, check: true
       validates :disk, check: true
       validates :storage, check: true
@@ -25,14 +25,7 @@ module Checks
       validates :ruby, check: true
 
       def self.list
-        [{
-          id: host.private_ip,
-          cpu_count: host.cpu_count,
-          disk_total: host.disks[Disk.disk_path][:fs_total],
-          storage_total: host.disks.dig(Storage.disk_path, :fs_total) || 0,
-          memory_total: host.ram_total,
-          swap_total: host.swap_total,
-        }]
+        [{ id: host.private_ip }]
       end
 
       def self.snapshot_key
@@ -44,7 +37,7 @@ module Checks
       end
 
       def self.capture
-        last_updated_at = LogLines::Host.last_messages(text_tiny: "#{host.private_ip}%").pick(:updated_at)
+        last_updated_at = LogLines::Host.last_message(text_tiny: host.private_ip).pick(:updated_at)
         if last_updated_at.nil? || last_updated_at < (Setting[:check_host_interval] - 30.seconds).ago
           Global.write(snapshot_key, host.build_snapshot, expires: false)
           Log.host(current)

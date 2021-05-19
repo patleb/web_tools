@@ -1,27 +1,35 @@
 module Checks
   module Linux
     class Memory < Base
-      attribute :size, :integer
-      attribute :swap_size, :integer
+      attribute :ram_used, :integer
+      attribute :swap_used, :integer
 
       def self.list
-        [{ id: 'mem', size: host.memory[:ram_used], swap_size: host.memory[:swap_used] }]
+        [{ id: 'mem', ram_used: host.memory[:ram_used], swap_used: host.memory[:swap_used] }]
       end
 
-      def usage
-        self.class.usage(size, self.class.host.ram_total)
+      def ram_total
+        self.class.host.ram_total
+      end
+
+      def ram_usage
+        self.class.usage(ram_used, ram_total)
+      end
+
+      def swap_total
+        self.class.host.swap_total
       end
 
       def swap_usage
-        self.class.usage(swap_size, self.class.host.swap_total)
+        self.class.usage(swap_used, swap_total)
       end
 
-      def usage_issue?
-        usage >= 95.0
+      def ram_usage_issue?
+        ram_usage >= 95.0
       end
 
-      def usage_warning?
-        usage >= 75.0
+      def ram_usage_warning?
+        ram_usage >= 75.0
       end
 
       def swap_usage_warning?

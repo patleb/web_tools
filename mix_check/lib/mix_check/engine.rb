@@ -19,9 +19,14 @@ module MixCheck
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixLog.config.available_types['LogLines::Database'] = 140
-      MixLog.config.available_types['LogLines::Host'] = 142
-      MixLog.config.available_rollups['LogRollups::Database'] = 100
+      MixLog.config.available_types.merge!(
+        'LogLines::Database' => 140,
+        'LogLines::Host' => 142,
+      )
+      MixLog.config.available_rollups.merge!(
+        'LogRollups::Database' => 100,
+        'LogRollups::Host' => 102,
+      )
     end
   end
 end

@@ -30,18 +30,6 @@ module LogLines
     }
     INVALID_URI = OpenStruct.new(path: nil)
     PERIODS = %i(year month week day hour)
-    ROLLUPS_JSON_DATA = %i(
-      requests
-      time_min
-      time_max
-      time_avg
-      time_std
-      time_med
-      bytes_out
-      bytes_in
-      users
-      hours
-    ).map.with_index.to_h
 
     json_attribute(
       ip: :string,
@@ -147,24 +135,14 @@ module LogLines
     end
 
     def self.rollups
-      operations = [
-        [:count],
-        *%i(minimum maximum average stddev median).map{ |operation| [operation, :time] },
-        [:sum, :bytes_out], [:sum, :bytes_in],
-      ]
-      ceil = ->(row) do
-        %i(time_avg time_std).each{ |name| row[ROLLUPS_JSON_DATA[name]] = row[ROLLUPS_JSON_DATA[name]].ceil(3) }
-        row
-      end
       groups = %i(week day).each_with_object({}) do |period, result|
-        result[[period, :period]] = success.group_by_period(period).calculate(operations).transform_values!(&ceil)
+        result[[period, :period]] = success.group_by_period(period).calculate(LogRollups::NginxAccess::OPERATIONS)
         success.unique_users.group_by_period(period).count.each do |period_at, users|
           result[[period, :period]][period_at] << users
         end
       end
       groups[[:week, :path]] = success.group_by_period(:week).joins(:log_message).order_group(:text_tiny)
-        .calculate(operations)
-        .transform_values!(&ceil)
+        .calculate(LogRollups::NginxAccess::OPERATIONS)
         .transform_keys!{ |(week, text_tiny)| [week, text_tiny.sub(/^2\d\d /, '')] }
       groups[[:week, :status]] = group_by_period(:week).order_group(:status).count
       groups[[:week, :referer]] = success.referers.group_by_period(:week).order_group(:referer).count
@@ -177,6 +155,12 @@ module LogLines
       end
       groups[[:week, :period]].each do |week, row|
         row << (0...24).map{ |hour| (0..7).sum{ |day| (days[week + day.days] || [[]]).last[hour] || 0 } }
+      end
+      groups.transform_values! do |rows|
+        rows.map!.with_index do |value, i|
+          next value.ceil(3) if rollups_type(i) == :float
+          value
+        end
       end
       groups.transform_keys! do |(period, group_name)|
         group_name = case group_name

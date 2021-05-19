@@ -1,11 +1,5 @@
 module LogLines
   class Database < LogLine
-    ROLLUPS_JSON_DATA = %i(
-      size
-      wal_size
-      connections
-    )
-
     json_attribute(
       name: :string,
       size: :integer,
@@ -16,9 +10,8 @@ module LogLines
     )
 
     def self.rollups
-      operations = ROLLUPS_JSON_DATA.map{ |field| [:maximum, field] }
       %i(week day).each_with_object({}) do |period, result|
-        result[[period, :period]] = group_by_period(period).calculate(operations)
+        result[[period, :period]] = group_by_period(period).calculate(LogRollups::Database::OPERATIONS)
       end
     end
 
@@ -32,7 +25,7 @@ module LogLines
         issues: row.issue_names(false),
         warnings: row.warning_names(false),
       }
-      message = { text: [json_data[:name], (json_data[:issues] + json_data[:warnings]).uniq].join!(' '), level: level }
+      message = { text: json_data[:name], level: level }
       super(log, message: message, json_data: json_data)
     end
   end

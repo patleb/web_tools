@@ -1,0 +1,57 @@
+class LogRollups::Host < LogRollup
+  OPERATIONS = [
+    [:sum,     :pids],
+    [:maximum, :usage],
+    [:average, :usage],
+    [:maximum, :steal],
+    [:average, :steal],
+    [:maximum, :load_avg],
+    [:maximum, :disk_used],
+    [:sum,     :disk_reads],
+    [:sum,     :disk_writes],
+    [:maximum, :disk_inodes],
+    [:maximum, :storage_used],
+    [:sum,     :storage_read],
+    [:sum,     :storage_writes],
+    [:maximum, :storage_inodes],
+    [:maximum, :ram],
+    [:maximum, :swap],
+    [:sum,     :bytes_in],
+    [:sum,     :bytes_out],
+    [:maximum, :postgres_pids],
+    [:maximum, :postgres_ram],
+    [:maximum, :ruby_pids],
+    [:maximum, :ruby_ram],
+    [:maximum, :sockets],
+  ]
+
+  json_attribute(
+    pids: :integer,
+    usage_max: :float,
+    usage_avg: :float,
+    steal_max: :float,
+    steal_avg: :float,
+    load_avg: :float,
+    disk_used: :integer,
+    disk_reads: :integer,
+    disk_writes: :integer,
+    disk_inodes: :float,
+    storage_used: :integer,
+    storage_read: :integer,
+    storage_writes: :integer,
+    storage_inodes: :float,
+    ram: :integer,
+    swap: :integer,
+    bytes_in: :integer,
+    bytes_out: :integer,
+    postgres_pids: :integer,
+    postgres_ram: :integer,
+    ruby_pids: :integer,
+    ruby_ram: :integer,
+    sockets: :integer,
+  )
+
+  enum group_name: {
+    period: 0,
+  }
+end

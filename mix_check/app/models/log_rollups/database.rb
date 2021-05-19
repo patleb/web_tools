@@ -1,4 +1,10 @@
 class LogRollups::Database < LogRollup
+  OPERATIONS = [
+    [:maximum, :size],
+    [:maximum, :wal_size],
+    [:maximum, :connections]
+  ]
+
   json_attribute(
     size: :integer,
     wal_size: :integer,

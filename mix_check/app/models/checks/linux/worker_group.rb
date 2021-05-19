@@ -5,14 +5,14 @@ module Checks
       attribute       :pids, :integer
       attribute       :threads, :integer
       attribute       :start_time, :datetime
-      attribute       :memory_size, :integer
-      attribute       :inodes_count, :integer
+      attribute       :ram, :integer
+      attribute       :inodes, :integer
 
       def self.list
         Worker.all.group_by(&:name).map do |id, workers|
           {
             id: id, pids: workers.size, start_time: workers.min{ |w1, w2| w1.start_time <=> w2.start_time }.start_time,
-            **%i(threads memory_size inodes_count).map{ |name| [name, workers.sum(&name.to_sym)] }.to_h
+            **%i(threads ram inodes).map{ |name| [name, workers.sum(&name.to_sym)] }.to_h
           }
         end
       end

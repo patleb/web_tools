@@ -1,4 +1,15 @@
 class LogRollups::NginxAccess < LogRollup
+  OPERATIONS = [
+    [:count],
+    [:minimum, :time],
+    [:maximum, :time],
+    [:average, :time],
+    [:stddev,  :time],
+    [:median,  :time],
+    [:sum,     :bytes_out],
+    [:sum,     :bytes_in],
+  ]
+
   json_attribute(
     requests: :integer,
     time_min: :float,
@@ -6,8 +17,8 @@ class LogRollups::NginxAccess < LogRollup
     time_avg: :float,
     time_std: :float,
     time_med: :float,
-    bytes_out: :float,
-    bytes_in: :float,
+    bytes_out: :integer,
+    bytes_in: :integer,
     users: :integer,
     hours: :json,
   )
