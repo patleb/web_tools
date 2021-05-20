@@ -36,6 +36,10 @@ module ActiveRecord::Base::WithList
       super
     end
 
+    def listables
+      descendants.select{ |klass| klass.base_class? && klass.listable? }
+    end
+
     def listable?
       return @_listable if defined? @_listable
       @_listable = self < ActiveRecord::Base::WithList::Position
@@ -49,6 +53,28 @@ module ActiveRecord::Base::WithList
 end
 
 module ActiveRecord::Base::WithList::Position
+  extend ActiveSupport::Concern
+
+  class_methods do
+    def list_reorganize
+      without_default_scope do
+        decimals = maximum("scale(#{list_column})") || 0
+        return unless decimals > 64 # postgres numeric max is 16383, but ruby conversion speed is a concern
+        with_table_lock do
+          connection.exec_query(<<-SQL.strip_sql)
+            UPDATE #{quoted_table_name} t_updated SET #{list_column} = t_ordered.i
+              FROM (
+                SELECT id, (row_number() OVER (ORDER BY #{list_column})) - 1.0 AS i
+                FROM #{quoted_table_name}
+                ORDER BY id
+              ) t_ordered
+              WHERE t_updated.id = t_ordered.id
+          SQL
+        end
+      end
+    end
+  end
+
   def create_or_update(...)
     if list_column
       if new_record?
