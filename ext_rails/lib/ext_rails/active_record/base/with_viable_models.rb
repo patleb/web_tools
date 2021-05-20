@@ -11,6 +11,8 @@ module ActiveRecord::Base::WithViableModels
     /root.rb
     /null.rb
     /base.rb
+    /main.rb
+    /relation.rb
   ))
 
   included do
