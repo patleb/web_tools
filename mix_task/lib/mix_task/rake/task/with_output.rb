@@ -46,8 +46,10 @@ module Rake::Task::WithOutput
           result = super
         end
         return result
-      else
+      elsif name == 'environment' || name.start_with?('db:')
         return super
+      else
+        return with_db_loggers{ super }
       end
     end
 
