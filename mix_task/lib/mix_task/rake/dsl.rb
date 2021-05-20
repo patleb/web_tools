@@ -1,11 +1,32 @@
 module Rake
   module DSL
-    def run_task(task_name, *args)
-      Rake::Task[task_name].invoke(*args)
+    def self.with_argv(task_name, **argv)
+      if argv.any?
+        old_argv = ARGV.dup
+        ARGV.replace([task_name, '--'])
+        argv.each do |key, value|
+          ARGV << case value
+          when nil, true then "--#{key.to_s.dasherize}"
+          when false     then "--no-#{key.to_s.dasherize}"
+          else                "--#{key.to_s.dasherize}=#{value}"
+          end
+        end
+      end
+      yield
+    ensure
+      ARGV.replace(old_argv) if old_argv
     end
 
-    def run_task!(task_name, *args)
-      Rake::Task[task_name].invoke!(*args)
+    def run_task(task_name, *args, **argv)
+      self.class.with_argv(task_name, **argv) do
+        Rake::Task[task_name].invoke(*args)
+      end
+    end
+
+    def run_task!(task_name, *args, **argv)
+      self.class.with_argv(task_name, **argv) do
+        Rake::Task[task_name].invoke!(*args)
+      end
     end
 
     def cap_task(task_name, environment = {})

@@ -8,23 +8,9 @@ module Rake
     protected
 
     def run_task(*args, **argv)
-      Rake::Task[task_name].reenable
-      if argv.any?
-        ARGV << task_name
-        ARGV << '--'
-        argv.each do |key, value|
-          ARGV <<
-            case value
-            when nil, true
-              "--#{key.to_s.dasherize}"
-            when false
-              "--no-#{key.to_s.dasherize}"
-            else
-              "--#{key.to_s.dasherize}=#{value}"
-            end
-        end
+      Rake::DSL.with_argv(task_name, **argv) do
+        Rake::Task[task_name].invoke!(*args)
       end
-      Rake::Task[task_name].invoke(*args)
     end
 
     def task_name
