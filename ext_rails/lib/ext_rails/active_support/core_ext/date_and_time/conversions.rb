@@ -6,7 +6,7 @@ module DateAndTime
       to_i * (10 ** 9) + nsec
     end
 
-    def rotations(days: 5, weeks: 3, months: 2)
+    def rotations(days: 5, weeks: 3, months: 2, format: true)
       days = 1 if days < 1; days = 6 if days > 6
       weeks = 1 if weeks < 1; weeks = 3 if weeks > 3
       months = 0 if months < 0
@@ -17,8 +17,8 @@ module DateAndTime
         memo << day
       end.reverse
       week_day, *weeks = (1..weeks - 1).each_with_object([current_week]) do |i, memo|
-        week = memo.first - i.week
-        memo << week
+        day = memo.first - i.week
+        memo << day
       end
       all += [week_day] + (1..days - all.size).each_with_object([]) do |i, memo|
         day = all.empty? ? current_week - (6 - days).days - i.days : all.last - (7 - days).days - i.days
@@ -26,10 +26,10 @@ module DateAndTime
       end
       all += weeks
       all += (1..months - 1).each_with_object([current_week - 3.weeks]) do |i, memo|
-        month = memo.first - (i * 4).weeks
-        memo << month
+        day = memo.first - (i * 4).weeks
+        memo << day
       end if months > 0
-      all
+      format ? all.map{ |day| day.to_date.to_s(&:db).tr('-', '_') } : all
     end
   end
 end
