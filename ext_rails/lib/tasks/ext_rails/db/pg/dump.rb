@@ -7,18 +7,22 @@ module Db
 
       def self.args
         {
-          name:       ['--name=NAME',                'Dump file name (default to dump)'],
-          base_dir:   ['--base-dir=BASE_DIR',        'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
-          includes:   ['--includes=INCLUDES', Array, 'Included tables (only for pg_dump and COPY command)'],
-          excludes:   ['--excludes=EXCLUDES', Array, 'Excluded tables (only for pg_dump and COPY command)'],
-          compress:   ['--[no-]compress',            'Compress the dump (default to true)'],
-          split:      ['--[no-]split',               'Compress and split the dump'],
-          md5:        ['--[no-]md5',                 'Generate md5 file after successful dump'],
-          physical:   ['--[no-]physical',            'Use pg_basebackup instead of pg_dump'],
-          wal:        ['--[no-]wal',                 'Use pg_receivewal with pg_basebackup (default to true)'],
-          csv:        ['--[no-]csv',                 'Use COPY command instead of pg_dump'],
-          where:      ['--where=WHERE',              'WHERE condition for the COPY command'],
-          pg_options: ['--pg_options=PG_OPTIONS',    'Extra options'],
+          name:       ['--name=NAME',                  'Dump file name (default to dump)'],
+          base_dir:   ['--base-dir=BASE_DIR',          'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
+          rotate:     ['--[no-]rotate',                'Rotate dumps (only for pg_dump)'],
+          days:       ['--days=DAYS',         Integer, 'Number of days in rotation (default to 5, min 5, max 6)'],
+          weeks:      ['--weeks=WEEKS',       Integer, 'Number of weeks in rotation (default to 3, min 1, max 3)'],
+          months:     ['--months=MONTHS',     Integer, 'Number of months in rotation (default to 2, min 0)'],
+          includes:   ['--includes=INCLUDES', Array,   'Included tables (only for pg_dump and COPY command)'],
+          excludes:   ['--excludes=EXCLUDES', Array,   'Excluded tables (only for pg_dump and COPY command)'],
+          compress:   ['--[no-]compress',              'Compress the dump (default to true)'],
+          split:      ['--[no-]split',                 'Compress and split the dump'],
+          md5:        ['--[no-]md5',                   'Generate md5 file after successful dump'],
+          physical:   ['--[no-]physical',              'Use pg_basebackup instead of pg_dump'],
+          wal:        ['--[no-]wal',                   'Use pg_receivewal with pg_basebackup (default to true)'],
+          csv:        ['--[no-]csv',                   'Use COPY command instead of pg_dump'],
+          where:      ['--where=WHERE',                'WHERE condition for the COPY command'],
+          pg_options: ['--pg_options=PG_OPTIONS',      'Extra postgres options'],
         }
       end
 
@@ -100,6 +104,10 @@ module Db
       end
 
       def pg_dump
+        if options.rotate && !rotation?
+          puts_info 'DUMP', 'skipped: not in the rotation'
+          return
+        end
         only = options.includes.reject(&:blank?)
         skip = options.excludes.reject(&:blank?)
         skip << ActiveRecord::Base.internal_metadata_table_name
@@ -120,6 +128,16 @@ module Db
             export PGPASSWORD=#{pwd};
             pg_dump #{cmd_options} #{output}
           CMD
+        end
+        rotate_dump if options.rotate
+      end
+
+      def rotate_dump
+        dump_dates = Pathname.new(dump_path.dirname).glob("#{options.name}_*").map do |path|
+          path.basename.to_s.gsub(/(^#{options.name}_|\.[\w.]+$)/, '')
+        end
+        (dump_dates - rotations).each do |date|
+          dump_path.dirname.glob("#{options.name}_#{date}*").each(&:delete)
         end
       end
 
@@ -169,7 +187,20 @@ module Db
       end
 
       def dump_path
-        @dump_path ||= Pathname.new(options.base_dir).join(options.name).expand_path
+        @dump_path ||= Pathname.new(options.base_dir).join(dump_name).expand_path
+      end
+
+      def dump_name
+        return options.name unless !options.physical && !options.csv && options.rotate
+        "#{options.name}_#{rotations.first}"
+      end
+
+      def rotation?
+        rotations.first == Time.current.beginning_of_day.to_date.to_s(:db).tr('-', '_')
+      end
+
+      def rotations
+        @rotations ||= Time.current.rotations(days: options.days, weeks: options.weeks, months: options.months)
       end
     end
   end

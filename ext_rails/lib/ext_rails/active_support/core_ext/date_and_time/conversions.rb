@@ -7,7 +7,7 @@ module DateAndTime
     end
 
     def rotations(days: nil, weeks: nil, months: nil, format: true)
-      days ||= 5; days = 1 if days < 1; days = 6 if days > 6
+      days ||= 5; days = 5 if days < 5; days = 6 if days > 6
       weeks ||= 3; weeks = 1 if weeks < 1; weeks = 3 if weeks > 3
       months ||= 2; months = 0 if months < 0
       current_day = beginning_of_day
