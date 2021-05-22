@@ -110,7 +110,6 @@ module Db
         end
         only = options.includes.reject(&:blank?)
         skip = options.excludes.reject(&:blank?)
-        skip << ActiveRecord::Base.internal_metadata_table_name
         with_db_config do |host, db, user, pwd|
           cmd_options = <<-CMD.squish
             --host #{host} --username #{user} --verbose --no-owner --no-acl --clean --format=c --compress=0
@@ -134,8 +133,8 @@ module Db
 
       def rotate_dump
         dump_dates = Pathname.new(dump_path.dirname).glob("#{options.name}_*").map do |path|
-          path.basename.to_s.gsub(/(^#{options.name}_|\.[\w.]+$)/, '')
-        end
+          path.basename.to_s.gsub(/(^#{options.name}_|\.[\w.-]+$)/, '')
+        end.uniq
         (dump_dates - rotations).each do |date|
           dump_path.dirname.glob("#{options.name}_#{date}*").each(&:delete)
         end

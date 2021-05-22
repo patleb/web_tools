@@ -134,6 +134,7 @@ module Db
               notify!(cmd, stderr) if notify?(stderr)
             end
           end
+          post_restore_environment
           post_restore_timescaledb if options.timescaledb
           post_restore_pgrest if options.pgrest
           output
@@ -155,6 +156,12 @@ module Db
         psql! <<-SQL.strip_sql
           CREATE EXTENSION IF NOT EXISTS timescaledb;
           SELECT timescaledb_pre_restore();
+        SQL
+      end
+
+      def post_restore_environment
+        psql! <<-SQL.strip_sql
+          UPDATE #{ActiveRecord::Base.internal_metadata_table_name} SET value = '#{Rails.env}' WHERE key = 'environment'
         SQL
       end
 
