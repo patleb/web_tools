@@ -64,9 +64,9 @@ module ActiveRecord::Base::WithList::Position
           connection.exec_query(<<-SQL.strip_sql)
             UPDATE #{quoted_table_name} t_updated SET #{list_column} = t_ordered.i
               FROM (
-                SELECT id, (row_number() OVER (ORDER BY #{list_column})) - 1.0 AS i
+                SELECT #{primary_key}, (row_number() OVER (ORDER BY #{list_column})) - 1.0 AS i
                 FROM #{quoted_table_name}
-                ORDER BY id
+                ORDER BY #{primary_key}
               ) t_ordered
               WHERE t_updated.id = t_ordered.id
           SQL
