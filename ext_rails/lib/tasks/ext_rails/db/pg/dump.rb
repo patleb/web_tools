@@ -104,6 +104,7 @@ module Db
       end
 
       def pg_dump
+        dump_path.dirname.mkpath
         if options.rotate && !rotation?
           puts_info 'DUMP', 'skipped: not in the rotation'
           return
