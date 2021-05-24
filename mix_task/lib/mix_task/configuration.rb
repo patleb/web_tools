@@ -1,5 +1,3 @@
-require 'mix_setting'
-
 module MixTask
   has_config do
     attr_writer   :available_names
