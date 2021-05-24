@@ -26,7 +26,7 @@ module Db
 
       def self.defaults
         {
-          base_dir: MixTask.config.rails_root.join('db'),
+          base_dir: Rails.root.join('db'),
           includes: [],
           md5: true,
         }

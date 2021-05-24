@@ -214,9 +214,6 @@ module ActiveTask
         locale: I18n.locale,
         time_zone: Time.zone,
       }
-      @_environment[:rake_config] = MixTask.config.instance_variables.each_with_object({}) do |ivar, memo|
-        memo[ivar] = MixTask.config.instance_variable_get(ivar)
-      end
 
       yield(@_environment) unless (run_help = _parse_args)
 
@@ -229,9 +226,6 @@ module ActiveTask
       rails_config = @_environment[:rails_config]
       I18n.locale = rails_config[:locale]
       Time.zone = rails_config[:time_zone]
-      @_environment[:rake_config].each do |ivar, value|
-        MixTask.config.instance_variable_set(ivar, value)
-      end
       Setting.rollback!
       @_environment.clear
     end

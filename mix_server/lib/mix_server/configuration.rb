@@ -13,5 +13,13 @@ module MixServer
         compute_canada: 70
       }
     end
+
+    def shared_dir
+      if Rails.env.dev_or_test?
+        Rails.root
+      else
+        Rails.root.join('..', '..', 'shared').expand_path
+      end
+    end
   end
 end

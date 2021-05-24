@@ -22,7 +22,7 @@ namespace :db do
 
     desc 'Drop all'
     task :drop_all => :environment do
-      sh Sh.psql 'DROP OWNED BY CURRENT_USER', MixTask.config.db_url
+      sh Sh.psql 'DROP OWNED BY CURRENT_USER', ExtRails.config.db_url
     end
 
     # https://www.dbrnd.com/2018/04/postgresql-9-5-brin-index-maintenance-using-brin_summarize_new_values-add-new-data-page-in-brin-index/
@@ -30,19 +30,19 @@ namespace :db do
     # https://www.postgresql.org/docs/10/functions-admin.html
     desc 'BRIN summarize'
     task :brin_summarize, [:index] => :environment do |t, args|
-      sh Sh.psql "SELECT brin_summarize_new_values('#{args[:index]}')", MixTask.config.db_url
+      sh Sh.psql "SELECT brin_summarize_new_values('#{args[:index]}')", ExtRails.config.db_url
     end
 
     desc 'ANALYZE database'
     task :analyze, [:table] => :environment do |t, args|
-      sh Sh.psql "ANALYZE VERBOSE #{args[:table]}", MixTask.config.db_url
+      sh Sh.psql "ANALYZE VERBOSE #{args[:table]}", ExtRails.config.db_url
     end
 
     desc 'VACUUM database'
     task :vacuum, [:table, :analyze, :full] => :environment do |t, args|
       analyze = 'ANALYZE' if flag_on? args, :analyze
       full = 'FULL' if flag_on? args, :full
-      sh Sh.psql "VACUUM #{full} #{analyze} VERBOSE #{args[:table]}", MixTask.config.db_url
+      sh Sh.psql "VACUUM #{full} #{analyze} VERBOSE #{args[:table]}", ExtRails.config.db_url
     end
   end
 end

@@ -9,7 +9,7 @@ module MixServer
         end
 
         def vpn_client_name
-          Setting[:vpn_client_name] || "client_#{MixTask.config.rails_env}"
+          Setting[:vpn_client_name] || "client_#{Rails.env}"
         end
       end
 

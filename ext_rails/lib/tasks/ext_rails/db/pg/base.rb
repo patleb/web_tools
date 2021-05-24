@@ -15,7 +15,7 @@ module Db
       protected
 
       def with_db_config
-        db = MixTask.config.db_config
+        db = ExtRails.config.db_config
         yield db[:host],
           db[:database],
           db[:username],

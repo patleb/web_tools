@@ -29,7 +29,7 @@ module Db
       def self.defaults
         {
           name: 'dump',
-          base_dir: MixTask.config.rails_root.join('db'),
+          base_dir: Rails.root.join('db'),
           includes: [],
           excludes: [],
           compress: true,
