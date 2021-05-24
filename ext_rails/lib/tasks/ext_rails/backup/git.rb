@@ -1,4 +1,4 @@
-module MixBackup
+module ExtRails
   module Backup
     class Git < ActiveTask::Base
       def self.steps

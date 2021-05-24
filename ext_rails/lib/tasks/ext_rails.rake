@@ -1,5 +1,12 @@
 require_rel 'ext_rails'
 
+namespace :backup do
+  desc "-- [options] Backup Git"
+  task :git => :environment do |t|
+    ExtRails::Backup::Git.new(self, t).run!
+  end
+end
+
 namespace :db do
   task :force_environment_set => :environment do
     Rake::Task['db:environment:set'].invoke rescue nil

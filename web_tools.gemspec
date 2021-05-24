@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_webpacker",   version
   s.add_dependency "ext_whenever",    version
   s.add_dependency "mix_admin",       version
-  # TODO remove s.add_dependency "mix_backup",      version
   s.add_dependency "ext_rails",       version
   s.add_dependency "mix_certificate", version
   s.add_dependency "mix_check",       version
