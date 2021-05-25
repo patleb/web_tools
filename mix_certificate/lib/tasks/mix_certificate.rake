@@ -8,7 +8,7 @@ namespace :certificate do
 
     desc 'Renew certificate'
     task :renew => :environment do
-      next if Rails.env.vagrant?
+      next unless Rails.env.production? || Rails.env.staging?
       next unless (certificate = Certificates::LetsEncrypt.find_renewable)
       certificate.renew
       run_task 'certificate:lets_encrypt:apply'
