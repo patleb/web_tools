@@ -5,6 +5,8 @@ module ExtRails
     attr_writer :params_debug
     attr_writer :skip_discard
     attr_writer :excluded_models
+    attr_writer :backup_excludes
+    attr_writer :backup_dir
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
@@ -23,6 +25,14 @@ module ExtRails
 
     def excluded_models
       @excluded_models ||= Set.new
+    end
+
+    def backup_excludes
+      @backup_excludes ||= Set.new
+    end
+
+    def backup_dir
+      @backup_dir ||= Rails.root.join('db')
     end
 
     def db_url
