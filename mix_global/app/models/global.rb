@@ -17,11 +17,11 @@ class Global < LibRecord
 
   scope :expired, -> {
     updated_at, expires_at = column(:updated_at), column(:expires_at)
-    expirable.where((updated_at < past_expires_at).or((expires_at != nil).and expires_at < Time.current))
+    expirable.where((updated_at < past_expires_at).or((expires_at.not_eq nil).and expires_at < Time.current))
   }
   scope :ongoing, -> {
     updated_at, expires_at = column(:updated_at), column(:expires_at)
-    expirable.where((updated_at > past_expires_at).and((expires_at == nil).or expires_at > Time.current))
+    expirable.where((updated_at > past_expires_at).and((expires_at.eq nil).or expires_at > Time.current))
   }
   scope :expirable, -> { where(expires: true) }
   scope :permanent, -> { where(expires: false) }
