@@ -17,14 +17,18 @@ module Rake
       ARGV.replace(old_argv) if old_argv
     end
 
+    def with_argv(...)
+      Rake::DSL.with_argv(...)
+    end
+
     def run_task(task_name, *args, **argv)
-      self.class.with_argv(task_name, **argv) do
+      with_argv(task_name, **argv) do
         Rake::Task[task_name].invoke(*args)
       end
     end
 
     def run_task!(task_name, *args, **argv)
-      self.class.with_argv(task_name, **argv) do
+      with_argv(task_name, **argv) do
         Rake::Task[task_name].invoke!(*args)
       end
     end
