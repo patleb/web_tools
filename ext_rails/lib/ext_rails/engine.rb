@@ -84,7 +84,7 @@ module ExtRails
       app.routes.append do
         match '/' => 'application#healthcheck', via: [:get, :head], as: :base
 
-        match '*not_found', via: :all, to: 'application#render_404', format: false
+        match '(/)*not_found', via: :all, to: 'application#render_404', format: false
       end
     end
 
