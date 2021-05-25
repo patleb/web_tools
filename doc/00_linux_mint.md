@@ -157,8 +157,18 @@ sed -i '/# group: old_group/c\# group: new_group' permissions.txt
 sudo setfacl --restore=permissions.txt
 ```
 
+## Parallel
+
+wget https://git.savannah.gnu.org/cgit/parallel.git/plain/src/parallel
+chmod 755 parallel
+sudo cp parallel sem
+sudo cp parallel /bin
+sudo cp sem /bin
+sudo mv parallel sem /usr/bin/
+
 ## GUI Softwares (check if better in software manager)
 
+- Tor Browser Launcher
 - QGIS
 - VSCode
 - Toolbox App, Rubymine
