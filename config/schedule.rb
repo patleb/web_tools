@@ -12,6 +12,7 @@ ExtWhenever.setup(self)
 #   runner 'EveryWeekJob.perform_later'
 # end
 #
+# EDT = UTC - (4|5) hours
 # every :day, at: '5am' do
 #   rake 'every_day'
 # end
