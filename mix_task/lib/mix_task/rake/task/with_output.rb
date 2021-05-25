@@ -46,8 +46,6 @@ module Rake::Task::WithOutput
           result = super
         end
         return result
-      elsif name == 'environment' || name.start_with?('db:')
-        return super
       else
         return with_db_loggers{ super }
       end
@@ -81,13 +79,13 @@ module Rake::Task::WithOutput
   end
 
   def with_db_loggers
-    if Rails.env.development?
+    if MixTask.config.sql_debug
       @_ar_logger = ActiveRecord::Base.logger
       ActiveRecord::Base.logger = ::Logger.new(STDOUT)
     end
     yield
   ensure
-    if Rails.env.development?
+    if MixTask.config.sql_debug
       ActiveRecord::Base.logger = @_ar_logger
     end
   end
