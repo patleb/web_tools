@@ -22,6 +22,7 @@ module Db
           'WARNING:  no privileges could be revoked for "public"',
           'WARNING:  no privileges were granted for "public"',
           "tar: Removing leading `/' from member names",
+          "unpigz: warning: <stdin>: trailing junk was ignored",
         ]
       end
 
