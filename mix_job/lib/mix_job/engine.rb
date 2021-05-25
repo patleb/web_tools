@@ -44,6 +44,10 @@ module MixJob
       end
     end
 
+    initializer 'mix_job.backup' do
+      ExtRails.config.backup_excludes << 'lib_jobs'
+    end
+
     ActiveSupport.on_load(:active_record) do
       MixLog.config.available_types['LogLines::JobWatchAction'] = 130
     end

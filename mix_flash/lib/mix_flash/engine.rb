@@ -6,5 +6,9 @@ module MixFlash
     initializer 'mix_flash.append_migrations' do |app|
       append_migrations(app)
     end
+
+    initializer 'mix_flash.backup' do
+      ExtRails.config.backup_excludes << 'lib_flashes'
+    end
   end
 end
