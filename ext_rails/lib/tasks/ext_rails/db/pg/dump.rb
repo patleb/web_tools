@@ -15,6 +15,7 @@ module Db
           months:     ['--months=MONTHS',     Integer, 'Number of months in rotation (default to 2, min 0)'],
           includes:   ['--includes=INCLUDES', Array,   'Included tables (only for pg_dump and COPY command)'],
           excludes:   ['--excludes=EXCLUDES', Array,   'Excluded tables (only for pg_dump and COPY command)'],
+          migrations: ['--[no-]migrations',            'Exclude schema migrations table (only for pg_dump, default to true)'],
           compress:   ['--[no-]compress',              'Compress the dump (default to true)'],
           split:      ['--[no-]split',                 'Compress and split the dump'],
           md5:        ['--[no-]md5',                   'Generate md5 file after successful dump'],
@@ -32,6 +33,7 @@ module Db
           base_dir: Rails.root.join('db'),
           includes: [],
           excludes: [],
+          migrations: true,
           compress: true,
           wal: true,
         }
@@ -111,6 +113,7 @@ module Db
         end
         only = options.includes.reject(&:blank?)
         skip = options.excludes.reject(&:blank?)
+        skip << ActiveRecord::SchemaMigration.table_name unless options.migrations
         with_db_config do |host, db, user, pwd|
           cmd_options = <<-CMD.squish
             --host #{host} --username #{user} --verbose --no-owner --no-acl --clean --format=c --compress=0

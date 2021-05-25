@@ -112,6 +112,7 @@ module Db
             when compress then "#{uncompress_cmd} |"
             else nil
             end
+          pre_restore_environment if options.data_only
           pre_restore_timescaledb if options.timescaledb
           sections = staged ? %w(pre-data data post-data) : [false]
           sections.unshift('list') if options.data_only
@@ -134,7 +135,7 @@ module Db
               notify!(cmd, stderr) if notify?(stderr)
             end
           end
-          post_restore_environment
+          post_restore_environment if options.data_only
           post_restore_timescaledb if options.timescaledb
           post_restore_pgrest if options.pgrest
           output
@@ -152,6 +153,10 @@ module Db
         end
       end
 
+      def pre_restore_environment
+        ActiveRecord::InternalMetadata.where(key: :environment).delete_all
+      end
+
       def pre_restore_timescaledb
         psql! <<-SQL.strip_sql
           CREATE EXTENSION IF NOT EXISTS timescaledb;
@@ -160,9 +165,7 @@ module Db
       end
 
       def post_restore_environment
-        psql! <<-SQL.strip_sql
-          UPDATE #{ActiveRecord::Base.internal_metadata_table_name} SET value = '#{Rails.env}' WHERE key = 'environment'
-        SQL
+        ActiveRecord::InternalMetadata[:environment] = Rails.env
       end
 
       def post_restore_timescaledb
