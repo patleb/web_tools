@@ -93,6 +93,7 @@ sudo chown root:root /etc/sudoers.d/$USER
 ## Panel buttons (click Preferences / Configure)
 
 - Replace Grouped Window List applet with Window List and Panel Launcher (use Desktop shortcuts to find configs)
+- Show window thumbnails on hover [false]
 
 ## File explorer
 
@@ -126,7 +127,7 @@ sudo chown root:root /etc/sudoers.d/$USER
 
 ## Panel Shortcuts
 
-- show desktop, files, system monitor, terminator, chromium, calculator, vscode, rubymine
+- show desktop, files, system monitor, terminator, chromium, calculator, rubymine
 
 ## Keyboard Quirks
 
@@ -170,12 +171,10 @@ sudo mv parallel sem /usr/bin/
 
 - Tor Browser Launcher
 - QGIS
-- VSCode
 - Toolbox App, Rubymine
 - CLion, Cling
-- Cheese, Deluge
-- VLC, Spotify
-- Calibre, Shutter
+- Deluge, VLC
+- Calibre, Shutter, Xournal
 - Remmina
 - VirtualBox
 
@@ -206,7 +205,6 @@ sudo apt-get -y install \
   libncurses5-dev \
   libreadline-dev \
   libssl-dev \
-  libvips libvips-dev libvips-tools \
   libxml2-dev libxml2-utils \
   libxslt1-dev \
   libyaml-dev \
@@ -221,10 +219,9 @@ sudo apt-get -y install \
   sqlite3 libsqlite3-dev \
   software-properties-common \
   time \
-  zlib1g-dev
+  whois \
+  zlib1g-dev \
 sudo apt-get -y install \
-  python-dev \
-  python-pip \
   python3-pip \
   python3-dev
 ```
@@ -247,8 +244,8 @@ echo '/node_modules/' >> ~/.gitignore_global
 ```bash
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 RELEASE=$(. /etc/os-release && echo $UBUNTU_CODENAME)
-echo "deb http://apt.postgresql.org/pub/repos/apt/ ${RELEASE}"-pgdg main | sudo tee  /etc/apt/sources.list.d/pgdg.list
-sudo apt update && sudo apt-get -y install libpq-dev postgresql-client-11
+echo "deb [arch=$(dpkg --print-architecture)] http://apt.postgresql.org/pub/repos/apt/ ${RELEASE}"-pgdg main | sudo tee  /etc/apt/sources.list.d/pgdg.list
+sudo apt update && sudo apt-get -y install libpq-dev postgresql-client-13
 ```
 
 ## Docker
@@ -256,7 +253,7 @@ sudo apt update && sudo apt-get -y install libpq-dev postgresql-client-11
 ```bash
 source /etc/os-release
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $UBUNTU_CODENAME stable"
+sudo add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $UBUNTU_CODENAME stable"
 sudo apt update
 sudo apt-get -y install docker-ce
 ...
@@ -273,11 +270,11 @@ sudo mv ~/docker-compose /usr/local/bin/docker-compose
 ## Nodejs
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get -y install nodejs
 ...
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+echo "deb [arch=$(dpkg --print-architecture)] https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 sudo apt update && sudo apt-get -y install yarn
 ```
 
@@ -324,7 +321,7 @@ vi $HOME/.config/terminator/config
 
 ## VirtualBox + Vagrant
 
-- https://www.virtualbox.org/wiki/Downloads
+- https://www.virtualbox.org/wiki/Downloads (add Oracle VM VirtualBox Extension Pack)
 - https://www.vagrantup.com/downloads.html
 
 ```bash
@@ -334,15 +331,15 @@ vagrant plugin install vagrant-hostmanager
 ## Openstack Client
 
 ```bash
-sudo pip3 install python-openstackclient
+sudo -H pip3 install python-openstackclient
 ```
 
 ## Python GIS
 
 ```bash
-sudo pip3 install --upgrade cython
-sudo pip3 install matplotlib==3.2.1
-sudo pip3 install pyproj==2.6.1
+sudo -H pip3 install --upgrade cython
+sudo -H pip3 install matplotlib==3.2.1
+sudo -H pip3 install pyproj==2.6.1
 sudo apt-get install -y python3-psycopg2 python3-numpy python3-tk python3-netcdf4 netcdf-bin gdal-bin libgdal-dev ncview
 ```
 
