@@ -18,7 +18,7 @@ module Checks
           {
             id: worker.pid, ppid: worker.ppid, name: worker.name, command: worker.cmdline,
             **worker.cpu.slice(:state, :nice, :threads, :start_time),
-            ram: worker.ram, inodes: worker.inodes,
+            ram: worker.ram_used, inodes: worker.inodes_count,
           }
         end
       end
