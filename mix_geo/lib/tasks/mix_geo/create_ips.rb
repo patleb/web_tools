@@ -37,10 +37,10 @@ module MixGeo
       mkdir_p TMP_GEOLITE2_FOLDER, verbose: false
       version_was = Gem::Version.new((ActiveRecord::InternalMetadata[:geolite2_version] || '0.0.0'))
       if options.remote
-        @version = Gem::Version.new(JSON.parse(open(GIT_GEOLITE2_VERSION))['version'])
+        @version = Gem::Version.new(JSON.parse(URI.open(GIT_GEOLITE2_VERSION))['version'])
         if @version > version_was
           @csv_file = "#{TMP_GEOLITE2_FOLDER}/#{GEOLITE2_CSV}"
-          IO.copy_stream(open(GIT_GEOLITE2_CSV_GZ), gzip_file)
+          IO.copy_stream(URI.open(GIT_GEOLITE2_CSV_GZ), gzip_file)
           puts_info 'VERSION', "New GeoLite2 version [#{@version}] downloaded in #{TMP_GEOLITE2_FOLDER} folder"
         end
       elsif options.path.present?
