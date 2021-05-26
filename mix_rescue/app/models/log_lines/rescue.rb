@@ -4,7 +4,7 @@ module LogLines
       error: :string,
       exception: :string,
       data: :json,
-      ram: :integer
+      ram: :big_integer
     )
 
     def self.push(log, exception, data: nil)

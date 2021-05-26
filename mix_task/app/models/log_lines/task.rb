@@ -4,7 +4,7 @@ module LogLines
       name: :string,
       args: :json,
       time: :float,
-      ram: :integer,
+      ram: :big_integer,
     )
 
     def self.push(log, name, args: nil, time: nil)

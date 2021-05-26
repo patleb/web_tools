@@ -2,8 +2,8 @@ module LogLines
   class Database < LogLine
     json_attribute(
       name: :string,
-      size: :integer,
-      wal_size: :integer,
+      size: :big_integer,
+      wal_size: :big_integer,
       connections: :integer,
       issues: :json,
       warnings: :json,

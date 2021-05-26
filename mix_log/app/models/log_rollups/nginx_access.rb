@@ -11,15 +11,15 @@ class LogRollups::NginxAccess < LogRollup
   ]
 
   json_attribute(
-    requests: :integer,
+    requests: :big_integer,
     time_min: :float,
     time_max: :float,
     time_avg: :float,
     time_std: :float,
     time_med: :float,
-    bytes_out: :integer,
-    bytes_in: :integer,
-    users: :integer,
+    bytes_out: :big_integer,
+    bytes_in: :big_integer,
+    users: :big_integer,
     hours: :json,
   )
 

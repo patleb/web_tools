@@ -6,8 +6,8 @@ class LogRollups::Database < LogRollup
   ]
 
   json_attribute(
-    size: :integer,
-    wal_size: :integer,
+    size: :big_integer,
+    wal_size: :big_integer,
     connections: :integer,
   )
 

@@ -3,7 +3,7 @@ module LogLines
     json_attribute(
       command: :string,
       stopped: :boolean,
-      ram: :integer,
+      ram: :big_integer,
     )
 
     def self.push(log, stop: nil)
