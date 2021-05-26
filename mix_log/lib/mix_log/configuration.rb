@@ -26,6 +26,7 @@ module MixLog
         'LogLines::Auth'        => 40,
         'LogLines::Fail2ban'    => 50,
         'LogLines::Postgresql'  => 60,
+        'LogLines::Rails'       => 70,
       }
     end
 
@@ -43,7 +44,8 @@ module MixLog
         log_path(:syslog),
         log_path(:auth),
         log_path(:fail2ban),
-        log_path("postgresql/postgresql-#{Setting[:postgres]}-main/postgresql")
+        log_path("postgresql/postgresql-#{Setting[:postgres]}-main/postgresql"),
+        rails_log_path,
       ]
     end
 
@@ -87,6 +89,10 @@ module MixLog
           /^ID: \w+$/,
         ]
       }.with_keyword_access
+    end
+
+    def rails_log_path
+      "tmp/log/#{Rails.env}.log"
     end
 
     def nginx_log_path(*type, name)

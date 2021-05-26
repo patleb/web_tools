@@ -58,9 +58,11 @@ module MixLog
       if line_i < log.line_i
         line_i += 1
       else
-        lines << (line = log.parse(line, mtime: mtime)) # line.force_encoding('utf-8')
+        previous = lines.last
+        lines << (line = log.parse(line, mtime: mtime, previous: previous)) # line.force_encoding('utf-8')
         line[:created_at] = last_created_at = normalize_timestamp(line[:created_at], last_created_at)
         line_i += 1
+        lines.delete_at(-2) if line.delete(:anchored)
         lines.pop if line[:filtered]
         lines.process(line_i)
       end

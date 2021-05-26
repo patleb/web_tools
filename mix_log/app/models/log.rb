@@ -24,7 +24,8 @@ class Log < LibMainRecord
   end
 
   def self.fs_type(path)
-    "LogLines::#{path.match(FS_TYPE).captures.join('_').camelize}"
+    name = path.match(FS_TYPE).captures.join('_')
+    name == Rails.env ? 'LogLines::Rails' : "LogLines::#{name.camelize}"
   end
 
   db_types.each do |db_type|

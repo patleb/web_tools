@@ -18,7 +18,7 @@ module LogLines
       key: :string,
     )
 
-    def self.parse(log, line, mtime:)
+    def self.parse(log, line, mtime:, **)
       created_at, program, pid, text = rsyslog_parse(line, mtime)
       return { created_at: created_at, filtered: true } unless program == 'sshd'
 

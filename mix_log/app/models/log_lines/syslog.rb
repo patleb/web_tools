@@ -8,7 +8,7 @@ module LogLines
 
     json_attribute :user
 
-    def self.parse(log, line, mtime:)
+    def self.parse(log, line, mtime:, **)
       created_at, program, pid, message = rsyslog_parse(line, mtime)
       return { created_at: created_at, filtered: true } unless program == 'CRON'
 

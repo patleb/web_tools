@@ -1,0 +1,103 @@
+F, [2021-05-23T13:39:45.0 #4198] FATAL -- : [d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1]
+[d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1] EOFError (EOFError):
+[d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1]
+[d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1] /usr/lib/ruby/vendor_ruby/phusion_passenger/rack/thread_handler_extension.rb:107:in `process_request'
+[d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1] /usr/lib/ruby/vendor_ruby/phusion_passenger/request_handler/thread_handler.rb:157:in `accept_and_process_next_request'
+[d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1] /usr/lib/ruby/vendor_ruby/phusion_passenger/request_handler/thread_handler.rb:110:in `main_loop'
+[d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1] /usr/lib/ruby/vendor_ruby/phusion_passenger/request_handler.rb:415:in `block (3 levels) in start_threads'
+[d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1] /usr/lib/ruby/vendor_ruby/phusion_passenger/utils.rb:113:in `block in create_thread_and_abort_on_exception'
+E, [2020-12-16T07:37:40.631578 #2240] ERROR -- : [e5bc2b66-a1e4-4226-afe4-cc77c0ba973e] [2020-12-16 07:37:40 UTC][NOTIFICATION]
+[Rescues::JavascriptError]
+[RESCUE][Rescues::JavascriptError]
+{
+  "tag": "div",
+  "id": "box",
+  "class": "box panel panel-default",
+  "width": 1536,
+  "height": 722,
+  "user_ip": "0.0.0.0",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0",
+  "host": {
+    "name": "web-tools",
+    "private_ip": "192.168.239.38",
+    "boot_time": "2020-11-24 12:43:10 UTC",
+    "uptime": 1882468.741,
+    "cpu_count": 16,
+    "cpu_usage": 0.005932,
+    "cpu_load": [
+      0.0375,
+      0.011875,
+      0.00375
+    ],
+    "ram_total_mb": 181349.926,
+    "ram_used_mb": 19506.517,
+    "swap_total_mb": 18431.997,
+    "swap_used_mb": 263.75,
+    "fs_total_mb": 49447,
+    "fs_used_mb": 26876
+  }
+}
+nextTick: TypeError: this.containerElement is undefined
+[END]
+
+F, [2021-05-26T13:39:45.0 #13427] FATAL -- : [f2ae9f4a-1324-4d6f-99e3-2ce0380a5669]
+[f2ae9f4a-1324-4d6f-99e3-2ce0380a5669] NoMethodError (undefined method `t' for #<CredentialsController:0x000055fd212b5858>):
+[f2ae9f4a-1324-4d6f-99e3-2ce0380a5669]
+[f2ae9f4a-1324-4d6f-99e3-2ce0380a5669] /usr/lib/ruby/vendor_ruby/phusion_passenger/rack/thread_handler_extension.rb:107:in `process_request'
+[f2ae9f4a-1324-4d6f-99e3-2ce0380a5669] /usr/lib/ruby/vendor_ruby/phusion_passenger/request_handler/thread_handler.rb:149:in `accept_and_process_next_request'
+[f2ae9f4a-1324-4d6f-99e3-2ce0380a5669] /usr/lib/ruby/vendor_ruby/phusion_passenger/request_handler/thread_handler.rb:110:in `main_loop'
+[f2ae9f4a-1324-4d6f-99e3-2ce0380a5669] /usr/lib/ruby/vendor_ruby/phusion_passenger/request_handler.rb:415:in `block (3 levels) in start_threads'
+[f2ae9f4a-1324-4d6f-99e3-2ce0380a5669] /usr/lib/ruby/vendor_ruby/phusion_passenger/utils.rb:113:in `block in create_thread_and_abort_on_exception'
+F, [2021-05-28T13:39:45.0 #26533] FATAL -- : [fd33573b-fe93-4055-a817-2b496f55e74f]
+[fd33573b-fe93-4055-a817-2b496f55e74f] NoMethodError (undefined method `admin?' for nil:NilClass):
+[fd33573b-fe93-4055-a817-2b496f55e74f]
+[fd33573b-fe93-4055-a817-2b496f55e74f] app/controllers/application_controller.rb:3:in `root_path'
+[fd33573b-fe93-4055-a817-2b496f55e74f] /usr/lib/ruby/vendor_ruby/phusion_passenger/rack/thread_handler_extension.rb:107:in `process_request'
+[fd33573b-fe93-4055-a817-2b496f55e74f] /usr/lib/ruby/vendor_ruby/phusion_passenger/request_handler/thread_handler.rb:157:in `accept_and_process_next_request'
+[fd33573b-fe93-4055-a817-2b496f55e74f] /usr/lib/ruby/vendor_ruby/phusion_passenger/request_handler/thread_handler.rb:110:in `main_loop'
+[fd33573b-fe93-4055-a817-2b496f55e74f] /usr/lib/ruby/vendor_ruby/phusion_passenger/request_handler.rb:415:in `block (3 levels) in start_threads'
+[fd33573b-fe93-4055-a817-2b496f55e74f] /usr/lib/ruby/vendor_ruby/phusion_passenger/utils.rb:113:in `block in create_thread_and_abort_on_exception'
+E, [2020-09-18T21:46:48.021278 #10484] ERROR -- : [41e1e56d-3d57-4804-bac3-d04e8c4e0b6b]   Couldn't find template for digesting: example/index
+E, [2020-08-20T15:02:27.505340 #5868] ERROR -- : [440da9b3-4b27-4c4a-b051-8ab2fd114198]   Couldn't find template for digesting: example/index
+E, [2020-08-05T15:51:29.245153 #5868] ERROR -- : [de374b28-1650-49de-a7d4-124a673a0507]   Couldn't find template for digesting: example/index
+F, [2021-05-29T13:39:45.0 #4142] FATAL -- : [4f9e2b31-4ec4-41b7-b6cb-ef4d195f371a]
+[4f9e2b31-4ec4-41b7-b6cb-ef4d195f371a] PG::ConnectionBad (could not connect to server: Connection refused
+	Is the server running on host "127.0.0.1" and accepting
+	TCP/IP connections on port 5432?
+):
+[4f9e2b31-4ec4-41b7-b6cb-ef4d195f371a]
+[4f9e2b31-4ec4-41b7-b6cb-ef4d195f371a] pg (1.2.3) lib/pg.rb:58:in `initialize'
+[4f9e2b31-4ec4-41b7-b6cb-ef4d195f371a] pg (1.2.3) lib/pg.rb:58:in `new'
+[4f9e2b31-4ec4-41b7-b6cb-ef4d195f371a] pg (1.2.3) lib/pg.rb:58:in `connect'
+[4f9e2b31-4ec4-41b7-b6cb-ef4d195f371a] activerecord-postgis-adapter (6.0.0) lib/active_record/connection_adapters/postgis/create_connection.rb:38:in `postgis_connection'
+[4f9e2b31-4ec4-41b7-b6cb-ef4d195f371a] activerecord (6.0.3.1) lib/active_record/connection_adapters/abstract/connection_pool.rb:887:in `new_connection'
+[4f9e2b31-4ec4-41b7-b6cb-ef4d195f371a] activerecord (6.0.3.1) lib/active_record/connection_adapters/abstract/connection_pool.rb:931:in `checkout_new_connection'
+E, [2021-01-18T19:35:10.557016 #18047] ERROR -- : [99bfd286-921e-4f45-972e-aae88ef2bd38] [2021-01-18 19:35:10 UTC][NOTIFICATION]
+[Rescues::JavascriptError]
+[RESCUE][Rescues::JavascriptError]
+{
+  "user_ip": "0.0.0.0",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36",
+  "host": {
+    "name": "web-tools",
+    "private_ip": "192.168.239.38",
+    "boot_time": "2020-12-21 22:47:33 UTC",
+    "uptime": 2407656.624,
+    "cpu_count": 16,
+    "cpu_usage": 0.000778,
+    "cpu_load": [
+      0.048125,
+      0.01625,
+      0.00625
+    ],
+    "ram_total_mb": 181349.926,
+    "ram_used_mb": 16203.041,
+    "swap_total_mb": 18431.997,
+    "swap_used_mb": 0.0,
+    "fs_total_mb": 49447,
+    "fs_used_mb": 26896
+  }
+}
+Uncaught TypeError: Cannot redefine property: globalPrivacyControl
+https://example.com/:6:24
+[END]
