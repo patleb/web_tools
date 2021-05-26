@@ -22,8 +22,8 @@ module LogLines
       json_data = {
         **row.slice(:name, :size, :wal_size),
         connections: row.connections_total,
-        issues: row.issue_names(false),
-        warnings: row.warning_names(false),
+        issues: row.issue_names,
+        warnings: row.warning_names,
       }
       message = { text: json_data[:name], level: level }
       super(log, message: message, json_data: json_data)

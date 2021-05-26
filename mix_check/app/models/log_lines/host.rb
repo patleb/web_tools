@@ -66,8 +66,8 @@ module LogLines
         postgres_pids: row.postgres.pids, postgres_ram: row.postgres.ram,
         ruby_pids: row.ruby.pids, ruby_ram: row.ruby.ram,
         sockets: row.sockets.size,
-        issues: row.issue_names(false),
-        warnings: row.warning_names(false),
+        issues: row.issue_names,
+        warnings: row.warning_names,
       }
       message = { text: row.ip, text_tiny: row.ip, level: level }
       super(log, message: message, json_data: json_data)
