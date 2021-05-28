@@ -16,6 +16,11 @@ namespace :log do
     MixLog::Rollup.new(self, t).run!
   end
 
+  desc 'report server log errors'
+  task :report => :environment do |t|
+    MixLog::Report.new(self, t).run!
+  end
+
   desc 'dump log tables' # 3.6 MB
   task :dump_tables => :environment do |t|
     name = "log_#{Log.maximum(:updated_at).utc.iso8601.tr('-T:Z', '')}"

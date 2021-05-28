@@ -1,0 +1,1 @@
+@report.pretty_json

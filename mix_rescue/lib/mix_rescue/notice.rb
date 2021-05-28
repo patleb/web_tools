@@ -63,7 +63,7 @@ class Notice
     else
       mail.deliver! unless MixRescue.config.skip_notice
     end
-    log_message.toggle! :alerted
+    log_message.update_attribute :alerted, true
   rescue Exception => e
     Log.rescue(e)
   end
