@@ -7,7 +7,7 @@ module Rack::Utils
   def self.log_context(request)
     {
       request: REQUEST_CONTEXT.each_with_object({}){ |attr, memo| memo[attr] = request.send(attr) },
-      params: request.filtered_parameters.except(*IGNORED_PARAMS, request.controller_class.controller_path),
+      params: request.filtered_parameters.except(*IGNORED_PARAMS, request.controller_class.try(:controller_path)),
       cookies: request.cookies.try(:reject){ |k, _| k.start_with?('_') && k.end_with?('_session') } || {},
       session: request.session.try(:to_hash) || {},
       x_csrf: request.headers.env['HTTP_X_CSRF_TOKEN'],
