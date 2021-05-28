@@ -12,7 +12,7 @@ module LogLines
       disk_writes: :big_integer,
       disk_inodes: :float,
       storage_used: :big_integer,
-      storage_read: :big_integer,
+      storage_reads: :big_integer,
       storage_writes: :big_integer,
       storage_inodes: :float,
       ram: :big_integer,
