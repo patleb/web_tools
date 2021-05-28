@@ -33,10 +33,11 @@ module RailsAdmin
         end
 
         def register(action)
-          klass = const_get(action.camelize)
-          self.class.define_method action do |&block|
-            add_action_custom_key(klass.new, &block)
-          end
+          instance_eval <<-RUBY
+            def #{action}(&block)
+              add_action_custom_key(#{action.camelize}.new, &block)
+            end
+          RUBY
         end
 
         private
