@@ -19,7 +19,7 @@ class LogMessage < LibMainRecord
 
   attr_accessor :log_line_id
 
-  scope :reportable, -> { where( (column(:level) >= levels[:error]).and(column(:monitor).eq nil).or(column(:monitor).eq true) ).where(alerted: false) }
+  scope :reportable, -> { where((column(:level) >= levels[:error]).and(column(:monitor).eq nil).or(column(:monitor).eq true)).where(alerted: false) }
 
   def self.select_by_hashes(log_id, levels, hashes)
     connection.exec_query(sanitize_sql_array([<<-SQL.strip_sql, hashes, levels, log_id]))
