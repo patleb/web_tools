@@ -63,6 +63,7 @@ module LogLines
         return { filtered: true }
       end
       message = { text: [json_data[:event], lock, text].join!(': '), level: level }
+
       { created_at: Time.parse(created_at), pid: pid.to_i, message: message, json_data: json_data }
     end
   end
