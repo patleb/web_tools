@@ -160,12 +160,24 @@ sudo setfacl --restore=permissions.txt
 
 ## Parallel
 
+```bash
 wget https://git.savannah.gnu.org/cgit/parallel.git/plain/src/parallel
 chmod 755 parallel
 sudo cp parallel sem
 sudo cp parallel /bin
 sudo cp sem /bin
 sudo mv parallel sem /usr/bin/
+```
+
+## Osquery
+
+```bash
+export OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $OSQUERY_KEY
+sudo add-apt-repository 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'
+sudo apt-get update
+sudo apt-get install osquery
+```
 
 ## GUI Softwares (check if better in software manager)
 
