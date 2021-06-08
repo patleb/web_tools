@@ -5,14 +5,14 @@ volumes:
   geoserver:
 services:
   postgres:
-    build: ./docker/postgres
+    build: ./dev/docker/postgres
     container_name: postgres
     ports:
       - 127.0.0.1:5432:5432
     volumes:
       - postgres:/var/lib/postgresql/data
-      - ./docker/postgres/docker-entrypoint-initdb.d/files:/docker-entrypoint-initdb.d/files
-      - ./docker/postgres/docker-entrypoint-initdb.d/setup.sh:/docker-entrypoint-initdb.d/setup.sh
+      - ./dev/docker/postgres/docker-entrypoint-initdb.d/files:/docker-entrypoint-initdb.d/files
+      - ./dev/docker/postgres/docker-entrypoint-initdb.d/setup.sh:/docker-entrypoint-initdb.d/setup.sh
     restart: always
     logging:
       options:
