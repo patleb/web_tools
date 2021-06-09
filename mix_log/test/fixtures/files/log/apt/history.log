@@ -1,0 +1,100 @@
+
+Start-Date: 2021-06-02  06:14:45
+Commandline: /usr/bin/unattended-upgrade
+Upgrade: libwebp6:amd64 (0.6.1-2, 0.6.1-2ubuntu0.18.04.1), libwebpdemux2:amd64 (0.6.1-2, 0.6.1-2ubuntu0.18.04.1), libwebpmux3:amd64 (0.6.1-2, 0.6.1-2ubuntu0.18.04.1), libwebp-dev:amd64 (0.6.1-2, 0.6.1-2ubuntu0.18.04.1)
+End-Date: 2021-06-02  06:14:49
+
+Start-Date: 2021-06-03  06:02:44
+Commandline: /usr/bin/unattended-upgrade
+Upgrade: dnsmasq-base:amd64 (2.79-1ubuntu0.3, 2.79-1ubuntu0.4)
+End-Date: 2021-06-03  06:02:47
+
+Start-Date: 2021-06-03  06:02:50
+Commandline: /usr/bin/unattended-upgrade
+Upgrade: firefox:amd64 (88.0.1+build1-0ubuntu0.18.04.2, 89.0+build2-0ubuntu0.18.04.2)
+End-Date: 2021-06-03  06:03:00
+
+Start-Date: 2021-06-05  06:27:21
+Commandline: /usr/bin/unattended-upgrade
+Upgrade: linux-libc-dev:amd64 (4.15.0-143.147, 4.15.0-144.148)
+End-Date: 2021-06-05  06:27:27
+
+Start-Date: 2021-06-05  06:27:29
+Commandline: /usr/bin/unattended-upgrade
+Install: linux-modules-4.15.0-144-generic:amd64 (4.15.0-144.148, automatic), linux-image-4.15.0-144-generic:amd64 (4.15.0-144.148, automatic), linux-headers-4.15.0-144:amd64 (4.15.0-144.148, automatic), linux-headers-4.15.0-144-generic:amd64 (4.15.0-144.148, automatic)
+Upgrade: linux-headers-generic:amd64 (4.15.0.143.130, 4.15.0.144.131), linux-virtual:amd64 (4.15.0.143.130, 4.15.0.144.131), linux-headers-virtual:amd64 (4.15.0.143.130, 4.15.0.144.131), linux-image-virtual:amd64 (4.15.0.143.130, 4.15.0.144.131)
+End-Date: 2021-06-05  06:29:16
+
+Start-Date: 2021-06-06  06:59:17
+Commandline: /usr/bin/unattended-upgrade
+Remove: linux-image-4.15.0-142-generic:amd64 (4.15.0-142.146)
+End-Date: 2021-06-06  06:59:38
+
+Start-Date: 2021-06-06  06:59:42
+Commandline: /usr/bin/unattended-upgrade
+Remove: linux-modules-4.15.0-142-generic:amd64 (4.15.0-142.146)
+End-Date: 2021-06-06  06:59:49
+
+Start-Date: 2021-06-06  06:59:52
+Commandline: /usr/bin/unattended-upgrade
+Remove: linux-headers-4.15.0-142-generic:amd64 (4.15.0-142.146)
+End-Date: 2021-06-06  07:00:41
+
+Start-Date: 2021-06-06  07:00:43
+Commandline: /usr/bin/unattended-upgrade
+Remove: linux-headers-4.15.0-142:amd64 (4.15.0-142.146)
+End-Date: 2021-06-06  07:01:31
+
+Start-Date: 2021-06-08  06:08:45
+Commandline: /usr/bin/unattended-upgrade
+Upgrade: libarchive13:amd64 (3.2.2-3.1ubuntu0.6, 3.2.2-3.1ubuntu0.7)
+End-Date: 2021-06-08  06:08:51
+
+Start-Date: 2021-06-01  08:25:11
+Commandline: /usr/sbin/synaptic --hide-main-window --non-interactive --parent-window-id 73400328 -o Synaptic::closeZvt=true --set-selections-file /tmp/tmpupcelv_u
+Requested-By: ubuntu (1000)
+Upgrade: libwebp6:amd64 (0.6.1-2, 0.6.1-2ubuntu0.18.04.1), libwebpdemux2:amd64 (0.6.1-2, 0.6.1-2ubuntu0.18.04.1), libwebpmux3:amd64 (0.6.1-2, 0.6.1-2ubuntu0.18.04.1), libwebp-dev:amd64 (0.6.1-2, 0.6.1-2ubuntu0.18.04.1)
+End-Date: 2021-06-01  08:25:13
+
+Start-Date: 2021-06-01  12:34:12
+Commandline: /usr/sbin/synaptic --hide-main-window --non-interactive --parent-window-id 73400328 -o Synaptic::closeZvt=true --set-selections-file /tmp/tmpietvesql
+Requested-By: ubuntu (1000)
+Upgrade: firefox-locale-en:amd64 (88.0.1+linuxmint1+tricia, 89.0+linuxmint1+tricia), firefox:amd64 (88.0.1+linuxmint1+tricia, 89.0+linuxmint1+tricia)
+End-Date: 2021-06-01  12:34:17
+
+Start-Date: 2021-06-01  18:25:06
+Commandline: /usr/sbin/synaptic --hide-main-window --non-interactive --parent-window-id 73400328 -o Synaptic::closeZvt=true --set-selections-file /tmp/tmp82hw3d8t
+Requested-By: ubuntu (1000)
+Upgrade: xul-ext-lightning:amd64 (1:68.10.0+build1-0ubuntu0.18.04.1, 1:78.8.1+build1-0ubuntu0.18.04.1), python-apt-common:amd64 (1.6.5ubuntu0.5, 1.6.5ubuntu0.6), thunderbird-gnome-support:amd64 (1:68.10.0+build1-0ubuntu0.18.04.1, 1:78.8.1+build1-0ubuntu0.18.04.1), chromium-browser:amd64 (90.0.4430.93-0ubuntu0.18.04.1, 91.0.4472.77-0ubuntu0.18.04.1), thunderbird-locale-en-us:amd64 (1:68.10.0+build1-0ubuntu0.18.04.1, 1:78.8.1+build1-0ubuntu0.18.04.1), chromium-codecs-ffmpeg-extra:amd64 (90.0.4430.93-0ubuntu0.18.04.1, 91.0.4472.77-0ubuntu0.18.04.1), python-apt:amd64 (1.6.5ubuntu0.5, 1.6.5ubuntu0.6), thunderbird:amd64 (1:68.10.0+build1-0ubuntu0.18.04.1, 1:78.8.1+build1-0ubuntu0.18.04.1), chromium-browser-l10n:amd64 (90.0.4430.93-0ubuntu0.18.04.1, 91.0.4472.77-0ubuntu0.18.04.1), thunderbird-locale-en:amd64 (1:68.10.0+build1-0ubuntu0.18.04.1, 1:78.8.1+build1-0ubuntu0.18.04.1), python3-apt:amd64 (1.6.5ubuntu0.5, 1.6.5ubuntu0.6)
+End-Date: 2021-06-01  18:25:22
+
+Start-Date: 2021-06-02  11:50:21
+Commandline: /usr/sbin/synaptic --hide-main-window --non-interactive --parent-window-id 92274696 -o Synaptic::closeZvt=true --set-selections-file /tmp/tmpc7r2n6qn
+Requested-By: ubuntu (1000)
+Upgrade: dnsmasq-base:amd64 (2.79-1ubuntu0.3, 2.79-1ubuntu0.4)
+End-Date: 2021-06-02  11:50:23
+
+Start-Date: 2021-06-02  18:22:28
+Commandline: /usr/sbin/synaptic --hide-main-window --non-interactive --parent-window-id 92274696 -o Synaptic::closeZvt=true --set-selections-file /tmp/tmpfew1mfz9
+Requested-By: ubuntu (1000)
+Install: linux-modules-4.15.0-144-generic:amd64 (4.15.0-144.148, automatic), linux-image-4.15.0-144-generic:amd64 (4.15.0-144.148, automatic), libnvidia-compute-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-compute-460:i386 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-encode-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-encode-460:i386 (460.80-0ubuntu0.18.04.2, automatic), nvidia-kernel-common-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), xserver-xorg-video-nvidia-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-gl-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-gl-460:i386 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-fbc1-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-fbc1-460:i386 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-decode-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-decode-460:i386 (460.80-0ubuntu0.18.04.2, automatic), linux-modules-extra-4.15.0-144-generic:amd64 (4.15.0-144.148, automatic), libnvidia-cfg1-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), nvidia-utils-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), nvidia-dkms-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), linux-image-5.4.0-74-generic:amd64 (5.4.0-74.83~18.04.1, automatic), nvidia-compute-utils-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), linux-modules-extra-5.4.0-74-generic:amd64 (5.4.0-74.83~18.04.1, automatic), libnvidia-ifr1-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-ifr1-460:i386 (460.80-0ubuntu0.18.04.2, automatic), nvidia-driver-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), linux-headers-5.4.0-74-generic:amd64 (5.4.0-74.83~18.04.1, automatic), linux-hwe-5.4-headers-5.4.0-74:amd64 (5.4.0-74.83~18.04.1, automatic), linux-headers-4.15.0-144:amd64 (4.15.0-144.148, automatic), libnvidia-common-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), libnvidia-extra-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), linux-modules-5.4.0-74-generic:amd64 (5.4.0-74.83~18.04.1, automatic), nvidia-kernel-source-460:amd64 (460.80-0ubuntu0.18.04.2, automatic), linux-headers-4.15.0-144-generic:amd64 (4.15.0-144.148, automatic)
+Upgrade: linux-headers-generic-hwe-18.04-edge:amd64 (5.4.0.73.82~18.04.66, 5.4.0.74.83~18.04.67), linux-headers-generic:amd64 (4.15.0.143.130, 4.15.0.144.131), linux-image-generic-hwe-18.04-edge:amd64 (5.4.0.73.82~18.04.66, 5.4.0.74.83~18.04.67), linux-libc-dev:amd64 (4.15.0-143.147, 4.15.0-144.148), libnvidia-compute-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-compute-450:i386 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-encode-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-encode-450:i386 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), nvidia-kernel-common-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), xserver-xorg-video-nvidia-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-gl-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-gl-450:i386 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), linux-image-generic:amd64 (4.15.0.143.130, 4.15.0.144.131), libnvidia-fbc1-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-fbc1-450:i386 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-decode-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-decode-450:i386 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), linux-generic-hwe-18.04-edge:amd64 (5.4.0.73.82~18.04.66, 5.4.0.74.83~18.04.67), docker-ce-rootless-extras:amd64 (5:20.10.6~3-0~ubuntu-bionic, 5:20.10.7~3-0~ubuntu-bionic), libnvidia-cfg1-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), nvidia-utils-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), nvidia-dkms-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), nvidia-compute-utils-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-ifr1-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-ifr1-450:i386 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), nvidia-driver-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-common-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), libnvidia-extra-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), docker-scan-plugin:amd64 (0.7.0~ubuntu-bionic, 0.8.0~ubuntu-bionic), docker-ce:amd64 (5:20.10.6~3-0~ubuntu-bionic, 5:20.10.7~3-0~ubuntu-bionic), nvidia-kernel-source-450:amd64 (450.119.03-0ubuntu0.18.04.1, 460.80-0ubuntu0.18.04.2), docker-ce-cli:amd64 (5:20.10.6~3-0~ubuntu-bionic, 5:20.10.7~3-0~ubuntu-bionic)
+End-Date: 2021-06-02  18:28:02
+
+Start-Date: 2021-06-03  16:58:40
+Commandline: /usr/sbin/synaptic --hide-main-window --non-interactive --parent-window-id 73400334 -o Synaptic::closeZvt=true --set-selections-file /tmp/tmpzqspkrdw
+Requested-By: ubuntu (1000)
+Upgrade: grub-efi-amd64-bin:amd64 (2.04-1ubuntu44, 2.04-1ubuntu44.1), grub-efi-amd64:amd64 (2.04-1ubuntu44, 2.04-1ubuntu44.1), grub-efi-amd64-signed:amd64 (1.167~18.04.1+2.04-1ubuntu44, 1.167~18.04.3+2.04-1ubuntu44.1)
+End-Date: 2021-06-03  16:58:53
+
+Start-Date: 2021-06-07  14:28:32
+Commandline: /usr/sbin/synaptic --hide-main-window --non-interactive --parent-window-id 62914574 -o Synaptic::closeZvt=true --set-selections-file /tmp/tmpsweqlui2
+Requested-By: ubuntu (1000)
+Upgrade: libarchive13:amd64 (3.2.2-3.1ubuntu0.6, 3.2.2-3.1ubuntu0.7)
+End-Date: 2021-06-07  14:28:33
+
+Start-Date: 2021-06-07  23:09:09
+Commandline: apt-get install osquery
+Requested-By: ubuntu (1000)
+Install: osquery:amd64 (4.8.0-1.linux)
+End-Date: 2021-06-07  23:09:11

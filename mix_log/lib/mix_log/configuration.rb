@@ -27,6 +27,7 @@ module MixLog
         'LogLines::Fail2ban'    => 50,
         'LogLines::Postgresql'  => 60,
         'LogLines::Rails'       => 70,
+        'LogLines::AptHistory'  => 80,
       }
     end
 
@@ -41,6 +42,7 @@ module MixLog
         nginx_log_path(:public, :access),
         log_path(:nginx, :access),
         log_path(:nginx, :error),
+        log_path(:apt, :history),
         log_path(:syslog),
         log_path(:auth),
         log_path(:fail2ban),
