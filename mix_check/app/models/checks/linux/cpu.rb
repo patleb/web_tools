@@ -48,7 +48,7 @@ module Checks
 
       def steal_warning?
         last_records = LogLines::Host.last_records.limit(20.minutes / Setting[:check_host_interval]).pluck(:steal)
-        last_records.any? && (last_records << steal).all?(&:>=.with(10.0))
+        last_records.any? && (last_records << steal).all?{ |value| value >= 10.0 }
       end
     end
   end
