@@ -64,6 +64,10 @@ module Process
       @name ||= Socket.gethostname
     end
 
+    def machine_id
+      @machine_id ||= File.readlines("/etc/machine-id", chomp: true).first
+    end
+
     def private_ip
       @private_ip ||= Socket.ip_address_list.reverse.find{ |addrinfo| addrinfo.ipv4_private? }.ip_address
     end
