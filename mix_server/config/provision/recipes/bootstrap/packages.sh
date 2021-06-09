@@ -12,10 +12,12 @@
   dirmngr gnupg
   imagemagick
   libcurl4-openssl-dev
+  libevent-dev
   libffi-dev
   libgdbm6 libgdbm-dev
   libgmp-dev
   libncurses5-dev
+  libpcre2-dev
   libreadline-dev
   libssl-dev
   libxml2-dev libxml2-utils

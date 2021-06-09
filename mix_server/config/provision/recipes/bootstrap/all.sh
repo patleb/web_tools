@@ -10,6 +10,7 @@
   firewall
   firewall/deny_mail
   fail2ban
+  osquery
 ), base: 'bootstrap') do |name, id| -%>
   sun.source_recipe "<%= name %>" <%= id %>
 <% end -%>
