@@ -1,7 +1,7 @@
 class CreateLibLogs < ActiveRecord::Migration[6.0]
   def change
     create_table :lib_logs do |t|
-      t.belongs_to :server,          null: false, index: false, foreign_key: { to_table: :lib_servers }
+      t.belongs_to :server,          null: false, index: false, type: :string, foreign_key: { to_table: :lib_servers }
       t.string     :path,            null: false, default: ''
       t.bigint     :line_i,          null: false, default: 0
       t.datetime   :mtime,           null: false, default: Time.at(0)
