@@ -1,6 +1,6 @@
 __POSTGRES_PRIVATE_MASK__=${__POSTGRES_PRIVATE_MASK__:-24}
-INTERNAL_IP=$(sun.internal_ip)
-PRIVATE_NETWORK=$(sun.network $INTERNAL_IP $__POSTGRES_PRIVATE_MASK__)/$__POSTGRES_PRIVATE_MASK__
+PRIVATE_IP=$(sun.private_ip)
+PRIVATE_NETWORK=$(sun.network $PRIVATE_IP $__POSTGRES_PRIVATE_MASK__)/$__POSTGRES_PRIVATE_MASK__
 
 <%= Sh.delete_lines! '$(sun.pg_hba_file)', '$PRIVATE_NETWORK', escape: false %>
 

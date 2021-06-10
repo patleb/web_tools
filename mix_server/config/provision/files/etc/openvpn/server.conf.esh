@@ -200,7 +200,7 @@ push "route $LOCAL_NETWORK"
 # DNS servers provided by opendns.com.
 ;push "dhcp-option DNS 208.67.222.222"
 ;push "dhcp-option DNS 208.67.220.220"
-push "dhcp-option DNS $INTERNAL_IP"
+push "dhcp-option DNS $PRIVATE_IP"
 
 # Uncomment this directive to allow different
 # clients to be able to "see" each other.

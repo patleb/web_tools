@@ -1,7 +1,7 @@
 export VPN_DOMAIN=<%= sun.vpn_domain %>
 export INTERFACE=$(sun.default_interface)
-export INTERNAL_IP=$(sun.internal_ip)
-export LOCAL_NETWORK="$(sun.network $INTERNAL_IP 24) $(sun.netmask 24)"
+export PRIVATE_IP=$(sun.private_ip)
+export LOCAL_NETWORK="$(sun.network $PRIVATE_IP 24) $(sun.netmask 24)"
 OPENVPN_DIR='/etc/openvpn'
 SERVER_CONF="$OPENVPN_DIR/server.conf"
 CLIENT_CONF="$OPENVPN_DIR/client.conf"

@@ -1,6 +1,6 @@
 # TODO https://www.digitalocean.com/community/tutorials/how-to-create-an-intranet-with-openvpn-on-ubuntu-16-04
 
-export LOCAL_NETWORK=$(sun.network $(sun.internal_ip) 16)/16
+export LOCAL_NETWORK=$(sun.network $(sun.private_ip) 16)/16
 export SAMBA_DATA='/opt/samba_data'
 
 sun.install "samba"

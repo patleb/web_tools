@@ -20,11 +20,11 @@ module Sh::Network
     "route | grep '^default' | grep -o '[^ ]*$'"
   end
 
-  def external_ip
+  def public_ip
     'curl -s http://whatismyip.akamai.com/ && echo'
   end
 
-  def internal_ip
+  def private_ip
     "hostname -I | awk '{print $NF; exit}'"
   end
 

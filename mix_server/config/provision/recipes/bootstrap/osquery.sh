@@ -15,6 +15,5 @@ sun.backup_compare "/usr/share/osquery/packs/vuln-management.conf"
 systemctl enable osqueryd
 # osqueryctl start osqueryd
 
-mkdir -p /etc/osquery/machine-id
-touch "/etc/osquery/machine-id/$(cat /etc/machine-id)"
-# SELECT filename AS machine_id FROM file WHERE path LIKE '/etc/osquery/machine-id/%' LIMIT 1;
+mkdir -p /etc/osquery/private_ip
+touch "/etc/osquery/private_ip/$(<%= Sh.private_ip %>)"

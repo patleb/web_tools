@@ -64,6 +64,7 @@ module Process
       @name ||= Socket.gethostname
     end
 
+    # NOTE isn't unique on VM reuse
     def machine_id
       @machine_id ||= File.readlines("/etc/machine-id", chomp: true).first
     end

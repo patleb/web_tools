@@ -1,12 +1,11 @@
 class CreateLibServers < ActiveRecord::Migration[6.0]
   def change
-    create_table :lib_servers, id: false do |t|
-      t.primary_key :id, :string
-      t.integer     :provider,   null: false
-      t.inet        :private_ip, null: false
-      t.jsonb       :json_data,  null: false, default: {}, index: { using: :gin }
+    create_table :lib_servers do |t|
+      t.integer    :provider,   null: false
+      t.inet       :private_ip, null: false
+      t.jsonb      :json_data,  null: false, default: {}, index: { using: :gin }
       t.timestamps
-      t.datetime    :deleted_at
+      t.datetime   :deleted_at
     end
 
     # https://stackoverflow.com/questions/8289100/create-unique-constraint-with-null-columns

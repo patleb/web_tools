@@ -36,10 +36,10 @@ sun.default_interface() {
   <%= Sh.default_interface %>
 }
 
-sun.external_ip() {
-  <%= Sh.external_ip %>
+sun.public_ip() {
+  <%= Sh.public_ip %>
 }
 
-sun.internal_ip() {
-  <%= Sh.internal_ip %>
+sun.private_ip() {
+  <%= Sh.private_ip %>
 }
