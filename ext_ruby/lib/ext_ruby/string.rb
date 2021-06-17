@@ -5,7 +5,7 @@ class NilClass
 end
 
 class Integer
-  def to_bytes
+  def to_bytes(*)
     self
   end
 end
@@ -23,11 +23,15 @@ class String
     'BYTE' => 1, 'BYTES' => 1, 'KB' => 1024, 'MB' => 1024**2, 'GB' => 1024**3, 'TB' => 1024**4, 'PB' => 1024**5,
     'OCTET' => 1, 'OCTETS' => 1, 'KO' => 1024, 'MO' => 1024**2, 'GO' => 1024**3, 'TO' => 1024**4, 'PO' => 1024**5,
   }
+  DB_BYTES = {
+    'BYTE' => 1, 'BYTES' => 1, 'KB' => 1024, 'MB' => 1000*1024, 'GB' => 1000*1024**2, 'TB' => 1000*1024**3, 'PB' => 1000*1024**4,
+    'OCTET' => 1, 'OCTETS' => 1, 'KO' => 1024, 'MO' => 1000*1024, 'GO' => 1000*1024**2, 'TO' => 1000*1024**3, 'PO' => 1000*1024**4,
+  }
 
-  def to_bytes
+  def to_bytes(standard = :db)
     value, units = upcase.split
     value = value.tr(',', '.') if BYTES.has_key?(units) && units.include?('O')
-    (value.cast * BYTES[units]).to_i
+    (value.cast * (standard == :db ? DB_BYTES[units] : BYTES[units])).to_i
   end
 
   def to_args
