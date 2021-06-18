@@ -1,10 +1,10 @@
 class RescueError < ::StandardError
   RESCUE = '[RESCUE]'.freeze
 
-  attr_reader :name, :backtrace, :data
+  attr_reader :base_class, :name, :backtrace, :data
 
   def initialize(exception = self, data: nil)
-    @exception = exception
+    @base_class = exception
     @name      ||= exception.class.name
     @backtrace ||= exception.backtrace
     @data      ||= data || {}
