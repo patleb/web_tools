@@ -1,16 +1,18 @@
 module ActionController
   module WithStatus
-    EXCEPTION_TEMPLATES = [422, 500].freeze
-
     class RequestTimeoutError < StandardError; end
     class InternalServerError < StandardError; end
 
-    def render_404
+    def render_400
+      render_404(400)
+    end
+
+    def render_404(status = 404)
       # do not log these errors, they are already in nginx log
       respond_to do |format|
-        format.text { render plain: template_status_plain(404), status: :not_found }
-        format.html { render html: template_status_html(404), status: :not_found }
-        format.any  { head :not_found }
+        format.text { render plain: template_status_plain(status), status: status }
+        format.html { render html: template_status_html(status), status: status }
+        format.any  { head status }
       end
     end
 
@@ -18,37 +20,40 @@ module ActionController
       log exception
       respond_to do |format|
         format.text do
-          render plain: template_status_plain(408), status: :request_timeout
+          render plain: template_status_plain(408), status: 408
         end
         format.html do
           self.response_body = nil # make sure that there is no DoubleRenderError
-          render html: template_status_html(408), status: :request_timeout
+          render html: template_status_html(408), status: 408
         end
         format.any do
           if params[:file]
             output = "#{t('rescue.408.title')}: #{t('rescue.408.problem')} #{t('rescue.408.solution')}"
             send_data output, type: 'text/plain', filename: 'request_timeout.txt'
           else
-            head :request_timeout
+            head 408
           end
         end
       end
     end
 
     def render_500(exception = InternalServerError.new)
+      case response.status
+      when 400 then return render_400
+      when 422 then status = 422
+      else          status = 500
+      end
       log exception
       respond_to do |format|
         format.text do
-          status = response.status.in?(EXCEPTION_TEMPLATES) ? response.status : 500
-          render plain: template_status_plain(status), status: :internal_server_error
+          render plain: template_status_plain(status), status: status
         end
         format.html do
           self.response_body = nil # make sure that there is no DoubleRenderError
-          status = response.status.in?(EXCEPTION_TEMPLATES) ? response.status : 500
-          render html: template_status_html(status), status: :internal_server_error
+          render html: template_status_html(status), status: status
         end
         format.any do
-          head :internal_server_error
+          head status
         end
       end
     end

@@ -5,6 +5,9 @@ en:
       title: ""
       problem: ""
       solution: If you are the application owner check the logs for more information.
+    :400:
+      <<: *template_default
+      title: The page request is invalid
     :404:
       <<: *template_default
       title: The page you were looking for doesn't exist

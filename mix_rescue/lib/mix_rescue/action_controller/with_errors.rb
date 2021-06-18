@@ -22,6 +22,7 @@ module ActionController
       # TODO rack https://github.com/rails/rails/pull/23868/files
       rescue_from Exception, with: :render_500 if MixRescue.config.rescue_500
       rescue_from DbTimeout, with: :render_408
+      rescue_from URI::InvalidURIError, with: :render_400
     end
   end
 end

@@ -5,6 +5,9 @@ fr:
       title: ""
       problem: ""
       solution: Si vous êtes le propriétaire de l'application, consultez les logs pour plus d'informations.
+    :400:
+      <<: *template_default
+      title: La requête pour la page est invalide
     :404:
       <<: *template_default
       title: La page que vous recherchez n'existe pas
