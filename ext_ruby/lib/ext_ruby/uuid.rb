@@ -46,10 +46,11 @@ class UUID
     end
 
     def expand(short_uuid)
-      return UUID::NIL.to_s if short_uuid.blank?
+      return UUID::NIL.to_s if short_uuid.blank? || short_uuid.size > 22
       return short_uuid if short_uuid.match? SecureRandom::UUID
       base = 1
       uuid = short_uuid.chars.reverse.reduce(0) do |result, char|
+        return UUID::NIL.to_s unless CHAR_INDEX.has_key? char
         result += CHAR_INDEX[char] * base
         base *= BASE_SIZE
         result
