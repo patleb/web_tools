@@ -27,14 +27,18 @@ UUID = Struct.new(:raw_bytes)
 class UUID
   BASE = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'.freeze
   BASE_SIZE = BASE.size
+  BASE_VALID = /^[1-9a-km-zA-HJ-NP-Z]{1,22}$/
   CHAR_INDEX = BASE.chars.each_with_object({}).with_index{ |(char, result), i| result[char] = i }.freeze
 
   private_class_method :new
 
   class << self
+    # short uuid or uuid               => short uuid
+    # UUID::NIL, blank or invalid uuid => ''
     def shorten(uuid)
       return '' if uuid.blank?
-      return uuid unless uuid.match? SecureRandom::UUID
+      return uuid if uuid.match? BASE_VALID
+      return '' unless uuid.match? SecureRandom::UUID
       integer = uuid.split('-').join.to_i(16)
       result = []
       while integer > 0
@@ -45,12 +49,14 @@ class UUID
       result.join
     end
 
+    # blank or invalid short uuid => UUID::NIL
+    # uuid or short uuid          => uuid
     def expand(short_uuid)
-      return UUID::NIL.to_s if short_uuid.blank? || short_uuid.size > 22
+      return UUID::NIL if short_uuid.blank?
       return short_uuid if short_uuid.match? SecureRandom::UUID
+      return UUID::NIL unless short_uuid.match? BASE_VALID
       base = 1
       uuid = short_uuid.chars.reverse.reduce(0) do |result, char|
-        return UUID::NIL.to_s unless CHAR_INDEX.has_key? char
         result += CHAR_INDEX[char] * base
         base *= BASE_SIZE
         result
@@ -270,11 +276,11 @@ class UUID
   end
 
   # Pre-defined UUID Namespaces described in RFC4122 Appendix C.
-  NS_DNS = parse "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
-  NS_URL = parse "6ba7b811-9dad-11d1-80b4-00c04fd430c8"
-  NS_OID = parse "6ba7b812-9dad-11d1-80b4-00c04fd430c8"
-  NS_X500 = parse "6ba7b814-9dad-11d1-80b4-00c04fd430c8"
+  NS_DNS  = "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+  NS_URL  = "6ba7b811-9dad-11d1-80b4-00c04fd430c8"
+  NS_OID  = "6ba7b812-9dad-11d1-80b4-00c04fd430c8"
+  NS_X500 = "6ba7b814-9dad-11d1-80b4-00c04fd430c8"
 
   # The Nil UUID in RFC4122 Section 4.1.7
-  NIL = parse "00000000-0000-0000-0000-000000000000"
+  NIL = "00000000-0000-0000-0000-000000000000"
 end
