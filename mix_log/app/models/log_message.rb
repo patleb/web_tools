@@ -31,23 +31,23 @@ class LogMessage < LibMainRecord
     SQL
   end
 
-  def self.report!(...)
-    if report? ...
-      LogMailer.report(...).deliver_now
-      reported! ...
+  def self.report!(since = nil)
+    if report? since
+      LogMailer.report(since).deliver_now
+      reported! since
     end
   end
 
-  def self.report(...)
-    report_ids(...).first
+  def self.report(since = nil)
+    report_ids(since).first
   end
 
-  def self.report?(...)
-    report_ids(...).last.any?
+  def self.report?(since = nil)
+    report_ids(since).last.any?
   end
 
-  def self.reported!(...)
-    where(id: report_ids(...).last).update_all(alerted: true)
+  def self.reported!(since = nil)
+    where(id: report_ids(since).last).update_all(alerted: true)
   end
 
   def self.report_ids(since = nil)
