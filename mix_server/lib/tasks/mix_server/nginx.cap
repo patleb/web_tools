@@ -45,7 +45,7 @@ namespace :nginx do
   desc 'Export nginx global configuration file'
   task :push do
     on release_roles :all do
-      template_push 'nginx/system', '/etc/nginx/nginx.conf'
+      template_push 'nginx/system.conf', '/etc/nginx/nginx.conf'
     end
   end
   after 'nginx:push', 'nginx:reload'
@@ -104,7 +104,7 @@ namespace :nginx do
     desc 'Export nginx app configuration file'
     task :push do
       on release_roles :all do
-        template_push 'nginx/app', "/etc/nginx/sites-available/#{fetch(:deploy_dir)}"
+        template_push 'nginx/app.conf', "/etc/nginx/sites-available/#{fetch(:deploy_dir)}"
       end
     end
     after 'nginx:app:push', 'nginx:reload'
