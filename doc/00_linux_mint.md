@@ -181,6 +181,19 @@ sudo mkdir -p /etc/osquery/private_ip
 sudo touch "/etc/osquery/private_ip/$(hostname -I | awk '{print $NF; exit}')"
 ```
 
+## RocksDB
+
+```bash
+sudo apt-get install -y libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev liblz4-dev libzstd-dev
+export __ROCKSDB__=6.20.3
+sudo wget "https://github.com/facebook/rocksdb/archive/v$__ROCKSDB__.zip"
+sudo unzip "v$__ROCKSDB__.zip"
+cd "rocksdb-$__ROCKSDB__"
+sudo make -j8 static_lib && sudo make install-static
+sudo make clean && sudo make -j8 shared_lib && sudo make install-shared
+sudo ldconfig
+```
+
 ## GUI Softwares (check if better in software manager)
 
 - Tor Browser Launcher
