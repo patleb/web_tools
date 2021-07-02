@@ -6,10 +6,7 @@ module MixLog
 
     def report
       since = 1.day.ago unless options.all
-      if LogMessage.report? since
-        LogMailer.report(since).deliver_now
-        LogMessage.reported! since
-      end
+      LogMessage.report! since
     end
   end
 end
