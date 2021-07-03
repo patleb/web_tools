@@ -13,7 +13,7 @@ class Setting
   METHOD = '$METHOD'.freeze
   ALIAS  = '$ALIAS'.freeze
   REMOVE = '$REMOVE'.freeze
-  FREED_IVARS = %i(@types @gems @secrets @database @aliases @methods @removed @replaced @types)
+  FREED_IVARS = %i(@types @secrets @database @aliases @methods @removed @replaced @types)
 
   class << self
     delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, :select, :select_map, :reject, to: :all
@@ -115,6 +115,10 @@ class Setting
 
   def self.gem_root(name)
     @gems[name] ||= Gem.root(name) or raise "gem [#{name}] not found"
+  end
+
+  def self.gems
+    @gems
   end
 
   def self.encryptor?
