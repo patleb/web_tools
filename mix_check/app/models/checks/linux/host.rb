@@ -39,7 +39,7 @@ module Checks
       def self.capture
         last_updated_at = LogLines::Host.last_messages(text_tiny: host.private_ip).pick(:updated_at)
         if last_updated_at.nil? || last_updated_at < (Setting[:check_host_interval] - 30.seconds).ago
-          Global.write(snapshot_key, host.build_snapshot, expires: false)
+          Global.write! snapshot_key, host.build_snapshot
           Log.host(current)
           reset
         end

@@ -8,7 +8,7 @@ module Throttler
     old_value = nil
     old_count = nil
 
-    record = Global.write_record([PREFIX, key].flatten, expires: false) do |record|
+    record = Global.write_record!([PREFIX, key].flatten) do |record|
       if record.nil?
         { value: new_value, time: new_time.iso8601, count: 1 }
       else

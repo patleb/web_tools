@@ -55,6 +55,10 @@ class Global < LibRecord
     MixGlobal.config.touch_in
   end
 
+  def self.fetch_record!(name, expires: false, **options, &block)
+    fetch_record(name, expires: false, **options, &block)
+  end
+
   def self.fetch_record(name, **options, &block)
     options = options.reverse_merge expires: true
     if block_given?
@@ -76,6 +80,10 @@ class Global < LibRecord
     else
       read_record(name, **options)
     end
+  end
+
+  def self.write_record!(*args, expires: false, **options, &block)
+    write_record(*args, expires: false, **options, &block)
   end
 
   ### Useful statements for the block:
@@ -140,6 +148,10 @@ class Global < LibRecord
     else raise ArgumentError, "Bad type: `Global#delete_records` requires matcher as Array, String or Regexp."
     end
     where(column(:id).matches key_matcher(matcher, **options)).delete_all
+  end
+
+  def self.update_integer!(*args, expires: false, **options)
+    update_integer(*args, expires: false, **options)
   end
 
   def self.update_integer(name, amount, **options)

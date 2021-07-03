@@ -11,8 +11,16 @@ module GlobalCache
       read_record(name, **options).present?
     end
 
+    def fetch!(name, expires: false, **options, &block)
+      fetch(name, expires: false, **options, &block)
+    end
+
     def fetch(name, **options, &block)
       fetch_record(name, **options, &block)&.data
+    end
+
+    def fetch_multi!(*names, expires: false, **options, &block)
+      fetch_multi(*names, expires: false, **options, &block)
     end
 
     def fetch_multi(*names, **options, &block)
@@ -35,9 +43,17 @@ module GlobalCache
       read_records(names, **options).transform_values!(&:data)
     end
 
+    def write!(name, value, expires: false, **options)
+      write(name, value, expires: false, **options)
+    end
+
     def write(name, value, **options)
       write_record(name, value, **options)
       value
+    end
+
+    def write_multi!(hash, expires: false, **options)
+      write_multi(hash, expires: false, **options)
     end
 
     def write_multi(hash, **options)
@@ -47,8 +63,16 @@ module GlobalCache
       end
     end
 
+    def increment!(*args, expires: false, **options)
+      increment(*args, expires: false, **options)
+    end
+
     def increment(name, amount = 1, **options)
       update_integer(name, amount, **options)
+    end
+
+    def decrement!(*args, expires: false, **options)
+      decrement(*args, expires: false, **options)
     end
 
     def decrement(name, amount = 1, **options)
