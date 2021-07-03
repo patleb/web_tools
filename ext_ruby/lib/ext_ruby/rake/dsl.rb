@@ -21,9 +21,35 @@ module Rake
       Pathname.new(dst).write(value)
     end
 
-    def template(src)
-      ERB.template(src, binding)
+    def template(src, gems = nil)
+      tmp_file = compile(src, gems)
+      mv tmp_file, src, force: true
     end
+
+    def compile(src, gems = nil)
+      gems ||= Setting.gems.keys
+      base_dir = Pathname.new("tmp/#{File.dirname(src).delete_prefix('/')}")
+      new_file = base_dir.join(File.basename(src))
+      FileUtils.mkdir_p base_dir
+      File.open(new_file, 'w') do |f|
+        source_erb = "#{src}.erb"
+
+        unless File.exist? source_erb
+          gems.each do |name|
+            if (root = Gem.root(name))
+              if (path = root.join(source_erb)).exist?
+                source_erb = path
+                break
+              end
+            end
+          end
+        end
+
+        f.puts ERB.new(File.read(source_erb), nil, '-').result(binding)
+      end
+      new_file
+    end
+    module_function :compile
 
     def app_name
       Rails.application.name

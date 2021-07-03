@@ -90,26 +90,7 @@ module ExtCapistrano
     end
 
     def compile_erb(source)
-      base_dir = Pathname.new("tmp/#{File.dirname(source)}")
-      new_file = base_dir.join(File.basename(source))
-      FileUtils.mkdir_p base_dir
-      File.open(new_file, 'w') do |f|
-        source_erb = "#{source}.erb"
-
-        unless File.exist? source_erb
-          fetch(:gems).each do |name|
-            if (root = Gem.root(name))
-              if (path = root.join(source_erb)).exist?
-                source_erb = path
-                break
-              end
-            end
-          end
-        end
-
-        f.puts ERB.new(File.read(source_erb), nil, '-').result
-      end
-      new_file
+      Rake::DSL.compile(source, fetch(:gems))
     end
   end
 end
