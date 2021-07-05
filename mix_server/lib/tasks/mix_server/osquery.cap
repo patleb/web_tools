@@ -24,7 +24,7 @@ namespace :osquery do
   task :push do
     on release_roles :all do
       template_push 'osquery/osquery.conf', '/etc/osquery/osquery.conf'
-      template_push 'osquery/osquery.flags', '/etc/osquery/osquery.flags.default'
+      template_push 'osquery/osquery.flags', '/etc/osquery/osquery.flags'
       logrotate_path = '/etc/logrotate.d/osquery'
       template_push 'osquery/logrotate', logrotate_path
       execute :sudo, :chown, 'root:root', logrotate_path
