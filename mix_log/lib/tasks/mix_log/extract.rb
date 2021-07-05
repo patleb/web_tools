@@ -86,8 +86,12 @@ module MixLog
     def logs
       @logs ||= begin
         MixLog.config.available_paths.map do |path|
-          raise AccessDenied unless system("sudo chmod +r #{path}*")
-          raise InvalidPath unless File.exist?(path) || File.exist?("#{path}.0") || File.exist?("#{path}.1")
+          if MixLog.config.force_read
+            raise AccessDenied unless system("sudo chmod +r #{path}.*")
+          end
+          unless File.exist?(path) || File.exist?("#{path}.0") || File.exist?("#{path}.1")
+            raise InvalidPath
+          end
           Log.find_or_create_by! server: Server.current, path: path
         end
       end

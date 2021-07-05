@@ -1,3 +1,11 @@
+if [[ "$__ENV__" != 'vagrant' ]]; then
+  case "$OS" in
+  ubuntu)
+    sun.backup_compare '/etc/apt/apt.conf.d/50unattended-upgrades'
+  ;;
+  esac
+fi
+
 <% %W(
   apt-transport-https
   autoconf

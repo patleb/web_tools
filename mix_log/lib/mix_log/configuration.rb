@@ -1,14 +1,15 @@
 module MixLog
   has_config do
-    attr_writer :partition_size
-    attr_writer :partitions_total_size
-    attr_writer :available_types
-    attr_writer :available_paths
-    attr_writer :available_rollups
-    attr_writer :filter_parameters
-    attr_writer :ided_paths
-    attr_writer :ided_errors
-    attr_writer :known_errors
+    attr_writer   :partition_size
+    attr_writer   :partitions_total_size
+    attr_writer   :available_types
+    attr_writer   :available_paths
+    attr_writer   :available_rollups
+    attr_writer   :filter_parameters
+    attr_writer   :ided_paths
+    attr_writer   :ided_errors
+    attr_writer   :known_errors
+    attr_accessor :force_read
 
     def partition_size
       @partition_size ||= :week
@@ -28,6 +29,7 @@ module MixLog
         'LogLines::Postgresql'  => 60,
         'LogLines::Rails'       => 70,
         'LogLines::AptHistory'  => 80,
+        'LogLines::Osquery'     => 90,
       }
     end
 
@@ -46,7 +48,8 @@ module MixLog
         log_path(:syslog),
         log_path(:auth),
         log_path(:fail2ban),
-        log_path("postgresql/postgresql-#{Setting[:postgres]}-main/postgresql"),
+        postgres_log_path,
+        osquery_log_path, # must be after 'apt/history.log'
         rails_log_path,
       ]
     end
@@ -91,6 +94,14 @@ module MixLog
           /^ID: \w+$/,
         ]
       }.with_keyword_access
+    end
+
+    def postgres_log_path
+      log_path("postgresql/postgresql-#{Setting[:postgres]}-main/postgresql")
+    end
+
+    def osquery_log_path
+      "#{Setting[:osquery_logger_path]}/osqueryd.results.log"
     end
 
     def rails_log_path

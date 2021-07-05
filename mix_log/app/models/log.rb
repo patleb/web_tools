@@ -1,5 +1,6 @@
 class Log < LibMainRecord
   FS_TYPE = %r{(?:/log|/(\w+)|)/(?:\w+\.)?(?:(\w+)\.log|(\w+log))$}
+  FS_TYPE_SKIP = [nil, 'results']
 
   belongs_to :server
   has_many   :log_lines
@@ -24,7 +25,7 @@ class Log < LibMainRecord
   end
 
   def self.fs_type(path)
-    name = path.match(FS_TYPE).captures.join('_')
+    name = path.match(FS_TYPE).captures.reject{ |token| FS_TYPE_SKIP.include? token }.join('_')
     name == Rails.env ? 'LogLines::Rails' : "LogLines::#{name.camelize}"
   end
 
@@ -47,7 +48,7 @@ class Log < LibMainRecord
   end
 
   def finalize
-    log_lines_type.to_const!.finalize
+    log_lines_type.to_const!.finalize(self)
   end
 
   def rotated_files

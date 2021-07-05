@@ -11,6 +11,15 @@ shared:
   postgis: 3
   max_pool_size: 6
   deployer_name: deployer
+  osquery_logger_path: /var/log/osquery
+  osquery_logger_level: 1
+  osquery_database_path: /var/osquery/osquery.db
+  osquery_day: 86400
+  osquery_hour: 3600
+  osquery_minute: 60
+  osquery_2_hrs: 7200
+  osquery_10_min: 600
+  osquery_10_sec: 10
   geoserver_nginx_upstream: $METHOD
   geoserver_nginx_location_wms: $METHOD
   geoserver_local_url: $METHOD
@@ -52,6 +61,15 @@ test:
 
 development:
   server_provider: localhost
+  osquery_logger_path: ./tmp/osquery
+  osquery_logger_level: 0
+  osquery_database_path: ./tmp/osquery/osquery.db
+#  osquery_day: 10
+#  osquery_hour: 10
+#  osquery_minute: 10
+#  osquery_2_hrs: 10
+#  osquery_10_min: 10
+#  osquery_10_sec: 10
   geoserver_port: $ALIAS geoserver_local_port
   pgrest_port: $ALIAS pgrest_local_port
   server_cluster_data: ./tmp/shared_data

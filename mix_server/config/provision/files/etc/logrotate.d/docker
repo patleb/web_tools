@@ -1,6 +1,6 @@
 /var/lib/docker/containers/*/*.log {
-  weekly
-  rotate 52
+  daily
+  rotate 365
   missingok
   compress
   delaycompress

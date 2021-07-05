@@ -28,8 +28,8 @@ namespace :cron do
     end
   end
 
-  desc 'every minute cron jobs'
-  task :every_minute => :environment do
+  desc 'every 5 minutes cron jobs'
+  task :every_5_minutes => :environment do
     run_task 'check:capture' if defined? MixCheck
   end
 end

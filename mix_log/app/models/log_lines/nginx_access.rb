@@ -233,7 +233,7 @@ module LogLines
       { created_at: created_at, pid: pid&.to_i, message: message, json_data: json_data }
     end
 
-    def self.finalize
+    def self.finalize(log)
       @_browsers = nil
     end
 

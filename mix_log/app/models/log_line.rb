@@ -135,7 +135,7 @@ class LogLine < LibMainRecord
     raise NotImplementedError
   end
 
-  def self.finalize
+  def self.finalize(log)
   end
 
   def self.squish(text)

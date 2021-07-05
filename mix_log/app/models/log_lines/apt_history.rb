@@ -1,4 +1,3 @@
-# reboot --> nginx:maintenance:enable, wait passenger and job:watch finishes, nginx:maintenance:disable, reboot
 module LogLines
   class AptHistory < LogLine
     START_DATE = /^Start-Date: (\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})/
@@ -9,6 +8,12 @@ module LogLines
     json_attribute(
       command: :string,
     )
+
+    scope :unattended_upgrade, -> { where(command: '/usr/bin/unattended-upgrade') }
+
+    def self.has_upgraded?(time, interval: 5.minutes)
+      unattended_upgrade.where(created_at: (time - interval)..time).exists?
+    end
 
     def self.parse(log, line, previous:, **)
       if (values = line.match(START_DATE))

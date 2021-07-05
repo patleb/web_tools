@@ -1,0 +1,20 @@
+--config_path=/etc/osquery/osquery.conf
+--config_refresh=10
+--database_path=<%= Setting[:osquery_database_path] %>
+--disable_events=false
+--enable_file_events=true
+--disable_audit=false
+--audit_allow_config=true
+--audit_persist=true
+--audit_allow_process_events=true
+--audit_allow_sockets=true
+--events_expiry=1
+--events_max=500000
+--logger_path=<%= Setting[:osquery_logger_path] %>
+--logger_min_status=<%= Setting[:osquery_logger_level] %>
+--logger_event_type=false
+--logger_snapshot_event_type=true
+--logger_numerics=true
+--watchdog_memory_limit=400
+--watchdog_utilization_limit=130
+--force=false
