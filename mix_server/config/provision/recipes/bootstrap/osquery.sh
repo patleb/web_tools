@@ -13,6 +13,7 @@ sun.backup_compare "/usr/share/osquery/packs/ossec-rootkit.conf"
 sun.backup_compare "/usr/share/osquery/packs/vuln-management.conf"
 
 systemctl enable osqueryd
+osqueryctl stop
 
 mkdir -p /etc/osquery/private_ip
 touch "/etc/osquery/private_ip/$(<%= Sh.private_ip %>)"
