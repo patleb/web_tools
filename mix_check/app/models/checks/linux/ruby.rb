@@ -6,11 +6,7 @@ module Checks
       end
 
       def pids_issue?
-        if Rails.configuration.active_job.queue_adapter == :job && !MixJob.config.async?
-          pids <= 2
-        else
-          pids <= 1 # must skip the current process
-        end
+        pids < MixServer.config.minimum_workers
       end
     end
   end

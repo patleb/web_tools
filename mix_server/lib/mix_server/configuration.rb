@@ -1,6 +1,7 @@
 module MixServer
   has_config do
     attr_writer :available_providers
+    attr_writer :minimum_workers
 
     def available_providers
       @available_providers ||= {
@@ -12,6 +13,20 @@ module MixServer
         ovh: 60,
         compute_canada: 70
       }
+    end
+
+    def minimum_workers
+      @minimum_workers ||= begin
+        count = Setting[:min_instances] || 1
+        if Rails.configuration.active_job.queue_adapter == :job && !MixJob.config.async?
+          count += 1
+        end
+        count
+      end
+    end
+
+    def deploy_dir
+      @deploy_dir ||= "#{Rails.app}_#{Rails.env}"
     end
 
     def shared_dir

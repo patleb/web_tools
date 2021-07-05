@@ -110,7 +110,7 @@ module MixLog
 
     def nginx_log_path(*type, name)
       type = type.first
-      name = "#{deploy_dir}#{"_#{type.to_s.full_underscore}" if type}.#{name}"
+      name = "#{MixServer.config.deploy_dir}#{"_#{type.to_s.full_underscore}" if type}.#{name}"
       log_path(:nginx, name)
     end
 
@@ -127,10 +127,6 @@ module MixLog
         when :development then 'tmp/log'
         else                   '/var/log'
         end
-    end
-
-    def deploy_dir
-      @deploy_dir ||= "#{Rails.app}_#{Rails.env}"
     end
   end
 end
