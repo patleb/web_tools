@@ -64,8 +64,8 @@ require 'ext_ruby/process/os'
 if defined? Rails
   require 'ext_ruby/process/passenger'
   require 'ext_ruby/railtie'
-  require 'ext_ruby/rake/dsl'
 end
+require 'ext_ruby/rake/dsl'
 require 'ext_ruby/secure_random'
 require 'ext_ruby/sh'
 require 'ext_ruby/string'
