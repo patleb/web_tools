@@ -25,7 +25,7 @@ div_('#devise.panel.panel-default.col-sm-8.col-sm-offset-2.col-md-6.col-md-offse
       end
       if devise_mapping.omniauthable?
         resource_class.omniauth_providers.each do |provider|
-          links << link_to(t('.sign_in_with_provider', provider: OmniAuth::Utils.camelize(provider)), omniauth_authorize_path(resource_name, provider), class: 'pjax')
+          links << link_to(t('.sign_in_with_provider', provider: OmniAuth::Utils.camelize(provider)), omniauth_authorize_path(resource_name, provider), method: :post, class: 'pjax')
         end
       end
       if links.any?
