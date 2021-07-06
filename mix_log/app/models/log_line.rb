@@ -27,15 +27,15 @@ class LogLine < LibMainRecord
   end
 
   # :rollups groups must have their json_data keys in the same order/positions as :rollups_keys
-  def self.rollups!(scope = :from_last, dry_run: false)
+  def self.rollups!(log, scope = :from_last, dry_run: false)
     groups = case scope
       when :all, true
-        rollups
+        where(log: log).rollups
       when :from_last, false, nil
-        period_at = rollups_class.order(period: :desc, period_at: :desc).pick(:period_at)
-        period_at ? where(column(:created_at) >= period_at).rollups : rollups
+        period_at = rollups_class.where(log: log).order(period: :desc, period_at: :desc).pick(:period_at)
+        period_at ? where(column(:created_at) >= period_at).where(log: log).rollups : where(log: log).rollups
       when Symbol
-        send(scope).rollups
+        send(scope).where(log: log).rollups
       end
     rows = groups.each_with_object([]) do |(key, values), result|
       period, group_name = key
@@ -51,7 +51,10 @@ class LogLine < LibMainRecord
         }
       end)
     end
-    rows.each{ |row| row[:type] = rollups_class_name }
+    rows.each do |row|
+      row[:type] = rollups_class_name
+      row[:log_id] = log.id
+    end
     unless dry_run || rows.empty?
       rollups_class.upsert_all(rows, unique_by: 'index_lib_log_rollups_on_groups', returning: false) if rows.any?
     end

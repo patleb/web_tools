@@ -13,16 +13,19 @@ module MixLog
 
     def rollup
       if options.parallel
-        Parallel.each(log_lines, &:rollups!.with(options.all))
+        Parallel.each(logs, &:rollups!.with(options.all))
       else
-        log_lines.each(&:rollups!.with(options.all))
+        logs.each(&:rollups!.with(options.all))
       end
     end
 
     private
 
-    def log_lines
-      @log_lines ||= MixLog.config.available_rollups.keys.map{ |name| "LogLines::#{name.demodulize}".to_const! }
+    def logs
+      @logs ||= begin
+        log_lines = MixLog.config.available_rollups.keys.map{ |name| "LogLines::#{name.demodulize}" }
+        Log.where(log_lines_type: log_lines)
+      end
     end
   end
 end

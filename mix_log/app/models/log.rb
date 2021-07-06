@@ -35,6 +35,10 @@ class Log < LibMainRecord
     end
   end
 
+  def rollups!(*args, **options, &block)
+    log_lines_type.to_const!.rollups!(self, *args, **options, &block)
+  end
+
   def push(*args, **options, &block)
     log_lines_type.to_const!.push(self, *args, **options, &block)
   end
