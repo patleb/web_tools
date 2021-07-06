@@ -58,7 +58,7 @@ module LogLines
         json_data = { event: 'timeout' }
         level = :error
       elsif (values = line.match(ANCHOR))
-        return { created_at: Time.parse(values.captures.first).utc, filtered: true}
+        return { created_at: Time.parse(values.captures.first).utc, filtered: true }
       else
         return { filtered: true }
       end
