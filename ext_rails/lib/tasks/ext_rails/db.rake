@@ -14,7 +14,7 @@ namespace :db do
   task :rollback_engine, [:name] => :environment do |t, args|
     raise "unavailable gem [#{args[:name]}]" unless (gem = Gem.root(args[:name]))
     versions = gem.join('db').glob('**/*.rb').select_map do |path|
-      path.basename('.rb').to_s.match(/(\d+)_create_\w+s$/)&.captures&.first
+      path.basename('.rb').to_s.match(/(\d+)_\w+$/).captures.first
     end
     (versions & ActiveRecord::SchemaMigration.all_versions).sort.reverse.each do |version|
       old_version = ENV['VERSION']
