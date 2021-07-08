@@ -41,7 +41,7 @@ namespace :deploy do
   desc 'Full server deploy after provisioning'
   task push: %i(
     osquery:push
-    osquery:start
+    osquery:restart
     nginx:push
     pgrest:push
     deploy:app:push
