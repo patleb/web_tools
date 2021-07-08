@@ -5,6 +5,7 @@ namespace :cron do
       run_task 'check:cleanup' if defined? MixCheck
       run_task 'global:cleanup'
       run_task 'list:reorganize'
+      run_task 'log:extract'
     end
   end
 
@@ -62,7 +63,7 @@ namespace :cron do
 
     # won't interfere with 5 minutes cron
     until (Time.current.min % 5) == 3
-      sleep 5
+      sleep 10
     end
     sh 'sudo reboot'
   end
