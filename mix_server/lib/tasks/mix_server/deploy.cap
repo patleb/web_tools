@@ -1,4 +1,16 @@
 namespace :deploy do
+  namespace :logrotate do
+    desc 'upload app logrotate'
+    task :push do
+      on release_roles fetch(:bundle_roles) do
+        logrotate_path = "/etc/logrotate.d/#{fetch(:deploy_dir)}"
+        template_push 'logrotate', logrotate_path
+        execute :sudo, :chown, 'root:root', logrotate_path
+        execute :sudo, :chmod, 644, logrotate_path
+      end
+    end
+  end
+
   desc 'link dev shared folder'
   task :link_dev do
     next unless cap.env.vagrant?
@@ -42,8 +54,8 @@ namespace :deploy do
       deploy:check:directories
       deploy:check:linked_dirs
       deploy:check:make_linked_dirs
+      deploy:logrotate:push
       secrets:push
-      logrotate:push
       nginx:app:push
       nginx:app:enable
       nginx:maintenance:push
