@@ -1,3 +1,4 @@
+# TODO https://ubuntu.com/tutorials/setup-zfs-storage-pool#1-overview
 __DATA_PARTITION__=${__DATA_PARTITION__:-/dev/vdc}
 __DATA_ORDER__=${__DATA_ORDER__:-3}
 if fdisk -l | grep -Fq $__DATA_PARTITION__; then

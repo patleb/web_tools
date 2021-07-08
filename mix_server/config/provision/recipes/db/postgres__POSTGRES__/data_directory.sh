@@ -2,7 +2,7 @@ __DATA_PARTITION__=${__DATA_PARTITION__:-/dev/vdc}
 if fdisk -l | grep -Fq $__DATA_PARTITION__; then
   PG_CONFIG_FILE=$(sun.pg_config_file)
   OLD_PG_DATA_DIR=$(sun.pg_data_dir)
-  export NEW_PG_DATA_DIR=$__DATA_DIRECTORY__/pg_${__POSTGRES__}_data
+  export NEW_PG_DATA_DIR=$__DATA_DIRECTORY__/postgresql-$__POSTGRES__-main
 
   systemctl stop postgresql
 

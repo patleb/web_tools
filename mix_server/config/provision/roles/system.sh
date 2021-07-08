@@ -2,11 +2,9 @@
   bootstrap/all
   user/deployer
   db/postgres__POSTGRES__
-  db/postgres__POSTGRES__/logrotate
   #{'db/postgres__POSTGRES__/pg_repack' if sun.pgrepack_enabled}
   nginx/passenger
   nginx/htpasswd
-  nginx/logrotate
   #{'ssl/ca' unless sun.nginx_skip_ssl}
   #{'ssl/self_signed' unless sun.nginx_skip_ssl}
   lang/ruby/system__RUBY__
@@ -18,6 +16,7 @@
   #{'db/postgres__POSTGRES__/postgis__POSTGIS__' if sun.postgis_enabled}
   #{'db/postgres__POSTGRES__/timescaledb' if sun.timescaledb_enabled}
   #{'db/postgres__POSTGRES__/tune' unless sun.timescaledb_enabled}
+  db/postgres__POSTGRES__/config
   utils/all
   lang/ruby/app__RBENV_RUBY__
 )) do |name, id| -%>

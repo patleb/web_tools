@@ -97,7 +97,7 @@ module MixLog
     end
 
     def postgres_log_path
-      log_path("postgresql/postgresql-#{Setting[:postgres]}-main/postgresql")
+      log_path("postgresql/postgresql-#{Setting[:postgres]}-main")
     end
 
     def osquery_log_path

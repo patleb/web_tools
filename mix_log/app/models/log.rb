@@ -1,5 +1,5 @@
 class Log < LibMainRecord
-  FS_TYPE = %r{(?:/log|/(\w+)|)/(?:\w+\.)?(?:(\w+)\.log|(\w+log))$}
+  FS_TYPE = %r{(?:/log|/(\w+)|)/(?:\w+\.)?(?:(\w+)(?:-\w+)*\.log|(\w+log))$}
   FS_TYPE_SKIP = [nil, 'results']
 
   belongs_to :server
@@ -25,7 +25,7 @@ class Log < LibMainRecord
   end
 
   def self.fs_type(path)
-    name = path.match(FS_TYPE).captures.reject{ |token| FS_TYPE_SKIP.include? token }.join('_')
+    name = path.match(FS_TYPE).captures.reject{ |token| FS_TYPE_SKIP.include? token }.uniq.join('_')
     name == Rails.env ? 'LogLines::Rails' : "LogLines::#{name.camelize}"
   end
 

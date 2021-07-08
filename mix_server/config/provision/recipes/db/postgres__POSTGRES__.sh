@@ -1,4 +1,4 @@
-### TODO
+### TODO read replica
 # https://github.com/citusdata/pg_auto_failover
 # https://github.com/pgbackrest
 # https://github.com/reorg/pg_repack
@@ -32,6 +32,7 @@ EOF
 
   sun.backup_compare "$PG_CONFIG_FILE"
   sun.backup_compare "$PG_HBA_FILE"
+  sun.backup_move "/etc/logrotate.d/postgresql-common"
   echo $PG_DATA_DIR > $(sun.metadata_path 'pg_data_dir')
 else
   PG_OLD_VERSION=$(tac "$PG_MANIFEST" | grep -m 1 '.')
