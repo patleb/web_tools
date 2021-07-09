@@ -20,8 +20,11 @@ class Log < LibMainRecord
   end
 
   def self.db_types
-    fs_types = MixLog.config.available_paths.map(&singleton_method(:fs_type))
-    MixLog.config.available_types.except(*fs_types).keys
+    @db_types ||= MixLog.config.available_types.except(*fs_types).keys
+  end
+
+  def self.fs_types
+    @fs_types ||= MixLog.config.available_paths.map(&singleton_method(:fs_type)).uniq
   end
 
   def self.fs_type(path)

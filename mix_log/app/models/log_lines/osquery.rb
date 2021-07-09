@@ -59,7 +59,7 @@ module LogLines
         level = ram > (flags[:watchdog_memory_limit] || 400).mb_to_bytes ? :error : :info
         message = { text: name, level: level }
       when 'file_events'
-        has_upgraded = LogLines::AptHistory.has_upgraded? time
+        has_upgraded = apt_history(log)&.has_upgraded? time
         paths = diff['added'].each_with_object(Set.new) do |row, memo|
           path = row['target_path']
           unless upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
@@ -82,7 +82,7 @@ module LogLines
     end
 
     def self.finalize(log)
-      unless where(created_at: (log.mtime - 1.day)..log.mtime).exists?
+      unless where(log: log, created_at: (log.mtime - 1.day)..log.mtime).exists?
         name = 'osquey_dead'
         push(log, message: { text: name }, json_data: { name: name, level: :error })
       end
@@ -98,6 +98,13 @@ module LogLines
         token.size > 1 ? "{#{token.join(',')}}" : token.first
       end
       tokens.join('/')
+    end
+
+    def self.apt_history(log)
+      return unless Log.fs_types.include? 'LogLines::AptHistory'
+      apt_history_path = MixLog.config.available_paths.find{ |path| path.end_with? 'apt/history.log'}
+      apt_history_log = Log.find_or_create_by! server: log.server, path: apt_history_path
+      LogLines::AptHistory.where(log: apt_history_log)
     end
   end
 end
