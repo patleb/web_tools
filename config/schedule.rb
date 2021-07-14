@@ -12,7 +12,7 @@ ExtWhenever.setup(self)
 #
 # Examples
 # --------
-# every :month, at: "start of the month at 4:30am" do
+# every :month, at: "start of the month at 4:30 am" do
 #   rake 'every_month'
 # end
 #
@@ -30,6 +30,23 @@ ExtWhenever.setup(self)
 
 case @environment
 when 'vagrant'
-when 'staging'
-when 'production'
+when 'staging', 'production'
+  every :sunday, at: '10:00 am' do
+    rake 'cron:every_week'
+  end
+
+  case @application
+  when 'web_tools'
+    every :day, at: '8:00 am' do
+      rake 'cron:every_day'
+    end
+  when 'web_cluster'
+    every :day, at: '8:00 am' do
+      rake 'cron:cluster:every_day'
+    end
+  end
+
+  every 5.minutes do
+    rake 'cron:every_5_minutes'
+  end
 end
