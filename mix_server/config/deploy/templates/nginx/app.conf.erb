@@ -67,25 +67,6 @@ server {
     return 503;
   <% end %>
 
-  <% if (satisfy = fetch(:nginx_satisfy)) %>
-    satisfy '<%= satisfy %>';
-  <% end %>
-
-  <% fetch(:nginx_denied_ips).each do |ip| %>
-    deny '<%= ip %>';
-  <% end %>
-  <% if (allowed_ips = fetch(:nginx_allowed_ips)).any? %>
-    <% allowed_ips.each do |ip| %>
-      allow '<%= ip %>';
-    <% end %>
-    deny all;
-  <% end %>
-
-  <% if fetch(:nginx_auth_basic) %>
-    auth_basic           "Restricted Content";
-    auth_basic_user_file /etc/nginx/.htpasswd;
-  <% end %>
-
   ##
   # Logging Settings
   ##
