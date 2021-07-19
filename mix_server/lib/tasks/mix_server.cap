@@ -17,16 +17,16 @@ namespace :load do
       favicon.png
       robots.txt
     ) }
-    set :nginx_satisfy,       -> { false }
-    set :nginx_denied_ips,    -> { [] }
-    set :nginx_allowed_ips,   -> { [] }
-    set :nginx_auth_basic,    -> { false }
-    set :nginx_redirects,     -> { {} }
-    set :nginx_upstreams,     -> { {} }
-    set :nginx_locations,     -> { {} }
-    set :nginx_rails,         -> { true }
-    set :nginx_deferred,      -> { fetch(:nginx_rails) && cap.env.production? }
-    set :nginx_skip_ssl,      -> { !Setting[:server_ssl] }
+    set :nginx_satisfy,     -> { false }
+    set :nginx_denied_ips,  -> { [ '74.217.28.0/22' ] }
+    set :nginx_allowed_ips, -> { [] }
+    set :nginx_auth_basic,  -> { false }
+    set :nginx_redirects,   -> { {} }
+    set :nginx_upstreams,   -> { {} }
+    set :nginx_locations,   -> { {} }
+    set :nginx_rails,       -> { true }
+    set :nginx_deferred,    -> { fetch(:nginx_rails) && cap.env.production? }
+    set :nginx_skip_ssl,    -> { !Setting[:server_ssl] }
 
     set :monit_max_swap_size,     -> { '25%' }
     set :monit_max_swap_action,   -> { 'alert' } # { %{exec "/bin/systemctl restart nginx"} }
