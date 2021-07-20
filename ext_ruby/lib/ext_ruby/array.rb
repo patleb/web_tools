@@ -1,4 +1,11 @@
 class Array
+  def mode
+    return if empty?
+    counts = each_with_object(Hash.new(0)){ |v, h| h[v] += 1 }
+    max = counts.values.max
+    counts.find{ |_v, count| count == max }.first
+  end
+
   def average(init = 0, &block)
     return if empty?
     total = sum(init, &block)
