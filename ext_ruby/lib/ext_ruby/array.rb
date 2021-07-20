@@ -43,7 +43,7 @@ class Array
 
   def closest(value)
     return if empty?
-    min_by{ |v| v <= value ? [0, value - v] : [1, v - value] }
+    min_by{ |e| (value - e).abs }
   end
 
   def join!(separator = $,)
