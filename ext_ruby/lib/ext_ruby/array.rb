@@ -41,11 +41,6 @@ class Array
     end
   end
 
-  def closest(value)
-    return if empty?
-    min_by{ |e| (value - e).abs }
-  end
-
   def join!(separator = $,)
     reject(&:blank?).join(separator)
   end
@@ -87,6 +82,15 @@ class Array
       replace(first)
     else
       self
+    end
+  end
+
+  def closest(value)
+    return if empty?
+    if value.size < 10
+      min_by{ |e| Array.wrap(value).subs(Array.wrap(e)).sum{ |v| v * v } }
+    else
+      min_by{ |e| Array.wrap(value).subs(Array.wrap(e)).sum(&:abs) }
     end
   end
 
