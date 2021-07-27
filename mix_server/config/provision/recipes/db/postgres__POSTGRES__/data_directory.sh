@@ -1,4 +1,4 @@
-__DATA_PARTITION__=${__DATA_PARTITION__:-/dev/vdb}
+__DATA_PARTITION__=${__DATA_PARTITION__:-/dev/sdb}
 if fdisk -l | grep -Fq $__DATA_PARTITION__; then
   PG_CONFIG_FILE=$(sun.pg_config_file)
   OLD_PG_DATA_DIR=$(sun.pg_data_dir)
