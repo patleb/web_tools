@@ -7,7 +7,7 @@ module Checks
           path = if Rails.env.dev_or_test?
             MixLog::Engine.root.join('test/fixtures/files/log/osquery/osqueryd.results.log')
           else
-            Pahtname.new(MixLog.config.osquery_log_path)
+            Pathname.new(MixLog.config.osquery_log_path)
           end
           File.foreach(path, chomp: true) do |line|
             json = JSON.parse(line)
