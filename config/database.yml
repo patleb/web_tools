@@ -112,12 +112,12 @@ main_test:
 
 main_vagrant:
   <<: *vagrant
-  host: vagrant-web.test
+  host: <%= Setting[:server_host] %>
 
 main_staging:
   <<: *staging
-  # host: test-example.com
+  host: <%= Setting[:server_host] %>
 
 main_production:
   <<: *production
-  # host: example.com
+  host: <%= Setting[:server_host] %>
