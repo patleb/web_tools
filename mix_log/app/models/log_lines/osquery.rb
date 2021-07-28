@@ -69,6 +69,8 @@ module LogLines
         return { filtered: true } if paths.empty?
         message = { text: [name, merge_paths(paths)].join(' '), level: :error }
       when 'socket_events'
+        # Setting[:server_cluster_master_ip]
+        # ips = Set.new([Process.host.private_ip]).merge(Cloud.server_cluster_ips || [])
         paths = diff['added'].each_with_object(Set.new) do |row, memo|
           # TODO add filters
           memo << row['path'] if %w(connect bind).include?(row['action'])
@@ -84,7 +86,7 @@ module LogLines
     def self.finalize(log)
       unless where(log: log, created_at: (log.mtime - 1.day)..log.mtime).exists?
         name = 'osquey_dead'
-        push(log, message: { text: name }, json_data: { name: name, level: :error })
+        push(log, message: { text: name, level: :error }, json_data: { name: name })
       end
     end
 

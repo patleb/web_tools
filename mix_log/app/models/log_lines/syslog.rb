@@ -12,7 +12,7 @@ module LogLines
       created_at, program, pid, message = rsyslog_parse(line, mtime)
       return { created_at: created_at, filtered: true } unless program == 'CRON'
 
-      raise IncompatibleLogLine unless (values = message.match(CRON))
+      raise IncompatibleLogLine, line unless (values = message.match(CRON))
 
       user, text = values.captures
       json_data = { user: user }

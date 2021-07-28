@@ -179,7 +179,7 @@ module LogLines
     #   without parameters            -->  122 MB (- 31 MB idx)
     #   without parameters + browser  -->  100 MB (- 28 MB idx)
     def self.parse(log, line, browser: true, parameters: true, **)
-      raise IncompatibleLogLine unless (values = line.match(ACCESS))
+      raise IncompatibleLogLine, line unless (values = line.match(ACCESS))
 
       ip, user, created_at, request, status, bytes_out, bytes_in, referer, user_agent, upstream_time, time, https, gzip, pid = values.captures
       created_at = Time.strptime(created_at, "%d/%b/%Y:%H:%M:%S %z").utc

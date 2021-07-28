@@ -39,7 +39,7 @@ module LogLines
         level = :warn
         text_tiny = user ? text.sub("user #{user}", 'user *') : text
       else
-        raise IncompatibleLogLine
+        raise IncompatibleLogLine, line
       end
 
       json_data = { user: user, ip: ip, port: port&.to_i, key: key }
