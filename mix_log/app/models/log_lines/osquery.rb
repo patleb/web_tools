@@ -84,7 +84,7 @@ module LogLines
     end
 
     def self.finalize(log)
-      unless where(log: log, created_at: (log.mtime - 1.day)..log.mtime).exists?
+      unless log.created_at <= 1.day.ago || where(log: log, created_at: (log.mtime - 1.day)..log.mtime).exists?
         name = 'osquey_dead'
         push(log, message: { text: name, level: :error }, json_data: { name: name })
       end
