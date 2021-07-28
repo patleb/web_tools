@@ -147,7 +147,7 @@ class LogLine < LibMainRecord
 
   def self.with_message(message)
     unless message && (message = message.values_at(:text_hash, :text_tiny, :text, :level)).last(2).all?(&:present?)
-      raise IncompatibleLogLine
+      raise IncompatibleLogLine, message.try(:pretty_json) || message
     end
     text_hash, text_tiny, text, level = message
     text_tiny ||= squish(text)
