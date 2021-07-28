@@ -1,5 +1,4 @@
 # TODO https://ubuntu.com/tutorials/setup-zfs-storage-pool#1-overview
-__DATA_PARTITION__=${__DATA_PARTITION__:-/dev/sdb}
 if fdisk -l | grep -Fq $__DATA_PARTITION__; then
   if df -h | grep -Fq $__DATA_PARTITION__; then
     : # do nothing --> already mounted

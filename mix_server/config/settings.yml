@@ -48,6 +48,7 @@ shared:
   ftp_mount_path: /opt/ftp_data
   server_cluster_data: /mnt/shared_data
   server_cluster_master_data: /opt/shared_data
+  data_partition: /dev/sdb
   data_directory: /opt/storage
 
 test:

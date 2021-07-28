@@ -72,7 +72,7 @@ module Process
     def private_ip
       @private_ip ||= begin
         ip = Socket.ip_address_list.reverse.find{ |addrinfo| addrinfo.ipv4_private? }&.ip_address
-        ip || `#{Sh.private_ip}`.strip
+        ip || `#{Sh.private_ip}`.strip.presence || `ls /etc/osquery/private_ip | xargs -n 1 basename`.strip
       end
     end
 
@@ -265,7 +265,8 @@ module Process
       @mounts ||= File.readlines("/proc/mounts").each_with_object({}) do |line, memo|
         next unless line.start_with? '/dev/'
         dev, mount, _ = line.split(' ', 3)
-        next if mount.start_with? '/boot/', '/media/'
+        next if mount.start_with? '/boot', '/snap/', '/media/'
+        dev = ExtRuby.config.host_disk_partition if mount == '/'
         memo[dev.delete_prefix('/dev/')] = mount
       end
     end

@@ -1,11 +1,16 @@
 module ExtRuby
   has_config do
     attr_writer :memoized_at_threshold
+    attr_writer :host_disk_partition
     attr_writer :host_snapshot
     attr_writer :worker_snapshot
 
     def memoized_at_threshold
       @memoized_at_threshold ||= 20.0
+    end
+
+    def host_disk_partition
+      @host_disk_partition ||= '/dev/sda'
     end
 
     def host_snapshot
