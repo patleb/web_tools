@@ -31,7 +31,7 @@ module LogLines
     def self.rollups
       %i(week day).each_with_object({}) do |period, result|
         groups = group_by_period(period).calculate(LogRollups::Host::OPERATIONS)
-        result[[period, :period]] = groups.transform_values! do |group|
+        result[[period, :period]] = groups.map! do |group|
           group.transform_values! do |row|
             row.map!.with_index do |value, i|
               next value.ceil(3) if rollups_keys[i] == :load_avg
