@@ -11,7 +11,7 @@ module LogLines
 
     class_methods do
       def rsyslog_parse(line, mtime)
-        raise LogLine::IncompatibleLogLine unless (values = line.match(RSYSLOG))
+        raise LogLine::IncompatibleLogLine, line unless (values = line.match(RSYSLOG))
 
         created_at, program, pid, message = values.captures
         created_at = Time.strptime("#{mtime.year} #{created_at} UTC", "%Y %b %e %H:%M:%S %z").utc
