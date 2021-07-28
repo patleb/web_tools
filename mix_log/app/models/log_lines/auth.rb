@@ -6,10 +6,15 @@ module LogLines
     IP   = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}/
     PORT = /\d+/
     KEY  = /ssh.+/
-    CLIENT_AUTH  = /(?:Accepted publickey|session (?:opened|closed)) for (?:user )?(#{USER})(?: from (#{IP}) port (#{PORT}) (#{KEY}))?/
-    CLIENT_EXIT  = /(?:Received disconnect from|Disconnected from user (#{USER})) (#{IP}) port (#{PORT})(?:$|:\d+: disconnected by user$)/
-    SERVER_AUTH  = /Server listening on .* port (#{PORT})/
-    INVALID_AUTH = /(?:user (#{USER}) )?(?:from )?(#{IP}) port (#{PORT})/i
+    CLIENT_AUTH    = /(?:Accepted publickey|session (?:opened|closed)) for (?:user )?(#{USER})(?: from (#{IP}) port (#{PORT}) (#{KEY}))?/
+    CLIENT_EXIT    = /(?:Received disconnect from|Disconnected from user (#{USER})) (#{IP}) port (#{PORT})(?:$|:\d+: disconnected by user$)/
+    SERVER_AUTH    = /Server listening on .* port (#{PORT})/
+    SERVER_EXIT    = /Received signal \d+; terminating/
+    INVALID_AUTH   = /(?:user (#{USER}) )?(?:from )?(#{IP}) port (#{PORT})/i
+    PWD_INVALID    = /pam.+failures?; .+ rhost=(#{IP})(?:\s+user=(#{USER}))?/i
+    BAD_KEY_METHOD = /Unable to negotiate with (#{IP}) port (#{PORT}): no matching key exchange method found/
+    BAD_KEY_EXIT   = 'error: kex_exchange_identification: Connection closed by remote host'
+    BAD_KEY_USER   = 'pam_unix(sshd:auth): check pass; user unknown'
 
     json_attribute(
       ip: :string,
@@ -32,12 +37,24 @@ module LogLines
         text_tiny = text
       elsif (values = text.match(SERVER_AUTH))
         port = values.captures.first
-        level = :error # server restart
+        level = :error # server start
         text_tiny = text.sub("::", '*')
+      elsif text.match?(SERVER_EXIT)
+        level = :error # server stop
       elsif (values = text.match(INVALID_AUTH))
         user, ip, port = values.captures
         level = :warn
         text_tiny = user ? text.sub("user #{user}", 'user *') : text
+      elsif (values = text.match(PWD_INVALID))
+        ip, user = values.captures
+        level = :warn
+        text_tiny = user ? text.sub("user=#{user}", 'user=*') : text
+      elsif (values = text.match(BAD_KEY_METHOD))
+        ip, port = values.captures
+        level = :warn
+        text_tiny = text.sub(/Their offer: .+/, 'Their offer: *')
+      elsif text.include?(BAD_KEY_EXIT) || text.include?(BAD_KEY_USER)
+        return { filtered: true }
       else
         raise IncompatibleLogLine, line
       end
