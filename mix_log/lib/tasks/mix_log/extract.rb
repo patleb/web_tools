@@ -90,7 +90,7 @@ module MixLog
             raise AccessDenied unless system("sudo chmod +r #{path}.*")
           end
           unless File.exist?(path) || File.exist?("#{path}.0") || File.exist?("#{path}.1")
-            raise InvalidPath
+            raise InvalidPath, path
           end
           Log.find_or_create_by! server: Server.current, path: path
         end
