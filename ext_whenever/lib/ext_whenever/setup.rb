@@ -5,7 +5,7 @@ Setting.load(env: @environment, app: @application)
 
 deployer = Dir.pwd.match(/home\/(\w+)\//)[1]
 rbenv_ruby = "#{Sh.rbenv_export(deployer)}; #{Sh.rbenv_init}"
-context = "#{rbenv_ruby}; export RAKE_OUTPUT=true; export RAILS_ENV=#{@environment}; export RAILS_APP=#{@application}"
+context = "#{rbenv_ruby}; export RAKE_OUTPUT=true; export RAILS_ENV=#{@environment}; export RAILS_APP=#{@application};"
 path = "cd :path &&"
 flock = "flock -n #{Whenever.path}/tmp/locks/:task.lock"
 rake = "/home/#{deployer}/.rbenv/bin/rbenv sudo bin/rake"
