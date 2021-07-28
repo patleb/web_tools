@@ -172,4 +172,4 @@ String.define_methods
       @match ///#{suffix.safe_regex()}$///
 
   simple_format: ->
-    this.gsub /(?:\r\n|\r|\n)/g, '<br>'
+    this.gsub /\r?\n/g, '<br>'

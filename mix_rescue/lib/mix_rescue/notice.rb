@@ -53,7 +53,7 @@ class Notice
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
           </head>
           <body>
-            <code style="white-space: pre;">#{context.sanitize(message)}</code>
+            <code style="white-space: pre;">#{context.sanitize(message).gsub(/\r?\n/, '<br>')}</code>
           </body>
         </html>
       HTML
