@@ -27,7 +27,8 @@ module Rake::Task::WithOutput
   end
 
   def puts_failure(exception)
-    Notice.deliver! Rescues::RakeError.new(exception, data: { task: name }), subject: name
+    Notice.deliver! Rescues::RakeError.new(exception, data: { task: name }), subject: name unless $rake_notice_delivered
+    $rake_notice_delivered ||= true
     puts "[#{Time.current.utc}]#{MixTask::FAILURE}[#{Process.pid}] #{name}".red
   end
 
@@ -35,6 +36,10 @@ module Rake::Task::WithOutput
     remainder = number_to_human_size remainder
     total = number_to_human_size total
     puts "Downloading #{file_name}[#{Process.pid}][#{total}] remaining #{remainder}"
+  end
+
+  def reset_notice
+    $rake_notice_delivered = false
   end
 
   def execute(args = nil)
