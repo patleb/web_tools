@@ -105,7 +105,7 @@ module MixLog
     end
 
     def rails_log_path
-      "tmp/log/#{Rails.env}.log"
+      "log/#{Rails.env}.log"
     end
 
     def nginx_log_path(*type, name)
