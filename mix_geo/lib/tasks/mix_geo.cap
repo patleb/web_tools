@@ -1,0 +1,5 @@
+namespace :load do
+  task :defaults do
+    append :linked_dirs, 'tmp/geolite2'
+  end
+end
