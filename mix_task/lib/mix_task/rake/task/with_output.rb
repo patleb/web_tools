@@ -8,6 +8,12 @@ module Rake::Task::WithOutput
     attr_accessor :output
   end
 
+  def output!
+    result = output
+    self.output = nil
+    result
+  end
+
   def puts(obj = '', *arg, output: rake_ouput?)
     if output
       self.output ||= ''

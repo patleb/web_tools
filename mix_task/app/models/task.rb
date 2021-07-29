@@ -99,7 +99,7 @@ class Task < LibMainRecord
       task = Rake::Task[name]
       task.invoke!(*arguments)
     rescue Exception
-      task.output
+      task.output!
     end.first
     result = output.lines.reject(&:blank?).last
     case
