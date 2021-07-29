@@ -17,7 +17,7 @@ module MixServer
 
     def minimum_workers
       @minimum_workers ||= begin
-        count = Setting[:min_instances] || 1
+        count = Setting[:min_instances]
         if Rails.configuration.active_job.queue_adapter == :job && !MixJob.config.async?
           count += 1
         end

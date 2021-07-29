@@ -96,7 +96,7 @@ http {
   passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
   passenger_ruby /home/<%= fetch(:deployer_name) %>/.rbenv/shims/ruby;
   passenger_pool_idle_time 300;
-  passenger_min_instances <%= Setting[:min_instances] || 1 %>;
+  passenger_min_instances <%= Setting[:min_instances] %>;
   passenger_max_request_queue_size 1000;
   passenger_show_version_in_header off;
   # passenger_max_instances_per_app 2;

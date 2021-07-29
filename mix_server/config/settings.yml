@@ -9,6 +9,7 @@ types:
 shared:
   postgres: 13
   postgis: 3
+  min_instances: 1
   max_pool_size: 6
   deployer_name: deployer
   osquery_logger_path: /var/log/osquery
