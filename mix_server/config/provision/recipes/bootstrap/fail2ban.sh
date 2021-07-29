@@ -4,7 +4,7 @@
 # TODO https://askubuntu.com/questions/54771/potential-ufw-and-fail2ban-conflicts
 
 sun.install "fail2ban"
-sun.backup_move "/etc/logrotate.d/fail2ban"
+sun.backup_move "/etc/logrotate.d/fail2ban" 0440 root:root
 
 systemctl enable fail2ban
 systemctl start fail2ban

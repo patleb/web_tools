@@ -32,7 +32,7 @@ EOF
 
   sun.backup_compare "$PG_CONFIG_FILE"
   sun.backup_compare "$PG_HBA_FILE"
-  sun.backup_move "/etc/logrotate.d/postgresql-common"
+  sun.backup_move "/etc/logrotate.d/postgresql-common" 0440 root:root
   echo $PG_DATA_DIR > $(sun.metadata_path 'pg_data_dir')
 else
   PG_OLD_VERSION=$(tac "$PG_MANIFEST" | grep -m 1 '.')
