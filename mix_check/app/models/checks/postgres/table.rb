@@ -94,7 +94,6 @@ module Checks
         $stderr = old_stderr
       end
 
-      alias_method :unused_warning?, :unused?
       alias_method :bloat_warning?, :bloat?
       alias_method :missing_indexes_warning?, :missing_indexes?
     end
