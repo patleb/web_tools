@@ -26,10 +26,10 @@ module Checks
           id = row[:name]
           not_valid = !row[:valid] && !row[:creating]
           duplicate, unused, bloat_bytes = duplicate_indexes[id], unused_indexes[id], bloated_indexes[id]
-          cache_hit = index_caching[id]
+          total_bytes, cache_hit = relation_sizes[id], index_caching[id]
           {
-            id: id, not_valid: not_valid, duplicate: !!duplicate, unused: !!unused,
-            bloat_bytes: bloat_bytes, total_bytes: relation_sizes[id], cache_hit: cache_hit,
+            id: id, not_valid: not_valid, duplicate: !!duplicate, unused: !!unused && total_bytes > 8192*100,
+            bloat_bytes: bloat_bytes, total_bytes: total_bytes, cache_hit: cache_hit,
             columns: row[:columns].map{ |c| c.sub(/^CREATE INDEX \w+ ON public.\w+ USING \w+ /, '') },
             **row.slice(:table, :using, :unique, :primary)
           }
