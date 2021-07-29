@@ -6,7 +6,7 @@ module Checks
       end
 
       def pids_issue?
-        pids < MixServer.config.minimum_workers
+        pids < MixServer.config.minimum_workers && host.uptime > 5.minutes
       end
     end
   end
