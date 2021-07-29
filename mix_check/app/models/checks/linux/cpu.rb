@@ -9,8 +9,8 @@ module Checks
 
       def self.list
         load_avg = case
-          when Setting[:check_host_interval] < 5.minutes  then host.cpu_load[0]
-          when Setting[:check_host_interval] < 15.minutes then host.cpu_load[1]
+          when Setting[:check_interval] < 5.minutes  then host.cpu_load[0]
+          when Setting[:check_interval] < 15.minutes then host.cpu_load[1]
           else host.cpu_load[2]
           end
         boot_time = host.boot_time if host.boot_time > snapshot[:boot_time]
@@ -47,7 +47,7 @@ module Checks
       end
 
       def steal_warning?
-        last_records = LogLines::Host.last_records.limit(20.minutes / Setting[:check_host_interval]).pluck(:steal)
+        last_records = LogLines::Host.last_records.limit(20.minutes / Setting[:check_interval]).pluck(:steal)
         last_records.any? && (last_records << steal).all?{ |value| value >= 10.0 }
       end
     end

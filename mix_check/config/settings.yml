@@ -1,6 +1,5 @@
 types:
-  check_database_interval: interval
-  check_host_interval: interval
+  check_interval: interval
 
 shared:
   pg_log_min_duration: 2000
@@ -16,5 +15,4 @@ shared:
   # check_index_bloat_bytes: 104857600
   check_table_bloat_factor: 10.0
   check_table_bloat_bytes: 104857600
-  check_database_interval: 5 minutes
-  check_host_interval: 1 minute
+  check_interval: 5 minutes
