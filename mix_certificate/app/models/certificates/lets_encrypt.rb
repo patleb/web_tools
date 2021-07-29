@@ -19,8 +19,15 @@ module Certificates
       "#{Setting[:server_host]}/#{ACME_CHALLENGE}"
     end
 
-    def self.find_or_initialize
-      find_current || new.initialize_account
+    def self.create_or_renew
+      if (record = find_current)
+        return unless record.renewable?
+        record.renew
+      else
+        record = new.initialize_account
+        record.create
+      end
+      record.reload
     end
 
     def self.find_current
@@ -31,12 +38,12 @@ module Certificates
       current_host.take!
     end
 
-    def self.find_renewable
-      current_host.renewable.take
-    end
-
     def self.find_by_token!(token)
       current_host.where(token: token).take!
+    end
+
+    def renewable?
+      expires_at - 30.days < Time.current
     end
 
     def initialize_account
