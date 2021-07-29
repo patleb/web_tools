@@ -5,10 +5,9 @@ module LogLines
     USER = /[\w-]*/
     IP   = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}/
     PORT = /\d+/
-    KEY  = /ssh.+/
-    CLIENT_PWD  = /Accepted password for (#{USER}) from (#{IP}) port (#{PORT})/
-    CLIENT_AUTH = /(?:Accepted publickey|session (?:opened|closed)) for (?:user )?(#{USER})(?: from (#{IP}) port (#{PORT}) (#{KEY}))?/
-    CLIENT_EXIT = /(?:Received disconnect from|Disconnected from user (#{USER})) (#{IP}) port (#{PORT})(?:$|:\d+: disconnected by user$)/
+    KEY  = /ssh.*/
+    CLIENT_AUTH = /Accepted (?:publickey|password) for (#{USER}) from (#{IP}) port (#{PORT}) (#{KEY})/
+    CLIENT_EXIT = /Disconnected from user (#{USER}) (#{IP}) port (#{PORT})/
     SERVER_AUTH = /Server listening on .* port (#{PORT})/
     SERVER_EXIT = /Received signal \d+; terminating/
 
@@ -23,14 +22,10 @@ module LogLines
       created_at, program, pid, text = rsyslog_parse(line, mtime)
       return { created_at: created_at, filtered: true } unless program == 'sshd'
 
-      if (values = text.match(CLIENT_PWD))
-        user, ip, port = values.captures
-        level = :info
-        text_tiny = text.sub("for #{user}", 'for *')
-      elsif (values = text.match(CLIENT_AUTH))
+      if (values = text.match(CLIENT_AUTH))
         user, ip, port, key = values.captures
         level = :info
-        text_tiny = text.sub("user #{user}", 'user *').sub(/ #{KEY}$/, ' *')
+        text_tiny = text.sub(/ #{KEY}$/, ' *')
       elsif (values = text.match(CLIENT_EXIT))
         user, ip, port = values.captures
         level = :info
