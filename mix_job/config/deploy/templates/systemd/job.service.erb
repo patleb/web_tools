@@ -5,10 +5,7 @@ After=network.target
 [Service]
 User=<%= fetch(:deployer_name) %>
 WorkingDirectory=<%= fetch(:deploy_to) %>/current
-Environment="RAILS_ENV=<%= cap.env %>"
-Environment="RAILS_APP=<%= cap.app %>"
-Environment="RAKE_OUTPUT=true"
-ExecStart=/home/<%= fetch(:deployer_name) %>/.rbenv/bin/rbenv sudo bin/rake job:watch -- --queue=<%= fetch(:job_queue_name) %> >> <%= fetch(:deploy_to) %>/current/log/job.log 2>&1
+ExecStart=/home/<%= fetch(:deployer_name) %>/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true RAILS_ENV=<%= cap.env %> RAILS_APP=<%= cap.app %> bin/rake job:watch -- --queue=<%= fetch(:job_queue_name) %> >> <%= fetch(:deploy_to) %>/current/log/job.log 2>&1
 Restart=always
 StandardInput=null
 StandardOutput=syslog
