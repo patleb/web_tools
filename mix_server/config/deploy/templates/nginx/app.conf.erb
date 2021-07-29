@@ -29,6 +29,10 @@ server {
 
   server_name '<%= fetch(:server) %>';
 
+  location ~ \.php$ {
+    return 404;
+  }
+
   <% if fetch(:nginx_rails) %>
     root <%= fetch(:deploy_to) %>/current/public;
 
