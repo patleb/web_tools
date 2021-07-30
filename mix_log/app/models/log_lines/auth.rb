@@ -27,7 +27,7 @@ module LogLines
         level = :info
         text_tiny = text.sub(/ #{KEY}$/, ' *')
       elsif (values = text.match(CLIENT_EXIT))
-        user = values.captures
+        user = values.captures.first
         level = :info
         text_tiny = text
       elsif (values = text.match(SERVER_AUTH))
