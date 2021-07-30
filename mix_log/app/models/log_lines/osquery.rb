@@ -37,7 +37,7 @@ module LogLines
 
     def self.flags
       @@flags ||= begin
-        Pathname.new('/etc/osquery/osquery.flags.default').readlines(chomp: true).select_map do |line|
+        Pathname.new('/etc/osquery/osquery.flags').readlines(chomp: true).select_map do |line|
           next unless line.delete_prefix! '--'
           line.split('=', 2)
         end.to_h.with_keyword_access.transform_values(&:cast)
