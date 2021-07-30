@@ -4,7 +4,7 @@ module LogLines
 
     TIME    = /[A-Z][a-z]{2}\s+\d+ \d{2}:\d{2}:\d{2}/
     HOST    = /[\w-]+/
-    PROGRAM = /[\w.(=)-]+/
+    PROGRAM = /[^\[:]+/
     PID     = /\d+/
     MESSAGE = /.+/
     RSYSLOG  = /(#{TIME}) #{HOST} (#{PROGRAM})(?:\[(#{PID})\])?: (#{MESSAGE})/
