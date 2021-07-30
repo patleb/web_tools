@@ -56,7 +56,7 @@ class LogMessage < LibMainRecord
       messages = reportable.includes(log: :server)
       messages = messages.joins(:log_lines).where(LogLine.table_name => { created_at: since..Time.current }) if since
       ids = []
-      servers = messages.order(updated_at: :desc).map do |message|
+      servers = messages.order(updated_at: :desc).distinct.map do |message|
         ids << message.id
         [
           message.log.server.private_ip.to_s,
