@@ -3,10 +3,9 @@
 module MixJob
   class Watch < ActiveTask::Base
     # TERM --> by System Monitor
-    # INT  --> by Ctrl-C / IDE
     # HUP  --> by Closing Terminal
-    SHUTDOWN_SIGNALS = IceNine.deep_freeze(ENV['DEBUGGER_HOST'] ? %w(HUP TERM): %w(HUP INT TERM))
-    SHUTDOWN_SIGNAL  = 'TERM'.freeze
+    # INT  --> by Systemd / Ctrl-C / IDE
+    SHUTDOWN_SIGNALS = IceNine.deep_freeze(ENV['DEBUGGER_HOST'] ? %w(TERM HUP): %w(TERM HUP INT))
     INSPECT_SIGNAL   = 'USR1'.freeze
     EXECUTE_SIGNAL   = 'USR2'.freeze
     SIGNALS = IceNine.deep_freeze(

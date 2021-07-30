@@ -5,13 +5,16 @@ After=network.target
 [Service]
 User=<%= fetch(:deployer_name) %>
 WorkingDirectory=<%= fetch(:deploy_to) %>/current
-ExecStart=/home/<%= fetch(:deployer_name) %>/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true RAILS_ENV=<%= cap.env %> RAILS_APP=<%= cap.app %> bin/rake job:watch -- --queue=<%= fetch(:job_queue_name) %> >> <%= fetch(:deploy_to) %>/current/log/job.log 2>&1
+ExecStart=/home/<%= fetch(:deployer_name) %>/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true RAILS_ENV=<%= cap.env %> RAILS_APP=<%= cap.app %> bin/rake job:watch -- --queue=<%= fetch(:job_queue_name) %>
 Restart=always
 StandardInput=null
-StandardOutput=syslog
-StandardError=syslog
+StandardOutput=file:<%= fetch(:deploy_to) %>/current/log/job.log
+StandardError=file:<%= fetch(:deploy_to) %>/current/log/job.log
 SyslogIdentifier=<%= fetch(:job_service) %>
 KillMode=mixed
+KillSignal=SIGTERM
+SendSIGHUP=yes
+FinalKillSignal=SIGINT
 TimeoutStopSec=infinity
 
 [Install]
