@@ -1,6 +1,6 @@
 /var/log/fail2ban.log {
 
-    daily
+    hourly
     rotate 31
     compress
 

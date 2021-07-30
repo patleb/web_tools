@@ -1,6 +1,6 @@
 /var/log/apt/term.log {
   rotate 365
-  daily
+  hourly
   compress
   missingok
   notifempty
@@ -8,7 +8,7 @@
 
 /var/log/apt/history.log {
   rotate 365
-  daily
+  hourly
   compress
   missingok
   notifempty

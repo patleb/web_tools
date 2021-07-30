@@ -1,7 +1,7 @@
 /var/log/syslog
 {
 	rotate 7
-	daily
+	hourly
 	missingok
 	notifempty
 	delaycompress
@@ -25,7 +25,7 @@
 /var/log/messages
 {
 	rotate 31
-	daily
+	hourly
 	missingok
 	notifempty
 	compress

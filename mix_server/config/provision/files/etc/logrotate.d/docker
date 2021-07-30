@@ -1,5 +1,5 @@
 /var/lib/docker/containers/*/*.log {
-  daily
+  hourly
   rotate 365
   missingok
   compress
