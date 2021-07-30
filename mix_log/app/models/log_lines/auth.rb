@@ -36,6 +36,7 @@ module LogLines
         text_tiny = text.sub("::", '*')
       elsif text.match?(SERVER_EXIT)
         level = :error # server stop
+        text_tiny = text
       else
         return { created_at: created_at, filtered: true }
       end
