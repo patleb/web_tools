@@ -7,14 +7,14 @@ module LogLines
     PORT = /\d+/
     KEY  = /ssh.*/
     CLIENT_AUTH = /Accepted (?:publickey|password) for (#{USER}) from (#{IP}) port (#{PORT}) (#{KEY})/
-    CLIENT_EXIT = /Disconnected from user (#{USER}) (#{IP}) port (#{PORT})/
+    CLIENT_EXIT = /session closed for user (#{USER})/
     SERVER_AUTH = /Server listening on .* port (#{PORT})/
     SERVER_EXIT = /Received signal \d+; terminating/
 
     json_attribute(
+      user: :string,
       ip: :string,
       port: :integer,
-      user: :string,
       key: :string,
     )
 
@@ -27,7 +27,7 @@ module LogLines
         level = :info
         text_tiny = text.sub(/ #{KEY}$/, ' *')
       elsif (values = text.match(CLIENT_EXIT))
-        user, ip, port = values.captures
+        user = values.captures
         level = :info
         text_tiny = text
       elsif (values = text.match(SERVER_AUTH))
