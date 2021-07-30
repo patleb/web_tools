@@ -164,15 +164,13 @@ module ActiveTask
     def method_missing(name, *args, **options, &block)
       if rake.respond_to? name, true
         rake.__send__(name, *args, **options, &block)
-      elsif task.respond_to? name, true
-        task.__send__(name, *args, **options, &block)
       else
         raise NoMethodError.new("No method '#{name}' for #{self.class} or :rake", name)
       end
     end
 
     def respond_to_missing?(name, _include_private = false)
-      rake.respond_to?(name, true) || task.respond_to?(name, true)
+      rake.respond_to?(name, true)
     end
 
     private
