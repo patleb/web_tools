@@ -4,6 +4,7 @@ module LogLines
     END_DATE   = /^End-Date: \d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}/
     COMMAND    = /^Commandline: (.+)$/
     INFO       = /^(?:[\w-]+): (?:.+)$/
+    INSTALL    = /^(apt-get -y install) (.+)$/
 
     json_attribute(
       command: :string,
@@ -32,6 +33,7 @@ module LogLines
       else
         return { filtered: true }
       end
+      message[:text].sub! INSTALL, '\1 *'
       json_data = { command: command }
 
       { created_at: created_at, message: message, json_data: json_data, anchored: anchored }
