@@ -2,7 +2,7 @@ module Checks
   module Osquery
     class Base < Checks::Base
       def self.osquery
-        @@osquery ||= begin
+        m_access(:osquery) do
           result = {}
           path = if Rails.env.dev_or_test?
             MixLog::Engine.root.join('test/fixtures/files/log/osquery/osqueryd.results.log')
