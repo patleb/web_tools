@@ -18,7 +18,7 @@ module LogLines
       (#{REMOTE_ADDR})\s-\s(#{REMOTE_USER})\s\[(#{TIME_LOCAL})\]\s
       "(#{REQUEST})"\s(#{STATUS})\s(#{BYTES_SENT})\s(#{REQUEST_LENGTH}\s)?
       "(#{HTTP_REFERER})"\s"(#{HTTP_USER_AGENT})"\s
-      (#{REQUEST_TIME})(?:\s#{PIPE})?\s(#{REQUEST_TIME}\s)?-\s(#{SCHEME})\s-\s(#{GZIP_RATIO})(?:-\s(#{PID}))?
+      (#{REQUEST_TIME})(?:\s#{PIPE})?\s(#{REQUEST_TIME}\s)?-\s(#{SCHEME})\s-\s(#{GZIP_RATIO})(?:\s-\s(#{PID}))?
     }x
     ACCESS_LEVELS = {
       (100...400) => :info,
