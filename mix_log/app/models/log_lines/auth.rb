@@ -2,20 +2,22 @@ module LogLines
   class Auth < LogLine
     include WithRsyslog
 
-    USER = /[\w-]*/
-    IP   = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}/
-    PORT = /\d+/
-    KEY  = /ssh.*/
+    USER   = /[\w-]*/
+    IP     = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}/
+    PORT   = /\d+/
+    KEY    = /ssh.*/
+    SIGNAL = /\d+/
     CLIENT_AUTH = /Accepted (?:publickey|password) for (#{USER}) from (#{IP}) port (#{PORT}) (#{KEY})/
     CLIENT_EXIT = /session closed for user (#{USER})/
     SERVER_AUTH = /Server listening on .* port (#{PORT})/
-    SERVER_EXIT = /Received signal \d+; terminating/
+    SERVER_EXIT = /Received signal (#{SIGNAL}); terminating/
 
     json_attribute(
       user: :string,
       ip: :string,
       port: :integer,
       key: :string,
+      signal: :integer,
     )
 
     def self.parse(log, line, mtime:, **)
@@ -32,16 +34,17 @@ module LogLines
         text_tiny = text
       elsif (values = text.match(SERVER_AUTH))
         port = values.captures.first
-        level = :error # server start
+        level = :info # server start
         text_tiny = text.sub("::", '*')
-      elsif text.match?(SERVER_EXIT)
+      elsif (values = text.match(SERVER_EXIT))
+        signal = values.captures.first
         level = :error # server stop
         text_tiny = text
       else
         return { created_at: created_at, filtered: true }
       end
 
-      json_data = { user: user, ip: ip, port: port&.to_i, key: key }
+      json_data = { user: user, ip: ip, port: port&.to_i, key: key, signal: signal&.to_i }
       message = { text: text, text_tiny: squish(text_tiny), level: level }
 
       { created_at: created_at, pid: pid, message: message, json_data: json_data }
