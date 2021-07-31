@@ -83,6 +83,7 @@ module MixLog
         warn: [
           'SSL routines:tls_early_post_process_client_hello:version too low',
           'SSL routines:tls_early_post_process_client_hello:unsupported protocol',
+          'SSL routines:tls_parse_ctos_key_share:bad key share',
         ],
         info: [
           '[passenger_native_support.so] trying to compile for the current user',
