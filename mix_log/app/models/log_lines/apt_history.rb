@@ -25,15 +25,16 @@ module LogLines
         created_at = previous[:created_at]
         command = values.captures.first
         message = { text: command, level: :info }
-      elsif line.match?(INFO) || line.match?(END_DATE)
+      elsif line.match?(INFO) || (end_date = line.match?(END_DATE))
         anchored = true
         created_at = previous[:created_at]
         command = previous.dig(:json_data, :command)
-        message = { text: previous.dig(:message, :text), level: :info }
+        text = previous.dig(:message, :text)
+        text_tiny = text.sub(INSTALL, '\1 *') if end_date && text.match?(INSTALL)
+        message = { text: text, text_tiny: text_tiny, level: :info }
       else
         return { filtered: true }
       end
-      message[:text].sub! INSTALL, '\1 *'
       json_data = { command: command }
 
       { created_at: created_at, message: message, json_data: json_data, anchored: anchored }
