@@ -63,7 +63,9 @@ module MixLog
     end
 
     def ided_paths
-      @ided_paths ||= {}
+      @ided_paths ||= {
+        %r{^(/packs/.+)(-[a-f0-9]+)((?:\.chunk)?\.[a-z0-9]{1,5})$} => '\1-*\3',
+      }
     end
 
     def ided_errors
