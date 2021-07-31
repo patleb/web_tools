@@ -38,6 +38,7 @@ module LogLines
       'C'     => 'crit',
       'App'   => 'ruby',
     }
+    SYSTEM_ERROR = %i(error fatal unknown)
 
     def self.parse(log, line, **)
       if (values = line.match(ERROR))
@@ -65,7 +66,10 @@ module LogLines
         errors.find{ |e| e.is_a?(Regexp) ? text.match?(e) : text.include?(e) }
       end
       level = known_level || level
-      message = { text_tiny: text_tiny, text: text, level: ERROR_LEVELS[level] }
+      level = ERROR_LEVELS[level]
+      return { filtered: true } unless SYSTEM_ERROR.include? level
+
+      message = { text_tiny: text_tiny, text: text, level: level }
 
       { created_at: created_at, pid: pid&.to_i, message: message }
     end
