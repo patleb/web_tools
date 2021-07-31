@@ -1,7 +1,7 @@
 <%= fetch(:deploy_to) %>/current/log/*.log {
-  hourly
+  daily
   missingok
-  rotate 365
+  rotate 28
   compress
   delaycompress
   notifempty

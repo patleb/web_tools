@@ -1,7 +1,7 @@
 /var/log/fail2ban.log {
 
-    hourly
-    rotate 31
+    daily
+    rotate 28
     compress
 
     delaycompress
