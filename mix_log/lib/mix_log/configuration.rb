@@ -93,7 +93,7 @@ module MixLog
           'details saved to: /tmp/passenger-error-',
           /^ID: \w+$/,
         ]
-      }.with_keyword_access
+      }
     end
 
     def postgres_log_path
