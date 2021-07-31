@@ -23,13 +23,12 @@ module MixLog
       @available_types ||= {
         'LogLines::NginxAccess' => 10,
         'LogLines::NginxError'  => 20,
-        'LogLines::Syslog'      => 30,
-        'LogLines::Auth'        => 40,
-        'LogLines::Fail2ban'    => 50,
-        'LogLines::Postgresql'  => 60,
-        'LogLines::Rails'       => 70,
-        'LogLines::AptHistory'  => 80,
-        'LogLines::Osquery'     => 90,
+        'LogLines::Auth'        => 30,
+        'LogLines::Fail2ban'    => 40,
+        'LogLines::Postgresql'  => 50,
+        'LogLines::Rails'       => 60,
+        'LogLines::AptHistory'  => 70,
+        'LogLines::Osquery'     => 80,
       }
     end
 
@@ -45,7 +44,6 @@ module MixLog
         log_path(:nginx, :access),
         log_path(:nginx, :error),
         log_path(:apt, :history),
-        log_path(:syslog),
         log_path(:auth),
         log_path(:fail2ban),
         postgres_log_path,
