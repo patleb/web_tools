@@ -34,7 +34,7 @@ module LogLines
         text_tiny = text
       elsif (values = text.match(SERVER_AUTH))
         port = values.captures.first
-        level = :info # server start
+        level = :error # server start (could signal a machine reboot)
         text_tiny = text.sub("::", '*')
       elsif (values = text.match(SERVER_EXIT))
         signal = values.captures.first
