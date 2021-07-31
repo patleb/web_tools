@@ -99,6 +99,7 @@ http {
   passenger_min_instances <%= Setting[:min_instances] %>;
   passenger_max_request_queue_size 1000;
   passenger_show_version_in_header off;
+  passenger_disable_security_update_check on;
   # passenger_max_instances_per_app 2;
   passenger_max_pool_size <%= Setting[:max_pool_size] %>;
   # TODO https://www.phusionpassenger.com/library/config/nginx/reference/#passenger_max_request_queue_time
