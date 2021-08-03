@@ -76,9 +76,6 @@ namespace :deploy do
       invoke! 'deploy:assets:precompile'
       invoke! 'deploy:assets:backup_manifest'
       invoke! 'nginx:reload'
-      on release_roles(:all) do
-        execute('sudo logrotate /etc/logrotate.conf --force')
-      end
     ensure
       set :assets_roles, old_assets_role
       set :job_roles, old_job_role
