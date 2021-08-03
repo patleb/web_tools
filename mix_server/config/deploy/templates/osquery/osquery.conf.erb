@@ -226,6 +226,16 @@
       "/usr/local/sbin/%%"
     ]
   },
+  "exclude_paths": {
+    "configuration": [
+      "/etc/.pwd.lock",
+      "/etc/lvm/cache/.%",
+      "/etc/sed%",
+      "/etc/systemd/system/.%",
+      "/etc/logrotate.d/.%",
+      "/etc/nginx/sites-available/.%"
+    ]
+  },
   "events": {
     "disable_subscribers": ["user_events"]
   },
