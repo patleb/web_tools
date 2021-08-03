@@ -145,6 +145,15 @@ server {
   }
 <% end %>
 
+# server {
+#   listen 80;
+#   listen [::]:80;
+#
+#   server_name '<%= fetch(:server) %>';
+#
+#   return 301 https://$host$request_uri;
+# }
+
 <% if fetch(:nginx_rails) %>
   passenger_pre_start http<%= 's' unless fetch(:nginx_skip_ssl) %>://<%= fetch(:server) %>/;
 <% end %>
