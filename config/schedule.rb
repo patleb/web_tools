@@ -47,6 +47,6 @@ when 'staging', 'production'
   end
 
   every 5.minutes do
-    rake 'cron:every_5_minutes'
+    runner 'Check.capture'
   end
 end

@@ -32,11 +32,6 @@ namespace :cron do
     end
   end
 
-  desc 'every 5 minutes cron jobs'
-  task :every_5_minutes => :environment do
-    run_task 'check:capture' if defined? MixCheck
-  end
-
   desc 'every week cron jobs'
   task :every_week => :environment do
     run_task 'cron:reboot' if File.exist? '/var/run/reboot-required'
