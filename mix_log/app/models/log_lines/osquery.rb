@@ -63,7 +63,7 @@ module LogLines
         paths = diff['added'].each_with_object(Set.new) do |row, memo|
           path = row['target_path']
           unless upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
-            memo << path
+            memo << [path, row['action']].join('/')
           end
         end.to_a.sort
         return { filtered: true } if paths.empty?
@@ -72,8 +72,12 @@ module LogLines
         # Setting[:server_cluster_master_ip]
         # ips = Set.new([Process.host.private_ip]).merge(Cloud.server_cluster_ips || [])
         paths = diff['added'].each_with_object(Set.new) do |row, memo|
-          # TODO add filters
-          memo << row['path'] if %w(connect bind).include?(row['action'])
+          if %w(connect bind).include?(row['action'])
+            # TODO add filters
+            local = row.values_at('local_address', 'local_port')
+            remote = row.values_at('remote_address', 'remote_port')
+            memo << [row['path'], local.compact.join(':'), remote.compact.join(':')].join('/')
+          end
         end.to_a.sort
         return { filtered: true } if paths.empty?
         message = { text: [name, merge_paths(paths)].join(' '), level: :error }
