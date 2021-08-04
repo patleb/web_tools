@@ -76,8 +76,8 @@ module LogLines
             path = row['path']
             local = row.values_at('local_address', 'local_port')
             remote = row.values_at('remote_address', 'remote_port')
-            next if MixLog.config.known_sockets.find do |type, sockets|
-              sockets.find do |s|
+            next if MixLog.config.known_sockets.any? do |type, sockets|
+              sockets.any? do |s|
                 case type
                 when :path
                   s.is_a?(Regexp) ? path.match?(s) : path == s
