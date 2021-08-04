@@ -92,5 +92,9 @@ module ExtCapistrano
     def compile_erb(source)
       Rake::DSL.compile(source, fetch(:gems))
     end
+
+    def flag_on?(...)
+      Rake::DSL.flag_on?(...)
+    end
   end
 end

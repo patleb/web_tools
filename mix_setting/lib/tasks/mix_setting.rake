@@ -56,10 +56,4 @@ namespace :setting do
   task :escape, [:file] do |t, args|
     puts Pathname.new(args[:file]).expand_path.read.escape_newlines
   end
-
-  def assign_environment!(args)
-    raise 'argument [:env] must be specified' unless (ENV['RAILS_ENV'] = args[:env]).present?
-    ENV['RAILS_APP'] ||= ENV['APP']
-    ENV['RAILS_ROOT'] ||= ENV['ROOT']
-  end
 end

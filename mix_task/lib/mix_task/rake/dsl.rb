@@ -1,6 +1,6 @@
 module Rake
   module DSL
-    def self.with_argv(task_name, **argv)
+    def with_argv(task_name, **argv)
       if argv.any?
         old_argv = ARGV.dup
         ARGV.replace([task_name, '--'])
@@ -16,10 +16,7 @@ module Rake
     ensure
       ARGV.replace(old_argv) if old_argv
     end
-
-    def with_argv(...)
-      Rake::DSL.with_argv(...)
-    end
+    module_function :with_argv
 
     def run_task(task_name, *args, **argv)
       with_argv(task_name, **argv) do

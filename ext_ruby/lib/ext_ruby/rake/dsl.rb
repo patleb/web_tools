@@ -98,5 +98,18 @@ module Rake
         row
       end
     end
+
+    def flag_on?(args, name)
+      return unless args.respond_to? :key?
+      value = args[name]
+      (value.to_s == name.to_s) || value.to_b
+    end
+    module_function :flag_on?
+
+    def assign_environment!(args)
+      raise 'argument [:env] must be specified' unless (ENV['RAILS_ENV'] = args[:env]).present?
+      ENV['RAILS_APP'] ||= ENV['APP']
+      ENV['RAILS_ROOT'] ||= ENV['ROOT']
+    end
   end
 end
