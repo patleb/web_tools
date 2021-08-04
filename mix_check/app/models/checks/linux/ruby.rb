@@ -6,7 +6,8 @@ module Checks
       end
 
       def pids_issue?
-        pids < MixServer.config.minimum_workers && host.uptime > (Setting[:check_interval] - 30.seconds)
+        minimum = MixServer.config.minimum_workers + Setting[:check_from_cron].to_i
+        pids < minimum && host.uptime > (Setting[:check_interval] - 30.seconds)
       end
     end
   end
