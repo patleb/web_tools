@@ -1,5 +1,5 @@
 module LogLines
-  class JobWatchAction < LogLine
+  class JobAction < LogLine
     json_attribute(
       action: :string,
       time: :float,

@@ -354,12 +354,12 @@ module MixJob
     end
 
     def puts_action_success(action, total)
-      Log.job_watch_action(action, total)
+      Log.job_action(action, total)
       puts "[#{Time.current.utc}]#{MixTask::SUCCESS}[#{Process.pid}]#{ACTION} #{action}: #{distance_of_time total}".green
     end
 
     def puts_action_failure(action, exception)
-      Notice.deliver! JobError.new(exception, data: { action: action })
+      Notice.deliver! Jobs::ActionError.new(exception, data: { action: action })
       puts "[#{Time.current.utc}]#{MixTask::FAILURE}[#{Process.pid}]#{ACTION} #{action}".red
     end
 

@@ -49,7 +49,7 @@ module MixJob
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixLog.config.available_types['LogLines::JobWatchAction'] = 130
+      MixLog.config.available_types['LogLines::JobAction'] = 130
     end
   end
 end
