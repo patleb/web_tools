@@ -106,9 +106,11 @@ class LogLine < LibMainRecord
 
   def self.push_all(log, lines)
     log_id = log.id
-    log_server_created_at = log.server.created_at
-    lines.reject! do |line|
-      line[:created_at] < log_server_created_at
+    unless Rails.env.dev_or_test?
+      log_server_created_at = log.server.created_at
+      lines.reject! do |line|
+        line[:created_at] < log_server_created_at
+      end
     end
     lines.each do |line|
       line[:log_id] = log_id

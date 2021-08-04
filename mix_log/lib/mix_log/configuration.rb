@@ -21,6 +21,7 @@ module MixLog
 
     def available_types
       @available_types ||= {
+        'LogLines::Syslog'      => 0,
         'LogLines::NginxAccess' => 10,
         'LogLines::NginxError'  => 20,
         'LogLines::Auth'        => 30,

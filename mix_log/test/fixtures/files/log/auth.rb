@@ -2,9 +2,10 @@ module LogLines
   AUTH_TIMESTAMP = Time.new(2021, 1, 4, 6, 32, 34, 0)
   AUTH_EXPECTATIONS = [
     {created_at: AUTH_TIMESTAMP, filtered: true},
-    {created_at: AUTH_TIMESTAMP, pid: 24692, message: {text: "Accepted publickey for deployer from 24.50.71.128 port 56216 ssh2: RSA SHA256:Eoa80Y0CCyKjujc/KbER1vXM+i58j78hihmYcwG05M4", text_tiny: "Accepted publickey for deployer from * port * *", level: :info}, json_data: {user: "deployer", ip: "24.50.71.128", port: 56216, key: "ssh2: RSA SHA256:Eoa80Y0CCyKjujc/KbER1vXM+i58j78hihmYcwG05M4"}},
-    {created_at: AUTH_TIMESTAMP, pid: 24692, message: {text: "Accepted publickey for ubuntu from 24.50.71.128 port 58753 ssh2: RSA SHA256:5X19eF/zKf+27MP6a+uBXaTuy5AZWiiH61sajw5jfng", text_tiny: "Accepted publickey for ubuntu from * port * *", level: :info}, json_data: {user: "ubuntu", ip: "24.50.71.128", port: 58753, key: "ssh2: RSA SHA256:5X19eF/zKf+27MP6a+uBXaTuy5AZWiiH61sajw5jfng"}},
-    {created_at: AUTH_TIMESTAMP, pid: 24692, message: {text: "Disconnected from user deployer 24.50.71.128 port 56216", text_tiny: "Disconnected from user deployer * port *", level: :info}, json_data: {user: "deployer", ip: "24.50.71.128", port: 56216, key: nil}},
+    {created_at: AUTH_TIMESTAMP, pid: 24692, message: {text: "Accepted publickey for deployer from 24.50.71.128 port 56216 ssh2: RSA SHA256:Eoa80Y0CCyKjujc/KbER1vXM+i58j78hihmYcwG05M4", text_tiny: "Accepted publickey for deployer from * port * *", level: :info}, json_data: {user: "deployer", ip: "24.50.71.128", port: 56216, key: "ssh2: RSA SHA256:Eoa80Y0CCyKjujc/KbER1vXM+i58j78hihmYcwG05M4", signal: nil}},
+    {created_at: AUTH_TIMESTAMP, pid: 24692, message: {text: "Accepted publickey for ubuntu from 24.50.71.128 port 58753 ssh2: RSA SHA256:5X19eF/zKf+27MP6a+uBXaTuy5AZWiiH61sajw5jfng", text_tiny: "Accepted publickey for ubuntu from * port * *", level: :info}, json_data: {user: "ubuntu", ip: "24.50.71.128", port: 58753, key: "ssh2: RSA SHA256:5X19eF/zKf+27MP6a+uBXaTuy5AZWiiH61sajw5jfng", signal: nil}},
+    {created_at: AUTH_TIMESTAMP, filtered: true},
+    {created_at: AUTH_TIMESTAMP, pid: 24692, message: {text: "pam_unix(sshd:session): session closed for user deployer", text_tiny: "pam_unix(sshd:session): session closed for user deployer", level: :info}, json_data: {user: "deployer", ip: nil, port: nil, key: nil, signal: nil}},
     {created_at: AUTH_TIMESTAMP, filtered: true},
     {created_at: AUTH_TIMESTAMP, filtered: true},
     {created_at: AUTH_TIMESTAMP, filtered: true},
@@ -28,8 +29,7 @@ module LogLines
     {created_at: AUTH_TIMESTAMP, filtered: true},
     {created_at: AUTH_TIMESTAMP, filtered: true},
     {created_at: AUTH_TIMESTAMP, filtered: true},
-    {created_at: AUTH_TIMESTAMP, filtered: true},
-    {created_at: AUTH_TIMESTAMP, pid: 24692, message: {text: "Server listening on 0.0.0.0 port 22.", text_tiny: "Server listening on * port *.", level: :error}, json_data: {user: nil, ip: nil, port: 22, key: nil}},
+    {created_at: AUTH_TIMESTAMP, pid: 24692, message: {text: "Server listening on 0.0.0.0 port 22.", text_tiny: "Server listening on * port *.", level: :error}, json_data: {user: nil, ip: nil, port: 22, key: nil, signal: nil}},
     {created_at: AUTH_TIMESTAMP, filtered: true}
   ]
 end

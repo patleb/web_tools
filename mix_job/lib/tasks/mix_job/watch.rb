@@ -6,6 +6,7 @@ module MixJob
     # HUP  --> by Closing Terminal
     # INT  --> by Systemd / Ctrl-C / IDE
     SHUTDOWN_SIGNALS = IceNine.deep_freeze(ENV['DEBUGGER_HOST'] ? %w(TERM HUP): %w(TERM HUP INT))
+    SHUTDOWN_SIGNAL  = 'TERM'.freeze # used in tests
     INSPECT_SIGNAL   = 'USR1'.freeze
     EXECUTE_SIGNAL   = 'USR2'.freeze
     SIGNALS = IceNine.deep_freeze(
