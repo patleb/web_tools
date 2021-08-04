@@ -73,10 +73,18 @@ module LogLines
         # ips = Set.new([Process.host.private_ip]).merge(Cloud.server_cluster_ips || [])
         paths = diff['added'].each_with_object(Set.new) do |row, memo|
           if %w(connect bind).include?(row['action'])
-            # TODO add filters
+            path = row['path']
             local = row.values_at('local_address', 'local_port')
             remote = row.values_at('remote_address', 'remote_port')
-            memo << [row['path'], local.compact.join(':'), remote.compact.join(':')].join('/')
+            next if MixLog.config.known_sockets.find do |type, sockets|
+              sockets.find do |s|
+                case type
+                when :path
+                  s.is_a?(Regexp) ? path.match?(s) : path == s
+                end
+              end
+            end
+            memo << [path, local.compact.join(':'), remote.compact.join(':')].join('/')
           end
         end.to_a.sort
         return { filtered: true } if paths.empty?

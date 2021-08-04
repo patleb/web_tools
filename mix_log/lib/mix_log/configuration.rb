@@ -9,6 +9,7 @@ module MixLog
     attr_writer   :ided_paths
     attr_writer   :ided_errors
     attr_writer   :known_errors
+    attr_writer   :known_sockets
     attr_accessor :force_read
 
     def partition_size
@@ -95,6 +96,26 @@ module MixLog
           '[passenger_native_support.so] successfully loaded',
           'details saved to: /tmp/passenger-error-',
           /^ID: \w+$/,
+        ]
+      }
+    end
+
+    # TODO
+    # /usr/bin/fwupdmgr
+    # /usr/bin/python3.8
+    # /usr/bin/ssh
+    # /usr/bin/sudo
+    # /usr/lib/apt/methods/http
+    # /usr/bin/node
+    # /usr/lib/git-core/git-remote-http
+    # /usr/bin/wget
+    # /usr/bin/git
+    def known_sockets
+      @known_sockets ||= {
+        path: [
+          %r{/snap/snapd/\d+/usr/lib/snapd/snapd},
+          %r{/home/deployer/\.rbenv/versions/[\d.]+/bin/ruby},
+          '/usr/lib/passenger/support-binaries/PassengerAgent',
         ]
       }
     end
