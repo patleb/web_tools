@@ -111,6 +111,7 @@ class LogLine < LibMainRecord
       lines.reject! do |line|
         line[:created_at] < log_server_created_at
       end
+      return if lines.empty?
     end
     lines.each do |line|
       line[:log_id] = log_id
