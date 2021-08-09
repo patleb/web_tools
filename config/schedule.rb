@@ -31,17 +31,17 @@ ExtWhenever.setup(self)
 case @environment
 when 'vagrant'
 when 'staging', 'production'
-  every :sunday, at: '10:00 am' do
+  every :sunday, at: '10:03 am' do
     rake 'cron:every_week'
   end
 
   case @application
   when 'web_tools'
-    every :day, at: '8:00 am' do
+    every :day, at: '8:01 am' do
       rake 'cron:every_day'
     end
   when 'web_cluster'
-    every :day, at: '8:00 am' do
+    every :day, at: '8:03 am' do
       rake 'cron:cluster:every_day'
     end
   end
