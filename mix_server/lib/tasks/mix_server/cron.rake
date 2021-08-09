@@ -45,8 +45,7 @@ namespace :cron do
       break if (Time.current - started_at) > 2.hours
       sleep ExtRuby.config.memoized_at_threshold
     end
-    run_task 'nginx:maintenance:disable'
-    next unless ready
+    next run_task('nginx:maintenance:disable') unless ready
 
     # make sure that Passenger extra workers are killed and no extra rake tasks are running
     min_workers = MixServer.config.minimum_workers + 1 # include the current rake task
@@ -54,12 +53,14 @@ namespace :cron do
       break if (Time.current - started_at) > 2.hours
       sleep ExtRuby.config.memoized_at_threshold
     end
-    next unless ready
+    next run_task('nginx:maintenance:disable') unless ready
 
     # won't interfere with 5 minutes cron
     until (Time.current.min % 5) == 3
       sleep 10
     end
+    run_task 'nginx:maintenance:disable'
+
     sh 'sudo reboot'
   end
 end
