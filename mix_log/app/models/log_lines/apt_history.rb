@@ -25,7 +25,7 @@ module LogLines
         created_at = previous[:created_at]
         command = values.captures.first
         message = { text: command, level: :info }
-      elsif line.match?(INFO) || (end_date = line.match?(END_DATE))
+      elsif (end_date = line.match?(END_DATE)) || line.match?(INFO)
         anchored = true
         created_at = previous[:created_at]
         command = previous.dig(:json_data, :command)
