@@ -71,7 +71,7 @@ module LogLines
         end.to_a.sort
         return { filtered: true } if paths.empty?
         text = [name, merge_paths(paths)].join(' ')
-        text_tiny = text.gsub(/([A-Z_]+,?)+/, '*')
+        text_tiny = text.gsub(/(([A-Z]+_?)+,?)+/, '*')
         message = { text: text, text_tiny: text_tiny, level: :error }
       when 'socket_events'
         # Setting[:server_cluster_master_ip]
