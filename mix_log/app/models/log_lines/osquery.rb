@@ -64,7 +64,7 @@ module LogLines
           path = row['target_path']
           unless upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
             next if MixLog.config.known_files.any? do |f|
-              f.is_a?(Regexp) ? path.match?(s) : path == f
+              f.is_a?(Regexp) ? path.match?(f) : path == f
             end
             memo << [path, row['action']].join('/')
           end
