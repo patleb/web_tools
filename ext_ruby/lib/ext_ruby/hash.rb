@@ -33,12 +33,14 @@ class Hash
     JSON.pretty_generate(self, indent: '  ', space: ' ', space_before: '')
   end
 
-  def pretty_hash!(default = nil)
+  def pretty_hash!(default = nil, **options)
     return default unless present?
-    pretty_hash
+    pretty_hash(**options)
   end
 
-  def pretty_hash
-    sort_by{ |k, _| k.to_s }.to_h.cast.to_s.gsub(/:(\w+)=>/, '\1: ')
+  def pretty_hash(sort: true)
+    hash = self
+    hash = hash.sort_by{ |k, _| k.to_s }.to_h if sort
+    hash.cast.to_s.gsub(/:(\w+)=>/, '\1: ')
   end
 end
