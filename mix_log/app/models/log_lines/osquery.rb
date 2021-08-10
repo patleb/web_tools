@@ -63,6 +63,9 @@ module LogLines
         paths = diff['added'].each_with_object(Set.new) do |row, memo|
           path = row['target_path']
           unless upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
+            next if MixLog.config.known_files.any? do |f|
+              f.is_a?(Regexp) ? path.match?(s) : path == f
+            end
             memo << [path, row['action']].join('/')
           end
         end.to_a.sort
@@ -84,7 +87,7 @@ module LogLines
                 end
               end
             end
-            memo << [path, local.compact.join(':'), remote.compact.join(':')].join('/')
+            memo << [path, local.join(':'), remote.join(':')].join('/')
           end
         end.to_a.sort
         return { filtered: true } if paths.empty?

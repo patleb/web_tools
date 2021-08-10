@@ -43,7 +43,6 @@ module MixLog
         nginx_log_path(:access),
         nginx_log_path(:packs, :access),
         nginx_log_path(:public, :access),
-        log_path(:nginx, :access),
         log_path(:nginx, :error),
         log_path(:apt, :history),
         log_path(:auth),
@@ -100,23 +99,20 @@ module MixLog
       }
     end
 
-    # TODO
-    # /usr/bin/fwupdmgr
-    # /usr/bin/python3.8
-    # /usr/bin/ssh
-    # /usr/bin/sudo
-    # /usr/lib/apt/methods/http
-    # /usr/bin/node
-    # /usr/lib/git-core/git-remote-http
-    # /usr/bin/wget
-    # /usr/bin/git
+    # https://github.com/osquery/osquery/issues/4750
+    def known_files
+      @known_files ||= [
+        %r{/etc/sed\w+},
+        %r{/etc/systemd/system/\.\w+},
+        %r{/etc/logrotate.d/\.\w+},
+        %r{/etc/nginx/sites-available/\.\w+},
+        %r{/etc/osquery/.osquery\.\w+},
+      ]
+    end
+
     def known_sockets
       @known_sockets ||= {
-        path: [
-          %r{/snap/snapd/\d+/usr/lib/snapd/snapd},
-          %r{/home/deployer/\.rbenv/versions/[\d.]+/bin/ruby},
-          '/usr/lib/passenger/support-binaries/PassengerAgent',
-        ]
+        path: []
       }
     end
 

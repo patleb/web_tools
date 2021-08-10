@@ -155,8 +155,7 @@
       "interval": <%= Setting[:osquery_10_sec] %>
     },
     "socket_events":{
-      // TODO --> AND local_port NOT IN (21, 22, 53)
-      "query": "SELECT action, auid, family, local_address, local_port, path, pid, remote_address, remote_port, success, time FROM socket_events WHERE success=1 AND path NOT IN ('/usr/bin/hostname') AND remote_address NOT IN ('127.0.0.1', '169.254.169.254', '', '0000:0000:0000:0000:0000:0000:0000:0001', '::1', '0000:0000:0000:0000:0000:ffff:7f00:0001', 'unknown', '0.0.0.0', '0000:0000:0000:0000:0000:0000:0000:0000') AND remote_address NOT LIKE '172.17.%' AND remote_address NOT LIKE '172.18.%' AND remote_address NOT LIKE '10.%' AND remote_address NOT LIKE '192.168.%'",
+      "query": "SELECT action, auid, family, local_address, local_port, pid, cmdline AS path, remote_address, remote_port, success, time FROM socket_events JOIN processes USING (pid) WHERE success=1 AND socket_events.path NOT IN ('/usr/bin/hostname', '/usr/lib/passenger/support-binaries/PassengerAgent') AND socket_events.path NOT LIKE '/snap/snapd/%/usr/lib/snapd/snapd' AND socket_events.path NOT LIKE '/home/deployer/.rbenv/versions/%/bin/ruby' AND remote_address NOT IN ('127.0.0.1', '127.0.0.53', '169.254.169.254', '', '0000:0000:0000:0000:0000:0000:0000:0001', '::1', '0000:0000:0000:0000:0000:ffff:7f00:0001', 'unknown', '0.0.0.0', '0000:0000:0000:0000:0000:0000:0000:0000', '0') AND <%= (%w(172.17 172.18 10 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| "remote_address NOT LIKE '#{ip}.%'" }.join(' AND ') %>",
       "interval": <%= Setting[:osquery_10_sec] %>
     },
     "file_events": {
@@ -229,11 +228,44 @@
   "exclude_paths": {
     "configuration": [
       "/etc/.pwd.lock",
-      "/etc/lvm/cache/.%",
-      "/etc/sed%",
-      "/etc/systemd/system/.%",
-      "/etc/logrotate.d/.%",
-      "/etc/nginx/sites-available/.%"
+      "/etc/lvm/cache/.cache.tmp",
+      "/etc/lvm/cache/.cache",
+      "/etc/ld.so.cache~",
+      "/etc/ld.so.cache",
+      "/etc/fwupd/%",
+      "/etc/fwupd/remotes.d/%",
+      "/etc/libblockdev.dpkg-new",
+      "/etc/libblockdev",
+      "/etc/pki/fwupd-metadata/%",
+      "/etc/pki/fwupd/%",
+      "/etc/udisks2.dpkg-new",
+      "/etc/udisks2",
+      "/etc/update-motd.d/85-fwupd.dpkg-new",
+      "/etc/update-motd.d/85-fwupd",
+      "/usr/bin/dbxtool.dpkg-new",
+      "/usr/bin/dbxtool",
+      "/usr/bin/dfu-tool.dpkg-new",
+      "/usr/bin/dfu-tool.dpkg-tmp",
+      "/usr/bin/dfu-tool",
+      "/usr/bin/fwupdagent.dpkg-new",
+      "/usr/bin/fwupdagent.dpkg-tmp",
+      "/usr/bin/fwupdagent",
+      "/usr/bin/fwupdate.dpkg-new",
+      "/usr/bin/fwupdate.dpkg-tmp",
+      "/usr/bin/fwupdate",
+      "/usr/bin/fwupdmgr.dpkg-new",
+      "/usr/bin/fwupdmgr.dpkg-tmp",
+      "/usr/bin/fwupdmgr",
+      "/usr/bin/fwupdtool.dpkg-new",
+      "/usr/bin/fwupdtool.dpkg-tmp",
+      "/usr/bin/fwupdtool",
+      "/usr/bin/fwupdtpmevlog.dpkg-new",
+      "/usr/bin/fwupdtpmevlog.dpkg-tmp",
+      "/usr/bin/fwupdtpmevlog",
+      "/usr/bin/udisksctl.dpkg-new",
+      "/usr/bin/udisksctl",
+      "/usr/sbin/umount.udisks2.dpkg-new",
+      "/usr/sbin/umount.udisks2"
     ]
   },
   "events": {
