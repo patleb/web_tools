@@ -70,7 +70,9 @@ module LogLines
           end
         end.to_a.sort
         return { filtered: true } if paths.empty?
-        message = { text: [name, merge_paths(paths)].join(' '), level: :error }
+        text = [name, merge_paths(paths)].join(' ')
+        text_tiny = text.gsub(/([A-Z_]+,?)+/, '*')
+        message = { text: text, text_tiny: text_tiny, level: :error }
       when 'socket_events'
         # Setting[:server_cluster_master_ip]
         # ips = Set.new([Process.host.private_ip]).merge(Cloud.server_cluster_ips || [])
@@ -91,7 +93,9 @@ module LogLines
           end
         end.to_a.sort
         return { filtered: true } if paths.empty?
-        message = { text: [name, merge_paths(paths)].join(' '), level: :error }
+        text = [name, merge_paths(paths)].join(' ')
+        text_tiny = text.gsub(/((\d+\.)*\d+:\d+,?)+/, '*')
+        message = { text: text, text_tiny: text_tiny, level: :error }
       end
       json_data = { name: name, ram: ram, paths: paths }
 
