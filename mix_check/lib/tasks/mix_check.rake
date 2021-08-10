@@ -9,6 +9,14 @@ namespace :check do
     Check.cleanup
   end
 
+  desc 'database missing indexes'
+  task :missing_indexes => :environment do
+    tables = Checks::Postgres::Table.missing_indexes.map do |table|
+      { table: table.id, estimated_rows: table.estimated_rows, index_usage: table.index_usage }.pretty_hash(sort: false)
+    end
+    puts tables
+  end
+
   desc 'database suggested indexes'
   task :suggested_indexes => :environment do
     indexes = Checks::Postgres::Query.suggested_indexes.map do |index|

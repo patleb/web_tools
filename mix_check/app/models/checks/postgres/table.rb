@@ -76,12 +76,16 @@ module Checks
         sum(&:estimated_rows)
       end
 
-      def bloat?
-        !!bloat_bytes
+      def self.missing_indexes
+        select(&:missing_indexes?)
       end
 
       def missing_indexes?
         estimated_rows >= 10000 && index_usage && index_usage < 95
+      end
+
+      def bloat?
+        !!bloat_bytes
       end
 
       def analyze
@@ -95,7 +99,6 @@ module Checks
       end
 
       alias_method :bloat_warning?, :bloat?
-      alias_method :missing_indexes_warning?, :missing_indexes?
     end
   end
 end
