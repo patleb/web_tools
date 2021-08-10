@@ -5,9 +5,7 @@ module VirtualRecord
     ar_attribute :id
 
     class << self
-      delegate :first, :last, :take, :count, :count_estimate, :size, to: :all
-      delegate :exists?, :all?, :any?, :empty?, :none?, :one?, to: :all
-      delegate :where, :order, :reorder, :reverse_order, to: :all
+      delegate :count_estimate, :size, :all?, :empty?, :reverse_order, to: :all
 
       def scope(name, body)
         raise ArgumentError, "The scope body needs to be callable." unless body.respond_to? :call
