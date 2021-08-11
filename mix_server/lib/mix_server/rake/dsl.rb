@@ -23,7 +23,7 @@ module Rake
 
       @capistrano ||= Sunzistrano::Context.capistrano(Setting.rails_env).with_keyword_access
 
-      Setting.with(env: Setting.rails_env) do |all|
+      Setting.with(env: Setting.rails_env, app: Setting.rails_app) do |all|
         @capistrano.merge(all)[name]
       end
     end
