@@ -41,8 +41,8 @@ namespace :nginx do
         cap_task 'nginx:maintenance:enable', env: args[:env]
       else
         nginx_maintenance_push
-        # ENV['MAINTENANCE'] = true
-        # nginx_app_push
+        ENV['MAINTENANCE'] = true
+        nginx_app_push
       end
     end
 
