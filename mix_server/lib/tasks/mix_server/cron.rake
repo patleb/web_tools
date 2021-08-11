@@ -61,6 +61,6 @@ namespace :cron do
     end
     run_task 'nginx:maintenance:disable'
 
-    sh 'sudo reboot'
+    exec 'sudo reboot'
   end
 end
