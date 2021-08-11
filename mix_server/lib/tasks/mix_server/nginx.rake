@@ -15,7 +15,7 @@ namespace :nginx do
   end
 
   def nginx_maintenance_push
-    html = compile '503.html'
+    html = compile 'config/deploy/templates/503.html'
     mv html, MixServer.config.shared_dir.join('public/503.html')
   end
 
@@ -41,8 +41,8 @@ namespace :nginx do
         cap_task 'nginx:maintenance:enable', env: args[:env]
       else
         nginx_maintenance_push
-        ENV['MAINTENANCE'] = true
-        nginx_app_push
+        # ENV['MAINTENANCE'] = true
+        # nginx_app_push
       end
     end
 
