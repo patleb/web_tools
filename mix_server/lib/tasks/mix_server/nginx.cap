@@ -63,6 +63,7 @@ namespace :nginx do
       invoke 'nginx:maintenance:push'
       ENV['MAINTENANCE'] = true
       invoke 'nginx:app:push'
+      ENV['MAINTENANCE'] = false
     end
 
     desc "Disable maintenance mode"

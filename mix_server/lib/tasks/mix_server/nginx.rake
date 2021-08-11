@@ -43,6 +43,7 @@ namespace :nginx do
         nginx_maintenance_push
         ENV['MAINTENANCE'] = true
         nginx_app_push
+        ENV['MAINTENANCE'] = false
       end
     end
 
