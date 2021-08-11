@@ -15,7 +15,6 @@ module LogLines
         osquery_info
         file_events
         socket_events
-        process_events
       )
     end
 
@@ -87,10 +86,6 @@ module LogLines
             end
             memo << [path, local.join(':'), remote.join(':')].join('/')
           end
-        end
-      when 'process_events'
-        message, paths = extract_event(diff, name, tiny: /(-?\d+,?)+/) do |row, memo|
-          memo << row.values_at('cmdline', 'parent', 'pid').join('/')
         end
       end
       return { filtered: true } unless message
