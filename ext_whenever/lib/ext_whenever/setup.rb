@@ -16,4 +16,5 @@ job_type :rake,    "#{rbenv_ruby} #{path} #{flock} nice -n 19 #{rake} :task --si
 job_type :rake!,   "#{rbenv_ruby} #{path} #{flock} #{rake} :task --silent :output"
 job_type :runner,  "#{rbenv_ruby} #{path} #{flock} nice -n 19 #{runner} ':task' :output"
 job_type :runner!, "#{rbenv_ruby} #{path} #{flock} #{runner} ':task' :output"
-job_type :bash,    "#{rbenv_ruby} #{context} #{path} #{flock} bash -e -u bin/:task :output"
+job_type :bash,    "#{rbenv_ruby} #{context} #{path} #{flock} nice -n 19 bash -e -u bin/:task :output"
+job_type :bash!,   "#{rbenv_ruby} #{context} #{path} #{flock} bash -e -u bin/:task :output"
