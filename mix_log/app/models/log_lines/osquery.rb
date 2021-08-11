@@ -10,12 +10,12 @@ module LogLines
       @@names ||= Set.new(monitors).merge(threats)
     end
 
-    # TODO 'process_events'
     def self.monitors
       @@monitors ||= %w(
         osquery_info
         file_events
         socket_events
+        process_events
       )
     end
 
@@ -60,7 +60,7 @@ module LogLines
         message = { text: name, level: level }
       when 'file_events'
         has_upgraded = apt_history(log)&.has_upgraded? time
-        paths = diff['added'].each_with_object(Set.new) do |row, memo|
+        message, paths = extract_event(name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
           path = row['target_path']
           unless upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
             next if MixLog.config.known_files.any? do |f|
@@ -68,15 +68,11 @@ module LogLines
             end
             memo << [path, row['action']].join('/')
           end
-        end.to_a.sort
-        return { filtered: true } if paths.empty?
-        text = [name, merge_paths(paths)].join(' ')
-        text_tiny = text.gsub(/(([A-Z]+_?)+,?)+/, '*')
-        message = { text: text, text_tiny: text_tiny, level: :error }
+        end
       when 'socket_events'
         # Setting[:server_cluster_master_ip]
         # ips = Set.new([Process.host.private_ip]).merge(Cloud.server_cluster_ips || [])
-        paths = diff['added'].each_with_object(Set.new) do |row, memo|
+        message, paths = extract_event(name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
           if %w(connect bind).include?(row['action'])
             path = row['path']
             local = row.values_at('local_address', 'local_port')
@@ -91,22 +87,37 @@ module LogLines
             end
             memo << [path, local.join(':'), remote.join(':')].join('/')
           end
-        end.to_a.sort
-        return { filtered: true } if paths.empty?
-        text = [name, merge_paths(paths)].join(' ')
-        text_tiny = text.gsub(/((\d+\.)*\d+:\d+,?)+/, '*')
-        message = { text: text, text_tiny: text_tiny, level: :error }
+        end
+      when 'process_events'
+        message, paths = extract_event(name, tiny: /(-?\d+,?)+/) do |row, memo|
+          memo << row.values_at('cmdline', 'parent', 'pid').join('/')
+        end
       end
+      return { filtered: true } unless message
+
       json_data = { name: name, ram: ram, paths: paths }
 
       { created_at: time, pid: pid, message: message, json_data: json_data }
     end
 
     def self.finalize(log)
+      return unless log.server.created_at < 1.day.ago
       unless where(log: log, created_at: (log.mtime - 1.day)..Time.current).exists?
         name = 'osquey_dead'
         push(log, message: { text: name, level: :error }, json_data: { name: name })
       end
+    end
+
+    def self.extract_event(name, tiny: nil)
+      paths = diff['added'].each_with_object(Set.new) do |row, memo|
+        yield(row, memo)
+      end.to_a.sort
+
+      return nil if paths.empty?
+
+      text = [name, merge_paths(paths)].join(' ')
+      text_tiny = text.gsub(/?{#{tiny}}?/, '*') if tiny
+      [{ text: text, text_tiny: text_tiny, level: :error }, paths]
     end
 
     def self.merge_paths(paths)
