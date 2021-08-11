@@ -116,7 +116,7 @@ module LogLines
       return nil if paths.empty?
 
       text = [name, merge_paths(paths)].join(' ')
-      text_tiny = text.gsub(/?{#{tiny}}?/, '*') if tiny
+      text_tiny = text.gsub(/{?#{tiny}}?/, '*') if tiny
       [{ text: text, text_tiny: text_tiny, level: :error }, paths]
     end
 
