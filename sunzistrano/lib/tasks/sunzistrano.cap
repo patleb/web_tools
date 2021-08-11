@@ -8,7 +8,8 @@ namespace :sunzistrano do
       memo[key] = value
     end
 
-    values.reject!{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) }
+    values.reject!{ |_, v| v.nil? }
+    values.transform_values!{ |v| (v.is_a?(Hash) || v.is_a?(Array)) ? v.to_json : v }
     values.merge!(port: values[:ssh_options].try(:[], :port) || values[:port])
     output = values.each_with_object('') do |(key, value), output|
       output << key.to_s << ' ' << value.to_s << "\n"

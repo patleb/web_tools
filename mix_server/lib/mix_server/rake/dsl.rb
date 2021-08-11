@@ -13,5 +13,19 @@ module Rake
     def run_ftp_cat(match, **options)
       `#{Sh.ftp_cat(match, **options)}`.strip
     end
+
+    def cap
+      OpenStruct.new(env: Setting.rails_env, app: Setting.rails_app, os: Process.os.to_s)
+    end
+
+    def fetch(name)
+      raise "Setting.rails_env == '#{Setting.rails_env}'" unless Setting.rails_env != 'development'
+
+      @capistrano ||= Sunzistrano::Context.capistrano(Setting.rails_env).with_keyword_access
+
+      Setting.with(env: Setting.rails_env) do |all|
+        @capistrano.merge(all)[name]
+      end
+    end
   end
 end

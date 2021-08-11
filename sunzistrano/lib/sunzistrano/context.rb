@@ -11,8 +11,38 @@ module Sunzistrano
     METADATA_DIR = 'sun_metadata'
     DEFAULTS_DIR = 'sun_defaults'
 
+    delegate :capistrano, to: :class
+
     def self.provision_yml
       Pathname.new(File.expand_path('config/provision.yml'))
+    end
+
+    def self.capistrano(stage)
+      cap = File.file?('bin/cap') ? 'bin/cap' : 'bundle exec cap'
+      stdout, stderr, status = Open3.capture3("RAILS_ENV=development #{cap} #{stage} sunzistrano:capistrano --dry-run")
+      if status.success?
+        if stdout.present?
+          stdout.lines.each_with_object({}) do |key_value, memo|
+            key, value = key_value.strip.split(' ', 2).map(&:strip)
+            next if value.blank? || key == 'DEBUG'
+
+            if %w(true false).include?(value)
+              value = value.to_b
+            elsif value.start_with?('{', '[') && value.end_with?(']', '}')
+              value = JSON.parse(value)
+            elsif value.to_i?
+              value = value.to_i
+            end
+            memo[key] = value
+          end
+        else
+          puts %{cap #{stage} sunzistrano:capistrano => ""}.red
+          {}
+        end
+      else
+        puts stderr.red
+        {}
+      end
     end
 
     def initialize(stage, role, **options)
@@ -44,7 +74,7 @@ module Sunzistrano
     end
 
     def attributes
-      to_h.reject{ |_, v| v.nil? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
+      to_h.reject{ |_, v| v.blank? || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
         os_name: os,
         username: username,
         owner_public_key: owner_public_key,
@@ -150,30 +180,6 @@ module Sunzistrano
         recipes - (remove_recipes || []).reject(&:blank?)
       else
         recipes + (append_recipes || []).reject(&:blank?)
-      end
-    end
-
-    def capistrano(stage)
-      cap = File.file?('bin/cap') ? 'bin/cap' : 'bundle exec cap'
-      stdout, stderr, status = Open3.capture3("#{cap} #{stage} sunzistrano:capistrano --dry-run")
-      if status.success?
-        if stdout.present?
-          stdout.lines.each_with_object({}) do |key_value, memo|
-            key, value = key_value.strip.split(' ', 2).map(&:strip)
-            if %w(true false).include?(value)
-              value = value.to_b
-            elsif value.to_i?
-              value = value.to_i
-            end
-            memo[key] = value unless value.blank? || key == 'DEBUG'
-          end
-        else
-          puts %{cap #{stage} sunzistrano:capistrano => ""}.red
-          {}
-        end
-      else
-        puts stderr.red
-        {}
       end
     end
   end
