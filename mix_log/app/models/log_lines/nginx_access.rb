@@ -215,6 +215,9 @@ module LogLines
       if global_log || status == 404 || path.end_with?('/wp-admin', '/allowurl.txt', '.php')
         method, path, params = nil, '*', nil
       end
+      if global_log
+        json_data.except! :params, :referer, :browser
+      end
       regex, replacement = MixLog.config.ided_paths.find{ |regex, _replacement| path.match? regex }
       path_tiny = regex ? squish(path.gsub(regex, replacement)) : squish(path)
       if method

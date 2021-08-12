@@ -43,6 +43,7 @@ module MixLog
         nginx_log_path(:access),
         nginx_log_path(:packs, :access),
         nginx_log_path(:public, :access),
+        log_path(:nginx, :access),
         log_path(:nginx, :error),
         log_path(:apt, :history),
         log_path(:auth),
