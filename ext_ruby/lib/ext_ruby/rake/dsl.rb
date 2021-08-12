@@ -22,16 +22,16 @@ module Rake
     end
 
     def template(src, gems = nil)
-      tmp_file = compile(src, gems)
+      tmp_file = compile(src, gems, deployer: false)
       mv tmp_file, src, force: true
     end
 
-    def compile(src, gems = nil, rake: true)
+    def compile(src, gems = nil, deployer: true)
       gems ||= Setting.gems.keys
       base_dir = Pathname.new("tmp/#{File.dirname(src).delete_prefix('/')}")
       new_file = base_dir.join(File.basename(src))
       FileUtils.mkdir_p base_dir
-      FileUtils.chown_R('deployer', 'deployer', base_dir) if rake
+      FileUtils.chown_R('deployer', 'deployer', base_dir) if deployer
       File.open(new_file, 'w') do |f|
         source_erb = "#{src}.erb"
 
