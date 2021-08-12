@@ -96,8 +96,7 @@ module LogLines
     end
 
     def self.finalize(log)
-      return unless log.server.created_at < 1.day.ago
-      unless where(log: log, created_at: (log.mtime - 1.day)..Time.current).exists?
+      if Process.host.workers.select{ |w| w.name == 'osqueryd' }.empty?
         name = 'osquey_dead'
         push(log, message: { text: name, level: :error }, json_data: { name: name })
       end
