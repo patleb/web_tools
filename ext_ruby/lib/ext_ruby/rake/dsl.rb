@@ -26,11 +26,12 @@ module Rake
       mv tmp_file, src, force: true
     end
 
-    def compile(src, gems = nil)
+    def compile(src, gems = nil, rake: true)
       gems ||= Setting.gems.keys
       base_dir = Pathname.new("tmp/#{File.dirname(src).delete_prefix('/')}")
       new_file = base_dir.join(File.basename(src))
       FileUtils.mkdir_p base_dir
+      FileUtils.chown_R('deployer', 'deployer', base_dir) if rake
       File.open(new_file, 'w') do |f|
         source_erb = "#{src}.erb"
 
