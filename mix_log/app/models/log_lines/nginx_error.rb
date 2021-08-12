@@ -54,7 +54,7 @@ module LogLines
         level = P_ERROR_LEVELS[level]
         text = "#{p_message}: #{text}"
       else
-        raise IncompatibleLogLine, line
+        return { filtered: true }
       end
       regex, replacement = MixLog.config.ided_errors.find{ |regex, _replacement| text.match? regex }
       if regex

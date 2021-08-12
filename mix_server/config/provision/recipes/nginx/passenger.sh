@@ -18,6 +18,9 @@ fi
 # https://bugs.launchpad.net/ubuntu/+source/perl/+bug/1897561
 rm -f /etc/nginx/modules-enabled/50-mod-http-perl.conf
 
+# https://www.claudiokuenzler.com/blog/1022/debian-buster-nginx-1.14-nchan-error-logs-memstore-assertion-failed
+rm -f /etc/nginx/modules-enabled/50-mod-nchan.conf
+
 sun.backup_compare "/etc/nginx/nginx.conf"
 sun.backup_compile "/etc/logrotate.d/nginx"
 chown $__DEPLOYER_NAME__:adm /var/log/nginx
