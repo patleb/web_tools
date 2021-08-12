@@ -3,6 +3,7 @@ module Checks
   module Linux
     class Host < Base
       alias_attribute :ip, :id
+      attribute       :version
 
       nests_one  :cpu,      default: proc { Cpu.current }
       nests_one  :disk,     default: proc { Disk.current }
@@ -25,7 +26,8 @@ module Checks
       validates :ruby, check: true
 
       def self.list
-        [{ id: host.private_ip }]
+        version = Server.current_version if Server.current_version != snapshot[:version]
+        [{ id: host.private_ip, version: version }]
       end
 
       def self.snapshot_key
@@ -39,7 +41,7 @@ module Checks
       def self.capture
         last_updated_at = LogLines::Host.last_messages(text_tiny: host.private_ip).pick(:updated_at)
         if last_updated_at.nil? || last_updated_at < (Setting[:check_interval] - 30.seconds).ago
-          snapshot = host.build_snapshot
+          snapshot = host.build_snapshot.merge(version: Server.current_version)
           Log.host(current)
           Global.write! snapshot_key, snapshot
           reset

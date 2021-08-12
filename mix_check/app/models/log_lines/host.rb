@@ -1,7 +1,7 @@
 module LogLines
   class Host < LogLine
     json_attribute(
-      ip: :string,
+      version: :string,
       boot_time: :datetime,
       pids: :big_integer,
       usage: :float,
@@ -57,6 +57,7 @@ module LogLines
         {}
       end
       json_data = {
+        version: row.version,
         **row.cpu.slice(:boot_time, :pids, :load_avg),
         usage: row.cpu.usage, steal: row.cpu.steal,
         **row.disk.slice(:used, :reads, :writes).transform_keys{ |k| "disk_#{k}" },
