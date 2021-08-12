@@ -46,7 +46,7 @@ when 'staging', 'production'
     end
   end
 
-  every 5.minutes do
+  every Setting[:check_interval] do
     runner 'Check.capture'
   end
 end
