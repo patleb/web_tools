@@ -15,7 +15,7 @@ module MixLog
     end
 
     def extract
-      sh 'sudo logrotate /etc/logrotate.conf --force' if options.rotate
+      sh 'sudo logrotate /etc/logrotate.conf --force' if options.rotate # cat /var/lib/logrotate/status
 
       block = proc do |log|
         log.rotated_files.select{ |file| file.mtime.to_i > log.mtime.to_i }.each do |file|
