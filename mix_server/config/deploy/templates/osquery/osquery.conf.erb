@@ -155,7 +155,7 @@
       "interval": <%= Setting[:osquery_10_sec] %>
     },
     "socket_events":{
-      "query": "SELECT action, auid, family, local_address, local_port, cmdline AS path, pid, remote_address, remote_port, success, time FROM socket_events JOIN processes USING (pid) WHERE success=1 AND path NOT LIKE 'node /usr/share/yarn/bin/yarn.js install%' socket_events.path NOT IN ('/usr/bin/hostname', '/usr/lib/passenger/support-binaries/PassengerAgent') AND socket_events.path NOT LIKE '/snap/snapd/%/usr/lib/snapd/snapd' AND remote_address NOT IN ('127.0.0.1', '127.0.0.53', '', '0000:0000:0000:0000:0000:0000:0000:0001', '::1', '0000:0000:0000:0000:0000:ffff:7f00:0001', 'unknown', '0.0.0.0', '0000:0000:0000:0000:0000:0000:0000:0000', '0') AND <%= (%w(169.254 172.17 172.18 10 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| "remote_address NOT LIKE '#{ip}.%'" }.join(' AND ') %>",
+      "query": "SELECT action, auid, family, local_address, local_port, cmdline AS path, pid, remote_address, remote_port, success, time FROM socket_events JOIN processes USING (pid) WHERE success=1 AND path NOT LIKE 'node /usr/share/yarn/bin/yarn.js install%' socket_events.path NOT IN ('/usr/bin/hostname', '/usr/lib/passenger/support-binaries/PassengerAgent') AND socket_events.path NOT LIKE '/snap/snapd/%/usr/lib/snapd/snapd' AND remote_address NOT IN ('127.0.0.1', '127.0.0.53', '', '0000:0000:0000:0000:0000:0000:0000:0001', '::1', '0000:0000:0000:0000:0000:ffff:7f00:0001', 'unknown', '0.0.0.0', '0000:0000:0000:0000:0000:0000:0000:0000', '0') AND <%= (%w(169.254 172.17 172.18 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| "remote_address NOT LIKE '#{ip}.%'" }.join(' AND ') %>",
       "interval": <%= Setting[:osquery_10_sec] %>
     },
     "file_events": {
@@ -168,7 +168,7 @@
       "interval": <%= Setting[:osquery_day] %>
     },
     "behavioral_reverse_shell": {
-      "query": "SELECT DISTINCT(processes.pid), processes.parent, processes.name, processes.path, processes.cmdline, processes.cwd, processes.root, processes.uid, processes.gid, processes.start_time, process_open_sockets.remote_address, process_open_sockets.remote_port, (SELECT cmdline FROM processes AS parent_cmdline WHERE pid=processes.parent) AS parent_cmdline FROM processes JOIN process_open_sockets USING (pid) LEFT OUTER JOIN process_open_files ON processes.pid = process_open_files.pid WHERE (name='sh' OR name='bash') AND remote_address NOT IN ('0.0.0.0', '::', '') AND remote_address NOT LIKE '10.%' AND remote_address NOT LIKE '192.168.%'",
+      "query": "SELECT DISTINCT(processes.pid), processes.parent, processes.name, processes.path, processes.cmdline, processes.cwd, processes.root, processes.uid, processes.gid, processes.start_time, process_open_sockets.remote_address, process_open_sockets.remote_port, (SELECT cmdline FROM processes AS parent_cmdline WHERE pid=processes.parent) AS parent_cmdline FROM processes JOIN process_open_sockets USING (pid) LEFT OUTER JOIN process_open_files ON processes.pid = process_open_files.pid WHERE (name='sh' OR name='bash') AND remote_address NOT IN ('0.0.0.0', '::', '') AND remote_address NOT LIKE '192.168.%'",
       "interval": <%= Setting[:osquery_10_min] %>
     },
     "dns_resolvers": {
