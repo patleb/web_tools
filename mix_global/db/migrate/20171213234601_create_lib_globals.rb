@@ -1,6 +1,6 @@
 class CreateLibGlobals < ActiveRecord::Migration[6.0]
   def change
-    create_table :lib_globals, id: false, unlogged: true do |t|
+    create_table :lib_globals, id: false do |t|
       t.primary_key :id, :string
       t.boolean     :expires,   null: false, default: false
       t.datetime    :expires_at
