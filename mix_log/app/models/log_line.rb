@@ -164,16 +164,16 @@ class LogLine < LibMainRecord
 
   def self.insert_all!(attributes, **)
     attributes.each{ |row| row[:type] = name }
-    with_partition(attributes, column: :created_at, size: MixLog.config.partition_size){ super }
+    with_partition(attributes, column: :created_at){ super }
   end
 
   def self.insert_all(attributes, **)
     attributes.each{ |row| row[:type] = name }
-    with_partition(attributes, column: :created_at, size: MixLog.config.partition_size){ super }
+    with_partition(attributes, column: :created_at){ super }
   end
 
   def self.upsert_all(attributes, **)
     attributes.each{ |row| row[:type] = name }
-    with_partition(attributes, column: :created_at, size: MixLog.config.partition_size){ super }
+    with_partition(attributes, column: :created_at){ super }
   end
 end

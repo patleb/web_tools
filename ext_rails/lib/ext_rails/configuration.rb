@@ -7,6 +7,7 @@ module ExtRails
     attr_writer :excluded_models
     attr_writer :backup_excludes
     attr_writer :backup_dir
+    attr_writer :db_partitions
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
@@ -33,6 +34,10 @@ module ExtRails
 
     def backup_dir
       @backup_dir ||= Rails.root.join('db')
+    end
+
+    def db_partitions
+      @db_partitions ||= {}.with_keyword_access
     end
 
     def db_url

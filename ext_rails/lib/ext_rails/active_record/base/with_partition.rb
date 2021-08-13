@@ -3,6 +3,7 @@ module ActiveRecord::Base::WithPartition
 
   class UnsupportedPartitionBucket < ::StandardError; end
   class UnknownPartitionSize < ::StandardError; end
+  class InvalidPartitionName < ::StandardError; end
 
   class DuplicatePartition < ActiveRecord::StatementInvalid
     def self.===(exception)
@@ -21,30 +22,36 @@ module ActiveRecord::Base::WithPartition
   NUMBER = /\d{10}$/
 
   class_methods do
-    def with_partition(attributes, table = table_name, column:, **options)
+    def with_partition(attributes, table = table_name, column:)
       yield
     rescue MissingPartition
-      attributes.each{ |row| create_partition_for(row[column], table, **options) }
+      size = partition_size(table)
+      attributes.each{ |row| create_partition_for(row[column], table, size: size) }
       retry
     end
 
-    def create_all_partitions(buckets, table = table_name, size: nil)
-      size ||= partition_size(buckets)
+    def create_all_partitions(buckets, table = table_name)
+      size = partition_size(table, buckets)
       buckets.each{ |key| create_partition_for(key, table, size: size) }
     end
 
-    def drop_all_partitions(buckets, table = table_name, size: nil)
-      size ||= partition_size(buckets)
+    def drop_all_partitions(buckets, table = table_name)
+      size = partition_size(table, buckets)
       buckets.each{ |key| drop_partition_for(key, table, size: size) }
     end
 
-    def drop_partition(name)
-      connection.exec_query("DROP TABLE IF EXISTS #{name}")
-      @_partitions[partition_table(name)] = nil
+    def create_partition(name)
+      table, key = partition_table_key(name)
+      create_partition_for(key, table, size: partition_size(table))
     end
 
-    def create_partition_for(key, table = table_name, **options)
-      partition = partition_for(key, table, **options)
+    def drop_partition(name)
+      table, key = partition_table_key(name)
+      drop_partition_for(key, table, size: partition_size(table))
+    end
+
+    def create_partition_for(key, table = table_name, size:)
+      partition = partition_for(key, table, size)
       return if partitions(table).include? partition[:name]
       connection.exec_query(<<-SQL.strip_sql)
         CREATE TABLE #{partition[:name]} PARTITION OF #{table}
@@ -55,8 +62,8 @@ module ActiveRecord::Base::WithPartition
       @_partitions[table] = nil
     end
 
-    def drop_partition_for(key, table = table_name, **options)
-      connection.exec_query("DROP TABLE IF EXISTS #{partition_for(key, table, **options)[:name]}")
+    def drop_partition_for(key, table = table_name, size:)
+      connection.exec_query("DROP TABLE IF EXISTS #{partition_for(key, table, size)[:name]}")
       @_partitions[table] = nil
     end
 
@@ -82,29 +89,36 @@ module ActiveRecord::Base::WithPartition
       end
     end
 
-    def partition_table(name)
-      name.sub(/_(#{TIME}|#{NUMBER})/, '')
-    end
-
     def partition_empty?(name)
       connection.select_value("SELECT count(*) FROM (SELECT 1 FROM #{name} LIMIT 1) AS t") != 1
     end
 
-    def partition_size(buckets)
-      raise UnknownPartitionSize if buckets.size < 2
+    private
+
+    def partition_table_key(name)
+      table_key = name.split(/_(#{TIME}|#{NUMBER})/)
+      raise InvalidPartitionName, "name: [#{name}]" unless table_key.size == 2
+      table_key
+    end
+
+    # TODO make size variable in the future, but frozen in the past by bucket
+    def partition_size(table, buckets = [])
+      if buckets.size < 2
+        return ExtRails.config.db_partitions[table] || raise(UnknownPartitionSize, "table: [#{table}]")
+      end
       size = buckets[1..-1].map.with_index{ |bucket, i| bucket - buckets[i] }.min.to_i
       if buckets.first.is_a? Time
         size = case size.to_days.first
           when 1      then :day
           when 7      then :week
           when 28..31 then :month
-          else raise UnsupportedPartitionBucket
+          else raise UnsupportedPartitionBucket, "size: [#{size.to_days.first} days]"
           end
       end
       size
     end
 
-    def partition_for(key, table = table_name, size:)
+    def partition_for(key, table, size)
       case key
       when Integer
         size = size.to_i

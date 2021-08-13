@@ -1,6 +1,5 @@
 module MixLog
   has_config do
-    attr_writer   :partition_size
     attr_writer   :partitions_total_size
     attr_writer   :available_types
     attr_writer   :available_paths
@@ -11,10 +10,6 @@ module MixLog
     attr_writer   :known_errors
     attr_writer   :known_sockets
     attr_accessor :force_read
-
-    def partition_size
-      @partition_size ||= :week
-    end
 
     def partitions_total_size
       @partitions_total_size ||= 1.year

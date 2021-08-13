@@ -17,7 +17,6 @@ module Db
           md5:         ['--[no-]md5',                 'Check md5 files if present (default to true)'],
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
           data_only:   ['--[no-]data-only',           'Load only data with disabled triggers for pg_restore'],
-          data_size:   ['--data-size=DATA_SIZE',      'Specify the partition size (used with :data_only option)'],
           timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
           pgrest:      ['--[no-]pgrest',              'Specify if PostgREST API is used for pg_restore'],
           pg_options:  ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
@@ -149,7 +148,7 @@ module Db
           (list[table] ||= []) << ActiveRecord::Base.partition_bucket(bucket)
         end
         partitions.each do |table, buckets|
-          ActiveRecord::Base.create_all_partitions(buckets, table, size: options.data_size.presence)
+          ActiveRecord::Base.create_all_partitions(buckets, table)
         end
       end
 
