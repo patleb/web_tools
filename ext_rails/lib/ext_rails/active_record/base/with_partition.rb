@@ -41,17 +41,15 @@ module ActiveRecord::Base::WithPartition
     end
 
     def create_partition(name)
-      table, key = partition_table_key(name)
-      create_partition_for(key, table, size: partition_size(table))
+      create_partition_for(*partition_key_table(name))
     end
 
     def drop_partition(name)
-      table, key = partition_table_key(name)
-      drop_partition_for(key, table, size: partition_size(table))
+      drop_partition_for(*partition_key_table(name))
     end
 
-    def create_partition_for(key, table = table_name, size:)
-      partition = partition_for(key, table, size)
+    def create_partition_for(key, table = table_name, size: partition_size(table))
+      partition = partition_for(key, table, size: size)
       return if partitions(table).include? partition[:name]
       connection.exec_query(<<-SQL.strip_sql)
         CREATE TABLE #{partition[:name]} PARTITION OF #{table}
@@ -62,8 +60,8 @@ module ActiveRecord::Base::WithPartition
       @_partitions[table] = nil
     end
 
-    def drop_partition_for(key, table = table_name, size:)
-      connection.exec_query("DROP TABLE IF EXISTS #{partition_for(key, table, size)[:name]}")
+    def drop_partition_for(key, table = table_name, size: partition_size(table))
+      connection.exec_query("DROP TABLE IF EXISTS #{partition_for(key, table, size: size)[:name]}")
       @_partitions[table] = nil
     end
 
@@ -93,12 +91,30 @@ module ActiveRecord::Base::WithPartition
       connection.select_value("SELECT count(*) FROM (SELECT 1 FROM #{name} LIMIT 1) AS t") != 1
     end
 
+    def partition_for(key, table = table_name, size: partition_size(table))
+      case key
+      when Integer
+        size = size.to_i
+        bucket = key / size
+        from = bucket.to_s.rjust(10, '0')
+        to = (bucket + size).to_s.rjust(10, '0')
+      when Time, Date, DateTime
+        raise UnsupportedPartitionBucket, "size: [#{size}]" unless size.to_sym.in? TIME_PARTITION_BUCKETS
+        date = key.send("beginning_of_#{size}")
+        from = date.strftime('%Y_%m_%d')
+        to = (date + 1.send(size)).strftime('%Y_%m_%d')
+      else
+        raise UnsupportedPartitionBucket, "key: [#{key}]"
+      end
+      { name: "#{table}_#{from}", from: from, to: to }
+    end
+
     private
 
-    def partition_table_key(name)
-      table_key = name.split(/_(#{TIME}|#{NUMBER})/)
-      raise InvalidPartitionName, "name: [#{name}]" unless table_key.size == 2
-      table_key
+    def partition_key_table(name)
+      key_table = name.split(/_(#{TIME}|#{NUMBER})/).reverse
+      raise InvalidPartitionName, "name: [#{name}]" unless key_table.size == 2
+      key_table
     end
 
     # TODO make size variable in the future, but frozen in the past by bucket
@@ -116,24 +132,6 @@ module ActiveRecord::Base::WithPartition
           end
       end
       size
-    end
-
-    def partition_for(key, table, size)
-      case key
-      when Integer
-        size = size.to_i
-        bucket = key / size
-        from = bucket.to_s.rjust(10, '0')
-        to = (bucket + size).to_s.rjust(10, '0')
-      when Time, Date, DateTime
-        raise UnsupportedPartitionBucket, "size: [#{size}]" unless size.to_sym.in? TIME_PARTITION_BUCKETS
-        date = key.send("beginning_of_#{size}")
-        from = date.strftime('%Y_%m_%d')
-        to = (date + 1.send(size)).strftime('%Y_%m_%d')
-      else
-        raise UnsupportedPartitionBucket, "key: [#{key}]"
-      end
-      { name: "#{table}_#{from}", from: from, to: to }
     end
   end
 end
