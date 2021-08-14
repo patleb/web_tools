@@ -1,5 +1,9 @@
-class Global < LibRecord
+class Global < LibMainRecord
   include GlobalCache
+
+  default_scope{ where(server: Server.current) }
+
+  belongs_to :server
 
   attribute :data
   attribute :interval, :interval # TODO remove in Rails 7.0
@@ -29,7 +33,7 @@ class Global < LibRecord
   validates :id, length: { maximum: 2712 }
   validates :expires_at, date: { after: proc{ 1.second.from_now }, before: proc{ future_expires_at }, allow_blank: true }
 
-  after_initialize :set_data
+  after_initialize :set_defaults
 
   def self.past_expires_at(from: ::Time.current)
     expires_in.seconds.ago(from)
@@ -319,7 +323,8 @@ class Global < LibRecord
     end
   end
 
-  def set_data
+  def set_defaults
+    self.server ||= Server.current
     self[:data] = cast(self[data_type])
     clear_attribute_changes [:data]
   end

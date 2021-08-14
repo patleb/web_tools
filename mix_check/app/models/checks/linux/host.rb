@@ -31,7 +31,7 @@ module Checks
       end
 
       def self.snapshot_key
-        [name, host.private_ip, :snapshot]
+        [name, :snapshot]
       end
 
       def self.snapshot
