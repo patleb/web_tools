@@ -10,7 +10,6 @@ class CreateLibLogMessages < ActiveRecord::Migration[6.0]
       t.integer    :level,           null: false
       t.boolean    :monitor # nil --> based on level, false --> never, true --> always
       t.boolean    :alerted,         null: false, default: false
-      t.citext     :notes
       t.timestamps
     end
 
