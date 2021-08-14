@@ -155,7 +155,7 @@
       "interval": <%= Setting[:osquery_10_sec] %>
     },
     "socket_events":{
-      "query": "SELECT action, auid, family, local_address, local_port, cmdline AS path, pid, remote_address, remote_port, success, time FROM socket_events JOIN processes USING (pid) WHERE success=1 AND path NOT LIKE 'node /usr/share/yarn/bin/yarn.js install%' socket_events.path NOT IN ('/usr/bin/hostname', '/usr/lib/passenger/support-binaries/PassengerAgent') AND socket_events.path NOT LIKE '/snap/snapd/%/usr/lib/snapd/snapd' AND remote_address NOT IN ('127.0.0.1', '127.0.0.53', '', '0000:0000:0000:0000:0000:0000:0000:0001', '::1', '0000:0000:0000:0000:0000:ffff:7f00:0001', 'unknown', '0.0.0.0', '0000:0000:0000:0000:0000:0000:0000:0000', '0') AND <%= (%w(169.254 172.17 172.18 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| "remote_address NOT LIKE '#{ip}.%'" }.join(' AND ') %>",
+      "query": "SELECT action, auid, family, local_address, local_port, socket_events.path AS path, cmdline, pid, remote_address, remote_port, success, time FROM socket_events JOIN processes USING (pid) WHERE success=1 AND cmdline NOT LIKE 'node /usr/share/yarn/bin/yarn.js install%' path NOT IN ('/usr/bin/hostname', '/usr/lib/passenger/support-binaries/PassengerAgent') AND path NOT LIKE '/snap/snapd/%/usr/lib/snapd/snapd' AND remote_address NOT IN ('127.0.0.1', '127.0.0.53', '', '0000:0000:0000:0000:0000:0000:0000:0001', '::1', '0000:0000:0000:0000:0000:ffff:7f00:0001', 'unknown', '0.0.0.0', '0000:0000:0000:0000:0000:0000:0000:0000', '0') AND <%= (%w(169.254 172.17 172.18 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| "remote_address NOT LIKE '#{ip}.%'" }.join(' AND ') %>",
       "interval": <%= Setting[:osquery_10_sec] %>
     },
     "file_events": {

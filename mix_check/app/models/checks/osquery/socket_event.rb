@@ -19,7 +19,7 @@ module Checks
               local_ip: row['local_address'], local_port: row['local_port'],
               remote_ip: remote_ip, remote_port: remote_port,
               connected: %w(connect bind).include?(row['action']),
-              path: row['path'],
+              path: row['cmdline'],
             }
           end
         end

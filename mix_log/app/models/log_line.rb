@@ -13,6 +13,19 @@ class LogLine < LibMainRecord
     pid
   )
 
+  def self.apt_history(log)
+    return unless Log.fs_types.include? 'LogLines::AptHistory'
+    apt_history_path = MixLog.config.available_paths.find{ |path| path.end_with? 'apt/history.log'}
+    apt_history_log = Log.find_or_create_by! server: log.server, path: apt_history_path
+    LogLines::AptHistory.where(log: apt_history_log)
+  end
+
+  def self.host(log)
+    return unless Log.db_types.include? 'LogLines::Host'
+    host_log = Log.find_by! server: log.server, log_lines_type: 'LogLines::Host'
+    LogLines::Host.where(log: host_log)
+  end
+
   def self.last_records(**conditions)
     query = where(log: Log.db_log(name))
     query = where(**conditions) if conditions.present?

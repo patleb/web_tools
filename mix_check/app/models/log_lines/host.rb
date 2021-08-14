@@ -28,6 +28,21 @@ module LogLines
       warnings: :json,
     )
 
+    scope :versioned, -> { where_not(version: nil) }
+    scope :rebooted,  -> { where_not(boot_time: nil) }
+
+    def self.versions
+      versioned.order(created_at: :desc).pluck(:version)
+    end
+
+    def self.reboots
+      rebooted.order(created_at: :desc).pluck(:boot_time)
+    end
+
+    def self.has_rebooted?(time)
+      rebooted.where(boot_time: (time - Setting[:check_interval])..(time + Setting[:check_interval])).exists?
+    end
+
     def self.rollups
       %i(week day).each_with_object({}) do |period, result|
         groups = group_by_period(period).calculate(LogRollups::Host::OPERATIONS)

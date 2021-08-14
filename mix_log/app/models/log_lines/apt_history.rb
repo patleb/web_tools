@@ -12,8 +12,8 @@ module LogLines
 
     scope :unattended_upgrade, -> { where(command: '/usr/bin/unattended-upgrade') }
 
-    def self.has_upgraded?(time, interval: 5.minutes)
-      unattended_upgrade.where(created_at: (time - interval)..time).exists?
+    def self.has_upgraded?(time)
+      unattended_upgrade.where(created_at: (time - 5.minutes)..time).exists?
     end
 
     def self.parse(log, line, previous:, **)

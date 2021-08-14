@@ -51,14 +51,14 @@ module LogLines
       name, time, diff = JSON.parse(line).values_at('name', 'unixTime', 'diffResults')
       return { filtered: true } unless names.include? name
 
-      time = Time.at(time).utc
+      created_at = Time.at(time).utc
       case name
       when 'osquery_info'
         pid, ram = diff['added'].first.values_at('pid', 'resident_size')
-        level = ram > (flags[:watchdog_memory_limit] || 400).mb_to_bytes ? :error : :info
+        level = ram > flags[:watchdog_memory_limit].mb_to_bytes ? :error : :info
         message = { text: name, level: level }
       when 'file_events'
-        has_upgraded = apt_history(log)&.has_upgraded? time
+        has_upgraded = apt_history(log)&.has_upgraded? created_at
         message, paths = extract_event(diff, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
           path = row['target_path']
           unless upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
@@ -73,7 +73,7 @@ module LogLines
         # ips = Set.new([Process.host.private_ip]).merge(Cloud.server_cluster_ips || [])
         message, paths = extract_event(diff, name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
           if %w(connect bind).include?(row['action'])
-            path = row['path']
+            path = row['cmdline']
             local = row.values_at('local_address', 'local_port')
             remote = row.values_at('remote_address', 'remote_port')
             next if MixLog.config.known_sockets.any? do |type, sockets|
@@ -92,7 +92,7 @@ module LogLines
 
       json_data = { name: name, ram: ram, paths: paths }
 
-      { created_at: time, pid: pid, message: message, json_data: json_data }
+      { created_at: created_at, pid: pid, message: message, json_data: json_data }
     end
 
     def self.finalize(log)
@@ -124,13 +124,6 @@ module LogLines
         token.size > 1 ? "{#{token.join(',')}}" : token.first
       end
       tokens.join('/')
-    end
-
-    def self.apt_history(log)
-      return unless Log.fs_types.include? 'LogLines::AptHistory'
-      apt_history_path = MixLog.config.available_paths.find{ |path| path.end_with? 'apt/history.log'}
-      apt_history_log = Log.find_or_create_by! server: log.server, path: apt_history_path
-      LogLines::AptHistory.where(log: apt_history_log)
     end
   end
 end
