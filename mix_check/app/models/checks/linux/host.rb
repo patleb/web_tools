@@ -26,7 +26,7 @@ module Checks
       validates :ruby, check: true
 
       def self.list
-        version = Server.current_version if Server.current_version != snapshot[:version]
+        version = Server.current_version if Server.current_version != snapshot&.dig(:version)
         [{ id: host.private_ip, version: version }]
       end
 
