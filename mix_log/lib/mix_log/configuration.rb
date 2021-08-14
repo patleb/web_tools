@@ -44,7 +44,7 @@ module MixLog
         log_path(:auth),
         log_path(:fail2ban),
         postgres_log_path,
-        osquery_log_path, # must be after 'apt/history.log'
+        osquery_log_path,
         rails_log_path,
       ]
     end

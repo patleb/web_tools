@@ -85,7 +85,7 @@ module MixLog
 
     def logs
       @logs ||= begin
-        MixLog.config.available_paths.map do |path|
+        MixLog.config.available_paths.sort_by{ |path| path.split('/').last(2) }.map do |path|
           if MixLog.config.force_read
             raise AccessDenied unless system("sudo chmod +r #{path}.*")
           end
