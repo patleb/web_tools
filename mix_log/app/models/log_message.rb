@@ -31,11 +31,17 @@ class LogMessage < LibMainRecord
     SQL
   end
 
+  def self.reset_alerts!
+    where(alerted: true).update_all(alerted: false)
+  end
+
   def self.report!
     if report?
       LogMailer.report.deliver_now
-      reported!
+      reported! unless MixLog.config.reset_alerts
+      Global[reported_key] = Time.current
     end
+    reset_alerts! if MixLog.config.reset_alerts
   end
 
   def self.report
@@ -52,7 +58,6 @@ class LogMessage < LibMainRecord
 
   def self.reported!
     where(id: report_ids.last).update_all(alerted: true)
-    Global[reported_key] = Time.current
   end
 
   def self.report_ids
@@ -84,7 +89,7 @@ class LogMessage < LibMainRecord
       .includes(log: :server)
       .joins(:log_lines)
       .where(LogLine.column(:created_at) >= reported_at)
-      .order(updated_at: :desc)
+      .order(updated_at: :desc) # :updated_at is the last time a log line has been added
       .distinct
   end
 end
