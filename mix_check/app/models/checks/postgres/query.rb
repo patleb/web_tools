@@ -81,7 +81,7 @@ module Checks
 
       def self.suggested_indexes
         Setting.with(freeze: false) do |setting|
-          setting[:check_interval] = 24.hours
+          setting[:check_interval] = 1.day
           suggested_indexes_by_query = db.suggested_indexes_by_query(queries: historical.map(&:query), indexes: db_indexes)
           db.suggested_indexes(suggested_indexes_by_query: suggested_indexes_by_query, indexes: db_indexes)
         end
