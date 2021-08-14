@@ -1,8 +1,6 @@
 class Global < LibMainRecord
   include GlobalCache
 
-  default_scope{ where(server: Server.current) }
-
   belongs_to :server
 
   attribute :data
@@ -173,6 +171,8 @@ class Global < LibMainRecord
     retry
   end
 
+  private_class_method
+
   def self.update_counter(key, amount)
     raise ArgumentError, "Bad value: `Global#update_counter` requires amount != 0." if amount == 0
 
@@ -188,7 +188,7 @@ class Global < LibMainRecord
 
   def self.normalize_key(key, **)
     # no namespace functionality implemented on purpose --> https://github.com/kickstarter/rack-attack/issues/370
-    expanded_key(key).full_underscore(GlobalKey::SEPARATOR)
+    Server.current.id.to_s << GlobalKey::SEPARATOR << expanded_key(key).full_underscore(GlobalKey::SEPARATOR)
   end
 
   def self.expanded_key(key)
@@ -219,9 +219,10 @@ class Global < LibMainRecord
     regex = "^#{regex}" unless regex.start_with? '^'
     regex = regex.tr('/', GlobalKey::SEPARATOR)
     if regex == '^' || regex.exclude?(GlobalKey::SEPARATOR)
-      raise ArgumentError, "Bad value: `Global#key_matcher` pattern /#{regex}/ matches too much."
+      raise ArgumentError, "Bad value: `Global#key_matcher` pattern /#{regex}/ matches too many records."
     end
-    sanitize_matcher /#{regex}/
+    regex[0] = Server.current.id.to_s << GlobalKey::SEPARATOR
+    sanitize_matcher /^#{regex}/
   end
 
   def expirable?

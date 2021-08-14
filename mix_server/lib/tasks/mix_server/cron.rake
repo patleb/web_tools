@@ -3,7 +3,6 @@ namespace :cron do
     desc 'every day cron jobs cluster'
     task :every_day => :environment do
       run_task 'check:cleanup' if defined? MixCheck
-      run_task 'global:cleanup'
       run_task 'list:reorganize'
       run_task 'log:extract'
     end
