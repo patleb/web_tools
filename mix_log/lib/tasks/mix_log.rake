@@ -17,8 +17,8 @@ namespace :log do
   end
 
   desc 'report server log errors'
-  task :report => :environment do |t|
-    MixLog::Report.new(self, t).run!
+  task :report => :environment do
+    LogMessage.report!
   end
 
   desc 'dump log tables' # 3.6 MB

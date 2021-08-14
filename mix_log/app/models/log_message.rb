@@ -31,32 +31,34 @@ class LogMessage < LibMainRecord
     SQL
   end
 
-  def self.report!(since = nil)
-    if report? since
-      LogMailer.report(since).deliver_now
-      reported! since
+  def self.report!
+    if report?
+      LogMailer.report.deliver_now
+      reported!
     end
   end
 
-  def self.report(since = nil)
-    report_ids(since).first
+  def self.report
+    report_ids.first
   end
 
-  def self.report?(since = nil)
-    report_ids(since).last.any?
+  def self.report?
+    report_ids.last.any?
   end
 
-  def self.reported!(since = nil)
-    where(id: report_ids(since).last).update_all(alerted: true)
+  def self.reported_key
+    [name, :reported]
   end
 
-  def self.report_ids(since = nil)
-    since = since.beginning_of_day if since
-    m_access(:report_ids, since) do
-      messages = reportable.includes(log: :server)
-      messages = messages.joins(:log_lines).where(LogLine.table_name => { created_at: since..Time.current }) if since
+  def self.reported!
+    where(id: report_ids.last).update_all(alerted: true)
+    Global.write! reported_key, Time.current
+  end
+
+  def self.report_ids
+    m_access(:report_ids) do
       ids = []
-      servers = messages.order(updated_at: :desc).distinct.map do |message|
+      servers = report_rows.map do |message|
         ids << message.id
         [
           message.log.server.private_ip.to_s,
@@ -74,5 +76,15 @@ class LogMessage < LibMainRecord
       end
       [report, ids]
     end
+  end
+
+  def self.report_rows
+    reported_at = Global.read(reported_key) || Server.current.created_at
+    reportable
+      .includes(log: :server)
+      .joins(:log_lines)
+      .where(LogLine.column(:created_at) >= reported_at)
+      .order(updated_at: :desc)
+      .distinct
   end
 end
