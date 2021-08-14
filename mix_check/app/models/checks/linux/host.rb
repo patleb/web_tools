@@ -35,7 +35,7 @@ module Checks
       end
 
       def self.snapshot
-        m_access(:snapshot){ Global.read(snapshot_key) }
+        m_access(:snapshot){ Global[snapshot_key] }
       end
 
       def self.capture
@@ -43,7 +43,7 @@ module Checks
         if last_updated_at.nil? || last_updated_at < (Setting[:check_interval] - 30.seconds).ago
           snapshot = host.build_snapshot.merge(version: Server.current_version)
           Log.host(current)
-          Global.write! snapshot_key, snapshot
+          Global[snapshot_key] = snapshot
           reset
         end
       end

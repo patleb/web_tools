@@ -34,6 +34,10 @@ module GlobalCache
       results
     end
 
+    def [](name)
+      read(name)
+    end
+
     def read(name, **options)
       read_record(name, **options)&.data
     end
@@ -41,6 +45,10 @@ module GlobalCache
     def read_multi(*names, **options)
       names = names.first if names.first.is_a? Regexp
       read_records(names, **options).transform_values!(&:data)
+    end
+
+    def []=(name, value)
+      write! name, value
     end
 
     def write!(name, value, expires: false, **options)

@@ -52,7 +52,7 @@ class LogMessage < LibMainRecord
 
   def self.reported!
     where(id: report_ids.last).update_all(alerted: true)
-    Global.write! reported_key, Time.current
+    Global[reported_key] = Time.current
   end
 
   def self.report_ids
@@ -79,7 +79,7 @@ class LogMessage < LibMainRecord
   end
 
   def self.report_rows
-    reported_at = Global.read(reported_key) || Server.current.created_at
+    reported_at = Global[reported_key] || Server.current.created_at
     reportable
       .includes(log: :server)
       .joins(:log_lines)

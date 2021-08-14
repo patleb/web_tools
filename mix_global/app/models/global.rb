@@ -325,7 +325,7 @@ class Global < LibMainRecord
   end
 
   def set_defaults
-    self.server ||= Server.current
+    self.server_id ||= Server.current.id
     self[:data] = cast(self[data_type])
     clear_attribute_changes [:data]
   end
