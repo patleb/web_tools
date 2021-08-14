@@ -36,7 +36,7 @@ module LogLines
       elsif (values = line.match(SHUTDOWN))
         created_at, pid, text, timestamp = values.captures
         json_data = { event: 'shutdown', stopped_at: Time.parse(timestamp) }
-        level = :error
+        level = host(log)&.has_rebooted?(created_at) ? :warn : :error
       elsif (values = line.match(READY))
         created_at, pid, text = values.captures
         json_data = { event: 'ready' }
