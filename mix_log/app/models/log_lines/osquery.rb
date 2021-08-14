@@ -59,7 +59,7 @@ module LogLines
         message = { text: name, level: level }
       when 'file_events'
         has_upgraded = apt_history(log)&.has_upgraded? created_at
-        message, paths = extract_event(diff, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
+        message, paths = extract_paths(diff, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
           path = row['target_path']
           unless upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
             next if MixLog.config.known_files.any? do |f|
@@ -71,7 +71,7 @@ module LogLines
       when 'socket_events'
         # Setting[:server_cluster_master_ip]
         # ips = Set.new([Process.host.private_ip]).merge(Cloud.server_cluster_ips || [])
-        message, paths = extract_event(diff, name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
+        message, paths = extract_paths(diff, name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
           if %w(connect bind).include?(row['action'])
             path = row['cmdline']
             local = row.values_at('local_address', 'local_port')
@@ -102,7 +102,7 @@ module LogLines
       end
     end
 
-    def self.extract_event(diff, name, tiny: nil)
+    def self.extract_paths(diff, name, tiny: nil)
       paths = diff['added'].each_with_object(Set.new) do |row, memo|
         yield(row, memo)
       end.to_a.sort
