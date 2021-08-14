@@ -26,6 +26,7 @@ module LogLines
       406         => :warn, # not acceptable
       499         => :warn, # client disconnected
       (400...500) => :error,
+      503         => :warn, # maintenance
       (500...600) => :fatal,
     }
     INVALID_URI = OpenStruct.new(path: nil)
