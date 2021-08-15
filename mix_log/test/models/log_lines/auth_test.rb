@@ -8,8 +8,10 @@ module LogLines
     it 'should parse correctly each line' do
       file = file_fixture('log/auth.log')
 
+      log = Log.create! server: Server.current, path: file.to_s
+      Log.create! server: log.server, log_lines_type: 'LogLines::Host'
       file.each_line.with_index do |line, i|
-        assert_equal AUTH_EXPECTATIONS[i], LogLines::Auth.parse(nil, line, mtime: file.mtime)
+        assert_equal AUTH_EXPECTATIONS[i], LogLines::Auth.parse(log, line, mtime: file.mtime)
       end
     end
   end
