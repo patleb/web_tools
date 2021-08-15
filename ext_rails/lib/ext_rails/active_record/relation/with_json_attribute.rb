@@ -16,7 +16,12 @@ module ActiveRecord::Relation::WithJsonAttribute
     scopes = attributes.each_with_object([]) do |(name, value), result|
       if json_attribute? name
         operator, value = extract_operator(value)
-        result << super("#{json_key(name)} #{operator} #{value.is_a?(Array) ? '(?)' : '?'}", value)
+        binds, *values = case value
+          when Array then ['(?)', value]
+          when Range then ['(?) AND (?)', value.begin, value.end]
+          else            ['?', value]
+          end
+        result << super("#{json_key(name)} #{operator} #{binds}", *values)
       else
         result << super(name => value)
       end
@@ -105,6 +110,7 @@ module ActiveRecord::Relation::WithJsonAttribute
     operator ||= case value
       when nil   then 'IS'
       when Array then 'IN'
+      when Range then 'BETWEEN'
       else '='
       end
     [operator.upcase, value]
