@@ -113,7 +113,10 @@ module Db
         end
         only = options.includes.reject(&:blank?)
         skip = options.excludes.reject(&:blank?)
-        skip << ActiveRecord::SchemaMigration.table_name unless options.migrations
+        unless options.migrations
+          skip << ActiveRecord::SchemaMigration.table_name
+          skip << 'spatial_ref_sys'
+        end
         with_db_config do |host, db, user, pwd|
           cmd_options = <<-CMD.squish
             --host #{host} --username #{user} --verbose --no-owner --no-acl --clean --format=c --compress=0
