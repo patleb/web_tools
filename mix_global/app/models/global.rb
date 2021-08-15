@@ -73,7 +73,7 @@ class Global < LibMainRecord
           record.assign_attributes options.slice(:expires, :expires_in).merge!(id: key, version: version, data: yield)
         end
         if record._sync(version, &block).destroyed?
-          fetch_record(key, version: version, **options, &block)
+          fetch_record(name, version: version, **options, &block)
         end
         record
       end
@@ -122,16 +122,16 @@ class Global < LibMainRecord
   def self.read_records(names, **options)
     case names
     when Array
-      keys = names.map{ |element| normalize_key(element) }
+      keys = names.map{ |name| normalize_key(name) }
       where(id: keys).find_each.with_object({}.with_keyword_access) do |record, memo|
-        key = record.id
-        version = normalize_version(names[keys.index(key)], **options)
-        memo[key] = record unless record._sync_stale_state(version).stale?
+        name = names[keys.index(record.id)]
+        version = normalize_version(name, **options)
+        memo[key_name(record)] = record unless record._sync_stale_state(version).stale?
       end
     when String, Regexp
       version = normalize_version(**options)
       where(column(:id).matches key_matcher(names, **options)).find_each.with_object({}.with_keyword_access) do |record, memo|
-        memo[record.id] = record unless record._sync_stale_state(version).stale?
+        memo[key_name(record)] = record unless record._sync_stale_state(version).stale?
       end
     else
       raise ArgumentError, "Bad type: `Global#read_records` requires names as Array, String or Regexp."
@@ -186,9 +186,11 @@ class Global < LibMainRecord
     unscoped.where(id: key).update_all(updates.join(", "), quoted_column)
   end
 
-  def self.normalize_key(key, **)
+  def self.normalize_key(key, server: true, **)
     # no namespace functionality implemented on purpose --> https://github.com/kickstarter/rack-attack/issues/370
-    Server.current.id.to_s << GlobalKey::SEPARATOR << expanded_key(key).full_underscore(GlobalKey::SEPARATOR)
+    key = expanded_key(key).full_underscore(GlobalKey::SEPARATOR)
+    key = Server.current.id.to_s << GlobalKey::SEPARATOR << key if server
+    key
   end
 
   def self.expanded_key(key)
@@ -223,6 +225,10 @@ class Global < LibMainRecord
     end
     regex[0] = Server.current.id.to_s << GlobalKey::SEPARATOR
     sanitize_matcher /^#{regex}/
+  end
+
+  def self.key_name(record)
+    record.id.delete_prefix([record.server_id, GlobalKey::SEPARATOR].join)
   end
 
   def expirable?

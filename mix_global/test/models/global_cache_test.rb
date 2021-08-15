@@ -19,12 +19,12 @@ class GlobalCacheTest < ActiveSupport::TestCase
     serialized: Setting,
   } }
   let(:multi_values){ {
-    [:key, GlobalKey::SEPARATOR, 0].join => 'key 0',
-    [:key, GlobalKey::SEPARATOR, 1].join => 'key 1',
+    [:key, 0].join(GlobalKey::SEPARATOR) => 'key 0',
+    [:key, 1].join(GlobalKey::SEPARATOR) => 'key 1',
   } }
   let(:multi_unknowns){ [
-    [:key, GlobalKey::SEPARATOR, 2].join,
-    [:key, GlobalKey::SEPARATOR, 3].join
+    [:key, 2].join(GlobalKey::SEPARATOR),
+    [:key, 3].join(GlobalKey::SEPARATOR)
   ] }
   let(:multi_keys){ multi_values.keys + multi_unknowns }
 

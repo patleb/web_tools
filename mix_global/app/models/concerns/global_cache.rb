@@ -27,9 +27,9 @@ module GlobalCache
       raise ArgumentError, "Missing block: Calling `Global#fetch_multi` requires a block." unless block_given?
 
       results = read_multi(*names, **options)
-      (names.map{ |element| normalize_key(element) } - results.keys).each do |key|
-        record = fetch_record(key, **options, &block)
-        results[record.id] = record.data
+      (names.map{ |element| normalize_key(element, server: false) } - results.keys).each do |name|
+        record = fetch_record(name, **options, &block)
+        results[name] = record.data
       end
       results
     end
@@ -67,7 +67,7 @@ module GlobalCache
     def write_multi(hash, **options)
       hash.each_with_object({}.with_keyword_access) do |(name, value), memo|
         record = write_record(name, value, **options)
-        memo[record.id] = value
+        memo[key_name(record)] = value
       end
     end
 
