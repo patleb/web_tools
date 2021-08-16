@@ -1,4 +1,4 @@
-# activerecord-6.0.2.1/lib/active_record/relation.rb
+# activerecord-6.1.4/lib/active_record/relation.rb
 # activerecord-6.0.2.1/lib/active_record/connection_adapters/abstract/database_statements.rb
 # activerecord-6.0.2.1/lib/active_record/connection_adapters/postgresql/database_statements.rb
 module ActiveRecord::Relation::WithReturningColumn
@@ -7,13 +7,11 @@ module ActiveRecord::Relation::WithReturningColumn
 
     raise ArgumentError, "Empty list of attributes to change" if updates.blank?
 
-    if eager_loading?
-      relation = apply_join_dependency
-      return relation.update_all(updates, column)
-    end
+    arel = eager_loading? ? apply_join_dependency.arel : build_arel
+    arel.source.left = table
 
     stmt = Arel::UpdateManager.new
-    stmt.table(arel.join_sources.empty? ? table : arel.source)
+    stmt.table(arel.source)
     stmt.key = table[primary_key]
     stmt.take(arel.limit)
     stmt.offset(arel.offset)
