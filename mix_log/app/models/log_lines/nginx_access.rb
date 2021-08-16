@@ -135,6 +135,11 @@ module LogLines
       end
     end
 
+    def self.rollups!(log, *args, **options)
+      return [] if log.path&.end_with?('/access.log')
+      super
+    end
+
     def self.rollups
       groups = %i(week day).each_with_object({}) do |period, result|
         result[[period, :period]] = success.group_by_period(period).calculate(LogRollups::NginxAccess::OPERATIONS)
@@ -158,9 +163,9 @@ module LogLines
         row << (0...24).map{ |hour| (0..7).sum{ |day| (days[week + day.days] || [[]]).last[hour] || 0 } }
       end
       groups.transform_values! do |group|
-        group.transform_values! do |rows|
-          next rows unless rows.is_a? Array
-          rows.map!.with_index do |value, i|
+        group.transform_values! do |row|
+          next row unless row.is_a? Array
+          row.map!.with_index do |value, i|
             next value.ceil(3) if rollups_type(i) == :float
             value
           end
