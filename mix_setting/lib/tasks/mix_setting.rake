@@ -13,7 +13,7 @@ namespace :setting do
     puts "[#{ENV['RAILS_APP']}_#{ENV['RAILS_ENV']}] settings written to file [#{file}]"
   end
 
-  desc "encrypt file or ENV['DATA']"
+  desc "encrypt file or ENV['DATA'] --> wrap with double quotes for escaped newlines"
   task :encrypt, [:env, :file] do |t, args|
     assign_environment! args
 

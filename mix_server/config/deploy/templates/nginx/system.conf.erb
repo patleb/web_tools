@@ -47,7 +47,7 @@ http {
   ##
   # SSL Settings
   ##
-  # TODO
+  ### REFERENCES
   # https://gist.github.com/plentz/6737338
   # https://michael.lustfield.net/nginx/getting-a-perfect-ssl-labs-score
   # https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-with-http-2-support-on-ubuntu-16-04
@@ -56,6 +56,8 @@ http {
   # https://www.linode.com/docs/web-servers/nginx/nginx-ssl-and-tls-deployment-best-practices
   # https://www.acunetix.com/blog/web-security-zone/hardening-nginx/
   # https://www.acunetix.com/blog/articles/tls-ssl-cipher-hardening/
+  # https://www.phusionpassenger.com/library/deploy/standalone/prod_ssl.html
+  # https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-in-ubuntu-18-04
   ssl_protocols TLSv1.2 TLSv1.3;
   ssl_prefer_server_ciphers on;
   ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
