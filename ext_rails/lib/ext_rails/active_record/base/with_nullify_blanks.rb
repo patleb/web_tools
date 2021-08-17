@@ -1,4 +1,4 @@
-### REFERENCES
+### References
 # https://github.com/rubiety/nilify_blanks/blob/master/lib/nilify_blanks.rb
 # TODO https://github.com/rmm5t/strip_attributes
 
