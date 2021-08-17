@@ -59,33 +59,33 @@ module LogLines
         message = { text: name, level: level }
       when 'file_events'
         has_upgraded = apt_history(log)&.has_upgraded? created_at
+        ssl_upgrade = task(log)&.ssl_upgrade? created_at
         message, paths = extract_paths(diff, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
           path = row['target_path']
-          unless upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
-            next if MixLog.config.known_files.any? do |f|
-              f.is_a?(Regexp) ? path.match?(f) : path == f
-            end
-            memo << [path, row['action']].join('/')
+          next if upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
+          next if path.start_with?('/etc/nginx/ssl/') && ssl_upgrade
+          next if MixLog.config.known_files.any? do |f|
+            f.is_a?(Regexp) ? path.match?(f) : path == f
           end
+          memo << [path, row['action']].join('/')
         end
       when 'socket_events'
         # Setting[:server_cluster_master_ip]
         # ips = Set.new([Process.host.private_ip]).merge(Cloud.server_cluster_ips || [])
         message, paths = extract_paths(diff, name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
-          if %w(connect bind).include?(row['action'])
-            path = row['cmdline']
-            local = row.values_at('local_address', 'local_port')
-            remote = row.values_at('remote_address', 'remote_port')
-            next if MixLog.config.known_sockets.any? do |type, sockets|
-              sockets.any? do |s|
-                case type
-                when :path
-                  s.is_a?(Regexp) ? path.match?(s) : path == s
-                end
+          next unless %w(connect bind).include? row['action']
+          path = row['cmdline']
+          local = row.values_at('local_address', 'local_port')
+          remote = row.values_at('remote_address', 'remote_port')
+          next if MixLog.config.known_sockets.any? do |type, sockets|
+            sockets.any? do |s|
+              case type
+              when :path
+                s.is_a?(Regexp) ? path.match?(s) : path == s
               end
             end
-            memo << [path, local.join(':'), remote.join(':')].join('/')
           end
+          memo << [path, local.join(':'), remote.join(':')].join('/')
         end
       end
       return { filtered: true } unless message

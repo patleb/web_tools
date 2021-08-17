@@ -26,6 +26,12 @@ class LogLine < LibMainRecord
     LogLines::Host.where(log: host_log)
   end
 
+  def self.task(log)
+    return unless Log.db_types.include? 'LogLines::Task'
+    task_log = Log.find_by! server: log.server, log_lines_type: 'LogLines::Task'
+    LogLines::Task.where(log: task_log)
+  end
+
   def self.last_records(**conditions)
     query = where(log: Log.db_log(name))
     query = where(**conditions) if conditions.present?
