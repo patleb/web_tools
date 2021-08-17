@@ -1,6 +1,5 @@
 module MixLog
   has_config do
-    attr_writer   :reset_alerts
     attr_writer   :partitions_total_size
     attr_writer   :available_types
     attr_writer   :available_paths
@@ -11,11 +10,6 @@ module MixLog
     attr_writer   :known_errors
     attr_writer   :known_sockets
     attr_accessor :force_read
-
-    def reset_alerts
-      return @reset_alerts if defined? @reset_alerts
-      @reset_alerts = true
-    end
 
     def partitions_total_size
       @partitions_total_size ||= 1.year

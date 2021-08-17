@@ -1,6 +1,6 @@
 class LogMailer < MainMailer
-  def report(since = nil)
-    @report = LogMessage.report(since)
+  def report
+    @report = LogMessage.report
     mail to: Setting[:mail_to]
   end
 end

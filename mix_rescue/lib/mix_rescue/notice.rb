@@ -18,7 +18,7 @@ class Notice
       exception = RescueError.new(exception, data: data)
     end
     log_message = Log.rescue(exception)
-    return if log_message.alerted?
+    return if log_message.line_at > MixRescue.config.notice_interval.ago
 
     subject = [subject, "[#{exception.name}]"].compact.join(' ')
     message = <<~TEXT
@@ -63,7 +63,7 @@ class Notice
     else
       mail.deliver! unless MixRescue.config.skip_notice
     end
-    log_message.update_attribute :alerted, true
+    log_message.update_attribute :line_at, log_message.new_line_at
   rescue Exception => e
     Log.rescue(e)
   end

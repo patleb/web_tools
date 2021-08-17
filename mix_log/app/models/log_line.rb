@@ -104,16 +104,16 @@ class LogLine < LibMainRecord
     line[:log_id] = log_id = log.id
     line[:json_data]&.reject!{ |_, v| v.blank? }
     log_message = nil
-    with_message(line.delete(:message)) do |text_hash, text_tiny, text, level|
+    with_message(line.delete(:message)) do |text_hash, text_tiny, text, level, monitor|
       log_message = LogMessage.find_or_create_by! log_id: log_id, level: level, text_hash: text_hash do |record|
-        record.assign_attributes(text_tiny: text_tiny, text: text, log_lines_type: name)
+        record.assign_attributes(text_tiny: text_tiny, text: text, monitor: monitor, log_lines_type: name)
       end
       line[:log_message_id] = log_message.id
     end
-    id = insert!(line).pluck('id').first
+    insert! line
     Log.increment_counter(:log_lines_count, log_id, touch: true)
     LogMessage.increment_counter(:log_lines_count, log_message.id, touch: true)
-    log_message.log_line_id = id
+    log_message.new_line_at = line[:created_at]
     log_message
   end
 
@@ -132,10 +132,10 @@ class LogLine < LibMainRecord
       line[:log_message_id] = nil
     end
     texts = lines.each_with_object([]).with_index do |(line, result), i|
-      with_message(line.delete(:message)) do |text_hash, text_tiny, text, level|
+      with_message(line.delete(:message)) do |text_hash, text_tiny, text, level, monitor|
         result << {
           text_hash: text_hash, text_tiny: text_tiny, text: text,
-          log_id: log_id, log_lines_type: name, level: level,
+          log_id: log_id, log_lines_type: name, level: level, monitor: monitor,
           line_i: i
         }
       end
@@ -147,7 +147,7 @@ class LogLine < LibMainRecord
     log_messages.each_with_index do |id, i|
       lines[texts[i][:line_i]][:log_message_id] = id
     end
-    insert_all!(lines)
+    insert_all! lines
     Log.update_counters(log_id, log_lines_count: lines.size, touch: true)
     log_messages.tally.each do |id, count|
       LogMessage.update_counters(id, log_lines_count: count, touch: true)
@@ -166,13 +166,13 @@ class LogLine < LibMainRecord
   end
 
   def self.with_message(message)
-    unless message && (message = message.values_at(:text_hash, :text_tiny, :text, :level)).last(2).all?(&:present?)
+    unless message && (message = message.values_at(:monitor, :text_hash, :text_tiny, :text, :level)).last(2).all?(&:present?)
       raise IncompatibleLogLine, message.try(:pretty_json) || message
     end
-    text_hash, text_tiny, text, level = message
+    monitor, text_hash, text_tiny, text, level = message
     text_tiny ||= squish(text)
     text_hash ||= text_tiny
-    yield Digest.sha256_hex(text_hash), text_tiny[0...256], text, LogMessage.levels[level]
+    yield Digest.sha256_hex(text_hash), text_tiny[0...256], text, LogMessage.levels[level], monitor
   end
 
   def self.insert_all!(attributes, **)

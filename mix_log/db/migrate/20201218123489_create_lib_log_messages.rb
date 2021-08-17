@@ -9,11 +9,11 @@ class CreateLibLogMessages < ActiveRecord::Migration[6.0]
       t.bigint     :log_lines_count, null: false, default: 0
       t.integer    :level,           null: false
       t.boolean    :monitor # nil --> based on level, false --> never, true --> always
-      t.boolean    :alerted,         null: false, default: false
+      t.datetime   :line_at,         null: false, default: Time.at(0)
       t.timestamps
     end
 
-    add_index :lib_log_messages, [:text_tiny, :log_id, :log_lines_type, :level, :monitor, :alerted, :updated_at],
+    add_index :lib_log_messages, [:text_tiny, :log_id, :log_lines_type, :level, :monitor, :line_at, :updated_at],
       using: :gin, name: 'index_lib_log_messages_on_columns'
     add_index :lib_log_messages, [:text_hash, :log_id, :level], unique: true
   end

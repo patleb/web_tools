@@ -17,7 +17,7 @@ module LogLines
         data: exception.data,
         ram: Process.worker.ram_used
       }
-      message = { text: exception.backtrace_log, level: :error }
+      message = { text: exception.backtrace_log, level: :error, monitor: false }
       super(log, message: message, json_data: json_data)
     end
   end
