@@ -4,7 +4,7 @@ class Server < LibMainRecord
   def self.current_version
     @current_version ||= begin
       version_path = Rails.root.join('REVISION')
-      version_path.exist? ? version_path.read.first(7) : '0.1.0'
+      version_path.exist? ? version_path.read.first(8) : '0.1.0'
     end
   end
 
