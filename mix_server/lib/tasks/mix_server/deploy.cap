@@ -44,8 +44,8 @@ namespace :deploy do
     osquery:restart
     nginx:push
     pgrest:push
-    deploy:app:push
     dns:set_hosts
+    deploy:app:push
   )
 
   namespace :app do
