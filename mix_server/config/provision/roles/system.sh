@@ -7,6 +7,7 @@
   nginx/htpasswd
   #{'ssl/ca' unless sun.nginx_skip_ssl}
   #{'ssl/self_signed' unless sun.nginx_skip_ssl}
+  #{'ssl/dhparam' unless sun.nginx_skip_ssl}
   lang/ruby/system__RUBY__
   lang/nodejs/system__NODEJS__
   lang/python/system__PYTHON__
