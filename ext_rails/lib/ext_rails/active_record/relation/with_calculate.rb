@@ -133,9 +133,7 @@ module ActiveRecord::Relation::WithCalculate
   def operation_sql(operation, column = nil, *args)
     operation = Arel.star.send(operation, *args.compact).to_sql
     if (column = column.to_s).present?
-      if !operation.upcase.start_with?('COUNT') && column.scan(/::/).size == 1
-        operation << '::' << column.split('::').last
-      end
+      operation << '::' << column.split('::').last unless operation.upcase.start_with?('COUNT')
       operation.sub! '*', klass.quote_column(column)
     end
     operation
