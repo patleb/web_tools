@@ -44,7 +44,6 @@ namespace :deploy do
     osquery:restart
     nginx:push
     pgrest:push
-    dns:set_hosts
     deploy:app:push
   )
 
@@ -63,6 +62,7 @@ namespace :deploy do
       db:pg:create_database
       db:pg:set_superuser
       whenever:create_cron_log
+      dns:set_hosts
     ) do
       old_assets_role = fetch(:assets_roles)
       old_job_role = fetch(:job_roles)
