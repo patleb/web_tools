@@ -85,7 +85,7 @@ module MixJob::WatchMock
     assert_equal _good_actions.size, _output.scan(MixTask::SUCCESS).size
     assert_equal _bad_actions.size,  _output.scan(MixTask::FAILURE).size
     _bad_actions.values.each do |exception|
-      assert_equal true, LogMessage.where('text_tiny LIKE ?', "%#{exception}%").take.alerted?
+      assert_equal true, LogMessage.where('text_tiny LIKE ?', "%#{exception}%").take.reported?
     end
 
     _signal :shutdown

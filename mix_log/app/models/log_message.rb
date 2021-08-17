@@ -83,4 +83,8 @@ class LogMessage < LibMainRecord
       .order(updated_at: :desc) # :updated_at is the last time a log line has been added
       .distinct
   end
+
+  def reported?
+    line_at != Time.at(0)
+  end
 end

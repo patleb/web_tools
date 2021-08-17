@@ -28,7 +28,7 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
       post Job.url, as: :json
 
       assert_response :job_server_error
-      assert_equal true, LogMessage.where('text_tiny LIKE ?', '%ActionController::ParameterMissing%').take.alerted?
+      assert_equal true, LogMessage.where('text_tiny LIKE ?', '%ActionController::ParameterMissing%').take.reported?
       assert_equal 1, ActionMailer::Base.deliveries.size
     end
 
@@ -39,7 +39,7 @@ class JobsControllerTest < ActionDispatch::IntegrationTest
       post job.url, params: { job: job.data.except(:job_id) }, as: :json
 
       assert_response :job_client_error
-      assert_equal true, LogMessage.where('text_tiny LIKE ?', '%ActiveRecord::RecordInvalid%').take.alerted?
+      assert_equal true, LogMessage.where('text_tiny LIKE ?', '%ActiveRecord::RecordInvalid%').take.reported?
       assert_equal 1, ActionMailer::Base.deliveries.size
     end
   end
