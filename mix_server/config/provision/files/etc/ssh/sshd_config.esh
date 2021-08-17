@@ -1,4 +1,4 @@
-#	$OpenBSD: sshd_config,v 1.103 2018/04/09 20:41:22 tj Exp $
+#	\$OpenBSD: sshd_config,v 1.103 2018/04/09 20:41:22 tj Exp \$
 
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.
@@ -31,7 +31,7 @@ Include /etc/ssh/sshd_config.d/*.conf
 # Authentication:
 
 #LoginGraceTime 2m
-#PermitRootLogin prohibit-password
+PermitRootLogin no
 #StrictModes yes
 #MaxAuthTries 6
 #MaxSessions 10
@@ -90,9 +90,9 @@ ChallengeResponseAuthentication no
 UsePAM yes
 
 #AllowAgentForwarding yes
-#AllowTcpForwarding yes
+AllowTcpForwarding no
 #GatewayPorts no
-X11Forwarding yes
+X11Forwarding no
 #X11DisplayOffset 10
 #X11UseLocalhost yes
 #PermitTTY yes
@@ -117,7 +117,7 @@ PrintMotd no
 AcceptEnv LANG LC_*
 
 # override default of no subsystems
-Subsystem sftp	/usr/lib/openssh/sftp-server
+Subsystem	sftp	/usr/lib/openssh/sftp-server
 
 # Example of overriding settings on a per-user basis
 #Match User anoncvs
@@ -128,6 +128,7 @@ Subsystem sftp	/usr/lib/openssh/sftp-server
 <% if sun.env.vagrant? -%>
 UseDNS no
 GSSAPIAuthentication no
-<% elsif sun.ssh_allow_password -%>
+<% elsif sun.ssh_allow_password %>
 PasswordAuthentication yes
 <% end -%>
+AllowUsers <%= ([sun.owner_name, sun.deployer_name] + Array.wrap(sun.ssh_allow_users)).uniq.join(' ') %>
