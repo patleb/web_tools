@@ -154,9 +154,8 @@ module Sunzistrano
         hosts = sun.servers.map{ |server| `getent hosts #{server}`.squish.split }.flatten.uniq
         if hosts.any?
           hosts.each do |host|
-            `ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host} 2> /dev/null`
-            while File.read("#{ENV['HOME']}/.ssh/known_hosts").include? host
-              sleep 1
+            until `ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host} 2>&1 >/dev/null`.start_with? "Host #{host} not found in"
+              Thread.pass
             end
           end
         end
