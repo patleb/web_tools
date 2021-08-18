@@ -39,6 +39,11 @@ module Sunzistrano
       do_download(stage, role)
     end
 
+    desc 'reset [stage] [role]', 'Reset ssh known hosts'
+    def reset(stage, role = 'system')
+      do_reset(stage, role)
+    end
+
     no_tasks do
       def self.source_root
         File.expand_path('../../', __FILE__)
@@ -68,6 +73,11 @@ module Sunzistrano
         unless system download_cmd(path, ref)
           puts "Cannot transfer [#{path}] to [#{ref}]".red
         end
+      end
+
+      def do_reset(stage, role)
+        load_config(stage, role)
+        run_reset_known_hosts
       end
 
       def load_config(stage, role, **custom_options)
