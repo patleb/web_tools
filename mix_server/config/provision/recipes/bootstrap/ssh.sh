@@ -1,12 +1,35 @@
 ### References
 # https://www.digitalocean.com/community/tutorials/how-to-harden-openssh-on-ubuntu-18-04
 # https://www.sshaudit.com/
+HOST_RSA="/etc/ssh/ssh_host_rsa_key"
+HOST_ED25519="/etc/ssh/ssh_host_ed25519_key"
+
 sun.backup_compile '/etc/ssh/sshd_config'
 
 # Re-generate the RSA and ED25519 keys
 rm /etc/ssh/ssh_host_*
-ssh-keygen -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key -N ""
-ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ""
+<% if sun.ssh_host_rsa.present? %>
+  echo -e '<%= sun.ssh_host_rsa.escape_newlines %>' > $HOST_RSA
+  ssh-keygen -y -f $HOST_RSA > "$HOST_RSA.pub"
+  chmod 644 "$HOST_RSA.pub"
+<% else %>
+  ssh-keygen -t rsa -b 4096 -f $HOST_RSA -N ""
+
+  echo "$DH should be kept in your settings.yml as :ssh_host_rsa"
+  <%= Sh.escape_newlines "$HOST_RSA" %>
+  echo ''
+<% end %>
+<% if sun.ssh_host_ed25519.present? %>
+  echo -e '<%= sun.ssh_host_ed25519.escape_newlines %>' > $HOST_ED25519
+  ssh-keygen -y -f $HOST_ED25519 > "$HOST_ED25519.pub"
+  chmod 644 "$HOST_ED25519.pub"
+<% else %>
+  ssh-keygen -t ed25519 -f $HOST_ED25519 -N ""
+
+  echo "$HOST_ED25519 should be kept in your settings.yml as :ssh_host_ed25519"
+  <%= Sh.escape_newlines "$HOST_ED25519" %>
+  echo ''
+<% end %>
 
 # Remove small Diffie-Hellman moduli
 awk '$5 >= 3071' /etc/ssh/moduli | sudo tee /etc/ssh/moduli.safe > /dev/null
