@@ -15,7 +15,7 @@ rm /etc/ssh/ssh_host_*
 <% else %>
   ssh-keygen -t rsa -b 4096 -f $HOST_RSA -N ""
 
-  echo "$DH should be kept in your settings.yml as :ssh_host_rsa"
+  echo "$HOST_RSA should be kept in your settings.yml as :ssh_host_rsa"
   <%= Sh.escape_newlines "$HOST_RSA" %>
   echo ''
 <% end %>
