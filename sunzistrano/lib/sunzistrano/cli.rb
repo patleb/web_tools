@@ -119,9 +119,7 @@ module Sunzistrano
       def compile_file(src, dst)
         source_path, destination_path = src.to_s, dst.to_s
         template src, dst, force: true
-        if source_path.end_with? '.pow'
-          `powscript --compile #{destination_path} > #{destination_path.sub(/\.pow$/, '.sh')}`
-        elsif source_path.end_with? '.esh'
+        if source_path.end_with? '.esh'
           ref_path = destination_path.sub(/\.esh$/, '.ref')
           if File.exist? ref_path
             esh_text, ref_file = Pathname.new(destination_path).read, Pathname.new(ref_path)

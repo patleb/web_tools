@@ -1,6 +1,0 @@
-require 'mod/mymod.pow'
-require 'mod/foo.sh'
-require_cmd 'awk'
-
-mymodfunc
-bar
