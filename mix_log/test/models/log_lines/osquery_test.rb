@@ -12,6 +12,7 @@ module LogLines
         file = file_fixture('log/osquery/osqueryd.results.log')
 
         log = Log.create! server: Server.current, path: file.to_s
+        Log.create! server: log.server, log_lines_type: 'LogLines::Task'
         count, info, files, sockets = 0, 0, 0, 0
         file.each_line do |line|
           line = LogLines::Osquery.parse(log, line)
