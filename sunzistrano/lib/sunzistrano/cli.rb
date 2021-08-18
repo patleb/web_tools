@@ -152,11 +152,15 @@ module Sunzistrano
         FileUtils.rm_rf('.provision') unless sun.debug
       end
 
-      def run_reset_known_hosts # TODO doesn't work --> too fast? --> poll check if host in file, then move to next
+      def run_reset_known_hosts
         hosts = sun.servers.map{ |server| `getent hosts #{server}`.squish.split }.flatten.uniq
         if hosts.any?
-          reset_known_hosts = hosts.map{ |host| %{ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host} 2> /dev/null} }
-          `#{reset_known_hosts.join(';')}`
+          hosts.each do |host|
+            `ssh-keygen -f "$HOME/.ssh/known_hosts" -R #{host} 2> /dev/null`
+            while File.read("#{ENV['HOME']}/.ssh/known_hosts").include? host
+              sleep 1
+            end
+          end
         end
       end
 
