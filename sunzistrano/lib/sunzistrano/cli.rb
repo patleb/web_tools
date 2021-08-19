@@ -157,6 +157,7 @@ module Sunzistrano
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_provison_cmd_for(server)
         end
+        run_reset_known_hosts
         FileUtils.rm_rf('.provision') unless sun.debug
       end
 

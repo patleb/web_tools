@@ -9,6 +9,8 @@ sun.backup_compile '/etc/ssh/sshd_config'
 # Re-generate the RSA and ED25519 keys
 rm /etc/ssh/ssh_host_*
 <% if sun.ssh_host_rsa.present? %>
+  touch "$HOST_RSA"
+  chmod 600 "$HOST_RSA"
   echo -e '<%= sun.ssh_host_rsa.escape_newlines %>' > $HOST_RSA
   ssh-keygen -y -f $HOST_RSA > "$HOST_RSA.pub"
   chmod 644 "$HOST_RSA.pub"
@@ -20,6 +22,8 @@ rm /etc/ssh/ssh_host_*
   echo ''
 <% end %>
 <% if sun.ssh_host_ed25519.present? %>
+  touch "$HOST_ED25519"
+  chmod 600 "$HOST_ED25519"
   echo -e '<%= sun.ssh_host_ed25519.escape_newlines %>' > $HOST_ED25519
   ssh-keygen -y -f $HOST_ED25519 > "$HOST_ED25519.pub"
   chmod 644 "$HOST_ED25519.pub"
