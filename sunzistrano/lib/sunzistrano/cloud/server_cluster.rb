@@ -15,7 +15,7 @@ module Cloud::ServerCluster
 
   def server_cluster_ips
     if Setting[:server_cluster_ips].present?
-      Setting[:server_cluster_ips]
+      Array.wrap(Setting[:server_cluster_ips])
     else
       server_cluster.values
     end
