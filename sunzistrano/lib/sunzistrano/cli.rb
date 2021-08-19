@@ -1,4 +1,3 @@
-# TODO https://github.com/christophemaximin/executable_mock
 module Sunzistrano
   class Cli < Thor
     include Thor::Actions
