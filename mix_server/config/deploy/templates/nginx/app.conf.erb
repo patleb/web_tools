@@ -69,6 +69,8 @@ server {
 
   <% if ENV['MAINTENANCE'].to_b %>
     return 503;
+  <% elsif fetch(:passenger_roles).blank? && fetch(:nginx_locations).empty? %>
+    return 200;
   <% end %>
 
   ##

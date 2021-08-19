@@ -35,9 +35,9 @@ module MixLog
 
     def available_paths
       @available_paths ||= [
-        nginx_log_path(:access),
-        nginx_log_path(:packs, :access),
-        nginx_log_path(:public, :access),
+        passenger_log_path(:access),
+        passenger_log_path(:packs, :access),
+        passenger_log_path(:public, :access),
         log_path(:nginx, :access),
         log_path(:nginx, :error),
         log_path(:apt, :history),
@@ -127,7 +127,7 @@ module MixLog
       "log/#{Rails.env}.log"
     end
 
-    def nginx_log_path(*type, name)
+    def passenger_log_path(*type, name)
       type = type.first
       name = "#{MixServer.config.deploy_dir}#{"_#{type.to_s.full_underscore}" if type}.#{name}"
       log_path(:nginx, name)

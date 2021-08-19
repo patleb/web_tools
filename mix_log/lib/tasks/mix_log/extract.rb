@@ -1,7 +1,6 @@
 module MixLog
   class Extract < ActiveTask::Base
     class AccessDenied < ::StandardError; end
-    class InvalidPath < ::StandardError; end
 
     def self.args
       {
@@ -85,14 +84,13 @@ module MixLog
 
     def logs
       @logs ||= begin
-        MixLog.config.available_paths.sort_by{ |path| path.split('/').last(2) }.map do |path|
+        MixLog.config.available_paths.sort_by{ |path| path.split('/').last(2) }.select_map do |path|
           if MixLog.config.force_read
             raise AccessDenied unless system("sudo chmod +r #{path}.*")
           end
-          unless File.exist?(path) || File.exist?("#{path}.0") || File.exist?("#{path}.1")
-            raise InvalidPath, path
+          if %W(#{path} #{path}.0 #{path}.1 #{path}.1.gz).any?{ |file| File.exist? file }
+            Log.find_or_create_by! server: Server.current, path: path
           end
-          Log.find_or_create_by! server: Server.current, path: path
         end
       end
     end
