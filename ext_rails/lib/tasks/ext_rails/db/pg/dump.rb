@@ -1,3 +1,5 @@
+# TODO https://www.depesz.com/2007/07/05/how-to-insert-data-to-database-as-fast-as-possible/
+# TODO sanitized_lines
 module Db
   module Pg
     class Dump < Base

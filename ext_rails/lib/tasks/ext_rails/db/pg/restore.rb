@@ -1,3 +1,6 @@
+# TODO https://ossc-db.github.io/pg_bulkload/index.html
+# TODO PITR --> https://www.scalingpostgres.com/tutorials/postgresql-backup-point-in-time-recovery/
+# TODO excludes --> use --list
 module Db
   module Pg
     class Restore < Base
@@ -52,7 +55,6 @@ module Db
         end
       end
 
-      # TODO PITR --> https://www.scalingpostgres.com/tutorials/postgresql-backup-point-in-time-recovery/
       def unpack(compress, split)
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{pg_data_dir}"
@@ -75,7 +77,6 @@ module Db
         sh 'sudo systemctl start postgresql'
       end
 
-      # TODO https://ossc-db.github.io/pg_bulkload/index.html
       def copy_from(table, compress, split)
         if options.timescaledb
           # TODO parallelize
