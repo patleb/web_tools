@@ -8,14 +8,14 @@ module Sunzistrano
       true
     end
 
-    desc 'provision [stage] [role] [--recipe] [--username]', 'Provision sunzistrano project'
-    method_options recipe: :string, username: :string
+    desc 'provision [stage] [role] [--recipe] [--username] [--reset]', 'Provision sunzistrano project'
+    method_options recipe: :string, username: :string, reset: false
     def provision(stage, role = 'system')
       do_provision(stage, role)
     end
 
-    desc 'specialize [stage] [role] [--recipe] [--username]', 'Specialize sunzistrano project'
-    method_options recipe: :string, username: :string
+    desc 'specialize [stage] [role] [--recipe] [--username] [--reset]', 'Specialize sunzistrano project'
+    method_options recipe: :string, username: :string, reset: false
     def specialize(stage, role = 'system')
       do_provision(stage, role, specialize: true)
     end
@@ -152,11 +152,11 @@ module Sunzistrano
       end
 
       def run_provision_cmd
-        run_reset_known_hosts
+        run_reset_known_hosts if sun.reset
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_provison_cmd_for(server)
         end
-        run_reset_known_hosts
+        run_reset_known_hosts if sun.reset
         FileUtils.rm_rf('.provision') unless sun.debug
       end
 
