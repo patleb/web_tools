@@ -33,7 +33,7 @@ server {
     return 404;
   }
 
-  <% if fetch(:nginx_rails) %>
+  <% if fetch(:passenger_roles) %>
     root <%= fetch(:deploy_to) %>/current/public;
 
     passenger_enabled on;
@@ -97,7 +97,7 @@ server {
     }
   <% end %>
 
-  <% if fetch(:nginx_rails) %>
+  <% if fetch(:passenger_roles) %>
     location /packs/ {
       gzip_static on;
       if_modified_since off;
@@ -154,6 +154,6 @@ server {
 #   return 301 https://$host$request_uri;
 # }
 
-<% if fetch(:nginx_rails) %>
+<% if fetch(:passenger_roles) %>
   passenger_pre_start http<%= 's' unless fetch(:nginx_skip_ssl) %>://<%= fetch(:server) %>/;
 <% end %>

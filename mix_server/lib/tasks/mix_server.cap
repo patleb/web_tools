@@ -24,8 +24,7 @@ namespace :load do
     set :nginx_redirects,   -> { {} }
     set :nginx_upstreams,   -> { {} }
     set :nginx_locations,   -> { {} }
-    set :nginx_rails,       -> { true }
-    set :nginx_deferred,    -> { fetch(:nginx_rails) && cap.env.production? }
+    set :nginx_deferred,    -> { fetch(:passenger_roles) && cap.env.production? }
     set :nginx_skip_ssl,    -> { !Setting[:server_ssl] }
 
     set :monit_max_swap_size,     -> { '25%' }
