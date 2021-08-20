@@ -22,6 +22,12 @@ class Time
   end
 end
 
+class Pathname
+  def cast
+    to_s
+  end
+end
+
 class String
   def cast
     case
