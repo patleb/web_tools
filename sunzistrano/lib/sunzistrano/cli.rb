@@ -152,6 +152,7 @@ module Sunzistrano
       end
 
       def run_provision_cmd
+        run_reset_known_hosts if sun.reset
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_provison_cmd_for(server)
         end
