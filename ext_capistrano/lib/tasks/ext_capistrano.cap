@@ -28,7 +28,7 @@ namespace :load do
     set :passenger_roles,           -> { :web }
     set :passenger_restart_command, -> { 'rbenv sudo passenger-config restart-app' }
 
-    set :assets_roles,  -> { release_roles fetch(:passenger_roles) }
+    set :assets_roles,  -> { fetch(:passenger_roles) }
     set :assets_prefix, -> { 'packs' }
 
     append :linked_dirs, *%w(
