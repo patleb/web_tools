@@ -121,7 +121,7 @@ module Process
         time = stat.delete(:utime) + stat.delete(:stime) + stat.delete(:cutime) + stat.delete(:cstime)
         stat[:time] = (time / host.hertz).ceil(3)
         stat
-      rescue Errno::ENOENT
+      rescue
         { ppid: PID_DEAD, start_time: -host.hertz }
       end
     end
@@ -150,7 +150,7 @@ module Process
             end
           memo[type] = line.split(': ').last.to_i if type
         end
-      rescue Errno::ENOENT, Errno::EACCES
+      rescue
         { ram_used: 0.0, swap_used: 0.0 }
       end
     end
@@ -175,10 +175,10 @@ module Process
             else                                  :file
             end
           memo[type] << File.stat(file).ino
-        rescue Errno::ENOENT
+        rescue
           # do nothing
         end
-      rescue Errno::ENOENT
+      rescue
         {}
       end
     end
@@ -204,7 +204,7 @@ module Process
         name, value = pair.split('=')
         memo[name] = value
       end
-    rescue Errno::ENOENT
+    rescue
       {}
     end
   end
