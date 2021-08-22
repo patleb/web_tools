@@ -22,7 +22,7 @@ class Notice
 
     subject = [subject, "[#{exception.name}]"].compact.join(' ')
     message = <<~TEXT
-      [#{Time.current.utc}]#{BODY_START}
+      [#{Time.current.utc}][#{Process.host.private_ip}]#{BODY_START}
       #{exception.backtrace_log}
       #{BODY_END}
     TEXT
