@@ -8,8 +8,8 @@ module Sunzistrano
       true
     end
 
-    desc 'provision [stage] [role] [--recipe] [--username] [--reset]', 'Provision sunzistrano project'
-    method_options recipe: :string, username: :string, reset: false
+    desc 'provision [stage] [role] [--recipe] [--username] [--reset] [--no-reboot]', 'Provision sunzistrano project'
+    method_options recipe: :string, username: :string, reset: false, no_reboot: false
     def provision(stage, role = 'system')
       do_provision(stage, role)
     end
@@ -26,8 +26,8 @@ module Sunzistrano
       do_provision(stage, role, rollback: true)
     end
 
-    desc 'compile [stage] [role] [--recipe] [--rollback] [--specialize]', 'Compile sunzistrano project'
-    method_options recipe: :string, rollback: false, specialize: false
+    desc 'compile [stage] [role] [--recipe] [--rollback] [--specialize] [--no-reboot]', 'Compile sunzistrano project'
+    method_options recipe: :string, rollback: false, specialize: false, no_reboot: false
     def compile(stage, role = 'system')
       do_compile(stage, role)
     end

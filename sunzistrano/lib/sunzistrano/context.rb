@@ -140,7 +140,7 @@ module Sunzistrano
     def role_recipes(*names)
       recipes = merge_recipes names
       if (reboot = recipes.delete('reboot'))
-        recipes << reboot
+        recipes << reboot unless no_reboot
       end
       list_recipes(recipes) do |name, id|
         yield name, id
