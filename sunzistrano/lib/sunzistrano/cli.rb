@@ -156,7 +156,7 @@ module Sunzistrano
           run_provison_cmd_for(server)
         end
         run_reset_known_hosts if sun.reset
-        FileUtils.rm_rf('.provision') unless sun.debug
+        FileUtils.rm_rf(provision_path) unless sun.debug
       end
 
       def run_reset_known_hosts
@@ -189,7 +189,7 @@ module Sunzistrano
 
       def provision_cmd(server)
         <<~CMD.squish
-          #{ssh_add_vagrant} cd .provision && tar cz . |
+          #{ssh_add_vagrant} cd #{provision_path} && tar cz . |
           ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR
           #{"-o ProxyCommand='ssh -W %h:%p #{sun.username}@#{sun.server}'" if sun.server_cluster?}
           #{sun.username}@#{server}
@@ -236,7 +236,7 @@ module Sunzistrano
         when :root
           file = Sunzistrano.root.join("config/provision/#{basename(file)}")
         when :provision
-          file = ".provision/#{basename(file)}"
+          file = "#{provision_path}/#{basename(file)}"
         else
           file = "config/provision/#{basename(file)}"
         end
@@ -245,6 +245,10 @@ module Sunzistrano
 
       def basename(file)
         file.sub(/.*config\/provision\//, '')
+      end
+
+      def provision_path
+        @provision_path ||= ".provision/#{sun.app}-#{sun.env}"
       end
 
       def abort_with(text)
