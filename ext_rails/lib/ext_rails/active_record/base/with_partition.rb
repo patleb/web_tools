@@ -119,19 +119,20 @@ module ActiveRecord::Base::WithPartition
 
     # TODO make size variable in the future, but frozen in the past by bucket
     def partition_size(table, buckets = [])
-      if buckets.size < 2
-        return ExtRails.config.db_partitions[table] || raise(UnknownPartitionSize, "table: [#{table}]")
-      end
-      size = buckets[1..-1].map.with_index{ |bucket, i| bucket - buckets[i] }.min.to_i
-      if buckets.first.is_a? Time
-        size = case size.to_days.first
-          when 1      then :day
-          when 7      then :week
-          when 28..31 then :month
-          else raise UnsupportedPartitionBucket, "size: [#{size.to_days.first} days]"
-          end
-      end
-      size
+      ExtRails.config.db_partitions[table] || raise(UnknownPartitionSize, "table: [#{table}]")
+      # if buckets.size < 2
+      #   return ExtRails.config.db_partitions[table] || raise(UnknownPartitionSize, "table: [#{table}]")
+      # end
+      # size = buckets[1..-1].map.with_index{ |bucket, i| bucket - buckets[i] }.min.to_i
+      # if buckets.first.is_a? Time
+      #   size = case size.to_days.first
+      #     when 1      then :day
+      #     when 7      then :week
+      #     when 28..31 then :month
+      #     else raise UnsupportedPartitionBucket, "size: [#{size.to_days.first} days]"
+      #     end
+      # end
+      # size
     end
   end
 end
