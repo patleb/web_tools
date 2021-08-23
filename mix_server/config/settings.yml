@@ -46,11 +46,11 @@ shared:
   pgrest_db_password: not-secret
   pgrest_max_rows: 100
   pgrest_timeout: 120_000
-  ftp_mount_path: /opt/ftp_data
-  server_cluster_data: /mnt/shared_data
-  server_cluster_master_data: /opt/shared_data
   data_partition: /dev/sdb
   data_directory: /opt/storage
+  ftp_mount_path: /opt/ftp_data
+  server_cluster_data: /opt/storage/shared_data
+  server_cluster_master_data: /opt/shared_data
 
 test:
   max_pool_size: 2

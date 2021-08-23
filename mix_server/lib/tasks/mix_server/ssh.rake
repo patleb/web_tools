@@ -1,4 +1,22 @@
 namespace :ssh do
+  namespace :cluster do
+    desc "Mount cluster with /opt/storage/shared_data on master as /opt/shared_data-{ip}"
+    task :mount => :environment do
+      host_path = Setting[:server_cluster_data]
+      Cloud.server_cluster_ips.zip(Cloud.server_cluster_paths).each do |(ip, mount_path)|
+        run_task! 'ssh:mount', ip, host_path, mount_path
+      end
+    end
+
+    desc "Unmount /opt/shared_data-{ip}"
+    task :unmount => :environment do
+      Cloud.server_cluster_paths.each do |mount_path|
+        run_task! 'ssh:unmount', mount_path
+        sh "sudo rmdir #{mount_path}"
+      end
+    end
+  end
+
   desc 'Mount SSH drive'
   task :mount, [:server, :host_path, :mount_path] => :environment do |t, args|
     sh "sudo mkdir -p #{args[:mount_path]}"
