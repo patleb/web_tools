@@ -1,11 +1,16 @@
 namespace :geoserver do
   namespace :workspace do
-    %w(Create Destroy).each do |action|
-      task_name = action.underscore
+    desc "Create GeoServer workspace"
+    task :create => :environment do |t|
+      Geoserver::Workspace::Create.new(self, t).run!
+    end
 
-      desc "#{task_name.humanize} GeoServer workspace"
-      task task_name => :environment do |t|
-        Geoserver::Workspace.const_get(action).new(self, t).run!
+    desc "Destroy GeoServer workspace"
+    task :destroy, [:silent] => :environment do |t, args|
+      if flag_on? args, :silent
+        Geoserver::Workspace::Destroy.new(self, t).run
+      else
+        Geoserver::Workspace::Destroy.new(self, t).run!
       end
     end
   end
