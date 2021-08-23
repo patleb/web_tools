@@ -41,4 +41,19 @@ namespace :ssh do
   task :unmount, [:path] => :environment do |t, args|
     sh "sudo fusermount -u #{args[:path]}"
   end
+
+  desc 'Add owner private key to development machine'
+  task :add, [:env, :force] => :environment do |t, args|
+    assign_environment! args
+
+    Setting.with(env: ENV['RAILS_ENV'], app: ENV['RAILS_APP']) do
+      path = "$HOME/.ssh/id_rsa-#{Setting.rails_app}-#{Setting.rails_env}.pem"
+      if flag_on? args, :force
+        sh %{echo "#{Setting[:owner_private_key]}" > #{path}}, verbose: false
+        sh %{chmod 600 #{path}}, verbose: false
+      end
+      sh %{ssh-add #{path} 2> /dev/null}, verbose: false
+      puts "ssh key [#{path}] added"
+    end
+  end
 end
