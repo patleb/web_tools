@@ -20,5 +20,13 @@ module LogLines
       message = { text: exception.backtrace_log, level: :error, monitor: false }
       super(log, message: message, json_data: json_data)
     end
+
+    def self.reset_messages!
+      all.each do |log_line|
+        message = log_line.log_message
+        message.line_at = Time.at(0)
+        message.save! touch: false
+      end
+    end
   end
 end
