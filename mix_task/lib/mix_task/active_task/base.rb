@@ -156,7 +156,7 @@ module ActiveTask
 
     # NOTE needed only if using a different Gemfile
     def sh_clean(*cmd, &block)
-      Bundler.with_clean_env do
+      Bundler.with_unbundled_env do
         rake.__send__ :sh, *cmd, &block
       end
     end
