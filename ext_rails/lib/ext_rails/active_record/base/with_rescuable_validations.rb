@@ -2,7 +2,7 @@ module ActiveRecord::Base::WithRescuableValidations
   RECORD_NOT_UNIQUE_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) already exists/.freeze
   INVALID_FOREIGN_KEY_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) is not present in table/.freeze
   VALUE_TOO_LONG_COUNT = /varying\((?<count>\d+)\)/.freeze
-  NOT_NULL_VIOLATION_COLUMN = /column "(\w+)" violates not-null constraint/.freeze
+  NOT_NULL_VIOLATION_COLUMN = /column "(\w+)"(?: of relation "\w+")? violates not-null constraint/.freeze
 
   def save(...)
     super
