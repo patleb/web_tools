@@ -13,9 +13,6 @@ gem 'webpacker', '~> 5.0'
 # gem 'rack-cors'
 
 group :development, :test do
-  gem 'ruby-debug-ide'
-  gem 'debase'
-
   gem 'ext_minitest', path: './ext_minitest'
   # gem 'ext_minitest', github: 'patleb/web_tools'
   # gem 'ext_minitest', path: '~/projects/web_tools'

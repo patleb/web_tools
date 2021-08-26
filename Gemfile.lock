@@ -428,9 +428,6 @@ GEM
     date_validator (0.12.0)
       activemodel (>= 3)
       activesupport (>= 3)
-    debase (2.3.0)
-      debase-ruby_core_source (~> 0.10.10)
-    debase-ruby_core_source (0.10.12)
     debugger-ruby_core_source (1.3.8)
     devise (4.8.0)
       bcrypt (~> 3.0)
@@ -629,8 +626,6 @@ GEM
     routes_lazy_routes (0.4.1)
       actionpack
       railties
-    ruby-debug-ide (2.3.0)
-      debase (~> 2.3.0)
     ruby-pg-extras (2.0.0)
       pg
       terminal-table
@@ -714,7 +709,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  debase
   ext_bootstrap!
   ext_capistrano!
   ext_minitest!
@@ -743,7 +737,6 @@ DEPENDENCIES
   mix_task!
   mix_template!
   mix_user!
-  ruby-debug-ide
   sunzistrano!
   tzinfo-data
   web_tools!
