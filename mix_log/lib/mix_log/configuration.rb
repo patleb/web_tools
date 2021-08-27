@@ -98,14 +98,14 @@ module MixLog
     # https://github.com/osquery/osquery/issues/4750
     def known_files
       @known_files ||= [
-        %r{/etc/sed\w+},
-        %r{/etc/ssh/sed\w+},
-        %r{/etc/ssh/\.\w+},
-        %r{/etc/systemd/system/\.\w+},
-        %r{/etc/logrotate.d/\.\w+},
-        %r{/etc/nginx/\.\w+},
-        %r{/etc/nginx/sites-available/\.\w+},
-        %r{/etc/osquery/.osquery\.\w+},
+        %r{^/etc/[-.\w/]+\.dpkg-(new|tmp)$},
+        %r{^/etc/([-.\w]+/)*sed\w{1,8}$},
+        %r{^/etc/ssh/\.\w+$},
+        %r{^/etc/systemd/system/\.\w+$},
+        %r{^/etc/logrotate.d/\.\w+$},
+        %r{^/etc/nginx/\.\w+$},
+        %r{^/etc/nginx/sites-available/\.\w+$},
+        %r{^/etc/osquery/.osquery\.\w+$},
       ]
     end
 
