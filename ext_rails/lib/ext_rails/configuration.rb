@@ -25,7 +25,7 @@ module ExtRails
     end
 
     def excluded_models
-      @excluded_models ||= Set.new
+      @excluded_models ||= Setting[:timescaledb_enabled] ? Set.new : Set.new(['Timescaledb::Chunk', 'Timescaledb::Table'])
     end
 
     def backup_excludes

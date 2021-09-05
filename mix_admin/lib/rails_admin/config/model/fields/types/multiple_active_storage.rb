@@ -1,5 +1,5 @@
-class RailsAdmin::Config::Model::Fields::MultipleActiveStorage < RailsAdmin::Config::Fields::MultipleFileUpload
-  class ActiveStorageAttachment < RailsAdmin::Config::Fields::MultipleFileUpload::AbstractAttachment
+class RailsAdmin::Config::Model::Fields::MultipleActiveStorage < RailsAdmin::Config::Model::Fields::MultipleFileUpload
+  class ActiveStorageAttachment < RailsAdmin::Config::Model::Fields::MultipleFileUpload::AbstractAttachment
     register_instance_option :thumb_method do
       { resize: '100x100>' }
     end

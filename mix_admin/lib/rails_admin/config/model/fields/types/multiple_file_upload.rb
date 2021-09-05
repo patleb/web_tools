@@ -1,4 +1,4 @@
-class RailsAdmin::Config::Model::Fields::MultipleFileUpload < RailsAdmin::Config::Fields::Base
+class RailsAdmin::Config::Model::Fields::MultipleFileUpload < RailsAdmin::Config::Model::Fields::Base
   class AbstractAttachment
     include RailsAdmin::Config::Configurable
 

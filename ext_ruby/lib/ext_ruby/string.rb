@@ -2,6 +2,10 @@ class NilClass
   def upcase_first
     ''
   end
+
+  def html_blank?
+    true
+  end
 end
 
 class Integer

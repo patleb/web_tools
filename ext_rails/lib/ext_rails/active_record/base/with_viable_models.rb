@@ -5,7 +5,6 @@ module ActiveRecord::Base::WithViableModels
     .include.rb
     .prepend.rb
     _admin.rb
-    _record.rb
     _decorator.rb
     /current.rb
     /root.rb
@@ -74,7 +73,7 @@ module ActiveRecord::Base::WithViableModels
     def with_model(model_name)
       model = begin
         model_name.to_const!
-      rescue LoadError
+      rescue LoadError, NameError
         puts model_name if Rails.env.development?
         return
       end

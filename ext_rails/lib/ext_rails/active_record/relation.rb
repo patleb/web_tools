@@ -12,10 +12,6 @@ ActiveRecord::Relation.class_eval do
     select(*(column_names - fields.map(&:to_s)))
   end
 
-  def where_not(...)
-    where.not(...)
-  end
-
   def order_group(*columns, reverse: false)
     aliases = columns.map{ |field| column_alias_for(field.to_s.dup).downcase }
     relation = reverse ? order(aliases.map{ |column| [column, :desc] }.to_h) : order(*aliases)

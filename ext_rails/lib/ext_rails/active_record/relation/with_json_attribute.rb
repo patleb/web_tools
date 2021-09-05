@@ -31,7 +31,7 @@ module ActiveRecord::Relation::WithJsonAttribute
 
   def where_not(*args)
     return super unless (attributes = args.first).is_a?(Hash) && attributes.present?
-    attributes = attributes.each_with_object({}) do |(name, value), result|
+    scopes = attributes.each_with_object([]) do |(name, value), result|
       if json_attribute? name
         operator, value = extract_operator(value)
         operator = case operator
@@ -46,12 +46,12 @@ module ActiveRecord::Relation::WithJsonAttribute
           when /^NOT (\w+)$/ then $1
           else "NOT #{operator.upcase}"
           end
-        result[name] = [operator, value]
+        result << where(name => [operator, value])
       else
-        result[name] = value
+        result << where.not(name => value)
       end
     end
-    where(attributes)
+    scopes.reduce(&:merge)
   end
 
   def order(*args, **opts)
