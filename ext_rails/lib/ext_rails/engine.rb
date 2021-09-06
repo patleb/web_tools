@@ -39,7 +39,7 @@ module ExtRails
       require 'ext_rails/pycall'
 
       app.config.active_record.schema_format = :sql
-      app.config.action_view.embed_authenticity_token_in_remote_forms = true
+      # app.config.action_view.embed_authenticity_token_in_remote_forms = true
       # app.config.active_record.time_zone_aware_attributes = false
       app.config.i18n.default_locale = :fr
       app.config.i18n.available_locales = [:fr, :en]
