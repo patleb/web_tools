@@ -54,9 +54,9 @@ module MixPage
 
     def available_field_types
       @available_field_types ||= {
-        'PageFields::Text' => 0,
-        'PageFields::Link' => 20,
+        'PageFields::Text'     => 0,
         'PageFields::RichText' => 10,
+        'PageFields::Link'     => 20,
       }
     end
 

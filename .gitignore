@@ -9,8 +9,10 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*
-/tmp/*
+!/log/
 !/log/.keep
+/tmp/*
+!/tmp/
 !/tmp/.keep
 
 # Ignore pidfiles, but keep the directory.
@@ -20,7 +22,13 @@
 
 # Ignore uploaded files in development.
 /storage/*
+!/storage/
 !/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
+/public/storage/*
+/public/storage-test/*
 
 /public/assets
 .byebug_history
@@ -37,6 +45,7 @@ yarn-debug.log*
 
 /vendor/ruby
 /.vagrant/*
+!/.vagrant/
 !/.vagrant/private_key
 *.box
 /.provision/*

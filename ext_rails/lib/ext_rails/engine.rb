@@ -5,6 +5,29 @@ module ActionService
 end
 
 module ExtRails
+  module Routes
+    def self.base_url
+      @base_url ||= url_for
+    end
+
+    def self.url_for(path = nil)
+      [scheme, '://', host, (':' if port), port, path].join
+    end
+
+    def self.host
+      @host ||= Rails.application.routes.default_url_options[:host] || raise('routes.default_url_options[:host] must be defined')
+    end
+
+    def self.port
+      return @port if defined? @port
+      @port = Rails.application.routes.default_url_options[:port]
+    end
+
+    def self.scheme
+      @scheme ||= "http#{'s' if Setting[:server_ssl]}"
+    end
+  end
+
   class Engine < ::Rails::Engine
     require 'active_type'
     require 'date_validator'

@@ -17,7 +17,9 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency 'mix_log', version
+  s.add_dependency 'mix_log',   version
   s.add_dependency 'mix_admin', version
+  s.add_dependency 'mix_file',  version
   # TODO https://github.com/algolia/frontman
+  # TODO https://github.com/collectiveidea/audited
 end

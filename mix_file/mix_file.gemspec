@@ -18,4 +18,6 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
+  s.add_dependency 'image_processing', '>= 1.2'
+  s.add_dependency 'active_storage_validations'
 end

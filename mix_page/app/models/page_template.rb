@@ -90,10 +90,7 @@ class PageTemplate < Page
   end
 
   def to_url(...)
-   host = Rails.application.routes.default_url_options[:host]
-   port = Rails.application.routes.default_url_options[:port]
-   protocol = "http#{'s' if Setting[:server_ssl]}://"
-   [protocol, host, (':' if port), port, "/#{slug(...)}/#{MixPage::URL_SEGMENT}/#{uuid}"].join
+    ExtRails::Routes.url_for("/#{slug(...)}/#{MixPage::URL_SEGMENT}/#{uuid}")
   end
 
   alias_method :old_title, :title

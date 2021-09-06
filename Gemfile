@@ -6,9 +6,6 @@ ruby File.read('.ruby-version').strip # TODO 2.7.3
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '~> 5.0'
 
-# Use Active Storage variant
-# gem 'image_processing', '~> 1.2'
-
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 

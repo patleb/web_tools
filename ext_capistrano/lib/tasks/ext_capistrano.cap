@@ -19,7 +19,7 @@ namespace :load do
     set :default_env,         -> { { rails_app: fetch(:rails_app) } }
     set :pty,                 -> { true }
 
-    set :files_public_dirs,   -> { %w(system images) }
+    set :files_public_dirs,   -> { [] }
     set :files_private_dirs,  -> { [] }
 
     set :rbenv_ruby,          -> { RUBY_VERSION }
