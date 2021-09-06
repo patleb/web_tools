@@ -12,8 +12,7 @@ class RailsAdmin.Form.FieldConcept::FileElement
       target.toggleClass('btn-danger btn-info')
   ]
 
-  accessors: =>
-    thumbnail: -> @wrapper.find_first(@THUMBNAIL)
-
   constructor: (@input) ->
     @wrapper = @input.closest(@WRAPPER)
+    # TODO can't have 'accessors' if already used in parent concept?
+    @thumbnail = @wrapper.find_first(@THUMBNAIL)
