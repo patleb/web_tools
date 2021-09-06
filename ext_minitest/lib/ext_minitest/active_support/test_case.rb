@@ -19,12 +19,6 @@ ActiveSupport::TestCase.class_eval do
     super
   end
 
-  def after_teardown
-    super
-    FileUtils.rm_rf(ActiveStorage::Blob.service.root)
-    FileUtils.mkdir_p(ActiveStorage::Blob.service.root)
-  end
-
   before do
     VCR.turn_off!
   end

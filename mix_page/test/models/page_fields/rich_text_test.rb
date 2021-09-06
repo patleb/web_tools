@@ -24,6 +24,7 @@ class PageFields::RichTextTest < ActiveSupport::TestCase
       config.async = false
       MixPage.with do |config|
         config.available_templates = { 'generic_multi' => 0 }
+        config.max_image_size = 500.bytes
         test.call
       end
     end
@@ -38,12 +39,28 @@ class PageFields::RichTextTest < ActiveSupport::TestCase
     field.update! text_fr: text + url, text_en: text + text
 
     assert_equal 'ActiveStorage::AnalyzeJob', Job.dequeue.job_class
+    assert_equal 'ActiveStorage::MirrorJob', Job.dequeue.job_class
     assert_equal 'ActiveStorage::AnalyzeJob', Job.dequeue.job_class
+    assert_equal 'ActiveStorage::MirrorJob', Job.dequeue.job_class
     assert_nil Job.dequeue
     rich_text = PageFields::RichText.first
     assert_equal 2, rich_text.images_attachments.count
     assert_equal 2, rich_text.images_attachments.flat_map(&:blob).count
     assert_equal 2, rich_text.text_en.scan(/#{ExtRails::Routes.url_for('/storage-test/')}/).size
     assert_equal 2, rich_text.text_fr.scan(/#{ExtRails::Routes.url_for('/storage-test/')}/).size
+  end
+
+  def after_teardown
+    super
+    case ActiveStorage::Blob.service.class.name
+    when 'ActiveStorage::Service::MirrorService'
+      ([ActiveStorage::Blob.service.primary] + ActiveStorage::Blob.service.mirrors).each do |service|
+        FileUtils.rm_rf(service.root)
+        FileUtils.mkdir_p(service.root)
+      end
+    when 'ActiveStorage::Service::DiskService'
+      FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+      FileUtils.mkdir_p(ActiveStorage::Blob.service.root)
+    end
   end
 end

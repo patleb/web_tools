@@ -1,12 +1,30 @@
 test:
+  service: Mirror
+  primary: test_public
+  mirrors: [ test_private ]
+
+test_public:
   service: Disk
   root: <%= Rails.root.join("public/storage-test") %>
   public: true
 
+test_private:
+  service: Disk
+  root: <%= Rails.root.join("storage/test") %>
+
 local:
+  service: Mirror
+  primary: local_public
+  mirrors: [ local_private ]
+
+local_public:
   service: Disk
   root: <%= Rails.root.join("public/storage") %>
   public: true
+
+local_private:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
 
 # Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:

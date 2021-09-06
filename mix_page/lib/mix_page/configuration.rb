@@ -13,6 +13,7 @@ module MixPage
     attr_writer   :available_fieldables
     attr_writer   :member_actions
     attr_writer   :max_children_count
+    attr_writer   :max_image_size
     attr_accessor :skip_sidebar_link
 
     def js_routes
@@ -72,6 +73,10 @@ module MixPage
 
     def member_actions
       @member_actions ||= %i(edit delete)
+    end
+
+    def max_image_size
+      @max_image_size ||= 2.megabytes
     end
 
     def max_children_count
