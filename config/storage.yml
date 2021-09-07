@@ -13,11 +13,6 @@ test_private:
   root: <%= Rails.root.join("storage/test") %>
 
 local:
-  service: Mirror
-  primary: local_public
-  mirrors: [ local_private ]
-
-local_public:
   service: Disk
   root: <%= Rails.root.join("public/storage") %>
   public: true

@@ -44,7 +44,8 @@ module PageFields
             next
           end
           io = StringIO.new(Base64.decode64(src.split(',').last))
-          blob = ActiveStorage::Blob.build_after_unfurling(io: io, filename: filename)
+          blob = ActiveStorage::Blob.build_after_unfurling(io: io, filename: '') # extract content type by io only
+          blob.filename = filename
           (blobs[locale] ||= []) << [img, io, blob]
         end
       end
@@ -60,11 +61,12 @@ module PageFields
             errors.add("text_#{locale}", :file_size_out_of_range, file_size: blob.byte_size)
             next (error = true)
           end
-
           next if error
+
           blob = existing_blob(blob) || blob
-          if blob.new_record?
+          if blob.new_record? || blob.backup_missing?
             blob.save!
+            blob.backup_file(io)
             blob.upload_without_unfurling(io)
           end
           attachment = images_attachments.find_or_create_by! blob: blob

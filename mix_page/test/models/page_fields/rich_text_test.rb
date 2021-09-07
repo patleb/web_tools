@@ -45,7 +45,8 @@ class PageFields::RichTextTest < ActiveSupport::TestCase
     assert_nil Job.dequeue
     rich_text = PageFields::RichText.first
     assert_equal 2, rich_text.images_attachments.count
-    assert_equal 2, rich_text.images_attachments.flat_map(&:blob).count
+    assert_equal 2, rich_text.images_blobs.count
+    assert_equal 1, rich_text.images_blobs.select_map(&:backup).count
     assert_equal 2, rich_text.text_en.scan(/#{ExtRails::Routes.url_for('/storage-test/')}/).size
     assert_equal 2, rich_text.text_fr.scan(/#{ExtRails::Routes.url_for('/storage-test/')}/).size
   end

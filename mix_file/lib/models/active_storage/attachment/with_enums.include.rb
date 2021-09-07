@@ -1,4 +1,4 @@
-module ActiveStorage::Attachment::WithFile
+module ActiveStorage::Attachment::WithEnums
   extend ActiveSupport::Concern
 
   included do
