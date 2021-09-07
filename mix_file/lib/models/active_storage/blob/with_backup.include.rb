@@ -21,9 +21,14 @@ module ActiveStorage::Blob::WithBackup
     end
   end
 
+  def restore_file!
+    raise 'no backup' unless restore_file
+  end
+
   def restore_file
-    raise 'no backup' unless backup
+    return false unless backup
     io = StringIO.new(backup.data)
     upload_without_unfurling(io)
+    true
   end
 end
