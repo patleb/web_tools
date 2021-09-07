@@ -26,28 +26,55 @@ namespace :ftp do
 
   desc 'Mount FTP drive'
   task :mount, [:user_id, :group_id] => :environment do |t, args|
-    user_id = args[:user_id] || 1001
-    group_id = args[:group_id] || user_id
+    ftp_create_mount_path
+    sh ftp_drive_mount_cmd(args)
+  end
+
+  desc 'Unmount FTP drive'
+  task :unmount => :environment do
+    sh "sudo fusermount -u #{Setting[:ftp_mount_path]}"
+  end
+
+  namespace :nohup do
+    desc 'Mount FTP drive'
+    task :mount, [:user_id, :group_id] => :environment do |t, args|
+      ftp_create_mount_path
+      sh ftp_drive_mount_cmd(args, nohup: true)
+    end
+
+    desc 'Unmount FTP drive'
+    task :unmount => :environment do
+      sh "sudo pkill -P $(cat /home/#{Setting[:deployer_name]}/curlftpfs.pid)"
+    end
+  end
+
+  def ftp_create_mount_path
     sh "sudo mkdir -p #{Setting[:ftp_mount_path]}"
     sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{Setting[:ftp_mount_path]}"
-    options = %W(
+  end
+
+  def ftp_drive_mount_cmd(args, nohup: false)
+    <<~CMD.squish.gsub('\\', '\\\\\\')
+      sudo nohup curlftpfs #{'-f' if nohup} -o '#{ftp_drive_options(args).join(',')}'
+        '#{Setting[:ftp_host]}:#{Setting[:ftp_drive_path]}' #{Setting[:ftp_mount_path]}
+        >> /home/#{Setting[:deployer_name]}/curlftpfs.log 2>&1
+        #{"& sleep 1 && echo $! > /home/#{Setting[:deployer_name]}/curlftpfs.pid" if nohup}
+    CMD
+  end
+
+  def ftp_drive_options(args)
+    user_id = args[:user_id] || Setting[:deployer_id] || 1001
+    group_id = args[:group_id] || user_id
+    %W(
       allow_other
       ssl
       no_verify_peer
       no_verify_hostname
       nonempty
       user=#{Setting[:ftp_username]}:#{Setting[:ftp_password]}
-    ).reject(&:blank?)
-    sh <<~CMD.squish.gsub('\\', '\\\\\\')
-      sudo nohup curlftpfs -f -o '#{options.join(',')},uid=#{user_id},gid=#{group_id}'
-        '#{Setting[:ftp_host]}:#{Setting[:ftp_drive_path]}' #{Setting[:ftp_mount_path]}
-        >> /home/#{Setting[:deployer_name]}/curlftpfs.log 2>&1 & sleep 1
-        && echo $! > /home/#{Setting[:deployer_name]}/curlftpfs.pid
-    CMD
-  end
-
-  desc 'Unmount FTP drive'
-  task :unmount => :environment do
-    sh "sudo pkill -P $(cat /home/#{Setting[:deployer_name]}/curlftpfs.pid)"
+    ).reject(&:blank?).concat(%W(
+      uid=#{user_id}
+      gid=#{group_id}
+    ))
   end
 end

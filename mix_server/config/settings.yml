@@ -11,6 +11,8 @@ shared:
   postgis: 3
   min_instances: 1
   max_pool_size: 6
+  owner_id: 1000
+  deployer_id: 1001
   deployer_name: deployer
   osquery_logger_path: /var/log/osquery
   osquery_logger_level: 1
