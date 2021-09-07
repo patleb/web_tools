@@ -26,7 +26,6 @@ module PageFields
 
     private
 
-    # TODO cron job to clear orphans
     def create_or_purge_images
       urls = images_attachments.map{ |record| [record.url, record] }.to_h
       blobs, bodies = {}, {}
