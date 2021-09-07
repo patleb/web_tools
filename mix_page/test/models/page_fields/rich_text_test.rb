@@ -23,7 +23,10 @@ class PageFields::RichTextTest < ActiveSupport::TestCase
     MixJob.with do |config|
       config.async = false
       MixPage.with do |config|
-        config.available_templates = { 'generic_multi' => 0 }
+        config.available_templates = {
+          'generic_multi' => 0,
+          'home' => 10
+        }
         config.max_image_size = 500.bytes
         test.call
       end
@@ -33,7 +36,7 @@ class PageFields::RichTextTest < ActiveSupport::TestCase
   it 'should replace base64 images with attachments' do
     template = PageTemplate.create! view: PageTemplate.available_views.keys.first
     field = template.page_fields.create! type: 'PageFields::RichText', name: 'page_texts'
-    blob = ActiveStorage::Blob.create! key: key, filename: 'no_file.png', content_type: 'image/png', service_name: 'test', byte_size: 1, checksum: Digest::MD5.base64digest('0')
+    blob = ActiveStorage::Blob.create! key: key, filename: 'no_file.png', content_type: 'image/png', service_name: 'test', byte_size: 0, checksum: Digest::MD5.base64digest('')
     ActiveStorage::Attachment.create! name: 'images', record: field, blob: blob
 
     field.update! text_fr: text + url, text_en: text + text

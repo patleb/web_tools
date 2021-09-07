@@ -14,6 +14,16 @@ module RailsAdmin
       ENV['DEVISE_USER'] = user.email
     end
 
+    around do |test|
+      MixPage.with do |config|
+        config.available_templates = {
+          'generic_multi' => 0,
+          'home' => 10
+        }
+        test.call
+      end
+    end
+
     it 'should run the task correctly' do
       assert_enqueued_with(job: TaskJob) do
         put rails_admin.edit_url(model_name: 'task', id: 'try:send_email'), params: { task: { notify: '1', _perform: '1' }, _save: '' }

@@ -6,6 +6,13 @@ module ActiveJob
     class JobAdapterTest < ActiveSupport::TestCase
       include JobAdapterContext
 
+      around do |test|
+        MixJob.with do |config|
+          config.async = false
+          test.call
+        end
+      end
+
       describe '#perform_now' do
         before do
           SimpleJob.any_instance.expects(:perform).with(*args).returns(:ok)

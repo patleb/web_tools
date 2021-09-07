@@ -4,10 +4,15 @@ require './mix_job/test/libraries/active_job/queue_adapters/job_adapter_context'
 class JobsControllerTest < ActionDispatch::IntegrationTest
   include JobAdapterContext
 
-  delegate :jobs_url, to: 'Rails.application.routes.url_helpers'
-
   def queue_adapter_for_test
     ActiveJob::QueueAdapters::JobAdapter.new
+  end
+
+  around do |test|
+    MixJob.with do |config|
+      config.async = false
+      test.call
+    end
   end
 
   describe '#perform' do

@@ -28,11 +28,11 @@ module PageFields
 
     def create_or_purge_images
       urls = images_attachments.map{ |record| [record.url, record] }.to_h
-      blobs, bodies = {}, {}
+      blobs, texts = {}, {}
       records = I18n.available_locales.each_with_object({}) do |locale, records|
         text = send("text_#{locale}")
         next if text.html_blank?
-        body = bodies[locale] = Nokogiri::HTML(text).css('body > *')
+        body = texts[locale] = Nokogiri::HTML(text).css('body > *')
         body.css('img').each do |img|
           src, filename = img.attributes.values_at('src', 'data-file-name').map(&:to_s)
           if urls.has_key? src
@@ -75,7 +75,7 @@ module PageFields
       end
       return if error
 
-      bodies.each do |locale, body|
+      texts.each do |locale, body|
         send("text_#{locale}=", body.to_html) if blobs[locale].present?
       end
 
