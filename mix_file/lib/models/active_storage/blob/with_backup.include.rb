@@ -23,6 +23,7 @@ module ActiveStorage::Blob::WithBackup
 
   def restore_file
     raise 'no backup' unless backup
-    # convert data to io, then upload_without_unfurling(io)
+    io = StringIO.new(backup.data)
+    upload_without_unfurling(io)
   end
 end
