@@ -26,9 +26,7 @@
 /storage/*
 !/storage/
 !/storage/.keep
-/tmp/storage/*
-!/tmp/storage/
-!/tmp/storage/.keep
+/storage_test/*
 
 /public/assets
 .byebug_history

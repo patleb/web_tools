@@ -57,11 +57,9 @@ class PageFields::RichTextTest < ActiveSupport::TestCase
     when 'ActiveStorage::Service::MirrorService'
       ([ActiveStorage::Blob.service.primary] + ActiveStorage::Blob.service.mirrors).each do |service|
         FileUtils.rm_rf(service.root)
-        FileUtils.mkdir_p(service.root)
       end
     when 'ActiveStorage::Service::DiskService'
       FileUtils.rm_rf(ActiveStorage::Blob.service.root)
-      FileUtils.mkdir_p(ActiveStorage::Blob.service.root)
     end
   end
 end

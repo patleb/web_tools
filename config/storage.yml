@@ -10,7 +10,7 @@ test_public:
 
 test_private:
   service: Disk
-  root: <%= Rails.root.join("storage/test") %>
+  root: <%= Rails.root.join("storage_test") %>
 
 local:
   service: Disk
