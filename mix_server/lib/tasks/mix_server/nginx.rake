@@ -35,10 +35,10 @@ namespace :nginx do
 
   namespace :maintenance do
     desc 'Put application in maintenance mode'
-    task :enable, [:env, :duration] => :environment do |t, args|
+    task :enable, [:env, :app, :duration] => :environment do |t, args|
       ENV['MESSAGE'] = nginx_maintenance_message(args[:duration])
       if args[:env].present?
-        cap_task 'nginx:maintenance:enable', env: args[:env]
+        cap_task 'nginx:maintenance:enable', args.slice(:env, :app)
       else
         nginx_maintenance_push
         ENV['MAINTENANCE'] = true
@@ -48,9 +48,9 @@ namespace :nginx do
     end
 
     desc 'Put the application out of maintenance mode'
-    task :disable, [:env] => :environment do |t, args|
+    task :disable, [:env, :app] => :environment do |t, args|
       if args[:env].present?
-        cap_task 'nginx:maintenance:disable', env: args[:env]
+        cap_task 'nginx:maintenance:disable', args.slice(:env, :app)
       else
         nginx_app_push
       end

@@ -2,7 +2,7 @@ namespace :geoserver do
   %w[start stop restart reload].each do |action|
     desc "#{action.capitalize} GeoServer"
     task action do
-      on release_roles :all do
+      on release_roles fetch(:geoserver_roles) do
         execute :sudo, "systemctl #{action} geoserver"
       end
     end
