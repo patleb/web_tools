@@ -11,6 +11,7 @@
   firewall/deny_mail
   fail2ban
   osquery
+  clamav
 ), base: 'bootstrap') do |name, id| -%>
   sun.source_recipe "<%= name %>" <%= id %>
 <% end -%>

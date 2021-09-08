@@ -2,20 +2,22 @@ namespace :cron do
   namespace :cluster do
     desc 'every day cron jobs cluster'
     task :every_day => :environment do
-      run_task 'check:cleanup' if defined? MixCheck
+      run_task 'check:cleanup'
       run_task 'list:reorganize'
+      run_task 'clamav:scan'
       run_task 'log:extract'
     end
   end
 
   desc 'every day cron jobs'
   task :every_day, [:dump] => :environment do |t, args|
-    run_task 'check:cleanup'  if defined? MixCheck
+    run_task 'check:cleanup'
     run_task 'certificate:lets_encrypt:create_or_renew' if defined? MixCertificate
     run_task 'flash:cleanup'  if defined? MixFlash
     run_task 'geo:import_ips' if defined? MixGeo
     run_task 'global:cleanup'
     run_task 'list:reorganize'
+    run_task 'clamav:scan'
     run_task 'log:cleanup'
     run_task 'log:extract'
     run_task 'log:rollup'

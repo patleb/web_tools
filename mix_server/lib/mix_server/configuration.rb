@@ -2,6 +2,7 @@ module MixServer
   has_config do
     attr_writer :available_providers
     attr_writer :minimum_workers
+    attr_writer :clamav_dirs
 
     def available_providers
       @available_providers ||= {
@@ -24,6 +25,19 @@ module MixServer
         end
         count
       end
+    end
+
+    def clamav_dirs
+      @clamav_dirs ||= %W(
+        /tmp
+        /home/#{Setting[:deployer_name]}
+        /bin
+        /sbin
+        /usr/bin
+        /usr/sbin
+        /usr/local/bin
+        /usr/local/sbin
+      )
     end
 
     def deploy_dir

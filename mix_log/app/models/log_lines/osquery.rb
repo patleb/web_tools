@@ -113,17 +113,5 @@ module LogLines
       text_tiny = text.gsub(/{?#{tiny}}?/, '*') if tiny
       [{ text: text, text_tiny: text_tiny, level: :error }, paths]
     end
-
-    def self.merge_paths(paths)
-      tokens = paths.each_with_object([]) do |path, memo|
-        path.split('/').each_with_index do |token, i|
-          (memo[i] ||= Set.new) << token
-        end
-      end
-      tokens = tokens.map(&:to_a).map do |token|
-        token.size > 1 ? "{#{token.join(',')}}" : token.first
-      end
-      tokens.join('/')
-    end
   end
 end

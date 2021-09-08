@@ -34,7 +34,10 @@ module MixServer
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixLog.config.available_types['LogLines::Worker'] = 150
+      MixLog.config.available_types.merge!(
+        'LogLines::Worker' => 150,
+        'LogLines::Clamav' => 160,
+      )
     end
   end
 end
