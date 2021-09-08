@@ -1,3 +1,4 @@
+sun.backup_move '/etc/default/motd-news'
 sun.backup_compare '/etc/default/grub'
 sun.backup_compare '/etc/sysctl.conf'
 sun.backup_defaults '/etc/fstab'
