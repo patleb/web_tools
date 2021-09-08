@@ -14,8 +14,8 @@ module Cloud::ServerCluster
   end
 
   def server_cluster_paths
-    server_cluster_ips.map do |ip|
-      Setting[:server_cluster_master_data].sub_ext("-#{ip}")
+    server_cluster_ips.each_with_object({}) do |ip, memo|
+      memo[ip] = Setting[:server_cluster_master_data].sub_ext("-#{ip}")
     end
   end
 
@@ -23,13 +23,13 @@ module Cloud::ServerCluster
     if Setting[:server_cluster_ips].present?
       Array.wrap(Setting[:server_cluster_ips])
     else
-      server_cluster.values
+      server_cluster_list.values
     end
   end
 
   # TODO run_locally --> so Openstack credentials don't need to be shared
-  def server_cluster
-    @server_cluster ||= case Setting[:server_cluster_provider]
+  def server_cluster_list
+    @server_cluster_list ||= case Setting[:server_cluster_provider]
       when 'vagrant'   then vagrant_servers(Setting[:server_cluster_name])
       when 'openstack' then openstack_servers(Setting[:server_cluster_name], 'ACTIVE')
       else raise UnsupportedClusterProvider
