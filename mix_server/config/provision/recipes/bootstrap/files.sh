@@ -1,4 +1,6 @@
-sun.backup_move '/etc/default/motd-news'
+if [[ "$__ENV__" != 'vagrant' ]]; then
+  sun.backup_move '/etc/default/motd-news'
+fi
 sun.backup_compare '/etc/default/grub'
 sun.backup_compare '/etc/sysctl.conf'
 sun.backup_defaults '/etc/fstab'
