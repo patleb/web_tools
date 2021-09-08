@@ -39,8 +39,6 @@ namespace :load do
     set :monit_filesystem_size,   -> { '80%' }
     set :monit_filesystem_action, -> { 'alert' }
 
-    append :linked_files, *%w(
-      public/503.html
-    )
+    append :linked_files, 'public/503.html'
   end
 end
