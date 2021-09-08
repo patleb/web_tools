@@ -60,13 +60,15 @@ module RailsAdmin::Main::ExportAction
       # TODO https://github.com/Paxa/light_record
       method = @objects.respond_to?(:find_each) ? :find_each : :each
 
-      CSV.generate(force_quotes: @force_quotes, **generator_options) do |csv|
-        csv << generate_csv_header unless options[:skip_header] || @fields.nil?
+      Parallel.map([options], in_processes: 1) do |options|
+        CSV.generate(force_quotes: @force_quotes, **generator_options) do |csv|
+          csv << generate_csv_header unless options[:skip_header] || @fields.nil?
 
-        @objects.send(method) do |object|
-          csv << generate_csv_row(object)
+          @objects.send(method) do |object|
+            csv << generate_csv_row(object)
+          end
         end
-      end
+      end.first
     end
 
     def generate_csv_header
