@@ -71,8 +71,8 @@ module Process
 
     def private_ip
       @private_ip ||= begin
-        ip = Socket.ip_address_list.reverse.find{ |addrinfo| addrinfo.ipv4_private? }&.ip_address
-        ip || `#{Sh.private_ip}`.strip.presence || `ls /etc/osquery/private_ip | xargs -n 1 basename`.strip
+        ip = Pathname.new('/etc/private_ip').glob('*').first&.basename&.to_s
+        ip || Socket.ip_address_list.find{ |addrinfo| addrinfo.ipv4_private? }&.ip_address
       end
     end
 

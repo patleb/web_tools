@@ -9,6 +9,7 @@
   firewall
   firewall/deny_mail
   fail2ban
+  private_ip
   osquery
   clamav
 ), base: 'bootstrap') do |name, id| -%>
