@@ -11,6 +11,8 @@ module Db
         {
           name:       ['--name=NAME',                  'Dump file name (default to dump)'],
           base_dir:   ['--base-dir=BASE_DIR',          'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
+          version:    ['--[no-]version',               'Add a git version number to the dump'],
+          force:      ['--[no-]force'                  'Force overwrite of the current backup (only for pg_basebackup)'],
           rotate:     ['--[no-]rotate',                'Rotate dumps (only for pg_dump)'],
           days:       ['--days=DAYS',         Integer, 'Number of days in rotation (default to 5, min 5, max 6)'],
           weeks:      ['--weeks=WEEKS',       Integer, 'Number of weeks in rotation (default to 3, min 1, max 3)'],
@@ -52,6 +54,7 @@ module Db
       private
 
       def pg_basebackup
+        sh "sudo rm -f #{dump_path}/*", verbose: false if options.force
         sh "sudo mkdir -p #{dump_path}", verbose: false
         sh "sudo chown -R postgres:postgres #{dump_path}", verbose: false
         sh "sudo chmod +r #{dump_path}", verbose: false
@@ -62,6 +65,7 @@ module Db
             else "-D #{dump_path}"
             end
           sh su_postgres "pg_basebackup -v -Xnone -cfast -Ft #{pg_options} #{output}"
+          sh "sudo touch #{dump_path.join(MixServer.current_version)}"
         end
         sh "sudo cp /home/$(id -nu 1000)/#{Sunzistrano::Context::MANIFEST_DIR}/postgresql.log #{dump_path}/manifest.log"
       end
@@ -199,8 +203,9 @@ module Db
       end
 
       def dump_name
-        return options.name unless !options.physical && !options.csv && options.rotate
-        "#{options.name}_#{rotations.first}"
+        name = !options.physical && !options.csv && options.rotate ? "#{options.name}_#{rotations.first}" : options.name
+        name = "#{name}-#{MixServer.current_version}" if !options.physical && options.version
+        name
       end
 
       def rotation?
