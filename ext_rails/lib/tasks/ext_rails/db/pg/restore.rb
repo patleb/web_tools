@@ -125,7 +125,7 @@ module Db
               notify!(cmd, stderr) if notify?(stderr)
             end
           end
-          post_restore_environment if options.data_only
+          post_restore_environment
           post_restore_timescaledb if options.timescaledb
           post_restore_pgrest if options.pgrest
           output

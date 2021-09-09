@@ -121,7 +121,7 @@ module Db
         skip = options.excludes.reject(&:blank?)
         unless options.migrations
           skip << ActiveRecord::SchemaMigration.table_name
-          skip << 'spatial_ref_sys'
+          skip << 'spatial_ref_sys' if Setting[:postgis_enabled]
         end
         with_db_config do |host, db, user, pwd|
           cmd_options = <<-CMD.squish
