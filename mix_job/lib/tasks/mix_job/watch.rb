@@ -109,7 +109,7 @@ module MixJob
     def check_readiness
       start = Time.current
       sleep 1 while File.exist? WAIT
-      sleep options.server_interval until Rails.env.test? || server_available?
+      sleep options.server_interval until Rails.env.dev_or_test? || server_available?
       @waited = (Time.current - start).to_i
     end
 
