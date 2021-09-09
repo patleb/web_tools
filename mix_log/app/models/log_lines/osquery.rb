@@ -43,8 +43,8 @@ module LogLines
       end
     end
 
-    def self.upgrade_paths
-      @@upgrade_paths ||= conf[:file_paths][:binaries].map(&:delete_suffix.with('%%'))
+    def self.upgraded_binaries
+      @@upgraded_binaries ||= conf[:file_paths][:binaries].map(&:delete_suffix.with('%%'))
     end
 
     def self.parse(log, line, **)
@@ -63,7 +63,7 @@ module LogLines
         ssl_upgrade = task(log)&.ssl_upgrade? created_at
         message, paths = extract_paths(diff, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
           path = row['target_path']
-          next if upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
+          next if upgraded_binaries.any?{ |dir| path.start_with? dir } && has_upgraded
           next if path.start_with?('/etc/nginx/sites-available/') && has_rebooted
           next if path.start_with?('/etc/nginx/ssl/') && ssl_upgrade
           next if MixLog.config.known_files.any? do |f|
@@ -72,13 +72,13 @@ module LogLines
           memo << [path, row['action']].join('/')
         end
       when 'socket_events'
-        # Setting[:server_cluster_master_ip]
-        # ips = Set.new([Process.host.private_ip]).merge(Cloud.server_cluster_ips || [])
+        servers = Set.new(Cloud.servers)
         message, paths = extract_paths(diff, name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
           next unless %w(connect bind).include? row['action']
           path = row['cmdline']
           local = row.values_at('local_address', 'local_port')
           remote = row.values_at('remote_address', 'remote_port')
+          next if servers.include? remote.first
           next if MixLog.config.known_sockets.any? do |type, sockets|
             sockets.any? do |s|
               case type
@@ -89,6 +89,8 @@ module LogLines
           end
           memo << [path, local.join(':'), remote.join(':')].join('/')
         end
+      else
+        message = { text: "threat #{name}", level: :fatal }
       end
       return { filtered: true } unless message
 

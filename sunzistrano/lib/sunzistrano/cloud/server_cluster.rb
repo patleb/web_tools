@@ -1,8 +1,14 @@
 module Cloud::ServerCluster
   class UnsupportedClusterProvider < ::StandardError; end
 
+  def servers
+    [Cloud.server_cluster_master] + Cloud.server_cluster_ips
+  end
+
   def server_cluster_master
-    @server_cluster_master ||= if Setting[:server_cluster_master_ip].present?
+    @server_cluster_master ||= if defined?(Rails) && Rails.env.dev_or_test?
+      '127.0.0.1'
+    elsif Setting[:server_cluster_master_ip].present?
       Setting[:server_cluster_master_ip]
     else
       case Setting[:server_cluster_provider]
@@ -29,10 +35,14 @@ module Cloud::ServerCluster
 
   # TODO run_locally --> so Openstack credentials don't need to be shared
   def server_cluster_list
-    @server_cluster_list ||= case Setting[:server_cluster_provider]
+    @server_cluster_list ||= if defined?(Rails) && Rails.env.dev_or_test?
+      {}
+    else
+      case Setting[:server_cluster_provider]
       when 'vagrant'   then vagrant_servers(Setting[:server_cluster_name])
       when 'openstack' then openstack_servers(Setting[:server_cluster_name], 'ACTIVE')
       else raise UnsupportedClusterProvider
       end
+    end
   end
 end
