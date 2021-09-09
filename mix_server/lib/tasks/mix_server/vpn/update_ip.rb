@@ -40,7 +40,7 @@ module MixServer
           },
           hosted_zone_id: dns_zone.id
         )
-        MixServer.config.shared_dir.join('vpn_ip').write(@ip)
+        MixServer.shared_dir.join('vpn_ip').write(@ip)
       end
 
       protected

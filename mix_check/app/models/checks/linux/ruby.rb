@@ -6,8 +6,8 @@ module Checks
       end
 
       def pids_issue?
-        return unless File.exist? "/etc/nginx/sites-enabled/#{MixServer.config.deploy_dir}"
-        return unless (nginx_conf = Pathname.new("/etc/nginx/sites-available/#{MixServer.config.deploy_dir}")).exist?
+        return unless File.exist? "/etc/nginx/sites-enabled/#{MixServer.deploy_dir}"
+        return unless (nginx_conf = Pathname.new("/etc/nginx/sites-available/#{MixServer.deploy_dir}")).exist?
         return unless nginx_conf.readlines.none?{ |line| line.match? /^\s*return 503;/ }
         return unless self.class.host.uptime > 5.minutes
         return unless (Time.current - Server.current.created_at) > 5.minutes

@@ -1,12 +1,12 @@
 namespace :nginx do
   def nginx_maintenance_push
     html = compile 'config/deploy/templates/503.html'
-    mv html, MixServer.config.shared_dir.join('public/503.html')
+    mv html, MixServer.shared_dir.join('public/503.html')
   end
 
   def nginx_app_push
     conf = compile 'config/deploy/templates/nginx/app.conf'
-    sh "sudo mv #{conf} /etc/nginx/sites-available/#{MixServer.config.deploy_dir}"
+    sh "sudo mv #{conf} /etc/nginx/sites-available/#{MixServer.deploy_dir}"
     nginx_reload
   end
 

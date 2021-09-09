@@ -68,11 +68,11 @@ class TemplatesController < MixTemplate.config.parent_controller.constantize
     @root_pjax = true
     @app_name = @page_title = @page_description = Rails.application.title
     @page_web_app_capable = MixTemplate.config.web_app_capable
-    @page_version = Server.current_version
+    @page_version = MixServer.current_version
   end
 
   def versionize
-    response.set_header('X-PAGE-VERSION', Server.current_version)
+    response.set_header('X-PAGE-VERSION', MixServer.current_version)
   end
 
   def pjax_layout?

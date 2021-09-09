@@ -129,7 +129,7 @@ module MixLog
 
     def passenger_log_path(*type, name)
       type = type.first
-      name = "#{MixServer.config.deploy_dir}#{"_#{type.to_s.full_underscore}" if type}.#{name}"
+      name = "#{MixServer.deploy_dir}#{"_#{type.to_s.full_underscore}" if type}.#{name}"
       log_path(:nginx, name)
     end
 

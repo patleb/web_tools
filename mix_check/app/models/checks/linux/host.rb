@@ -26,7 +26,7 @@ module Checks
       validates :ruby, check: true
 
       def self.list
-        version = Server.current_version if Server.current_version != snapshot&.dig(:version)
+        version = MixServer.current_version if MixServer.current_version != snapshot&.dig(:version)
         [{ id: host.private_ip, version: version }]
       end
 
@@ -41,7 +41,7 @@ module Checks
       def self.capture
         last_updated_at = LogLines::Host.last_messages(text_tiny: host.private_ip).pick(:updated_at)
         if last_updated_at.nil? || last_updated_at < (Setting[:check_interval] - 30.seconds).ago
-          snapshot = host.build_snapshot.merge(version: Server.current_version)
+          snapshot = host.build_snapshot.merge(version: MixServer.current_version)
           Log.host(current)
           Global[snapshot_key] = snapshot
           reset

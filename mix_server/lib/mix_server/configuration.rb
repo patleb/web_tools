@@ -27,10 +27,6 @@ module MixServer
       end
     end
 
-    def no_reboot_file
-      shared_dir.join('tmp/files/no_reboot')
-    end
-
     def clamav_dirs
       @clamav_dirs ||= %W(
         /tmp
@@ -42,18 +38,6 @@ module MixServer
         /usr/local/bin
         /usr/local/sbin
       )
-    end
-
-    def deploy_dir
-      @deploy_dir ||= "#{Rails.app}_#{Rails.env}"
-    end
-
-    def shared_dir
-      if Rails.env.dev_or_test?
-        Rails.root
-      else
-        Rails.root.join('..', '..', 'shared').expand_path
-      end
     end
   end
 end

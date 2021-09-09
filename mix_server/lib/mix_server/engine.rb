@@ -2,6 +2,29 @@ require 'ext_ruby'
 require 'mix_server/configuration'
 
 module MixServer
+  def self.current_version
+    @current_version ||= begin
+      version_path = Rails.root.join('REVISION')
+      version_path.exist? ? version_path.read.first(8) : `git rev-parse --short HEAD`.strip
+    end
+  end
+
+  def self.no_reboot_file
+    shared_dir.join('tmp/files/no_reboot')
+  end
+
+  def self.deploy_dir
+    @deploy_dir ||= "#{Rails.app}_#{Rails.env}"
+  end
+
+  def self.shared_dir
+    if Rails.env.dev_or_test?
+      Rails.root
+    else
+      Rails.root.join('..', '..', 'shared').expand_path
+    end
+  end
+
   class Engine < ::Rails::Engine
     require 'mix_server/rake/dsl'
     require 'mix_server/sh'
