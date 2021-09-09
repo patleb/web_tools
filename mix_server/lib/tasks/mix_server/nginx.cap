@@ -59,7 +59,8 @@ namespace :nginx do
     end
 
     desc "Enable maintenance mode"
-    task :enable do
+    task :enable, [:duration] do |t, args|
+      ENV['MESSAGE'] = nginx_maintenance_message(args[:duration])
       invoke 'nginx:maintenance:push'
       ENV['MAINTENANCE'] = true
       invoke 'nginx:app:push'
@@ -139,4 +140,8 @@ namespace :nginx do
       end
     end
   end
+end
+if Gem.loaded_specs['mix_job']
+  before 'nginx:maintenance:enable', 'job:stop'
+  after 'nginx:maintenance:disable', 'job:start'
 end

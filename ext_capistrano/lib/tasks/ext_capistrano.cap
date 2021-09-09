@@ -37,7 +37,7 @@ namespace :load do
       log
       node_modules
       public/packs
-      tmp/bash
+      tmp/files
       tmp/cache
       tmp/pids
     )

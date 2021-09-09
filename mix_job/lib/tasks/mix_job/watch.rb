@@ -34,7 +34,7 @@ module MixJob
 
     def self.steps
       %i(
-        check_wait_file
+        check_readiness
         restore_signals
         setup_trapping
         setup_signaling
@@ -106,9 +106,10 @@ module MixJob
       end
     end
 
-    def check_wait_file
+    def check_readiness
       start = Time.current
       sleep 1 while File.exist? WAIT
+      sleep options.server_interval until Rails.env.test? || server_available?
       @waited = (Time.current - start).to_i
     end
 

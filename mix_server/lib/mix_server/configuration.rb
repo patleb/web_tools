@@ -27,6 +27,10 @@ module MixServer
       end
     end
 
+    def no_reboot_file
+      shared_dir.join('tmp/files/no_reboot')
+    end
+
     def clamav_dirs
       @clamav_dirs ||= %W(
         /tmp

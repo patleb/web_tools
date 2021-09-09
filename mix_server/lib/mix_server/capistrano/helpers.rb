@@ -8,6 +8,10 @@ module MixServer
       execute :sudo, "systemctl restart pgrest"
     end
 
+    def nginx_maintenance_message(...)
+      Rake::DSL.nginx_maintenance_message(...)
+    end
+
     def nginx_reload!
       unless nginx_reload
         error "Could not reload Nginx, trying start."

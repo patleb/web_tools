@@ -12,7 +12,7 @@ namespace :load do
 end
 
 namespace :job do
-  %w[start stop restart].each do |action|
+  %w(start stop restart).each do |action|
     desc "#{action.capitalize} job service"
     task action do
       on release_roles fetch(:job_roles) do

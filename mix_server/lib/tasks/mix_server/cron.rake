@@ -35,7 +35,9 @@ namespace :cron do
 
   desc 'every week cron jobs'
   task :every_week => :environment do
-    run_task 'cron:reboot' if File.exist? '/var/run/reboot-required'
+    next unless File.exist?('/var/run/reboot-required')
+    next if MixServer.config.no_reboot_file.exist?
+    run_task 'cron:reboot'
   end
 
   desc 'reboot'
@@ -63,5 +65,17 @@ namespace :cron do
     run_task 'nginx:maintenance:disable'
 
     exec 'sudo reboot'
+  end
+
+  namespace :reboot do
+    desc 'disable reboot'
+    task :disable => :environment do
+      FileUtils.touch MixServer.config.no_reboot_file
+    end
+
+    desc 'enable reboot'
+    task :enable => :environment do
+      MixServer.config.no_reboot_file.delete(false)
+    end
   end
 end
