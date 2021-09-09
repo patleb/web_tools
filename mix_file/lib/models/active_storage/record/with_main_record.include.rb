@@ -1,3 +1,7 @@
 module ActiveStorage::Record::WithMainRecord
-  include AsMainRecord
+  extend ActiveSupport::Concern
+
+  included do
+    include AsMainRecord
+  end
 end

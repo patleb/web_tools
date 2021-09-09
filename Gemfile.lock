@@ -562,7 +562,7 @@ GEM
       racc (~> 1.4)
     null-logger (0.1.7)
     numerizer (0.1.1)
-    oj (3.13.4)
+    oj (3.13.5)
     orm_adapter (0.5.0)
     parallel (1.20.2)
     pg (1.2.3)
