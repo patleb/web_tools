@@ -59,10 +59,12 @@ module LogLines
         message = { text: name, level: level }
       when 'file_events'
         has_upgraded = apt_history(log)&.has_upgraded? created_at
+        has_rebooted = host(log)&.has_rebooted? created_at
         ssl_upgrade = task(log)&.ssl_upgrade? created_at
         message, paths = extract_paths(diff, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
           path = row['target_path']
           next if upgrade_paths.any?{ |dir| path.start_with? dir } && has_upgraded
+          next if path.start_with?('/etc/nginx/sites-available/') && has_rebooted
           next if path.start_with?('/etc/nginx/ssl/') && ssl_upgrade
           next if MixLog.config.known_files.any? do |f|
             f.is_a?(Regexp) ? path.match?(f) : path == f
