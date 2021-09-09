@@ -28,6 +28,10 @@ Rails::Application.class_eval do
 end
 
 module Rails
+  def self.stage
+    @_stage ||= app.base? ? env.to_s : "#{env}:#{app}"
+  end
+
   def self.app
     @_app ||= AppStringInquirer.new(ENV["RAILS_APP"].presence || ENV["RACK_APP"].presence || application.name)
   end

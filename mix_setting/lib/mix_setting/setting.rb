@@ -13,7 +13,7 @@ class Setting
   METHOD = '$METHOD'.freeze
   ALIAS  = '$ALIAS'.freeze
   REMOVE = '$REMOVE'.freeze
-  FREED_IVARS = %i(@types @secrets @database @aliases @methods @removed @replaced @types)
+  FREED_IVARS = %i(@types @secrets @database @aliases @methods @removed @replaced)
 
   class << self
     delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, :select, :select_map, :reject, to: :all
@@ -38,7 +38,7 @@ class Setting
     if @all_was
       previous = []
       current  = []
-      instance_variables.each{ |ivar| ivar.end_with?('_was') ? previous << ivar : current << ivar }
+      instance_variables.except(:@default_app).each{ |ivar| ivar.end_with?('_was') ? previous << ivar : current << ivar }
       current.each{ |ivar| instance_variable_set(ivar, instance_variable_get("#{ivar}_was")) }
       previous.each{ |ivar| instance_variable_set(ivar, nil) }
     end
@@ -55,7 +55,7 @@ class Setting
 
   def self.all(force = false, env: rails_env, app: rails_app, freeze: true)
     if force
-      current = instance_variables.reject{ |ivar| ivar.end_with?('_was') }
+      current = instance_variables.except(:@default_app).reject{ |ivar| ivar.end_with?('_was') }
       current.each{ |ivar| instance_variable_set("#{ivar}_was", instance_variable_get(ivar)) }
       current.each{ |ivar| instance_variable_set(ivar, nil) }
       remove_instance_variable(:@encryptor) if instance_variable_defined? :@encryptor
@@ -95,7 +95,9 @@ class Setting
     encryptor.decrypt_and_verify(value.delete_prefix(SECRET).strip).unescape_newlines
   end
 
-  private_class_method
+  def self.rails_stage
+    rails_app == default_app ? rails_env : "#{rails_env}:#{rails_app}"
+  end
 
   def self.rails_env
     case
@@ -110,15 +112,22 @@ class Setting
     when @app             then @app
     when ENV['RAILS_APP'] then ENV['RAILS_APP']
     when defined?(Rails)  then Rails.app.to_s
+    else default_app
     end
   end
 
-  def self.gem_root(name)
-    @gems[name] ||= Gem.root(name) or raise "gem [#{name}] not found"
+  def self.default_app
+    @default_app ||= File.read('config/application.rb')[/^module \w+$/].split.last.underscore
   end
 
   def self.gems
     @gems
+  end
+
+  private_class_method
+
+  def self.gem_root(name)
+    @gems[name] ||= Gem.root(name) or raise "gem [#{name}] not found"
   end
 
   def self.encryptor?

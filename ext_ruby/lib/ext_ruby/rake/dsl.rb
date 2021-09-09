@@ -53,7 +53,7 @@ module Rake
     module_function :compile
 
     def app_name
-      @_app_name ||= File.read('config/application.rb')[/^module \w+$/].split.last.underscore
+      @_app_name ||= Setting.default_app
     end
 
     def app_secret
