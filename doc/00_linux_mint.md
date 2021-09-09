@@ -177,8 +177,6 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $OSQUERY_
 sudo add-apt-repository 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'
 sudo apt-get update
 sudo apt-get install osquery
-sudo mkdir -p /etc/osquery/private_ip
-sudo touch "/etc/osquery/private_ip/$(hostname -I | awk '{print $NF; exit}')"
 ```
 
 ## RocksDB
