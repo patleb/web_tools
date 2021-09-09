@@ -14,8 +14,7 @@ module Db
 
       def self.args
         {
-          name:        ['--name=NAME',                'Dump file name', :required],
-          base_dir:    ['--base-dir=BASE_DIR',        'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
+          path:        ['--path=PATH',                'Dump path', :required],
           includes:    ['--includes=INCLUDES', Array, 'Included tables for pg_restore'],
           md5:         ['--[no-]md5',                 'Check md5 files if present (default to true)'],
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
@@ -28,7 +27,6 @@ module Db
 
       def self.defaults
         {
-          base_dir: Rails.root.join('db'),
           includes: [],
           md5: true,
         }
@@ -192,7 +190,7 @@ module Db
       end
 
       def dump_path
-        @dump_path ||= Pathname.new(options.base_dir).join(options.name).expand_path
+        @dump_path ||= Pathname.new(options.path).expand_path
       end
     end
   end
