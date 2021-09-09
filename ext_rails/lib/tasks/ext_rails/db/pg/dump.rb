@@ -4,13 +4,13 @@ module Db
   module Pg
     class Dump < Base
       SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
-      SPLIT_SIZE = Setting[:db_pg_dump_split_size]
+      SPLIT_SIZE = Setting[:backup_split_size]
       PIGZ_CORES = (Etc.nprocessors / 2.0).ceil
 
       def self.args
         {
-          name:       ['--name=NAME',                  'Dump file name (default to dump)'],
-          base_dir:   ['--base-dir=BASE_DIR',          'Dump file(s) base directory (default to ENV["RAILS_ROOT"]/db)'],
+          name:       ['--name=NAME',                  'Dump file name (default to "dump")'],
+          base_dir:   ['--base-dir=BASE_DIR',          'Dump file(s) base directory (default to Setting[:backup_dir])'],
           version:    ['--[no-]version',               'Add a git version number to the dump'],
           force:      ['--[no-]force'                  'Force overwrite of the current backup (only for pg_basebackup)'],
           rotate:     ['--[no-]rotate',                'Rotate dumps (only for pg_dump)'],
@@ -34,7 +34,7 @@ module Db
       def self.defaults
         {
           name: 'dump',
-          base_dir: Rails.root.join('db'),
+          base_dir: Setting[:backup_dir],
           includes: [],
           excludes: [],
           migrations: true,

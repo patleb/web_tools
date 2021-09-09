@@ -24,7 +24,6 @@ namespace :cron do
     run_task 'log:report'
     if flag_on? args, :dump
       run_task 'db:pg:dump',
-        base_dir: ExtRails.config.backup_dir,
         split: true,
         md5: true,
         rotate: true,

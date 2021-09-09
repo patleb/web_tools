@@ -1,6 +1,7 @@
 types:
   mail_to: emails
   server_ssl: boolean
+  backup_dir: pathname
 
 shared:
   default_url_options: $METHOD
@@ -11,17 +12,20 @@ shared:
   mail_port: 1025
   pgstats_enabled: true
   pgrepack_enabled: true
-  db_pg_dump_split_size: 2
+  backup_split_size: 2
+  backup_dir: /opt/storage/backup
 
 test:
   server_host: localhost
   server_port: 3000
   mail_domain: $ALIAS server
+  backup_dir: ./tmp/backup
 
 development:
   server_host: localhost
   server_port: 3000
   mail_domain: $ALIAS server
+  backup_dir: ./tmp/backup
 
 vagrant:
   server_ssl: true

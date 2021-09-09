@@ -6,7 +6,6 @@ module ExtRails
     attr_writer :skip_discard
     attr_writer :excluded_models
     attr_writer :backup_excludes
-    attr_writer :backup_dir
     attr_writer :db_partitions
 
     def sql_debug?
@@ -30,10 +29,6 @@ module ExtRails
 
     def backup_excludes
       @backup_excludes ||= Set.new
-    end
-
-    def backup_dir
-      @backup_dir ||= Rails.root.join('db')
     end
 
     def db_partitions
