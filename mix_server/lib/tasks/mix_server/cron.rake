@@ -70,7 +70,7 @@ namespace :cron do
   namespace :reboot do
     desc 'disable reboot'
     task :disable => :environment do
-      FileUtils.touch MixServer.config.no_reboot_file
+      MixServer.config.no_reboot_file.touch
     end
 
     desc 'enable reboot'

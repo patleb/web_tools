@@ -1,6 +1,11 @@
 require 'pathname'
 
 module Pathname::WithoutRaise
+  def touch
+    FileUtils.touch self
+    self
+  end
+
   def delete(raise_on_no_entry = true)
     raise_on_no_entry ? super() : _delete
   end
