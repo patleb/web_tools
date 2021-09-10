@@ -196,7 +196,7 @@ module Db
       end
 
       def dump_wal_dir
-        @dump_wal_dir ||= dump_path.sub_ext('_wal')
+        @dump_wal_dir ||= dump_path.sub_ext('-wal')
       end
 
       def dump_path
