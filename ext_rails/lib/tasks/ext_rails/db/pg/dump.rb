@@ -4,6 +4,8 @@ module Db
       SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
       SPLIT_SIZE = Setting[:backup_split_size]
       PIGZ_CORES = (Etc.nprocessors / 2.0).ceil
+      EXTENSIONS = /\.[\w.-]+$/
+      VERSION    = /[a-f0-9]{8}/
 
       def self.args
         {
@@ -84,9 +86,9 @@ module Db
           sleep 1 while system("sudo pgrep pg_receivewal")
           psql! "SELECT * FROM pg_drop_replication_slot('#{slot_name}')"
           if compress
-            sh su_postgres "tar cvf - -C #{dump_wal_dir} . | #{compress_cmd(wal_file)}"
+            sh su_postgres "tar cvfm - -C #{dump_wal_dir} . | #{compress_cmd(wal_file)}"
           else
-            sh su_postgres "tar -cvf #{wal_file} -C #{dump_wal_dir} ."
+            sh su_postgres "tar -cvfm #{wal_file} -C #{dump_wal_dir} ."
             sh "sudo md5sum #{wal_file} | sudo tee #{wal_file}.md5 > /dev/null" if options.md5
           end
         end
@@ -139,12 +141,17 @@ module Db
       end
 
       def rotate_dump
-        dump_dates = Pathname.new(dump_path.dirname).glob("#{options.name}_*").map do |path|
-          path.basename.to_s.gsub(/(^#{options.name}_|\.[\w.-]+$)/, '')
+        dump_dates = Pathname.new(dump_path.dirname).glob("#{options.name}_*").select_map do |path|
+          path = path.basename.to_s.gsub(/(^#{options.name}_|-#{VERSION}|#{EXTENSIONS})/, '')
+          path if path.match? /^\d{4}_\d{2}_\d{2}$/
         end.uniq
         (dump_dates - rotations).each do |date|
           dump_path.dirname.glob("#{options.name}_#{date}*").each(&:delete)
         end
+        dump_versions = Pathname.new(dump_path.dirname).glob("#{options.name}_#{rotations.first}-*").select_map do |path|
+          path unless path.basename.to_s.match? /-#{MixServer.current_version}#{EXTENSIONS}/
+        end
+        dump_versions.each(&:delete)
       end
 
       def split_cmd(file)
