@@ -20,7 +20,13 @@ module Sh::Ftp
   end
 
   def ftp_remove(match, **options)
-    ftp "mrm -r #{match}", **options
+    match = match.to_s.dup
+    if match.delete_suffix! '/*'
+      ftp "rm -r #{match}", **options
+      ftp "mkdir -f #{match}", **options
+    else
+      ftp "rm #{match}", **options
+    end
   end
 
   def ftp_rename(old_name, new_name, **options)

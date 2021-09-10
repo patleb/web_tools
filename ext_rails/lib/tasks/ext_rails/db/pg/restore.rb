@@ -1,3 +1,4 @@
+# TODO https://www.depesz.com/2007/07/05/how-to-insert-data-to-database-as-fast-as-possible/
 # TODO https://ossc-db.github.io/pg_bulkload/index.html
 # TODO PITR --> https://www.scalingpostgres.com/tutorials/postgresql-backup-point-in-time-recovery/
 # TODO excludes --> use --list

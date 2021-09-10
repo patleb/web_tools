@@ -49,7 +49,7 @@ module Db
         cmd = Sh.psql command, (ExtRails.config.db_url unless sudo)
         cmd = [cmd, *sh_rest, (' > /dev/null' if silent)].join(' ')
         stdout, stderr, _status = Open3.capture3(cmd)
-        notify!(cmd, stderr) if raise_on_error && respond_to?(:notify?, true) && notify?(stderr)
+        notify!(cmd, stderr) if raise_on_error && notify?(stderr)
         stdout.strip
       end
 
