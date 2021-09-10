@@ -8,7 +8,7 @@ namespace :geo do
 
   desc 'dump geo tables'
   task :dump_tables => :environment do |t|
-    name = "geo_#{ActiveRecord::InternalMetadata[:geolite2_version].tr('.', '-')}"
+    name = "geo_#{Global[:geolite2_version].tr('.', '-')}"
     Db::Pg::Dump.new(self, t, name: name, includes: MixGeo::CreateIps::GEO_TABLES).run!
   end
 
@@ -18,7 +18,7 @@ namespace :geo do
     file = File.exist?(file) ? file : Dir.glob('db/geo_*.pg.gz').sort.last
     file = File.basename(file)
     Db::Pg::Restore.new(self, t, name: file, pg_options: '--disable-triggers --data-only').run!
-    ActiveRecord::InternalMetadata[:geolite2_version] = file[/[\d-]+/].tr('-', '.')
+    Global[:geolite2_version] = file[/[\d-]+/].tr('-', '.')
     GeoState.all.each(&:update_searches)
   end
 end

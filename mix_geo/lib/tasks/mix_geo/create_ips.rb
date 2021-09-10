@@ -35,7 +35,7 @@ module MixGeo
 
     def prepare_csv_file
       mkdir_p TMP_GEOLITE2_FOLDER, verbose: false
-      version_was = Gem::Version.new((ActiveRecord::InternalMetadata[:geolite2_version] || '0.0.0'))
+      version_was = Gem::Version.new(GeoIp.exists? && Global[:geolite2_version] || '0.0.0')
       if options.remote
         @version = Gem::Version.new(JSON.parse(URI.open(GIT_GEOLITE2_VERSION))['version'])
         if @version > version_was
@@ -132,7 +132,7 @@ module MixGeo
 
     def save_version
       remove_tmp_files
-      ActiveRecord::InternalMetadata[:geolite2_version] = @version.to_s
+      Global[:geolite2_version] = @version.to_s
     end
 
     private
