@@ -65,7 +65,8 @@ module Db
           sh su_postgres "pg_basebackup -v -Xnone -cfast -Ft #{pg_options} #{output}"
           sh "echo #{MixServer.current_version} | sudo tee #{dump_path}/REVISION > /dev/null"
         end
-        sh "sudo cp /home/$(id -nu 1000)/#{Sunzistrano::Context::MANIFEST_DIR}/postgresql.log #{dump_path}/manifest.log"
+        manifest_path = dump_path.join("#{today}-#{MixServer.current_version}")
+        sh "sudo cp /home/$(id -nu 1000)/#{Sunzistrano::Context::MANIFEST_DIR}/postgresql.log #{manifest_path}"
       end
 
       def pg_receivewal
@@ -210,11 +211,15 @@ module Db
       end
 
       def rotation?
-        rotations.first == Time.current.beginning_of_day.to_date.to_s(:db).tr('-', '_')
+        rotations.first == today
       end
 
       def rotations
         @rotations ||= Time.current.rotations(days: options.days, weeks: options.weeks, months: options.months)
+      end
+
+      def today
+        Time.current.beginning_of_day.to_date.to_s(:db).tr('-', '_')
       end
     end
   end
