@@ -1,6 +1,7 @@
 module Sh::Ftp
   def ftp_mirror(match, base_dir, parallel: nil, **options)
-    ftp "mirror -O #{base_dir} #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c --reverse --delete #{match}", **options
+    match_dir = File.dirname(match)
+    ftp "lcd #{base_dir}; mirror -R -O #{match_dir} #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c -e -f #{match}", **options
   end
 
   def ftp_list(match, **options)
