@@ -101,7 +101,6 @@ module Db
             when compress then "#{uncompress_cmd} |"
             else nil
             end
-          pre_restore_environment if options.data_only
           pre_restore_timescaledb if options.timescaledb
           sections = staged ? %w(pre-data data post-data) : [false]
           sections.unshift('list') if options.data_only
@@ -125,6 +124,7 @@ module Db
             end
           end
           post_restore_environment
+          post_restore_tasks
           post_restore_timescaledb if options.timescaledb
           post_restore_pgrest if options.pgrest
           output
@@ -140,10 +140,6 @@ module Db
         partitions.each do |table, buckets|
           ActiveRecord::Base.create_all_partitions(buckets, table)
         end
-      end
-
-      def pre_restore_environment
-        ActiveRecord::InternalMetadata.where(key: :environment).delete_all
       end
 
       def pre_restore_timescaledb
@@ -168,6 +164,10 @@ module Db
           DELETE FROM #{ActiveRecord::Base.schema_migrations_table_name} WHERE version = '20010000000820'
         SQL
         run_task 'db:migrate'
+      end
+
+      def post_restore_tasks
+        Task.where(state: :running).update_all(state: :unknown) if defined? Task
       end
 
       def staged
