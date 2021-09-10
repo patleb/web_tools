@@ -1,4 +1,8 @@
 module Sh::Ftp
+  def ftp_mirror(match, base_dir, parallel: nil, **options)
+    ftp "mirror #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c --reverse --delete #{match} #{base_dir}", **options
+  end
+
   def ftp_list(match, **options)
     ftp "cls #{match} --sort=name --size --date --time-style=%Y-%m-%dT%H:%M:%S%z --sortnocase", **options
   end
@@ -7,23 +11,22 @@ module Sh::Ftp
     ftp "cat #{match}", **options
   end
 
-  def ftp_download(match, client_dir, parallel: nil, **options)
+  def ftp_download(match, base_dir, parallel: nil, **options)
     files = Array.wrap(match)
     parallel ||= files.size if files.size > 1
-    ftp "mget -O #{client_dir} #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c -d #{files.join(' ')}", **options
+    ftp "mget -O #{base_dir} #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c -d #{files.join(' ')}", **options
   end
 
-  def ftp_upload(match, client_dir, parallel: nil, **options)
+  def ftp_upload(match, base_dir, parallel: nil, **options)
     files = Array.wrap(match)
     parallel ||= files.size if files.size > 1
-    ftp "lcd #{client_dir}; mput #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c -d #{files.join(' ')}", **options
+    ftp "lcd #{base_dir}; mput #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c -d #{files.join(' ')}", **options
   end
 
   def ftp_remove(match, **options)
     match = match.to_s.dup
     if match.delete_suffix! '/*'
-      ftp "rm -r #{match}", **options
-      ftp "mkdir -f #{match}", **options
+      ftp "rm -r #{match}; mkdir -f #{match}", **options
     else
       ftp "rm #{match}", **options
     end
