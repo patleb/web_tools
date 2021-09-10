@@ -22,14 +22,7 @@ namespace :cron do
     run_task 'log:extract'
     run_task 'log:rollup'
     run_task 'log:report'
-    if flag_on? args, :dump
-      run_task 'db:pg:dump',
-        version: true,
-        rotate: true,
-        split: true,
-        md5: true,
-        excludes: ExtRails.config.backup_excludes
-    end
+    run_task 'db:pg:dump:rotate' if flag_on? args, :dump
   end
 
   desc 'every week cron jobs'

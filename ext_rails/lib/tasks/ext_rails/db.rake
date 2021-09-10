@@ -33,6 +33,19 @@ namespace :db do
       end
     end
 
+    namespace :dump do
+      desc 'rotate dumps'
+      task :rotate => :environment do |t|
+        Db::Pg::Dump.new(self, t,
+          version: true,
+          rotate: true,
+          split: true,
+          md5: true,
+          excludes: ExtRails.config.backup_excludes
+        ).run!
+      end
+    end
+
     desc 'Drop all'
     task :drop_all => :environment do
       sh Sh.psql 'DROP OWNED BY CURRENT_USER', ExtRails.config.db_url
