@@ -73,7 +73,6 @@ module Db
         if options.wal
           sh "sudo mkdir -p #{dump_wal_dir}", verbose: false
           sh "sudo chown postgres:postgres #{dump_wal_dir}", verbose: false
-          sh "sudo rm -f #{dump_wal_dir}/*"
           psql! "SELECT * FROM pg_create_physical_replication_slot('#{slot_name}')"
           pid = spawn su_postgres "pg_receivewal --synchronous -S #{slot_name} -D #{dump_wal_dir}"
         end
@@ -87,11 +86,12 @@ module Db
           sleep 1 while system("sudo pgrep pg_receivewal")
           psql! "SELECT * FROM pg_drop_replication_slot('#{slot_name}')"
           if compress
-            sh su_postgres "tar cvfm - -C #{dump_wal_dir} . | #{compress_cmd(wal_file)}"
+            sh su_postgres "tar cvf - -C #{dump_wal_dir} . | #{compress_cmd(wal_file)}"
           else
-            sh su_postgres "tar -cvfm #{wal_file} -C #{dump_wal_dir} ."
+            sh su_postgres "tar -cvf #{wal_file} -C #{dump_wal_dir} ."
             sh "sudo md5sum #{wal_file} | sudo tee #{wal_file}.md5 > /dev/null" if options.md5
           end
+          sh "sudo rm -rf #{dump_wal_dir}"
         end
       end
 
