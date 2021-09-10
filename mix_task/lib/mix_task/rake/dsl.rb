@@ -6,9 +6,10 @@ module Rake
         ARGV.replace([task_name, '--'])
         argv.each do |key, value|
           ARGV << case value
-          when nil, true then "--#{key.to_s.dasherize}"
-          when false     then "--no-#{key.to_s.dasherize}"
-          else                "--#{key.to_s.dasherize}=#{value}"
+          when nil, true  then "--#{key.to_s.dasherize}"
+          when false      then "--no-#{key.to_s.dasherize}"
+          when Array, Set then "--#{key.to_s.dasherize}=#{value.to_a.join(',')}"
+          else                 "--#{key.to_s.dasherize}=#{value}"
           end
         end
       end
