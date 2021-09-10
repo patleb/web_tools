@@ -63,7 +63,6 @@ module Db
             else "-D #{dump_path}"
             end
           sh su_postgres "pg_basebackup -v -Xnone -cfast -Ft #{pg_options} #{output}"
-          sh "echo #{MixServer.current_version} | sudo tee #{dump_path}/REVISION > /dev/null"
         end
         manifest_path = dump_path.join("#{today}-#{MixServer.current_version}")
         sh "sudo cp /home/$(id -nu 1000)/#{Sunzistrano::Context::MANIFEST_DIR}/postgresql.log #{manifest_path}"
