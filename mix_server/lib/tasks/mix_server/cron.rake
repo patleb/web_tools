@@ -23,12 +23,7 @@ namespace :cron do
     run_task 'log:rollup'
     run_task 'log:report'
     if flag_on? args, :dump
-      run_task 'db:pg:dump',
-        split: true,
-        md5: true,
-        rotate: true,
-        excludes: ExtRails.config.backup_excludes.to_a.join(','),
-        migrations: false
+      run_task 'db:pg:dump', split: true, md5: true, rotate: true, excludes: ExtRails.config.backup_excludes.to_a.join(',')
     end
   end
 

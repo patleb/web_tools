@@ -17,6 +17,11 @@ module MixGeo
       append_migrations(app, scope: 'postgis') if Setting[:postgis_enabled]
     end
 
+    initializer 'mix_geo.backup' do
+      ExtRails.config.backup_excludes << 'lib_geo_*'
+      ExtRails.config.backup_excludes.merge(%w(spatial_ref_sys topology layer)) if Setting[:postgis_enabled]
+    end
+
     ActiveSupport.on_load(:active_record) do
       if Setting[:postgis_enabled]
         require 'activerecord-postgis-adapter'

@@ -18,6 +18,10 @@ module MixCertificate
       end
     end
 
+    initializer 'mix_certificate.backup' do
+      ExtRails.config.backup_excludes << 'lib_certificates'
+    end
+
     ActiveSupport.on_load(:active_record) do
       MixLog.config.ided_paths[%r{/(#{ACME_CHALLENGE})/([\w-]+)}] = '/\1/*'
     end

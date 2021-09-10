@@ -28,7 +28,7 @@ module ExtRails
     end
 
     def backup_excludes
-      @backup_excludes ||= Set.new
+      @backup_excludes ||= Set.new([ActiveRecord::SchemaMigration.table_name, ActiveRecord::InternalMetadata.table_name])
     end
 
     def db_partitions

@@ -5,6 +5,7 @@ module Db
 
       def self.ignored_errors
         [
+          /pg_dump: (last built-in|reading|identifying|finding|flagging|saving|dumping)/,
           /pg_restore: (connecting|creating|executing|processing|implied|disabling|enabling)/,
           /Error while PROCESSING TOC/,
           /Error from TOC entry/,
