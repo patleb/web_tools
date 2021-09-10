@@ -45,8 +45,8 @@ when 'staging', 'production'
       rake 'cron:cluster:every_day'
     end
   end
+end
 
-  every Setting[:check_interval] do
-    runner 'Check.capture'
-  end
+every Setting[:check_interval] do
+  runner 'Check.capture'
 end
