@@ -15,6 +15,7 @@ module Db
           /WARNING: errors ignored/,
           /ERROR:.+does not exist/,
           /NOTICE:.+already exists, skipping/,
+          /NOTICE: +truncate/,
           /Command was: (COPY|ALTER TABLE|CREATE INDEX)/,
           'ERROR:  unrecognized configuration parameter "idle_in_transaction_session_timeout"',
           'ERROR:  must be owner of extension plpgsql',
@@ -70,11 +71,7 @@ module Db
 
       def output_error?(line)
         line.present? && self.class.ignored_errors.none? do |ignored_error|
-          if ignored_error.is_a? Regexp
-            line.match ignored_error
-          else
-            line == ignored_error
-          end
+          ignored_error.is_a?(Regexp) ? line.match?(ignored_error) : line == ignored_error
         end
       end
 
