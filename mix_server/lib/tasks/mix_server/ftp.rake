@@ -77,4 +77,55 @@ namespace :ftp do
       gid=#{group_id}
     ))
   end
+
+  namespace :db do
+    desc 'Backup database and upload dump under backup directory'
+    task :backup, [:skip_ftp] => :environment do |t, args|
+      Db::Pg::Dump.new(self, t, args, version: true, split: true, md5: true, physical: true).run!
+      puts_info '[DUMP]', 'done'
+      unless flag_on? args, :skip_ftp
+        sh Sh.ftp_remove(backup_folder.join('dump-old/*')), verbose: false
+        sh Sh.ftp_rename(backup_folder.join('dump/*'), backup_folder.join('dump-old/')), verbose: false
+        sh Sh.ftp_upload(backup_folder.join('dump/*'), backup_root, sudo: true, parallel: 10), verbose: false
+      end
+    end
+
+    desc 'Download dump under backup directory and restore database'
+    task :restore, [:skip_ftp] => :environment do |t, args|
+      unless flag_on? args, :skip_ftp
+        local_md5 = `sudo cat #{Setting[:backup_dir].join('dump/*.md5')}`.strip
+        remote_md5 = run_ftp_list(backup_folder.join('dump/*.md5')).map{ |file| file[:name] }
+        remote_md5 = remote_md5.presence ? run_ftp_cat(remote_md5.join(' ')) : ''
+        if local_md5.blank? || local_md5 != remote_md5
+          sh "sudo rm -f #{Setting[:backup_dir].join('dump/*')}" if local_md5.present?
+          sh Sh.ftp_download(backup_folder.join('dump/*'), backup_root, sudo: true, parallel: 10), verbose: false
+        end
+      end
+      Db::Pg::Restore.new(self, t, args, path: Setting[:backup_dir].join('dump/base.tar.gz-*')).run!
+    end
+
+    namespace :backups do
+      desc 'mirror dumps'
+      task :mirror => :environment do
+        sh Sh.ftp_mirror(backup_folder.join('dump_*'), backup_root, sudo: true, parallel: 10), verbose: false
+      end
+
+      desc 'restore dated dump'
+      task :restore, [:date, :version] => :environment do |t, args|
+        raise 'must specify a date' unless (date = args[:date]&.tr('-', '_')).present?
+        raise 'must specify git short hash' unless (version = args[:version]).present?
+        dump_name = "dump_#{date}-#{version}"
+        sh Sh.ftp_download(backup_folder.join(dump_name), backup_root, sudo: true, parallel: 10), verbose: false
+        Db::Pg::Restore.new(self, t, args, path: Setting[:backup_dir].join("#{dump_name}.pg.gz-*")).run!
+      end
+    end
+
+    def backup_folder
+      @backup_folder ||= Setting[:backup_dir].basename
+    end
+
+    def backup_root
+      @backup_root ||= Setting[:backup_dir].dirname
+    end
+  end
 end
