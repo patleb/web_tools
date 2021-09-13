@@ -1,7 +1,6 @@
 # TODO https://www.depesz.com/2007/07/05/how-to-insert-data-to-database-as-fast-as-possible/
 # TODO https://ossc-db.github.io/pg_bulkload/index.html
 # TODO PITR --> https://www.scalingpostgres.com/tutorials/postgresql-backup-point-in-time-recovery/
-# TODO excludes --> use --list
 module Db
   module Pg
     class Restore < Base
@@ -11,12 +10,13 @@ module Db
       COMPRESS = /\.gz/
       SPLIT = /-\*/
       MATCHER = /(?:~(#{TABLE}))?\.(tar|csv|pg)(#{COMPRESS})?(#{SPLIT})?$/
-      PARTITION = /TABLE public (#{TABLE})_(\d{4}_\d{2}_\d{2}|\d{10}) /
+      PARTITION = /\d{4}_\d{2}_\d{2}|\d{10}/
 
       def self.args
         {
           path:        ['--path=PATH',                'Dump path', :required],
           includes:    ['--includes=INCLUDES', Array, 'Included tables for pg_restore'],
+          excludes:    ['--excludes=EXCLUDES', Array, 'Excluded tables for pg_restore'],
           md5:         ['--[no-]md5',                 'Check md5 files if present (default to true)'],
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
           data_only:   ['--[no-]data-only',           'Load only data with disabled triggers for pg_restore'],
@@ -29,6 +29,7 @@ module Db
       def self.defaults
         {
           includes: [],
+          excludes: [],
           md5: true,
         }
       end
@@ -86,29 +87,29 @@ module Db
       end
 
       def pg_restore(compress, split)
-        output = ''
-        only = options.includes.reject(&:blank?)
+        pre_restore_timescaledb if options.timescaledb
         with_db_config do |host, db, user, pwd|
-          cmd_options = <<~CMD.squish
-            --host #{host} --username #{user} --verbose --no-owner --no-acl
-            #{'--disable-triggers --data-only' if options.data_only}
-            #{pg_options}
-            #{only.map{ |table| "--table='#{table}'" }.join(' ')}
-            --dbname #{db}
-          CMD
-          input = case
-            when split    then "#{unsplit_cmd} |"
-            when compress then "#{uncompress_cmd} |"
-            else nil
-            end
-          pre_restore_timescaledb if options.timescaledb
-          sections = staged ? %w(pre-data data post-data) : [false]
-          sections.unshift('list') if options.data_only
+          output = ''
+          only = options.includes.reject(&:blank?)
+          skip = options.excludes.reject(&:blank?)
+          sections = staged ? %w(list pre-data data post-data) : ['list', false]
           sections.each do |section|
             section = case section
               when false  then nil
               when 'list' then '--list'
               else "--section=#{section}"
+              end
+            cmd_options = <<~CMD.squish
+              --host #{host} --username #{user} --verbose --no-owner --no-acl
+              #{'--disable-triggers --data-only' if options.data_only}
+              #{pg_options}
+              #{only.map{ |table| "--table='#{table}'" }.join(' ') unless section == '--list'}
+              --dbname #{db}
+            CMD
+            input = case
+              when split    then "#{unsplit_cmd} |"
+              when compress then "#{uncompress_cmd} |"
+              else nil
               end
             cmd = <<~CMD
               export PGPASSWORD=#{pwd};
@@ -117,24 +118,45 @@ module Db
             stdout, stderr, _status = Open3.capture3(cmd)
             if section == '--list'
               notify!(cmd, stderr) if notify?(stderr)
-              list_restore(stdout, only)
+              pre_restore_schema(stdout, only, skip)
             else
               output << stdout
               notify!(cmd, stderr) if notify?(stderr)
             end
           end
-          post_restore_environment
-          post_restore_tasks
           post_restore_timescaledb if options.timescaledb
           post_restore_pgrest if options.pgrest
+          post_restore_environment
+          post_restore_tasks
           output
         end
       end
 
-      def list_restore(output, only)
-        partitions = output.lines.select_map{ |line| line.match(PARTITION)&.captures }
-        partitions = partitions.each_with_object({}) do |(table, bucket), list|
-          next if only.any? && only.exclude?(table)
+      def pre_restore_schema(output, only, skip)
+        tables = output.lines.select_map{ |line| line.match(/TABLE public (#{TABLE}) /)&.captures&.first }
+        if only.any?
+          tables.select! do |t|
+            only.any?{ |t_only| t_only.include?('*') ? t.match?(Regexp.new t_only.gsub('*', '\w*')) : t == t_only }
+          end
+        end
+        if skip.any?
+          tables.reject! do |t|
+            skip.any?{ |t_skip| t_skip.include?('*') ? t.match?(Regexp.new t_skip.gsub('*', '\w*')) : t == t_skip }
+          end
+          only.replace(tables) # pg_restore doesn't support --exclude-table
+        end
+        return unless options.data_only
+
+        tables = Set.new(tables)
+        data_tables = output.lines.select_map do |line|
+          next unless (table = line.match(/TABLE DATA public (#{TABLE}) /)&.captures&.first)
+          table if tables.include? table
+        end
+        Db::Pg::Truncate.new(rake, task, isolate: true, cascade: true, includes: data_tables).run!
+
+        partitions = output.lines.each_with_object({}) do |line, list|
+          next unless (table, bucket = line.match(/TABLE public (#{TABLE})_(#{PARTITION}) /)&.captures)
+          next unless tables.include? table
           (list[table] ||= []) << ActiveRecord::Base.partition_bucket(bucket)
         end
         partitions.each do |table, buckets|
@@ -149,10 +171,6 @@ module Db
         SQL
       end
 
-      def post_restore_environment
-        ActiveRecord::InternalMetadata[:environment] = Rails.env
-      end
-
       def post_restore_timescaledb
         psql! <<-SQL.strip_sql
           SELECT timescaledb_post_restore();
@@ -164,6 +182,10 @@ module Db
           DELETE FROM #{ActiveRecord::Base.schema_migrations_table_name} WHERE version = '20010000000820'
         SQL
         run_task 'db:migrate'
+      end
+
+      def post_restore_environment
+        ActiveRecord::InternalMetadata[:environment] = Rails.env
       end
 
       def post_restore_tasks
