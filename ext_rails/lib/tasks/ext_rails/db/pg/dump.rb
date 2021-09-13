@@ -115,9 +115,9 @@ module Db
           puts_info 'DUMP', 'skipped: not in the rotation'
           return
         end
-        only = options.includes.reject(&:blank?)
-        skip = options.excludes.reject(&:blank?)
         with_db_config do |host, db, user, pwd|
+          only = options.includes.reject(&:blank?)
+          skip = options.excludes.reject(&:blank?)
           cmd_options = <<-CMD.squish
             --host #{host} --username #{user} --verbose --no-owner --no-acl --clean --format=c --compress=0
             #{pg_options}
