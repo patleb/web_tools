@@ -5,7 +5,7 @@ module Db
       SPLIT_SIZE = Setting[:backup_split_size]
       PIGZ_CORES = (Etc.nprocessors / 2.0).ceil
       EXTENSIONS = /\.[\w.-]+$/
-      VERSION    = /[a-f0-9]{8}/
+      VERSION    = /[a-f0-9]{7}/
 
       def self.args
         {

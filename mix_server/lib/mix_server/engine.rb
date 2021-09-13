@@ -5,7 +5,8 @@ module MixServer
   def self.current_version
     @current_version ||= begin
       version_path = Rails.root.join('REVISION')
-      version_path.exist? ? version_path.read.first(8) : `git rev-parse --short HEAD`.strip
+      version_path.exist? ? version_path.read : `git rev-parse --short HEAD`.strip
+      version_path.first(7)
     end
   end
 
