@@ -95,7 +95,7 @@ module ActiveRecord::Base::WithPartition
       case key
       when Integer
         size = size.to_i
-        bucket = key / size
+        bucket = (key / size) * size
         from = bucket.to_s.rjust(10, '0')
         to = (bucket + size).to_s.rjust(10, '0')
       when Time, Date, DateTime
