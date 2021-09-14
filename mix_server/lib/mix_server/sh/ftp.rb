@@ -27,7 +27,7 @@ module Sh::Ftp
   def ftp_remove(match, **options)
     match = match.to_s.dup
     if match.delete_suffix! '/*'
-      ftp "rm -r #{match}; mkdir -f #{match}", **options
+      ftp "rm -rf #{match}; mkdir -f #{match}", **options
     else
       ftp "rm #{match}", **options
     end
