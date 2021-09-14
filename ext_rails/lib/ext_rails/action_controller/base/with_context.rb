@@ -36,8 +36,9 @@ module ActionController::Base::WithContext
       end
     end
   rescue NoMethodError => e # prevent infinite loop
-    Rails.logger.error(e.backtrace_log)
-    render_500 NoMethodError.new("undefined method '#{e.corrections.first || e.name}'\nat #{e.backtrace.first}", e.name)
+    backtrace = e.backtrace.first(ExtRuby.config.backtrace_log_lines)
+    message = "undefined method name[#{e.name}] maybe[#{e.corrections.first}]\nat #{backtrace.join("\n")}"
+    render_500 NoMethodError.new(message, e.name)
   end
 
   def without_time_zone(&block)
