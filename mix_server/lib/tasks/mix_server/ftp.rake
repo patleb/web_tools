@@ -119,13 +119,23 @@ namespace :ftp do
         Db::Pg::Restore.new(self, t, args, path: Setting[:backup_dir].join("#{dump_name}.pg.gz-*")).run!
       end
     end
+  end
 
-    def backup_folder
-      @backup_folder ||= Setting[:backup_dir].basename
+  namespace :osquery do
+    namespace :logs do
+      desc 'mirror osquery logs'
+      task :mirror => :environment do
+        path = "#{MixLog.config.osquery_log_path}*"
+        sh Sh.ftp_mirror(path, backup_root, sudo: true, parallel: 10), verbose: false
+      end
     end
+  end
 
-    def backup_root
-      @backup_root ||= Setting[:backup_dir].dirname
-    end
+  def backup_folder
+    @backup_folder ||= Setting[:backup_dir].basename
+  end
+
+  def backup_root
+    @backup_root ||= Setting[:backup_dir].dirname
   end
 end
