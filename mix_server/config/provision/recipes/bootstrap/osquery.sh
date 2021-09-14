@@ -5,13 +5,13 @@ sun.update
 
 sun.install "osquery"
 
-sun.backup_compare "/usr/share/osquery/osquery.example.conf"
-sun.backup_compare "/usr/share/osquery/packs/hardware-monitoring.conf"
-sun.backup_compare "/usr/share/osquery/packs/incident-response.conf"
-sun.backup_compare "/usr/share/osquery/packs/it-compliance.conf"
-sun.backup_compare "/usr/share/osquery/packs/osquery-monitoring.conf"
-sun.backup_compare "/usr/share/osquery/packs/ossec-rootkit.conf"
-sun.backup_compare "/usr/share/osquery/packs/vuln-management.conf"
+sun.backup_compare "/opt/osquery/share/osquery/osquery.example.conf"
+sun.backup_compare "/opt/osquery/share/osquery/packs/hardware-monitoring.conf"
+sun.backup_compare "/opt/osquery/share/osquery/packs/incident-response.conf"
+sun.backup_compare "/opt/osquery/share/osquery/packs/it-compliance.conf"
+sun.backup_compare "/opt/osquery/share/osquery/packs/osquery-monitoring.conf"
+sun.backup_compare "/opt/osquery/share/osquery/packs/ossec-rootkit.conf"
+sun.backup_compare "/opt/osquery/share/osquery/packs/vuln-management.conf"
 
 systemctl enable osqueryd
 osqueryctl stop

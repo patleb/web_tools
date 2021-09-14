@@ -224,7 +224,7 @@
     "configs": [
       "/etc/%%",
       "/var/spool/cron/crontabs/%",
-      "/usr/share/osquery/%%"
+      "/opt/osquery/share/osquery/%%"
     ],
     "binaries": [
       "/bin/%%",
@@ -299,17 +299,17 @@
   // There are several 'default' packs installed with 'make install' or via
   // packages and/or Homebrew.
   //
-  // Linux:        /usr/share/osquery/packs
+  // Linux:        /opt/osquery/share/osquery/packs
   // OS X:         /var/osquery/packs
   // Homebrew:     /usr/local/share/osquery/packs
   // make install: {PREFIX}/share/osquery/packs
   //
   "packs": {
-    // "osquery-monitoring": "/usr/share/osquery/packs/osquery-monitoring.conf",
-    // "incident-response": "/usr/share/osquery/packs/incident-response.conf",
-    // "it-compliance": "/usr/share/osquery/packs/it-compliance.conf"
-    // "vuln-management": "/usr/share/osquery/packs/vuln-management.conf",
-    // "hardware-monitoring": "/usr/share/osquery/packs/hardware-monitoring.conf",
-    "ossec-rootkit": "/usr/share/osquery/packs/ossec-rootkit.conf"
+    // "osquery-monitoring": "/opt/osquery/share/osquery/packs/osquery-monitoring.conf",
+    // "incident-response": "/opt/osquery/share/osquery/packs/incident-response.conf",
+    // "it-compliance": "/opt/osquery/share/osquery/packs/it-compliance.conf"
+    // "vuln-management": "/opt/osquery/share/osquery/packs/vuln-management.conf",
+    // "hardware-monitoring": "/opt/osquery/share/osquery/packs/hardware-monitoring.conf",
+    "ossec-rootkit": "/opt/osquery/share/osquery/packs/ossec-rootkit.conf"
   }
 }

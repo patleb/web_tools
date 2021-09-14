@@ -20,7 +20,7 @@ module LogLines
 
     def self.threats
       @@threats ||= begin
-        rootkits = Pathname.new('/usr/share/osquery/packs/ossec-rootkit.conf')
+        rootkits = Pathname.new('/opt/osquery/share/osquery/packs/ossec-rootkit.conf')
         rootkits = JSON.parse(rootkits.read)['queries'].keys
         rootkits.concat(%w(
           backdoored_python_packages
