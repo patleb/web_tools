@@ -43,6 +43,8 @@ module ActionController
       when 422 then status = 422
       else          status = 500
       end
+      Rails.logger.error(exception.backtrace_log) if status == 500
+
       log exception
       respond_to do |format|
         format.text do
