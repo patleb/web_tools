@@ -4,9 +4,9 @@ require 'mix_server/configuration'
 module MixServer
   def self.current_version
     @current_version ||= begin
-      version_path = Rails.root.join('REVISION')
-      version_path.exist? ? version_path.read : `git rev-parse --short HEAD`.strip
-      version_path.first(7)
+      version = Rails.root.join('REVISION')
+      version = version.exist? ? version.read : `git rev-parse --short HEAD`
+      version.strip.first(7)
     end
   end
 
