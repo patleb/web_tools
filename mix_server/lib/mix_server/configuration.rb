@@ -3,6 +3,7 @@ module MixServer
     attr_writer :available_providers
     attr_writer :minimum_workers
     attr_writer :clamav_dirs
+    attr_writer :clamav_false_positives
 
     def available_providers
       @available_providers ||= {
@@ -38,6 +39,12 @@ module MixServer
         /usr/local/bin
         /usr/local/sbin
       )
+    end
+
+    def clamav_false_positives
+      @clamav_false_positives ||= [
+        %r{/imurmurhash/}
+      ]
     end
   end
 end
