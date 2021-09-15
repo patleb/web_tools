@@ -1,46 +1,6 @@
-module FtpHelpers
-  def create_mount_path
-    sh "sudo mkdir -p #{Setting[:ftp_mount_path]}"
-    sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{Setting[:ftp_mount_path]}"
-  end
-
-  def drive_mount_cmd(args, nohup: false)
-    <<~CMD.squish.gsub('\\', '\\\\\\')
-      sudo nohup curlftpfs #{'-f' if nohup} -o '#{drive_options(args).join(',')}'
-        '#{Setting[:ftp_host]}:#{Setting[:ftp_drive_path]}' #{Setting[:ftp_mount_path]}
-        >> /home/#{Setting[:deployer_name]}/curlftpfs.log 2>&1
-        #{"& sleep 1 && echo $! > /home/#{Setting[:deployer_name]}/curlftpfs.pid" if nohup}
-    CMD
-  end
-
-  def drive_options(args)
-    user_id = args[:user_id] || Setting[:deployer_id] || 1001
-    group_id = args[:group_id] || user_id
-    %W(
-      allow_other
-      ssl
-      no_verify_peer
-      no_verify_hostname
-      nonempty
-      user=#{Setting[:ftp_username]}:#{Setting[:ftp_password]}
-    ).reject(&:blank?).concat(%W(
-      uid=#{user_id}
-      gid=#{group_id}
-    ))
-  end
-
-  def backup_folder
-    @backup_folder ||= Setting[:backup_dir].basename
-  end
-
-  def backup_root
-    @backup_root ||= Setting[:backup_dir].dirname
-  end
-end
-
 module FtpTasks
   extend Rake::DSL
-  extend FtpHelpers
+  extend self
 
   namespace :ftp do
     desc 'List files matching the expression'
@@ -144,5 +104,43 @@ module FtpTasks
         end
       end
     end
+  end
+
+  def create_mount_path
+    sh "sudo mkdir -p #{Setting[:ftp_mount_path]}"
+    sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{Setting[:ftp_mount_path]}"
+  end
+
+  def drive_mount_cmd(args, nohup: false)
+    <<~CMD.squish.gsub('\\', '\\\\\\')
+      sudo nohup curlftpfs #{'-f' if nohup} -o '#{drive_options(args).join(',')}'
+        '#{Setting[:ftp_host]}:#{Setting[:ftp_drive_path]}' #{Setting[:ftp_mount_path]}
+        >> /home/#{Setting[:deployer_name]}/curlftpfs.log 2>&1
+        #{"& sleep 1 && echo $! > /home/#{Setting[:deployer_name]}/curlftpfs.pid" if nohup}
+    CMD
+  end
+
+  def drive_options(args)
+    user_id = args[:user_id] || Setting[:deployer_id] || 1001
+    group_id = args[:group_id] || user_id
+    %W(
+      allow_other
+      ssl
+      no_verify_peer
+      no_verify_hostname
+      nonempty
+      user=#{Setting[:ftp_username]}:#{Setting[:ftp_password]}
+    ).reject(&:blank?).concat(%W(
+      uid=#{user_id}
+      gid=#{group_id}
+    ))
+  end
+
+  def backup_folder
+    @backup_folder ||= Setting[:backup_dir].basename
+  end
+
+  def backup_root
+    @backup_root ||= Setting[:backup_dir].dirname
   end
 end

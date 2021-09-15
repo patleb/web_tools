@@ -1,27 +1,6 @@
-module NginxHelpers
-  def nginx_maintenance_push
-    html = compile 'config/deploy/templates/503.html'
-    mv html, MixServer.shared_dir.join('public/503.html')
-  end
-
-  def nginx_app_push
-    conf = compile 'config/deploy/templates/nginx/app.conf'
-    sh "sudo mv #{conf} /etc/nginx/sites-available/#{MixServer.deploy_dir}"
-    nginx_reload
-  end
-
-  def nginx_reload
-    sh 'sudo systemctl reload nginx' do |ok, _res|
-      unless ok
-        sh 'sudo systemctl start nginx'
-      end
-    end
-  end
-end
-
 module NginxTasks
   extend Rake::DSL
-  extend NginxHelpers
+  extend self
 
   namespace :nginx do
     namespace :maintenance do
@@ -37,6 +16,25 @@ module NginxTasks
       desc 'Put the application out of maintenance mode'
       task :disable => :environment do
         nginx_app_push
+      end
+    end
+  end
+
+  def nginx_maintenance_push
+    html = compile 'config/deploy/templates/503.html'
+    mv html, MixServer.shared_dir.join('public/503.html')
+  end
+
+  def nginx_app_push
+    conf = compile 'config/deploy/templates/nginx/app.conf'
+    sh "sudo mv #{conf} /etc/nginx/sites-available/#{MixServer.deploy_dir}"
+    nginx_reload
+  end
+
+  def nginx_reload
+    sh 'sudo systemctl reload nginx' do |ok, _res|
+      unless ok
+        sh 'sudo systemctl start nginx'
       end
     end
   end
