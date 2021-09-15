@@ -23,10 +23,8 @@
       max-height: 20px;
     }
 
-    .se-dialog-image {
-      .se-dialog-tabs [data-tab-link="url"] {
-        visibility: hidden;
-      }
+    .se-dialog-tabs [data-tab-link="url"] {
+      visibility: hidden;
     }
 
     .se-dialog-form {
