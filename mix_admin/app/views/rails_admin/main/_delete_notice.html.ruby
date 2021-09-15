@@ -14,8 +14,9 @@ li_('.delete_notice', [
       count = children.count
       limit = count > 12 ? 10 : count
       h_(
-        children.first(limit).map do |child|
+        children.first(limit).select_map do |child|
           child_model = RailsAdmin.model(child)
+          next if child_model.abstract_model.nil?
           wording = child_model.with(object: child).object_label
           li_({ class: dom_class(child) }, [
             b_(child.model_name.human),

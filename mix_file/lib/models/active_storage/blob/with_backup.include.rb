@@ -19,6 +19,7 @@ module ActiveStorage::Blob::WithBackup
       backup.destroy!
       raise ActiveStorage::IntegrityError
     end
+    io.rewind
   end
 
   def restore_file!
