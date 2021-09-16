@@ -100,7 +100,7 @@ module FtpTasks
         desc 'mirror osquery logs'
         task :mirror => :environment do
           path = "#{MixLog.config.osquery_log_path}*"
-          sh Sh.ftp_mirror(path, backup_root, sudo: true, parallel: 10), verbose: false
+          sh Sh.ftp_mirror(path, backup_root.join("server_#{Server.current.id}"), sudo: true, parallel: 10), verbose: false
         end
       end
     end
