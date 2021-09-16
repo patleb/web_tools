@@ -1,7 +1,6 @@
 module MixPage
   has_config do
     attr_writer   :js_routes
-    attr_writer   :reserved_words
     attr_writer   :parent_controller
     attr_accessor :root_path
     attr_accessor :root_template
@@ -18,21 +17,6 @@ module MixPage
 
     def js_routes
       @js_routes ||= MixPage.routes
-    end
-
-    def reserved_words
-      @reserved_words ||= begin
-        known_segments = [
-          MixPage::URL_SEGMENT,
-          RailsAdmin.root_path,
-          MixRescue.routes[:rescue],
-        ].map do |path|
-          path.split('/').reject(&:blank?).first
-        end
-        Set.new(known_segments).merge(%w(
-          page admin rescues users assets packs stylesheets javascripts images new show edit index session login logout
-        ))
-      end
     end
 
     def parent_controller

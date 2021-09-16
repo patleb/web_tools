@@ -4,8 +4,6 @@ class PageTemplate < Page
 
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }
-  validate  :slug_exclusion
-  validate  :slug_scoped_by_locale
   I18n.available_locales.each do |locale|
     validates "title_#{locale}", length: { maximum: 120 }
     validates "description_#{locale}", length: { maximum: 360 }
@@ -44,7 +42,7 @@ class PageTemplate < Page
   end
 
   def self.find_with_state_by_uuid_or_view(uuid, slug)
-    conditions =  uuid.present? ? { uuid: UUID.expand(uuid) } : { view: (view = slug.tr('-', '/')) }
+    conditions =  uuid.present? ? { uuid: UUID.expand(uuid) } : { view: (view = slug.sub(/-[a-z]{2}$/, '').tr('-', '/')) }
     return unless view.nil? || views.has_key?(view)
     layouts = alias_table(:layouts)
     with_discarded
@@ -108,26 +106,14 @@ class PageTemplate < Page
     self.class.human_attribute_name("view.#{view}", default: view.sub(MixPage::MULTI_VIEW, '').tr('/', ' ').humanize)
   end
 
-  def slug(...)
-    title(...)&.slugify
+  def slug(locale = nil, fallback = nil)
+    locale ||= Current.locale || I18n.default_locale
+    value = title(locale, fallback)&.slugify
+    [value, locale].join('-') if value
   end
 
   def slugs
     I18n.available_locales.map{ |locale| slug(locale) }.compact.uniq
-  end
-
-  def slug_exclusion
-    I18n.available_locales.each do |locale|
-      if MixPage.config.reserved_words.include? slug(locale)
-        errors.add :title, :exclusion
-      end
-    end
-  end
-
-  def slug_scoped_by_locale
-    if I18n.available_locales.size != slugs.size
-      errors.add :title, :taken
-    end
   end
 
   private
