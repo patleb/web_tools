@@ -9,6 +9,7 @@ ActiveRecord::Base.class_eval do
   include self::WithArel
   prepend self::WithCreateState
   include self::WithDiscard
+  prepend self::WithJsonb
   prepend self::WithJsonAttribute
   include self::WithNullifyBlanks
   include self::WithPartition
@@ -18,8 +19,6 @@ ActiveRecord::Base.class_eval do
   include self::WithViableModels
 
   nullify_blanks nullables_only: false
-
-  delegate :url_helpers, to: 'Rails.application.routes'
 
   alias_method :decrypted, :read_attribute_before_type_cast
 
