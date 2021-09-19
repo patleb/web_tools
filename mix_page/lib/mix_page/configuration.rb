@@ -60,7 +60,7 @@ module MixPage
     end
 
     def max_image_size
-      @max_image_size ||= 2.megabytes
+      @max_image_size ||= 5.megabytes
     end
 
     def max_children_count

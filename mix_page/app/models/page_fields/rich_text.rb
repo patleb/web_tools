@@ -63,7 +63,7 @@ module PageFields
           next if error
 
           blob = existing_blob(blob) || blob
-          if blob.new_record? || blob.backup_missing?
+          if blob.new_record? || !blob.backuped?
             blob.save!
             blob.backup_file(io)
             blob.upload_without_unfurling(io)

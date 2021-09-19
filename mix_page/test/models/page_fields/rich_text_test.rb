@@ -1,6 +1,6 @@
 require './test/rails_helper'
 
-class PageFields::RichTextTest < ActiveSupport::TestCase
+class PageFields::RichTextTest < ActiveStorage::TestCase
   let(:text){ <<-HTML.strip_heredoc }
     <p><br></p>
     <div class="se-component se-image-container __se__float-none" contenteditable="false">
@@ -52,17 +52,5 @@ class PageFields::RichTextTest < ActiveSupport::TestCase
     assert_equal 1, rich_text.images_blobs.select_map(&:backup).count
     assert_equal 2, rich_text.text_en.scan(/#{ExtRails::Routes.url_for('/storage-test/')}/).size
     assert_equal 2, rich_text.text_fr.scan(/#{ExtRails::Routes.url_for('/storage-test/')}/).size
-  end
-
-  def after_teardown
-    super
-    case ActiveStorage::Blob.service.class.name
-    when 'ActiveStorage::Service::MirrorService'
-      ([ActiveStorage::Blob.service.primary] + ActiveStorage::Blob.service.mirrors).each do |service|
-        FileUtils.rm_rf(service.root)
-      end
-    when 'ActiveStorage::Service::DiskService'
-      FileUtils.rm_rf(ActiveStorage::Blob.service.root)
-    end
   end
 end
