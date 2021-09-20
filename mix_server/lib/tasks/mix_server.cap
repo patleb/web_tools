@@ -10,7 +10,7 @@ namespace :load do
 
     append :gems, 'mix_server'
 
-    set :nginx_max_body_size, -> { '10m' }
+    set :nginx_max_body_size, -> { '100m' }
     set :nginx_public_dirs,   -> { fetch(:files_public_dirs) }
     set :nginx_public_files,  -> { %w(
       apple-touch-icon-precomposed.png

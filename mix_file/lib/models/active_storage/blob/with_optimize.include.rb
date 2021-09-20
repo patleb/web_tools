@@ -26,24 +26,41 @@ module ActiveStorage::Blob::WithOptimize
   end
 
   def optimize
-    data = image_optim.optimize_image_data(download)
-    raise OptimizeError, "blob id [#{id}]" if data.nil?
+    transform(resize_to_limit: MixFile.config.image_limit) do |file|
+      file = image_optim.optimize_image! file
+      raise OptimizeError, "blob id [#{id}]" if file.nil?
 
-    io = StringIO.new(data)
-    self.byte_size, self.checksum = io.size, Digest::MD5.base64digest(data)
-    upload_without_unfurling(io)
-    update! metadata: metadata.merge(optimized: true)
+      self.byte_size, self.checksum = File.size(file), Digest::MD5.file(file).base64digest
+      file.open do |io|
+        upload_without_unfurling(io)
+      end
+    end
+    gain = (100.0 * (1 - (byte_size.to_f / byte_size_was))).floor(2)
+    update! metadata: metadata.merge(optimized: true, gain: gain)
+  end
+
+  def transform(**transformations)
+    open do |file|
+      if transformations.compact.present?
+        variation = ActiveStorage::Variation.wrap(transformations)
+        variation.transform(file) do |output|
+          yield output
+        end
+      else
+        yield file
+      end
+    end
   end
 
   def optimize_later
     ActiveStorage::OptimizeJob.perform_later(self)
   end
 
-  def optimized?
-    optimized
-  end
-
   def optimizable?
     image? && !optimized?
+  end
+
+  def optimized?
+    optimized
   end
 end
