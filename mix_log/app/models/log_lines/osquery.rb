@@ -82,8 +82,8 @@ module LogLines
           next if MixLog.config.known_sockets.any? do |type, sockets|
             sockets.any? do |s|
               case type
-              when :path
-                s.is_a?(Regexp) ? path.match?(s) : path == s
+              when :path   then s.is_a?(Regexp) ? path.match?(s) : path == s
+              when :remote then s.is_a?(Regexp) ? remote.first.match?(s) : remote.first == s
               end
             end
           end

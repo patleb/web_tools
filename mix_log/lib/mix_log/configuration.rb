@@ -98,20 +98,47 @@ module MixLog
     # https://github.com/osquery/osquery/issues/4750
     def known_files
       @known_files ||= [
-        %r{^/etc/[-.\w/]+\.dpkg-(new|tmp)$},
+        '/home/deployer/.ssh/known_hosts',
+        '/root/.ssh/known_hosts',
+        '/etc/.pwd.lock',
+        '/etc/ssh/sshd_config~',
+        %r{^/etc/lvm/cache(/\.cache(\.tmp)?)?$},
+        %r{^/etc/ld\.so\.cache~?$},
+        %r{^/etc/fwupd/},
+        %r{^/etc/pki/fwupd(-metadata)?/},
+        '/etc/libblockdev',
+        '/etc/udisks2',
+        '/etc/update-motd.d/85-fwupd',
+        '/etc/apt/apt.conf.d/01autoremove-kernels',
+        %r{^/(etc|usr/s?bin)/[-.\w/]+\.dpkg-(new|tmp)$},
         %r{^/etc/([-.\w]+/)*sed\w{1,8}$},
         %r{^/etc/ssh/\.\w+$},
-        %r{^/etc/systemd/system/\.\w+$},
-        %r{^/etc/logrotate.d/\.\w+$},
+        %r{^/etc/systemd/system/\.[-.\w]+$},
+        %r{^/etc/systemd/system/(multi-user|sockets)\.target\.wants/snap[-.][-.\w~]+$},
+        %r{^/etc/systemd/system/snap[-.][-.\w~]+$},
+        %r{^/etc/logrotate\.d/\.\w+$},
         %r{^/etc/nginx/\.\w+$},
         %r{^/etc/nginx/sites-available/\.\w+$},
-        %r{^/etc/osquery/.osquery\.\w+$},
+        %r{^/etc/osquery/\.osquery\.\w+$},
+        %r{^/var/spool/cron/crontabs(/tmp\.\w{1,8}|/deployer)?$},
+        %r{^/usr/bin/(dbxtool|dfu-tool|fwupdagent|fwupdate|fwupdmgr|fwupdtool|fwupdtpmevlog|udisksctl)$},
+        '/usr/sbin/umount.udisks2',
       ]
     end
 
     def known_sockets
       @known_sockets ||= {
-        path: []
+        path: [
+          %r{^node /usr/share/yarn/bin/yarn\.js install},
+          %r{^/home/deployer/\.rbenv/versions/[.\d]+/bin/ruby /home/deployer/\.rbenv/versions/[.\d]+/bin/bundle install},
+          %r{^/home/deployer/\.rbenv/versions/[.\d]+/bin/ruby /home/deployer/\.rbenv/versions/[.\d]+/bin/bundle .+ --deployment .+/\.local_repo/},
+          %r{^Passenger RubyApp: /home/deployer/},
+          %r{^ruby bin/rake cron:every_day},
+          '/usr/bin/freshclam -d --foreground=true',
+        ],
+        remote: %w(127.0.0.1 127.0.0.53 0).concat(
+          (%w(169.254 172.17 172.18 10 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| /^#{ip}\./ } # private networks + ubuntu ip ranges
+        ),
       }
     end
 
