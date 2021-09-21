@@ -198,7 +198,7 @@ class LogLine < LibMainRecord
 
   def self.merge_paths(paths)
     tokens = paths.each_with_object([]) do |path, memo|
-      path.split('/').each_with_index do |token, i|
+      path.delete_suffix('/').split('/').each_with_index do |token, i|
         (memo[i] ||= Set.new) << token
       end
     end
