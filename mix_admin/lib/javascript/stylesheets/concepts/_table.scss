@@ -129,6 +129,11 @@
     margin-bottom: 0;
     table-layout: fixed;
   }
+  .js_table_column_head {
+    // TODO bug, click on freezed header will trigger sort
+    // TODO merge_params ???
+    pointer-events: none;
+  }
 }
 
 .js_table_sticky_column {
