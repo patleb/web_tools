@@ -71,6 +71,7 @@ module PageFields
           attachment = images_attachments.find_or_create_by! blob: blob
           records[attachment.id] ||= attachment
           img['src'] = records[attachment.id].url
+          img.remove_attribute('data-file-size')
         end
       end
       return if error
