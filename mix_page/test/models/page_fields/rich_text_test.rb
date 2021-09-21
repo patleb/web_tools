@@ -41,8 +41,10 @@ class PageFields::RichTextTest < ActiveStorage::TestCase
 
     field.update! text_fr: text + url, text_en: text + text
 
+    assert_equal 'ActiveStorage::OptimizeJob', Job.dequeue.job_class
     assert_equal 'ActiveStorage::AnalyzeJob', Job.dequeue.job_class
     assert_equal 'ActiveStorage::MirrorJob', Job.dequeue.job_class
+    assert_equal 'ActiveStorage::OptimizeJob', Job.dequeue.job_class
     assert_equal 'ActiveStorage::AnalyzeJob', Job.dequeue.job_class
     assert_equal 'ActiveStorage::MirrorJob', Job.dequeue.job_class
     assert_nil Job.dequeue
