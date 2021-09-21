@@ -30,8 +30,16 @@ class Js.SidebarConcept # TODO extract to MixTemplate with RailsAdmin.SidebarCon
 
   ready: =>
     $(@ACTIVE_WRAPPER).removeClass(@ACTIVE)
-    $(".#{@PAGE}_#{Page.uuid}").parent().addClass(@ACTIVE)
-    # TODO if current page is active, but parent is closed, then open the parent + scroll to
+    li = $(".#{@PAGE}_#{Page.uuid}").parent()
+    li.addClass(@ACTIVE)
+    segments = li.data('node').split('/')[0..-2]
+    base = null
+    segments.each (segment) =>
+      base = [base, segment].compact().join('/')
+      li.prevAll("[data-node='#{base}']").each$ (li) =>
+        target = li.find('i')
+        if target.hasClass('fa-chevron-right')
+          @toggle(target) # TODO scroll to active element
 
   toggle: (target) =>
     li = target.closest('li')
