@@ -32,6 +32,13 @@ class RailsAdmin.Form.FieldConcept::WysiwygElement
         # ['save', 'template'],
       ],
     )
+    @editor.onload = (core, reload) =>
+      Js.decorate core, 'cleanHTML', (html, whitelist) ->
+        if whitelist == core.pasteTagsWhitelistRegExp
+          $(html).map$((e) -> e.text()).reject((text) -> text.blank()).map((text) -> p_(text, escape: false)).join('')
+        else
+          this.super(html, whitelist)
+
     @editor.onChange = (contents, core) =>
       if contents.html_blank()
         @input.val('')
