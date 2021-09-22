@@ -3,7 +3,7 @@ module Rake
     LS_HEADERS = %i(permissions links owner group size date time zone path)
 
     def namespace!(name = nil, &block)
-      module_name = "#{name.to_s.camelize}Tasks"
+      module_name = "#{name.to_s.camelize}_Tasks"
       with_scope   = self.class.const_get(module_name) if self.class.const_defined? module_name
       with_scope ||= self.class.const_set(module_name, Module.new)
       with_scope.module_eval do
