@@ -2,6 +2,19 @@ module Rake
   module DSL
     LS_HEADERS = %i(permissions links owner group size date time zone path)
 
+    def namespace!(name = nil, &block)
+      module_name = "#{name.to_s.camelize}Tasks"
+      with_scope   = self.class.const_get(module_name) if self.class.const_defined? module_name
+      with_scope ||= self.class.const_set(module_name, Module.new)
+      with_scope.module_eval do
+        extend Rake::DSL
+        extend self
+        namespace name do
+          instance_eval(&block)
+        end
+      end
+    end
+
     def keep(root, force: false)
       root = Pathname.new(root)
       mkdir_p root

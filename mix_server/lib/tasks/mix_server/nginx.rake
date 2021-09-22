@@ -1,22 +1,17 @@
-module NginxTasks
-  extend Rake::DSL
-  extend self
+namespace! :nginx do
+  namespace :maintenance do
+    desc 'Put application in maintenance mode'
+    task :enable, [:duration] => :environment do |t, args|
+      ENV['MESSAGE'] = nginx_maintenance_message(args[:duration])
+      nginx_maintenance_push
+      ENV['MAINTENANCE'] = true
+      nginx_app_push
+      ENV['MAINTENANCE'] = false
+    end
 
-  namespace :nginx do
-    namespace :maintenance do
-      desc 'Put application in maintenance mode'
-      task :enable, [:duration] => :environment do |t, args|
-        ENV['MESSAGE'] = nginx_maintenance_message(args[:duration])
-        nginx_maintenance_push
-        ENV['MAINTENANCE'] = true
-        nginx_app_push
-        ENV['MAINTENANCE'] = false
-      end
-
-      desc 'Put the application out of maintenance mode'
-      task :disable => :environment do
-        nginx_app_push
-      end
+    desc 'Put the application out of maintenance mode'
+    task :disable => :environment do
+      nginx_app_push
     end
   end
 
