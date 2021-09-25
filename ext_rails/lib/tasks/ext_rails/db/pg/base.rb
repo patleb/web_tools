@@ -48,7 +48,7 @@ module Db
       end
 
       def psql(command, *sh_rest, raise_on_error: false, sudo: false, silent: false)
-        cmd = Sh.psql command, (ExtRails.config.db_url unless sudo)
+        cmd = Sh.psql command, (Setting.db_url unless sudo)
         cmd = [cmd, *sh_rest, (' > /dev/null' if silent)].join(' ')
         stdout, stderr, _status = Open3.capture3(cmd)
         notify!(cmd, stderr) if raise_on_error && notify?(stderr)
@@ -73,14 +73,6 @@ module Db
         line.present? && self.class.ignored_errors.none? do |ignored_error|
           ignored_error.is_a?(Regexp) ? line.match?(ignored_error) : line == ignored_error
         end
-      end
-
-      def with_db_config
-        db = ExtRails.config.db_config
-        yield db[:host],
-          db[:database],
-          db[:username],
-          db[:password]
       end
 
       def pg_data_dir

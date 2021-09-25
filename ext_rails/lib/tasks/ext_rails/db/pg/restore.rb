@@ -88,7 +88,7 @@ module Db
 
       def pg_restore(compress, split)
         pre_restore_timescaledb if options.timescaledb
-        with_db_config do |host, db, user, pwd|
+        Setting.db do |host, port, database, username, password|
           output = ''
           only = options.includes.reject(&:blank?)
           skip = options.excludes.reject(&:blank?)
@@ -100,11 +100,11 @@ module Db
               else "--section=#{section}"
               end
             cmd_options = <<~CMD.squish
-              --host #{host} --username #{user} --verbose --no-owner --no-acl
+              --host #{host} --port #{port} --username #{username} --verbose --no-owner --no-acl
               #{'--disable-triggers --data-only' if options.data_only}
               #{pg_options}
               #{only.map{ |table| "--table='#{table}'" }.join(' ') unless section == '--list'}
-              --dbname #{db}
+              --dbname #{database}
             CMD
             input = case
               when split    then "#{unsplit_cmd} |"
@@ -112,7 +112,7 @@ module Db
               else nil
               end
             cmd = <<~CMD
-              export PGPASSWORD=#{pwd};
+              export PGPASSWORD=#{password};
               #{input} pg_restore #{cmd_options} #{section} #{dump_path if input.nil?}
             CMD
             stdout, stderr, _status = Open3.capture3(cmd)

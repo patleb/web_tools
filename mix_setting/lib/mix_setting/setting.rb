@@ -124,6 +124,17 @@ class Setting
     @gems
   end
 
+  def self.db_url(db_user = nil, db_password = nil)
+    db do |host, port, database, username, password|
+      "postgresql://#{db_user || username}:#{db_password || password}@#{host}:#{port}/#{database}"
+    end
+  end
+
+  def self.db
+    host, port, database, username, password = values_at(:db_host, :db_port, :db_database, :db_username, :db_password)
+    yield(host || '127.0.0.1', port || 5432, database, username, password)
+  end
+
   private_class_method
 
   def self.gem_root(name)

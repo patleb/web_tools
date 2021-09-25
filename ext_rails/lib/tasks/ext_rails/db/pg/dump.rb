@@ -115,15 +115,15 @@ module Db
           puts_info 'DUMP', 'skipped: not in the rotation'
           return
         end
-        with_db_config do |host, db, user, pwd|
+        Setting.db do |host, port, database, username, password|
           only = options.includes.reject(&:blank?)
           skip = options.excludes.reject(&:blank?)
           cmd_options = <<-CMD.squish
-            --host #{host} --username #{user} --verbose --no-owner --no-acl --clean --format=c --compress=0
+            --host #{host} --port #{port} --username #{username} --verbose --no-owner --no-acl --clean --format=c --compress=0
             #{pg_options}
             #{only.map{ |table| "--table='#{table}'" }.join(' ')}
             #{skip.map{ |table| "--exclude-table='#{table}'" }.join(' ')}
-            #{db}
+            #{database}
           CMD
           output = case
             when options.split    then "| #{split_cmd(pg_file)}"
@@ -131,7 +131,7 @@ module Db
             else pg_file
             end
           cmd = <<~CMD
-            export PGPASSWORD=#{pwd};
+            export PGPASSWORD=#{password};
             pg_dump #{cmd_options} #{output}
           CMD
           _stdout, stderr, _status = Open3.capture3(cmd)

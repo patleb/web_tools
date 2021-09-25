@@ -34,19 +34,5 @@ module ExtRails
     def db_partitions
       @db_partitions ||= {}.with_keyword_access
     end
-
-    def db_url
-      db = db_config
-      "postgresql://#{db[:username]}:#{db[:password]}@#{db[:host]}:5432/#{db[:database]}"
-    end
-
-    def db_config
-      {
-        host: Setting[:db_host],
-        database: Setting[:db_database],
-        username: Setting[:db_username],
-        password: Setting[:db_password],
-      }
-    end
   end
 end

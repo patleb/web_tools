@@ -24,7 +24,7 @@ Setting.class_eval do
   end
 
   def self.pgrest_db_uri
-    database_url(self[:pgrest_db_username], self[:pgrest_db_password])
+    db_url(self[:pgrest_db_username], self[:pgrest_db_password])
   end
 
   def self.pgrest_nginx_upstream

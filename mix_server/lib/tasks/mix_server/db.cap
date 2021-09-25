@@ -1,9 +1,5 @@
 namespace :db do
   namespace :pg do
-    def psql(pg_command, *sh_rest)
-      test [Sh.psql(pg_command), *sh_rest].join(' ')
-    end
-
     desc 'create user'
     task :create_user, [:username, :password] do |t, args|
       on release_roles fetch(:db_roles) do
@@ -36,17 +32,23 @@ namespace :db do
     desc 'create database'
     task :create_database, [:database, :username] do |t, args|
       on release_roles fetch(:db_roles) do
-        next unless Setting[:db_host].in? ['127.0.0.1', 'localhost']
-        db = args[:database] || Setting[:db_database]
-        next if psql "SELECT 1 FROM pg_database WHERE datname='#{db}'", '| grep -q 1'
-        user = args[:username].presence || Setting[:db_username]
-        if psql "CREATE DATABASE #{db} OWNER #{user}"
-          info 'create database successful'
-        else
-          error "cannot create database #{db}"
-          exit 1
+        Setting.db do |host, _port, database, username, _password|
+          next unless host.in? ['127.0.0.1', 'localhost']
+          db = args[:database] || database
+          next if psql "SELECT 1 FROM pg_database WHERE datname='#{db}'", '| grep -q 1'
+          user = args[:username].presence || username
+          if psql "CREATE DATABASE #{db} OWNER #{user}"
+            info 'create database successful'
+          else
+            error "cannot create database #{db}"
+            exit 1
+          end
         end
       end
     end
+  end
+
+  def psql(pg_command, *sh_rest)
+    test [Sh.psql(pg_command), *sh_rest].join(' ')
   end
 end
