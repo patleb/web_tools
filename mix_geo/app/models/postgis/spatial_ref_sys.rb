@@ -60,7 +60,7 @@ module Postgis
       return [source, src_bounds] if srid == 4326
       src_crs, dst_crs = proj4(srid), 'epsg:4326'
       src_shape = source.shape.to_a
-      dst_shape = dst_zoom ? src_shape.map{ |size| (size * fill_ratio).ceil } : src_shape
+      dst_shape = fill_ratio ? src_shape.map{ |size| (size * fill_ratio).ceil } : src_shape
       dst_bounds = transform_bounds(src_crs, dst_crs, *src_bounds).to_a
       src_transform, dst_transform = [[src_shape, src_bounds], [dst_shape, dst_bounds]].map do |shape, (left, top, right, bottom)|
         rasterio.transform.from_gcps([
