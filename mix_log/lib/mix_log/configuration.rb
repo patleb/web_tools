@@ -136,7 +136,7 @@ module MixLog
           %r{^ruby bin/rake cron:every_day},
           '/usr/bin/freshclam -d --foreground=true',
         ],
-        remote: %w(127.0.0.1 127.0.0.53 0).concat(
+        remote: %w(127.0.0.1 127.0.0.53 0 0.0.0.0 0000:0000:0000:0000:0000:0000:0000:0000).concat(
           (%w(169.254 172.17 172.18 10 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| /^#{ip}\./ } # private networks + ubuntu ip ranges
         ),
       }
