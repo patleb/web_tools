@@ -97,7 +97,7 @@ module Postgis
       end
     end
 
-    def self.py_contour(source, x_axis, y_axis, levels, debug: false)
+    def self.py_contour(source, x_axis, y_axis, levels, sql: false, debug: false)
       contours = if debug
         py_plot.contourf(x_axis, y_axis, source, levels, antialiased: false)
       else
@@ -117,8 +117,20 @@ module Postgis
             end
           end
           polygons.reject!{ |polygon| polygon.size <= 3 }
-
-          yield(levels[level_i], polygons) unless polygons.empty?
+          next if polygons.empty?
+          if sql
+            polygons.map!{ |polygon| polygon.map!{ |point| point.to_list.to_a.join(' ') } }
+            polygons.map!{ |polygon| polygon.join(',') }
+            polygons.map!{ |polygon| "ST_GeomFromText('LINESTRING(#{polygon})', 4326)" }
+            if polygons.size == 1
+              contour = "ST_MakePolygon(#{polygons[0]})"
+            else
+              contour = "ST_MakePolygon(#{polygons[0]}, ARRAY[#{polygons[1..-1].join(',')}])"
+            end
+            yield(levels[level_i].to_sql, contour)
+          else
+            yield(levels[level_i], polygons)
+          end
         end
       end
     end
