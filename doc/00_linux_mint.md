@@ -365,17 +365,19 @@ sudo -H pip3 install python-openstackclient
 sudo -H pip3 install --upgrade cython
 sudo -H pip3 install matplotlib==3.2.1
 sudo -H pip3 install pyproj==2.6.1
+sudo -H pip3 install rasterio==1.1.8
 sudo apt-get install -y python3-psycopg2 python3-numpy python3-tk python3-netcdf4 netcdf-bin gdal-bin libgdal-dev ncview
 ```
 
 ## QGIS
 
 ```bash
-sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
-wget -O - https://qgis.org/downloads/qgis-2019.gpg.key | gpg --import
-gpg --fingerprint 51F523511C7028C3
-gpg --export --armor 51F523511C7028C3 | sudo apt-key add -
-sudo apt update && sudo apt-get -y install qgis python-qgis
+# https://github.com/qgis/QGIS-Website/blob/master/source/site/forusers/alldownloads.rst
+source /etc/os-release
+wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
+sudo add-apt-repository "deb https://qgis.org/ubuntu $UBUNTU_CODENAME main"
+sudo chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
+sudo apt update && sudo apt-get install -y qgis qgis-plugin-grass
 ```
 
 ### QGIS pip3 troubleshoot

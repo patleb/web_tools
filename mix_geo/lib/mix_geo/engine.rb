@@ -7,7 +7,9 @@ require 'mix_geo/countries/country'
 module MixGeo
   class Engine < ::Rails::Engine
     config.before_initialize do
-      unless Setting[:postgis_enabled]
+      if Setting[:postgis_enabled]
+        require 'matplotlib'
+      else
         Rails.autoloaders.main.ignore("#{root}/app/models/postgis")
       end
     end

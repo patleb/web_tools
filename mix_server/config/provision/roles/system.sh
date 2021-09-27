@@ -12,8 +12,7 @@
   lang/nodejs/system__NODEJS__
   lang/python/system__PYTHON__
   #{'addons/pgrest__PGREST__' if sun.pgrest_enabled}
-  #{'addons/gdal' if sun.postgis_enabled}
-  #{'addons/pyproj' if sun.postgis_enabled}
+  #{'addons/gis_packages' if sun.postgis_enabled}
   #{'db/postgres__POSTGRES__/postgis__POSTGIS__' if sun.postgis_enabled}
   #{'db/postgres__POSTGRES__/timescaledb' if sun.timescaledb_enabled}
   #{'db/postgres__POSTGRES__/tune' unless sun.timescaledb_enabled}

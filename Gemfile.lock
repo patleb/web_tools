@@ -206,6 +206,7 @@ PATH
       activerecord-postgis-adapter
       countries (= 3.0.1)
       ext_ruby (= 0.2.0)
+      matplotlib
       rgeo
 
 PATH
@@ -507,7 +508,7 @@ GEM
       image_size (>= 1.5, < 3)
       in_threads (~> 1.3)
       progress (~> 3.0, >= 3.0.1)
-    image_optim_pack (0.7.0.20210511-x86_64-linux)
+    image_optim_pack (0.7.0.20210511)
       fspath (>= 2.1, < 4)
       image_optim (~> 0.19)
     image_processing (1.12.1)
@@ -539,6 +540,8 @@ GEM
     mail_interceptor (0.0.7)
       activesupport
     marcel (1.0.1)
+    matplotlib (1.2.0)
+      pycall (>= 1.0.0)
     maxitest (4.0.0)
       minitest (>= 5.0.0, < 5.15.0)
     method_source (1.0.0)

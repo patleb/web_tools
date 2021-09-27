@@ -34,6 +34,7 @@ require 'active_support/core_ext/string/filters'
 require 'active_support/core_ext/string/inflections'
 require 'active_support/hash_with_indifferent_access'
 require 'active_support/string_inquirer'
+require 'active_support/testing/stream'
 
 require 'ext_ruby/array'
 require 'ext_ruby/boolean'
