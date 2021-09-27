@@ -94,6 +94,13 @@ class String
     string
   end
 
+  def squish_char(char, prefix: nil, suffix: nil, both: nil)
+    string = gsub(/#{char}{2,}/, char)
+    string.delete_prefix! char if prefix || both
+    string.delete_suffix! char if suffix || both
+    string
+  end
+
   def escape_regex
     Regexp.new(Regexp.escape(self)).source
   end

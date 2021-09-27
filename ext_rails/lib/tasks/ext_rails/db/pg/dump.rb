@@ -51,7 +51,7 @@ module Db
       private
 
       def pg_basebackup
-        raise "dangerous dump_path: [#{dump_path}]" unless dump_path.to_s.sub(%r{/{2,}}, '/').count('/') >= 2
+        raise "dangerous dump_path: [#{dump_path}]" unless dump_path.to_s.squish_char('/').count('/') >= 2
         sh "sudo rm -f #{dump_path}/*"
         sh "sudo mkdir -p #{dump_path}", verbose: false
         sh "sudo chown -R postgres:postgres #{dump_path}", verbose: false
