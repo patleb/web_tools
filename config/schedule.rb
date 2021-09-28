@@ -51,6 +51,6 @@ when 'staging', 'production'
   end
 end
 
-every Setting[:check_interval] do
-  runner 'Check.capture'
+every Setting[:monit_interval] do
+  runner 'Monit.capture'
 end

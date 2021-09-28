@@ -1,0 +1,19 @@
+types:
+  monit_interval: interval
+
+shared:
+  pg_log_min_duration: 2000
+  # monit_long_running_query_sec: 60
+  monit_slow_query_ms: $ALIAS pg_log_min_duration
+  monit_slow_query_calls: 1
+  # monit_total_connections_threshold: 500
+  # monit_explain_timeout_sec: 10
+  monit_time_zone: UTC
+  monit_filter_data: false
+  # monit_capture_query_stats: true
+  # monit_cache_hit_rate_threshold: 99
+  # monit_index_bloat_bytes: 104857600
+  monit_table_bloat_factor: 10.0
+  monit_table_bloat_bytes: 104857600
+  monit_interval: 5 minutes
+  monit_from_cron: true

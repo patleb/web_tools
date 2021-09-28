@@ -1,6 +1,6 @@
 gems:
   - ext_rails
-  - mix_check
+  - mix_monit
 
 types:
   server_cluster_data: pathname
