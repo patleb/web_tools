@@ -14,6 +14,7 @@ echo "log_lock_waits = $__PG_LOG_LOCK_WAITS__" >> "$PG_CONFIG_FILE"
 
 <% %w(
   synchronous_commit
+  full_page_writes
   fsync
   huge_pages
   max_locks_per_transaction
@@ -33,6 +34,7 @@ echo "log_lock_waits = $__PG_LOG_LOCK_WAITS__" >> "$PG_CONFIG_FILE"
   max_parallel_workers_per_gather
   max_parallel_workers
   max_parallel_maintenance_workers
+  jit
 ).each do |config| -%>
   __PG_<%= config.upcase %>__=${__PG_<%= config.upcase %>__:-nil}
 
