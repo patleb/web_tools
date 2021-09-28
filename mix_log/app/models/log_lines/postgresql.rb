@@ -5,7 +5,6 @@ module LogLines
   class Postgresql < LogLine
     TIMESTAMP    = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}(?:\.\d{3})? UTC/
     ANCHOR       = /^(#{TIMESTAMP}) \[(\d+)\](?: \[\w+\]@\[\w+\])? \w+: +/
-    CHECKPOINT   = /#{ANCHOR}checkpoint (starting|complete): (.+)/
     CHECKPOINTS  = /#{ANCHOR}(checkpoints are occurring too frequently) \((\d+) seconds? apart\)/ # max_wal_size
     SHUTDOWN     = /#{ANCHOR}(database system .+)(?:; last known up)? at(?: log time)? (#{TIMESTAMP})/
     READY        = /#{ANCHOR}(database system is ready) to accept/
@@ -25,18 +24,14 @@ module LogLines
     )
 
     def self.parse(log, line, **)
-      if (values = line.match(CHECKPOINT))
-        created_at, pid, state, text = values.captures
-        json_data = { event: "checkpoint_#{state == 'starting' ? 'start' : 'end'}" }
-        level = :info
-      elsif (values = line.match(CHECKPOINTS))
+      if (values = line.match(CHECKPOINTS))
         created_at, pid, text, duration = values.captures
         json_data = { event: 'checkpoints', duration: duration.to_i }
         level = :error
       elsif (values = line.match(SHUTDOWN))
         created_at, pid, text, timestamp = values.captures
         json_data = { event: 'shutdown', stopped_at: Time.parse(timestamp) }
-        level = host(log)&.has_rebooted?(Time.parse(created_at)) ? :warn : :error
+        level = host(log)&.was_rebooted?(Time.parse(created_at)) ? :warn : :error
       elsif (values = line.match(READY))
         created_at, pid, text = values.captures
         json_data = { event: 'ready' }

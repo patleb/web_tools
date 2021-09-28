@@ -10,7 +10,7 @@ module Checks
         return unless (nginx_conf = Pathname.new("/etc/nginx/sites-available/#{MixServer.deploy_dir}")).exist?
         return unless nginx_conf.readlines.none?{ |line| line.match? /^\s*return 503;/ }
         return unless self.class.host.uptime > 5.minutes
-        return unless (Time.current - Server.current.created_at) > 5.minutes
+        return unless Server.provisioned?
         minimum = MixServer.config.minimum_workers + Setting[:check_from_cron].to_i
         pids < minimum
       end

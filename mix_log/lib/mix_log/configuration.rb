@@ -38,11 +38,9 @@ module MixLog
         passenger_log_path(:access),
         passenger_log_path(:packs, :access),
         passenger_log_path(:public, :access),
-        log_path(:nginx, :access),
         log_path(:nginx, :error),
         log_path(:apt, :history),
         log_path(:auth),
-        log_path(:fail2ban),
         postgres_log_path,
         osquery_log_path,
         rails_log_path,
@@ -78,6 +76,7 @@ module MixLog
     def known_errors
       @known_errors ||= {
         warn: [
+          'SSL routines:ssl3_read_bytes:invalid alert',
           'SSL routines:tls_early_post_process_client_hello:version too low',
           'SSL routines:tls_early_post_process_client_hello:unsupported protocol',
           'SSL routines:tls_parse_ctos_key_share:bad key share',
@@ -110,7 +109,7 @@ module MixLog
         '/etc/udisks2',
         '/etc/update-motd.d/85-fwupd',
         '/etc/apt/apt.conf.d/01autoremove-kernels',
-        %r{^/(etc|usr/s?bin)/[-.\w/]+\.dpkg-(new|tmp)$},
+        %r{^/(etc|usr/s?bin)/[-.\w/]+\.dpkg-(old|new|tmp)$},
         %r{^/etc/([-.\w]+/)*sed\w{1,8}$},
         %r{^/etc/ssh/\.\w+$},
         %r{^/etc/systemd/system/\.[-.\w]+$},

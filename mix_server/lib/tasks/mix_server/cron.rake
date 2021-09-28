@@ -25,15 +25,13 @@ namespace :cron do
     run_task 'db:pg:dump:rotate' if flag_on? args, :dump
   end
 
-  desc 'every week cron jobs'
-  task :every_week => :environment do
-    next unless File.exist?('/var/run/reboot-required')
-    next if MixServer.no_reboot_file.exist?
-    run_task 'cron:reboot'
-  end
-
+  # TODO add wait functionality for main connection readiness, instead of receiving PG::UnableToSend
+  # TODO put cluster in maintenance before rebooting master --> cap_task ...
   desc 'reboot'
   task :reboot => :environment do
+    next unless File.exist?('/var/run/reboot-required')
+    next if MixServer.no_reboot_file.exist?
+
     run_task 'nginx:maintenance:enable'
     started_at = Time.current
     until (ready = Process.passenger.requests.blank?)
@@ -51,7 +49,7 @@ namespace :cron do
     next run_task('nginx:maintenance:disable') unless ready
 
     # won't interfere with 5 minutes cron
-    until (Time.current.min % 5) == 3
+    until (Time.current.min % 5) == 2
       sleep 10
     end
     run_task 'nginx:maintenance:disable'

@@ -34,11 +34,11 @@ module LogLines
         text_tiny = text
       elsif (values = text.match(SERVER_AUTH))
         port = values.captures.first
-        level = host(log)&.has_rebooted?(created_at) ? :warn : :error
+        level = host(log)&.was_rebooted?(created_at) ? :warn : :error
         text_tiny = text.sub("::", '*')
       elsif (values = text.match(SERVER_EXIT))
         signal = values.captures.first
-        level = host(log)&.has_rebooted?(created_at) ? :warn : :error
+        level = host(log)&.was_rebooted?(created_at) ? :warn : :error
         text_tiny = text
       else
         return { created_at: created_at, filtered: true }

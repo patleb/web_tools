@@ -39,8 +39,12 @@ module LogLines
       rebooted.order(created_at: :desc).pluck(:boot_time)
     end
 
-    def self.has_rebooted?(time)
+    def self.was_rebooted?(time)
       rebooted.where(boot_time: (time - Setting[:check_interval])..(time + Setting[:check_interval])).exists?
+    end
+
+    def self.was_deployed?(time)
+      versioned.where(created_at: time..(time + Setting[:check_interval])).exists?
     end
 
     def self.rollups

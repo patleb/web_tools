@@ -58,18 +58,22 @@ module LogLines
         level = ram > flags[:watchdog_memory_limit].mb_to_bytes ? :error : :info
         message = { text: name, level: level }
       when 'file_events'
-        has_upgraded = apt_history(log)&.has_upgraded? created_at
-        has_rebooted = host(log)&.has_rebooted? created_at
+        not_provisioned = !Server.provisioned? created_at
+        was_upgraded = apt_history(log)&.was_upgraded? created_at
+        was_deployed = host(log)&.was_deployed? created_at
+        was_rebooted = host(log)&.was_rebooted? created_at
         ssl_upgrade = task(log)&.ssl_upgrade? created_at
         message, paths = extract_paths(diff, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
           path = row['target_path']
-          next if upgraded_binaries.any?{ |dir| path.start_with? dir } && has_upgraded
-          next if path.start_with?('/etc/nginx/sites-available/') && has_rebooted
-          next if path.start_with?('/etc/nginx/ssl/') && ssl_upgrade
+          next if not_provisioned && path.end_with?("/#{Rails.app}_#{Rails.env}-job-default.service")
+          next if was_upgraded && upgraded_binaries.any?{ |dir| path.start_with? dir }
+          next if was_deployed && path.start_with?('/var/spool/cron/crontabs/')
+          next if was_rebooted && path.start_with?('/etc/nginx/sites-available/')
+          next if ssl_upgrade && path.start_with?('/etc/nginx/ssl/')
           next if MixLog.config.known_files.any? do |f|
             f.is_a?(Regexp) ? path.match?(f) : path == f
           end
-          memo << [path, row['action']].join('/')
+          memo << [path.delete_suffix('/'), row['action']].join('/')
         end
       when 'socket_events'
         servers = Set.new(Cloud.servers)
