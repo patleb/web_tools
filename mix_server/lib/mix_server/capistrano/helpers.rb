@@ -29,24 +29,6 @@ module MixServer
       end
     end
 
-    def monit_reload
-      test :sudo, "systemctl reload monit"
-    end
-
-    def monit_restart
-      execute :sudo, "systemctl restart monit"
-    end
-
-    def monit_push
-      template_push 'monitrc', monitrc
-      execute :sudo, :chown, 'root:root', monitrc
-      execute :sudo, :chmod, 600, monitrc
-    end
-
-    def monitrc
-      '/etc/monit/monitrc'
-    end
-
     def url_for(path, ssl: true, **params)
       path = path[0] == '/' ? path[1..-1] : path
       params = params.any? ? "?#{params.to_param}" : ''
