@@ -29,7 +29,7 @@ class Log < LibMainRecord
 
   def self.fs_type(path)
     name = path.match(FS_TYPE).captures.reject{ |token| FS_TYPE_SKIP.include? token }.uniq.join('_')
-    name == Rails.env ? 'LogLines::Rails' : "LogLines::#{name.camelize}"
+    name == Rails.env ? 'LogLines::App' : "LogLines::#{name.camelize}"
   end
 
   db_types.each do |db_type|

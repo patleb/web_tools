@@ -1,4 +1,4 @@
-RAILS_EXPECTATIONS = [
+APP_EXPECTATIONS = [
   {:created_at=>Time.new(2021,5,23,13,39,45.0,0), :pid=>4198, :message=>{:text=>"look in rails log", :level=>:fatal}, :json_data=>{:uuid=>"d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1"}, :anchored=>nil},
   {:created_at=>Time.new(2021,5,23,13,39,45.0,0), :pid=>4198, :message=>{:text=>"EOFError (EOFError):", :level=>:fatal}, :json_data=>{:uuid=>"d2a6857e-cf52-4a01-8b5b-1a26a8ba63c1"}, :anchored=>true},
   {:filtered=>true},

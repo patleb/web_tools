@@ -23,7 +23,7 @@ module MixLog
         'LogLines::Auth'        => 30,
         'LogLines::Fail2ban'    => 40,
         'LogLines::Postgresql'  => 50,
-        'LogLines::Rails'       => 60,
+        'LogLines::App'         => 60,
         'LogLines::AptHistory'  => 70,
         'LogLines::Osquery'     => 80,
       }

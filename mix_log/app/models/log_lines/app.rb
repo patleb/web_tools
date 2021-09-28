@@ -1,5 +1,5 @@
 module LogLines
-  class Rails < LogLine
+  class App < LogLine
     TIME    = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+/
     PID     = /\d+/
     UUID    = /[\w-]+/

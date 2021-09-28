@@ -58,7 +58,7 @@ module LogLines
         level = ram > flags[:watchdog_memory_limit].mb_to_bytes ? :error : :info
         message = { text: name, level: level }
       when 'file_events'
-        not_provisioned = !Server.provisioned? created_at
+        not_provisioned = !Server.provisioned?(created_at)
         was_upgraded = apt_history(log)&.was_upgraded? created_at
         was_deployed = host(log)&.was_deployed? created_at
         was_rebooted = host(log)&.was_rebooted? created_at
