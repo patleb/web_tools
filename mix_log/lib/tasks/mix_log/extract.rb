@@ -23,7 +23,7 @@ module MixLog
         log.finalize
       end
 
-      options.parallel ? Parallel.each(logs, &block) : logs.each(&block)
+      options.parallel ? Parallel.each(logs, ar_base: LibMainRecord, &block) : logs.each(&block)
     end
 
     private

@@ -13,7 +13,7 @@ module MixLog
 
     def rollup
       if options.parallel
-        Parallel.each(logs, &:rollups!.with(options.all))
+        Parallel.each(logs, ar_base: LibMainRecord, &:rollups!.with(options.all))
       else
         logs.each(&:rollups!.with(options.all))
       end

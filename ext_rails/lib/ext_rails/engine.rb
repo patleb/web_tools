@@ -52,6 +52,7 @@ module ExtRails
     require 'ext_rails/configuration'
     require 'ext_rails/http'
     require 'ext_rails/money_rails'
+    require 'ext_rails/parallel'
     require 'ext_rails/rack/utils'
     require 'ext_rails/rails/engine'
     require 'ext_rails/rails/initializable/initializer'
