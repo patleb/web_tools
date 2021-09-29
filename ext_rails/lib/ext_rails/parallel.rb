@@ -8,7 +8,7 @@ module Parallel::WithActiveRecord
       begin
         super
       ensure
-        ar_bases.map{ |ar_base| ar_base.connection.reconnect! }
+        ar_bases.each{ |ar_base| ar_base.connection.reconnect! }
       end
     end
   end
