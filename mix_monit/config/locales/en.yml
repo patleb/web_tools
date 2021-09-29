@@ -10,7 +10,7 @@ en:
   errors:
     messages:
       check_error: Check error
-  monits:
+  monit:
     postgres:
       replication_slots_html: >
         Inactive replication slots can cause a lot of disk space to be consumed. For each, run:

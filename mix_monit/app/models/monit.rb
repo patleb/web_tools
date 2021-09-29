@@ -1,7 +1,7 @@
-class Monit
+module Monit
   def self.capture
-    Monits::Linux::Host.capture
-    Monits::Postgres::Database.capture
+    Linux::Host.capture
+    Postgres::Database.capture
   rescue Exception => exception
     unless exception.is_a? RescueError
       exception = Rescues::MonitError.new(exception)
@@ -10,6 +10,6 @@ class Monit
   end
 
   def self.cleanup
-    Monits::Postgres::Database.cleanup
+    Postgres::Database.cleanup
   end
 end

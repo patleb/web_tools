@@ -11,7 +11,7 @@ namespace :monit do
 
   desc 'database missing indexes'
   task :missing_indexes => :environment do
-    tables = Monits::Postgres::Table.missing_indexes.map do |table|
+    tables = Monit::Postgres::Table.missing_indexes.map do |table|
       { table: table.id, estimated_rows: table.estimated_rows, index_usage: table.index_usage }.pretty_hash(sort: false)
     end
     puts tables
@@ -19,7 +19,7 @@ namespace :monit do
 
   desc 'database suggested indexes'
   task :suggested_indexes => :environment do
-    indexes = Monits::Postgres::Query.suggested_indexes.map do |index|
+    indexes = Monit::Postgres::Query.suggested_indexes.map do |index|
       if index[:using] && index[:using] != "btree"
         using = ", using: #{index[:using].inspect}"
       end
