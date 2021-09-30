@@ -25,7 +25,7 @@ module Monit
       end
 
       def ram_usage_issue?
-        ram_usage >= 95.0
+        ram_usage >= Setting[:monit_ram_usage]
       end
 
       def ram_usage_warning?

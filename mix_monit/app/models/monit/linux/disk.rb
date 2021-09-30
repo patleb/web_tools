@@ -34,7 +34,7 @@ module Monit
       end
 
       def usage_issue?
-        usage >= 90.0
+        usage >= Setting[:monit_disk_usage]
       end
 
       def usage_warning?

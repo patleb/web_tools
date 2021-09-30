@@ -15,5 +15,8 @@ shared:
   # monit_index_bloat_bytes: 104857600
   monit_table_bloat_factor: 10.0
   monit_table_bloat_bytes: 104857600
+  monit_cpu_load_avg: 1.0
+  monit_disk_usage: 90.0
+  monit_ram_usage: 95.0
   monit_interval: 5 minutes
   monit_from_cron: true

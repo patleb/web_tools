@@ -30,7 +30,7 @@ module Monit
         m_access(:snapshot) do
           keys = [:boot_time, :cpu_load, :cpu_pids, :cpu_work, :cpu_idle, :cpu_steal]
           values = Host.snapshot&.slice(*keys)
-          values || keys.drop(2).map{ |k| [k, 0] }.to_h.merge(boot_time: Time.at(0), cpu_load: [0, 0 , 0])
+          values || keys.drop(2).map{ |k| [k, 0] }.to_h.merge(boot_time: Time.at(0), cpu_load: [0, 0, 0])
         end
       end
 
@@ -39,11 +39,11 @@ module Monit
       end
 
       def load_avg_issue?
-        load_avg >= 1.0 && self.class.snapshot[:cpu_load].all?{ |value| value >= 1.0 }
+        [load_avg].concat(self.class.snapshot[:cpu_load]).all?{ |value| value >= Setting[:monit_cpu_load_avg] }
       end
 
       def load_avg_warning?
-        load_avg >= 0.7 && self.class.snapshot[:cpu_load].all?{ |value| value >= 0.7 }
+        [load_avg].concat(self.class.snapshot[:cpu_load]).all?{ |value| value >= 0.7 }
       end
 
       def steal_warning?
