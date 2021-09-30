@@ -13,7 +13,7 @@ system:
     - reboot
 
 vagrant:
-  swap_size: 0M
+  swap_size: 0
 
 staging:
   swap_size: 2G

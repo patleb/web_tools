@@ -11,8 +11,8 @@ if [[ ${__SWAP_SIZE__::1} != '0' ]] && [[ $__SWAP_SIZE__ != false ]]; then
   fallocate -l $__SWAP_SIZE__ $SWAP_NAME
   chmod 600 $SWAP_NAME
   mkswap $SWAP_NAME
-  swapon $SWAP_NAME
-  echo "$SWAP_NAME   none    swap    sw    0   0" >> /etc/fstab
+  swapon -p 0 $SWAP_NAME
+  echo "$SWAP_NAME   none    swap    sw,pri=0    0   0" >> /etc/fstab
 fi
 
 <%= Sh.concat('/etc/sysctl.conf', 'vm.swappiness=10', unique: true) %>
