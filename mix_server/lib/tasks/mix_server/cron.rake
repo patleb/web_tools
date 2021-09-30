@@ -12,9 +12,9 @@ namespace :cron do
   desc 'every day cron jobs'
   task :every_day, [:dump] => :environment do |t, args|
     run_task 'monit:cleanup'
-    run_task 'certificate:lets_encrypt:create_or_renew' if defined? MixCertificate
-    run_task 'flash:cleanup'  if defined? MixFlash
-    run_task 'geo:import_ips' if defined? MixGeo
+    run_task 'certificate:lets_encrypt:create_or_renew' if Setting[:server_ssl]
+    run_task 'flash:cleanup'
+    run_task 'geo:import_ips'
     run_task 'global:cleanup'
     run_task 'list:reorganize'
     run_task 'clamav:scan'
