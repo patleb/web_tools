@@ -78,7 +78,7 @@ namespace! :ftp do
     namespace :backups do
       desc 'mirror dumps'
       task :mirror => :environment do
-        sh Sh.ftp_mirror(backup_folder.join('dump_*'), backup_root, sudo: true, parallel: 10), verbose: false
+        sh Sh.ftp_mirror(Setting[:backup_dir].join('dump_*'), backup_folder, sudo: true, parallel: 10), verbose: false
       end
 
       desc 'restore dated dump'
@@ -96,8 +96,7 @@ namespace! :ftp do
     namespace :logs do
       desc 'mirror osquery logs'
       task :mirror => :environment do
-        path = "#{MixLog.config.osquery_log_path}*"
-        sh Sh.ftp_mirror(path, backup_root.join("server_#{Server.current.id}"), sudo: true, parallel: 10), verbose: false
+        sh Sh.ftp_mirror("#{MixLog.config.osquery_log_path}*", osquery_folder, sudo: true, parallel: 10), verbose: false
       end
     end
   end
@@ -130,6 +129,10 @@ namespace! :ftp do
       uid=#{user_id}
       gid=#{group_id}
     ))
+  end
+
+  def osquery_folder
+    "osquery_#{Server.current.id.to_s.rjust(6, '0')}"
   end
 
   def backup_folder

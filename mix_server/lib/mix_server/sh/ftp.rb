@@ -1,7 +1,6 @@
 module Sh::Ftp
   def ftp_mirror(match, base_dir, parallel: nil, **options)
-    match_dir = File.basename(File.dirname(match))
-    ftp "mkdir -pf #{base_dir}; lcd #{base_dir}; mirror -R -O #{match_dir} #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c -e -f #{match}", **options
+    ftp "mkdir -pf #{base_dir}; mirror -R -O #{base_dir} #{"-P #{parallel}" if parallel && parallel.to_i > 1} -c -e -f #{match}", **options
   end
 
   def ftp_list(match, **options)
