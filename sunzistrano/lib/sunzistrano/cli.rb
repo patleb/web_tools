@@ -183,6 +183,7 @@ module Sunzistrano
             print "[#{server}] "
             print line.green
           end
+          puts "[#{server}] #{Time.now}"
           t.join
         end
       end
