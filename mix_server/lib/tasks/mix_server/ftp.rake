@@ -54,9 +54,10 @@ namespace! :ftp do
       Db::Pg::Dump.new(self, t, args, version: true, split: true, md5: true, physical: true).run!
       puts_info '[DUMP]', 'done'
       unless flag_on? args, :skip_ftp
+        dump = backup_folder.join('dump')
         sh Sh.ftp_remove(backup_folder.join('dump-old/*')), verbose: false
-        sh Sh.ftp_rename(backup_folder.join('dump/*'), backup_folder.join('dump-old/')), verbose: false
-        sh Sh.ftp_upload(backup_folder.join('dump/*'), backup_root, sudo: true, parallel: 10), verbose: false
+        sh Sh.ftp_rename(dump.join('*'), backup_folder.join('dump-old/')), verbose: false if run_ftp_list(dump).present?
+        sh Sh.ftp_upload(dump.join('*'), backup_root, sudo: true, parallel: 10), verbose: false
       end
     end
 
