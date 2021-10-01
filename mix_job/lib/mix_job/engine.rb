@@ -8,6 +8,12 @@ module ActiveJob
 end
 
 module MixJob
+  def self.routes
+    @routes ||= {
+      job: '/_jobs/__JOB_CLASS__/__JOB_ID__',
+    }
+  end
+
   class Engine < ::Rails::Engine
     config.before_configuration do |app|
       app.config.active_job.queue_adapter = :job

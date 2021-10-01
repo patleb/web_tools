@@ -15,7 +15,7 @@ class Job < LibRecord
   end
 
   def self.url(job_class: nil, job_id: nil, **params)
-    url = (@url ||= Rails.application.routes.url_helpers.jobs_url(job_class: '__JOB_CLASS__', job_id: '__JOB_ID__'))
+    url = (@url ||= ExtRails::Routes.url_for(MixJob.routes[:job]))
     if job_class && job_id
       url = url.sub('__JOB_CLASS__', job_class).sub('__JOB_ID__', job_id)
       params.any? ? "#{url}?#{params.to_query}" : url
