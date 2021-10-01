@@ -3,6 +3,7 @@ module Parallel::WithActiveRecord
 
   class_methods do
     def map(source, options = {}, &block)
+      return super if Rails.env.test?
       options = options.dup
       return super if (ar_bases = Array.wrap(options.delete(:ar_base))).empty?
       begin
