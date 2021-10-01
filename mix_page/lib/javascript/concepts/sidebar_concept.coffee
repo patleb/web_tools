@@ -32,7 +32,8 @@ class Js.SidebarConcept # TODO extract to MixTemplate with RailsAdmin.SidebarCon
     $(@ACTIVE_WRAPPER).removeClass(@ACTIVE)
     li = $(".#{@PAGE}_#{Page.uuid}").parent()
     li.addClass(@ACTIVE)
-    segments = li.data('node').split('/')[0..-2]
+    return unless (node = li.data('node'))
+    segments = node.split('/')[0..-2]
     base = null
     segments.each (segment) =>
       base = [base, segment].compact().join('/')
