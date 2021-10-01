@@ -35,7 +35,7 @@ module ActiveStorage::Blob::WithOptimize
         upload_without_unfurling(io)
       end
     end
-    ratio = (100.0 * (byte_size.to_f / byte_size_was)).floor(2)
+    ratio = (byte_size_was.to_f / byte_size).floor(2)
     save!
     with_lock do
       update! metadata: metadata.merge(optimized: true, compression: ratio)
