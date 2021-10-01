@@ -232,7 +232,7 @@ module MixJob
     def inspect
       <<~EOF.strip
         #{INSPECT}[#{self.class.name}]
-        #{snapshot}
+        #{snapshot.pretty_hash}
         #{@jobs.join("\n") if options.keep_jobs > 0}
       EOF
     end

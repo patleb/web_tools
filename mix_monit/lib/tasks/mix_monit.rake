@@ -12,7 +12,7 @@ namespace :monit do
   desc 'database missing indexes'
   task :missing_indexes => :environment do
     tables = Monit::Postgres::Table.missing_indexes.map do |table|
-      { table: table.id, estimated_rows: table.estimated_rows, index_usage: table.index_usage }.pretty_hash(sort: false)
+      { table: table.id, estimated_rows: table.estimated_rows, index_usage: table.index_usage }.pretty_hash
     end
     puts tables
   end

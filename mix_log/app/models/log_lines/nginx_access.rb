@@ -227,7 +227,7 @@ module LogLines
       regex, replacement = MixLog.config.ided_paths.find{ |regex, _replacement| path.match? regex }
       path_tiny = regex ? squish(path.gsub(regex, replacement)) : squish(path)
       if method
-        params = json_data[:params]&.pretty_hash!('')
+        params = json_data[:params]&.pretty_hash! || ''
         params_tiny = squish(params)
       end
       text_tiny = [status, method, path_tiny].join!(' ')
