@@ -39,7 +39,7 @@ module ActiveStorage::Blob::WithBackup
     return false unless backuped?
     io = StringIO.new(backup.data)
     upload_without_unfurling(io)
-    update! metadata: metadata.except(:optimized, :gain)
+    update! metadata: metadata.except(:optimized, :compression)
     optimize if optimizable?
     true
   end

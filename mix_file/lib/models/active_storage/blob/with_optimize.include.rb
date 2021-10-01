@@ -35,8 +35,10 @@ module ActiveStorage::Blob::WithOptimize
         upload_without_unfurling(io)
       end
     end
-    gain = (100.0 * (1 - (byte_size.to_f / byte_size_was))).floor(2)
-    update! metadata: metadata.merge(optimized: true, gain: gain)
+    ratio = (100.0 * (byte_size.to_f / byte_size_was)).floor(2)
+    with_lock do
+      update! metadata: metadata.merge(optimized: true, compression: ratio)
+    end
   end
 
   def transform(**transformations)
