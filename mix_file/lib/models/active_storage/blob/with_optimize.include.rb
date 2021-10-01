@@ -36,6 +36,7 @@ module ActiveStorage::Blob::WithOptimize
       end
     end
     ratio = (100.0 * (byte_size.to_f / byte_size_was)).floor(2)
+    save!
     with_lock do
       update! metadata: metadata.merge(optimized: true, compression: ratio)
     end
