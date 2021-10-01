@@ -70,8 +70,9 @@ module ExtRails
       app.config.i18n.fallbacks = [:en]
       # app.config.i18n.fallbacks = true
 
+      $stdout.sync = true
+
       if Rails.env.dev_or_test?
-        $stdout.sync = true # for Foreman
         host, port = Setting[:default_url_options].values_at(:host, :port)
         app.config.asset_host = "#{host}#{":#{port}" if port}"
         app.config.logger = ActiveSupport::Logger.new(app.config.paths['log'].first, 5)
