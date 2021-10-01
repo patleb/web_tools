@@ -72,7 +72,7 @@ module MixJob::WatchMock
     _signal :inspect
     assert_until(1){ _output.scan(self.class::INSPECT).size }
     assert_includes  _output, self.class.name
-    assert_includes  _output, ':waited=>0'
+    assert_includes  _output, 'waited: 0'
 
     _actions.each do |action|
       Pathname.new("#{self.class::ACTIONS}/#{Time.current.to_nanoseconds}.rb").write(action)

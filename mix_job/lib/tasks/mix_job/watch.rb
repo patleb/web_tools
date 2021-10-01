@@ -115,6 +115,7 @@ module MixJob
 
     def wait_for_termination
       @executor.wait_for_termination
+      puts snapshot.except(:time, :thread, :shutdown, :job).pretty_hash
     end
 
     def restore_signals
@@ -233,7 +234,7 @@ module MixJob
       <<~EOF.strip
         #{INSPECT}[#{self.class.name}]
         #{snapshot.pretty_hash}
-        #{@jobs.join("\n") if options.keep_jobs > 0}
+        #{@jobs.map(&:pretty_hash).join("\n") if options.keep_jobs > 0}
       EOF
     end
 
