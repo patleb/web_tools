@@ -38,6 +38,7 @@ module ActiveStorage::Blob::WithBackup
   def restore_file
     return false unless backuped?
     io = StringIO.new(backup.data)
+    self.byte_size, self.checksum = backup.byte_size, backup.checksum
     upload_without_unfurling(io)
     update! metadata: metadata.except(:optimized, :compression)
     optimize if optimizable?
