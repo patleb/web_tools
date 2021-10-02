@@ -4,6 +4,6 @@ namespace :load do
       public/storage
       storage
     )
-    append :files_public_dirs, 'storage'
+    append :public_dirs, 'storage'
   end
 end

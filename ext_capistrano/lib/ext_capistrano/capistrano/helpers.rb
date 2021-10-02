@@ -1,5 +1,7 @@
 module ExtCapistrano
   module Helpers
+    RSYNC_OPTIONS = "--rsync-path='sudo rsync' --inplace --partial -azvh"
+
     def execute_cap(stage, task, environment = {})
       with_ruby(environment.merge(rails_env: 'development', git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS'])) do |context|
         execute <<-SH.squish
@@ -69,20 +71,12 @@ module ExtCapistrano
       capture(cmd).to_b
     end
 
-    def send_files(server, root, folder)
-      run_locally{ execute "rsync --progress -rutzvh -e 'ssh -p #{fetch(:port, 22)}' #{root}/#{folder} #{server.user}@#{server.hostname}:#{shared_path}/#{root}/" }
-    end
-
-    def get_files(server, root, folder)
-      run_locally{ execute "rsync --progress -rutzvh -e 'ssh -p #{fetch(:port, 22)}' #{server.user}@#{server.hostname}:#{shared_path}/#{root}/#{folder} ./#{root}/" }
-    end
-
     def upload_file(server, source, destination, user: false)
-      run_locally{ execute "rsync --rsync-path='sudo rsync' #{"--chown=#{fetch(:deployer_name)}:#{fetch(:deployer_name)}" if user} -azvh -e 'ssh -p #{fetch(:port, 22)}' '#{source}' #{fetch(:deployer_name)}@#{server.hostname}:#{destination}" }
+      run_locally{ execute "rsync #{RSYNC_OPTIONS} #{"--chown=#{fetch(:deployer_name)}:#{fetch(:deployer_name)}" if user} -e 'ssh -p #{fetch(:port, 22)}' '#{source}' #{fetch(:deployer_name)}@#{server.hostname}:#{destination}" }
     end
 
     def download_file(server, source, destination)
-      run_locally{ execute "rsync --rsync-path='sudo rsync' -azvh -e 'ssh -p #{fetch(:port, 22)}' #{fetch(:deployer_name)}@#{server.hostname}:#{source} '#{destination}'" }
+      run_locally{ execute "rsync #{RSYNC_OPTIONS} -e 'ssh -p #{fetch(:port, 22)}' #{fetch(:deployer_name)}@#{server.hostname}:#{source} '#{destination}'" }
     end
 
     def upload_erb(source, destination)

@@ -5,9 +5,9 @@
   #{'db/postgres__POSTGRES__/pg_repack' if sun.pgrepack_enabled}
   nginx/passenger
   nginx/htpasswd
-  #{'ssl/ca' unless sun.nginx_skip_ssl}
-  #{'ssl/self_signed' unless sun.nginx_skip_ssl}
-  #{'ssl/dhparam' unless sun.nginx_skip_ssl}
+  #{'ssl/ca' if sun.server_ssl}
+  #{'ssl/self_signed' if sun.server_ssl}
+  #{'ssl/dhparam' if sun.server_ssl}
   lang/ruby/system__RUBY__
   lang/nodejs/system__NODEJS__
   lang/python/system__PYTHON__

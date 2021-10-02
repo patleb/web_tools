@@ -11,13 +11,6 @@ namespace :load do
     append :gems, 'mix_server'
 
     set :nginx_max_body_size, -> { '100m' }
-    set :nginx_public_dirs,   -> { fetch(:files_public_dirs) }
-    set :nginx_public_files,  -> { %w(
-      apple-touch-icon-precomposed.png
-      apple-touch-icon.png
-      favicon.png
-      robots.txt
-    ) }
     set :nginx_satisfy,     -> { false }
     set :nginx_denied_ips,  -> { [ '74.217.28.0/22' ] }
     set :nginx_allowed_ips, -> { [] }
@@ -26,7 +19,6 @@ namespace :load do
     set :nginx_upstreams,   -> { {} }
     set :nginx_locations,   -> { {} }
     set :nginx_deferred,    -> { fetch(:passenger_roles) && cap.env.production? }
-    set :nginx_skip_ssl,    -> { !Setting[:server_ssl] }
 
     # command = [fetch(:passenger_restart_command), fetch(:passenger_restart_options)].join(' ')
     # %{exec "/usr/bin/sudo -u #{fetch(:deployer_name)} -H sh -c '/home/#{fetch(:deployer_name)}/.rbenv/bin/#{command}'"}

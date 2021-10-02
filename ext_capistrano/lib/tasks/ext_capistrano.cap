@@ -19,8 +19,13 @@ namespace :load do
     set :default_env,         -> { { rails_app: fetch(:rails_app) } }
     set :pty,                 -> { true }
 
-    set :files_public_dirs,   -> { [] }
-    set :files_private_dirs,  -> { [] }
+    set :public_dirs,  -> { [] }
+    set :public_files, -> { %w(
+      apple-touch-icon-precomposed.png
+      apple-touch-icon.png
+      favicon.png
+      robots.txt
+    ) }
 
     set :rbenv_ruby,          -> { RUBY_VERSION }
     set :rbenv_prefix,        -> { "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec" }

@@ -81,7 +81,7 @@ server {
 
   # SSL configuration
   #
-  <% unless fetch(:nginx_skip_ssl) %>
+  <% if Setting[:server_ssl] %>
     listen 443 ssl http2 <%= deferred %>;
     listen [::]:443 ssl http2 <%= deferred %>;
   <% end %>
@@ -110,7 +110,7 @@ server {
       access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_packs.access.log mix_server_access_log;
     }
 
-    <% fetch(:nginx_public_dirs).each do |root| %>
+    <% fetch(:public_dirs).each do |root| %>
       location /<%= root %>/ {
         expires 1M;
         add_header Cache-Control public;
@@ -118,7 +118,7 @@ server {
       }
     <% end %>
 
-    <% fetch(:nginx_public_files).each do |root| %>
+    <% fetch(:public_files).each do |root| %>
       location /<%= root %> {
         expires 1M;
         add_header Cache-Control public;
@@ -132,7 +132,7 @@ server {
   server {
     listen 80;
     listen [::]:80;
-    <% unless fetch(:nginx_skip_ssl) %>
+    <% if Setting[:server_ssl] %>
       listen 443 ssl;
       listen [::]:443 ssl;
     <% end %>
@@ -157,5 +157,5 @@ server {
 # }
 
 <% if fetch(:passenger_roles) %>
-  passenger_pre_start http<%= 's' unless fetch(:nginx_skip_ssl) %>://<%= fetch(:server) %>/;
+  passenger_pre_start http<%= 's' if Setting[:server_ssl] %>://<%= fetch(:server) %>/;
 <% end %>

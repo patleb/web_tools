@@ -30,42 +30,4 @@ namespace :file do
       upload_file(host, args[:src], args[:dst], user: user)
     end
   end
-
-  desc 'Import public files'
-  task :pull do
-    on release_roles :all do |host|
-      fetch(:files_public_dirs).each do |folder|
-        get_files host, 'public', folder
-      end
-    end
-  end
-
-  desc 'Export public files'
-  task :push do
-    on release_roles :all do |host|
-      fetch(:files_public_dirs).each do |folder|
-        send_files host, 'public', folder
-      end
-    end
-  end
-
-  namespace :storage do
-    desc 'Import private files'
-    task :pull do
-      on release_roles :all do |host|
-        fetch(:files_private_dirs).each do |folder|
-          get_files host, 'storage', folder
-        end
-      end
-    end
-
-    desc 'Export private files'
-    task :push do
-      on release_roles :all do |host|
-        fetch(:files_private_dirs).each do |folder|
-          send_files host, 'storage', folder
-        end
-      end
-    end
-  end
 end
