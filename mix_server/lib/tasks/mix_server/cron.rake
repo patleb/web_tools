@@ -12,7 +12,7 @@ namespace :cron do
   desc 'every day cron jobs'
   task :every_day, [:dump] => :environment do |t, args|
     run_task 'monit:cleanup'
-    run_task 'certificate:lets_encrypt:create_or_renew' if Setting[:server_ssl]
+    run_task 'certificate:lets_encrypt:create_or_renew'
     run_task 'flash:cleanup'
     run_task 'geo:import_ips'
     run_task 'global:cleanup'
