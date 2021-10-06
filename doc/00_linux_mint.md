@@ -235,6 +235,7 @@ sudo apt-get -y install \
   libyaml-dev \
   m4 \
   mmv \
+  net-tools \
   openssh-server \
   openssl \
   patch \
