@@ -51,6 +51,9 @@ when 'staging', 'production'
   end
 end
 
+raise "Setting[:monit_interval] < 1.minute" unless Setting[:monit_interval] >= 1.minute
+raise "Setting[:monit_interval] > 20.minutes" unless Setting[:monit_interval] <= 20.minutes
+
 every Setting[:monit_interval] do
   runner 'Monit.capture'
 end
