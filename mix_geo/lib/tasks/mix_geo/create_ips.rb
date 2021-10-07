@@ -90,7 +90,7 @@ module MixGeo
     end
 
     def create_cities_and_ips
-      Parallel.each(tmp_files_glob, ar_base: LibMainRecord) do |file|
+      Parallel.each(tmp_files_glob, reconnect: LibMainRecord) do |file|
         cities = Set.new
         cities_ids = {}
         states_ids = {}
