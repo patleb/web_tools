@@ -1,7 +1,6 @@
 namespace :sunzistrano do
   desc 'output capistrano config'
   task :capistrano do
-    ENV['RAILS_ROOT'] = Dir.pwd
     env = Capistrano::Configuration.env
     values = env.variables.instance_values['values'].each_with_object({}) do |(key, value), memo|
       value = value.call if value.respond_to?(:call)

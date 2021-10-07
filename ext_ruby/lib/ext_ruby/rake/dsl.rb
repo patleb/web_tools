@@ -122,8 +122,7 @@ module Rake
 
     def assign_environment!(args)
       raise 'argument [:env] must be specified' unless (ENV['RAILS_ENV'] = args[:env]).present?
-      ENV['RAILS_APP'] ||= ENV['APP']
-      ENV['RAILS_ROOT'] ||= ENV['ROOT']
+      ENV['RAILS_APP'] ||= ENV['APP'] || args[:app]
     end
   end
 end
