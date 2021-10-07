@@ -33,7 +33,7 @@ module Monit
       end
 
       def swap_usage_warning?
-        swap_usage >= 25.0
+        swap_usage >= 50.0
       end
     end
   end
