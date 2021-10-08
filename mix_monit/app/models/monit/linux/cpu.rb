@@ -46,9 +46,23 @@ module Monit
         [load_avg].concat(self.class.snapshot[:cpu_load]).all?{ |value| value >= 0.7 }
       end
 
+      def usage_issue?
+        interval_ok? :usage, Setting[:monit_cpu_usage]
+      end
+
+      def usage_warning?
+        interval_ok? :usage, 75.0
+      end
+
       def steal_warning?
-        last_records = LogLines::Host.last_records.limit(20.minutes / Setting[:monit_interval]).pluck(:steal)
-        last_records.any? && (last_records << steal).all?{ |value| value >= 10.0 }
+        interval_ok? :steal, 10.0
+      end
+
+      private
+
+      def interval_ok?(attribute, threshold)
+        last_records = LogLines::Host.last_records.limit(20.minutes / Setting[:monit_interval]).pluck(attribute)
+        last_records.any? && (last_records << send(attribute)).all?{ |value| value >= threshold }
       end
     end
   end

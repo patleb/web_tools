@@ -29,11 +29,15 @@ module Monit
       end
 
       def ram_usage_warning?
-        ram_usage >= 75.0
+        ram_usage >= 85.0
+      end
+
+      def swap_usage_issue?
+        swap_usage >= Setting[:monit_swap_usage]
       end
 
       def swap_usage_warning?
-        swap_usage >= 50.0
+        swap_usage >= 25.0
       end
     end
   end
