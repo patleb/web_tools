@@ -64,7 +64,7 @@ class Setting
       raise 'environment must be specified or configured' unless env
 
       @env = env.to_s
-      @app = app.to_s
+      @app = app&.to_s
       @root = Pathname.new('').expand_path
       @types = {}.with_keyword_access
       @gems = {}
