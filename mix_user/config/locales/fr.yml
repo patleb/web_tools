@@ -38,6 +38,12 @@ fr:
         null: Indéfini
     models:
       user: Utilisateur
+    errors:
+      models:
+        user:
+          attributes:
+            role:
+              deployer_denied: interdit
   devise:
     confirmations:
       confirmed: Votre compte a bien été confirmé.

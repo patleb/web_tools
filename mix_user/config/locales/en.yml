@@ -40,6 +40,12 @@ en:
       user:
         one: User
         other: Users
+    errors:
+      models:
+        user:
+          attributes:
+            role:
+              deployer_denied: denied
   devise:
     confirmations:
       confirmed: Your email address has been successfully confirmed.
