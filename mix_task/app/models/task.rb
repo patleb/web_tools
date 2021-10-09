@@ -92,7 +92,7 @@ class Task < LibMainRecord
 
   def perform_now
     started_at = Concurrent.monotonic_time
-    self.output = Parallel.map([[name, arguments]], in_processes: 1, reconnect: LibMainRecord) do |(name, arguments)|
+    self.output = Parallel.map([[name, arguments]], in_processes: 1) do |(name, arguments)|
       String.try(:disable_colorization=, true)
       ARGV.clear
       ENV['RAKE_OUTPUT'] = true
