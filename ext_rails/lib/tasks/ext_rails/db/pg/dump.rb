@@ -3,7 +3,7 @@ module Db
     class Dump < Base
       SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
       SPLIT_SIZE = Setting[:backup_split_size]
-      PIGZ_CORES = (Etc.nprocessors / 2.0).ceil
+      PIGZ_CORES = (cores = (Etc.nprocessors / 2.0).ceil) > 32 ? 32 : cores
       EXTENSIONS = /\.[\w.-]+$/
       VERSION    = /[a-f0-9]{7}/
 
