@@ -15,6 +15,11 @@ namespace :ssh do
         sh "sudo rmdir #{mount_path}"
       end
     end
+
+    desc 'Write cluster_ssh file for parallel-ssh'
+    task :parallelize => :environment do
+      File.write('/home/deployer/ssh_cluster', Setting[:server_cluster_ips].map{ |ip| "deployer@#{ip}" }.join("\n") + "\n")
+    end
   end
 
   desc 'Mount SSH drive'
