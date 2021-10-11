@@ -19,7 +19,11 @@ module MixSetting::Type
       else
         case type&.to_sym
         when :json
-          ActiveSupport::JSON.decode(value).with_keyword_access
+          case value
+          when Array then value
+          when Hash  then value.with_keyword_access
+          else ActiveSupport::JSON.decode(value).with_keyword_access
+          end
         when :boolean
           value.to_b
         when :integer
