@@ -1,3 +1,9 @@
+namespace :load do
+  task :defaults do
+    set :docker_dir, -> { 'docker' }
+  end
+end
+
 namespace :docker do
   desc 'Export Dockerfile template'
   task :push, [:template] do |t, args|

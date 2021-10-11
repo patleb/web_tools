@@ -1,3 +1,9 @@
+namespace :load do
+  task :defaults do
+    set :geoserver_roles, -> { fetch(:passenger_roles) }
+  end
+end
+
 namespace :geoserver do
   %w[start stop restart reload].each do |action|
     desc "#{action.capitalize} GeoServer"

@@ -1,3 +1,19 @@
+namespace :load do
+  task :defaults do
+    set :nginx_max_body_size, -> { '100m' }
+    set :nginx_satisfy,       -> { false }
+    set :nginx_denied_ips,    -> { [ '74.217.28.0/22' ] }
+    set :nginx_allowed_ips,   -> { [] }
+    set :nginx_auth_basic,    -> { false }
+    set :nginx_redirects,     -> { {} }
+    set :nginx_upstreams,     -> { {} }
+    set :nginx_locations,     -> { {} }
+    set :nginx_deferred,      -> { fetch(:passenger_roles) && cap.env.production? }
+
+    append :linked_files, 'public/503.html'
+  end
+end
+
 namespace :nginx do
   desc "Reload nginx service"
   task :reload do
