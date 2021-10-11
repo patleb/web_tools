@@ -179,6 +179,18 @@ sudo apt-get update
 sudo apt-get install osquery
 ```
 
+## AGE
+
+```bash
+VERSION=$(curl -s "https://api.github.com/repos/FiloSottile/age/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
+curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-v${VERSION}-linux-amd64.tar.gz"
+tar xf age.tar.gz
+sudo mv age/age /usr/local/bin
+sudo mv age/age-keygen /usr/local/bin
+rm -rf age.tar.gz
+rm -rf age
+```
+
 ## RocksDB
 
 ```bash
@@ -190,6 +202,8 @@ cd "rocksdb-$__ROCKSDB__"
 sudo make -j8 static_lib && sudo make install-static
 sudo make clean && sudo make -j8 shared_lib && sudo make install-shared
 sudo ldconfig
+sudo rm -f "v$__ROCKSDB__.zip"
+sudo rm -rf "rocksdb-$__ROCKSDB__"
 ```
 
 ## GUI Softwares (check if better in software manager)
@@ -380,10 +394,6 @@ sudo add-apt-repository "deb https://qgis.org/ubuntu $UBUNTU_CODENAME main"
 sudo chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
 sudo apt update && sudo apt-get install -y qgis qgis-plugin-grass
 ```
-
-### QGIS pip3 troubleshoot
-
-- https://stackoverflow.com/questions/47955397/pip3-error-namespacepath-object-has-no-attribute-sort
 
 ## Webcamoid
 
