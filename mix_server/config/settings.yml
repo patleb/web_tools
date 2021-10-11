@@ -3,6 +3,7 @@ gems:
   - mix_monit
 
 types:
+  authorized_keys: array
   server_cluster_data: pathname
   server_cluster_master_data: pathname
 

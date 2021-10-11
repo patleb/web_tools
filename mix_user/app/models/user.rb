@@ -78,7 +78,7 @@ class User < MixUser.config.parent_model.constantize
   end
 
   def check_deployer
-    unless deployer? && Array.wrap(Setting[:authorized_keys]).any?{ |key| key.split(' ').last == email }
+    unless deployer? && Setting[:authorized_keys].any?{ |key| key.split(' ').last == email }
       errors.add :role, :deployer_denied
     end
   end
