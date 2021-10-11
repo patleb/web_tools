@@ -134,6 +134,7 @@ module MixLog
           %r{^Passenger RubyApp: /home/deployer/},
           %r{^ruby bin/rake cron:every_day},
           '/usr/bin/freshclam -d --foreground=true',
+          '/usr/lib/snapd/snapd',
         ],
         remote: %w(
           127.0.0.1
