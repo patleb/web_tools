@@ -49,9 +49,7 @@ namespace :ssh do
 
   desc 'Add owner private key to development machine'
   task :add, [:env, :force] => :environment do |t, args|
-    assign_environment! args
-
-    Setting.with(env: ENV['RAILS_ENV'], app: ENV['RAILS_APP']) do
+    with_stage(args) do
       path = "$HOME/.ssh/id_rsa-#{Setting.rails_app}-#{Setting.rails_env}.pem"
       if flag_on? args, :force
         sh %{echo "#{Setting[:owner_private_key]}" > #{path}}, verbose: false

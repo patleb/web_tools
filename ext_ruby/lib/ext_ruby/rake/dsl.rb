@@ -120,9 +120,16 @@ module Rake
     end
     module_function :flag_on?
 
-    def assign_environment!(args)
-      raise 'argument [:env] must be specified' unless (ENV['RAILS_ENV'] = args[:env]).present?
-      ENV['RAILS_APP'] ||= ENV['APP'] || args[:app]
+    def with_stage!(args, &block)
+      raise 'argument [:app] must be specified' unless args[:app].present?
+      with_stage(args, &block)
+    end
+
+    def with_stage(args)
+      raise 'argument [:env] must be specified' unless args[:env].present?
+      Setting.with(env: args[:env], app: args[:app]) do
+        yield
+      end
     end
   end
 end

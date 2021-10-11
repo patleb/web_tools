@@ -5,19 +5,16 @@ namespace :setting do
   end
 
   task :dump, [:env, :app, :file] do |t, args|
-    raise 'argument [:app] must be specified' unless (ENV['RAILS_APP'] = args[:app]).present?
     raise 'argument [:file] must be specified' unless (file = args[:file]).present?
-    assign_environment! args
-
-    Setting.with(env: ENV['RAILS_ENV']){ Pathname.new(file).expand_path.write(Setting.to_yaml) }
-    puts "[#{ENV['RAILS_APP']}_#{ENV['RAILS_ENV']}] settings written to file [#{file}]"
+    with_stage! args do
+      Pathname.new(file).expand_path.write(Setting.to_yaml)
+      puts "[#{Setting.rails_app}_#{Setting.rails_env}] settings written to file [#{file}]"
+    end
   end
 
   desc "encrypt file or ENV['DATA'] --> wrap with double quotes for escaped newlines"
   task :encrypt, [:env, :file] do |t, args|
-    assign_environment! args
-
-    Setting.with(env: ENV['RAILS_ENV']) do
+    with_stage(args) do
       if ENV['DATA'].present?
         puts Setting.encrypt(ENV['DATA'])
       else
@@ -28,9 +25,7 @@ namespace :setting do
 
   desc "decrypt key and optionally output to file"
   task :decrypt, [:env, :key, :file] do |t, args|
-    assign_environment! args
-
-    Setting.with(env: ENV['RAILS_ENV']) do
+    with_stage(args) do
       if args[:file].present?
         Pathname.new(args[:file]).expand_path.write(Setting[args[:key]])
         puts "[#{args[:key]}] key written to file [#{args[:file]}]"
