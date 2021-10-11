@@ -18,6 +18,8 @@ module MixSetting::Type
         (value || '').split(',').map!{ |element| cast(element.strip, type) }
       else
         case type&.to_sym
+        when :array
+          Array.wrap(value)
         when :json
           case value
           when Array then value
