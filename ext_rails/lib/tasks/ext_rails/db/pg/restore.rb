@@ -75,6 +75,7 @@ module Db
         sh "sudo chmod 700 #{pg_data_dir}"
         sh "sudo chown -R postgres:postgres #{pg_data_dir}"
         sh 'sudo systemctl start postgresql'
+        Db::Pg::Truncate.new(rake, task, cascade: true, includes: ExtRails.config.temporary_tables.to_a).run!
       end
 
       def copy_from(table, compress, split)

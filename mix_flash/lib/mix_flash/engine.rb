@@ -8,7 +8,7 @@ module MixFlash
     end
 
     initializer 'mix_flash.backup' do
-      ExtRails.config.backup_excludes << 'lib_flashes'
+      ExtRails.config.temporary_tables << 'lib_flashes'
     end
   end
 end

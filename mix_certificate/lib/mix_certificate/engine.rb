@@ -19,7 +19,7 @@ module MixCertificate
     end
 
     initializer 'mix_certificate.backup' do
-      ExtRails.config.backup_excludes << 'lib_certificates'
+      ExtRails.config.temporary_tables << 'lib_certificates'
     end
 
     ActiveSupport.on_load(:active_record) do

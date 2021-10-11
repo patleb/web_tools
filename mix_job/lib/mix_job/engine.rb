@@ -51,7 +51,7 @@ module MixJob
     end
 
     initializer 'mix_job.backup' do
-      ExtRails.config.backup_excludes << 'lib_jobs'
+      ExtRails.config.temporary_tables << 'lib_jobs'
     end
 
     ActiveSupport.on_load(:active_record) do

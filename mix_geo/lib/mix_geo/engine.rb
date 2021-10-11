@@ -20,8 +20,8 @@ module MixGeo
     end
 
     initializer 'mix_geo.backup' do
-      ExtRails.config.backup_excludes << 'lib_geo_*'
-      ExtRails.config.backup_excludes.merge(%w(spatial_ref_sys topology layer)) if Setting[:postgis_enabled]
+      ExtRails.config.temporary_tables.merge(%w(cities countries ips states).map{ |name| "lib_geo_#{name}" })
+      ExtRails.config.excluded_tables.merge(%w(spatial_ref_sys topology layer)) if Setting[:postgis_enabled]
     end
 
     ActiveSupport.on_load(:active_record) do

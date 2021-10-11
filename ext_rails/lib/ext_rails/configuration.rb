@@ -5,7 +5,8 @@ module ExtRails
     attr_writer :params_debug
     attr_writer :skip_discard
     attr_writer :excluded_models
-    attr_writer :backup_excludes
+    attr_writer :excluded_tables
+    attr_writer :temporary_tables
     attr_writer :db_partitions
 
     def sql_debug?
@@ -27,12 +28,20 @@ module ExtRails
       @excluded_models ||= Setting[:timescaledb_enabled] ? Set.new : Set.new(['Timescaledb::Chunk', 'Timescaledb::Table'])
     end
 
-    def backup_excludes
-      @backup_excludes ||= Set.new([ActiveRecord::SchemaMigration.table_name, ActiveRecord::InternalMetadata.table_name])
+    def excluded_tables
+      @excluded_tables ||= Set.new([ActiveRecord::SchemaMigration.table_name, ActiveRecord::InternalMetadata.table_name])
+    end
+
+    def temporary_tables
+      @temporary_tables ||= Set.new
     end
 
     def db_partitions
       @db_partitions ||= {}.with_keyword_access
+    end
+
+    def backup_excludes
+      excluded_tables + temporary_tables
     end
   end
 end
