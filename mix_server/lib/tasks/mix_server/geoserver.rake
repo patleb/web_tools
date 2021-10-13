@@ -1,4 +1,14 @@
 namespace :geoserver do
+  desc 'Start geoserver'
+  task :start => :environment do
+    sh 'sudo systemctl start geoserver'
+  end
+
+  desc 'Stop geoserver'
+  task :stop => :environment do
+    sh 'sudo systemctl stop geoserver'
+  end
+
   namespace :workspace do
     desc "Create GeoServer workspace"
     task :create => :environment do |t|
