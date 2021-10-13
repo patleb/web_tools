@@ -20,6 +20,7 @@ module Db
           md5:         ['--[no-]md5',                 'Check md5 files if present (default to true)'],
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
           data_only:   ['--[no-]data-only',           'Load only data with disabled triggers for pg_restore'],
+          append:      ['--[no-]append',              'Append data for pg_restore'],
           timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
           pgrest:      ['--[no-]pgrest',              'Specify if PostgREST API is used for pg_restore'],
           pg_options:  ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
@@ -126,9 +127,11 @@ module Db
             end
           end
           post_restore_timescaledb if options.timescaledb
-          post_restore_pgrest if options.pgrest
-          post_restore_environment
-          post_restore_tasks
+          unless data_append?
+            post_restore_pgrest if options.pgrest
+            post_restore_environment
+            post_restore_tasks
+          end
           output
         end
       end
@@ -153,7 +156,9 @@ module Db
           next unless (table = line.match(/TABLE DATA public (#{TABLE}) /)&.captures&.first)
           table if tables.include? table
         end
-        Db::Pg::Truncate.new(rake, task, isolate: true, cascade: true, includes: data_tables).run!
+        unless data_append?
+          Db::Pg::Truncate.new(rake, task, isolate: true, cascade: true, includes: data_tables).run!
+        end
 
         partitions = output.lines.each_with_object({}) do |line, list|
           next unless (table, bucket = line.match(/TABLE public (#{TABLE})_(#{PARTITION}) /)&.captures)
@@ -215,6 +220,10 @@ module Db
 
       def dump_path
         @dump_path ||= Pathname.new(options.path).expand_path
+      end
+
+      def data_append?
+        options.data_only && options.data_append
       end
     end
   end
