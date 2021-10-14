@@ -1,11 +1,5 @@
 namespace :ssh do
   namespace :cluster do
-    desc "Remount cluster with /opt/storage/shared_data on master as /opt/shared_data-{ip}"
-    task :remount => :environment do
-      run_task! 'ssh:cluster:unmount'
-      run_task! 'ssh:cluster:mount'
-    end
-
     desc "Mount cluster with /opt/storage/shared_data on master as /opt/shared_data-{ip}"
     task :mount => :environment do
       host_path = Setting[:server_cluster_data]
