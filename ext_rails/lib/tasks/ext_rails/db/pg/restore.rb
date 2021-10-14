@@ -223,7 +223,7 @@ module Db
       end
 
       def data_append?
-        options.data_only && options.data_append
+        options.data_only && options.append
       end
     end
   end
