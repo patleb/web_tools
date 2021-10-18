@@ -43,7 +43,7 @@ time_zone: <%= Setting[:monit_time_zone] %> # "Pacific Time (US & Canada)"
 # aws_region: us-east-1
 
 # Filter data from queries (experimental)
-filter_data: <%= Setting[:monit_filter_data] %> # true
+<%= 'filter_data: true' if Setting[:monit_filter_data] %>
 
 # Undocumented
 capture_query_stats: <%= Setting[:monit_capture_query_stats] %> # true
