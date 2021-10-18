@@ -98,5 +98,9 @@ module ExtCapistrano
     def flag_on?(...)
       Rake::DSL.flag_on?(...)
     end
+
+    def maintenance_message(...)
+      Rake::DSL.maintenance_message(...)
+    end
   end
 end

@@ -76,7 +76,7 @@ namespace :nginx do
 
     desc "Enable maintenance mode"
     task :enable, [:duration] do |t, args|
-      ENV['MESSAGE'] = nginx_maintenance_message(args[:duration])
+      ENV['MESSAGE'] = maintenance_message(args[:duration])
       invoke 'nginx:maintenance:push'
       ENV['MAINTENANCE'] = true
       invoke 'nginx:app:push'

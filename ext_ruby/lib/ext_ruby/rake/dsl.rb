@@ -120,6 +120,22 @@ module Rake
     end
     module_function :flag_on?
 
+    def maintenance_message(duration = nil)
+      time =
+        case duration
+        when /\d+\.weeks?$/   then duration.to_i.weeks.from_now.to_s.sub(/\d{2}:\d{2}:\d{2} UTC$/, '20:00:00 UTC')
+        when /\d+\.days?$/    then duration.to_i.day.from_now.to_s.sub(/\d{2}:\d{2}:\d{2} UTC$/, '20:00:00 UTC')
+        when /\d+\.hours?$/   then duration.to_i.hours.from_now.to_s.sub(/\d{2}:\d{2} UTC$/, '00:00 UTC')
+        when /\d+\.minutes?$/ then duration.to_i.minutes.from_now.to_s.sub(/\d{2} UTC$/, '00 UTC')
+        when /\d{4}-\d{1,2}-\d{1,2} \d{2}:\d{2}/ then "#{duration} UTC"
+        when nil
+        else
+          raise 'invalid :duration'
+        end
+      "Should be back around #{time}".gsub(' ', '&nbsp;').gsub('-', '&#8209;') if time
+    end
+    module_function :maintenance_message
+
     def with_stage!(args, &block)
       raise 'argument [:app] must be specified' unless args[:app].present?
       with_stage(args, &block)
