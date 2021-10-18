@@ -65,6 +65,7 @@ module Monit
       # (pgmonitor)      :database_locks
       # (pgmonitor)      :database_size
       # (ruby-pg-extras) :db_settings
+      # (ruby-pg-extras) :duplicate_indexes
       # (ruby-pg-extras) :extensions
       # (ruby-pg-extras) :index_cache_hit
       # (ruby-pg-extras) :index_size
