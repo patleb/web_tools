@@ -72,7 +72,7 @@ module Db
             sh "sudo mmv '#{wal_dir}/*.partial' '#{wal_dir}/#1'"
           end
         end
-        sh %{echo "restore_command = ':'" | sudo tee #{pg_data_dir.join('recovery.conf')} > /dev/null}
+        sh "sudo touch #{pg_data_dir.join('recovery.signal')}"
         sh "sudo chmod 700 #{pg_data_dir}"
         sh "sudo chown -R postgres:postgres #{pg_data_dir}"
         sh 'sudo systemctl start postgresql'

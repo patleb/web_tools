@@ -2,6 +2,7 @@ PG_CONFIG_FILE=$(sun.pg_config_file)
 __PG_LOG_MIN_MESSAGES__=${__PG_LOG_MIN_MESSAGES__:-error}
 __PG_LOG_CHECKPOINTS__=${__PG_LOG_CHECKPOINTS__:-on}
 __PG_LOG_LOCK_WAITS__=${__PG_LOG_LOCK_WAITS__:-on}
+__PG_RESTORE_COMMAND__=${__PG_RESTORE_COMMAND__:-:}
 
 <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'log_min_messages =' %>
 echo "log_min_messages = $__PG_LOG_MIN_MESSAGES__" >> "$PG_CONFIG_FILE"
@@ -11,6 +12,9 @@ echo "log_checkpoints = $__PG_LOG_CHECKPOINTS__" >> "$PG_CONFIG_FILE"
 
 <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'log_lock_waits =' %>
 echo "log_lock_waits = $__PG_LOG_LOCK_WAITS__" >> "$PG_CONFIG_FILE"
+
+<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'restore_command =' %>
+echo "restore_command = '$__PG_RESTORE_COMMAND__'" >> "$PG_CONFIG_FILE"
 
 <% %w(
   synchronous_commit
