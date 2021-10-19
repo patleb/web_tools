@@ -3,6 +3,7 @@ __PG_LOG_MIN_MESSAGES__=${__PG_LOG_MIN_MESSAGES__:-error}
 __PG_LOG_CHECKPOINTS__=${__PG_LOG_CHECKPOINTS__:-on}
 __PG_LOG_LOCK_WAITS__=${__PG_LOG_LOCK_WAITS__:-on}
 __PG_RESTORE_COMMAND__=${__PG_RESTORE_COMMAND__:-:}
+__PG_HOT_STANDBY__=${__PG_HOT_STANDBY__:off}
 
 <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'log_min_messages =' %>
 echo "log_min_messages = $__PG_LOG_MIN_MESSAGES__" >> "$PG_CONFIG_FILE"
