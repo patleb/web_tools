@@ -17,6 +17,9 @@ echo "log_lock_waits = $__PG_LOG_LOCK_WAITS__" >> "$PG_CONFIG_FILE"
 <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'restore_command =' %>
 echo "restore_command = '$__PG_RESTORE_COMMAND__'" >> "$PG_CONFIG_FILE"
 
+<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'hot_standby =' %>
+echo "hot_standby = $__PG_HOT_STANDBY__" >> "$PG_CONFIG_FILE"
+
 <% %w(
   synchronous_commit
   full_page_writes
