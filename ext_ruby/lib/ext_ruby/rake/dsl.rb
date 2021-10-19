@@ -77,9 +77,11 @@ module Rake
       SecureRandom.hex(16)
     end
 
-    def puts_info(tag, text = nil)
+    def puts_info(tag, text = nil, started_at: nil)
       tag = "[#{tag}]" unless tag.start_with?('[') && tag.end_with?(']')
-      puts "[#{Time.current.utc}]#{tag.full_underscore.upcase}[#{Process.pid}] #{text}"
+      text = "[#{Time.current.utc}]#{tag.full_underscore.upcase}[#{Process.pid}] #{text}"
+      text = "#{text}: #{distance_of_time (Concurrent.monotonic_time - started_at).seconds.ceil(3)}" if started_at
+      puts text
     end
 
     def free_local_ip
