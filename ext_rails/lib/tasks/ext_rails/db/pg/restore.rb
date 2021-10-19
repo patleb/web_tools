@@ -21,6 +21,7 @@ module Db
           staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
           data_only:   ['--[no-]data-only',           'Load only data with disabled triggers for pg_restore'],
           append:      ['--[no-]append',              'Append data for pg_restore'],
+          new_server:  ['--[no-]new-server',          'Reset current server centralized log'],
           timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
           pgrest:      ['--[no-]pgrest',              'Specify if PostgREST API is used for pg_restore'],
           pg_options:  ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
@@ -51,8 +52,9 @@ module Db
       def check_md5
         md5_files = dump_path.sub(MATCHER, '*.md5')
         if system("sudo ls #{md5_files}", out: File::NULL, err: File::NULL)
+          started_at = Concurrent.monotonic_time
           sh "sudo find #{dump_path} -type f -name '*.md5' | sudo parallel --no-notice 'md5sum -c {} > /dev/null'"
-          puts_info 'MD5', 'checked'
+          puts_info 'MD5', 'checked', started_at: started_at
         end
       end
 
@@ -60,12 +62,14 @@ module Db
         sh 'sudo systemctl stop postgresql'
         sh "sudo rm -rf #{pg_data_dir}"
         sh "sudo mkdir -p #{pg_data_dir}"
+        started_at = Concurrent.monotonic_time
         if split
           list_cmd = "find #{dump_path.dirname} -iname #{dump_path.basename} -not -name *.md5"
           sh "sudo bash -c '#{list_cmd} | sort | xargs cat | tar -C #{pg_data_dir} #{'-I pigz' if compress} -xf -'"
         else
           sh "sudo bash -c 'tar -C #{pg_data_dir} #{'-I pigz' if compress} -xf #{dump_path}'"
         end
+        puts_info 'UNPACK', 'finished', started_at: started_at
         if system("sudo ls #{wal_file(compress)}", out: File::NULL, err: File::NULL)
           sh "sudo tar -C #{wal_dir} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
           if system("sudo ls #{wal_dir}/*.partial", out: File::NULL, err: File::NULL)
@@ -77,6 +81,9 @@ module Db
         sh "sudo chown -R postgres:postgres #{pg_data_dir}"
         sh 'sudo systemctl start postgresql'
         Db::Pg::Truncate.new(rake, task, cascade: true, includes: ExtRails.config.temporary_tables.to_a).run!
+        post_restore_environment
+        post_restore_server if options.new_server
+        post_restore_tasks
       end
 
       def copy_from(table, compress, split)
@@ -130,6 +137,7 @@ module Db
           unless data_append?
             post_restore_pgrest if options.pgrest
             post_restore_environment
+            post_restore_server if options.new_server
             post_restore_tasks
           end
           output
@@ -192,6 +200,10 @@ module Db
 
       def post_restore_environment
         ActiveRecord::InternalMetadata[:environment] = Rails.env
+      end
+
+      def post_restore_server
+        Server.current.discard! unless Server.current.new?
       end
 
       def post_restore_tasks
