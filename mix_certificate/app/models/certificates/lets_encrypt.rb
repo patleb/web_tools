@@ -108,10 +108,12 @@ module Certificates
 
     def acme
       @acme ||= begin
-        directory = case
-        when Rails.env.production? then 'https://acme-v02.api.letsencrypt.org/directory'
-        when Rails.env.staging?    then 'https://acme-staging-v02.api.letsencrypt.org/directory'
-        else raise InvalidEnv
+        directory = if Rails.env.production? || (Rails.env.staging? && !Setting[:lets_encrypt_test])
+          'https://acme-v02.api.letsencrypt.org/directory'
+        elsif Rails.env.staging?
+          'https://acme-staging-v02.api.letsencrypt.org/directory'
+        else
+          raise InvalidEnv
         end
         private_key = OpenSSL::PKey::RSA.new(Setting[:owner_private_key])
         Acme::Client.new(kid: kid, private_key: private_key, directory: directory, bad_nonce_retry: 5)

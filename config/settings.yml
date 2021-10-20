@@ -15,6 +15,7 @@ development:
 vagrant:
 
 staging:
+  lets_encrypt_test: true
   server_host:
   mail_to:
   mail_from:
