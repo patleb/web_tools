@@ -27,6 +27,7 @@ module PageFields
     private
 
     def create_or_purge_images
+      return unless I18n.available_locales.any?{ |locale| send("text_#{locale}_changed?") }
       urls = images_attachments.map{ |record| [record.url, record] }.to_h
       blobs, texts = {}, {}
       records = I18n.available_locales.each_with_object({}) do |locale, records|
