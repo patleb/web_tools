@@ -1,3 +1,4 @@
+oxipng: false
 pngout: false
 svgo: false
 allow_lossy: true
