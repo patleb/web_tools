@@ -1,11 +1,13 @@
 namespace :geoserver do
   desc 'Start geoserver'
   task :start => :environment do
+    next unless fetch(:geoserver_roles)
     sh 'sudo systemctl start geoserver'
   end
 
   desc 'Stop geoserver'
   task :stop => :environment do
+    next unless fetch(:geoserver_roles)
     sh 'sudo systemctl stop geoserver'
   end
 
