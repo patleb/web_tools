@@ -8,6 +8,7 @@ class RailsAdmin.Form.FieldConcept::WysiwygElement
       height : 'auto',
       minHeight: '480px',
       maxWidth : '640px',
+      formats: ['p', 'h5'],
       imageResizing: false,
       imageRotation: false,
       videoResizing: false,
@@ -17,7 +18,7 @@ class RailsAdmin.Form.FieldConcept::WysiwygElement
       videoHeight: '360px',
       buttonList: [
         ['undo', 'redo'],
-        # ['font', 'fontSize', 'formatBlock'],
+        ['formatBlock'], # ['font', 'fontSize'],
         # ['paragraphStyle'],
         ['bold', 'underline', 'italic', 'strike', 'subscript', 'superscript'],
         # ['fontColor', 'hiliteColor', 'textStyle'],
