@@ -2,6 +2,7 @@ module Rescues
   class JavascriptsController < ActionController::API
     include ActionController::RequestForgeryProtection
 
+    prepend_before_action :set_format
     protect_from_forgery with: :exception
 
     def create
@@ -19,6 +20,10 @@ module Rescues
 
     def create_params
       @_create_params ||= params.require(:rescues_javascript).permit(:message, backtrace: [], data: {})
+    end
+
+    def set_format
+      request.format = :json
     end
   end
 end

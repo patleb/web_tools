@@ -2,6 +2,7 @@ module Rpc
   class FunctionsController < ActionController::API
     include ActionController::RequestForgeryProtection
 
+    prepend_before_action :set_format
     protect_from_forgery with: :exception
 
     def call
@@ -18,6 +19,10 @@ module Rpc
 
     def function
       @function ||= Rpc::Function.find(params[:id])
+    end
+
+    def set_format
+      request.format = :json
     end
   end
 end
