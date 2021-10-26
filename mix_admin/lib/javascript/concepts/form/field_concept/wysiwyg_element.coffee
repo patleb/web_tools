@@ -5,7 +5,7 @@ class RailsAdmin.Form.FieldConcept::WysiwygElement
       lang: suneditor.lang[I18n.locale],
       plugins: suneditor.plugins,
       width : '100%',
-      height : 'auto',
+      height : '640px',
       minHeight: '480px',
       maxWidth : '640px',
       formats: ['p', 'h5'],
