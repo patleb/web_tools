@@ -2,6 +2,15 @@
 @import "suneditor/src/assets/css/suneditor-contents";
 
 .sun-editor {
+  .se-container .se-wrapper {
+    * {
+      font-size: 14px;
+    }
+    h5 {
+      font-size: 20px;
+    }
+  }
+
   .se-controller .se-btn-group {
     [data-command=mirror],
     [data-command=revert],
