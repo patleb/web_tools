@@ -115,6 +115,7 @@ server {
         expires 1M;
         add_header Cache-Control public;
         access_log /var/log/nginx/<%= fetch(:deploy_dir) %>_public.access.log mix_server_access_log;
+        open_file_cache_errors off;
       }
     <% end %>
 
