@@ -16,7 +16,7 @@ class User < MixUser.config.parent_model.constantize
   after_discard :scramble_email_and_password
 
   validates :role, presence: true, exclusion: { in: ['null'] }
-  validate  :check_deployer
+  validate  :check_deployer, if: :deployer?
 
   def self.enum_roles
     Current.user.visible_roles
@@ -78,7 +78,7 @@ class User < MixUser.config.parent_model.constantize
   end
 
   def check_deployer
-    unless deployer? && Setting[:authorized_keys].any?{ |key| key.split(' ').last == email }
+    unless Setting[:authorized_keys].any?{ |key| key.split(' ').last == email }
       errors.add :role, :deployer_denied
     end
   end
