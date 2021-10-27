@@ -3,7 +3,7 @@ module Rpc
     include ActionController::RequestForgeryProtection
 
     prepend_before_action :set_format
-    protect_from_forgery with: :exception
+    # TODO protect_from_forgery with: :exception
 
     def call
       function.call! params: params[:rpc_function].to_unsafe_h
