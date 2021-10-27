@@ -68,7 +68,7 @@ class LogMessage < LibMainRecord
       end
       messages = servers.group_by(&:shift).transform_values! do |levels|
         levels.sort_by!(&:first).reverse.group_by(&:shift).transform_values! do |line_types|
-          line_types.sort_by!(&:shift).reverse.map!(&:join!.with(' => '))
+          line_types.sort_by!(&:shift).reverse.map!(&:join!.with(' => ')).uniq
         end
       end
       { messages: messages, times: times }
