@@ -120,6 +120,7 @@ module MixLog
         %r{^/etc/nginx/\.\w+$},
         %r{^/etc/nginx/sites-available/\.\w+$},
         %r{^/etc/osquery/\.osquery\.\w+$},
+        %r{^/etc/(localtime|timezone)$},
         %r{^/var/spool/cron/crontabs(/tmp\.\w{1,8}|/deployer)?$},
         %r{^/usr/bin/(dbxtool|dfu-tool|fwupdagent|fwupdate|fwupdmgr|fwupdtool|fwupdtpmevlog|udisksctl)$},
         '/usr/sbin/umount.udisks2',
@@ -134,8 +135,10 @@ module MixLog
           %r{^/home/deployer/\.rbenv/versions/[.\d]+/bin/ruby /home/deployer/\.rbenv/versions/[.\d]+/bin/bundle .+ --deployment .+/\.local_repo/},
           %r{^Passenger RubyApp: /home/deployer/},
           %r{^ruby bin/rake cron:every_day},
+          %r{^/usr/sbin/ntpd -p /var/run/ntpd.pid -g -u \d+:\d+},
           '/usr/bin/freshclam -d --foreground=true',
           '/usr/lib/snapd/snapd',
+          '/usr/bin/python3 /usr/lib/ubuntu-release-upgrader/check-new-release -q',
         ],
         remote: %w(
           127.0.0.1
