@@ -3,7 +3,8 @@ require 'mix_file/configuration'
 
 module MixFile
   class Engine < ::Rails::Engine
-    require 'active_storage_validations'
+    # require 'active_storage_validations'
+    # require 'activestorage-validator'
     require 'image_optim'
     require 'image_optim_pack'
 

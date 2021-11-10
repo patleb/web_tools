@@ -19,7 +19,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'image_processing', '>= 1.2'
-  s.add_dependency 'active_storage_validations'
+  # s.add_dependency 'active_storage_validations'
+  # s.add_dependency 'activestorage-validator'
   s.add_dependency 'image_optim'
   s.add_dependency 'image_optim_pack'
 end

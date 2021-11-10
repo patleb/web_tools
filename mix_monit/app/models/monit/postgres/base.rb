@@ -4,6 +4,12 @@
 module Monit
   module Postgres
     class Base < Monit::Base
+      EXCLUDED_PG_EXTRAS = Set.new(%w(
+        add_extensions
+        pg_stat_statements_reset
+        ssl_used
+      ))
+
       delegate :db, to: :class
 
       def self.db
@@ -54,7 +60,7 @@ module Monit
         db.send(:select_all, sql, **options)
       end
 
-      ### STATEMENTS (38)
+      ### STATEMENTS (39)
       # (ruby-pg-extras) :all_locks
       # (pgmonitor)      :archive_command_status
       # (ruby-pg-extras) :bloat
@@ -107,6 +113,7 @@ module Monit
           pgextras_path = Gem.root('ruby-pg-extras').join('lib/ruby-pg-extras/queries')
           pgextras = pgextras_path.glob('*.sql').each_with_object({}.with_keyword_access) do |sql, memo|
             name = sql.basename('.sql').to_s
+            next if EXCLUDED_PG_EXTRAS.include? name
             next if (sql = sql.readlines.drop(1).join(' ').strip_sql).include? '%{'
             memo[name] = sql
           end
