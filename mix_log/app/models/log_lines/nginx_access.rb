@@ -30,6 +30,7 @@ module LogLines
       (500...600) => :fatal,
     }
     INVALID_URI = OpenStruct.new(path: nil)
+    NULL_CHARS = ["\\u0000", "\0"]
     PERIODS = %i(year month week day hour)
 
     json_attribute(
@@ -194,6 +195,7 @@ module LogLines
       method, path, protocol = nil, method, path unless protocol
       http = protocol&.split('/')&.last&.to_f
       uri, params = (Rack::Utils.parse_url(path) rescue [INVALID_URI, nil])
+      params = nil if params&.any?{ |_, v| v = v.to_s; NULL_CHARS.any?{ |c| v.include? c } }
       path = uri.path&.downcase || ''
       path = path.delete_suffix('/') unless path == '/'
       referer_uri, _referer_params = (Rack::Utils.parse_url(referer) rescue [INVALID_URI, nil]) unless referer == '-'
