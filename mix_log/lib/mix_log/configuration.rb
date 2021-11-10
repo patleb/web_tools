@@ -59,7 +59,8 @@ module MixLog
 
     def ided_paths
       @ided_paths ||= {
-        %r{^(/packs/.+)(-[a-f0-9]+)((?:\.chunk)?\.[a-z0-9]{1,5})$} => '\1-*\3',
+        %r{^(/packs/.+)(-[a-f0-9]+)((?:\.chunk)?\.[a-z0-9]{1,5})(\.map)?$} => '\1-*\3\4',
+        %r{^/storage/.+} => '/storage/*',
       }
     end
 
