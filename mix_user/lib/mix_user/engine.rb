@@ -24,15 +24,15 @@ module MixUser
       autoload_models_if_admin('User')
     end
 
-    initializer 'mix_user.rack_attack' do
+    # initializer 'mix_user.rack_attack' do
       # TODO use Rack::Attack.fail2ban instead
-      Rack::Attack.throttle('sign_in:email', limit: 5, period: 1.day) do |req|
-        if req.post? && req.path.end_with?('/sign_in')
-          # TODO log --> then pass to fail2ban
-          req.params.dig('user', 'email')
-        end
-      end
-    end
+      # Rack::Attack.throttle('sign_in:email', limit: 5, period: 1.day) do |req|
+      #   if req.post? && req.path.end_with?('/sign_in')
+      #     # TODO log --> then pass to fail2ban
+      #     req.params.dig('user', 'email')
+      #   end
+      # end
+    # end
 
     initializer 'mix_user.append_migrations' do |app|
       append_migrations(app)
