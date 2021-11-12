@@ -37,11 +37,9 @@ sun.source_recipe() {
     sun.rollback "$id"
   elif sun.to_be_done "$id"; then
     local recipe_start=$(sun.start_time)
-    source "recipes/hook_before.sh"
     source "recipes/$name.sh"
     if [[ "$RECIPE_ID" != 'reboot' ]]; then
       cd $(sun.provision_path)
-      source "recipes/hook_after.sh"
       sun.elapsed_time $recipe_start
       sun.done "$id"
     fi
