@@ -105,11 +105,7 @@ module Sunzistrano
     end
 
     def username
-      if (value = self[:username]).present?
-        value
-      else
-        sudo ? owner_name : deployer_name
-      end
+      sudo ? owner_name : deployer_name
     end
 
     def env
