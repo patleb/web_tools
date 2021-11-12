@@ -76,7 +76,6 @@ module Sunzistrano
     def attributes
       to_h.reject{ |_, v| (v != false && v.blank?) || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
         os_name: os,
-        username: username,
         owner_public_key: owner_public_key,
         owner_private_key: owner_private_key.escape_newlines,
         provision_log: PROVISION_LOG,
@@ -102,10 +101,6 @@ module Sunzistrano
 
     def owner_private_key
       self[:owner_private_key].presence && "'#{self[:owner_private_key]}'"
-    end
-
-    def username
-      sudo ? owner_name : deployer_name
     end
 
     def env

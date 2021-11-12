@@ -54,7 +54,7 @@ source sun.sh
 export ROLE_START=$(sun.start_time)
 export REBOOT_RECIPE=false
 export REBOOT_FORCE=false
-export HOME=/home/$__USERNAME__
+export HOME=/home/$__OWNER_NAME__
 
 export DEBIAN_FRONTEND=noninteractive
 export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1

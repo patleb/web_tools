@@ -67,7 +67,7 @@ module Sunzistrano
         ref = ref.join('config', 'provision', 'files', "#{path.delete_prefix('/')}.ref")
         FileUtils.mkdir_p File.dirname(ref)
         if sun.defaults
-          path = "/home/#{sun.username}/#{Sunzistrano::Context::DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
+          path = "/home/#{sun.owner_name}/#{Sunzistrano::Context::DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
         end
         unless system download_cmd(path, ref)
           puts "Cannot transfer [#{path}] to [#{ref}]".red
@@ -192,8 +192,8 @@ module Sunzistrano
         <<~CMD.squish
           #{ssh_add_vagrant} cd #{provision_path} && tar cz . |
           ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR
-          #{"-o ProxyCommand='ssh -W %h:%p #{sun.username}@#{sun.server}'" if sun.server_cluster?}
-          #{sun.username}@#{server}
+          #{"-o ProxyCommand='ssh -W %h:%p #{sun.owner_name}@#{sun.server}'" if sun.server_cluster?}
+          #{sun.owner_name}@#{server}
           '#{provision_remote_cmd}'
         CMD
       end
@@ -212,7 +212,7 @@ module Sunzistrano
         <<~CMD.squish
           #{ssh_add_vagrant} rsync --rsync-path='sudo rsync' -azvh -e
           "ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR"
-          #{sun.username}@#{sun.server}:#{path} #{ref}
+          #{sun.owner_name}@#{sun.server}:#{path} #{ref}
         CMD
       end
 
