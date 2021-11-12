@@ -8,14 +8,14 @@ module Sunzistrano
       true
     end
 
-    desc 'provision [stage] [role] [--recipe] [--reset] [--no-reboot]', 'Provision sunzistrano project'
-    method_options recipe: :string, reset: false, no_reboot: false
+    desc 'provision [stage] [role] [--recipe] [--new-host] [--no-reboot]', 'Provision sunzistrano project'
+    method_options recipe: :string, new_host: false, no_reboot: false
     def provision(stage, role = 'system')
       do_provision(stage, role)
     end
 
-    desc 'specialize [stage] [role] [--recipe] [--reset]', 'Specialize sunzistrano project'
-    method_options recipe: :string, reset: false
+    desc 'specialize [stage] [role] [--recipe] [--new-host]', 'Specialize sunzistrano project'
+    method_options recipe: :string, new_host: false
     def specialize(stage, role = 'system')
       do_provision(stage, role, specialize: true)
     end
@@ -32,15 +32,15 @@ module Sunzistrano
       do_compile(stage, role)
     end
 
-    desc 'download [stage] [role] [--path] [--saved]', 'Dowload file meant to be used as .ref template'
-    method_options path: :required, saved: false
+    desc 'download [stage] [role] [--path] [--defaults]', 'Dowload file meant to be used as .ref template'
+    method_options path: :required, defaults: false
     def download(stage, role = 'system')
       do_download(stage, role)
     end
 
-    desc 'reset [stage] [role]', 'Reset ssh known hosts'
-    def reset(stage, role = 'system')
-      do_reset(stage, role)
+    desc 'reset_ssh [stage] [role]', 'Reset ssh known hosts'
+    def reset_ssh(stage, role = 'system')
+      do_reset_ssh(stage, role)
     end
 
     no_tasks do
@@ -66,7 +66,7 @@ module Sunzistrano
         ref = Pathname.new(Dir.pwd).expand_path
         ref = ref.join('config', 'provision', 'files', "#{path.delete_prefix('/')}.ref")
         FileUtils.mkdir_p File.dirname(ref)
-        if sun.saved
+        if sun.defaults
           path = "/home/#{sun.username}/#{Sunzistrano::Context::DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
         end
         unless system download_cmd(path, ref)
@@ -74,7 +74,7 @@ module Sunzistrano
         end
       end
 
-      def do_reset(stage, role)
+      def do_reset_ssh(stage, role)
         load_config(stage, role)
         run_reset_known_hosts
       end
@@ -155,7 +155,7 @@ module Sunzistrano
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_provison_cmd_for(server)
         end
-        run_reset_known_hosts if sun.reset
+        run_reset_known_hosts if sun.new_host
         FileUtils.rm_rf(provision_path) unless sun.debug
       end
 
