@@ -115,12 +115,6 @@ module Sunzistrano
       @_os ||= ActiveSupport::StringInquirer.new(os_name || 'ubuntu')
     end
 
-    def local_dir
-      if local_path.present?
-        @_local_dir ||= Pathname.new(local_path).expand_path
-      end
-    end
-
     def list_helpers(root)
       base_dir = Pathname.new(root).join('config/provision/helpers')
       Dir[base_dir.join('**/*.sh').to_s].map do |file|

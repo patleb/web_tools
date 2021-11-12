@@ -88,7 +88,6 @@ module Sunzistrano
         basenames = "config/provision/{files,helpers,recipes,roles}/**/*"
 
         dirnames = [basenames]
-        dirnames << sun.local_dir.join(basenames).to_s if sun.local_dir
         (sun.gems || []).each do |name|
           next unless (root = Gem.root(name))
           require "#{name}/sunzistrano" rescue nil
@@ -103,10 +102,6 @@ module Sunzistrano
 
         files.each do |file|
           compile_file File.expand_path(file), expand_path(:provision, file)
-        end
-
-        (sun.local_files || []).each do |file|
-          compile_file File.expand_path(file), expand_path(:provision, "files/local/#{File.basename(file)}")
         end
       end
 
