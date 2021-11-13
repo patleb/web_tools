@@ -1,106 +1,168 @@
-Sunzistrano
-===========
+# Sunzistrano
 
+Sunzistrano is a rewrite of [Sunzi](https://github.com/kenn/sunzi), a provisioning tool enabling infrastructure as code.
+
+## Usage
+
+Infrastructure code is organized through **roles** defining which **recipes** are run as Bash files.
+
+Each Bash file can be embedded with Ruby using the [ERB](https://puppet.com/docs/puppet/7/lang_template_erb.html) syntax.
+
+### Provision
+
+```sh
+  # 'vagrant' stage with default options
+  sun provision vagrant
+
+  # 'vagrant' stage and 'app_name' application
+  sun provision vagrant:app_name
+
+  # 'custom' role specified (default is 'system')
+  sun provision vagrant custom
+
+  # run only one recipe
+  sun provision vagrant --recipe=lang/ruby/app__RBENV_RUBY__
+
+  # reset ssh known hosts afterward
+  sun provision vagrant --new-host
+
+  # skip the 'reboot' recipe
+  sun provision vagrant --no-reboot
 ```
-"The supreme art of war is to subdue the enemy without fighting." - Sunzi
+
+See [cli.rb](./lib/sunzistrano/cli.rb) for more commands.
+
+## Configuration
+
+The configuration file is a YAML file located at `config/provision.yml` and is integrated with **[capistrano](../ext_capistrano/README.md)** and **[mix_setting](../mix_setting/README.md)** to reuse their configuration files as well.
+
+Configurations are accessible in Bash through global variables with the following convention:
+
+**uppercased variable name with 2 leading and 2 trailing underscores**
+
+```yaml
+# config/provision.yml
+...
+system:
+  swap_size: 1G
+  owner_name: ubuntu
+  ...
 ```
 
-Sunzistrano is the easiest [server provisioning](http://en.wikipedia.org/wiki/Provisioning#Server_provisioning) utility designed for mere mortals. If Chef or Puppet is driving you nuts, try Sunzistrano!
+```bash
+# Bash file
+...
+$__SWAP_SIZE__
+$__OWNER_NAME__
+```
 
-Sunzistrano assumes that modern Linux distributions have (mostly) sane defaults and great package managers.
+It's important to note that collections (array or hash), empty strings, null values, discontinuous strings or ERB strings aren't accessible through global variables.
 
-Its design goals are:
+Otherwise, the whole Sunzistrano context is accessible through the `sun` accessor which exposes all the configurations and some contextual Ruby helpers:
 
-* **It's just shell script.** No clunky Ruby DSL involved. Most of the information about server configuration on the web is written in shell commands. Just copy-paste them, rather than translate it into an arbitrary DSL. Also, Bash is the greatest common denominator on minimum Linux installs.
-* **Focus on diff from default.** No big-bang overwriting. Append or replace the smallest possible piece of data in a config file. Loads of custom configurations make it difficult to understand what you are really doing.
-* **Always use the root user.** Think twice before blindly assuming you need a regular user - it doesn't add any security benefit for server provisioning, it just adds extra verbosity for nothing. However, it doesn't mean that you shouldn't create regular users with Sunzistrano - feel free to write your own recipes.
-* **Minimum dependencies.** No configuration server required. You don't even need a Ruby runtime on the remote server.
+```bash
+VAR_NAME=<%= sun.var_name %>
+```
 
-Provisioning
-------------
+The `provision.yml` file follows the same application and environment scoping conventions as `config/settings.yml` from **mix_setting**, but with an additional role scope.
 
-* start new instances with same region as the database (t2.micro/24GB admin, t2.small/16GB api)
+```yaml
+# all available scopes
+shared:
+  ...
+system: # role
+  ...
+vagrant: # stage (environment)
+  ...
+vagrant_system:
+  ...
+app_name: # application
+  ...
+app_name_system:
+  ...
+app_name_vagrant:
+  ...
+app_name_vagrant_system:
+  ...
+```
 
-* point local machine to new instances ip
+See [provision.yml](../config/provision.yml) for an example.
 
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R admin.domain.com
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R api.domain.com
-    $ sudo vi /etc/hosts
+## Roles
 
-xxx.xxx.xxx.xxx admin.domain.com
-xxx.xxx.xxx.xxx api.domain.com
+Each **role** is a Bash file located under the folder `config/provision/roles` and is meant to source the **recipes**.
 
-* provision new instances
+### Role Helper
 
-    $ bundle exec sun provision production system
-    $ bundle exec sun provision production:app_api system
+The `sun.role_recipes` Ruby helper adds some essential functionalities to the role:
 
-* point local machine to old instances ip
+- CLI option for running only one recipe;
+- CLI option for skipping the `reboot` recipe;
+- keeping the `reboot` recipe at the end of the list of recipes;
+- appending/removing recipes through `config/provision.yml` with `append_recipes` and `remove_recipes` configurations;
+- outputing the recipe names including variables with the actual values;
 
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R admin.domain.com
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R api.domain.com
-    $ sudo vi /etc/hosts
+See [system.sh](../mix_server/config/provision/roles/system.sh) for an example.
 
-* disable applications
+### Role Hooks
 
-    $ bundle exec cap production whenever:clear_crontab
-    $ bundle exec cap production nginx:maintenance:enable
-    $ bundle exec cap production:app_api nginx:maintenance:enable # or nginx:app:disable if database connections must be closed
+Role hooks are Bash files located under the folder `config/provision/roles` with the following file names:
 
-or
+ - `hook_before.sh` is run before the recipes
+ - `hook_after.sh` is run after all the recipes ran successfully
+ - `hook_ensure.sh` is run before the program exits
 
-    $ RAILS_ENV=production bundle exec whenever -c app_admin_production
-    $ sudo rm -f /etc/nginx/sites-enabled/app_admin_production && sudo systemctl reload nginx
-    $ sudo rm -f /etc/nginx/sites-enabled/app_api_production && sudo systemctl reload nginx
+## Recipes
 
-* backup important files
+Each **recipe** is a Bash file located under the folder `config/provision/recipes` and runs only once if it completed with success.
 
-    $ bundle exec cap production rake TASK='mix_task:backup -- --model=app_logs'
-    $ bundle exec cap production rake TASK='mix_task:backup -- --model=sys_logs'
-    $ bundle exec cap production files:download[~/app_admin_production/shared/tmp/backups/.data/model_name/S3.yml,tmp/S3.yml]
+The recipe name is the file path in the recipes folder without the extension (.sh) and thus unique, but can include a variable in its name to make it evolve through time or different versions with the following convention:
 
-or
+**uppercased variable name with 2 leading and 2 trailing underscores**
 
-    $ RAILS_ENV=production bundle exec rake mix_task:backup -- --model=app_logs
-    $ RAILS_ENV=production bundle exec rake mix_task:backup -- --model=sys_logs
-    $ download shared/log and shared/tmp/backups/.data/model_name/S3.yml
+For example, the recipe `config/provision/recipes/lang/ruby/app__RBENV_RUBY__.sh` with the configuration
 
-TODO: app_logs/sys_logs backup for sub application (ex.: production:app_api)
-* make a manual backup of postgres if necessary
-* upgrade postgres if necessary
+```yaml
+# config/provision.yml
+...
+shared:
+  rbenv_ruby: 2.7.4
+  ...
+```
 
-* point local machine to new instances ip
+Would be sourced in the compiled role file as:
 
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R admin.domain.com
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R api.domain.com
-    $ sudo vi /etc/hosts
+```bash
+# config/roles/system.sh
+...
+sun.source_recipe "lang/ruby/app__RBENV_RUBY__" 'lang/ruby/app-2.7.4'
+...
+```
 
-* deploy applications
+### Recipe Helpers
 
-    $ bundle exec cap production deploy:push
-    $ bundle exec cap production:app_api deploy:push
-    $ bundle exec cap production files:mkdir[~/app_admin_production/shared/tmp/backups/.data/model_name]
-    $ bundle exec cap production files:upload[tmp/S3.yml,~/app_admin_production/shared/tmp/backups/.data/model_name/S3.yml,user]
+The `sun.source_recipe` Bash helper must be used to source the **recipe** and make sure that it runs only once. It's also required for more advanced features like the **specialize** and **rollback** commands.
 
-* point local machine to old instances ip
+The `sun.list_recipes` Ruby helper let you group recipes within `all.sh` files and outputs the names of the recipes that include variables with the actual values.
 
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R admin.domain.com
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R api.domain.com
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R xxx.xxx.xxx.xxx
-    $ ssh-keygen -f "$HOME/.ssh/known_hosts" -R xxx.xxx.xxx.xxx
-    $ sudo vi /etc/hosts
+See [bootstrap/all.sh](../mix_server/config/provision/recipes/bootstrap/all.sh) for an example.
 
-* point elastic ips to new instances
-* terminate old instances
-* reassign alarms
+## Files
 
-https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html
+Transferred **files** are located under the folder `config/provision/files` and must follow the actual location of the remote machine. For example, if the file `/etc/hosts` is expected to be replaced, then the file path would be `config/provision/files/etc/hosts`.
 
-Notes
------
-sudo cat sun_provision.log | grep -A 1 -B 1 -e '\(Recipe\|Done\) \['
+### File helpers
 
-Credits
--------
+Some Bash **helpers** are available to ease/extend the usage/manipulation of transferred **files**.
 
-Special thanks to the owner of [sunzi](https://github.com/kenn/sunzi), the present gem is pretty much a rewritten copy suited to work with Rails and Capistrano.
+See [template_helper.sh](./config/provision/helpers/sun/template_helper.sh) for more details.
+
+## Helpers
+
+Added Bash **helpers** are located under the folder `config/provision/helpers` and must be manually sourced through `config/provision/roles/hook_before.sh` as follow:
+
+```bash
+<% sun.list_helpers(Rails.root).each do |file| %>
+  source helpers/<%= file %>
+<% end %>
+```
