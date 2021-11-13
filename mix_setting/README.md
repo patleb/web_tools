@@ -1,22 +1,8 @@
 # MixSetting
 
-### Installation
+## Usage
 
-As a global gem:
-
-    $ gem install mix_setting
-
-In your `Gemfile`:
-
-```ruby
-# Gemfile
-
-gem 'mix_setting'
-```
-
-### Usage
-
-#### Rails
+### Rails
 
 Create a `settings.yml` in your project `config` directory:
 
@@ -39,7 +25,7 @@ and access your settings through the `Setting` class:
 Setting[:name_1] # => 'value_1'
 ```
 
-#### Ruby
+### Ruby
 
 For a ruby script outside of the Rails context, but running at the root of the project,
 you must specify the environment either by passing it as `env` parameter to `load`:
@@ -49,7 +35,7 @@ require 'mix_setting'
 
 settings = Setting.load(env: fetch(:stage))
 
-settings['name]      # => 'value'
+settings['name'] # => 'value'
 
 Setting['name']  # => 'value'
 ```
@@ -58,20 +44,7 @@ or to `RAILS_ENV` environment variable on the command line:
 
     $ RAILS_ENV=production ruby_script
 
-If the script is running outside of the project root,
-then the project path must be specified either by passing it as `root` parameter to `with`:
-
-```ruby
-Setting.load(env: stage, root: '/path/to/base/dir')
-```
-
-or to `RAILS_ROOT` environment variable on the command line:
-
-    $ RAILS_ENV=production RAILS_ROOT=/path/to/base/dir ruby_script
-
 ### Settings in gems
-
-#### Rails
 
 It is possible to reference gems that might have some shared settings with the project
 by specifying them with the `gems` key within the project `settings.yml`
@@ -86,7 +59,7 @@ shared:
 ```
 
 ```yaml
-# gem_name/config/settings.yml
+# gem_root/config/settings.yml
 
 development:
   key: value1
@@ -95,22 +68,22 @@ production:
   key: value2
 ```
 
-### Files loaded (merged in that order for the *.yml)
+The files loaded are merged in the following order:
 
-* `/.../app_root/config/secrets.yml` if it exists
+* `app_root/config/secrets.yml` if it exists
 
-* `/.../app_root/config/database.yml` if it exists and keys will be scoped with a `db_` prefix
+* `app_root/config/database.yml` if it exists and keys will be scoped with a `db_` prefix
 
-* `/.../any/gem_root/config/settings.yml` if it exists in the `gem`
+* `gem_root/config/settings.yml` if it exists in the `gem`
 
-* `/.../app_root/config/settings.yml`
+* `app_root/config/settings.yml`
 
 ### Database secrets
 
 In case you want to keep your production `database.yml` values within your `secrets.yml`,
 it can be done like this:
 
-```ruby
+```yaml
 # app_root/config/database.yml
 
 production:
@@ -119,7 +92,7 @@ production:
   password: <%= Rails.application.secrets.db_password %>
 ```
 
-```ruby
+```yaml
 # app_root/config/secrets.yml
 
 production:
@@ -138,13 +111,13 @@ So any other tags different from `<%= Rails.application.secrets.config_name[:nes
 You can keep encrypted secrets in `settings.yml`, but a `secret_key_base` must be defined in `secrets.yml`.
 Available rake tasks to help encrypt/decrypt with the first argument as the environment are:
 
-    $ rake secret:encrypt[production,'file/path']
+    $ rake secret:encrypt[production,file/path]
 
-    $ rake secret:encrypt[production] DATA='newline-escaped-data'
+    $ rake secret:encrypt[production] DATA="newline-escaped-data"
 
     $ rake secret:decrypt[production,key_name]
 
-    $ rake secret:decrypt[production,key_name,'file/path']
+    $ rake secret:decrypt[production,key_name,file/path]
 
 ### Version lock
 
@@ -157,7 +130,3 @@ otherwise an error is raised.
 shared:
   lock: 2.5.0
 ```
-
-### Alias
-
-The alias `all` is available as an alternative to `with` if the name is more appropriate to the context.
