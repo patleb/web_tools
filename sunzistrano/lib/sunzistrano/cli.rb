@@ -32,7 +32,7 @@ module Sunzistrano
       do_compile(stage, role)
     end
 
-    desc 'download [stage] [role] [--path] [--defaults]', 'Dowload file meant to be used as .ref template'
+    desc 'download [stage] [role] [--path] [--defaults]', 'Dowload the file meant to be used as .ref template'
     method_options path: :required, defaults: false
     def download(stage, role = 'system')
       do_download(stage, role)
@@ -143,7 +143,7 @@ module Sunzistrano
       end
 
       def validate_config_presence!
-        abort_with 'You must have a provision.yml'unless Sunzistrano::Context.provision_yml.exist?
+        abort 'You must have a provision.yml'.red unless Sunzistrano::Context.provision_yml.exist?
       end
 
       def run_provision_cmd
@@ -245,11 +245,6 @@ module Sunzistrano
 
       def provision_path
         @provision_path ||= ".provision/#{sun.app}-#{sun.env}"
-      end
-
-      def abort_with(text)
-        puts text.red
-        abort
       end
     end
   end
