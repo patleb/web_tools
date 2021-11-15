@@ -1,0 +1,17 @@
+digraph G {
+  compound=true
+  subgraph cluster_local {
+    label="Local Machine (Test | Development)"
+    sun [shape=box label="Sunzistrano"]
+    cap [shape=box label="Capistrano"]
+    rake_local [shape=box label="Rake"]
+  }
+  subgraph cluster_remote {
+    label="Remote Server (Vagrant | Staging | Production)"
+    whenever [shape=box label="Whenever"]
+    rake_remote [shape=box label="Rake"]
+  }
+  cap -> whenever [label="ssh" lhead=cluster_remote]
+  sun -> whenever [label="ssh" lhead=cluster_remote]
+  whenever -> rake_remote [constraint=false]
+}

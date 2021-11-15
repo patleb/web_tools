@@ -1,0 +1,17 @@
+digraph G {
+  rankdir="LR"
+  subgraph cluster_detection {
+    label="Intrusion detection"
+    monitoring [shape=box label="Monitoring (Osquery + ClamAV)"]
+    auditing [shape=box label="Auditing (Osquery)"]
+  }
+  subgraph cluster_prevention {
+    label="Intrusion prevention"
+    firewall [shape=box label="Firewall"]
+    fail2ban [shape=box label="Fail2ban"]
+    authorized_keys [shape=box label="Authorized keys (ssh)"]
+    secrets [shape=box label="Secrets"]
+    ssl [shape=box label="SSL certificate (MixCertificate)"]
+  }
+  authorized_keys -> secrets
+}

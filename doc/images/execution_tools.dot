@@ -1,0 +1,13 @@
+digraph G {
+  concentrate=true
+  client [label="Client (Browser)"]
+  passenger [shape=box label="Rails (Passenger)"]
+  mix_job [shape=box label="Background Job (MixJob)"]
+  mix_task [shape=box label="Rake (MixTask)"]
+
+  client -> passenger
+  mix_job -> passenger
+  passenger -> mix_task
+  mix_task -> mix_job
+  passenger -> client
+}
