@@ -139,6 +139,8 @@ sun.source_recipe "lang/ruby/app__RBENV_RUBY__" 'lang/ruby/app-2.7.4'
 ...
 ```
 
+See [mix_server/config/provision/recipes](https://github1s.com/patleb/web_tools/tree/master/mix_server/config/provision/recipes) for more examples.
+
 ### Recipe Helpers
 
 The `sun.source_recipe` Bash helper must be used to source the **recipe** and make sure that it runs only once. It's also required for more advanced features like the **specialize** and **rollback** commands.
@@ -153,7 +155,12 @@ Transferred **files** are located under the folder `config/provision/files` and 
 
 ### File helpers
 
-Some Bash **helpers** are available to ease/extend the usage/manipulation of transferred **files**.
+Some Bash **helpers** are available to ease/extend the usage/manipulation of transferred **files**. Some of the functionalities available are:
+
+- ESH templating;
+- Original file backup;
+- Comparison between an expected file and the original file;
+- Multi OS support;
 
 See [template_helper.sh](./config/provision/helpers/sun/template_helper.sh) for more details.
 
