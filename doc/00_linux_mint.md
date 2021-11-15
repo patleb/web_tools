@@ -217,8 +217,6 @@ sudo rm -rf "rocksdb-$__ROCKSDB__"
 - Remmina
 - VirtualBox
 
-# TODO bash copy-paste safeguard --> https://unix.stackexchange.com/questions/309786/disable-default-copypaste-behaviour-in-bash/309798#309798
-
 ## Packages
 
 ```bash
@@ -235,6 +233,7 @@ sudo apt-get -y install \
   clang \
   cmake \
   git \
+  graphviz \
   dirmngr gnupg \
   imagemagick \
   libcurl4-openssl-dev \
@@ -334,8 +333,8 @@ echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 echo 'gem: --no-document' > ~/.gemrc
 . ~/.bashrc
 RBENV_OPTIONS='--with-jemalloc --enable-shared --disable-install-doc --disable-install-rdoc --disable-install-capi'
-RUBY_CONFIGURE_OPTS=$RBENV_OPTIONS rbenv install 2.6.5
-rbenv global 2.6.5
+RUBY_CONFIGURE_OPTS=$RBENV_OPTIONS rbenv install 2.7.4
+rbenv global 2.7.4
 echo 'require "irb/ext/save-history"' > ~/.irbrc
 echo 'IRB.conf[:SAVE_HISTORY] = 1000' >> ~/.irbrc
 echo $'IRB.conf[:HISTORY_FILE] = "#{ENV[\'HOME\']}/.irb-history"' >> ~/.irbrc
@@ -431,7 +430,3 @@ Download and install [https://code.visualstudio.com/docs/setup/linux](VSCode)
 
 - https://code.visualstudio.com/docs/supporting/faq#_how-to-disable-telemetry-reporting
 - https://code.visualstudio.com/docs/editor/settings-sync
-
-## Portainer (TODO)
-
-# TODO https://www.reddit.com/r/programming/comments/js5go2/90_frequently_used_linux_commands/
