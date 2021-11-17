@@ -4,6 +4,9 @@ __PG_LOG_CHECKPOINTS__=${__PG_LOG_CHECKPOINTS__:-on}
 __PG_LOG_LOCK_WAITS__=${__PG_LOG_LOCK_WAITS__:-on}
 __PG_RESTORE_COMMAND__=${__PG_RESTORE_COMMAND__:-:}
 __PG_HOT_STANDBY__=${__PG_HOT_STANDBY__:off}
+__PG_JIT__=${__PG_JIT__:off}
+# https://www.reddit.com/r/PostgreSQL/comments/pt7wxk/psa_postgresql_13_has_jit_enabled_by_default_but/
+# https://www.reddit.com/r/PostgreSQL/comments/qtsif5/cascade_of_doom_jit_and_how_a_postgres_update_led/
 
 <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'log_min_messages =' %>
 echo "log_min_messages = $__PG_LOG_MIN_MESSAGES__" >> "$PG_CONFIG_FILE"
@@ -19,6 +22,9 @@ echo "restore_command = '$__PG_RESTORE_COMMAND__'" >> "$PG_CONFIG_FILE"
 
 <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'hot_standby =' %>
 echo "hot_standby = $__PG_HOT_STANDBY__" >> "$PG_CONFIG_FILE"
+
+<%= Sh.delete_lines! '$PG_CONFIG_FILE', 'jit =' %>
+echo "jit = $__PG_JIT__" >> "$PG_CONFIG_FILE"
 
 <% %w(
   synchronous_commit
@@ -42,7 +48,6 @@ echo "hot_standby = $__PG_HOT_STANDBY__" >> "$PG_CONFIG_FILE"
   max_parallel_workers_per_gather
   max_parallel_workers
   max_parallel_maintenance_workers
-  jit
 ).each do |config| -%>
   __PG_<%= config.upcase %>__=${__PG_<%= config.upcase %>__:-nil}
 
