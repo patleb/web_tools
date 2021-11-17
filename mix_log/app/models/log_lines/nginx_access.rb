@@ -220,7 +220,7 @@ module LogLines
         gzip: gzip == '-' ? nil : gzip.to_f,
       }
       global_log = log.path&.end_with?('/access.log')
-      if global_log || status == 404 || path.end_with?('/wp-admin', '/allowurl.txt', '.php')
+      if global_log || status == 404 || path.end_with?(*MixLog.config.filter_endings) || MixLog.config.filter_ips.include?(ip)
         method, path, params = nil, '*', nil
       end
       if global_log

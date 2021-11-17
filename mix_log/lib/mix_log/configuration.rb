@@ -5,6 +5,8 @@ module MixLog
     attr_writer   :available_paths
     attr_writer   :available_rollups
     attr_writer   :filter_parameters
+    attr_writer   :filter_endings
+    attr_writer   :filter_ips
     attr_writer   :ided_paths
     attr_writer   :ided_errors
     attr_writer   :known_errors
@@ -55,6 +57,14 @@ module MixLog
 
     def filter_parameters
       @filter_parameters ||= Rails.application.config.filter_parameters.dup
+    end
+
+    def filter_endings
+      @filter_endings ||= ['/wp-admin', '/allowurl.txt', '.php']
+    end
+
+    def filter_ips
+      @filter_ips ||= Set.new
     end
 
     def ided_paths
