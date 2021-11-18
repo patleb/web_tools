@@ -21,11 +21,6 @@ namespace :log do
     LogMessage.report!
   end
 
-  desc 'reset server log alerts'
-  task :reset => :environment do
-    LogMessage.reset_alerts!
-  end
-
   desc 'dump log tables' # 3.6 MB
   task :dump_tables => :environment do |t|
     name = "log_#{Log.maximum(:updated_at).utc.iso8601.tr('-T:Z', '')}"
