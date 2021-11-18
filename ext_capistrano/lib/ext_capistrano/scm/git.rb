@@ -1,4 +1,4 @@
-if ENV['BUNDLE_RSYNC']
+if ENV['CLUSTER']
   require 'capistrano/bundle_rsync/plugin'
   install_plugin Capistrano::BundleRsync::Plugin
 else

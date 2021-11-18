@@ -1,6 +1,6 @@
 desc 'cap stage:application task[...]'
 task :cap, [:app, :task] do |t, args|
   on release_roles :all do
-    execute_cap "#{cap.env}:#{args[:app]}", args[:task], bundle_rsync: true
+    execute_cap "#{cap.env}:#{args[:app]}", args[:task], cluster: true
   end
 end
