@@ -4,8 +4,8 @@ gems:
 
 types:
   authorized_keys: array
+  server_master_data: pathname
   server_cluster_data: pathname
-  server_cluster_master_data: pathname
 
 shared:
   postgres: 13
@@ -53,8 +53,8 @@ shared:
   data_partition: /dev/sdb
   data_directory: /opt/storage
   ftp_mount_path: /opt/ftp_data
+  server_master_data: /opt/shared_data
   server_cluster_data: /opt/storage/shared_data
-  server_cluster_master_data: /opt/shared_data
 
 test:
   max_pool_size: 2
@@ -62,8 +62,8 @@ test:
   deployer_password: test
   geoserver_port: $ALIAS geoserver_local_port
   pgrest_port: $ALIAS pgrest_local_port
+  server_master_data: ./tmp/shared_data
   server_cluster_data: ./tmp/shared_data
-  server_cluster_master_data: ./tmp/shared_data
 
 development:
   server_provider: localhost
@@ -78,8 +78,8 @@ development:
 #  osquery_10_sec: 10
   geoserver_port: $ALIAS geoserver_local_port
   pgrest_port: $ALIAS pgrest_local_port
+  server_master_data: ./tmp/shared_data
   server_cluster_data: ./tmp/shared_data
-  server_cluster_master_data: ./tmp/shared_data
 
 vagrant:
   server_provider: vagrant

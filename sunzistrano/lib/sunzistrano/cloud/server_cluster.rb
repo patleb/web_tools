@@ -2,18 +2,18 @@ module Cloud::ServerCluster
   class UnsupportedClusterProvider < ::StandardError; end
 
   def servers
-    [Cloud.server_cluster_master] + Cloud.server_cluster_ips
+    [Cloud.server_master] + Cloud.server_cluster_ips
   end
 
-  def server_cluster_master
-    @server_cluster_master ||= if defined?(Rails) && Rails.env.dev_or_test?
+  def server_master
+    @server_master ||= if defined?(Rails) && Rails.env.dev_or_test?
       '127.0.0.1'
-    elsif Setting[:server_cluster_master_ip].present?
-      Setting[:server_cluster_master_ip]
+    elsif Setting[:server_master_ip].present?
+      Setting[:server_master_ip]
     else
       case Setting[:server_cluster_provider]
       when 'vagrant'   then vagrant_server_ips(Setting[:server_host]).first
-      when 'openstack' then openstack_server_ips(Setting[:server_cluster_master], 'ACTIVE').first
+      when 'openstack' then openstack_server_ips(Setting[:server_master_name], 'ACTIVE').first
       else raise UnsupportedClusterProvider
       end
     end
@@ -21,7 +21,7 @@ module Cloud::ServerCluster
 
   def server_cluster_paths
     server_cluster_ips.each_with_object({}) do |ip, memo|
-      memo[ip] = Setting[:server_cluster_master_data].sub_ext("-#{ip}")
+      memo[ip] = Setting[:server_master_data].sub_ext("-#{ip}")
     end
   end
 
