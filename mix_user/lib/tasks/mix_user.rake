@@ -32,15 +32,13 @@ namespace :user do
         end
       end
     end
-    [classes, modules].each do |policies|
-      policies.sort.each do |policy, actions|
-        puts policy
-        if parents[policy]
-          puts *parents[policy].to_a
-        end
-        actions.each do |action_check|
-          puts action_check.to_s.indent(2)
-        end
+    classes.merge(modules).sort.each do |policy, actions|
+      puts policy
+      if parents[policy]
+        puts *parents[policy].to_a
+      end
+      actions.each do |action_check|
+        puts action_check.to_s.indent(2)
       end
     end
   end
