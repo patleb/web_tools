@@ -34,7 +34,8 @@ class RailsAdmin::Config::Model::Fields::Association < RailsAdmin::Config::Model
       else
         path = authorized_path_for(:show, model, associated) || authorized_path_for(:edit, model, associated)
       end
-      path ? a_('.pjax', wording, href: path) : ERB::Util.html_escape(wording)
+      next unless path
+      a_('.pjax', wording, href: path)
     end
   end
 
