@@ -19,9 +19,15 @@ class Task < LibMainRecord
 
   validate :perform_later
 
+  def self.visible_tasks
+    return names.keys if Current.user.deployer?
+    return names.keys & MixTask.config.admin_names if Current.user.admin?
+    return []
+   end
+
   def self.delete_or_create_all
-    where.not(name: MixTask.config.available_names.keys).delete_all
-    MixTask.config.available_names.each_key do |name|
+    where.not(name: names.keys).delete_all
+    names.each_key do |name|
       task = find_or_initialize_by(name: name)
       task.save(validate: false)
     end
@@ -50,6 +56,10 @@ class Task < LibMainRecord
 
   def description
     rake_task.comment
+  end
+
+  def visible?
+    self.class.visible_tasks.include? name
   end
 
   def arguments_visible?

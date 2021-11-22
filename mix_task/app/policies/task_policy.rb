@@ -1,6 +1,6 @@
 class TaskPolicy < ApplicationPolicy
   def index?
-    user.deployer?
+    Task.visible_tasks.any?
   end
 
   def export?
@@ -8,7 +8,11 @@ class TaskPolicy < ApplicationPolicy
   end
 
   def show?
-    user.deployer?
+    if record.is_a? Task
+      record.visible?
+    else
+      super
+    end
   end
 
   def new?
@@ -16,10 +20,20 @@ class TaskPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.deployer?
+    if record.is_a? Task
+      record.visible?
+    else
+      super
+    end
   end
 
   def delete?
     false
+  end
+
+  class Scope < Scope
+    def resolve
+      super.where(name: Task.visible_tasks)
+    end
   end
 end
