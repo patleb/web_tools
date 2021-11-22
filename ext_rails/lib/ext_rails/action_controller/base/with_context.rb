@@ -37,7 +37,7 @@ module ActionController::Base::WithContext
     end
   rescue NoMethodError => e # prevent infinite loop
     backtrace = e.backtrace.first(ExtRuby.config.backtrace_log_lines)
-    message = ["Undefined method [#{e.name}]", ("did you mean? [#{e.corrections.first}]" rescue nil)].join! ', '
+    message = "undefined method [#{e.name}], did you mean? [#{e.corrections.first rescue nil}]"
     message = [message, e.message, "at #{backtrace.join("\n")}"].join! "\n"
     render_500 NoMethodError.new(message, e.name)
   end
