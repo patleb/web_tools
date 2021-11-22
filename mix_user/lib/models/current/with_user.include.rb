@@ -3,12 +3,16 @@ module Current::WithUser
 
   included do
     attribute :user
-    attribute :as_user
-
-    alias_method :as_user?, :as_user
+    attribute :role
 
     def logged_in?
       user && user.id > ActiveType::NullObject::ID
+    end
+
+    User.roles.each_key do |role_name|
+      define_method "as_#{role_name}?" do
+        role == role_name
+      end
     end
   end
 end

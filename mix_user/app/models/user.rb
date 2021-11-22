@@ -3,7 +3,7 @@ class User < MixUser.config.parent_model.constantize
 
   devise *MixUser.config.devise_modules
 
-  scope :visible_roles, -> (user) { where(column(:role) <= roles[user.role]) }
+  scope :visible_roles, -> (user) { where(column(:role) <= roles[user.as_role]) }
 
   json_attribute MixUser.config.json_attributes
 
@@ -26,16 +26,22 @@ class User < MixUser.config.parent_model.constantize
     admin.exists?
   end
 
-  def admin?
-    role_i >= self.class.roles[:admin]
-  end
+  roles.each do |name, value|
+    define_method "role_#{name}?" do
+      role_i >= value
+    end
 
-  def user?
-    role_i >= self.class.roles[:user]
+    define_method "#{name}?" do
+      as_role_i >= value
+    end
   end
 
   def visible_roles
-    self.class.roles.select{ |_, i| i <= role_i }.except!(:null)
+    self.class.roles.select{ |_, i| i <= as_role_i }.except!(:null)
+  end
+
+  def visible_role?(user)
+    user.role_i <= as_role_i
   end
 
   def has?(record)
@@ -51,7 +57,21 @@ class User < MixUser.config.parent_model.constantize
   end
 
   def role_i
-    read_attribute_before_type_cast(:role).to_i
+    self.class.roles[role]
+  end
+
+  def as_role_i
+    self.class.roles[as_role]
+  end
+
+  def as_role
+    if Current.as_admin? && role_i >= self.class.roles[:deployer]
+      'admin'
+    elsif Current.as_user? && role_i >= self.class.roles[:admin]
+      'user'
+    else
+      role
+    end
   end
 
   protected

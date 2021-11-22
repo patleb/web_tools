@@ -22,7 +22,7 @@ module UsersHelper
     return unless Current.logged_in?
     css = 'edit_user_link'
     admin_controller = controller.try(:admin?)
-    if defined?(MixAdmin) && !(Current.as_user? && !admin_controller) && Current.user.admin?
+    if defined?(MixAdmin) && Current.user.admin?
       css << ' pjax' if admin_controller
       path = admin_path_for(:edit, Current.user)
       title = t('user.admin')
@@ -80,6 +80,32 @@ module UsersHelper
         i_('.fa.fa-terminal'),
         span_('Console'),
       ]}
+    end
+  end
+
+  def user_view_link
+    return unless defined?(MixAdmin) && !Current.controller.try(:admin?)
+    if Current.as_user?
+      a_ href: "?_role=false" do
+        span_ '.label.label-danger', t('user.quit_preview')
+      end
+    elsif Current.user.admin?
+      a_ href: "?_role=user" do
+        span_ '.label.label-primary', t('user.enter_user_view')
+      end
+    end
+  end
+
+  def admin_view_link
+    return unless defined?(MixAdmin) && Current.controller.try(:admin?)
+    if Current.as_admin?
+      a_ href: "?_role=false" do
+        span_ '.label.label-danger', t('user.quit_preview')
+      end
+    elsif Current.user.deployer?
+      a_ href: "?_role=admin" do
+        span_ '.label.label-primary', t('user.enter_admin_view')
+      end
     end
   end
 

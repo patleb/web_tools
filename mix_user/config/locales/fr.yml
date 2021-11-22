@@ -2,7 +2,8 @@ fr:
   user:
     log_out: Se déconnecter
     admin: Admin
-    enter_preview: Aperçu utilisateur
+    enter_user_view: Aperçu utilisateur
+    enter_admin_view: Aperçu administrateur
     quit_preview: Quitter l'aperçu
   activerecord:
     attributes:

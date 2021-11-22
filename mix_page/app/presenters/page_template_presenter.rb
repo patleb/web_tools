@@ -52,8 +52,8 @@ class PageTemplatePresenter < ActionPresenter::Base
 
   def member_actions
     @member_actions ||= {
-      edit:   !Current.as_user? && admin_path_for(:edit, object, _back: true),
-      create: !Current.as_user? && admin_path_for(:create, object, _back: true),
+      edit:   admin_path_for(:edit, object, _back: true),
+      create: admin_path_for(:create, object, _back: true),
     }.reject{ |_, v| v.blank? }
   end
 end

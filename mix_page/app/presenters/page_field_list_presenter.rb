@@ -18,7 +18,7 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
   end
 
   def types
-    @types ||= super.select{ |type| !Current.as_user? && can?(:create, type) }
+    @types ||= super.select{ |type| can?(:create, type) }
   end
 
   def dom_class

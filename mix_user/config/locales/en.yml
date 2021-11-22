@@ -2,7 +2,8 @@ en:
   user:
     log_out: Log out
     admin: Admin
-    enter_preview: Preview as user
+    enter_user_view: Preview as user
+    enter_admin_view: Preview as admin
     quit_preview: Quit preview
   activerecord:
     attributes:

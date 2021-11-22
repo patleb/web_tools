@@ -68,7 +68,7 @@ class PageTemplate < Page
   end
 
   def show?
-    super && (published? || Current.user&.admin?)
+    super && (published? || Current.user&.role_admin?)
   end
 
   def publish
