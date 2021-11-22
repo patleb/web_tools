@@ -31,7 +31,7 @@ module TaskAdmin
         readonly{ !object.notify_editable? }
       end
       configure :_perform, :boolean do
-        readonly false
+        readonly{ object.running? }
       end
 
       include_fields :name, :parameters, :arguments, :state, :updated_at, :duration_avg, :output, :updater, :notify, :_perform
