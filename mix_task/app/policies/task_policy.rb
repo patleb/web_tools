@@ -8,11 +8,7 @@ class TaskPolicy < ApplicationPolicy
   end
 
   def show?
-    if record.is_a? Task
-      record.visible?
-    else
-      super
-    end
+    false
   end
 
   def new?
