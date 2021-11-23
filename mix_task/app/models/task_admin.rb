@@ -37,6 +37,8 @@ module TaskAdmin
       include_fields :name, :parameters, :arguments, :state, :updated_at, :duration_avg, :output, :updater, :notify, :_perform
 
       index do
+        sort_by :name
+        sort_reverse true
         exclude_fields :_perform
       end
     end
