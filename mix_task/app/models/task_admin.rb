@@ -10,6 +10,7 @@ module TaskAdmin
         readonly true
         pretty_value{ value }
       end
+      configure :description
       configure :parameters, :string_array do
         visible{ object&.arguments_visible? }
       end
@@ -34,7 +35,7 @@ module TaskAdmin
         readonly{ object.running? }
       end
 
-      include_fields :name, :parameters, :arguments, :state, :updated_at, :duration_avg, :output, :updater, :notify, :_perform
+      include_fields :name, :description, :parameters, :arguments, :state, :updated_at, :duration_avg, :output, :updater, :notify, :_perform
 
       index do
         sort_by :name
