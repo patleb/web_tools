@@ -55,14 +55,14 @@ module ActiveRecord::Base::WithPartition
         CREATE TABLE #{partition[:name]} PARTITION OF #{table}
           FOR VALUES FROM ('#{partition[:from]}') TO ('#{partition[:to]}')
       SQL
-      @_partitions[table] = nil
+      (@_partitions ||= {})[table] = nil
     rescue DuplicatePartition
-      @_partitions[table] = nil
+      (@_partitions ||= {})[table] = nil
     end
 
     def drop_partition_for(key, table = table_name, size: partition_size(table))
       connection.exec_query("DROP TABLE IF EXISTS #{partition_for(key, table, size: size)[:name]}")
-      @_partitions[table] = nil
+      (@_partitions ||= {})[table] = nil
     end
 
     def partitions(table = table_name)
@@ -114,7 +114,8 @@ module ActiveRecord::Base::WithPartition
     def partition_key_table(name)
       key_table = name.split(/_(#{TIME}|#{NUMBER})/).reverse
       raise InvalidPartitionName, "name: [#{name}]" unless key_table.size == 2
-      key_table
+      key, table = key_table
+      [partition_bucket(key), table]
     end
 
     # TODO make size variable in the future, but frozen in the past by bucket
