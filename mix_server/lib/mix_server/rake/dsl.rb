@@ -9,10 +9,12 @@ module Rake
         end
       end
     end
+    module_function :run_ftp_list
 
     def run_ftp_cat(match, **options)
       `#{Sh.ftp_cat(match, **options)}`.strip
     end
+    module_function :run_ftp_cat
 
     def cap
       OpenStruct.new(env: Setting.rails_env, app: Setting.rails_app, os: Process.os.to_s)
