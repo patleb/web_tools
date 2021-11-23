@@ -1,7 +1,6 @@
 module Rake
   class TestCase < ActiveSupport::TestCase
-    require 'rake'
-    Rails.application.all_rake_tasks
+    Rails.application.load_tasks
 
     class_attribute :task_namespace
 

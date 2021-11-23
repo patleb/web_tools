@@ -3,6 +3,4 @@
 
 require_relative "config/application"
 
-Rails.application.all_rake_tasks
-
-load_rel 'app/tasks/**/*.rake'
+Rails.application.load_tasks
