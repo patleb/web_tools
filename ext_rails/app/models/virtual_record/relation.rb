@@ -10,6 +10,7 @@ module VirtualRecord
     alias_method :exists?, :any?
 
     def initialize(original_array = [], limit: original_array.size, offset: nil, total_count: nil, padding: nil)
+      limit = 1 if limit == 0
       super
     end
 
