@@ -19,6 +19,10 @@ class Task < LibMainRecord
 
   validate :perform_later
 
+  def self.perform(name, *arguments)
+    find(name).update! arguments: arguments, _perform: true
+  end
+
   def self.visible_tasks
     return names.keys if Current.user.deployer?
     return names.keys & MixTask.config.admin_names if Current.user.admin?
