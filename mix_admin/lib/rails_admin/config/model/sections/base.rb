@@ -41,7 +41,7 @@ class RailsAdmin::Config::Model::Sections::Base
   end
 
   # Defines a configuration for a field.
-  def field(name, type = nil, add_to_section = true, translated: false, editable: false, weight: nil, &block)
+  def field(name, type = nil, add_to_section = true, translated: false, editable: nil, weight: nil, &block)
     if translated
       field(name, type, add_to_section, weight: weight, &block) if translated == :all
       I18n.available_locales.each{ |locale| field!("#{name}_#{locale}", type, add_to_section, weight: weight, &block) }
@@ -79,8 +79,8 @@ class RailsAdmin::Config::Model::Sections::Base
       end
 
       # Force editable behavior
-      if editable
-        field.readonly false
+      if editable.is_a? Boolean
+        field.readonly !editable
       end
 
       # If a block has been given evaluate it and sort fields after that
