@@ -1,4 +1,4 @@
-@import "~@@/mix_user/stylesheets/mixins";
+@import "~@@/mix_template/stylesheets/mixins";
 
 @mixin hidden_bulk_actions {
   tr:not(.js_table_create_row) {

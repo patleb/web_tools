@@ -1,2 +1,2 @@
-import '@@/mix_user/packs/base'
+import '@@/mix_template/packs/base'
 import '@@/mix_page/all'
