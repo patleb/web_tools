@@ -106,19 +106,28 @@ class Task < LibMainRecord
 
   def perform_now
     started_at = Concurrent.monotonic_time
-    self.output = Parallel.map([[name, arguments]], in_processes: 1) do |(name, arguments)|
-      String.try(:disable_colorization=, true)
-      ARGV.clear
-      ENV['RAKE_OUTPUT'] = true
-      task = Rake::Task[name]
-      task.invoke!(*arguments)
-    rescue Exception
-      task.output!
-    end.first
+    if MixTask.config.shell
+      args = "[#{arguments.map{ |arg| "'#{arg.escape_single_quotes}'" if arg.present? }.join(',')}]" if arguments.any?
+      env = "RAKE_OUTPUT=true DISABLE_COLORIZATION=true RAILS_ENV=#{Rails.env} RAILS_APP=#{Rails.app}"
+      cmd = "#{env} bin/rake #{name}#{args}"
+      self.output, status = Open3.capture2e(cmd)
+    else
+      self.output, status = Parallel.map([[name, arguments]], in_processes: 1) do |(name, arguments)|
+        ARGV.clear
+        ENV['RAKE_OUTPUT'] = true
+        ENV['DISABLE_COLORIZATION'] = true
+        task = Rake::Task[name]
+        task.invoke!(*arguments)
+      rescue Exception
+        task.output!
+      end.first, 0
+    end
     result = output.lines.reject(&:blank?).last
     case
-    when result&.include?(MixTask::FAILURE) then set_error_state :failure
-    when output&.include?(MixTask::CANCEL)  then set_error_state :cancelled
+    when result&.include?(MixTask::FAILURE) || status != 0
+      set_error_state :failure
+    when output&.include?(MixTask::CANCEL)
+      set_error_state :cancelled
     when result&.include?(MixTask::SUCCESS)
       durations.shift until durations.size < MixTask.config.durations_max_size
       self.durations << (Concurrent.monotonic_time - started_at).seconds.ceil(3)

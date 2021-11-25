@@ -40,7 +40,7 @@ module TaskAdmin
       index do
         sort_by :name
         sort_reverse true
-        exclude_fields :_perform
+        exclude_fields :output, :_perform
       end
     end
   end

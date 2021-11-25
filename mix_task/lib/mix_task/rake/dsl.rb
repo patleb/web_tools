@@ -37,6 +37,7 @@ module Rake
       environment = environment.each_with_object('RAILS_ENV=development') do |(name, value), string|
         string << " #{name.to_s.upcase}=#{value}"
       end
+      environment << ' DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
       cap = File.file?('bin/cap') ? 'bin/cap' : 'bundle exec cap'
       sh "#{environment} #{cap} #{stage} #{task_name}"
     end
