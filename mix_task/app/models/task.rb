@@ -112,7 +112,7 @@ class Task < LibMainRecord
       cmd = "#{env} bin/rake #{name}#{args}"
       self.output, status = Open3.capture2e(cmd)
     else
-      self.output, status = Parallel.map([[name, arguments]], in_processes: 1) do |(name, arguments)|
+      self.output, status = Parallel.map([1], in_processes: 1) do
         ARGV.clear
         ENV['RAKE_OUTPUT'] = true
         ENV['DISABLE_COLORIZATION'] = true
