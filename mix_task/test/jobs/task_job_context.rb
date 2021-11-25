@@ -14,7 +14,7 @@ module TaskJobContext
           'try:send_email' => 1,
           'try:raise_exception' => 2,
         }
-        Rake::Task['task:create'].invoke!
+        Rake::Task['task:create_all'].invoke!
         Task.all.each(&:update!.with(notify: notify))
         test.call
         Task.connection.exec_query("TRUNCATE TABLE #{Task.quoted_table_name}")
