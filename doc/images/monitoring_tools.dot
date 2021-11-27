@@ -1,7 +1,7 @@
 digraph G {
   mix_log [shape=box label="Logging + Reporting (MixLog)"]
   mix_rescue [shape=box label="Exceptions (MixRescue)"]
-  mix_monit [shape=box label="Monitoring (MixJob)"]
+  mix_monit [shape=box label="Monitoring (MixMonit)"]
   osquery [shape=box label="Monitoring + Audit (Osquery)"]
   whenever [shape=box label="Cron job (Whenever)"]
 
