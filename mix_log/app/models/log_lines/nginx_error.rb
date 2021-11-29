@@ -40,7 +40,7 @@ module LogLines
     }
     SYSTEM_ERROR = %i(error fatal unknown)
 
-    def self.parse(log, line, **)
+    def self.parse(log, line, mtime:, **)
       if (values = line.match(ERROR))
         created_at, level, pid, text = values.captures
         created_at = Time.strptime("#{created_at} UTC", "%Y/%m/%d %H:%M:%S %z").utc
@@ -52,6 +52,7 @@ module LogLines
       elsif (values = line.match(P_ERROR))
         level, pid, p_message, text = values.captures
         level = P_ERROR_LEVELS[level]
+        created_at = mtime
         text = "#{p_message}: #{text}"
       else
         return { filtered: true }
