@@ -18,6 +18,7 @@ module MixLog
 
       block = proc do |log|
         log.rotated_files.select{ |file| file.mtime.to_i > log.mtime.to_i }.each do |file|
+          puts "Processing: #{file}" if MixLog.config.log_debug
           process log, file
         end
         log.finalize

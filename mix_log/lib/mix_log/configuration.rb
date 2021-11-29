@@ -12,6 +12,7 @@ module MixLog
     attr_writer   :known_errors
     attr_writer   :known_sockets
     attr_accessor :force_read
+    attr_accessor :log_debug
 
     def partitions_total_size
       @partitions_total_size ||= 1.year
