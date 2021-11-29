@@ -106,22 +106,11 @@ class Task < LibMainRecord
 
   def perform_now
     started_at = Concurrent.monotonic_time
-    if MixTask.config.shell
-      args = "[#{arguments.map{ |arg| "'#{arg.escape_single_quotes}'" if arg.present? }.join(',')}]" if arguments.any?
-      env = "RAKE_OUTPUT=true DISABLE_COLORIZATION=true RAILS_ENV=#{Rails.env} RAILS_APP=#{Rails.app}"
-      cmd = "#{env} bin/rake #{name}#{args}"
-      self.output, status = Open3.capture2e(cmd)
-    else
-      self.output, status = Parallel.map([1], in_processes: 1) do
-        ARGV.clear
-        ENV['RAKE_OUTPUT'] = true
-        ENV['DISABLE_COLORIZATION'] = true
-        task = Rake::Task[name]
-        task.invoke!(*arguments)
-      rescue Exception
-        task.output!
-      end.first, 0
-    end
+    args = "[#{arguments.map{ |arg| "'#{arg.escape_single_quotes}'" if arg.present? }.join(',')}]" if arguments.any?
+    env = "RAKE_OUTPUT=true DISABLE_COLORIZATION=true RAILS_ENV=#{Rails.env} RAILS_APP=#{Rails.app}"
+    cmd = "#{env} bin/rake #{name}#{args}"
+    self.output, status = Open3.capture2e(cmd)
+
     result = output.lines.reject(&:blank?).last
     case
     when result&.include?(MixTask::FAILURE) || status != 0

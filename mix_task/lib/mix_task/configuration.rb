@@ -3,7 +3,6 @@ module MixTask
     attr_writer   :admin_names
     attr_writer   :available_names
     attr_writer   :durations_max_size
-    attr_accessor :shell
     attr_accessor :keep_install_migrations
     attr_accessor :sql_debug
 
