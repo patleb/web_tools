@@ -37,7 +37,7 @@ namespace! :nginx do
   end
 
   def clear_tmp_config
-    "sudo rm -rf /home/deployer/#{fetch(:deploy_dir)}/releases/*/tmp/config"
+    "sudo rm -rf /home/deployer/#{MixServer.deploy_dir}/releases/*/tmp/config"
   end
 end
 
