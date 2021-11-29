@@ -18,11 +18,13 @@ namespace! :nginx do
   def nginx_maintenance_push
     html = compile 'config/deploy/templates/503.html'
     mv html, MixServer.shared_dir.join('public/503.html')
+    clear_tmp_config
   end
 
   def nginx_app_push
     conf = compile 'config/deploy/templates/nginx/app.conf'
     sh "sudo mv #{conf} /etc/nginx/sites-available/#{MixServer.deploy_dir}"
+    clear_tmp_config
     nginx_reload
   end
 
@@ -32,6 +34,10 @@ namespace! :nginx do
         sh 'sudo systemctl start nginx'
       end
     end
+  end
+
+  def clear_tmp_config
+    "sudo rm -rf /home/deployer/#{fetch(:deploy_dir)}/releases/*/tmp/config"
   end
 end
 
