@@ -3,8 +3,8 @@ __PG_LOG_MIN_MESSAGES__=${__PG_LOG_MIN_MESSAGES__:-error}
 __PG_LOG_CHECKPOINTS__=${__PG_LOG_CHECKPOINTS__:-on}
 __PG_LOG_LOCK_WAITS__=${__PG_LOG_LOCK_WAITS__:-on}
 __PG_RESTORE_COMMAND__=${__PG_RESTORE_COMMAND__:-:}
-__PG_HOT_STANDBY__=${__PG_HOT_STANDBY__:off}
-__PG_JIT__=${__PG_JIT__:off}
+__PG_HOT_STANDBY__=${__PG_HOT_STANDBY__:-off}
+__PG_JIT__=${__PG_JIT__:-off}
 # https://www.reddit.com/r/PostgreSQL/comments/pt7wxk/psa_postgresql_13_has_jit_enabled_by_default_but/
 # https://www.reddit.com/r/PostgreSQL/comments/qtsif5/cascade_of_doom_jit_and_how_a_postgres_update_led/
 
