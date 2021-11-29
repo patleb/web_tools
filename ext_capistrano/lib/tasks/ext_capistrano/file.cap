@@ -2,9 +2,17 @@
 # https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts
 # https://unix.stackexchange.com/questions/289971/download-with-rsync-through-bastion-jumper-without-ssh-config-changes
 namespace :file do
+  desc 'Compile template'
   task :compile, [:name] do |t, args|
     on release_roles :all do
       compile_erb "config/deploy/templates/#{args[:name]}"
+    end
+  end
+
+  desc 'Clear tmp/config directory'
+  task :clear_tmp_config, [:name] do
+    on release_roles :all do
+      execute "sudo rm -rf /home/deployer/#{fetch(:deploy_dir)}/releases/*/tmp/config"
     end
   end
 
