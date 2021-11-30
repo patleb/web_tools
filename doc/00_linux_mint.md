@@ -118,13 +118,6 @@ sudo chown root:root /etc/sudoers.d/$USER
 - Edit / Preferences / Other / Associate Magnet links with Deluge [true]
 - ~/.config/deluge/gtkui.conf --> "ntf_tray_blink": false
 
-## Rubymine
-
-- [https://confluence.jetbrains.com/display/IDEADEV/Inotify+Watches+Limit](inotify):
-- File / Settings / Editor / Font / Font [DejaVu Sans Mono], Size [12], Line spacing [1.3]
-- File / Settings / Editor / Color Scheme / Scheme [Classic Light]
-- File / Settings / Editor / Color Scheme / Language Defaults / Italic [false]
-
 ## Panel Shortcuts
 
 - show desktop, files, system monitor, terminator, chromium, calculator, rubymine
@@ -158,54 +151,6 @@ sed -i '/# group: old_group/c\# group: new_group' permissions.txt
 sudo setfacl --restore=permissions.txt
 ```
 
-## Parallel
-
-```bash
-wget https://git.savannah.gnu.org/cgit/parallel.git/plain/src/parallel
-chmod 755 parallel
-sudo cp parallel sem
-sudo cp parallel /bin
-sudo cp sem /bin
-sudo mv parallel sem /usr/bin/
-```
-
-## Osquery
-
-```bash
-export OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $OSQUERY_KEY
-sudo add-apt-repository 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'
-sudo apt-get update
-sudo apt-get install osquery
-```
-
-## AGE
-
-```bash
-VERSION=$(curl -s "https://api.github.com/repos/FiloSottile/age/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
-curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-v${VERSION}-linux-amd64.tar.gz"
-tar xf age.tar.gz
-sudo mv age/age /usr/local/bin
-sudo mv age/age-keygen /usr/local/bin
-rm -rf age.tar.gz
-rm -rf age
-```
-
-## RocksDB
-
-```bash
-sudo apt-get install -y libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev liblz4-dev libzstd-dev
-export __ROCKSDB__=6.20.3
-sudo wget "https://github.com/facebook/rocksdb/archive/v$__ROCKSDB__.zip"
-sudo unzip "v$__ROCKSDB__.zip"
-cd "rocksdb-$__ROCKSDB__"
-sudo make -j8 static_lib && sudo make install-static
-sudo make clean && sudo make -j8 shared_lib && sudo make install-shared
-sudo ldconfig
-sudo rm -f "v$__ROCKSDB__.zip"
-sudo rm -rf "rocksdb-$__ROCKSDB__"
-```
-
 ## GUI Softwares (check if better in software manager)
 
 - Tor Browser Launcher
@@ -216,6 +161,20 @@ sudo rm -rf "rocksdb-$__ROCKSDB__"
 - Calibre, Shutter, Xournal
 - Remmina
 - VirtualBox
+
+## Terminator
+
+- Preferences / Profiles / Scrolling / Infinite Scrollback [true]
+
+```bash
+vi $HOME/.config/terminator/config
+...
+    [[[window0]]]
+      parent = ""
+      type = Window
+      size = 1320, 800
+...
+```
 
 ## Packages
 
@@ -344,18 +303,54 @@ echo 'alias be="bundle exec "' >> ~/.bashrc
 gem install mailcatcher
 ```
 
-## Terminator
+Note: run `mkdir -p .git/safe` with every new `git clone` of a trusted project.
 
-- Preferences / Profiles / Scrolling / Infinite Scrollback [true]
+## Parallel
 
 ```bash
-vi $HOME/.config/terminator/config
-...
-    [[[window0]]]
-      parent = ""
-      type = Window
-      size = 1320, 800
-...
+wget https://git.savannah.gnu.org/cgit/parallel.git/plain/src/parallel
+chmod 755 parallel
+sudo cp parallel sem
+sudo cp parallel /bin
+sudo cp sem /bin
+sudo mv parallel sem /usr/bin/
+```
+
+## AGE
+
+```bash
+VERSION=$(curl -s "https://api.github.com/repos/FiloSottile/age/releases/latest" | grep -Po '"tag_name": "v\K[0-9.]+')
+curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-v${VERSION}-linux-amd64.tar.gz"
+tar xf age.tar.gz
+sudo mv age/age /usr/local/bin
+sudo mv age/age-keygen /usr/local/bin
+rm -rf age.tar.gz
+rm -rf age
+```
+
+## Osquery (optional)
+
+```bash
+export OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $OSQUERY_KEY
+sudo add-apt-repository 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'
+sudo apt-get update
+sudo apt-get install osquery
+```
+
+## RocksDB (optional)
+
+```bash
+sudo apt-get install -y libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev liblz4-dev libzstd-dev
+export __ROCKSDB__=6.20.3
+sudo wget "https://github.com/facebook/rocksdb/archive/v$__ROCKSDB__.zip"
+sudo unzip "v$__ROCKSDB__.zip"
+cd "rocksdb-$__ROCKSDB__"
+sudo make -j8 static_lib && sudo make install-static
+sudo make clean && sudo make -j8 shared_lib && sudo make install-shared
+sudo ldconfig
+sudo rm -f "v$__ROCKSDB__.zip"
+sudo rm -rf "rocksdb-$__ROCKSDB__"
 ```
 
 ## VirtualBox + Vagrant
@@ -394,6 +389,20 @@ sudo chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
 sudo apt update && sudo apt-get install -y qgis qgis-plugin-grass
 ```
 
+## VSCode
+
+Download and install [https://code.visualstudio.com/docs/setup/linux](VSCode)
+
+- https://code.visualstudio.com/docs/supporting/faq#_how-to-disable-telemetry-reporting
+- https://code.visualstudio.com/docs/editor/settings-sync
+
+## Rubymine
+
+- [https://confluence.jetbrains.com/display/IDEADEV/Inotify+Watches+Limit](inotify):
+- File / Settings / Editor / Font / Font [DejaVu Sans Mono], Size [12], Line spacing [1.3]
+- File / Settings / Editor / Color Scheme / Scheme [Classic Light]
+- File / Settings / Editor / Color Scheme / Language Defaults / Italic [false]
+
 ## Webcamoid
 
 ```
@@ -423,10 +432,3 @@ rm -rf ~/.config/Webcamoid
 ```
 
 Download and install [https://zoom.us/download?os=linux](Zoom)
-
-## VSCode
-
-Download and install [https://code.visualstudio.com/docs/setup/linux](VSCode)
-
-- https://code.visualstudio.com/docs/supporting/faq#_how-to-disable-telemetry-reporting
-- https://code.visualstudio.com/docs/editor/settings-sync
