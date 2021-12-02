@@ -24,17 +24,18 @@ module MixLog
     end
 
     def available_types
-      @available_types ||= {
-        'LogLines::Syslog'      => 0,
+      @available_types ||= (Rails.env.test? ? {
+        'LogLines::Syslog'      => 0
+      } : {}).merge(
         'LogLines::NginxAccess' => 10,
         'LogLines::NginxError'  => 20,
         'LogLines::Auth'        => 30,
-        'LogLines::Fail2ban'    => 40,
+        # 'LogLines::Fail2ban'    => 40,
         'LogLines::Postgresql'  => 50,
         'LogLines::App'         => 60,
         'LogLines::AptHistory'  => 70,
         'LogLines::Osquery'     => 80,
-      }
+      )
     end
 
     def add_available_path(...)
@@ -42,17 +43,20 @@ module MixLog
     end
 
     def available_paths
-      @available_paths ||= [
+      @available_paths ||= (Rails.env.test? ? [
+        log_path(:syslog)
+      ] : []).concat([
         passenger_log_path(:access),
         passenger_log_path(:packs, :access),
         passenger_log_path(:public, :access),
         log_path(:nginx, :error),
-        log_path(:apt, :history),
         log_path(:auth),
+        # log_path(:fail2ban),
         postgres_log_path,
-        osquery_log_path,
         rails_log_path,
-      ]
+        log_path(:apt, :history),
+        osquery_log_path,
+      ])
     end
 
     def available_rollups
