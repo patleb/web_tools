@@ -34,19 +34,11 @@ namespace :cron do
 
     run_task 'nginx:maintenance:enable'
     started_at = Time.current
-    until (ready = Process.passenger.requests.blank?)
+    until (idle = MixServer.idle?)
       break if (Time.current - started_at) > 2.hours
       sleep ExtRuby.config.memoized_at_threshold
     end
-    next run_task('nginx:maintenance:disable') unless ready
-
-    # make sure that Passenger extra workers are killed and no extra rake tasks are running
-    min_workers = MixServer.config.minimum_workers + 1 # include the current rake task
-    until (ready = Process::Worker.all.select{ |w| w.name == 'ruby' }.size <= min_workers)
-      break if (Time.current - started_at) > 2.hours
-      sleep ExtRuby.config.memoized_at_threshold
-    end
-    next run_task('nginx:maintenance:disable') unless ready
+    next run_task('nginx:maintenance:disable') unless idle
 
     # won't interfere with 5 minutes cron
     until (Time.current.min % 5) == 2

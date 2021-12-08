@@ -14,6 +14,12 @@ module MixServer
     shared_dir.join('tmp/files/no_reboot')
   end
 
+  def self.idle?
+    # make sure that Passenger extra workers are killed and no extra rake tasks are running
+    min_workers = MixServer.config.minimum_workers + 1 # include the current rake task
+    Process.passenger.requests.blank? && Process::Worker.all.select{ |w| w.name == 'ruby' }.size <= min_workers
+  end
+
   def self.deploy_dir
     @deploy_dir ||= "#{Rails.app}_#{Rails.env}"
   end
