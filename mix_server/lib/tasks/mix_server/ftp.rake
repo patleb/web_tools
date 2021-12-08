@@ -82,12 +82,15 @@ namespace! :ftp do
       end
 
       desc 'restore dated dump'
-      task :restore, [:date, :version] => :environment do |t, args|
+      task :restore, [:date, :version, :data_only, :new_server] => :environment do |t, args|
         raise 'must specify a date' unless (date = args[:date]&.tr('-', '_')).present?
         raise 'must specify git short hash' unless (version = args[:version]).present?
         dump_name = "dump_#{date}-#{version}.pg.gz-*"
+        data_only = flag_on? args, :data_only
+        new_server = flag_on? args, :new_server
         sh Sh.ftp_download(backup_folder.join(dump_name), backup_root, sudo: true, parallel: 10), verbose: false
-        Db::Pg::Restore.new(self, t, args, path: Setting[:backup_dir].join(dump_name)).run!
+        options = { path: Setting[:backup_dir].join(dump_name), data_only: data_only, new_server: new_server }
+        Db::Pg::Restore.new(self, t, args, **options).run!
       end
     end
   end
