@@ -3,6 +3,7 @@ module Rake::Task::WithOutput
 
   prepended do
     include ActionView::Helpers::DateHelper
+    include ActionView::Helpers::TextHelper
     include ActionView::Helpers::NumberHelper
 
     attr_accessor :output
