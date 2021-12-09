@@ -8,6 +8,7 @@ module ExtCapistrano
     end
 
     def execute_rake(task, nohup: false)
+      task = task.dup
       rake_sudo = ENV['RAKE_SUDO'].in?(['true', '1']) || task.sub!(/(^| +)RAKE_SUDO=(true|1)( +|$)/, ' ')
       skip_output = ENV['RAKE_OUTPUT'].in?(['false', '0']) || task.sub!(/(^| +)RAKE_OUTPUT=(false|0)( +|$)/, ' ')
       command = "bin/rake #{task}"
