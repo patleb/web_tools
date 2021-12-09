@@ -78,6 +78,9 @@ module Rake
     end
 
     def puts_info(tag, text = nil, started_at: nil)
+      unless respond_to?(:distance_of_time) || self.class.include?(DOTIW::Methods)
+        self.class.include DOTIW::Methods
+      end
       tag = "[#{tag}]" unless tag.start_with?('[') && tag.end_with?(']')
       text = "[#{Time.current.utc}]#{tag.full_underscore.upcase}[#{Process.pid}] #{text}"
       text = "#{text}: #{distance_of_time (Concurrent.monotonic_time - started_at).seconds.ceil(3)}" if started_at
