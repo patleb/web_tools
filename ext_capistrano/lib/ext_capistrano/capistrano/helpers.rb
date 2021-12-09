@@ -3,31 +3,47 @@ module ExtCapistrano
     RSYNC_ARCHIVE_OPTIONS = "--rsync-path='sudo rsync' --inplace --partial -azvh"
 
     def execute_cap(stage, task, environment = {})
-      with_ruby(environment.merge(rails_env: 'development', git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS'])) do |context|
-        execute <<-SH.squish
-          #{context}
-          bin/cap #{stage} #{task}
-        SH
-      end
+      command = "bin/cap #{stage} #{task}"
+      execute_ruby(command, environment.merge(rails_env: 'development', git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS']))
     end
 
-    def execute_rake(task, environment = {})
-      with_ruby(environment.merge(rake_output: true)) do |context|
-        execute <<-SH.squish
-          #{context}
-          bin/rake #{task}
-        SH
-      end
-    end
-
-    def execute_nohup(command)
-      with_ruby(rake_output: true) do |context|
+    def execute_rake(task, nohup: false)
+      rake_sudo = ENV['RAKE_SUDO'].in?(['true', '1']) || task.sub!(/(^| +)RAKE_SUDO=(true|1)( +|$)/, ' ')
+      skip_output = ENV['RAKE_OUTPUT'].in?(['false', '0']) || task.sub!(/(^| +)RAKE_OUTPUT=(false|0)( +|$)/, ' ')
+      command = "bin/rake #{task}"
+      if nohup
         filename = nohup_basename(command)
+        command = "#{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid"
+      end
+      execute_ruby command, nohup: nohup, sudo: rake_sudo, rake_output: !skip_output
+    end
+
+    def execute_ruby(command, environment = {})
+      environment = { rails_env: cap.env, rails_app: cap.app }.merge(environment)
+      sudo = environment.delete(:sudo) || environment.delete('sudo')
+      nohup = environment.delete(:nohup) || environment.delete('nohup')
+      environment.map! do |name, value|
+        %{#{name.is_a?(Symbol) ? name.to_s.upcase : name}="#{value.to_s.gsub(/"/, '\"')}"}
+      end
+      rbenv_ruby = "#{Sh.rbenv_export(fetch(:deployer_name))}; #{Sh.rbenv_init};"
+      rbenv_sudo = "rbenv sudo #{environment.join(' ')}" if sudo
+      context = environment.map{ |value| "export #{value};" }.join(' ') unless sudo
+      path = " cd #{current_path};"
+      if nohup
         execute <<-SH.squish, pty: false
-          #{context}
-          nohup #{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid
+          #{rbenv_ruby} #{context} #{path} nohup #{rbenv_sudo} #{command}
+        SH
+      else
+        execute <<-SH.squish
+          #{rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command}
         SH
       end
+    end
+
+    def execute_bash(inline_code, sudo: false, u: true)
+      tmp_file = shared_path.join("tmp/files/cap_#{SecureRandom.hex(8)}.sh")
+      upload! StringIO.new(inline_code), tmp_file
+      execute "chmod +x #{tmp_file} && #{'sudo' if sudo} bash -#{'u' if u}c #{tmp_file} && rm -f #{tmp_file}"
     end
 
     def kill_nohup(command)
@@ -37,19 +53,6 @@ module ExtCapistrano
 
     def nohup_basename(command)
       command.squish.gsub(/[^_\w]/, '-').gsub(/-{2,}/, '-').delete_prefix('-').delete_suffix('-')
-    end
-
-    def with_ruby(environment = {})
-      environment = { rails_env: cap.env, rails_app: cap.app }.merge(environment).map do |k, v|
-        %{export #{k.is_a?(Symbol) ? k.to_s.upcase : k}="#{v.to_s.gsub(/"/, '\"')}";}
-      end.join(' ')
-      yield "#{Sh.rbenv_export(fetch(:deployer_name))}; #{Sh.rbenv_init}; #{environment} cd #{current_path};"
-    end
-
-    def execute_bash(inline_code, sudo: false, u: true)
-      tmp_file = shared_path.join("tmp/files/cap_#{SecureRandom.hex(8)}.sh")
-      upload! StringIO.new(inline_code), tmp_file
-      execute "chmod +x #{tmp_file} && #{'sudo' if sudo} bash -#{'u' if u}c #{tmp_file} && rm -f #{tmp_file}"
     end
 
     def template_push(name, destination)

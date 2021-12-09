@@ -15,7 +15,7 @@ namespace :nohup do
   task :rake do
     if ENV['TASK'].present?
       on release_roles :all do
-        execute_nohup "bin/rake #{ENV['TASK']}"
+        execute_rake ENV['TASK'], nohup: true
       end
     else
       error "Failed! You need to specify the 'TASK' parameter!", "Usage: cap <stage> nohup:rake TASK=your:task"
