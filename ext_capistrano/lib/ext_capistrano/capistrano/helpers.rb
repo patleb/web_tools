@@ -22,7 +22,7 @@ module ExtCapistrano
       environment = { rails_env: cap.env, rails_app: cap.app }.merge(environment)
       sudo = environment.delete(:sudo) || environment.delete('sudo')
       nohup = environment.delete(:nohup) || environment.delete('nohup')
-      environment.map! do |name, value|
+      environment = environment.map do |name, value|
         %{#{name.is_a?(Symbol) ? name.to_s.upcase : name}="#{value.to_s.gsub(/"/, '\"')}"}
       end
       rbenv_ruby = "#{Sh.rbenv_export(fetch(:deployer_name))}; #{Sh.rbenv_init};"
