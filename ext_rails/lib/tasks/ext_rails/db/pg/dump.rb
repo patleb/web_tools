@@ -121,8 +121,8 @@ module Db
           cmd_options = <<-CMD.squish
             --host #{host} --port #{port} --username #{username} --verbose --no-owner --no-acl --clean --format=c --compress=0
             #{pg_options}
-            #{only.map{ |table| "--table='#{table}'" }.join(' ')}
-            #{skip.map{ |table| "--exclude-table='#{table}'" }.join(' ')}
+            #{only.map{ |table| "--table='#{table}' --table='#{table}_id_seq'" }.join(' ')}
+            #{skip.map{ |table| "--exclude-table='#{table}' --exclude-table='#{table}_id_seq'" }.join(' ')}
             #{database}
           CMD
           output = case
