@@ -12,7 +12,9 @@ namespace :cron do
   desc 'every day cron jobs'
   task :every_day, [:dump] => :environment do |t, args|
     run_task 'monit:cleanup'
-    run_task 'certificate:lets_encrypt:create_or_renew'
+    if MixServer.idle? timeout: 20.minutes
+      run_task 'certificate:lets_encrypt:create_or_renew'
+    end
     run_task 'flash:cleanup'
     run_task 'geo:import_ips'
     run_task 'global:cleanup'
@@ -33,12 +35,9 @@ namespace :cron do
     next if MixServer.no_reboot_file.exist?
 
     run_task 'nginx:maintenance:enable'
-    started_at = Time.current
-    until (idle = MixServer.idle?)
-      break if (Time.current - started_at) > 2.hours
-      sleep ExtRuby.config.memoized_at_threshold
+    unless MixServer.idle? timeout: 2.hours
+      next run_task('nginx:maintenance:disable')
     end
-    next run_task('nginx:maintenance:disable') unless idle
 
     # won't interfere with 5 minutes cron
     until (Time.current.min % 5) == 2
