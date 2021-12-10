@@ -5,22 +5,6 @@ module Rake::Task::WithOutput
     include ActionView::Helpers::DateHelper
     include ActionView::Helpers::TextHelper
     include ActionView::Helpers::NumberHelper
-
-    attr_accessor :output
-  end
-
-  def output!
-    result = output
-    self.output = nil
-    result
-  end
-
-  def puts(obj = '', *arg, output: rake_ouput?)
-    if output
-      self.output ||= ''
-      self.output << ERB::Util.html_escape(obj) << "\n"
-    end
-    super(obj, *arg)
   end
 
   def puts_started(args)
@@ -66,7 +50,6 @@ module Rake::Task::WithOutput
     end
 
     started_at = Concurrent.monotonic_time
-    self.output = ''
     I18n.with_locale(:en) do
       Time.use_zone('UTC') do
         with_db_loggers do
@@ -84,8 +67,6 @@ module Rake::Task::WithOutput
         end
       end
     end
-
-    output.dup
   ensure
     String.try(:disable_colorization=, old_disable_colorization)
   end
