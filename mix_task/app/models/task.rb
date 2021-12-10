@@ -27,7 +27,7 @@ class Task < LibMainRecord
     return names.keys if Current.user.deployer?
     return names.keys & MixTask.config.admin_names if Current.user.admin?
     return []
-   end
+  end
 
   def self.delete_or_create_all
     where.not(name: names.keys).delete_all
