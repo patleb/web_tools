@@ -141,10 +141,6 @@ module ActiveTask
     def after_rescue(exception); end
     def after_ensure(exception); end
 
-    def puts(obj = '', *arg, **options)
-      task.puts(obj, *arg, **options)
-    end
-
     def puts_step(name)
       Log.task("+#{name}")
       puts "[#{Time.current.utc}]#{MixTask::STEP}[#{Process.pid}] #{name}".yellow
