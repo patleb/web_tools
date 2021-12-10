@@ -1,7 +1,7 @@
 class Global < LibMainRecord
   include GlobalCache
 
-  belongs_to :server
+  belongs_to :server, -> { with_discarded }
 
   attribute :data
   attribute :interval, :interval # TODO remove in Rails 7.0
