@@ -7,10 +7,10 @@ module ExtCapistrano
       execute_ruby(command, environment.merge(rails_env: 'development', git_user: ENV['GIT_USER'], git_pass: ENV['GIT_PASS']))
     end
 
-    def execute_rake(task, nohup: false)
+    def execute_rake(task, nohup: false, sudo: false, output: false)
       task = task.dup
-      rake_sudo = ENV['RAKE_SUDO'].in?(['true', '1']) || task.sub!(/(^| +)RAKE_SUDO=(true|1)( +|$)/, ' ')
-      skip_output = ENV['RAKE_OUTPUT'].in?(['false', '0']) || task.sub!(/(^| +)RAKE_OUTPUT=(false|0)( +|$)/, ' ')
+      rake_sudo = sudo || ENV['RAKE_SUDO'].in?(['true', '1']) || task.sub!(/(^| +)RAKE_SUDO=(true|1)( +|$)/, ' ')
+      skip_output = !output || ENV['RAKE_OUTPUT'].in?(['false', '0']) || task.sub!(/(^| +)RAKE_OUTPUT=(false|0)( +|$)/, ' ')
       command = "bin/rake #{task}"
       if nohup
         filename = nohup_basename(command)
