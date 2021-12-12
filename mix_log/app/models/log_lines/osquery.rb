@@ -55,7 +55,7 @@ module LogLines
       case name
       when 'osquery_info'
         pid, ram = diff['added'].first.values_at('pid', 'resident_size')
-        level = ram > flags[:watchdog_memory_limit].mb_to_bytes ? :error : :info
+        level = ram > (flags[:watchdog_memory_limit] + 100).mb_to_bytes ? :error : :info
         message = { text: name, level: level }
       when 'file_events'
         not_provisioned = !Server.provisioned?(created_at)
