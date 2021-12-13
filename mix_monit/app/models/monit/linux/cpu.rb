@@ -22,7 +22,7 @@ module Monit
           pids: counter_value(host.cpu_pids, snapshot[:cpu_pids]),
           usage: usage(work, work + idle + steal),
           steal: usage(steal, work + idle + steal),
-          load_avg: load_avg,
+          load_avg: load_avg.ceil(3),
         }]
       end
 
