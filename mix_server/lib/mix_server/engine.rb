@@ -38,7 +38,7 @@ module MixServer
 
   def self._idle?
     # make sure that Passenger extra workers are killed and no extra rake tasks are running
-    min_workers = MixServer.config.minimum_workers + 1 # include the current rake task
+    min_workers = MixServer.config.minimum_workers + 1 # include the current rake task or rails console
     Process.passenger.requests.blank? && Process::Worker.all.select{ |w| w.name == 'ruby' }.size <= min_workers
   end
   private_class_method :_idle?
