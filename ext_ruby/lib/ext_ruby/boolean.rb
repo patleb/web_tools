@@ -1,14 +1,17 @@
 module Boolean; end
 
 class String
+  TRUTHY = (/^(true|t|yes|y|1)$/i)
+  FALSY = (/^(false|f|no|n|0)$/i)
+
   def to_b
-    return true if self == true || self =~ (/^(true|t|yes|y|1)$/i)
-    return false if self == false || self.blank? || self =~ (/^(false|f|no|n|0)$/i)
+    return true if self =~ TRUTHY
+    return false if self.blank? || self =~ FALSY
     raise ArgumentError.new("invalid value for Boolean: '#{self}'")
   end
 
   def to_b?
-    self == true || self =~ (/^(true|t|yes|y|1)$/i) || self == false || self.blank? || self =~ (/^(false|f|no|n|0)$/i)
+    self =~ TRUTHY || self.blank? || self =~ FALSY
   end
 end
 
