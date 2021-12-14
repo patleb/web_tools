@@ -9,8 +9,8 @@ module ExtCapistrano
 
     def execute_rake(task, nohup: false, sudo: false, output: true)
       task = task.dup
-      rake_sudo = sudo || ENV['RAKE_SUDO']&.match?(String::TRUTHY) || task.sub!(/(^| +)RAKE_SUDO=#{String::TRUTHY}( +|$)/, ' ')
-      skip_output = !output || ENV['RAKE_OUTPUT']&.match?(String::FALSY) || task.sub!(/(^| +)RAKE_OUTPUT=#{String::FALSY}( +|$)/, ' ')
+      rake_sudo = sudo || ENV['RAKE_SUDO']&.match?(String::TRUTHY) || task.sub!(/(^| +)RAKE_SUDO=['"]?#{String::TRUTHY}['"]?( +|$)/, ' ')
+      skip_output = !output || ENV['RAKE_OUTPUT']&.match?(String::FALSY) || task.sub!(/(^| +)RAKE_OUTPUT=['"]?#{String::FALSY}['"]?( +|$)/, ' ')
       command = "bin/rake #{task}"
       if nohup
         filename = nohup_basename(command)
