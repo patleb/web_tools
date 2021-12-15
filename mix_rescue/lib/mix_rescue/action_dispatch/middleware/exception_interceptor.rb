@@ -4,6 +4,7 @@ module ActionDispatch
     URI::InvalidURIError,
     ActionController::BadRequest,
     ActionDispatch::Http::MimeNegotiation::InvalidType,
+    ActionController::InvalidAuthenticityToken,
   ]
 
   class ExceptionInterceptor
