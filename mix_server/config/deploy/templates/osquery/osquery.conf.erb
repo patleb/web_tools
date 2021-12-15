@@ -234,6 +234,9 @@
       "/usr/local/bin/%%",
       "/usr/local/sbin/%%",
       "/usr/lib/passenger/support-binaries/%"
+    ],
+    "extra": [
+      <%= Setting[:osquery_extra_files].map{ |path| %{"#{path}"} }.join(",\n      ") %>
     ]
   },
   "events": {

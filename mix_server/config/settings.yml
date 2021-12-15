@@ -6,6 +6,7 @@ types:
   authorized_keys: array
   server_master_data: pathname
   server_cluster_data: pathname
+  osquery_extra_files: array
 
 shared:
   postgres: 13
@@ -25,6 +26,7 @@ shared:
   osquery_2_hrs: 7200
   osquery_10_min: 600
   osquery_10_sec: 10
+  osquery_extra_files: []
   geoserver_nginx_upstream: $METHOD
   geoserver_nginx_location_wms: $METHOD
   geoserver_local_url: $METHOD
