@@ -17,9 +17,7 @@ module LogLines
         message = { text: 'look in rails log', level: :fatal } # wasn't able to anchor the next line
       elsif (values = line.match(MESSAGE))
         uuid, text = values.captures
-        if text.blank? || uuid != previous&.dig(:json_data, :uuid)
-          return { filtered: true }
-        end
+        return { filtered: true } if previous&.dig(:filtered) || uuid != previous&.dig(:json_data, :uuid)
         anchored = true
         created_at, pid = previous.values_at(:created_at, :pid)
         message = { text: text, level: :fatal }
