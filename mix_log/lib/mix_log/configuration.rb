@@ -141,6 +141,7 @@ module MixLog
         %r{^/etc/nginx/sites-available/\.\w+$},
         %r{^/etc/osquery/\.osquery\.\w+$},
         %r{^/etc/(localtime|timezone)$},
+        %r{^/etc/udev/rules\.d/70-snap\.snapd\.rules(\.\w+~)?$},
         %r{^/var/spool/cron/crontabs(/tmp\.\w{1,8}|/deployer)?$},
         %r{^/usr/bin/(dbxtool|dfu-tool|fwupdagent|fwupdate|fwupdmgr|fwupdtool|fwupdtpmevlog|udisksctl)$},
         '/usr/sbin/umount.udisks2',
