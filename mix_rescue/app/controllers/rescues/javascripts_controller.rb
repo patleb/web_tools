@@ -6,8 +6,12 @@ module Rescues
     protect_from_forgery with: :exception
 
     def create
-      log Rescues::JavascriptError.new(*create_args)
-      head :created
+      if USER_AGENT_PARSER.parse(request.user_agent).browser_array[UA[:hw_brand]] == 'Spider'
+        head :forbidden
+      else
+        log Rescues::JavascriptError.new(*create_args)
+        head :created
+      end
     end
 
     private
