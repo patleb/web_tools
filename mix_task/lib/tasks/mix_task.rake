@@ -8,7 +8,7 @@ namespace :task do
 end
 
 namespace :try do
-  %w(raise_exception sleep).each do |name|
+  %w(raise_exception sleep sleep_long).each do |name|
     desc "try #{name.tr('_', ' ')}"
     task name.to_sym => :environment do |t|
       "::MixTask::Try::#{name.camelize}".constantize.new(self, t).run!
