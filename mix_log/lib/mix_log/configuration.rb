@@ -152,11 +152,13 @@ module MixLog
     def known_sockets
       @known_sockets ||= {
         path: [
-          %r{^node /usr/share/yarn/bin/yarn\.js install},
+          'node /usr/share/yarn/bin/yarn.js install',
           %r{^/home/deployer/\.rbenv/versions/[.\d]+/bin/ruby /home/deployer/\.rbenv/versions/[.\d]+/bin/bundle install},
           %r{^/home/deployer/\.rbenv/versions/[.\d]+/bin/ruby /home/deployer/\.rbenv/versions/[.\d]+/bin/bundle .+ --deployment .+/\.local_repo/},
-          %r{^Passenger RubyApp: /home/deployer/},
-          %r{^ruby bin/rake cron:every_day},
+          'Passenger RubyApp: /home/deployer/',
+          'ruby bin/rake cron:every_day', # geolite fetch or email on errors
+          'ruby bin/rails runner Monit.capture', # email on errors
+          'ruby bin/rake job:watch -- --queue=', # email on errors
           %r{^/usr/sbin/ntpd -p /var/run/ntpd.pid -g -u \d+:\d+},
           '/usr/bin/freshclam -d --foreground=true',
           '/usr/lib/snapd/snapd',
