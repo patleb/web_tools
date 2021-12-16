@@ -235,7 +235,9 @@ class Setting
         elsif value.start_with? REMOVE
           (@removed ||= Set.new) << key
           next
-        elsif key.end_with? Hash::REPLACE
+        end
+      else
+        if key.end_with? Hash::REPLACE
           (@replaced ||= Set.new) << key
         end
       end
