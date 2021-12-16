@@ -60,7 +60,7 @@ module Monit
         db.send(:select_all, sql, **options)
       end
 
-      ### STATEMENTS (39)
+      ### STATEMENTS (43)
       # (ruby-pg-extras) :all_locks
       # (pgmonitor)      :archive_command_status
       # (ruby-pg-extras) :bloat
@@ -74,8 +74,10 @@ module Monit
       # (ruby-pg-extras) :duplicate_indexes
       # (ruby-pg-extras) :extensions
       # (ruby-pg-extras) :index_cache_hit
+      # (ruby-pg-extras) :index_scans
       # (ruby-pg-extras) :index_size
       # (ruby-pg-extras) :index_usage
+      # (ruby-pg-extras) :indexes
       # (pgmonitor)      :is_in_recovery
       # (ruby-pg-extras) :kill_all
       # (ruby-pg-extras) :locks
@@ -93,8 +95,10 @@ module Monit
       # (pgmonitor)      :stat_bgwriter
       # (pgmonitor)      :stat_database
       # (ruby-pg-extras) :table_cache_hit
+      # (ruby-pg-extras) :table_index_scans
       # (ruby-pg-extras) :table_indexes_size
       # (ruby-pg-extras) :table_size
+      # (ruby-pg-extras) :tables
       # (ruby-pg-extras) :total_index_size
       # (ruby-pg-extras) :total_table_size
       # (pgmonitor)      :transaction_wraparound
