@@ -102,6 +102,7 @@ module MixLog
           'SSL routines:tls_early_post_process_client_hello:unsupported protocol',
           'SSL routines:tls_parse_ctos_key_share:bad key share',
           'SSL routines:tls_choose_sigalg:internal error',
+          'access forbidden by rule',
         ],
         info: [
           '[passenger_native_support.so] trying to compile for the current user',
