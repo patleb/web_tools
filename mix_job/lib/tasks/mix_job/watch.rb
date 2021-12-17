@@ -75,6 +75,7 @@ module MixJob
     def before_run
       STDOUT.sync = true
       $task_snapshot = proc{ snapshot }
+      @host = HTTP::URI.parse(Job.url).origin
       @signals = Queue.new
       @requests = Queue.new
       @responses = Queue.new
@@ -138,10 +139,8 @@ module MixJob
     def setup_requesting
       @dispatcher.post_all(name: 'request') do
         client_ready!
-        HTTP.no_ssl_client do |http|
-          until thread_shuttingdown?
-            @responses << on_request(http, **@requests.pop)
-          end
+        until thread_shuttingdown?
+          @responses << on_request(**@requests.pop)
         end
       end
     end
@@ -256,10 +255,13 @@ module MixJob
       # use for count
     end
 
-    def on_request(http, **request)
+    def on_request(**request)
       begin
-        response = http.post(request[:url], json: { job: request[:data] }).flush
-        response = Jobs::RejectedError.new(response, request) unless response.status.job_accepted?
+        response = nil
+        HTTP.no_ssl_client(@host) do |http|
+          response = http.post(request[:url], json: { job: request[:data] }).flush
+          response = Jobs::RejectedError.new(response, request) unless response.status.job_accepted?
+        end
       rescue Exception => exception
         response = JobError.new(exception, data: request)
       end
