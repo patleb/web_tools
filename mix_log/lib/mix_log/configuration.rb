@@ -128,6 +128,7 @@ module MixLog
         %r{^/etc/fwupd/},
         %r{^/etc/pki/fwupd(-metadata)?/},
         '/etc/libblockdev',
+        %r{/etc/mailcap(\.new)?$},
         '/etc/udisks2',
         '/etc/update-motd.d/85-fwupd',
         '/etc/apt/apt.conf.d/01autoremove-kernels',
