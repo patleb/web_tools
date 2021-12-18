@@ -6,7 +6,7 @@ module Db
     class Restore < Base
       class MismatchedExtension < ::StandardError; end
 
-      TABLE = /[A-Za-z_][A-Za-z0-9_]*/
+      TABLE = /[A-Za-z_]\w*/
       COMPRESS = /\.gz/
       SPLIT = /-\*/
       MATCHER = /(?:~(#{TABLE}))?\.(tar|csv|pg)(#{COMPRESS})?(#{SPLIT})?$/
@@ -148,14 +148,15 @@ module Db
         tables = output.lines.select_map{ |line| line.match(/TABLE public (#{TABLE}) /)&.captures&.first }
         if only.any?
           tables.select! do |t|
-            only.any?{ |t_only| t_only.include?('*') ? t.match?(Regexp.new t_only.gsub('*', '\w*')) : t == t_only }
+            only.any?{ |t_only| table_match? t, t_only }
           end
+          only.replace(tables.flat_map{ |table| [table, "#{table}_id_seq"] }) unless skip.any?
         end
         if skip.any?
           tables.reject! do |t|
-            skip.any?{ |t_skip| t_skip.include?('*') ? t.match?(Regexp.new t_skip.gsub('*', '\w*')) : t == t_skip }
+            skip.any?{ |t_skip| table_match? t, t_skip }
           end
-          only.replace(tables) # pg_restore doesn't support --exclude-table
+          only.replace(tables.flat_map{ |table| [table, "#{table}_id_seq"] })
         end
         return unless options.data_only
 
@@ -236,6 +237,14 @@ module Db
 
       def data_append?
         options.data_only && options.append
+      end
+
+      def table_match?(table, pattern)
+        if pattern.include? '*'
+          table.match? Regexp.new('^' << pattern.gsub('*', '\w*') << '$')
+        else
+          table == pattern
+        end
       end
     end
   end
