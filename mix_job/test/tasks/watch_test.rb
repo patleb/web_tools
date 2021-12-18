@@ -115,7 +115,7 @@ module MixJob
     end
 
     def mock_request(result)
-      url = Regexp.new(Job.url(job_class: '[\\w:]+', job_id: '[\\w-]+'))
+      url = Regexp.new(Job.url(job_class: '[\w:]+', job_id: '[\w-]+'))
       stub_request(:post, url).with(
         body: hash_including(job: hash_including(result: result.to_s)),
         headers: { content_type: 'application/json; charset=UTF-8' }

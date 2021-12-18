@@ -20,6 +20,7 @@ module MixJob
     ACTION   = '[ACTION]'.freeze
     WAIT     = 'tmp/jobs/wait.txt'.freeze
     ACTIONS  = 'tmp/jobs/actions'.freeze
+    REQUESTS = 'tmp/jobs/requests.txt'.freeze
 
     track_count_of :on_signal
     track_count_of :on_request
@@ -36,6 +37,7 @@ module MixJob
       %i(
         check_readiness
         restore_signals
+        restore_requests
         setup_trapping
         setup_signaling
         setup_requesting
@@ -51,7 +53,7 @@ module MixJob
         queue:           ['--queue=QUEUE',                              'Queue name processed (default to "default")'],
         listen_timeout:  ['--listen-timeout=LISTEN_TIMEOUT',   Float,   'Timeout in seconds when blocking on listen', greater_than: 0],
         poll_interval:   ['--poll-interval=POLL_INTERVAL',     Float,   'Polling interval in seconds',                greater_than: 0],
-        server_interval: ['--server-interval=SERVER_INTERVAL', Float,   'Check interval for HTTP calls restoration',  greater_than: 0],
+        server_interval: ['--server-interval=SERVER_INTERVAL', Float,   'Check interval for server requests/status',  greater_than: 0],
         max_pool_size:   ['--max-pool-size=MAX_POOL_SIZE',     Integer, 'Maximum number of HTTP clients',             greater_or_equal: 1],
         keep_jobs:       ['--keep-jobs=KEEP_JOBS',             Integer, 'Number of jobs to keep for inspection',      greater_or_equal: 0],
       }
@@ -75,7 +77,7 @@ module MixJob
     def before_run
       STDOUT.sync = true
       $task_snapshot = proc{ snapshot }
-      @host = HTTP::URI.parse(Job.url).origin
+      @host = ExtRails::Routes.base_url
       @signals = Queue.new
       @requests = Queue.new
       @responses = Queue.new
@@ -83,6 +85,7 @@ module MixJob
       @jobs = []
       @job = nil
       @waited = nil
+      @restored = Concurrent::AtomicFixnum.new
       @perform_error = nil
       @dequeue_mutex = Mutex.new
       # thread groups must be defined after context initialization, otherwise they'll use their own
@@ -112,11 +115,20 @@ module MixJob
 
     def wait_for_termination
       @executor.wait_for_termination
+      dump_requests unless Rails.env.dev_or_test?
       puts snapshot.except(:time, :thread, :shutdown, :job).pretty_hash
     end
 
     def restore_signals
       actions.each{ @signals << :execute }
+    end
+
+    def restore_requests
+      @dumped_requests = if File.exist? REQUESTS
+        Concurrent::Array.new(Pathname.new(REQUESTS).readlines(chomp: true).reject(&:blank?))
+      else
+        []
+      end
     end
 
     def setup_trapping
@@ -138,6 +150,10 @@ module MixJob
 
     def setup_requesting
       @dispatcher.post_all(name: 'request') do
+        if (path = @dumped_requests.pop)
+          sleep options.server_interval while server_request? path
+          @restored.increment
+        end
         client_ready!
         until thread_shuttingdown?
           @responses << on_request(**@requests.pop)
@@ -190,6 +206,7 @@ module MixJob
         time: Time.current.utc,
         thread: Thread.current[:name],
         waited: @waited,
+        restored: @restored.value,
         shutdown: @executor.shuttingdown?,
         signals: @signals.size,
         actions: actions.size,
@@ -258,28 +275,22 @@ module MixJob
     def on_request(**request)
       begin
         response = nil
-        HTTP.no_ssl_client(@host) do |http|
-          response = http.post(request[:url], json: { job: request[:data] }).flush
+        HTTP.persistent(@host) do |http|
+          (ctx = OpenSSL::SSL::SSLContext.new).verify_mode = OpenSSL::SSL::VERIFY_NONE
+          response = http.post(request[:url], json: { job: request[:data] }, ssl_context: ctx).flush
           response = Jobs::RejectedError.new(response, request) unless response.status.job_accepted?
         end
       rescue Exception => exception
         response = JobError.new(exception, data: request)
       end
-      unless response.is_a? HTTP::Response
-        perform_error!
-        Thread.pass
-      end
+      perform_error! unless response.is_a? HTTP::Response
       response
     ensure
       client_ready!
     end
 
     def on_response(response)
-      if response.is_a? HTTP::Response
-        # do nothing
-      else
-        Notice.deliver! response
-      end
+      Notice.deliver! response unless response.is_a? HTTP::Response
     end
 
     def on_listen
@@ -332,6 +343,11 @@ module MixJob
 
     def perform_error!
       @perform_error = true
+      Thread.pass
+    end
+
+    def server_request?(path)
+      Process.passenger.requests(threshold: options.server_interval).any?{ |request| request[:path] == path }
     end
 
     def server_available?
@@ -366,6 +382,18 @@ module MixJob
 
     def actions
       Pathname.new(ACTIONS).children.sort_by(&:mtime)
+    end
+
+    def dump_requests
+      requests = Process.passenger.requests(force: true).select_map do |request|
+        next unless (path = request[:path]).match? Job.path_regex
+        path
+      end
+      if requests.any?
+        Pathname.new(REQUESTS).write(requests.join("\n"))
+      else
+        Pathname.new(REQUESTS).delete(false)
+      end
     end
 
     def extract_ruby_call(action)

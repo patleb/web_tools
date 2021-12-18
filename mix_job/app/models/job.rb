@@ -14,6 +14,14 @@ class Job < LibRecord
     validates :job_id
   end
 
+  def self.path_regex
+    @path_regex ||= Regexp.new("^#{path(job_class: '([\w:]+)', job_id: '([\w-]+)')}$")
+  end
+
+  def self.path(...)
+    url(...).delete_prefix(ExtRails::Routes.base_url)
+  end
+
   def self.url(job_class: nil, job_id: nil, **params)
     url = (@url ||= ExtRails::Routes.url_for(MixJob.routes[:job]))
     if job_class && job_id
