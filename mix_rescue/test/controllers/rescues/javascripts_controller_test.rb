@@ -3,16 +3,9 @@ require 'action_controller/metal/request_forgery_protection'
 
 module Rescues
   class JavascriptsControllerTest < ActionDispatch::IntegrationTest
-    it 'should raise on CSRF error' do
-      MixRescue.with do |config|
-        config.rescue_500 = false
-        assert_emails(1) do
-          assert_raise(ActionController::InvalidAuthenticityToken) do
-            post '/_rescues/javascripts', as: :json
-          end
-          assert_equal true, LogMessage.where('text_tiny LIKE ?', '%RackError%').take.reported?
-        end
-      end
+    it 'should catch CSRF error as bad request' do
+      post '/_rescues/javascripts', as: :json
+      assert_response :bad_request
     end
 
     context 'without CSRF' do
