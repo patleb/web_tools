@@ -66,7 +66,7 @@ module MixJob
         queue:           ActiveJob::Base.default_queue_name,
         listen_timeout:  1,
         poll_interval:   10,
-        server_interval: 5,
+        server_interval: 20,
         max_pool_size:   max_pool_size,
         keep_jobs:       0
       }
