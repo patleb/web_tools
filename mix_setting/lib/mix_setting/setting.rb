@@ -211,7 +211,7 @@ class Setting
   end
 
   def self.gsub_rails_secrets(content)
-    content.gsub(/<%=\s*Rails\.application\.secrets\.([a-zA-Z_][a-zA-Z0-9_]+)\s*%>/) do
+    content.gsub(/<%=\s*Rails\.application\.secrets\.([a-zA-Z_]\w+)\s*%>/) do
       @secrets[$1]
     end
   end
