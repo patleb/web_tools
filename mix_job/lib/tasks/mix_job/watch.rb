@@ -385,11 +385,11 @@ module MixJob
     end
 
     def dump_requests
-      requests = Process.passenger.requests(force: true).select_map do |request|
+      requests = Process.passenger.requests(force: true)&.select_map do |request|
         next unless (path = request[:path]).match? Job.path_regex
         path
       end
-      if requests.any?
+      if requests.present?
         Pathname.new(REQUESTS).write(requests.join("\n"))
       else
         Pathname.new(REQUESTS).delete(false)
