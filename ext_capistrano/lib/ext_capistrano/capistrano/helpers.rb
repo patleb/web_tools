@@ -84,7 +84,7 @@ module ExtCapistrano
     end
 
     def upload_file(server, source, destination, user: false)
-      run_locally{ execute "rsync #{RSYNC_ARCHIVE_OPTIONS} #{"--chown=#{fetch(:deployer_name)}:#{fetch(:deployer_name)}" if user} -e 'ssh -p #{fetch(:port, 22)}' '#{source}' #{fetch(:deployer_name)}@#{server.hostname}:#{destination}" }
+      run_locally{ execute "rsync #{RSYNC_ARCHIVE_OPTIONS} #{"--chown=#{fetch(:deployer_name)}:#{fetch(:deployer_name)}" if user} -e 'ssh -p #{fetch(:port, 22)}' #{source} #{fetch(:deployer_name)}@#{server.hostname}:#{destination}" }
     end
 
     def download_file(server, source, destination)
