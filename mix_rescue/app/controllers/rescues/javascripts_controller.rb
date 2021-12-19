@@ -6,7 +6,7 @@ module Rescues
     protect_from_forgery with: :exception
 
     def create
-      if USER_AGENT_PARSER.parse(request.user_agent).browser_array[UA[:hw_brand]] == 'Spider'
+      if browser_bot?
         head :forbidden
       else
         log Rescues::JavascriptError.new(*create_args)
@@ -28,6 +28,11 @@ module Rescues
 
     def set_format
       request.format = :json
+    end
+
+    def browser_bot?
+      browser = USER_AGENT_PARSER.parse(request.user_agent).browser_array
+      browser[UA[:name]] == 'HeadlessChrome' || browser[UA[:hw_brand]] == 'Spider'
     end
   end
 end
