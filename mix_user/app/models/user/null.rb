@@ -12,6 +12,10 @@ class User::Null < ActiveType::NullObject
   end
   alias_method :discarded?, :discarded
 
+  roles.each_key do |name|
+    alias_method "role_#{name}?", "#{name}?"
+  end
+
   def has?(_record)
     false
   end
