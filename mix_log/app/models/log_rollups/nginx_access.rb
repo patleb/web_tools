@@ -68,7 +68,8 @@ class LogRollups::NginxAccess < LogRollup
   end
 
   def self.users_by(period = :week)
-    joins(:log).period.where(period: 1.send(period), log: { path: MixLog.config.passenger_log_path(:access) }).order(period_at: :desc).map do |row|
+    log_path = MixLog.config.passenger_log_path(:access)
+    joins(:log).period.where(period: 1.send(period), log: { path: log_path }).order(period_at: :desc).map do |row|
       [row.period_at.strftime('%Y-%m-%d'), row.users]
     end
   end
