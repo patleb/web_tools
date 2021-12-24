@@ -53,6 +53,7 @@ yarn-debug.log*
 .editorconfig
 .generators
 .rakeTasks
+.rake_tasks~
 /db/structure.sql
 /db/dump*
 /db/*.pg.gz
