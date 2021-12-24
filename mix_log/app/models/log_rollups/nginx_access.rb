@@ -57,8 +57,8 @@ class LogRollups::NginxAccess < LogRollup
         [date.strftime('%Y-%m-%d'), sum.to_i]
       end
     when :week, :day
-      period.where(period: 1.send(period_or_group)).order(period_at: :desc).map do |row|
-        [row.period_at.strftime('%Y-%m-%d'), row.requests]
+      period.where(period: 1.send(period_or_group)).order(period_at: :desc).group(:period_at).sum(:requests).map do |(date, sum)|
+        [date.strftime('%Y-%m-%d'), sum.to_i]
       end
     else
       send(period_or_group).top_group_calculate(:group_value, :sum, column: :requests).map do |(group, sum)|
