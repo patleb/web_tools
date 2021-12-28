@@ -4,7 +4,7 @@ require "rails/test_unit/runner"
 module WebTools
   class Runner < Rails::TestUnit::Runner
     def self.testable_gems
-      @testable_gems ||= WebTools.gems.select{ |_name, path| path.join('test').exist? }
+      @testable_gems ||= WebTools.gems.merge(WebTools.private_gems).select{ |_name, path| path.join('test').exist? }
     end
 
     def self.test_all(name = nil)

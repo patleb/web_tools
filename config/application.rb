@@ -20,6 +20,7 @@ require "rails/test_unit/railtie"
 Bundler.require(*Rails.groups)
 require 'web_tools/admin'
 require 'web_tools/application'
+require 'web_tools/private' if File.exists? 'lib/web_tools/private.rb'
 
 module WebTools
   class Application < Rails::Application

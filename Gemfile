@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby File.read('.ruby-version').strip # TODO 2.7.3
+ruby File.read('.ruby-version').strip
 
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '5.4.0' # TODO update to 5.4.2
@@ -70,3 +70,5 @@ gem 'mix_task', path: './mix_task'
 gem 'mix_template', path: './mix_template'
 gem 'mix_user', path: './mix_user'
 gem 'sunzistrano', path: './sunzistrano'
+
+eval File.read('Gemfile.private') if File.exists? 'Gemfile.private'
