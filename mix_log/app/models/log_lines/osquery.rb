@@ -79,19 +79,19 @@ module LogLines
         servers = Set.new(Cloud.servers)
         message, paths = extract_paths(diff, name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
           next unless %w(connect bind).include? row['action']
-          paths = row.values_at('cmdline', 'path').reject(&:blank?)
+          path = row.values_at('cmdline', 'path').reject(&:blank?).first || ''
           local = row.values_at('local_address', 'local_port')
           remote = row.values_at('remote_address', 'remote_port')
           next if servers.include? remote.first
           next if MixLog.config.known_sockets.any? do |type, sockets|
             sockets.any? do |s|
               case type
-              when :path   then s.is_a?(Regexp) ? paths.any?(&:match?.with(s)) : paths.any?(&:start_with?.with(s))
+              when :path   then s.is_a?(Regexp) ? path.match?(s) : path.start_with?(s)
               when :remote then s.is_a?(Regexp) ? remote.first.match?(s) : remote.first == s
               end
             end
           end
-          memo << [paths.join('/+'), local.join(':'), remote.join(':')].join('/')
+          memo << [path, local.join(':'), remote.join(':')].join('/')
         end
       else
         message = { text: "threat #{name}", level: :fatal }
