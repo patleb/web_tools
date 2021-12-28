@@ -1,7 +1,7 @@
 require "minitest"
 require "rails/test_unit/runner"
 
-module ExtMinitest
+module WebTools
   class Runner < Rails::TestUnit::Runner
     def self.testable_gems
       @testable_gems ||= WebTools.gems.select{ |_name, path| path.join('test').exist? }

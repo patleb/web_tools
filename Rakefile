@@ -4,3 +4,5 @@
 require_relative "config/application"
 
 Rails.application.load_tasks
+
+load_rel 'lib/tasks/web_tools.rake'
