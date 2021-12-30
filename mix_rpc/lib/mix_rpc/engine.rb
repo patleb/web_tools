@@ -18,5 +18,9 @@ module MixRpc
         post '/rpc/functions/:id' => 'rpc/functions#call', as: :rpc_functions
       end
     end
+
+    config.to_prepare do
+      require 'mix_rpc/rails/generators/with_rpc_schema'
+    end
   end
 end
