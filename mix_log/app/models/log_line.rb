@@ -75,7 +75,7 @@ class LogLine < LibMainRecord
       row[:log_id] = log.id
     end
     unless dry_run || rows.empty?
-      rollups_class.upsert_all(rows, unique_by: 'index_lib_log_rollups_on_groups', returning: false) if rows.any?
+      rollups_class.upsert_all(rows, unique_by: 'index_lib_log_rollups_on_groups', returning: false)
     end
     rows
   end
