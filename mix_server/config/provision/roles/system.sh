@@ -2,6 +2,8 @@
   bootstrap/all
   user/deployer
   db/postgres__POSTGRES__
+  db/postgres__POSTGRES__/pgxnclient
+  #{'db/postgres__POSTGRES__/vector' if sun.vector_enabled}
   #{'db/postgres__POSTGRES__/pg_repack' if sun.pgrepack_enabled}
   nginx/passenger
   nginx/htpasswd

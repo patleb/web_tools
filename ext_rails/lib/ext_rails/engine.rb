@@ -99,6 +99,7 @@ module ExtRails
     initializer 'ext_rails.append_migrations' do |app|
       append_migrations(app)
       append_migrations(app, scope: 'pgunit') if Rails.env.dev_or_test?
+      append_migrations(app, scope: 'vector') if Setting[:vector_enabled]
       append_migrations(app, scope: 'pgstats') if Setting[:pgstats_enabled]
       append_migrations(app, scope: 'pgrepack') if Setting[:pgrepack_enabled]
       append_migrations(app, scope: 'timescaledb') if Setting[:timescaledb_enabled]
