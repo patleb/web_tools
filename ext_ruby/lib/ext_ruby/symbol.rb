@@ -4,10 +4,10 @@ class Symbol
   end
 
   def pluralize(*args)
-    to_s.pluralize(*args)
+    to_s.pluralize(*args).to_sym
   end
 
   def singularize(*args)
-    to_s.singularize(*args)
+    to_s.singularize(*args).to_sym
   end
 end
