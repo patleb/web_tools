@@ -88,7 +88,9 @@ class Array
   def closest(value)
     return if empty?
     values = Array.wrap(value)
-    if values.size < 10
+    if values.size == 1
+      min_by{ |e| (value - e).abs }
+    elsif values.size < 10
       min_by{ |e| values.subs(Array.wrap(e)).sum{ |v| v * v } }
     else
       min_by{ |e| values.subs(Array.wrap(e)).sum(&:abs) }
