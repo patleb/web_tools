@@ -47,6 +47,7 @@ class String
     gsub(HTML_BLANK, '').blank?
   end
 
+  # Convert to Base36 + space separators
   def simplify
     string = ActiveSupport::Inflector.transliterate(self, ' ', locale: :en)
     string.gsub! /[^\w\s]+/, ' '

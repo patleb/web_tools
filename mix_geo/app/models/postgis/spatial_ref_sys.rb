@@ -56,6 +56,7 @@ module Postgis
       find(srid).proj4
     end
 
+    # EPSG:3857 bounds for postgis cartesian coordinates approximately ±20037508.34 or exactly ±20037508.342789
     def self.py_reproject(srid, source, src_bounds, src_nodata: nil, dst_nodata: nil, fill_ratio: nil)
       return [source, src_bounds] if srid == 4326
       src_crs, dst_crs = proj4(srid), 'epsg:4326'
