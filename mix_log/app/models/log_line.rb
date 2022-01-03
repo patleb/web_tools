@@ -167,6 +167,11 @@ class LogLine < LibMainRecord
   def self.finalize(log)
   end
 
+  def self.rescue_and_filter(line, created_at = nil)
+    Log.rescue(IncompatibleLogLine.new(line))
+    { created_at: created_at, filtered: true }
+  end
+
   def self.squish(text)
     text.squish_numbers.squish!
   end

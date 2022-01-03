@@ -20,7 +20,7 @@ module LogLines
     json_attribute :ip
 
     def self.parse(log, line, **)
-      raise IncompatibleLogLine, line unless (values = line.match(FAIL2BAN))
+      return rescue_and_filter(line) unless (values = line.match(FAIL2BAN))
 
       created_at, pid, level, program, text = values.captures
       created_at = Time.strptime("#{created_at} UTC", "%Y-%m-%d %H:%M:%S %z").utc

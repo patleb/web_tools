@@ -7,7 +7,7 @@ module LogLines
     STATUS          = /\d{3}/
     BYTES_SENT      = /\d+/
     REQUEST_LENGTH  = /\d+/
-    HTTP_REFERER    = /[^"]+/
+    HTTP_REFERER    = /[^"]*/
     HTTP_USER_AGENT = /[^"]*/
     PIPE            = /[p.]/
     REQUEST_TIME    = /[-\d.]+/
@@ -186,7 +186,7 @@ module LogLines
     #   without parameters            -->  122 MB (- 31 MB idx)
     #   without parameters + browser  -->  100 MB (- 28 MB idx)
     def self.parse(log, line, browser: true, parameters: true, **)
-      raise IncompatibleLogLine, line unless (values = line.match(ACCESS))
+      return rescue_and_filter(line) unless (values = line.match(ACCESS))
 
       ip, user, created_at, request, status, bytes_out, bytes_in, referer, user_agent, upstream_time, time, https, gzip, pid = values.captures
       created_at = Time.strptime(created_at, "%d/%b/%Y:%H:%M:%S %z").utc
@@ -198,7 +198,7 @@ module LogLines
       params = nil if params&.any?{ |_, v| v = v.to_s; NULL_CHARS.any?{ |c| v.include? c } }
       path = uri.path&.downcase || ''
       path = path.delete_suffix('/') unless path == '/'
-      referer_uri, _referer_params = (Rack::Utils.parse_url(referer) rescue [INVALID_URI, nil]) unless referer == '-'
+      referer_uri, _referer_params = (Rack::Utils.parse_url(referer) rescue [INVALID_URI, nil]) unless referer.blank? || referer == '-'
       referer_host = referer_uri&.hostname
       referer = [(referer_host if referer_host != Setting[:server_host]), referer_uri&.path].compact.join
       time = time.in?([nil, '-']) ? nil : time.to_f
@@ -242,6 +242,9 @@ module LogLines
       }
 
       { created_at: created_at, pid: pid&.to_i, message: message, json_data: json_data }
+    rescue Exception => exception
+      Log.rescue(exception, data: { line: line })
+      { created_at: created_at, filtered: true }
     end
 
     def self.finalize(log)

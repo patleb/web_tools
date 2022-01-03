@@ -10,9 +10,7 @@ module LogLines
 
     def self.parse(log, line, mtime:, **)
       created_at, program, pid, message = rsyslog_parse(line, mtime)
-      return { created_at: created_at, filtered: true } unless program == 'CRON'
-
-      raise IncompatibleLogLine, line unless (values = message.match(CRON))
+      return rescue_and_filter(line, created_at) unless program == 'CRON' && (values = message.match(CRON))
 
       user, text = values.captures
       json_data = { user: user }
