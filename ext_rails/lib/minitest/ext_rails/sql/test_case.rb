@@ -10,7 +10,7 @@ module Sql
     self.migrations_root = Rails.root
     self.migrations = []
     self.adapter = ActiveRecord::Base
-    self.sql_root = 'test/sqls'
+    self.sql_root = 'test/migrate'
 
     delegate :connection, to: :adapter
 

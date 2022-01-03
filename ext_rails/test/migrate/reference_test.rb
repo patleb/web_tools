@@ -8,7 +8,7 @@ class ReferenceTest < Sql::TestCase
     '20180106225130_add_triggers_to_lib_page_fields' => MixPage::Engine.root,
     '20201224095685_add_triggers_to_lib_searches' => MixSearch::Engine.root,
   }
-  self.sql_root = 'ext_rails/test/sqls'
+  self.sql_root = 'ext_rails/test/migrate'
 
   test_sql 'reference/counter_cache'
   test_sql 'reference/touch'
