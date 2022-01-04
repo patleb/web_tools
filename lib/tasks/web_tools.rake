@@ -3,9 +3,11 @@ require_rel 'web_tools'
 namespace :tools do
   desc 'symlink all private gems'
   task :symlink_all => :environment do
-    WebTools.root.children.select(&:symlink?).each(&:delete.with(false))
+    root = WebTools.root.join('private')
+    root.mkdir unless root.exist?
+    root.children.select(&:symlink?).each(&:delete.with(false))
     WebTools.private_gems.each do |gem_name, gem_path|
-      WebTools.root.join(gem_name).symlink(gem_path, false)
+      root.join(gem_name).symlink(gem_path, false)
     end
   end
 end

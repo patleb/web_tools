@@ -64,5 +64,7 @@ yarn-debug.log*
 ### AFTER .gitignore ###
 
 web_tools-*.gem
+Gemfile.lock
 Gemfile.private
-lib/web_tools/private.rb
+/lib/web_tools/private.rb
+/private
