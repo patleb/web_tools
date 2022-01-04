@@ -10,7 +10,7 @@ class EnableUuidOssp < ActiveRecord::Migration[6.0]
 
     reversible do |change|
       change.up do
-        execute <<-SQL.strip_sql
+        execute <<-SQL.strip_sql(epoch: 122_192_928_000_000_000, seconds: 10_000_000)
           CREATE OR REPLACE FUNCTION uuid_v1_from_seq(seq regclass) RETURNS UUID AS $$
           DECLARE
             uuid TEXT = uuid_generate_v1mc()::TEXT;
@@ -29,7 +29,7 @@ class EnableUuidOssp < ActiveRecord::Migration[6.0]
             result TIMESTAMP;
           BEGIN
             SELECT to_timestamp(
-              (uuid_v1_to_100nsecs(uuid)::DOUBLE PRECISION - #{122_192_928_000_000_000} ) / #{10_000_000}
+              (uuid_v1_to_100nsecs(uuid)::DOUBLE PRECISION - {{ epoch }} ) / {{ seconds }}
             ) INTO result;
             RETURN result;
           END;

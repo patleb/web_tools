@@ -5,8 +5,14 @@ class String
     Arel.sql(self)
   end
 
-  def strip_sql
-    strip.gsub(/(--.*\n|\n)/, ' ').gsub(/\s{2,}/, ' ')
+  def strip_sql(**variables)
+    result = strip.gsub(/(--.*\n|\n)/, ' ').gsub(/\s{2,}/, ' ')
+    unless variables.empty?
+      result = variables.reduce(result) do |result, (name, value)|
+        result.gsub(/\{\{\s#{name}\s\}\}/, value.to_s.strip_sql)
+      end
+    end
+    result
   end
 
   def compile_sql(delimiters = '[]')

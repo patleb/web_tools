@@ -1,7 +1,7 @@
 # TODO allow multiple PostgREST API applications on the same server
 class EnablePgrest < ActiveRecord::Migration[6.0]
   def up
-    execute <<-SQL.strip_sql
+    execute <<-SQL.strip_sql(username: Setting[:pgrest_db_username], password: Setting[:pgrest_db_password])
       CREATE SCHEMA IF NOT EXISTS api;
       GRANT USAGE ON SCHEMA api TO public;
 
@@ -14,12 +14,12 @@ class EnablePgrest < ActiveRecord::Migration[6.0]
       ALTER ROLE web_anon SET search_path TO api;
 
       DO $do$ BEGIN
-        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '#{Setting[:pgrest_db_username]}') THEN
-          CREATE ROLE #{Setting[:pgrest_db_username]} NOINHERIT LOGIN;
+        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '{{ username }}') THEN
+          CREATE ROLE {{ username }} NOINHERIT LOGIN;
         END IF;
       END $do$;
-      ALTER USER #{Setting[:pgrest_db_username]} WITH PASSWORD '#{Setting[:pgrest_db_password]}';
-      GRANT web_anon TO #{Setting[:pgrest_db_username]};
+      ALTER USER {{ username }} WITH PASSWORD '{{ password }}';
+      GRANT web_anon TO {{ username }};
     SQL
   end
 

@@ -5,7 +5,12 @@ class EnableUnaccent < ActiveRecord::Migration[6.0]
 
     reversible do |change|
       change.up do
-        execute <<-SQL.strip_sql
+        variables = {
+          set_value: Sql.execute(:get_value_cmd, 'column_name', 'value'),
+          set_value_was: Sql.execute(:get_value_cmd, 'column_name', 'value_was', record: 'OLD'),
+          set_value_changed: Sql.value_changed?('value')
+        }
+        execute <<-SQL.strip_sql(variables)
           CREATE OR REPLACE FUNCTION unaccent_text() RETURNS TRIGGER AS $$
           DECLARE
             column_name TEXT;
@@ -14,10 +19,10 @@ class EnableUnaccent < ActiveRecord::Migration[6.0]
             value_changed BOOLEAN = TRUE;
           BEGIN
             FOREACH column_name IN ARRAY TG_ARGV LOOP
-              #{Sql.execute :get_value_cmd, 'column_name', 'value'}
+              {{ set_value }}
               IF TG_OP = 'UPDATE' THEN
-                #{Sql.execute :get_value_cmd, 'column_name', 'value_was', record: 'OLD'}
-                #{Sql.value_changed? 'value'}
+                {{ set_value_was }}
+                {{ set_value_changed }}
               END IF;
               IF value_changed AND value IS NOT NULL THEN
                 NEW = NEW #= hstore(column_name, unaccent(value));
