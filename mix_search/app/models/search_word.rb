@@ -3,8 +3,8 @@ class SearchWord < LibMainRecord
 
   # AND condition is implicit by the spaces in the token
   scope :similar_to, ->(*tokens) {
-    tokens = tokens.compact.map(&:simplify).reject(&:blank?)
-    return none if (tokens = tokens.uniq).empty?
+    tokens = tokens.compact.map(&:simplify).reject(&:blank?).uniq
+    return none if tokens.empty?
 
     token_column = quote_column(:token)
     where((["#{token_column} % ?"] * tokens.size).join(' OR '), *tokens)
