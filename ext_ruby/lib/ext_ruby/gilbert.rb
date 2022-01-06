@@ -74,7 +74,7 @@ class Gilbert
       if axes.except(i).all?{ |j| size[0][j] == 1 }
         (0...size[0][i]).each do
           list << x0
-          x0 = x0.adds(step[i])
+          x0 = x0.add(step[i])
         end
         return list
       end
@@ -86,34 +86,34 @@ class Gilbert
     # prefer even steps
     dims.times.each do |i|
       if (size[1][i] % 2) != 0 && size[0][i] > 2
-        grid[1][i] = grid[1][i].adds(step[i])
+        grid[1][i] = grid[1][i].add(step[i])
       end
     end
 
     if dims == 2 && 2*size[0][0] > 3*size[0][1] # split in x[0] only
       build x0, grid[1][0], grid[0][1], list: list
-      build x0.adds(grid[1][0]), grid[0][0].subs(grid[1][0]), grid[0][1], list: list
+      build x0.add(grid[1][0]), grid[0][0].sub(grid[1][0]), grid[0][1], list: list
     elsif dims == 3 && 2*size[0][0] > 3*size[0][1] && 2*size[0][0] > 3*size[0][2]
       build x0, grid[1][0], grid[0][1], grid[0][2], list: list
-      build x0.adds(grid[1][0]), grid[0][0].subs(grid[1][0]), grid[0][1], grid[0][2], list: list
+      build x0.add(grid[1][0]), grid[0][0].sub(grid[1][0]), grid[0][1], grid[0][2], list: list
     elsif dims == 3 && 3*size[0][1] > 4*size[0][2] # split in x[0] and x[1] only
       build x0, grid[1][1], grid[0][2], grid[1][0], list: list
-      build x0.adds(grid[1][1]), grid[0][0], grid[0][1].subs(grid[1][1]), grid[0][2], list: list
-      build x0.adds(grid[0][0].subs(step[0]), grid[1][1].subs(step[1])), grid[1][1].negs, grid[0][2], grid[0][0].subs(grid[1][0]).negs, list: list
+      build x0.add(grid[1][1]), grid[0][0], grid[0][1].sub(grid[1][1]), grid[0][2], list: list
+      build x0.add(grid[0][0].sub(step[0]), grid[1][1].sub(step[1])), grid[1][1].neg, grid[0][2], grid[0][0].sub(grid[1][0]).neg, list: list
     elsif dims == 3 && 3*size[0][2] > 4*size[0][1] # split in x[0] and x[2] only
       build x0, grid[1][2], grid[1][0], grid[0][1], list: list
-      build x0.adds(grid[1][2]), grid[0][0], grid[0][1], grid[0][2].subs(grid[1][2]), list: list
-      build x0.adds(grid[0][0].subs(step[0]), grid[1][2].subs(step[2])), grid[1][2].negs, grid[0][0].subs(grid[1][0]).negs, grid[0][1], list: list
+      build x0.add(grid[1][2]), grid[0][0], grid[0][1], grid[0][2].sub(grid[1][2]), list: list
+      build x0.add(grid[0][0].sub(step[0]), grid[1][2].sub(step[2])), grid[1][2].neg, grid[0][0].sub(grid[1][0]).neg, grid[0][1], list: list
     elsif dims == 2 # split in all x
       build x0, grid[1][1], grid[1][0], list: list
-      build x0.adds(grid[1][1]), grid[0][0], grid[0][1].subs(grid[1][1]), list: list
-      build x0.adds(grid[0][0].subs(step[0]), grid[1][1].subs(step[1])), grid[1][1].negs, grid[0][0].subs(grid[1][0]).negs, list: list
+      build x0.add(grid[1][1]), grid[0][0], grid[0][1].sub(grid[1][1]), list: list
+      build x0.add(grid[0][0].sub(step[0]), grid[1][1].sub(step[1])), grid[1][1].neg, grid[0][0].sub(grid[1][0]).neg, list: list
     else
       build x0, grid[1][1], grid[1][2], grid[1][0], list: list
-      build x0.adds(grid[1][1]), grid[0][2], grid[1][0], grid[0][1].subs(grid[1][1]), list: list
-      build x0.adds(grid[1][1].subs(step[1]), grid[0][2].subs(step[2])), grid[0][0], grid[1][1].negs, grid[0][2].subs(grid[1][2]).negs, list: list
-      build x0.adds(grid[0][0].subs(step[0]), grid[1][1], grid[0][2].subs(step[2])), grid[0][2].negs, grid[0][0].subs(grid[1][0]).negs, grid[0][1].subs(grid[1][1]), list: list
-      build x0.adds(grid[0][0].subs(step[0]), grid[1][1].subs(step[1])), grid[1][1].negs, grid[1][2], grid[0][0].subs(grid[1][0]).negs, list: list
+      build x0.add(grid[1][1]), grid[0][2], grid[1][0], grid[0][1].sub(grid[1][1]), list: list
+      build x0.add(grid[1][1].sub(step[1]), grid[0][2].sub(step[2])), grid[0][0], grid[1][1].neg, grid[0][2].sub(grid[1][2]).neg, list: list
+      build x0.add(grid[0][0].sub(step[0]), grid[1][1], grid[0][2].sub(step[2])), grid[0][2].neg, grid[0][0].sub(grid[1][0]).neg, grid[0][1].sub(grid[1][1]), list: list
+      build x0.add(grid[0][0].sub(step[0]), grid[1][1].sub(step[1])), grid[1][1].neg, grid[1][2], grid[0][0].sub(grid[1][0]).neg, list: list
     end
   end
   private_class_method :build

@@ -53,13 +53,13 @@ class Array
     insert((index(anchor) || -1) + 1, value)
   end
 
-  def sub(old_value, new_value)
+  def switch(old_value, new_value)
     arr = dup
-    arr.sub! old_value, new_value
+    arr.switch! old_value, new_value
     arr
   end
 
-  def sub!(old_value, new_value)
+  def switch!(old_value, new_value)
     return unless (i = index(old_value))
     self[i] = new_value
     self
@@ -91,29 +91,29 @@ class Array
     if values.size == 1
       min_by{ |e| (value - e).abs }
     elsif values.size < 10
-      min_by{ |e| values.subs(Array.wrap(e)).sum{ |v| v * v } }
+      min_by{ |e| values.sub(Array.wrap(e)).sum{ |v| v * v } }
     else
-      min_by{ |e| values.subs(Array.wrap(e)).sum(&:abs) }
+      min_by{ |e| values.sub(Array.wrap(e)).sum(&:abs) }
     end
   end
 
-  def negs
+  def neg
     map{ |x| -x }
   end
 
-  def muls(value)
+  def mul(value)
     map{ |x| x * value }
   end
 
-  def divs(value)
+  def div(value)
     map{ |x| x / value }
   end
 
-  def subs(*others)
+  def sub(*others)
     (others.empty? ? self : [self, *others]).transpose.map{ |x| x.reduce(:-) }
   end
 
-  def adds(*others)
+  def add(*others)
     (others.empty? ? self : [self, *others]).transpose.map(&:sum)
   end
 end
