@@ -15,10 +15,10 @@ class String
     result
   end
 
-  def compile_sql(delimiters = '[]')
+  def compile_sql(delimiters = '[]', **variables)
     open, close = delimiters.chars
     open_regex, close_regex = open.escape_regex, close.escape_regex
-    result = strip_sql
+    result = strip_sql(**variables)
     result.gsub! "'", "''"
     result.start_with?(open) ? result.delete_prefix!(open) : result.prepend("'")
     result.end_with?(close) ? result.delete_suffix!(close) : result.concat("'")
