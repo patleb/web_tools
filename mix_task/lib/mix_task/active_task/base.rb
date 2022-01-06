@@ -151,18 +151,24 @@ module ActiveTask
       puts "[#{Time.current.utc}]#{MixTask::CANCEL}[#{Process.pid}]".magenta
     end
 
-    def read_file(path)
+    def read_header(path)
+      read_file(path, first: true)
+    end
+
+    def read_file(path, first: false)
       if (path = path.to_s).end_with? '.gz'
         IO.popen("unpigz -c #{path}", 'rb') do |io|
           until io.eof?
             next if (line = io.gets).blank?
             yield line.chomp
+            break if first
           end
         end
       else
         File.foreach(path, chomp: true) do |line|
           next if line.blank?
           yield line
+          break if first
         end
       end
     end
