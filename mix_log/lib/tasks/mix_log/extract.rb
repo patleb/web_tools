@@ -1,30 +1,23 @@
 module MixLog
-  class Extract < ActiveTask::Base
+  class Extract < ParallelTask::Base
     class AccessDenied < ::StandardError; end
 
     def self.args
-      {
-        rotate:   ['--[no-]rotate',   'Rotate current logs before extracting'],
-        parallel: ['--[no-]parallel', 'Run in parallel mode (default to true)']
-      }
-    end
-
-    def self.defaults
-      { parallel: !Rails.env.test? }
+      super.merge!(
+        rotate: ['--[no-]rotate', 'Rotate current logs before extracting'],
+      )
     end
 
     def extract
       sh 'sudo logrotate /etc/logrotate.conf --force' if options.rotate # cat /var/lib/logrotate/status
 
-      block = proc do |log|
+      parallel(logs) do |log|
         log.rotated_files.select{ |file| file.mtime.to_i > log.mtime.to_i }.each do |file|
           puts "Processing: #{file}" if MixLog.config.log_debug
           process log, file
         end
         log.finalize
       end
-
-      options.parallel ? Parallel.each(logs, &block) : logs.each(&block)
     end
 
     private

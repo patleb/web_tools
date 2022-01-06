@@ -1,22 +1,13 @@
 module MixLog
-  class Rollup < ActiveTask::Base
+  class Rollup < ParallelTask::Base
     def self.args
-      {
-        all:      ['--[no-]all',      'Rebuild all rollups'],
-        parallel: ['--[no-]parallel', 'Run in parallel mode (default to true)']
-      }
-    end
-
-    def self.defaults
-      { parallel: !Rails.env.test? }
+      super.merge!(
+        all: ['--[no-]all', 'Rebuild all rollups'],
+      )
     end
 
     def rollup
-      if options.parallel
-        Parallel.each(logs, &:rollups!.with(options.all))
-      else
-        logs.each(&:rollups!.with(options.all))
-      end
+      parallel(logs, &:rollups!.with(options.all))
     end
 
     private
