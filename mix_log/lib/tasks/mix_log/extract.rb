@@ -30,7 +30,7 @@ module MixLog
     private
 
     def process(log, file)
-      lines = BulkProcessor.new(1000) do |batch, line_i|
+      lines = BulkProcessor.new(1_000) do |batch, line_i|
         log.push_all(batch)
         log.update! line_i: line_i
       end

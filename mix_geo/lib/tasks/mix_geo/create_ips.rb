@@ -95,7 +95,7 @@ module MixGeo
         cities_ids = {}
         states_ids = {}
         states_codes = {}
-        ips = BulkProcessor.new(10000) do |ips|
+        ips = BulkProcessor.new(10_000) do |ips|
           GeoIp.insert_all! ips
         end
         CSV.foreach(file) do |row|
