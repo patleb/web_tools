@@ -36,18 +36,8 @@ module MixLog
       end
       last_created_at, line_i, mtime = nil, 0, file.mtime.utc
 
-      if (path = file.to_s).end_with? '.gz'
-        IO.popen("unpigz -c #{path}", 'rb') do |io|
-          until io.eof?
-            next if (line = io.gets).blank?
-            last_created_at, line_i = process_line(log, line, lines, last_created_at, line_i, mtime)
-          end
-        end
-      else
-        File.foreach(path, chomp: true) do |line|
-          next if line.blank?
-          last_created_at, line_i = process_line(log, line, lines, last_created_at, line_i, mtime)
-        end
+      read_file(file) do |line|
+        last_created_at, line_i = process_line(log, line, lines, last_created_at, line_i, mtime)
       end
       lines.finalize(line_i)
 

@@ -151,6 +151,22 @@ module ActiveTask
       puts "[#{Time.current.utc}]#{MixTask::CANCEL}[#{Process.pid}]".magenta
     end
 
+    def read_file(path)
+      if (path = path.to_s).end_with? '.gz'
+        IO.popen("unpigz -c #{path}", 'rb') do |io|
+          until io.eof?
+            next if (line = io.gets).blank?
+            yield line.chomp
+          end
+        end
+      else
+        File.foreach(path, chomp: true) do |line|
+          next if line.blank?
+          yield line
+        end
+      end
+    end
+
     # NOTE needed only if using a different Gemfile
     def sh_clean(*cmd, &block)
       Bundler.with_unbundled_env do
