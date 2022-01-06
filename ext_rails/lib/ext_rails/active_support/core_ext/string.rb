@@ -9,7 +9,7 @@ class String
     result = strip.gsub(/(--.*\n|\n)/, ' ').gsub(/\s{2,}/, ' ')
     unless variables.empty?
       result = variables.reduce(result) do |result, (name, value)|
-        result.gsub(/\{\{\s#{name}\s\}\}/, value.to_s.strip_sql)
+        result.gsub(/\{\{\s*#{name}\s*\}\}/, value.to_s.strip_sql)
       end
     end
     result
