@@ -15,6 +15,7 @@ class Integer
 end
 
 class String
+  REPLACEMENT = ' '
   NIL_VALUE = /([(\[{,] *)(nil)( *[,\]})])/.freeze
   NULL_VALUE = '\1null\3'.freeze
   HTML_BLANK = /(<\/?p>|&nbsp;|<br>)/.freeze
@@ -48,7 +49,7 @@ class String
   end
 
   def transliterate(locale = :en)
-    ActiveSupport::Inflector.transliterate(self, ' ', locale: locale)
+    ActiveSupport::Inflector.transliterate(self, REPLACEMENT, locale: locale)
   end
 
   # Convert to Base36 + space separators
