@@ -47,17 +47,21 @@ class String
     gsub(HTML_BLANK, '').blank?
   end
 
+  def transliterate(locale = :en)
+    ActiveSupport::Inflector.transliterate(self, ' ', locale: locale)
+  end
+
   # Convert to Base36 + space separators
-  def simplify
-    string = ActiveSupport::Inflector.transliterate(self, ' ', locale: :en)
+  def simplify(locale = :en)
+    string = transliterate(locale)
     string.gsub! /[^\w\s]+/, ' '
     string.squish!
     string.downcase!
     string
   end
 
-  def trigrams
-    simplify.split.each_with_object(SortedSet.new) do |word, result|
+  def trigrams(locale = :en)
+    simplify(locale).split.each_with_object(SortedSet.new) do |word, result|
       "  #{word} ".chars.each_cons(3).map do |chars|
         result << chars.join
       end

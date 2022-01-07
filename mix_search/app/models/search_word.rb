@@ -2,8 +2,8 @@ class SearchWord < LibMainRecord
   has_many :searches
 
   # AND condition is implicit by the spaces in the token
-  scope :similar_to, ->(*tokens) {
-    tokens = tokens.compact.map(&:simplify).reject(&:blank?).uniq
+  scope :similar_to, ->(*tokens, locale: :en) {
+    tokens = tokens.compact.map(&:simplify.with(locale)).reject(&:blank?).uniq
     return none if tokens.empty?
 
     token_column = quote_column(:token)
