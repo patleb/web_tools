@@ -68,9 +68,9 @@ class String
     end
   end
 
-  def similarity(other)
-    left = trigrams
-    right = other.trigrams
+  def similarity(other, locale = :en)
+    left = trigrams(locale)
+    right = other.trigrams(locale)
     return 0.0 if left.empty? && right.empty?
     (left & right).size / (left | right).size.to_f
   end
