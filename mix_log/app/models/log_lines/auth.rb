@@ -22,7 +22,7 @@ module LogLines
 
     def self.parse(log, line, mtime:, **)
       created_at, program, pid, text = rsyslog_parse(line, mtime)
-      return rescue_and_filter(line, created_at) unless program == 'sshd'
+      return { created_at: created_at, filtered: true } unless program == 'sshd'
 
       if (values = text.match(CLIENT_AUTH))
         user, ip, port, key = values.captures
