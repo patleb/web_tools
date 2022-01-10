@@ -24,9 +24,9 @@ class EnablePgrest < ActiveRecord::Migration[6.0]
   end
 
   def down
-    execute <<-SQL.strip_sql
-      REVOKE web_anon FROM #{Setting[:pgrest_db_username]};
-      DROP ROLE #{Setting[:pgrest_db_username]};
+    execute <<-SQL.strip_sql(username: Setting[:pgrest_db_username])
+      REVOKE web_anon FROM {{ username }};
+      DROP ROLE {{ username }};
 
       REVOKE USAGE ON SCHEMA api FROM web_anon;
       DROP ROLE web_anon;
