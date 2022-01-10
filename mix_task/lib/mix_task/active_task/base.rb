@@ -156,19 +156,22 @@ module ActiveTask
     end
 
     def read_file(path, first: nil)
+      i = 0
       if (path = path.to_s).end_with? '.gz'
         IO.popen("unpigz -c #{path}", 'rb') do |io|
           until io.eof?
             next if (line = io.gets).blank?
-            yield(line.chomp) unless first == false
-            break unless first.nil?
+            yield(line.chomp, i) unless i == 0 && first == false
+            i += 1
+            break if first
           end
         end
       else
         File.foreach(path, chomp: true) do |line|
           next if line.blank?
-          yield(line) unless first == false
-          break unless first.nil?
+          yield(line, i) unless i == 0 && first == false
+          i += 1
+          break if first
         end
       end
     end
