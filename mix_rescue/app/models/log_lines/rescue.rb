@@ -7,7 +7,7 @@ module LogLines
       ram: :big_integer
     )
 
-    def self.push(log, exception, data: nil)
+    def self.push(log, exception, data: nil, monitor: nil)
       unless exception.is_a? RescueError
         exception = RescueError.new(exception, data: data)
       end
@@ -17,7 +17,7 @@ module LogLines
         data: exception.data,
         ram: Process.worker.ram_used
       }
-      message = { text: exception.backtrace_log, level: :error, monitor: false }
+      message = { text: exception.backtrace_log, level: :error, monitor: monitor }
       super(log, message: message, json_data: json_data)
     end
 

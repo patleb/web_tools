@@ -14,7 +14,7 @@ module ActionDispatch
       end
       case exception.base_class
       when *BAD_REQUEST_ERRORS
-        Log.rescue(exception)
+        Log.rescue! exception
       else
         Notice.deliver! exception
       end
