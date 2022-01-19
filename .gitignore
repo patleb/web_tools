@@ -68,3 +68,4 @@ Gemfile.lock
 Gemfile.private
 /lib/web_tools/private.rb
 /private
+yarn.lock
