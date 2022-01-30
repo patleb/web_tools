@@ -23,7 +23,7 @@ module WebTools
     list = root.children.select do |d|
       d.directory? && d.children.any?{ |f| f.to_s.end_with? '.gemspec' }
     end
-    list.any? ? list.map{ |d| d.basename.to_s } : root.basename.to_s
+    list.any? ? list.map{ |d| d.basename.to_s } : [root.basename.to_s]
   end
   private_class_method :subgems
 end
