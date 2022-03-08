@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   # https://github.com/delonnewman/activerecord-setops
   # https://github.com/westonganger/active_snapshot
   # https://github.com/DmitryTsepelev/ar_lazy_preload
+  # https://github.com/composite-primary-keys/composite_primary_keys
   s.add_dependency 'date_validator'
   s.add_dependency 'discard'
   # https://github.com/jrochkind/faster_s3_url

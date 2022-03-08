@@ -51,7 +51,7 @@ namespace! :ftp do
   namespace :db do
     desc 'Backup database and upload dump under backup directory'
     task :backup, [:skip_ftp] => :environment do |t, args|
-      run_task 'cron:reboot:disable'
+      run_task 'cron:reboot:disable' # TODO should use a semaphore
       Db::Pg::Dump.new(self, t, args, version: true, split: true, md5: true, physical: true).run!
       puts_info '[DUMP]', 'done'
       unless flag_on? args, :skip_ftp

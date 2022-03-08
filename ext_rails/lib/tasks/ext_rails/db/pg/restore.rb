@@ -95,6 +95,7 @@ module Db
         psql! "\\COPY #{table} FROM #{input} CSV"
       end
 
+      # TODO -j number-of-jobs
       def pg_restore(compress, split)
         pre_restore_timescaledb if options.timescaledb
         Setting.db do |host, port, database, username, password|

@@ -21,6 +21,7 @@ module RailsAdmin::Main
           end
           format.xml.none { render xml: without_time_zone{ @objects.to_xml(@schema) } }
 
+          # TODO https://github.com/rails/rails/pull/41488
           format.csv do |variant|
             options = params[:csv_options].permit(:encoding_to, :skip_header, generator: [:col_sep])
             header, encoding, csv = without_time_zone{ CsvService.new.to_csv(options) }

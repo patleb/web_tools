@@ -89,6 +89,11 @@ class RailsAdmin::Config::Model::Fields::Base
     property.nil? || property.true?(:virtual?)
   end
 
+  # TODO
+  def json_attribute?
+    klass.json_attribute? name
+  end
+
   register_instance_option :virtual_queryable, memoize: true do
     false
   end

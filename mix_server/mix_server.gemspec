@@ -18,4 +18,6 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
+  # TODO https://github.com/localstack/localstack
+  # TODO https://www.pgmustard.com/blog/auto-explain-overhead-with-timing
 end

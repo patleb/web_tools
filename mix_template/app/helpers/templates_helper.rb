@@ -139,7 +139,7 @@ module TemplatesHelper
     end
   end
 
-  def render_pjax
+  def render_pjax # TODO cache
     render template: "#{@virtual_path}/pjax"
   end
 

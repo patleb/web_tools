@@ -15,6 +15,7 @@ module MixRpc
 
     initializer 'mix_rpc.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
+        # TODO https://github.com/heartcombo/devise/wiki/How-To:-Define-resource-actions-that-require-authentication-using-routes.rb
         post '/rpc/functions/:id' => 'rpc/functions#call', as: :rpc_functions
       end
     end

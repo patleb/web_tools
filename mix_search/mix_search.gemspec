@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
+  # TODO https://github.com/ankane/autosuggest
 end

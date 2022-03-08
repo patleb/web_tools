@@ -1,7 +1,6 @@
+# TODO https://github.com/rails/rails/pull/42106
 require 'ext_ruby'
 require 'active_support/message_encryptor'
-require 'erb'
-require 'yaml'
 require 'inifile'
 require 'mix_setting/type'
 
@@ -157,7 +156,7 @@ class Setting
   end
 
   def self.parse_secrets_yml
-    extract_yml(:secrets, @root).with_keyword_access
+    extract_yml(:secrets, @root).with_keyword_access # TODO doesn't propagate
   end
 
   def self.parse_database_yml

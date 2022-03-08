@@ -46,6 +46,8 @@ module ActionController::Base::WithContext
     ActiveRecord::Base.without_time_zone(&block)
   end
 
+  # TODO not good for multiple tabs --> should persist in html page instead
+  # https://www.reddit.com/r/rails/comments/mit6pi/how_to_redirect_to_previous_page_after_sign_in/
   def set_current_referer
     if request.get? && request.referer.present?
       if (uri = URI.parse(request.referer)).host == request.host && ((path = uri.path) != request.path)

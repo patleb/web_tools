@@ -1,3 +1,4 @@
+# TODO https://www.postgresql.org/docs/13/logical-replication.html
 module Db
   module Pg
     class Dump < Base
@@ -154,6 +155,7 @@ module Db
         dump_versions.each(&:delete)
       end
 
+      # TODO make split size configurable for CSV dump: would allow faster parallel restore
       def split_cmd(file)
         if options.md5
           md5sum = %{echo $(md5sum | cut -d " " -f 1 | tr -d "\\n") " "$FILE > $FILE.md5}

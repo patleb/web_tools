@@ -6,7 +6,7 @@ version = WebTools::VERSION::STRING
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "ext_pjax"
+  s.name        = "ext_pjax" # TODO rename to ext_coffee
   s.version     = version
   s.authors     = ["Patrice Lebel"]
   s.email       = ["patleb@users.noreply.github.com"]
@@ -20,4 +20,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'ext_bootstrap', version
   # TODO https://htmx.org/docs/
+  # TODO https://westonganger.com/#open-source-software
+  # TODO https://github.com/rails/requestjs-rails
 end

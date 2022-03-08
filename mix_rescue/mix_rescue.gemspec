@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'actionview'
+  # TODO https://github.com/palkan/active_delivery
   s.add_dependency 'mail'
   s.add_dependency 'rack-attack'
   s.add_dependency 'mix_setting'

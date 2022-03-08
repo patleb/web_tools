@@ -89,6 +89,10 @@ stages.each do |stage|
 
       # TODO deploy DB server behind proxy server
       # https://www.randomerrata.com/articles/2015/deploying-via-a-bastion-host-with-capistrano-3/
+      # TODO bundler update
+      # https://github.com/sonots/capistrano-bundle_rsync/issues/29
+      # https://github.com/capistrano/bundler/pull/122/files
+      # TODO [DEPRECATED] `Bundler.with_clean_env` has been deprecated in favor of `Bundler.with_unbundled_env`
       if Setting[:server_cluster]
         Cloud.server_cluster_ips.each do |server|
           server server, user: fetch(:deployer_name), roles: %i(web app)

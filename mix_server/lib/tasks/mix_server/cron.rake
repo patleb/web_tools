@@ -29,6 +29,7 @@ namespace :cron do
 
   # TODO add wait functionality for main connection readiness, instead of receiving PG::UnableToSend
   # TODO put cluster in maintenance before rebooting master --> cap_task ...
+  # TODO disable master reboot when cluster reboots --> which would make necessary to manage reboots from the master only
   desc 'reboot'
   task :reboot => :environment do
     next unless File.exist?('/var/run/reboot-required')

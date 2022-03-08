@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'ext_rails', version
   s.add_dependency 'mix_log', version
   s.add_dependency 'mail_interceptor'
+  # TODO https://github.com/stevepolitodesign/unsubscribe
 end

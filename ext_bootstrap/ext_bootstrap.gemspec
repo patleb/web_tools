@@ -17,5 +17,6 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency 'ext_webpacker', version
+  # TODO https://github.com/jamesshore/quixote
+  # TODO define which tests have the most benefits and which one to write/maintain (sysadmin? devops? css?)
 end

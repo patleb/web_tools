@@ -3,6 +3,7 @@ module PageTemplateAdmin
 
   # TODO form button french text breaks on mobile
   # TODO datetime picker doesn't switch to french
+  # TODO intercept page change in javascript if current text modification hasn't been saved
   included do
     rails_admin do
       field :lock_version
@@ -35,7 +36,7 @@ module PageTemplateAdmin
         field :publish, :boolean do
           readonly false
         end
-        fields :updater, :creator
+        fields :updater, :creator # TODO should verify if it's seen by a lesser role
         exclude_fields :title, :description, :published_at
       end
     end

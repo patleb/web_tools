@@ -39,6 +39,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'diffy'
   s.add_dependency 'vcr'
   s.add_dependency 'ext_ruby', version
+  # TODO https://locust.io/
   # TODO https://github.com/rubocop-hq/rubocop-minitest
   # TODO https://evilmartians.com/chronicles/system-of-a-test-2-robust-rails-browser-testing-with-siteprism
 end
+# TODO https://github.com/refIekt/reflekt

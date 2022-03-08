@@ -1,4 +1,5 @@
 # TODO rsync to other servers before passenger-restart, but don't use roles
+# TODO deploy:check_lock, deploy:reset_lock
 # https://github.com/capistrano/sshkit/blob/master/EXAMPLES.md
 load_rel 'ext_capistrano/**/*.cap'
 
@@ -11,6 +12,7 @@ namespace :load do
     set :format,              -> { :airbrussh }
     set :format_options,      -> { { truncate: false } }
     set :owner_name,          -> { Setting[:owner_name] }
+    # TODO remove :deployer_name config --> it's actually a constant
     set :deployer_name,       -> { Setting[:deployer_name] }
     set :deploy_dir,          -> { "#{cap.app}_#{cap.env}" }
     set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }

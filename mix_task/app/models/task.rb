@@ -67,7 +67,7 @@ class Task < LibMainRecord
   end
 
   def arguments_visible?
-    arguments.any?(&:present?)
+    arguments.any?(&:present?) # TODO should be parameters --> add config
   end
 
   def notify_editable?

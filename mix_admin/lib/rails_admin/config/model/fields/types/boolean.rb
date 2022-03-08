@@ -8,6 +8,7 @@ class RailsAdmin::Config::Model::Fields::Boolean < RailsAdmin::Config::Model::Fi
   end
 
   # TODO boolean field nil don't show icon on mobile
+  # TODO should show false value in :show view
   register_instance_option :pretty_value do
     pretty_format_boolean
   end

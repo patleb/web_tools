@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'webpacker'
   # TODO https://github.com/trivago/parallel-webpack
+  # TODO https://github.com/axios/axios
 end

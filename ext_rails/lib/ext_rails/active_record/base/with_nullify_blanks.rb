@@ -1,6 +1,7 @@
 ### References
 # https://github.com/rubiety/nilify_blanks/blob/master/lib/nilify_blanks.rb
 # TODO https://github.com/rmm5t/strip_attributes
+# TODO https://github.com/rails/rails/pull/42095 --> Rails 7.0
 
 module ActiveRecord::Base::WithNullifyBlanks
   extend ActiveSupport::Concern

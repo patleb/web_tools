@@ -1,5 +1,5 @@
 class RailsAdmin::Config::Model::Fields::Sti < RailsAdmin::Config::Model::Fields::Enum
-  register_instance_option :enum do
+  register_instance_option :enum do # TODO filter/sort/search doesn't work
     klass.self_and_inherited_types.map do |type|
       model = RailsAdmin.model(type)
       [model.abstract_model && model.label || type.name, type.name]

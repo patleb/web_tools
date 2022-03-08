@@ -1,3 +1,4 @@
+# TODO https://gist.github.com/metaskills/8691558
 module Rake
   module DSL
     LS_HEADERS = %i(permissions links owner group size date time zone path)
@@ -34,14 +35,15 @@ module Rake
       Pathname.new(dst).write(value)
     end
 
-    def template(src, gems = nil)
-      tmp_file = compile(src, gems, deployer: false)
+    # TODO scope under env:app to allow parallel deploys (capistrano)
+    def template(src, gems = nil, scope: nil)
+      tmp_file = compile(src, gems, scope: scope, deployer: false)
       mv tmp_file, src, force: true
     end
 
-    def compile(src, gems = nil, deployer: true)
+    def compile(src, gems = nil, scope: nil, deployer: true)
       gems ||= Setting.gems.keys
-      base_dir = Pathname.new("tmp/#{File.dirname(src).delete_prefix('/')}")
+      base_dir = Pathname.new("tmp/#{"#{scope}/" if scope}#{File.dirname(src).delete_prefix('/')}")
       new_file = base_dir.join(File.basename(src))
       FileUtils.mkdir_p base_dir
       FileUtils.chown_R('deployer', 'deployer', base_dir) if deployer && !(defined?(Rails) && Rails.env.dev_or_test?)

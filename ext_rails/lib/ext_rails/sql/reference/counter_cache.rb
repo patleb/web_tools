@@ -40,6 +40,7 @@ module Sql::Reference::CounterCache
       "DROP FUNCTION IF EXISTS counter_cache()"
     end
 
+    # TODO --> ON TRUNCATE (what about partioned tables?)
     def create_counter_cache_trigger(from_table, ref_name, **options)
       counter_name = options.dig(:foreign_key, :counter_name) || "#{from_table}_count"
       to_table = options.dig(:foreign_key, :to_table) || ref_name.to_s.tableize

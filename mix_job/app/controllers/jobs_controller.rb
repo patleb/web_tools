@@ -1,3 +1,4 @@
+# TODO https://github.com/stitchfix/stitches
 class JobsController < MixJob.config.parent_controller.constantize
   class ForbiddenRemoteIp < ::StandardError; end
 

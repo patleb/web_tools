@@ -144,6 +144,7 @@ ActiveRecord::Base.class_eval do
     sizes(**options).transform_values(&:to_s.with(:human_size))
   end
 
+  # TODO doesn't work with native partitions
   def self.sizes(order_by_name: false, indexes: false)
     m_access(:sizes, order_by_name, indexes, threshold: 300) do
       size = indexes ? 'pg_indexes_size(relid)' :'pg_total_relation_size(relid)'

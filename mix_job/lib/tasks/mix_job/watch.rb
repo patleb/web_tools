@@ -1,4 +1,7 @@
 # TODO helpers for tmp/jobs/actions with Cron jobs and Incron watchers
+# TODO self watch ram used
+# TODO add folder for long jobs instead of polling passenger, check the files --> leaks some RAM otherwise
+# https://github.com/SamSaffron/memory_profiler
 # https://layerci.com/blog/postgres-is-the-answer/
 module MixJob
   class Watch < ActiveTask::Base

@@ -26,3 +26,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'ext_minitest', version
 end
 # https://juanitofatas.com/optimization_techniques_by_benchmark_winners
+# TODO rails_admin commit --> 6e4a5a51 M.Shibuya on 2019-02-09 at 5:18 a.m.

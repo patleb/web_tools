@@ -28,8 +28,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'net-ssh'
   s.add_dependency 'oj'
   s.add_dependency 'parallel'
+  # TODO s.add_dependency 'rejectu'
   s.add_dependency 'require_all', '~> 1.5'
   s.add_dependency 'reversed'
+  # TODO https://github.com/peterzhu2118/ruby_memcheck
+  # TODO https://zverok.github.io/blog/2021-12-08-value-omission-debug.html
+  # TODO https://blog.saeloun.com/2021/05/12/ruby-evaluate-multiple-assignment-left-hand-side-before-right
   s.add_dependency 'sorted_set'
   s.add_dependency 'vmstat'
 end

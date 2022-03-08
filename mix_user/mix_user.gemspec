@@ -25,3 +25,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'web-console'
   s.add_dependency 'mix_template', version
 end
+# TODO https://abevoelker.com/skipping-the-database-with-stateless-tokens-a-hidden-rails-gem-and-a-useful-web-technique/
+# TODO or rodauth with sequel-activerecord

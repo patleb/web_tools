@@ -1,6 +1,7 @@
 # encoding: UTF-8
 require 'csv'
 
+# TODO throttle client by ip for file export (add bulk import as well)
 module RailsAdmin::Main::ExportAction
   class CsvService < ActionService::Base[:@model, :@abstract_model, :@objects, :@schema]
     # https://medium.com/table-xi/stream-csv-files-in-rails-because-you-can-46c212159ab7

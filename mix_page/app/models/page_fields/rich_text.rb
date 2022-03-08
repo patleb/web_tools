@@ -4,6 +4,7 @@ module PageFields
 
     has_many_attached :images
 
+    # TODO sanitize html
     before_validation :create_or_purge_images, on: :update
 
     with_options on: :update, unless: :list_changed? do

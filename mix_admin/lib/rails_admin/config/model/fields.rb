@@ -3,6 +3,7 @@ module RailsAdmin::Config::Model::Fields
   autoload :Group, 'rails_admin/config/model/fields/group'
   autoload_dir RailsAdmin::Engine.root.join('lib/rails_admin/config/model/fields/types')
 
+  # TODO factory for virtual attributes
   def self.load(type)
     require 'rails_admin/config/model/fields/types/association/aliases'
     require 'rails_admin/config/model/fields/types/array/aliases'

@@ -85,10 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (process.env.NODE_ENV === 'production') {
     Vue.config.errorHandler = (error, vm, info) => {
+      // TODO include vuex state
       $rescue(axios, {
         message: `${info}: ${error}`,
         backtrace: error.stack || [],
-        data: {tag: vm.$el.localName, id: vm.$el.id, class: vm.$el.className}
+        data: { tag: vm.$el.localName, id: vm.$el.id, class: vm.$el.className }
       })
       return false
     }

@@ -1,3 +1,5 @@
+# TODO #each and #each_key add option to iterate as string or symbol
+
 class ActiveSupport::HashWithKeywordAccess < ActiveSupport::HashWithIndifferentAccess
   def with_keyword_access
     dup

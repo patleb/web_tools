@@ -150,6 +150,7 @@ module MixLog
       ]
     end
 
+    # TODO incidence analysis tools for /usr/lib/apt/methods/https
     def known_sockets
       @known_sockets ||= {
         path: [

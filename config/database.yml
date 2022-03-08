@@ -25,6 +25,8 @@ default: &default
   password: postgres
   variables:
     statement_timeout: 120000 # ms
+    # TODO https://blog.crunchydata.com/blog/five-tips-for-a-healthier-postgres-database-in-the-new-year
+    # idle_in_transaction
 
 development: &development
   <<: *default

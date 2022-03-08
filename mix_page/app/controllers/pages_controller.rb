@@ -119,6 +119,7 @@ class PagesController < MixPage.config.parent_controller.constantize
     @state.slugs.include?(params[:slug]) ? :found : :moved_permanently
   end
 
+  # TODO https://github.com/basecamp/local_time
   def stale_state?
     return true unless pjax?
     return true if Rails.env.dev_or_test?
