@@ -24,7 +24,8 @@ Vagrant.configure("2") do |config|
     config.hostmanager.manage_host = true
   end
 
-  hostname, ip, public_key = 'vagrant-web.test', '192.168.65.34', `ssh-keygen -f .vagrant/private_key -y`.strip
+  hostname, ip = 'vagrant-web.test', '192.168.65.34'
+  public_key = `chmod 600 .vagrant/private_key; ssh-keygen -f .vagrant/private_key -y`.strip
   subdomains = [
   ]
   link_dev = false
