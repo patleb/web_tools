@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'countries', '3.0.1'
   # s.add_dependency 'ip_location_db', '2.2.2020121618'
   s.add_dependency 'rgeo'
+  # TODO https://github.com/rgeo/rgeo-proj4
   s.add_dependency 'matplotlib'
   s.add_dependency 'activerecord-postgis-adapter'
 end

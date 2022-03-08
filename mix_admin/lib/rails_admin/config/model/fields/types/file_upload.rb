@@ -66,8 +66,8 @@ class RailsAdmin::Config::Model::Fields::FileUpload < RailsAdmin::Config::Model:
     end
   end
 
-  register_instance_option :image? do
-    (url = resource_url.to_s) && url.split('.').last =~ /jpg|jpeg|png|gif|svg/i
+  register_instance_option :image? do # TODO html validation accept="image/*, video/*"
+    (url = resource_url.to_s) && url.split('.').last =~ /jpe?g|png|gif|svg|webp/i
   end
 
   register_instance_option :allowed_methods do
