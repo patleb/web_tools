@@ -9,7 +9,7 @@ class TaskJob < ActiveJob::Base
     Flash[:error] += (errors = task.errors.full_messages.join(MixTemplate::ERROR_SEPARATOR)) # should be only one error
     email_message = I18n.t('task.email.failure', name: task.name, errors: errors)
   ensure
-    if email_message && task&.notify?
+    if email_message && task.notify? && task.updater&.email
       TaskMailer.with(email: task.updater.email, message: email_message).notify.deliver_later!
     end
   end

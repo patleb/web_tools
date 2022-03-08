@@ -48,8 +48,8 @@ class String
     gsub(HTML_BLANK, '').blank?
   end
 
-  def transliterate(locale = :en)
-    ActiveSupport::Inflector.transliterate(self, REPLACEMENT, locale: locale)
+  def transliterate(locale = :en, replacement = REPLACEMENT)
+    ActiveSupport::Inflector.transliterate(self, replacement, locale: locale)
   end
 
   # Convert to Base36 + space separators
