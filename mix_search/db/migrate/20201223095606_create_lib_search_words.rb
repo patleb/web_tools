@@ -8,7 +8,7 @@ class CreateLibSearchWords < ActiveRecord::Migration[6.0]
     end
 
     # https://stackoverflow.com/questions/43867449/optimizing-a-postgres-similarity-query-pg-trgm-gin-index
-    add_index :lib_search_words, :token, using: :gist, opclass: { title: :gist_trgm_ops },
+    add_index :lib_search_words, :token, using: :gist, opclass: :gist_trgm_ops,
       name: 'index_lib_search_words_on_token_trgm'
   end
 end
