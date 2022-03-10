@@ -5,7 +5,6 @@
 @import "~@@/mix_admin/stylesheets/concepts/bulk";
 @import "~@@/mix_admin/stylesheets/concepts/chart";
 @import "~@@/mix_admin/stylesheets/concepts/choose";
-@import "~@@/mix_admin/stylesheets/concepts/export";
 @import "~@@/mix_admin/stylesheets/concepts/filter_box";
 @import "~@@/mix_admin/stylesheets/concepts/paginate";
 @import "~@@/mix_admin/stylesheets/concepts/sort";
@@ -20,6 +19,12 @@
 @import "~@@/mix_admin/stylesheets/concepts/table/update";
 
 // TODO https://css-tricks.com/annoying-mobile-double-tap-link-issue/
+
+#export_action {
+  .js_toggle_checkbox.well {
+    margin: 0;
+  }
+}
 
 #new_action > form, #edit_action > form, #clone_action > form {
   label {

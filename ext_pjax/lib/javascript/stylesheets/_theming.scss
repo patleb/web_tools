@@ -6,3 +6,7 @@
   @extend .disabled;
   pointer-events: none;
 }
+
+.js_toggle_checkbox {
+  cursor: pointer;
+}
