@@ -7,5 +7,3 @@ packages:
   - 'regenerator-runtime'
   - 'resolve-url-loader'
   - 'sass-resources-loader'
-  - 'vue-loader'
-  - 'vue-template-compiler'
