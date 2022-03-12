@@ -1,9 +1,36 @@
 packages:
+  - 'shakapacker'
+  # ES6
+  - '@babel/core'
+  - '@babel/plugin-transform-runtime'
+  - '@babel/preset-env'
+  - '@babel/runtime'
+  - 'babel-loader'
+  # Webpack
+  - 'compression-webpack-plugin'
+  - 'terser-webpack-plugin'
+  - 'webpack'
+  - 'webpack-assets-manifest'
+  - 'webpack-cli'
+  - 'webpack-merge'
+  # CoffeeScript 1.12.7
   - 'coffee-loader'
   - 'coffeescript'
-  - 'core-js'
-  # - 'expose-loader'
+  # ERB
   - 'rails-erb-loader'
-  - 'regenerator-runtime'
-  - 'resolve-url-loader'
-  - 'sass-resources-loader'
+  # CSS
+  - 'css-loader'
+  - 'css-minimizer-webpack-plugin'
+  - 'mini-css-extract-plugin'
+  - 'style-loader'
+  # PostCSS
+  - 'autoprefixer'
+  - 'postcss'
+  - 'postcss-loader'
+  - 'postcss-flexbugs-fixes'
+  - 'postcss-preset-env'
+  - 'postcss-import'
+  - 'postcss-nested'
+  # SCSS
+  - 'sass'
+  - 'sass-loader'

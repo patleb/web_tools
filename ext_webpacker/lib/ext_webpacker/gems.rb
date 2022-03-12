@@ -14,14 +14,21 @@ module ExtWebpacker
       watched_symlinks = dependencies[:gems].map do |(gem_name, gem_path)|
         path = source_gems_path.join(gem_name)
         path.symlink(gem_path, false)
-        path.join("**/*{#{watched_extensions}}").to_s
+        path.join("**/*.{js,coffee,css,scss,erb}").to_s # ? png,svg,git,jpeg,jpg
       end
-      Webpacker::Compiler.watched_paths.concat(watched_symlinks) # TODO additional_paths
+      Webpacker::Compiler.gems_watched_paths = watched_symlinks
+      compile_tailwind_config
     end
 
     def verify_dependencies!
       missing_dependencies = dependencies[:packages] - package_dependencies
       raise MissingDependency, missing_dependencies.to_a.join(', ') unless missing_dependencies.empty?
+    end
+
+    def compile_tailwind_config
+      return unless (file = Pathname.new('./tailwind.config.js')).exist?
+      tailwind = file.read.gsub(%r{@@/[\w-]+}){ |name| Gem.root(name.delete_prefix('@@/')).to_s }.gsub('@/', './')
+      Pathname.new('./tmp/tailwind.config.js').write(tailwind)
     end
 
     def dependencies
@@ -59,14 +66,6 @@ module ExtWebpacker
 
     def source_path
       @source_path ||= Pathname.new(default_config['source_path'])
-    end
-
-    def watched_extensions
-      @watched_extensions ||= default_config['extensions'].join(',')
-    end
-
-    def additional_paths
-      @additional_paths ||= default_config['additional_paths']
     end
 
     def default_config

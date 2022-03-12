@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-ENV["RAILS_ENV"] ||= ENV["RACK_ENV"] || "development"
-ENV["NODE_ENV"]  ||= "development"
+ENV["RAILS_ENV"] ||= "development"
+ENV["NODE_ENV"]  ||= ENV["RAILS_ENV"]
 
 require_relative '../config/boot'
 require "ext_webpacker/webpacker"

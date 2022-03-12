@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
-  s.add_dependency 'webpacker'
+  s.add_dependency 'shakapacker'
   # TODO https://github.com/trivago/parallel-webpack
   # TODO https://github.com/axios/axios
 end

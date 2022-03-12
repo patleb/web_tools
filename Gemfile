@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby File.read('.ruby-version').strip
 
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'webpacker', '5.4.0' # TODO update to 5.4.2
+# gem 'shakapacker', '~> 6.1.1'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
@@ -47,7 +47,7 @@ gem 'ext_capistrano', path: './ext_capistrano'
 gem 'ext_pjax', path: './ext_pjax'
 gem 'ext_rails', path: './ext_rails'
 gem 'ext_ruby', path: './ext_ruby'
-gem 'ext_vue', path: './ext_vue'
+gem 'ext_tailwind', path: './ext_tailwind'
 gem 'ext_webpacker', path: './ext_webpacker'
 gem 'ext_whenever', path: './ext_whenever'
 gem 'mix_admin', path: './mix_admin'
