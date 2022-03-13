@@ -5,8 +5,9 @@
 
 module.exports = {
   content: [
-    "@/app/{helpers,presenters}/**/*.rb",
+    "@/app/helpers/**/*.rb",
     "@/app/javascript/**/*.{js,coffee}",
+    "@/app/presenters/**/*.rb",
     "@/app/views/**/*.html.{erb,ruby}",
     "@@/ext_tailwind/app/helpers/**/*.rb",
   ],
@@ -22,5 +23,6 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('@tailwindcss/line-clamp'),
     require('@tailwindcss/typography'),
+    require('daisyui'),
   ],
 }

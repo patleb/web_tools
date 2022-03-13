@@ -5,3 +5,4 @@ packages:
   - '@tailwindcss/typography'
   - 'tailwindcss'
   - 'heroicons'
+  - 'daisyui'
