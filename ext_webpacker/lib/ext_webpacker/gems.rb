@@ -2,6 +2,7 @@ module ExtWebpacker
   module Gems
     extend self
 
+    class CoffeeScriptVersion < StandardError; end
     class MissingDependency < StandardError; end
     class MissingGem < StandardError; end
 
@@ -21,6 +22,10 @@ module ExtWebpacker
     end
 
     def verify_dependencies!
+      if package_dependencies.include? 'coffeescript'
+        cs_version = `./node_modules/.bin/coffee -v`.strip.split.last
+        raise CoffeeScriptVersion, cs_version unless cs_version == '1.12.7'
+      end
       missing_dependencies = dependencies[:packages] - package_dependencies
       raise MissingDependency, missing_dependencies.to_a.join(', ') unless missing_dependencies.empty?
     end

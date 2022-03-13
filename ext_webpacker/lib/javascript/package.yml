@@ -13,7 +13,7 @@ packages:
   - 'webpack-assets-manifest'
   - 'webpack-cli'
   - 'webpack-merge'
-  # CoffeeScript 1.12.7
+  # CoffeeScript
   - 'coffee-loader'
   - 'coffeescript'
   # ERB
