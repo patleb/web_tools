@@ -8,6 +8,7 @@ module ExtWebpacker
 
     GEMS_SOURCE_PATH = 'lib/javascript'
 
+    # webpacker --profile --json > tmp/stats.json && yarn webpack-bundle-analyzer tmp/stats.json
     def install
       verify_dependencies!
       source_gems_path.mkdir unless source_gems_path.exist?
@@ -31,7 +32,7 @@ module ExtWebpacker
     end
 
     def compile_tailwind_config
-      return unless (file = Pathname.new('./tailwind.config.js')).exist?
+      return unless package_dependencies.include?('tailwindcss') && (file = Pathname.new('./tailwind.config.js')).exist?
       tailwind = file.read.gsub(%r{@@/[\w-]+}){ |name| Gem.root(name.delete_prefix('@@/')).to_s }.gsub('@/', './')
       Pathname.new('./tmp/tailwind.config.js').write(tailwind)
     end
