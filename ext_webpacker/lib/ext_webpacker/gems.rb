@@ -23,8 +23,8 @@ module ExtWebpacker
 
     def verify_dependencies!
       if package_dependencies.include? 'coffeescript'
-        cs_version = `./node_modules/.bin/coffee -v`.strip.split.last
-        raise CoffeeScriptVersion, cs_version unless cs_version == '1.12.7'
+        coffee_version = `./node_modules/.bin/coffee -v`.strip.split.last
+        raise CoffeeScriptVersion, coffee_version unless coffee_version == '1.12.7'
       end
       missing_dependencies = dependencies[:packages] - package_dependencies
       raise MissingDependency, missing_dependencies.to_a.join(', ') unless missing_dependencies.empty?
