@@ -23,32 +23,31 @@ class Js.Concepts
     concepts.each (concept) => @add_concept(concept)
     modules.each (module) => @add_module(module)
 
-    if process.env.NODE_ENV == 'production'
-      # necessary for having accurate jQuery heights/widths
-      retries = 0
-      test = setInterval(->
-        if $("head > link[rel='stylesheet'][href^='/']").last().prop('sheet')?.cssRules.length || retries >= 50
-          Logger.debug("CSS load #{retries * 20} ms")
-          clearInterval(test)
-          setTimeout(->
-            $(document).ready ->
-              while life_cycle.ready_once.length
-                concept_instance = life_cycle.ready_once.shift()
-                concept_instance.ready_once()
-                concept_instance.READY_ONCE = []
-                concept_instance.each (key, value) ->
-                  unless not_nullifyable(key, value)
-                    concept_instance.READY_ONCE.push(key)
-              life_cycle.ready.each (concept) ->
-                concept.ready()
-              while life_cycle.leave.length
-                $.leave_list.push(life_cycle.leave.shift().leave)
-              while life_cycle.leave_clean.length
-                $.leave_list.push(life_cycle.leave_clean.shift().leave_clean)
-          , 80)
-        else
-          retries++
-      , 20)
+    # necessary for having accurate jQuery heights/widths
+    retries = 0
+    test = setInterval(->
+      if $("head > link[rel='stylesheet'][href^='/']").last().prop('sheet')?.cssRules.length || retries >= 50
+        Logger.debug("CSS load #{retries * 20} ms")
+        clearInterval(test)
+        setTimeout(->
+          $(document).ready ->
+            while life_cycle.ready_once.length
+              concept_instance = life_cycle.ready_once.shift()
+              concept_instance.ready_once()
+              concept_instance.READY_ONCE = []
+              concept_instance.each (key, value) ->
+                unless not_nullifyable(key, value)
+                  concept_instance.READY_ONCE.push(key)
+            life_cycle.ready.each (concept) ->
+              concept.ready()
+            while life_cycle.leave.length
+              $.leave_list.push(life_cycle.leave.shift().leave)
+            while life_cycle.leave_clean.length
+              $.leave_list.push(life_cycle.leave_clean.shift().leave_clean)
+        , 80)
+      else
+        retries++
+    , 20)
 
   @add_module: (module) =>
     modules = []
