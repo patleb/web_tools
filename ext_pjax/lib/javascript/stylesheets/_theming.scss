@@ -1,7 +1,7 @@
 @import '~accessible-nprogress/dist/accessible-nprogress';
 
 .js_disable {
-  @extend .disabled;
+  cursor: not-allowed;
   pointer-events: none;
 }
 
