@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby File.read('.ruby-version').strip
 
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-# gem 'shakapacker', '~> 6.1.1'
+gem 'shakapacker', '~> 6.1.1'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'

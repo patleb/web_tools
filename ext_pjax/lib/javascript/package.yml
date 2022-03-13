@@ -1,17 +1,12 @@
 packages:
   - 'accessible-nprogress'
-  - 'chart.js'
-  - 'chartkick'
-  - 'eonasdan-bootstrap-datetimepicker'
+  # - 'date-fns'
+  # - 'epic-spinners'
+  - 'hamsterjs'
   - 'jquery'
   - 'jquery-touch-events'
-  - 'jquery-ui'
-  - 'jquery-ui-touch-punch'
   - 'jquery.iframe-transport'
   - 'js-cookie'
   - 'jstz'
   - 'lodash'
-  - 'moment'
-
-gems:
-  - 'ext_bootstrap'
+  - 'tiny-lru'

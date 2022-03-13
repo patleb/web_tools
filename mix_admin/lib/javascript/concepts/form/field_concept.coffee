@@ -11,7 +11,7 @@ class RailsAdmin.Form.FieldConcept
 
   ready_once: ->
     # TODO still have the bug --> happens when quitting pjax
-    $rescue_skipped.push '[SUNEDITOR.create.fail] The ID of the suneditor you are trying to create already exists'
+    Rescue.skipped.push '[SUNEDITOR.create.fail] The ID of the suneditor you are trying to create already exists'
 
   ready: =>
     return unless (fields = $(@INPUT)).length

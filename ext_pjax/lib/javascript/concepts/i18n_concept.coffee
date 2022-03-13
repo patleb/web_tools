@@ -7,7 +7,6 @@ class Js.I18nConcept
   ready_once: =>
     @locale = $('html').attr('lang') || 'en'
     @translations = $(@TRANSLATIONS).data('translations') || {}
-    moment.locale(@locale)
     Js.Cookie.set('locale', @locale)
 
   t: (key, escape = true) =>

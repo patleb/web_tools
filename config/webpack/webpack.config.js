@@ -1,7 +1,7 @@
 const { config } = require('shakapacker')
 const { resolve } = require('path')
-const base_path = resolve(config.source_path, config.source_gems_path, 'ext_webpacker/webpack/base')
-const { webpackConfig, process_env } = require(base_path)
+const webpackConfigPath = resolve(config.source_path, config.source_gems_path, 'ext_webpacker/webpack/webpack.config')
+const webpackConfig = require(webpackConfigPath)
 
 // const webpack = require('webpack')
 // const { safeLoad } = require('js-yaml')

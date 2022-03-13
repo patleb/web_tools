@@ -21,9 +21,12 @@ class Js.DeviceConcept
     window.removeEventListener('touchstart', @on_first_touch, false)
 
   refresh: =>
+    # width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
+    # height = window.innerHeight || document.documentElement.clientHeight|| document.body.clientHeight
     @width = @window().width()
     @height = @window().height()
     breakpoint = window.getComputedStyle(@body(), ':before').getPropertyValue('content').gsub(/\"/, '')
+    # mobile = (width < 768) || (height < 400)
     @desktop = (breakpoint == 'desktop')
     @mobile = (breakpoint == 'mobile')
     @mini = (breakpoint == 'mini')

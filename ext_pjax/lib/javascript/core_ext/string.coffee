@@ -7,8 +7,8 @@ String.define_methods
     return false if this.blank() || this.match(/^(false|f|no|n|0|✘)$/i)
     throw "invalid value for Boolean: '#{this}'"
 
-  to_i: ->
-    _.parseInt(this)
+  to_i: (base = null) ->
+    _.parseInt(this, base)
 
   to_f: ->
     _.toNumber(this)

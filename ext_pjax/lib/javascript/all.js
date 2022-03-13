@@ -1,16 +1,17 @@
-import _ from 'lodash'
+const images = require.context('@/images', true)
+const image_path = (name) => images(name, true)
+
 import $ from 'jquery'
+import _ from 'lodash'
+import lru from 'tiny-lru/lib/tiny-lru'
+import Hamster from 'hamsterjs'
 import NProgress from 'accessible-nprogress'
 import Cookies from 'js-cookie'
 import jstz from 'jstz'
-import moment from 'moment'
 import 'jquery.iframe-transport'
 import 'jquery-touch-events'
-import 'eonasdan-bootstrap-datetimepicker'
+// import { AtomSpinner } from 'epic-spinners'
 
-import '@@/ext_bootstrap/all'
-import '@@/ext_pjax/moment/locales.js.erb'
-import '@@/ext_pjax/jquery_ui/slim'
 import '@@/ext_pjax/env.coffee.erb'
 import '@@/ext_pjax/logger'
 import '@@/ext_pjax/core_ext'
@@ -22,10 +23,12 @@ import '@@/ext_pjax/concepts'
 import '@@/ext_pjax/concepts/all'
 
 document.addEventListener('DOMContentLoaded', function () {
-  window._ = _
+  window.$image = image_path
   window.$ = window.jQuery = $
+  window._ = _
+  window.lru = lru
+  window.Hamster = Hamster
   window.NProgress = NProgress
   window.Cookies = Cookies
   window.jstz = jstz
-  window.moment = moment
 })

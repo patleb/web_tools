@@ -25,6 +25,14 @@ jQuery.define_singleton_methods
   unique_id: ->
     "#{$.now().to_s().ljust(13, '0')}#{_.uniqueId().to_s()[0..2].rjust(3, '0')}"
 
+  # https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+  add_opacity: (hex, opacity) ->
+    result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+    if result
+      "rgba(#{result[1].to_i(16)}, #{result[2].to_i(16)}, #{result[3].to_i(16)}, #{opacity})"
+    else
+      hex
+
   selected_text: ->
     text =
       if window.getSelection
