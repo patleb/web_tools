@@ -7,9 +7,10 @@ const webpackConfig = require(webpackConfigPath)
 // const { safeLoad } = require('js-yaml')
 // const { readFileSync } = require('fs')
 //
-// webpackConfig.plugins.prepend('Environment', new webpack.EnvironmentPlugin(Object.assign(process_env, {
+// let environment = { plugins: [new webpack.EnvironmentPlugin(Object.assign(process.env, {
 //   YML_VALUE: Object.keys(safeLoad(readFileSync(resolve('config/settings.yml')), 'utf8')[process.env.NODE_ENV].name),
-//   STATIC_VALUE: true,
-// })))
+//   STATIC_VALUE: 'name',
+// }))] }
+// module.exports = merge(webpackConfig, environment)
 
 module.exports = webpackConfig
