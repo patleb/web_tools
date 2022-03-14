@@ -27,7 +27,7 @@ screens = { plugins: [new webpack.EnvironmentPlugin(Object.assign(process.env, {
 
 module.exports = merge(webpackConfig, devtool, screens, {
   resolve: {
-    alias: { '/@': source_path, '@@': source_lib_path, '$$': source_vendor_path },
+    alias: { '@@': source_path, '@@lib': source_lib_path, '@@vendor': source_vendor_path },
     modules: [path.resolve('node_modules')],
     extensions: ['.css', '.scss'],
   },

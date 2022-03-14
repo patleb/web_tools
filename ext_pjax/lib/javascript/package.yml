@@ -10,6 +10,3 @@ packages:
   - 'jstz'
   - 'lodash'
   - 'tiny-lru'
-
-tailwind:
-  - '@@/ext_pjax/lib/javascript/**/*.coffee'

@@ -32,13 +32,23 @@ module ExtWebpacker
         symlinks.concat(dependencies[:gems].select_map do |name|
           root = Gem.root(name).join("#{type}/javascript")
           next unless root.exist?
-          path = directory.join(name)
-          path.symlink(root, false)
-          path.join("**/*.{js,coffee,css,scss,erb}").to_s # ,png,svg,gif,jpeg,jpg ?
-        end)
+          if type == :vendor
+            root.children.map do |root|
+              symlink_path(directory, root.basename, root)
+            end
+          else
+            symlink_path(directory, name, root)
+          end
+        end.flatten)
       end
       Webpacker::Compiler.gems_watched_paths = watched_symlinks
       compile_tailwind_config
+    end
+
+    def symlink_path(directory, name, root)
+      path = directory.join(name)
+      path.symlink(root, false)
+      path.join("**/*.{js,coffee,css,scss,erb}").to_s # ,png,svg,gif,jpeg,jpg ?
     end
 
     def verify_dependencies!
@@ -55,7 +65,7 @@ module ExtWebpacker
       tailwind = file.read
       tailwind.sub!(/["']ExtWebpacker::Gems::TAILWIND_EXTRACTOR["']/, TAILWIND_EXTRACTOR)
       tailwind.sub!(/["']ExtWebpacker::Gems::TAILWIND_DEPENDENCIES["']/, tailwind_dependencies)
-      tailwind.gsub!(%r{@@/[\w-]+}){ |name| Gem.root(name.delete_prefix('@@/')).to_s }
+      tailwind.gsub!(%r{@@[\w-]+}){ |name| Gem.root(name.tr('@', '')).to_s }
       Pathname.new('./tmp/tailwind.config.js').write(tailwind)
     end
 
