@@ -1,6 +1,3 @@
-const images = require.context('@/images', true)
-const image_path = (name) => images(name, true)
-
 import $ from 'jquery'
 import _ from 'lodash'
 import lru from 'tiny-lru/lib/tiny-lru'
@@ -22,7 +19,7 @@ import '@@/ext_pjax/cookie'
 import '@@/ext_pjax/concepts'
 import '@@/ext_pjax/concepts/all'
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
   window.$image = image_path
   window.$ = window.jQuery = $
   window._ = _

@@ -6,19 +6,38 @@ module ExtWebpacker
     class MissingDependency < StandardError; end
     class MissingGem < StandardError; end
 
-    GEMS_SOURCE_PATH = 'lib/javascript'
+    # https://github.com/tailwindlabs/tailwindcss/blob/master/src/lib/expandTailwindAtRules.js#L9-L31
+    TAILWIND_EXTRACTOR = <<~JS.strip.indent(6)
+      (content) => {
+        let results = content.match(/("[^"]+"|'[^']+')/g) || []
+        results = results.map(v => {
+          v = v.slice(1, -1)
+          if (v.match(/^[#.]/)) {
+            v = v.split('.')
+          } else if (v.includes(' ')) {
+            v = v.split(' ')
+          }
+          return v
+        }).flat()
+        return results
+      }
+    JS
 
     # webpacker --profile --json > tmp/stats.json && yarn webpack-bundle-analyzer tmp/stats.json
     def install
       verify_dependencies!
-      source_gems_path.mkdir unless source_gems_path.exist?
-      source_gems_path.children.select(&:symlink?).each(&:delete.with(false))
-      watched_symlinks = dependencies[:gems].map do |(gem_name, gem_path)|
-        path = source_gems_path.join(gem_name)
-        path.symlink(gem_path, false)
-        path.join("**/*.{js,coffee,css,scss,erb,png,svg,gif,jpeg,jpg}").to_s
+      watched_symlinks = { lib: source_lib_path, vendor: source_vendor_path }.each_with_object([]) do |(type, directory), symlinks|
+        directory.mkdir unless directory.exist?
+        directory.children.select(&:symlink?).each(&:delete.with(false))
+        symlinks.concat(dependencies[:gems].select_map do |name|
+          root = Gem.root(name).join("#{type}/javascript")
+          next unless root.exist?
+          path = directory.join(name)
+          path.symlink(root, false)
+          path.join("**/*.{js,coffee,css,scss,erb}").to_s # ,png,svg,gif,jpeg,jpg ?
+        end)
       end
-      Webpacker::Compiler.watched_paths.concat(watched_symlinks)
+      Webpacker::Compiler.gems_watched_paths = watched_symlinks
       compile_tailwind_config
     end
 
@@ -33,31 +52,38 @@ module ExtWebpacker
 
     def compile_tailwind_config
       return unless package_dependencies.include?('tailwindcss') && (file = Pathname.new('./tailwind.config.js')).exist?
-      tailwind = file.read.gsub(%r{@@/[\w-]+}){ |name| Gem.root(name.delete_prefix('@@/')).to_s }.gsub('@/', './')
+      tailwind = file.read
+      tailwind.sub!(/["']ExtWebpacker::Gems::TAILWIND_EXTRACTOR["']/, TAILWIND_EXTRACTOR)
+      tailwind.sub!(/["']ExtWebpacker::Gems::TAILWIND_DEPENDENCIES["']/, tailwind_dependencies)
+      tailwind.gsub!(%r{@@/[\w-]+}){ |name| Gem.root(name.delete_prefix('@@/')).to_s }
       Pathname.new('./tmp/tailwind.config.js').write(tailwind)
     end
 
+    def tailwind_dependencies
+      dependencies[:tailwind].map{ |path| "'#{path}'" }.join(",\n      ")
+    end
+
     def dependencies
-      @dependencies ||= gems.each_with_object({ packages: Set.new, gems: Set.new }) do |gem, dependencies|
-        packages, gems = packages_gems(gem)
+      @dependencies ||= gems.each_with_object(packages: Set.new, gems: Set.new, tailwind: Set.new) do |gem, result|
+        packages, gems, tailwind = packages_gems_tailwind(gem)
         missing_gems = []
         gems = ((gems || []) << gem).map do |name|
-          next (missing_gems << name) unless (path = Gem.root(name))
-          [name, path.join(GEMS_SOURCE_PATH)]
+          next (missing_gems << name) unless Gem.exists? name
+          name
         end
         raise MissingGem, missing_gems.join(', ') unless missing_gems.empty?
-        dependencies[:gems].merge(gems)
-        dependencies[:packages].merge(packages || [])
+        result[:gems].merge(gems)
+        result[:packages].merge(packages || [])
+        result[:tailwind].merge(tailwind || [])
       end.transform_values(&:to_a).transform_values(&:sort)
     end
 
-    def packages_gems(gem)
-      if gem && (package = Gem.root(gem)&.join(GEMS_SOURCE_PATH, 'package.yml'))&.exist?
-        packages, gems = YAML.safe_load(package.read).values_at('packages', 'gems')
-        (gems || []).each_with_object([Set.new(packages || []), Set.new(gems || [])]) do |gem, result|
-          packages, gems = packages_gems(gem)
-          result[0].merge(packages || [])
-          result[1].merge(gems || [])
+    def packages_gems_tailwind(name)
+      if name && (package = Gem.root(name)&.join('lib/javascript/package.yml'))&.exist?
+        parent = YAML.safe_load(package.read).values_at('packages', 'gems', 'tailwind').map{ |v| Set.new(v || []) }
+        (parent[1] || []).each_with_object(parent) do |gem, result|
+          children = packages_gems_tailwind(gem)
+          result.each_with_index{ |v, i| v.merge(children[i] || []) }
         end
       end
     end
@@ -66,8 +92,12 @@ module ExtWebpacker
       @gems ||= Set.new(default_config['gems'] || []).merge(['ext_webpacker'])
     end
 
-    def source_gems_path
-      @source_gems_path ||= source_path.join(default_config['source_gems_path'])
+    def source_lib_path
+      @source_lib_path ||= source_path.join('lib')
+    end
+
+    def source_vendor_path
+      @source_vendor_path ||= source_path.join('vendor')
     end
 
     def source_path

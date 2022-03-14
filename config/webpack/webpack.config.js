@@ -1,6 +1,6 @@
 const { config } = require('shakapacker')
 const { resolve } = require('path')
-const webpackConfigPath = resolve(config.source_path, config.source_gems_path, 'ext_webpacker/webpack/webpack.config')
+const webpackConfigPath = resolve(config.source_path, 'lib/ext_webpacker/webpack/webpack.config')
 const webpackConfig = require(webpackConfigPath)
 
 // const webpack = require('webpack')

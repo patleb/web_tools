@@ -4,9 +4,11 @@ const require_module = (name) => require(path.resolve('node_modules', name))
 const { webpackConfig, config, merge } = require_module('shakapacker')
 const webpack = require_module('webpack')
 const source_path = path.resolve(config.source_path)
-const source_gems_path = path.join(source_path, config.source_gems_path)
+const source_lib_path = path.join(source_path, 'lib')
+const source_vendor_path = path.join(source_path, 'vendor')
 const { existsSync } = require('fs')
 
+let devtool = config.devtool != null ? { devtool: config.devtool } : {}
 let screens = false
 try {
   const tailwindConfigPath = path.resolve('./tmp/tailwind.config.js')
@@ -23,19 +25,9 @@ screens = { plugins: [new webpack.EnvironmentPlugin(Object.assign(process.env, {
   SCREENS: JSON.stringify(screens)
 }))] }
 
-let devtool = {}
-switch (process.env.NODE_ENV) {
-case 'development':
-  devtool = { devtool: 'eval-source-map' }
-  break
-case 'production':
-  devtool = { devtool: false }
-  break
-}
-
 module.exports = merge(webpackConfig, devtool, screens, {
   resolve: {
-    alias: { '@': source_path, '@@': source_gems_path },
+    alias: { '/@': source_path, '@@': source_lib_path, '$$': source_vendor_path },
     modules: [path.resolve('node_modules')],
     extensions: ['.css', '.scss'],
   },

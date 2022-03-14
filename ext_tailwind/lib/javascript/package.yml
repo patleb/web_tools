@@ -6,3 +6,6 @@ packages:
   - 'tailwindcss'
   - 'heroicons'
   - 'daisyui'
+
+tailwind:
+  - '@@/ext_tailwind/app/helpers/**/*.rb'
