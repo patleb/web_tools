@@ -1,21 +1,23 @@
-// TODO
-// yarn add @fontsource/inter
-// https://github.com/rails/tailwindcss-rails
-// const defaultTheme = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-  content: [
-    "@/app/helpers/**/*.rb",
-    "@/app/javascript/**/*.{js,coffee}",
-    "@/app/presenters/**/*.rb",
-    "@/app/views/**/*.html.{erb,ruby}",
-    "@@/ext_tailwind/app/helpers/**/*.rb",
-  ],
+  content: {
+    files: [
+      "@@/app/helpers/**/*.rb",
+      "@@/app/javascript/**/*.{js,coffee}",
+      "@@/app/presenters/**/*.rb",
+      "@@/app/views/**/*.html.{erb,ruby}",
+      "ExtWebpacker::Gems::TAILWIND_DEPENDENCIES",
+    ],
+    extract: {
+      DEFAULT: 'ExtWebpacker::Gems::TAILWIND_EXTRACTOR',
+    }
+  },
   theme: {
     extend: {
-      // fontFamily: {
-      //   sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-      // },
+      fontFamily: {
+        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+      },
     },
   },
   plugins: [
@@ -25,4 +27,7 @@ module.exports = {
     require('@tailwindcss/typography'),
     require('daisyui'),
   ],
+  daisyui: {
+    logs: false
+  }
 }

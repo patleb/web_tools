@@ -66,6 +66,7 @@ module ExtWebpacker
       tailwind.sub!(/["']ExtWebpacker::Gems::TAILWIND_EXTRACTOR["']/, TAILWIND_EXTRACTOR)
       tailwind.sub!(/["']ExtWebpacker::Gems::TAILWIND_DEPENDENCIES["']/, tailwind_dependencies)
       tailwind.gsub!(%r{@@[\w-]+}){ |name| Gem.root(name.tr('@', '')).to_s }
+      tailwind.gsub! '@@', Bundler.root.to_s
       Pathname.new('./tmp/tailwind.config.js').write(tailwind)
     end
 
