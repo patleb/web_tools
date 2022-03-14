@@ -31,3 +31,6 @@ Boolean.define_methods
 
   safe_text: ->
     this.toString()
+
+  html_safe: ->
+    true

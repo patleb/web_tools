@@ -173,3 +173,11 @@ String.define_methods
 
   simple_format: ->
     this.gsub /\r?\n/g, '<br>'
+
+  html_safe: (safe = null) ->
+    if safe?
+      value = new String(this)
+      value._html_safe = !!safe
+      value
+    else
+      !!this._html_safe

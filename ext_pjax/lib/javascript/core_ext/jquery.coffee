@@ -412,3 +412,9 @@ jQuery.ajaxPrefilter (options, original_options, xhr) ->
 
     jQuery.fn["remove_#{flag}"] = ->
       this.each$ (e) -> e.prop(class: e.classes().except(css_class).join(' '))
+
+jQueryTags = jQuery.fn.init
+jQuery.fn.init = (selector, context, root) ->
+  if selector?.html_safe?()
+    selector = selector.to_s()
+  new jQueryTags(selector, context, root)

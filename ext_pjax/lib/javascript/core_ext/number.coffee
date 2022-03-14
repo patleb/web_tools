@@ -48,3 +48,6 @@ Number.define_methods
 
   round: (precision = 0) ->
     _.round(this, precision)
+
+  html_safe: ->
+    true

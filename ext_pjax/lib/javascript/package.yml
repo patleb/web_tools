@@ -1,7 +1,5 @@
 packages:
   - 'accessible-nprogress'
-  # - 'date-fns'
-  # - 'epic-spinners'
   - 'hamsterjs'
   - 'jquery'
   - 'jquery-touch-events'

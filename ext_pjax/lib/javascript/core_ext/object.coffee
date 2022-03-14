@@ -145,3 +145,6 @@ Object.define_methods
 
   super_3: (name, args...) ->
     @constructor.__super__.__proto__.__proto__[name].apply(this, args)
+
+  html_map: (f_key_item_self) ->
+    h_(this.map(f_key_item_self))

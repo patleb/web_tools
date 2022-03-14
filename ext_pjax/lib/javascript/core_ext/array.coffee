@@ -132,6 +132,9 @@ Array.define_methods
     else
       {}
 
+  html_map: (f_item_index_self) ->
+    h_(this.map(f_item_index_self))
+
 Array.decorate_methods
   find: (f_item_index_self_or_keys) ->
     if arguments.length == 1
