@@ -58,7 +58,8 @@ yarn-debug.log*
 /db/dump*
 /db/*.pg.gz
 /config/secrets.yml
-/app/javascript/gems
+/app/javascript/lib
+/app/javascript/vendor
 !package.json
 
 ### AFTER .gitignore ###
