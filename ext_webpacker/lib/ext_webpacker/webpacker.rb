@@ -10,15 +10,4 @@ Webpacker::Env.class_eval do
   end
 end
 
-Webpacker::Compiler.class_eval do
-  class_attribute :gems_watched_paths
-
-  private
-
-  alias_method :old_default_watched_paths, :default_watched_paths
-  def default_watched_paths
-    (gems_watched_paths + old_default_watched_paths).freeze
-  end
-end
-
 ExtWebpacker::Gems.install

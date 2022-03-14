@@ -16,9 +16,9 @@ module ExtWebpacker
       watched_symlinks = dependencies[:gems].map do |(gem_name, gem_path)|
         path = source_gems_path.join(gem_name)
         path.symlink(gem_path, false)
-        path.join("**/*.{js,coffee,css,scss,erb}").to_s # ? png,svg,git,jpeg,jpg
+        path.join("**/*.{js,coffee,css,scss,erb,png,svg,gif,jpeg,jpg}").to_s
       end
-      Webpacker::Compiler.gems_watched_paths = watched_symlinks
+      Webpacker::Compiler.watched_paths.concat(watched_symlinks)
       compile_tailwind_config
     end
 
