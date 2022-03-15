@@ -1,3 +1,6 @@
+const images = require.context('@@/images', true)
+const image_path = (name) => images(name, true)
+
 import $ from 'jquery'
 import _ from 'lodash'
 import lru from 'tiny-lru/lib/tiny-lru'

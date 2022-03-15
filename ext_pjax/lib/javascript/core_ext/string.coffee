@@ -141,10 +141,17 @@ String.define_methods
     this.camelize().match(/[A-Z]/g)?.join('')
 
   constantize: ->
-    if this.match /[^A-Za-z0-9_:.]+/
+    if this.match /[^:\w.]+/
       throw "#{this.safe_text()} isn't a valid module or class name"
     else
-      eval(this.gsub '::', '.prototype.')
+      object = window
+      this.sub(/^::/, '').split('.').each (class_scope) ->
+        class_scope.split('::').each (prototype_scope, i) ->
+          if i == 0
+            object = object[prototype_scope]
+          else
+            object = object::[prototype_scope]
+      object
 
   partition: (separator) ->
     if (index = this.index(separator))?

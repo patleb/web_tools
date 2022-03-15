@@ -22,18 +22,13 @@ Rails.application.config.content_security_policy do |policy|
   urls = []
   if Rails.env.development?
     policy.connect_src :self, :https, "http://localhost:3035", "ws://localhost:3035", *urls
-    if defined? WebConsole
-      policy.script_src  :self, :https, :unsafe_eval, :unsafe_inline
-    else
-      policy.script_src  :self, :https, :unsafe_eval
-    end
   else
     policy.connect_src :self, *urls
-    if defined? WebConsole
-      policy.script_src  :self, :https, :unsafe_eval, :unsafe_inline
-    else
-      policy.script_src  :self, :https, :unsafe_eval
-    end
+  end
+  if defined? WebConsole
+    policy.script_src  :self, :https, :unsafe_inline
+  else
+    policy.script_src  :self, :https
   end
 end
 
