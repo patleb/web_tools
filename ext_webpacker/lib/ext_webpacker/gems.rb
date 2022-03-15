@@ -30,8 +30,7 @@ module ExtWebpacker
         directory.mkdir unless directory.exist?
         directory.children.select(&:symlink?).each(&:delete.with(false))
         symlinks.concat(dependencies[:gems].select_map do |name|
-          root = Gem.root(name).join("#{type}/javascript")
-          next unless root.exist?
+          next unless (root = Gem.root(name).join("#{type}/javascript")).exist?
           if type == :vendor
             root.children.map do |root|
               symlink_path(directory, root.basename, root)
@@ -40,6 +39,11 @@ module ExtWebpacker
             symlink_path(directory, name, root)
           end
         end.flatten)
+      end
+      if (root = Bundler.root.join('vendor/javascript')).exist?
+        watched_symlinks.concat(root.children.map do |root|
+          symlink_path(source_vendor_path, root.basename, root)
+        end)
       end
       Webpacker::Compiler.gems_watched_paths = watched_symlinks
       compile_tailwind_config
