@@ -13,7 +13,7 @@ class Js.DeviceConcept
     @touched = false
     window.addEventListener('touchstart', @on_first_touch, false)
 
-    @screens = JSON.parse(process.env.SCREENS) || { sm: "640px", md: "768px", lg: "1024px", xl: "1280px", "2xl": "1536px" }
+    @screens = JSON.parse(process.env.SCREENS) || { sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 }
     @screens = @screens.map((k, v) -> [k, v.to_i()]).to_h()
     @refresh()
     $(window).on 'resize.device', _.throttle(@refresh)
@@ -23,8 +23,6 @@ class Js.DeviceConcept
     window.removeEventListener('touchstart', @on_first_touch, false)
 
   refresh: =>
-    # width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth
-    # height = window.innerHeight || document.documentElement.clientHeight|| document.body.clientHeight
     @width = @window().width()
     @height = @window().height()
 
