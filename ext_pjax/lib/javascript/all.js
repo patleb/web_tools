@@ -4,12 +4,12 @@ const image_path = (name) => images(name, true)
 import $ from 'jquery'
 import _ from 'lodash'
 import lru from 'tiny-lru/lib/tiny-lru'
-import Hamster from 'hamsterjs'
-import NProgress from 'accessible-nprogress'
 import Cookies from 'js-cookie'
 import jstz from 'jstz'
-import 'jquery.iframe-transport'
 import 'jquery-touch-events'
+
+import Hamster from '@@vendor/hamsterjs/hamster'
+import '@@vendor/jquery-iframe-transport/jquery.iframe-transport'
 
 import '@@lib/ext_pjax/env.coffee.erb'
 import '@@lib/ext_pjax/logger'
@@ -27,8 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.$ = window.jQuery = $
   window._ = _
   window.lru = lru
-  window.Hamster = Hamster
-  window.NProgress = NProgress
   window.Cookies = Cookies
   window.jstz = jstz
+  window.Hamster = Hamster
 })

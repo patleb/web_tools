@@ -2,8 +2,8 @@ jQuery.extend
   AJAX_UNSENT: 0
   AJAX_DONE: 4
   REPORT_VALIDITY: $('<form>')[0].reportValidity?
-  PROGRESS_BAR_DEBOUNCE: 500
-  progress_bar_timeout: null
+  SPINNER_DEBOUNCE: 500
+  spinner_timeout: null
   ready_list: []
   leave_list: []
   request_id: 0
@@ -143,16 +143,16 @@ jQuery.define_singleton_methods
     # URL param that must contain the CSRF token
     $('meta[name=csrf-param]').attr('content')
 
-  load_progress_bar: ->
-    unless $.progress_bar_timeout?
-      $.progress_bar_timeout = setTimeout(->
-        NProgress.start()
-      , $.PROGRESS_BAR_DEBOUNCE)
+  load_spinner: ->
+    unless $.spinner_timeout?
+      $.spinner_timeout = setTimeout(->
+        $('.spinner_container').removeClass('hidden')
+      , $.SPINNER_DEBOUNCE)
 
-  clear_progress_bar: ->
-    NProgress.done()
-    clearTimeout($.progress_bar_timeout)
-    $.progress_bar_timeout = null
+  clear_spinner: ->
+    $('.spinner_container').addClass('hidden')
+    clearTimeout($.spinner_timeout)
+    $.spinner_timeout = null
 
 jQuery.define_methods
   is_a: (klass) ->
@@ -372,9 +372,9 @@ jQuery.ajaxPrefilter (options, original_options, xhr) ->
     (options.headers ||= {})['X-CSRF-Token'] = token if token
 
   unless options.progress == false
-    $.load_progress_bar()
+    $.load_spinner()
     Js.prepend_to options, 'complete', (xhr, status) ->
-      $.clear_progress_bar()
+      $.clear_spinner()
 
   unless options.flags == false
     {

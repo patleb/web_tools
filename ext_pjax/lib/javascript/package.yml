@@ -1,9 +1,6 @@
 packages:
-  - 'accessible-nprogress'
-  - 'hamsterjs'
   - 'jquery'
   - 'jquery-touch-events'
-  - 'jquery.iframe-transport'
   - 'js-cookie'
   - 'jstz'
   - 'lodash'

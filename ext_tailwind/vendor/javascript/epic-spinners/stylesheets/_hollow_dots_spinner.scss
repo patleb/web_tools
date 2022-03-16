@@ -1,0 +1,40 @@
+$spinner_duration: 1000ms !default;
+$spinner_size: 15px !default;
+$spinner_color: #ff1d5e !default;
+$spinner_hollow_dots: 3 !default;
+
+.hollow-dots-spinner, .hollow-dots-spinner * {
+  box-sizing: border-box;
+}
+
+.hollow-dots-spinner {
+  height: $spinner_size;
+  width: calc(#{$spinner_size} * #{$spinner_hollow_dots});
+}
+
+.hollow-dots-spinner .dot {
+  width: $spinner_size;
+  height: $spinner_size;
+  margin: 0 calc(#{$spinner_size} / 2);
+  border: calc(#{$spinner_size} / 5) solid $spinner_color;
+  border-radius: 50%;
+  float: left;
+  transform: scale(0);
+  animation: hollow-dots-spinner-animation $spinner_duration ease infinite 0ms;
+}
+
+@for $i from 1 through $spinner_hollow_dots {
+  .hollow-dots-spinner .dot:nth-child(#{$i}) {
+    animation-delay: calc(300ms * #{$i});
+  }
+}
+
+@keyframes hollow-dots-spinner-animation {
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

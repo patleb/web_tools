@@ -1,0 +1,72 @@
+$spinner_duration: 1250ms !default;
+$spinner_size: 65px !default;
+$spinner_color: #ff1d5e !default;
+
+.scaling-squares-spinner, .scaling-squares-spinner * {
+  box-sizing: border-box;
+}
+
+.scaling-squares-spinner {
+  height: $spinner_size;
+  width: $spinner_size;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  animation: scaling-squares-animation $spinner_duration;
+  animation-iteration-count: infinite;
+  transform: rotate(0deg);
+}
+
+.scaling-squares-spinner .square {
+  height: calc(#{$spinner_size} * 0.25 / 1.3);
+  width: calc(#{$spinner_size} * 0.25 / 1.3);
+  margin-right: auto;
+  margin-left: auto;
+  border: calc(#{$spinner_size} * 0.04 / 1.3) solid $spinner_color;
+  position: absolute;
+  animation-duration: $spinner_duration;
+  animation-iteration-count: infinite;
+}
+
+@for $i from 1 through 4 {
+  .scaling-squares-spinner .square:nth-child(#{$i}) {
+    animation-name: scaling-squares-spinner-animation-child-#{$i};
+  }
+}
+
+@keyframes scaling-squares-animation {
+
+  50% {
+    transform: rotate(90deg);
+  }
+
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes scaling-squares-spinner-animation-child-1 {
+  50% {
+    transform: translate(150%,150%) scale(2,2);
+  }
+}
+
+@keyframes scaling-squares-spinner-animation-child-2 {
+  50% {
+    transform: translate(-150%,150%) scale(2,2);
+  }
+}
+
+@keyframes scaling-squares-spinner-animation-child-3 {
+  50% {
+    transform: translate(-150%,-150%) scale(2,2);
+  }
+}
+
+@keyframes scaling-squares-spinner-animation-child-4 {
+  50% {
+    transform: translate(150%,-150%) scale(2,2);
+  }
+}
