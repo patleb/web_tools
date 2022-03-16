@@ -7,8 +7,7 @@ class Js.Pjax
   @DISABLE_CLICK: '[data-disable="click"]'
 
   @initialize: (options = {}) =>
-    $.error('cannot be used with turbolinks!') if window.Turbolinks?
-    window.Turbolinks = {}
+    $.error('ajax not supported') unless $.support.ajax
 
     # For stubbing purpose in tests
     @location_replace = window.location.replace.bind(window.location)
