@@ -45,19 +45,20 @@ module ExtWebpacker
           symlink_path(source_vendor_path, root.basename, root)
         end)
       end
-      Webpacker::Compiler.gems_watched_paths = watched_symlinks
+      Webpacker::Compiler.gems_watched_paths = watched_symlinks.map do |link|
+        link.join("**/*.{js,coffee,css,scss,erb}").to_s # ,png,svg,gif,jpeg,jpg ?
+      end
       compile_tailwind_config
     end
 
     def symlink_path(directory, name, root)
       path = directory.join(name)
       path.symlink(root, false)
-      path.join("**/*.{js,coffee,css,scss,erb}").to_s # ,png,svg,gif,jpeg,jpg ?
     end
 
     def verify_dependencies!
       if package_dependencies.include? 'coffeescript'
-        coffee_version = `./node_modules/.bin/coffee -v`.strip.split.last
+        coffee_version = `node_modules/.bin/coffee -v`.strip.split.last
         raise CoffeeScriptVersion, coffee_version unless coffee_version == '1.12.7'
       end
       missing_dependencies = dependencies[:packages] - package_dependencies
