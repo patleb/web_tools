@@ -2,4 +2,4 @@ packages:
   - 'katex'
 
 gems:
-  - 'ext_pjax'
+  - 'ext_coffee'

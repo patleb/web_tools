@@ -1,4 +1,4 @@
-import '@@/ext_pjax/packs/base'
+import '@@/ext_coffee/packs/base'
 import katex from 'katex'
 
 import '@@/mix_template/all'

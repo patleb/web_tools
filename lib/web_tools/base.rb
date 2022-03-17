@@ -1,7 +1,7 @@
 require 'ext_bootstrap'
 require 'ext_capistrano'
+require 'ext_coffee'
 # require 'ext_minitest'
-require 'ext_pjax'
 require 'ext_rails'
 require 'ext_ruby'
 require 'ext_tailwind'

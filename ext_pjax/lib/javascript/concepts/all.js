@@ -1,8 +1,0 @@
-import '@@lib/ext_pjax/concepts/device_concept'
-import '@@lib/ext_pjax/concepts/i18n_concept'
-import '@@lib/ext_pjax/concepts/routes_concept'
-import '@@lib/ext_pjax/concepts/rescue_concept'
-import '@@lib/ext_pjax/concepts/tag_concept'
-import '@@lib/ext_pjax/concepts/time_zone_concept'
-import '@@lib/ext_pjax/concepts/toggle_concept'
-import '@@lib/ext_pjax/concepts/ujs_concept'

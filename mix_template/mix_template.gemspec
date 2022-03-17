@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'query_diet', '~> 0.6.2' # TODO https://github.com/makandra/query_diet/commit/445debd96e17365fae4c55d849a462db0163c7f4
   s.add_dependency 'nestive'
-  s.add_dependency 'ext_pjax', version
+  s.add_dependency 'ext_coffee', version
 end

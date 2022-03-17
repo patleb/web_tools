@@ -1,7 +1,7 @@
 require 'ext_ruby'
-require 'ext_pjax/configuration'
+require 'ext_coffee/configuration'
 
-module ExtPjax
+module ExtCoffee
   class Engine < ::Rails::Engine
   end
 end

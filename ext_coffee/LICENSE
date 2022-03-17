@@ -662,7 +662,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 
 ---
 
-ExtPjax is a derviative work based on jquery-pjax, whose Copyright follows.
+ExtCoffee is a derviative work based on jquery-pjax, whose Copyright follows.
 
 Copyright (c) Chris Wanstrath
 
@@ -687,7 +687,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-ExtPjax is a derviative work based on jquery-ujs, whose Copyright follows.
+ExtCoffee is a derviative work based on jquery-ujs, whose Copyright follows.
 
 Copyright (c) 2007-2016 Contributors at http://github.com/rails/jquery-ujs/contributors
 

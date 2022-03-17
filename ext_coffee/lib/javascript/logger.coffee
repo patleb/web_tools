@@ -3,7 +3,7 @@ for method in ['log', 'trace', 'groupCollapsed', 'groupEnd']
   window.console[method] ?= ->
 
 if window.Logger?
-  console.log "ExtPjax Overriding #{this.name}.Logger"
+  console.log "ExtCoffee Overriding #{this.name}.Logger"
 
 class window.Logger
   @IGNORED_METHODS: {
@@ -18,12 +18,12 @@ class window.Logger
     if klass::[name]
       klass_name = klass.class_name || klass.name
       unless (ignored = @IGNORED_METHODS[klass_name]) && ignored[name]
-        @debug "ExtPjax Overriding #{klass_name}.prototype.#{name}"
+        @debug "ExtCoffee Overriding #{klass_name}.prototype.#{name}"
 
   @warn_define_singleton_method: (klass, name) =>
     if klass[name]
       klass_name = klass.class_name || klass.name || klass.constructor.name
-      @debug "ExtPjax Overriding #{klass_name}.#{name}"
+      @debug "ExtCoffee Overriding #{klass_name}.#{name}"
 
   @debug: (args...) =>
     if Env.development

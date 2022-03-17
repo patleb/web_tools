@@ -18,6 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
   window.$image = imagePath
 })
 
-import '@@lib/ext_pjax/all'
+import '@@lib/ext_coffee/all'
 
 Js.Concepts.initialize({ modules: ['Js'] })

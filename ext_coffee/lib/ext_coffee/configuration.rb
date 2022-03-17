@@ -1,4 +1,4 @@
-module ExtPjax
+module ExtCoffee
   has_config do
     attr_accessor :debug_trace
 
