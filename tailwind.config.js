@@ -14,6 +14,10 @@ module.exports = {
     }
   },
   theme: {
+    screens: {
+      ...(({ sm, md, lg, xl }) => ({ sm, md, lg, xl }))(defaultTheme.screens),
+      xxl: '1536px',
+    },
     extend: {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],

@@ -57,4 +57,4 @@ for type in [Array, Boolean, Function, jQuery, JSON, Number, Object, RegExp, Str
 for type in [Array, Boolean, Number, Object, RegExp, String]
   do (type) ->
     type.prototype.to_json = -> JSON.parse(JSON.stringify(this))
-    Object.defineProperty(type.prototype, 'to_json', { enumerable: false })
+    Object.defineProperty(type.prototype, 'to_json', enumerable: false)
