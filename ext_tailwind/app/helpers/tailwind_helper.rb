@@ -1,20 +1,22 @@
 module TailwindHelper
   SVG_BEGIN = /^\s*<svg [^>]+>\s*/
   SVG_END = /\s*<\/svg>\s*$/
-  SVG_OUTLINE = { xmlns: 'http://www.w3.org/2000/svg', fill: 'none', viewBox: '0 0 24 24', 'stroke-width': 2, stroke: 'currentColor', 'aria-hidden': true }
-  SVG_SOLID = { xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 20 20', fill: 'currentColor', 'aria-hidden': true }
+  SVG_ATTRIBUTES = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', viewBox: '0 0 16 16', 'aria-hidden': true }
 
-  def icon(name, type, **options)
-    type = type.to_sym
-    text = ((@@_icon ||= {})[type] ||= {})[name] ||= begin
-      Pathname.new("node_modules/heroicons/#{type}/#{name}.svg").read.sub!(SVG_BEGIN, '').sub!(SVG_END, '').html_safe
+  # https://icon-sets.iconify.design/
+  # https://boxicons.com/
+  # https://materialdesignicons.com/
+  # https://tabler-icons.io/
+  # https://lucide.dev/
+  # https://fonts.google.com/icons?selected=Material+Icons
+  # https://icons.getbootstrap.com/
+  def icon(name, **options)
+    name = name.to_s.dasherize
+    text = (@@_icon ||= {})[name] ||= begin
+      Pathname.new("node_modules/bootstrap-icons/icons/#{name}.svg").read.sub!(SVG_BEGIN, '').sub!(SVG_END, '').html_safe
     end
-    case type
-    when :outline
-      svg_ text, SVG_OUTLINE.merge(options)
-    when :solid
-      svg_ text, SVG_SOLID.merge(options)
-    end
+    svg_attributes = SVG_ATTRIBUTES.merge(options[:svg] || {})
+    i_(svg_(text, svg_attributes), options.except(:svg))
   end
 
   def spinner(type = :atom, **options)
