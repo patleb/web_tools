@@ -1,3 +1,4 @@
+import '@@lib/ext_coffee/concepts/click_concept'
 import '@@lib/ext_coffee/concepts/device_concept'
 import '@@lib/ext_coffee/concepts/i18n_concept'
 import '@@lib/ext_coffee/concepts/routes_concept'
