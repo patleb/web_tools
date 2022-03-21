@@ -1,5 +1,5 @@
 class Js.TagConcept
-  ID_CLASSES = /^([#.][A-Za-z][:\w-]*)+$/
+  ID_CLASSES = /^([#.][A-Za-z][\w-]*)+$/
   HTML_TAGS = [
     'a'
     'b', 'button'
