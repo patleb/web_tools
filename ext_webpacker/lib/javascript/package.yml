@@ -29,8 +29,6 @@ packages:
   - 'postcss-loader'
   - 'postcss-flexbugs-fixes'
   - 'postcss-preset-env'
-  - 'postcss-import'
-  - 'postcss-nested'
   # SCSS
   - 'sass'
   - 'sass-loader'
