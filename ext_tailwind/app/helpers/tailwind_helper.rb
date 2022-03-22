@@ -1,8 +1,9 @@
 module TailwindHelper
   SVG_BEGIN = /^\s*<svg [^>]+>\s*/
   SVG_END = /\s*<\/svg>\s*$/
-  SVG_ATTRIBUTES = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', viewBox: '0 0 16 16', 'aria-hidden': true }
+  SVG_ATTRIBUTES = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', height: 16, width: 16, viewBox: '0 0 16 16', 'aria-hidden': true }
 
+  # https://heroicons.com/
   # https://icon-sets.iconify.design/
   # https://boxicons.com/
   # https://materialdesignicons.com/
