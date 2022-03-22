@@ -23,7 +23,7 @@ module MixTemplate
       var video
       wbr
     ))
-    ID_CLASSES = /^([#.][A-Za-z_-][\w-]*)+$/.freeze
+    ID_CLASSES = /^([#.][A-Za-z_-][:\w-]*)+$/.freeze
 
     def html_(*args, &block)
       h_(
