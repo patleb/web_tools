@@ -10,15 +10,15 @@ class Js.ToggleConcept
     'click.continue', @SECTIONS, @throttled_click
 
     'click.continue', @CHECKBOXES, (event, target) =>
-      checkboxes = target.data('targets')
+      checkboxes = $(target.data('targets')).not(target)
       switch target[0].type
         when 'checkbox'
           if target.is(':checked')
-            $(checkboxes).prop(checked: true)
+            checkboxes.prop(checked: true)
           else
-            $(checkboxes).prop(checked: false)
+            checkboxes.prop(checked: false)
         else
-          $(checkboxes).each$ (input) ->
+          checkboxes.each$ (input) ->
             input.prop(checked: !input.prop('checked'))
   ]
 
