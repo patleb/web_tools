@@ -8,7 +8,6 @@ class Js.DeviceConcept
 
   accessors: ->
     window: -> $(window)
-    body:   -> document.querySelector('body')
 
   ready_once: =>
     @touched = false
