@@ -1,5 +1,3 @@
-#= require ./dom
-
 { $ } = Rails
 
 # Up-to-date Cross-Site Request Forgery token

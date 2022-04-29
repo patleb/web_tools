@@ -1,11 +1,4 @@
-#= require ./rails-ujs/BANNER
-#= export Rails
-#= require_self
-#= require_tree ./rails-ujs/utils
-#= require_tree ./rails-ujs/features
-#= require ./rails-ujs/start
-
-@Rails =
+window.Rails =
   # Link elements bound by rails-ujs
   linkClickSelector: 'a[data-confirm], a[data-method], a[data-remote]:not([disabled]), a[data-disable-with], a[data-disable]'
 

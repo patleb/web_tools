@@ -1,5 +1,3 @@
-#= require_tree ../utils
-
 {
   matches, getData, setData
   fire, stopEverything

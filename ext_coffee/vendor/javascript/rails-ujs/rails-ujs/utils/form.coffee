@@ -1,5 +1,3 @@
-#= require ./dom
-
 { matches } = Rails
 
 toArray = (e) -> Array.prototype.slice.call(e)

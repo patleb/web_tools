@@ -1,5 +1,3 @@
-#= require_tree ../utils
-
 { matches, getData, setData, stopEverything, formElements } = Rails
 
 Rails.handleDisabledElement = (e) ->

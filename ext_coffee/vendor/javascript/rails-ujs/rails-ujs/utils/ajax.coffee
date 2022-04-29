@@ -1,7 +1,3 @@
-#= require ./csp
-#= require ./csrf
-#= require ./event
-
 { cspNonce, CSRFProtection, fire } = Rails
 
 AcceptHeaders =

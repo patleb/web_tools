@@ -1,5 +1,3 @@
-#= require_tree ../utils
-
 { stopEverything } = Rails
 
 # Handles "data-method" on links such as:

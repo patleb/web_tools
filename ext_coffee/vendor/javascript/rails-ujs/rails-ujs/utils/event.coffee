@@ -1,5 +1,3 @@
-#= require ./dom
-
 { matches } = Rails
 
 # Polyfill for CustomEvent in IE9+

@@ -1,5 +1,3 @@
-#= require_tree ../utils
-
 { fire, stopEverything } = Rails
 
 Rails.handleConfirm = (e) ->
