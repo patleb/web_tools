@@ -1,7 +1,3 @@
-#= require ./snapshot
-#= require ./snapshot_renderer
-#= require ./error_renderer
-
 class Turbolinks.View
   constructor: (@delegate) ->
     @htmlElement = document.documentElement

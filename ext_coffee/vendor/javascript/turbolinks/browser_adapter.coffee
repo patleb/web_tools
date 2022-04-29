@@ -1,6 +1,3 @@
-#= require ./http_request
-#= require ./progress_bar
-
 class Turbolinks.BrowserAdapter
   {NETWORK_FAILURE, TIMEOUT_FAILURE} = Turbolinks.HttpRequest
 

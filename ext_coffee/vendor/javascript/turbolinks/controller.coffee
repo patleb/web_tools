@@ -1,11 +1,3 @@
-#= require ./location
-#= require ./browser_adapter
-#= require ./history
-#= require ./view
-#= require ./scroll_manager
-#= require ./snapshot_cache
-#= require ./visit
-
 class Turbolinks.Controller
   constructor: ->
     @history = new Turbolinks.History this

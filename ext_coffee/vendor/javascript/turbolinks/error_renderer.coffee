@@ -1,5 +1,3 @@
-#= require ./renderer
-
 class Turbolinks.ErrorRenderer extends Turbolinks.Renderer
   constructor: (html) ->
     htmlElement = document.createElement("html")

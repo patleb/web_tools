@@ -1,12 +1,4 @@
-#= require ./BANNER
-#= export Turbolinks
-#= require_self
-#= require ./helpers
-#= require ./controller
-#= require ./script_warning
-#= require ./start
-
-@Turbolinks =
+window.Turbolinks =
   supported: do ->
     window.history.pushState? and
       window.requestAnimationFrame? and

@@ -1,5 +1,3 @@
-#= require ./head_details
-
 class Turbolinks.Snapshot
   @wrap: (value) ->
     if value instanceof this

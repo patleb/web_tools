@@ -1,5 +1,3 @@
-#= require ./http_request
-
 class Turbolinks.Visit
   constructor: (@controller, location, @action) ->
     @identifier = Turbolinks.uuid()

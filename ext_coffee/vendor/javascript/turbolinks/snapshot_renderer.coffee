@@ -1,5 +1,3 @@
-#= require ./renderer
-
 class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
   constructor: (@currentSnapshot, @newSnapshot, @isPreview) ->
     @currentHeadDetails = @currentSnapshot.headDetails
