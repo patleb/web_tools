@@ -1,4 +1,4 @@
-import '@@vendor/turbolinks/BANNER.js.erb'
+import '@@vendor/turbolinks/BANNER'
 import '@@vendor/turbolinks/index'
 import '@@vendor/turbolinks/helpers'
 import '@@vendor/turbolinks/location'
