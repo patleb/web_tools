@@ -19,6 +19,7 @@ class Turbolinks.Renderer
     else
       createdScriptElement = document.createElement("script")
       createdScriptElement.textContent = element.textContent
+      createdScriptElement.nonce = element.nonce
       createdScriptElement.async = false
       copyElementAttributes(createdScriptElement, element)
       createdScriptElement
