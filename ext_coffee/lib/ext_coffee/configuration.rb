@@ -1,9 +1,5 @@
 module ExtCoffee
   has_config do
-    attr_accessor :debug_trace
-
-    def debug_trace?
-      !!@debug_trace
-    end
+    # attr_accessor :name
   end
 end

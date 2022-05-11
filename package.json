@@ -43,10 +43,18 @@
     "webpack-merge": "^5.8.0"
   },
   "devDependencies": {
+    "babel-jest": "^28.0.3",
+    "jest": "^28.0.3",
+    "jest-environment-jsdom": "^28.0.2",
+    "tailwindcss-debug-screens": "^2.2.1",
     "webpack-bundle-analyzer": "^4.5.0",
-    "webpack-dev-server": "^4.7.4"
+    "webpack-dev-server": "^4.7.4",
+    "xhr-mock": "^2.5.1"
   },
   "version": "0.1.0",
+  "scripts": {
+    "test": "jest --config jest.config.js"
+  },
   "babel": {
     "presets": [
       "./node_modules/shakapacker/package/babel/preset.js"
