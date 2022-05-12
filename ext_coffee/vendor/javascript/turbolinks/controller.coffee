@@ -164,8 +164,8 @@ class Turbolinks.Controller
   notifyApplicationBeforeVisitingLocation: (location) ->
     Turbolinks.dispatch("turbolinks:before-visit", data: { url: location.absoluteURL }, cancelable: true)
 
-  notifyApplicationAfterVisitingLocation: (location) ->
-    Turbolinks.dispatch("turbolinks:visit", data: { url: location.absoluteURL })
+  notifyApplicationAfterVisitingLocation: (location, action) ->
+    Turbolinks.dispatch("turbolinks:visit", data: { url: location.absoluteURL, action })
 
   notifyApplicationBeforeCachingSnapshot: ->
     Turbolinks.dispatch("turbolinks:before-cache")
@@ -185,7 +185,7 @@ class Turbolinks.Controller
     @currentVisit?.cancel()
     @currentVisit = @createVisit(location, action, properties)
     @currentVisit.start()
-    @notifyApplicationAfterVisitingLocation(location)
+    @notifyApplicationAfterVisitingLocation(location, action)
 
   createVisit: (location, action, {restorationIdentifier, restorationData, historyChanged} = {}) ->
     visit = new Turbolinks.Visit this, location, action

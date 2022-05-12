@@ -21,6 +21,7 @@ describe('Turbolinks Visit', () => {
     })
     turbolinks.on_event('turbolinks:visit', (event) => {
       assert.equal('http://localhost/one', event.data.url)
+      assert.equal('advance', event.data.action)
     })
     await turbolinks.visit('one', {}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
