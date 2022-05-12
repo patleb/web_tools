@@ -3,6 +3,9 @@ class Turbolinks.History
 
   start: ->
     unless @started
+      @location = Turbolinks.Location.currentLocation()
+      @initialLocation = @location
+      @initialRestorationIdentifier = @restorationIdentifier
       addEventListener("popstate", @onPopState, false)
       addEventListener("load", @onPageLoad, false)
       @started = true
@@ -11,6 +14,8 @@ class Turbolinks.History
     if @started
       removeEventListener("popstate", @onPopState, false)
       removeEventListener("load", @onPageLoad, false)
+      delete @initialLocation
+      delete @initialRestorationIdentifier
       @started = false
 
   push: (location, restorationIdentifier) ->
@@ -25,10 +30,10 @@ class Turbolinks.History
 
   onPopState: (event) =>
     if @shouldHandlePopState()
-      if turbolinks = event.state?.turbolinks
-        location = Turbolinks.Location.currentLocation()
-        restorationIdentifier = turbolinks.restorationIdentifier
-        @delegate.historyPoppedToLocationWithRestorationIdentifier(location, restorationIdentifier)
+      if restorationIdentifier = @restorationIdentifierForPopState(event)
+        @location = Turbolinks.Location.currentLocation()
+        @restorationIdentifier = restorationIdentifier
+        @delegate.historyPoppedToLocationWithRestorationIdentifier(@location, restorationIdentifier)
 
   onPageLoad: (event) =>
     Turbolinks.defer =>
@@ -43,6 +48,17 @@ class Turbolinks.History
   pageIsLoaded: ->
     @pageLoaded or document.readyState is "complete"
 
+  restorationIdentifierForPopState: (event) =>
+    if event.state
+      return (event.state.turbolinks || {}).restorationIdentifier
+    if @poppedToInitialEntry(event)
+      @initialRestorationIdentifier
+
+  poppedToInitialEntry: (event) ->
+    !event.state && Turbolinks.Location.currentLocation().isEqualTo(@initialLocation)
+
   update: (method, location, restorationIdentifier) ->
     state = turbolinks: {restorationIdentifier}
     history[method + "State"](state, null, location)
+    @location = location
+    @restorationIdentifier = restorationIdentifier
