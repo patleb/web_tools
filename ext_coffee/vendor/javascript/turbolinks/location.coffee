@@ -37,7 +37,7 @@ class Turbolinks.Location
     @getLastPathComponent().match(/\.[^.]*$/)?[0] ? ""
 
   isHTML: ->
-    @getExtension().match(/^(?:|\.(?:htm|html|xhtml))$/)
+    !!@getExtension().match(/^(?:|\.(?:htm|html|xhtml))$/)
 
   isPrefixedBy: (location) ->
     prefixURL = getPrefixURL(location)
