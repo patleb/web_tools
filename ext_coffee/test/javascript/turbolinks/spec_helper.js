@@ -1,8 +1,34 @@
 import '@@vendor/rails-ujs/all'
 import '@@vendor/turbolinks/all'
 
+const events = [
+  "turbolinks:before-cache",
+  "turbolinks:before-render",
+  "turbolinks:before-visit",
+  "turbolinks:click",
+  "turbolinks:load",
+  "turbolinks:render",
+  "turbolinks:request-end",
+  "turbolinks:visit",
+] + [
+  "turbolinks:click-cancel",
+  "turbolinks:click-only",
+  "turbolinks:visit-reload",
+]
+
+const branches = {
+  click_cancel: false,
+  click_only: false,
+  visit_reload: false,
+}
+
 beforeAll(() => {
   fixture.set_root('ext_coffee/test/fixtures/files/turbolinks')
+  for (const event_name of events) {
+    addEventListener(event_name, (event) => {
+      window.events_log.push([event.type, event.data])
+    }, false)
+  }
 })
 
 afterAll(() => {
@@ -10,6 +36,7 @@ afterAll(() => {
 })
 
 beforeEach(() => {
+  window.events_log = []
   xhr.setup()
 })
 
@@ -17,49 +44,43 @@ afterEach(() => {
   xhr.teardown()
 })
 
-Turbolinks.controller.old_clickBubbled = Turbolinks.controller.clickBubbled
+const old_clickBubbled = Turbolinks.controller.clickBubbled.bind(Turbolinks.controller)
 Turbolinks.controller.clickBubbled = function (event) {
-  let bubbled = !!Turbolinks.controller.old_clickBubbled(event)
+  let bubbled = !!old_clickBubbled(event)
   event.data = { bubbled }
   Turbolinks.dispatch('turbolinks:click-only', event)
 }
 
-Turbolinks.controller.old_visit = Turbolinks.controller.visit
+const old_visit = Turbolinks.controller.visit.bind(Turbolinks.controller)
 Turbolinks.controller.visit = function (location, options = {}) {
-  if (Turbolinks.controller.click_only) {
+  if (branches.click_only) {
     return true
-  } else if (Turbolinks.controller.visit_reload) {
-    let result = Turbolinks.controller.old_visit(location, options)
+  } else if (branches.visit_reload) {
+    let result = old_visit(location, options)
     Turbolinks.dispatch('turbolinks:visit-reload', { data: { url: new URL(location).toString() } })
     return result
-  } else if (Turbolinks.controller.click_cancel) {
-    let prevented = !Turbolinks.controller.old_visit(location, options)
+  } else if (branches.click_cancel) {
+    let prevented = !old_visit(location, options)
     Turbolinks.dispatch('turbolinks:click-cancel', { data: { prevented } })
     return prevented
   } else {
-    return Turbolinks.controller.old_visit(location, options)
+    return old_visit(location, options)
   }
 }
 
-Turbolinks.controller.old_startVisitToLocationWithAction = Turbolinks.controller.startVisitToLocationWithAction
-Turbolinks.controller.startVisitToLocationWithAction = function (location, ...args) {
-  if (Turbolinks.controller.visit_reload) {
-    let result = Turbolinks.old_startVisitToLocationWithAction(location, ...args)
-    Turbolinks.dispatch('turbolinks:visit-reload', { data: { url: new URL(location).toString() } })
-    return result
-  } else {
-    return Turbolinks.controller.old_startVisitToLocationWithAction(location, ...args)
-  }
+function listen_on(event_name, handler) {
+  addEventListener(event_name, function eventListener(event) {
+    removeEventListener(event_name, eventListener, false)
+    handler(event)
+  }, false)
 }
 
 function navigate(direction, location, { event_name = 'turbolinks:load' } = {}, asserts) {
   return new Promise((resolve) => {
-    function after(event) {
-      removeEventListener(event_name, after)
+    listen_on(event_name, (event) => {
       resolve(event)
       asserts(event)
-    }
-    addEventListener(event_name, after)
+    })
     return window.history[direction]()
   })
 }
@@ -81,14 +102,12 @@ const turbolinks = {
   },
   visit_reload: (location, asserts) => {
     return new Promise((resolve) => {
-      function after(event) {
-        removeEventListener('turbolinks:visit-reload', after)
-        delete Turbolinks.controller.visit_reload
+      listen_on('turbolinks:visit-reload', (event) => {
+        branches.visit_reload = false
         resolve(event)
         asserts(event)
-      }
-      addEventListener('turbolinks:visit-reload', after)
-      Turbolinks.controller.visit_reload = true
+      })
+      branches.visit_reload = true
       return Turbolinks.visit(location)
     })
   },
@@ -98,27 +117,35 @@ const turbolinks = {
       return res.status(status).body(fixture.html(location))
     })
     return new Promise((resolve) => {
-      function after(event) {
-        removeEventListener(event_name, after)
+      listen_on(event_name, (event) => {
         resolve(event)
         asserts(event)
-      }
-      addEventListener(event_name, after)
+      })
       return Turbolinks.visit(location, { action })
     })
   },
   click_cancel: (selector, asserts) => {
     let link = document.querySelector(selector)
     return new Promise((resolve) => {
-      function after(event) {
-        removeEventListener('turbolinks:click-cancel', after)
-        delete Turbolinks.controller.click_cancel
+      listen_on('turbolinks:click-cancel', (event) => {
+        branches.click_cancel = false
         resolve(event)
         asserts(event)
-      }
-      addEventListener('turbolinks:click-cancel', after)
-      Turbolinks.controller.click_cancel = true
+      })
+      branches.click_cancel = true
       return link.click()
+    })
+  },
+  click_only: (selector, asserts) => {
+    let link = document.querySelector(selector)
+    return new Promise((resolve) => {
+      listen_on('turbolinks:click-only', (event) => {
+        branches.click_only = false
+        resolve(event)
+        asserts(event)
+      })
+      branches.click_only = true
+      return Turbolinks.dispatch('click', { target: link, cancelable: true })
     })
   },
   click_reload: (selector, asserts) => {
@@ -148,35 +175,17 @@ const turbolinks = {
       return res.status(status).body(fixture.html(location))
     })
     return new Promise((resolve) => {
-      function after(event) {
-        removeEventListener(event_name, after)
+      listen_on(event_name, (event) => {
         resolve(event)
         asserts(event)
-      }
-      addEventListener(event_name, after)
+      })
       return link.click()
     })
   },
-  click_only: (selector, asserts) => {
-    let link = document.querySelector(selector)
-    return new Promise((resolve) => {
-      function after(event) {
-        removeEventListener('turbolinks:click-only', after)
-        delete Turbolinks.controller.click_only
-        resolve(event)
-        asserts(event)
-      }
-      addEventListener('turbolinks:click-only', after)
-      Turbolinks.controller.click_only = true
-      return Turbolinks.dispatch('click', { target: link, cancelable: true })
-    })
-  },
   on_event: (event_name, asserts = (e) => {}) => {
-    function after(event) {
-      removeEventListener(event_name, after)
+    listen_on(event_name, (event) => {
       asserts(event)
-    }
-    addEventListener(event_name, after)
+    })
   },
   assert_reload: (event, href, { action = 'advance' } = {}) => {
     assert.equal(true, event.responded)

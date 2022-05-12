@@ -87,7 +87,7 @@ describe('Turbolinks Navigation', () => {
     })
   })
 
-  it('should click the back button', async () => {
+  it('should follow the back button click', async () => {
     await turbolinks.click('#same-origin-unannotated-link', {}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
     })
@@ -96,7 +96,7 @@ describe('Turbolinks Navigation', () => {
     })
   })
 
-  it('should click the forward button', async () => {
+  it('should follow the forward button click', async () => {
     await turbolinks.click('#same-origin-unannotated-link', {}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
     })
