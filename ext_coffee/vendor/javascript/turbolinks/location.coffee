@@ -1,4 +1,7 @@
 class Turbolinks.Location
+  @currentLocation: ->
+    @wrap(window.location)
+
   @wrap: (value) ->
     if value instanceof this
       value

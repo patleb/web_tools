@@ -8,13 +8,14 @@ const events = [
   "turbolinks:click",
   "turbolinks:load",
   "turbolinks:render",
+  "turbolinks:request-start",
   "turbolinks:request-end",
   "turbolinks:visit",
-] + [
+].concat([
   "turbolinks:click-cancel",
   "turbolinks:click-only",
   "turbolinks:visit-reload",
-]
+])
 
 const branches = {
   click_cancel: false,
@@ -86,19 +87,32 @@ function navigate(direction, location, { event_name = 'turbolinks:load' } = {}, 
 }
 
 const turbolinks = {
-  setup: (location) => {
+  setup: (location, { async = false } = {}) => {
     let state = { turbolinks: { restorationIdentifier: Turbolinks.controller.restorationIdentifier } }
     window.history.replaceState(state, null, `/${location}`)
     Turbolinks.controller.location = Turbolinks.Location.wrap(window.location)
     window.setup_document(fixture.html(location))
     Turbolinks.clearCache()
-    Turbolinks.dispatch('DOMContentLoaded')
+    if (!async) {
+      Turbolinks.dispatch('DOMContentLoaded')
+    }
   },
   back: (...args) => {
     return navigate('back', ...args)
   },
   forward: (...args) => {
     return navigate('forward', ...args)
+  },
+  visit_reload_and_assert: (url) => {
+    assert.total(4)
+    assert.null(window.location)
+    turbolinks.on_event('turbolinks:before-visit', (event) => {
+      assert.equal(url, event.data.url)
+    })
+    turbolinks.visit_reload(url, (event) => {
+      assert.equal(url, event.data.url)
+      assert.equal(url, window.location.toString())
+    })
   },
   visit_reload: (location, asserts) => {
     return new Promise((resolve) => {
@@ -114,7 +128,7 @@ const turbolinks = {
   visit: (location, { event_name = 'turbolinks:load', status = 200, action = 'advance' } = {}, asserts) => {
     let origin_url = `http://localhost/${location}`
     xhr.get(origin_url, (req, res) => {
-      return res.status(status).body(fixture.html(location))
+      return res.status(status).header('content-type', 'text/html').body(fixture.html(location))
     })
     return new Promise((resolve) => {
       listen_on(event_name, (event) => {
@@ -172,7 +186,7 @@ const turbolinks = {
     }
     let location = origin_url.replace(/^http:\/\/localhost\//, '')
     xhr.get(origin_url, (req, res) => {
-      return res.status(status).body(fixture.html(location))
+      return res.status(status).header('content-type', 'text/html').body(fixture.html(location))
     })
     return new Promise((resolve) => {
       listen_on(event_name, (event) => {
@@ -188,8 +202,8 @@ const turbolinks = {
     })
   },
   assert_reload: (event, href, { action = 'advance' } = {}) => {
-    assert.equal(true, event.responded)
-    assert.equal(false, event.rendered)
+    assert.true(event.responded)
+    assert.false(event.rendered)
     assert.equal(action, Turbolinks.controller.currentVisit.action)
     assert.equal(href, event.data.url)
     assert.called(window.location.reload)

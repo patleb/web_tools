@@ -1,5 +1,5 @@
 class Turbolinks.BrowserAdapter
-  {NETWORK_FAILURE, TIMEOUT_FAILURE} = Turbolinks.HttpRequest
+  {NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH} = Turbolinks.HttpRequest
 
   constructor: (@controller) ->
     @progressBar = new Turbolinks.ProgressBar
@@ -27,7 +27,7 @@ class Turbolinks.BrowserAdapter
 
   visitRequestFailedWithStatusCode: (visit, statusCode) ->
     switch statusCode
-      when NETWORK_FAILURE, TIMEOUT_FAILURE
+      when NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH
         @reload()
       else
         visit.loadResponse()

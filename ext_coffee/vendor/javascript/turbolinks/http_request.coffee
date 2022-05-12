@@ -1,6 +1,7 @@
 class Turbolinks.HttpRequest
   @NETWORK_FAILURE = 0
   @TIMEOUT_FAILURE = -1
+  @CONTENT_TYPE_MISMATCH = -2
 
   @timeout = 60
 
@@ -31,11 +32,16 @@ class Turbolinks.HttpRequest
 
   requestLoaded: =>
     @endRequest =>
-      if 200 <= @xhr.status < 300
-        @delegate.requestCompletedWithResponse(@xhr.responseText, @xhr.getResponseHeader("Turbolinks-Location"))
+      contentType = @xhr.getResponseHeader("Content-Type")
+      if @contentTypeIsHTML(contentType)
+        if 200 <= @xhr.status < 300
+          @delegate.requestCompletedWithResponse(@xhr.responseText, @xhr.getResponseHeader("Turbolinks-Location"))
+        else
+          @failed = true
+          @delegate.requestFailedWithStatusCode(@xhr.status, @xhr.responseText)
       else
         @failed = true
-        @delegate.requestFailedWithStatusCode(@xhr.status, @xhr.responseText)
+        @delegate.requestFailedWithStatusCode(@constructor.CONTENT_TYPE_MISMATCH)
 
   requestFailed: =>
     @endRequest =>
@@ -88,3 +94,6 @@ class Turbolinks.HttpRequest
     @delegate.requestFinished?()
     @delegate = null
     @xhr = null
+
+  contentTypeIsHTML: (contentType) ->
+    (contentType || "").match(/^text\/html|^application\/xhtml\+xml/)

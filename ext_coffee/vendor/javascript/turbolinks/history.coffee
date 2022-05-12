@@ -26,7 +26,7 @@ class Turbolinks.History
   onPopState: (event) =>
     if @shouldHandlePopState()
       if turbolinks = event.state?.turbolinks
-        location = Turbolinks.Location.wrap(window.location)
+        location = Turbolinks.Location.currentLocation()
         restorationIdentifier = turbolinks.restorationIdentifier
         @delegate.historyPoppedToLocationWithRestorationIdentifier(location, restorationIdentifier)
 

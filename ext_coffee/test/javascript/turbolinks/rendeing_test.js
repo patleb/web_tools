@@ -99,7 +99,7 @@ describe('Turbolinks Rendering', () => {
   })
 
   it('should evaluate head script elements once', async () => {
-    assert.undefined(window.headScriptEvaluationCount)
+    assert.null(window.headScriptEvaluationCount)
     await turbolinks.click('#head-script-link', { event_name: 'turbolinks:render' }, (event) => {
       assert.equal(1, window.headScriptEvaluationCount)
     })
@@ -113,7 +113,7 @@ describe('Turbolinks Rendering', () => {
   })
 
   it('should evaluate body script elements on each render', async () => {
-    assert.undefined(window.bodyScriptEvaluationCount)
+    assert.null(window.bodyScriptEvaluationCount)
     await turbolinks.click('#body-script-link', { event_name: 'turbolinks:render' }, (event) => {
       assert.equal(1, window.bodyScriptEvaluationCount)
     })
@@ -127,9 +127,9 @@ describe('Turbolinks Rendering', () => {
   })
 
   it('should not evaluate data-turbolinks-eval=false scripts', async () => {
-    assert.undefined(window.bodyScriptEvaluationCount)
+    assert.null(window.bodyScriptEvaluationCount)
     await turbolinks.click('#eval-false-script-link', { event_name: 'turbolinks:render' }, (event) => {
-      assert.undefined(window.bodyScriptEvaluationCount)
+      assert.null(window.bodyScriptEvaluationCount)
     })
   })
 
@@ -164,7 +164,7 @@ describe('Turbolinks Rendering', () => {
     const { documentElement, body } = document
     const observer = new MutationObserver(records => {
       for (const record of records) {
-        if ([...record.removedNodes].indexOf(body) > -1) {
+        if (Array.from(record.removedNodes).indexOf(body) > -1) {
           body.innerHTML = "Modified"
           observer.disconnect()
           break

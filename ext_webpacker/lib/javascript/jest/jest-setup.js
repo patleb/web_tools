@@ -1,10 +1,12 @@
 import * as assert from '@@lib/ext_webpacker/jest/assertions'
 import * as fixture from '@@lib/ext_webpacker/jest/fixtures'
+import * as matchers from 'jest-extended'
 import xhr from 'xhr-mock'
 
 global.assert = assert
 global.fixture = fixture
 global.xhr = xhr
+expect.extend(matchers)
 
 if (process.env.JB_PUBLISH_PORT != null) {
   jest.setTimeout(2147483647)

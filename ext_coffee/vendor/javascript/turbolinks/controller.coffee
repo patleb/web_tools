@@ -52,7 +52,7 @@ class Turbolinks.Controller
   # History
 
   startHistory: ->
-    @location = Turbolinks.Location.wrap(window.location)
+    @location = Turbolinks.Location.currentLocation()
     @restorationIdentifier = Turbolinks.uuid()
     @history.start()
     @history.replace(@location, @restorationIdentifier)
@@ -90,7 +90,7 @@ class Turbolinks.Controller
     if @shouldCacheSnapshot()
       @notifyApplicationBeforeCachingSnapshot()
       snapshot = @view.getSnapshot()
-      location = @lastRenderedLocation
+      location = @lastRenderedLocation || Turbolinks.Location.currentLocation()
       Turbolinks.defer =>
         @cache.put(location, snapshot.clone())
 

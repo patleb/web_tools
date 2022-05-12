@@ -24,28 +24,25 @@ describe('Turbolinks Visit', () => {
     })
     await turbolinks.visit('one', {}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
+      assert.not_null(event.data.timing)
     })
   })
 
   describe('Reload', () => {
-    beforeAll(() => {
+    beforeEach(() => {
       delete window.location
     })
 
-    afterAll(() => {
+    afterEach(() => {
       window.reset_location()
     })
 
     it('should programmatically visit a cross-origin location falls back to window.location', async () => {
-      assert.total(4)
-      assert.undefined(window.location)
-      turbolinks.on_event('turbolinks:before-visit', (event) => {
-        assert.equal('about:blank', event.data.url)
-      })
-      await turbolinks.visit_reload('about:blank', (event) => {
-        assert.equal('about:blank', event.data.url)
-        assert.equal('about:blank', window.location.toString())
-      })
+      await turbolinks.visit_reload_and_assert('about:blank')
+    })
+
+    it('should visit a location served with a non-HTML content type', async () => {
+      await turbolinks.visit_reload_and_assert('http://localhost/svg.svg')
     })
   })
 
@@ -56,7 +53,7 @@ describe('Turbolinks Visit', () => {
       event.preventDefault()
     })
     await turbolinks.click_cancel('#same-origin-link', (event) => {
-      assert.equal(true, event.data.prevented)
+      assert.true(event.data.prevented)
       assert.equal('http://localhost/visit', window.location.href)
     })
   })
@@ -73,7 +70,7 @@ describe('Turbolinks Visit', () => {
       event_locations.visit = event.data.url
     })
     await turbolinks.back('visit', {}, (event) => {
-      assert.undefined(event_locations.before_visit)
+      assert.null(event_locations.before_visit)
       assert.equal(event_locations.visit, event.data.url)
     })
   })
