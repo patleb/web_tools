@@ -62,8 +62,9 @@ processResponse = (response, type) ->
     if type.match(/\bjson\b/)
       try response = JSON.parse(response)
     else if type.match(/\b(?:java|ecma)script\b/)
+      nonce = cspNonce()
       script = document.createElement('script')
-      script.setAttribute('nonce', cspNonce())
+      script.setAttribute('nonce', nonce) if nonce
       script.text = response
       document.head.appendChild(script).parentNode.removeChild(script)
     else if type.match(/\b(xml|html|svg)\b/)
