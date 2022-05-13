@@ -1,6 +1,6 @@
 class Turbolinks.Controller
   constructor: ->
-    @view = new Turbolinks.View this
+    @htmlElement = document.documentElement
     @scrollManager = new Turbolinks.ScrollManager this
     @restorationData = {}
     @clearCache()
@@ -93,12 +93,12 @@ class Turbolinks.Controller
     @cache.get(location)?.clone()
 
   shouldCacheSnapshot: ->
-    @view.getSnapshot().isCacheable()
+    @getSnapshot().isCacheable()
 
   cacheSnapshot: ->
     if @shouldCacheSnapshot()
       @notifyApplicationBeforeCachingSnapshot()
-      snapshot = @view.getSnapshot()
+      snapshot = @getSnapshot()
       location = @lastRenderedLocation || Turbolinks.Location.currentLocation()
       Turbolinks.defer =>
         @cache.put(location, snapshot.clone())
@@ -106,7 +106,7 @@ class Turbolinks.Controller
   # Scrolling
 
   scrollToAnchor: (anchor) ->
-    if element = @view.getElementForAnchor(anchor)
+    if element = @getElementForAnchor(anchor)
       @scrollToElement(element)
     else
       @scrollToPosition(x: 0, y: 0)
@@ -125,8 +125,21 @@ class Turbolinks.Controller
 
   # View
 
-  render: (options, callback) ->
-    @view.render(options, callback)
+  getRootLocation: ->
+    @getSnapshot().getRootLocation()
+
+  getElementForAnchor: (anchor) ->
+    @getSnapshot().getElementForAnchor(anchor)
+
+  getSnapshot: ->
+    Turbolinks.Snapshot.fromHTMLElement(@htmlElement)
+
+  render: ({snapshot, error, isPreview}, callback) ->
+    @markAsPreview(isPreview)
+    if snapshot?
+      @renderSnapshot(snapshot, isPreview, callback)
+    else
+      @renderError(error, callback)
 
   viewInvalidated: ->
     @adapter.pageInvalidated()
@@ -247,7 +260,7 @@ class Turbolinks.Controller
       true
 
   locationIsVisitable: (location) ->
-    location.isPrefixedBy(@view.getRootLocation()) and location.isHTML()
+    location.isPrefixedBy(@getRootLocation()) and location.isHTML()
 
   getRestorationDataForIdentifier: (identifier) ->
     @restorationData[identifier] ?= {}
@@ -261,3 +274,15 @@ class Turbolinks.Controller
       (event.state.turbolinks || {}).restorationIdentifier
     else if Turbolinks.Location.currentLocation().isEqualTo(@initialLocation)
       @initialRestorationIdentifier
+
+  markAsPreview: (isPreview) ->
+    if isPreview
+      @htmlElement.setAttribute("data-turbolinks-preview", "")
+    else
+      @htmlElement.removeAttribute("data-turbolinks-preview")
+
+  renderSnapshot: (snapshot, isPreview, callback) ->
+    Turbolinks.SnapshotRenderer.render(this, callback, @getSnapshot(), Turbolinks.Snapshot.wrap(snapshot), isPreview)
+
+  renderError: (error, callback) ->
+    Turbolinks.ErrorRenderer.render(this, callback, error)
