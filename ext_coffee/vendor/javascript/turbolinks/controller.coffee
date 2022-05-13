@@ -1,6 +1,5 @@
 class Turbolinks.Controller
   constructor: ->
-    @history = new Turbolinks.History this
     @view = new Turbolinks.View this
     @scrollManager = new Turbolinks.ScrollManager this
     @restorationData = {}
@@ -10,7 +9,7 @@ class Turbolinks.Controller
   start: ->
     if Turbolinks.supported and not @started
       addEventListener("click", @clickCaptured, true)
-      addEventListener("DOMContentLoaded", @pageLoaded, false)
+      addEventListener("DOMContentLoaded", @domLoaded, false)
       @scrollManager.start()
       @startHistory()
       @started = true
@@ -22,7 +21,7 @@ class Turbolinks.Controller
   stop: ->
     if @started
       removeEventListener("click", @clickCaptured, true)
-      removeEventListener("DOMContentLoaded", @pageLoaded, false)
+      removeEventListener("DOMContentLoaded", @domLoaded, false)
       @scrollManager.stop()
       @stopHistory()
       @started = false
@@ -54,19 +53,29 @@ class Turbolinks.Controller
   startHistory: ->
     @location = Turbolinks.Location.currentLocation()
     @restorationIdentifier = Turbolinks.uuid()
-    @history.start()
-    @history.replace(@location, @restorationIdentifier)
+    @initialLocation = @location
+    @initialRestorationIdentifier = @restorationIdentifier
+    addEventListener("popstate", @onPopState, false)
+    addEventListener("load", @onPageLoad, false)
+    @updateHistory('replace')
 
   stopHistory: ->
-    @history.stop()
+    removeEventListener("popstate", @onPopState, false)
+    removeEventListener("load", @onPageLoad, false)
+    delete @initialLocation
+    delete @initialRestorationIdentifier
 
   pushHistoryWithLocationAndRestorationIdentifier: (location, @restorationIdentifier) ->
     @location = Turbolinks.Location.wrap(location)
-    @history.push(@location, @restorationIdentifier)
+    @updateHistory('push')
 
   replaceHistoryWithLocationAndRestorationIdentifier: (location, @restorationIdentifier) ->
     @location = Turbolinks.Location.wrap(location)
-    @history.replace(@location, @restorationIdentifier)
+    @updateHistory('replace')
+
+  updateHistory: (method) ->
+    state = turbolinks: { restorationIdentifier: @restorationIdentifier }
+    history[method + "State"](state, null, @location)
 
   # History delegate
 
@@ -111,7 +120,7 @@ class Turbolinks.Controller
   # Scroll manager delegate
 
   scrollPositionChanged: (scrollPosition) ->
-    restorationData = @getCurrentRestorationData()
+    restorationData = @getRestorationDataForIdentifier(@restorationIdentifier)
     restorationData.scrollPosition = scrollPosition
 
   # View
@@ -131,7 +140,7 @@ class Turbolinks.Controller
 
   # Event handlers
 
-  pageLoaded: =>
+  domLoaded: =>
     @lastRenderedLocation = @location
     @notifyApplicationAfterPageLoad()
 
@@ -147,6 +156,17 @@ class Turbolinks.Controller
             event.preventDefault()
             action = @getActionForLink(link)
             @visit(location, {action})
+
+  onPopState: (event) =>
+    if @shouldHandlePopState()
+      if restorationIdentifier = @restorationIdentifierForPopState(event)
+        @location = Turbolinks.Location.currentLocation()
+        @restorationIdentifier = restorationIdentifier
+        @historyPoppedToLocationWithRestorationIdentifier(@location, restorationIdentifier)
+
+  onPageLoad: (event) =>
+    Turbolinks.defer =>
+      @pageLoaded = true
 
   # Application events
 
@@ -229,8 +249,15 @@ class Turbolinks.Controller
   locationIsVisitable: (location) ->
     location.isPrefixedBy(@view.getRootLocation()) and location.isHTML()
 
-  getCurrentRestorationData: ->
-    @getRestorationDataForIdentifier(@restorationIdentifier)
-
   getRestorationDataForIdentifier: (identifier) ->
     @restorationData[identifier] ?= {}
+
+  shouldHandlePopState: ->
+    # Safari dispatches a popstate event after window's load event, ignore it
+    @pageLoaded or document.readyState is "complete"
+
+  restorationIdentifierForPopState: (event) ->
+    if event.state
+      (event.state.turbolinks || {}).restorationIdentifier
+    else if Turbolinks.Location.currentLocation().isEqualTo(@initialLocation)
+      @initialRestorationIdentifier
