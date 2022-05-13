@@ -1,7 +1,7 @@
 class Turbolinks.Controller
   constructor: ->
     @htmlElement = document.documentElement
-    @scrollManager = new Turbolinks.ScrollManager this
+    @onScroll = Turbolinks.throttle(@onScroll)
     @restorationData = {}
     @clearCache()
     @setProgressBarDelay(500)
@@ -10,7 +10,8 @@ class Turbolinks.Controller
     if Turbolinks.supported and not @started
       addEventListener("click", @clickCaptured, true)
       addEventListener("DOMContentLoaded", @domLoaded, false)
-      @scrollManager.start()
+      addEventListener("scroll", @onScroll, false)
+      @onScroll()
       @startHistory()
       @started = true
       @enabled = true
@@ -22,7 +23,7 @@ class Turbolinks.Controller
     if @started
       removeEventListener("click", @clickCaptured, true)
       removeEventListener("DOMContentLoaded", @domLoaded, false)
-      @scrollManager.stop()
+      removeEventListener("scroll", @onScroll, false)
       @stopHistory()
       @started = false
 
@@ -112,10 +113,10 @@ class Turbolinks.Controller
       @scrollToPosition(x: 0, y: 0)
 
   scrollToElement: (element) ->
-    @scrollManager.scrollToElement(element)
+    element.scrollIntoView()
 
-  scrollToPosition: (position) ->
-    @scrollManager.scrollToPosition(position)
+  scrollToPosition: ({x, y}) ->
+    window.scrollTo(x, y)
 
   # Scroll manager delegate
 
@@ -180,6 +181,9 @@ class Turbolinks.Controller
   onPageLoad: (event) =>
     Turbolinks.defer =>
       @pageLoaded = true
+
+  onScroll: (event) =>
+    @updatePosition(x: window.pageXOffset, y: window.pageYOffset)
 
   # Application events
 
@@ -286,3 +290,6 @@ class Turbolinks.Controller
 
   renderError: (error, callback) ->
     Turbolinks.ErrorRenderer.render(this, callback, error)
+
+  updatePosition: (@position) ->
+    @scrollPositionChanged(@position)
