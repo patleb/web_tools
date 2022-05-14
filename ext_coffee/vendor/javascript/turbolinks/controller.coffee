@@ -1,18 +1,20 @@
 class Turbolinks.Controller
+  @cache_size = 10
+
   constructor: ->
-    @htmlElement = document.documentElement
-    @onScroll = Turbolinks.throttle(@onScroll)
-    @restorationData = {}
-    @clearCache()
-    @setProgressBarDelay(500)
+    @html = document.documentElement
+    @on_scroll = Turbolinks.throttle(@on_scroll)
+    @restoration_data = {}
+    @clear_cache()
+    @set_progress_bar_delay(500)
 
   start: ->
     if Turbolinks.supported and not @started
-      addEventListener("click", @clickCaptured, true)
-      addEventListener("DOMContentLoaded", @domLoaded, false)
-      addEventListener("scroll", @onScroll, false)
-      @onScroll()
-      @startHistory()
+      addEventListener('click', @click_captured, true)
+      addEventListener('DOMContentLoaded', @dom_loaded, false)
+      addEventListener('scroll', @on_scroll, false)
+      @on_scroll()
+      @start_history()
       @started = true
       @enabled = true
 
@@ -21,221 +23,202 @@ class Turbolinks.Controller
 
   stop: ->
     if @started
-      removeEventListener("click", @clickCaptured, true)
-      removeEventListener("DOMContentLoaded", @domLoaded, false)
-      removeEventListener("scroll", @onScroll, false)
-      @stopHistory()
+      removeEventListener('click', @click_captured, true)
+      removeEventListener('DOMContentLoaded', @dom_loaded, false)
+      removeEventListener('scroll', @on_scroll, false)
+      @stop_history()
       @started = false
 
-  clearCache: ->
-    @cache = new Turbolinks.SnapshotCache 10
+  clear_cache: ->
+    @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
 
   visit: (location, options = {}) ->
     location = Turbolinks.Location.wrap(location)
-    if @applicationAllowsVisitingLocation(location)
-      if @locationIsVisitable(location)
-        action = options.action ? "advance"
+    unless @dispatch_before_visit(location).defaultPrevented
+      if @location_is_visitable(location)
+        action = options.action ? 'advance'
         @adapter.visitProposedToLocationWithAction(location, action)
       else
         window.location = location
 
-  startVisitToLocationWithAction: (location, action, restorationIdentifier) ->
+  startVisitToLocationWithAction: (location, action, restoration_id) ->
     if Turbolinks.supported
-      restorationData = @getRestorationDataForIdentifier(restorationIdentifier)
-      @startVisit(location, action, {restorationIdentifier, restorationData})
+      restoration_data = @get_restoration_data(restoration_id)
+      @start_visit(location, action, { restoration_id, restoration_data })
     else
       window.location = location
 
-  setProgressBarDelay: (delay) ->
-    @progressBarDelay = delay
+  set_progress_bar_delay: (delay) ->
+    @progress_bar_delay = delay
 
   # History
 
-  startHistory: ->
-    @location = Turbolinks.Location.currentLocation()
+  start_history: ->
+    @location = Turbolinks.Location.current_location()
     @restorationIdentifier = Turbolinks.uuid()
-    @initialLocation = @location
-    @initialRestorationIdentifier = @restorationIdentifier
-    addEventListener("popstate", @onPopState, false)
-    addEventListener("load", @onPageLoad, false)
-    @updateHistory('replace')
+    @initial_location = @location
+    @initial_restoration_id = @restorationIdentifier
+    addEventListener('popstate', @on_popstate, false)
+    addEventListener('load', @on_load, false)
+    @update_history('replace')
 
-  stopHistory: ->
-    removeEventListener("popstate", @onPopState, false)
-    removeEventListener("load", @onPageLoad, false)
-    delete @initialLocation
-    delete @initialRestorationIdentifier
+  stop_history: ->
+    removeEventListener('popstate', @on_popstate, false)
+    removeEventListener('load', @on_load, false)
+    delete @initial_location
+    delete @initial_restoration_id
 
-  pushHistoryWithLocationAndRestorationIdentifier: (location, @restorationIdentifier) ->
+  push_history: (location, @restorationIdentifier) ->
     @location = Turbolinks.Location.wrap(location)
-    @updateHistory('push')
+    @update_history('push')
 
-  replaceHistoryWithLocationAndRestorationIdentifier: (location, @restorationIdentifier) ->
+  replace_history: (location, @restorationIdentifier) ->
     @location = Turbolinks.Location.wrap(location)
-    @updateHistory('replace')
+    @update_history('replace')
 
-  updateHistory: (method) ->
-    state = turbolinks: { restorationIdentifier: @restorationIdentifier }
-    history[method + "State"](state, null, @location)
+  update_history: (method) ->
+    state = turbolinks: { @restorationIdentifier }
+    history["#{method}State"](state, null, @location)
 
-  # History delegate
-
-  historyPoppedToLocationWithRestorationIdentifier: (location, @restorationIdentifier) ->
+  on_history_popped: (location, @restorationIdentifier) ->
     if @enabled
-      restorationData = @getRestorationDataForIdentifier(@restorationIdentifier)
-      @startVisit(location, "restore", {@restorationIdentifier, restorationData, historyChanged: true})
+      restoration_data = @get_restoration_data(@restorationIdentifier)
+      @start_visit(location, 'restore', { restoration_id: @restorationIdentifier, restoration_data, history_changed: true })
       @location = Turbolinks.Location.wrap(location)
     else
       @adapter.pageInvalidated()
 
   # Snapshot cache
 
-  getCachedSnapshotForLocation: (location) ->
+  get_cached_snapshot: (location) ->
     @cache.get(location)?.clone()
 
-  shouldCacheSnapshot: ->
-    @getSnapshot().isCacheable()
+  should_cache_snapshot: ->
+    @get_snapshot().is_cacheable()
 
-  cacheSnapshot: ->
-    if @shouldCacheSnapshot()
-      @notifyApplicationBeforeCachingSnapshot()
-      snapshot = @getSnapshot()
-      location = @lastRenderedLocation || Turbolinks.Location.currentLocation()
+  cache_snapshot: ->
+    if @should_cache_snapshot()
+      @dispatch_before_cache()
+      snapshot = @get_snapshot()
+      location = @last_rendered_location || Turbolinks.Location.current_location()
       Turbolinks.defer =>
         @cache.put(location, snapshot.clone())
 
   # Scrolling
 
-  scrollToAnchor: (anchor) ->
-    if element = @getElementForAnchor(anchor)
-      @scrollToElement(element)
+  scroll_to_anchor: (name) ->
+    if element = @get_anchor(name)
+      element.scrollIntoView()
     else
-      @scrollToPosition(x: 0, y: 0)
+      @scroll_to_position(x: 0, y: 0)
 
-  scrollToElement: (element) ->
-    element.scrollIntoView()
-
-  scrollToPosition: ({x, y}) ->
+  scroll_to_position: ({ x, y }) ->
     window.scrollTo(x, y)
-
-  # Scroll manager delegate
-
-  scrollPositionChanged: (scrollPosition) ->
-    restorationData = @getRestorationDataForIdentifier(@restorationIdentifier)
-    restorationData.scrollPosition = scrollPosition
 
   # View
 
-  getRootLocation: ->
-    @getSnapshot().getRootLocation()
+  get_root_location: ->
+    @get_snapshot().get_root_location()
 
-  getElementForAnchor: (anchor) ->
-    @getSnapshot().getElementForAnchor(anchor)
+  get_anchor: (name) ->
+    @get_snapshot().get_anchor(name)
 
-  getSnapshot: ->
-    Turbolinks.Snapshot.fromHTMLElement(@htmlElement)
+  get_snapshot: ->
+    Turbolinks.Snapshot.from_element(@html)
 
-  render: ({snapshot, error, isPreview}, callback) ->
-    @markAsPreview(isPreview)
+  render: ({ snapshot, error, is_preview }, callback) ->
+    @mark_as_preview(is_preview)
     if snapshot?
-      @renderSnapshot(snapshot, isPreview, callback)
+      Turbolinks.SnapshotRenderer.render(this, callback, @get_snapshot(), Turbolinks.Snapshot.wrap(snapshot), is_preview)
     else
-      @renderError(error, callback)
+      Turbolinks.ErrorRenderer.render(this, callback, error)
 
-  viewInvalidated: ->
+  invalidate_view: ->
     @adapter.pageInvalidated()
 
-  viewWillRender: (newBody) ->
-    @notifyApplicationBeforeRender(newBody)
+  view_will_render: (new_body) ->
+    @dispatch_before_render(new_body)
 
-  viewRendered: ->
-    @lastRenderedLocation = @currentVisit.location
-    @notifyApplicationAfterRender()
+  view_rendered: ->
+    @last_rendered_location = @current_visit.location
+    @dispatch_render()
 
   # Event handlers
 
-  domLoaded: =>
-    @lastRenderedLocation = @location
-    @notifyApplicationAfterPageLoad()
+  dom_loaded: =>
+    @last_rendered_location = @location
+    @dispatch_load()
 
-  clickCaptured: =>
-    removeEventListener("click", @clickBubbled, false)
-    addEventListener("click", @clickBubbled, false)
+  click_captured: =>
+    removeEventListener('click', @click_bubbled, false)
+    addEventListener('click', @click_bubbled, false)
 
-  clickBubbled: (event) =>
-    if @enabled and @clickEventIsSignificant(event)
-      if link = @getVisitableLinkForNode(event.target)
-        if location = @getVisitableLocationForLink(link)
-          if @applicationAllowsFollowingLinkToLocation(link, location)
+  click_bubbled: (event) =>
+    if @enabled and @click_event_is_significant(event)
+      if link = @get_visitable_link_for_node(event.target)
+        if location = @get_visitable_location_for_link(link)
+          unless @dispatch_click(link, location).defaultPrevented
             event.preventDefault()
-            action = @getActionForLink(link)
+            action = @get_action_for_link(link)
             @visit(location, {action})
 
-  onPopState: (event) =>
-    if @shouldHandlePopState()
-      if restorationIdentifier = @restorationIdentifierForPopState(event)
-        @location = Turbolinks.Location.currentLocation()
-        @restorationIdentifier = restorationIdentifier
-        @historyPoppedToLocationWithRestorationIdentifier(@location, restorationIdentifier)
+  on_popstate: (event) =>
+    if @should_handle_popstate()
+      if restoration_id = @get_restoration_id(event)
+        @location = Turbolinks.Location.current_location()
+        @restorationIdentifier = restoration_id
+        @on_history_popped(@location, restoration_id)
 
-  onPageLoad: (event) =>
+  on_load: (event) =>
     Turbolinks.defer =>
-      @pageLoaded = true
+      @page_loaded = true
 
-  onScroll: (event) =>
-    @updatePosition(x: window.pageXOffset, y: window.pageYOffset)
+  on_scroll: (event) =>
+    @update_position(x: window.pageXOffset, y: window.pageYOffset)
 
   # Application events
 
-  applicationAllowsFollowingLinkToLocation: (link, location) ->
-    event = @notifyApplicationAfterClickingLinkToLocation(link, location)
-    not event.defaultPrevented
+  dispatch_click: (link, location) ->
+    Turbolinks.dispatch('turbolinks:click', target: link, data: { url: location.absolute_url }, cancelable: true)
 
-  applicationAllowsVisitingLocation: (location) ->
-    event = @notifyApplicationBeforeVisitingLocation(location)
-    not event.defaultPrevented
+  dispatch_before_visit: (location) ->
+    Turbolinks.dispatch('turbolinks:before-visit', data: { url: location.absolute_url }, cancelable: true)
 
-  notifyApplicationAfterClickingLinkToLocation: (link, location) ->
-    Turbolinks.dispatch("turbolinks:click", target: link, data: { url: location.absoluteURL }, cancelable: true)
+  dispatch_visit: (location, action) ->
+    Turbolinks.dispatch('turbolinks:visit', data: { url: location.absolute_url, action })
 
-  notifyApplicationBeforeVisitingLocation: (location) ->
-    Turbolinks.dispatch("turbolinks:before-visit", data: { url: location.absoluteURL }, cancelable: true)
+  dispatch_before_cache: ->
+    Turbolinks.dispatch('turbolinks:before-cache')
 
-  notifyApplicationAfterVisitingLocation: (location, action) ->
-    Turbolinks.dispatch("turbolinks:visit", data: { url: location.absoluteURL, action })
+  dispatch_before_render: (new_body) ->
+    Turbolinks.dispatch('turbolinks:before-render', data: { new_body })
 
-  notifyApplicationBeforeCachingSnapshot: ->
-    Turbolinks.dispatch("turbolinks:before-cache")
+  dispatch_render: ->
+    Turbolinks.dispatch('turbolinks:render')
 
-  notifyApplicationBeforeRender: (newBody) ->
-    Turbolinks.dispatch("turbolinks:before-render", data: {newBody})
-
-  notifyApplicationAfterRender: ->
-    Turbolinks.dispatch("turbolinks:render")
-
-  notifyApplicationAfterPageLoad: (timing = {}) ->
-    Turbolinks.dispatch("turbolinks:load", data: { url: @location.absoluteURL, timing })
+  dispatch_load: (timing = {}) ->
+    Turbolinks.dispatch('turbolinks:load', data: { url: @location.absolute_url, timing })
 
   # Private
 
-  startVisit: (location, action, properties) ->
-    @currentVisit?.cancel()
-    @currentVisit = @createVisit(location, action, properties)
-    @currentVisit.start()
-    @notifyApplicationAfterVisitingLocation(location, action)
+  start_visit: (location, action, properties) ->
+    @current_visit?.cancel()
+    @current_visit = @create_visit(location, action, properties)
+    @current_visit.start()
+    @dispatch_visit(location, action)
 
-  createVisit: (location, action, {restorationIdentifier, restorationData, historyChanged} = {}) ->
-    visit = new Turbolinks.Visit this, location, action
-    visit.restorationIdentifier = restorationIdentifier ? Turbolinks.uuid()
-    visit.restorationData = Turbolinks.copyObject(restorationData)
-    visit.historyChanged = historyChanged
+  create_visit: (location, action, { restoration_id, restoration_data, history_changed } = {}) ->
+    visit = new Turbolinks.Visit(this, location, action)
+    visit.restoration_id = restoration_id ? Turbolinks.uuid()
+    visit.restoration_data = Turbolinks.copy(restoration_data)
+    visit.history_changed = history_changed
     visit.referrer = @location
     visit
 
-  visitCompleted: (visit) ->
-    @notifyApplicationAfterPageLoad(visit.getTimingMetrics())
+  visit_completed: (visit) ->
+    @dispatch_load(visit.get_timing())
 
-  clickEventIsSignificant: (event) ->
+  click_event_is_significant: (event) ->
     not (
       event.defaultPrevented or
       event.target.isContentEditable or
@@ -246,50 +229,45 @@ class Turbolinks.Controller
       event.shiftKey
     )
 
-  getVisitableLinkForNode: (node) ->
-    if @nodeIsVisitable(node)
-      Turbolinks.closest(node, "a[href]:not([target]):not([download])")
+  get_visitable_link_for_node: (node) ->
+    if @is_visitable(node)
+      Turbolinks.closest(node, 'a[href]:not([target]):not([download])')
 
-  getVisitableLocationForLink: (link) ->
-    location = new Turbolinks.Location link.getAttribute("href")
-    location if @locationIsVisitable(location)
+  get_visitable_location_for_link: (link) ->
+    location = new Turbolinks.Location(link.getAttribute('href'))
+    location if @location_is_visitable(location)
 
-  getActionForLink: (link) ->
-    link.getAttribute("data-turbolinks-action") ? "advance"
+  get_action_for_link: (link) ->
+    link.getAttribute('data-turbolinks-action') ? 'advance'
 
-  nodeIsVisitable: (node) ->
-    if container = Turbolinks.closest(node, "[data-turbolinks]")
-      container.getAttribute("data-turbolinks") isnt "false"
+  is_visitable: (node) ->
+    if container = Turbolinks.closest(node, '[data-turbolinks]')
+      container.getAttribute('data-turbolinks') isnt 'false'
     else
       true
 
-  locationIsVisitable: (location) ->
-    location.isPrefixedBy(@getRootLocation()) and location.isHTML()
+  location_is_visitable: (location) ->
+    location.is_prefixed_by(@get_root_location()) and location.is_html()
 
-  getRestorationDataForIdentifier: (identifier) ->
-    @restorationData[identifier] ?= {}
+  get_restoration_data: (identifier) ->
+    @restoration_data[identifier] ?= {}
 
-  shouldHandlePopState: ->
+  should_handle_popstate: ->
     # Safari dispatches a popstate event after window's load event, ignore it
-    @pageLoaded or document.readyState is "complete"
+    @page_loaded or document.readyState is 'complete'
 
-  restorationIdentifierForPopState: (event) ->
+  get_restoration_id: (event) ->
     if event.state
       (event.state.turbolinks || {}).restorationIdentifier
-    else if Turbolinks.Location.currentLocation().isEqualTo(@initialLocation)
-      @initialRestorationIdentifier
+    else if Turbolinks.Location.current_location().is_equal_to(@initial_location)
+      @initial_restoration_id
 
-  markAsPreview: (isPreview) ->
-    if isPreview
-      @htmlElement.setAttribute("data-turbolinks-preview", "")
+  mark_as_preview: (is_preview) ->
+    if is_preview
+      @html.setAttribute('data-turbolinks-preview', '')
     else
-      @htmlElement.removeAttribute("data-turbolinks-preview")
+      @html.removeAttribute('data-turbolinks-preview')
 
-  renderSnapshot: (snapshot, isPreview, callback) ->
-    Turbolinks.SnapshotRenderer.render(this, callback, @getSnapshot(), Turbolinks.Snapshot.wrap(snapshot), isPreview)
-
-  renderError: (error, callback) ->
-    Turbolinks.ErrorRenderer.render(this, callback, error)
-
-  updatePosition: (@position) ->
-    @scrollPositionChanged(@position)
+  update_position: (@position) ->
+    restoration_data = @get_restoration_data(@restorationIdentifier)
+    restoration_data.position = @position

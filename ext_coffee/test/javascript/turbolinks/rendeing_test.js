@@ -19,7 +19,7 @@ describe('Turbolinks Rendering', () => {
     assert.total(4)
     let new_body
     turbolinks.on_event('turbolinks:before-render', (event) => {
-      new_body = event.data.newBody
+      new_body = event.data.new_body
       assert.not_equal(document.body.innerHTML, new_body.innerHTML)
       assert.equal('One', new_body.querySelector('h1').innerHTML)
     })
@@ -35,7 +35,7 @@ describe('Turbolinks Rendering', () => {
     assert.total(3)
     let new_body
     turbolinks.on_event('turbolinks:before-render', (event) => {
-      new_body = event.data.newBody
+      new_body = event.data.new_body
       assert.not_equal(document.body.innerHTML, new_body.innerHTML)
     })
     turbolinks.on_event('turbolinks:render', (event) => {

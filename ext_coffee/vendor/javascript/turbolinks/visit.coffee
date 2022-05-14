@@ -3,158 +3,155 @@ class Turbolinks.Visit
     @identifier = Turbolinks.uuid()
     @location = Turbolinks.Location.wrap(location)
     @adapter = @controller.adapter
-    @state = "initialized"
-    @timingMetrics = {}
+    @state = 'initialized'
+    @timing = {}
 
   start: ->
-    if @state is "initialized"
-      @recordTimingMetric("visitStart")
-      @state = "started"
+    if @state is 'initialized'
+      @record_timing('visitStart')
+      @state = 'started'
       @adapter.visitStarted(this)
 
   cancel: ->
-    if @state is "started"
+    if @state is 'started'
       @request?.cancel()
-      @cancelRender()
-      @state = "canceled"
+      @cancel_render()
+      @state = 'canceled'
 
   complete: ->
-    if @state is "started"
-      @recordTimingMetric("visitEnd")
-      @state = "completed"
+    if @state is 'started'
+      @record_timing('visitEnd')
+      @state = 'completed'
       @adapter.visitCompleted?(this)
-      @controller.visitCompleted(this)
+      @controller.visit_completed(this)
 
   fail: ->
-    if @state is "started"
-      @state = "failed"
+    if @state is 'started'
+      @state = 'failed'
       @adapter.visitFailed?(this)
 
-  changeHistory: ->
-    unless @historyChanged
-      actionForHistory = if @location.isEqualTo(@referrer) then "replace" else @action
-      method = getHistoryMethodForAction(actionForHistory)
-      @controller[method](@location, @restorationIdentifier)
-      @historyChanged = true
+  change_history: ->
+    unless @history_changed
+      action = if @location.is_equal_to(@referrer) then 'replace' else @action
+      method = switch action
+        when 'replace'            then 'replace_history'
+        when 'advance', 'restore' then 'push_history'
+      @controller[method](@location, @restoration_id)
+      @history_changed = true
 
-  issueRequest: ->
-    if @shouldIssueRequest() and not @request?
+  issue_request: ->
+    if @should_issue_request() and not @request?
       @progress = 0
-      @request = new Turbolinks.HttpRequest this, @location, @referrer
+      @request = new Turbolinks.HttpRequest(this, @location, @referrer)
       @request.send()
 
-  getCachedSnapshot: ->
-    if snapshot = @controller.getCachedSnapshotForLocation(@location)
-      if not @location.anchor? or snapshot.hasAnchor(@location.anchor)
-        if @action is "restore" or snapshot.isPreviewable()
+  get_cached_snapshot: ->
+    if snapshot = @controller.get_cached_snapshot(@location)
+      if not @location.anchor? or snapshot.has_anchor(@location.anchor)
+        if @action is 'restore' or snapshot.is_previewable()
           snapshot
 
-  hasCachedSnapshot: ->
-    @getCachedSnapshot()?
+  has_cached_snapshot: ->
+    @get_cached_snapshot()?
 
-  loadCachedSnapshot: ->
-    if snapshot = @getCachedSnapshot()
-      isPreview = @shouldIssueRequest()
+  load_cached_snapshot: ->
+    if snapshot = @get_cached_snapshot()
+      is_preview = @should_issue_request()
       @render ->
-        @cacheSnapshot()
-        @controller.render({snapshot, isPreview}, @performScroll)
+        @cache_snapshot()
+        @controller.render({snapshot, is_preview}, @perform_scroll)
         @adapter.visitRendered?(this)
-        @complete() unless isPreview
+        @complete() unless is_preview
 
-  loadResponse: ->
+  load_response: ->
     if @response?
       @render ->
-        @cacheSnapshot()
+        @cache_snapshot()
         if @request.failed
-          @controller.render(error: @response, @performScroll)
+          @controller.render(error: @response, @perform_scroll)
           @adapter.visitRendered?(this)
           @fail()
         else
-          @controller.render(snapshot: @response, @performScroll)
+          @controller.render(snapshot: @response, @perform_scroll)
           @adapter.visitRendered?(this)
           @complete()
 
-  followRedirect: ->
-    if @redirectedToLocation and not @followedRedirect
-      @location = @redirectedToLocation
-      @controller.replaceHistoryWithLocationAndRestorationIdentifier(@redirectedToLocation, @restorationIdentifier)
-      @followedRedirect = true
+  follow_redirect: ->
+    if @redirected_to_location and not @followed_redirect
+      @location = @redirected_to_location
+      @controller.replace_history(@redirected_to_location, @restoration_id)
+      @followed_redirect = true
 
   # HTTP Request delegate
 
-  requestStarted: ->
-    @recordTimingMetric("requestStart")
+  request_started: ->
+    @record_timing('requestStart')
     @adapter.visitRequestStarted?(this)
 
-  requestProgressed: (@progress) ->
+  request_progressed: (@progress) ->
     @adapter.visitRequestProgressed?(this)
 
-  requestCompletedWithResponse: (@response, redirectedToLocation) ->
-    @redirectedToLocation = Turbolinks.Location.wrap(redirectedToLocation) if redirectedToLocation?
+  request_completed: (@response, redirected_to_location) ->
+    @redirected_to_location = Turbolinks.Location.wrap(redirected_to_location) if redirected_to_location?
     @adapter.visitRequestCompleted(this)
 
-  requestFailedWithStatusCode: (statusCode, @response) ->
+  request_failed: (statusCode, @response) ->
     @adapter.visitRequestFailedWithStatusCode(this, statusCode)
 
-  requestFinished: ->
-    @recordTimingMetric("requestEnd")
+  request_finished: ->
+    @record_timing('requestEnd')
     @adapter.visitRequestFinished?(this)
 
   # Scrolling
 
-  performScroll: =>
+  perform_scroll: =>
     unless @scrolled
-      if @action is "restore"
-        @scrollToRestoredPosition() or @scrollToTop()
+      if @action is 'restore'
+        @scroll_to_restored_position() or @scroll_to_top()
       else
-        @scrollToAnchor() or @scrollToTop()
+        @scroll_to_anchor() or @scroll_to_top()
       @scrolled = true
 
-  scrollToRestoredPosition: ->
-    position = @restorationData?.scrollPosition
+  scroll_to_restored_position: ->
+    position = @restoration_data?.position
     if position?
-      @controller.scrollToPosition(position)
+      @controller.scroll_to_position(position)
       true
 
-  scrollToAnchor: ->
+  scroll_to_anchor: ->
     if @location.anchor?
-      @controller.scrollToAnchor(@location.anchor)
+      @controller.scroll_to_anchor(@location.anchor)
       true
 
-  scrollToTop: ->
-    @controller.scrollToPosition(x: 0, y: 0)
+  scroll_to_top: ->
+    @controller.scroll_to_position(x: 0, y: 0)
 
   # Instrumentation
 
-  recordTimingMetric: (name) ->
-    @timingMetrics[name] ?= new Date().getTime()
+  record_timing: (name) ->
+    @timing[name] ?= new Date().getTime()
 
-  getTimingMetrics: ->
-    Turbolinks.copyObject(@timingMetrics)
+  get_timing: ->
+    Turbolinks.copy(@timing)
 
   # Private
 
-  getHistoryMethodForAction = (action) ->
-    switch action
-      when "replace" then "replaceHistoryWithLocationAndRestorationIdentifier"
-      when "advance", "restore" then "pushHistoryWithLocationAndRestorationIdentifier"
-
-  shouldIssueRequest: ->
-    if @action is "restore"
-      not @hasCachedSnapshot()
+  should_issue_request: ->
+    if @action is 'restore'
+      not @has_cached_snapshot()
     else
       true
 
-  cacheSnapshot: ->
-    unless @snapshotCached
-      @controller.cacheSnapshot()
-      @snapshotCached = true
+  cache_snapshot: ->
+    unless @snapshot_cached
+      @controller.cache_snapshot()
+      @snapshot_cached = true
 
   render: (callback) ->
-    @cancelRender()
+    @cancel_render()
     @frame = requestAnimationFrame =>
       @frame = null
       callback.call(this)
 
-  cancelRender: ->
+  cancel_render: ->
     cancelAnimationFrame(@frame) if @frame

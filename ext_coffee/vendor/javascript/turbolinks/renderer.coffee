@@ -1,29 +1,23 @@
 class Turbolinks.Renderer
-  @render: (delegate, callback, args...) ->
+  @render: (controller, callback, args...) ->
     renderer = new this args...
-    renderer.delegate = delegate
+    renderer.controller = controller
     renderer.render(callback)
     renderer
 
-  renderView: (callback) ->
-    @delegate.viewWillRender(@newBody)
+  render_view: (callback) ->
+    @controller.view_will_render(@new_body)
     callback()
-    @delegate.viewRendered(@newBody)
+    @controller.view_rendered(@new_body)
 
-  invalidateView: ->
-    @delegate.viewInvalidated()
-
-  createScriptElement: (element) ->
-    if element.getAttribute("data-turbolinks-eval") is "false"
+  create_script: (element) ->
+    if element.getAttribute('data-turbolinks-eval') is 'false'
       element
     else
-      createdScriptElement = document.createElement("script")
-      createdScriptElement.textContent = element.textContent
-      createdScriptElement.nonce = element.nonce if element.nonce
-      createdScriptElement.async = false
-      copyElementAttributes(createdScriptElement, element)
-      createdScriptElement
-
-  copyElementAttributes = (destinationElement, sourceElement) ->
-    for {name, value} in sourceElement.attributes
-      destinationElement.setAttribute(name, value)
+      script = document.createElement('script')
+      script.textContent = element.textContent
+      script.nonce = element.nonce if element.nonce
+      script.async = false
+      for { name, value } in element.attributes
+        script.setAttribute(name, value)
+      script

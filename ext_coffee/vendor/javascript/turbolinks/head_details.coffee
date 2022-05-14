@@ -1,68 +1,65 @@
 class Turbolinks.HeadDetails
-  @fromHeadElement: (headElement) ->
-    new this headElement?.childNodes ? []
+  @from_element: (head) ->
+    new this head?.childNodes ? []
 
-  constructor: (childNodes) ->
+  constructor: (nodes) ->
     @elements = {}
-    for node in childNodes when node.nodeType is Node.ELEMENT_NODE
+    for node in nodes when node.nodeType is Node.ELEMENT_NODE
       key = node.outerHTML
       data = @elements[key] ?=
-        type: elementType(node)
-        tracked: elementIsTracked(node)
+        type: type_of(node)
+        tracked: is_tracked(node)
         elements: []
       data.elements.push(node)
 
-  hasElementWithKey: (key) ->
+  has_key: (key) ->
     key of @elements
 
-  getTrackedElementSignature: ->
-    (key for key, {tracked} of @elements when tracked).join("")
+  get_tracked_signature: ->
+    (key for key, { tracked } of @elements when tracked).join('')
 
-  getScriptElementsNotInDetails: (headDetails) ->
-    @getElementsMatchingTypeNotInDetails("script", headDetails)
+  get_missing_scripts: (head_details) ->
+    @get_missing_elements('script', head_details)
 
-  getStylesheetElementsNotInDetails: (headDetails) ->
-    @getElementsMatchingTypeNotInDetails("stylesheet", headDetails)
+  get_missing_stylesheets: (head_details) ->
+    @get_missing_elements('stylesheet', head_details)
 
-  getElementsMatchingTypeNotInDetails: (matchedType, headDetails) ->
-    elements[0] for key, {type, elements} of @elements when type is matchedType and not headDetails.hasElementWithKey(key)
+  get_missing_elements: (node_type, head_details) ->
+    elements[0] for key, { type, elements } of @elements when type is node_type and not head_details.has_key(key)
 
-  getProvisionalElements: ->
-    provisionalElements = []
-    for key, {type, tracked, elements} of @elements
+  get_provisional_elements: ->
+    result = []
+    for key, { type, tracked, elements } of @elements
       if not type? and not tracked
-        provisionalElements.push(elements...)
+        result.push(elements...)
       else if elements.length > 1
-        provisionalElements.push(elements[1...]...)
-    provisionalElements
+        result.push(elements[1...]...)
+    result
 
-  getMetaValue: (name) ->
-    @findMetaElementByName(name)?.getAttribute("content")
-
-  findMetaElementByName: (name) ->
+  get_meta_value: (name) ->
     element = undefined
-    for key, {elements} of @elements
-      if elementIsMetaElementWithName(elements[0], name)
+    for key, { elements } of @elements
+      if is_meta_with(elements[0], name)
         element = elements[0]
-    element
+    element?.getAttribute('content')
 
-  elementType = (element) ->
-    if elementIsScript(element)
-      "script"
-    else if elementIsStylesheet(element)
-      "stylesheet"
+  type_of = (element) ->
+    if is_script(element)
+      'script'
+    else if is_stylesheet(element)
+      'stylesheet'
 
-  elementIsTracked = (element) ->
-    element.getAttribute("data-turbolinks-track") is "reload"
+  is_tracked = (element) ->
+    element.getAttribute('data-turbolinks-track') is 'reload'
 
-  elementIsScript = (element) ->
+  is_script = (element) ->
     tagName = element.tagName.toLowerCase()
-    tagName is "script"
+    tagName is 'script'
 
-  elementIsStylesheet = (element) ->
+  is_stylesheet = (element) ->
     tagName = element.tagName.toLowerCase()
-    tagName is "style" or (tagName is "link" and element.getAttribute("rel") is "stylesheet")
+    tagName is 'style' or (tagName is 'link' and element.getAttribute('rel') is 'stylesheet')
 
-  elementIsMetaElementWithName = (element, name) ->
+  is_meta_with = (element, name) ->
     tagName = element.tagName.toLowerCase()
-    tagName is "meta" and element.getAttribute("name") is name
+    tagName is 'meta' and element.getAttribute('name') is name

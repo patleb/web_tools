@@ -4,7 +4,7 @@ class Turbolinks.SnapshotCache
     @snapshots = {}
 
   has: (location) ->
-    key = keyForLocation(location)
+    key = key_for(location)
     key of @snapshots
 
   get: (location) ->
@@ -21,15 +21,15 @@ class Turbolinks.SnapshotCache
   # Private
 
   read: (location) ->
-    key = keyForLocation(location)
+    key = key_for(location)
     @snapshots[key]
 
   write: (location, snapshot) ->
-    key = keyForLocation(location)
+    key = key_for(location)
     @snapshots[key] = snapshot
 
   touch: (location) ->
-    key = keyForLocation(location)
+    key = key_for(location)
     index = @keys.indexOf(key)
     @keys.splice(index, 1) if index > -1
     @keys.unshift(key)
@@ -39,5 +39,5 @@ class Turbolinks.SnapshotCache
     for key in @keys.splice(@size)
       delete @snapshots[key]
 
-  keyForLocation = (location) ->
-    Turbolinks.Location.wrap(location).toCacheKey()
+  key_for = (location) ->
+    Turbolinks.Location.wrap(location).to_cache_key()

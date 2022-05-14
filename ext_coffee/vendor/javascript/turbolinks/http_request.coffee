@@ -5,20 +5,20 @@ class Turbolinks.HttpRequest
 
   @timeout = 60
 
-  constructor: (@delegate, location, referrer) ->
-    @url = Turbolinks.Location.wrap(location).requestURL
-    @referrer = Turbolinks.Location.wrap(referrer).absoluteURL
-    @createXHR()
+  constructor: (@visit, location, referrer) ->
+    @url = Turbolinks.Location.wrap(location).request_url
+    @referrer = Turbolinks.Location.wrap(referrer).absolute_url
+    @create_xhr()
 
   send: ->
     if @xhr and not @sent
-      @notifyApplicationBeforeRequestStart()
+      @dispatch_request_start()
       nonce = Rails.cspNonce()
       @xhr.setRequestHeader('X-Turbolinks-Nonce', nonce) if nonce
-      @setProgress(0)
+      @set_progress(0)
       @xhr.send()
       @sent = true
-      @delegate.requestStarted?()
+      @visit.request_started?()
 
   cancel: ->
     if @xhr and @sent
@@ -26,74 +26,73 @@ class Turbolinks.HttpRequest
 
   # XMLHttpRequest events
 
-  requestProgressed: (event) =>
+  request_progressed: (event) =>
     if event.lengthComputable
-      @setProgress(event.loaded / event.total)
+      @set_progress(event.loaded / event.total)
 
-  requestLoaded: =>
-    @endRequest =>
-      contentType = @xhr.getResponseHeader("Content-Type")
-      if @contentTypeIsHTML(contentType)
+  request_loaded: =>
+    @end_request =>
+      contentType = @xhr.getResponseHeader('Content-Type')
+      if @is_html(contentType)
         if 200 <= @xhr.status < 300
-          @delegate.requestCompletedWithResponse(@xhr.responseText, @xhr.getResponseHeader("Turbolinks-Location"))
+          @visit.request_completed(@xhr.responseText, @xhr.getResponseHeader('Turbolinks-Location'))
         else
           @failed = true
-          @delegate.requestFailedWithStatusCode(@xhr.status, @xhr.responseText)
+          @visit.request_failed(@xhr.status, @xhr.responseText)
       else
         @failed = true
-        @delegate.requestFailedWithStatusCode(@constructor.CONTENT_TYPE_MISMATCH)
+        @visit.request_failed(@constructor.CONTENT_TYPE_MISMATCH)
 
-  requestFailed: =>
-    @endRequest =>
+  request_failed: =>
+    @end_request =>
       @failed = true
-      @delegate.requestFailedWithStatusCode(@constructor.NETWORK_FAILURE)
+      @visit.request_failed(@constructor.NETWORK_FAILURE)
 
-  requestTimedOut: =>
-    @endRequest =>
+  request_timed_out: =>
+    @end_request =>
       @failed = true
-      @delegate.requestFailedWithStatusCode(@constructor.TIMEOUT_FAILURE)
+      @visit.request_failed(@constructor.TIMEOUT_FAILURE)
 
-  requestCanceled: =>
-    @endRequest()
-
+  request_canceled: =>
+    @end_request()
 
   # Application events
 
-  notifyApplicationBeforeRequestStart: ->
-    Turbolinks.dispatch("turbolinks:request-start", data: { url: @url, xhr: @xhr })
+  dispatch_request_start: ->
+    Turbolinks.dispatch('turbolinks:request-start', data: { @url, @xhr })
 
-  notifyApplicationAfterRequestEnd: ->
-    Turbolinks.dispatch("turbolinks:request-end", data: { url: @url, xhr: @xhr })
+  dispatch_request_end: ->
+    Turbolinks.dispatch('turbolinks:request-end', data: { @url, @xhr })
 
   # Private
 
-  createXHR: ->
+  create_xhr: ->
     @xhr = new XMLHttpRequest
-    @xhr.open("GET", @url, true)
+    @xhr.open('GET', @url, true)
     @xhr.timeout = @constructor.timeout * 1000
-    @xhr.setRequestHeader("Accept", "text/html, application/xhtml+xml")
-    @xhr.setRequestHeader("Turbolinks-Referrer", @referrer)
-    @xhr.onprogress = @requestProgressed
-    @xhr.onload = @requestLoaded
-    @xhr.onerror = @requestFailed
-    @xhr.ontimeout = @requestTimedOut
-    @xhr.onabort = @requestCanceled
+    @xhr.setRequestHeader('Accept', 'text/html, application/xhtml+xml')
+    @xhr.setRequestHeader('Turbolinks-Referrer', @referrer)
+    @xhr.onprogress = @request_progressed
+    @xhr.onload = @request_loaded
+    @xhr.onerror = @request_failed
+    @xhr.ontimeout = @request_timed_out
+    @xhr.onabort = @request_canceled
 
-  endRequest: (callback) ->
+  end_request: (callback) ->
     if @xhr
-      @notifyApplicationAfterRequestEnd()
+      @dispatch_request_end()
       callback?.call(this)
       @destroy()
 
-  setProgress: (progress) ->
+  set_progress: (progress) ->
     @progress = progress
-    @delegate.requestProgressed?(@progress)
+    @visit.request_progressed?(@progress)
 
   destroy: ->
-    @setProgress(1)
-    @delegate.requestFinished?()
-    @delegate = null
+    @set_progress(1)
+    @visit.request_finished?()
+    @visit = null
     @xhr = null
 
-  contentTypeIsHTML: (contentType) ->
-    (contentType || "").match(/^text\/html|^application\/xhtml\+xml/)
+  is_html: (content_type) ->
+    (content_type || '').match(/^text\/html|^application\/xhtml\+xml/)

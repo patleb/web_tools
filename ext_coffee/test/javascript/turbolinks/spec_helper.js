@@ -45,9 +45,9 @@ afterEach(() => {
   xhr.teardown()
 })
 
-const old_clickBubbled = Turbolinks.controller.clickBubbled.bind(Turbolinks.controller)
-Turbolinks.controller.clickBubbled = function (event) {
-  let bubbled = !!old_clickBubbled(event)
+const old_click_bubbled = Turbolinks.controller.click_bubbled.bind(Turbolinks.controller)
+Turbolinks.controller.click_bubbled = function (event) {
+  let bubbled = !!old_click_bubbled(event)
   event.data = { bubbled }
   Turbolinks.dispatch('turbolinks:click-only', event)
 }
@@ -204,7 +204,7 @@ const turbolinks = {
   assert_reload: (event, href, { action = 'advance' } = {}) => {
     assert.true(event.responded)
     assert.false(event.rendered)
-    assert.equal(action, Turbolinks.controller.currentVisit.action)
+    assert.equal(action, Turbolinks.controller.current_visit.action)
     assert.equal(href, event.data.url)
     assert.called(window.location.reload)
   },
@@ -215,7 +215,7 @@ const turbolinks = {
     } else {
       assert.called(window.scrollTo)
     }
-    assert.equal(action, Turbolinks.controller.currentVisit.action)
+    assert.equal(action, Turbolinks.controller.current_visit.action)
     assert.equal(href, event.data.url)
     assert.equal(href, window.location.href)
     assert.equal(title, document.querySelector('title').innerHTML)

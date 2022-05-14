@@ -1,5 +1,5 @@
 class Turbolinks.Location
-  @currentLocation: ->
+  @current_location: ->
     @wrap(window.location)
 
   @wrap: (value) ->
@@ -8,66 +8,68 @@ class Turbolinks.Location
     else
       new this value
 
-  constructor: (url = "") ->
-    linkWithAnchor = document.createElement("a")
-    linkWithAnchor.href = url.toString()
+  constructor: (url = '') ->
+    link = document.createElement('a')
+    link.href = url.toString()
 
-    @absoluteURL = linkWithAnchor.href
+    @absolute_url = link.href
 
-    anchorLength = linkWithAnchor.hash.length
-    if anchorLength < 2
-      @requestURL = @absoluteURL
+    anchor_length = link.hash.length
+    if anchor_length < 2
+      @request_url = @absolute_url
     else
-      @requestURL = @absoluteURL.slice(0, -anchorLength)
-      @anchor = linkWithAnchor.hash.slice(1)
+      @request_url = @absolute_url.slice(0, -anchor_length)
+      @anchor = link.hash.slice(1)
 
-  getOrigin: ->
-    @absoluteURL.split("/", 3).join("/")
+  get_origin: ->
+    @absolute_url.split('/', 3).join('/')
 
-  getPath: ->
-    @requestURL.match(/\/\/[^/]*(\/[^?;]*)/)?[1] ? "/"
+  get_path: ->
+    @request_url.match(/\/\/[^/]*(\/[^?;]*)/)?[1] ? '/'
 
-  getPathComponents: ->
-    @getPath().split("/").slice(1)
+  get_path_components: ->
+    @get_path().split('/').slice(1)
 
-  getLastPathComponent: ->
-    @getPathComponents().slice(-1)[0]
+  get_last_path_component: ->
+    @get_path_components().slice(-1)[0]
 
-  getExtension: ->
-    @getLastPathComponent().match(/\.[^.]*$/)?[0] ? ""
+  get_extension: ->
+    @get_last_path_component().match(/\.[^.]*$/)?[0] ? ''
 
-  isHTML: ->
-    !!@getExtension().match(/^(?:|\.(?:htm|html|xhtml))$/)
+  is_html: ->
+    !!@get_extension().match(/^(?:|\.(?:htm|html|xhtml))$/)
 
-  isPrefixedBy: (location) ->
-    prefixURL = getPrefixURL(location)
-    @isEqualTo(location) or stringStartsWith(@absoluteURL, prefixURL)
+  is_prefixed_by: (location) ->
+    prefix_url = get_prefix_url(location)
+    @is_equal_to(location) or string_starts_with(@absolute_url, prefix_url)
 
-  isEqualTo: (location) ->
-    @absoluteURL is location?.absoluteURL
+  is_equal_to: (location) ->
+    @absolute_url is location?.absolute_url
 
-  toCacheKey: ->
-    @requestURL
+  to_cache_key: ->
+    @request_url
+
+  # Standard interface
 
   toJSON: ->
-    @absoluteURL
+    @absolute_url
 
   toString: ->
-    @absoluteURL
+    @absolute_url
 
   valueOf: ->
-    @absoluteURL
+    @absolute_url
 
   # Private
 
-  getPrefixURL = (location) ->
-    addTrailingSlash(location.getOrigin() + location.getPath())
+  get_prefix_url = (location) ->
+    add_trailing_slash(location.get_origin() + location.get_path())
 
-  addTrailingSlash = (url) ->
-    if stringEndsWith(url, "/") then url else url + "/"
+  add_trailing_slash = (url) ->
+    if string_ends_with(url, '/') then url else url + '/'
 
-  stringStartsWith = (string, prefix) ->
+  string_starts_with = (string, prefix) ->
     string.slice(0, prefix.length) is prefix
 
-  stringEndsWith = (string, suffix) ->
+  string_ends_with = (string, suffix) ->
     string.slice(-suffix.length) is suffix

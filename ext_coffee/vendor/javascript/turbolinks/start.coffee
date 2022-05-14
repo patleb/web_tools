@@ -1,18 +1,18 @@
 Turbolinks.start = ->
-  if installTurbolinks()
-    Turbolinks.controller ?= createController()
+  if install_turbolinks()
+    Turbolinks.controller ?= create_controller()
     Turbolinks.controller.start()
 
-installTurbolinks = ->
+install_turbolinks = ->
   window.Turbolinks ?= Turbolinks
-  moduleIsInstalled()
+  module_is_installed()
 
-createController = ->
+create_controller = ->
   controller = new Turbolinks.Controller
   controller.adapter = new Turbolinks.BrowserAdapter(controller)
   controller
 
-moduleIsInstalled = ->
+module_is_installed = ->
   window.Turbolinks is Turbolinks
 
-Turbolinks.start() if moduleIsInstalled()
+Turbolinks.start() if module_is_installed()

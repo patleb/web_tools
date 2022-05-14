@@ -8,7 +8,7 @@ window.Turbolinks =
     Turbolinks.controller.visit(location, options)
 
   clearCache: ->
-    Turbolinks.controller.clearCache()
+    Turbolinks.controller.clear_cache()
 
   setProgressBarDelay: (delay) ->
-    Turbolinks.controller.setProgressBarDelay(delay)
+    Turbolinks.controller.set_progress_bar_delay(delay)

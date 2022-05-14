@@ -1,7 +1,7 @@
 class Turbolinks.ProgressBar
   ANIMATION_DURATION = 300
 
-  @defaultCSS: """
+  @default_css: """
     .turbolinks-progress-bar {
       position: fixed;
       display: block;
@@ -16,68 +16,68 @@ class Turbolinks.ProgressBar
   """
 
   constructor: ->
-    @stylesheetElement = @createStylesheetElement()
-    @progressElement = @createProgressElement()
+    @stylesheet = @create_stylesheet()
+    @progress = @create_progress()
 
   show: ->
     unless @visible
       @visible = true
-      @installStylesheetElement()
-      @installProgressElement()
-      @startTrickling()
+      @install_stylesheet()
+      @install_progress()
+      @start_trickling()
 
   hide: ->
     if @visible and not @hiding
       @hiding = true
-      @fadeProgressElement =>
-        @uninstallProgressElement()
-        @stopTrickling()
+      @fade_progress =>
+        @uninstall_progress()
+        @stop_trickling()
         @visible = false
         @hiding = false
 
-  setValue: (@value) ->
+  set_value: (@value) ->
     @refresh()
 
   # Private
 
-  installStylesheetElement: ->
-    document.head.insertBefore(@stylesheetElement, document.head.firstChild)
+  install_stylesheet: ->
+    document.head.insertBefore(@stylesheet, document.head.firstChild)
 
-  installProgressElement: ->
-    @progressElement.style.width = 0
-    @progressElement.style.opacity = 1
-    document.documentElement.insertBefore(@progressElement, document.body)
+  install_progress: ->
+    @progress.style.width = 0
+    @progress.style.opacity = 1
+    document.documentElement.insertBefore(@progress, document.body)
     @refresh()
 
-  fadeProgressElement: (callback) ->
-    @progressElement.style.opacity = 0
+  fade_progress: (callback) ->
+    @progress.style.opacity = 0
     setTimeout(callback, ANIMATION_DURATION * 1.5)
 
-  uninstallProgressElement: ->
-    if @progressElement.parentNode
-      document.documentElement.removeChild(@progressElement)
+  uninstall_progress: ->
+    if @progress.parentNode
+      document.documentElement.removeChild(@progress)
 
-  startTrickling: ->
-    @trickleInterval ?= setInterval(@trickle, ANIMATION_DURATION)
+  start_trickling: ->
+    @trickle_interval ?= setInterval(@trickle, ANIMATION_DURATION)
 
-  stopTrickling: ->
-    clearInterval(@trickleInterval)
-    @trickleInterval = null
+  stop_trickling: ->
+    clearInterval(@trickle_interval)
+    @trickle_interval = null
 
   trickle: =>
-    @setValue(@value + Math.random() / 100)
+    @set_value(@value + Math.random() / 100)
 
   refresh: ->
     requestAnimationFrame =>
-      @progressElement.style.width = "#{10 + (@value * 90)}%"
+      @progress.style.width = "#{10 + (@value * 90)}%"
 
-  createStylesheetElement: ->
-    element = document.createElement("style")
-    element.type = "text/css"
-    element.textContent = @constructor.defaultCSS
+  create_stylesheet: ->
+    element = document.createElement('style')
+    element.type = 'text/css'
+    element.textContent = @constructor.default_css
     element
 
-  createProgressElement: ->
-    element = document.createElement("div")
-    element.className = "turbolinks-progress-bar"
+  create_progress: ->
+    element = document.createElement('div')
+    element.className = 'turbolinks-progress-bar'
     element

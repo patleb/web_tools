@@ -1,102 +1,59 @@
 class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
-  constructor: (@currentSnapshot, @newSnapshot, @isPreview) ->
-    @currentHeadDetails = @currentSnapshot.headDetails
-    @newHeadDetails = @newSnapshot.headDetails
-    @currentBody = @currentSnapshot.bodyElement
-    @newBody = @newSnapshot.bodyElement
+  constructor: (@old_snapshot, @new_snapshot, @is_preview) ->
+    super()
+    @old_head_details = @old_snapshot.head_details
+    @new_head_details = @new_snapshot.head_details
+    @old_body = @old_snapshot.body
+    @new_body = @new_snapshot.body
 
   render: (callback) ->
-    if @shouldRender()
-      @mergeHead()
-      @renderView =>
-        @replaceBody()
-        @focusFirstAutofocusableElement() unless @isPreview
+    if @should_render()
+      @merge_head()
+      @render_view =>
+        @replace_body()
+        @new_snapshot.first_autofocusable()?.focus() unless @is_preview
         callback()
     else
-      @invalidateView()
+      @controller.invalidate_view()
 
-  mergeHead: ->
-    @copyNewHeadStylesheetElements()
-    @copyNewHeadScriptElements()
-    @removeCurrentHeadProvisionalElements()
-    @copyNewHeadProvisionalElements()
-
-  replaceBody: ->
-    placeholders = @relocateCurrentBodyPermanentElements()
-    @activateNewBodyScriptElements()
-    @assignNewBody()
-    @replacePlaceholderElementsWithClonedPermanentElements(placeholders)
-
-  shouldRender: ->
-    @newSnapshot.isVisitable() and @trackedElementsAreIdentical()
-
-  trackedElementsAreIdentical: ->
-    @currentHeadDetails.getTrackedElementSignature() is @newHeadDetails.getTrackedElementSignature()
-
-  copyNewHeadStylesheetElements: ->
-    for element in @getNewHeadStylesheetElements()
+  merge_head: ->
+    for element in @new_head_details.get_missing_stylesheets(@old_head_details)
       document.head.appendChild(element)
-
-  copyNewHeadScriptElements: ->
-    for element in @getNewHeadScriptElements()
-      document.head.appendChild(@createScriptElement(element))
-
-  removeCurrentHeadProvisionalElements: ->
-    for element in @getCurrentHeadProvisionalElements()
+    for element in @new_head_details.get_missing_scripts(@old_head_details)
+      document.head.appendChild(@create_script(element))
+    for element in @old_head_details.get_provisional_elements()
       document.head.removeChild(element)
-
-  copyNewHeadProvisionalElements: ->
-    for element in @getNewHeadProvisionalElements()
+    for element in @new_head_details.get_provisional_elements()
       document.head.appendChild(element)
 
-  relocateCurrentBodyPermanentElements: ->
-    for permanentElement in @getCurrentBodyPermanentElements()
-      placeholder = createPlaceholderForPermanentElement(permanentElement)
-      newElement = @newSnapshot.getPermanentElementById(permanentElement.id)
-      replaceElementWithElement(permanentElement, placeholder.element)
-      replaceElementWithElement(newElement, permanentElement)
-      placeholder
+  replace_body: ->
+    placeholders =
+      for permanent in @old_snapshot.get_permanent_elements(@new_snapshot)
+        placeholder = create_placeholder(permanent)
+        new_element = @new_snapshot.get_permanent(permanent)
+        replace_with(permanent, placeholder.element)
+        replace_with(new_element, permanent)
+        placeholder
+    for inert_script in @new_body.querySelectorAll('script')
+      activated_script = @create_script(inert_script)
+      replace_with(inert_script, activated_script)
+    replace_with(document.body, @new_body)
+    for { element, permanent } in placeholders
+      clone = permanent.cloneNode(true)
+      replace_with(element, clone)
 
-  replacePlaceholderElementsWithClonedPermanentElements: (placeholders) ->
-    for { element, permanentElement } in placeholders
-      clonedElement = permanentElement.cloneNode(true)
-      replaceElementWithElement(element, clonedElement)
+  should_render: ->
+    @new_snapshot.is_visitable() and @same_tracked_signature()
 
-  activateNewBodyScriptElements: ->
-    for inertScriptElement in @getNewBodyScriptElements()
-      activatedScriptElement = @createScriptElement(inertScriptElement)
-      replaceElementWithElement(inertScriptElement, activatedScriptElement)
+  same_tracked_signature: ->
+    @old_head_details.get_tracked_signature() is @new_head_details.get_tracked_signature()
 
-  assignNewBody: ->
-    replaceElementWithElement(document.body, @newBody)
+create_placeholder = (permanent) ->
+  element = document.createElement('meta')
+  element.setAttribute('name', 'turbolinks-permanent-placeholder')
+  element.setAttribute('content', permanent.id)
+  { element, permanent }
 
-  focusFirstAutofocusableElement: ->
-    @newSnapshot.findFirstAutofocusableElement()?.focus()
-
-  getNewHeadStylesheetElements: ->
-    @newHeadDetails.getStylesheetElementsNotInDetails(@currentHeadDetails)
-
-  getNewHeadScriptElements: ->
-    @newHeadDetails.getScriptElementsNotInDetails(@currentHeadDetails)
-
-  getCurrentHeadProvisionalElements: ->
-    @currentHeadDetails.getProvisionalElements()
-
-  getNewHeadProvisionalElements: ->
-    @newHeadDetails.getProvisionalElements()
-
-  getCurrentBodyPermanentElements: ->
-    @currentSnapshot.getPermanentElementsPresentInSnapshot(@newSnapshot)
-
-  getNewBodyScriptElements: ->
-    @newBody.querySelectorAll("script")
-
-createPlaceholderForPermanentElement = (permanentElement) ->
-  element = document.createElement("meta")
-  element.setAttribute("name", "turbolinks-permanent-placeholder")
-  element.setAttribute("content", permanentElement.id)
-  { element, permanentElement }
-
-replaceElementWithElement = (fromElement, toElement) ->
-  if parentElement = fromElement.parentNode
-    parentElement.replaceChild(toElement, fromElement)
+replace_with = (from, to) ->
+  if parent = from.parentNode
+    parent.replaceChild(to, from)

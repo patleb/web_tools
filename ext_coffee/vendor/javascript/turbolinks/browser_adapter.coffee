@@ -1,57 +1,66 @@
+### Turbo 7 iOS/Android adapters
+  Turbo.registerAdapter(this)
+  Turbo.navigator.restorationIdentifier
+  Turbo.navigator.locationWithActionIsSamePage
+  Turbo.navigator.startVisit(location, restorationIdentifier, options)
+  Turbo.navigator.view.scrollToAnchorFromLocation
+###
+### Turbolinks 5 iOS/Android adapters
+  Turbolinks.controller.adapter = this
+  Turbolinks.controller.startVisitToLocationWithAction
+  Turbolinks.controller.restorationIdentifier
+###
 class Turbolinks.BrowserAdapter
-  {NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH} = Turbolinks.HttpRequest
+  { NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH } = Turbolinks.HttpRequest
 
   constructor: (@controller) ->
-    @progressBar = new Turbolinks.ProgressBar
+    @progress_bar = new Turbolinks.ProgressBar
 
   visitProposedToLocationWithAction: (location, action) ->
     @controller.startVisitToLocationWithAction(location, action)
 
   visitStarted: (visit) ->
-    visit.issueRequest()
-    visit.changeHistory()
-    visit.loadCachedSnapshot()
+    visit.issue_request()
+    visit.change_history()
+    visit.load_cached_snapshot()
 
   visitRequestStarted: (visit) ->
-    @progressBar.setValue(0)
-    if visit.hasCachedSnapshot() or visit.action isnt "restore"
-      @showProgressBarAfterDelay()
+    @progress_bar.set_value(0)
+    if visit.has_cached_snapshot() or visit.action isnt 'restore'
+      @progress_bar_timeout = setTimeout(@show_progress_bar, @controller.progress_bar_delay)
     else
-      @showProgressBar()
+      @show_progress_bar()
 
   visitRequestProgressed: (visit) ->
-    @progressBar.setValue(visit.progress)
+    @progress_bar.set_value(visit.progress)
 
   visitRequestCompleted: (visit) ->
-    visit.loadResponse()
+    visit.load_response()
 
   visitRequestFailedWithStatusCode: (visit, statusCode) ->
     switch statusCode
       when NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH
         @reload()
       else
-        visit.loadResponse()
+        visit.load_response()
 
   visitRequestFinished: (visit) ->
-    @hideProgressBar()
+    @hide_progress_bar()
 
   visitCompleted: (visit) ->
-    visit.followRedirect()
+    visit.follow_redirect()
 
   pageInvalidated: ->
     @reload()
 
   # Private
 
-  showProgressBarAfterDelay: ->
-    @progressBarTimeout = setTimeout(@showProgressBar, @controller.progressBarDelay)
+  show_progress_bar: =>
+    @progress_bar.show()
 
-  showProgressBar: =>
-    @progressBar.show()
-
-  hideProgressBar: ->
-    @progressBar.hide()
-    clearTimeout(@progressBarTimeout)
+  hide_progress_bar: ->
+    @progress_bar.hide()
+    clearTimeout(@progress_bar_timeout)
 
   reload: ->
     window.location.reload()

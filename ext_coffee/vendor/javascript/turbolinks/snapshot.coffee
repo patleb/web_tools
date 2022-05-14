@@ -2,62 +2,56 @@ class Turbolinks.Snapshot
   @wrap: (value) ->
     if value instanceof this
       value
-    else if typeof value == "string"
-      @fromHTMLString(value)
+    else if typeof value == 'string'
+      @from_string(value)
     else
-      @fromHTMLElement(value)
+      @from_element(value)
 
-  @fromHTMLString: (html) ->
-    htmlElement = document.createElement("html")
-    htmlElement.innerHTML = html
-    @fromHTMLElement(htmlElement)
+  @from_string: (html) ->
+    element = document.createElement('html')
+    element.innerHTML = html
+    @from_element(element)
 
-  @fromHTMLElement: (htmlElement) ->
-    headElement = htmlElement.querySelector("head")
-    bodyElement = htmlElement.querySelector("body") ? document.createElement("body")
-    headDetails = Turbolinks.HeadDetails.fromHeadElement(headElement)
-    new this headDetails, bodyElement
+  @from_element: (element) ->
+    head = element.querySelector('head')
+    body = element.querySelector('body') ? document.createElement('body')
+    head_details = Turbolinks.HeadDetails.from_element(head)
+    new this head_details, body
 
-  constructor: (@headDetails, @bodyElement) ->
+  constructor: (@head_details, @body) ->
 
   clone: ->
-    new @constructor @headDetails, @bodyElement.cloneNode(true)
+    new @constructor @head_details, @body.cloneNode(true)
 
-  getRootLocation: ->
-    root = @getSetting("root") ? "/"
-    new Turbolinks.Location root
+  get_root_location: ->
+    root = @get_setting('root') ? '/'
+    new Turbolinks.Location(root)
 
-  getCacheControlValue: ->
-    @getSetting("cache-control")
+  get_anchor: (name) ->
+    try @body.querySelector("[id='#{name}'], a[name='#{name}']")
 
-  getElementForAnchor: (anchor) ->
-    try @bodyElement.querySelector("[id='#{anchor}'], a[name='#{anchor}']")
+  get_permanent: (element) ->
+    @body.querySelector("##{element.id}[data-turbolinks-permanent]")
 
-  getPermanentElements: ->
-    @bodyElement.querySelectorAll("[id][data-turbolinks-permanent]")
+  get_permanent_elements: (snapshot) ->
+    element for element in @body.querySelectorAll('[id][data-turbolinks-permanent]') when snapshot.get_permanent(element)
 
-  getPermanentElementById: (id) ->
-    @bodyElement.querySelector("##{id}[data-turbolinks-permanent]")
+  first_autofocusable: ->
+    @body.querySelector('[autofocus]')
 
-  getPermanentElementsPresentInSnapshot: (snapshot) ->
-    element for element in @getPermanentElements() when snapshot.getPermanentElementById(element.id)
+  has_anchor: (name) ->
+    @get_anchor(name)?
 
-  findFirstAutofocusableElement: ->
-    @bodyElement.querySelector("[autofocus]")
+  is_previewable: ->
+    @get_setting('cache-control') isnt 'no-preview'
 
-  hasAnchor: (anchor) ->
-    @getElementForAnchor(anchor)?
+  is_cacheable: ->
+    @get_setting('cache-control') isnt 'no-cache'
 
-  isPreviewable: ->
-    @getCacheControlValue() isnt "no-preview"
-
-  isCacheable: ->
-    @getCacheControlValue() isnt "no-cache"
-
-  isVisitable: ->
-    @getSetting("visit-control") isnt "reload"
+  is_visitable: ->
+    @get_setting('visit-control') isnt 'reload'
 
   # Private
 
-  getSetting: (name) ->
-    @headDetails.getMetaValue("turbolinks-#{name}")
+  get_setting: (name) ->
+    @head_details.get_meta_value("turbolinks-#{name}")
