@@ -61,7 +61,7 @@ class Turbolinks.Visit
       is_preview = @should_issue_request()
       @render ->
         @cache_snapshot()
-        @controller.render({snapshot, is_preview}, @perform_scroll)
+        @controller.render({ snapshot, is_preview }, @perform_scroll)
         @adapter.visitRendered?(this)
         @complete() unless is_preview
 

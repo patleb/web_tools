@@ -179,7 +179,7 @@ class Turbolinks.Controller
           unless @dispatch_click(link, location).defaultPrevented
             event.preventDefault()
             action = @get_action(link)
-            @visit(location, {action})
+            @visit(location, { action })
 
   on_beforeunload: =>
     if @scroll_restoration_was
