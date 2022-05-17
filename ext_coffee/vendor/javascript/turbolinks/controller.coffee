@@ -34,20 +34,20 @@ class Turbolinks.Controller
   clear_cache: ->
     @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
 
-  visit: (location, { action = 'advance' } = {}) ->
+  visit: (location, { action = 'advance', html } = {}) ->
     if @is_reloadable(location)
       return window.location = location
     location = Turbolinks.Location.wrap(location)
     unless @dispatch_before_visit(location, action).defaultPrevented
       if @location_is_visitable(location, action)
-        @adapter.visitProposedToLocationWithAction(location, action)
+        @adapter.visitProposedToLocationWithAction(location, action, html)
       else
         window.location = location
 
-  startVisitToLocationWithAction: (location, action, restoration_id) ->
+  startVisitToLocationWithAction: (location, action, restoration_id, html) ->
     if Turbolinks.supported
       restoration_data = @get_restoration_data(restoration_id)
-      @start_visit(location, action, { restoration_id, restoration_data })
+      @start_visit(location, action, { restoration_id, restoration_data, html })
     else
       window.location = location
 
@@ -234,8 +234,8 @@ class Turbolinks.Controller
     @current_visit.start()
     @dispatch_visit(location, action)
 
-  create_visit: (location, action, { restoration_id, restoration_data, history_changed } = {}) ->
-    visit = new Turbolinks.Visit(this, location, action)
+  create_visit: (location, action, { restoration_id, restoration_data, history_changed, html } = {}) ->
+    visit = new Turbolinks.Visit(this, location, action, html)
     visit.restoration_id = restoration_id ? Turbolinks.uid()
     visit.restoration_data = Turbolinks.copy(restoration_data)
     visit.history_changed = history_changed
@@ -276,7 +276,7 @@ class Turbolinks.Controller
       true
 
   is_reloadable: (url) ->
-    url?.charAt(0) is '?'
+    not (url instanceof Turbolinks.Location) and url?.charAt(0) is '?'
 
   location_is_visitable: (location, action) ->
     location.is_prefixed_by(@get_root_location()) and location.is_html() and

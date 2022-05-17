@@ -16,8 +16,8 @@ class Turbolinks.BrowserAdapter
   constructor: (@controller) ->
     @progress_bar = new Turbolinks.ProgressBar
 
-  visitProposedToLocationWithAction: (location, action) ->
-    @controller.startVisitToLocationWithAction(location, action)
+  visitProposedToLocationWithAction: (location, action, html) ->
+    @controller.startVisitToLocationWithAction(location, action, html)
 
   visitStarted: (visit) ->
     visit.load_cached_snapshot()
