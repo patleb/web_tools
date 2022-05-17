@@ -1,3 +1,6 @@
+import '@@vendor/turbolinks/polyfills/performance_now'
+import '@@vendor/turbolinks/polyfills/replace_with'
+import '@@vendor/turbolinks/polyfills/request_animation_frame'
 import '@@vendor/turbolinks/BANNER'
 import '@@vendor/turbolinks/index'
 import '@@vendor/turbolinks/helpers'

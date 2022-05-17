@@ -20,9 +20,9 @@ class Turbolinks.BrowserAdapter
     @controller.startVisitToLocationWithAction(location, action)
 
   visitStarted: (visit) ->
+    visit.load_cached_snapshot()
     visit.issue_request()
     visit.change_history()
-    visit.load_cached_snapshot()
 
   visitRequestStarted: (visit) ->
     @progress_bar.set_value(0)
@@ -31,27 +31,25 @@ class Turbolinks.BrowserAdapter
     else
       @show_progress_bar()
 
-  visitRequestProgressed: (visit) ->
-    @progress_bar.set_value(visit.progress)
-
   visitRequestCompleted: (visit) ->
     visit.load_response()
 
-  visitRequestFailedWithStatusCode: (visit, statusCode) ->
-    switch statusCode
+  visitRequestFailedWithStatusCode: (visit, status_code) ->
+    switch status_code
       when NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH
-        @reload()
+        @reload("request_failed[#{status_code}]")
       else
         visit.load_response()
 
   visitRequestFinished: (visit) ->
+    @progress_bar.set_value(1)
     @hide_progress_bar()
 
   visitCompleted: (visit) ->
     visit.follow_redirect()
 
-  pageInvalidated: ->
-    @reload()
+  pageInvalidated: (reason) ->
+    @reload(reason)
 
   # Private
 
@@ -62,5 +60,9 @@ class Turbolinks.BrowserAdapter
     @progress_bar.hide()
     clearTimeout(@progress_bar_timeout)
 
-  reload: ->
+  reload: (reason) ->
+    @dispatch_reload(reason)
     window.location.reload()
+
+  dispatch_reload: (reason) ->
+    Turbolinks.dispatch('turbolinks:reload', data: { reason })

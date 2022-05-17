@@ -7,14 +7,16 @@ class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
     @new_body = @new_snapshot.body
 
   render: (callback) ->
-    if @should_render()
+    if not @new_snapshot.is_visitable()
+      @controller.page_invalidated('turbolinks_visit_control_is_reload')
+    else if not @same_tracked_signature()
+      @controller.page_invalidated('tracked_element_mismatch')
+    else
       @merge_head()
       @render_view =>
         @replace_body()
         @new_snapshot.first_autofocusable()?.focus() unless @is_preview
         callback()
-    else
-      @controller.invalidate_view()
 
   merge_head: ->
     for element in @new_head_details.get_missing_stylesheets(@old_head_details)
@@ -27,23 +29,36 @@ class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
       document.head.appendChild(element)
 
   replace_body: ->
-    placeholders =
-      for permanent in @old_snapshot.get_permanent_elements(@new_snapshot)
-        placeholder = create_placeholder(permanent)
-        new_element = @new_snapshot.get_permanent(permanent)
-        replace_with(permanent, placeholder.element)
-        replace_with(new_element, permanent)
-        placeholder
-    for inert_script in @new_body.querySelectorAll('script')
-      activated_script = @create_script(inert_script)
-      replace_with(inert_script, activated_script)
-    replace_with(document.body, @new_body)
-    for { element, permanent } in placeholders
-      clone = permanent.cloneNode(true)
-      replace_with(element, clone)
+    @with_pernament_elements =>
+      for inert_script in @new_body.querySelectorAll('script')
+        document.adoptNode(@new_body)
+        activated_script = @create_script(inert_script)
+        inert_script.replaceWith(activated_script)
+      if document.body and @new_body instanceof HTMLBodyElement
+        document.body.replaceWith(@new_body)
+      else
+        document.documentElement.appendChild(@new_body)
 
-  should_render: ->
-    @new_snapshot.is_visitable() and @same_tracked_signature()
+  with_pernament_elements: (callback) ->
+    placeholders = {}
+    elements = @get_permanent_elements()
+    for id, [..., new_element] of elements
+      placeholder = create_placeholder(new_element)
+      new_element.replaceWith(placeholder)
+      placeholders[placeholder.getAttribute('content')] = placeholder
+    callback()
+    for id, [old_element, ...] of elements
+      clone = old_element.cloneNode(true)
+      old_element.replaceWith(clone)
+      placeholder = placeholders[old_element.id]
+      placeholder?.replaceWith(old_element)
+
+  get_permanent_elements: ->
+    elements = {}
+    for old_element in @old_snapshot.get_permanent_elements(@new_snapshot)
+      if new_element = @new_snapshot.get_permanent(old_element)
+        elements[old_element.id] = [old_element, new_element]
+    elements
 
   same_tracked_signature: ->
     @old_head_details.get_tracked_signature() is @new_head_details.get_tracked_signature()
@@ -52,8 +67,4 @@ create_placeholder = (permanent) ->
   element = document.createElement('meta')
   element.setAttribute('name', 'turbolinks-permanent-placeholder')
   element.setAttribute('content', permanent.id)
-  { element, permanent }
-
-replace_with = (from, to) ->
-  if parent = from.parentNode
-    parent.replaceChild(to, from)
+  element

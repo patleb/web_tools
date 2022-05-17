@@ -6,9 +6,7 @@ class Turbolinks.Renderer
     renderer
 
   render_view: (callback) ->
-    @controller.view_will_render(@new_body)
-    callback()
-    @controller.view_rendered(@new_body)
+    @controller.render_view(@new_body, callback)
 
   create_script: (element) ->
     if element.getAttribute('data-turbolinks-eval') is 'false'

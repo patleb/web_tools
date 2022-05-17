@@ -1,6 +1,6 @@
 class Turbolinks.Visit
-  constructor: (@controller, location, @action) ->
-    @identifier = Turbolinks.uuid()
+  constructor: (@controller, location, @action, @snapshot_html) ->
+    @id = Turbolinks.uid()
     @location = Turbolinks.Location.wrap(location)
     @adapter = @controller.adapter
     @state = 'initialized'
@@ -41,15 +41,17 @@ class Turbolinks.Visit
 
   issue_request: ->
     if @should_issue_request() and not @request?
-      @progress = 0
       @request = new Turbolinks.HttpRequest(this, @location, @referrer)
       @request.send()
 
   get_cached_snapshot: ->
-    if snapshot = @controller.get_cached_snapshot(@location)
+    if snapshot = @controller.get_cached_snapshot(@location) or @get_preloaded_snapshot()
       if not @location.anchor? or snapshot.has_anchor(@location.anchor)
         if @action is 'restore' or snapshot.is_previewable()
           snapshot
+
+  get_preloaded_snapshot: ->
+    Turbolinks.Snapshot.from_string(@snapshot_html) if @snapshot_html
 
   has_cached_snapshot: ->
     @get_cached_snapshot()?
@@ -88,9 +90,6 @@ class Turbolinks.Visit
     @record_timing('requestStart')
     @adapter.visitRequestStarted?(this)
 
-  request_progressed: (@progress) ->
-    @adapter.visitRequestProgressed?(this)
-
   request_completed: (@response, redirected_to_location) ->
     @redirected_to_location = Turbolinks.Location.wrap(redirected_to_location) if redirected_to_location?
     @adapter.visitRequestCompleted(this)
@@ -107,7 +106,7 @@ class Turbolinks.Visit
   perform_scroll: =>
     unless @scrolled
       if @action is 'restore'
-        @scroll_to_restored_position() or @scroll_to_top()
+        @scroll_to_restored_position() or @scroll_to_anchor() or @scroll_to_top()
       else
         @scroll_to_anchor() or @scroll_to_top()
       @scrolled = true

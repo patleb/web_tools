@@ -4,7 +4,9 @@ class Turbolinks.HeadDetails
 
   constructor: (nodes) ->
     @elements = {}
-    for node in nodes when node.nodeType is Node.ELEMENT_NODE
+    for node in nodes when node.nodeType is Node.ELEMENT_NODE and node.tagName.toLowerCase() isnt 'noscript'
+      if node.hasAttribute('nonce')
+        node.setAttribute('nonce', '')
       key = node.outerHTML
       data = @elements[key] ?=
         type: type_of(node)

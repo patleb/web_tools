@@ -12,7 +12,7 @@ function file_fixture(fixture_name, file_fixture_path = null) {
   return cache[path]
 }
 
-module.exports = {
+const fixture = {
   json: (name, root = null) => {
     return JSON.parse(file_fixture(`${name}.json`, root))
   },
@@ -32,3 +32,4 @@ module.exports = {
     cache = {}
   }
 }
+global.fixture = fixture

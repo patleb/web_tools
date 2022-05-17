@@ -9,7 +9,9 @@ class Turbolinks.Controller
     @set_progress_bar_delay(500)
 
   start: ->
-    if Turbolinks.supported and not @started
+    unless Turbolinks.supported
+      return addEventListener('DOMContentLoaded', @dispatch_load, false)
+    unless @started
       addEventListener('click', @click_captured, true)
       addEventListener('DOMContentLoaded', @dom_loaded, false)
       addEventListener('scroll', @on_scroll, false)
@@ -32,11 +34,10 @@ class Turbolinks.Controller
   clear_cache: ->
     @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
 
-  visit: (location, options = {}) ->
+  visit: (location, { action = 'advance' } = {}) ->
     location = Turbolinks.Location.wrap(location)
-    unless @dispatch_before_visit(location).defaultPrevented
-      if @location_is_visitable(location)
-        action = options.action ? 'advance'
+    unless @dispatch_before_visit(location, action).defaultPrevented
+      if @location_is_visitable(location, action)
         @adapter.visitProposedToLocationWithAction(location, action)
       else
         window.location = location
@@ -55,14 +56,16 @@ class Turbolinks.Controller
 
   start_history: ->
     @location = Turbolinks.Location.current_location()
-    @restorationIdentifier = Turbolinks.uuid()
+    @restorationIdentifier = Turbolinks.uid()
     @initial_location = @location
     @initial_restoration_id = @restorationIdentifier
+    addEventListener('beforeunload', @on_beforeunload, false)
     addEventListener('popstate', @on_popstate, false)
     addEventListener('load', @on_load, false)
     @update_history('replace')
 
   stop_history: ->
+    removeEventListener('beforeunload', @on_beforeunload, false)
     removeEventListener('popstate', @on_popstate, false)
     removeEventListener('load', @on_load, false)
     delete @initial_location
@@ -78,7 +81,7 @@ class Turbolinks.Controller
 
   update_history: (method) ->
     state = turbolinks: { @restorationIdentifier }
-    history["#{method}State"](state, null, @location)
+    history["#{method}State"](state, '', @location.toString())
 
   on_history_popped: (location, @restorationIdentifier) ->
     if @enabled
@@ -86,7 +89,7 @@ class Turbolinks.Controller
       @start_visit(location, 'restore', { restoration_id: @restorationIdentifier, restoration_data, history_changed: true })
       @location = Turbolinks.Location.wrap(location)
     else
-      @adapter.pageInvalidated()
+      @adapter.pageInvalidated('turbolinks_disabled')
 
   # Snapshot cache
 
@@ -98,22 +101,33 @@ class Turbolinks.Controller
 
   cache_snapshot: ->
     if @should_cache_snapshot()
-      @dispatch_before_cache()
-      snapshot = @get_snapshot()
-      location = @last_rendered_location || Turbolinks.Location.current_location()
-      Turbolinks.defer =>
-        @cache.put(location, snapshot.clone())
+      unless @dispatch_before_cache().defaultPrevented
+        snapshot = @get_snapshot()
+        location = @last_rendered_location or Turbolinks.Location.current_location()
+        Turbolinks.defer =>
+          @cache.put(location, snapshot.clone())
+        @dispatch_cache()
 
   # Scrolling
 
   scroll_to_anchor: (name) ->
     if element = @get_anchor(name)
       element.scrollIntoView()
+      @focus(element)
     else
       @scroll_to_position(x: 0, y: 0)
 
   scroll_to_position: ({ x, y }) ->
     window.scrollTo(x, y)
+
+  focus: (element) ->
+    if element instanceof HTMLElement
+      if element.hasAttribute('tabindex')
+        element.focus()
+      else
+        element.setAttribute('tabindex', '-1')
+        element.focus()
+        element.removeAttribute('tabindex')
 
   # View
 
@@ -133,19 +147,21 @@ class Turbolinks.Controller
     else
       Turbolinks.ErrorRenderer.render(this, callback, error)
 
-  invalidate_view: ->
-    @adapter.pageInvalidated()
+  render_view: (new_body, callback) ->
+    unless @dispatch_before_render(new_body).defaultPrevented
+      callback()
+      @last_rendered_location = @current_visit.location
+      @dispatch_render(new_body)
 
-  view_will_render: (new_body) ->
-    @dispatch_before_render(new_body)
-
-  view_rendered: ->
-    @last_rendered_location = @current_visit.location
-    @dispatch_render()
+  page_invalidated: (reason) ->
+    @adapter.pageInvalidated(reason)
 
   # Event handlers
 
   dom_loaded: =>
+    unless @scroll_restoration_was
+      @scroll_restoration_was = history.scrollRestoration ? 'auto'
+      history.scrollRestoration = 'manual'
     @last_rendered_location = @location
     @dispatch_load()
 
@@ -155,12 +171,18 @@ class Turbolinks.Controller
 
   click_bubbled: (event) =>
     if @enabled and @click_event_is_significant(event)
-      if link = @get_visitable_link_for_node(event.target)
-        if location = @get_visitable_location_for_link(link)
+      target = event.composedPath?()[0] or event.target
+      if link = @get_visitable_link(target)
+        if location = @get_visitable_location(link)
           unless @dispatch_click(link, location).defaultPrevented
             event.preventDefault()
-            action = @get_action_for_link(link)
+            action = @get_action(link)
             @visit(location, {action})
+
+  on_beforeunload: =>
+    if @scroll_restoration_was
+      history.scrollRestoration = @scroll_restoration_was
+      delete @scroll_restoration_was
 
   on_popstate: (event) =>
     if @should_handle_popstate()
@@ -181,23 +203,26 @@ class Turbolinks.Controller
   dispatch_click: (link, location) ->
     Turbolinks.dispatch('turbolinks:click', target: link, data: { url: location.absolute_url }, cancelable: true)
 
-  dispatch_before_visit: (location) ->
-    Turbolinks.dispatch('turbolinks:before-visit', data: { url: location.absolute_url }, cancelable: true)
+  dispatch_before_visit: (location, action) ->
+    Turbolinks.dispatch('turbolinks:before-visit', data: { url: location.absolute_url, action }, cancelable: true)
 
   dispatch_visit: (location, action) ->
     Turbolinks.dispatch('turbolinks:visit', data: { url: location.absolute_url, action })
 
   dispatch_before_cache: ->
-    Turbolinks.dispatch('turbolinks:before-cache')
+    Turbolinks.dispatch('turbolinks:before-cache', cancelable: true)
+
+  dispatch_cache: ->
+    Turbolinks.dispatch('turbolinks:cache')
 
   dispatch_before_render: (new_body) ->
-    Turbolinks.dispatch('turbolinks:before-render', data: { new_body })
+    Turbolinks.dispatch('turbolinks:before-render', data: { new_body }, cancelable: true)
 
-  dispatch_render: ->
-    Turbolinks.dispatch('turbolinks:render')
+  dispatch_render: (new_body) ->
+    Turbolinks.dispatch('turbolinks:render', data: { new_body })
 
   dispatch_load: (timing = {}) ->
-    Turbolinks.dispatch('turbolinks:load', data: { url: @location.absolute_url, timing })
+    Turbolinks.dispatch('turbolinks:load', data: { url: @location?.absolute_url, timing })
 
   # Private
 
@@ -209,7 +234,7 @@ class Turbolinks.Controller
 
   create_visit: (location, action, { restoration_id, restoration_data, history_changed } = {}) ->
     visit = new Turbolinks.Visit(this, location, action)
-    visit.restoration_id = restoration_id ? Turbolinks.uuid()
+    visit.restoration_id = restoration_id ? Turbolinks.uid()
     visit.restoration_data = Turbolinks.copy(restoration_data)
     visit.history_changed = history_changed
     visit.referrer = @location
@@ -221,7 +246,7 @@ class Turbolinks.Controller
   click_event_is_significant: (event) ->
     not (
       event.defaultPrevented or
-      event.target.isContentEditable or
+      event.target?.isContentEditable or
       event.which > 1 or
       event.altKey or
       event.ctrlKey or
@@ -229,15 +254,15 @@ class Turbolinks.Controller
       event.shiftKey
     )
 
-  get_visitable_link_for_node: (node) ->
+  get_visitable_link: (node) ->
     if @is_visitable(node)
-      Turbolinks.closest(node, 'a[href]:not([target]):not([download])')
+      Turbolinks.closest(node, 'a[href]:not([target^=_]):not([download])')
 
-  get_visitable_location_for_link: (link) ->
+  get_visitable_location: (link) ->
     location = new Turbolinks.Location(link.getAttribute('href'))
-    location if @location_is_visitable(location)
+    location if @location_is_visitable(location, @get_action(link))
 
-  get_action_for_link: (link) ->
+  get_action: (link) ->
     link.getAttribute('data-turbolinks-action') ? 'advance'
 
   is_visitable: (node) ->
@@ -246,19 +271,21 @@ class Turbolinks.Controller
     else
       true
 
-  location_is_visitable: (location) ->
-    location.is_prefixed_by(@get_root_location()) and location.is_html()
+  location_is_visitable: (location, action) ->
+    location.is_prefixed_by(@get_root_location()) and location.is_html() and
+      (not location.is_same_page_anchor() or action is 'replace')
 
-  get_restoration_data: (identifier) ->
-    @restoration_data[identifier] ?= {}
+  get_restoration_data: (restoration_id) ->
+    @restoration_data[restoration_id] ?= {}
 
   should_handle_popstate: ->
     # Safari dispatches a popstate event after window's load event, ignore it
-    @page_loaded or document.readyState is 'complete'
+    (@page_loaded or document.readyState is 'complete') and
+      @restorationIdentifier isnt event.state?.turbolinks?.restorationIdentifier
 
   get_restoration_id: (event) ->
     if event.state
-      (event.state.turbolinks || {}).restorationIdentifier
+      (event.state.turbolinks ? {}).restorationIdentifier
     else if Turbolinks.Location.current_location().is_equal_to(@initial_location)
       @initial_restoration_id
 

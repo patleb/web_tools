@@ -9,7 +9,7 @@ class Turbolinks.ProgressBar
       left: 0;
       height: 3px;
       background: #0076ff;
-      z-index: 9999;
+      z-index: 2147483647;
       transition: width #{ANIMATION_DURATION}ms ease-out, opacity #{ANIMATION_DURATION / 2}ms #{ANIMATION_DURATION / 2}ms ease-in;
       transform: translate3d(0, 0, 0);
     }
@@ -18,11 +18,12 @@ class Turbolinks.ProgressBar
   constructor: ->
     @stylesheet = @create_stylesheet()
     @progress = @create_progress()
+    @install_stylesheet()
+    @set_value(0)
 
   show: ->
     unless @visible
       @visible = true
-      @install_stylesheet()
       @install_progress()
       @start_trickling()
 
@@ -75,6 +76,8 @@ class Turbolinks.ProgressBar
     element = document.createElement('style')
     element.type = 'text/css'
     element.textContent = @constructor.default_css
+    nonce = Rails.cspNonce()
+    element.nonce = nonce if nonce
     element
 
   create_progress: ->

@@ -6,7 +6,7 @@ describe('Turbolinks Visit', () => {
   })
 
   afterEach(() => {
-    window.reset_document()
+    dom.reset_document()
   })
 
   it('should go to location /visit', async () => {
@@ -31,11 +31,11 @@ describe('Turbolinks Visit', () => {
 
   describe('Reload', () => {
     beforeEach(() => {
-      delete window.location
+      url.delete_location()
     })
 
     afterEach(() => {
-      window.reset_location()
+      url.reset_location()
     })
 
     it('should programmatically visit a cross-origin location falls back to window.location', async () => {
@@ -70,7 +70,7 @@ describe('Turbolinks Visit', () => {
     turbolinks.on_event('turbolinks:visit', (event) => {
       event_locations.visit = event.data.url
     })
-    await turbolinks.back('visit', {}, (event) => {
+    await turbolinks.back({}, (event) => {
       assert.null(event_locations.before_visit)
       assert.equal(event_locations.visit, event.data.url)
     })

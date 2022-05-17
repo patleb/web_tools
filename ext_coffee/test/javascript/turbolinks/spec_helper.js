@@ -2,19 +2,24 @@ import '@@vendor/rails-ujs/all'
 import '@@vendor/turbolinks/all'
 
 const events = [
-  "turbolinks:before-cache",
-  "turbolinks:before-render",
-  "turbolinks:before-visit",
-  "turbolinks:click",
-  "turbolinks:load",
-  "turbolinks:render",
-  "turbolinks:request-start",
-  "turbolinks:request-end",
-  "turbolinks:visit",
+  'DOMContentLoaded',
+  'hashchange',
+  'popstate',
+  'turbolinks:before-cache',
+  'turbolinks:before-render',
+  'turbolinks:before-visit',
+  'turbolinks:cache',
+  'turbolinks:click',
+  'turbolinks:load',
+  'turbolinks:reload',
+  'turbolinks:render',
+  'turbolinks:request-start',
+  'turbolinks:request-end',
+  'turbolinks:visit',
 ].concat([
-  "turbolinks:click-cancel",
-  "turbolinks:click-only",
-  "turbolinks:visit-reload",
+  'turbolinks:click-cancel',
+  'turbolinks:click-only',
+  'turbolinks:visit-reload',
 ])
 
 const branches = {
@@ -48,8 +53,10 @@ afterEach(() => {
 const old_click_bubbled = Turbolinks.controller.click_bubbled.bind(Turbolinks.controller)
 Turbolinks.controller.click_bubbled = function (event) {
   let bubbled = !!old_click_bubbled(event)
-  event.data = { bubbled }
-  Turbolinks.dispatch('turbolinks:click-only', event)
+  if (branches.click_only) {
+    event.data = { bubbled }
+    Turbolinks.dispatch('turbolinks:click-only', event)
+  }
 }
 
 const old_visit = Turbolinks.controller.visit.bind(Turbolinks.controller)
@@ -76,7 +83,7 @@ function listen_on(event_name, handler) {
   }, false)
 }
 
-function navigate(direction, location, { event_name = 'turbolinks:load' } = {}, asserts) {
+function navigate(direction, { event_name = 'turbolinks:load' } = {}, asserts) {
   return new Promise((resolve) => {
     listen_on(event_name, (event) => {
       resolve(event)
@@ -87,15 +94,13 @@ function navigate(direction, location, { event_name = 'turbolinks:load' } = {}, 
 }
 
 const turbolinks = {
-  setup: (location, { async = false } = {}) => {
+  setup: (location) => {
     let state = { turbolinks: { restorationIdentifier: Turbolinks.controller.restorationIdentifier } }
-    window.history.replaceState(state, null, `/${location}`)
+    window.history.replaceState(state, '', `http://localhost/${location}`)
     Turbolinks.controller.location = Turbolinks.Location.wrap(window.location)
-    window.setup_document(fixture.html(location))
+    dom.setup_document(fixture.html(location))
     Turbolinks.clearCache()
-    if (!async) {
-      Turbolinks.dispatch('DOMContentLoaded')
-    }
+    Turbolinks.dispatch('DOMContentLoaded')
   },
   back: (...args) => {
     return navigate('back', ...args)
@@ -103,18 +108,18 @@ const turbolinks = {
   forward: (...args) => {
     return navigate('forward', ...args)
   },
-  visit_reload_and_assert: (url) => {
+  visit_reload_and_assert: (location, { action = 'advance' } = {}) => {
     assert.total(4)
     assert.null(window.location)
     turbolinks.on_event('turbolinks:before-visit', (event) => {
-      assert.equal(url, event.data.url)
+      assert.equal(location, event.data.url)
     })
-    turbolinks.visit_reload(url, (event) => {
-      assert.equal(url, event.data.url)
-      assert.equal(url, window.location.toString())
+    turbolinks.visit_reload(location, { action }, (event) => {
+      assert.equal(location, event.data.url)
+      assert.equal(location, window.location.toString())
     })
   },
-  visit_reload: (location, asserts) => {
+  visit_reload: (location, { action = 'advance' } = {}, asserts) => {
     return new Promise((resolve) => {
       listen_on('turbolinks:visit-reload', (event) => {
         branches.visit_reload = false
@@ -122,14 +127,21 @@ const turbolinks = {
         asserts(event)
       })
       branches.visit_reload = true
-      return Turbolinks.visit(location)
+      return Turbolinks.visit(location, { action })
     })
   },
-  visit: (location, { event_name = 'turbolinks:load', status = 200, action = 'advance' } = {}, asserts) => {
+  visit: (location, { event_name = 'turbolinks:load', status = 200, action = 'advance', headers = {} } = {}, asserts) => {
     let origin_url = `http://localhost/${location}`
-    xhr.get(origin_url, (req, res) => {
-      return res.status(status).header('content-type', 'text/html').body(fixture.html(location))
-    })
+    let anchor = url.get_anchor(origin_url)
+    if (anchor != null) {
+      origin_url = origin_url.replace(`#${anchor}`, '')
+    }
+    if (anchor == null || window.location && origin_url !== window.location.href || action === 'replace') {
+      let name = location.replace(`#${anchor}`, '')
+      xhr.get(origin_url, (req, res) => {
+        return res.status(status).header('content-type', 'text/html').body(fixture.html(name))
+      })
+    }
     return new Promise((resolve) => {
       listen_on(event_name, (event) => {
         resolve(event)
@@ -177,17 +189,28 @@ const turbolinks = {
       asserts(event)
     })
   },
-  click: (selector, { event_name = 'turbolinks:load', status = 200 } = {}, asserts) => {
+  click: (selector, { event_name = 'turbolinks:load', status = 200, headers = {} } = {}, asserts) => {
     let link = document.querySelector(selector)
+    let shadow_root = link.shadowRoot
+    if (shadow_root) {
+      link = shadow_root.querySelector('a')
+    }
     let origin_url = link.href
-    let anchor = origin_url.split('#')[1]
+    let action = link.getAttribute('data-turbolinks-action')
+    let anchor = url.get_anchor(origin_url)
     if (anchor != null) {
       origin_url = origin_url.replace(`#${anchor}`, '')
     }
-    let location = origin_url.replace(/^http:\/\/localhost\//, '')
-    xhr.get(origin_url, (req, res) => {
-      return res.status(status).header('content-type', 'text/html').body(fixture.html(location))
-    })
+    if (anchor == null || window.location && origin_url !== window.location.href || action === 'replace') {
+      let name = origin_url.replace(/^http:\/\/localhost\//, '')
+      xhr.get(origin_url, (req, res) => {
+        res = res.status(status).header('content-type', 'text/html')
+        for(const [name, value] of Object.entries(headers)) {
+          res = res.header(name, value)
+        }
+        return res.body(fixture.html(name))
+      })
+    }
     return new Promise((resolve) => {
       listen_on(event_name, (event) => {
         resolve(event)

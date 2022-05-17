@@ -19,11 +19,11 @@ module.exports = {
   testRegex: '_test\\.js$',
   transform: {
     '\\.js$': 'babel-jest',
-    '\\.coffee$': './app/javascript/lib/ext_webpacker/jest/jest-preprocessor.js',
+    '\\.coffee$': './app/javascript/lib/ext_webpacker/jest/jest_preprocessor.js',
   },
-  preset: './app/javascript/lib/ext_webpacker/jest/jest-preset.js',
+  preset: './app/javascript/lib/ext_webpacker/jest/jest_preset.js',
   setupFilesAfterEnv: [
-    './app/javascript/lib/ext_webpacker/jest/jest-setup.js'
+    './app/javascript/lib/ext_webpacker/jest/jest_setup.js'
   ],
   clearMocks: true,
 }

@@ -6,7 +6,7 @@ describe('Turbolinks Rendering', () => {
   })
 
   afterEach(() => {
-    window.reset_document()
+    dom.reset_document()
   })
 
   it('should go to location /rendering', async () => {
@@ -48,11 +48,11 @@ describe('Turbolinks Rendering', () => {
 
   describe('Reload', () => {
     beforeAll(() => {
-      window.mock_location()
+      url.mock_location()
     })
 
     afterAll(() => {
-      window.reset_location()
+      url.reset_location()
     })
 
     it('should reload when tracked elements change', async () => {
@@ -70,29 +70,29 @@ describe('Turbolinks Rendering', () => {
 
   it('should accumulate asset elements in head', async () => {
     assert.total(2)
-    let old_elements = dom.get_asset_elements()
+    let old_elements = get_asset_elements()
     let new_elements
     await turbolinks.click('#additional-assets-link', { event_name: 'turbolinks:render' }, (event) => {
-      new_elements = dom.get_asset_elements()
+      new_elements = get_asset_elements()
       assert.not_equal(old_elements, new_elements)
     })
-    await turbolinks.back('rendering', { event_name: 'turbolinks:render' }, (event) => {
-      old_elements = dom.get_asset_elements()
+    await turbolinks.back({ event_name: 'turbolinks:render' }, (event) => {
+      old_elements = get_asset_elements()
       assert.equal(new_elements, old_elements)
     })
   })
 
   it('should replace provisional elements in head', async () => {
     assert.null(document.querySelector('meta[name=test]'))
-    let old_elements = dom.get_provisional_elements()
+    let old_elements = get_provisional_elements()
     let new_elements
     await turbolinks.click('#same-origin-link', { event_name: 'turbolinks:render' }, (event) => {
-      new_elements = dom.get_provisional_elements()
+      new_elements = get_provisional_elements()
       assert.not_equal(old_elements, new_elements)
       assert.not_null(document.querySelector('meta[name=test]'))
     })
-    await turbolinks.back('rendering', { event_name: 'turbolinks:render' }, (event) => {
-      old_elements = dom.get_provisional_elements()
+    await turbolinks.back({ event_name: 'turbolinks:render' }, (event) => {
+      old_elements = get_provisional_elements()
       assert.not_equal(new_elements, old_elements)
       assert.null(document.querySelector('meta[name=test]'))
     })
@@ -103,7 +103,7 @@ describe('Turbolinks Rendering', () => {
     await turbolinks.click('#head-script-link', { event_name: 'turbolinks:render' }, (event) => {
       assert.equal(1, window.headScriptEvaluationCount)
     })
-    await turbolinks.back('rendering', { event_name: 'turbolinks:render' }, (event) => {
+    await turbolinks.back({ event_name: 'turbolinks:render' }, (event) => {
       assert.equal(1, window.headScriptEvaluationCount)
     })
     await turbolinks.click('#head-script-link', { event_name: 'turbolinks:render' }, (event) => {
@@ -117,7 +117,7 @@ describe('Turbolinks Rendering', () => {
     await turbolinks.click('#body-script-link', { event_name: 'turbolinks:render' }, (event) => {
       assert.equal(1, window.bodyScriptEvaluationCount)
     })
-    await turbolinks.back('rendering', { event_name: 'turbolinks:render' }, (event) => {
+    await turbolinks.back({ event_name: 'turbolinks:render' }, (event) => {
       assert.equal(1, window.bodyScriptEvaluationCount)
     })
     await turbolinks.click('#body-script-link', { event_name: 'turbolinks:render' }, (event) => {
@@ -142,7 +142,7 @@ describe('Turbolinks Rendering', () => {
       new_element = document.querySelector('#permanent')
       assert.same(old_element, new_element)
     })
-    await turbolinks.back('rendering', { event_name: 'turbolinks:render' }, (event) => {
+    await turbolinks.back({ event_name: 'turbolinks:render' }, (event) => {
       new_element = document.querySelector('#permanent')
       assert.same(old_element, new_element)
     })
@@ -155,7 +155,7 @@ describe('Turbolinks Rendering', () => {
     await turbolinks.click('#same-origin-link', {}, (event) => {
       assert.not_equal('Modified', document.body.innerHTML)
     })
-    await turbolinks.back('rendering', {}, (event) => {
+    await turbolinks.back({}, (event) => {
       assert.equal('Modified', document.body.innerHTML)
     })
   })
@@ -175,7 +175,7 @@ describe('Turbolinks Rendering', () => {
     await turbolinks.click('#same-origin-link', {}, (event) => {
       assert.not_equal('Modified', document.body.innerHTML)
     })
-    await turbolinks.back('rendering', {}, (event) => {
+    await turbolinks.back({}, (event) => {
       assert.equal('Modified', document.body.innerHTML)
     })
   })
@@ -186,3 +186,10 @@ describe('Turbolinks Rendering', () => {
     })
   })
 })
+
+const get_asset_elements = () => {
+  return dom.children(document.head, (e) => dom.match(e, 'script, style, link[rel=stylesheet], noscript'))
+}
+const get_provisional_elements = () => {
+  return dom.children(document.head, (e) => !dom.match(e, 'script, style, link[rel=stylesheet], noscript'))
+}

@@ -1,12 +1,33 @@
 import turbolinks from './spec_helper'
 
 describe('Turbolinks Navigation', () => {
+  beforeAll(() => {
+    class CustomLinkElement extends HTMLElement {
+      constructor() {
+        super()
+        this.attachShadow({ mode: 'open' })
+      }
+      connectedCallback() {
+        this.shadowRoot.innerHTML = `
+          <a href="${this.getAttribute('link')}">
+            ${this.getAttribute('text')}
+          </a>
+        `
+      }
+    }
+    window.customElements.define('custom-link-element', CustomLinkElement)
+  })
+
   beforeEach(() => {
     turbolinks.setup('navigation')
+    Turbolinks.controller.stop()
+    Turbolinks.controller.adapter = new Turbolinks.BrowserAdapter(Turbolinks.controller)
+    Turbolinks.controller.start()
+    assert.equal('123', document.head.querySelector('style').getAttribute('nonce'))
   })
 
   afterEach(() => {
-    window.reset_document()
+    dom.reset_document()
   })
 
   it('should go to location /navigation', async () => {
@@ -16,7 +37,16 @@ describe('Turbolinks Navigation', () => {
   })
 
   it('should follow a same-origin unannotated link', async () => {
-    await turbolinks.click('#same-origin-unannotated-link', {}, (event) => {
+    turbolinks.on_event('turbolinks:request-end', (event) => {
+      assert.equal('123', event.data.xhr.req.header('X-Turbolinks-Nonce'))
+    })
+    await turbolinks.click('#same-origin-unannotated-link', { headers: { 'X-Turbolinks-Nonce': '123' } }, (event) => {
+      turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
+    })
+  })
+
+  it('should follow a same-origin unannotated custom element link', async () => {
+    await turbolinks.click('#custom-link-element', {}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
     })
   })
@@ -91,7 +121,7 @@ describe('Turbolinks Navigation', () => {
     await turbolinks.click('#same-origin-unannotated-link', {}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
     })
-    await turbolinks.back('navigation', {}, (event) => {
+    await turbolinks.back({}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/navigation', { title: 'Turbolinks', h1: 'Navigation', action: 'restore' })
     })
   })
@@ -100,10 +130,10 @@ describe('Turbolinks Navigation', () => {
     await turbolinks.click('#same-origin-unannotated-link', {}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
     })
-    await turbolinks.back('navigation', {}, (event) => {
+    await turbolinks.back({}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/navigation', { title: 'Turbolinks', h1: 'Navigation', action: 'restore' })
     })
-    await turbolinks.forward('one', {}, (event) => {
+    await turbolinks.forward({}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One', action: 'restore' })
     })
   })

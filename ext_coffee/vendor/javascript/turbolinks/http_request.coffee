@@ -86,7 +86,6 @@ class Turbolinks.HttpRequest
 
   set_progress: (progress) ->
     @progress = progress
-    @visit.request_progressed?(@progress)
 
   destroy: ->
     @set_progress(1)
@@ -94,5 +93,5 @@ class Turbolinks.HttpRequest
     @visit = null
     @xhr = null
 
-  is_html: (content_type) ->
-    (content_type || '').match(/^text\/html|^application\/xhtml\+xml/)
+  is_html: (content_type = '') ->
+    content_type.match(/^text\/html|^application\/xhtml\+xml/)

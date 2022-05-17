@@ -2,15 +2,14 @@ class Turbolinks.Snapshot
   @wrap: (value) ->
     if value instanceof this
       value
-    else if typeof value == 'string'
+    else if typeof value is 'string'
       @from_string(value)
     else
       @from_element(value)
 
   @from_string: (html) ->
-    element = document.createElement('html')
-    element.innerHTML = html
-    @from_element(element)
+    { documentElement } = new DOMParser().parseFromString(html, 'text/html')
+    @from_element(documentElement)
 
   @from_element: (element) ->
     head = element.querySelector('head')
@@ -21,7 +20,8 @@ class Turbolinks.Snapshot
   constructor: (@head_details, @body) ->
 
   clone: ->
-    new @constructor @head_details, @body.cloneNode(true)
+    { body } = @constructor.from_string(@body.outerHTML)
+    new @constructor @head_details, body
 
   get_root_location: ->
     root = @get_setting('root') ? '/'

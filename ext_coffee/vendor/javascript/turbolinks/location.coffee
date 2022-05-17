@@ -14,12 +14,14 @@ class Turbolinks.Location
 
     @absolute_url = link.href
 
-    anchor_length = link.hash.length
-    if anchor_length < 2
-      @request_url = @absolute_url
+    if hash = @absolute_url.hash
+      @anchor = hash.slice(1)
+    else if anchor_match = @absolute_url.match(/#(.*)$/)
+      @anchor = anchor_match[1]
+    if @anchor?
+      @request_url = @absolute_url.slice(0, -(@anchor.length + 1))
     else
-      @request_url = @absolute_url.slice(0, -anchor_length)
-      @anchor = link.hash.slice(1)
+      @request_url = @absolute_url
 
   get_origin: ->
     @absolute_url.split('/', 3).join('/')
@@ -45,6 +47,9 @@ class Turbolinks.Location
 
   is_equal_to: (location) ->
     @absolute_url is location?.absolute_url
+
+  is_same_page_anchor: ->
+    @request_url is @constructor.current_location().request_url and @anchor?
 
   to_cache_key: ->
     @request_url

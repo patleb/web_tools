@@ -1,8 +1,6 @@
 window.Turbolinks =
   supported: do ->
-    window.history.pushState? and
-      window.requestAnimationFrame? and
-      window.addEventListener?
+    window.history.pushState?
 
   visit: (location, options) ->
     Turbolinks.controller.visit(location, options)

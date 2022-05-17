@@ -12,7 +12,7 @@ closest = do ->
   html.closest ? (selector) ->
     node = this
     while node
-      return node if node.nodeType is Node.ELEMENT_NODE and match.call(node, selector)
+      return node if node.nodeType is Node.ELEMENT_NODE and Rails.matches(node, selector)
       node = node.parentNode
 
 Turbolinks.defer = (callback) ->
@@ -31,7 +31,7 @@ Turbolinks.dispatch = (name, { target, cancelable, data } = {}) ->
   event.data = data ? {}
   # Fix setting `defaultPrevented` when `preventDefault()` is called
   # http://stackoverflow.com/questions/23349191/event-preventdefault-is-not-working-in-ie-11-for-custom-events
-  if event.cancelable and not prevent_default_supported
+  if event.cancelable and not preventDefaultSupported
     { preventDefault } = event
     event.preventDefault = ->
       unless this.defaultPrevented
@@ -40,18 +40,22 @@ Turbolinks.dispatch = (name, { target, cancelable, data } = {}) ->
   (target ? document).dispatchEvent(event)
   event
 
-prevent_default_supported = do ->
+preventDefaultSupported = do ->
   event = document.createEvent('Events')
   event.initEvent('test', true, true)
   event.preventDefault()
   event.defaultPrevented
 
-Turbolinks.match = (element, selector) ->
-  match.call(element, selector)
+Turbolinks.id = 0
 
-match = do ->
-  html = document.documentElement
-  html.matchesSelector ? html.webkitMatchesSelector ? html.msMatchesSelector ? html.mozMatchesSelector
+Turbolinks.uid = ->
+  pad = '0000000000000'
+  time = (new Date().getTime()).toString()
+  time = String(time + pad).substring(0, pad.length)
+  pad = '000'
+  num = Turbolinks.id++
+  num = String(pad + num).slice(-pad.length)
+  "#{time}#{num}"
 
 Turbolinks.uuid = ->
   result = ''
