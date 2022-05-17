@@ -45,6 +45,13 @@ describe('Turbolinks Visit', () => {
     it('should visit a location served with a non-HTML content type', async () => {
       await turbolinks.visit_reload_and_assert('http://localhost/svg.svg')
     })
+
+    it('should visit a same-page reload link', async () => {
+      assert.null(window.location)
+      await turbolinks.visit_reload('?', {}, (event) => {
+        assert.equal('?', window.location.toString())
+      })
+    })
   })
 
   it('should prevent navigation on canceling a visit event', async () => {

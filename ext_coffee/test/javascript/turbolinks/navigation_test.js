@@ -137,4 +137,10 @@ describe('Turbolinks Navigation', () => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One', action: 'restore' })
     })
   })
+
+  it('should not follow a same-page reload link', async () => {
+    await turbolinks.click_only('#same-origin-reloadable-link', (event) => {
+      turbolinks.assert_click_event(event, { bubbled: false })
+    })
+  })
 })

@@ -35,6 +35,8 @@ class Turbolinks.Controller
     @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
 
   visit: (location, { action = 'advance' } = {}) ->
+    if @is_reloadable(location)
+      return window.location = location
     location = Turbolinks.Location.wrap(location)
     unless @dispatch_before_visit(location, action).defaultPrevented
       if @location_is_visitable(location, action)
@@ -259,7 +261,9 @@ class Turbolinks.Controller
       Turbolinks.closest(node, 'a[href]:not([target^=_]):not([download])')
 
   get_visitable_location: (link) ->
-    location = new Turbolinks.Location(link.getAttribute('href'))
+    url = link.getAttribute('href')
+    return if @is_reloadable(url)
+    location = new Turbolinks.Location(url)
     location if @location_is_visitable(location, @get_action(link))
 
   get_action: (link) ->
@@ -270,6 +274,9 @@ class Turbolinks.Controller
       container.getAttribute('data-turbolinks') isnt 'false'
     else
       true
+
+  is_reloadable: (url) ->
+    url?.charAt(0) is '?'
 
   location_is_visitable: (location, action) ->
     location.is_prefixed_by(@get_root_location()) and location.is_html() and
