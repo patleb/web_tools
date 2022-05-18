@@ -110,7 +110,6 @@ class Turbolinks.Controller
         location = @last_rendered_location or Turbolinks.Location.current_location()
         Turbolinks.defer =>
           @cache.put(location, snapshot.clone())
-        @dispatch_cache()
 
   # Scrolling
 
@@ -234,9 +233,6 @@ class Turbolinks.Controller
 
   dispatch_before_cache: ->
     Turbolinks.dispatch('turbolinks:before-cache', cancelable: true)
-
-  dispatch_cache: ->
-    Turbolinks.dispatch('turbolinks:cache')
 
   dispatch_before_render: (new_body) ->
     Turbolinks.dispatch('turbolinks:before-render', data: { new_body }, cancelable: true)

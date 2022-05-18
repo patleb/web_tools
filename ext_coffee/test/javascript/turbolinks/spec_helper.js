@@ -8,7 +8,6 @@ const events = [
   'turbolinks:before-cache',
   'turbolinks:before-render',
   'turbolinks:before-visit',
-  'turbolinks:cache',
   'turbolinks:click',
   'turbolinks:load',
   'turbolinks:reload',
@@ -80,6 +79,8 @@ Turbolinks.controller.visit = function (location, options = {}) {
   }
 }
 
+const old_defer = Turbolinks.defer
+
 function listen_on(event_name, handler) {
   addEventListener(event_name, function eventListener(event) {
     removeEventListener(event_name, eventListener, false)
@@ -105,6 +106,12 @@ const turbolinks = {
     dom.setup_document(fixture.html(location))
     Turbolinks.clearCache()
     Turbolinks.dispatch('DOMContentLoaded')
+  },
+  setup_no_defer: () => {
+    Turbolinks.defer = (callback) =>  callback()
+  },
+  reset_defer: () => {
+    Turbolinks.defer = old_defer
   },
   back: (...args) => {
     return navigate('back', ...args)
