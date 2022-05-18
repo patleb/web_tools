@@ -9,6 +9,8 @@ const assert = {
   not_null: (act) => expect(act).not.toBeNil(),
   empty: (act) => expect(act).toBeEmpty(),
   not_empty: (act) => expect(act).not.toBeEmpty(),
+  includes: (exp, act) => expect(act).toInclude(exp),
+  excludes: (exp, act) => expect(act).not.toInclude(exp),
   called: (act, n = null) => n == null ? expect(act).toBeCalled() : expect(act).toBeCalledTimes(n),
   not_called: (act) => expect(act).not.toBeCalled(),
   total: (n) => expect.assertions(n),

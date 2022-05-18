@@ -30,11 +30,20 @@ class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
 
   replace_body: ->
     @with_pernament_elements =>
-      document.adoptNode(@new_body)
-      for inert_script in @new_body.querySelectorAll('script')
+      old_body = document.body.querySelector('[data-turbolinks-body]')
+      new_body = @new_body.querySelector('[data-turbolinks-body]')
+      if old_body and new_body
+        container = true
+      else
+        old_body = document.body
+        new_body = @new_body
+      document.adoptNode(new_body)
+      for inert_script in new_body.querySelectorAll('script')
         activated_script = @create_script(inert_script)
         inert_script.replaceWith(activated_script)
-      if document.body and @new_body instanceof HTMLBodyElement
+      if container
+        old_body.replaceWith(new_body)
+      else if document.body and @new_body instanceof HTMLBodyElement
         document.body.replaceWith(@new_body)
       else
         document.documentElement.appendChild(@new_body)

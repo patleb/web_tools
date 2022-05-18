@@ -188,6 +188,14 @@ describe('Turbolinks Rendering', () => {
     })
   })
 
+  it('should render the specified body container marked with data-turbolinks-body', async () => {
+    await turbolinks.click('#body-container', {}, (event) => {
+      assert.includes('Rendering', document.body.innerHTML)
+      assert.excludes('Body container', document.body.innerHTML)
+      assert.includes('New body', document.body.innerHTML)
+    })
+  })
+
   it('should load error pages', async () => {
     await turbolinks.click('#nonexistent-link', { event_name: 'turbolinks:render', status: 404 }, (event) => {
       assert.equal('Not found', document.body.innerHTML.trim())
