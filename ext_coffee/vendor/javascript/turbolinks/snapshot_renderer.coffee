@@ -8,7 +8,7 @@ class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
 
   render: (callback) ->
     if not @new_snapshot.is_visitable()
-      @controller.page_invalidated('turbolinks_visit_control_is_reload')
+      @controller.page_invalidated('visit_control_is_reload')
     else if not @same_tracked_signature()
       @controller.page_invalidated('tracked_element_mismatch')
     else
@@ -41,12 +41,10 @@ class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
       for inert_script in new_body.querySelectorAll('script')
         activated_script = @create_script(inert_script)
         inert_script.replaceWith(activated_script)
-      if container
+      if container or old_body and new_body instanceof HTMLBodyElement
         old_body.replaceWith(new_body)
-      else if document.body and @new_body instanceof HTMLBodyElement
-        document.body.replaceWith(@new_body)
       else
-        document.documentElement.appendChild(@new_body)
+        document.documentElement.appendChild(new_body)
 
   with_pernament_elements: (callback) ->
     placeholders = {}

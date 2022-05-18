@@ -167,7 +167,7 @@ class Turbolinks.Controller
       @scroll_restoration_was = history.scrollRestoration ? 'auto'
       history.scrollRestoration = 'manual'
     @last_rendered_location = @location
-    @dispatch_load()
+    @dispatch_load(once: true)
 
   search_captured: =>
     removeEventListener('submit', @search_bubbled, false)
@@ -244,8 +244,8 @@ class Turbolinks.Controller
   dispatch_render: (new_body) ->
     Turbolinks.dispatch('turbolinks:render', data: { new_body })
 
-  dispatch_load: (timing = {}) ->
-    Turbolinks.dispatch('turbolinks:load', data: { url: @location?.absolute_url, timing })
+  dispatch_load: (info = {}) ->
+    Turbolinks.dispatch('turbolinks:load', data: { url: @location?.absolute_url, info })
 
   # Private
 

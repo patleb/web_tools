@@ -8,7 +8,7 @@ class Turbolinks.Visit
 
   start: ->
     if @state is 'initialized'
-      @record_timing('visitStart')
+      @record_timing('visit_start')
       @state = 'started'
       @adapter.visitStarted(this)
 
@@ -20,7 +20,7 @@ class Turbolinks.Visit
 
   complete: ->
     if @state is 'started'
-      @record_timing('visitEnd')
+      @record_timing('visit_end')
       @state = 'completed'
       @adapter.visitCompleted?(this)
       @controller.visit_completed(this)
@@ -87,7 +87,7 @@ class Turbolinks.Visit
   # HTTP Request delegate
 
   request_started: ->
-    @record_timing('requestStart')
+    @record_timing('request_start')
     @adapter.visitRequestStarted?(this)
 
   request_completed: (@response, redirected_to_location) ->
@@ -98,7 +98,7 @@ class Turbolinks.Visit
     @adapter.visitRequestFailedWithStatusCode(this, statusCode)
 
   request_finished: ->
-    @record_timing('requestEnd')
+    @record_timing('request_end')
     @adapter.visitRequestFinished?(this)
 
   # Scrolling
