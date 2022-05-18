@@ -1,5 +1,5 @@
 class Turbolinks.Visit
-  constructor: (@controller, location, @action, @snapshot_html) ->
+  constructor: (@controller, location, @action, @html) ->
     @id = Turbolinks.uid()
     @location = Turbolinks.Location.wrap(location)
     @adapter = @controller.adapter
@@ -51,7 +51,7 @@ class Turbolinks.Visit
           snapshot
 
   get_preloaded_snapshot: ->
-    Turbolinks.Snapshot.from_string(@snapshot_html) if @snapshot_html
+    Turbolinks.Snapshot.from_string(@html) if @html
 
   has_cached_snapshot: ->
     @get_cached_snapshot()?
