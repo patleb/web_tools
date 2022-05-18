@@ -65,7 +65,7 @@ Turbolinks.controller.visit = function (location, options = {}) {
     return true
   } else if (branches.visit_reload) {
     let result = old_visit(location, options)
-    if (!location.match(/^http:/)) {
+    if (!location.match(/^http:/) && location !== 'about:blank') {
       location = `http://localhost/${location}`
     }
     Turbolinks.dispatch('turbolinks:visit-reload', { data: { url: new URL(location).toString() } })
