@@ -23,6 +23,16 @@ class Turbolinks.Location
     else
       @request_url = @absolute_url
 
+  push_query: (string) ->
+    if @has_query()
+      @request_url += "&#{string}"
+    else
+      @request_url += "?#{string}"
+    if @anchor?
+      @absolute_url = "#{@request_url}##{@anchor}"
+    else
+      @absolute_url = @request_url
+
   get_origin: ->
     @absolute_url.split('/', 3).join('/')
 
@@ -37,6 +47,9 @@ class Turbolinks.Location
 
   get_extension: ->
     @get_last_path_component().match(/\.[^.]*$/)?[0] ? ''
+
+  has_query: ->
+    @request_url.indexOf('?') isnt -1
 
   is_html: ->
     !!@get_extension().match(/^(?:|\.(?:htm|html|xhtml))$/)

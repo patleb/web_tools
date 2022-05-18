@@ -15,6 +15,7 @@ const events = [
   'turbolinks:render',
   'turbolinks:request-start',
   'turbolinks:request-end',
+  'turbolinks:search',
   'turbolinks:visit',
 ].concat([
   'turbolinks:click-cancel',

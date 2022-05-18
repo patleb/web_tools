@@ -12,6 +12,7 @@ class Turbolinks.Controller
     unless Turbolinks.supported
       return addEventListener('DOMContentLoaded', @dispatch_load, false)
     unless @started
+      addEventListener('submit', @search_captured, true)
       addEventListener('click', @click_captured, true)
       addEventListener('DOMContentLoaded', @dom_loaded, false)
       addEventListener('scroll', @on_scroll, false)
@@ -25,6 +26,7 @@ class Turbolinks.Controller
 
   stop: ->
     if @started
+      removeEventListener('submit', @search_captured, true)
       removeEventListener('click', @click_captured, true)
       removeEventListener('DOMContentLoaded', @dom_loaded, false)
       removeEventListener('scroll', @on_scroll, false)
@@ -167,6 +169,22 @@ class Turbolinks.Controller
     @last_rendered_location = @location
     @dispatch_load()
 
+  search_captured: =>
+    removeEventListener('submit', @search_bubbled, false)
+    addEventListener('submit', @search_bubbled, false)
+
+  search_bubbled: (event) =>
+    form = event.target
+    if @enabled and Rails.matches(form, 'form[method=get]:not([data-remote=true])')
+      if @is_visitable(document.activeElement)
+        location = Turbolinks.Location.wrap(form.action)
+        params = Rails.serializeElement(form, document.activeElement)
+        location.push_query(params)
+        unless @dispatch_search(form, location).defaultPrevented
+          event.preventDefault()
+          event.stopPropagation()
+          @visit(location)
+
   click_captured: =>
     removeEventListener('click', @click_bubbled, false)
     addEventListener('click', @click_bubbled, false)
@@ -201,6 +219,9 @@ class Turbolinks.Controller
     @update_position(x: window.pageXOffset, y: window.pageYOffset)
 
   # Application events
+
+  dispatch_search: (form, location) ->
+    Turbolinks.dispatch('turbolinks:search', target: form, data: { url: location.absolute_url }, cancelable: true)
 
   dispatch_click: (link, location) ->
     Turbolinks.dispatch('turbolinks:click', target: link, data: { url: location.absolute_url }, cancelable: true)
