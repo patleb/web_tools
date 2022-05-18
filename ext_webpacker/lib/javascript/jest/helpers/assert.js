@@ -10,6 +10,7 @@ const assert = {
   empty: (act) => expect(act).toBeEmpty(),
   not_empty: (act) => expect(act).not.toBeEmpty(),
   called: (act, n = null) => n == null ? expect(act).toBeCalled() : expect(act).toBeCalledTimes(n),
+  not_called: (act) => expect(act).not.toBeCalled(),
   total: (n) => expect.assertions(n),
 }
 global.assert = assert

@@ -103,8 +103,8 @@ class Turbolinks.Visit
 
   # Scrolling
 
-  perform_scroll: =>
-    unless @scrolled
+  perform_scroll: (snapshot) =>
+    if not @scrolled and (not snapshot? or snapshot.is_scrollable())
       if @action is 'restore'
         @scroll_to_restored_position() or @scroll_to_anchor() or @scroll_to_top()
       else

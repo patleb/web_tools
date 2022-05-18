@@ -51,6 +51,9 @@ class Turbolinks.Snapshot
   is_visitable: ->
     @get_setting('visit-control') isnt 'reload'
 
+  is_scrollable: ->
+    @get_setting('visit-control') isnt 'no-scroll'
+
   # Private
 
   get_setting: (name) ->

@@ -68,6 +68,14 @@ describe('Turbolinks Rendering', () => {
     })
   })
 
+  it('should not scroll when turbolinks-visit-control setting is no-scroll', async () => {
+    assert.total(2)
+    await turbolinks.click('#visit-control-no-scroll-link', {}, (event) => {
+      assert.not_called(window.scrollTo)
+      assert.equal('http://localhost/visit_control_no_scroll', event.data.url)
+    })
+  })
+
   it('should accumulate asset elements in head', async () => {
     assert.total(2)
     let old_elements = get_asset_elements()

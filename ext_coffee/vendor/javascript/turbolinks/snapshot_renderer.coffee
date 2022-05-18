@@ -16,7 +16,7 @@ class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
       @render_view =>
         @replace_body()
         @new_snapshot.first_autofocusable()?.focus() unless @is_preview
-        callback()
+        callback(@new_snapshot)
 
   merge_head: ->
     for element in @new_head_details.get_missing_stylesheets(@old_head_details)
