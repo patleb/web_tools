@@ -25,7 +25,7 @@ describe('Turbolinks Visit', () => {
     })
     await turbolinks.visit('one', {}, (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
-      assert.not_null(event.data.timing)
+      assert.not_null(event.data.info)
     })
   })
 
