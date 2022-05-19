@@ -62,13 +62,11 @@ class Turbolinks.Controller
     @restoration_id = Turbolinks.uid()
     @initial_location = @location
     @initial_restoration_id = @restoration_id
-    addEventListener('beforeunload', @on_beforeunload, false)
     addEventListener('popstate', @on_popstate, false)
     addEventListener('load', @on_load, false)
     @update_history('replace')
 
   stop_history: ->
-    removeEventListener('beforeunload', @on_beforeunload, false)
     removeEventListener('popstate', @on_popstate, false)
     removeEventListener('load', @on_load, false)
     delete @initial_location
@@ -178,9 +176,6 @@ class Turbolinks.Controller
   # Event handlers
 
   dom_loaded: =>
-    unless @scroll_restoration_was
-      @scroll_restoration_was = history.scrollRestoration ? 'auto'
-      history.scrollRestoration = 'manual'
     @last_rendered_location = @location
     @dispatch_load(once: true)
 
@@ -213,11 +208,6 @@ class Turbolinks.Controller
             event.preventDefault()
             action = @get_action(link)
             @visit(location, { action })
-
-  on_beforeunload: =>
-    if @scroll_restoration_was
-      history.scrollRestoration = @scroll_restoration_was
-      delete @scroll_restoration_was
 
   on_popstate: (event) =>
     if @should_handle_popstate()
