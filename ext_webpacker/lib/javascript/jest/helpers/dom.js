@@ -22,7 +22,7 @@ const dom = {
   children: (element, test) => {
     return Array.from(element.childNodes).filter(node => node.nodeType === Node.ELEMENT_NODE && test(node))
   },
-  match: (element, selector) => {
+  matches: (element, selector) => {
     let html = document.documentElement
     let fn = html.matchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.mozMatchesSelector
     return fn.call(element, selector)

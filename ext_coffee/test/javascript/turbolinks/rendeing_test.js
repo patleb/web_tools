@@ -244,8 +244,8 @@ describe('Turbolinks Rendering', () => {
 })
 
 const get_asset_elements = () => {
-  return dom.children(document.head, (e) => dom.match(e, 'script, style, link[rel=stylesheet], noscript'))
+  return dom.children(document.head, (e) => dom.matches(e, 'script, style, link[rel=stylesheet], noscript'))
 }
 const get_provisional_elements = () => {
-  return dom.children(document.head, (e) => !dom.match(e, 'script, style, link[rel=stylesheet], noscript'))
+  return dom.children(document.head, (e) => !dom.matches(e, 'script, style, link[rel=stylesheet], noscript'))
 }
