@@ -18,12 +18,12 @@ describe('Turbolinks Rendering', () => {
   it('should trigger before-render and render events', async () => {
     assert.total(4)
     let new_body
-    turbolinks.on_event('turbolinks:before-render', (event) => {
+    turbolinks.on_event('turbolinks:before-render', {}, (event) => {
       new_body = event.data.new_body
       assert.not_equal(document.body.innerHTML, new_body.innerHTML)
       assert.equal('One', new_body.querySelector('h1').innerHTML)
     })
-    turbolinks.on_event('turbolinks:render', (event) => {
+    turbolinks.on_event('turbolinks:render', {}, (event) => {
       assert.equal(document.body.innerHTML, new_body.innerHTML)
     })
     await turbolinks.click('#same-origin-link', {}, (event) => {
@@ -34,11 +34,11 @@ describe('Turbolinks Rendering', () => {
   it('should trigger before-render and render events for error pages', async () => {
     assert.total(3)
     let new_body
-    turbolinks.on_event('turbolinks:before-render', (event) => {
+    turbolinks.on_event('turbolinks:before-render', {}, (event) => {
       new_body = event.data.new_body
       assert.not_equal(document.body.innerHTML, new_body.innerHTML)
     })
-    turbolinks.on_event('turbolinks:render', (event) => {
+    turbolinks.on_event('turbolinks:render', {}, (event) => {
       assert.equal(document.body.innerHTML, new_body.innerHTML)
     })
     await turbolinks.click('#nonexistent-link', { event_name: 'turbolinks:render', status: 404 }, (event) => {
@@ -157,7 +157,7 @@ describe('Turbolinks Rendering', () => {
   })
 
   it('should trigger before-cache event', async () => {
-    turbolinks.on_event('turbolinks:before-cache', (event) => {
+    turbolinks.on_event('turbolinks:before-cache', {}, (event) => {
       document.body.innerHTML = 'Modified'
     })
     await turbolinks.click('#same-origin-link', {}, (event) => {
@@ -199,6 +199,46 @@ describe('Turbolinks Rendering', () => {
   it('should load error pages', async () => {
     await turbolinks.click('#nonexistent-link', { event_name: 'turbolinks:render', status: 404 }, (event) => {
       assert.equal('Not found', document.body.innerHTML.trim())
+    })
+  })
+
+  describe('No defer', () => {
+    beforeEach(() => {
+      turbolinks.setup_no_defer()
+    })
+
+    afterEach(() => {
+      turbolinks.reset_defer()
+    })
+
+    it('should load the preview before the new page', async () => {
+      await turbolinks.visit('one', {}, (event) => {
+        assert.equal(1, Turbolinks.controller.cache.keys.length)
+      })
+      turbolinks.on_event('turbolinks:before-render', { event_count: 2 }, (event, index) => {
+        assert.equal(2, Turbolinks.controller.cache.keys.length)
+        if (index === 0) {
+          assert.true(event.data.preview)
+        } else {
+          assert.false(event.data.preview)
+        }
+      })
+      await turbolinks.visit('rendering', {}, (event) => {
+        assert.equal(2, Turbolinks.controller.cache.keys.length)
+      })
+    })
+
+    it('should not preview when replacing the current location', async () => {
+      await turbolinks.visit('rendering', {}, (event) => {
+        assert.equal(1, Turbolinks.controller.cache.keys.length)
+      })
+      turbolinks.on_event('turbolinks:before-render', {}, (event) => {
+        assert.equal(1, Turbolinks.controller.cache.keys.length)
+        assert.false(event.data.preview)
+      })
+      await turbolinks.visit('rendering', { action: 'replace' }, (event) => {
+        assert.equal(1, Turbolinks.controller.cache.keys.length)
+      })
     })
   })
 })

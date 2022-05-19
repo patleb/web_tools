@@ -25,9 +25,9 @@ class Turbolinks.Location
 
   push_query: (string) ->
     if @has_query()
-      @request_url += "&#{string}"
+      @request_url += "&#{string.replace(/^&/, '')}"
     else
-      @request_url += "?#{string}"
+      @request_url += "?#{string.replace(/^\?/, '')}"
     if @anchor?
       @absolute_url = "#{@request_url}##{@anchor}"
     else
@@ -62,7 +62,10 @@ class Turbolinks.Location
     @absolute_url is location?.absolute_url
 
   is_same_page_anchor: ->
-    @request_url is @constructor.current_location().request_url and @anchor?
+    @is_same_page() and @anchor?
+
+  is_same_page: ->
+    @request_url is @constructor.current_location().request_url
 
   to_cache_key: ->
     @request_url

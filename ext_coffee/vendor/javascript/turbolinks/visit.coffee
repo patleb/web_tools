@@ -47,7 +47,7 @@ class Turbolinks.Visit
   get_cached_snapshot: ->
     if snapshot = @controller.get_cached_snapshot(@location) or @get_preloaded_snapshot()
       if not @location.anchor? or snapshot.has_anchor(@location.anchor)
-        if @action is 'restore' or snapshot.is_previewable()
+        if @action is 'restore' or not (@action is 'replace' and @location.is_same_page()) and snapshot.is_previewable()
           snapshot
 
   get_preloaded_snapshot: ->
@@ -58,12 +58,12 @@ class Turbolinks.Visit
 
   load_cached_snapshot: ->
     if snapshot = @get_cached_snapshot()
-      is_preview = @should_issue_request()
+      preview = @should_issue_request()
       @render ->
         @cache_snapshot()
-        @controller.render({ snapshot, is_preview }, @perform_scroll)
+        @controller.render({ snapshot, preview }, @perform_scroll)
         @adapter.visitRendered?(this)
-        @complete() unless is_preview
+        @complete() unless preview
 
   load_response: ->
     if @response?

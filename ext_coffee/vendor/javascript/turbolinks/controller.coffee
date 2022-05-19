@@ -143,18 +143,18 @@ class Turbolinks.Controller
   get_snapshot: ->
     Turbolinks.Snapshot.from_element(@html)
 
-  render: ({ snapshot, error, is_preview }, callback) ->
-    @mark_as_preview(is_preview)
+  render: ({ snapshot, error, preview }, callback) ->
+    @mark_as_preview(preview)
     if snapshot?
-      Turbolinks.SnapshotRenderer.render(this, callback, @get_snapshot(), Turbolinks.Snapshot.wrap(snapshot), is_preview)
+      Turbolinks.SnapshotRenderer.render(this, callback, @get_snapshot(), Turbolinks.Snapshot.wrap(snapshot), preview)
     else
       Turbolinks.ErrorRenderer.render(this, callback, error)
 
-  render_view: (new_body, callback) ->
-    unless @dispatch_before_render(new_body).defaultPrevented
+  render_view: (new_body, callback, preview) ->
+    unless @dispatch_before_render(new_body, !!preview).defaultPrevented
       callback()
       @last_rendered_location = @current_visit.location
-      @dispatch_render(new_body)
+      @dispatch_render(new_body, !!preview)
 
   page_invalidated: (reason) ->
     @adapter.pageInvalidated(reason)
@@ -234,11 +234,11 @@ class Turbolinks.Controller
   dispatch_before_cache: ->
     Turbolinks.dispatch('turbolinks:before-cache', cancelable: true)
 
-  dispatch_before_render: (new_body) ->
-    Turbolinks.dispatch('turbolinks:before-render', data: { new_body }, cancelable: true)
+  dispatch_before_render: (new_body, preview) ->
+    Turbolinks.dispatch('turbolinks:before-render', data: { new_body, preview }, cancelable: true)
 
-  dispatch_render: (new_body) ->
-    Turbolinks.dispatch('turbolinks:render', data: { new_body })
+  dispatch_render: (new_body, preview) ->
+    Turbolinks.dispatch('turbolinks:render', data: { new_body, preview })
 
   dispatch_load: (info = {}) ->
     Turbolinks.dispatch('turbolinks:load', data: { url: @location?.absolute_url, info })
@@ -313,8 +313,8 @@ class Turbolinks.Controller
     else if Turbolinks.Location.current_location().is_equal_to(@initial_location)
       @initial_restoration_id
 
-  mark_as_preview: (is_preview) ->
-    if is_preview
+  mark_as_preview: (preview) ->
+    if preview
       @html.setAttribute('data-turbolinks-preview', '')
     else
       @html.removeAttribute('data-turbolinks-preview')

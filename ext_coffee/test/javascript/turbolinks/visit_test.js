@@ -16,10 +16,10 @@ describe('Turbolinks Visit', () => {
   })
 
   it('should programmatically visit a same-origin location', async () => {
-    turbolinks.on_event('turbolinks:before-visit', (event) => {
+    turbolinks.on_event('turbolinks:before-visit', {}, (event) => {
       assert.equal('http://localhost/one', event.data.url)
     })
-    turbolinks.on_event('turbolinks:visit', (event) => {
+    turbolinks.on_event('turbolinks:visit', {}, (event) => {
       assert.equal('http://localhost/one', event.data.url)
       assert.equal('advance', event.data.action)
     })
@@ -56,7 +56,7 @@ describe('Turbolinks Visit', () => {
 
   it('should prevent navigation on canceling a visit event', async () => {
     assert.total(3)
-    turbolinks.on_event('turbolinks:before-visit', (event) => {
+    turbolinks.on_event('turbolinks:before-visit', {}, (event) => {
       assert.equal('http://localhost/one', event.data.url)
       event.preventDefault()
     })
@@ -68,18 +68,24 @@ describe('Turbolinks Visit', () => {
 
   it('should keep navigation by history not cancelable', async () => {
     let event_locations = {}
-    await turbolinks.click('#same-origin-link', { event_name: 'turbolinks:visit' }, (event) => {
-      assert.equal('http://localhost/one', event.data.url)
+    let old_url = 'http://localhost/visit'
+    let new_url = 'http://localhost/one'
+    turbolinks.on_event('turbolinks:visit', {}, (event) => {
+      assert.equal(new_url, event.data.url)
     })
-    turbolinks.on_event('turbolinks:before-visit', (event) => {
+    await turbolinks.click('#same-origin-link', {}, (event) => {
+      assert.equal(new_url, event.data.url)
+    })
+    turbolinks.on_event('turbolinks:before-visit', {}, (event) => {
       event_locations.before_visit = event.data.url
     })
-    turbolinks.on_event('turbolinks:visit', (event) => {
+    turbolinks.on_event('turbolinks:visit', {}, (event) => {
       event_locations.visit = event.data.url
     })
     await turbolinks.back({}, (event) => {
       assert.null(event_locations.before_visit)
-      assert.equal(event_locations.visit, event.data.url)
+      assert.equal(old_url, event.data.url)
+      assert.equal(old_url, event_locations.visit)
     })
   })
 })

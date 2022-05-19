@@ -1,5 +1,5 @@
 class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
-  constructor: (@old_snapshot, @new_snapshot, @is_preview) ->
+  constructor: (@old_snapshot, @new_snapshot, @preview) ->
     super()
     @old_head_details = @old_snapshot.head_details
     @new_head_details = @new_snapshot.head_details
@@ -15,7 +15,7 @@ class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
       @merge_head()
       @render_view =>
         @replace_body()
-        @new_snapshot.first_autofocusable()?.focus() unless @is_preview
+        @new_snapshot.first_autofocusable()?.focus() unless @preview
         callback(@new_snapshot)
 
   merge_head: ->

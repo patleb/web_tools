@@ -6,6 +6,8 @@ import * as matchers from 'jest-extended'
 import xhr from 'xhr-mock'
 
 global.xhr = xhr
+global.tick = () => delay(1000 / 60)
+global.delay = (ms = 1) => new Promise(resolve => setTimeout(resolve, ms))
 expect.extend(matchers)
 
 if (process.env.JB_PUBLISH_PORT != null) {
