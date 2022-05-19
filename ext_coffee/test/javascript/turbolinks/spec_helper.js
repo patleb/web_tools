@@ -8,6 +8,7 @@ const events = [
   'turbolinks:before-cache',
   'turbolinks:before-render',
   'turbolinks:before-visit',
+  'turbolinks:cache',
   'turbolinks:click',
   'turbolinks:load',
   'turbolinks:reload',
@@ -28,7 +29,7 @@ const branches = {
   visit_reload: false,
 }
 
-global.pretty_events_log = () => window.events_log.map(([type, data]) => `[${type}] ${JSON.stringify(data)}`)
+global.pretty_events_log = () => window.events_log.map(([type, data]) => `[${type}] ${data ? JSON.stringify(data): ''}`)
 
 beforeAll(() => {
   fixture.set_root('ext_coffee/test/fixtures/files/turbolinks')
@@ -105,7 +106,7 @@ function navigate(direction, { event_name = 'turbolinks:load', event_count = 1 }
 
 const turbolinks = {
   setup: (location) => {
-    let state = { turbolinks: { restorationIdentifier: Turbolinks.controller.restorationIdentifier } }
+    let state = { turbolinks: { restoration_id: Turbolinks.controller.restoration_id } }
     window.history.replaceState(state, '', `http://localhost/${location}`)
     Turbolinks.controller.location = Turbolinks.Location.wrap(window.location)
     dom.setup_document(fixture.html(location))

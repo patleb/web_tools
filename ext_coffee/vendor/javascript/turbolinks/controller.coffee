@@ -7,6 +7,7 @@ class Turbolinks.Controller
     @restoration_data = {}
     @clear_cache()
     @set_progress_bar_delay(500)
+    @progress_bar = new Turbolinks.ProgressBar
 
   start: ->
     unless Turbolinks.supported
@@ -36,22 +37,20 @@ class Turbolinks.Controller
   clear_cache: ->
     @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
 
-  visit: (location, { action = 'advance', html } = {}) ->
+  visit: (location, { action = 'advance', restoration_id, html } = {}) ->
     if @is_reloadable(location)
       return window.location = location
     location = Turbolinks.Location.wrap(location)
     unless @dispatch_before_visit(location, action).defaultPrevented
-      if @location_is_visitable(location, action)
-        @adapter.visitProposedToLocationWithAction(location, action, html)
+      if Turbolinks.supported and @location_is_visitable(location, action)
+        restoration_data = @get_restoration_data(restoration_id)
+        @start_visit(location, action, { restoration_id, restoration_data, html })
       else
         window.location = location
 
-  startVisitToLocationWithAction: (location, action, restoration_id, html) ->
-    if Turbolinks.supported
-      restoration_data = @get_restoration_data(restoration_id)
-      @start_visit(location, action, { restoration_id, restoration_data, html })
-    else
-      window.location = location
+  reload: (reason) ->
+    @dispatch_reload(reason)
+    window.location.reload()
 
   set_progress_bar_delay: (delay) ->
     @progress_bar_delay = delay
@@ -60,9 +59,9 @@ class Turbolinks.Controller
 
   start_history: ->
     @location = Turbolinks.Location.current_location()
-    @restorationIdentifier = Turbolinks.uid()
+    @restoration_id = Turbolinks.uid()
     @initial_location = @location
-    @initial_restoration_id = @restorationIdentifier
+    @initial_restoration_id = @restoration_id
     addEventListener('beforeunload', @on_beforeunload, false)
     addEventListener('popstate', @on_popstate, false)
     addEventListener('load', @on_load, false)
@@ -75,25 +74,25 @@ class Turbolinks.Controller
     delete @initial_location
     delete @initial_restoration_id
 
-  push_history: (location, @restorationIdentifier) ->
+  push_history: (location, @restoration_id) ->
     @location = Turbolinks.Location.wrap(location)
     @update_history('push')
 
-  replace_history: (location, @restorationIdentifier) ->
+  replace_history: (location, @restoration_id) ->
     @location = Turbolinks.Location.wrap(location)
     @update_history('replace')
 
   update_history: (method) ->
-    state = turbolinks: { @restorationIdentifier }
+    state = turbolinks: { @restoration_id }
     history["#{method}State"](state, '', @location.toString())
 
-  on_history_popped: (location, @restorationIdentifier) ->
+  history_popped: (location, @restoration_id) ->
     if @enabled
-      restoration_data = @get_restoration_data(@restorationIdentifier)
-      @start_visit(location, 'restore', { restoration_id: @restorationIdentifier, restoration_data, history_changed: true })
+      restoration_data = @get_restoration_data(@restoration_id)
+      @start_visit(location, 'restore', { @restoration_id, restoration_data, history_changed: true })
       @location = Turbolinks.Location.wrap(location)
     else
-      @adapter.pageInvalidated('turbolinks_disabled')
+      @page_invalidated('turbolinks_disabled')
 
   # Snapshot cache
 
@@ -110,6 +109,7 @@ class Turbolinks.Controller
         location = @last_rendered_location or Turbolinks.Location.current_location()
         Turbolinks.defer =>
           @cache.put(location, snapshot.clone())
+          @dispatch_cache()
 
   # Scrolling
 
@@ -157,7 +157,23 @@ class Turbolinks.Controller
       @dispatch_render(new_body, !!preview)
 
   page_invalidated: (reason) ->
-    @adapter.pageInvalidated(reason)
+    @reload(reason)
+
+  # Visit
+
+  visit_request_started: (visit) ->
+    @progress_bar.set_value(0)
+    if visit.has_cached_snapshot() or visit.action isnt 'restore'
+      @progress_bar_timeout = setTimeout(@show_progress_bar, @progress_bar_delay)
+    else
+      @show_progress_bar()
+
+  visit_request_finished: (visit) ->
+    @progress_bar.set_value(1)
+    @hide_progress_bar()
+
+  visit_completed: (visit) ->
+    @dispatch_load(visit.get_timing())
 
   # Event handlers
 
@@ -207,8 +223,8 @@ class Turbolinks.Controller
     if @should_handle_popstate()
       if restoration_id = @get_restoration_id(event)
         @location = Turbolinks.Location.current_location()
-        @restorationIdentifier = restoration_id
-        @on_history_popped(@location, restoration_id)
+        @restoration_id = restoration_id
+        @history_popped(@location, restoration_id)
 
   on_load: (event) =>
     Turbolinks.defer =>
@@ -234,6 +250,9 @@ class Turbolinks.Controller
   dispatch_before_cache: ->
     Turbolinks.dispatch('turbolinks:before-cache', cancelable: true)
 
+  dispatch_cache: ->
+    Turbolinks.dispatch('turbolinks:cache')
+
   dispatch_before_render: (new_body, preview) ->
     Turbolinks.dispatch('turbolinks:before-render', data: { new_body, preview }, cancelable: true)
 
@@ -242,6 +261,9 @@ class Turbolinks.Controller
 
   dispatch_load: (info = {}) ->
     Turbolinks.dispatch('turbolinks:load', data: { url: @location?.absolute_url, info })
+
+  dispatch_reload: (reason) ->
+    Turbolinks.dispatch('turbolinks:reload', data: { reason })
 
   # Private
 
@@ -258,9 +280,6 @@ class Turbolinks.Controller
     visit.history_changed = history_changed
     visit.referrer = @location
     visit
-
-  visit_completed: (visit) ->
-    @dispatch_load(visit.get_timing())
 
   click_event_is_significant: (event) ->
     not (
@@ -305,11 +324,11 @@ class Turbolinks.Controller
   should_handle_popstate: ->
     # Safari dispatches a popstate event after window's load event, ignore it
     (@page_loaded or document.readyState is 'complete') and
-      @restorationIdentifier isnt event.state?.turbolinks?.restorationIdentifier
+      @restoration_id isnt event.state?.turbolinks?.restoration_id
 
   get_restoration_id: (event) ->
     if event.state
-      (event.state.turbolinks ? {}).restorationIdentifier
+      (event.state.turbolinks ? {}).restoration_id
     else if Turbolinks.Location.current_location().is_equal_to(@initial_location)
       @initial_restoration_id
 
@@ -320,5 +339,12 @@ class Turbolinks.Controller
       @html.removeAttribute('data-turbolinks-preview')
 
   update_position: (@position) ->
-    restoration_data = @get_restoration_data(@restorationIdentifier)
+    restoration_data = @get_restoration_data(@restoration_id)
     restoration_data.position = @position
+
+  show_progress_bar: =>
+    @progress_bar.show()
+
+  hide_progress_bar: ->
+    @progress_bar.hide()
+    clearTimeout(@progress_bar_timeout)

@@ -5,8 +5,8 @@ window.Turbolinks =
   visit: (location, options) ->
     Turbolinks.controller.visit(location, options)
 
-  update: (location) ->
-    Turbolinks.controller.on_history_popped(location, Turbolinks.uid())
+  change: (location) ->
+    Turbolinks.controller.history_popped(location, Turbolinks.uid())
 
   clearCache: ->
     Turbolinks.controller.clear_cache()

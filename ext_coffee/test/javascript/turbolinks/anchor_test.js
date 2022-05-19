@@ -9,37 +9,47 @@ describe('Turbolinks Anchor', () => {
     dom.reset_document()
   })
 
-  it('should go to location /anchor', async () => {
-    await turbolinks.visit('anchor', {}, (event) => {
-      turbolinks.assert_page(event, 'http://localhost/anchor', { title: 'Anchor' })
+  describe('No defer', () => {
+    beforeEach(() => {
+      turbolinks.setup_no_defer()
     })
-  })
 
-  it('should not follow anchor on same-page', async () => {
-    await turbolinks.click('a[href="#main"]', { event_name: 'hashchange' }, (event) => {
-      assert.equal('main', url.get_anchor(event.newURL))
+    afterEach(() => {
+      turbolinks.reset_defer()
     })
-    await turbolinks.back({ event_name: 'hashchange' }, (event) => {
-      assert.null(url.get_anchor(event.newURL))
+
+    it('should go to location /anchor', async () => {
+      await turbolinks.visit('anchor', {}, (event) => {
+        turbolinks.assert_page(event, 'http://localhost/anchor', { title: 'Anchor' })
+      })
     })
-    await turbolinks.forward({ event_name: 'hashchange' }, (event) => {
-      assert.equal('main', url.get_anchor(event.newURL))
+
+    it('should not follow anchor on same-page', async () => {
+      await turbolinks.click('a[href="#main"]', { event_name: 'hashchange' }, (event) => {
+        assert.equal('main', url.get_anchor(event.newURL))
+      })
+      await turbolinks.back({ event_name: 'hashchange' }, (event) => {
+        assert.null(url.get_anchor(event.newURL))
+      })
+      await turbolinks.forward({ event_name: 'hashchange' }, (event) => {
+        assert.equal('main', url.get_anchor(event.newURL))
+      })
+      let doms = 0, loads = 0, pops = 0, hashes = 0, total = 0
+      events_log.forEach(([name, data]) => {
+        switch(name){
+        case 'DOMContentLoaded': doms++; break
+        case 'turbolinks:load': loads++; break
+        case 'popstate': pops++; break
+        case 'hashchange': hashes++
+        }
+        total++
+      })
+      assert.equal(total, doms + loads + pops + hashes)
+      assert.equal(1, doms)
+      assert.equal(1, loads)
+      assert.equal(3, pops)
+      assert.equal(3, hashes)
     })
-    let doms = 0, loads = 0, pops = 0, hashes = 0, total = 0
-    events_log.forEach(([name, data]) => {
-      switch(name){
-      case 'DOMContentLoaded': doms++; break
-      case 'turbolinks:load': loads++; break
-      case 'popstate': pops++; break
-      case 'hashchange': hashes++
-      }
-      total++
-    })
-    assert.equal(total, doms + loads + pops + hashes)
-    assert.equal(1, doms)
-    assert.equal(1, loads)
-    assert.equal(3, pops)
-    assert.equal(3, hashes)
   })
 
   describe('Reload', () => {

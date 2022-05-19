@@ -21,7 +21,7 @@ describe('Turbolinks Navigation', () => {
   beforeEach(() => {
     turbolinks.setup('navigation')
     Turbolinks.controller.stop()
-    Turbolinks.controller.adapter = new Turbolinks.BrowserAdapter(Turbolinks.controller)
+    Turbolinks.controller.progress_bar = new Turbolinks.ProgressBar
     Turbolinks.controller.start()
     assert.equal('123', document.head.querySelector('style').getAttribute('nonce'))
   })

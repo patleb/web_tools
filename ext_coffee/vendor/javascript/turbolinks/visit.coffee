@@ -1,8 +1,9 @@
 class Turbolinks.Visit
+  { NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH } = Turbolinks.HttpRequest
+
   constructor: (@controller, location, @action, @html) ->
     @id = Turbolinks.uid()
     @location = Turbolinks.Location.wrap(location)
-    @adapter = @controller.adapter
     @state = 'initialized'
     @timing = {}
 
@@ -10,7 +11,9 @@ class Turbolinks.Visit
     if @state is 'initialized'
       @record_timing('visit_start')
       @state = 'started'
-      @adapter.visitStarted(this)
+      @load_cached_snapshot()
+      @issue_request()
+      @change_history()
 
   cancel: ->
     if @state is 'started'
@@ -22,13 +25,12 @@ class Turbolinks.Visit
     if @state is 'started'
       @record_timing('visit_end')
       @state = 'completed'
-      @adapter.visitCompleted?(this)
+      @follow_redirect()
       @controller.visit_completed(this)
 
   fail: ->
     if @state is 'started'
       @state = 'failed'
-      @adapter.visitFailed?(this)
 
   change_history: ->
     unless @history_changed
@@ -62,7 +64,6 @@ class Turbolinks.Visit
       @render ->
         @cache_snapshot()
         @controller.render({ snapshot, preview }, @perform_scroll)
-        @adapter.visitRendered?(this)
         @complete() unless preview
 
   load_response: ->
@@ -71,11 +72,9 @@ class Turbolinks.Visit
         @cache_snapshot()
         if @request.failed
           @controller.render(error: @response, @perform_scroll)
-          @adapter.visitRendered?(this)
           @fail()
         else
           @controller.render(snapshot: @response, @perform_scroll)
-          @adapter.visitRendered?(this)
           @complete()
 
   follow_redirect: ->
@@ -88,18 +87,22 @@ class Turbolinks.Visit
 
   request_started: ->
     @record_timing('request_start')
-    @adapter.visitRequestStarted?(this)
+    @controller.visit_request_started(this)
 
   request_completed: (@response, redirected_to_location) ->
     @redirected_to_location = Turbolinks.Location.wrap(redirected_to_location) if redirected_to_location?
-    @adapter.visitRequestCompleted(this)
+    @load_response()
 
-  request_failed: (statusCode, @response) ->
-    @adapter.visitRequestFailedWithStatusCode(this, statusCode)
+  request_failed: (status_code, @response) ->
+    switch status_code
+      when NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH
+        @controller.reload("request_failed[#{status_code}]")
+      else
+        @load_response()
 
   request_finished: ->
     @record_timing('request_end')
-    @adapter.visitRequestFinished?(this)
+    @controller.visit_request_finished(this)
 
   # Scrolling
 
