@@ -261,7 +261,8 @@ class Turbolinks.Controller
     Turbolinks.dispatch('turbolinks:reload', data: { reason })
 
   dispatch_hashchange: (location_was, location) ->
-    dispatchEvent(new HashChangeEvent('hashchange', { oldURL: location_was.toString(), newURL: location.toString() }))
+    if window.HashChangeEvent?
+      dispatchEvent(new HashChangeEvent('hashchange', { oldURL: location_was.toString(), newURL: location.toString() }))
 
   # Private
 
