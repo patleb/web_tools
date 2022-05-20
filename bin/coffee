@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+require_relative '../config/boot'
+
+APP_ROOT = File.expand_path('..', __dir__)
+LIB_ROOT = File.expand_path(Gem.loaded_specs['ext_coffee'].gem_dir)
+dirs = %W(
+  #{LIB_ROOT}/vendor/javascript
+  #{LIB_ROOT}/lib/javascript
+  app/javascript
+)
+command, *extra_dirs = ARGV
+Dir.chdir(APP_ROOT) do
+  case command
+  when 'compile'
+    exec('node_modules/.bin/coffee', '--bare', '--compile', '--map', *dirs, *extra_dirs)
+  when 'watch'
+    exec('node_modules/.bin/coffee', '--bare', '--compile', '--map', '--watch', *dirs, *extra_dirs)
+  when 'clobber'
+    (dirs + extra_dirs).each do |dir|
+      Dir["#{dir}/**/*.coffee"].each do |file|
+        FileUtils.rm_f file.sub(/\.coffee$/, '.js')
+        FileUtils.rm_f file.sub(/\.coffee$/, '.js.map')
+      end
+    end
+  else
+    puts "supported commands are 'compile', 'watch' and 'clobber', but '#{command}' was given"
+    puts "now running 'node_modules/.bin/coffee' instead of 'bin/coffee'"
+    exec('node_modules/.bin/coffee', *ARGV)
+  end
+end
