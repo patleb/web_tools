@@ -38,13 +38,20 @@ class Turbolinks.Controller
     @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
 
   visit: (location, { action = 'advance', restoration_id, html } = {}) ->
-    if @is_reloadable(location)
+    unless Turbolinks.supported and not @is_reloadable(location)
       return window.location = location
     location = Turbolinks.Location.wrap(location)
     unless @dispatch_before_visit(location, action).defaultPrevented
-      if Turbolinks.supported and @location_is_visitable(location, action)
+      if @location_is_visitable(location, action)
         restoration_data = @get_restoration_data(restoration_id)
         @start_visit(location, action, { restoration_id, restoration_data, html })
+      else if location.is_same_page_anchor()
+        location_was = @location
+        @cache_snapshot()
+        method = if @location.is_equal_to(location) then 'replace_history' else 'push_history'
+        @[method](location, Turbolinks.uid())
+        @scroll_to_anchor(location.anchor)
+        @dispatch_hashchange(location_was, location)
       else
         window.location = location
 
@@ -83,14 +90,6 @@ class Turbolinks.Controller
   update_history: (method) ->
     state = turbolinks: { @restoration_id }
     history["#{method}State"](state, '', @location.toString())
-
-  history_popped: (location, @restoration_id) ->
-    if @enabled
-      restoration_data = @get_restoration_data(@restoration_id)
-      @start_visit(location, 'restore', { @restoration_id, restoration_data, history_changed: true })
-      @location = Turbolinks.Location.wrap(location)
-    else
-      @page_invalidated('turbolinks_disabled')
 
   # Snapshot cache
 
@@ -154,14 +153,11 @@ class Turbolinks.Controller
       @last_rendered_location = @current_visit.location
       @dispatch_render(new_body, !!preview)
 
-  page_invalidated: (reason) ->
-    @reload(reason)
-
   # Visit
 
   visit_request_started: (visit) ->
     @progress_bar.set_value(0)
-    if visit.has_cached_snapshot() or visit.action isnt 'restore'
+    if visit.should_issue_request()
       @progress_bar_timeout = setTimeout(@show_progress_bar, @progress_bar_delay)
     else
       @show_progress_bar()
@@ -184,37 +180,46 @@ class Turbolinks.Controller
     addEventListener('submit', @search_bubbled, false)
 
   search_bubbled: (event) =>
+    return unless @enabled and Rails.matches(event.target, 'form[method=get]:not([data-remote=true])')
     form = event.target
-    if @enabled and Rails.matches(form, 'form[method=get]:not([data-remote=true])')
-      if @is_visitable(document.activeElement)
-        location = Turbolinks.Location.wrap(form.action)
-        params = Rails.serializeElement(form, document.activeElement)
-        location.push_query(params)
+    button = event.submitter or document.activeElement
+    if @is_visitable(button) and (button.getAttribute('formmethod')?.toLowerCase() ? 'get') == 'get'
+      url = button.getAttribute('formaction') ? form.getAttribute('action') ? form.action
+      return if @is_reloadable(url)
+      location = Turbolinks.Location.wrap(url)
+      params = Rails.serializeElement(form, button)
+      location.push_query(params)
+      action = button.getAttribute('data-turbolinks-action') ? form.getAttribute('data-turbolinks-action') ? 'advance'
+      if @location_is_visitable(location, action)
         unless @dispatch_search(form, location).defaultPrevented
           event.preventDefault()
           event.stopPropagation()
-          @visit(location)
+          @visit(location, { action })
 
   click_captured: =>
     removeEventListener('click', @click_bubbled, false)
     addEventListener('click', @click_bubbled, false)
 
   click_bubbled: (event) =>
-    if @enabled and @click_event_is_significant(event)
-      target = event.composedPath?()[0] or event.target
-      if link = @get_visitable_link(target)
-        if location = @get_visitable_location(link)
-          unless @dispatch_click(link, location).defaultPrevented
-            event.preventDefault()
-            action = @get_action(link)
-            @visit(location, { action })
+    return unless @enabled and @click_event_is_significant(event)
+    target = event.composedPath?()[0] or event.target
+    if @is_visitable(target) and (link = Turbolinks.closest(target, 'a[href]:not([target^=_]):not([download])'))
+      url = link.getAttribute('href')
+      return if @is_reloadable(url)
+      location = new Turbolinks.Location(url)
+      action = link.getAttribute('data-turbolinks-action') ? 'advance'
+      if @location_is_visitable(location, action) or location.is_same_page_anchor()
+        unless @dispatch_click(link, location).defaultPrevented
+          event.preventDefault()
+          @visit(location, { action })
 
   on_popstate: (event) =>
-    if @should_handle_popstate()
-      if restoration_id = @get_restoration_id(event)
-        @location = Turbolinks.Location.current_location()
-        @restoration_id = restoration_id
-        @history_popped(@location, restoration_id)
+    return unless @enabled and @should_handle_popstate()
+    if restoration_id = @get_restoration_id(event)
+      @location = Turbolinks.Location.current_location()
+      @restoration_id = restoration_id
+      restoration_data = @get_restoration_data(@restoration_id)
+      @start_visit(@location, 'restore', { @restoration_id, restoration_data, history_changed: true })
 
   on_load: (event) =>
     Turbolinks.defer =>
@@ -255,6 +260,9 @@ class Turbolinks.Controller
   dispatch_reload: (reason) ->
     Turbolinks.dispatch('turbolinks:reload', data: { reason })
 
+  dispatch_hashchange: (location_was, location) ->
+    dispatchEvent(new HashChangeEvent('hashchange', { oldURL: location_was.toString(), newURL: location.toString() }))
+
   # Private
 
   start_visit: (location, action, properties) ->
@@ -281,19 +289,6 @@ class Turbolinks.Controller
       event.metaKey or
       event.shiftKey
     )
-
-  get_visitable_link: (node) ->
-    if @is_visitable(node)
-      Turbolinks.closest(node, 'a[href]:not([target^=_]):not([download])')
-
-  get_visitable_location: (link) ->
-    url = link.getAttribute('href')
-    return if @is_reloadable(url)
-    location = new Turbolinks.Location(url)
-    location if @location_is_visitable(location, @get_action(link))
-
-  get_action: (link) ->
-    link.getAttribute('data-turbolinks-action') ? 'advance'
 
   is_visitable: (node) ->
     if container = Turbolinks.closest(node, '[data-turbolinks]')

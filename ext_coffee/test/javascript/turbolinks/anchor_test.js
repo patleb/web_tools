@@ -24,7 +24,7 @@ describe('Turbolinks Anchor', () => {
       })
     })
 
-    it('should not follow anchor on same-page', async () => {
+    it('should follow anchor on same-page', async () => {
       await turbolinks.click('a[href="#main"]', { event_name: 'hashchange' }, (event) => {
         assert.equal('main', url.get_anchor(event.newURL))
       })
@@ -34,35 +34,27 @@ describe('Turbolinks Anchor', () => {
       await turbolinks.forward({ event_name: 'hashchange' }, (event) => {
         assert.equal('main', url.get_anchor(event.newURL))
       })
-      let doms = 0, loads = 0, pops = 0, hashes = 0, total = 0
+      let before_visits = 0, visits = 0, popstates = 0, hashchanges = 0, total = 0
       events_log.forEach(([name, data]) => {
         switch(name){
-        case 'DOMContentLoaded': doms++; break
-        case 'turbolinks:load': loads++; break
-        case 'popstate': pops++; break
-        case 'hashchange': hashes++
+        case 'turbolinks:before-visit': before_visits++; break
+        case 'turbolinks:visit': visits++; break
+        case 'popstate': popstates++; break
+        case 'hashchange': hashchanges++
         }
         total++
       })
-      assert.equal(total, doms + loads + pops + hashes)
-      assert.equal(1, doms)
-      assert.equal(1, loads)
-      assert.equal(3, pops)
-      assert.equal(3, hashes)
+      assert.equal(1, before_visits)
+      assert.equal(2, visits)
+      assert.equal(2, popstates)
+      assert.equal(3, hashchanges)
+      assert.equal(13, total)
     })
   })
 
-  describe('Reload', () => {
-    beforeAll(() => {
-      url.delete_location()
-    })
-
-    afterAll(() => {
-      url.reset_location()
-    })
-
-    it('should not visit anchor on same-page', async () => {
-      await turbolinks.visit_reload_and_assert('http://localhost/anchor#main')
+  it('should visit anchor on same-page', async () => {
+    await turbolinks.visit('http://localhost/anchor#main', {}, (event) => {
+      turbolinks.assert_page(event, 'http://localhost/anchor#main', { title: 'Anchor', action: 'restore' })
     })
   })
 

@@ -104,6 +104,12 @@ class Turbolinks.Visit
     @record_timing('request_end')
     @controller.visit_request_finished(this)
 
+  should_issue_request: ->
+    if @action is 'restore'
+      not @has_cached_snapshot()
+    else
+      true
+
   # Scrolling
 
   perform_scroll: (snapshot) =>
@@ -137,12 +143,6 @@ class Turbolinks.Visit
     Turbolinks.copy(@timing)
 
   # Private
-
-  should_issue_request: ->
-    if @action is 'restore'
-      not @has_cached_snapshot()
-    else
-      true
 
   cache_snapshot: ->
     unless @snapshot_cached

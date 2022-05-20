@@ -29,7 +29,7 @@ const branches = {
   visit_reload: false,
 }
 
-global.pretty_events_log = () => window.events_log.map(([type, data]) => `[${type}] ${data ? JSON.stringify(data): ''}`)
+global.pretty_events_log = () => window.events_log.map(([type, data]) => `${type} -- ${data ? JSON.stringify(data): ''}`)
 
 beforeAll(() => {
   fixture.set_root('ext_coffee/test/fixtures/files/turbolinks')
@@ -153,13 +153,11 @@ const turbolinks = {
     if (anchor != null) {
       origin_url = origin_url.replace(`#${anchor}`, '')
     }
-    if (anchor == null || window.location && origin_url !== window.location.href || action === 'replace') {
-      let name = location.replace(`#${anchor}`, '')
-      xhr.get(origin_url, async (req, res) => {
-        await tick()
-        return res.status(status).header('content-type', 'text/html').body(fixture.html(name))
-      })
-    }
+    let name = location.replace(`#${anchor}`, '')
+    xhr.get(origin_url, async (req, res) => {
+      await tick()
+      return res.status(status).header('content-type', 'text/html').body(fixture.html(name))
+    })
     return new Promise((resolve) => {
       listen_on(event_name, event_count, (event) => {
         resolve(event)
@@ -219,16 +217,14 @@ const turbolinks = {
     if (anchor != null) {
       origin_url = origin_url.replace(`#${anchor}`, '')
     }
-    if (anchor == null || window.location && origin_url !== window.location.href || action === 'replace') {
-      let name = origin_url.replace(/^http:\/\/localhost\//, '')
-      xhr.get(origin_url, (req, res) => {
-        res = res.status(status).header('content-type', 'text/html')
-        for(const [name, value] of Object.entries(headers)) {
-          res = res.header(name, value)
-        }
-        return res.body(fixture.html(name))
-      })
-    }
+    let name = origin_url.replace(/^http:\/\/localhost\//, '')
+    xhr.get(origin_url, (req, res) => {
+      res = res.status(status).header('content-type', 'text/html')
+      for(const [key, value] of Object.entries(headers)) {
+        res = res.header(key, value)
+      }
+      return res.body(fixture.html(name))
+    })
     return new Promise((resolve) => {
       listen_on(event_name, event_count, (event) => {
         resolve(event)

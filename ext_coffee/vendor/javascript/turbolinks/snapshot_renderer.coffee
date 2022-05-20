@@ -8,9 +8,9 @@ class Turbolinks.SnapshotRenderer extends Turbolinks.Renderer
 
   render: (callback) ->
     if not @new_snapshot.is_visitable()
-      @controller.page_invalidated('visit_control_is_reload')
+      @controller.reload('visit_control_is_reload')
     else if not @same_tracked_signature()
-      @controller.page_invalidated('tracked_element_mismatch')
+      @controller.reload('tracked_element_mismatch')
     else
       @merge_head()
       @render_view =>
