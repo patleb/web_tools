@@ -46,7 +46,7 @@ class Turbolinks.Snapshot
     @get_setting('cache-control') isnt 'no-preview'
 
   is_cacheable: ->
-    @get_setting('cache-control') isnt 'no-cache'
+    Turbolinks.Controller.cache_size and @get_setting('cache-control') isnt 'no-cache'
 
   is_visitable: ->
     @get_setting('visit-control') isnt 'reload'

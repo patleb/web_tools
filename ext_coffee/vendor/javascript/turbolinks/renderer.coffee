@@ -1,7 +1,7 @@
 class Turbolinks.Renderer
-  @render: (controller, callback, args...) ->
+  @render: (callback, args...) ->
     renderer = new this args...
-    renderer.controller = controller
+    renderer.controller = Turbolinks.controller
     renderer.render(callback)
     renderer
 

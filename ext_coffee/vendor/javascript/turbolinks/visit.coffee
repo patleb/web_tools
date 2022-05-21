@@ -1,7 +1,8 @@
 class Turbolinks.Visit
   { NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH } = Turbolinks.HttpRequest
 
-  constructor: (@controller, location, @action, @html) ->
+  constructor: (location, @action, @html) ->
+    @controller = Turbolinks.controller
     @id = Turbolinks.uid()
     @location = Turbolinks.Location.wrap(location)
     @state = 'initialized'

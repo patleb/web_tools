@@ -1,12 +1,12 @@
 class Turbolinks.Controller
   @cache_size = 10
+  @progress_bar_delay = 500
 
   constructor: ->
     @html = document.documentElement
     @on_scroll = Turbolinks.throttle(@on_scroll)
     @restoration_data = {}
     @clear_cache()
-    @set_progress_bar_delay(500)
     @progress_bar = new Turbolinks.ProgressBar
 
   start: ->
@@ -34,9 +34,6 @@ class Turbolinks.Controller
       @stop_history()
       @started = false
 
-  clear_cache: ->
-    @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
-
   visit: (location, { action = 'advance', restoration_id, html } = {}) ->
     unless Turbolinks.supported and not @is_reloadable(location)
       return window.location = location
@@ -55,12 +52,12 @@ class Turbolinks.Controller
       else
         window.location = location
 
+  clear_cache: ->
+    @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
+
   reload: (reason) ->
     @dispatch_reload(reason)
     window.location.reload()
-
-  set_progress_bar_delay: (delay) ->
-    @progress_bar_delay = delay
 
   # History
 
@@ -143,9 +140,9 @@ class Turbolinks.Controller
   render: ({ snapshot, error, preview }, callback) ->
     @mark_as_preview(preview)
     if snapshot?
-      Turbolinks.SnapshotRenderer.render(this, callback, @get_snapshot(), Turbolinks.Snapshot.wrap(snapshot), preview)
+      Turbolinks.SnapshotRenderer.render(callback, @get_snapshot(), Turbolinks.Snapshot.wrap(snapshot), preview)
     else
-      Turbolinks.ErrorRenderer.render(this, callback, error)
+      Turbolinks.ErrorRenderer.render(callback, error)
 
   render_view: (new_body, callback, preview) ->
     unless @dispatch_before_render(new_body, !!preview).defaultPrevented
@@ -158,7 +155,7 @@ class Turbolinks.Controller
   visit_request_started: (visit) ->
     @progress_bar.set_value(0)
     if visit.should_issue_request()
-      @progress_bar_timeout = setTimeout(@show_progress_bar, @progress_bar_delay)
+      @progress_bar_timeout = setTimeout(@show_progress_bar, @constructor.progress_bar_delay)
     else
       @show_progress_bar()
 
@@ -273,7 +270,7 @@ class Turbolinks.Controller
     @dispatch_visit(location, action)
 
   create_visit: (location, action, { restoration_id, restoration_data, history_changed, html } = {}) ->
-    visit = new Turbolinks.Visit(this, location, action, html)
+    visit = new Turbolinks.Visit(location, action, html)
     visit.restoration_id = restoration_id ? Turbolinks.uid()
     visit.restoration_data = Turbolinks.copy(restoration_data)
     visit.history_changed = history_changed
