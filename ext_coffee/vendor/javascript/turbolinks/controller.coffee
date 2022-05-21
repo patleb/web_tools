@@ -39,7 +39,7 @@ class Turbolinks.Controller
       return window.location = location
     location = Turbolinks.Location.wrap(location)
     unless @dispatch_before_visit(location, action).defaultPrevented
-      if @location_is_visitable(location, action)
+      if @location_is_visitable(location)
         same_page = location.is_same_page() and location.anchor?
         restoration_data = @get_restoration_data(restoration_id)
         @start_visit(location, action, { restoration_id, restoration_data, same_page, html })
@@ -179,7 +179,7 @@ class Turbolinks.Controller
       params = Rails.serializeElement(form, button)
       location.push_query(params)
       action = button.getAttribute('data-turbolinks-action') ? form.getAttribute('data-turbolinks-action') ? 'advance'
-      if @location_is_visitable(location, action)
+      if @location_is_visitable(location)
         unless @dispatch_search(form, location).defaultPrevented
           event.preventDefault()
           event.stopPropagation()
@@ -197,7 +197,7 @@ class Turbolinks.Controller
       return if @is_reloadable(url)
       location = new Turbolinks.Location(url)
       action = link.getAttribute('data-turbolinks-action') ? 'advance'
-      if @location_is_visitable(location, action)
+      if @location_is_visitable(location)
         unless @dispatch_click(link, location).defaultPrevented
           event.preventDefault()
           @visit(location, { action })
@@ -292,7 +292,7 @@ class Turbolinks.Controller
   is_reloadable: (url) ->
     not (url instanceof Turbolinks.Location) and url?.charAt(0) is '?'
 
-  location_is_visitable: (location, action) ->
+  location_is_visitable: (location) ->
     location.is_prefixed_by(@get_root_location()) and location.is_html()
 
   get_restoration_data: (restoration_id) ->

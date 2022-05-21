@@ -16,7 +16,7 @@ class Turbolinks.Visit
         @load_anchor()
         @change_history()
         @scroll_to_anchor()
-        @controller.dispatch_hashchange(@referrer, @location) unless @action == 'restore'
+        @controller.dispatch_hashchange(@referrer, @location) if @action isnt 'restore'
       else
         @load_cached_snapshot()
         @issue_request()
