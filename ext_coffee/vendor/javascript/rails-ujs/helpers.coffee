@@ -50,24 +50,24 @@ Rails.cspNonce = ->
 # CSRF helpers
 
 # Up-to-date Cross-Site Request Forgery token
-csrfToken = Rails.csrfToken = ->
+Rails.csrfToken = ->
   meta = document.querySelector('meta[name=csrf-token]')
   meta and meta.content
 
 # URL param that must contain the CSRF token
-csrfParam = Rails.csrfParam = ->
+Rails.csrfParam = ->
   meta = document.querySelector('meta[name=csrf-param]')
   meta and meta.content
 
 # Make sure that every Ajax request sends the CSRF token
 Rails.CSRFProtection = (xhr) ->
-  token = csrfToken()
+  token = Rails.csrfToken()
   xhr.setRequestHeader('X-CSRF-Token', token) if token?
 
 # Make sure that all forms have actual up-to-date tokens (cached forms contain old ones)
 Rails.refreshCSRFTokens = ->
-  token = csrfToken()
-  param = csrfParam()
+  token = Rails.csrfToken()
+  param = Rails.csrfParam()
   if token? and param?
     Rails.$('form input[name="' + param + '"]').forEach (input) -> input.value = token
 
@@ -102,7 +102,7 @@ if typeof CustomEvent isnt 'function'
 #   e.g. 'click', 'submit'
 # data::
 #   data you want to pass when you dispatch an event
-fire = Rails.fire = (obj, name, data) ->
+Rails.fire = (obj, name, data) ->
   event = new CustomEvent(
     name,
     bubbles: true,
@@ -114,7 +114,7 @@ fire = Rails.fire = (obj, name, data) ->
 
 # Helper function, needed to provide consistent behavior in IE
 Rails.stopEverything = (e) ->
-  fire(e.target, 'ujs:everythingStopped')
+  Rails.fire(e.target, 'ujs:everythingStopped')
   e.preventDefault()
   e.stopPropagation()
   e.stopImmediatePropagation()
