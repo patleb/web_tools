@@ -61,9 +61,6 @@ class Turbolinks.Location
   is_equal_to: (location) ->
     @absolute_url is location?.absolute_url
 
-  is_same_page_anchor: ->
-    @is_same_page() and @anchor?
-
   is_same_page: ->
     @request_url is @constructor.current_location().request_url
 

@@ -11,7 +11,7 @@ describe('Turbolinks Search form', () => {
 
   it('should go to location /search_form', async () => {
     await turbolinks.visit('search_form', {}, (event) => {
-      turbolinks.assert_page(event, 'http://localhost/search_form', { title: 'Search form' })
+      turbolinks.assert_page(event, 'http://localhost/search_form', { title: 'Search form', action: 'replace' })
     })
   })
 

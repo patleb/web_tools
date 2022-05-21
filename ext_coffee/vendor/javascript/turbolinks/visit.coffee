@@ -12,9 +12,15 @@ class Turbolinks.Visit
     if @state is 'initialized'
       @record_timing('visit_start')
       @state = 'started'
-      @load_cached_snapshot()
-      @issue_request()
-      @change_history()
+      if @same_page
+        @load_anchor()
+        @change_history()
+        @scroll_to_anchor()
+        @controller.dispatch_hashchange(@referrer, @location) unless @action == 'restore'
+      else
+        @load_cached_snapshot()
+        @issue_request()
+        @change_history()
 
   cancel: ->
     if @state is 'started'
@@ -35,8 +41,8 @@ class Turbolinks.Visit
 
   change_history: ->
     unless @history_changed
-      action = if @location.is_equal_to(@referrer) then 'replace' else @action
-      method = switch action
+      @action = 'replace' if @location.is_equal_to(@referrer)
+      method = switch @action
         when 'replace'            then 'replace_history'
         when 'advance', 'restore' then 'push_history'
       @controller[method](@location, @restoration_id)
@@ -50,7 +56,8 @@ class Turbolinks.Visit
   get_cached_snapshot: ->
     if snapshot = @controller.get_cached_snapshot(@location) or @get_preloaded_snapshot()
       if not @location.anchor? or snapshot.has_anchor(@location.anchor)
-        if @action is 'restore' or not (@action is 'replace' and @location.is_same_page()) and snapshot.is_previewable()
+        refresh = @action is 'replace' and @location.is_same_page()
+        if @action is 'restore' or not refresh and snapshot.is_previewable()
           snapshot
 
   get_preloaded_snapshot: ->
@@ -66,6 +73,10 @@ class Turbolinks.Visit
         @cache_snapshot()
         @controller.render({ snapshot, preview }, @perform_scroll)
         @complete() unless preview
+
+  load_anchor: ->
+    @render ->
+      @cache_snapshot()
 
   load_response: ->
     if @response?

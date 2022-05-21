@@ -20,7 +20,7 @@ describe('Turbolinks Anchor', () => {
 
     it('should go to location /anchor', async () => {
       await turbolinks.visit('anchor', {}, (event) => {
-        turbolinks.assert_page(event, 'http://localhost/anchor', { title: 'Anchor' })
+        turbolinks.assert_page(event, 'http://localhost/anchor', { title: 'Anchor', action: 'replace' })
       })
     })
 
@@ -45,24 +45,25 @@ describe('Turbolinks Anchor', () => {
         total++
       })
       assert.equal(1, before_visits)
-      assert.equal(2, visits)
+      assert.equal(3, visits)
       assert.equal(2, popstates)
       assert.equal(3, hashchanges)
-      assert.equal(13, total)
+      assert.equal(18, total)
     })
   })
 
   it('should visit anchor on same-page', async () => {
-    await turbolinks.visit('http://localhost/anchor#main', {}, (event) => {
-      turbolinks.assert_page(event, 'http://localhost/anchor#main', { title: 'Anchor', action: 'restore' })
+    await turbolinks.visit('anchor#main', { event_name: 'hashchange' }, (event) => {
+      turbolinks.assert_page(event, 'http://localhost/anchor#main', { title: 'Anchor' })
     })
   })
 
-  it('should follow anchor on same-page with replace', async () => {
-    await turbolinks.visit('anchor#main', { action: 'replace' }, (event) => {
-      turbolinks.assert_page(event, 'http://localhost/anchor#main', { title: 'Anchor', action: 'replace' })
+  it('should follow same-anchor on same-page with replace', async () => {
+    await turbolinks.visit('anchor#main', { event_name: 'hashchange' }, (event) => {
+      turbolinks.assert_page(event, 'http://localhost/anchor#main', { title: 'Anchor' })
     })
-    await turbolinks.click('#replace-with-same-page-anchor', {}, (event) => {
+    tick()
+    await turbolinks.click('#replace-with-same-page-anchor', { event_name: 'hashchange' }, (event) => {
       turbolinks.assert_page(event, 'http://localhost/anchor#main', { title: 'Anchor', action: 'replace' })
     })
   })

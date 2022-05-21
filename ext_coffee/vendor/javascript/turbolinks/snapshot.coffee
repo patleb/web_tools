@@ -28,6 +28,7 @@ class Turbolinks.Snapshot
     new Turbolinks.Location(root)
 
   get_anchor: (name) ->
+    return @body if name == ''
     try @body.querySelector("[id='#{name}'], a[name='#{name}']")
 
   get_permanent: (element) ->

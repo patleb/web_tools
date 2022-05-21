@@ -83,6 +83,7 @@ Turbolinks.controller.visit = function (location, options = {}) {
 }
 
 const old_defer = Turbolinks.defer
+const old_requestAnimationFrame = window.requestAnimationFrame
 
 function listen_on(event_name, event_count, handler) {
   let countdown = event_count
@@ -115,9 +116,11 @@ const turbolinks = {
   },
   setup_no_defer: () => {
     Turbolinks.defer = (callback) =>  callback()
+    window.requestAnimationFrame = (callback) => callback()
   },
   reset_defer: () => {
     Turbolinks.defer = old_defer
+    window.requestAnimationFrame = old_requestAnimationFrame
   },
   back: (...args) => {
     return navigate('back', ...args)
@@ -153,11 +156,13 @@ const turbolinks = {
     if (anchor != null) {
       origin_url = origin_url.replace(`#${anchor}`, '')
     }
-    let name = location.replace(`#${anchor}`, '')
-    xhr.get(origin_url, async (req, res) => {
-      await tick()
-      return res.status(status).header('content-type', 'text/html').body(fixture.html(name))
-    })
+    if (anchor == null || window.location && origin_url !== window.location.href || action === 'replace') {
+      let name = location.replace(`#${anchor}`, '')
+      xhr.get(origin_url, async (req, res) => {
+        await tick()
+        return res.status(status).header('content-type', 'text/html').body(fixture.html(name))
+      })
+    }
     return new Promise((resolve) => {
       listen_on(event_name, event_count, (event) => {
         resolve(event)
@@ -217,14 +222,16 @@ const turbolinks = {
     if (anchor != null) {
       origin_url = origin_url.replace(`#${anchor}`, '')
     }
-    let name = origin_url.replace(/^http:\/\/localhost\//, '')
-    xhr.get(origin_url, (req, res) => {
-      res = res.status(status).header('content-type', 'text/html')
-      for(const [key, value] of Object.entries(headers)) {
-        res = res.header(key, value)
-      }
-      return res.body(fixture.html(name))
-    })
+    if (anchor == null || window.location && origin_url !== window.location.href || action === 'replace') {
+      let name = origin_url.replace(/^http:\/\/localhost\//, '')
+      xhr.get(origin_url, (req, res) => {
+        res = res.status(status).header('content-type', 'text/html')
+        for(const [name, value] of Object.entries(headers)) {
+          res = res.header(name, value)
+        }
+        return res.body(fixture.html(name))
+      })
+    }
     return new Promise((resolve) => {
       listen_on(event_name, event_count, (event) => {
         resolve(event)
@@ -253,7 +260,7 @@ const turbolinks = {
       assert.called(window.scrollTo)
     }
     assert.equal(action, Turbolinks.controller.current_visit.action)
-    assert.equal(href, event.data.url)
+    assert.equal(href, event.newURL || event.data.url)
     assert.equal(href, window.location.href)
     assert.equal(title, document.querySelector('title').innerHTML)
     assert.equal(h1, document.querySelector('h1').innerHTML)

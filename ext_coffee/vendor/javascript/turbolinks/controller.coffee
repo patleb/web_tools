@@ -40,15 +40,9 @@ class Turbolinks.Controller
     location = Turbolinks.Location.wrap(location)
     unless @dispatch_before_visit(location, action).defaultPrevented
       if @location_is_visitable(location, action)
+        same_page = location.is_same_page() and location.anchor?
         restoration_data = @get_restoration_data(restoration_id)
-        @start_visit(location, action, { restoration_id, restoration_data, html })
-      else if location.is_same_page_anchor()
-        location_was = @location
-        @cache_snapshot()
-        method = if @location.is_equal_to(location) then 'replace_history' else 'push_history'
-        @[method](location, Turbolinks.uid())
-        @scroll_to_anchor(location.anchor)
-        @dispatch_hashchange(location_was, location)
+        @start_visit(location, action, { restoration_id, restoration_data, same_page, html })
       else
         window.location = location
 
@@ -205,7 +199,7 @@ class Turbolinks.Controller
       return if @is_reloadable(url)
       location = new Turbolinks.Location(url)
       action = link.getAttribute('data-turbolinks-action') ? 'advance'
-      if @location_is_visitable(location, action) or location.is_same_page_anchor()
+      if @location_is_visitable(location, action)
         unless @dispatch_click(link, location).defaultPrevented
           event.preventDefault()
           @visit(location, { action })
@@ -213,10 +207,12 @@ class Turbolinks.Controller
   on_popstate: (event) =>
     return unless @enabled and @should_handle_popstate()
     if restoration_id = @get_restoration_id(event)
+      anchored = @location.anchor? or Turbolinks.Location.current_location().anchor?
+      same_page = @location.is_same_page() and anchored
       @location = Turbolinks.Location.current_location()
       @restoration_id = restoration_id
       restoration_data = @get_restoration_data(@restoration_id)
-      @start_visit(@location, 'restore', { @restoration_id, restoration_data, history_changed: true })
+      @start_visit(@location, 'restore', { @restoration_id, restoration_data, same_page, history_changed: true })
 
   on_load: (event) =>
     Turbolinks.defer =>
@@ -269,10 +265,11 @@ class Turbolinks.Controller
     @current_visit.start()
     @dispatch_visit(location, action)
 
-  create_visit: (location, action, { restoration_id, restoration_data, history_changed, html } = {}) ->
+  create_visit: (location, action, { restoration_id, restoration_data, same_page, html, history_changed } = {}) ->
     visit = new Turbolinks.Visit(location, action, html)
     visit.restoration_id = restoration_id ? Turbolinks.uid()
     visit.restoration_data = Turbolinks.copy(restoration_data)
+    visit.same_page = same_page
     visit.history_changed = history_changed
     visit.referrer = @location
     visit
@@ -298,8 +295,7 @@ class Turbolinks.Controller
     not (url instanceof Turbolinks.Location) and url?.charAt(0) is '?'
 
   location_is_visitable: (location, action) ->
-    location.is_prefixed_by(@get_root_location()) and location.is_html() and
-      (not location.is_same_page_anchor() or action is 'replace')
+    location.is_prefixed_by(@get_root_location()) and location.is_html()
 
   get_restoration_data: (restoration_id) ->
     @restoration_data[restoration_id] ?= {}

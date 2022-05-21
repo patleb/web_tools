@@ -32,7 +32,7 @@ describe('Turbolinks Navigation', () => {
 
   it('should go to location /navigation', async () => {
     await turbolinks.visit('navigation', {}, (event) => {
-      turbolinks.assert_page(event, 'http://localhost/navigation', { title: 'Turbolinks', h1: 'Navigation' })
+      turbolinks.assert_page(event, 'http://localhost/navigation', { title: 'Turbolinks', h1: 'Navigation', action: 'replace' })
     })
   })
 

@@ -11,7 +11,7 @@ describe('Turbolinks Rendering', () => {
 
   it('should go to location /rendering', async () => {
     await turbolinks.visit('rendering', {}, (event) => {
-      turbolinks.assert_page(event, 'http://localhost/rendering', { title: 'Turbolinks', h1: 'Rendering' })
+      turbolinks.assert_page(event, 'http://localhost/rendering', { title: 'Turbolinks', h1: 'Rendering', action: 'replace' })
     })
   })
 
