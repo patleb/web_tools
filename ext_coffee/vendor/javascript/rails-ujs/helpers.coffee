@@ -138,6 +138,9 @@ Rails.delegate = (element, selector, eventType, handler) ->
       e.preventDefault()
       e.stopPropagation()
 
+Rails.document_on = (eventType, selector, handler) ->
+  Rails.delegate(document, selector, eventType, handler)
+
 # Form helpers
 
 toArray = (e) -> Array.prototype.slice.call(e)

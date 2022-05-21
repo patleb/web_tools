@@ -13,41 +13,41 @@ Rails.start = ->
     Rails.$(Rails.linkDisableSelector).forEach (el) ->
       Rails.enableElement(el) if Rails.getData(el, 'ujs:disabled')
 
-  Rails.delegate document, Rails.linkDisableSelector, 'ajax:complete', Rails.enableElement
-  Rails.delegate document, Rails.linkDisableSelector, 'ajax:stopped', Rails.enableElement
-  Rails.delegate document, Rails.buttonDisableSelector, 'ajax:complete', Rails.enableElement
-  Rails.delegate document, Rails.buttonDisableSelector, 'ajax:stopped', Rails.enableElement
+  Rails.document_on 'ajax:complete', Rails.linkDisableSelector, Rails.enableElement
+  Rails.document_on 'ajax:stopped', Rails.linkDisableSelector, Rails.enableElement
+  Rails.document_on 'ajax:complete', Rails.buttonDisableSelector, Rails.enableElement
+  Rails.document_on 'ajax:stopped', Rails.buttonDisableSelector, Rails.enableElement
 
-  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.preventInsignificantClick
-  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.handleDisabledElement
-  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.handleConfirm
-  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.disableElement
-  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.handleRemote
-  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.handleMethod
+  Rails.document_on 'click', Rails.linkClickSelector, Rails.preventInsignificantClick
+  Rails.document_on 'click', Rails.linkClickSelector, Rails.handleDisabledElement
+  Rails.document_on 'click', Rails.linkClickSelector, Rails.handleConfirm
+  Rails.document_on 'click', Rails.linkClickSelector, Rails.disableElement
+  Rails.document_on 'click', Rails.linkClickSelector, Rails.handleRemote
+  Rails.document_on 'click', Rails.linkClickSelector, Rails.handleMethod
 
-  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.preventInsignificantClick
-  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.handleDisabledElement
-  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.handleConfirm
-  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.disableElement
-  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.handleRemote
+  Rails.document_on 'click', Rails.buttonClickSelector, Rails.preventInsignificantClick
+  Rails.document_on 'click', Rails.buttonClickSelector, Rails.handleDisabledElement
+  Rails.document_on 'click', Rails.buttonClickSelector, Rails.handleConfirm
+  Rails.document_on 'click', Rails.buttonClickSelector, Rails.disableElement
+  Rails.document_on 'click', Rails.buttonClickSelector, Rails.handleRemote
 
-  Rails.delegate document, Rails.inputChangeSelector, 'change', Rails.handleDisabledElement
-  Rails.delegate document, Rails.inputChangeSelector, 'change', Rails.handleConfirm
-  Rails.delegate document, Rails.inputChangeSelector, 'change', Rails.handleRemote
+  Rails.document_on 'change', Rails.inputChangeSelector, Rails.handleDisabledElement
+  Rails.document_on 'change', Rails.inputChangeSelector, Rails.handleConfirm
+  Rails.document_on 'change', Rails.inputChangeSelector, Rails.handleRemote
 
-  Rails.delegate document, Rails.formSubmitSelector, 'submit', Rails.handleDisabledElement
-  Rails.delegate document, Rails.formSubmitSelector, 'submit', Rails.handleConfirm
-  Rails.delegate document, Rails.formSubmitSelector, 'submit', Rails.handleRemote
+  Rails.document_on 'submit', Rails.formSubmitSelector, Rails.handleDisabledElement
+  Rails.document_on 'submit', Rails.formSubmitSelector, Rails.handleConfirm
+  Rails.document_on 'submit', Rails.formSubmitSelector, Rails.handleRemote
   # Normal mode submit
   # Slight timeout so that the submit button gets properly serialized
-  Rails.delegate document, Rails.formSubmitSelector, 'submit', (e) -> setTimeout((-> Rails.disableElement(e)), 13)
-  Rails.delegate document, Rails.formSubmitSelector, 'ajax:send', Rails.disableElement
-  Rails.delegate document, Rails.formSubmitSelector, 'ajax:complete', Rails.enableElement
+  Rails.document_on 'submit', Rails.formSubmitSelector, (e) -> setTimeout((-> Rails.disableElement(e)), 13)
+  Rails.document_on 'ajax:send', Rails.formSubmitSelector, Rails.disableElement
+  Rails.document_on 'ajax:complete', Rails.formSubmitSelector, Rails.enableElement
 
-  Rails.delegate document, Rails.formInputClickSelector, 'click', Rails.preventInsignificantClick
-  Rails.delegate document, Rails.formInputClickSelector, 'click', Rails.handleDisabledElement
-  Rails.delegate document, Rails.formInputClickSelector, 'click', Rails.handleConfirm
-  Rails.delegate document, Rails.formInputClickSelector, 'click', Rails.formSubmitButtonClick
+  Rails.document_on 'click', Rails.formInputClickSelector, Rails.preventInsignificantClick
+  Rails.document_on 'click', Rails.formInputClickSelector, Rails.handleDisabledElement
+  Rails.document_on 'click', Rails.formInputClickSelector, Rails.handleConfirm
+  Rails.document_on 'click', Rails.formInputClickSelector, Rails.formSubmitButtonClick
 
   document.addEventListener('DOMContentLoaded', Rails.refreshCSRFTokens)
   document.addEventListener('DOMContentLoaded', Rails.loadCSPNonce)
