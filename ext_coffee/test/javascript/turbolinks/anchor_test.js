@@ -67,4 +67,12 @@ describe('Turbolinks Anchor', () => {
       turbolinks.assert_page(event, 'http://localhost/anchor#main', { title: 'Anchor', action: 'replace' })
     })
   })
+
+  it('should not do anything if the same-page anchor is invalid', async () => {
+    await turbolinks.visit('anchor#!', { event_name: 'hashchange' }, (event) => {
+      assert.not_called(Element.prototype.scrollIntoView)
+      assert.not_called(window.scrollTo)
+      assert.equal('http://localhost/anchor#!', event.newURL)
+    })
+  })
 })

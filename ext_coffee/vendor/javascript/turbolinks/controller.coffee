@@ -105,8 +105,6 @@ class Turbolinks.Controller
     if element = @get_anchor(name)
       element.scrollIntoView()
       @focus(element)
-    else
-      @scroll_to_position(x: 0, y: 0)
 
   scroll_to_position: ({ x, y }) ->
     window.scrollTo(x, y)
