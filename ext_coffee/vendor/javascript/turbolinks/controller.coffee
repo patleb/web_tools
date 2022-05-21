@@ -13,8 +13,8 @@ class Turbolinks.Controller
     unless Turbolinks.supported
       return addEventListener('DOMContentLoaded', @dispatch_load, false)
     unless @started
-      addEventListener('submit', @search_captured, true)
-      addEventListener('click', @click_captured, true)
+      addEventListener('submit', @on_submit, true)
+      addEventListener('click', @on_click, true)
       addEventListener('DOMContentLoaded', @dom_loaded, false)
       addEventListener('scroll', @on_scroll, false)
       @on_scroll()
@@ -27,8 +27,8 @@ class Turbolinks.Controller
 
   stop: ->
     if @started
-      removeEventListener('submit', @search_captured, true)
-      removeEventListener('click', @click_captured, true)
+      removeEventListener('submit', @on_submit, true)
+      removeEventListener('click', @on_click, true)
       removeEventListener('DOMContentLoaded', @dom_loaded, false)
       removeEventListener('scroll', @on_scroll, false)
       @stop_history()
@@ -94,7 +94,7 @@ class Turbolinks.Controller
     if @should_cache_snapshot()
       unless @dispatch_before_cache().defaultPrevented
         snapshot = @get_snapshot()
-        location = @last_rendered_location or Turbolinks.Location.current_location()
+        location = @rendered_location or Turbolinks.Location.current_location()
         Turbolinks.defer =>
           @cache.put(location, snapshot.clone())
           @dispatch_cache()
@@ -139,7 +139,7 @@ class Turbolinks.Controller
   render_view: (new_body, callback, preview) ->
     unless @dispatch_before_render(new_body, !!preview).defaultPrevented
       callback()
-      @last_rendered_location = @current_visit.location
+      @rendered_location = @current_visit.location
       @dispatch_render(new_body, !!preview)
 
   # Visit
@@ -161,14 +161,14 @@ class Turbolinks.Controller
   # Event handlers
 
   dom_loaded: =>
-    @last_rendered_location = @location
+    @rendered_location = @location
     @dispatch_load(once: true)
 
-  search_captured: =>
-    removeEventListener('submit', @search_bubbled, false)
-    addEventListener('submit', @search_bubbled, false)
+  on_submit: =>
+    removeEventListener('submit', @submit_bubbled, false)
+    addEventListener('submit', @submit_bubbled, false)
 
-  search_bubbled: (event) =>
+  submit_bubbled: (event) =>
     return unless @enabled and Rails.matches(event.target, 'form[method=get]:not([data-remote=true])')
     form = event.target
     button = event.submitter or document.activeElement
@@ -185,7 +185,7 @@ class Turbolinks.Controller
           event.stopPropagation()
           @visit(location, { action, same_page: false })
 
-  click_captured: =>
+  on_click: =>
     removeEventListener('click', @click_bubbled, false)
     addEventListener('click', @click_bubbled, false)
 
