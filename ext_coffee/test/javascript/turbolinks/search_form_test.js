@@ -16,18 +16,10 @@ describe('Turbolinks Search form', () => {
   })
 
   it('should visit the submitted query form', async () => {
-    assert.total(3)
-    let url = 'http://localhost/search_form?page=1&search=input&commit=button#search'
-    await turbolinks.on_event('turbolinks:search', {}, (event) => {
-      assert.equal(url, event.data.url)
-    })
-    await turbolinks.on_event('turbolinks:before-visit', {}, (event) => {
-      event.preventDefault()
-      assert.equal(url, event.data.url)
+    assert.total(2)
+    await turbolinks.click_button('[name="commit"]', (event) => {
+      assert.equal('http://localhost/search_form?page=1&search=input&commit=button#search', event.data.url)
       assert.equal('advance', event.data.action)
     })
-    let button = document.querySelector('[name="commit"]')
-    Turbolinks.controller.focus(button)
-    button.click()
   })
 })

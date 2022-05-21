@@ -34,13 +34,13 @@ class Turbolinks.Controller
       @stop_history()
       @started = false
 
-  visit: (location, { action = 'advance', restoration_id, html } = {}) ->
+  visit: (location, { action = 'advance', restoration_id, same_page, html } = {}) ->
     unless Turbolinks.supported and not @is_reloadable(location)
       return window.location = location
     location = Turbolinks.Location.wrap(location)
     unless @dispatch_before_visit(location, action).defaultPrevented
       if @location_is_visitable(location)
-        same_page = location.is_same_page() and location.anchor?
+        same_page = same_page ? location.is_same_page() and location.anchor?
         restoration_data = @get_restoration_data(restoration_id)
         @start_visit(location, action, { restoration_id, restoration_data, same_page, html })
       else
@@ -183,7 +183,7 @@ class Turbolinks.Controller
         unless @dispatch_search(form, location).defaultPrevented
           event.preventDefault()
           event.stopPropagation()
-          @visit(location, { action })
+          @visit(location, { action, same_page: false })
 
   click_captured: =>
     removeEventListener('click', @click_bubbled, false)

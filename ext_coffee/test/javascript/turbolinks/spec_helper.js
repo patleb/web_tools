@@ -171,6 +171,18 @@ const turbolinks = {
       return Turbolinks.visit(location, { action })
     })
   },
+  click_button: (selector, asserts) => {
+    let button = document.querySelector(selector)
+    return new Promise((resolve) => {
+      listen_on('turbolinks:before-visit', 1, (event) => {
+        event.preventDefault()
+        resolve(event)
+        asserts(event)
+      })
+      Turbolinks.controller.focus(button)
+      button.click()
+    })
+  },
   click_cancel: (selector, asserts) => {
     let link = document.querySelector(selector)
     return new Promise((resolve) => {
