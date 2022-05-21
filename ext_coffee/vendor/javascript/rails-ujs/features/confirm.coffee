@@ -1,7 +1,5 @@
-{ fire, stopEverything } = Rails
-
 Rails.handleConfirm = (e) ->
-  stopEverything(e) unless allowAction(this)
+  Rails.stopEverything(e) unless allowAction(this)
 
 # Default confirm dialog, may be overridden with custom confirm dialog in Rails.confirm
 Rails.confirm = (message, element) ->
@@ -21,8 +19,8 @@ allowAction = (element) ->
   return true unless message
 
   answer = false
-  if fire(element, 'confirm')
+  if Rails.fire(element, 'confirm')
     try answer = Rails.confirm(message, element)
-    callback = fire(element, 'confirm:complete', [answer])
+    callback = Rails.fire(element, 'confirm:complete', [answer])
 
   answer and callback

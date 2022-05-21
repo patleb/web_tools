@@ -1,21 +1,3 @@
-{
-  fire, delegate
-  getData, $
-  refreshCSRFTokens, CSRFProtection
-  loadCSPNonce
-  enableElement, disableElement, handleDisabledElement
-  handleConfirm, preventInsignificantClick
-  handleRemote, formSubmitButtonClick,
-  handleMethod
-} = Rails
-
-# For backward compatibility
-if jQuery? and jQuery.ajax?
-  throw new Error('If you load both jquery_ujs and rails-ujs, use rails-ujs only.') if jQuery.rails
-  jQuery.rails = Rails
-  jQuery.ajaxPrefilter (options, originalOptions, xhr) ->
-    CSRFProtection(xhr) unless options.crossDomain
-
 Rails.start = ->
   # Cut down on the number of issues from people inadvertently including
   # rails-ujs twice by detecting and raising an error when it happens.
@@ -26,50 +8,50 @@ Rails.start = ->
   # See https://github.com/rails/jquery-ujs/issues/357
   # See https://developer.mozilla.org/en-US/docs/Using_Firefox_1.5_caching
   window.addEventListener 'pageshow', ->
-    $(Rails.formEnableSelector).forEach (el) ->
-      enableElement(el) if getData(el, 'ujs:disabled')
-    $(Rails.linkDisableSelector).forEach (el) ->
-      enableElement(el) if getData(el, 'ujs:disabled')
+    Rails.$(Rails.formEnableSelector).forEach (el) ->
+      Rails.enableElement(el) if Rails.getData(el, 'ujs:disabled')
+    Rails.$(Rails.linkDisableSelector).forEach (el) ->
+      Rails.enableElement(el) if Rails.getData(el, 'ujs:disabled')
 
-  delegate document, Rails.linkDisableSelector, 'ajax:complete', enableElement
-  delegate document, Rails.linkDisableSelector, 'ajax:stopped', enableElement
-  delegate document, Rails.buttonDisableSelector, 'ajax:complete', enableElement
-  delegate document, Rails.buttonDisableSelector, 'ajax:stopped', enableElement
+  Rails.delegate document, Rails.linkDisableSelector, 'ajax:complete', Rails.enableElement
+  Rails.delegate document, Rails.linkDisableSelector, 'ajax:stopped', Rails.enableElement
+  Rails.delegate document, Rails.buttonDisableSelector, 'ajax:complete', Rails.enableElement
+  Rails.delegate document, Rails.buttonDisableSelector, 'ajax:stopped', Rails.enableElement
 
-  delegate document, Rails.linkClickSelector, 'click', preventInsignificantClick
-  delegate document, Rails.linkClickSelector, 'click', handleDisabledElement
-  delegate document, Rails.linkClickSelector, 'click', handleConfirm
-  delegate document, Rails.linkClickSelector, 'click', disableElement
-  delegate document, Rails.linkClickSelector, 'click', handleRemote
-  delegate document, Rails.linkClickSelector, 'click', handleMethod
+  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.preventInsignificantClick
+  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.handleDisabledElement
+  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.handleConfirm
+  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.disableElement
+  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.handleRemote
+  Rails.delegate document, Rails.linkClickSelector, 'click', Rails.handleMethod
 
-  delegate document, Rails.buttonClickSelector, 'click', preventInsignificantClick
-  delegate document, Rails.buttonClickSelector, 'click', handleDisabledElement
-  delegate document, Rails.buttonClickSelector, 'click', handleConfirm
-  delegate document, Rails.buttonClickSelector, 'click', disableElement
-  delegate document, Rails.buttonClickSelector, 'click', handleRemote
+  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.preventInsignificantClick
+  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.handleDisabledElement
+  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.handleConfirm
+  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.disableElement
+  Rails.delegate document, Rails.buttonClickSelector, 'click', Rails.handleRemote
 
-  delegate document, Rails.inputChangeSelector, 'change', handleDisabledElement
-  delegate document, Rails.inputChangeSelector, 'change', handleConfirm
-  delegate document, Rails.inputChangeSelector, 'change', handleRemote
+  Rails.delegate document, Rails.inputChangeSelector, 'change', Rails.handleDisabledElement
+  Rails.delegate document, Rails.inputChangeSelector, 'change', Rails.handleConfirm
+  Rails.delegate document, Rails.inputChangeSelector, 'change', Rails.handleRemote
 
-  delegate document, Rails.formSubmitSelector, 'submit', handleDisabledElement
-  delegate document, Rails.formSubmitSelector, 'submit', handleConfirm
-  delegate document, Rails.formSubmitSelector, 'submit', handleRemote
+  Rails.delegate document, Rails.formSubmitSelector, 'submit', Rails.handleDisabledElement
+  Rails.delegate document, Rails.formSubmitSelector, 'submit', Rails.handleConfirm
+  Rails.delegate document, Rails.formSubmitSelector, 'submit', Rails.handleRemote
   # Normal mode submit
   # Slight timeout so that the submit button gets properly serialized
-  delegate document, Rails.formSubmitSelector, 'submit', (e) -> setTimeout((-> disableElement(e)), 13)
-  delegate document, Rails.formSubmitSelector, 'ajax:send', disableElement
-  delegate document, Rails.formSubmitSelector, 'ajax:complete', enableElement
+  Rails.delegate document, Rails.formSubmitSelector, 'submit', (e) -> setTimeout((-> Rails.disableElement(e)), 13)
+  Rails.delegate document, Rails.formSubmitSelector, 'ajax:send', Rails.disableElement
+  Rails.delegate document, Rails.formSubmitSelector, 'ajax:complete', Rails.enableElement
 
-  delegate document, Rails.formInputClickSelector, 'click', preventInsignificantClick
-  delegate document, Rails.formInputClickSelector, 'click', handleDisabledElement
-  delegate document, Rails.formInputClickSelector, 'click', handleConfirm
-  delegate document, Rails.formInputClickSelector, 'click', formSubmitButtonClick
+  Rails.delegate document, Rails.formInputClickSelector, 'click', Rails.preventInsignificantClick
+  Rails.delegate document, Rails.formInputClickSelector, 'click', Rails.handleDisabledElement
+  Rails.delegate document, Rails.formInputClickSelector, 'click', Rails.handleConfirm
+  Rails.delegate document, Rails.formInputClickSelector, 'click', Rails.formSubmitButtonClick
 
-  document.addEventListener('DOMContentLoaded', refreshCSRFTokens)
-  document.addEventListener('DOMContentLoaded', loadCSPNonce)
+  document.addEventListener('DOMContentLoaded', Rails.refreshCSRFTokens)
+  document.addEventListener('DOMContentLoaded', Rails.loadCSPNonce)
   window._rails_loaded = true
 
-if window.Rails is Rails and fire(document, 'rails:attachBindings')
+if window.Rails is Rails and Rails.fire(document, 'rails:attachBindings')
   Rails.start()
