@@ -36,6 +36,15 @@ Rails.setData = (element, key, value) ->
 Rails.$ = (selector) ->
   Array.prototype.slice.call(document.querySelectorAll(selector))
 
+Rails.focus = (element) ->
+  if element instanceof HTMLElement
+    if element.hasAttribute('tabindex')
+      element.focus()
+    else
+      element.setAttribute('tabindex', '-1')
+      element.focus()
+      element.removeAttribute('tabindex')
+
 # CSP helpers
 
 csp_nonce = null

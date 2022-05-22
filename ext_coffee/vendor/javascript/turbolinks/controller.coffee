@@ -104,19 +104,10 @@ class Turbolinks.Controller
   scroll_to_anchor: (name) ->
     if element = @get_anchor(name)
       element.scrollIntoView()
-      @focus(element)
+      Rails.focus(element)
 
   scroll_to_position: ({ x, y }) ->
     window.scrollTo(x, y)
-
-  focus: (element) ->
-    if element instanceof HTMLElement
-      if element.hasAttribute('tabindex')
-        element.focus()
-      else
-        element.setAttribute('tabindex', '-1')
-        element.focus()
-        element.removeAttribute('tabindex')
 
   # View
 
@@ -144,19 +135,16 @@ class Turbolinks.Controller
 
   # Visit
 
-  visit_request_started: (visit) ->
+  request_started: (visit) ->
     @progress_bar.set_value(0)
     if visit.should_issue_request()
       @progress_bar_timeout = setTimeout(@show_progress_bar, @constructor.progress_bar_delay)
     else
       @show_progress_bar()
 
-  visit_request_finished: (visit) ->
+  request_finished: (visit) ->
     @progress_bar.set_value(1)
     @hide_progress_bar()
-
-  visit_completed: (visit) ->
-    @dispatch_load(visit.get_timing())
 
   # Event handlers
 

@@ -33,7 +33,7 @@ class Turbolinks.Visit
       @record_timing('visit_end')
       @state = 'completed'
       @follow_redirect()
-      @controller.visit_completed(this)
+      @controller.dispatch_load(@get_timing())
 
   fail: ->
     if @state is 'started'
@@ -99,7 +99,7 @@ class Turbolinks.Visit
 
   request_started: ->
     @record_timing('request_start')
-    @controller.visit_request_started(this)
+    @controller.request_started(this)
 
   request_completed: (@response, redirected_to_location) ->
     @redirected_to_location = Turbolinks.Location.wrap(redirected_to_location) if redirected_to_location?
@@ -114,7 +114,7 @@ class Turbolinks.Visit
 
   request_finished: ->
     @record_timing('request_end')
-    @controller.visit_request_finished(this)
+    @controller.request_finished(this)
 
   should_issue_request: ->
     if @action is 'restore'

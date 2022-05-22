@@ -169,7 +169,7 @@ const turbolinks = {
         resolve(event)
         handler(event)
       })
-      Turbolinks.controller.focus(button)
+      Rails.focus(button)
       button.click()
     })
   },
