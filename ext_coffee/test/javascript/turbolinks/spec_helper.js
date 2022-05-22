@@ -85,21 +85,11 @@ Turbolinks.controller.visit = function (location, options = {}) {
 const old_defer = Turbolinks.defer
 const old_requestAnimationFrame = window.requestAnimationFrame
 
-function listen_on(event_name, event_count, handler) {
-  let countdown = event_count
-  addEventListener(event_name, function eventListener(event) {
-    if (--countdown === 0) {
-      removeEventListener(event_name, eventListener, false)
-    }
-    handler(event, event_count - countdown - 1)
-  }, false)
-}
-
 function navigate(direction, { event_name = 'turbolinks:load', event_count = 1 } = {}, asserts) {
   return new Promise((resolve) => {
-    listen_on(event_name, event_count, (event) => {
+    dom.on_event(event_name, { event_count }, (event, index) => {
       resolve(event)
-      asserts(event)
+      asserts(event, index)
     })
     return window.history[direction]()
   })
@@ -131,7 +121,7 @@ const turbolinks = {
   visit_reload_and_assert: (location, { action = 'advance' } = {}) => {
     assert.total(4)
     assert.null(window.location)
-    turbolinks.on_event('turbolinks:before-visit', {}, (event) => {
+    dom.on_event('turbolinks:before-visit', {}, (event) => {
       assert.equal(location, event.data.url)
     })
     turbolinks.visit_reload(location, { action }, (event) => {
@@ -141,10 +131,10 @@ const turbolinks = {
   },
   visit_reload: (location, { action = 'advance', event_count = 1 } = {}, asserts) => {
     return new Promise((resolve) => {
-      listen_on('turbolinks:visit-reload', event_count, (event) => {
+      dom.on_event('turbolinks:visit-reload', { event_count }, (event, index) => {
         branches.visit_reload = false
         resolve(event)
-        asserts(event)
+        asserts(event, index)
       })
       branches.visit_reload = true
       return Turbolinks.visit(location, { action })
@@ -164,9 +154,9 @@ const turbolinks = {
       })
     }
     return new Promise((resolve) => {
-      listen_on(event_name, event_count, (event) => {
+      dom.on_event(event_name, { event_count }, (event, index) => {
         resolve(event)
-        asserts(event)
+        asserts(event, index)
       })
       return Turbolinks.visit(location, { action })
     })
@@ -174,7 +164,7 @@ const turbolinks = {
   click_button: (selector, asserts) => {
     let button = document.querySelector(selector)
     return new Promise((resolve) => {
-      listen_on('turbolinks:before-visit', 1, (event) => {
+      dom.on_event('turbolinks:before-visit', {}, (event) => {
         event.preventDefault()
         resolve(event)
         asserts(event)
@@ -186,7 +176,7 @@ const turbolinks = {
   click_cancel: (selector, asserts) => {
     let link = document.querySelector(selector)
     return new Promise((resolve) => {
-      listen_on('turbolinks:click-cancel', 1, (event) => {
+      dom.on_event('turbolinks:click-cancel', {}, (event) => {
         branches.click_cancel = false
         resolve(event)
         asserts(event)
@@ -198,7 +188,7 @@ const turbolinks = {
   click_only: (selector, asserts) => {
     let link = document.querySelector(selector)
     return new Promise((resolve) => {
-      listen_on('turbolinks:click-only', 1, (event) => {
+      dom.on_event('turbolinks:click-only', {}, (event) => {
         branches.click_only = false
         resolve(event)
         asserts(event)
@@ -209,11 +199,11 @@ const turbolinks = {
   },
   click_reload: (selector, asserts) => {
     let responded = false
-    turbolinks.on_event('turbolinks:request-end', {}, (event) => {
+    dom.on_event('turbolinks:request-end', {}, (event) => {
       responded = true
     })
     let rendered = false
-    turbolinks.on_event('turbolinks:render', {}, (event) => {
+    dom.on_event('turbolinks:render', {}, (event) => {
       rendered = true
     })
     return turbolinks.click(selector, {}, (event) => {
@@ -245,16 +235,11 @@ const turbolinks = {
       })
     }
     return new Promise((resolve) => {
-      listen_on(event_name, event_count, (event) => {
+      dom.on_event(event_name, { event_count }, (event, index) => {
         resolve(event)
-        asserts(event)
+        asserts(event, index)
       })
       return link.click()
-    })
-  },
-  on_event: (event_name, { event_count = 1 } = {}, asserts = (e) => {}) => {
-    listen_on(event_name, event_count, (event, index) => {
-      asserts(event, index)
     })
   },
   assert_reload: (event, href, { action = 'advance' } = {}) => {

@@ -37,7 +37,7 @@ describe('Turbolinks Navigation', () => {
   })
 
   it('should follow a same-origin unannotated link', async () => {
-    turbolinks.on_event('turbolinks:request-end', {}, (event) => {
+    dom.on_event('turbolinks:request-end', {}, (event) => {
       assert.equal('123', event.data.xhr.req.header('X-Turbolinks-Nonce'))
     })
     await turbolinks.click('#same-origin-unannotated-link', { headers: { 'X-Turbolinks-Nonce': '123' } }, (event) => {
