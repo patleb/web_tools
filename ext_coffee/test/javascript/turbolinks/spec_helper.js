@@ -85,11 +85,11 @@ Turbolinks.controller.visit = function (location, options = {}) {
 const old_defer = Turbolinks.defer
 const old_requestAnimationFrame = window.requestAnimationFrame
 
-function navigate(direction, { event_name = 'turbolinks:load', event_count = 1 } = {}, asserts) {
+function navigate(direction, { event_name = 'turbolinks:load', event_count = 1 } = {}, handler) {
   return new Promise((resolve) => {
     dom.on_event(event_name, { event_count }, (event, index) => {
       resolve(event)
-      asserts(event, index)
+      handler(event, index)
     })
     return window.history[direction]()
   })
@@ -129,18 +129,18 @@ const turbolinks = {
       assert.equal(location, window.location.toString())
     })
   },
-  visit_reload: (location, { action = 'advance', event_count = 1 } = {}, asserts) => {
+  visit_reload: (location, { action = 'advance', event_count = 1 } = {}, handler) => {
     return new Promise((resolve) => {
       dom.on_event('turbolinks:visit-reload', { event_count }, (event, index) => {
         branches.visit_reload = false
         resolve(event)
-        asserts(event, index)
+        handler(event, index)
       })
       branches.visit_reload = true
       return Turbolinks.visit(location, { action })
     })
   },
-  visit: (location, { event_name = 'turbolinks:load', event_count = 1, status = 200, action = 'advance' } = {}, asserts) => {
+  visit: (location, { event_name = 'turbolinks:load', event_count = 1, status = 200, action = 'advance' } = {}, handler) => {
     let origin_url = `http://localhost/${location}`
     let anchor = url.get_anchor(origin_url)
     if (anchor != null) {
@@ -156,48 +156,48 @@ const turbolinks = {
     return new Promise((resolve) => {
       dom.on_event(event_name, { event_count }, (event, index) => {
         resolve(event)
-        asserts(event, index)
+        handler(event, index)
       })
       return Turbolinks.visit(location, { action })
     })
   },
-  click_button: (selector, asserts) => {
+  click_button: (selector, handler) => {
     let button = document.querySelector(selector)
     return new Promise((resolve) => {
       dom.on_event('turbolinks:before-visit', {}, (event) => {
         event.preventDefault()
         resolve(event)
-        asserts(event)
+        handler(event)
       })
       Turbolinks.controller.focus(button)
       button.click()
     })
   },
-  click_cancel: (selector, asserts) => {
+  click_cancel: (selector, handler) => {
     let link = document.querySelector(selector)
     return new Promise((resolve) => {
       dom.on_event('turbolinks:click-cancel', {}, (event) => {
         branches.click_cancel = false
         resolve(event)
-        asserts(event)
+        handler(event)
       })
       branches.click_cancel = true
       return link.click()
     })
   },
-  click_only: (selector, asserts) => {
+  click_only: (selector, handler) => {
     let link = document.querySelector(selector)
     return new Promise((resolve) => {
       dom.on_event('turbolinks:click-only', {}, (event) => {
         branches.click_only = false
         resolve(event)
-        asserts(event)
+        handler(event)
       })
       branches.click_only = true
       return Turbolinks.dispatch('click', { target: link, cancelable: true })
     })
   },
-  click_reload: (selector, asserts) => {
+  click_reload: (selector, handler) => {
     let responded = false
     dom.on_event('turbolinks:request-end', {}, (event) => {
       responded = true
@@ -209,10 +209,10 @@ const turbolinks = {
     return turbolinks.click(selector, {}, (event) => {
       event.responded = responded
       event.rendered = rendered
-      asserts(event)
+      handler(event)
     })
   },
-  click: (selector, { event_name = 'turbolinks:load', event_count = 1, status = 200, headers = {} } = {}, asserts) => {
+  click: (selector, { event_name = 'turbolinks:load', event_count = 1, status = 200, headers = {} } = {}, handler) => {
     let link = document.querySelector(selector)
     let shadow_root = link.shadowRoot
     if (shadow_root) {
@@ -237,7 +237,7 @@ const turbolinks = {
     return new Promise((resolve) => {
       dom.on_event(event_name, { event_count }, (event, index) => {
         resolve(event)
-        asserts(event, index)
+        handler(event, index)
       })
       return link.click()
     })

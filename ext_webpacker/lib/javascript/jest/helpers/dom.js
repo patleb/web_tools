@@ -27,11 +27,11 @@ const dom = {
     let fn = html.matchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.mozMatchesSelector
     return fn.call(element, selector)
   },
-  on_event: (event_name, { event_count = 1 } = {}, handler = (e, index) => {}) => {
+  on_event: (event_name, { element = window, event_count = 1 } = {}, handler = (e, index) => {}) => {
     let countdown = event_count
-    addEventListener(event_name, function eventListener(event) {
+    element.addEventListener(event_name, function eventListener(event) {
       if (--countdown === 0) {
-        removeEventListener(event_name, eventListener, false)
+        element.removeEventListener(event_name, eventListener, false)
       }
       handler(event, event_count - countdown - 1)
     }, false)
