@@ -1,3 +1,4 @@
+import '@@vendor/rails-ujs/polyfills/custom_event'
 import '@@vendor/rails-ujs/BANNER'
 import '@@vendor/rails-ujs/index'
 import '@@vendor/rails-ujs/helpers'
