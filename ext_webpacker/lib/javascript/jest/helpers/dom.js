@@ -63,5 +63,12 @@ const dom = {
       handler(event, event_count - countdown - 1)
     }, false)
   },
+  off_event: (event_name, { element = window, event_count = 1 } = {}) => {
+    let countdown = event_count
+    while (countdown--) {
+      const event = new CustomEvent(event_name, { bubbles: true })
+      element.dispatchEvent(event)
+    }
+  },
 }
 global.dom = dom
