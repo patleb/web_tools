@@ -281,3 +281,16 @@ Rails.isCrossDomain = (url) ->
   catch e
     # If there is an error parsing the URL, assume it is crossDomain.
     true
+
+# Misc helpers
+
+Rails.id = 0
+
+Rails.uid = ->
+  pad = '0000000000000'
+  time = (new Date().getTime()).toString()
+  time = String(time + pad).substring(0, pad.length)
+  pad = '000'
+  num = Turbolinks.id++
+  num = String(pad + num).slice(-pad.length)
+  "#{time}#{num}"

@@ -3,7 +3,7 @@ class Turbolinks.Visit
 
   constructor: (location, @action, @html) ->
     @controller = Turbolinks.controller
-    @id = Turbolinks.uid()
+    @id = Rails.uid()
     @location = Turbolinks.Location.wrap(location)
     @state = 'initialized'
     @timing = {}

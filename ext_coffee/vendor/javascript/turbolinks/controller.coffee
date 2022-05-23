@@ -57,7 +57,7 @@ class Turbolinks.Controller
 
   start_history: ->
     @location = Turbolinks.Location.current_location()
-    @restoration_id = Turbolinks.uid()
+    @restoration_id = Rails.uid()
     @initial_location = @location
     @initial_restoration_id = @restoration_id
     addEventListener('popstate', @on_popstate, false)
@@ -253,7 +253,7 @@ class Turbolinks.Controller
 
   create_visit: (location, action, { restoration_id, restoration_data, same_page, html, history_changed } = {}) ->
     visit = new Turbolinks.Visit(location, action, html)
-    visit.restoration_id = restoration_id ? Turbolinks.uid()
+    visit.restoration_id = restoration_id ? Rails.uid()
     visit.restoration_data = Turbolinks.copy(restoration_data)
     visit.same_page = same_page
     visit.history_changed = history_changed
