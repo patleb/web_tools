@@ -19,6 +19,20 @@ const dom = {
     document.head.innerHTML = head_was
     document.body.innerHTML = body_was
   },
+  setup_events_log: (events) => {
+    dom.reset_events_log()
+    for (const event_name of events) {
+      addEventListener(event_name, (event) => {
+        window.events_log.push([event.type, event.data || event.detail])
+      }, false)
+    }
+  },
+  reset_events_log: () => {
+    window.events_log = []
+  },
+  events_log: () => {
+    return window.events_log.map(([type, data]) => `${type} -- ${data ? JSON.stringify(data): ''}`)
+  },
   children: (element, test) => {
     return Array.from(element.childNodes).filter(node => node.nodeType === Node.ELEMENT_NODE && test(node))
   },

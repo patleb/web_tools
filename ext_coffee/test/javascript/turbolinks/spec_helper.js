@@ -29,15 +29,9 @@ const branches = {
   visit_reload: false,
 }
 
-global.pretty_events_log = () => window.events_log.map(([type, data]) => `${type} -- ${data ? JSON.stringify(data): ''}`)
-
 beforeAll(() => {
   fixture.set_root('ext_coffee/test/fixtures/files/turbolinks')
-  for (const event_name of events) {
-    addEventListener(event_name, (event) => {
-      window.events_log.push([event.type, event.data])
-    }, false)
-  }
+  dom.setup_events_log(events)
 })
 
 afterAll(() => {
@@ -45,12 +39,12 @@ afterAll(() => {
 })
 
 beforeEach(() => {
-  window.events_log = []
   xhr.setup()
 })
 
 afterEach(() => {
   xhr.teardown()
+  dom.reset_events_log()
 })
 
 const old_click_bubbled = Turbolinks.controller.click_bubbled.bind(Turbolinks.controller)
