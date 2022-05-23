@@ -169,8 +169,7 @@ const turbolinks = {
         resolve(event)
         handler(event)
       })
-      Rails.focus(button)
-      button.click()
+      return dom.click(button)
     })
   },
   click_cancel: (selector, handler) => {
@@ -182,7 +181,7 @@ const turbolinks = {
         handler(event)
       })
       branches.click_cancel = true
-      return link.click()
+      return dom.click(link)
     })
   },
   click_only: (selector, handler) => {
@@ -239,7 +238,7 @@ const turbolinks = {
         resolve(event)
         handler(event, index)
       })
-      return link.click()
+      return dom.click(link)
     })
   },
   assert_reload: (event, href, { action = 'advance' } = {}) => {

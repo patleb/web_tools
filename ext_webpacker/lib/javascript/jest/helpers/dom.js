@@ -27,6 +27,19 @@ const dom = {
     let fn = html.matchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.mozMatchesSelector
     return fn.call(element, selector)
   },
+  click: (element) => {
+    dom.focus(element)
+    return element.click()
+  },
+  focus: (element) => {
+    if (element.hasAttribute('tabindex')) {
+      element.focus()
+    } else {
+      element.setAttribute('tabindex', '-1')
+      element.focus()
+      element.removeAttribute('tabindex')
+    }
+  },
   on_event: (event_name, { element = window, event_count = 1 } = {}, handler = (e, index) => {}) => {
     let countdown = event_count
     element.addEventListener(event_name, function eventListener(event) {
