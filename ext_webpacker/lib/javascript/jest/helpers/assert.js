@@ -14,5 +14,6 @@ const assert = {
   called: (act, n = null) => n == null ? expect(act).toBeCalled() : expect(act).toBeCalledTimes(n),
   not_called: (act) => expect(act).not.toBeCalled(),
   total: (n) => expect.assertions(n),
+  raise: (msg, handler) => expect(handler).toThrow(msg),
 }
 global.assert = assert
