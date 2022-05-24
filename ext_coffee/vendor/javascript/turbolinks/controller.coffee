@@ -159,7 +159,7 @@ class Turbolinks.Controller
   submit_bubbled: (event) =>
     return unless @enabled and event.target.matches('form[method=get]:not([data-remote=true])')
     form = event.target
-    button = event.submitter or document.activeElement
+    button = event.submitter
     if @is_visitable(button) and (button.getAttribute('formmethod')?.toLowerCase() ? 'get') == 'get'
       url = button.getAttribute('formaction') ? form.getAttribute('action') ? form.action
       return if @is_reloadable(url)

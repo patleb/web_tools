@@ -41,10 +41,6 @@ const dom = {
     let fn = html.matchesSelector || html.webkitMatchesSelector || html.msMatchesSelector || html.mozMatchesSelector
     return fn.call(element, selector)
   },
-  click: (element) => {
-    dom.focus(element)
-    return element.click()
-  },
   focus: (element) => {
     if (element.hasAttribute('tabindex')) {
       element.focus()

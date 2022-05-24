@@ -46,19 +46,29 @@ const rails = {
       } })
     })
   },
-  click: (selector, { type = 'get', url, event_name = 'ajax:complete', status = 200 } = {}, handler) => {
+  click: (selector, { type = 'get', url, event_name = 'ajax:complete', status = 200, skip } = {}, handler) => {
     let element = document.querySelector(selector)
+    let skipped_event = true
     if (url) {
       xhr[type](url, async (req, res) => {
         return res.status(status)
+      })
+    }
+    if (skip) {
+      dom.on_event(skip, {}, (event) => {
+        skipped_event = false
       })
     }
     return new Promise((resolve) => {
       dom.on_event(event_name, {}, (event) => {
         resolve(event)
         handler(event)
+        if (skip) {
+          assert.true(skipped_event)
+          dom.off_event(skip)
+        }
       })
-      return dom.click(element)
+      return element.click()
     })
   },
 }

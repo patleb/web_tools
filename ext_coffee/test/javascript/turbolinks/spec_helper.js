@@ -163,7 +163,7 @@ const turbolinks = {
         resolve(event)
         handler(event)
       })
-      return dom.click(button)
+      return button.click()
     })
   },
   click_cancel: (selector, handler) => {
@@ -175,7 +175,7 @@ const turbolinks = {
         handler(event)
       })
       branches.click_cancel = true
-      return dom.click(link)
+      return link.click()
     })
   },
   click_only: (selector, handler) => {
@@ -232,7 +232,7 @@ const turbolinks = {
         resolve(event)
         handler(event, index)
       })
-      return dom.click(link)
+      return link.click()
     })
   },
   assert_reload: (event, href, { action = 'advance' } = {}) => {
