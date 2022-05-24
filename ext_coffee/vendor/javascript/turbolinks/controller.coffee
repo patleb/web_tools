@@ -158,17 +158,16 @@ class Turbolinks.Controller
 
   submit_bubbled: (event) =>
     return unless @enabled and event.target.matches('form[method=get]:not([data-remote=true])')
-    form = event.target
-    button = event.submitter
-    if @is_visitable(button) and (button.getAttribute('formmethod')?.toLowerCase() ? 'get') == 'get'
-      url = button.getAttribute('formaction') ? form.getAttribute('action') ? form.action
+    { target, submitter } = event
+    if @is_visitable(submitter) and (submitter.getAttribute('formmethod')?.toLowerCase() ? 'get') == 'get'
+      url = submitter.getAttribute('formaction') ? target.getAttribute('action') ? target.action
       return if @is_reloadable(url)
       location = Turbolinks.Location.wrap(url)
-      params = Rails.serializeElement(form, button)
+      params = Rails.serializeElement(target, submitter)
       location.push_query(params)
-      action = button.getAttribute('data-turbolinks-action') ? form.getAttribute('data-turbolinks-action') ? 'advance'
+      action = submitter.getAttribute('data-turbolinks-action') ? target.getAttribute('data-turbolinks-action') ? 'advance'
       if @location_is_visitable(location)
-        unless @dispatch_search(form, location).defaultPrevented
+        unless @dispatch_search(target, location).defaultPrevented
           event.preventDefault()
           event.stopPropagation()
           @visit(location, { action, same_page: false })
