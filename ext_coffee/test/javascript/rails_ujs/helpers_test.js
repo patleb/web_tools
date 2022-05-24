@@ -50,12 +50,13 @@ describe('Rails UJS Helpers', () => {
 
   it('should call ajax without "ajax:beforeSend"', async () => {
     let before = false
-    dom.on_event('ajax:beforeSend', (event) => {
+    dom.on_event('ajax:beforeSend', {}, (event) => {
       before = true
     })
     await rails.ajax('get', '/', {}, (xhr) => {
       assert.false(before)
       assert.equal(200, xhr.status)
     })
+    dom.off_event('ajax:beforeSend')
   })
 })
