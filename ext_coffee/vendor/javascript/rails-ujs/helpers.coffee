@@ -14,7 +14,7 @@ Rails.setData = (element, key, value) ->
 # a wrapper for document.querySelectorAll
 # returns an Array
 Rails.$ = (selector) ->
-  Array.prototype.slice.call(document.querySelectorAll(selector))
+  Array::slice.call(document.querySelectorAll(selector))
 
 Rails.focus = (element) ->
   if element instanceof HTMLElement
@@ -111,7 +111,7 @@ Rails.document_on = (eventType, selector, handler) ->
 
 # Form helpers
 
-toArray = (e) -> Array.prototype.slice.call(e)
+toArray = (e) -> Array::slice.call(e)
 
 Rails.serializeElement = (element, additionalParam) ->
   inputs = [element]

@@ -21,8 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ###
-if typeof HTMLFormElement.prototype.requestSubmit isnt 'function'
-  HTMLFormElement.prototype.requestSubmit = (submitter) ->
+if typeof HTMLFormElement::requestSubmit isnt 'function'
+  HTMLFormElement::requestSubmit = (submitter) ->
     if submitter
       validateSubmitter(submitter, this)
       submitter.click()
