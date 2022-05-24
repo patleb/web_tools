@@ -36,26 +36,18 @@ const dom = {
   children: (element, test) => {
     return Array.from(element.childNodes).filter(node => node.nodeType === Node.ELEMENT_NODE && test(node))
   },
-  focus: (element) => {
-    if (element.hasAttribute('tabindex')) {
-      element.focus()
-    } else {
-      element.setAttribute('tabindex', '-1')
-      element.focus()
-      element.removeAttribute('tabindex')
-    }
-  },
-  on_event: (event_name, { element = window, event_count = 1 } = {}, handler = (e, index) => {}) => {
-    let countdown = event_count
+  on_event: ({ element = window, count = 1, ...rest } = {}) => {
+    const [event_name, handler] = Object.entries(rest)[0]
+    let countdown = count
     element.addEventListener(event_name, function eventListener(event) {
       if (--countdown === 0) {
         element.removeEventListener(event_name, eventListener, false)
       }
-      handler(event, event_count - countdown - 1)
+      handler(event, count - countdown - 1)
     }, false)
   },
-  off_event: (event_name, { element = window, event_count = 1 } = {}) => {
-    let countdown = event_count
+  off_event: (event_name, { element = window, count = 1 } = {}) => {
+    let countdown = count
     while (countdown--) {
       const event = new CustomEvent(event_name, { bubbles: true })
       element.dispatchEvent(event)

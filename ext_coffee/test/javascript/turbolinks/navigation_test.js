@@ -31,30 +31,30 @@ describe('Turbolinks Navigation', () => {
   })
 
   it('should go to location /navigation', async () => {
-    await turbolinks.visit('navigation', {}, (event) => {
+    await turbolinks.visit('navigation', { 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/navigation', { title: 'Turbolinks', h1: 'Navigation', action: 'replace' })
-    })
+    }})
   })
 
   it('should follow a same-origin unannotated link', async () => {
-    dom.on_event('turbolinks:request-end', {}, (event) => {
+    dom.on_event({ 'turbolinks:request-end': (event) => {
       assert.equal('123', event.data.xhr.req.header('X-Turbolinks-Nonce'))
-    })
-    await turbolinks.click('#same-origin-unannotated-link', { headers: { 'X-Turbolinks-Nonce': '123' } }, (event) => {
+    }})
+    await turbolinks.click('#same-origin-unannotated-link', { headers: { 'X-Turbolinks-Nonce': '123' }, 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
-    })
+    }})
   })
 
   it('should follow a same-origin unannotated custom element link', async () => {
-    await turbolinks.click('#custom-link-element', {}, (event) => {
+    await turbolinks.click('#custom-link-element', { 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
-    })
+    }})
   })
 
   it('should follow a same-origin data-turbolinks-action=replace link', async () => {
-    await turbolinks.click('#same-origin-replace-link', {}, (event) => {
+    await turbolinks.click('#same-origin-replace-link', { 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One', action: 'replace' })
-    })
+    }})
   })
 
   it('should not follow a same-origin data-turbolinks=false link', async () => {
@@ -76,15 +76,15 @@ describe('Turbolinks Navigation', () => {
   })
 
   it('should follow a same-origin anchored link', async () => {
-    await turbolinks.click('#same-origin-anchored-link', {}, (event) => {
+    await turbolinks.click('#same-origin-anchored-link', { 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one#element-id', { title: 'One' })
-    })
+    }})
   })
 
   it('should follow a same-origin link to named anchor', async () => {
-    await turbolinks.click('#same-origin-anchored-link-named', {}, (event) => {
+    await turbolinks.click('#same-origin-anchored-link-named', { 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one#named-anchor', { title: 'One' })
-    })
+    }})
   })
 
   it('should not follow a cross-origin unannotated link', async () => {
@@ -118,24 +118,24 @@ describe('Turbolinks Navigation', () => {
   })
 
   it('should follow the back button click', async () => {
-    await turbolinks.click('#same-origin-unannotated-link', {}, (event) => {
+    await turbolinks.click('#same-origin-unannotated-link', { 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
-    })
-    await turbolinks.back({}, (event) => {
+    }})
+    await turbolinks.back({ 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/navigation', { title: 'Turbolinks', h1: 'Navigation', action: 'restore' })
-    })
+    }})
   })
 
   it('should follow the forward button click', async () => {
-    await turbolinks.click('#same-origin-unannotated-link', {}, (event) => {
+    await turbolinks.click('#same-origin-unannotated-link', { 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
-    })
-    await turbolinks.back({}, (event) => {
+    }})
+    await turbolinks.back({ 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/navigation', { title: 'Turbolinks', h1: 'Navigation', action: 'restore' })
-    })
-    await turbolinks.forward({}, (event) => {
+    }})
+    await turbolinks.forward({ 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One', action: 'restore' })
-    })
+    }})
   })
 
   it('should not follow a same-page reload link', async () => {

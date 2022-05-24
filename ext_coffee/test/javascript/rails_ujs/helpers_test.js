@@ -12,18 +12,18 @@ describe('Rails UJS Helpers', () => {
   it('should have the getter for a href element overridable', async () => {
     const old_href = Rails.href
     Rails.href = (element) => element.getAttribute('data-href')
-    await rails.click('#fixture a', { event_name: 'ajax:beforeSend' }, (event) => {
+    await rails.click('#fixture a', { 'ajax:beforeSend': (event) => {
       event.preventDefault()
       assert.equal('/data/href', event.detail[1].url)
-    })
+    }})
     Rails.href = old_href
   })
 
   it('should have the getter for a href work normally if not overridden', async () => {
-    await rails.click('#fixture a', { event_name: 'ajax:beforeSend' }, (event) => {
+    await rails.click('#fixture a', { 'ajax:beforeSend': (event) => {
       event.preventDefault()
       assert.equal('http://localhost/real/href', event.detail[1].url)
-    })
+    }})
   })
 
   it('should have the event selector strings overridable', () => {
@@ -50,13 +50,13 @@ describe('Rails UJS Helpers', () => {
 
   it('should call ajax without "ajax:beforeSend"', async () => {
     let before = false
-    dom.on_event('ajax:beforeSend', {}, (event) => {
+    dom.on_event({ 'ajax:beforeSend': (event) => {
       before = true
-    })
-    await rails.ajax('get', '/', {}, (xhr) => {
+    }})
+    await rails.ajax('get', '/', { 'complete': (xhr) => {
       assert.false(before)
       assert.equal(200, xhr.status)
-    })
+    }})
     dom.off_event('ajax:beforeSend')
   })
 })

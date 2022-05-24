@@ -79,12 +79,13 @@ Turbolinks.controller.visit = function (location, options = {}) {
 const old_defer = Turbolinks.defer
 const old_requestAnimationFrame = window.requestAnimationFrame
 
-function navigate(direction, { event_name = 'turbolinks:load', event_count = 1 } = {}, handler) {
+function navigate(direction, rest = {}) {
+  const [event_name, handler] = Object.entries(rest)[0]
   return new Promise((resolve) => {
-    dom.on_event(event_name, { event_count }, (event, index) => {
+    dom.on_event({ [event_name]: (event, index) => {
       resolve(event)
       handler(event, index)
-    })
+    }})
     return window.history[direction]()
   })
 }
@@ -106,35 +107,36 @@ const turbolinks = {
     Turbolinks.defer = old_defer
     window.requestAnimationFrame = old_requestAnimationFrame
   },
-  back: (...args) => {
-    return navigate('back', ...args)
+  back: (rest) => {
+    return navigate('back', rest)
   },
-  forward: (...args) => {
-    return navigate('forward', ...args)
+  forward: (rest) => {
+    return navigate('forward', rest)
   },
-  visit_reload_and_assert: (location, { action = 'advance' } = {}) => {
+  visit_reload_and_assert: (location) => {
     assert.total(4)
     assert.null(window.location)
-    dom.on_event('turbolinks:before-visit', {}, (event) => {
+    dom.on_event({ 'turbolinks:before-visit': (event) => {
       assert.equal(location, event.data.url)
-    })
-    turbolinks.visit_reload(location, { action }, (event) => {
+    }})
+    turbolinks.visit_reload(location, (event) => {
       assert.equal(location, event.data.url)
       assert.equal(location, window.location.toString())
     })
   },
-  visit_reload: (location, { action = 'advance', event_count = 1 } = {}, handler) => {
+  visit_reload: (location, handler) => {
     return new Promise((resolve) => {
-      dom.on_event('turbolinks:visit-reload', { event_count }, (event, index) => {
+      dom.on_event({ 'turbolinks:visit-reload': (event, index) => {
         branches.visit_reload = false
         resolve(event)
         handler(event, index)
-      })
+      }})
       branches.visit_reload = true
-      return Turbolinks.visit(location, { action })
+      return Turbolinks.visit(location, { action: 'advance' })
     })
   },
-  visit: (location, { event_name = 'turbolinks:load', event_count = 1, status = 200, action = 'advance' } = {}, handler) => {
+  visit: (location, { action = 'advance', ...rest } = {}) => {
+    const [event_name, handler] = Object.entries(rest)[0]
     let origin_url = `http://localhost/${location}`
     let anchor = url.get_anchor(origin_url)
     if (anchor != null) {
@@ -144,36 +146,36 @@ const turbolinks = {
       let name = location.replace(`#${anchor}`, '')
       xhr.get(origin_url, async (req, res) => {
         await tick()
-        return res.status(status).header('content-type', 'text/html').body(fixture.html(name))
+        return res.status(200).header('content-type', 'text/html').body(fixture.html(name))
       })
     }
     return new Promise((resolve) => {
-      dom.on_event(event_name, { event_count }, (event, index) => {
+      dom.on_event({ [event_name]: (event, index) => {
         resolve(event)
         handler(event, index)
-      })
+      }})
       return Turbolinks.visit(location, { action })
     })
   },
   click_button: (selector, handler) => {
     let button = document.querySelector(selector)
     return new Promise((resolve) => {
-      dom.on_event('turbolinks:before-visit', {}, (event) => {
+      dom.on_event({ 'turbolinks:before-visit': (event) => {
         event.preventDefault()
         resolve(event)
         handler(event)
-      })
+      }})
       return button.click()
     })
   },
   click_cancel: (selector, handler) => {
     let link = document.querySelector(selector)
     return new Promise((resolve) => {
-      dom.on_event('turbolinks:click-cancel', {}, (event) => {
+      dom.on_event({ 'turbolinks:click-cancel': (event) => {
         branches.click_cancel = false
         resolve(event)
         handler(event)
-      })
+      }})
       branches.click_cancel = true
       return link.click()
     })
@@ -181,31 +183,32 @@ const turbolinks = {
   click_only: (selector, handler) => {
     let link = document.querySelector(selector)
     return new Promise((resolve) => {
-      dom.on_event('turbolinks:click-only', {}, (event) => {
+      dom.on_event({ 'turbolinks:click-only': (event) => {
         branches.click_only = false
         resolve(event)
         handler(event)
-      })
+      }})
       branches.click_only = true
       return Turbolinks.dispatch('click', { target: link, cancelable: true })
     })
   },
   click_reload: (selector, handler) => {
     let responded = false
-    dom.on_event('turbolinks:request-end', {}, (event) => {
+    dom.on_event({ 'turbolinks:request-end': (event) => {
       responded = true
-    })
+    }})
     let rendered = false
-    dom.on_event('turbolinks:render', {}, (event) => {
+    dom.on_event({ 'turbolinks:render': (event) => {
       rendered = true
-    })
-    return turbolinks.click(selector, {}, (event) => {
+    }})
+    return turbolinks.click(selector, { 'turbolinks:load': (event) => {
       event.responded = responded
       event.rendered = rendered
       handler(event)
-    })
+    }})
   },
-  click: (selector, { event_name = 'turbolinks:load', event_count = 1, status = 200, headers = {} } = {}, handler) => {
+  click: (selector, { status = 200, headers = {}, ...rest } = {}) => {
+    const [event_name, handler] = Object.entries(rest)[0]
     let link = document.querySelector(selector)
     let shadow_root = link.shadowRoot
     if (shadow_root) {
@@ -228,17 +231,17 @@ const turbolinks = {
       })
     }
     return new Promise((resolve) => {
-      dom.on_event(event_name, { event_count }, (event, index) => {
+      dom.on_event({ [event_name]: (event, index) => {
         resolve(event)
         handler(event, index)
-      })
+      }})
       return link.click()
     })
   },
-  assert_reload: (event, href, { action = 'advance' } = {}) => {
+  assert_reload: (event, href) => {
     assert.true(event.responded)
     assert.false(event.rendered)
-    assert.equal(action, Turbolinks.controller.current_visit.action)
+    assert.equal('advance', Turbolinks.controller.current_visit.action)
     assert.equal(href, event.data.url)
     assert.called(window.location.reload)
   },

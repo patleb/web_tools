@@ -35,7 +35,8 @@ afterEach(() => {
 })
 
 const rails = {
-  ajax: (type, url, { event_name = 'complete', status = 200 } = {}, handler) => {
+  ajax: (type, url, { status = 200, ...rest } = {}) => {
+    const [event_name, handler] = Object.entries(rest)[0]
     xhr[type](url, (req, res) => {
       return res.status(status)
     })
@@ -46,8 +47,9 @@ const rails = {
       } })
     })
   },
-  click: (selector, { type = 'get', url, event_name = 'ajax:complete', status = 200, skip } = {}, handler) => {
-    let element = document.querySelector(selector)
+  click: (selector, { type = 'get', url, status = 200, skip, ...rest } = {}) => {
+    const [event_name, handler] = Object.entries(rest)[0]
+    const element = document.querySelector(selector)
     let skipped_event = true
     if (url) {
       xhr[type](url, async (req, res) => {
@@ -55,20 +57,36 @@ const rails = {
       })
     }
     if (skip) {
-      dom.on_event(skip, {}, (event) => {
+      dom.on_event({ [skip]: (event) => {
         skipped_event = false
-      })
+      }})
     }
     return new Promise((resolve) => {
-      dom.on_event(event_name, {}, (event) => {
+      dom.on_event({ [event_name]: (event) => {
         resolve(event)
         handler(event)
         if (skip) {
           assert.true(skipped_event)
           dom.off_event(skip)
         }
-      })
+      }})
       return element.click()
+    })
+  },
+  submit: (selector, { type = 'post', url, status = 200, ...rest } = {}) => {
+    const [event_name, handler] = Object.entries(rest)[0]
+    const form = document.querySelector(selector)
+    if (url) {
+      xhr[type](url, async (req, res) => {
+        return res.status(status)
+      })
+    }
+    return new Promise((resolve) => {
+      dom.on_event({ [event_name]: (event) => {
+        resolve(event)
+        handler(event)
+      }})
+      return form.submit()
     })
   },
 }
