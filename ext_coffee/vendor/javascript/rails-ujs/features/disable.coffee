@@ -10,21 +10,21 @@ Rails.enableElement = (e) ->
   else
     element = e
 
-  if Rails.matches(element, Rails.linkDisableSelector)
+  if element.matches(Rails.linkDisableSelector)
     enableLinkElement(element)
-  else if Rails.matches(element, Rails.buttonDisableSelector) or Rails.matches(element, Rails.formEnableSelector)
+  else if element.matches(Rails.buttonDisableSelector) or element.matches(Rails.formEnableSelector)
     enableFormElement(element)
-  else if Rails.matches(element, Rails.formSubmitSelector)
+  else if element.matches(Rails.formSubmitSelector)
     enableFormElements(element)
 
 # Unified function to disable an element (link, button and form)
 Rails.disableElement = (e) ->
   element = if e instanceof Event then e.target else e
-  if Rails.matches(element, Rails.linkDisableSelector)
+  if element.matches(Rails.linkDisableSelector)
     disableLinkElement(element)
-  else if Rails.matches(element, Rails.buttonDisableSelector) or Rails.matches(element, Rails.formDisableSelector)
+  else if element.matches(Rails.buttonDisableSelector) or element.matches(Rails.formDisableSelector)
     disableFormElement(element)
-  else if Rails.matches(element, Rails.formSubmitSelector)
+  else if element.matches(Rails.formSubmitSelector)
     disableFormElements(element)
 
 #  Replace element's html with the 'data-disable-with' after storing original html
@@ -58,7 +58,7 @@ disableFormElement = (element) ->
   return if Rails.getData(element, 'ujs:disabled')
   replacement = element.getAttribute('data-disable-with')
   if replacement?
-    if Rails.matches(element, 'button')
+    if element.matches('button')
       Rails.setData(element, 'ujs:enable-with', element.innerHTML)
       element.innerHTML = replacement
     else
@@ -76,7 +76,7 @@ enableFormElements = (form) ->
 enableFormElement = (element) ->
   originalText = Rails.getData(element, 'ujs:enable-with')
   if originalText?
-    if Rails.matches(element, 'button')
+    if element.matches('button')
       element.innerHTML = originalText
     else
       element.value = originalText

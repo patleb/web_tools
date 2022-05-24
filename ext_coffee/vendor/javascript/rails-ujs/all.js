@@ -1,5 +1,6 @@
 import '@@vendor/rails-ujs/polyfills/custom_event'
 import '@@vendor/rails-ujs/polyfills/form_request_submit'
+import '@@vendor/rails-ujs/polyfills/matches'
 import '@@vendor/rails-ujs/BANNER'
 import '@@vendor/rails-ujs/index'
 import '@@vendor/rails-ujs/helpers'

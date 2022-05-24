@@ -157,7 +157,7 @@ class Turbolinks.Controller
     addEventListener('submit', @submit_bubbled, false)
 
   submit_bubbled: (event) =>
-    return unless @enabled and Rails.matches(event.target, 'form[method=get]:not([data-remote=true])')
+    return unless @enabled and event.target.matches('form[method=get]:not([data-remote=true])')
     form = event.target
     button = event.submitter or document.activeElement
     if @is_visitable(button) and (button.getAttribute('formmethod')?.toLowerCase() ? 'get') == 'get'

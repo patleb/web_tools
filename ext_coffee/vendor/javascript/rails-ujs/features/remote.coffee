@@ -15,7 +15,7 @@ Rails.handleRemote = (e) ->
   withCredentials = element.getAttribute('data-with-credentials')
   dataType = element.getAttribute('data-type') or 'script'
 
-  if Rails.matches(element, Rails.formSubmitSelector)
+  if element.matches(Rails.formSubmitSelector)
     # memoized value from clicked submit button
     button = Rails.getData(element, 'ujs:submit-button')
     method = Rails.getData(element, 'ujs:submit-button-formmethod') or element.method
@@ -33,7 +33,7 @@ Rails.handleRemote = (e) ->
     Rails.setData(element, 'ujs:submit-button', null)
     Rails.setData(element, 'ujs:submit-button-formmethod', null)
     Rails.setData(element, 'ujs:submit-button-formaction', null)
-  else if Rails.matches(element, Rails.buttonClickSelector) or Rails.matches(element, Rails.inputChangeSelector)
+  else if element.matches(Rails.buttonClickSelector) or element.matches(Rails.inputChangeSelector)
     method = element.getAttribute('data-method')
     url = element.getAttribute('data-url')
     data = Rails.serializeElement(element, element.getAttribute('data-params'))

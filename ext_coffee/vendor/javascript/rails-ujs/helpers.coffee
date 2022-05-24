@@ -1,25 +1,5 @@
 # DOM helpers
 
-m = Element.prototype.matches or
-    Element.prototype.matchesSelector or
-    Element.prototype.mozMatchesSelector or
-    Element.prototype.msMatchesSelector or
-    Element.prototype.oMatchesSelector or
-    Element.prototype.webkitMatchesSelector
-
-# Checks if the given native dom element matches the selector
-# element::
-#   native DOM element
-# selector::
-#   CSS selector string or
-#   a JavaScript object with `selector` and `exclude` properties
-#   Examples: "form", { selector: "form", exclude: "form[data-remote='true']"}
-Rails.matches = (element, selector) ->
-  if selector.exclude?
-    m.call(element, selector.selector) and not m.call(element, selector.exclude)
-  else
-    m.call(element, selector)
-
 # get and set data on a given element using "expando properties"
 # See: https://developer.mozilla.org/en-US/docs/Glossary/Expando
 expando = '_ujsData'
@@ -121,7 +101,7 @@ Rails.stopEverything = (e) ->
 Rails.delegate = (element, selector, eventType, handler) ->
   element.addEventListener eventType, (e) ->
     target = e.target
-    target = target.parentNode until not (target instanceof Element) or Rails.matches(target, selector)
+    target = target.parentNode until not (target instanceof Element) or target.matches(selector)
     if target instanceof Element and handler.call(target, e) == false
       e.preventDefault()
       e.stopPropagation()
@@ -135,13 +115,13 @@ toArray = (e) -> Array.prototype.slice.call(e)
 
 Rails.serializeElement = (element, additionalParam) ->
   inputs = [element]
-  inputs = toArray(element.elements) if Rails.matches(element, 'form')
+  inputs = toArray(element.elements) if element.matches('form')
   params = []
 
   inputs.forEach (input) ->
     return if !input.name || input.disabled
-    return if Rails.matches(input, 'fieldset[disabled] *')
-    if Rails.matches(input, 'select')
+    return if input.matches('fieldset[disabled] *')
+    if input.matches('select')
       toArray(input.options).forEach (option) ->
         params.push(name: input.name, value: option.value) if option.selected
     else if input.checked or ['radio', 'checkbox', 'submit'].indexOf(input.type) == -1
@@ -160,8 +140,8 @@ Rails.serializeElement = (element, additionalParam) ->
 # If form is actually a "form" element this will return associated elements outside the from that have
 # the html form attribute set
 Rails.formElements = (form, selector) ->
-  if Rails.matches(form, 'form')
-    toArray(form.elements).filter (el) -> Rails.matches(el, selector)
+  if form.matches('form')
+    toArray(form.elements).filter (el) -> el.matches(selector)
   else
     toArray(form.querySelectorAll(selector))
 
