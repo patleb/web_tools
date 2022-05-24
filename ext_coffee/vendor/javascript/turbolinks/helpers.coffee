@@ -4,17 +4,6 @@ Turbolinks.copy = (object) ->
     result[key] = value
   result
 
-Turbolinks.closest = (element, selector) ->
-  closest.call(element, selector)
-
-closest = do ->
-  html = document.documentElement
-  html.closest ? (selector) ->
-    node = this
-    while node
-      return node if node.nodeType is Node.ELEMENT_NODE and node.matches(selector)
-      node = node.parentNode
-
 Turbolinks.defer = (callback) ->
   setTimeout(callback, 1)
 

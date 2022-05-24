@@ -180,7 +180,7 @@ class Turbolinks.Controller
   click_bubbled: (event) =>
     return unless @enabled and @click_event_is_significant(event)
     target = event.composedPath?()[0] or event.target
-    if @is_visitable(target) and (link = Turbolinks.closest(target, 'a[href]:not([target^=_]):not([download])'))
+    if @is_visitable(target) and (link = target.closest('a[href]:not([target^=_]):not([download])'))
       url = link.getAttribute('href')
       return if @is_reloadable(url)
       location = new Turbolinks.Location(url)
@@ -272,7 +272,7 @@ class Turbolinks.Controller
     )
 
   is_visitable: (node) ->
-    if container = Turbolinks.closest(node, '[data-turbolinks]')
+    if container = node.closest('[data-turbolinks]')
       container.getAttribute('data-turbolinks') isnt 'false'
     else
       true

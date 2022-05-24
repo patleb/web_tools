@@ -1,3 +1,4 @@
+import '@@vendor/rails-ujs/polyfills/closest'
 import '@@vendor/rails-ujs/polyfills/custom_event'
 import '@@vendor/rails-ujs/polyfills/form_request_submit'
 import '@@vendor/rails-ujs/polyfills/matches'
