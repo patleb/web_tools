@@ -241,6 +241,6 @@ Rails.uid = ->
   time = (new Date().getTime()).toString()
   time = String(time + pad).substring(0, pad.length)
   pad = '000'
-  num = Turbolinks.id++
+  num = Rails.id++
   num = String(pad + num).slice(-pad.length)
   "#{time}#{num}"
