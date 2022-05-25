@@ -5,6 +5,7 @@ const events = [
   'DOMContentLoaded',
   'hashchange',
   'popstate',
+  'ujs:everythingStopped',
   'turbolinks:before-cache',
   'turbolinks:before-render',
   'turbolinks:before-visit',

@@ -48,7 +48,7 @@ describe('Turbolinks Anchor', () => {
       assert.equal(3, visits)
       assert.equal(2, popstates)
       assert.equal(3, hashchanges)
-      assert.equal(18, total)
+      assert.equal(19, total)
     })
   })
 
