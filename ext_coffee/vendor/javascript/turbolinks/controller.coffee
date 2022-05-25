@@ -104,7 +104,7 @@ class Turbolinks.Controller
   scroll_to_anchor: (name) ->
     if element = @get_anchor(name)
       element.scrollIntoView()
-      Rails.focus(element)
+      element.focus()
 
   scroll_to_position: ({ x, y }) ->
     window.scrollTo(x, y)
