@@ -6,7 +6,11 @@ import * as matchers from 'jest-extended'
 import xhr from 'xhr-mock'
 
 global.xhr = xhr
-global.tick = (n = 1) => { while(n--){ delay((1000 / 60) + 1) } }
+global.tick = async (n = 1) => {
+  while (n--) {
+    await delay((1000 / 60) + 1)
+  }
+}
 global.delay = (ms = 1) => new Promise(resolve => setTimeout(resolve, ms))
 expect.extend(matchers)
 
