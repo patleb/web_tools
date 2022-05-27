@@ -42,9 +42,9 @@ const rails = {
     })
     return new Promise((resolve) => {
       return Rails.ajax({ type, url, [event_name]: (...args) => {
-          resolve(...args)
-          handler(...args)
-      } })
+        resolve(...args)
+        handler(...args)
+      }})
     })
   },
   click: (selector, { type = 'get', url, status = 200, skip, ...rest } = {}) => {
@@ -75,19 +75,34 @@ const rails = {
   },
   submit: (selector, { type = 'post', url, status = 200, ...rest } = {}) => {
     const [event_name, handler] = Object.entries(rest)[0]
-    const form = document.querySelector(selector)
+    const form = document.querySelector(selector).closest('form')
     if (url) {
       xhr[type](url, async (req, res) => {
         return res.status(status)
       })
     }
     return new Promise((resolve) => {
-      dom.on_event({ [event_name]: (event) => {
+      dom.on_event({ [event_name]: async (event) => {
         resolve(event)
+        await tick()
         handler(event)
       }})
       return form.submit()
     })
+  },
+  assert_enabled_count: 2,
+  assert_enabled: (event, selector) => {
+    const { target } = event
+    const element = selector ? target.querySelector(selector) : target
+    assert.false(element.hasAttribute('disabled'))
+    assert.null(Rails.getData(element, 'ujs:disabled'))
+  },
+  assert_disabled_count: 2,
+  assert_disabled: (event, selector) => {
+    const { target } = event
+    const element = selector ? target.querySelector(selector) : target
+    assert.true(element.hasAttribute('disabled'))
+    assert.true(Rails.getData(element, 'ujs:disabled'))
   },
 }
 

@@ -40,7 +40,10 @@ Rails.start = ->
   Rails.document_on 'submit', Rails.formSubmitSelector, Rails.handleRemote
   # Normal mode submit
   # Slight timeout so that the submit button gets properly serialized
-  Rails.document_on 'submit', Rails.formSubmitSelector, (e) -> setTimeout((-> Rails.disableElement(e)), 13)
+  Rails.document_on 'submit', Rails.formSubmitSelector, (e) ->
+    setTimeout(->
+      Rails.disableElement(e)
+    , 13)
   Rails.document_on 'ajax:send', Rails.formSubmitSelector, Rails.disableElement
   Rails.document_on 'ajax:complete', Rails.formSubmitSelector, Rails.enableElement
 

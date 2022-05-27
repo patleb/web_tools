@@ -8,7 +8,7 @@ import xhr from 'xhr-mock'
 global.xhr = xhr
 global.tick = async (n = 1) => {
   while (n--) {
-    await delay((1000 / 60) + 1)
+    await delay(1000 / 60)
   }
 }
 global.delay = (ms = 1) => new Promise(resolve => setTimeout(resolve, ms))

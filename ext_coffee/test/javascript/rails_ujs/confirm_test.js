@@ -119,14 +119,14 @@ describe('Rails UJS Confirm', () => {
     }})
   })
 
-  it('should not trigger a confirm when clicking on the children of a disabled button', () => {
+  it('should not trigger a confirm when clicking on the children of a disabled button', async () => {
     window.confirm = (message) => { confirm_message = message; return false }
     let skipped_event = true
     dom.on_event({ 'click': (event) => {
       skipped_event = false
     }})
     document.querySelector('button[data-confirm][disabled] > strong').click()
-    tick()
+    await tick()
     assert.true(skipped_event)
     dom.off_event('click')
   })

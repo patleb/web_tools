@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Disable</title>
+    <script src="/rails-ujs.js"></script>
+  </head>
+  <body>
+    <h1>Disable</h1>
+    <form action="/echo" data-remote="true" method="post">
+      <input type="text" data-disable name="user_name" value="john"/>
+    </form>
+    <form action="/echo" method="post">
+      <input type="submit" data-disable="true" name="submit" value="submit"/>
+    </form>
+    <p><a href="/echo" data-disable>Click me</a></p>
+    <p><button data-remote="true" data-url="/echo" data-disable="true"></button></p>
+  </body>
+</html>

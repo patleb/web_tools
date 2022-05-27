@@ -62,7 +62,7 @@ describe('Turbolinks Anchor', () => {
     await turbolinks.visit('anchor#main', { 'hashchange': (event) => {
       turbolinks.assert_page(event, 'http://localhost/anchor#main', { title: 'Anchor' })
     }})
-    tick()
+    await tick()
     await turbolinks.click('#replace-with-same-page-anchor', { 'hashchange': (event) => {
       turbolinks.assert_page(event, 'http://localhost/anchor#main', { title: 'Anchor', action: 'replace' })
     }})
