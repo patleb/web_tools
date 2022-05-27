@@ -33,6 +33,9 @@ const dom = {
   events_log: () => {
     return window.events_log.map(([type, data]) => `${type} -- ${data ? JSON.stringify(data): ''}`)
   },
+  $: (selector) => {
+    return Array.prototype.slice.call(document.querySelectorAll(selector))
+  },
   children: (element, test) => {
     return Array.from(element.childNodes).filter(node => node.nodeType === Node.ELEMENT_NODE && test(node))
   },
