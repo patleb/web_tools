@@ -18,7 +18,7 @@ class Turbolinks.HttpRequest
       @set_progress(0)
       @xhr.send()
       @sent = true
-      @visit.request_started?()
+      @visit.request_started()
 
   cancel: ->
     if @xhr and @sent
@@ -89,7 +89,7 @@ class Turbolinks.HttpRequest
 
   destroy: ->
     @set_progress(1)
-    @visit.request_finished?()
+    @visit.request_finished()
     @visit = null
     @xhr = null
 
