@@ -56,7 +56,9 @@ Rails.handleRemote = (e) ->
         return false
     success: (args...) -> Rails.fire(element, 'ajax:success', args)
     error: (args...) -> Rails.fire(element, 'ajax:error', args)
-    complete: (args...) -> Rails.fire(element, 'ajax:complete', args)
+    complete: (args...) ->
+      Rails.fire(element, 'ajax:complete', args)
+      window.last_button = null
     crossDomain: Rails.isCrossDomain(url)
     withCredentials: withCredentials? and withCredentials isnt 'false'
   )

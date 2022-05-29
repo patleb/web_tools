@@ -34,6 +34,7 @@ class Turbolinks.Visit
       @state = 'completed'
       @follow_redirect()
       @controller.dispatch_load(@get_timing())
+      window.last_button = null
 
   fail: ->
     if @state is 'started'

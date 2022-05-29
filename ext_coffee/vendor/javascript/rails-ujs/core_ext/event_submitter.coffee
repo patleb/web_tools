@@ -1,5 +1,5 @@
 SUBMITABLE_BUTTON = 'button, input[type="button"], input[type="submit"], input[type="image"]'
-last_button = null
+window.last_button = null
 
 do ->
   if 'submitter' of Event::
@@ -13,7 +13,7 @@ do ->
   prototype ?= window.Event::
 
   document.addEventListener 'click', (event) ->
-    last_button = event.target.closest(SUBMITABLE_BUTTON)
+    window.last_button = event.target.closest(SUBMITABLE_BUTTON)
   , true
 
   Object.defineProperty prototype, 'submitter',
@@ -21,8 +21,8 @@ do ->
     enumerable: true,
     get: ->
       return @_submitter if @_submitter
-      candidates = [document.activeElement, last_button]
-      last_button = null
+      candidates = [document.activeElement, window.last_button]
+      window.last_button = null
       for candidate in candidates
         if candidate?.matches(SUBMITABLE_BUTTON) and @target is candidate.form
           return @_submitter = candidate
