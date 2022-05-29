@@ -114,6 +114,17 @@ describe('Rails UJS Disable', () => {
     }})
   })
 
+  it('should re-enable when "pageshow" event is triggered', () => {
+    assert.total(5)
+    const target = dom.$('button[data-remote]')[0]
+    Rails.disableElement(target)
+    rails.assert_disabled({ target })
+    dom.on_event({ 'pageshow': (event) => {
+      rails.assert_enabled({ target })
+    }})
+    dom.off_event('pageshow')
+  })
+
   it('should not enable elements for XHR redirects', async () => {
     assert.total(6)
     dom.on_event({ 'ajax:before': (event) => {
