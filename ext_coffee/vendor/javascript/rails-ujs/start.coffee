@@ -23,7 +23,6 @@ Rails.start = ->
   Rails.document_on 'click', Rails.linkClickSelector, Rails.handleConfirm
   Rails.document_on 'click', Rails.linkClickSelector, Rails.disableElement
   Rails.document_on 'click', Rails.linkClickSelector, Rails.handleRemote
-  Rails.document_on 'click', Rails.linkClickSelector, Rails.handleMethod
 
   Rails.document_on 'click', Rails.buttonClickSelector, Rails.preventInsignificantClick
   Rails.document_on 'click', Rails.buttonClickSelector, Rails.handleDisabledElement
