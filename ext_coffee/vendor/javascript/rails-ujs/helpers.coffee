@@ -100,6 +100,16 @@ Rails.delegate = (element, selector, eventType, handler) ->
 Rails.document_on = (eventType, selector, handler) ->
   Rails.delegate(document, selector, eventType, handler)
 
+Rails.is_meta_click = (event, method, data) ->
+  (event.button? and event.button isnt 0) or (
+    event.target?.isContentEditable or
+    event.which > 1 or
+    event.altKey or
+    event.ctrlKey or
+    event.metaKey or
+    event.shiftKey
+  ) and (method or 'GET').toUpperCase() is 'GET' and not data
+
 # Form helpers
 
 toArray = (e) -> Array::slice.call(e)
@@ -110,7 +120,7 @@ Rails.serializeElement = (element, additionalParam) ->
   params = []
 
   inputs.forEach (input) ->
-    return if !input.name || input.disabled
+    return if !input.name || input.disabled || input.hasAttribute('disabled')
     return if input.matches('fieldset[disabled] *')
     if input.matches('select')
       toArray(input.options).forEach (option) ->

@@ -6,6 +6,16 @@ Element.prototype.scrollIntoView = jest.fn()
 
 const head_was = ''
 const body_was = ''
+const form_submit_was = HTMLFormElement.prototype.submit
+const anchor_click_was = HTMLAnchorElement.prototype.click
+
+function create_custom_event(type, options) {
+  let event = new CustomEvent(type, { bubbles: true, cancelable: true })
+  for (const [key, value] of Object.entries(options)) {
+    event[key] = value
+  }
+  return event
+}
 
 const dom = {
   setup_document: (content) => {
@@ -18,6 +28,24 @@ const dom = {
   reset_document: () => {
     document.head.innerHTML = head_was
     document.body.innerHTML = body_was
+  },
+  stub_click: () => {
+    delete HTMLAnchorElement.prototype.click
+    HTMLAnchorElement.prototype.click = function(options = {}) {
+      this.dispatchEvent(create_custom_event('click', options))
+    }
+  },
+  reset_click: () => {
+    HTMLAnchorElement.prototype.click = anchor_click_was
+  },
+  stub_submit: () => {
+    delete HTMLFormElement.prototype.submit
+    HTMLFormElement.prototype.submit = function(options = {}) {
+      this.dispatchEvent(create_custom_event('submit', options))
+    }
+  },
+  reset_submit: () => {
+    HTMLFormElement.prototype.submit = form_submit_was
   },
   setup_events_log: (events) => {
     dom.reset_events_log()

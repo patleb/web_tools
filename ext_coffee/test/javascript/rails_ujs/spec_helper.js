@@ -14,6 +14,7 @@ const events = [
   'confirm:complete',
   'rails:attachBindings',
   'ujs:everythingStopped',
+  'ujs:meta-click',
 ]
 
 beforeAll(() => {
@@ -47,13 +48,17 @@ const rails = {
       }})
     })
   },
-  click: (selector, { type = 'get', url, status = 200, skip, ...rest } = {}) => {
+  click: (selector, { type = 'get', url, status = 200, headers = {}, skip, button, ctrlKey, altKey, shiftKey, metaKey, ...rest } = {}) => {
     const [event_name, handler] = Object.entries(rest)[0]
     const element = document.querySelector(selector)
     let skipped_event = true
     if (url) {
       xhr[type](url, async (req, res) => {
-        return res.status(status)
+        res = res.status(status)
+        for(const [name, value] of Object.entries(headers)) {
+          res = res.header(name, value)
+        }
+        return res
       })
     }
     if (skip) {
@@ -70,7 +75,13 @@ const rails = {
           dom.off_event(skip)
         }
       }})
-      return element.click()
+      let options = button != null ? { button }
+        : ctrlKey  ? { ctrlKey }
+        : altKey   ? { altKey }
+        : shiftKey ? { shiftKey }
+        : metaKey  ? { metaKey }
+        : {}
+      return element.click(options)
     })
   },
   submit: (selector, { type = 'post', url, status = 200, ...rest } = {}) => {
@@ -90,20 +101,28 @@ const rails = {
       return form.submit()
     })
   },
-  assert_enabled_count: 2,
-  assert_enabled: (event, selector) => {
-    const { target } = event
+  assert_enabled: ({ target }, selector = null) => {
     const element = selector ? target.querySelector(selector) : target
-    assert.false(element.hasAttribute('disabled'))
     assert.null(Rails.getData(element, 'ujs:disabled'))
+    assert.false(element.hasAttribute('disabled'))
   },
-  assert_disabled_count: 2,
-  assert_disabled: (event, selector) => {
-    const { target } = event
+  assert_disabled: ({ target }, selector = null) => {
     const element = selector ? target.querySelector(selector) : target
-    assert.true(element.hasAttribute('disabled'))
     assert.true(Rails.getData(element, 'ujs:disabled'))
+    assert.null(Rails.getData(element, 'ujs:enable-with'))
+    if(!element.matches(Rails.linkDisableSelector)) {
+      assert.true(element.hasAttribute('disabled'))
+    }
   },
+  assert_disabled_with: ({ target }, old_text, new_text, selector = null) => {
+    const element = selector ? target.querySelector(selector) : target
+    assert.true(Rails.getData(element, 'ujs:disabled'))
+    assert.equal(old_text, Rails.getData(element, 'ujs:enable-with'))
+    assert.equal(new_text, element.innerHTML)
+    if(!element.matches(Rails.linkDisableSelector)) {
+      assert.true(element.hasAttribute('disabled'))
+    }
+  }
 }
 
 module.exports = rails

@@ -75,10 +75,7 @@ Rails.formSubmitButtonClick = (e) ->
 
 Rails.preventInsignificantClick = (e) ->
   link = this
-  method = (link.getAttribute('data-method') or 'GET').toUpperCase()
+  method = link.getAttribute('data-method')
   data = link.getAttribute('data-params')
-  metaClick = e.metaKey or e.ctrlKey
-  insignificantMetaClick = metaClick and method is 'GET' and not data
-  nonPrimaryMouseClick = e.button? and e.button isnt 0
-  e.stopImmediatePropagation() if nonPrimaryMouseClick or insignificantMetaClick
-
+  if Rails.is_meta_click(e, method, data) and Rails.fire(e.target, 'ujs:meta-click')
+    e.stopImmediatePropagation()

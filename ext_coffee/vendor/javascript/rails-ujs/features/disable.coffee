@@ -1,6 +1,6 @@
 Rails.handleDisabledElement = (e) ->
   element = this
-  Rails.stopEverything(e) if element.disabled
+  Rails.stopEverything(e) if element.disabled or element.hasAttribute('disabled')
 
 # Unified function to enable an element (link, button and form)
 Rails.enableElement = (e) ->
@@ -30,7 +30,7 @@ Rails.disableElement = (e) ->
 #  Replace element's html with the 'data-disable-with' after storing original html
 #  and prevent clicking on it
 disableLinkElement = (element) ->
-  return if Rails.getData(element, 'ujs:disabled')
+  return if Rails.getData(element, 'ujs:disabled') or element.hasAttribute('disabled')
   replacement = element.getAttribute('data-disable-with')
   if replacement?
     Rails.setData(element, 'ujs:enable-with', element.innerHTML) # store enabled state
@@ -40,6 +40,7 @@ disableLinkElement = (element) ->
 
 # Restore element to its original state which was disabled by 'disableLinkElement' above
 enableLinkElement = (element) ->
+  return unless Rails.getData(element, 'ujs:disabled')
   originalText = Rails.getData(element, 'ujs:enable-with')
   if originalText?
     element.innerHTML = originalText # set to old enabled state
@@ -55,7 +56,7 @@ disableFormElements = (form) ->
   Rails.formElements(form, Rails.formDisableSelector).forEach(disableFormElement)
 
 disableFormElement = (element) ->
-  return if Rails.getData(element, 'ujs:disabled')
+  return if Rails.getData(element, 'ujs:disabled') or element.hasAttribute('disabled')
   replacement = element.getAttribute('data-disable-with')
   if replacement?
     if element.matches('button')
@@ -74,6 +75,7 @@ enableFormElements = (form) ->
   Rails.formElements(form, Rails.formEnableSelector).forEach(enableFormElement)
 
 enableFormElement = (element) ->
+  return unless Rails.getData(element, 'ujs:disabled')
   originalText = Rails.getData(element, 'ujs:enable-with')
   if originalText?
     if element.matches('button')

@@ -159,7 +159,7 @@ class Turbolinks.Controller
   submit_bubbled: (event) =>
     return unless @enabled and event.target.matches('form[method=get]:not([data-remote=true])')
     { target, submitter } = event
-    if @is_visitable(submitter) and (submitter.getAttribute('formmethod')?.toLowerCase() ? 'get') == 'get'
+    if @is_visitable(submitter) and (submitter.getAttribute('formmethod')?.toUpperCase() ? 'GET') is 'GET'
       url = submitter.getAttribute('formaction') ? target.getAttribute('action') ? target.action
       return if @is_reloadable(url)
       location = new Turbolinks.Location(url)
@@ -176,7 +176,7 @@ class Turbolinks.Controller
     addEventListener('click', @click_bubbled, false)
 
   click_bubbled: (event) =>
-    return unless @enabled and @click_event_is_significant(event)
+    return unless @enabled and @is_significant_click(event)
     target = event.composedPath?()[0] or event.target
     if @is_visitable(target) and (link = target.closest('a[href]:not([target^=_]):not([download])'))
       url = link.getAttribute('href')
@@ -258,16 +258,8 @@ class Turbolinks.Controller
     visit.referrer = @location
     visit
 
-  click_event_is_significant: (event) ->
-    not (
-      event.defaultPrevented or
-      event.target?.isContentEditable or
-      event.which > 1 or
-      event.altKey or
-      event.ctrlKey or
-      event.metaKey or
-      event.shiftKey
-    )
+  is_significant_click: (event) ->
+    not (event.defaultPrevented or Rails.is_meta_click(event))
 
   is_visitable: (node) ->
     if container = node.closest('[data-turbolinks]')
