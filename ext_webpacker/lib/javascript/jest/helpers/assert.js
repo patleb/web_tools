@@ -1,3 +1,7 @@
+import * as matchers from 'jest-extended'
+
+expect.extend(matchers)
+
 const assert = {
   true: (act) => expect(act).toBeTrue(),
   false: (act) => expect(act).toBeFalse(),
