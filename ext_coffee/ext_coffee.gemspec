@@ -18,7 +18,6 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
-  s.add_dependency 'turbolinks'
   # TODO https://htmx.org/docs/
   # TODO https://westonganger.com/#open-source-software
   # TODO https://github.com/rails/requestjs-rails

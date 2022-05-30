@@ -3,7 +3,7 @@ require 'ext_coffee/configuration'
 
 module ExtCoffee
   class Engine < ::Rails::Engine
-    require 'turbolinks'
+    require 'ext_coffee/turbolinks'
 
     if Rails.env.development?
       paths['app/controllers'] = 'lib/controllers'
@@ -41,6 +41,12 @@ module ExtCoffee
           end
         end
       end
+    end
+
+    ActiveSupport.on_load(:action_controller_base) do |base|
+      base.include Controller
+
+      ActionDispatch::Assertions.include Turbolinks::Assertions
     end
   end
 end
