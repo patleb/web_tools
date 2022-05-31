@@ -157,7 +157,7 @@ class Turbolinks.Controller
     addEventListener('submit', @submit_bubbled, false)
 
   submit_bubbled: (event) =>
-    return unless @enabled and event.target.matches('form[method=get]:not([data-remote=true])')
+    return unless @enabled and @is_search_form(event)
     { target, submitter } = event
     if @is_visitable(submitter) and (submitter.getAttribute('formmethod')?.toUpperCase() ? 'GET') is 'GET'
       url = submitter.getAttribute('formaction') ? target.getAttribute('action') ? target.action
@@ -260,6 +260,11 @@ class Turbolinks.Controller
 
   is_significant_click: (event) ->
     not (event.defaultPrevented or Rails.is_meta_click(event))
+
+  is_search_form: ({ target }) ->
+    return false unless target.matches('form:not([data-remote=true])')
+    return false unless target.matches('[method=get]') or not target.hasAttribute('method')
+    true
 
   is_visitable: (node) ->
     if container = node.closest('[data-turbolinks]')
