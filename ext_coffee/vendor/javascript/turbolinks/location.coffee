@@ -11,27 +11,8 @@ class Turbolinks.Location
   constructor: (url = '') ->
     link = document.createElement('a')
     link.href = url.toString()
-
     @absolute_url = link.href
-
-    if hash = @absolute_url.hash
-      @anchor = hash.slice(1)
-    else if anchor_match = @absolute_url.match(/#(.*)$/)
-      @anchor = anchor_match[1]
-    if @anchor?
-      @request_url = @absolute_url.slice(0, -(@anchor.length + 1))
-    else
-      @request_url = @absolute_url
-
-  push_query: (string) ->
-    if @has_query()
-      @request_url += "&#{string.replace(/^&/, '')}"
-    else
-      @request_url += "?#{string.replace(/^\?/, '')}"
-    if @anchor?
-      @absolute_url = "#{@request_url}##{@anchor}"
-    else
-      @absolute_url = @request_url
+    [@request_url, @anchor] = Rails.split_at_anchor(@absolute_url)
 
   get_origin: ->
     @absolute_url.split('/', 3).join('/')
@@ -47,9 +28,6 @@ class Turbolinks.Location
 
   get_extension: ->
     @get_last_path_component().match(/\.[^.]*$/)?[0] ? ''
-
-  has_query: ->
-    @request_url.indexOf('?') isnt -1
 
   is_html: ->
     !!@get_extension().match(/^(?:|\.(?:htm|html|xhtml))$/)

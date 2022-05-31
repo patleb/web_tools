@@ -18,7 +18,7 @@ describe('Turbolinks Search form', () => {
   it('should visit the submitted query form', async () => {
     assert.total(2)
     await turbolinks.click_button('[name="commit"]', (event) => {
-      assert.equal('http://localhost/search_form?page=1&search=input&commit=button#search', event.data.url)
+      assert.equal('http://localhost/search_form?search=input&commit=button#search', event.data.url)
       assert.equal('advance', event.data.action)
     })
   })

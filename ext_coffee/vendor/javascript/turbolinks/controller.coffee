@@ -162,9 +162,9 @@ class Turbolinks.Controller
     if @is_visitable(submitter) and (submitter.getAttribute('formmethod')?.toUpperCase() ? 'GET') is 'GET'
       url = submitter.getAttribute('formaction') ? target.getAttribute('action') ? target.action
       return if @is_reloadable(url)
-      location = new Turbolinks.Location(url)
+      url = url.replace(/\?[^#]*/, '')
       params = Rails.serializeElement(target, submitter)
-      location.push_query(params)
+      location = new Turbolinks.Location(Rails.push_query(url, params))
       action = submitter.getAttribute('data-turbolinks-action') ? target.getAttribute('data-turbolinks-action') ? 'advance'
       if @location_is_visitable(location)
         unless @dispatch_search(target, location).defaultPrevented

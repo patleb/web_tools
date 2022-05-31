@@ -69,7 +69,7 @@ describe('Rails UJS Remote', () => {
     })
 
     it('should submit without "method" as GET and input with matching "form" attribute', async () => {
-      const url = '/echo?user_name=john&user_data=value1'
+      const url = '/echo?user_name=john&user_data=value1#anchor'
       await rails.submit('#form-with-form-attributes', { type: 'get', url, 'ajax:complete': (event) => {
         rails.assert_request(event, 'GET', url)
       }})

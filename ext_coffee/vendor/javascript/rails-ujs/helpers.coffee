@@ -177,10 +177,7 @@ prepareOptions = (options) ->
   options.type = options.type.toUpperCase()
   # append data to url if it's a GET request
   if options.type is 'GET' and options.data
-    if options.url.indexOf('?') < 0
-      options.url += '?' + options.data
-    else
-      options.url += '&' + options.data
+    options.url = Rails.push_query(options.url, options.data)
   # Use "*" as default dataType
   options.dataType = '*' unless AcceptHeaders[options.dataType]?
   options.accept = AcceptHeaders[options.dataType]
@@ -254,3 +251,25 @@ Rails.uid = ->
   num = Rails.id++
   num = String(pad + num).slice(-pad.length)
   "#{time}#{num}"
+
+Rails.split_at_anchor = (url) ->
+  if hash = url.hash
+    anchor = hash.slice(1)
+  else if anchor_match = url.match(/#(.*)$/)
+    anchor = anchor_match[1]
+  if anchor?
+    [url.slice(0, -(anchor.length + 1)), anchor]
+  else
+    [url, null]
+
+Rails.push_query = (url, string) ->
+  return url unless string
+  [url, anchor] = Rails.split_at_anchor(url)
+  if url.indexOf('?') isnt -1
+    url += "&#{string.replace(/^&/, '')}"
+  else
+    url += "?#{string.replace(/^\?/, '')}"
+  if anchor?
+    "#{url}##{anchor}"
+  else
+    url

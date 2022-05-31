@@ -25,7 +25,7 @@
       <input type="text" name="user_name" value="john">
       <fieldset><input name="items[]" value="Item" /></fieldset>
     </form>
-    <form action="/echo" data-remote="true" id="form-with-form-attributes">
+    <form action="/echo?stripped=true#anchor" data-remote="true" id="form-with-form-attributes">
       <input type="text" name="user_name" value="john">
       <input type="text" name="user_data" value="value1" form="form-with-form-attributes">
       <input type="text" name="user_email" value="from@example.com" disabled="disabled" form="form-with-form-attributes">

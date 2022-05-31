@@ -20,9 +20,7 @@ Rails.handleRemote = (e) ->
     button = Rails.getData(element, 'ujs:submit-button')
     method = Rails.getData(element, 'ujs:submit-button-formmethod') or element.getAttribute('method') or 'GET'
     url = Rails.getData(element, 'ujs:submit-button-formaction') or element.getAttribute('action') or location.href
-
-    # strip query string if it's a GET request
-    url = url.replace(/\?.*$/, '') if method.toUpperCase() is 'GET'
+    url = url.replace(/\?[^#]*/, '') if method.toUpperCase() is 'GET'
 
     if element.enctype is 'multipart/form-data'
       data = new FormData(element)
