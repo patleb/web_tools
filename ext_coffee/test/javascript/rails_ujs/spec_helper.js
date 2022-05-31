@@ -53,7 +53,7 @@ const rails = {
     const element = document.querySelector(selector)
     let skipped_event = true
     if (url) {
-      xhr[type](url, async (req, res) => {
+      xhr[type](url, (req, res) => {
         res = res.status(status)
         for(const [name, value] of Object.entries(headers)) {
           res = res.header(name, value)
@@ -88,7 +88,7 @@ const rails = {
     const [event_name, handler] = Object.entries(rest)[0]
     const form = document.querySelector(selector).closest('form')
     if (url) {
-      xhr[type](url, async (req, res) => {
+      xhr[type](url, (req, res) => {
         return res.status(status)
       })
     }
@@ -99,6 +99,24 @@ const rails = {
         handler(event)
       }})
       return form.submit()
+    })
+  },
+  change: (selector, { type = 'get', url, status = 200, ...rest } = {}) => {
+    const [event_name, handler] = Object.entries(rest)[0]
+    const option = document.querySelector(selector)
+    const select = option.parentNode
+    if (url) {
+      xhr[type](url, (req, res) => {
+        return res.status(status)
+      })
+    }
+    return new Promise((resolve) => {
+      dom.on_event({ [event_name]: (event) => {
+        resolve(event)
+        handler(event)
+      }})
+      option.selected = 'selected'
+      return select.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }))
     })
   },
   assert_enabled: ({ target }, selector = null) => {
@@ -122,7 +140,15 @@ const rails = {
     if(!element.matches(Rails.linkDisableSelector)) {
       assert.true(element.hasAttribute('disabled'))
     }
-  }
+  },
+  assert_request: (event, method, url, body) => {
+    const request = event.detail[0].req
+    assert.equal(method.toUpperCase(), request._method)
+    assert.equal(url, request._url.toString())
+    if (body != null) {
+      assert.equal(body, nav.get_params(request._body))
+    }
+  },
 }
 
 module.exports = rails

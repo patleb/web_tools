@@ -1,3 +1,5 @@
+const querystring = require('node:querystring')
+
 let window_location_was = window.location
 
 const nav = {
@@ -24,7 +26,7 @@ const nav = {
   },
   get_params: (url) => {
     url = url.replace(/^(http:\/\/localhost\/?(\w+\/?)*)?\?/, '').replace(/#(.+)$/, '')
-    return Object.fromEntries(decodeURIComponent(url).split('&').map((v) => v.split('=')))
+    return JSON.parse(JSON.stringify(querystring.parse(url)))
   },
 }
 global.nav = nav

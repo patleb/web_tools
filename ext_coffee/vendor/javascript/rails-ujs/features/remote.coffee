@@ -18,7 +18,7 @@ Rails.handleRemote = (e) ->
   if element.matches(Rails.formSubmitSelector)
     # memoized value from clicked submit button
     button = Rails.getData(element, 'ujs:submit-button')
-    method = Rails.getData(element, 'ujs:submit-button-formmethod') or element.method
+    method = Rails.getData(element, 'ujs:submit-button-formmethod') or element.getAttribute('method')
     url = Rails.getData(element, 'ujs:submit-button-formaction') or element.getAttribute('action') or location.href
 
     # strip query string if it's a GET request

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Remote</title>
+    <script src="/rails-ujs.js"></script>
+  </head>
+  <body>
+    <h1>Remote</h1>
+    <p><a href="/echo?data3=value3" data-remote="true" data-params="data1=value1&data2=value2">my address</a></p>
+    <p><button data-url="/echo?data3=value3" data-remote="true" data-method="post" data-params="data1=value1&data2=value2">my button</button></p>
+    <select name="user_data" data-url="/echo" data-remote="true" data-params="data1=value1" id="select">
+      <option value="optionValue1">option1</option>
+      <option value="optionValue2">option2</option>
+    </select>
+    <select name="user_data" data-remote="true" data-params="data1=value1" id="select-no-url">
+      <option value="optionValue1">option1</option>
+      <option value="optionValue2">option2</option>
+    </select>
+    <p><a href="/echo" data-remote="true" disabled="disabled">Disabled link</a></p>
+    <form action="/echo" data-remote="true" method="post" id="my-remote-form">
+      <input type="text" name="user_name" value="john">
+    </form>
+    <form action="/echo" data-remote="true" method="post" id="form-with-fieldset">
+      <input type="text" name="user_name" value="john">
+      <fieldset><input name="items[]" value="Item" /></fieldset>
+    </form>
+    <form action="/echo" data-remote="true" method="post" id="form-with-form-attributes">
+      <input type="text" name="user_name" value="john">
+      <input type="text" name="user_data" value="value1" form="form-with-form-attributes">
+      <input type="text" name="user_email" value="from@example.com" disabled="disabled" form="form-with-form-attributes">
+    </form>
+    <form action="/echo" data-remote="true" method="post" id="form-with-buttons">
+      <input type="text" name="user_name" value="john">
+      <button type="submit" name="user_data" value="value1" form="form-with-buttons"></button>
+      <button type="submit" name="user_data" value="value2" form="form-with-buttons"></button>
+    </form>
+    <form action="/echo" data-remote="false" method="post" id="non-remote-form">
+      <input type="text" name="user_name" value="john">
+    </form>
+    <form action="/echo" data-remote="true" method="post" id="form-serialized">
+      <textarea name="textarea">textarea</textarea>
+      <input type="checkbox" name="checkbox[]" value="0" />
+      <input type="checkbox" checked="checked" name="checkbox[]" value="1" />
+      <input type="radio" checked="checked" name="radio" value="0" />
+      <input type="radio" name="radio" value="1" />
+      <select multiple="multiple" name="select[]">
+        <option value="1" selected>1</option>
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+        <option selected>4</option>
+      </select>
+    </form>
+    <form action="/echo" data-remote="true" method="post" id="form-disabled-fieldset">
+      <fieldset><input name="description" value="A wise man" /></fieldset>
+      <fieldset disabled="disabled"><input name="age" /></fieldset>
+    </form>
+  </body>
+</html>
