@@ -26,13 +26,13 @@ describe('Turbolinks Anchor', () => {
 
     it('should follow anchor on same-page', async () => {
       await turbolinks.click('a[href="#main"]', { 'hashchange': (event) => {
-        assert.equal('main', url.get_anchor(event.newURL))
+        assert.equal('main', nav.get_anchor(event.newURL))
       }})
       await turbolinks.back({ 'hashchange': (event) => {
-        assert.null(url.get_anchor(event.newURL))
+        assert.null(nav.get_anchor(event.newURL))
       }})
       await turbolinks.forward({ 'hashchange': (event) => {
-        assert.equal('main', url.get_anchor(event.newURL))
+        assert.equal('main', nav.get_anchor(event.newURL))
       }})
       let before_visits = 0, visits = 0, popstates = 0, hashchanges = 0, total = 0
       events_log.forEach(([name, data]) => {

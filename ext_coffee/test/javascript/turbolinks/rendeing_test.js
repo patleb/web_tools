@@ -48,11 +48,11 @@ describe('Turbolinks Rendering', () => {
 
   describe('Reload', () => {
     beforeAll(() => {
-      url.mock_location()
+      nav.mock_location()
     })
 
     afterAll(() => {
-      url.reset_location()
+      nav.reset_location()
     })
 
     it('should reload when tracked elements change', async () => {

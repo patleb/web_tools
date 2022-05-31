@@ -31,11 +31,11 @@ describe('Turbolinks Visit', () => {
 
   describe('Reload', () => {
     beforeEach(() => {
-      url.delete_location()
+      nav.delete_location()
     })
 
     afterEach(() => {
-      url.reset_location()
+      nav.reset_location()
     })
 
     it('should programmatically visit a cross-origin location falls back to window.location', async () => {

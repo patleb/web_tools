@@ -1,6 +1,6 @@
 let window_location_was = window.location
 
-const url = {
+const nav = {
   mock_location: (url = 'https://localhost') => {
     const location = new URL(url)
     location.assign = jest.fn()
@@ -27,4 +27,4 @@ const url = {
     return Object.fromEntries(decodeURIComponent(url).split('&').map((v) => v.split('=')))
   },
 }
-global.url = url
+global.nav = nav

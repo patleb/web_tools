@@ -139,7 +139,7 @@ const turbolinks = {
   visit: (location, { action = 'advance', ...rest } = {}) => {
     const [event_name, handler] = Object.entries(rest)[0]
     let origin_url = `http://localhost/${location}`
-    let anchor = url.get_anchor(origin_url)
+    let anchor = nav.get_anchor(origin_url)
     if (anchor != null) {
       origin_url = origin_url.replace(`#${anchor}`, '')
     }
@@ -217,7 +217,7 @@ const turbolinks = {
     }
     let origin_url = link.href
     let action = link.getAttribute('data-turbolinks-action')
-    let anchor = url.get_anchor(origin_url)
+    let anchor = nav.get_anchor(origin_url)
     if (anchor != null) {
       origin_url = origin_url.replace(`#${anchor}`, '')
     }
