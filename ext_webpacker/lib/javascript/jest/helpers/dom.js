@@ -9,14 +9,6 @@ const body_was = ''
 const form_submit_was = HTMLFormElement.prototype.submit
 const anchor_click_was = HTMLAnchorElement.prototype.click
 
-function create_custom_event(type, options = {}) {
-  let event = new CustomEvent(type, { bubbles: true, cancelable: true })
-  for (const [key, value] of Object.entries(options)) {
-    event[key] = value
-  }
-  return event
-}
-
 const dom = {
   setup_document: (content) => {
     let element = document.createElement('html')
@@ -32,7 +24,11 @@ const dom = {
   stub_click: () => {
     delete HTMLAnchorElement.prototype.click
     HTMLAnchorElement.prototype.click = function(options = {}) {
-      this.dispatchEvent(create_custom_event('click', options))
+      let event = new CustomEvent('click', { bubbles: true, cancelable: true })
+      for (const [key, value] of Object.entries(options)) {
+        event[key] = value
+      }
+      this.dispatchEvent(event)
     }
   },
   reset_click: () => {
@@ -41,7 +37,7 @@ const dom = {
   stub_submit: () => {
     delete HTMLFormElement.prototype.submit
     HTMLFormElement.prototype.submit = function() {
-      this.dispatchEvent(create_custom_event('submit'))
+      this.dispatchEvent(new CustomEvent('submit', { bubbles: true, cancelable: true }))
     }
   },
   reset_submit: () => {
