@@ -18,22 +18,22 @@
       <option value="optionValue2">option2</option>
     </select>
     <p><a href="/echo" data-remote="true" disabled="disabled">Disabled link</a></p>
-    <form action="/echo" data-remote="true" method="post" id="my-remote-form">
+    <form action="/echo" data-remote="true" method="post" data-method="get" id="my-remote-form">
       <input type="text" name="user_name" value="john">
     </form>
     <form action="/echo" data-remote="true" method="post" id="form-with-fieldset">
       <input type="text" name="user_name" value="john">
       <fieldset><input name="items[]" value="Item" /></fieldset>
     </form>
-    <form action="/echo" data-remote="true" method="post" id="form-with-form-attributes">
+    <form action="/echo" data-remote="true" id="form-with-form-attributes">
       <input type="text" name="user_name" value="john">
       <input type="text" name="user_data" value="value1" form="form-with-form-attributes">
       <input type="text" name="user_email" value="from@example.com" disabled="disabled" form="form-with-form-attributes">
     </form>
-    <form action="/echo" data-remote="true" method="post" id="form-with-buttons">
+    <form data-remote="true" id="form-with-buttons">
       <input type="text" name="user_name" value="john">
       <button type="submit" name="user_data" value="value1" form="form-with-buttons"></button>
-      <button type="submit" name="user_data" value="value2" form="form-with-buttons"></button>
+      <button type="submit" name="user_data" value="value2" form="form-with-buttons" formaction="/echo" formmethod="post"></button>
     </form>
     <form action="/echo" data-remote="false" method="post" id="non-remote-form">
       <input type="text" name="user_name" value="john">

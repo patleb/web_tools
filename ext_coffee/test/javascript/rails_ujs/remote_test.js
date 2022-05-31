@@ -51,36 +51,37 @@ describe('Rails UJS Remote', () => {
     }})
   })
 
-  describe('Form', () => {
+  describe('Form with "data-remote"', () => {
     afterEach(async () => {
       await tick()
     })
 
-    it('should submit form with "data-remote" attribute', async () => {
+    it('should submit with "method" only attributes', async () => {
       await rails.submit('#my-remote-form', { url: '/echo', 'ajax:complete': (event) => {
         rails.assert_request(event, 'POST', '/echo', { user_name: 'john' })
       }})
     })
 
-    it('should submit form with "data-remote" attribute and include inputs in a fieldset', async () => {
+    it('should submit include inputs in a fieldset', async () => {
       await rails.submit('#form-with-fieldset', { url: '/echo', 'ajax:complete': (event) => {
         rails.assert_request(event, 'POST', '/echo', { user_name: 'john', 'items[]': 'Item' })
       }})
     })
 
-    it('should submit form with "data-remote" attribute and input with matching [form] attribute', async () => {
-      await rails.submit('#form-with-form-attributes', { url: '/echo', 'ajax:complete': (event) => {
-        rails.assert_request(event, 'POST', '/echo', { user_name: 'john', user_data: 'value1' })
+    it('should submit without "method" as GET and input with matching "form" attribute', async () => {
+      const url = '/echo?user_name=john&user_data=value1'
+      await rails.submit('#form-with-form-attributes', { type: 'get', url, 'ajax:complete': (event) => {
+        rails.assert_request(event, 'GET', url)
       }})
     })
 
-    it('should submit form with "data-remote" attribute by clicking button with matching [form] attribute', async () => {
+    it('should by clicking button with matching "form" attribute and use "formaction" and "formmethod" attributes', async () => {
       await rails.click('#form-with-buttons button[value=value2]', { type: 'post', url: '/echo', 'ajax:complete': (event) => {
         rails.assert_request(event, 'POST', '/echo', { user_name: 'john', user_data: 'value2' })
       }})
     })
 
-    it('should not submit form with ajax if "data-remote" is false', async () => {
+    it('should not submit with ajax if "data-remote" is false', async () => {
       dom.stub_submit()
       let submitted = false
       dom.on_event({ 'ajax:before': (event) => {
