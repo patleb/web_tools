@@ -1,6 +1,9 @@
 SUBMITABLE_BUTTON = 'button, input[type="button"], input[type="submit"], input[type="image"]'
 event_submitter = null
 
+window.clear_event_submitter = ->
+  event_submitter = null
+
 do ->
   if 'submitter' of Event::
     return
@@ -15,9 +18,6 @@ do ->
   document.addEventListener 'click', (event) ->
     event_submitter = event.target.closest(SUBMITABLE_BUTTON)
   , true
-
-  window.clear_event_submitter = ->
-    event_submitter = null
 
   Object.defineProperty prototype, 'submitter',
     configurable: true,
