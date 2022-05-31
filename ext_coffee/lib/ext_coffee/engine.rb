@@ -44,7 +44,7 @@ module ExtCoffee
     end
 
     ActiveSupport.on_load(:action_controller_base) do |base|
-      base.include Controller
+      base.include Turbolinks::Controller
 
       ActionDispatch::Assertions.include Turbolinks::Assertions
     end
