@@ -178,7 +178,7 @@ class Turbolinks.Controller
   click_bubbled: (event) =>
     return unless @enabled and @is_significant_click(event)
     target = event.composedPath?()[0] or event.target
-    if @is_visitable(target) and (link = target.closest('a[href]:not([target^=_]):not([download])'))
+    if @is_visitable(target) and (link = @get_link(target))
       url = link.getAttribute('href')
       return if @is_reloadable(url)
       location = new Turbolinks.Location(url)
@@ -262,9 +262,9 @@ class Turbolinks.Controller
     not (event.defaultPrevented or Rails.is_meta_click(event))
 
   is_search_form: ({ target }) ->
-    return false unless target.matches('form:not([data-remote=true])')
-    return false unless target.matches('[method=get]') or not target.hasAttribute('method')
-    true
+    target.matches('form') and (
+      target.matches('[method=get]') or not target.hasAttribute('method')
+    ) and not Rails.is_remote(target)
 
   is_visitable: (node) ->
     if container = node.closest('[data-turbolinks]')
@@ -277,6 +277,10 @@ class Turbolinks.Controller
 
   location_is_visitable: (location) ->
     location.is_prefixed_by(@get_root_location()) and location.is_html()
+
+  get_link: (target) ->
+    link = target.closest('a[href]:not([target^=_]):not([download])')
+    link if link and not Rails.is_remote(link)
 
   get_restoration_data: (restoration_id) ->
     @restoration_data[restoration_id] ?= {}

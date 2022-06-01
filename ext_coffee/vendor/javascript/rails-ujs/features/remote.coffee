@@ -1,5 +1,5 @@
 # Checks "data-remote" if true to handle the request through a XHR request.
-is_remote = (element) ->
+Rails.is_remote = (element) ->
   value = element.getAttribute('data-remote')
   value? and value isnt 'false'
 
@@ -7,7 +7,7 @@ is_remote = (element) ->
 Rails.handle_remote = (e) ->
   element = this
 
-  return true unless is_remote(element)
+  return true unless Rails.is_remote(element)
   unless Rails.fire(element, 'ajax:before')
     Rails.fire(element, 'ajax:stopped')
     return false

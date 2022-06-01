@@ -143,4 +143,19 @@ describe('Turbolinks Navigation', () => {
       turbolinks.assert_click_event(event, { bubbled: false })
     })
   })
+
+  it('should not follow a "data-remote" link', async () => {
+    let turbolinks_click = false
+    dom.on_event({ 'turbolinks:click': (event) => {
+       turbolinks_click = true
+    }})
+    let data_remote_click = false
+    await turbolinks.click('#data-remote-link', { 'ajax:complete': (event) => {
+      data_remote_click = true
+    }})
+    await tick()
+    assert.false(turbolinks_click)
+    assert.true(data_remote_click)
+    dom.off_event('turbolinks:click')
+  })
 })
