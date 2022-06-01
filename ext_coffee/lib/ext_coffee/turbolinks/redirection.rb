@@ -27,7 +27,7 @@ module Turbolinks
         }
 
         script = []
-        script << "Turbolinks.clearCache()"
+        script << "Turbolinks.clear_cache()"
         script << "Turbolinks.visit(#{location.to_json}, #{visit_options.to_json})"
 
         self.status = 200

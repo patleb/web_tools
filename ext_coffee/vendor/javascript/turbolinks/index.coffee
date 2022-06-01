@@ -6,13 +6,16 @@ window.Turbolinks =
     Turbolinks.controller.visit(location, options)
 
   clearCache: ->
+    Turbolinks.clear_cache()
+
+  clear_cache: ->
     Turbolinks.controller.clear_cache()
 
-  setCacheSize: (size) ->
+  set_cache_size: (size) ->
     Turbolinks.Controller.cache_size = size # 0 to disable
 
-  setProgressBarDelay: (delay) ->
+  set_progress_bar_delay: (delay) ->
     Turbolinks.Controller.progress_bar_delay = delay
 
-  setHttpRequestTimeout: (timeout) ->
+  set_http_request_timeout: (timeout) ->
     Turbolinks.HttpRequest.timeout = timeout # 0 to disable
