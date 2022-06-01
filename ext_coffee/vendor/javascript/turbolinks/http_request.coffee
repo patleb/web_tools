@@ -13,7 +13,7 @@ class Turbolinks.HttpRequest
   send: ->
     if @xhr and not @sent
       @dispatch_request_start()
-      nonce = Rails.cspNonce()
+      nonce = Rails.csp_nonce()
       @xhr.setRequestHeader('X-Turbolinks-Nonce', nonce) if nonce
       @set_progress(0)
       @xhr.send()

@@ -27,7 +27,7 @@ describe('Rails UJS Helpers', () => {
   })
 
   it('should have the event selector strings overridable', () => {
-    assert.includes(', a[data-custom-remote-link]', Rails.linkClickSelector)
+    assert.includes(', a[data-custom-remote-link]', Rails.click_links)
   })
 
   it('should throw error when including rails-ujs multiple times', () => {
@@ -35,11 +35,11 @@ describe('Rails UJS Helpers', () => {
   })
 
   it('should find the csrf token', () => {
-    assert.equal('cf50faa3fe97702ca1ae', Rails.csrfToken())
+    assert.equal('cf50faa3fe97702ca1ae', Rails.csrf_token())
   })
 
   it('should find the csrf param', () => {
-    assert.equal('authenticity_token', Rails.csrfParam())
+    assert.equal('authenticity_token', Rails.csrf_param())
   })
 
   it('should refresh all csrf tokens', () => {

@@ -121,23 +121,23 @@ const rails = {
   },
   assert_enabled: ({ target }, selector = null) => {
     const element = selector ? target.querySelector(selector) : target
-    assert.null(Rails.getData(element, 'ujs:disabled'))
+    assert.null(Rails.get(element, 'ujs:disabled'))
     assert.false(element.hasAttribute('disabled'))
   },
   assert_disabled: ({ target }, selector = null) => {
     const element = selector ? target.querySelector(selector) : target
-    assert.true(Rails.getData(element, 'ujs:disabled'))
-    assert.null(Rails.getData(element, 'ujs:enable-with'))
-    if(!element.matches(Rails.linkDisableSelector)) {
+    assert.true(Rails.get(element, 'ujs:disabled'))
+    assert.null(Rails.get(element, 'ujs:enable-with'))
+    if(!element.matches(Rails.disableable_links)) {
       assert.true(element.hasAttribute('disabled'))
     }
   },
   assert_disabled_with: ({ target }, old_text, new_text, selector = null) => {
     const element = selector ? target.querySelector(selector) : target
-    assert.true(Rails.getData(element, 'ujs:disabled'))
-    assert.equal(old_text, Rails.getData(element, 'ujs:enable-with'))
+    assert.true(Rails.get(element, 'ujs:disabled'))
+    assert.equal(old_text, Rails.get(element, 'ujs:enable-with'))
     assert.equal(new_text, element.innerHTML)
-    if(!element.matches(Rails.linkDisableSelector)) {
+    if(!element.matches(Rails.disableable_links)) {
       assert.true(element.hasAttribute('disabled'))
     }
   },

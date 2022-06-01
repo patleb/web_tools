@@ -56,7 +56,7 @@ describe('Rails UJS Disable', () => {
   it('should not prevent usage of "disabled" attribute', async () => {
     assert.total(3)
     await rails.click('a[data-disable]', { skip: 'click', 'ujs:everythingStopped': (event) => {
-      assert.null(Rails.getData(event.target, 'ujs:disabled'))
+      assert.null(Rails.get(event.target, 'ujs:disabled'))
       assert.true(event.target.hasAttribute('disabled'))
     }})
   })
@@ -117,7 +117,7 @@ describe('Rails UJS Disable', () => {
   it('should re-enable when "pageshow" event is triggered', () => {
     assert.total(5)
     const target = dom.$('button[data-remote]')[0]
-    Rails.disableElement(target)
+    Rails.disable_element(target)
     rails.assert_disabled({ target })
     dom.on_event({ 'pageshow': (event) => {
       rails.assert_enabled({ target })

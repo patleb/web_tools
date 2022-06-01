@@ -163,12 +163,12 @@ class Turbolinks.Controller
       url = submitter.getAttribute('formaction') ? target.getAttribute('action') ? target.action
       return if @is_reloadable(url)
       url = url.replace(/\?[^#]*/, '')
-      params = Rails.serializeElement(target, submitter)
+      params = Rails.serialize_element(target, submitter)
       location = new Turbolinks.Location(Rails.push_query(url, params))
       action = submitter.getAttribute('data-turbolinks-action') ? target.getAttribute('data-turbolinks-action') ? 'advance'
       if @location_is_visitable(location)
         unless @dispatch_search(target, location).defaultPrevented
-          Rails.stopEverything(event)
+          Rails.stop_everything(event)
           @visit(location, { action, same_page: false })
 
   on_click: =>

@@ -8,51 +8,51 @@ Rails.start = ->
   # See https://github.com/rails/jquery-ujs/issues/357
   # See https://developer.mozilla.org/en-US/docs/Using_Firefox_1.5_caching
   window.addEventListener 'pageshow', ->
-    Rails.$(Rails.formEnableSelector).forEach (el) ->
-      Rails.enableElement(el) if Rails.getData(el, 'ujs:disabled')
-    Rails.$(Rails.linkDisableSelector).forEach (el) ->
-      Rails.enableElement(el) if Rails.getData(el, 'ujs:disabled')
+    Rails.$(Rails.enableable_inputs).forEach (el) ->
+      Rails.enable_element(el) if Rails.get(el, 'ujs:disabled')
+    Rails.$(Rails.disableable_links).forEach (el) ->
+      Rails.enable_element(el) if Rails.get(el, 'ujs:disabled')
 
-  Rails.document_on 'ajax:complete', Rails.linkDisableSelector, Rails.enableElement
-  Rails.document_on 'ajax:stopped', Rails.linkDisableSelector, Rails.enableElement
-  Rails.document_on 'ajax:complete', Rails.buttonDisableSelector, Rails.enableElement
-  Rails.document_on 'ajax:stopped', Rails.buttonDisableSelector, Rails.enableElement
+  Rails.document_on 'ajax:complete', Rails.disableable_links, Rails.enable_element
+  Rails.document_on 'ajax:stopped', Rails.disableable_links, Rails.enable_element
+  Rails.document_on 'ajax:complete', Rails.disableable_buttons, Rails.enable_element
+  Rails.document_on 'ajax:stopped', Rails.disableable_buttons, Rails.enable_element
 
-  Rails.document_on 'click', Rails.linkClickSelector, Rails.preventInsignificantClick
-  Rails.document_on 'click', Rails.linkClickSelector, Rails.handleDisabledElement
-  Rails.document_on 'click', Rails.linkClickSelector, Rails.handleConfirm
-  Rails.document_on 'click', Rails.linkClickSelector, Rails.disableElement
-  Rails.document_on 'click', Rails.linkClickSelector, Rails.handleRemote
+  Rails.document_on 'click', Rails.clickable_links, Rails.prevent_meta_click
+  Rails.document_on 'click', Rails.clickable_links, Rails.handle_disabled_element
+  Rails.document_on 'click', Rails.clickable_links, Rails.handle_confirm
+  Rails.document_on 'click', Rails.clickable_links, Rails.disable_element
+  Rails.document_on 'click', Rails.clickable_links, Rails.handle_remote
 
-  Rails.document_on 'click', Rails.buttonClickSelector, Rails.preventInsignificantClick
-  Rails.document_on 'click', Rails.buttonClickSelector, Rails.handleDisabledElement
-  Rails.document_on 'click', Rails.buttonClickSelector, Rails.handleConfirm
-  Rails.document_on 'click', Rails.buttonClickSelector, Rails.disableElement
-  Rails.document_on 'click', Rails.buttonClickSelector, Rails.handleRemote
+  Rails.document_on 'click', Rails.clickable_buttons, Rails.prevent_meta_click
+  Rails.document_on 'click', Rails.clickable_buttons, Rails.handle_disabled_element
+  Rails.document_on 'click', Rails.clickable_buttons, Rails.handle_confirm
+  Rails.document_on 'click', Rails.clickable_buttons, Rails.disable_element
+  Rails.document_on 'click', Rails.clickable_buttons, Rails.handle_remote
 
-  Rails.document_on 'change', Rails.inputChangeSelector, Rails.handleDisabledElement
-  Rails.document_on 'change', Rails.inputChangeSelector, Rails.handleConfirm
-  Rails.document_on 'change', Rails.inputChangeSelector, Rails.handleRemote
+  Rails.document_on 'change', Rails.changeable_inputs, Rails.handle_disabled_element
+  Rails.document_on 'change', Rails.changeable_inputs, Rails.handle_confirm
+  Rails.document_on 'change', Rails.changeable_inputs, Rails.handle_remote
 
-  Rails.document_on 'submit', Rails.formSubmitSelector, Rails.handleDisabledElement
-  Rails.document_on 'submit', Rails.formSubmitSelector, Rails.handleConfirm
-  Rails.document_on 'submit', Rails.formSubmitSelector, Rails.handleRemote
+  Rails.document_on 'submit', Rails.submitable_forms, Rails.handle_disabled_element
+  Rails.document_on 'submit', Rails.submitable_forms, Rails.handle_confirm
+  Rails.document_on 'submit', Rails.submitable_forms, Rails.handle_remote
   # Normal mode submit
   # Slight timeout so that the submit button gets properly serialized
-  Rails.document_on 'submit', Rails.formSubmitSelector, (e) ->
+  Rails.document_on 'submit', Rails.submitable_forms, (e) ->
     setTimeout(->
-      Rails.disableElement(e)
+      Rails.disable_element(e)
     , 13)
-  Rails.document_on 'ajax:send', Rails.formSubmitSelector, Rails.disableElement
-  Rails.document_on 'ajax:complete', Rails.formSubmitSelector, Rails.enableElement
+  Rails.document_on 'ajax:send', Rails.submitable_forms, Rails.disable_element
+  Rails.document_on 'ajax:complete', Rails.submitable_forms, Rails.enable_element
 
-  Rails.document_on 'click', Rails.formInputClickSelector, Rails.preventInsignificantClick
-  Rails.document_on 'click', Rails.formInputClickSelector, Rails.handleDisabledElement
-  Rails.document_on 'click', Rails.formInputClickSelector, Rails.handleConfirm
-  Rails.document_on 'click', Rails.formInputClickSelector, Rails.formSubmitButtonClick
+  Rails.document_on 'click', Rails.clickable_inputs, Rails.prevent_meta_click
+  Rails.document_on 'click', Rails.clickable_inputs, Rails.handle_disabled_element
+  Rails.document_on 'click', Rails.clickable_inputs, Rails.handle_confirm
+  Rails.document_on 'click', Rails.clickable_inputs, Rails.form_submit_button_click
 
-  document.addEventListener('DOMContentLoaded', Rails.refreshCSRFTokens)
-  document.addEventListener('DOMContentLoaded', Rails.loadCSPNonce)
+  document.addEventListener('DOMContentLoaded', Rails.refresh_csrf_tokens)
+  document.addEventListener('DOMContentLoaded', Rails.load_csp_nonce)
   window._rails_loaded = true
 
 if window.Rails is Rails and Rails.fire(document, 'rails:attachBindings')

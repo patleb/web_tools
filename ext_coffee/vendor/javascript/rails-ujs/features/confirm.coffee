@@ -1,5 +1,5 @@
-Rails.handleConfirm = (e) ->
-  Rails.stopEverything(e) unless allowAction(this)
+Rails.handle_confirm = (e) ->
+  Rails.stop_everything(e) unless allow_action(this)
 
 # Default confirm dialog, may be overridden with custom confirm dialog in Rails.confirm
 Rails.confirm = (message, element) ->
@@ -14,7 +14,7 @@ Rails.confirm = (message, element) ->
 # Attaching a handler to the element's `confirm` event that returns a `falsy` value cancels the confirmation dialog.
 # Attaching a handler to the element's `confirm:complete` event that returns a `falsy` value makes this function
 # return false. The `confirm:complete` event is fired whether or not the user answered true or false to the dialog.
-allowAction = (element) ->
+allow_action = (element) ->
   message = element.getAttribute('data-confirm')
   return true unless message
 

@@ -76,7 +76,7 @@ class Turbolinks.ProgressBar
     element = document.createElement('style')
     element.type = 'text/css'
     element.textContent = @constructor.default_css
-    nonce = Rails.cspNonce()
+    nonce = Rails.csp_nonce()
     element.nonce = nonce if nonce
     element
 

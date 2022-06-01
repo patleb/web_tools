@@ -106,4 +106,12 @@ describe('Rails UJS Remote', () => {
       }})
     })
   })
+
+  describe('Rails.handleRemote', () => {
+
+  })
+
+  describe('Callbacks', () => {
+
+  })
 })

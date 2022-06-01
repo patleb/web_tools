@@ -2,12 +2,12 @@
 
 # get and set data on a given element using "expando properties"
 # See: https://developer.mozilla.org/en-US/docs/Glossary/Expando
-expando = '_ujsData'
+expando = '_ujs_data'
 
-Rails.getData = (element, key) ->
+Rails.get = (element, key) ->
   element[expando]?[key]
 
-Rails.setData = (element, key, value) ->
+Rails.set = (element, key, value) ->
   element[expando] ?= {}
   element[expando][key] = value
 
@@ -20,36 +20,36 @@ Rails.$ = (selector) ->
 
 csp_nonce = null
 
-Rails.loadCSPNonce = ->
-  csp_nonce = document.querySelector("meta[name=csp-nonce]")?.content
+Rails.load_csp_nonce = ->
+  csp_nonce = document.querySelector('meta[name=csp-nonce]')?.content
 
 # Returns the Content-Security-Policy nonce for inline scripts.
-Rails.cspNonce = ->
-  csp_nonce ? Rails.loadCSPNonce()
+Rails.csp_nonce = ->
+  csp_nonce ? Rails.load_csp_nonce()
 
 # CSRF helpers
 
 # Up-to-date Cross-Site Request Forgery token
-Rails.csrfToken = ->
+Rails.csrf_token = ->
   meta = document.querySelector('meta[name=csrf-token]')
   meta and meta.content
 
 # URL param that must contain the CSRF token
-Rails.csrfParam = ->
+Rails.csrf_param = ->
   meta = document.querySelector('meta[name=csrf-param]')
   meta and meta.content
 
 # Make sure that every Ajax request sends the CSRF token
-Rails.CSRFProtection = (xhr) ->
-  token = Rails.csrfToken()
+Rails.csrf_protection = (xhr) ->
+  token = Rails.csrf_token()
   xhr.setRequestHeader('X-CSRF-Token', token) if token?
 
 # Make sure that all forms have actual up-to-date tokens (cached forms contain old ones)
-Rails.refreshCSRFTokens = ->
-  token = Rails.csrfToken()
-  param = Rails.csrfParam()
+Rails.refresh_csrf_tokens = ->
+  token = Rails.csrf_token()
+  param = Rails.csrf_param()
   if token? and param?
-    Rails.$('form input[name="' + param + '"]').forEach (input) -> input.value = token
+    Rails.$("form input[name='#{param}']").forEach (input) -> input.value = token
 
 # Event helpers
 
@@ -62,17 +62,12 @@ Rails.refreshCSRFTokens = ->
 # data::
 #   data you want to pass when you dispatch an event
 Rails.fire = (obj, name, data) ->
-  event = new CustomEvent(
-    name,
-    bubbles: true,
-    cancelable: true,
-    detail: data,
-  )
+  event = new CustomEvent(name, bubbles: true, cancelable: true, detail: data)
   obj.dispatchEvent(event)
   !event.defaultPrevented
 
 # Helper function, needed to provide consistent behavior in IE
-Rails.stopEverything = (e) ->
+Rails.stop_everything = (e) ->
   Rails.fire(e.target, 'ujs:everythingStopped')
   e.preventDefault()
   e.stopPropagation()
@@ -80,25 +75,25 @@ Rails.stopEverything = (e) ->
 
 # Delegates events
 # to a specified parent `element`, which fires event `handler`
-# for the specified `selector` when an event of `eventType` is triggered
+# for the specified `selector` when an event of `event_type` is triggered
 # element::
 #   parent element that will listen for events e.g. document
 # selector::
 #   CSS selector; or an object that has `selector` and `exclude` properties (see: Rails.matches)
-# eventType::
+# event_type::
 #   string representing the event e.g. 'submit', 'click'
 # handler::
 #   the event handler to be called
-Rails.delegate = (element, selector, eventType, handler) ->
-  element.addEventListener eventType, (e) ->
+Rails.delegate = (element, selector, event_type, handler) ->
+  element.addEventListener event_type, (e) ->
     target = e.target
     target = target.parentNode until not (target instanceof Element) or target.matches(selector)
-    if target instanceof Element and handler.call(target, e) == false
+    if target instanceof Element and handler.call(target, e) is false
       e.preventDefault()
       e.stopPropagation()
 
-Rails.document_on = (eventType, selector, handler) ->
-  Rails.delegate(document, selector, eventType, handler)
+Rails.document_on = (event_type, selector, handler) ->
+  Rails.delegate(document, selector, event_type, handler)
 
 Rails.is_meta_click = (event, method, data) ->
   (event.button? and event.button isnt 0) or (
@@ -112,24 +107,21 @@ Rails.is_meta_click = (event, method, data) ->
 
 # Form helpers
 
-toArray = (e) -> Array::slice.call(e)
+to_array = (e) -> Array::slice.call(e)
 
-Rails.serializeElement = (element, additionalParam) ->
+Rails.serialize_element = (element, additional_param) ->
   inputs = [element]
-  inputs = toArray(element.elements) if element.matches('form')
+  inputs = to_array(element.elements) if element.matches('form')
   params = []
-
   inputs.forEach (input) ->
-    return if !input.name || input.disabled || input.hasAttribute('disabled')
+    return if !input.name or input.disabled or input.hasAttribute('disabled')
     return if input.matches('fieldset[disabled] *')
     if input.matches('select')
-      toArray(input.options).forEach (option) ->
+      to_array(input.options).forEach (option) ->
         params.push(name: input.name, value: option.value) if option.selected
-    else if input.checked or ['radio', 'checkbox', 'submit'].indexOf(input.type) == -1
+    else if input.checked or ['radio', 'checkbox', 'submit'].indexOf(input.type) is -1
       params.push(name: input.name, value: input.value)
-
-  params.push(additionalParam) if additionalParam
-
+  params.push(additional_param) if additional_param
   params.map (param) ->
     if param.name?
       "#{encodeURIComponent(param.name)}=#{encodeURIComponent(param.value)}"
@@ -140,15 +132,15 @@ Rails.serializeElement = (element, additionalParam) ->
 # Helper function that returns form elements that match the specified CSS selector
 # If form is actually a "form" element this will return associated elements outside the from that have
 # the html form attribute set
-Rails.formElements = (form, selector) ->
+Rails.form_elements = (form, selector) ->
   if form.matches('form')
-    toArray(form.elements).filter (el) -> el.matches(selector)
+    to_array(form.elements).filter (el) -> el.matches(selector)
   else
-    toArray(form.querySelectorAll(selector))
+    to_array(form.querySelectorAll(selector))
 
 # AJAX helpers
 
-AcceptHeaders =
+ACCEPT_HEADERS =
   '*': '*/*'
   text: 'text/plain'
   html: 'text/html'
@@ -157,10 +149,10 @@ AcceptHeaders =
   script: 'text/javascript, application/javascript, application/ecmascript, application/x-ecmascript'
 
 Rails.ajax = (options) ->
-  options = prepareOptions(options)
-  xhr = createXHR options, ->
-    response = processResponse(xhr.response ? xhr.responseText, xhr.getResponseHeader('Content-Type'))
-    if xhr.status // 100 == 2
+  options = prepare_options(options)
+  xhr = create_xhr options, ->
+    response = process_response(xhr.response ? xhr.responseText, xhr.getResponseHeader('Content-Type'))
+    if 200 <= xhr.status < 300
       options.success?(response, xhr.statusText, xhr)
     else
       options.error?(response, xhr.statusText, xhr)
@@ -172,19 +164,19 @@ Rails.ajax = (options) ->
   if xhr.readyState is XMLHttpRequest.OPENED
     xhr.send(options.data)
 
-prepareOptions = (options) ->
+prepare_options = (options) ->
   options.url = options.url or location.href
   options.type = options.type.toUpperCase()
   # append data to url if it's a GET request
   if options.type is 'GET' and options.data
     options.url = Rails.push_query(options.url, options.data)
-  # Use "*" as default dataType
-  options.dataType = '*' unless AcceptHeaders[options.dataType]?
-  options.accept = AcceptHeaders[options.dataType]
-  options.accept += ', */*; q=0.01' if options.dataType isnt '*'
+  # Use "*" as default data_type
+  options.data_type = '*' unless ACCEPT_HEADERS[options.data_type]?
+  options.accept = ACCEPT_HEADERS[options.data_type]
+  options.accept += ', */*; q=0.01' if options.data_type isnt '*'
   options
 
-createXHR = (options, done) ->
+create_xhr = (options, done) ->
   xhr = new XMLHttpRequest()
   # Open and set up xhr
   xhr.open(options.type, options.url, true)
@@ -196,18 +188,18 @@ createXHR = (options, done) ->
   unless options.crossDomain
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
     # Add X-CSRF-Token
-    Rails.CSRFProtection(xhr)
+    Rails.csrf_protection(xhr)
   xhr.withCredentials = !!options.withCredentials
   xhr.onreadystatechange = ->
     done(xhr) if xhr.readyState is XMLHttpRequest.DONE
   xhr
 
-processResponse = (response, type) ->
+process_response = (response, type) ->
   if typeof response is 'string' and typeof type is 'string'
     if type.match(/\bjson\b/)
       try response = JSON.parse(response)
     else if type.match(/\b(?:java|ecma)script\b/)
-      nonce = Rails.cspNonce()
+      nonce = Rails.csp_nonce()
       script = document.createElement('script')
       script.setAttribute('nonce', nonce) if nonce
       script.text = response
@@ -222,19 +214,21 @@ processResponse = (response, type) ->
 Rails.href = (element) -> element.href
 
 # Determines if the request is a cross domain request.
-Rails.isCrossDomain = (url) ->
-  originAnchor = document.createElement('a')
-  originAnchor.href = location.href
-  urlAnchor = document.createElement('a')
+Rails.is_cross_domain = (url) ->
+  old_anchor = document.createElement('a')
+  old_anchor.href = location.href
+  new_anchor = document.createElement('a')
   try
-    urlAnchor.href = url
+    new_anchor.href = url
     # If URL protocol is false or is a string containing a single colon
     # *and* host are false, assume it is not a cross-domain request
     # (should only be the case for IE7 and IE compatibility mode).
     # Otherwise, evaluate protocol and host of the URL against the origin
     # protocol and host.
-    !(((!urlAnchor.protocol || urlAnchor.protocol == ':') && !urlAnchor.host) ||
-      (originAnchor.protocol + '//' + originAnchor.host == urlAnchor.protocol + '//' + urlAnchor.host))
+    not (
+      (not new_anchor.protocol or new_anchor.protocol is ':') and not new_anchor.host or
+      "#{old_anchor.protocol}//#{old_anchor.host}" is "#{new_anchor.protocol}//#{new_anchor.host}"
+    )
   catch e
     # If there is an error parsing the URL, assume it is crossDomain.
     true

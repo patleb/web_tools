@@ -1,3 +1,3 @@
 dom.on_event({ element: document, 'rails:attachBindings': (event) => {
-  Rails.linkClickSelector += ', a[data-custom-remote-link]'
+  Rails.click_links += ', a[data-custom-remote-link]'
 }})
