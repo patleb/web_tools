@@ -189,6 +189,9 @@ create_xhr = (options, done) ->
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
     # Add X-CSRF-Token
     Rails.csrf_protection(xhr)
+  xhr.setRequestHeader('X-Referrer', location.href)
+  for name, value of options.headers ? {}
+    xhr.setRequestHeader(name, value)
   xhr.withCredentials = !!options.withCredentials
   xhr.onreadystatechange = ->
     done(xhr) if xhr.readyState is XMLHttpRequest.DONE
