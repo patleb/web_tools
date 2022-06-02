@@ -5,9 +5,6 @@ window.Turbolinks =
   visit: (location, options) ->
     Turbolinks.controller.visit(location, options)
 
-  clearCache: ->
-    Turbolinks.clear_cache()
-
   clear_cache: ->
     Turbolinks.controller.clear_cache()
 
