@@ -153,10 +153,10 @@ Rails.ajax = (options) ->
   xhr = create_xhr options, ->
     response = process_response(xhr.response ? xhr.responseText, xhr.getResponseHeader('Content-Type'))
     if 200 <= xhr.status < 300
-      options.success?(response, xhr.statusText, xhr)
+      options.success?(response, xhr.status, xhr)
     else
-      options.error?(response, xhr.statusText, xhr)
-    options.complete?(xhr, xhr.statusText)
+      options.error?(response, xhr.status, xhr)
+    options.complete?(xhr, xhr.status)
 
   if options.beforeSend? && !options.beforeSend(xhr, options)
     return false
@@ -218,19 +218,19 @@ Rails.href = (element) -> element.href
 
 # Determines if the request is a cross domain request.
 Rails.is_cross_domain = (url) ->
-  old_anchor = document.createElement('a')
-  old_anchor.href = location.href
-  new_anchor = document.createElement('a')
+  old_url = document.createElement('a')
+  old_url.href = location.href
+  new_url = document.createElement('a')
   try
-    new_anchor.href = url
+    new_url.href = url
     # If URL protocol is false or is a string containing a single colon
     # *and* host are false, assume it is not a cross-domain request
     # (should only be the case for IE7 and IE compatibility mode).
     # Otherwise, evaluate protocol and host of the URL against the origin
     # protocol and host.
     not (
-      (not new_anchor.protocol or new_anchor.protocol is ':') and not new_anchor.host or
-      "#{old_anchor.protocol}//#{old_anchor.host}" is "#{new_anchor.protocol}//#{new_anchor.host}"
+      (not new_url.protocol or new_url.protocol is ':') and not new_url.host or
+      "#{old_url.protocol}//#{old_url.host}" is "#{new_url.protocol}//#{new_url.host}"
     )
   catch e
     # If there is an error parsing the URL, assume it is crossDomain.
