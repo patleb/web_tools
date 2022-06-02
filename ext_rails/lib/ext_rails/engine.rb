@@ -146,6 +146,10 @@ module ExtRails
       require 'ext_rails/action_dispatch/routing/url_for/with_only_path'
     end
 
+    ActiveSupport.on_load(:action_dispatch_request) do
+      require 'ext_rails/action_dispatch/request/session/with_memoized_at'
+    end
+
     ActiveSupport.on_load(:action_controller, run_once: true) do
       require 'ext_rails/action_controller/parameters'
     end
