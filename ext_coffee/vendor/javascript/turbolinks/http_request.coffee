@@ -14,7 +14,7 @@ class Turbolinks.HttpRequest
     if @xhr and not @sent
       @dispatch_request_start()
       nonce = Rails.csp_nonce()
-      @xhr.setRequestHeader('X-Turbolinks-Nonce', nonce) if nonce
+      @xhr.setRequestHeader('X-Xhr-Nonce', nonce) if nonce
       @set_progress(0)
       @xhr.send()
       @sent = true
@@ -35,7 +35,7 @@ class Turbolinks.HttpRequest
       contentType = @xhr.getResponseHeader('Content-Type')
       if @is_html(contentType)
         if 200 <= @xhr.status < 300
-          @visit.request_completed(@xhr.responseText, @xhr.getResponseHeader('Turbolinks-Location'))
+          @visit.request_completed(@xhr.responseText, @xhr.getResponseHeader('X-Xhr-Redirect'))
         else
           @failed = true
           @visit.request_failed(@xhr.status, @xhr.responseText)
@@ -71,7 +71,8 @@ class Turbolinks.HttpRequest
     @xhr.open('GET', @url, true)
     @xhr.timeout = @constructor.timeout * 1000
     @xhr.setRequestHeader('Accept', 'text/html, application/xhtml+xml')
-    @xhr.setRequestHeader('Turbolinks-Referrer', @referrer)
+    @xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+    @xhr.setRequestHeader('X-Referrer', @referrer)
     @xhr.onprogress = @request_progressed
     @xhr.onload = @request_loaded
     @xhr.onerror = @request_failed

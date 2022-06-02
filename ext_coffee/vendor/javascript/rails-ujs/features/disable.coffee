@@ -88,4 +88,4 @@ enable_input = (element) ->
 
 is_xhr_redirect = (event) ->
   xhr = event.detail?[0]
-  xhr?.getResponseHeader("X-Xhr-Redirect")?
+  xhr?.getResponseHeader('X-Xhr-Redirect')?

@@ -38,9 +38,9 @@ describe('Turbolinks Navigation', () => {
 
   it('should follow a same-origin unannotated link', async () => {
     dom.on_event({ 'turbolinks:request-end': (event) => {
-      assert.equal('123', event.data.xhr.req.header('X-Turbolinks-Nonce'))
+      assert.equal('123', event.data.xhr.req.header('X-Xhr-Nonce'))
     }})
-    await turbolinks.click('#same-origin-unannotated-link', { headers: { 'X-Turbolinks-Nonce': '123' }, 'turbolinks:load': (event) => {
+    await turbolinks.click('#same-origin-unannotated-link', { headers: { 'X-Xhr-Nonce': '123' }, 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
     }})
   })

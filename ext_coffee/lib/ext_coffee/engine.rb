@@ -3,8 +3,6 @@ require 'ext_coffee/configuration'
 
 module ExtCoffee
   class Engine < ::Rails::Engine
-    require 'ext_coffee/turbolinks'
-
     if Rails.env.development?
       paths['app/controllers'] = 'lib/controllers'
       paths['app/views'] = 'lib/views'
@@ -14,8 +12,8 @@ module ExtCoffee
 
     config.before_initialize do |app|
       app.config.content_security_policy_nonce_generator = -> (request) do
-        if request.env['HTTP_TURBOLINKS_REFERRER'].present?
-          request.env['HTTP_X_TURBOLINKS_NONCE']
+        if request.env['HTTP_X_REFERRER'].present?
+          request.env['HTTP_X_XHR_NONCE']
         else
           SecureRandom.base64(16)
         end
@@ -43,10 +41,8 @@ module ExtCoffee
       end
     end
 
-    ActiveSupport.on_load(:action_controller_base) do |base|
-      base.include Turbolinks::Controller
-
-      ActionDispatch::Assertions.include Turbolinks::Assertions
+    ActiveSupport.on_load(:action_controller_base) do
+      require 'ext_coffee/action_controller/base/with_xhr_redirect'
     end
   end
 end
