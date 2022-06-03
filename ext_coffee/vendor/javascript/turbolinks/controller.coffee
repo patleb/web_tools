@@ -247,6 +247,9 @@ class Turbolinks.Controller
     @current_visit.start()
     @dispatch_visit(location, action)
 
+  is_reloadable: (url) ->
+    not (url instanceof Turbolinks.Location) and url?.charAt(0) is '?'
+
   is_significant_click: (event) ->
     not (event.defaultPrevented or Rails.is_meta_click(event))
 
@@ -261,15 +264,18 @@ class Turbolinks.Controller
     else
       true
 
-  is_reloadable: (url) ->
-    not (url instanceof Turbolinks.Location) and url?.charAt(0) is '?'
-
   location_is_visitable: (location) ->
     location.is_prefixed_by(@get_root_location()) and location.is_html()
 
   get_link: (target) ->
     link = target.closest('a[href]:not([target^=_]):not([download])')
     link if link and not Rails.is_remote(link)
+
+  get_restoration_id: (event) ->
+    if event.state
+      (event.state.turbolinks ? {}).restoration_id
+    else if Turbolinks.Location.current_location().is_equal_to(@initial_location)
+      @initial_restoration_id
 
   get_restoration_data: (restoration_id) ->
     @restoration_data[restoration_id] ?= {}
@@ -278,12 +284,6 @@ class Turbolinks.Controller
     # Safari dispatches a popstate event after window's load event, ignore it
     (@page_loaded or document.readyState is 'complete') and
       @restoration_id isnt event.state?.turbolinks?.restoration_id
-
-  get_restoration_id: (event) ->
-    if event.state
-      (event.state.turbolinks ? {}).restoration_id
-    else if Turbolinks.Location.current_location().is_equal_to(@initial_location)
-      @initial_restoration_id
 
   mark_as_preview: (preview) ->
     if preview
