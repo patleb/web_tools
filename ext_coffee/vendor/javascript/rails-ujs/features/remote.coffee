@@ -62,7 +62,6 @@ Rails.handle_remote = (e) ->
       turbolinks_error(method, url, data_type, response, xhr)
     complete: (args...) ->
       Rails.fire(element, 'ajax:complete', args)
-      window.clear_event_submitter()
       turbolinks_finished()
     crossDomain: Rails.is_cross_domain(url)
     withCredentials: with_credentials? and with_credentials isnt 'false'

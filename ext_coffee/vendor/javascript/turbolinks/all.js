@@ -1,4 +1,5 @@
 import '@@vendor/turbolinks/core_ext/element_replace_with'
+import '@@vendor/turbolinks/core_ext/event_submitter'
 import '@@vendor/turbolinks/core_ext/function_defer'
 import '@@vendor/turbolinks/core_ext/function_throttle'
 import '@@vendor/turbolinks/core_ext/object_dup'
