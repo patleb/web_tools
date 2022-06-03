@@ -12,8 +12,8 @@ module ExtCoffee
 
     config.before_initialize do |app|
       app.config.content_security_policy_nonce_generator = -> (request) do
-        if request.env['HTTP_X_REFERRER'].present?
-          request.env['HTTP_X_XHR_NONCE']
+        if request.headers['X-Referrer'].present?
+          request.headers['X-Xhr-Nonce']
         else
           SecureRandom.base64(16)
         end

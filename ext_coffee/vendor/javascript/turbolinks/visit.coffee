@@ -1,9 +1,11 @@
 class Turbolinks.Visit
   { NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH } = Turbolinks.HttpRequest
 
-  constructor: (location, @action, @html) ->
+  constructor: (location, @action, { restoration_id, restoration_data, @same_page, @error, @html, @history_changed }) ->
     @controller = Turbolinks.controller
     @id = Rails.uid()
+    @restoration_id = restoration_id ? Rails.uid()
+    @restoration_data = restoration_data.dup()
     @location = Turbolinks.Location.wrap(location)
     @state = 'initialized'
     @timing = {}
@@ -33,7 +35,7 @@ class Turbolinks.Visit
       @record_timing('visit_end')
       @state = 'completed'
       @follow_redirect()
-      @controller.dispatch_load(@get_timing())
+      @controller.dispatch_load(@timing.dup())
       window.clear_event_submitter()
 
   fail: ->
@@ -72,7 +74,7 @@ class Turbolinks.Visit
       preview = @should_issue_request()
       @render ->
         @cache_snapshot()
-        @controller.render({ snapshot, preview }, @perform_scroll)
+        @controller.render({ snapshot, @error, preview }, @perform_scroll)
         @complete() unless preview
 
   load_anchor: ->
@@ -84,10 +86,10 @@ class Turbolinks.Visit
       @render ->
         @cache_snapshot()
         if @request.failed
-          @controller.render(error: @response, @perform_scroll)
+          @controller.render({ snapshot: @response, error: true }, @perform_scroll)
           @fail()
         else
-          @controller.render(snapshot: @response, @perform_scroll)
+          @controller.render({ snapshot: @response }, @perform_scroll)
           @complete()
 
   follow_redirect: ->
@@ -100,7 +102,7 @@ class Turbolinks.Visit
 
   request_started: ->
     @record_timing('request_start')
-    @controller.request_started(this)
+    @controller.request_started(@should_issue_request())
 
   request_completed: (@response, redirected_to_location) ->
     @redirected_to_location = Turbolinks.Location.wrap(redirected_to_location) if redirected_to_location?
@@ -115,7 +117,7 @@ class Turbolinks.Visit
 
   request_finished: ->
     @record_timing('request_end')
-    @controller.request_finished(this)
+    @controller.request_finished()
 
   should_issue_request: ->
     if @action is 'restore'
@@ -152,13 +154,10 @@ class Turbolinks.Visit
   record_timing: (name) ->
     @timing[name] ?= new Date().getTime()
 
-  get_timing: ->
-    Turbolinks.copy(@timing)
-
   # Private
 
   cache_snapshot: ->
-    unless @snapshot_cached
+    unless @snapshot_cached or @referrer_state is 'failed'
       @controller.cache_snapshot()
       @snapshot_cached = true
 

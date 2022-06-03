@@ -8,13 +8,14 @@ class Turbolinks.Snapshot
       @from_element(value)
 
   @from_string: (html) ->
+    return @from_element(html) if html instanceof HTMLDocument
     { documentElement } = new DOMParser().parseFromString(html, 'text/html')
     @from_element(documentElement)
 
   @from_element: (element) ->
     head = element.querySelector('head')
     body = element.querySelector('body') ? document.createElement('body')
-    head_details = Turbolinks.HeadDetails.from_element(head)
+    head_details = new Turbolinks.HeadDetails(head)
     new this head_details, body
 
   constructor: (@head_details, @body) ->

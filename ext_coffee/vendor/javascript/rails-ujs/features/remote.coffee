@@ -13,7 +13,7 @@ Rails.handle_remote = (e) ->
     return false
 
   with_credentials = element.getAttribute('data-with-credentials')
-  data_type = element.getAttribute('data-type') or 'script'
+  data_type = element.getAttribute('data-type') or (turbolinks_enabled() and 'html') or 'script'
 
   if element.matches(Rails.submitable_forms)
     # memoized value from clicked submit button
@@ -39,28 +39,54 @@ Rails.handle_remote = (e) ->
     method = element.getAttribute('data-method')
     url = Rails.href(element)
     data = element.getAttribute('data-params')
+  method = (method or 'GET').toUpperCase()
 
-  Rails.ajax(
-    type: method or 'GET'
-    url: url
-    data: data
-    data_type: data_type
-    # stopping the "ajax:beforeSend" event will cancel the ajax request
+  Rails.ajax({
+    type: method,
+    url,
+    data,
+    data_type,
     beforeSend: (xhr, options) ->
       if Rails.fire(element, 'ajax:beforeSend', [xhr, options])
         Rails.fire(element, 'ajax:send', [xhr])
+        turbolinks_started()
+        true
       else
         Rails.fire(element, 'ajax:stopped')
-        return false
-    success: (args...) -> Rails.fire(element, 'ajax:success', args)
-    error: (args...) -> Rails.fire(element, 'ajax:error', args)
+        false
+    success: (response, status, xhr) ->
+      Rails.fire(element, 'ajax:success', [response, status, xhr])
+      turbolinks_success(method, url, data_type, response, xhr)
+    error: (response, status, xhr) ->
+      Rails.fire(element, 'ajax:error', [response, status, xhr])
+      turbolinks_error(method, url, data_type, response, xhr)
     complete: (args...) ->
       Rails.fire(element, 'ajax:complete', args)
       window.clear_event_submitter()
+      turbolinks_finished()
     crossDomain: Rails.is_cross_domain(url)
     withCredentials: with_credentials? and with_credentials isnt 'false'
-  )
+  })
   Rails.stop_everything(e)
+
+turbolinks_enabled = ->
+  window.Turbolinks and Turbolinks.enabled()
+
+turbolinks_started = ->
+  Turbolinks.request_started() if turbolinks_enabled()
+
+turbolinks_finished = ->
+  Turbolinks.request_finished() if turbolinks_enabled()
+
+turbolinks_success = (method, url, data_type, response, xhr) ->
+  if turbolinks_enabled() and data_type is 'html'
+    Turbolinks.clear_cache() unless method is 'GET'
+    Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') ? url, action: 'restore', html: response)
+
+turbolinks_error = (method, url, data_type, response, xhr) ->
+  if turbolinks_enabled() and data_type is 'html'
+    Turbolinks.clear_cache()
+    Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') ? url, action: 'restore', error: true, html: response)
 
 Rails.form_submit_button_click = (e) ->
   button = this

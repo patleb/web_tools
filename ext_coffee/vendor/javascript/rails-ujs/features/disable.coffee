@@ -5,7 +5,6 @@ Rails.handle_disabled_element = (e) ->
 # Unified function to enable an element (link, button and form)
 Rails.enable_element = (e) ->
   if e instanceof Event
-    return if is_xhr_redirect(e)
     element = e.target
   else
     element = e
@@ -85,7 +84,3 @@ enable_input = (element) ->
     Rails.set(element, 'ujs:enable-with', null) # clean up cache
   element.disabled = false
   Rails.set(element, 'ujs:disabled', null)
-
-is_xhr_redirect = (event) ->
-  xhr = event.detail?[0]
-  xhr?.getResponseHeader('X-Xhr-Redirect')?

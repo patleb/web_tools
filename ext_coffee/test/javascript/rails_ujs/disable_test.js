@@ -124,14 +124,4 @@ describe('Rails UJS Disable', () => {
     }})
     dom.off_event('pageshow')
   })
-
-  it('should not enable elements for XHR redirects', async () => {
-    assert.total(6)
-    dom.on_event({ 'ajax:before': (event) => {
-      rails.assert_disabled(event)
-    }})
-    await rails.click('button[data-remote]', { url: '/echo', headers: { 'X-Xhr-Redirect': '/home' }, 'ajax:complete': (event) => {
-      rails.assert_disabled(event)
-    }})
-  })
 })

@@ -1,9 +1,3 @@
-Turbolinks.copy = (object) ->
-  result = {}
-  for key, value of object
-    result[key] = value
-  result
-
 Turbolinks.defer = (callback) ->
   setTimeout(callback, 1)
 

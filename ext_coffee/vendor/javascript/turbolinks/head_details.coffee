@@ -1,8 +1,6 @@
 class Turbolinks.HeadDetails
-  @from_element: (head) ->
-    new this head?.childNodes ? []
-
-  constructor: (nodes) ->
+  constructor: (@head) ->
+    nodes = @head?.childNodes ? []
     @elements = {}
     for node in nodes when node.nodeType is Node.ELEMENT_NODE and node.tagName.toLowerCase() isnt 'noscript'
       if node.hasAttribute('nonce')

@@ -34,7 +34,7 @@ class Turbolinks.Controller
       @stop_history()
       @started = false
 
-  visit: (location, { action = 'advance', restoration_id, same_page, html } = {}) ->
+  visit: (location, { action = 'advance', restoration_id, same_page, error, html } = {}) ->
     unless Turbolinks.supported and not @is_reloadable(location)
       return window.location = location
     location = Turbolinks.Location.wrap(location)
@@ -42,7 +42,7 @@ class Turbolinks.Controller
       if @location_is_visitable(location)
         same_page = same_page ? location.is_same_page() and location.anchor?
         restoration_data = @get_restoration_data(restoration_id)
-        @start_visit(location, action, { restoration_id, restoration_data, same_page, html })
+        @start_visit(location, action, { restoration_id, restoration_data, same_page, error, html })
       else
         window.location = location
 
@@ -122,10 +122,8 @@ class Turbolinks.Controller
 
   render: ({ snapshot, error, preview }, callback) ->
     @mark_as_preview(preview)
-    if snapshot?
-      Turbolinks.SnapshotRenderer.render(callback, @get_snapshot(), Turbolinks.Snapshot.wrap(snapshot), preview)
-    else
-      Turbolinks.ErrorRenderer.render(callback, error)
+    renderer = new Turbolinks.Renderer(@get_snapshot(), Turbolinks.Snapshot.wrap(snapshot), error, preview)
+    renderer.render(callback)
 
   render_view: (new_body, callback, preview) ->
     unless @dispatch_before_render(new_body, !!preview).defaultPrevented
@@ -135,14 +133,14 @@ class Turbolinks.Controller
 
   # Visit
 
-  request_started: (visit) ->
+  request_started: (delayed = true) ->
     @progress_bar.set_value(0)
-    if visit.should_issue_request()
+    if delayed
       @progress_bar_timeout = setTimeout(@show_progress_bar, @constructor.progress_bar_delay)
     else
       @show_progress_bar()
 
-  request_finished: (visit) ->
+  request_finished: ->
     @progress_bar.set_value(1)
     @hide_progress_bar()
 
@@ -249,13 +247,10 @@ class Turbolinks.Controller
     @current_visit.start()
     @dispatch_visit(location, action)
 
-  create_visit: (location, action, { restoration_id, restoration_data, same_page, html, history_changed } = {}) ->
-    visit = new Turbolinks.Visit(location, action, html)
-    visit.restoration_id = restoration_id ? Rails.uid()
-    visit.restoration_data = Turbolinks.copy(restoration_data)
-    visit.same_page = same_page
-    visit.history_changed = history_changed
+  create_visit: (args...) ->
+    visit = new Turbolinks.Visit(args...)
     visit.referrer = @location
+    visit.referrer_state = @current_visit?.state
     visit
 
   is_significant_click: (event) ->
