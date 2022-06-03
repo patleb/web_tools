@@ -1,7 +1,7 @@
 class Turbolinks.Visit
   { NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH } = Turbolinks.HttpRequest
 
-  constructor: (location, @action, { restoration_id, restoration_data, @same_page, @history_changed, @html, @error }) ->
+  constructor: (@referrer, location, @action, { restoration_id, restoration_data, @same_page, @history_changed, @html, @error }) ->
     @controller = Turbolinks.controller
     @id = Rails.uid()
     @restoration_id = restoration_id ? Rails.uid()
@@ -156,7 +156,7 @@ class Turbolinks.Visit
   # Private
 
   cache_snapshot: ->
-    unless @snapshot_cached or @referrer_state is 'failed'
+    unless @snapshot_cached
       @controller.cache_snapshot()
       @snapshot_cached = true
 

@@ -243,15 +243,9 @@ class Turbolinks.Controller
 
   start_visit: (location, action, properties) ->
     @current_visit?.cancel()
-    @current_visit = @create_visit(location, action, properties)
+    @current_visit = new Turbolinks.Visit(@location, location, action, properties)
     @current_visit.start()
     @dispatch_visit(location, action)
-
-  create_visit: (args...) ->
-    visit = new Turbolinks.Visit(args...)
-    visit.referrer = @location
-    visit.referrer_state = @current_visit?.state
-    visit
 
   is_significant_click: (event) ->
     not (event.defaultPrevented or Rails.is_meta_click(event))
