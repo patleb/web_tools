@@ -97,7 +97,7 @@ const turbolinks = {
     window.history.replaceState(state, '', `http://localhost/${location}`)
     Turbolinks.controller.location = Turbolinks.Location.wrap(window.location)
     dom.setup_document(fixture.html(location))
-    Turbolinks.clearCache()
+    Turbolinks.clear_cache()
     Turbolinks.dispatch('DOMContentLoaded')
   },
   setup_no_defer: () => {
