@@ -125,11 +125,11 @@ class Turbolinks.Controller
     renderer = new Turbolinks.Renderer(@get_snapshot(), Turbolinks.Snapshot.wrap(snapshot), error, preview)
     renderer.render(callback)
 
-  render_view: (new_body, callback, preview) ->
-    unless @dispatch_before_render(new_body, !!preview).defaultPrevented
+  render_view: (new_body, callback, error, preview) ->
+    unless @dispatch_before_render(new_body, !!error, !!preview).defaultPrevented
       callback()
       @rendered_location = @current_visit.location
-      @dispatch_render(new_body, !!preview)
+      @dispatch_render(new_body, !!error, !!preview)
 
   # Visit
 
@@ -223,11 +223,11 @@ class Turbolinks.Controller
   dispatch_cache: ->
     Turbolinks.dispatch('turbolinks:cache')
 
-  dispatch_before_render: (new_body, preview) ->
-    Turbolinks.dispatch('turbolinks:before-render', data: { new_body, preview }, cancelable: true)
+  dispatch_before_render: (new_body, error, preview) ->
+    Turbolinks.dispatch('turbolinks:before-render', data: { new_body, error, preview }, cancelable: true)
 
-  dispatch_render: (new_body, preview) ->
-    Turbolinks.dispatch('turbolinks:render', data: { new_body, preview })
+  dispatch_render: (new_body, error, preview) ->
+    Turbolinks.dispatch('turbolinks:render', data: { new_body, error, preview })
 
   dispatch_load: (info = {}) ->
     Turbolinks.dispatch('turbolinks:load', data: { url: @location?.absolute_url, info })

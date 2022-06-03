@@ -20,7 +20,7 @@ class Turbolinks.Renderer
       callback(@new_snapshot)
 
   render_view: (callback) ->
-    @controller.render_view(@new_body, callback, @preview)
+    @controller.render_view(@new_body, callback, @error, @preview)
 
   merge_head: ->
     for element in @new_head_details.get_missing_stylesheets(@old_head_details)
