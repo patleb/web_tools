@@ -77,7 +77,7 @@ Turbolinks.controller.visit = function (location, options = {}) {
   }
 }
 
-const old_defer = Turbolinks.defer
+const old_defer = Function.defer
 const old_requestAnimationFrame = window.requestAnimationFrame
 
 function navigate(direction, rest = {}) {
@@ -101,11 +101,11 @@ const turbolinks = {
     Turbolinks.dispatch('DOMContentLoaded')
   },
   setup_no_defer: () => {
-    Turbolinks.defer = (callback) =>  callback()
+    Function.defer = (callback) =>  callback()
     window.requestAnimationFrame = (callback) => callback()
   },
   reset_defer: () => {
-    Turbolinks.defer = old_defer
+    Function.defer = old_defer
     window.requestAnimationFrame = old_requestAnimationFrame
   },
   back: (rest) => {

@@ -4,7 +4,7 @@ class Turbolinks.Controller
 
   constructor: ->
     @html = document.documentElement
-    @on_scroll = Turbolinks.throttle(@on_scroll)
+    @on_scroll = @on_scroll.throttle()
     @restoration_data = {}
     @clear_cache()
     @progress_bar = new Turbolinks.ProgressBar
@@ -34,7 +34,7 @@ class Turbolinks.Controller
       @stop_history()
       @started = false
 
-  visit: (location, { action = 'advance', restoration_id, same_page, error, html } = {}) ->
+  visit: (location, { action = 'advance', restoration_id, same_page, html, error } = {}) ->
     unless Turbolinks.supported and not @is_reloadable(location)
       return window.location = location
     location = Turbolinks.Location.wrap(location)
@@ -42,7 +42,7 @@ class Turbolinks.Controller
       if @location_is_visitable(location)
         same_page = same_page ? location.is_same_page() and location.anchor?
         restoration_data = @get_restoration_data(restoration_id)
-        @start_visit(location, action, { restoration_id, restoration_data, same_page, error, html })
+        @start_visit(location, action, { restoration_id, restoration_data, same_page, html, error })
       else
         window.location = location
 
@@ -95,7 +95,7 @@ class Turbolinks.Controller
       unless @dispatch_before_cache().defaultPrevented
         snapshot = @get_snapshot()
         location = @rendered_location or Turbolinks.Location.current_location()
-        Turbolinks.defer =>
+        Function.defer =>
           @cache.put(location, snapshot.clone())
           @dispatch_cache()
 
@@ -197,7 +197,7 @@ class Turbolinks.Controller
       @start_visit(@location, 'restore', { @restoration_id, restoration_data, same_page, history_changed: true })
 
   on_load: (event) =>
-    Turbolinks.defer =>
+    Function.defer =>
       @page_loaded = true
 
   on_scroll: (event) =>

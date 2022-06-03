@@ -1,13 +1,3 @@
-Turbolinks.defer = (callback) ->
-  setTimeout(callback, 1)
-
-Turbolinks.throttle = (fn) ->
-  request = null
-  (args...) ->
-    request ?= requestAnimationFrame =>
-      request = null
-      fn.apply(this, args)
-
 Turbolinks.dispatch = (name, { target, cancelable, data } = {}) ->
   event = document.createEvent('Events')
   event.initEvent(name, true, cancelable is true)

@@ -86,7 +86,7 @@ turbolinks_success = (method, url, data_type, response, xhr) ->
 turbolinks_error = (method, url, data_type, response, xhr) ->
   if turbolinks_enabled() and data_type is 'html'
     Turbolinks.clear_cache()
-    Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') ? url, action: 'restore', error: true, html: response)
+    Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') ? url, action: 'restore', html: response, error: true)
 
 Rails.form_submit_button_click = (e) ->
   button = this

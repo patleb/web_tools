@@ -1,7 +1,7 @@
 class Turbolinks.Visit
   { NETWORK_FAILURE, TIMEOUT_FAILURE, CONTENT_TYPE_MISMATCH } = Turbolinks.HttpRequest
 
-  constructor: (location, @action, { restoration_id, restoration_data, @same_page, @error, @html, @history_changed }) ->
+  constructor: (location, @action, { restoration_id, restoration_data, @same_page, @history_changed, @html, @error }) ->
     @controller = Turbolinks.controller
     @id = Rails.uid()
     @restoration_id = restoration_id ? Rails.uid()
