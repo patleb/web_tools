@@ -165,7 +165,7 @@ Rails.ajax = (options) ->
     xhr.send(options.data)
 
 prepare_options = (options) ->
-  options.url = options.url or location.href
+  options.url ||= location.href
   options.type = options.type.toUpperCase()
   # append data to url if it's a GET request
   if options.type is 'GET' and options.data

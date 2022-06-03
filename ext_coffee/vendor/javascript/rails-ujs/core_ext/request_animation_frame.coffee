@@ -11,8 +11,8 @@ Gist: https://gist.github.com/jalbam/5fe05443270fa6d8136238ec72accbc0
 do ->
   vendors = ['webkit', 'moz', 'ms', 'o']
   for vp in vendors when not window.requestAnimationFrame and not window.cancelAnimationFrame
-    window.requestAnimationFrame = window.requestAnimationFrame or window["#{vp}RequestAnimationFrame"]
-    window.cancelAnimationFrame = window.cancelAnimationFrame or window["#{vp}CancelAnimationFrame"] or window["#{vp}CancelRequestAnimationFrame"]
+    window.requestAnimationFrame ||= window["#{vp}RequestAnimationFrame"]
+    window.cancelAnimationFrame ||= window["#{vp}CancelAnimationFrame"] or window["#{vp}CancelRequestAnimationFrame"]
 
   if /iP(ad|hone|od).*OS 6/.test(window.navigator.userAgent) or not window.requestAnimationFrame or not window.cancelAnimationFrame
     lastTime = 0
