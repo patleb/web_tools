@@ -12,21 +12,21 @@
   <body>
     <section>
       <h1>Navigation</h1>
-      <p><a id="same-origin-unannotated-link" href="/one">Same-origin unannotated link</a></p>
-      <p><a id="same-origin-replace-link" href="/one" data-turbolinks-action="replace">Same-origin data-turbolinks-action=replace link</a></p>
-      <p><a id="same-origin-false-link" href="/one" data-turbolinks="false">Same-origin data-turbolinks=false link</a></p>
+      <a id="same-origin-unannotated-link" href="/one">Same-origin unannotated link</a>
+      <a id="same-origin-replace-link" href="/one" data-turbolinks-action="replace">Same-origin data-turbolinks-action=replace link</a>
+      <a id="same-origin-false-link" href="/one" data-turbolinks="false">Same-origin data-turbolinks=false link</a>
       <p data-turbolinks="false"><a id="same-origin-unannotated-link-inside-false-container" href="/one">Same-origin unannotated link inside data-turbolinks=false container</a></p>
       <p data-turbolinks="false"><a id="same-origin-true-link-inside-false-container" href="/one" data-turbolinks="true">Same-origin data-turbolinks=true link inside data-turbolinks=false container</a></p>
-      <p><a id="same-origin-anchored-link" href="/one#element-id">Same-origin anchored link</a></p>
-      <p><a id="same-origin-anchored-link-named" href="/one#named-anchor">Same-origin link to named anchor</a></p>
-      <p><a id="cross-origin-unannotated-link" href="about:blank">Cross-origin unannotated link</a></p>
-      <p><a id="same-origin-targeted-link" href="/one" target="_blank">Same-origin targeted link</a></p>
-      <p><a id="same-origin-download-link" href="/one" download="one">Same-origin download link</a></p>
+      <a id="same-origin-anchored-link" href="/one#element-id">Same-origin anchored link</a>
+      <a id="same-origin-anchored-link-named" href="/one#named-anchor">Same-origin link to named anchor</a>
+      <a id="cross-origin-unannotated-link" href="about:blank">Cross-origin unannotated link</a>
+      <a id="same-origin-targeted-link" href="/one" target="_blank">Same-origin targeted link</a>
+      <a id="same-origin-download-link" href="/one" download="one">Same-origin download link</a>
       <svg width="600" height="100" viewbox="-300 -50 600 100"><text><a id="same-origin-link-inside-svg-element" href="/one">Same-origin link inside SVG element</a></text></svg>
       <svg width="600" height="100" viewbox="-300 -50 600 100"><text><a id="cross-origin-link-inside-svg-element" href="about:blank">Cross-origin link inside SVG element</a></text></svg>
-      <p><custom-link-element id="custom-link-element" link="/one" text="Same-origin unannotated custom element link"></custom-link-element></p>
-      <p><a id="same-origin-reloadable-link" href="?">Same-origin reloadable link</a></p>
-      <p><a id="data-remote-link" href="/one" data-remote="true">Data-remote link</a></p>
+      <custom-link-element id="custom-link-element" link="/one" text="Same-origin unannotated custom element link"></custom-link-element>
+      <a id="same-origin-reloadable-link" href="?">Same-origin reloadable link</a>
+      <a id="data-remote-link" href="/one" data-remote="true">Data-remote link</a>
     </section>
   </body>
 </html>

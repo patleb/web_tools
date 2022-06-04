@@ -7,8 +7,8 @@
   </head>
   <body>
     <h1>Remote</h1>
-    <p><a href="/echo?data3=value3" data-remote="true" data-params="data1=value1&data2=value2">my address</a></p>
-    <p><button data-url="/echo?data3=value3" data-remote="true" data-method="post" data-params="data1=value1&data2=value2">my button</button></p>
+    <a href="/echo?data3=value3" data-remote="true" data-params="data1=value1&data2=value2">my address</a>
+    <button data-url="/echo?data3=value3" data-remote="true" data-method="post" data-params="data1=value1&data2=value2">my button</button>
     <select name="user_data" data-url="/echo" data-remote="true" data-params="data1=value1" id="select">
       <option value="optionValue1">option1</option>
       <option value="optionValue2">option2</option>
@@ -17,7 +17,7 @@
       <option value="optionValue1">option1</option>
       <option value="optionValue2">option2</option>
     </select>
-    <p><a href="/echo" data-remote="true" disabled="disabled">Disabled link</a></p>
+    <a href="/echo" data-remote="true" disabled="disabled">Disabled link</a>
     <form action="/echo" data-remote="true" method="post" data-method="get" id="my-remote-form">
       <input type="text" name="user_name" value="john">
     </form>
@@ -30,7 +30,7 @@
       <input type="text" name="user_data" value="value1" form="form-with-form-attributes">
       <input type="text" name="user_email" value="from@example.com" disabled="disabled" form="form-with-form-attributes">
     </form>
-    <form data-remote="true" id="form-with-buttons">
+    <form action="/echo2" data-remote="true" id="form-with-buttons">
       <input type="text" name="user_name" value="john">
       <button type="submit" name="user_data" value="value1" form="form-with-buttons"></button>
       <button type="submit" name="user_data" value="value2" form="form-with-buttons" formaction="/echo" formmethod="post"></button>
