@@ -25,7 +25,7 @@ class Turbolinks.Snapshot
     new @constructor @head_details, body
 
   get_root_location: ->
-    root = @get_setting('root') ? '/'
+    root = @head_details.get_meta_value('turbolinks-root') ? '/'
     new Turbolinks.Location(root)
 
   get_anchor: (name) ->
@@ -45,18 +45,13 @@ class Turbolinks.Snapshot
     @get_anchor(name)?
 
   is_previewable: ->
-    @get_setting('cache-control') isnt 'no-preview'
+    @head_details.get_meta_value('turbolinks-cache-control') isnt 'no-preview'
 
   is_cacheable: ->
-    Turbolinks.Controller.cache_size and @get_setting('cache-control') isnt 'no-cache'
+    Turbolinks.Controller.cache_size and @head_details.get_meta_value('turbolinks-cache-control') isnt 'no-cache'
 
   is_visitable: ->
-    @get_setting('visit-control') isnt 'reload'
+    @head_details.get_meta_value('turbolinks-visit-control') isnt 'reload'
 
   is_scrollable: ->
-    @get_setting('visit-control') isnt 'no-scroll'
-
-  # Private
-
-  get_setting: (name) ->
-    @head_details.get_meta_value("turbolinks-#{name}")
+    @head_details.get_meta_value('turbolinks-visit-control') isnt 'no-scroll'
