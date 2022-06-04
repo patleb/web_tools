@@ -165,7 +165,7 @@ class Turbolinks.Controller
       location = new Turbolinks.Location(Rails.push_query(url, params))
       action = submitter.getAttribute('data-turbolinks-action') or form.getAttribute('data-turbolinks-action') or 'advance'
       if @location_is_visitable(location)
-        unless @dispatch_search(form, location).defaultPrevented
+        unless @dispatch_submit(form, location).defaultPrevented
           Rails.stop_everything(event)
           @visit(location, { action, same_page: false })
 
@@ -205,8 +205,8 @@ class Turbolinks.Controller
 
   # Application events
 
-  dispatch_search: (form, location) ->
-    Turbolinks.dispatch('turbolinks:search', target: form, data: { url: location.absolute_url }, cancelable: true)
+  dispatch_submit: (form, location) ->
+    Turbolinks.dispatch('turbolinks:submit', target: form, data: { url: location.absolute_url }, cancelable: true)
 
   dispatch_click: (link, location) ->
     Turbolinks.dispatch('turbolinks:click', target: link, data: { url: location.absolute_url }, cancelable: true)
