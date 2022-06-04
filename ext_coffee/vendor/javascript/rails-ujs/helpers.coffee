@@ -64,7 +64,7 @@ Rails.refresh_csrf_tokens = ->
 Rails.fire = (obj, name, data) ->
   event = new CustomEvent(name, bubbles: true, cancelable: true, detail: data)
   obj.dispatchEvent(event)
-  !event.defaultPrevented
+  not event.defaultPrevented
 
 # Helper function, needed to provide consistent behavior in IE
 Rails.stop_everything = (e) ->
@@ -114,7 +114,7 @@ Rails.serialize_element = (element, additional_param) ->
   inputs = to_array(element.elements) if element.matches('form')
   params = []
   inputs.forEach (input) ->
-    return if !input.name or input.disabled or input.hasAttribute('disabled')
+    return if not input.name or input.disabled or input.hasAttribute('disabled')
     return if input.matches('fieldset[disabled] *')
     return if input.name is additional_param?.name
     if input.matches('select')
@@ -159,7 +159,7 @@ Rails.ajax = (options) ->
       options.error?(response, xhr.status, xhr)
     options.complete?(xhr, xhr.status)
 
-  if options.beforeSend? && !options.beforeSend(xhr, options)
+  if options.beforeSend? and not options.beforeSend(xhr, options)
     return false
 
   if xhr.readyState is XMLHttpRequest.OPENED
