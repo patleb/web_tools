@@ -157,13 +157,13 @@ class Turbolinks.Controller
   submit_bubbled: (event) =>
     return unless @enabled and (form = @get_form(event.target))
     submitter = document.activeElement
-    if @is_visitable(submitter) and (submitter.getAttribute('formmethod')?.toUpperCase() ? 'GET') is 'GET'
-      url = submitter.getAttribute('formaction') ? form.getAttribute('action')
+    if @is_visitable(submitter) and (submitter.getAttribute('formmethod')?.toUpperCase() or 'GET') is 'GET'
+      url = submitter.getAttribute('formaction') or form.getAttribute('action')
       return if @is_reloadable(url)
       url = url.replace(/\?[^#]*/, '')
       params = Rails.serialize_element(form, submitter)
       location = new Turbolinks.Location(Rails.push_query(url, params))
-      action = submitter.getAttribute('data-turbolinks-action') ? form.getAttribute('data-turbolinks-action') ? 'advance'
+      action = submitter.getAttribute('data-turbolinks-action') or form.getAttribute('data-turbolinks-action') or 'advance'
       if @location_is_visitable(location)
         unless @dispatch_search(form, location).defaultPrevented
           Rails.stop_everything(event)
@@ -180,7 +180,7 @@ class Turbolinks.Controller
       url = link.getAttribute('href')
       return if @is_reloadable(url)
       location = new Turbolinks.Location(url)
-      action = link.getAttribute('data-turbolinks-action') ? 'advance'
+      action = link.getAttribute('data-turbolinks-action') or 'advance'
       if @location_is_visitable(location)
         unless @dispatch_click(link, location).defaultPrevented
           event.preventDefault()
