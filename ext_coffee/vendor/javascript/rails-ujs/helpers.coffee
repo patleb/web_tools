@@ -120,7 +120,7 @@ Rails.serialize_element = (element, additional_param) ->
     if input.matches('select')
       to_array(input.options).forEach (option) ->
         params.push(name: input.name, value: option.value) if option.selected
-    else if input.checked or ['radio', 'checkbox', 'submit'].indexOf(input.type) is -1
+    else if input.checked or input.type not in ['radio', 'checkbox', 'submit']
       params.push(name: input.name, value: input.value)
   params.push(additional_param) if additional_param
   params.map (param) ->
@@ -276,7 +276,7 @@ Rails.split_at_anchor = (url) ->
 Rails.push_query = (url, string) ->
   return url unless string
   [url, anchor] = Rails.split_at_anchor(url)
-  if url.indexOf('?') isnt -1
+  if '?' in url
     url += "&#{string.replace(/^&/, '')}"
   else
     url += "?#{string.replace(/^\?/, '')}"
