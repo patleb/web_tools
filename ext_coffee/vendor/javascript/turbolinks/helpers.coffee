@@ -1,3 +1,30 @@
+Turbolinks.enabled = ->
+  Turbolinks.supported and Turbolinks.controller.enabled
+
+Turbolinks.is_visitable = (element) ->
+  Turbolinks.enabled() and Turbolinks.controller.is_visitable(element)
+
+Turbolinks.visit = (location, options) ->
+  Turbolinks.controller.visit(location, options)
+
+Turbolinks.clear_cache = ->
+  Turbolinks.controller.clear_cache()
+
+Turbolinks.request_started = ->
+  Turbolinks.controller.request_started()
+
+Turbolinks.request_finished = ->
+  Turbolinks.controller.request_finished()
+
+Turbolinks.set_cache_size = (size) ->
+  Turbolinks.Controller.cache_size = size # 0 to disable
+
+Turbolinks.set_progress_bar_delay = (delay) ->
+  Turbolinks.Controller.progress_bar_delay = delay
+
+Turbolinks.set_http_request_timeout = (timeout) ->
+  Turbolinks.HttpRequest.timeout = timeout # 0 to disable
+
 Turbolinks.dispatch = (name, { target, cancelable, data } = {}) ->
   event = document.createEvent('Events')
   event.initEvent(name, true, cancelable is true)
