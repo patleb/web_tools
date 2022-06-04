@@ -48,21 +48,21 @@ Rails.handle_remote = (e) ->
     data
     data_type
     beforeSend: (xhr, options) ->
-      if Rails.fire(element, 'ajax:beforeSend', [xhr, options])
-        Rails.fire(element, 'ajax:send', [xhr])
+      if Rails.fire(element, 'ajax:beforeSend', [xhr, options, visitable])
+        Rails.fire(element, 'ajax:send', [xhr, visitable])
         turbolinks_started() if visitable
         true
       else
         Rails.fire(element, 'ajax:stopped')
         false
     success: (response, status, xhr) ->
-      Rails.fire(element, 'ajax:success', [response, status, xhr])
+      Rails.fire(element, 'ajax:success', [response, status, xhr, visitable])
       turbolinks_success(response, xhr, url) if visitable
     error: (response, status, xhr) ->
-      Rails.fire(element, 'ajax:error', [response, status, xhr])
+      Rails.fire(element, 'ajax:error', [response, status, xhr, visitable])
       turbolinks_error(response, xhr, url) if visitable
-    complete: (args...) ->
-      Rails.fire(element, 'ajax:complete', args)
+    complete: (xhr, status) ->
+      Rails.fire(element, 'ajax:complete', [xhr, status, visitable])
       turbolinks_finished() if visitable
     crossDomain: Rails.is_cross_domain(url)
     withCredentials: with_credentials? and with_credentials isnt 'false'
