@@ -26,9 +26,9 @@ Rails.handle_remote = (e) ->
       data.append(button.name, button.value) if button?
     else
       data = Rails.serialize_element(element, button)
-    if turbolinks_enabled() and method isnt 'GET' and (not data_type or data_type is 'html')
+    if turbolinks_visitable(element) and method isnt 'GET' and (not data_type or data_type is 'html')
       data_type = 'html'
-      visit = true
+      visitable = true
     Rails.set(element, 'ujs:submit-button', null)
     Rails.set(element, 'ujs:submit-button-formmethod', null)
     Rails.set(element, 'ujs:submit-button-formaction', null)
@@ -50,27 +50,27 @@ Rails.handle_remote = (e) ->
     beforeSend: (xhr, options) ->
       if Rails.fire(element, 'ajax:beforeSend', [xhr, options])
         Rails.fire(element, 'ajax:send', [xhr])
-        turbolinks_started() if visit
+        turbolinks_started() if visitable
         true
       else
         Rails.fire(element, 'ajax:stopped')
         false
     success: (response, status, xhr) ->
       Rails.fire(element, 'ajax:success', [response, status, xhr])
-      turbolinks_success(response, xhr, url) if visit
+      turbolinks_success(response, xhr, url) if visitable
     error: (response, status, xhr) ->
       Rails.fire(element, 'ajax:error', [response, status, xhr])
-      turbolinks_error(response, xhr, url) if visit
+      turbolinks_error(response, xhr, url) if visitable
     complete: (args...) ->
       Rails.fire(element, 'ajax:complete', args)
-      turbolinks_finished() if visit
+      turbolinks_finished() if visitable
     crossDomain: Rails.is_cross_domain(url)
     withCredentials: with_credentials? and with_credentials isnt 'false'
   })
   Rails.stop_everything(e)
 
-turbolinks_enabled = ->
-  window.Turbolinks and Turbolinks.enabled()
+turbolinks_visitable = (element) ->
+  window.Turbolinks and Turbolinks.is_visitable(element)
 
 turbolinks_started = ->
   Turbolinks.request_started()
@@ -80,10 +80,10 @@ turbolinks_finished = ->
 
 turbolinks_success = (response, xhr, url) ->
   Turbolinks.clear_cache()
-  Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') ? url, action: 'restore', html: response)
+  Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') or url, action: 'restore', html: response)
 
 turbolinks_error = (response, xhr, url) ->
-  Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') ? url, action: 'restore', html: response, error: true)
+  Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') or url, action: 'restore', html: response, error: true)
 
 Rails.form_submit_button_click = (e) ->
   button = this

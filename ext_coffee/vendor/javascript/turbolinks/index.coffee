@@ -5,6 +5,9 @@ window.Turbolinks =
   enabled: ->
     Turbolinks.supported and Turbolinks.controller.enabled
 
+  is_visitable: (element) ->
+    Turbolinks.enabled() and Turbolinks.controller.is_visitable(element)
+
   visit: (location, options) ->
     Turbolinks.controller.visit(location, options)
 
