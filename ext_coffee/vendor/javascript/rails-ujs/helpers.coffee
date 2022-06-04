@@ -116,6 +116,7 @@ Rails.serialize_element = (element, additional_param) ->
   inputs.forEach (input) ->
     return if !input.name or input.disabled or input.hasAttribute('disabled')
     return if input.matches('fieldset[disabled] *')
+    return if input.name is additional_param?.name
     if input.matches('select')
       to_array(input.options).forEach (option) ->
         params.push(name: input.name, value: option.value) if option.selected

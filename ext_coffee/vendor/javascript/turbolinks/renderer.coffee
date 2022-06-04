@@ -18,7 +18,6 @@ class Turbolinks.Renderer
       @replace_body()
       @new_snapshot.first_autofocusable()?.focus() unless @preview
       callback(@new_snapshot)
-    window.clear_event_submitter()
 
   render_view: (callback) ->
     @controller.render_view(@new_body, callback, @error, @preview)

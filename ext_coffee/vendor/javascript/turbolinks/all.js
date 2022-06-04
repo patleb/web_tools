@@ -1,4 +1,3 @@
-import '@@vendor/turbolinks/core_ext/event_submitter'
 import '@@vendor/turbolinks/BANNER'
 import '@@vendor/turbolinks/index'
 import '@@vendor/turbolinks/helpers'

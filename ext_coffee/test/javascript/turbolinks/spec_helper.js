@@ -166,6 +166,7 @@ const turbolinks = {
         resolve(event)
         handler(event)
       }})
+      button.focus()
       return button.click()
     })
   },

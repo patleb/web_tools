@@ -155,17 +155,17 @@ class Turbolinks.Controller
     addEventListener('submit', @submit_bubbled, false)
 
   submit_bubbled: (event) =>
-    return unless @enabled and @is_search_form(event)
-    { target, submitter } = event
+    return unless @enabled and (form = @get_form(event.target))
+    submitter = document.activeElement
     if @is_visitable(submitter) and (submitter.getAttribute('formmethod')?.toUpperCase() ? 'GET') is 'GET'
-      url = submitter.getAttribute('formaction') ? target.getAttribute('action') ? target.action
+      url = submitter.getAttribute('formaction') ? form.getAttribute('action')
       return if @is_reloadable(url)
       url = url.replace(/\?[^#]*/, '')
-      params = Rails.serialize_element(target, submitter)
+      params = Rails.serialize_element(form, submitter)
       location = new Turbolinks.Location(Rails.push_query(url, params))
-      action = submitter.getAttribute('data-turbolinks-action') ? target.getAttribute('data-turbolinks-action') ? 'advance'
+      action = submitter.getAttribute('data-turbolinks-action') ? form.getAttribute('data-turbolinks-action') ? 'advance'
       if @location_is_visitable(location)
-        unless @dispatch_search(target, location).defaultPrevented
+        unless @dispatch_search(form, location).defaultPrevented
           Rails.stop_everything(event)
           @visit(location, { action, same_page: false })
 
@@ -253,11 +253,6 @@ class Turbolinks.Controller
   is_significant_click: (event) ->
     not (event.defaultPrevented or Rails.is_meta_click(event))
 
-  is_search_form: ({ target }) ->
-    target.matches('form') and (
-      target.matches('[method=get]') or not target.hasAttribute('method')
-    ) and not Rails.is_remote(target)
-
   is_visitable: (node) ->
     if container = node.closest('[data-turbolinks]')
       container.getAttribute('data-turbolinks') isnt 'false'
@@ -266,6 +261,11 @@ class Turbolinks.Controller
 
   location_is_visitable: (location) ->
     location.is_prefixed_by(@get_root_location()) and location.is_html()
+
+  get_form: (target) ->
+    target if target.matches('form') \
+      and (target.matches('[method=get]') or not target.hasAttribute('method')) \
+      and not Rails.is_remote(target)
 
   get_link: (target) ->
     link = target.closest('a[href]:not([target^=_]):not([download])')
