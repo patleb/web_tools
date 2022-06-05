@@ -15,7 +15,6 @@ class Turbolinks.HttpRequest
       @dispatch_request_start()
       nonce = Rails.csp_nonce()
       @xhr.setRequestHeader('X-Xhr-Nonce', nonce) if nonce
-      @set_progress(0)
       @xhr.send()
       @sent = true
       @visit.request_started()
@@ -25,10 +24,6 @@ class Turbolinks.HttpRequest
       @xhr.abort()
 
   # XMLHttpRequest events
-
-  request_progressed: (event) =>
-    if event.lengthComputable
-      @set_progress(event.loaded / event.total)
 
   request_loaded: =>
     @end_request =>
@@ -73,7 +68,6 @@ class Turbolinks.HttpRequest
     @xhr.setRequestHeader('Accept', 'text/html, application/xhtml+xml')
     @xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
     @xhr.setRequestHeader('X-Referrer', @referrer)
-    @xhr.onprogress = @request_progressed
     @xhr.onload = @request_loaded
     @xhr.onerror = @request_failed
     @xhr.ontimeout = @request_timed_out
@@ -85,11 +79,7 @@ class Turbolinks.HttpRequest
       callback?.call(this)
       @destroy()
 
-  set_progress: (progress) ->
-    @progress = progress
-
   destroy: ->
-    @set_progress(1)
     @visit.request_finished()
     @visit = null
     @xhr = null
