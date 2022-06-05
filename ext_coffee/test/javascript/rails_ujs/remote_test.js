@@ -115,6 +115,22 @@ describe('Rails UJS Remote', () => {
         rails.assert_request(event, 'POST', '/echo', { description: 'A wise man' })
       }})
     })
+
+    it('should allow blank "action"', async () => {
+      const url = 'http://localhost/'
+      await rails.submit('#blank-action', { url, 'ajax:beforeSend': (event) => {
+        assert.equal(url, event.detail[1].url)
+        event.preventDefault()
+      }})
+    })
+
+    it('should allow blank "formaction"', async () => {
+      const url = 'http://localhost/'
+      await rails.click('#blank-formaction button[type="submit"]', { 'ajax:beforeSend': (event) => {
+        assert.equal(url, event.detail[1].url)
+        event.preventDefault()
+      }})
+    })
   })
 
   it('should run javascript when "data-type" attribute is empty or "script"', async () => {

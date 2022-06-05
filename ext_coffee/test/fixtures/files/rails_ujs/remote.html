@@ -38,6 +38,13 @@
     <form action="/echo" data-remote="false" method="post" id="non-remote-form">
       <input type="text" name="user_name" value="john">
     </form>
+    <form data-remote="true" method="post" id="blank-action">
+      <input type="text" name="user_name" value="john">
+    </form>
+    <form action="/echo" data-remote="true" method="post" id="blank-formaction">
+      <input type="text" name="user_name" value="john">
+      <button type="submit" name="user_data" value="value2" form="blank-formaction" formaction=""></button>
+    </form>
     <form action="/echo?stripped=false" data-remote="true" method="post" id="form-serialized">
       <textarea name="textarea">textarea</textarea>
       <input type="checkbox" name="checkbox[]" value="0" />

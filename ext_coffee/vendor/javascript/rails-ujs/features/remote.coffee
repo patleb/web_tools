@@ -18,7 +18,7 @@ window.Rails = Rails.merge
       button = Rails.get(element, 'ujs:submit-button')
       method = Rails.get(element, 'ujs:submit-button-formmethod') or element.getAttribute('method')
       method = method?.toUpperCase() or 'GET'
-      url = Rails.get(element, 'ujs:submit-button-formaction') or element.getAttribute('action') or location.href
+      url = Rails.get(element, 'ujs:submit-button-formaction') ? element.getAttribute('action') ? ''
       url = url.replace(/\?[^#]*/, '') if method is 'GET'
       if element.enctype is 'multipart/form-data'
         data = new FormData(element)

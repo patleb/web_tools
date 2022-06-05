@@ -158,7 +158,7 @@ class Turbolinks.Controller
     return unless @enabled and (form = @get_form(event.target))
     submitter = document.activeElement
     if @is_visitable(submitter) and (submitter.getAttribute('formmethod')?.toUpperCase() or 'GET') is 'GET'
-      url = submitter.getAttribute('formaction') or form.getAttribute('action')
+      url = submitter.getAttribute('formaction') ? form.getAttribute('action') ? ''
       return if @is_reloadable(url)
       url = url.replace(/\?[^#]*/, '')
       params = Rails.serialize_element(form, submitter)
@@ -177,7 +177,7 @@ class Turbolinks.Controller
     return unless @enabled and @is_significant_click(event)
     target = event.composedPath?()[0] or event.target
     if @is_visitable(target) and (link = @get_link(target))
-      url = link.getAttribute('href')
+      url = link.getAttribute('href') ? ''
       return if @is_reloadable(url)
       location = new Turbolinks.Location(url)
       action = link.getAttribute('data-turbolinks-action') or 'advance'
