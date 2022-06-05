@@ -5,7 +5,7 @@ module ActionController::Base::WithXhrRedirect
     before_action :set_xhr_redirect
   end
 
-  def redirect_to(*)
+  def redirect_to(...)
     super.tap do
       if request.xhr?
         response.headers['X-Xhr-Redirect'] = location
