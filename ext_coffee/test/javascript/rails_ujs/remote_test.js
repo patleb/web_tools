@@ -164,7 +164,8 @@ describe('Rails UJS Remote', () => {
     const url = 'http://localhost/echo'
     const body = fixture.html('ajax_partial')
     await rails.click('#ajax-partial-html', { url, body, headers: { 'content-type': 'text/html' }, 'ajax:success': (event) => {
-      assert.equal(body, event.detail[0])
+      const partial = new DOMParser().parseFromString(body, 'text/html').body
+      assert.equal(partial, event.detail[0])
     }})
   })
 

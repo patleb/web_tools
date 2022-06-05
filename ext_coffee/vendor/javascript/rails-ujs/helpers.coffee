@@ -281,5 +281,5 @@ process_response = (response, type) ->
       type = type.replace(/;.+/, '') # remove something like ';charset=utf-8'
       head = response.indexOf('<head>') isnt -1
       unless not (try response = parser.parseFromString(response, type)) or head
-        response = response.body.innerHTML
+        response = response.body
   response
