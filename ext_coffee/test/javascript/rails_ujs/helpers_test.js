@@ -27,7 +27,8 @@ describe('Rails UJS Helpers', () => {
   })
 
   it('should have the event selector strings overridable', () => {
-    assert.includes(', a[data-custom-remote-link]', Rails.click_links)
+    assert.includes('a[data-remote]', Rails.clickable_links)
+    assert.includes('a[data-custom-remote-link]', Rails.clickable_links)
   })
 
   it('should throw error when including rails-ujs multiple times', () => {
