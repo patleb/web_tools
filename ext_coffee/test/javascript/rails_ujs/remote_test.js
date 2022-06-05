@@ -158,4 +158,21 @@ describe('Rails UJS Remote', () => {
       event.preventDefault()
     }})
   })
+
+  describe('Turbolinks', () => {
+    beforeAll(() => {
+      Turbolinks.supported = true
+    })
+
+    it('should execute a turbolinks visit', async () => {
+      const url = '/echo'
+      const redirect = 'http://localhost/success'
+      const headers = { 'content-type': 'text/html', 'X-Xhr-Redirect': redirect }
+      const body = fixture.html('ajax_page')
+      await rails.click('#turbolinks [type="submit"]', { type: 'post', url, body, headers, 'turbolinks:load': (event) => {
+        assert.equal(redirect, window.location.href)
+        assert.equal('Ajax page', document.querySelector('title').innerHTML)
+      }})
+    })
+  })
 })
