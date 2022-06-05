@@ -187,6 +187,28 @@ window.Rails = Rails.merge
       # If there is an error parsing the URL, assume it is crossDomain.
       true
 
+  split_at_anchor: (url) ->
+    if hash = url.hash
+      anchor = hash.slice(1)
+    else if anchor_match = url.match(/#(.*)$/)
+      anchor = anchor_match[1]
+    if anchor?
+      [url.slice(0, -(anchor.length + 1)), anchor]
+    else
+      [url, null]
+
+  push_query: (url, string) ->
+    return url unless string
+    [url, anchor] = Rails.split_at_anchor(url)
+    if '?' in url
+      url += "&#{string.replace(/^&/, '')}"
+    else
+      url += "?#{string.replace(/^\?/, '')}"
+    if anchor?
+      "#{url}##{anchor}"
+    else
+      url
+
   ## Misc helpers
 
   id: 0
@@ -212,28 +234,6 @@ window.Rails = Rails.merge
       else
         result += Math.floor(Math.random() * 15).toString(16)
     result
-
-  split_at_anchor: (url) ->
-    if hash = url.hash
-      anchor = hash.slice(1)
-    else if anchor_match = url.match(/#(.*)$/)
-      anchor = anchor_match[1]
-    if anchor?
-      [url.slice(0, -(anchor.length + 1)), anchor]
-    else
-      [url, null]
-
-  push_query: (url, string) ->
-    return url unless string
-    [url, anchor] = Rails.split_at_anchor(url)
-    if '?' in url
-      url += "&#{string.replace(/^&/, '')}"
-    else
-      url += "?#{string.replace(/^\?/, '')}"
-    if anchor?
-      "#{url}##{anchor}"
-    else
-      url
 
 prepare_options = (options) ->
   options.url ||= location.href

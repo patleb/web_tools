@@ -1,39 +1,36 @@
-Rails.handle_disabled_element = (e) ->
-  element = this
-  Rails.stop_everything(e) if element.disabled or element.hasAttribute('disabled')
+window.Rails = Rails.merge
+  handle_disabled_element: (e) ->
+    element = this
+    Rails.stop_everything(e) if element.disabled or element.hasAttribute('disabled')
 
-# Unified function to enable an element (link, button and form)
-Rails.enable_element = (e) ->
-  if e instanceof Event
-    element = e.target
-  else
-    element = e
+  # Unified function to enable an element (link, button and form)
+  enable_element: (e) ->
+    element = if e instanceof Event then e.target else e
+    if element.matches(Rails.disableable_links)
+      enable_link(element)
+    else if element.matches(Rails.disableable_buttons) or element.matches(Rails.enableable_inputs)
+      enable_input(element)
+    else if element.matches(Rails.submitable_forms)
+      enable_inputs(element)
 
-  if element.matches(Rails.disableable_links)
-    enable_link(element)
-  else if element.matches(Rails.disableable_buttons) or element.matches(Rails.enableable_inputs)
-    enable_input(element)
-  else if element.matches(Rails.submitable_forms)
-    enable_inputs(element)
-
-# Unified function to disable an element (link, button and form)
-Rails.disable_element = (e) ->
-  element = if e instanceof Event then e.target else e
-  if element.matches(Rails.disableable_links)
-    disable_link(element)
-  else if element.matches(Rails.disableable_buttons) or element.matches(Rails.disableable_inputs)
-    disable_input(element)
-  else if element.matches(Rails.submitable_forms)
-    disable_inputs(element)
+  # Unified function to disable an element (link, button and form)
+  disable_element: (e) ->
+    element = if e instanceof Event then e.target else e
+    if element.matches(Rails.disableable_links)
+      disable_link(element)
+    else if element.matches(Rails.disableable_buttons) or element.matches(Rails.disableable_inputs)
+      disable_input(element)
+    else if element.matches(Rails.submitable_forms)
+      disable_inputs(element)
 
 #  Replace element's html with the 'data-disable-with' after storing original html
 #  and prevent clicking on it
 disable_link = (element) ->
   return if Rails.get(element, 'ujs:disabled') or element.hasAttribute('disabled')
-  replacement = element.getAttribute('data-disable-with')
-  if replacement?
+  new_text = element.getAttribute('data-disable-with')
+  if new_text?
     Rails.set(element, 'ujs:enable-with', element.innerHTML) # store enabled state
-    element.innerHTML = replacement
+    element.innerHTML = new_text
   element.addEventListener('click', Rails.stop_everything) # prevent further clicking
   Rails.set(element, 'ujs:disabled', true)
 

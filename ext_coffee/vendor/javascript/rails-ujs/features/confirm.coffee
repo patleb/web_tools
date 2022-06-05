@@ -1,9 +1,9 @@
-Rails.handle_confirm = (e) ->
-  Rails.stop_everything(e) unless allow_action(this)
+window.Rails = Rails.merge
+  handle_confirm: (e) ->
+    Rails.stop_everything(e) unless allow_action(this)
 
-# Default confirm dialog, may be overridden with custom confirm dialog in Rails.confirm
-Rails.confirm = (message, element) ->
-  confirm(message)
+  confirm: (message, element) ->
+    confirm(message)
 
 # For 'data-confirm' attribute:
 # - Fires `confirm` event
