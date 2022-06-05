@@ -48,7 +48,7 @@ const rails = {
       }})
     })
   },
-  click: (selector, { type = 'get', url, status = 200, headers = {}, skip, button, ctrlKey, altKey, shiftKey, metaKey, ...rest } = {}) => {
+  click: (selector, { type = 'get', url, status = 200, headers = {}, body, skip, button, ctrlKey, altKey, shiftKey, metaKey, ...rest } = {}) => {
     const [event_name, handler] = Object.entries(rest)[0]
     const element = document.querySelector(selector)
     let skipped_event = true
@@ -58,7 +58,7 @@ const rails = {
         for(const [name, value] of Object.entries(headers)) {
           res = res.header(name, value)
         }
-        return res
+        return body ? res.body(body) : res
       })
     }
     if (skip) {

@@ -200,7 +200,7 @@ window.Rails = Rails.merge
   push_query: (url, string) ->
     return url unless string
     [url, anchor] = Rails.split_at_anchor(url)
-    if '?' in url
+    if url.indexOf('?') isnt -1
       url += "&#{string.replace(/^&/, '')}"
     else
       url += "?#{string.replace(/^\?/, '')}"
@@ -281,5 +281,7 @@ process_response = (response, type) ->
     else if type.match(/\b(xml|html|svg)\b/)
       parser = new DOMParser()
       type = type.replace(/;.+/, '') # remove something like ';charset=utf-8'
-      try response = parser.parseFromString(response, type)
+      head = response.indexOf('<head>') isnt -1
+      unless not (try response = parser.parseFromString(response, type)) or head
+        response = response.body.innerHTML
   response

@@ -38,7 +38,7 @@
     <form action="/echo" data-remote="false" method="post" id="non-remote-form">
       <input type="text" name="user_name" value="john">
     </form>
-    <form action="/echo" data-remote="true" method="post" id="form-serialized">
+    <form action="/echo?stripped=false" data-remote="true" method="post" id="form-serialized">
       <textarea name="textarea">textarea</textarea>
       <input type="checkbox" name="checkbox[]" value="0" />
       <input type="checkbox" checked="checked" name="checkbox[]" value="1" />
@@ -55,5 +55,10 @@
       <fieldset><input name="description" value="A wise man" /></fieldset>
       <fieldset disabled="disabled"><input name="age" /></fieldset>
     </form>
+    <a href="/echo" data-remote="true" id="ajax-script">Ajax script</a>
+    <a href="/echo" data-remote="true" data-type="json" id="ajax-json">Ajax JSON</a>
+    <a href="/echo" data-remote="true" data-type="html" id="ajax-page-html">Ajax page HTML</a>
+    <a href="/echo" data-remote="true" data-type="html" id="ajax-partial-html">Ajax partial HTML</a>
+    <a href="http://example.com/echo" data-remote="true" id="cross-domain">Cross domain</a>
   </body>
 </html>

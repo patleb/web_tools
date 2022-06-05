@@ -1,6 +1,15 @@
 import rails from './spec_helper'
+import '@@vendor/turbolinks/all'
 
 describe('Rails UJS Remote', () => {
+  beforeAll(() => {
+    Turbolinks.supported = false
+  })
+
+  afterAll(() => {
+    Turbolinks.supported = true
+  })
+
   beforeEach(() => {
     dom.setup_document(fixture.html('remote'))
   })
@@ -51,7 +60,7 @@ describe('Rails UJS Remote', () => {
     }})
   })
 
-  describe('Form with "data-remote"', () => {
+  describe('Form with "data-remote" attribute', () => {
     afterEach(async () => {
       await tick()
     })
@@ -95,8 +104,9 @@ describe('Rails UJS Remote', () => {
     })
 
     it('should serialize form correctly', async () => {
-      await rails.submit('#form-serialized', { url: '/echo', 'ajax:complete': (event) => {
-        rails.assert_request(event, 'POST', '/echo', { textarea: 'textarea', 'checkbox[]': '1', radio: '0', 'select[]': ['1', '2', '4'] })
+      const url = '/echo?stripped=false'
+      await rails.submit('#form-serialized', { url, 'ajax:complete': (event) => {
+        rails.assert_request(event, 'POST', url, { textarea: 'textarea', 'checkbox[]': '1', radio: '0', 'select[]': ['1', '2', '4'] })
       }})
     })
 
@@ -107,11 +117,45 @@ describe('Rails UJS Remote', () => {
     })
   })
 
-  describe('Rails.handleRemote', () => {
-
+  it('should run javascript when "data-type" attribute is empty or "script"', async () => {
+    const url = 'http://localhost/echo'
+    const body = fixture.read('ajax.js')
+    const size = document.documentElement.outerHTML.length
+    await rails.click('#ajax-script', { url, body, headers: { 'content-type': 'text/javascript' }, 'ajax:complete': (event) => {
+      assert.equal(1, window.ajax_count)
+      assert.equal(size, document.documentElement.outerHTML.length)
+    }})
   })
 
-  describe('Callbacks', () => {
+  it('should parse JSON when "data-type" attribute is "json"', async () => {
+    const url = 'http://localhost/echo'
+    const body = fixture.json('ajax')
+    await rails.click('#ajax-json', { url, body, headers: { 'content-type': 'application/json' }, 'ajax:success': (event) => {
+      assert.equal(body, event.detail[0])
+    }})
+  })
 
+  it('should parse HTML when "data-type" attribute is "html" and response is a full page', async () => {
+    const url = 'http://localhost/echo'
+    const body = fixture.html('ajax_page')
+    await rails.click('#ajax-page-html', { url, body, headers: { 'content-type': 'text/html' }, 'ajax:success': (event) => {
+      const page = new DOMParser().parseFromString(body, 'text/html')
+      assert.equal(page, event.detail[0])
+    }})
+  })
+
+  it('should not parse HTML when "data-type" attribute is "html" and response is a partial page', async () => {
+    const url = 'http://localhost/echo'
+    const body = fixture.html('ajax_partial')
+    await rails.click('#ajax-partial-html', { url, body, headers: { 'content-type': 'text/html' }, 'ajax:success': (event) => {
+      assert.equal(body, event.detail[0])
+    }})
+  })
+
+  it('should detect cross-domain request', async () => {
+    await rails.click('#cross-domain', { 'ajax:beforeSend': (event) => {
+      assert.true(event.detail[1].crossDomain)
+      event.preventDefault()
+    }})
   })
 })
