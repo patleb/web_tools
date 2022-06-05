@@ -8,19 +8,17 @@ Added high resolution timing. This window.performance.now() polyfill can be used
 MIT license
 Gist: https://gist.github.com/jalbam/5fe05443270fa6d8136238ec72accbc0
 ###
-do ->
-  vendors = ['webkit', 'moz', 'ms', 'o']
-  for vp in vendors when not window.requestAnimationFrame and not window.cancelAnimationFrame
-    window.requestAnimationFrame ||= window["#{vp}RequestAnimationFrame"]
-    window.cancelAnimationFrame ||= window["#{vp}CancelAnimationFrame"] or window["#{vp}CancelRequestAnimationFrame"]
+vendors = ['webkit', 'moz', 'ms', 'o']
+for vp in vendors when not requestAnimationFrame and not cancelAnimationFrame
+  window.requestAnimationFrame ||= window["#{vp}RequestAnimationFrame"]
+  window.cancelAnimationFrame ||= window["#{vp}CancelAnimationFrame"] or window["#{vp}CancelRequestAnimationFrame"]
 
-  if /iP(ad|hone|od).*OS 6/.test(window.navigator.userAgent) or not window.requestAnimationFrame or not window.cancelAnimationFrame
-    lastTime = 0
-    window.requestAnimationFrame = (callback, element) ->
-      now = window.performance.now()
-      nextTime = Math.max(lastTime + 16, now)
-      setTimeout(() ->
-        callback(lastTime = nextTime)
-      , nextTime - now)
-    window.cancelAnimationFrame = clearTimeout;
-  return
+if /iP(ad|hone|od).*OS 6/.test(window.navigator.userAgent) or not requestAnimationFrame or not cancelAnimationFrame
+  lastTime = 0
+  window.requestAnimationFrame = (callback, element) ->
+    now = window.performance.now()
+    nextTime = Math.max(lastTime + 16, now)
+    setTimeout(->
+      callback(lastTime = nextTime)
+    , nextTime - now)
+  window.cancelAnimationFrame = clearTimeout

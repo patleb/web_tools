@@ -9,25 +9,19 @@ but in reality, you're just getting the delta between now() calls, so it's not t
 Gist: https://gist.github.com/jalbam/cc805ac3cfe14004ecdf323159ecf40e
 ###
 unless Date.now
-  Date.now = () ->
+  Date.now = ->
     new Date().getTime()
-do ->
-  if window.performance and window.performance.now
-    return
-  window.performance = window.performance ? {}
-  if (window.performance.timing and window.performance.timing.navigationStart and
-    window.performance.mark and
-    window.performance.clearMarks and
-    window.performance.getEntriesByName
-  )
-    window.performance.now = () ->
-      window.performance.clearMarks('__PERFORMANCE_NOW__')
-      window.performance.mark('__PERFORMANCE_NOW__')
-      window.performance.getEntriesByName('__PERFORMANCE_NOW__')[0].startTime
-  else if 'now' of window.performance is false
+
+unless window.performance?.now
+  window.performance ?= {}
+  if performance.timing?.navigationStart and performance.mark and performance.clearMarks and performance.getEntriesByName
+    performance.now = ->
+      performance.clearMarks('__PERFORMANCE_NOW__')
+      performance.mark('__PERFORMANCE_NOW__')
+      performance.getEntriesByName('__PERFORMANCE_NOW__')[0].startTime
+  else if 'now' not of performance
     nowOffset = Date.now()
-    if window.performance.timing && window.performance.timing.navigationStart
-      nowOffset = window.performance.timing.navigationStart
-    window.performance.now = () ->
+    if performance.timing && performance.timing.navigationStart
+      nowOffset = performance.timing.navigationStart
+    performance.now = ->
       Date.now() - nowOffset
-  return
