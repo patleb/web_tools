@@ -6,9 +6,9 @@ html_('.no-js', lang: Current.locale, data: { theme: params[:theme] == 'dark' ? 
     meta_(name: 'viewport', content: 'width=device-width, initial-scale=1, shrink-to-fit=no'),
     csrf_meta_tags,
     csp_meta_tag,
-    title_{ @page_title },
+    title_{ template_virtual_path.classify },
   ]),
-  body_([
+  body_(class: template_virtual_path.full_underscore) {[
     yield,
-  ])
+  ]}
 ]}

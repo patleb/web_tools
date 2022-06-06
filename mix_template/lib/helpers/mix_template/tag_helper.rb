@@ -131,6 +131,13 @@ module MixTemplate
       content = options.delete(:text) if options.has_key? :text
       content = h_(&content) if content.is_a? Proc
       content = h_(&block) if content.nil? && block_given?
+      case tag
+      when 'a'
+        options[:rel] = 'noopener' if options[:rel].blank?
+      when 'form'
+        options = html_options_for_form(options.delete(:action) || '', options)
+        content = [extra_tags_for_form(options), content]
+      end
       content = h_(content) if content.is_a? Array
       content = sanitize(content) if sanitized
 

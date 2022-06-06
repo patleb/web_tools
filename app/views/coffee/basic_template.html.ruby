@@ -1,5 +1,3 @@
-# TODO Current.params --> for resusable url state with anchor as well (ex.: locale, lang, search, etc.)
-# TODO Current.referer --> from url/ajax/form instead of session
 h_(
   header_('.container', [
     hgroup_{[
@@ -9,29 +7,10 @@ h_(
     nav_(
       ul_([
         li_(
-          details_(role: 'list') {[
-            summary_('.secondary', 'aria-haspopup': 'listbox', role: 'button') {
-              'Theme'
-            },
-            ul_(role: 'listbox') {[
-              li_(a_ 'Default', href: '?'),
-              li_(a_ 'Light', href: '?theme=light'),
-              li_(a_ 'Dark', href: '?theme=dark'),
-            ]}
-          ]}
+          theme_menu(role: 'button', class: 'secondary')
         ),
         li_(
-          details_(role: 'list') {[
-            summary_('aria-haspopup': 'listbox') {
-              'Turbolinks'
-            },
-            ul_(role: 'listbox') {[
-              li_(a_ 'New', href: '/coffee/new'),
-              li_(a_ 'Show', href: '/coffee/1'),
-              li_(a_ 'Edit', href: '/coffee/1/edit'),
-              li_(a_ 'Delete', href: '/coffee/1/delete'),
-            ]}
-          ]}
+          examples_menu(role: 'button')
         ),
         li_(
           details_(role: 'list') {[
@@ -60,7 +39,6 @@ h_(
       h2_('Search'),
       form_tag('/coffee#search', method: :get) {[
         search_field_tag('search', params[:search], placeholder: 'Enter your search query here'),
-        submit_tag('Search'),
       ]},
     ]),
     section_('#preview', [
@@ -302,7 +280,5 @@ h_(
       button_('Please wait…', 'aria-busy': true)
     ])
   ]),
-  footer_('.container',
-    small_(['Built with', a_('Pico', href: 'https://picocss.com', target: '_blank'), '•', a_('Source code', href: 'https://github.com/picocss/examples/blob/master/basic-template/', target: '_blank')])
-  )
+  footer_('.container', footer_text)
 )
