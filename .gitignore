@@ -67,9 +67,12 @@ ext_coffee/lib/javascript/**/*.js
 ext_coffee/vendor/javascript/turbolinks/**/*.js
 !ext_coffee/vendor/javascript/turbolinks/**/all.js
 !ext_coffee/vendor/javascript/turbolinks/**/BANNER.js
+!ext_coffee/vendor/javascript/turbolinks/**/turbolinks.min.js
+!ext_coffee/vendor/javascript/turbolinks/**/turbolinks_backports.js
 ext_coffee/vendor/javascript/rails-ujs/**/*.js
 !ext_coffee/vendor/javascript/rails-ujs/**/all.js
 !ext_coffee/vendor/javascript/rails-ujs/**/BANNER.js
+!ext_coffee/vendor/javascript/rails-ujs/**/rails-ujs.min.js
 ### AFTER .gitignore ###
 
 web_tools-*.gem
