@@ -10,7 +10,7 @@
 // document.addEventListener('DOMContentLoaded', function() {
 //   window.Rails = Rails
 //   window.Turbolinks = Turbolinks
-//   Rails.fire(document, 'turbolinks:backports')
+//   Turbolinks.dispatch('turbolinks:backports')
 // })
 
 // Search forms
