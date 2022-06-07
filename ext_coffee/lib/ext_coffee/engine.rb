@@ -17,7 +17,7 @@ module ExtCoffee
 
     ActiveSupport.on_load(:action_controller_base) do
       require 'ext_coffee/action_controller/base/with_xhr_redirect'
-      require 'ext_coffee/turbolinks/redirection'
+      require 'ext_coffee/turbolinks/v5.2.0/redirection'
       include Turbolinks::Redirection
     end
   end
