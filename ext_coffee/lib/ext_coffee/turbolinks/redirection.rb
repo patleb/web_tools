@@ -6,12 +6,10 @@ module Turbolinks
       before_action :set_turbolinks_location_header_from_session
     end
 
-    def redirect_to(url = {}, options = {})
-      turbolinks = options.delete(:turbolinks)
-
+    def redirect_to(...)
       super.tap do
-        if turbolinks.present? && request.xhr? && !request.get?
-          visit_location_with_turbolinks(location, turbolinks)
+        if request.accept.match?(/\b(?:java|ecma)script\b/) && request.xhr? && !request.get?
+          visit_location_with_turbolinks(location)
         elsif request.headers["Turbolinks-Referrer"]
           store_turbolinks_location_in_session(location)
         end
@@ -20,14 +18,11 @@ module Turbolinks
 
     private
 
-    def visit_location_with_turbolinks(location, action)
-      visit_options = {
-        action: action.to_s == "advance" ? action : "replace"
-      }
+    def visit_location_with_turbolinks(location)
       self.status = 200
       self.response_body = <<~JS
         Turbolinks.clearCache()
-        Turbolinks.visit(#{location.to_json}, #{visit_options.to_json})
+        Turbolinks.visit(#{location.to_json}, { action: 'advance' })
       JS
       response.content_type = "text/javascript"
       response.headers["X-Xhr-Redirect"] = location

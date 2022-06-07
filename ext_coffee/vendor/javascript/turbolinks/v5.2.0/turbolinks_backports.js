@@ -53,7 +53,7 @@ document.addEventListener('turbolinks:click', function (event) {
   }
 })
 
-// Redirects with CSP enabled (Rails controller --> redirect_to url, turbolinks: 'advance')
+// Redirects with CSP enabled
 document.addEventListener('turbolinks:request-start', function(event) {
   var nonce = Rails.cspNonce()
   if (nonce) {
