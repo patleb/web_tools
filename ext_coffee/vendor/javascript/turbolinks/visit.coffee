@@ -3,8 +3,8 @@ class Turbolinks.Visit
 
   constructor: (@referrer, location, @action, { restoration_id, restoration_data, @same_page, @history_changed, @html, @error }) ->
     @controller = Turbolinks.controller
-    @id = Rails.uid()
-    @restoration_id = restoration_id ? Rails.uid()
+    @id = Math.uid()
+    @restoration_id = restoration_id ? Math.uid()
     @restoration_data = restoration_data.dup()
     @location = Turbolinks.Location.wrap(location)
     @state = 'initialized'

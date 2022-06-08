@@ -57,7 +57,7 @@ class Turbolinks.Controller
 
   start_history: ->
     @location = Turbolinks.Location.current_location()
-    @restoration_id = Rails.uid()
+    @restoration_id = Math.uid()
     @initial_location = @location
     @initial_restoration_id = @restoration_id
     addEventListener('popstate', @on_popstate, false)
