@@ -151,7 +151,7 @@ class Turbolinks.Visit
   # Instrumentation
 
   record_timing: (name) ->
-    @timing[name] ?= new Date().getTime()
+    @timing[name] ?= Date.now()
 
   # Private
 
