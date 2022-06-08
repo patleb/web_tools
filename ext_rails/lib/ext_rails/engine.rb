@@ -80,8 +80,6 @@ module ExtRails
     end
 
     config.before_initialize do |app|
-      require 'ext_rails/action_dispatch/middleware/iframe'
-      app.config.middleware.use ActionDispatch::IFrame
       app.config.middleware.insert_after ActionDispatch::Static, Rack::Deflater if Rails.env.dev_ngrok?
 
       %w(libraries tasks).each do |directory|
