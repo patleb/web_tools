@@ -22,6 +22,7 @@ Function.throttle = (fn, wait = 0, options = {}) ->
       timeout = null
       result = fn.apply(context, args)
       context = args = null unless timeout
+      return
 
     throttled = ->
       _now = Date.now()
@@ -44,6 +45,9 @@ Function.throttle = (fn, wait = 0, options = {}) ->
       clearTimeout(timeout)
       previous = 0
       timeout = context = args = null
+      return
+
+    throttled
 
 Function::throttle = (wait = 0, options = {}) ->
   @constructor.throttle(this, wait, options)
