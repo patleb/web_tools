@@ -133,7 +133,7 @@ String.define_methods
     @constructor(pad + this).slice(-length)
 
   upcase_first: ->
-    this[0].toUpperCase() + @slice(1)
+    @charAt(0).toUpperCase() + @slice(1)
 
   camelize: ->
     @split(/[-_\s]+/).map((word) -> word.upcase_first()).join('')
@@ -156,7 +156,7 @@ String.define_methods
       .downcase()
 
   humanize: ->
-    this[0].toUpperCase() + @gsub('_', ' ')[1..]
+    @charAt(0).toUpperCase() + @gsub('_', ' ')[1..]
 
   acronym: ->
     @camelize().match(/[A-Z]/g)?.join('')
