@@ -3,7 +3,6 @@ class Turbolinks.Renderer
     @controller = Turbolinks.controller
     @old_head_details = @old_snapshot.head_details
     @new_head_details = @new_snapshot.head_details
-    @old_body = @old_snapshot.body
     @new_body = @new_snapshot.body
 
   render: (callback) ->
