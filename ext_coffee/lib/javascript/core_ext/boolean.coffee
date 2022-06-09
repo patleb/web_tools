@@ -1,36 +1,36 @@
 Boolean.define_methods
   is_a: (klass) ->
-    this.constructor == klass
+    @constructor is klass
 
   to_b: ->
-    this.valueOf()
+    @valueOf()
 
   to_i: ->
-    if this.valueOf() then 1 else 0
+    if @valueOf() then 1 else 0
 
   to_f: ->
-    if this.valueOf() then 1.0 else 0.0
+    if @valueOf() then 1.0 else 0.0
 
   to_d: ->
-    if this.valueOf() then 1.0 else 0.0
+    if @valueOf() then 1.0 else 0.0
 
   to_s: ->
-    this.toString()
+    @toString()
 
   blank: ->
-    !this.valueOf()
+    not @valueOf()
 
   present: ->
-    this.valueOf()
+    @valueOf()
 
   presence: ->
-    this.valueOf() if this.valueOf()
+    @valueOf() if @valueOf()
 
   eql: (other) ->
-    _.isEqual(this, other)
+    this is other
 
   safe_text: ->
-    this.toString()
+    @toString()
 
   html_safe: ->
     true

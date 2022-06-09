@@ -1,41 +1,61 @@
+Object.define_singleton_methods
+  deep_merge: (others...) ->
+    result = {}
+    for object in others
+      for key, value of object
+        if result[key]?.is_a(Object) and value.is_a Object
+          result[key] = result[key].deep_merge(value)
+        else
+          result[key] = value
+    result
+
 Object.define_methods
   is_a: (klass) ->
-    this.constructor == klass
+    @constructor is klass
 
   to_a: ->
-    this.each_with_object [], (key, value, memo) ->
-      memo.push [key, value]
+    [key, item] for key, item of this
 
   to_h: ->
     this
 
   blank: ->
-    _.isEmpty(this)
+    @size() is 0
 
   present: ->
-    !this.blank()
+    not @blank()
 
   presence: ->
-    this.valueOf() unless this.blank()
+    @valueOf() unless @blank()
 
   empty: ->
-    _.isEmpty(this)
+    @size() is 0
+
+  size: ->
+    @keys().length
 
   eql: (other) ->
-    _.isEqual(this, other)
+    return false unless other?.is_a Object
+    return false unless @size() is other.size()
+    for key, item of this
+      if item?
+        return false unless item.eql(other[key])
+      else
+        return false if other[key]?
+    true
 
   has_key: (key) ->
-    _.hasIn(this, key)
+    key of this
 
   delete: (key) ->
-    value = this[key]
+    item = this[key]
     delete this[key]
-    value
+    item
 
   dig: (keys) ->
     digged = this
     keys.split('.').each_while (key) ->
-      if digged.has_key(key)
+      if digged.has_key?(key) or digged.has_index?(key)
         digged = digged[key]
         true
       else
@@ -45,100 +65,89 @@ Object.define_methods
 
   any: (f_key_item_self) ->
     if f_key_item_self?
-      f = (item, key, self) ->
-        f_key_item_self(key, item, self)
-      _.some this, f
+      for key, item of this
+        return true if f_key_item_self(key, item, this)
+      false
     else
-      this.keys().length > 0
+      @size() > 0
 
   all: (f_key_item_self) ->
-    f = (item, key, self) ->
-      f_key_item_self(key, item, self)
-    _.every this, f
+    for key, item of this
+      return false unless f_key_item_self(key, item, this)
+    true
 
   each: (f_key_item_self) ->
-    f = (item, key, self) ->
-      f_key_item_self(key, item, self)
-      true
-    _.forOwn this, f
+    for key, item of this
+      f_key_item_self(key, item, this)
+    return
 
   each_while: (f_key_item_self) ->
-    f = (item, key, self) ->
-      f_key_item_self(key, item, self)
-    _.forOwn this, f
+    for key, item of this
+      return unless f_key_item_self(key, item, this)
+    return
 
   each_with_object: (accumulator, f_key_item_memo_self) ->
-    f = (memo, item, key, self) ->
-      f_key_item_memo_self(key, item, memo, self)
+    self = this
+    @keys().reduce (memo, key) ->
+      f_key_item_memo_self(key, self[key], memo, self)
       accumulator
-    _.reduce(this, f, accumulator)
+    , accumulator
 
   map: (f_key_item_self) ->
-    f = (item, key, self) ->
-      f_key_item_self(key, item, self)
-    _.map this, f
+    f_key_item_self(key, item, this) for key, item of this
 
-  flatten_keys: (separator = '-', prefix = null) ->
-    this.each_with_object {}, (key, item, memo) ->
-      key = [prefix, key].join(separator) if prefix?
-      if item?.is_a(Object)
+  flatten_keys: (separator = '.', _prefix = null) ->
+    @each_with_object {}, (key, item, memo) ->
+      key = [_prefix, key].join(separator) if _prefix?
+      if item?.is_a Object
         item.flatten_keys(separator, key).each (nested_key, nested_item) ->
           memo[nested_key] = nested_item
       else
         memo[key] = item
 
   find: (f_key_item_self) ->
-    f = (item, key, self) ->
-      f_key_item_self(key, item, self)
-    _.find(this, f)
+    for key, item of this
+      return item if f_key_item_self(key, item, this)
+    return
 
   keys: ->
-    _.keys this
+    @constructor.keys(this)
 
-  vals: ->
-    _.values this
+  values: ->
+    item for key, item of this
 
-  vals_at: (keys...) ->
-    _.at(this, keys.unsplat())
+  values_at: (keys...) ->
+    this[key] for key in keys
 
   select: (f_key_item) ->
-    f = (item, key) ->
-      f_key_item(key, item)
-    _.pickBy(this, f)
+    result = {}
+    for key, item of this when f_key_item(key, item)
+      result[key] = item
+    result
 
   reject: (f_key_item) ->
-    f = (item, key) ->
-      f_key_item(key, item)
-    _.omitBy(this, f)
+    result = {}
+    for key, item of this when not f_key_item(key, item)
+      result[key] = item
+    result
 
   slice: (keys...) ->
-    _.pick(this, keys.unsplat())
+    result = {}
+    for key in keys
+      result[key] = this[key]
+    result
 
   except: (keys...) ->
-    _.omit(this, keys.unsplat())
+    result = {}
+    for key, item of this
+      result[key] = item if key not in keys
+    result
 
   compact: ->
-    this.select (key, item) -> item?
+    @select (key, item) -> item?
 
-  merge: (other_hashes..., f_val_otherval_key_self_other = {}) ->
-    args = other_hashes.unsplat().concat(f_val_otherval_key_self_other)
-    if f_val_otherval_key_self_other.is_a(Function)
-      _.assignWith {}, this, args...
-    else
-      _.assign {}, this, args...
-
-  deep_merge: (other_hashes..., f_val_otherval_key_self_other = {}) ->
-    args = other_hashes.unsplat().concat(f_val_otherval_key_self_other)
-    if f_val_otherval_key_self_other.is_a(Function)
-      _.mergeWith {}, this, args...
-    else
-      _.merge {}, this, args...
-
-  dup: ->
-    _.clone(this)
-
-  deep_dup: ->
-    _.cloneDeep(this)
+  deep_merge: (others...) ->
+    @constructor.deep_merge(this, others...)
 
   super_2: (name, args...) ->
     @constructor.__super__.__proto__[name].apply(this, args)
@@ -147,4 +156,4 @@ Object.define_methods
     @constructor.__super__.__proto__.__proto__[name].apply(this, args)
 
   html_map: (f_key_item_self) ->
-    h_(this.map(f_key_item_self))
+    h_(@map(f_key_item_self))

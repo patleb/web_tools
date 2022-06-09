@@ -1,6 +1,6 @@
 RegExp.define_methods
   is_a: (klass) ->
-    this.constructor == klass
+    @constructor is klass
 
   blank: ->
     false
@@ -9,10 +9,12 @@ RegExp.define_methods
     true
 
   presence: ->
-    this.valueOf()
+    @valueOf()
 
   eql: (other) ->
-    _.isEqual(this, other)
+    return false unless other?.is_a RegExp
+    return false unless @source is other.source
+    @flags.chars().sort().eql(other.flags.chars().sort())
 
   match: (str) ->
     str.match(this)

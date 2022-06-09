@@ -1,190 +1,203 @@
+HTML_ESCAPES =
+  '&': '&amp;'
+  '<': '&lt;'
+  '>': '&gt;'
+  '"': '&quot;'
+  "'": '&#x27;'
+  '`': '&#x60;'
+
+Logger.ignored_methods.String ?= {}
+Logger.ignored_methods.String.sub = true
+
 String.define_methods
   is_a: (klass) ->
-    this.constructor == klass
+    @constructor is klass
 
   to_b: ->
-    return true if this.match(/^(true|t|yes|y|1|✓)$/i)
-    return false if this.blank() || this.match(/^(false|f|no|n|0|✘)$/i)
+    return true if @match(/^(true|t|yes|y|1|1\.0|✓)$/i)
+    return false if @blank() or @match(/^(false|f|no|n|0|0\.0|✘)$/i)
     throw "invalid value for Boolean: '#{this}'"
 
   to_i: (base = null) ->
-    _.parseInt(this, base)
+    value = if @toLowerCase().startsWith('0x') then this else @replace(/^0+/, '')
+    return 0 if @length > 0 && value is ''
+    parseInt(value, base)
 
   to_f: ->
-    _.toNumber(this)
+    parseFloat(this)
 
   to_d: ->
-    _.toNumber(this)
+    parseFloat(this)
 
   to_s: ->
-    this.toString()
+    @toString()
 
   to_a: ->
     result = JSON.safe_parse(this)
-    throw "invalid value for Array: '#{this}'" unless result.is_a(Array)
+    throw "invalid value for Array: '#{this}'" unless result.is_a Array
     result
 
   to_h: ->
     result = JSON.safe_parse(this)
-    throw "invalid value for Object: '#{this}'" unless result.is_a(Object)
+    throw "invalid value for Object: '#{this}'" unless result.is_a Object
     result
 
-  to_timestamp: ->
+  to_date: ->
     Date.parse(this)
 
   html_blank: ->
-    this.gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
+    @gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
 
   blank: ->
-    _.isEmpty(_.trim(this))
+    @trim().length is 0
 
   present: ->
-    !this.blank()
+    not @blank()
 
   presence: ->
-    this.toString() unless this.blank()
+    @toString() unless @blank()
 
   empty: ->
-    _.isEmpty(this)
+    @length is 0
 
   eql: (other) ->
-    _.isEqual(this, other)
+    this is other
 
   first: ->
     this[0]
 
   last: ->
-    this[this.length - 1]
+    this[@length - 1]
 
-  index: (string_or_pattern, start_index = 0) ->
-    if string_or_pattern.is_a(RegExp)
-      if (index = this.search(string_or_pattern)) != -1
+  chars: ->
+    @split('')
+
+  index: (pattern, start_index = 0) ->
+    if pattern.is_a RegExp
+      if (index = @search(pattern)) isnt -1
         index
-    else if (index = this.indexOf(string_or_pattern, start_index)) != -1
+    else if (index = @indexOf(pattern, start_index)) isnt -1
       index
 
-  includes: (string, start_index = 0) ->
-    _.includes(this, string, start_index)
+  include: (string, start_index = 0) ->
+    @indexOf(string, start_index) isnt -1
 
-  excludes: (string, start_index = 0) ->
-    !this.includes(string, start_index)
+  exclude: (string, start_index = 0) ->
+    not @include(string, start_index)
 
   safe_text: ->
-    _.escape(this)
+    return this unless this and /[&<>"'`]/.test(this)
+    @replace(/[&<>"'`]/g, (char) -> HTML_ESCAPES[char])
 
   safe_regex: ->
-    _.escapeRegExp(this)
+    return this unless this and /[\\^$.*+?()[\]{}|]/.test(this)
+    @replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
 
   downcase: ->
-    this.toLowerCase()
+    @toLowerCase()
 
   upcase: ->
-    this.toUpperCase()
+    @toUpperCase()
 
-  sub: (pattern, replacement) ->
-    _.replace(this, pattern, replacement)
+  sub: (pattern, string_or_f_match) ->
+    @replace(pattern, string_or_f_match)
 
-  gsub: (pattern, replacement) ->
+  gsub: (pattern, string_or_f_match) ->
     pattern =
-      if pattern.is_a(String)
+      if pattern.is_a String
         ///#{pattern.safe_regex()}///g
       else
-        {source, flags, global} = pattern
+        { source, flags, global } = pattern
         flags += 'g' unless global
         new RegExp(source, flags)
-    _.replace(this, pattern, replacement)
+    @replace(pattern, string_or_f_match)
 
-  strip: (chars) ->
-    _.trim(this, chars)
+  strip: ->
+    @trim()
 
-  lstrip: (chars) ->
-    _.trimStart(this, chars)
+  lstrip: ->
+    @trimStart()
 
-  rstrip: (chars) ->
-    _.trimEnd(this, chars)
+  rstrip: ->
+    @trimEnd()
 
   chop: ->
     this[0..-2]
 
-  center: (length = 0, chars = ' ') ->
-    _.pad(this, length, chars)
-
   ljust: (length = 0, chars = ' ') ->
-    _.padEnd(this, length, chars)
+    pad = Array(length + 1).join(chars)
+    @constructor(this + pad).substring(0, length)
 
   rjust: (length = 0, chars = ' ') ->
-    _.padStart(this, length, chars)
+    pad = Array(length + 1).join(chars)
+    @constructor(pad + this).slice(-length)
+
+  upcase_first: ->
+    this[0].toUpperCase() + @slice(1)
 
   camelize: ->
-    _.upperFirst(_.camelCase(this))
+    @split(/[-_\s]+/).map((word) -> word.upcase_first()).join('')
+      .split(/\/+/).map((word) -> word.upcase_first()).join('::')
 
   underscore: ->
-    this.gsub(/::/, '/')
+    @gsub(/::/, '/')
       .gsub(/([A-Z\d]+)([A-Z][a-z])/, '$1_$2')
       .gsub(/([a-z\d])([A-Z])/, '$1_$2')
       .gsub('-', '_')
       .downcase()
 
   full_underscore: ->
-    this.underscore().gsub(/[\.\/]/, '_').sub(/^_/, '')
+    @underscore().gsub(/[\.\/]/, '_').replace(/^_/, '').replace(/_$/, '')
 
   parameterize: ->
-    this.gsub(/[^a-z0-9\-_]+/i, '-')
+    @gsub(/[^a-z0-9\-_]+/i, '-')
       .gsub(/-{2,}/, '-')
       .gsub(/^-|-$/i, '')
       .downcase()
 
   humanize: ->
-    this[0].upcase() + this.gsub('_', ' ')[1..]
+    this[0].toUpperCase() + @gsub('_', ' ')[1..]
 
   acronym: ->
-    this.camelize().match(/[A-Z]/g)?.join('')
+    @camelize().match(/[A-Z]/g)?.join('')
 
   constantize: ->
-    if this.match /[^:\w.]+/
-      throw "#{this.safe_text()} isn't a valid module or class name"
+    if @match /[^:\w.]+/
+      throw "#{@safe_text()} isn't a valid module or class name"
     else
       object = window
-      this.sub(/^::/, '').split('.').each (class_scope) ->
+      @replace(/^::/, '').split('.').each (class_scope) ->
         class_scope.split('::').each (prototype_scope, i) ->
-          if i == 0
+          if i is 0
             object = object[prototype_scope]
           else
             object = object::[prototype_scope]
       object
 
   partition: (separator) ->
-    if (index = this.index(separator))?
-      [left_start, left_end] = if index then [0, (index - 1)] else [this.length, 0]
-      if separator.is_a(RegExp)
-        separator = this.match(separator)[0]
+    if (index = @index(separator))?
+      [left_start, left_end] = if index then [0, (index - 1)] else [@length, 0]
+      if separator.is_a RegExp
+        separator = @match(separator)[0]
       [this[left_start..left_end], separator, this[(index + separator.length)..]]
     else
       [this[0..], '', '']
 
-  prefix_of: (name) ->
-    if this.present()
-      "#{this}_#{name}"
-    else
-      name
-
   start_with: (prefixes...) ->
-    prefixes = prefixes.unsplat()
     prefixes.any (prefix) =>
       @match ///^#{prefix.safe_regex()}///
 
   end_with: (suffixes...) ->
-    suffixes = suffixes.unsplat()
     suffixes.any (suffix) =>
       @match ///#{suffix.safe_regex()}$///
 
   simple_format: ->
-    this.gsub /\r?\n/g, '<br>'
+    @gsub /\r?\n/g, '<br>'
 
   html_safe: (safe = null) ->
     if safe?
-      value = new String(this)
+      value = new @constructor this
       value._html_safe = !!safe
       value
     else
-      !!this._html_safe
+      !!@_html_safe

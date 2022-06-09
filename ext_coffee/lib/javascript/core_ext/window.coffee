@@ -1,25 +1,28 @@
-class window.Js
-  @ABORT: 'ABORT'
+window.noop = ->
 
-  @prepend_to: (object, name, callback) ->
-    previous = object[name] || -> {}
-    object[name] = ->
-      callback.apply(this, arguments)
-      previous.apply(this, arguments)
+window.prepend_to = (object, name, callback) ->
+  previous = object[name] || -> {}
+  object[name] = ->
+    callback.apply(this, arguments)
+    previous.apply(this, arguments)
 
-  @append_to: (object, name, callback) ->
-    previous = object[name] || -> {}
-    object[name] = ->
-      previous.apply(this, arguments)
-      callback.apply(this, arguments)
+window.append_to = (object, name, callback) ->
+  previous = object[name] || -> {}
+  object[name] = ->
+    previous.apply(this, arguments)
+    callback.apply(this, arguments)
 
-  @decorate: (object, name, callback) ->
-    previous = object[name] || -> {}
-    object[name] = ->
-      this.super = previous
-      callback.apply(this, arguments)
+window.decorate = (object, name, callback) ->
+  previous = object[name] || -> {}
+  object[name] = ->
+    this.super = previous
+    callback.apply(this, arguments)
 
-for type in [Array, Boolean, Function, jQuery, JSON, Number, Object, RegExp, String]
+window.polyfill = (object, name, callback) ->
+  object[name] ?= ->
+    callback.apply(this, arguments)
+
+for type in [Array, Boolean, Function, JSON, Number, Object, RegExp, String]
   do (type) ->
     type.define_singleton_methods = (methods) ->
       for name, callback of methods
@@ -38,23 +41,23 @@ for type in [Array, Boolean, Function, jQuery, JSON, Number, Object, RegExp, Str
       type::[name] = callback
       Object.defineProperty(type::, name, enumerable: false)
 
-    for pattern in ['prepend_to', 'append_to', 'decorate']
+    for pattern in ['prepend_to', 'append_to', 'decorate', 'polyfill']
       do (pattern) ->
         type["#{pattern}_singleton_methods"] = (methods) ->
           for name, callback of methods
             type["#{pattern}_singleton_method"](name, callback)
 
         type["#{pattern}_singleton_method"] = (name, callback) ->
-          Js[pattern] type, name, callback
+          window[pattern] type, name, callback
 
         type["#{pattern}_methods"] = (methods) ->
           for name, callback of methods
             type["#{pattern}_method"](name, callback)
 
         type["#{pattern}_method"] = (name, callback) ->
-          Js[pattern] type::, name, callback
+          window[pattern] type::, name, callback
 
 for type in [Array, Boolean, Number, Object, RegExp, String]
   do (type) ->
-    type.prototype.to_json = -> JSON.parse(JSON.stringify(this))
-    Object.defineProperty(type.prototype, 'to_json', enumerable: false)
+    type::to_json = -> JSON.parse(JSON.stringify(this))
+    Object.defineProperty(type::, 'to_json', enumerable: false)

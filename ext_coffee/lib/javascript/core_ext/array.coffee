@@ -1,143 +1,180 @@
 Array.define_methods
   is_a: (klass) ->
-    this.constructor == klass
+    @constructor is klass
 
   to_a: ->
     this
 
   to_h: ->
-    this.each_with_object {}, ([key, value], memo) ->
-      memo[key] = value
+    @each_with_object {}, ([key, value...], memo) ->
+      throw "Array#to_h: invalid conversion structure" if value.length isnt 1
+      memo[key] = value[0]
 
   to_s: ->
-    this.toString()
+    @toString()
 
   blank: ->
-    _.isEmpty(this)
+    @length is 0
 
   present: ->
-    !this.blank()
+    not @blank()
 
   presence: ->
-    this.valueOf() unless this.blank()
+    @valueOf() unless @blank()
 
   empty: ->
-    _.isEmpty(this)
+    @length is 0
+
+  size: ->
+    @length
 
   eql: (other) ->
-    _.isEqual(this, other)
+    return false unless other?.is_a Array
+    return false unless @length is other.length
+    i = 0
+    for item in this
+      if item?
+        return false unless item.eql(other[i++])
+      else
+        return false if other[i++]?
+    true
+
+  has_index: (index) ->
+    0 <= index < @length
 
   clear: ->
-    this.length = 0
+    @length = 0
 
-  index: (object, start_index = 0) ->
-    if (index = this.indexOf(object, start_index)) != -1
+  index: (item, start_index = 0) ->
+    if (index = @indexOf(item, start_index)) != -1
       index
 
-  any: (f_item_index_self_or_keys) ->
-    if f_item_index_self_or_keys?
-      _.some(this, f_item_index_self_or_keys)
+  any: (f_item_index_self) ->
+    if f_item_index_self?
+      @some(f_item_index_self)
     else
-      this.length > 0
+      @length > 0
 
-  all: (f_item_index_self_or_keys) ->
-    _.every(this, f_item_index_self_or_keys)
+  all: (f_item_index_self) ->
+    @every(f_item_index_self)
 
-  includes: (object, start_index = 0) ->
-    _.includes(this, object, start_index)
+  include: (item) ->
+    item in this
 
-  excludes: (object, start_index = 0) ->
-    !this.includes(object, start_index)
+  exclude: (item) ->
+    not @include(item)
+
+  max: ->
+    Math.max this
+
+  min: ->
+    Math.min this
 
   each: (f_item_index_self) ->
-    f = (item, index, self) ->
-      f_item_index_self(item, index, self)
-      true
-    _.forEach this, f
+    @forEach(f_item_index_self)
+    return
 
   each_while: (f_item_index_self) ->
-    _.forEach this, f_item_index_self
+    i = 0
+    for item in this
+      return unless f_item_index_self(item, i, this)
+    return
 
   each_with_object: (accumulator, f_item_memo_index_self) ->
-    f = (memo, item, index, self) ->
+    @reduce (memo, item, index, self) ->
       f_item_memo_index_self(item, memo, index, self)
       accumulator
-    _.reduce(this, f, accumulator)
+    , accumulator
 
   each_slice: (size = 1) ->
-    _.chunk(this, size)
+    return [] unless size? and size >= 1
+    result = []
+    i = 0
+    result.push(@slice(i, i += size)) while i < @length
+    result
 
-  sort_by: (f_item_or_keys...) ->
-    _.sortBy(this, f_item_or_keys.unsplat())
+  pluck: (keys...) ->
+    if keys.length is 1
+      key = keys[0]
+      @map (item) -> item[key]
+    else
+      @map (item) -> item.values_at(keys...)
 
-  select: (f_item_index_self_or_keys) ->
-    _.filter(this, f_item_index_self_or_keys)
+  sort_by: (f_item_index_self) ->
+    @map (item, index, self) ->
+      { item, index, weight: f_item_index_self(item, index, self) }
+    .sort (left, right) ->
+      lw = left.weight; rw = right.weight
+      if lw isnt rw
+        return 1 if not lw? or lw > rw
+        return -1 if not rw? or lw < rw
+      left.index - right.index
+    .pluck('item')
 
-  reject: (f_item_index_self_or_keys) ->
-    _.reject(this, f_item_index_self_or_keys)
+  select: (f_item_index_self) ->
+    @filter(f_item_index_self)
 
-  except: (objects...) ->
-    _.without(this, objects.unsplat()...)
+  reject: (f_item_index_self) ->
+    @filter (item, index, self) ->
+      not f_item_index_self(item, index, self)
+
+  except: (items...) ->
+    item for item in this when item not in items
 
   compact: ->
-    this.select (item) -> item?
-
-  delete: (objects...) ->
-    _.pull(this, objects.unsplat()...)
-
-  delete_if: (f_item) ->
-    _.remove(this, f_item)
+    @filter (item) -> item?
 
   dup: ->
-    _.clone(this)
+    @slice()
 
-  deep_dup: ->
-    _.cloneDeep(this)
+  first: ->
+    this[0]
 
-  drop: (n = 1) ->
-    _.drop(this, n)
+  last: ->
+    this[@length - 1]
 
-  first: (n = 1) ->
-    return this[0] if n == 1
-    _.take(this, n)
-
-  last: (n = 1) ->
-    return this[this.length - 1] if n == 1
-    _.takeRight(this, n)
+  find_index: (f_item_index_self) ->
+    for i in [0...@length]
+      return i if f_item_index_self(this[i], i, this)
+    return
 
   flatten: ->
-    _.flattenDeep(this)
+    @reduce (memo, item) ->
+      memo.concat(if item.is_a(Array) then item.flatten() else item)
+    , []
 
-  add: (other_arrays...) ->
-    _.concat this, other_arrays...
+  add: (others...) ->
+    @concat others...
 
-  union: (other_arrays...) ->
-    _.union this, other_arrays...
+  union: (others...) ->
+    result = {}
+    for array in [this, others...]
+      result[array[i]] = array[i] for i in [0...array.length]
+    value for key, value of result
 
-  zip: (other_arrays...) ->
-    _.zip(this, other_arrays...)
+  zip: (others...) ->
+    arrays = [this, others...]
+    length = Math.min((array.length for array in arrays)...)
+    for i in [0...length]
+      array[i] for array in arrays
 
   uniq: ->
-    _.uniq(this)
-
-  unsplat: ->
-    if this.length == 1 && this[0]?.is_a(Array)
-      this[0]
-    else
-      this
+    result = {}
+    result[this[i]] = this[i] for i in [0...@length]
+    value for key, value of result
 
   extract_options: ->
-    if this.last()?.is_a(Object)
-      this.pop()
+    if @last()?.is_a Object
+      @pop()
     else
       {}
 
   html_map: (f_item_index_self) ->
-    h_(this.map(f_item_index_self))
+    h_(@map(f_item_index_self))
 
-Array.decorate_methods
-  find: (f_item_index_self_or_keys) ->
-    if arguments.length == 1
-      _.find(this, f_item_index_self_or_keys)
-    else
-      this.super.apply(this, arguments)
+Array.polyfill_methods
+  find: (f_item_index_self) ->
+    i = 0
+    for item in this
+      return item if f_item_index_self(item, i++, this)
+    return

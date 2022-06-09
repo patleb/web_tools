@@ -1,5 +1,4 @@
 Object.merge = (objects...) ->
-  return unless objects.length > 0
   result = {}
   for object in objects
     for key, value of object

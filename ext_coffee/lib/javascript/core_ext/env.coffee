@@ -2,8 +2,8 @@ if window.Env?
   console.log "ExtCoffee Overriding #{this.name}.Env"
 
 class window.Env
-  @current: '<%= Rails.env.to_s %>'
-  @debug_trace: <%= ExtCoffee.config.debug_trace? %>
+  @current: process.env.NODE_ENV
+  @debug_trace: !!process.env.DEBUG_TRACE
 
   @initialize: =>
     for env in ['development', 'test', 'vagrant', 'staging', 'production']

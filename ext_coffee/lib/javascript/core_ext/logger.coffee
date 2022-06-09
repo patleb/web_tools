@@ -6,23 +6,17 @@ if window.Logger?
   console.log "ExtCoffee Overriding #{this.name}.Logger"
 
 class window.Logger
-  @IGNORED_METHODS: {
-    Array:
-      includes: true
-    String:
-      includes: true
-      sub: true
-  }
+  @ignored_methods: {}
 
   @warn_define_method: (klass, name) =>
     if klass::[name]
-      klass_name = klass.class_name || klass.name
-      unless (ignored = @IGNORED_METHODS[klass_name]) && ignored[name]
+      klass_name = klass.class_name or klass.name
+      unless (ignored = @ignored_methods[klass_name]) and ignored[name]
         @debug "ExtCoffee Overriding #{klass_name}.prototype.#{name}"
 
   @warn_define_singleton_method: (klass, name) =>
     if klass[name]
-      klass_name = klass.class_name || klass.name || klass.constructor.name
+      klass_name = klass.class_name or klass.name or klass.constructor.name
       @debug "ExtCoffee Overriding #{klass_name}.#{name}"
 
   @debug: (args...) =>

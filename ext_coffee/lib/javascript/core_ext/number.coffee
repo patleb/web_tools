@@ -1,53 +1,53 @@
 Number.define_methods
   is_a: (klass) ->
-    this.constructor == klass
+    @constructor is klass
 
   to_b: ->
-    return true if this == 1
-    return false if this == 0
+    return true if this is 1
+    return false if this is 0
     throw "invalid value for Boolean: '#{this}'"
 
   to_i: ->
-    _.toInteger(this)
+    parseInt(this)
 
   to_f: ->
-    this.valueOf()
+    @valueOf()
 
   to_d: ->
-    this.valueOf()
+    @valueOf()
 
   to_s: ->
-    this.toString()
+    @toString()
 
   blank: ->
     isNaN(this)
 
   present: ->
-    !this.blank()
+    not @blank()
 
   presence: ->
-    this.valueOf() unless this.blank()
+    @valueOf() unless @blank()
 
   eql: (other) ->
-    _.isEqual(this, other)
+    this is other
 
   safe_text: ->
-    this.toString()
+    @toString()
 
   even: ->
-    this % 2 == 0
+    this % 2 is 0
 
   odd: ->
-    Math.abs(this % 2) == 1
+    Math.abs(this % 2) is 1
 
-  ceil: (precision = 0) ->
-    _.ceil(this, precision)
+  ceil: ->
+    Math.ceil(this)
 
-  floor: (precision = 0) ->
-    _.floor(this, precision)
+  floor: ->
+    Math.floor(this)
 
-  round: (precision = 0) ->
-    _.round(this, precision)
+  round: ->
+    Math.round(this)
 
   html_safe: ->
     true
