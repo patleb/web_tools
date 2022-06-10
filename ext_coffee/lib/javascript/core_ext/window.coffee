@@ -22,7 +22,7 @@ window.polyfill = (object, name, callback) ->
   object[name] ?= ->
     callback.apply(this, arguments)
 
-for type in [Array, Boolean, Function, JSON, Number, Object, RegExp, String]
+for type in [Array, Boolean, Element, Function, JSON, Number, Object, RegExp, String]
   do (type) ->
     type.define_singleton_methods = (methods) ->
       for name, callback of methods
