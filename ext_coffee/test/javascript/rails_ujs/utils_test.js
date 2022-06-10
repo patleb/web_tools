@@ -1,6 +1,6 @@
 import rails from './spec_helper'
 
-describe('Rails UJS Helpers', () => {
+describe('Rails UJS Utils', () => {
   beforeEach(() => {
     dom.setup_document(fixture.html('helpers'))
   })
