@@ -62,7 +62,6 @@ window.Rails = Rails.merge
         turbolinks_error(response, xhr, url) if visitable
       complete: (xhr, status) ->
         Rails.fire(element, 'ajax:complete', [xhr, status, visitable])
-        turbolinks_finished() if visitable
       crossDomain: Rails.is_cross_domain(url)
       withCredentials: with_credentials? and with_credentials isnt 'false'
     })
@@ -92,12 +91,11 @@ turbolinks_visitable = (element) ->
 turbolinks_started = ->
   Turbolinks.request_started()
 
-turbolinks_finished = ->
-  Turbolinks.request_finished()
-
 turbolinks_success = (response, xhr, url) ->
+  Turbolinks.request_finished()
   Turbolinks.clear_cache()
   Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') or url, action: 'restore', html: response)
 
 turbolinks_error = (response, xhr, url) ->
+  Turbolinks.request_finished()
   Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') or url, action: 'restore', html: response, error: true)
