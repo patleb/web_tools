@@ -13,7 +13,7 @@ m = Element::matches or
 #   a JavaScript object with `selector` and `exclude` properties
 #   Examples: "form", { selector: "form", exclude: "form[data-remote='true']"}
 Element::matches = (selector) ->
-  if selector.exclude?
+  if typeof selector is 'object' and selector.exclude?
     m.call(this, selector.selector) and not m.call(this, selector.exclude)
   else
     m.call(this, selector)
