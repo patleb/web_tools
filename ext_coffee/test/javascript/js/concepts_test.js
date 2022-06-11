@@ -1,7 +1,4 @@
-import '@@vendor/rails-ujs/all'
-import '@@lib/ext_coffee/core_ext/all'
-import '@@lib/ext_coffee/js/all'
-import './concepts'
+import './spec_helper'
 
 describe('Js.Concepts', () => {
   beforeAll(() => {
