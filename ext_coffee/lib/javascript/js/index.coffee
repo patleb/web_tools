@@ -1,7 +1,6 @@
 spinner_timeout = null
 
 window.Js =
-  ABORT: 'ABORT'
   SPINNER_DEBOUNCE: 500
 
   load_spinner: ->
