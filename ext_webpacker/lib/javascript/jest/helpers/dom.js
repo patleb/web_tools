@@ -61,6 +61,7 @@ const dom = {
     let event = new CustomEvent(name, { bubbles: true, cancelable: cancelable, detail: data })
     event.data = data
     target.dispatchEvent(event)
+    return event
   },
   $: (selector) => {
     return Array.prototype.slice.call(document.querySelectorAll(selector))
