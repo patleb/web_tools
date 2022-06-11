@@ -4,5 +4,9 @@ const jestConfigPath = resolve(config.source_path, 'lib/ext_webpacker/jest/jest.
 const jestConfig = require(jestConfigPath)
 
 jestConfig.roots.push('ext_coffee/test/javascript')
+jestConfig.moduleNameMapper['^@@test/ext_coffee/fixtures/(.+)'] = '<rootDir>/ext_coffee/test/fixtures/$1'
+jestConfig.moduleNameMapper['^@@test/ext_coffee/(.+)'] = '<rootDir>/ext_coffee/test/javascript/$1'
+jestConfig.moduleNameMapper['^@@test/fixtures/(.+)'] = '<rootDir>/test/fixtures/$1'
+jestConfig.moduleNameMapper['^@@test/(.+)'] = '<rootDir>/test/javascript/$1'
 
 module.exports = jestConfig
