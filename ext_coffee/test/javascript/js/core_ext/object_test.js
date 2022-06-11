@@ -1,11 +1,11 @@
-import '../spec_helper'
+import '@@lib/ext_coffee/js/all'
 
 describe('Object', () => {
   test('#is_a', () => {
     assert.true({}.is_a(Object))
     assert.false({}.is_a(Array))
     assert.false({}.is_a(Function))
-    assert.false({}.is_a(Rails))
+    assert.false({}.is_a(Element))
   })
 
   test('#to_a', () => {

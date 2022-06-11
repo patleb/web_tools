@@ -1,4 +1,4 @@
-import '../spec_helper'
+import '@@lib/ext_coffee/js/all'
 
 describe('Array', () => {
   test('#is_a', () => {
