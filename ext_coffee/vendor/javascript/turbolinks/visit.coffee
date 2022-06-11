@@ -40,6 +40,7 @@ class Turbolinks.Visit
   fail: ->
     if @state is 'started'
       @state = 'failed'
+      @controller.dispatch_load(@timing.dup())
 
   change_history: ->
     unless @history_changed

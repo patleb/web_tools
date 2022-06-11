@@ -34,9 +34,6 @@ class Turbolinks.Renderer
   replace_head: ->
     new_head = @new_head_details.head
     document.adoptNode(new_head)
-    for inert_script in new_head.querySelectorAll('script')
-      activated_script = create_script(inert_script)
-      inert_script.replaceWith(activated_script)
     document.head.replaceWith(new_head)
 
   replace_body: ->
