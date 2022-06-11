@@ -1,3 +1,6 @@
+Logger.ignored_methods.Array ?= {}
+Logger.ignored_methods.Array.dup = true
+
 Array.define_methods
   is_a: (klass) ->
     @constructor is klass
