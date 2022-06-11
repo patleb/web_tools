@@ -116,7 +116,7 @@ const rails = {
         handler(event)
       }})
       option.selected = 'selected'
-      return select.dispatchEvent(new CustomEvent('change', { bubbles: true, cancelable: true }))
+      return dom.fire('change', { target: select })
     })
   },
   assert_enabled: ({ target }, selector = null) => {

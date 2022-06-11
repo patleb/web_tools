@@ -24,11 +24,7 @@ const dom = {
   stub_click: () => {
     delete HTMLAnchorElement.prototype.click
     HTMLAnchorElement.prototype.click = function(options = {}) {
-      let event = new CustomEvent('click', { bubbles: true, cancelable: true })
-      for (const [key, value] of Object.entries(options)) {
-        event[key] = value
-      }
-      this.dispatchEvent(event)
+      dom.fire('click', { target: this, options })
     }
   },
   reset_click: () => {
@@ -37,7 +33,7 @@ const dom = {
   stub_submit: () => {
     delete HTMLFormElement.prototype.submit
     HTMLFormElement.prototype.submit = function() {
-      this.dispatchEvent(new CustomEvent('submit', { bubbles: true, cancelable: true }))
+      dom.fire('submit', { target: this })
     }
   },
   reset_submit: () => {
@@ -57,9 +53,12 @@ const dom = {
   events_log: () => {
     return window.events_log.map(([type, data]) => `${type} -- ${data ? JSON.stringify(data): ''}`)
   },
-  fire: (name, { target = document, cancelable = true, data = {} } = {}) => {
+  fire: (name, { target = document, cancelable = true, data = {}, options = {} } = {}) => {
     let event = new CustomEvent(name, { bubbles: true, cancelable: cancelable, detail: data })
     event.data = data
+    for (const [key, value] of Object.entries(options)) {
+      event[key] = value
+    }
     target.dispatchEvent(event)
     return event
   },
