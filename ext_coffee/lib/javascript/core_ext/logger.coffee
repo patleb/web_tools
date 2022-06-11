@@ -20,8 +20,8 @@ class window.Logger
       @debug "ExtCoffee Overriding #{klass_name}.#{name}"
 
   @debug: (args...) ->
-    if Env.development
-      if Env.debug_trace
+    if Env.debug or Env.debug isnt false and Env.development
+      if Env.trace
         console.groupCollapsed(args[0])
         console.trace()
         console.groupEnd()

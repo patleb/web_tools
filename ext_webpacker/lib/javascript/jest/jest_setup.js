@@ -15,3 +15,8 @@ global.delay = (ms = 1) => new Promise(resolve => setTimeout(resolve, ms))
 if (process.env.JB_PUBLISH_PORT != null) {
   jest.setTimeout(2147483647)
 }
+
+Object.assign(process.env, {
+  LOGGER_DEBUG: true,
+  // LOGGER_TRACE: true,
+})
