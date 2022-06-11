@@ -65,6 +65,9 @@ const dom = {
   $: (selector) => {
     return Array.prototype.slice.call(document.querySelectorAll(selector))
   },
+  $0: (selector) => {
+    return document.querySelector(selector)
+  },
   children: (element, test) => {
     return Array.from(element.childNodes).filter(node => node.nodeType === Node.ELEMENT_NODE && test(node))
   },

@@ -17,6 +17,9 @@ window.Rails = Rails.merge
   $: (selector) ->
     Array.wrap(document.querySelectorAll(selector))
 
+  $0: (selector) ->
+    document.querySelector(selector)
+
   load_csp_nonce: ->
     csp_nonce = document.querySelector('meta[name=csp-nonce]')?.content
 

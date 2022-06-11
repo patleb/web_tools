@@ -6,11 +6,11 @@ window.Js =
   load_spinner: ->
     unless spinner_timeout?
       spinner_timeout = setTimeout(->
-        Rails.$('.spinner_container')[0].classList.remove('hidden')
+        Rails.$0('.spinner_container').remove_class('hidden')
       , Js.SPINNER_DEBOUNCE)
 
   clear_spinner: ->
-    Rails.$('.spinner_container')[0].classList.add('hidden')
+    Rails.$0('.spinner_container').add_class('hidden')
     clearTimeout(spinner_timeout)
     spinner_timeout = null
 

@@ -26,17 +26,17 @@ describe('Rails UJS Disable', () => {
       const data = nav.get_params(event.detail[2].req._body)
       assert.equal({ user_name: 'john', user_bio: 'born, lived, died.' }, data)
       rails.assert_disabled(event, 'input[type=text]')
-      rails.assert_disabled({ target: dom.$('textarea[data-disable]')[0] })
+      rails.assert_disabled({ target: dom.$0('textarea[data-disable]') })
     }})
     await rails.submit('form[data-remote]', { url: '/echo', 'ajax:complete': (event) => {
       rails.assert_enabled(event, 'input[type=text]')
-      rails.assert_enabled({ target: dom.$('textarea[data-disable]')[0] })
+      rails.assert_enabled({ target: dom.$0('textarea[data-disable]') })
     }})
   })
 
   it('should disable non-remote form input field with "data-disable" attribute', async () => {
     assert.total(5)
-    rails.assert_enabled({ target: dom.$('input[type=submit]')[0] })
+    rails.assert_enabled({ target: dom.$0('input[type=submit]') })
     await rails.submit('input[type=submit]', { 'submit': (event) => {
       rails.assert_disabled(event, 'input[type=submit]')
     }})
@@ -44,7 +44,7 @@ describe('Rails UJS Disable', () => {
 
   it('should disable non-remote link and replace inner text with "data-disable-with" attribute', async () => {
     assert.total(9)
-    rails.assert_enabled({ target: dom.$('a[data-disable-with]')[0] })
+    rails.assert_enabled({ target: dom.$0('a[data-disable-with]') })
     await rails.click('a[data-disable-with]', { 'click': (event) => {
       rails.assert_disabled_with(event, 'Click me', 'Processing...')
     }})
@@ -73,7 +73,7 @@ describe('Rails UJS Disable', () => {
 
   it('should disable button with "data-disable" attribute', async () => {
     assert.total(8)
-    rails.assert_enabled({ target: dom.$('button[data-remote]')[0] })
+    rails.assert_enabled({ target: dom.$0('button[data-remote]') })
     dom.on_event({ 'ajax:before': (event) => {
       rails.assert_disabled(event)
     }})
@@ -116,7 +116,7 @@ describe('Rails UJS Disable', () => {
 
   it('should re-enable when "pageshow" event is triggered', () => {
     assert.total(5)
-    const target = dom.$('button[data-remote]')[0]
+    const target = dom.$0('button[data-remote]')
     Rails.disable_element(target)
     rails.assert_disabled({ target })
     dom.on_event({ 'pageshow': (event) => {

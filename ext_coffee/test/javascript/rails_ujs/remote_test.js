@@ -96,7 +96,7 @@ describe('Rails UJS Remote', () => {
       dom.on_event({ 'ajax:before': (event) => {
         submitted = true
       }})
-      dom.$('#non-remote-form')[0].submit()
+      dom.$0('#non-remote-form').submit()
       await tick()
       assert.false(submitted)
       dom.off_event('ajax:before')
