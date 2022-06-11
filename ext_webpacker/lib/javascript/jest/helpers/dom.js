@@ -57,6 +57,11 @@ const dom = {
   events_log: () => {
     return window.events_log.map(([type, data]) => `${type} -- ${data ? JSON.stringify(data): ''}`)
   },
+  fire: (name, { target = document, cancelable = true, data = {} } = {}) => {
+    let event = new CustomEvent(name, { bubbles: true, cancelable: cancelable, detail: data })
+    event.data = data
+    target.dispatchEvent(event)
+  },
   $: (selector) => {
     return Array.prototype.slice.call(document.querySelectorAll(selector))
   },

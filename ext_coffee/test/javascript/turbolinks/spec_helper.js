@@ -53,7 +53,7 @@ Turbolinks.controller.click_bubbled = function (event) {
   let bubbled = !!old_click_bubbled(event)
   if (branches.click_only) {
     event.data = { bubbled }
-    Turbolinks.dispatch('turbolinks:click-only', event)
+    dom.fire('turbolinks:click-only', event)
   }
 }
 
@@ -66,11 +66,11 @@ Turbolinks.controller.visit = function (location, options = {}) {
     if (!location.match(/^http:/) && location !== 'about:blank') {
       location = `http://localhost/${location}`
     }
-    Turbolinks.dispatch('turbolinks:visit-reload', { data: { url: new URL(location).toString() } })
+    dom.fire('turbolinks:visit-reload', { data: { url: new URL(location).toString() } })
     return result
   } else if (branches.click_cancel) {
     let prevented = !old_visit(location, options)
-    Turbolinks.dispatch('turbolinks:click-cancel', { data: { prevented } })
+    dom.fire('turbolinks:click-cancel', { data: { prevented } })
     return prevented
   } else {
     return old_visit(location, options)
@@ -98,7 +98,7 @@ const turbolinks = {
     Turbolinks.controller.location = Turbolinks.Location.wrap(window.location)
     dom.setup_document(fixture.html(location))
     Turbolinks.clear_cache()
-    Turbolinks.dispatch('DOMContentLoaded')
+    dom.fire('DOMContentLoaded')
   },
   setup_no_defer: () => {
     Function.defer = (callback) =>  callback()
@@ -191,7 +191,7 @@ const turbolinks = {
         handler(event)
       }})
       branches.click_only = true
-      return Turbolinks.dispatch('click', { target: link, cancelable: true })
+      return dom.fire('click', { target: link, cancelable: true })
     })
   },
   click_reload: (selector, handler) => {

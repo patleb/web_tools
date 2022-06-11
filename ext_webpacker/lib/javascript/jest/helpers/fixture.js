@@ -5,10 +5,10 @@ let root = 'test/fixtures/files'
 let root_was = root
 
 const fixture = {
-  json: (name, root = null) => {
+  json: (name, { root } = {}) => {
     return JSON.parse(fixture.read(`${name}.json`, root))
   },
-  html: (name, root = null) => {
+  html: (name, { root } = {}) => {
     return fixture.read(`${name}.html`, root)
   },
   read: (fixture_name, fixture_path = null) => {
