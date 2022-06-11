@@ -1,5 +1,4 @@
-import '@@lib/ext_coffee/js/all'
-import '../js/concepts'
+import './spec_helper'
 
 describe('String', () => {
   test('#is_a', () => {
