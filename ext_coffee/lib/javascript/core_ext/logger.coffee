@@ -19,7 +19,7 @@ class window.Logger
       klass_name = klass.class_name or klass.name or klass.constructor.name
       @debug "ExtCoffee Overriding #{klass_name}.#{name}"
 
-  @debug: (args...) =>
+  @debug: (args...) ->
     if Env.development
       if Env.debug_trace
         console.groupCollapsed(args[0])
