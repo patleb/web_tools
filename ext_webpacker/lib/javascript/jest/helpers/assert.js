@@ -9,6 +9,8 @@ const assert = {
   not_same: (exp, act) => expect(exp === act).not.toBe(true),
   equal: (exp, act) => (typeof exp === 'object') ? expect(act).toStrictEqual(exp) : expect(act).toBe(exp),
   not_equal: (exp, act) => (typeof exp === 'object') ? expect(act).not.toStrictEqual(exp) : expect(act).not.toBe(exp),
+  deep_equal: (exp, act) => assert.equal(JSON.stringify(exp), JSON.stringify(act)),
+  not_deep_equal: (exp, act) => assert.not_equal(JSON.stringify(exp), JSON.stringify(act)),
   null: (act) => expect(act).toBeNil(),
   not_null: (act) => expect(act).not.toBeNil(),
   empty: (act) => expect(act).toBeEmpty(),
