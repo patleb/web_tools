@@ -17,6 +17,6 @@ if (process.env.JB_PUBLISH_PORT != null) {
 }
 
 Object.assign(process.env, {
-  LOGGER_DEBUG: true,
+  // LOGGER_DEBUG: true,
   // LOGGER_TRACE: true,
 })
