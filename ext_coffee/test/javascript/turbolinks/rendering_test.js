@@ -20,14 +20,14 @@ describe('Turbolinks Rendering', () => {
     let new_body
     dom.on_event({ 'turbolinks:before-render': (event) => {
       new_body = event.data.new_body
-      assert.not_equal(document.body.innerHTML, new_body.innerHTML)
+      assert.not.equal(document.body.innerHTML, new_body.innerHTML)
       assert.equal('One', new_body.querySelector('h1').innerHTML)
     }})
     dom.on_event({ 'turbolinks:render': (event) => {
       assert.equal(document.body.innerHTML, new_body.innerHTML)
     }})
     await turbolinks.click('#same-origin-link', { 'turbolinks:load': (event) => {
-      assert.not_null(event)
+      assert.not.null(event)
     }})
   })
 
@@ -36,7 +36,7 @@ describe('Turbolinks Rendering', () => {
     let new_body
     dom.on_event({ 'turbolinks:before-render': (event) => {
       new_body = event.data.new_body
-      assert.not_equal(document.body.innerHTML, new_body.innerHTML)
+      assert.not.equal(document.body.innerHTML, new_body.innerHTML)
     }})
     dom.on_event({ 'turbolinks:render': (event) => {
       assert.equal(document.body.innerHTML, new_body.innerHTML)
@@ -71,7 +71,7 @@ describe('Turbolinks Rendering', () => {
   it('should not scroll when turbolinks-visit-control setting is no-scroll', async () => {
     assert.total(2)
     await turbolinks.click('#visit-control-no-scroll-link', { 'turbolinks:load': (event) => {
-      assert.not_called(window.scrollTo)
+      assert.not.called(window.scrollTo)
       assert.equal('http://localhost/visit_control_no_scroll', event.data.url)
     }})
   })
@@ -82,7 +82,7 @@ describe('Turbolinks Rendering', () => {
     let new_elements
     await turbolinks.click('#additional-assets-link', { 'turbolinks:render': (event) => {
       new_elements = get_asset_elements()
-      assert.not_equal(old_elements, new_elements)
+      assert.not.equal(old_elements, new_elements)
     }})
     await turbolinks.back({ 'turbolinks:render': (event) => {
       old_elements = get_asset_elements()
@@ -96,12 +96,12 @@ describe('Turbolinks Rendering', () => {
     let new_elements
     await turbolinks.click('#same-origin-link', { 'turbolinks:render': (event) => {
       new_elements = get_provisional_elements()
-      assert.not_equal(old_elements, new_elements)
-      assert.not_null(document.querySelector('meta[name=test]'))
+      assert.not.equal(old_elements, new_elements)
+      assert.not.null(document.querySelector('meta[name=test]'))
     }})
     await turbolinks.back({ 'turbolinks:render': (event) => {
       old_elements = get_provisional_elements()
-      assert.not_equal(new_elements, old_elements)
+      assert.not.equal(new_elements, old_elements)
       assert.null(document.querySelector('meta[name=test]'))
     }})
   })
@@ -161,7 +161,7 @@ describe('Turbolinks Rendering', () => {
       document.body.innerHTML = 'Modified'
     }})
     await turbolinks.click('#same-origin-link', { 'turbolinks:load': (event) => {
-      assert.not_equal('Modified', document.body.innerHTML)
+      assert.not.equal('Modified', document.body.innerHTML)
     }})
     await turbolinks.back({ 'turbolinks:load': (event) => {
       assert.equal('Modified', document.body.innerHTML)
@@ -181,7 +181,7 @@ describe('Turbolinks Rendering', () => {
     })
     observer.observe(documentElement, { childList: true })
     await turbolinks.click('#same-origin-link', { 'turbolinks:load': (event) => {
-      assert.not_equal('Modified', document.body.innerHTML)
+      assert.not.equal('Modified', document.body.innerHTML)
     }})
     await turbolinks.back({ 'turbolinks:load': (event) => {
       assert.equal('Modified', document.body.innerHTML)

@@ -70,8 +70,8 @@ describe('Turbolinks Anchor', () => {
 
   it('should not do anything if the same-page anchor is invalid', async () => {
     await turbolinks.visit('anchor#!', { 'hashchange': (event) => {
-      assert.not_called(Element.prototype.scrollIntoView)
-      assert.not_called(window.scrollTo)
+      assert.not.called(Element.prototype.scrollIntoView)
+      assert.not.called(window.scrollTo)
       assert.equal('http://localhost/anchor#!', event.newURL)
     }})
   })

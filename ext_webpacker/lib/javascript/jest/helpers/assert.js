@@ -2,24 +2,30 @@ import * as matchers from 'jest-extended'
 
 expect.extend(matchers)
 
+let not = false
+
+const expect_with_not = (act) => {
+  const handler = not ? expect(act).not : expect(act)
+  not = false
+  return handler
+}
+
 const assert = {
-  true: (act) => expect(act).toBeTrue(),
-  false: (act) => expect(act).toBeFalse(),
-  same: (exp, act) => expect(exp === act).toBe(true),
-  not_same: (exp, act) => expect(exp === act).not.toBe(true),
-  equal: (exp, act) => (typeof exp === 'object') ? expect(act).toStrictEqual(exp) : expect(act).toBe(exp),
-  not_equal: (exp, act) => (typeof exp === 'object') ? expect(act).not.toStrictEqual(exp) : expect(act).not.toBe(exp),
-  deep_equal: (exp, act) => assert.equal(JSON.stringify(exp), JSON.stringify(act)),
-  not_deep_equal: (exp, act) => assert.not_equal(JSON.stringify(exp), JSON.stringify(act)),
-  null: (act) => expect(act).toBeNil(),
-  not_null: (act) => expect(act).not.toBeNil(),
-  empty: (act) => expect(act).toBeEmpty(),
-  not_empty: (act) => expect(act).not.toBeEmpty(),
-  includes: (exp, act) => expect(act).toInclude(exp),
-  excludes: (exp, act) => expect(act).not.toInclude(exp),
-  called: (act, n = null) => n == null ? expect(act).toBeCalled() : expect(act).toBeCalledTimes(n),
-  not_called: (act) => expect(act).not.toBeCalled(),
+  get not() {
+    not = true
+    return assert
+  },
   total: (n) => expect.assertions(n),
-  raise: (error, handler) => expect(handler).toThrow(error),
+  true: (act) => expect_with_not(act).toBeTrue(),
+  false: (act) => expect_with_not(act).toBeFalse(),
+  same: (exp, act) => assert.true(exp === act),
+  equal: (exp, act) => (typeof exp === 'object') ? expect_with_not(act).toStrictEqual(exp) : expect_with_not(act).toBe(exp),
+  deep_equal: (exp, act) => assert.equal(JSON.stringify(exp), JSON.stringify(act)),
+  null: (act) => expect_with_not(act).toBeNil(),
+  empty: (act) => expect_with_not(act).toBeEmpty(),
+  includes: (exp, act) => expect_with_not(act).toInclude(exp),
+  excludes: (exp, act) => expect_with_not(act).not.toInclude(exp),
+  called: (act, n = null) => n == null ? expect_with_not(act).toBeCalled() : expect_with_not(act).toBeCalledTimes(n),
+  raise: (error, handler) => expect_with_not(handler).toThrow(error),
 }
 global.assert = assert

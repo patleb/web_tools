@@ -125,7 +125,7 @@ describe('Array', () => {
   test('#dup', () => {
     const array = [1, 2]
     const other = array.dup()
-    assert.not_same(array, other)
+    assert.not.same(array, other)
     assert.equal(array, other)
   })
 
