@@ -79,6 +79,10 @@ String.define_methods
     else if (index = @indexOf(pattern, start_index)) isnt -1
       index
 
+  rindex: (string, start_index = +Infinity) ->
+    if (index = @lastIndexOf(string, start_index)) isnt -1
+      index
+
   include: (string, start_index = 0) ->
     @indexOf(string, start_index) isnt -1
 
