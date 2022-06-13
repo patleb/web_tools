@@ -18,7 +18,7 @@ const assert = {
   total: (n) => expect.assertions(n),
   true: (act) => expect_with_not(act).toBeTrue(),
   false: (act) => expect_with_not(act).toBeFalse(),
-  same: (exp, act) => assert.true(exp === act),
+  same: (exp, act) => assert.true(Object.is(exp, act)),
   equal: (exp, act) => (typeof exp === 'object') ? expect_with_not(act).toStrictEqual(exp) : expect_with_not(act).toBe(exp),
   deep_equal: (exp, act) => assert.equal(JSON.stringify(exp), JSON.stringify(act)),
   null: (act) => expect_with_not(act).toBeNil(),
