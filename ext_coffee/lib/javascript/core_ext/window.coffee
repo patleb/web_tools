@@ -1,6 +1,6 @@
 window.noop = ->
 
-window.not_implemented = -> throw 'NotImplementedError'
+window.not_implemented = -> throw new Error('NotImplementedError')
 
 window.prepend_to = (object, name, callback) ->
   previous = object[name] || -> {}

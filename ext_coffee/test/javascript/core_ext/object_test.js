@@ -112,7 +112,7 @@ describe('Object', () => {
   })
 
   test('#slice', () => {
-    assert.equal({ a: 1, c: 3 }, { a: 1, b: 2, c: 3 }.slice('a', 'c'))
+    assert.equal({ a: 1, c: 3 }, { a: 1, b: 2, c: 3 }.slice('a', 'c', 'd'))
   })
 
   test('#except', () => {
