@@ -14,13 +14,14 @@ describe('Js.Concepts', () => {
     assert.equal(1, Js.Concepts.instances.ready_once.length)
     assert.equal(1, Js.Concepts.instances.ready.length)
     assert.equal(1, Js.Concepts.instances.leave.length)
-    assert.equal(4, Js.Concepts.instances.leave_clean.length)
+    assert.equal(5, Js.Concepts.instances.leave_clean.length)
     assert.equal('Test', Test.SimpleConcept.module_name)
     assert.equal('SimpleConcept', Test.SimpleConcept.class_name)
     assert.false(Test.SimpleConcept.is_a(Function))
     assert.true(Test.NotAConceptName.is_a(Function))
     assert.same(Global, Test.GlobalConcept)
     assert.same(SomeGlobal, Test.CustomGlobalConcept)
+    assert.same(Scoped.Global, Test.ScopedGlobalConcept)
     const constants = {
       BODY:      '#js_simple_body',
       ROWS:      '.js_simple_rows',

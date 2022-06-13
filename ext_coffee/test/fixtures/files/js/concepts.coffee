@@ -1,4 +1,5 @@
 window.Test = {}
+window.Scoped = {}
 
 class Test.SimpleConcept
   constants: =>
@@ -74,5 +75,8 @@ class Test.GlobalConcept
 
 class Test.CustomGlobalConcept
   global: 'SomeGlobal'
+
+class Test.ScopedGlobalConcept
+  global: 'Scoped.Global'
 
 class Test.NotAConceptName

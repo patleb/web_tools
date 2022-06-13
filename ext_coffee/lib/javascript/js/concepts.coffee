@@ -82,9 +82,14 @@ class Js.Concepts
     module_class[class_name] = concept = new concept_class
 
     if (global = concept_class::global)
-      global_name = if (global is true) then class_name.sub(CONCEPT, '') else global
-      Logger.warn_define_singleton_method(window, global_name)
-      window[global_name] = concept
+      global_name = if global is true then class_name.sub(CONCEPT, '') else global
+      if global_name.include '.'
+        [scope..., global_name] = global_name.split('.')
+        scope = scope.join('.').constantize()
+      else
+        scope = window
+      Logger.warn_define_singleton_method(scope, global_name)
+      scope[global_name] = concept
 
     @define_constants(concept_class)
     @define_accessors(concept_class)
