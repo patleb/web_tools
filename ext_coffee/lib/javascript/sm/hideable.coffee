@@ -1,4 +1,4 @@
-class Js.StateMachine.Hideable extends Js.StateMachine
+class Sm.Hideable extends Js.StateMachine
   VISIBLE_STATES = { true: 'visible', false: 'hidden' }
 
   config: =>
