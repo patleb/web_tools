@@ -1,0 +1,460 @@
+import js from './spec_helper'
+
+let sm
+let config
+let toggle_base
+let toggle_with_hooks
+let arrow_base
+
+describe('Js.StateMachine', () => {
+  beforeEach(() => {
+    sm = new Js.StateMachine(config)
+  })
+
+  describe('@name, @initial, @current with :initial value', () => {
+    beforeAll(() => {
+      config = { initial: 'init_value', terminal: 'final_value' }
+    })
+
+    it('should set @name, @initial, @terminal and @state correctly', () => {
+      assert.equal('init_value', sm.initial)
+      assert.equal(['final_value'], sm.terminal)
+      assert.equal(sm.initial, sm.current)
+    })
+  })
+
+  describe('as a toggle button', () => {
+    beforeAll(() => {
+      toggle_base = {
+        initial: 'up',
+        triggers: {
+          toggle: { up: 'down', down: 'up' },
+          void:   { nothing: 'nothing' }
+        }
+      }
+    })
+
+    describe('#trigger, #is, #can, #stop, #resume', () => {
+      beforeAll(() => {
+        config = toggle_base
+      })
+
+      it('should return current state and follow the sequence: up, down, up, down, throws', () => {
+        assert.equal('up', sm.current)
+        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal('down', sm.current)
+        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal('up', sm.current)
+        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal('down', sm.current)
+        assert.raise(TypeError, () => sm.trigger('unknown_trigger'))
+      })
+
+      it('should check the state and the transition', () =>{
+        assert.true(sm.is('up'))
+        assert.true(sm.is(/^up$/))
+        assert.false(sm.is('down'))
+        assert.false(sm.is(/^down$/))
+        assert.false(sm.is('unknown_state'))
+        assert.true(sm.can('toggle'))
+        assert.false(sm.can('void'))
+        assert.raise(TypeError, () => sm.can('unknown_trigger'))
+      })
+
+      it('should halt the transition and resume', () => {
+        sm.stop()
+        assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+        assert.equal('up', sm.current)
+        sm.resume()
+        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal('down', sm.current)
+      })
+    })
+
+    describe('#initialize, #dup, @terminal, #before, #after, #on_deny, #on_stop, trigger#(before|after), state#(exit|enter)', () => {
+      beforeAll(() => {
+        config = toggle_with_hooks = toggle_base.deep_merge({
+          initialize: (sm, reset_arg) => { sm.initial = 'down' },
+          terminal: 'up',
+          before: noop,
+          after: noop,
+          on_deny: noop,
+          on_stop: noop,
+          triggers: { toggle: { before: noop, after: noop } },
+          states: { down: { exit: noop }, up: { enter: noop } }
+        })
+        js.spy_on(config)
+      })
+
+      it('should make a copy of the state machine structure with #dup', () => {
+        const copy = sm.dup()
+        sm.trigger('toggle')
+        assert.true(copy instanceof sm.constructor)
+        assert.not.same(sm, copy)
+        assert.not.equal(sm.id, copy.id)
+        assert.not.equal(sm.current, copy.current)
+        const ivars = ['debug', 'initial', 'terminal', 'triggers', 'states', 'transitions', 'paths']
+        ivars.each((ivar) => {
+          assert.same(sm[ivar], copy[ivar])
+        })
+        const methods = ['initialize', 'before', 'after', 'on_deny', 'on_stop']
+        methods.each((method) => {
+          assert.same(sm[method], copy[method])
+        })
+      })
+
+      it('should call the hooks', () => {
+        assert.equal('down', sm.current)
+        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle', 'trigger_arg'))
+        assert.equal('up', sm.current)
+        sm.reset('reset_this')
+        assert.equal(sm.STATUS.INITIALIZED, sm.status)
+        assert.equal('down', sm.current)
+        assert.equal(sm.STATUS.DENIED, sm.trigger('void', 'trigger_arg'))
+        assert.deep_equal([sm, 'reset_this'], config.initialize.mock.calls[1])
+        const hooks = [
+          'before',
+          'after',
+          'on_deny',
+          'on_stop',
+          'triggers.toggle.before',
+          'triggers.toggle.after',
+          'states.down.exit',
+          'states.up.enter'
+        ]
+        hooks.each((hook) => {
+          assert.deep_equal(sm, config.dig(hook).mock.calls[0][0])
+        })
+      })
+
+      it('should stop the state machine when @terminal state is reached', () => {
+        assert.equal('down', sm.current)
+        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal('up', sm.current)
+        assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+        assert.equal('up', sm.current)
+        assert.raise(Error, sm.resume)
+      })
+
+      describe('with #cancel called in #before hook', () => {
+        beforeAll(() => {
+          config = toggle_with_hooks.deep_merge({
+            before: (sm) => { sm.cancel() },
+          })
+          js.spy_on(config)
+        })
+
+        it('should call #before hook, but not any other hooks after', () => {
+          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.true(sm.is('down'))
+          assert.called(config.before)
+          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.states.down.exit)
+          assert.not.called(config.after)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.states.up.enter)
+        })
+      })
+
+      describe('with #cancel called in trigger #before hook', () => {
+        beforeAll(() => {
+          config = toggle_with_hooks.deep_merge({
+            triggers: { toggle: { before: (sm) => { sm.cancel() } } },
+          })
+          js.spy_on(config)
+        })
+
+        it('should call trigger #before hook, but not any other hooks after', () => {
+          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.true(sm.is('down'))
+          assert.called(config.before)
+          assert.called(config.triggers.toggle.before)
+          assert.not.called(config.states.down.exit)
+          assert.not.called(config.after)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.states.up.enter)
+        })
+      })
+
+      describe('with #cancel called in state #exit hook', () => {
+        beforeAll(() => {
+          config = toggle_with_hooks.deep_merge({
+            states: { down: { exit: (sm) => { sm.cancel() } } },
+          })
+          js.spy_on(config)
+        })
+
+        it('should call state #exit hook, but not any other hooks after', () => {
+          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.true(sm.is('down'))
+          assert.called(config.before)
+          assert.called(config.triggers.toggle.before)
+          assert.called(config.states.down.exit)
+          assert.not.called(config.after)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.states.up.enter)
+        })
+      })
+
+      describe('with #cancel called in #after hook', () => {
+        beforeAll(() => {
+          config = toggle_with_hooks.deep_merge({
+            after: (sm) => { sm.cancel() },
+          })
+          js.spy_on(config)
+        })
+
+        it('should call #after hook, but not any other hooks after', () => {
+          assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+          assert.true(sm.is('up'))
+          assert.called(config.before)
+          assert.called(config.triggers.toggle.before)
+          assert.called(config.states.down.exit)
+          assert.called(config.after)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.states.up.enter)
+        })
+      })
+
+      describe('with #cancel called in trigger #after hook', () => {
+        beforeAll(() => {
+          config = toggle_with_hooks.deep_merge({
+            triggers: { toggle: { after: (sm) => { sm.cancel() } } },
+          })
+          js.spy_on(config)
+        })
+
+        it('should trigger #after hook, but not any other hooks after', () => {
+          assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+          assert.true(sm.is('up'))
+          assert.called(config.before)
+          assert.called(config.triggers.toggle.before)
+          assert.called(config.states.down.exit)
+          assert.called(config.after)
+          assert.called(config.triggers.toggle.after)
+          assert.not.called(config.states.up.enter)
+        })
+      })
+
+      describe('with #stop called in #before hook', () => {
+        beforeAll(() => {
+          config = toggle_with_hooks.deep_merge({
+            before: (sm) => { sm.stop() },
+          })
+          js.spy_on(config)
+        })
+
+        it('should trigger #before hook, but not any other hooks after', () => {
+          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.true(sm.is('down'))
+          assert.called(config.before)
+          assert.called(config.on_stop)
+          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.states.down.exit)
+          assert.not.called(config.after)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.states.up.enter)
+        })
+      })
+
+      describe('with #defer called in #before hook', () => {
+        beforeAll(() => {
+          config = toggle_with_hooks.deep_merge({
+            before: (sm) => { sm.defer() },
+          })
+          js.spy_on(config)
+        })
+
+        it('should trigger #before hook, but not any other hooks after', () => {
+          assert.raise(Error, sm.defer)
+          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.true(sm.is('down'))
+          assert.called(config.before)
+          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.states.down.exit)
+          assert.not.called(config.after)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.states.up.enter)
+        })
+
+        it('should trigger #before hook on #reject, but not any other hooks after', () => {
+          sm.trigger('toggle')
+          assert.equal(sm.STATUS.REJECTED, sm.reject())
+          assert.true(sm.is('down'))
+          assert.called(config.before)
+          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.states.down.exit)
+          assert.not.called(config.after)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.states.up.enter)
+        })
+
+        it('should trigger #before hook on #resolve, but not any other before hooks', () => {
+          sm.trigger('toggle')
+          assert.equal(sm.STATUS.CHANGED, sm.resolve())
+          assert.true(sm.is('up'))
+          assert.called(config.before)
+          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.states.down.exit)
+          assert.called(config.after)
+          assert.called(config.triggers.toggle.after)
+          assert.called(config.states.up.enter)
+        })
+      })
+    })
+  })
+
+  describe('as an arrow pointing vertices of a square', () => {
+    const arrow_flags = {
+      'up-right':   { data: { up: true,  down: false, left: false, right: true }},
+      'up-left':    { data: { up: true,  down: false, left: true,  right: false }},
+      'down-right': { data: { up: false, down: true,  left: false, right: true }},
+      'down-left':  { data: { up: false, down: true,  left: true,  right: false }},
+    }
+
+    beforeAll(() => {
+      arrow_base = {
+        initial: 'up-right',
+        triggers: {
+          left:  { 'up-right':  'up-left',   'down-right': 'down-left' },
+          right: { 'up-left':   'up-right',  'down-left':  'down-right' },
+          down:  { 'up-left':   'down-left', 'up-right':   'down-right' },
+          up:    { 'down-left': 'up-left',   'down-right': 'up-right' },
+      }}
+    })
+
+    describe('#inspect', () => {
+      beforeAll(() => {
+        config = arrow_base
+      })
+
+      it('should show all the transitions a state could take', () => {
+        const expected = {
+          'up-right':   { left:  'up-left',    down: 'down-right' },
+          'up-left':    { right: 'up-right',   down: 'down-left' },
+          'down-right': { left:  'down-left',  up:   'up-right' },
+          'down-left':  { right: 'down-right', up:   'up-left' },
+        }
+        assert.equal(expected, sm.inspect())
+      })
+    })
+
+    describe('with :states data', () => {
+      beforeAll(() => {
+        config = arrow_base.merge({ states: arrow_flags })
+      })
+
+      it('should assign data to @states', () => {
+        assert.equal(arrow_flags['up-right'].data, sm.data())
+        assert.equal(arrow_flags, sm.states.each_with_object({}, (k, v, h) => { h[k] = v.slice('data') }))
+      })
+    })
+
+    describe('with :flags at true', () => {
+      beforeAll(() => {
+        config = arrow_base.merge({ flags: true })
+      })
+
+      it('should assign deduced data to @states', () => {
+        assert.equal(arrow_flags, sm.states.each_with_object({}, (k, v, h) => { h[k] = v.slice('data') }))
+      })
+    })
+  })
+
+  describe('with wildcard and list syntax', () => {
+    //  states:
+    //    'slower_speed, slow_speed': { park: 'parked' }
+    //    '* - parked, stopped':      { break: 'stopped' }
+    //    '*':                        { move: 'slow_speed' }
+    //    slow_speed:                 { accelerate: 'normal_speed', slow_down: 'slower_speed' }
+    //    slower_speed:               { accelerate: 'slow_speed' }
+    //    normal_speed:               { slow_down: 'slow_speed' }
+    beforeAll(() => {
+      config = {
+        initial: 'parked',
+        triggers: {
+          park:  { 'slower_speed, slow_speed': 'parked' },
+          break: { '* - parked, stopped': 'stopped' },
+          move:  { '*': 'slow_speed' },
+          slow_down: {
+            normal_speed: 'slow_speed',
+            slow_speed: 'slower_speed'
+          },
+          accelerate: {
+            slower_speed: 'slow_speed',
+            slow_speed: 'normal_speed'
+          }
+        }
+      }
+    })
+
+    it('should define @states and @transitions correctly', () => {
+      const expected_states = ['parked', 'slower_speed', 'slow_speed', 'stopped', 'normal_speed']
+      assert.equal(expected_states, sm.states.keys())
+      const expected_transitions = {
+        park: {
+          slow_speed: 'parked',
+          slower_speed: 'parked'
+        },
+        break: {
+          slow_speed: 'stopped',
+          slower_speed: 'stopped',
+          normal_speed: 'stopped'
+        },
+        move: {
+          parked: 'slow_speed',
+          stopped: 'slow_speed',
+          slow_speed: 'slow_speed',
+          slower_speed: 'slow_speed',
+          normal_speed: 'slow_speed'
+        },
+        slow_down: {
+          normal_speed: 'slow_speed',
+          slow_speed: 'slower_speed'
+        },
+        accelerate: {
+          slower_speed: 'slow_speed',
+          slow_speed: 'normal_speed'
+        }
+      }
+      const actual_transitions = sm.transitions.each_with_object({}, (trigger, transitions, all) => {
+        all[trigger] = transitions.each_with_object({}, (k, v, h) => h[k] = v.to)
+      })
+      assert.equal(expected_transitions, actual_transitions)
+    })
+
+    it('should transpose @transitions correctly', () => {
+      const expected = {
+        parked:       { move: 'slow_speed' },
+        stopped:      { move: 'slow_speed' },
+        slow_speed:   { move: 'slow_speed', break: 'stopped', park: 'parked', accelerate: 'normal_speed', slow_down: 'slower_speed' },
+        slower_speed: { move: 'slow_speed', break: 'stopped', park: 'parked', accelerate: 'slow_speed' },
+        normal_speed: { move: 'slow_speed', break: 'stopped', slow_down: 'slow_speed' },
+      }
+      assert.equal(expected, sm.inspect())
+    })
+  })
+
+  describe('with nested arguments through #trigger', () => {
+    beforeAll(() => {
+      const shared_var = 'shared'
+      config = {
+        initial: 'init',
+        triggers: {
+          run: {
+            init: 'next',
+            before: (sm, arg, { key }) => {
+              assert.equal('arg', arg)
+              assert.equal('key', key)
+              assert.equal('shared', shared_var)
+            }
+          }
+        }
+      }
+    })
+
+    it('should pass correctly nested arguments', () => {
+      sm.trigger('run', 'arg', { key: 'key' })
+    })
+  })
+})
