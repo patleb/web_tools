@@ -16,6 +16,9 @@ Array.define_methods
   to_s: ->
     @toString()
 
+  to_set: ->
+    @map((v) -> [v, true]).to_h()
+
   blank: ->
     @length is 0
 
