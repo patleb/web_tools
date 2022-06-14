@@ -50,7 +50,7 @@ describe('Js.StateMachine', () => {
         assert.raise(TypeError, () => sm.trigger('unknown_trigger'))
       })
 
-      it('should check the state and the transition', () =>{
+      it('should check the state and the transition', () => {
         assert.true(sm.is('up'))
         assert.true(sm.is(/^up$/))
         assert.false(sm.is('down'))
