@@ -4,7 +4,7 @@ class Js.StateMachine
   TRIGGER_HOOKS = ['before', 'after']
   STATE_HOOKS   = ['enter', 'exit']
   STATE_CONFIG  = STATE_HOOKS.add ['data']
-  CLONABLE_IVARS = CONFIG_IVARS.add ['triggers', 'states', 'methods', 'transitions', 'paths']
+  CLONABLE_IVARS = CONFIG_IVARS.add ['states', 'methods', 'transitions', 'paths']
   WILDCARD = '*'
   WITHOUT = '-'
   LIST = ','
@@ -62,7 +62,7 @@ class Js.StateMachine
       @current is state
 
   can: (trigger) ->
-    !!@get_transition(trigger)?
+    @get_transition(trigger)?
 
   cancel: ->
     return if @canceled
@@ -83,87 +83,95 @@ class Js.StateMachine
     @reset_trigger()
     @log @STATUS.RESUMED
 
-  defer: ->
+  defer: (args...) ->
     unless @deferrable
       throw new Error('#defer must be called only once in config.(before | triggers[name].before | states[name].exit)')
-    @deferred = true
+    @deferred = [@trigger_name, args...]
     @deferrable = false
     @log @STATUS.DEFERRED
 
   reject: ->
     return unless @deferred
-    @deferred = false
-    @reset_trigger()
+    @deferred = null
     @log @STATUS.REJECTED
+    @reset_trigger()
+    @canceled = false
     @status
 
-  resolve: (args...) ->
+  resolve: ->
     return unless @deferred
-    @deferred = false
+    [@trigger_name, args...] = @deferred
+    @deferred = null
     @log @STATUS.RESOLVED
     @set_next_state(args...)
+    @reset_trigger()
+    @canceled = false
     @status
 
   reset: ->
-    @canceled = @stopped = @deferred = @deferrable = false
+    @deferred = null
+    @deferrable = @canceled = @stopped = false
     @initial = @state(this) unless @state is noop
     @initialize(this)
+    @previous = null
     @current = @initial
     @log @STATUS.INITIALIZED
 
   trigger: (trigger, args...) ->
     if @trigger_next
       throw new Error('triggers can be chained, but not queued')
-    else if @triggered
+    else if @trigger_name
       @trigger_next = [trigger, args...]
       return
-    @triggered = true
-    @triggers[trigger](args...)
+    @trigger_name = trigger
+    @run_trigger(args...)
+    @reset_trigger()
+    @canceled = false
     @status
 
   inspect: ->
     @paths ||= @transitions.each_with_object {}, (trigger, transitions, memo) ->
-      transitions.each (from, transition) ->
-        (memo[from] ||= {})[trigger] = transition.to
+      transitions.each (current, transition) ->
+        (memo[current] ||= {})[trigger] = transition.next
 
   #### PRIVATE ####
 
-  run_trigger: (trigger, args...) ->
+  run_trigger: (args...) ->
     return @log @STATUS.HALTED if @halted()
-    unless @can(trigger)
-      @on_deny(this, trigger, args...)
+    unless @can(@trigger_name)
+      @on_deny(this, args...)
       return @log @STATUS.DENIED
     return @log @STATUS.IDLED if @state(this) is @current
-    @set_transition(trigger)
+    @set_transition()
     @deferrable = true
     @run_before_hooks(args...)
     return @log @STATUS.HALTED if @halted()
     @set_next_state(args...)
 
   set_next_state: (args...) ->
-    @current = @transition.to
+    @previous = @current
+    @current = @transition.next
     @run_after_hooks(args...)
     @log @STATUS.CHANGED
-    next = @trigger_next
-    @reset_trigger()
-    @trigger(next...) if next
+    if (next = @trigger_next)
+      @reset_trigger()
+      @trigger(next...)
 
   reset_trigger: ->
     @trigger_next = null
-    @triggered = false
-    @canceled = false
+    @trigger_name = null
 
   # config.before, trigger.before, state.exit
   run_before_hooks: (args...) ->
     @before(this, args...)
     @transition.before(this, args...) unless @halted()
-    @states[@transition.from].exit(this, args...) unless @halted()
+    @states[@current].exit(this, args...) unless @halted()
 
   # config.after, trigger.after, state.enter
   run_after_hooks: (args...) ->
     @after(this, args...)
     @transition.after(this, args...) unless @halted()
-    @states[@transition.to].enter(this, args...) unless @halted()
+    @states[@current].enter(this, args...) unless @halted()
     @stop(args...) if @finished()
 
   halted: ->
@@ -175,34 +183,37 @@ class Js.StateMachine
   get_transition: (trigger) ->
     @transitions[trigger][@current]
 
-  set_transition: (trigger) ->
-    @transition = @get_transition(trigger)
+  set_transition: ->
+    @transition = @get_transition(@trigger_name)
 
   extract_transitions: (config) ->
-    @triggers = {}
     @states = {}
     @transitions = {}
     wildcards = {}
     config.triggers?.each (trigger_name, trigger_config) =>
-      hooks = trigger_config.slice(TRIGGER_HOOKS...)
+      trigger_hooks = trigger_config.slice(TRIGGER_HOOKS...)
       transitions = trigger_config.except(TRIGGER_HOOKS...)
-      transitions.each (from_state, next_state) =>
-        @add_default_state(next_state)
-        if from_state.start_with(WILDCARD)
+      transitions.each (current, next) =>
+        if next.is_a Object
+          [next, transition_hooks] = next.first()
+          transition_hooks.each (name, hook) -> hook.super = trigger_hooks[name]
+        hooks = transition_hooks ? trigger_hooks
+        @add_default_state(next)
+        if current.start_with(WILDCARD)
           except_states =
-            if from_state.include(WITHOUT)
-              from_state.split(WITHOUT, 2).last().split(LIST).map (state) =>
+            if current.include(WITHOUT)
+              current.split(WITHOUT, 2).last().split(LIST).map (state) =>
                 state = state.strip()
                 @add_default_state(state)
                 state
             else
               []
-          wildcards[trigger_name] = { except_states, next_state, hooks }
+          wildcards[trigger_name] = { except_states, next, hooks }
         else
-          from_state.split(LIST).each (state) =>
+          current.split(LIST).each (state) =>
             state = state.strip()
             @add_default_state(state)
-            @add_trigger_transition(trigger_name, state, next_state, hooks)
+            @add_transition(trigger_name, state, next, hooks)
     @configure_states(config)
     @add_wildards(wildcards)
 
@@ -216,21 +227,17 @@ class Js.StateMachine
         @states[state_name][key] = value
 
   add_wildards: (wildcards) ->
-    wildcards.each (trigger, { except_states, next_state, hooks }) =>
+    wildcards.each (trigger, { except_states, next, hooks }) =>
       @states.keys().except(except_states...).each (previous_state) =>
-        @add_trigger_transition(trigger, previous_state, next_state, hooks)
-
-  add_trigger_transition: (trigger, from, to, hooks) ->
-    @triggers[trigger] = (args...) => @run_trigger(trigger, args...)
-    @add_transition(trigger, from, to, hooks)
+        @add_transition(trigger, previous_state, next, hooks)
 
   # data is assumed to be static --> should assign functions or pointers for dynamic usage
   add_default_state: (state) ->
     @states[state] ?= { exit: noop, enter: noop, data: {} }
 
-  add_transition: (trigger, from, to, { before = noop, after = noop } = {}) ->
+  add_transition: (trigger, current, next, { before = noop, after = noop } = {}) ->
     @transitions[trigger] ?= {}
-    @transitions[trigger][from] = { trigger, from, to, before, after }
+    @transitions[trigger][current] = { next, before, after }
 
   extract_flags: ->
     flags = @states.each_with_object {}, (state_name, _, memo) ->
@@ -246,9 +253,9 @@ class Js.StateMachine
     tag = "[#{@id}][SM_#{@status}]#{pad}"
     switch @status
       when @STATUS.HALTED
-        return @log_debug "#{tag} #{@current} => [#{@transition.trigger}] => #{@transition.to}" if @transition
+        return @log_debug "#{tag} #{@current} => [#{@trigger_name}] => #{@transition?.next}"
       when @STATUS.CHANGED
-        return @log_debug "#{tag} #{@transition.from} => [#{@transition.trigger}] => #{@current}" if @transition
+        return @log_debug "#{tag} #{@previous} => [#{@trigger_name}] => #{@current}"
     @log_debug "#{tag} #{@current}"
 
   log_debug: (msg) ->

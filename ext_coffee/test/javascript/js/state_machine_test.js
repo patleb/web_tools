@@ -98,7 +98,7 @@ describe('Js.StateMachine', () => {
         assert.not.same(sm, copy)
         assert.not.equal(sm.id, copy.id)
         assert.not.equal(sm.current, copy.current)
-        const ivars = ['debug', 'initial', 'terminal', 'triggers', 'states', 'methods', 'transitions', 'paths']
+        const ivars = ['debug', 'initial', 'terminal', 'states', 'methods', 'transitions', 'paths']
         ivars.each((ivar) => {
           assert.same(sm[ivar], copy[ivar])
         })
@@ -424,7 +424,7 @@ describe('Js.StateMachine', () => {
         }
       }
       const actual_transitions = sm.transitions.each_with_object({}, (trigger, transitions, all) => {
-        all[trigger] = transitions.each_with_object({}, (k, v, h) => h[k] = v.to)
+        all[trigger] = transitions.each_with_object({}, (k, v, h) => h[k] = v.next)
       })
       assert.equal(expected_transitions, actual_transitions)
     })
@@ -485,6 +485,29 @@ describe('Js.StateMachine', () => {
     it('should chain and execute triggers', () => {
       assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
       assert.equal('next_3', sm.current)
+    })
+  })
+
+  describe('with transition hook', () => {
+    beforeAll(() => {
+      config = {
+        initial: 'init',
+        triggers: {
+          run: {
+            init: { 'next': {
+              before: (sm) => { sm.transition.before.super(sm) }
+            }},
+            before: noop
+          },
+        }
+      }
+      js.spy_on(config)
+    })
+
+    it.only('should call both hooks', () => {
+      assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
+      assert.called(config.triggers.run.before, 1)
+      assert.called(config.triggers.run.init.next.before, 1)
     })
   })
 })
