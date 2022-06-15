@@ -102,7 +102,7 @@ describe('Js.StateMachine', () => {
         ivars.each((ivar) => {
           assert.same(sm[ivar], copy[ivar])
         })
-        const methods = ['initialize', 'before', 'after', 'on_deny', 'on_stop']
+        const methods = ['state', 'initialize', 'before', 'after', 'on_deny', 'on_stop']
         methods.each((method) => {
           assert.same(sm[method], copy[method])
         })
