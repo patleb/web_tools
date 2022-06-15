@@ -11,14 +11,14 @@ describe('Js.StateMachine', () => {
     sm = new Js.StateMachine(config)
   })
 
-  describe('@name, @initial, @current with :initial value', () => {
+  describe('@initial, @terminal, @current', () => {
     beforeAll(() => {
       config = { initial: 'init_value', terminal: 'final_value' }
     })
 
-    it('should set @name, @initial, @terminal and @state correctly', () => {
+    it('should set instance variables correctly', () => {
       assert.equal('init_value', sm.initial)
-      assert.equal(['final_value'], sm.terminal)
+      assert.equal(['final_value'], sm.terminal.keys())
       assert.equal(sm.initial, sm.current)
     })
   })
@@ -71,19 +71,24 @@ describe('Js.StateMachine', () => {
       })
     })
 
-    describe('#initialize, #dup, @terminal, #before, #after, #on_deny, #on_stop, trigger#(before|after), state#(exit|enter)', () => {
+    describe('config', () => {
       beforeAll(() => {
         config = toggle_with_hooks = toggle_base.deep_merge({
-          initialize: (sm, reset_arg) => { sm.initial = 'down' },
+          initialize: (sm) => { sm.initial = 'down' },
           terminal: 'up',
           before: noop,
           after: noop,
           on_deny: noop,
           on_stop: noop,
           triggers: { toggle: { before: noop, after: noop } },
-          states: { down: { exit: noop }, up: { enter: noop } }
+          states: { down: { exit: noop }, up: { enter: noop } },
+          methods: { test: sm => sm.current },
         })
         js.spy_on(config)
+      })
+
+      it('should set #test correctly', () => {
+        assert.equal('down', sm.test(sm))
       })
 
       it('should make a copy of the state machine structure with #dup', () => {
@@ -93,7 +98,7 @@ describe('Js.StateMachine', () => {
         assert.not.same(sm, copy)
         assert.not.equal(sm.id, copy.id)
         assert.not.equal(sm.current, copy.current)
-        const ivars = ['debug', 'initial', 'terminal', 'triggers', 'states', 'transitions', 'paths']
+        const ivars = ['debug', 'initial', 'terminal', 'triggers', 'states', 'methods', 'transitions', 'paths']
         ivars.each((ivar) => {
           assert.same(sm[ivar], copy[ivar])
         })
@@ -101,18 +106,19 @@ describe('Js.StateMachine', () => {
         methods.each((method) => {
           assert.same(sm[method], copy[method])
         })
+        assert.equal('down', copy.test(copy))
       })
 
       it('should call the hooks', () => {
         assert.equal('down', sm.current)
         assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle', 'trigger_arg'))
         assert.equal('up', sm.current)
-        sm.reset('reset_this')
+        sm.reset()
         assert.equal(sm.STATUS.INITIALIZED, sm.status)
         assert.equal('down', sm.current)
         assert.equal(sm.STATUS.DENIED, sm.trigger('void', 'trigger_arg'))
-        assert.deep_equal([sm, 'reset_this'], config.initialize.mock.calls[1])
         const hooks = [
+          'initialize',
           'before',
           'after',
           'on_deny',
@@ -423,7 +429,7 @@ describe('Js.StateMachine', () => {
       assert.equal(expected_transitions, actual_transitions)
     })
 
-    it('should transpose @transitions correctly', () => {
+    it('should transpose @transitions correctly with #inspect', () => {
       const expected = {
         parked:       { move: 'slow_speed' },
         stopped:      { move: 'slow_speed' },

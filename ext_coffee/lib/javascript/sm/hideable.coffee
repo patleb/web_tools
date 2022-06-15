@@ -1,13 +1,9 @@
 class Sm.Hideable extends Js.StateMachine
-  VISIBLE_STATES = { true: 'visible', false: 'hidden' }
-
-  config: =>
-    is_visible: not_implemented
+  config: ->
+    state: =>
+      if @visible(this) then 'visible' else 'hidden'
     initialize: =>
-      @initial = @visible_state()
       @states[@initial].enter(this)
-    before: =>
-      @cancel() if @visible_state() is @current
     triggers:
       toggle:
         visible: 'hidden'
@@ -15,9 +11,5 @@ class Sm.Hideable extends Js.StateMachine
     states:
       visible: enter: noop
       hidden: enter: noop
-
-  constructor: (config) ->
-    super(@config().deep_merge(config))
-
-  visible_state: =>
-    VISIBLE_STATES[@config.is_visible()]
+    methods:
+      visible: not_implemented
