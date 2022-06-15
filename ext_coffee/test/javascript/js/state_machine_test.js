@@ -463,4 +463,28 @@ describe('Js.StateMachine', () => {
       sm.trigger('run', 'arg', { key: 'key' })
     })
   })
+
+  describe('with chained triggers', () => {
+    beforeAll(() => {
+      config = {
+        initial: 'init',
+        triggers: {
+          run: {
+            init: 'next',
+            next: 'next_2',
+            next_2: 'next_3'
+          }
+        },
+        states: {
+          next: { enter: (sm) => { sm.trigger('run') } },
+          next_2: { enter: (sm) => { sm.trigger('run') } },
+        }
+      }
+    })
+
+    it('should chain and execute triggers', () => {
+      assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
+      assert.equal('next_3', sm.current)
+    })
+  })
 })

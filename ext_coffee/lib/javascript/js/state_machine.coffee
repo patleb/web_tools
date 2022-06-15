@@ -80,6 +80,7 @@ class Js.StateMachine
     if @finished()
       throw new Error("#resume can't be called once the @terminal state is reached")
     @stopped = false
+    @reset_trigger()
     @log @STATUS.RESUMED
 
   defer: ->
@@ -92,8 +93,8 @@ class Js.StateMachine
   reject: ->
     return unless @deferred
     @deferred = false
+    @reset_trigger()
     @log @STATUS.REJECTED
-    @canceled = false
     @status
 
   resolve: (args...) ->
@@ -101,7 +102,6 @@ class Js.StateMachine
     @deferred = false
     @log @STATUS.RESOLVED
     @set_next_state(args...)
-    @canceled = false
     @status
 
   reset: ->
@@ -112,8 +112,13 @@ class Js.StateMachine
     @log @STATUS.INITIALIZED
 
   trigger: (trigger, args...) ->
+    if @trigger_next
+      throw new Error('triggers can be chained, but not queued')
+    else if @triggered
+      @trigger_next = [trigger, args...]
+      return
+    @triggered = true
     @triggers[trigger](args...)
-    @canceled = false
     @status
 
   inspect: ->
@@ -139,6 +144,14 @@ class Js.StateMachine
     @current = @transition.to
     @run_after_hooks(args...)
     @log @STATUS.CHANGED
+    next = @trigger_next
+    @reset_trigger()
+    @trigger(next...) if next
+
+  reset_trigger: ->
+    @trigger_next = null
+    @triggered = false
+    @canceled = false
 
   # config.before, trigger.before, state.exit
   run_before_hooks: (args...) ->
