@@ -196,8 +196,9 @@ class Js.StateMachine
       transitions.each (current, next) =>
         if next.is_a Object
           [next, transition_hooks] = next.first()
-          transition_hooks.each (name, hook) -> hook.super = trigger_hooks[name]
-        hooks = transition_hooks ? trigger_hooks
+          transition_hooks.each (name, hook) -> hook.super = trigger_hooks[name] ? noop
+        hooks = TRIGGER_HOOKS.each_with_object {}, (name, memo) ->
+          memo[name] = transition_hooks?[name] ? trigger_hooks[name] ? noop
         @add_default_state(next)
         if current.start_with(WILDCARD)
           except_states =
@@ -215,7 +216,9 @@ class Js.StateMachine
             @add_default_state(state)
             @add_transition(trigger_name, state, next, hooks)
     @configure_states(config)
-    @add_wildards(wildcards)
+    wildcards.each (trigger, { except_states, next, hooks }) =>
+      @states.keys().except(except_states...).each (previous_state) =>
+        @add_transition(trigger, previous_state, next, hooks)
 
   configure_states: (config) ->
     @add_default_state(@initial) if @initial?
@@ -226,18 +229,13 @@ class Js.StateMachine
       state_config.slice(STATE_CONFIG...).each (key, value) =>
         @states[state_name][key] = value
 
-  add_wildards: (wildcards) ->
-    wildcards.each (trigger, { except_states, next, hooks }) =>
-      @states.keys().except(except_states...).each (previous_state) =>
-        @add_transition(trigger, previous_state, next, hooks)
-
   # data is assumed to be static --> should assign functions or pointers for dynamic usage
   add_default_state: (state) ->
     @states[state] ?= { exit: noop, enter: noop, data: {} }
 
-  add_transition: (trigger, current, next, { before = noop, after = noop } = {}) ->
+  add_transition: (trigger, current, next, hooks) ->
     @transitions[trigger] ?= {}
-    @transitions[trigger][current] = { next, before, after }
+    @transitions[trigger][current] = { next }.merge(hooks)
 
   extract_flags: ->
     flags = @states.each_with_object {}, (state_name, _, memo) ->
