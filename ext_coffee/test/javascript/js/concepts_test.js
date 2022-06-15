@@ -143,7 +143,7 @@ describe('Js.Concepts', () => {
       let event = dom.fire('hover', { target: body })
       assert.true(body.classes().include(Test.SimpleConcept.TRIGGERED))
       assert.equal(Test.SimpleConcept.Element.prototype.__body, Test.SimpleConcept.Element.prototype.body())
-      assert.equal(['body'], Test.SimpleConcept.Element.prototype.ACCESSORS)
+      assert.equal(['body'], Test.SimpleConcept.Element.prototype.GETTERS)
     })
   })
 })

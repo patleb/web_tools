@@ -92,7 +92,7 @@ class Js.Concepts
       scope[global_name] = concept
 
     @define_constants(concept_class)
-    @define_accessors(concept_class)
+    @define_getters(concept_class)
     @unless_defined concept_class::document_on, =>
       @define_document_on(concept)
 
@@ -115,7 +115,7 @@ class Js.Concepts
   #### PRIVATE ####
 
   @nullify_on_leave: ->
-    @ACCESSORS.each (name) => this["__#{name}"] = null
+    @GETTERS.each (name) => this["__#{name}"] = null
     @each (key, value) =>
       unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
@@ -127,7 +127,7 @@ class Js.Concepts
     concept.constructor::CONSTANTS.each (name, value) ->
       element_class::[name] = value
     @define_constants(element_class)
-    @define_accessors(element_class)
+    @define_getters(element_class)
     @unless_defined element_class::document_on, =>
       @define_document_on(element_class::)
 
@@ -148,12 +148,12 @@ class Js.Concepts
       return @define_constant(klass, name, value(), constants)
     constants[name] = klass::[name] = value
 
-  @define_accessors: (klass) =>
-    accessors = @unless_defined klass::accessors, =>
-      klass::accessors().each_with_object [], (name, callback, all) ->
+  @define_getters: (klass) =>
+    getters = @unless_defined klass::getters, =>
+      klass::getters().each_with_object [], (name, callback, all) ->
         klass::[name] = -> this["__#{name}"] ?= callback.apply(this, arguments)
         all.push(name)
-    klass::ACCESSORS = accessors or []
+    klass::GETTERS = getters or []
 
   @define_document_on: (object) ->
     object.document_on().each_slice(3).each ([events, selector, handler]) ->
