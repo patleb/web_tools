@@ -43,7 +43,7 @@ class Js.StateMachine
       @debug = config.debug ? false
       @initial = config.initial
       @terminal = Array.wrap(config.terminal).to_set()
-      @extract_transitions(config)
+      @extract_states(config)
       @extract_flags() if config.flags
     @reset()
 
@@ -186,7 +186,7 @@ class Js.StateMachine
   set_transition: ->
     @transition = @get_transition(@trigger_name)
 
-  extract_transitions: (config) ->
+  extract_states: (config) ->
     @states = {}
     @transitions = {}
     wildcards = {}
@@ -215,12 +215,6 @@ class Js.StateMachine
             state = state.strip()
             @add_default_state(state)
             @add_transition(trigger_name, state, next, hooks)
-    @configure_states(config)
-    wildcards.each (trigger, { except_states, next, hooks }) =>
-      @states.keys().except(except_states...).each (previous_state) =>
-        @add_transition(trigger, previous_state, next, hooks)
-
-  configure_states: (config) ->
     @add_default_state(@initial) if @initial?
     @terminal.each (terminal) =>
       @add_default_state(terminal)
@@ -228,6 +222,9 @@ class Js.StateMachine
       @add_default_state(state_name)
       state_config.slice(STATE_CONFIG...).each (key, value) =>
         @states[state_name][key] = value
+    wildcards.each (trigger, { except_states, next, hooks }) =>
+      @states.keys().except(except_states...).each (previous_state) =>
+        @add_transition(trigger, previous_state, next, hooks)
 
   # data is assumed to be static --> should assign functions or pointers for dynamic usage
   add_default_state: (state) ->
