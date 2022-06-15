@@ -110,6 +110,10 @@ Object.define_methods
       return item if f_key_item_self(key, item, this)
     return
 
+  first: ->
+    for key, item of this
+      return [key, item]
+
   keys: ->
     Object.keys(this)
 
