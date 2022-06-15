@@ -125,6 +125,6 @@ describe('Object', () => {
   })
 
   test('#deep_merge', () => {
-    assert.equal({ a: { b: 1, c: 2 } }, { a: { b: 1 } }.deep_merge({ a: { c: 2 } }))
+    assert.equal({ a: { b: 1, c: 2 }, d: null }, { a: { b: 1 }, d: {} }.deep_merge({ a: { c: 2 }, d: null }))
   })
 })

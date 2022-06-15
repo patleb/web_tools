@@ -3,7 +3,7 @@ Object.define_singleton_methods
     result = {}
     for object in others
       for key, value of object
-        if result[key]?.is_a?(Object) and value.is_a?(Object)
+        if result[key]?.is_a?(Object) and value?.is_a?(Object)
           result[key] = result[key].deep_merge(value)
         else
           result[key] = value
@@ -111,7 +111,7 @@ Object.define_methods
     return
 
   keys: ->
-    @constructor.keys(this)
+    Object.keys(this)
 
   values: ->
     item for key, item of this
