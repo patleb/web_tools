@@ -169,9 +169,9 @@ class Js.StateMachine
 
   # config.after, trigger.after, state.enter
   run_after_hooks: (args...) ->
-    @after(this, args...)
+    @states[@current].enter(this, args...)
     @transition.after(this, args...) unless @halted()
-    @states[@current].enter(this, args...) unless @halted()
+    @after(this, args...) unless @halted()
     @stop(args...) if @finished()
 
   halted: ->

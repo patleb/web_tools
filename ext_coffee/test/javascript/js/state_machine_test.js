@@ -156,9 +156,9 @@ describe('Js.StateMachine', () => {
           assert.called(config.before)
           assert.not.called(config.triggers.toggle.before)
           assert.not.called(config.states.down.exit)
-          assert.not.called(config.after)
-          assert.not.called(config.triggers.toggle.after)
           assert.not.called(config.states.up.enter)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.after)
         })
       })
 
@@ -176,9 +176,9 @@ describe('Js.StateMachine', () => {
           assert.called(config.before)
           assert.called(config.triggers.toggle.before)
           assert.not.called(config.states.down.exit)
-          assert.not.called(config.after)
-          assert.not.called(config.triggers.toggle.after)
           assert.not.called(config.states.up.enter)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.after)
         })
       })
 
@@ -196,29 +196,29 @@ describe('Js.StateMachine', () => {
           assert.called(config.before)
           assert.called(config.triggers.toggle.before)
           assert.called(config.states.down.exit)
-          assert.not.called(config.after)
-          assert.not.called(config.triggers.toggle.after)
           assert.not.called(config.states.up.enter)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.after)
         })
       })
 
-      describe('with #cancel called in #after hook', () => {
+      describe('with #cancel called in state #enter hook', () => {
         beforeAll(() => {
           config = toggle_with_hooks.deep_merge({
-            after: (sm) => { sm.cancel() },
+            states: { up: { enter: (sm) => { sm.cancel() } } },
           })
           js.spy_on(config)
         })
 
-        it('should call #after hook, but not any other hooks after', () => {
+        it('should call state #enter hook, but not any other hooks after', () => {
           assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
           assert.true(sm.is('up'))
           assert.called(config.before)
           assert.called(config.triggers.toggle.before)
           assert.called(config.states.down.exit)
-          assert.called(config.after)
+          assert.called(config.states.up.enter)
           assert.not.called(config.triggers.toggle.after)
-          assert.not.called(config.states.up.enter)
+          assert.not.called(config.after)
         })
       })
 
@@ -236,9 +236,9 @@ describe('Js.StateMachine', () => {
           assert.called(config.before)
           assert.called(config.triggers.toggle.before)
           assert.called(config.states.down.exit)
-          assert.called(config.after)
+          assert.called(config.states.up.enter)
           assert.called(config.triggers.toggle.after)
-          assert.not.called(config.states.up.enter)
+          assert.not.called(config.after)
         })
       })
 
@@ -257,9 +257,9 @@ describe('Js.StateMachine', () => {
           assert.called(config.on_stop)
           assert.not.called(config.triggers.toggle.before)
           assert.not.called(config.states.down.exit)
-          assert.not.called(config.after)
-          assert.not.called(config.triggers.toggle.after)
           assert.not.called(config.states.up.enter)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.after)
         })
       })
 
@@ -278,9 +278,9 @@ describe('Js.StateMachine', () => {
           assert.called(config.before)
           assert.not.called(config.triggers.toggle.before)
           assert.not.called(config.states.down.exit)
-          assert.not.called(config.after)
-          assert.not.called(config.triggers.toggle.after)
           assert.not.called(config.states.up.enter)
+          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.after)
         })
 
         it('should trigger #before hook on #reject, but not any other hooks after', () => {
@@ -302,9 +302,9 @@ describe('Js.StateMachine', () => {
           assert.called(config.before)
           assert.not.called(config.triggers.toggle.before)
           assert.not.called(config.states.down.exit)
-          assert.called(config.after)
-          assert.called(config.triggers.toggle.after)
           assert.called(config.states.up.enter)
+          assert.called(config.triggers.toggle.after)
+          assert.called(config.after)
         })
       })
     })
@@ -504,7 +504,7 @@ describe('Js.StateMachine', () => {
       js.spy_on(config)
     })
 
-    it.only('should call both hooks', () => {
+    it('should call both hooks', () => {
       assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
       assert.called(config.triggers.run.before, 1)
       assert.called(config.triggers.run.init.next.before, 1)
