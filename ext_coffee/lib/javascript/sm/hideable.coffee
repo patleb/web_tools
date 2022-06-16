@@ -4,7 +4,7 @@ class Sm.Hideable extends Js.StateMachine
       if @visible(this) then 'visible' else 'hidden'
     initialize: =>
       @states[@initial].enter(this)
-    triggers:
+    events:
       toggle:
         visible: 'hidden'
         hidden: 'visible'

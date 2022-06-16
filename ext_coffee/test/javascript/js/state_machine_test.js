@@ -27,14 +27,14 @@ describe('Js.StateMachine', () => {
     beforeAll(() => {
       toggle_base = {
         initial: 'up',
-        triggers: {
+        events: {
           toggle: { up: 'down', down: 'up' },
           void:   { nothing: 'nothing' }
         }
       }
     })
 
-    describe('#trigger, #is, #can, #stop, #resume', () => {
+    describe('#trigger, #is, #stop, #resume', () => {
       beforeAll(() => {
         config = toggle_base
       })
@@ -47,7 +47,7 @@ describe('Js.StateMachine', () => {
         assert.equal('up', sm.current)
         assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
         assert.equal('down', sm.current)
-        assert.raise(TypeError, () => sm.trigger('unknown_trigger'))
+        assert.raise(TypeError, () => sm.trigger('unknown_event'))
       })
 
       it('should check the state and the transition', () => {
@@ -56,9 +56,6 @@ describe('Js.StateMachine', () => {
         assert.false(sm.is('down'))
         assert.false(sm.is(/^down$/))
         assert.false(sm.is('unknown_state'))
-        assert.true(sm.can('toggle'))
-        assert.false(sm.can('void'))
-        assert.raise(TypeError, () => sm.can('unknown_trigger'))
       })
 
       it('should halt the transition and resume', () => {
@@ -80,7 +77,7 @@ describe('Js.StateMachine', () => {
           after: noop,
           on_deny: noop,
           on_stop: noop,
-          triggers: { toggle: { before: noop, after: noop } },
+          events: { toggle: { before: noop, after: noop } },
           states: { down: { exit: noop }, up: { enter: noop } },
           methods: { test: sm => sm.current },
         })
@@ -123,8 +120,8 @@ describe('Js.StateMachine', () => {
           'after',
           'on_deny',
           'on_stop',
-          'triggers.toggle.before',
-          'triggers.toggle.after',
+          'events.toggle.before',
+          'events.toggle.after',
           'states.down.exit',
           'states.up.enter'
         ]
@@ -154,30 +151,30 @@ describe('Js.StateMachine', () => {
           assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
-          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.events.toggle.before)
           assert.not.called(config.states.down.exit)
           assert.not.called(config.states.up.enter)
-          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.events.toggle.after)
           assert.not.called(config.after)
         })
       })
 
-      describe('with #cancel called in trigger #before hook', () => {
+      describe('with #cancel called in event #before hook', () => {
         beforeAll(() => {
           config = toggle_with_hooks.deep_merge({
-            triggers: { toggle: { before: (sm) => { sm.cancel() } } },
+            events: { toggle: { before: (sm) => { sm.cancel() } } },
           })
           js.spy_on(config)
         })
 
-        it('should call trigger #before hook, but not any other hooks after', () => {
+        it('should call event #before hook, but not any other hooks after', () => {
           assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
-          assert.called(config.triggers.toggle.before)
+          assert.called(config.events.toggle.before)
           assert.not.called(config.states.down.exit)
           assert.not.called(config.states.up.enter)
-          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.events.toggle.after)
           assert.not.called(config.after)
         })
       })
@@ -194,10 +191,10 @@ describe('Js.StateMachine', () => {
           assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
-          assert.called(config.triggers.toggle.before)
+          assert.called(config.events.toggle.before)
           assert.called(config.states.down.exit)
           assert.not.called(config.states.up.enter)
-          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.events.toggle.after)
           assert.not.called(config.after)
         })
       })
@@ -214,30 +211,30 @@ describe('Js.StateMachine', () => {
           assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
           assert.true(sm.is('up'))
           assert.called(config.before)
-          assert.called(config.triggers.toggle.before)
+          assert.called(config.events.toggle.before)
           assert.called(config.states.down.exit)
           assert.called(config.states.up.enter)
-          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.events.toggle.after)
           assert.not.called(config.after)
         })
       })
 
-      describe('with #cancel called in trigger #after hook', () => {
+      describe('with #cancel called in event #after hook', () => {
         beforeAll(() => {
           config = toggle_with_hooks.deep_merge({
-            triggers: { toggle: { after: (sm) => { sm.cancel() } } },
+            events: { toggle: { after: (sm) => { sm.cancel() } } },
           })
           js.spy_on(config)
         })
 
-        it('should trigger #after hook, but not any other hooks after', () => {
+        it('should event #after hook, but not any other hooks after', () => {
           assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
           assert.true(sm.is('up'))
           assert.called(config.before)
-          assert.called(config.triggers.toggle.before)
+          assert.called(config.events.toggle.before)
           assert.called(config.states.down.exit)
           assert.called(config.states.up.enter)
-          assert.called(config.triggers.toggle.after)
+          assert.called(config.events.toggle.after)
           assert.not.called(config.after)
         })
       })
@@ -250,15 +247,15 @@ describe('Js.StateMachine', () => {
           js.spy_on(config)
         })
 
-        it('should trigger #before hook, but not any other hooks after', () => {
+        it('should event #before hook, but not any other hooks after', () => {
           assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
           assert.called(config.on_stop)
-          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.events.toggle.before)
           assert.not.called(config.states.down.exit)
           assert.not.called(config.states.up.enter)
-          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.events.toggle.after)
           assert.not.called(config.after)
         })
       })
@@ -271,39 +268,39 @@ describe('Js.StateMachine', () => {
           js.spy_on(config)
         })
 
-        it('should trigger #before hook, but not any other hooks after', () => {
+        it('should event #before hook, but not any other hooks after', () => {
           assert.raise(Error, sm.defer)
           assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
-          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.events.toggle.before)
           assert.not.called(config.states.down.exit)
           assert.not.called(config.states.up.enter)
-          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.events.toggle.after)
           assert.not.called(config.after)
         })
 
-        it('should trigger #before hook on #reject, but not any other hooks after', () => {
+        it('should event #before hook on #reject, but not any other hooks after', () => {
           sm.trigger('toggle')
           assert.equal(sm.STATUS.REJECTED, sm.reject())
           assert.true(sm.is('down'))
           assert.called(config.before)
-          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.events.toggle.before)
           assert.not.called(config.states.down.exit)
           assert.not.called(config.after)
-          assert.not.called(config.triggers.toggle.after)
+          assert.not.called(config.events.toggle.after)
           assert.not.called(config.states.up.enter)
         })
 
-        it('should trigger #before hook on #resolve, but not any other before hooks', () => {
+        it('should event #before hook on #resolve, but not any other before hooks', () => {
           sm.trigger('toggle')
           assert.equal(sm.STATUS.CHANGED, sm.resolve())
           assert.true(sm.is('up'))
           assert.called(config.before)
-          assert.not.called(config.triggers.toggle.before)
+          assert.not.called(config.events.toggle.before)
           assert.not.called(config.states.down.exit)
           assert.called(config.states.up.enter)
-          assert.called(config.triggers.toggle.after)
+          assert.called(config.events.toggle.after)
           assert.called(config.after)
         })
       })
@@ -321,7 +318,7 @@ describe('Js.StateMachine', () => {
     beforeAll(() => {
       arrow_base = {
         initial: 'up-right',
-        triggers: {
+        events: {
           left:  { 'up-right':  'up-left',   'down-right': 'down-left' },
           right: { 'up-left':   'up-right',  'down-left':  'down-right' },
           down:  { 'up-left':   'down-left', 'up-right':   'down-right' },
@@ -378,7 +375,7 @@ describe('Js.StateMachine', () => {
     beforeAll(() => {
       config = {
         initial: 'parked',
-        triggers: {
+        events: {
           park:  { 'slower_speed, slow_speed': 'parked' },
           break: { '* - parked, stopped': 'stopped' },
           move:  { '*': 'slow_speed' },
@@ -423,8 +420,8 @@ describe('Js.StateMachine', () => {
           slow_speed: 'normal_speed'
         }
       }
-      const actual_transitions = sm.transitions.each_with_object({}, (trigger, transitions, all) => {
-        all[trigger] = transitions.each_with_object({}, (k, v, h) => h[k] = v.next)
+      const actual_transitions = sm.transitions.each_with_object({}, (event, transitions, all) => {
+        all[event] = transitions.each_with_object({}, (k, v, h) => h[k] = v.next)
       })
       assert.equal(expected_transitions, actual_transitions)
     })
@@ -446,7 +443,7 @@ describe('Js.StateMachine', () => {
       const shared_var = 'shared'
       config = {
         initial: 'init',
-        triggers: {
+        events: {
           run: {
             init: 'next',
             before: (sm, arg, { key }) => {
@@ -464,11 +461,11 @@ describe('Js.StateMachine', () => {
     })
   })
 
-  describe('with chained triggers', () => {
+  describe('with chained events', () => {
     beforeAll(() => {
       config = {
         initial: 'init',
-        triggers: {
+        events: {
           run: {
             init: 'next',
             next: 'next_2',
@@ -492,7 +489,7 @@ describe('Js.StateMachine', () => {
     beforeAll(() => {
       config = {
         initial: 'init',
-        triggers: {
+        events: {
           run: {
             init: { 'next': {
               before: (sm) => { sm.transition.before.super(sm) }
@@ -506,8 +503,8 @@ describe('Js.StateMachine', () => {
 
     it('should call both hooks', () => {
       assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
-      assert.called(config.triggers.run.before, 1)
-      assert.called(config.triggers.run.init.next.before, 1)
+      assert.called(config.events.run.before, 1)
+      assert.called(config.events.run.init.next.before, 1)
     })
   })
 })
