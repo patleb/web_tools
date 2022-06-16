@@ -6,7 +6,7 @@ class Js.StateMachine
   STATE_CONFIG  = STATE_HOOKS.add ['data']
   CLONABLE_IVARS = CONFIG_IVARS.add ['states', 'methods', 'transitions', 'paths']
   WILDCARD = '*'
-  WITHOUT = '-'
+  WITHOUT = ' - '
   LIST = ','
   FLAGS = '-'
 
@@ -200,9 +200,9 @@ class Js.StateMachine
         hooks = TRIGGER_HOOKS.each_with_object {}, (name, memo) ->
           memo[name] = transition_hooks?[name] ? trigger_hooks[name] ? noop
         @add_default_state(next)
-        if current.start_with(WILDCARD)
+        if current.start_with WILDCARD
           except_states =
-            if current.include(WITHOUT)
+            if current.include WITHOUT
               current.split(WITHOUT, 2).last().split(LIST).map (state) =>
                 state = state.strip()
                 @add_default_state(state)
