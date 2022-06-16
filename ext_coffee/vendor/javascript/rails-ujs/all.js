@@ -1,6 +1,7 @@
 import '@@vendor/rails-ujs/core_ext/array_as_array'
 import '@@vendor/rails-ujs/core_ext/array_wrap'
 import '@@vendor/rails-ujs/core_ext/custom_event'
+import '@@vendor/rails-ujs/core_ext/date_now'
 import '@@vendor/rails-ujs/core_ext/element_closest'
 import '@@vendor/rails-ujs/core_ext/element_focus'
 import '@@vendor/rails-ujs/core_ext/element_matches'

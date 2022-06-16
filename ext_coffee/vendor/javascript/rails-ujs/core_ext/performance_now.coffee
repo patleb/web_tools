@@ -8,10 +8,6 @@ if you want values similar to what you'd get with real perf.now, place this towa
 but in reality, you're just getting the delta between now() calls, so it's not terribly important where it's placed
 Gist: https://gist.github.com/jalbam/cc805ac3cfe14004ecdf323159ecf40e
 ###
-unless Date.now
-  Date.now = ->
-    new Date().getTime()
-
 unless window.performance?.now
   window.performance ?= {}
   if performance.timing?.navigationStart and performance.mark and performance.clearMarks and performance.getEntriesByName
