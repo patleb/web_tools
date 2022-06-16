@@ -150,9 +150,9 @@ class Js.StateMachine
     @current = @transition.next
     @run_after_hooks(args...)
     @log @STATUS.CHANGED
-    if (next = @event_next)
+    if (event_next = @event_next)
       @reset_trigger()
-      @trigger(next...)
+      @trigger(event_next...)
 
   reset_trigger: ->
     @event_next = null
