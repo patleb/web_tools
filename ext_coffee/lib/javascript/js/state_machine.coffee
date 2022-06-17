@@ -1,6 +1,6 @@
 class Js.StateMachine
   CONFIG_IVARS = ['debug', 'initial', 'terminal']
-  CONFIG_HOOKS = ['state', 'initialize', 'before', 'after', 'on_deny', 'on_stop']
+  CONFIG_HOOKS = ['state', 'initialize', 'before', 'after', 'delegate', 'on_deny', 'on_stop']
   EVENT_HOOKS  = ['before', 'after']
   STATE_HOOKS  = ['enter', 'exit']
   STATE_CONFIG = STATE_HOOKS.add ['data']
@@ -19,6 +19,7 @@ class Js.StateMachine
     'RESOLVED'
     'INITIALIZED'
     'HALTED'
+    'DELEGATED'
     'DENIED'
     'CHANGED'
     'IDLED'
@@ -138,8 +139,12 @@ class Js.StateMachine
   run_event: (args...) ->
     return @log @STATUS.HALTED if @halted()
     unless @has_transition()
-      @on_deny(this, args...)
-      return @log @STATUS.DENIED
+      if @delegate isnt noop
+        @delegate(this, @event, args...)
+        return @log @STATUS.DELEGATED
+      else
+        @on_deny(this, args...)
+        return @log @STATUS.DENIED
     return @log @STATUS.IDLED if @state(this) is @current
     @set_transition()
     @deferrable = true
@@ -192,7 +197,7 @@ class Js.StateMachine
     @transition = @get_transition(@event)
 
   get_transition: (event) ->
-    @transitions[event][@current]
+    @transitions[event]?[@current]
 
   extract_states: (config) ->
     @states = {}

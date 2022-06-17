@@ -47,7 +47,7 @@ describe('Js.StateMachine', () => {
         assert.equal('up', sm.current)
         assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
         assert.equal('down', sm.current)
-        assert.raise(TypeError, () => sm.trigger('unknown_event'))
+        assert.equal(sm.STATUS.DENIED, sm.trigger('unknown_event'))
       })
 
       it('should check the state and the transition', () => {
@@ -99,7 +99,7 @@ describe('Js.StateMachine', () => {
         ivars.each((ivar) => {
           assert.same(sm[ivar], copy[ivar])
         })
-        const methods = ['state', 'initialize', 'before', 'after', 'on_deny', 'on_stop']
+        const methods = ['state', 'initialize', 'before', 'after', 'delegate', 'on_deny', 'on_stop']
         methods.each((method) => {
           assert.same(sm[method], copy[method])
         })
@@ -539,6 +539,45 @@ describe('Js.StateMachine', () => {
       assert.equal('neutral', sm.current)
       assert.equal(sm.STATUS.CHANGED, sm.trigger('stop'))
       assert.equal('stopped', sm.current)
+    })
+  })
+
+  describe('with #delegate', () => {
+    beforeAll(() => {
+      config = {
+        initialize: (sm) => {
+          sm.child = new Js.StateMachine({
+            initial: 'init',
+            events: {
+              execute: {
+                init: 'other'
+              },
+              run: {
+                other: 'next'
+              },
+            }
+          })
+        },
+        initial: 'init',
+        events: {
+          run: {
+            other: 'next',
+          }
+        },
+        delegate: (sm, event) => {
+          sm.child.trigger(event)
+        }
+      }
+    })
+
+    it('should delegate the event triggered to the child if no trigger or no transition', () => {
+      assert.equal(sm.STATUS.DELEGATED, sm.trigger('execute'))
+      assert.equal(sm.STATUS.CHANGED, sm.child.status)
+      assert.equal('other', sm.child.current)
+      assert.equal('init', sm.current)
+      assert.equal(sm.STATUS.DELEGATED, sm.trigger('run'))
+      assert.equal('next', sm.child.current)
+      assert.equal('init', sm.current)
     })
   })
 })
