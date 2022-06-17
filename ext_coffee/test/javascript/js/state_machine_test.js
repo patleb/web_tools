@@ -492,7 +492,7 @@ describe('Js.StateMachine', () => {
         events: {
           run: {
             init: { 'next': {
-              before: (sm) => { sm.transition.before.super(sm) }
+              before: (sm) => { sm.transition.event.before(sm) }
             }},
             before: noop
           },
@@ -505,6 +505,40 @@ describe('Js.StateMachine', () => {
       assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
       assert.called(config.events.run.before, 1)
       assert.called(config.events.run.init.next.before, 1)
+    })
+  })
+
+  describe('with several next states', () => {
+    beforeAll(() => {
+      config = {
+        initial: 'init',
+        events: {
+          run: {
+            '* - next, other': { '* - init': {
+              next: (sm) => 'other'
+            }},
+          },
+          execute: {
+            other: { 'running, neutral': {
+              next: (sm) => 'neutral'
+            }}
+          },
+          stop: {
+            'running, neutral': { 'other, stopped': {
+              next: (sm) => 'stopped'
+            }}
+          }
+        }
+      }
+    })
+
+    it('should use the #next method to set the state', () => {
+      assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
+      assert.equal('other', sm.current)
+      assert.equal(sm.STATUS.CHANGED, sm.trigger('execute'))
+      assert.equal('neutral', sm.current)
+      assert.equal(sm.STATUS.CHANGED, sm.trigger('stop'))
+      assert.equal('stopped', sm.current)
     })
   })
 })

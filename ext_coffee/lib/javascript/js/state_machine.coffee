@@ -6,7 +6,7 @@ class Js.StateMachine
   STATE_CONFIG = STATE_HOOKS.add ['data']
   CLONABLE_IVARS = CONFIG_IVARS.add ['states', 'methods', 'transitions', 'paths']
   WILDCARD = '*'
-  WITHOUT = ' - '
+  EXCEPT = ' - '
   LIST = ','
   FLAGS = '-'
 
@@ -82,7 +82,7 @@ class Js.StateMachine
 
   defer: (args...) ->
     unless @deferrable
-      throw new Error('#defer must be called only once in config.(before | events[name].before | states[name].exit)')
+      throw new Error('#defer must be called only once in before hooks')
     @deferred = [@event, args...]
     @deferrable = false
     @log @STATUS.DEFERRED
@@ -107,7 +107,7 @@ class Js.StateMachine
 
   reset: ->
     @deferred = null
-    @deferrable = @canceled = @stopped = false
+    @canceled = @stopped = false
     @initial = @state(this) unless @state is noop
     @initialize(this)
     @previous = null
@@ -129,25 +129,33 @@ class Js.StateMachine
   inspect: ->
     @paths ||= @transitions.each_with_object {}, (event, transitions, memo) ->
       transitions.each (current, transition) ->
-        (memo[current] ||= {})[event] = transition.next
+        next = transition.next
+        next = transition.next_states if next.is_a Function
+        (memo[current] ||= {})[event] = next
 
   #### PRIVATE ####
 
   run_event: (args...) ->
     return @log @STATUS.HALTED if @halted()
-    unless @has_transition(@event)
+    unless @has_transition()
       @on_deny(this, args...)
       return @log @STATUS.DENIED
     return @log @STATUS.IDLED if @state(this) is @current
     @set_transition()
     @deferrable = true
     @run_before_hooks(args...)
+    @deferrable = false
     return @log @STATUS.HALTED if @halted()
     @set_next_state(args...)
 
   set_next_state: (args...) ->
+    if (next = @transition.next).is_a Function
+      next = next(this, args...)
+      unless next of @transition.next_states
+        @on_deny(this, args...)
+        return @log @STATUS.DENIED
     @previous = @current
-    @current = @transition.next
+    @current = next
     @run_after_hooks(args...)
     @log @STATUS.CHANGED
     if (event_next = @event_next)
@@ -164,7 +172,7 @@ class Js.StateMachine
     @transition.before(this, args...) unless @halted()
     @states[@current].exit(this, args...) unless @halted()
 
-  # config.after, event.after, state.enter
+  # state.enter, event.after, config.after
   run_after_hooks: (args...) ->
     @states[@current].enter(this, args...)
     @transition.after(this, args...) unless @halted()
@@ -177,57 +185,90 @@ class Js.StateMachine
   finished: ->
     @current of @terminal
 
-  has_transition: (event) ->
-    @get_transition(event)?
-
-  get_transition: (event) ->
-    @transitions[event][@current]
+  has_transition: ->
+    @get_transition(@event)?
 
   set_transition: ->
     @transition = @get_transition(@event)
 
+  get_transition: (event) ->
+    @transitions[event][@current]
+
   extract_states: (config) ->
     @states = {}
     @transitions = {}
-    wildcards = {}
+    current_wildcards = {}
+    next_wildcards = {}
     config.events?.each (event_name, event_config) =>
       event_hooks = event_config.slice(EVENT_HOOKS...)
       transitions = event_config.except(EVENT_HOOKS...)
       transitions.each (current, next) =>
         if next.is_a Object
           [next, transition_hooks] = next.first()
-          transition_hooks.each (name, hook) -> hook.super = event_hooks[name] ? noop
-        hooks = EVENT_HOOKS.each_with_object {}, (name, memo) ->
-          memo[name] = transition_hooks?[name] ? event_hooks[name] ? noop
-        @add_default_state(next)
-        if current.start_with WILDCARD
-          except_states =
-            if current.include WITHOUT
-              current.split(WITHOUT, 2).last().split(LIST).map (state) =>
-                state = state.strip()
-                @add_default_state(state)
-                state
-            else
-              []
-          wildcards[event_name] = { except_states, next, hooks }
-        else
-          current.split(LIST).each (state) =>
-            state = state.strip()
-            @add_default_state(state)
-            @add_transition(event_name, state, next, hooks)
-    @add_default_state(@initial) if @initial?
+          if transition_hooks.next
+            hooks = @merge_hooks(transition_hooks, event_hooks)
+            if hooks.next_states = @add_wildcard_or_states(next_wildcards, event_name, next, transition_hooks.next)?.to_set()
+              hooks.next_states.each (next) =>
+                @add_wildcard_or_states(current_wildcards, event_name, current, next, hooks)?.each (state) =>
+                  @add_transition(event_name, state, transition_hooks.next, hooks)
+              return
+            next = transition_hooks.next
+        unless hooks
+          hooks = @merge_hooks(transition_hooks, event_hooks)
+          @add_state(next)
+        @add_wildcard_or_states(current_wildcards, event_name, current, next, hooks)?.each (state) =>
+          @add_transition(event_name, state, next, hooks)
+    @configure_states(config)
+    states = @states.keys()
+    current_wildcards.each (event, { except_states, next, hooks }) =>
+      states.except(except_states...).each (state) =>
+        @add_transition(event, state, next, hooks)
+    states = states.to_set()
+    next_wildcards.each (event, { except_states, next }) =>
+      next_states = if except_states.present() then states.except(except_states...) else states
+      @transitions[event].each (current, transition) =>
+        transition.next_states = next_states if transition.next is next
+
+  configure_states: (config) ->
+    @add_state(@initial) if @initial
     @terminal.each (terminal) =>
-      @add_default_state(terminal)
+      @add_state(terminal)
     config.states?.each (state_name, state_config) =>
-      @add_default_state(state_name)
+      @add_state(state_name)
       state_config.slice(STATE_CONFIG...).each (key, value) =>
         @states[state_name][key] = value
-    wildcards.each (event, { except_states, next, hooks }) =>
-      @states.keys().except(except_states...).each (previous_state) =>
-        @add_transition(event, previous_state, next, hooks)
+
+  merge_hooks: (transition_hooks, event_hooks) ->
+    EVENT_HOOKS.each_with_object {}, (name, memo) ->
+      if (transition_hook = transition_hooks?[name])
+        memo[name] = transition_hook
+        memo.event ||= {}
+        memo.event[name] = event_hooks[name] ? noop
+      else
+        memo[name] = event_hooks[name] ? noop
+
+  add_wildcard_or_states: (wildcards, event, states, next, hooks) ->
+    if states.start_with WILDCARD
+      except_states = @add_except_states(states)
+      wildcards[event] = { except_states, next, hooks }
+      null
+    else
+      @add_states(states)
+
+  add_except_states: (states) ->
+    if states.include EXCEPT
+      @add_states(states.split(EXCEPT, 2).last())
+    else
+      []
+
+  add_states: (states) ->
+    states.split(LIST).map (state) =>
+      state = state.strip()
+      @add_state(state)
+      state
 
   # data is assumed to be static --> should assign functions or pointers for dynamic usage
-  add_default_state: (state) ->
+  add_state: (state) ->
     @states[state] ?= { exit: noop, enter: noop, data: {} }
 
   add_transition: (event, current, next, hooks) ->
