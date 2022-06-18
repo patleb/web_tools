@@ -513,21 +513,15 @@ describe('Js.StateMachine', () => {
       config = {
         initial: 'init',
         events: {
-          run: {
-            '* - next, other': { '* - init': {
-              next: (sm) => 'other'
-            }},
-          },
-          execute: {
-            other: { 'running, neutral': {
-              next: (sm) => 'neutral'
-            }}
-          },
-          stop: {
-            'running, neutral': { 'other, stopped': {
-              next: (sm) => 'stopped'
-            }}
-          }
+          run: { '* - next, other': { '* - init': {
+            next: (sm) => 'other'
+          }}},
+          execute: { other: { 'running, neutral': {
+            next: (sm) => 'neutral'
+          }}},
+          stop: { 'running, neutral': { 'other, stopped': {
+            next: (sm) => 'stopped'
+          }}}
         }
       }
     })
@@ -549,20 +543,14 @@ describe('Js.StateMachine', () => {
           sm.child = new Js.StateMachine({
             initial: 'init',
             events: {
-              execute: {
-                init: 'other'
-              },
-              run: {
-                other: 'next'
-              },
+              execute: { init: 'other' },
+              run: { other: 'next' },
             }
           })
         },
         initial: 'init',
         events: {
-          run: {
-            other: 'next',
-          }
+          run: { other: 'next' }
         },
         delegate: (sm, event) => {
           sm.child.trigger(event)

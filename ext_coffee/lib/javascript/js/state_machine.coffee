@@ -1,8 +1,8 @@
 class Js.StateMachine
   CONFIG_IVARS = ['debug', 'initial', 'terminal']
   CONFIG_HOOKS = ['state', 'initialize', 'before', 'after', 'delegate', 'on_deny', 'on_stop']
-  EVENT_HOOKS  = ['before', 'after']
-  STATE_HOOKS  = ['enter', 'exit']
+  EVENT_HOOKS = ['before', 'after']
+  STATE_HOOKS = ['enter', 'exit']
   STATE_CONFIG = STATE_HOOKS.add ['data']
   CLONABLE_IVARS = CONFIG_IVARS.add ['states', 'methods', 'transitions', 'paths']
   WILDCARD = '*'
@@ -226,8 +226,8 @@ class Js.StateMachine
     @configure_states(config)
     states = @states.keys()
     current_wildcards.each (event, { except_states, next, hooks }) =>
-      states.except(except_states...).each (state) =>
-        @add_transition(event, state, next, hooks)
+      states.except(except_states...).each (current) =>
+        @add_transition(event, current, next, hooks)
     states = states.to_set()
     next_wildcards.each (event, { except_states, next }) =>
       next_states = if except_states.present() then states.except(except_states...) else states
