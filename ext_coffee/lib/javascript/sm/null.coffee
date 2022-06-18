@@ -1,4 +1,4 @@
 class Sm.Null extends Js.StateMachine
-  constructor: noop
+  new: noop
   is: -> false
   trigger: -> false
