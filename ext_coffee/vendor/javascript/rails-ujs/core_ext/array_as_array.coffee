@@ -14,4 +14,4 @@ Array.as_array = (object) ->
   else if typeof object isnt 'object' or not object.hasOwnProperty('length') or object.length < 0
     false
   else
-    object.length is 0 or object[0]?.nodeType
+    object.length is 0 or !!(object[0]?.nodeType)
