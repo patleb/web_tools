@@ -24,7 +24,7 @@ window.polyfill = (object, name, callback) ->
   object[name] ?= ->
     callback.apply(this, arguments)
 
-for type in [Array, Boolean, Element, Function, JSON, Number, Object, RegExp, String]
+for type in [Array, Boolean, Element, Function, Number, Object, RegExp, String]
   do (type) ->
     type.define_singleton_methods = (methods) ->
       for name, callback of methods
@@ -65,6 +65,14 @@ for type in [Array, Boolean, Element, Function, JSON, Number, Object, RegExp, St
 
         type["#{pattern}_method"] = (name, callback) ->
           window[pattern] type::, name, callback
+
+JSON.define_singleton_methods = (methods) ->
+  for name, callback of methods
+    JSON.define_singleton_method(name, callback)
+
+JSON.define_singleton_method = (name, callback) ->
+  Logger.warn_define_singleton_method(JSON, name)
+  JSON[name] = callback
 
 for type in [Array, Boolean, Number, Object, RegExp, String]
   do (type) ->
