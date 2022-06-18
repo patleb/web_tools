@@ -1,4 +1,4 @@
-RegExp.define_methods
+RegExp.override_methods
   is_a: (klass) ->
     @constructor is klass
 
@@ -16,5 +16,6 @@ RegExp.define_methods
     return false unless @source is other.source
     @flags.chars().sort().eql(other.flags.chars().sort())
 
+RegExp.define_methods
   match: (str) ->
     str.match(this)

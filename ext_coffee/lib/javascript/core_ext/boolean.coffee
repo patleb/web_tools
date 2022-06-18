@@ -1,7 +1,20 @@
-Boolean.define_methods
+Boolean.override_methods
   is_a: (klass) ->
     @constructor is klass
 
+  blank: ->
+    not @valueOf()
+
+  present: ->
+    @valueOf()
+
+  presence: ->
+    @valueOf() if @valueOf()
+
+  eql: (other) ->
+    this is other
+
+Boolean.define_methods
   to_b: ->
     @valueOf()
 
@@ -16,18 +29,6 @@ Boolean.define_methods
 
   to_s: ->
     @toString()
-
-  blank: ->
-    not @valueOf()
-
-  present: ->
-    @valueOf()
-
-  presence: ->
-    @valueOf() if @valueOf()
-
-  eql: (other) ->
-    this is other
 
   safe_text: ->
     @toString()

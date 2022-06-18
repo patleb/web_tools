@@ -34,12 +34,19 @@ for type in [Array, Boolean, Element, Function, JSON, Number, Object, RegExp, St
       Logger.warn_define_singleton_method(type, name)
       type[name] = callback
 
+    type.override_methods = (methods) ->
+      for name, callback of methods
+        type.override_method(name, callback)
+
+    type.override_method = (name, callback) ->
+      type.define_method(name, callback, false)
+
     type.define_methods = (methods) ->
       for name, callback of methods
         type.define_method(name, callback)
 
-    type.define_method = (name, callback) ->
-      Logger.warn_define_method(type, name)
+    type.define_method = (name, callback, warn = true) ->
+      Logger.warn_define_method(type, name) if warn
       type::[name] = callback
       Object.defineProperty(type::, name, enumerable: false)
 

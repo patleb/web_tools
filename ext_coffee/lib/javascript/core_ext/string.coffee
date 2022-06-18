@@ -6,13 +6,44 @@ HTML_ESCAPES =
   "'": '&#x27;'
   '`': '&#x60;'
 
-Logger.ignored_methods.String ?= {}
-Logger.ignored_methods.String.sub = true
+String.override_methods
+  sub: (pattern, string_or_f_match) ->
+    @replace(pattern, string_or_f_match)
 
-String.define_methods
+  dup: not_implemented
+
   is_a: (klass) ->
     @constructor is klass
 
+  to_a: ->
+    result = JSON.safe_parse(this)
+    throw "invalid value for Array: '#{this}'" unless result.is_a Array
+    result
+
+  to_h: ->
+    result = JSON.safe_parse(this)
+    throw "invalid value for Object: '#{this}'" unless result.is_a Object
+    result
+
+  blank: ->
+    @trim().length is 0
+
+  present: ->
+    not @blank()
+
+  presence: ->
+    @toString() unless @blank()
+
+  empty: ->
+    @length is 0
+
+  eql: (other) ->
+    this is other
+
+  first: ->
+    this[0]
+
+String.define_methods
   to_b: ->
     return true if @match(/^(true|t|yes|y|1|1\.0|✓)$/i)
     return false if @blank() or @match(/^(false|f|no|n|0|0\.0|✘)$/i)
@@ -32,39 +63,11 @@ String.define_methods
   to_s: ->
     @toString()
 
-  to_a: ->
-    result = JSON.safe_parse(this)
-    throw "invalid value for Array: '#{this}'" unless result.is_a Array
-    result
-
-  to_h: ->
-    result = JSON.safe_parse(this)
-    throw "invalid value for Object: '#{this}'" unless result.is_a Object
-    result
-
   to_date: ->
     Date.parse(this)
 
   html_blank: ->
     @gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
-
-  blank: ->
-    @trim().length is 0
-
-  present: ->
-    not @blank()
-
-  presence: ->
-    @toString() unless @blank()
-
-  empty: ->
-    @length is 0
-
-  eql: (other) ->
-    this is other
-
-  first: ->
-    this[0]
 
   last: ->
     this[@length - 1]
@@ -102,9 +105,6 @@ String.define_methods
 
   upcase: ->
     @toUpperCase()
-
-  sub: (pattern, string_or_f_match) ->
-    @replace(pattern, string_or_f_match)
 
   gsub: (pattern, string_or_f_match) ->
     pattern =

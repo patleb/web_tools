@@ -1,7 +1,7 @@
-Logger.ignored_methods.Array ?= {}
-Logger.ignored_methods.Array.dup = true
+Array.override_methods
+  dup: ->
+    @slice()
 
-Array.define_methods
   is_a: (klass) ->
     @constructor is klass
 
@@ -12,12 +12,6 @@ Array.define_methods
     @each_with_object {}, ([key, value...], memo) ->
       throw "Array#to_h: invalid conversion structure" if value.length isnt 1
       memo[key] = value[0]
-
-  to_s: ->
-    @toString()
-
-  to_set: ->
-    @map((v) -> [v, true]).to_h()
 
   blank: ->
     @length is 0
@@ -45,16 +39,6 @@ Array.define_methods
         return false if other[i++]?
     true
 
-  has_index: (index) ->
-    0 <= index < @length
-
-  clear: ->
-    @length = 0
-
-  index: (item, start_index = 0) ->
-    if (index = @indexOf(item, start_index)) != -1
-      index
-
   any: (f_item_index_self) ->
     if f_item_index_self?
       @some(f_item_index_self)
@@ -63,18 +47,6 @@ Array.define_methods
 
   all: (f_item_index_self) ->
     @every(f_item_index_self)
-
-  include: (item) ->
-    item in this
-
-  exclude: (item) ->
-    not @include(item)
-
-  max: ->
-    Math.max this
-
-  min: ->
-    Math.min this
 
   each: (f_item_index_self) ->
     @forEach(f_item_index_self)
@@ -91,6 +63,54 @@ Array.define_methods
       f_item_memo_index_self(item, memo, index, self)
       accumulator
     , accumulator
+
+  select: (f_item_index_self) ->
+    @filter(f_item_index_self)
+
+  reject: (f_item_index_self) ->
+    @filter (item, index, self) ->
+      not f_item_index_self(item, index, self)
+
+  except: (items...) ->
+    item for item in this when item not in items
+
+  compact: ->
+    @filter (item) -> item?
+
+  first: ->
+    this[0]
+
+  html_map: (f_item_index_self) ->
+    h_(@map(f_item_index_self))
+
+Array.define_methods
+  to_s: ->
+    @toString()
+
+  to_set: ->
+    @map((v) -> [v, true]).to_h()
+
+  has_index: (index) ->
+    0 <= index < @length
+
+  clear: ->
+    @length = 0
+
+  index: (item, start_index = 0) ->
+    if (index = @indexOf(item, start_index)) != -1
+      index
+
+  include: (item) ->
+    item in this
+
+  exclude: (item) ->
+    not @include(item)
+
+  max: ->
+    Math.max this
+
+  min: ->
+    Math.min this
 
   each_slice: (size = 1) ->
     return [] unless size? and size >= 1
@@ -116,25 +136,6 @@ Array.define_methods
         return -1 if not rw? or lw < rw
       left.index - right.index
     .pluck('item')
-
-  select: (f_item_index_self) ->
-    @filter(f_item_index_self)
-
-  reject: (f_item_index_self) ->
-    @filter (item, index, self) ->
-      not f_item_index_self(item, index, self)
-
-  except: (items...) ->
-    item for item in this when item not in items
-
-  compact: ->
-    @filter (item) -> item?
-
-  dup: ->
-    @slice()
-
-  first: ->
-    this[0]
 
   last: ->
     this[@length - 1]
@@ -174,9 +175,6 @@ Array.define_methods
       @pop()
     else
       {}
-
-  html_map: (f_item_index_self) ->
-    h_(@map(f_item_index_self))
 
 Array.polyfill_methods
   find: (f_item_index_self) ->

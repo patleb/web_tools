@@ -29,7 +29,7 @@ Function.define_singleton_methods
         fn.apply(self, args)
       timeout = setTimeout delayed, wait
 
-Function.define_methods
+Function.override_methods
   is_a: (klass) ->
     @constructor is klass
 
@@ -45,6 +45,7 @@ Function.define_methods
   eql: (other) ->
     this is other
 
+Function.define_methods
   include: (base, keys...) ->
     Function.delegate_to this::, base::, keys...
     base.included?(this::)

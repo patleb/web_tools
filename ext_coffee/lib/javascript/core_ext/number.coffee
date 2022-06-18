@@ -1,7 +1,20 @@
-Number.define_methods
+Number.override_methods
   is_a: (klass) ->
     @constructor is klass
 
+  blank: ->
+    isNaN(this)
+
+  present: ->
+    not @blank()
+
+  presence: ->
+    @valueOf() unless @blank()
+
+  eql: (other) ->
+    this is other
+
+Number.define_methods
   to_b: ->
     return true if this is 1
     return false if this is 0
@@ -18,18 +31,6 @@ Number.define_methods
 
   to_s: ->
     @toString()
-
-  blank: ->
-    isNaN(this)
-
-  present: ->
-    not @blank()
-
-  presence: ->
-    @valueOf() unless @blank()
-
-  eql: (other) ->
-    this is other
 
   safe_text: ->
     @toString()
