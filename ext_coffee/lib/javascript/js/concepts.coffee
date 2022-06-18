@@ -88,7 +88,7 @@ class Js.Concepts
         scope = scope.join('.').constantize()
       else
         scope = window
-      Logger.warn_define_singleton_method(scope, global_name)
+      warn_define_singleton_method(scope, global_name)
       scope[global_name] = concept
 
     @define_constants(concept_class)

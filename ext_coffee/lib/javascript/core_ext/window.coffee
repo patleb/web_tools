@@ -24,6 +24,16 @@ window.polyfill = (object, name, callback) ->
   object[name] ?= ->
     callback.apply(this, arguments)
 
+window.warn_define_method = (klass, name) =>
+  if klass::[name]
+    klass_name = klass.class_name or klass.name
+    Logger.debug "ExtCoffee Overriding #{klass_name}.prototype.#{name}"
+
+window.warn_define_singleton_method = (klass, name) =>
+  if klass[name]
+    klass_name = klass.class_name or klass.name or klass.constructor.name
+    Logger.debug "ExtCoffee Overriding #{klass_name}.#{name}"
+
 for type in [Array, Boolean, Element, Function, Number, Object, RegExp, String]
   do (type) ->
     type.define_singleton_methods = (methods) ->
@@ -31,7 +41,7 @@ for type in [Array, Boolean, Element, Function, Number, Object, RegExp, String]
         type.define_singleton_method(name, callback)
 
     type.define_singleton_method = (name, callback) ->
-      Logger.warn_define_singleton_method(type, name)
+      warn_define_singleton_method(type, name)
       type[name] = callback
 
     type.override_methods = (methods) ->
@@ -46,7 +56,7 @@ for type in [Array, Boolean, Element, Function, Number, Object, RegExp, String]
         type.define_method(name, callback)
 
     type.define_method = (name, callback, warn = true) ->
-      Logger.warn_define_method(type, name) if warn
+      warn_define_method(type, name) if warn
       type::[name] = callback
       Object.defineProperty(type::, name, enumerable: false)
 
@@ -71,7 +81,7 @@ JSON.define_singleton_methods = (methods) ->
     JSON.define_singleton_method(name, callback)
 
 JSON.define_singleton_method = (name, callback) ->
-  Logger.warn_define_singleton_method(JSON, name)
+  warn_define_singleton_method(JSON, name)
   JSON[name] = callback
 
 for type in [Array, Boolean, Number, Object, RegExp, String]
