@@ -1,4 +1,10 @@
 HTMLElement.define_methods
+  is_a: (klass) ->
+    @constructor is klass
+
+  to_s: ->
+    @outerHTML
+
   classes: ->
     Array.wrap(@classList)
 

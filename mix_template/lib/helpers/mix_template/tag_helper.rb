@@ -106,7 +106,7 @@ module MixTemplate
           options = css_or_content_or_options
         else
           content = css_or_content_or_options
-          options = content_or_options
+          options = content_or_options if content_or_options.is_a? Hash
         end
       end
       options = options ? options.dup : {}
@@ -117,7 +117,7 @@ module MixTemplate
       if id_classes
         id, classes = parse_id_classes(id_classes)
         options[:id] ||= id
-        options = merge_classes(options, classes)
+        options[:class] = merge_classes(options, classes)
       end
 
       if options[:class].is_a? Array
@@ -160,14 +160,11 @@ module MixTemplate
 
     def merge_classes(options, classes)
       if options.has_key? :class
-        options.merge(class: classes) do |_key, old_val, new_val|
-          old_array = classes_to_array(old_val)
-          new_array = classes_to_array(new_val)
-          (old_array | new_array).reject(&:blank?)
-        end
+        old_array = classes_to_array(options[:class])
+        new_array = classes_to_array(classes)
+        (old_array | new_array).reject(&:blank?)
       else
-        options[:class] = classes_to_array(classes).reject(&:blank?)
-        options
+        classes_to_array(classes).reject(&:blank?)
       end
     end
 
