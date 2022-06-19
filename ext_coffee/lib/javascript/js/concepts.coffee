@@ -15,12 +15,12 @@ class Js.Concepts
     leave: []
     leave_clean: []
 
-  @initialize: ({ concepts = [], modules = [], except = [] } = {}) =>
+  @initialize: ({ concepts = [], modules = [], except = [] } = {}) ->
     if initialized
       return Logger.debug('Js.Concepts already initialized')
     initialized = true
-    concepts.each (name) => @add_concept(name)
-    modules.each (name) => @add_module(name)
+    Array.wrap(concepts).each (name) => @add_concept(name)
+    Array.wrap(modules).each (name) => @add_module(name)
     document.addEventListener 'DOMContentLoaded', @on_load
     document.addEventListener 'turbolinks:before-render', @on_leave
     document.addEventListener 'turbolinks:load', @on_ready
@@ -53,7 +53,7 @@ class Js.Concepts
     return if event.data.info.once
     @instances.ready.each (concept) -> concept.ready()
 
-  @add_module: (module) =>
+  @add_module: (module) ->
     modules = []
     module.constantize().each (name) =>
       if name.match(MODULE)
@@ -62,7 +62,7 @@ class Js.Concepts
         @add_concept(name, { module })
     modules.each (module) => @add_module(module)
 
-  @add_concept: (name, { module = null } = {}) =>
+  @add_concept: (name, { module = null } = {}) ->
     return unless name.match(CONCEPT)
 
     name = "#{module}.#{name}" if module?
@@ -79,7 +79,7 @@ class Js.Concepts
     concept_class::class_name = class_name
 
     module_class = module.constantize()
-    module_class[class_name] = concept = new concept_class
+    module_class[class_name] = concept = new concept_class # singleton
 
     if (global = concept_class::global)
       global_name = if global is true then class_name.sub(CONCEPT, '') else global
@@ -109,10 +109,32 @@ class Js.Concepts
       @ready?()
       true
 
+    concept_class::ready_elements ?= (selector) ->
+      return unless (elements = Rails.$(selector)).present()
+
+      @elements = elements.each_with_object {}, (element, memo) =>
+        element_class = "#{type.camelize()}Element" if type = element.getAttribute('data-element')
+        element_class ||= 'Element'
+        uid = Math.uid()
+        element.setAttribute('data-uid', uid)
+        memo[uid] = new this[element_class](element)
+        memo[uid].uid = uid
+
+      @elements.each_with_object [], (uid, element, memo) ->
+        unless memo.include(element.__proto__)
+          memo.push(element.__proto__)
+          element.ready?()
+
+    concept_class::leave_elements ?= ->
+      @elements?.each_with_object [], (uid, element, memo) ->
+        unless memo.includes(element.__proto__)
+          memo.push(element.__proto__)
+          element.leave?()
+
     concept_class::select((name) -> name.match(ELEMENT)).each (name, element_class) =>
       @add_element(name, element_class, concept) unless element_class.class_name
 
-  #### PRIVATE ####
+  # Private
 
   @nullify_on_leave: ->
     @GETTERS.each (name) => this["__#{name}"] = null
@@ -120,7 +142,7 @@ class Js.Concepts
       unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
 
-  @add_element: (name, element_class, concept) =>
+  @add_element: (name, element_class, concept) ->
     element_class::concept = concept
     element_class.class_name = element_class::class_name = name
 
@@ -131,13 +153,13 @@ class Js.Concepts
     @unless_defined element_class::document_on, =>
       @define_document_on(element_class::)
 
-  @define_constants: (klass) =>
+  @define_constants: (klass) ->
     constants = @unless_defined klass::constants, =>
       klass::constants().each_with_object {}, (name, value, constants) =>
         @define_constant(klass, name, value, constants)
     klass::CONSTANTS = constants or {}
 
-  @define_constant: (klass, name, value, constants) =>
+  @define_constant: (klass, name, value, constants) ->
     if value.class_name
       scope = value.class_name
       scope = value::concept.class_name if scope is 'Element'
@@ -148,10 +170,11 @@ class Js.Concepts
       return @define_constant(klass, name, value(), constants)
     constants[name] = klass::[name] = value
 
-  @define_getters: (klass) =>
-    getters = @unless_defined klass::getters, =>
+  @define_getters: (klass) ->
+    getters = @unless_defined klass::getters, ->
       klass::getters().each_with_object [], (name, callback, all) ->
-        klass::[name] = -> this["__#{name}"] ?= callback.apply(this, arguments)
+        klass::[name] = ->
+          this["__#{name}"] ?= callback.apply(this, arguments)
         all.push(name)
     klass::GETTERS = getters or []
 
