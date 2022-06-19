@@ -147,7 +147,7 @@ Array.define_methods
 
   flatten: ->
     @reduce (memo, item) ->
-      memo.concat(if item.is_a(Array) then item.flatten() else item)
+      memo.concat(if item?.is_a(Array) then item.flatten() else item)
     , []
 
   add: (others...) ->
