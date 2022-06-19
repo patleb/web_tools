@@ -64,7 +64,8 @@ yarn-debug.log*
 *.js.map
 ext_coffee/lib/javascript/**/*.js
 !ext_coffee/lib/javascript/**/all.js
-ext_coffee/test/javascript/js/concepts.js
+ext_coffee/test/fixtures/files/**/*.js
+!ext_coffee/test/fixtures/files/rails_ujs/ajax.js
 ext_coffee/vendor/javascript/turbolinks/**/*.js
 !ext_coffee/vendor/javascript/turbolinks/**/all.js
 !ext_coffee/vendor/javascript/turbolinks/**/BANNER.js
