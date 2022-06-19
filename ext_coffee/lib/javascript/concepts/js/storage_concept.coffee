@@ -25,7 +25,7 @@ class Js.StorageConcept
 
   set: (inputs, { scope = '' } = {}) ->
     changed = false
-    inputs.each (name, value) =>
+    changes = inputs.each_with_object {}, (name, value, memo) =>
       if element = @storage().$0("[name='#{scope}:#{name}']")
         value_was = @cast_value(element)
       else
@@ -53,10 +53,14 @@ class Js.StorageConcept
       element.setAttribute('data-cast', cast) if cast
       if value_was is undefined or value isnt value_was
         changed = true
-        Rails.fire(element, "#{@CHANGE}:#{scope}:#{name}", { value, value_was })
+        changes = memo[name] = [value, value_was]
+        Rails.fire(element, "#{@CHANGE}:#{scope}:#{name}", changes)
     if changed
-      Rails.fire(@storage(), "#{@CHANGE}:#{scope}") is scope
-      Rails.fire(@storage(), @CHANGE)
+      if scope
+        Rails.fire(@storage(), "#{@CHANGE}:#{scope}", changes)
+        Rails.fire(@storage(), @CHANGE, { scope, changes })
+      else
+        Rails.fire(@storage(), @CHANGE, { changes })
 
   # Private
 
