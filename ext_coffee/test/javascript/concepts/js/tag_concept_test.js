@@ -1,11 +1,12 @@
-import './spec_helper'
+import concepts from './spec_helper'
 
 describe('Js.TagConcept', () => {
   const values = ['Prev', 'Next'].map(text => `<div>${text}</div>`)
   const safe_values = values.map(v => v.html_safe(true))
 
-  beforeAll(() => {
-    Js.TagConcept.ready_once()
+  beforeAll(async () => {
+    concepts.load_document('storge')
+    await tick()
   })
 
   it('should define tags', () => {
