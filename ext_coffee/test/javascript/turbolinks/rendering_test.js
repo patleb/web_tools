@@ -27,7 +27,7 @@ describe('Turbolinks Rendering', () => {
       assert.equal(document.body.innerHTML, new_body.innerHTML)
     }})
     await turbolinks.click('#same-origin-link', { 'turbolinks:load': (event) => {
-      assert.not.null(event)
+      assert.not.nil(event)
     }})
   })
 
@@ -91,23 +91,23 @@ describe('Turbolinks Rendering', () => {
   })
 
   it('should replace provisional elements in head', async () => {
-    assert.null(document.querySelector('meta[name=test]'))
+    assert.nil(document.querySelector('meta[name=test]'))
     let old_elements = get_provisional_elements()
     let new_elements
     await turbolinks.click('#same-origin-link', { 'turbolinks:render': (event) => {
       new_elements = get_provisional_elements()
       assert.not.equal(old_elements, new_elements)
-      assert.not.null(document.querySelector('meta[name=test]'))
+      assert.not.nil(document.querySelector('meta[name=test]'))
     }})
     await turbolinks.back({ 'turbolinks:render': (event) => {
       old_elements = get_provisional_elements()
       assert.not.equal(new_elements, old_elements)
-      assert.null(document.querySelector('meta[name=test]'))
+      assert.nil(document.querySelector('meta[name=test]'))
     }})
   })
 
   it('should evaluate head script elements once', async () => {
-    assert.null(window.headScriptEvaluationCount)
+    assert.nil(window.headScriptEvaluationCount)
     await turbolinks.click('#head-script-link', { 'turbolinks:render': (event) => {
       assert.equal(1, window.headScriptEvaluationCount)
     }})
@@ -121,7 +121,7 @@ describe('Turbolinks Rendering', () => {
   })
 
   it('should evaluate body script elements on each render', async () => {
-    assert.null(window.bodyScriptEvaluationCount)
+    assert.nil(window.bodyScriptEvaluationCount)
     await turbolinks.click('#body-script-link', { 'turbolinks:render': (event) => {
       assert.equal(1, window.bodyScriptEvaluationCount)
     }})
@@ -135,9 +135,9 @@ describe('Turbolinks Rendering', () => {
   })
 
   it('should not evaluate data-turbolinks-eval=false scripts', async () => {
-    assert.null(window.bodyScriptEvaluationCount)
+    assert.nil(window.bodyScriptEvaluationCount)
     await turbolinks.click('#eval-false-script-link', { 'turbolinks:render': (event) => {
-      assert.null(window.bodyScriptEvaluationCount)
+      assert.nil(window.bodyScriptEvaluationCount)
     }})
   })
 

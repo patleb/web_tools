@@ -121,13 +121,13 @@ const rails = {
   },
   assert_enabled: ({ target }, selector = null) => {
     const element = selector ? target.querySelector(selector) : target
-    assert.null(Rails.get(element, 'ujs:disabled'))
+    assert.nil(Rails.get(element, 'ujs:disabled'))
     assert.false(element.hasAttribute('disabled'))
   },
   assert_disabled: ({ target }, selector = null) => {
     const element = selector ? target.querySelector(selector) : target
     assert.true(Rails.get(element, 'ujs:disabled'))
-    assert.null(Rails.get(element, 'ujs:enable-with'))
+    assert.nil(Rails.get(element, 'ujs:enable-with'))
     if(!element.matches(Rails.disableable_links)) {
       assert.true(element.hasAttribute('disabled'))
     }

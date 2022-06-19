@@ -29,7 +29,7 @@ describe('Turbolinks Anchor', () => {
         assert.equal('main', nav.get_anchor(event.newURL))
       }})
       await turbolinks.back({ 'hashchange': (event) => {
-        assert.null(nav.get_anchor(event.newURL))
+        assert.nil(nav.get_anchor(event.newURL))
       }})
       await turbolinks.forward({ 'hashchange': (event) => {
         assert.equal('main', nav.get_anchor(event.newURL))

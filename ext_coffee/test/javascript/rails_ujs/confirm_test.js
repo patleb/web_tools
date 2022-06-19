@@ -70,7 +70,7 @@ describe('Rails UJS Confirm', () => {
     window.confirm = (message) => { confirm_message = message; return false }
     await rails.click('a[data-confirm]', { skip: 'confirm:complete', 'confirm': (event) => {
       event.preventDefault()
-      assert.null(confirm_message)
+      assert.nil(confirm_message)
     }})
   })
 
@@ -78,7 +78,7 @@ describe('Rails UJS Confirm', () => {
     window.confirm = (message) => { confirm_message = message; return false }
     await rails.click('button[data-confirm]', { skip: 'confirm:complete', 'confirm': (event) => {
       event.preventDefault()
-      assert.null(confirm_message)
+      assert.nil(confirm_message)
     }})
   })
 
@@ -86,7 +86,7 @@ describe('Rails UJS Confirm', () => {
     window.confirm = (message) => { confirm_message = message; return true }
     await rails.click('a[data-confirm]', { skip: 'ajax:beforeSend', 'confirm:complete': (event) => {
       event.preventDefault()
-      assert.not.null(event)
+      assert.not.nil(event)
       assert.equal('Are you absolutely sure?', confirm_message)
     }})
   })
@@ -95,7 +95,7 @@ describe('Rails UJS Confirm', () => {
     window.confirm = (message) => { confirm_message = message; return true }
     await rails.click('button[data-confirm]', { skip: 'ajax:beforeSend', 'confirm:complete': (event) => {
       event.preventDefault()
-      assert.not.null(event)
+      assert.not.nil(event)
       assert.equal('Are you absolutely sure?', confirm_message)
     }})
   })

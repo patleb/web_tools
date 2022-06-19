@@ -42,7 +42,7 @@ describe('String', () => {
   })
 
   test('#presence', () => {
-    assert.null(' \n'.presence())
+    assert.nil(' \n'.presence())
     assert.equal('text', 'text'.presence())
   })
 
@@ -57,9 +57,9 @@ describe('String', () => {
 
   test('#index', () => {
     assert.equal(1, 'abc'.index('b'))
-    assert.null('abc'.index('f'))
+    assert.nil('abc'.index('f'))
     assert.equal(2, 'abc'.index(/c$/))
-    assert.null('abc'.index(/^b/))
+    assert.nil('abc'.index(/^b/))
   })
 
   test('#include', () => {
@@ -117,7 +117,7 @@ describe('String', () => {
   test('#constantize', () => {
     assert.equal(Test.SimpleConcept, 'Test.SimpleConcept'.constantize())
     assert.equal(Test.SimpleConcept.prototype.Element, 'Test.SimpleConcept::Element'.constantize())
-    assert.null('Unknown'.constantize())
+    assert.nil('Unknown'.constantize())
     assert.raise(Error, '<invalid>'.constantize)
   })
 

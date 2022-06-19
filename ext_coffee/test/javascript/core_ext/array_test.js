@@ -19,7 +19,7 @@ describe('Array', () => {
   })
 
   test('#presence', () => {
-    assert.null([].presence())
+    assert.nil([].presence())
     assert.equal([1], [1].presence())
     assert.equal([null], [null].presence())
   })
@@ -55,7 +55,7 @@ describe('Array', () => {
   test('#index', () => {
     assert.equal(0, [1, 2].index(1))
     assert.equal(1, [1, 2].index(2))
-    assert.null([1, 2].index(3))
+    assert.nil([1, 2].index(3))
   })
 
   test('#any', () => {
@@ -131,7 +131,7 @@ describe('Array', () => {
 
   test('#find_index', () => {
     assert.equal(1, [1, 2, 3].find_index((v) => v === 2))
-    assert.null([1, 2, 3].find_index((v) => v === 4))
+    assert.nil([1, 2, 3].find_index((v) => v === 4))
   })
 
   test('#flatten', () => {

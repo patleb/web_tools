@@ -41,25 +41,25 @@ describe('Js.Concepts', () => {
     await tick()
     assert.equal(1, Test.SimpleConcept.did_ready_once)
     assert.equal(1, Test.SimpleConcept.did_ready)
-    assert.null(Test.SimpleConcept.__did_leave)
+    assert.nil(Test.SimpleConcept.__did_leave)
   })
 
   it('should call #ready on "turbolinks:load"', () => {
     dom.fire('turbolinks:load', { data: { info: {} } })
     assert.equal(1, Test.SimpleConcept.did_ready_once)
     assert.equal(2, Test.SimpleConcept.did_ready)
-    assert.null(Test.SimpleConcept.__did_leave)
+    assert.nil(Test.SimpleConcept.__did_leave)
   })
 
   it('should call #leave on "turbolinks:before-render" and nullify #did_ready ivar', () => {
     dom.fire('turbolinks:before-render')
     assert.equal(1, Test.SimpleConcept.did_ready_once)
-    assert.null(Test.SimpleConcept.did_ready)
+    assert.nil(Test.SimpleConcept.did_ready)
     assert.equal(1, Test.SimpleConcept.__did_leave)
   })
 
   it('should define lazy #accessors', () => {
-    assert.null(Test.SimpleConcept.__rows)
+    assert.nil(Test.SimpleConcept.__rows)
     dom.$0(Test.SimpleConcept.BODY).click()
     assert.equal(Test.SimpleConcept.__rows, Test.SimpleConcept.rows())
   })
@@ -72,13 +72,13 @@ describe('Js.Concepts', () => {
     assert.equal('system', Test.SimpleConcept.__system)
     assert.equal('inherited', Test.ExtendConcept.inherited)
     dom.fire('turbolinks:before-render')
-    assert.null(Test.SimpleConcept.__rows)
-    assert.not.null(Test.SimpleConcept.method)
-    assert.not.null(Test.SimpleConcept.CONSTANT)
-    assert.null(Test.SimpleConcept.public)
-    assert.null(Test.SimpleConcept._private)
-    assert.not.null(Test.SimpleConcept.__system)
-    assert.null(Test.ExtendConcept.inherited)
+    assert.nil(Test.SimpleConcept.__rows)
+    assert.not.nil(Test.SimpleConcept.method)
+    assert.not.nil(Test.SimpleConcept.CONSTANT)
+    assert.nil(Test.SimpleConcept.public)
+    assert.nil(Test.SimpleConcept._private)
+    assert.not.nil(Test.SimpleConcept.__system)
+    assert.nil(Test.ExtendConcept.inherited)
   })
 
   describe('#document_on', () => {
@@ -101,7 +101,7 @@ describe('Js.Concepts', () => {
       assert.true(body.classes().include(Test.SimpleConcept.TRIGGERED))
       assert.true(event.defaultPrevented)
       assert.true(event.document_on_before)
-      assert.null(event.document_on_after)
+      assert.nil(event.document_on_after)
     })
 
     it('should handle hover events', () => {
@@ -118,7 +118,7 @@ describe('Js.Concepts', () => {
       assert.true(event.defaultPrevented)
       assert.false(row.classes().include(Test.SimpleConcept.TRIGGERED))
       assert.true(event.document_on_before)
-      assert.null(event.document_on_after)
+      assert.nil(event.document_on_after)
     })
 
     it('should skip after hook if prevent default is in handler', () => {
@@ -127,7 +127,7 @@ describe('Js.Concepts', () => {
       assert.true(event.defaultPrevented)
       assert.true(row.classes().include(Test.SimpleConcept.TRIGGERED))
       assert.true(event.document_on_before)
-      assert.null(event.document_on_after)
+      assert.nil(event.document_on_after)
     })
   })
 

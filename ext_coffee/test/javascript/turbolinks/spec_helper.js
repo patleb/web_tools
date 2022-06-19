@@ -116,7 +116,7 @@ const turbolinks = {
   },
   visit_reload_and_assert: (location) => {
     assert.total(4)
-    assert.null(window.location)
+    assert.nil(window.location)
     dom.on_event({ 'turbolinks:before-visit': (event) => {
       assert.equal(location, event.data.url)
     }})

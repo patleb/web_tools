@@ -56,7 +56,7 @@ describe('Rails UJS Disable', () => {
   it('should not prevent usage of "disabled" attribute', async () => {
     assert.total(3)
     await rails.click('a[data-disable]', { skip: 'click', 'ujs:everythingStopped': (event) => {
-      assert.null(Rails.get(event.target, 'ujs:disabled'))
+      assert.nil(Rails.get(event.target, 'ujs:disabled'))
       assert.true(event.target.hasAttribute('disabled'))
     }})
   })

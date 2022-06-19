@@ -25,7 +25,7 @@ describe('Turbolinks Visit', () => {
     }})
     await turbolinks.visit('one', { 'turbolinks:load': (event) => {
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
-      assert.not.null(event.data.info)
+      assert.not.nil(event.data.info)
     }})
   })
 
@@ -47,7 +47,7 @@ describe('Turbolinks Visit', () => {
     })
 
     it('should visit a same-page reload link', async () => {
-      assert.null(window.location)
+      assert.nil(window.location)
       await turbolinks.visit_reload('?', (event) => {
         assert.equal('?', window.location.toString())
       })
@@ -83,7 +83,7 @@ describe('Turbolinks Visit', () => {
       event_locations.visit = event.data.url
     }})
     await turbolinks.back({ 'turbolinks:load': (event) => {
-      assert.null(event_locations.before_visit)
+      assert.nil(event_locations.before_visit)
       assert.equal(old_url, event.data.url)
       assert.equal(old_url, event_locations.visit)
     }})

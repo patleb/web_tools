@@ -20,7 +20,7 @@ describe('Object', () => {
   })
 
   test('#presence', () => {
-    assert.null({}.presence())
+    assert.nil({}.presence())
     assert.equal({ a: 1 }, { a: 1 }.presence())
     assert.equal({ null: null }, { null: null }.presence())
   })
