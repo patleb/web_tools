@@ -21,7 +21,7 @@ class Js.TagConcept
   ready_once: ->
     @define_tags()
 
-  #### PRIVATE ####
+  # Private
 
   define_tags: ->
     window.h_ = @h_

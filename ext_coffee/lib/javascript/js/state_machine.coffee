@@ -134,7 +134,7 @@ class Js.StateMachine
         next = transition.next_states if next.is_a Function
         (memo[current] ||= {})[event] = next
 
-  #### PRIVATE ####
+  # Private
 
   run_event: (args...) ->
     return @log @STATUS.HALTED if @halted()
