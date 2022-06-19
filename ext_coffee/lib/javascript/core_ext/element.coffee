@@ -21,3 +21,9 @@ HTMLElement.define_methods
 
   toggle_class: (token, force = null) ->
     @classList.toggle(token, force)
+
+  $: (selector) ->
+    Array.wrap(@querySelectorAll(selector))
+
+  $0: (selector) ->
+    @querySelector(selector)
