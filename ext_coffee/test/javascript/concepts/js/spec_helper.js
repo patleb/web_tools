@@ -10,6 +10,19 @@ const load_page = (name) => {
 }
 
 const concepts = {
+  with_page: (name) => {
+    beforeAll(async () => {
+      concepts.load_document(name)
+      await tick()
+    })
+    beforeEach(() => {
+      concepts.exit_page()
+      concepts.enter_page(name)
+    })
+    afterAll(() => {
+      concepts.exit_page()
+    })
+  },
   load_document: (name) => {
     if (name != null) {
       load_page(name)

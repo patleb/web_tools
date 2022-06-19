@@ -3,18 +3,7 @@ import concepts from './spec_helper'
 const storage = () => Rails.$0(Js.Storage.ROOT)
 
 describe('Js.StorageConcept', () => {
-  beforeAll(async () => {
-    concepts.load_document('storage')
-    await tick()
-  })
-
-  beforeEach(() => {
-    concepts.enter_page('storage')
-  })
-
-  afterEach(() => {
-    concepts.exit_page()
-  })
+  concepts.with_page('storage')
 
   it('should serialize values correctly', () => {
     assert.undefined(Js.Storage.get('test[0]'))
@@ -63,7 +52,7 @@ describe('Js.StorageConcept', () => {
   })
 
   it('should scope key and event names', () => {
-    assert.total(6)
+    assert.total(7)
     const scope = { scope: 'scoped' }
     dom.on_event({ count: 2, [`${Js.Storage.CHANGE}:scoped:name`]: ({ detail: { value, value_was} }, index) => {
       if (index === 0) {
@@ -81,6 +70,7 @@ describe('Js.StorageConcept', () => {
     Js.Storage.set({ name: 'value' }, scope)
     assert.equal('value', Js.Storage.get('name', scope))
     Js.Storage.set({ name: 'changed' }, scope)
+    assert.equal(['changed'], Js.Storage.get(scope))
     assert.equal(2, count)
   })
 })

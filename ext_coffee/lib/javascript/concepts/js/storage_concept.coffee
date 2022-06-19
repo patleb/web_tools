@@ -21,7 +21,7 @@ class Js.StorageConcept
     else
       result = @storage().$("[name^='#{scope}:']").map (element) =>
         @cast_value element
-    result = result[0] unless names.length > 1
+    result = result[0] if names.length is 1
     result
 
   set: (inputs, { scope = '' } = {}) ->
@@ -41,16 +41,16 @@ class Js.StorageConcept
         when Boolean
           'to_b'
         when Date
-          json_value = JSON.stringify(value).gsub('"', '')
+          serialized_value = JSON.stringify(value).gsub('"', '')
           'to_date'
         when Array
-          json_value = JSON.stringify(value)
+          serialized_value = JSON.stringify(value)
           'to_a'
         when Object
-          json_value = JSON.stringify(value)
+          serialized_value = JSON.stringify(value)
           'to_h'
       Rails.set(element, { value_was })
-      element.setAttribute('value', json_value ? value)
+      element.setAttribute('value', serialized_value ? value)
       element.setAttribute('data-cast', cast) if cast
       if value_was is undefined or value isnt value_was
         changed = true
