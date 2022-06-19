@@ -4,7 +4,7 @@ const storage = () => Rails.$0(Js.Storage.ROOT)
 
 describe('Js.StorageConcept', () => {
   beforeAll(async () => {
-    concepts.load_document('storge')
+    concepts.load_document('storage')
     await tick()
   })
 

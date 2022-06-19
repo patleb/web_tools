@@ -5,13 +5,15 @@ import '@@lib/ext_coffee/concepts/js/all'
 
 Js.Concepts.initialize({ modules: 'Js' })
 
-const load_page = () => {
-  dom.setup_document(fixture.html('storage', { root: 'ext_coffee/test/fixtures/files/concepts/js' }))
+const load_page = (name) => {
+  dom.setup_document(fixture.html(name, { root: 'ext_coffee/test/fixtures/files/concepts/js' }))
 }
 
 const concepts = {
   load_document: (name) => {
-    load_page(name)
+    if (name != null) {
+      load_page(name)
+    }
     dom.fire('DOMContentLoaded')
     dom.fire('turbolinks:load', { data: { info: { once: true } } })
   },
@@ -26,4 +28,3 @@ const concepts = {
 }
 
 module.exports = concepts
-

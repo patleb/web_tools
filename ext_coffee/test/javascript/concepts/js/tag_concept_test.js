@@ -5,7 +5,7 @@ describe('Js.TagConcept', () => {
   const safe_values = values.map(v => v.html_safe(true))
 
   beforeAll(async () => {
-    concepts.load_document('storge')
+    concepts.load_document()
     await tick()
   })
 
