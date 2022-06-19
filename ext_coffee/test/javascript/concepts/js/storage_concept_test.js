@@ -6,7 +6,7 @@ describe('Js.StorageConcept', () => {
   concepts.with_page('storage')
 
   it('should serialize values correctly', () => {
-    assert.undefined(Js.Storage.get('test[0]'))
+    assert.equal({ 'test[0]': undefined }, Js.Storage.get('test[0]'))
     const inputs = {
       integer: 0,
       float: 1.2,
@@ -17,9 +17,9 @@ describe('Js.StorageConcept', () => {
       null: null,
     }
     Js.Storage.set(inputs)
-    assert.equal(inputs.values(), Js.Storage.get(...inputs.keys()))
+    assert.equal(inputs, Js.Storage.get(...inputs.keys()))
     Js.Storage.set({ undefined: undefined })
-    assert.null(Js.Storage.get('undefined'))
+    assert.equal({ undefined: null }, Js.Storage.get('undefined'))
   })
 
   it('should create a storage tag if absent', () => {
@@ -68,9 +68,9 @@ describe('Js.StorageConcept', () => {
       count++
     }})
     Js.Storage.set({ name: 'value' }, scope)
-    assert.equal('value', Js.Storage.get('name', scope))
+    assert.equal({ name: 'value' }, Js.Storage.get('name', scope))
     Js.Storage.set({ name: 'changed' }, scope)
-    assert.equal(['changed'], Js.Storage.get(scope))
+    assert.equal({ name: 'changed' }, Js.Storage.get(scope))
     assert.equal(2, count)
   })
 })

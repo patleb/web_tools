@@ -17,12 +17,11 @@ class Js.StorageConcept
     { scope = '' } = names.extract_options()
     if names.length
       result = names.map (name) =>
-        @cast_value @storage().$0("[name='#{scope}:#{name}']")
+        [name, @cast_value @storage().$0("[name='#{scope}:#{name}']")]
     else
       result = @storage().$("[name^='#{scope}:']").map (element) =>
-        @cast_value element
-    result = result[0] if names.length is 1
-    result
+        [element.name.sub(///^#{scope.safe_regex()}:///, ''), @cast_value element]
+    result.to_h()
 
   set: (inputs, { scope = '' } = {}) ->
     changed = false
