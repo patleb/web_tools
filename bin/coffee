@@ -6,14 +6,15 @@ APP_ROOT = File.expand_path('..', __dir__)
 LIB_ROOT = File.expand_path(Gem.loaded_specs['ext_coffee'].gem_dir)
 dirs = %W(
   #{LIB_ROOT}/vendor/javascript
-  #{LIB_ROOT}/test/javascript
+  #{LIB_ROOT}/test/fixtures/files
   #{LIB_ROOT}/lib/javascript
-  test/javascript
+  test/fixtures/files
   app/javascript
 )
 command, *extra_dirs = ARGV
 coffee = 'node_modules/.bin/coffee'
 Dir.chdir(APP_ROOT) do
+  dirs.select!{ |dir| Dir.exist? dir }
   if File.executable? coffee
     case command
     when 'compile'
