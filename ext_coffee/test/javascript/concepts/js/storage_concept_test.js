@@ -43,7 +43,7 @@ describe('Js.StorageConcept', () => {
   })
 
   it('should fire changes', () => {
-    assert.total(4)
+    assert.total(5)
     dom.on_event({ count: 2, [`${Js.Storage.CHANGE}::name`]: ({ detail: { value, value_was} }, index) => {
       if (index === 0) {
         assert.undefined(value_was)
@@ -53,12 +53,17 @@ describe('Js.StorageConcept', () => {
         assert.equal('changed', value)
       }
     }})
+    let count = 0
+    dom.on_event({ count: 2, [Js.Storage.CHANGE]: (event, index) => {
+      count++
+    }})
     Js.Storage.set({ name: 'value' })
     Js.Storage.set({ name: 'changed' })
+    assert.equal(2, count)
   })
 
   it('should scope key and event names', () => {
-    assert.total(5)
+    assert.total(6)
     const scope = { scope: 'scoped' }
     dom.on_event({ count: 2, [`${Js.Storage.CHANGE}:scoped:name`]: ({ detail: { value, value_was} }, index) => {
       if (index === 0) {
@@ -69,8 +74,13 @@ describe('Js.StorageConcept', () => {
         assert.equal('changed', value)
       }
     }})
+    let count = 0
+    dom.on_event({ count: 2, [`${Js.Storage.CHANGE}:scoped`]: (event, index) => {
+      count++
+    }})
     Js.Storage.set({ name: 'value' }, scope)
     assert.equal('value', Js.Storage.get('name', scope))
     Js.Storage.set({ name: 'changed' }, scope)
+    assert.equal(2, count)
   })
 })

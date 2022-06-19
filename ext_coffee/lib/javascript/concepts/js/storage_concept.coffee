@@ -55,8 +55,9 @@ class Js.StorageConcept
       if value_was is undefined or value isnt value_was
         changed = true
         Rails.fire(element, "#{@CHANGE}:#{scope}:#{name}", { value, value_was })
-    if scope and changed
-      Rails.fire(@storage(), "#{@CHANGE}:#{scope}")
+    if changed
+      Rails.fire(@storage(), "#{@CHANGE}:#{scope}") is scope
+      Rails.fire(@storage(), @CHANGE)
 
   # Private
 
