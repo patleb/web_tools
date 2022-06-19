@@ -44,6 +44,10 @@ String.override_methods
     this[0]
 
 String.define_methods
+  to_null: ->
+    return null if @blank() or @match(/^(null|undefined)$/)
+    throw "invalid value for null: '#{this}'"
+
   to_b: ->
     return true if @match(/^(true|t|yes|y|1|1\.0|✓)$/i)
     return false if @blank() or @match(/^(false|f|no|n|0|0\.0|✘)$/i)
@@ -64,7 +68,7 @@ String.define_methods
     @toString()
 
   to_date: ->
-    Date.parse(this)
+    new Date(Date.parse(this))
 
   html_blank: ->
     @gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
