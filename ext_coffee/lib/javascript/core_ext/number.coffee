@@ -32,6 +32,12 @@ Number.define_methods
   to_s: ->
     @toString()
 
+  is_integer: ->
+    @constructor.isInteger?(this) ? @is_finite() and @floor() is this
+
+  is_finite: ->
+    @constructor.isFinite?(this) ? this isnt Infinity and this isnt -Infinity
+
   safe_text: ->
     @toString()
 
