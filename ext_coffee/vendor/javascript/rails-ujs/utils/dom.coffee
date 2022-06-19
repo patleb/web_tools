@@ -9,8 +9,12 @@ window.Rails = Rails.merge
     element[EXPANDO]?[key]
 
   set: (element, key, value) ->
-    element[EXPANDO] ?= {}
-    element[EXPANDO][key] = value
+    if typeof key is 'object'
+      for k, v of key
+        Rails.set(element, k, v)
+    else
+      element[EXPANDO] ?= {}
+      element[EXPANDO][key] = value
 
   # a wrapper for document.querySelectorAll
   # returns an Array
