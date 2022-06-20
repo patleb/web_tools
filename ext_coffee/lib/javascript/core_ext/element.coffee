@@ -27,3 +27,15 @@ HTMLElement.define_methods
 
   $0: (selector) ->
     @querySelector(selector)
+
+  get_value: ->
+    return if not @name or @disabled or @hasAttribute('disabled')
+    return if @matches('fieldset[disabled] *')
+    if @matches('select')
+      value = []
+      for option in Array.wrap(@options)
+        value.push(option.value) if option.selected
+      value = value[0] unless @multiple
+      value
+    else if @checked or @type not in ['radio', 'checkbox', 'submit']
+      @value
