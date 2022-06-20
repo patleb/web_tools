@@ -29,7 +29,7 @@ HTMLElement.define_methods
     @querySelector(selector)
 
   get_value: ->
-    return if not @name or @disabled or @hasAttribute('disabled')
+    return if @disabled or @hasAttribute('disabled')
     return if @matches('fieldset[disabled] *')
     if @matches('select')
       value = []
