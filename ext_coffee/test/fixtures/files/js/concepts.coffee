@@ -74,9 +74,9 @@ class Test.GlobalConcept
   global: true
 
 class Test.CustomGlobalConcept
-  global: 'SomeGlobal'
+  alias: 'SomeGlobal'
 
 class Test.ScopedGlobalConcept
-  global: 'Scoped.Global'
+  alias: 'Scoped.Global'
 
 class Test.NotAConceptName

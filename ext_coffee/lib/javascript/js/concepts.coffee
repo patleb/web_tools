@@ -81,15 +81,19 @@ class Js.Concepts
     module_class = module.constantize()
     module_class[class_name] = concept = new concept_class # singleton
 
-    if (global = concept_class::global)
-      global_name = if global is true then class_name.sub(CONCEPT, '') else global
-      if global_name.include '.'
-        [scope..., global_name] = global_name.split('.')
+    if concept_class::global is true
+      global_name = class_name.sub(CONCEPT, '')
+      warn_define_singleton_method(window, global_name)
+      window[global_name] = concept
+
+    if (alias = concept_class::alias)
+      if alias.include '.'
+        [scope..., alias] = alias.split('.')
         scope = scope.join('.').constantize()
       else
         scope = window
-      warn_define_singleton_method(scope, global_name)
-      scope[global_name] = concept
+      warn_define_singleton_method(scope, alias)
+      scope[alias] = concept
 
     @define_constants(concept_class)
     @define_getters(concept_class)

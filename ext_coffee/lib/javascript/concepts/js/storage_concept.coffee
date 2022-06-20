@@ -1,5 +1,5 @@
 class Js.StorageConcept
-  global: 'Js.Storage'
+  alias: 'Js.Storage'
 
   getters: ->
     storage: ->

@@ -1,5 +1,5 @@
 class Js.ComponentConcept
-  global: 'Js.Component'
+  alias: 'Js.Component'
 
   constants: ->
     ELEMENTS: '.js_component'
