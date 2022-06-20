@@ -17,12 +17,12 @@ String.override_methods
 
   to_a: ->
     result = JSON.safe_parse(this)
-    throw "invalid value for Array: '#{@safe_text()}'" unless result.is_a Array
+    throw "invalid value for Array: '#{this?.safe_text()}'" unless result.is_a Array
     result
 
   to_h: ->
     result = JSON.safe_parse(this)
-    throw "invalid value for Object: '#{@safe_text()}'" unless result.is_a Object
+    throw "invalid value for Object: '#{this?.safe_text()}'" unless result.is_a Object
     result
 
   blank: ->
@@ -46,12 +46,12 @@ String.override_methods
 String.define_methods
   to_null: ->
     return null if @blank() or @match(/^(null|undefined)$/)
-    throw "invalid value for null: '#{@safe_text()}'"
+    throw "invalid value for null: '#{this?.safe_text()}'"
 
   to_b: ->
     return true if @match(/^(true|t|yes|y|1|1\.0|✓)$/i)
     return false if @blank() or @match(/^(false|f|no|n|0|0\.0|✘)$/i)
-    throw "invalid value for Boolean: '#{@safe_text()}'"
+    throw "invalid value for Boolean: '#{this?.safe_text()}'"
 
   to_i: (base = null) ->
     value = if @toLowerCase().startsWith('0x') then this else @replace(/^0+/, '')
@@ -171,7 +171,7 @@ String.define_methods
 
   constantize: ->
     if @match /[^:\w.]+/
-      throw "#{@safe_text()} isn't a valid module or class name"
+      throw "#{this?.safe_text()} isn't a valid module or class name"
     else
       object = window
       @replace(/^::/, '').split('.').each (class_scope) ->
