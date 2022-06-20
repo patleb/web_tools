@@ -13,6 +13,9 @@ class Js.StorageConcept
     ROOT: '#js_storage'
     CHANGE: 'js:storage'
 
+  get_value: (name) ->
+    @get(name)[name]
+
   get: (names...) ->
     { scope = '' } = names.extract_options()
     if names.length
@@ -21,7 +24,7 @@ class Js.StorageConcept
     else
       result = @storage().$("[name^='#{scope}:']").map (element) =>
         [element.name.sub(///^#{scope.safe_regex()}:///, ''), @cast_value element]
-    result.to_h()
+    result.reject(([name, value]) -> value is undefined).to_h()
 
   set: (inputs, { scope = '' } = {}) ->
     changed = false
@@ -48,12 +51,12 @@ class Js.StorageConcept
         when Object
           serialized_value = JSON.stringify(value)
           'to_h'
-      Rails.set(element, { value_was })
-      element.setAttribute('value', serialized_value ? value)
-      element.setAttribute('data-cast', cast) if cast
       if value_was is undefined or value isnt value_was
         changed = true
         changes = memo[name] = [value, value_was]
+        element.setAttribute('value', serialized_value ? value)
+        element.setAttribute('data-cast', cast) if cast
+        Rails.set(element, { value_was })
         Rails.fire(element, "#{@CHANGE}:#{scope}:#{name}", changes)
     if changed
       if scope

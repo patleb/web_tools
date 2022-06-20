@@ -6,7 +6,7 @@ describe('Js.StorageConcept', () => {
   concepts.with_page('storage')
 
   it('should serialize values correctly', () => {
-    assert.equal({ 'test[0]': undefined }, Js.Storage.get('test[0]'))
+    assert.empty(Js.Storage.get('test[0]'))
     const inputs = {
       integer: 0,
       float: 1.2,
