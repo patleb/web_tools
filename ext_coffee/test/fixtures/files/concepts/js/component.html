@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Js.ComponentConcept</title>
+  </head>
+  <body>
+    <h1>Js.ComponentConcept</h1>
+    <div class="js_component" data-element="global" data-watch='{
+      "banner": "Hello World!"
+    }'></div>
+    <div class="js_component" data-element="banner" data-watch='[
+      "banner"
+    ]'></div>
+    <div class="js_component" data-element="card" data-scoped data-watch='{
+      "banner": "Today",
+      "players": ["Player 1", "Player 2"],
+      "name": "Input name"
+    }'></div>
+  </body>
+</html>

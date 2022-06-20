@@ -1,2 +1,5 @@
 import '@@lib/ext_coffee/concepts/js/storage_concept'
 import '@@lib/ext_coffee/concepts/js/tag_concept'
+import '@@lib/ext_coffee/concepts/js/component_concept'
+import '@@lib/ext_coffee/concepts/js/component/element'
+import '@@lib/ext_coffee/concepts/js/component/global_element'
