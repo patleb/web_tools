@@ -9,7 +9,7 @@ class Js.ComponentConcept
     Js.Storage.CHANGE, Js.Storage.ROOT, ({ detail: { scope, changes } } = {}) =>
       @render_elements(scope, changes)
 
-    'change', @INPUTS, (event, target) =>
+    'input', @INPUTS, (event, target) =>
       element = @elements[target.closest(@ELEMENTS).getAttribute('data-uid')]
       name = target.getAttribute('data-bind')
       value = target.get_value()

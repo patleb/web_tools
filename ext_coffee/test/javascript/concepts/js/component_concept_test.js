@@ -18,7 +18,7 @@ describe('Js.ComponentConcept', () => {
       card.innerHTML
     )
     input.value = 'New name'
-    dom.fire('change', { target: input })
+    dom.fire('input', { target: input })
     assert.html_equal(
       `<div>
         <h2>Today</h2>
