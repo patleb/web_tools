@@ -3,7 +3,7 @@ class Js.ComponentConcept
 
   constants: ->
     ELEMENTS: '.js_component'
-    INPUTS: => "#{@ELEMENTS} [data-watch]"
+    INPUTS: => "#{@ELEMENTS} [data-bind]"
 
   document_on: -> [
     Js.Storage.CHANGE, Js.Storage.ROOT, ({ detail: { scope, changes } } = {}) =>
@@ -11,7 +11,7 @@ class Js.ComponentConcept
 
     'change', @INPUTS, (event, target) =>
       element = @elements[target.closest(@ELEMENTS).getAttribute('data-uid')]
-      name = target.getAttribute('data-watch')
+      name = target.getAttribute('data-bind')
       value = target.get_value()
       value_was = element.get_value(name)
       if value_was is undefined or value isnt value_was

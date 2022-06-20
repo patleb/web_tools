@@ -13,7 +13,7 @@ describe('Js.ComponentConcept', () => {
       `<div>
         <h2>Today</h2>
         <ul><li>Player 1</li><li>Player 2</li></ul>
-        <input type="text" value="Input name" data-watch="name">
+        <input type="text" value="Input name" data-bind="name">
       </div>`,
       card.innerHTML
     )
@@ -23,7 +23,7 @@ describe('Js.ComponentConcept', () => {
       `<div>
         <h2>Today</h2>
         <ul><li>Player 1</li><li>Player 2</li></ul>
-        <input type="text" value="New name" data-watch="name">
+        <input type="text" value="New name" data-bind="name">
       </div>`,
       card.innerHTML
     )
@@ -32,7 +32,7 @@ describe('Js.ComponentConcept', () => {
       `<div>
         <h2>Tomorrow</h2>
         <ul><li>Player 1</li><li>Player 2</li></ul>
-        <input type="text" value="New name" data-watch="name">
+        <input type="text" value="New name" data-bind="name">
       </div>`,
       card.innerHTML
     )
