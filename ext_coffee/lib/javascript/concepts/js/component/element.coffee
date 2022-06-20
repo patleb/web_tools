@@ -18,7 +18,9 @@ class Js.ComponentConcept::Element
 
   render_element: (changes) ->
     changes.each (name, [value]) => this[name] = value
-    @element.innerHTML = @render()
+    unless (html = @render() ? '').html_safe()
+      html = html.safe_text()
+    @element.innerHTML = html
 
   get_value: (name) ->
     @get_data(name)[name]
