@@ -5,23 +5,25 @@ require_relative '../config/boot'
 APP_ROOT = File.expand_path('..', __dir__)
 LIB_ROOT = File.expand_path(Gem.loaded_specs['ext_coffee'].gem_dir)
 dirs = %W(
+  app/javascript
+  #{LIB_ROOT}/lib/javascript
   #{LIB_ROOT}/vendor/javascript
   #{LIB_ROOT}/test/fixtures/files
-  #{LIB_ROOT}/lib/javascript
   test/fixtures/files
-  app/javascript
 )
 command, *extra_dirs = ARGV
 coffee = 'node_modules/.bin/coffee'
 Dir.chdir(APP_ROOT) do
   dirs.select!{ |dir| Dir.exist? dir }
+  dirs.reject!{ |dir| dir.start_with? LIB_ROOT } if command.end_with? '-app'
+  dirs.select!{ |dir| dir.start_with? LIB_ROOT } if command.end_with? '-lib'
   if File.executable? coffee
     case command
-    when 'compile'
+    when 'compile', 'compile-app', 'compile-lib'
       exec(coffee, '--bare', '--compile', '--map', *dirs, *extra_dirs)
-    when 'watch'
+    when 'watch', 'watch-app', 'watch-lib'
       exec(coffee, '--bare', '--compile', '--map', '--watch', *dirs, *extra_dirs)
-    when 'clobber'
+    when 'clobber', 'clobber-app', 'clobber-lib'
       (dirs + extra_dirs).each do |dir|
         Dir["#{dir}/**/*.coffee"].each do |file|
           FileUtils.rm_f file.sub(/\.coffee$/, '.js')
