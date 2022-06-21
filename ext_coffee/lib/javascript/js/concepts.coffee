@@ -98,7 +98,7 @@ class Js.Concepts
     @define_constants(concept_class)
     @define_getters(concept_class)
     @unless_defined concept_class::document_on, =>
-      @define_document_on(concept)
+      @define_document_on(concept_class, concept)
 
     @instances.except('leave_clean').each (phase, all) =>
       @unless_defined concept_class::[phase], ->
@@ -155,7 +155,7 @@ class Js.Concepts
     @define_constants(element_class)
     @define_getters(element_class)
     @unless_defined element_class::document_on, =>
-      @define_document_on(element_class::)
+      @define_document_on(element_class, element_class::)
 
   @define_constants: (klass) ->
     constants = @unless_defined klass::constants, =>
@@ -171,7 +171,7 @@ class Js.Concepts
       shared = name.sub(///#{prefix}_///, '')
       value = if value::?.concept then value::[shared] else value[shared]
     else if value.is_a Function
-      return @define_constant(klass, name, value(), constants)
+      return @define_constant(klass, name, value.apply(klass::), constants)
     constants[name] = klass::[name] = value
 
   @define_getters: (klass) ->
@@ -182,28 +182,27 @@ class Js.Concepts
         all.push(name)
     klass::GETTERS = getters or []
 
-  @define_document_on: (object) ->
-    object.document_on().each_slice(3).each ([events, selector, handler]) ->
+  @define_document_on: (klass, context) ->
+    klass::document_on().each_slice(3).each ([events, selector, handler]) ->
       with_target = handler
-      handler = (event) ->
-        target = event.target
+      handler = ->
         args = Array.wrap(arguments)
-        args.push(target)
-        with_target.apply(this, args)
-      if object.document_on_before
+        args.push(this)
+        with_target.apply(context, args)
+      if klass::document_on_before
         with_before = handler
         handler = (event) ->
           unless event.defaultPrevented
-            object.document_on_before.apply(this, arguments)
+            klass::document_on_before.apply(context, arguments)
           unless event.defaultPrevented
-            with_before.apply(this, arguments)
-      if object.document_on_after
+            with_before.apply(context, arguments)
+      if klass::document_on_after
         with_after = handler
         handler = (event) ->
           unless event.defaultPrevented
-            with_after.apply(this, arguments)
+            with_after.apply(context, arguments)
           unless event.defaultPrevented
-            object.document_on_after.apply(this, arguments)
+            klass::document_on_after.apply(context, arguments)
 
       events.split(/ *, */).each (event) ->
         Rails.document_on event, selector, handler
