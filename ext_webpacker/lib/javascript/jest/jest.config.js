@@ -10,6 +10,7 @@ module.exports = {
     '^@@/(.+)': '<rootDir>/app/javascript/$1',
     '^@@lib/(.+)': '<rootDir>/app/javascript/lib/$1',
     '^@@vendor/(.+)': '<rootDir>/app/javascript/vendor/$1',
+    '^@@test/fixtures/(.+)': '<rootDir>/test/fixtures/$1',
   },
   moduleFileExtensions: [
     'js',
