@@ -2,38 +2,35 @@ class Js.StorageConcept
   alias: 'Js.Storage'
 
   getters: ->
-    storage: ->
-      unless (element = Rails.$0(@ROOT))
-        body = document.body.$0('[data-turbolinks-body]') ? document.body
-        element = div$ @ROOT
-        body.appendChild(element)
-      element
+    root: -> storage_node(@ROOT)
+    root_permanent: -> storage_node(@ROOT_PERMANENT, true)
 
   constants: ->
     ROOT: '#js_storage'
-    CHANGE: 'js:storage'
+    ROOT_PERMANENT: '#js_storage_permanent'
+    CHANGE: 'js_storage:change'
 
-  get_value: (name) ->
-    @get(name)[name]
+  get_value: (name, options = {}) ->
+    @get(name, options)[name]
 
   get: (names...) ->
-    { scope = '' } = names.extract_options()
+    { permanent = false, scope = '' } = names.extract_options()
     if names.length
       result = names.map (name) =>
-        [name, @cast_value @storage().$0("[name='#{scope}:#{name}']")]
+        [name, cast_value(@storage(permanent).$0("[name='#{scope}:#{name}']"))]
     else
-      result = @storage().$("[name^='#{scope}:']").map (element) =>
-        [element.name.sub(///^#{scope.safe_regex()}:///, ''), @cast_value element]
+      result = @storage(permanent).$("[name^='#{scope}:']").map (element) =>
+        [element.name.sub(///^#{scope.safe_regex()}:///, ''), cast_value(element)]
     result.reject(([name, value]) -> value is undefined).to_h()
 
-  set: (inputs, { scope = '' } = {}) ->
+  set: (inputs, { permanent = false, scope = '' } = {}) ->
     changed = false
     changes = inputs.each_with_object {}, (name, value, memo) =>
-      if element = @storage().$0("[name='#{scope}:#{name}']")
-        value_was = @cast_value(element)
+      if element = @storage(permanent).$0("[name='#{scope}:#{name}']")
+        value_was = cast_value(element)
       else
         element = input$ type: 'hidden', name: "#{scope}:#{name}"
-        @storage().appendChild(element)
+        @storage(permanent).appendChild(element)
       unless value?
         value = null
         cast = 'to_null'
@@ -57,17 +54,24 @@ class Js.StorageConcept
         element.setAttribute('value', serialized_value ? value)
         element.setAttribute('data-cast', cast) if cast
         Rails.set(element, { value_was })
-        Rails.fire(element, "#{@CHANGE}:#{scope}:#{name}", changes)
-    if changed
-      if scope
-        Rails.fire(@storage(), "#{@CHANGE}:#{scope}", changes)
-        Rails.fire(@storage(), @CHANGE, { scope, changes })
-      else
-        Rails.fire(@storage(), @CHANGE, { changes })
+    Rails.fire(@storage(permanent), @CHANGE, { permanent, scope, changes }) if changed
+
+  storage: (permanent) ->
+    if permanent then @root_permanent() else @root()
 
   # Private
 
-  cast_value: (element) ->
+  storage_node = (id_selector, permanent) ->
+    unless (element = Rails.$0(id_selector))
+      body = document.body.$0('[data-turbolinks-body]') ? document.body
+      if permanent
+        element = div$ id_selector, 'data-turbolinks-permanent': true
+      else
+        element = div$ id_selector
+      body.appendChild(element)
+    element
+
+  cast_value = (element) ->
     if element?
       value = element.value
       value = value[cast]() if cast = element.getAttribute('data-cast')

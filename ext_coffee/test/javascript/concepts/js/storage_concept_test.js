@@ -32,8 +32,8 @@ describe('Js.StorageConcept', () => {
   })
 
   it('should fire changes', () => {
-    assert.total(5)
-    dom.on_event({ count: 2, [`${Js.Storage.CHANGE}::name`]: ({ detail: [value, value_was] }, index) => {
+    assert.total(4)
+    dom.on_event({ count: 2, [Js.Storage.CHANGE]: ({ detail: { changes: { name: [value, value_was] }}}, index) => {
       if (index === 0) {
         assert.undefined(value_was)
         assert.equal('value', value)
@@ -42,19 +42,14 @@ describe('Js.StorageConcept', () => {
         assert.equal('changed', value)
       }
     }})
-    let count = 0
-    dom.on_event({ count: 2, [Js.Storage.CHANGE]: (event, index) => {
-      count++
-    }})
     Js.Storage.set({ name: 'value' })
     Js.Storage.set({ name: 'changed' })
-    assert.equal(2, count)
   })
 
   it('should scope key and event names', () => {
     assert.total(7)
     const scope = { scope: 'scoped' }
-    dom.on_event({ count: 2, [`${Js.Storage.CHANGE}:scoped:name`]: ({ detail: [value, value_was] }, index) => {
+    dom.on_event({ count: 2, [Js.Storage.CHANGE]: ({ detail: { changes: { name: [value, value_was] }}}, index) => {
       if (index === 0) {
         assert.undefined(value_was)
         assert.equal('value', value)
@@ -63,17 +58,22 @@ describe('Js.StorageConcept', () => {
         assert.equal('changed', value)
       }
     }})
-    let count = 0
-    dom.on_event({ count: 2, [`${Js.Storage.CHANGE}:scoped`]: (event, index) => {
-      count++
-    }})
-    dom.on_event({ count: 2, [Js.Storage.CHANGE]: (event, index) => {
-      count++
-    }})
     Js.Storage.set({ name: 'value' }, scope)
     assert.equal({ name: 'value' }, Js.Storage.get('name', scope))
     Js.Storage.set({ name: 'changed' }, scope)
+    const names = []
+    assert.equal({ name: 'changed' }, Js.Storage.get(...names, scope))
     assert.equal({ name: 'changed' }, Js.Storage.get(scope))
-    assert.equal(4, count)
+  })
+
+  it('should use the permanent storage', () => {
+    let count = 0
+    dom.on_event({ [Js.Storage.CHANGE]: (event, index) => {
+      count++
+    }})
+    Js.Storage.set({ name: 'value'}, { permanent: true })
+    assert.equal(1, count)
+    assert.nil(Js.Storage.get_value('name'))
+    assert.equal('value', Js.Storage.get_value('name', { permanent: true }))
   })
 })
