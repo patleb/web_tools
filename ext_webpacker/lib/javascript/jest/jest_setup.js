@@ -20,6 +20,6 @@ global.jest_console = global.console
 global.console = require('console')
 
 Object.assign(process.env, {
-  // LOGGER_DEBUG: true,
-  // LOGGER_TRACE: true,
+  LOGGER_DEBUG: false,
+  LOGGER_TRACE: false,
 })
