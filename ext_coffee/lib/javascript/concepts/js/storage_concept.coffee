@@ -1,6 +1,8 @@
 class Js.StorageConcept
   alias: 'Js.Storage'
 
+  @debug: false
+
   getters: ->
     root: -> storage_node(@ROOT)
     root_permanent: -> storage_node(@ROOT_PERMANENT, true)
@@ -54,12 +56,21 @@ class Js.StorageConcept
         element.setAttribute('value', serialized_value ? value)
         element.setAttribute('data-cast', cast) if cast
         Rails.set(element, { value_was })
+        @log permanent, scope, name, value, value_was
     Rails.fire(@storage(permanent), @CHANGE, { permanent, scope, changes }) if changed
 
   storage: (permanent) ->
     if permanent then @root_permanent() else @root()
 
   # Private
+
+  log: (permanent, scope, name, value, value_was) =>
+    pad = if permanent then ' ' else ''
+    tag = "[STORAGE][#{permanent}]#{pad}"
+    @log_debug "#{tag}[#{scope}:#{name}] #{JSON.stringify(value_was)} => #{JSON.stringify(value)}"
+
+  log_debug: (msg) ->
+    Logger.debug(msg) if @constructor.debug
 
   storage_node = (id_selector, permanent) ->
     unless (element = Rails.find(id_selector))
