@@ -69,7 +69,7 @@ describe('Js.Concepts', () => {
   it('should nullify non-system ivars and not from #ready_once on #leave', () => {
     assert.equal('method', Test.SimpleConcept.method())
     assert.equal('constant', Test.SimpleConcept.CONSTANT)
-    assert.equal('public', Test.SimpleConcept.public)
+    assert.equal('after', Test.SimpleConcept.public)
     assert.equal('private', Test.SimpleConcept._private)
     assert.equal('system', Test.SimpleConcept.__system)
     assert.equal('inherited', Test.ExtendConcept.inherited)

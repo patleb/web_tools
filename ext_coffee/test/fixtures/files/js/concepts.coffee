@@ -14,7 +14,7 @@ class Test.SimpleConcept
       dom.$(@ROWS)
 
   document_on: -> [
-    'click', @BODY, (event, this_was) ->
+    'click', @BODY, (event, this_was) =>
       event.preventDefault() if event.skip
       event.target.add_class(@TRIGGERED)
       @method = -> 'method'
@@ -38,6 +38,7 @@ class Test.SimpleConcept
 
   document_on_after: (event) ->
     event.document_on_after = true
+    @public = 'after'
 
   ready_once: ->
     @did_ready_once ?= 0
@@ -56,7 +57,7 @@ class Test.SimpleConcept::Element
     NAME: 'js_simple_name'
 
   getters: ->
-    body: -> dom.$0(@BODY)
+    body: -> dom.find(@BODY)
     value: -> 'value'
 
   document_on: -> [
