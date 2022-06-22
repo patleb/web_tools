@@ -65,7 +65,7 @@ const dom = {
   $: (selector) => {
     return Array.prototype.slice.call(document.querySelectorAll(selector))
   },
-  $0: (selector) => {
+  find: (selector) => {
     return document.querySelector(selector)
   },
   children: (element, test) => {

@@ -4,11 +4,11 @@ describe('Js.ComponentConcept', () => {
   concepts.with_page('component')
 
   it('should render elements', () => {
-    const banner_persistent = dom.$0(`${Js.Component.ELEMENTS}[data-element=banner][data-turbolinks-permanent]`)
-    const banner = dom.$0(`${Js.Component.ELEMENTS}[data-element=banner]:not([data-turbolinks-permanent])`)
-    const card = dom.$0(`${Js.Component.ELEMENTS}[data-element=card]`)
+    const banner_persistent = dom.find(`${Js.Component.ELEMENTS}[data-element=banner][data-turbolinks-permanent]`)
+    const banner = dom.find(`${Js.Component.ELEMENTS}[data-element=banner]:not([data-turbolinks-permanent])`)
+    const card = dom.find(`${Js.Component.ELEMENTS}[data-element=card]`)
     const card_element = Js.Component.elements[card.dataset.uid]
-    const input = card.$0('input')
+    const input = card.find('input')
     assert.html_equal('<div><h1>Persistent World!</h1></div>', banner_persistent.innerHTML)
     assert.html_equal('<div><h1>Hello World!</h1></div>', banner.innerHTML)
     assert.html_equal(

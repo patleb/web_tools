@@ -21,7 +21,7 @@ window.Rails = Rails.merge
   $: (selector) ->
     Array.wrap(document.querySelectorAll(selector))
 
-  $0: (selector) ->
+  find: (selector) ->
     document.querySelector(selector)
 
   load_csp_nonce: ->

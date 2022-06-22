@@ -1,6 +1,6 @@
 import concepts from './spec_helper'
 
-const storage = () => Rails.$0(Js.Storage.ROOT)
+const storage = () => Rails.find(Js.Storage.ROOT)
 
 describe('Js.StorageConcept', () => {
   concepts.with_page('storage')

@@ -25,7 +25,7 @@ HTMLElement.define_methods
   $: (selector) ->
     Array.wrap(@querySelectorAll(selector))
 
-  $0: (selector) ->
+  find: (selector) ->
     @querySelector(selector)
 
   get_value: ->

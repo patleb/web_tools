@@ -17,7 +17,7 @@ class Js.StorageConcept
     { permanent = false, scope = '' } = names.extract_options()
     if names.length
       result = names.map (name) =>
-        [name, cast_value(@storage(permanent).$0("[name='#{scope}:#{name}']"))]
+        [name, cast_value(@storage(permanent).find("[name='#{scope}:#{name}']"))]
     else
       result = @storage(permanent).$("[name^='#{scope}:']").map (element) =>
         [element.name.sub(///^#{scope.safe_regex()}:///, ''), cast_value(element)]
@@ -26,7 +26,7 @@ class Js.StorageConcept
   set: (inputs, { permanent = false, scope = '' } = {}) ->
     changed = false
     changes = inputs.each_with_object {}, (name, value, memo) =>
-      if element = @storage(permanent).$0("[name='#{scope}:#{name}']")
+      if element = @storage(permanent).find("[name='#{scope}:#{name}']")
         value_was = cast_value(element)
       else
         element = input$ type: 'hidden', name: "#{scope}:#{name}"
@@ -62,8 +62,8 @@ class Js.StorageConcept
   # Private
 
   storage_node = (id_selector, permanent) ->
-    unless (element = Rails.$0(id_selector))
-      body = document.body.$0('[data-turbolinks-body]') ? document.body
+    unless (element = Rails.find(id_selector))
+      body = document.body.find('[data-turbolinks-body]') ? document.body
       if permanent
         element = div$ id_selector, 'data-turbolinks-permanent': true
       else
