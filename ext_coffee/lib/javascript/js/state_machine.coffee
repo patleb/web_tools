@@ -1,5 +1,5 @@
 class Js.StateMachine
-  CONFIG_IVARS = ['debug', 'initial', 'terminal']
+  CONFIG_IVARS = ['initial', 'terminal']
   CONFIG_HOOKS = ['state', 'initialize', 'before', 'after', 'delegate', 'on_deny', 'on_stop']
   EVENT_HOOKS = ['before', 'after']
   STATE_HOOKS = ['enter', 'exit']
@@ -25,6 +25,8 @@ class Js.StateMachine
     'IDLED'
   ].map((v) -> [v, v]).to_h()
 
+  @debug: false
+
   constructor: (config) ->
     @new(config)
 
@@ -41,7 +43,6 @@ class Js.StateMachine
         config.methods.each (name, method) => this[name] = method
         @methods = config.methods.keys()
       CONFIG_HOOKS.each (name) => this[name] = config[name] ? noop
-      @debug = config.debug ? false
       @initial = config.initial
       @terminal = Array.wrap(config.terminal).to_set()
       @extract_states(config)
@@ -300,4 +301,4 @@ class Js.StateMachine
     @log_debug "#{tag} #{@current}"
 
   log_debug: (msg) ->
-    Logger.debug(msg) if @debug
+    Logger.debug(msg) if @constructor.debug

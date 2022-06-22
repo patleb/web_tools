@@ -95,7 +95,7 @@ describe('Js.StateMachine', () => {
         assert.not.same(sm, copy)
         assert.not.equal(sm.id, copy.id)
         assert.not.equal(sm.current, copy.current)
-        const ivars = ['debug', 'initial', 'terminal', 'states', 'methods', 'transitions', 'paths']
+        const ivars = ['initial', 'terminal', 'states', 'methods', 'transitions', 'paths']
         ivars.each((ivar) => {
           assert.same(sm[ivar], copy[ivar])
         })
