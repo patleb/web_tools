@@ -1,20 +1,22 @@
 class Js.ComponentConcept::Element
-  getters: ->
-    data_permanent: -> @element.hasAttribute('data-turbolinks-permanent')
-    data_scoped: -> @element.hasAttribute('data-scoped')
-    data_watch: -> JSON.safe_parse(@element.getAttribute('data-watch')) or []
-    watch_list: -> @data_watch().map (name) -> name
-
   constructor: (@element) ->
+    @static_data = JSON.safe_parse(@element.getAttribute('data-static')) or {}
+    @watch_data = JSON.safe_parse(@element.getAttribute('data-watch')) or []
+    @permanent = @element.hasAttribute('data-turbolinks-permanent')
+    @scoped = @element.hasAttribute('data-scoped')
+    @static = @watch_data.empty()
+    @watch = @watch_data.map (name) -> name
 
   ready: ->
-    return if @storage_get().present()
-    return unless (inputs = @data_watch()).is_a Object
-    @storage_set(inputs)
+    @static_data.each (name, value) => this[name] = value
+    if @static
+      @render_element()
+    else if @storage_get().empty() and @watch_data.is_a Object
+      @storage_set(@watch_data)
 
   render: not_implemented
 
-  render_element: (changes) ->
+  render_element: (changes = {}) ->
     changes.each (name, [value]) => this[name] = value
     unless (html = @render() ? '').html_safe()
       html = html.safe_text()
@@ -24,19 +26,22 @@ class Js.ComponentConcept::Element
     @storage_get(name)[name]
 
   storage_get: (names...) ->
-    Js.Storage.get(@storage_names(names)..., @storage_options())
+    if @static
+      {}
+    else
+      Js.Storage.get(@storage_names(names)..., @storage_options())
 
   storage_set: (inputs) ->
     Js.Storage.set(inputs, @storage_options())
 
   storage_names: (names) ->
-    if not @data_scoped() and names.empty()
-      @watch_list()
+    if not @scoped and names.empty()
+      @watch
     else
       names
 
   storage_options: ->
-    if @data_scoped()
-      { scope: @uid, permanent: @data_permanent() }
+    if @scoped
+      { scope: @uid, @permanent }
     else
-      { permanent: @data_permanent() }
+      { @permanent }

@@ -45,4 +45,12 @@ describe('Js.ComponentConcept', () => {
     assert.html_equal('<div><h1>New World!</h1></div>', banner.innerHTML)
     assert.html_equal('<div><h1>Dummy</h1></div>', dummy.innerHTML)
   })
+
+  it('should fire change event', () => {
+    assert.total(1)
+    dom.on_event({ [Js.Component.CHANGE]: ({ detail: { uids }}) => {
+      assert.equal(2, uids.length) // GlobalElement and BannerElement
+    }})
+    Js.Storage.set({ banner: 'changed' })
+  })
 })

@@ -4,6 +4,7 @@ class Js.ComponentConcept
   constants: ->
     ELEMENTS: '.js_component'
     INPUTS: -> "#{@ELEMENTS} [data-bind]"
+    CHANGE: 'js_component:change'
 
   document_on: -> [
     Js.Storage.CHANGE, Js.Storage.ROOT, @render_elements
@@ -25,7 +26,11 @@ class Js.ComponentConcept
     @leave_elements()
 
   render_elements: ({ detail: { permanent, scope, changes } } = {}) ->
-    @elements?.each (uid, element) ->
-      return if permanent isnt element.data_permanent()
-      return if scope and scope isnt uid or not scope and element.data_scoped()
+    uids = (@elements ? {}).each_with_object {}, (uid, element, memo) ->
+      return if element.static
+      return if permanent isnt element.permanent
+      return if scope and scope isnt uid or not scope and element.scoped
       element.render_element(changes)
+      memo[uid] = true
+    uids = uids.keys()
+    Rails.fire(document, @CHANGE, { uids }) unless uids.empty()
