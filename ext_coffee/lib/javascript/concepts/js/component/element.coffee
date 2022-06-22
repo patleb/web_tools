@@ -1,5 +1,6 @@
 class Js.ComponentConcept::Element
   getters: ->
+    data_permanent: -> @element.hasAttribute('data-turbolinks-permanent')
     data_scoped: -> @element.hasAttribute('data-scoped')
     data_watch: -> JSON.parse(@element.getAttribute('data-watch'))
     watch: ->
@@ -10,9 +11,9 @@ class Js.ComponentConcept::Element
   constructor: (@element) ->
 
   ready: ->
-    return if @get_data().present()
+    return if @storage_get().present()
     return unless (inputs = @data_watch()).is_a Object
-    @set_data(inputs)
+    @storage_set(inputs)
 
   render: not_implemented
 
@@ -22,19 +23,23 @@ class Js.ComponentConcept::Element
       html = html.safe_text()
     @element.innerHTML = html
 
-  get_value: (name) ->
-    @get_data(name)[name]
+  storage_value: (name) ->
+    @storage_get(name)[name]
 
-  get_data: (names...) ->
-    if @data_scoped()
-      return Js.Storage.get({ scope: @uid }) if names.empty()
-      Js.Storage.get(names..., { scope: @uid })
-    else
-      names = @watch() if names.empty()
-      Js.Storage.get(names...)
+  storage_get: (names...) ->
+    Js.Storage.get(@storage_names(names)..., @storage_options())
 
-  set_data: (inputs) ->
-    if @data_scoped()
-      Js.Storage.set(inputs, { scope: @uid })
+  storage_set: (inputs) ->
+    Js.Storage.set(inputs, @storage_options())
+
+  storage_names: (names) ->
+    if not @data_scoped() and names.empty()
+      @watch()
     else
-      Js.Storage.set(inputs)
+      names
+
+  storage_options: ->
+    if @data_scoped()
+      { scope: @uid, permanent: @data_permanent() }
+    else
+      { permanent: @data_permanent() }

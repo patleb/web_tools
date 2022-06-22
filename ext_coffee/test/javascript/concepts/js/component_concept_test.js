@@ -4,10 +4,12 @@ describe('Js.ComponentConcept', () => {
   concepts.with_page('component')
 
   it('should render elements', () => {
-    const banner = dom.$0(`${Js.Component.ELEMENTS}[data-element=banner]`)
+    const banner_persistent = dom.$0(`${Js.Component.ELEMENTS}[data-element=banner][data-turbolinks-permanent]`)
+    const banner = dom.$0(`${Js.Component.ELEMENTS}[data-element=banner]:not([data-turbolinks-permanent])`)
     const card = dom.$0(`${Js.Component.ELEMENTS}[data-element=card]`)
     const card_element = Js.Component.elements[card.dataset.uid]
     const input = card.$0('input')
+    assert.html_equal('<div><h1>Persistent World!</h1></div>', banner_persistent.innerHTML)
     assert.html_equal('<div><h1>Hello World!</h1></div>', banner.innerHTML)
     assert.html_equal(
       `<div>
@@ -36,7 +38,9 @@ describe('Js.ComponentConcept', () => {
       </div>`,
       card.innerHTML
     )
+    Js.Storage.set({ banner: 'Again World!' }, { permanent: true })
     Js.Storage.set({ banner: 'New World!' })
+    assert.html_equal('<div><h1>Again World!</h1></div>', banner_persistent.innerHTML)
     assert.html_equal('<div><h1>New World!</h1></div>', banner.innerHTML)
   })
 })
