@@ -4,9 +4,9 @@ describe('Js.ComponentConcept', () => {
   concepts.with_page('component')
 
   it('should render elements', () => {
+    const banner = dom.find(`${Js.Component.ELEMENTS}[data-element=banner]:not([data-turbolinks-permanent][data-static])`)
     const banner_persistent = dom.find(`${Js.Component.ELEMENTS}[data-element=banner][data-turbolinks-permanent]`)
-    const banner = dom.find(`${Js.Component.ELEMENTS}[data-element=banner]:not([data-turbolinks-permanent])`)
-    const dummy = dom.find(`${Js.Component.ELEMENTS}[data-element=dummy]`)
+    const banner_static = dom.find(`${Js.Component.ELEMENTS}[data-element=banner][data-static]`)
     const card = dom.find(`${Js.Component.ELEMENTS}[data-element=card]`)
     const card_element = Js.Component.elements[card.dataset.uid]
     const input = card.find('input')
@@ -43,7 +43,7 @@ describe('Js.ComponentConcept', () => {
     Js.Storage.set({ banner: 'New World!' })
     assert.html_equal('<div><h1>Again World!</h1></div>', banner_persistent.innerHTML)
     assert.html_equal('<div><h1>New World!</h1></div>', banner.innerHTML)
-    assert.html_equal('<div><h1>Dummy</h1></div>', dummy.innerHTML)
+    assert.html_equal('<div><h1>Header</h1></div>', banner_static.innerHTML)
   })
 
   it('should fire change event', () => {
