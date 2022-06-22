@@ -15,7 +15,8 @@ class Js.DeviceConcept
     @on_resize()
     window.addEventListener('resize', @on_resize.throttle(), false)
 
-    prefix = window.getComputedStyle(document.documentElement, '').values().join('').match(/-(webkit|moz|ms)-/)?[1]
+    styles = window.getComputedStyle(document.documentElement, '')
+    prefix = try styles.values().join('').match(/-(webkit|moz|ms)-/)?[1]
     @webkit = prefix is 'webkit'
     @firefox = prefix is 'moz' or typeof InstallTrigger isnt 'undefined'
     @microsoft = prefix is 'ms'
