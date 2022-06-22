@@ -124,12 +124,16 @@ class Js.Concepts
         memo[uid] = new this[element_class](element)
         memo[uid].uid = uid
 
-      @elements.each (uid, element) ->
+      @elements.each_with_object [], (uid, element, memo) ->
+        unless memo.include(element.__proto__)
+          memo.push(element.__proto__)
+          element.ready_once?()
         element.ready?()
 
     concept_class::leave_elements ?= ->
       @elements?.each (uid, element) ->
         element.leave?()
+      @elements = null
 
     concept_class::select((name) -> name.match(ELEMENT)).each (name, element_class) =>
       @add_element(name, element_class, concept) unless element_class.class_name
