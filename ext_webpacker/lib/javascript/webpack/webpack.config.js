@@ -22,7 +22,9 @@ try {
   // do nothing
 }
 screens = { plugins: [new webpack.EnvironmentPlugin(Object.assign(process.env, {
-  SCREENS: JSON.stringify(screens)
+  SCREENS: JSON.stringify(screens),
+  LOGGER_DEBUG: false,
+  LOGGER_TRACE: false,
 }))] }
 
 module.exports = merge(webpackConfig, devtool, screens, {
@@ -31,8 +33,7 @@ module.exports = merge(webpackConfig, devtool, screens, {
     modules: [path.resolve('node_modules')],
     extensions: ['.css', '.scss'],
   },
-  plugins: [new webpack.ProvidePlugin({
-    $:      'jquery',
-    jQuery: 'jquery',
-  })]
+  // plugins: [new webpack.ProvidePlugin({
+  //   _: 'underscore',
+  // })]
 })
