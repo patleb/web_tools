@@ -4,6 +4,7 @@ import '@@lib/ext_coffee/js/all'
 import '@@lib/ext_coffee/concepts/js/all'
 import '@@test/ext_coffee/fixtures/files/concepts/js/component/banner_element'
 import '@@test/ext_coffee/fixtures/files/concepts/js/component/card_element'
+import '@@test/ext_coffee/fixtures/files/concepts/js/component/dummy_element'
 
 Js.Concepts.initialize({ modules: 'Js' })
 

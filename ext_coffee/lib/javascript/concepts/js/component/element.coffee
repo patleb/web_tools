@@ -2,11 +2,8 @@ class Js.ComponentConcept::Element
   getters: ->
     data_permanent: -> @element.hasAttribute('data-turbolinks-permanent')
     data_scoped: -> @element.hasAttribute('data-scoped')
-    data_watch: -> JSON.parse(@element.getAttribute('data-watch'))
-    watch: ->
-      names = []
-      @data_watch().each (name) -> names.push name
-      names
+    data_watch: -> JSON.safe_parse(@element.getAttribute('data-watch')) or []
+    watch_list: -> @data_watch().map (name) -> name
 
   constructor: (@element) ->
 
@@ -34,7 +31,7 @@ class Js.ComponentConcept::Element
 
   storage_names: (names) ->
     if not @data_scoped() and names.empty()
-      @watch()
+      @watch_list()
     else
       names
 
