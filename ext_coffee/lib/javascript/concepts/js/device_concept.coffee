@@ -33,4 +33,4 @@ class Js.DeviceConcept
   on_resize: =>
     @width = window.innerWidth or document.documentElement.clientWidth or document.body.clientWidth
     @height = window.innerHeight or document.documentElement.clientHeight or document.body.clientHeight
-    @phone = (@width < @screens.md)
+    @mobile = (@width < @screens.md)
