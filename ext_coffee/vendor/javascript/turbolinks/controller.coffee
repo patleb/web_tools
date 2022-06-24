@@ -263,9 +263,7 @@ class Turbolinks.Controller
     location.is_prefixed_by(@get_root_location()) and location.is_html()
 
   get_form: (target) ->
-    target if target.matches('form') \
-      and (target.matches('[method=get]') or not target.hasAttribute('method')) \
-      and not Rails.is_remote(target)
+    target if target.matches('form:not([method=post])') and not Rails.is_remote(target)
 
   get_link: (target) ->
     link = target.closest('a[href]:not([target^=_]):not([download])')
