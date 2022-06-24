@@ -1,4 +1,5 @@
 Function.PROTECTED_METHODS = [
+  'class_methods'
   'included'
   'extended'
 ]
@@ -46,13 +47,23 @@ Function.override_methods
     this is other
 
 Function.define_methods
+  new: (args...) ->
+    new this(args...)
+
   include: (base, keys...) ->
-    Function.delegate_to this::, base::, keys...
+    @extend base.class_methods() if base.class_methods?
+    @constructor.delegate_to this::, base::, keys...
     base.included?(this::)
+    return
 
   extend: (base, keys...) ->
-    Function.delegate_to this, base, keys...
+    @constructor.delegate_to this, base, keys...
     base.extended?(this)
+    return
+
+  alias_method: (to, from) ->
+    this::[to] = this::[from]
+    return
 
   debounce: (wait = 100, immediate = false) ->
     @constructor.debounce(this, wait, immediate)
