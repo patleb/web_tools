@@ -186,9 +186,7 @@ class Js.Concepts
     context.document_on().each_slice(3).each ([events, selector, handler]) ->
       with_target = handler
       handler = ->
-        args = Array.wrap(arguments)
-        args.push(this)
-        with_target.apply(context, args)
+        with_target.apply(context, [arguments..., this])
       if context.document_on_before
         with_before = handler
         handler = (event) ->
