@@ -10,6 +10,12 @@ Object.define_singleton_methods
     result
 
 Object.define_methods
+  instance_exec: (block, args...) ->
+    block.apply(this, args)
+
+  instance_eval: (block) ->
+    block.apply(this)
+
   is_a: (klass) ->
     @constructor is klass
 
