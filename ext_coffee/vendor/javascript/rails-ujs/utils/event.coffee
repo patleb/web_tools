@@ -39,7 +39,11 @@ window.Rails = Rails.merge
         e.stopPropagation()
 
   document_on: (event_type, selector, handler) ->
-    Rails.delegate(document, selector, event_type, handler)
+    if typeof selector is 'string'
+      Rails.delegate(document, selector, event_type, handler)
+    else
+      handler ?= selector
+      document.addEventListener(event_type, handler)
 
   is_meta_click: (event, method, data) ->
     (event.button? and event.button isnt 0) or (

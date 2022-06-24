@@ -51,8 +51,8 @@ Rails.start = ->
   Rails.document_on 'click', Rails.clickable_inputs, Rails.handle_confirm
   Rails.document_on 'click', Rails.clickable_inputs, Rails.form_submit_button_click
 
-  document.addEventListener('DOMContentLoaded', Rails.refresh_csrf_tokens)
-  document.addEventListener('DOMContentLoaded', Rails.load_csp_nonce)
+  Rails.document_on 'DOMContentLoaded', Rails.refresh_csrf_tokens
+  Rails.document_on 'DOMContentLoaded', Rails.load_csp_nonce
   window._rails_loaded = true
 
 if window.Rails is Rails and Rails.fire(document, 'rails:attachBindings')

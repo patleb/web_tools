@@ -21,9 +21,9 @@ class Js.Concepts
     initialized = true
     Array.wrap(concepts).each (name) => @add_concept(name)
     Array.wrap(modules).each (name) => @add_module(name)
-    document.addEventListener 'DOMContentLoaded', @on_load
-    document.addEventListener 'turbolinks:before-render', @on_leave
-    document.addEventListener 'turbolinks:load', @on_ready
+    Rails.document_on 'DOMContentLoaded', @on_load
+    Rails.document_on 'turbolinks:before-render', @on_leave
+    Rails.document_on 'turbolinks:load', @on_ready
 
   @on_load: =>
     # necessary for having accurate heights/widths
