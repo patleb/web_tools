@@ -47,11 +47,11 @@ window.Rails = Rails.merge
     xhr.setRequestHeader('X-CSRF-Token', token) if token?
 
   # Make sure that all forms have actual up-to-date tokens (cached forms contain old ones)
-  refresh_csrf_tokens: ->
+  refresh_csrf_tokens: (root = Rails) ->
     token = Rails.csrf_token()
     param = Rails.csrf_param()
     if token? and param?
-      Rails.$("form input[name='#{param}']").forEach (input) -> input.value = token
+      root.$("form input[name='#{param}']").forEach (input) -> input.value = token
 
   serialize_element: (element, additional_param) ->
     inputs = [element]
