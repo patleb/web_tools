@@ -3,20 +3,21 @@ window.noop = ->
 window.not_implemented = -> throw new Error('NotImplementedError')
 
 window.prepend_to = (object, name, callback) ->
-  previous = object[name] || -> {}
+  previous = object[name]
   object[name] = ->
     callback.apply(this, arguments)
     previous.apply(this, arguments)
 
 window.append_to = (object, name, callback) ->
-  previous = object[name] || -> {}
+  previous = object[name]
   object[name] = ->
     previous.apply(this, arguments)
     callback.apply(this, arguments)
 
 window.decorate = (object, name, callback) ->
-  previous = object[name] || -> {}
+  previous = object[name]
   object[name] = ->
+    this.self = object
     this.super = previous
     callback.apply(this, arguments)
 
