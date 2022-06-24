@@ -10,7 +10,7 @@ Array.override_methods
 
   to_h: ->
     @each_with_object {}, ([key, value...], memo) ->
-      throw "Array#to_h: invalid conversion structure" if value.length isnt 1
+      throw 'Array#to_h: invalid conversion structure' if value.length isnt 1
       memo[key] = value[0]
 
   blank: ->

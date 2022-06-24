@@ -18,7 +18,7 @@ Number.define_methods
   to_b: ->
     return true if this is 1
     return false if this is 0
-    throw "invalid value for Boolean: '#{this}'"
+    throw 'invalid value for Boolean'
 
   to_i: ->
     parseInt(this)
