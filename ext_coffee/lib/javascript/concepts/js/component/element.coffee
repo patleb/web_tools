@@ -14,6 +14,9 @@ class Js.ComponentConcept::Element
     else if @storage_get().empty() and @watch_data.is_a Object
       @storage_set(@watch_data)
 
+  $: (args...) ->
+    @element.$(args...)
+
   render: not_implemented
 
   render_element: (changes = {}) ->
