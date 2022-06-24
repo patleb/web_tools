@@ -53,12 +53,12 @@ Function.define_methods
   include: (base, keys...) ->
     @extend base.class_methods() if base.class_methods?
     @constructor.delegate_to this::, base::, keys...
-    base.included?(this::)
+    base.included?.apply(this::)
     return
 
   extend: (base, keys...) ->
     @constructor.delegate_to this, base, keys...
-    base.extended?(this)
+    base.extended?.apply(this)
     return
 
   alias_method: (to, from) ->

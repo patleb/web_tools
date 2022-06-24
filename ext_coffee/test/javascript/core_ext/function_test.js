@@ -29,9 +29,8 @@ describe('Function', () => {
     assert.equal('Base', klass.__proto__.context.super())
     assert.equal('Extended', klass.__proto__.constructor.context())
     assert.equal('Module', klass.__proto__.constructor.context.super())
-    assert.equal('Module', klass.__proto__.constructor.module.context())
-    assert.equal('Concern', klass.__proto__.concern.prototype.context())
-    assert.equal('Extended', klass.__proto__.concern.class_methods().context())
+    assert.true(klass.__proto__.constructor.extended)
+    assert.true(klass.__proto__.included)
   })
 
   test('.alias_method', () => {

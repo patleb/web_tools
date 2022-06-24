@@ -1,17 +1,17 @@
 class window.Module
-  @extended: (klass) ->
-    klass.module = this
+  @extended: ->
+    @extended = true
 
   @context: ->
     'Module'
 
 class window.Concern
-  @class_methods: (klass) ->
+  @class_methods: ->
     context: ->
       'Extended'
 
-  @included: (prototype) ->
-    prototype.concern = this
+  @included: ->
+    @included = true
 
   context: ->
     'Concern'
