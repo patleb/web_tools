@@ -39,6 +39,14 @@ describe('Object', () => {
     assert.false({}.eql([]))
   })
 
+  test('#tap', () => {
+    let value
+    assert.equal({ a: 1 }, { a: 1 }.tap((object) => value = object.a ))
+    assert.equal(1, value)
+    assert.equal('value', 'value'.tap((string) => value = string ))
+    assert.equal('value', value)
+  })
+
   test('#has_key', () => {
     assert.true({ a: 1 }.has_key('a'))
     assert.true({ null: null }.has_key('null'))
