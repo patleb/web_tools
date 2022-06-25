@@ -1,4 +1,6 @@
 class Js.TagConcept
+  global: true
+
   ID_CLASSES = /^([#.][A-Za-z_-][:\w-]*)+$/
 
   HTML_TAGS: [
@@ -7,22 +9,25 @@ class Js.TagConcept
   ].to_set()
 
   ready_once: ->
-    @define_tags()
+    window.h_ = @h_
+    window.h_if = @h_if
+    window.h_unless = @h_unless
+    @HTML_TAGS.each (tag) => @define_tag(tag)
 
-  add_tags: (tags...) ->
+  define: (tags...) ->
+    @merge(tags...)
+    tags.each (tag) => @define_tag(tag)
+
+  merge: (tags...) ->
     @HTML_TAGS = @HTML_TAGS.merge(tags.to_set())
 
   # Private
 
-  define_tags: ->
-    window.h_ = @h_
-    window.h_if = @h_if
-    window.h_unless = @h_unless
-    @HTML_TAGS.each (tag) =>
-      tag_ = "#{tag}_"
-      tag$ = "#{tag}$"
-      window[tag_] ?= (args...) => @with_tag(tag_, args...)
-      window[tag$] ?= (args...) => @with_tag(tag$, args...)
+  define_tag: (tag) ->
+    tag_ = "#{tag}_"
+    tag$ = "#{tag}$"
+    window[tag_] ?= (args...) => @with_tag(tag_, args...)
+    window[tag$] ?= (args...) => @with_tag(tag$, args...)
 
   h_: (values...) =>
     if values.length is 1 and (text = values[0])?.is_a Function

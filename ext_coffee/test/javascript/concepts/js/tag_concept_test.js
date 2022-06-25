@@ -5,12 +5,12 @@ describe('Js.TagConcept', () => {
   const safe_values = values.map(v => v.html_safe(true))
 
   beforeAll(async () => {
-    Js.TagConcept.add_tags('a')
     concepts.load_document()
     await tick()
   })
 
   it('should define tags', () => {
+    Tag.define('a')
     assert.equal('<a href="#" rel="noopener">HOME</a>', a_({ href: '#' }, () => 'HOME').to_s())
   })
 

@@ -2,7 +2,7 @@ import concepts from './spec_helper'
 
 describe('Js.ComponentConcept', () => {
   concepts.with_page('component', () => {
-    Js.TagConcept.add_tags('h1', 'h2', 'ul', 'li')
+    Tag.define('h1', 'h2', 'ul', 'li')
   })
 
   it('should render elements', () => {
