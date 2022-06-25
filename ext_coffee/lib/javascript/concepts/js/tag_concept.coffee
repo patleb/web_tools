@@ -1,25 +1,16 @@
 class Js.TagConcept
   ID_CLASSES = /^([#.][A-Za-z_-][:\w-]*)+$/
 
-  @HTML_TAGS: [
-    'a'
-    'b', 'button'
-    'dd', 'div', 'dl', 'dt'
-    'em'
-    'fieldset', 'form'
-    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr'
-    'i', 'input'
-    'label', 'legend', 'li'
-    'nav'
-    'option'
-    'p', 'pre'
-    'select', 'span', 'strong'
-    'table', 'tbody', 'td', 'th', 'thead', 'tr'
-    'ul'
+  HTML_TAGS: [
+    'div'
+    'input'
   ].to_set()
 
   ready_once: ->
     @define_tags()
+
+  add_tags: (tags...) ->
+    @HTML_TAGS = @HTML_TAGS.merge(tags.to_set())
 
   # Private
 
@@ -27,19 +18,19 @@ class Js.TagConcept
     window.h_ = @h_
     window.h_if = @h_if
     window.h_unless = @h_unless
-    @constructor.HTML_TAGS.each (tag) =>
-      window["#{tag}_"] ?= (args...) =>
-        @with_tag(tag, args...)
+    @HTML_TAGS.each (tag) =>
+      tag_ = "#{tag}_"
       tag$ = "#{tag}$"
-      window[tag$] ?= (args...) =>
-        @with_tag(tag$, args...)
+      window[tag_] ?= (args...) => @with_tag(tag_, args...)
+      window[tag$] ?= (args...) => @with_tag(tag$, args...)
 
-  h_: (values...) ->
+  h_: (values...) =>
     if values.length is 1 and (text = values[0])?.is_a Function
       values = [text()]
     values = values.flatten().compact().map (item) ->
+      item = '' unless item?
       item = item.safe_text() unless item.html_safe()
-      item
+      item.to_s()
     values = values.join(' ')
     values.html_safe(true)
 
@@ -51,7 +42,7 @@ class Js.TagConcept
     return '' unless @continue(unless: is_true)
     @h_(values...)
 
-  with_tag: (tag, [css_or_content_or_options, content_or_options, options_or_content]...) =>
+  with_tag: (tag, [css_or_content_or_options, content_or_options, options_or_content]...) ->
     if css_or_content_or_options?
       if css_or_content_or_options.is_a(String) and css_or_content_or_options.match ID_CLASSES
         id_classes = css_or_content_or_options
@@ -85,19 +76,19 @@ class Js.TagConcept
       { data: options.delete('data') }.flatten_keys('-').each (key, value) ->
         options[key] = value
 
-    if tag.last() is '$'
-      element = true
-      tag = tag.chop()
+    element = true if tag.last() is '$'
+    tag = tag.chop()
 
     escape = options.delete('escape') ? true
     content = options.delete('text') if options.text?
     content = content() if content?.is_a Function
-    if tag.sub(/\$$/, '') is 'a'
-      options.rel = 'noopener' unless options.rel
+    switch tag
+      when 'a'
+        options.rel = 'noopener' unless options.rel
     content = @h_(content) if content?.is_a Array
 
     result = @content_tag(tag, content ? '', options, escape)
-    result = result.outerHTML.html_safe(true) unless element
+    result = result.to_s().html_safe(true) unless element
     result
 
   parse_id_classes: (string) ->

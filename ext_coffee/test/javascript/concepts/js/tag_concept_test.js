@@ -5,6 +5,7 @@ describe('Js.TagConcept', () => {
   const safe_values = values.map(v => v.html_safe(true))
 
   beforeAll(async () => {
+    Js.TagConcept.add_tags('a')
     concepts.load_document()
     await tick()
   })
@@ -27,6 +28,7 @@ describe('Js.TagConcept', () => {
         assert.equal(expect.join(' ').safe_text(), actual.to_s())
         assert.true(actual.html_safe())
       })
+      assert.html_equal('<div>Hello</div><div>World!</div>', h_(div$('Hello'), div_('World!'), null))
     })
 
     it('should allow to pass function as argument', () => {

@@ -12,8 +12,9 @@ const load_page = (name) => {
 }
 
 const concepts = {
-  with_page: (name) => {
+  with_page: (name, before = () => {}) => {
     beforeAll(async () => {
+      before()
       concepts.load_document(name)
       await tick()
     })

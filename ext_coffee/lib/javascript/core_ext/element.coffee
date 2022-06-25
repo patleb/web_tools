@@ -5,6 +5,9 @@ HTMLElement.define_methods
   to_s: ->
     @outerHTML
 
+  html_safe: ->
+    true
+
   classes: ->
     Array.wrap(@classList)
 
