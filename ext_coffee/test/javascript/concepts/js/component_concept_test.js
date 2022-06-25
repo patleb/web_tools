@@ -50,8 +50,8 @@ describe('Js.ComponentConcept', () => {
 
   it('should fire change event', () => {
     assert.total(1)
-    dom.on_event({ [Js.Component.CHANGE]: ({ detail: { uids }}) => {
-      assert.equal(2, uids.length) // GlobalElement and BannerElement
+    dom.on_event({ [Js.Component.CHANGE]: ({ detail: { elements }}) => {
+      assert.equal(2, elements.size()) // GlobalElement and BannerElement
     }})
     Js.Storage.set({ banner: 'changed' })
   })

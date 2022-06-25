@@ -26,11 +26,10 @@ class Js.ComponentConcept
     @leave_elements()
 
   render_elements: ({ detail: { permanent, scope, changes } } = {}) ->
-    uids = (@elements ? {}).each_with_object {}, (uid, element, memo) ->
+    elements = (@elements ? {}).select (uid, element) ->
       return if element.static
       return if permanent isnt element.permanent
       return if scope and scope isnt uid or not scope and element.scoped
-      element.render_element(changes)
-      memo[uid] = true
-    uids = uids.keys()
-    Rails.fire(document, @CHANGE, { uids }) unless uids.empty()
+      element.render_element(changes); true
+    elements.each (uid, element) -> Rails.refresh_csrf_tokens(element)
+    Rails.fire(document, @CHANGE, { elements })
