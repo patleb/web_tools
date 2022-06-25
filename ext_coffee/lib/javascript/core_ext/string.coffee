@@ -70,6 +70,9 @@ String.define_methods
   to_date: ->
     new Date(Date.parse(this))
 
+  to_element: ->
+    new DOMParser().parseFromString(this, 'text/html').body.children[0]
+
   last: ->
     this[@length - 1]
 

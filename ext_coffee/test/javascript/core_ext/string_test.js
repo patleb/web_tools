@@ -31,6 +31,12 @@ describe('String', () => {
     assert.raise(/invalid/, '{ a: 1 }'.to_h)
   })
 
+  test('#to_element', () => {
+    let element = document.createElement('div')
+    element.innerHTML = 'Hello'
+    assert.equal(element, '<div>Hello</div>'.to_element())
+  })
+
   test('#html_blank', () => {
     assert.true('<p>&nbsp;</p><br>'.html_blank())
     assert.false('text'.html_blank())
