@@ -17,6 +17,9 @@ class Js.ComponentConcept::Element
   $: (args...) ->
     @element.$(args...)
 
+  once: (args...) ->
+    @element.once(args...)
+
   render: not_implemented
 
   render_element: (changes = {}) ->

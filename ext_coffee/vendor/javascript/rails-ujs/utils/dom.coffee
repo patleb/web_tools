@@ -21,6 +21,11 @@ window.Rails = Rails.merge
   $: (selector) ->
     Array.wrap(document.querySelectorAll(selector))
 
+  once: (selector, callback) ->
+    Rails.$("#{selector}:not([data-once])").each (element) ->
+      callback(element)
+      element.setAttribute('data-once', true)
+
   find: (selector) ->
     document.querySelector(selector)
 
