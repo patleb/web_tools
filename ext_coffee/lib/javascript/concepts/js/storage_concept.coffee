@@ -1,8 +1,6 @@
 class Js.StorageConcept
   alias: 'Js.Storage'
 
-  @debug: false
-
   getters: ->
     root: -> storage_node(@ROOT)
     root_permanent: -> storage_node(@ROOT_PERMANENT, true)
@@ -11,6 +9,8 @@ class Js.StorageConcept
     ROOT: '#js_storage'
     ROOT_PERMANENT: '#js_storage_permanent'
     CHANGE: 'js_storage:change'
+
+  debug: (@__debug) ->
 
   get_value: (name, options = {}) ->
     @get(name, options)[name]
@@ -70,7 +70,7 @@ class Js.StorageConcept
     @log_debug "#{tag}[#{scope}:#{name}] #{JSON.stringify(value_was)} => #{JSON.stringify(value)}"
 
   log_debug: (msg) ->
-    Logger.debug(msg) if @constructor.debug
+    Logger.debug(msg) if @__debug
 
   storage_node = (id_selector, permanent) ->
     unless (element = Rails.find(id_selector))
