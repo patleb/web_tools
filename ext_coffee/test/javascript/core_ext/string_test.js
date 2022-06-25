@@ -31,10 +31,10 @@ describe('String', () => {
     assert.raise(/invalid/, '{ a: 1 }'.to_h)
   })
 
-  test('#to_element', () => {
+  test('#to_html', () => {
     let element = document.createElement('div')
     element.innerHTML = 'Hello'
-    assert.equal(element, '<div>Hello</div>'.to_element())
+    assert.equal(element, '<div>Hello</div>'.to_html()[0])
   })
 
   test('#html_blank', () => {
