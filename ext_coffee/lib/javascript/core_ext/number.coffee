@@ -1,15 +1,6 @@
 Number.override_methods
-  is_a: (klass) ->
-    @constructor is klass
-
   blank: ->
     isNaN(this)
-
-  present: ->
-    not @blank()
-
-  presence: ->
-    @valueOf() unless @blank()
 
   eql: (other) ->
     this is other

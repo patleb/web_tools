@@ -31,17 +31,8 @@ Function.define_singleton_methods
       timeout = setTimeout delayed, wait
 
 Function.override_methods
-  is_a: (klass) ->
-    @constructor is klass
-
   blank: ->
     false
-
-  present: ->
-    true
-
-  presence: ->
-    @valueOf()
 
   eql: (other) ->
     this is other

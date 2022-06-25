@@ -1,15 +1,6 @@
 RegExp.override_methods
-  is_a: (klass) ->
-    @constructor is klass
-
   blank: ->
     false
-
-  present: ->
-    true
-
-  presence: ->
-    @valueOf()
 
   eql: (other) ->
     return false unless other?.is_a RegExp

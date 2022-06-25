@@ -1,15 +1,6 @@
 Boolean.override_methods
-  is_a: (klass) ->
-    @constructor is klass
-
   blank: ->
-    not @valueOf()
-
-  present: ->
-    @valueOf()
-
-  presence: ->
-    @valueOf() if @valueOf()
+    not this
 
   eql: (other) ->
     this is other

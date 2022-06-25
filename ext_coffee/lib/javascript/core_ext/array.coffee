@@ -2,9 +2,6 @@ Array.override_methods
   dup: ->
     @slice()
 
-  is_a: (klass) ->
-    @constructor is klass
-
   to_a: ->
     this
 
@@ -12,18 +9,6 @@ Array.override_methods
     @each_with_object {}, ([key, value...], memo) ->
       throw 'Array#to_h: invalid conversion structure' if value.length isnt 1
       memo[key] = value[0]
-
-  blank: ->
-    @length is 0
-
-  present: ->
-    not @blank()
-
-  presence: ->
-    @valueOf() unless @blank()
-
-  empty: ->
-    @length is 0
 
   size: ->
     @length
@@ -79,9 +64,6 @@ Array.override_methods
 
   first: ->
     this[0]
-
-  html_map: (f_item_index_self) ->
-    h_(@map(f_item_index_self))
 
 Array.define_methods
   to_s: ->

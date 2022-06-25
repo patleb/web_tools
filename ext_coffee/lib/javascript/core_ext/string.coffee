@@ -12,9 +12,6 @@ String.override_methods
 
   dup: not_implemented
 
-  is_a: (klass) ->
-    @constructor is klass
-
   to_a: ->
     result = JSON.safe_parse(this)
     throw 'invalid value for Array' unless result.is_a Array
@@ -28,14 +25,8 @@ String.override_methods
   blank: ->
     @trim().length is 0
 
-  present: ->
-    not @blank()
-
-  presence: ->
-    @toString() unless @blank()
-
-  empty: ->
-    @length is 0
+  size: ->
+    @length
 
   eql: (other) ->
     this is other
