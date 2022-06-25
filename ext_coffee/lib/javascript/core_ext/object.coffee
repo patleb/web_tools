@@ -10,6 +10,12 @@ Object.define_singleton_methods
     result
 
 Object.define_methods
+  __send__: (method, args...) ->
+    if this[method]?.is_a Function
+      this[method](args...)
+    else
+      @method_missing(method, args...)
+
   instance_exec: (block, args...) ->
     block.apply(this, args)
 
