@@ -1,3 +1,5 @@
+ISO8601_SUPPORT = not isNaN(Date.parse('2011-01-01T12:00:00-05:00'))
+ISO8601_PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|[-+]?[\d:]+)$/
 HTML_ESCAPES =
   '&': '&amp;'
   '<': '&lt;'
@@ -59,7 +61,13 @@ String.define_methods
     @toString()
 
   to_date: ->
-    new Date(Date.parse(this))
+    if not ISO8601_SUPPORT and (matches = @match(ISO8601_PATTERN))
+      [_, year, month, day, hour, minute, second, zone] = matches
+      offset = zone.replace(':', '') if zone isnt 'Z'
+      date = "#{year}/#{month}/#{day} #{hour}:#{minute}:#{second} GMT#{[offset]}"
+    else
+      date = this
+    new Date(Date.parse(date))
 
   to_html: ->
     Array.wrap(new DOMParser().parseFromString(this, 'text/html').body.children)
