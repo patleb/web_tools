@@ -35,7 +35,7 @@ window.warn_define_singleton_method = (klass, name) =>
     klass_name = klass.class_name or klass.name or klass.constructor.name
     Logger.debug "ExtCoffee Overriding #{klass_name}.#{name}"
 
-for type in [Array, Boolean, Element, Function, Number, Object, RegExp, String]
+for type in [Array, Boolean, Date, Element, Function, Number, Object, RegExp, String]
   do (type) ->
     type.define_singleton_methods = (methods) ->
       for name, callback of methods
@@ -85,7 +85,7 @@ JSON.define_singleton_method = (name, callback) ->
   warn_define_singleton_method(JSON, name)
   JSON[name] = callback
 
-for type in [Array, Boolean, Number, Object, RegExp, String]
+for type in [Array, Boolean, Date, Number, Object, RegExp, String]
   do (type) ->
     type::to_json = -> JSON.parse(JSON.stringify(this))
     Object.defineProperty(type::, 'to_json', enumerable: false)

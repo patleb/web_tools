@@ -17,4 +17,4 @@ class window.Logger
     return
 
   @now: ->
-    console.log(new Date(Date.now()))
+    console.log Date.current()
