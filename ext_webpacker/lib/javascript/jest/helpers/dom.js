@@ -4,22 +4,29 @@ Object.defineProperty(window, 'scrollTo', {
 })
 Element.prototype.scrollIntoView = jest.fn()
 
-const head_was = ''
-const body_was = ''
+const document_was = { head: document.head, body: document.body }
 const form_submit_was = HTMLFormElement.prototype.submit
 const anchor_click_was = HTMLAnchorElement.prototype.click
 
 const dom = {
   setup_document: (content) => {
-    let element = document.createElement('html')
-    element.innerHTML = content
-    document.head.innerHTML = element.querySelector('head').innerHTML
-    document.body.innerHTML = element.querySelector('body').innerHTML
+    const html = new DOMParser().parseFromString(content, 'text/html')
+    for (const { name, value } of Array.prototype.slice.call(html.documentElement.attributes)) {
+      document.documentElement.setAttribute(name, value)
+    }
+    for (const node of ['head', 'body']) {
+      document_was[node] = document[node]
+      document[node].replaceWith(html[node])
+    }
     return content
   },
   reset_document: () => {
-    document.head.innerHTML = head_was
-    document.body.innerHTML = body_was
+    for (const { name } of Array.prototype.slice.call(document.documentElement.attributes)) {
+      document.documentElement.removeAttribute(name)
+    }
+    for (const node of ['head', 'body']) {
+      document[node].replaceWith(document_was[node])
+    }
   },
   stub_click: () => {
     delete HTMLAnchorElement.prototype.click
