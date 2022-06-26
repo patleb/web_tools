@@ -10,9 +10,11 @@ class window.I18n
       string = string.html_safe?(true) unless escape
     string ? key.gsub('.', ' ').humanize()
 
-  @with_locale: (@locale, callback) ->
+  @with_locale: (locale, callback) ->
+    locale_was = @locale
+    @locale = locale
     callback()
-    @locale = @default_locale
+    @locale = locale_was
     return
 
   @on_load: ->
