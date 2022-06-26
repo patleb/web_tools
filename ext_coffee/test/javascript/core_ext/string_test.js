@@ -33,6 +33,7 @@ describe('String', () => {
 
   test('#to_date', () => {
     assert.equal(Date.current(), 'now'.to_date())
+    assert.equal(new Date(Date.UTC(2001, 0, 1, 1, 1, 1)), '2001-01-01T01:01:01Z'.to_date())
     assert.equal(new Date(Date.UTC(2001, 0, 1, 1, 1, 1, 1.001001)), '2001-01-01 01:01:01.001001001 UTC'.to_date())
   })
 
