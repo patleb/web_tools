@@ -1,5 +1,6 @@
 import '@@lib/ext_coffee/core_ext/env'
 import '@@lib/ext_coffee/core_ext/logger'
+import '@@lib/ext_coffee/core_ext/i18n'
 import '@@lib/ext_coffee/core_ext/window'
 import '@@lib/ext_coffee/core_ext/object'
 import '@@lib/ext_coffee/core_ext/array'
