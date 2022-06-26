@@ -67,7 +67,7 @@ class Js.Concepts
 
     name = "#{module}.#{name}" if module?
     names = name.split('.')
-    module ||= (names.length && names[0..-2].join('.')) or ''
+    module ||= (names.length and names[0..-2].join('.')) or ''
     class_name = names.last()
 
     if uniq_classes[name]

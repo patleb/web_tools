@@ -55,7 +55,7 @@ const rails = {
     if (url) {
       xhr[type](url, (req, res) => {
         res = res.status(status)
-        for(const [name, value] of Object.entries(headers)) {
+        for (const [name, value] of Object.entries(headers)) {
           res = res.header(name, value)
         }
         return body ? res.body(body) : res

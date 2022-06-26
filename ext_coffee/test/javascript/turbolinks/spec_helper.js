@@ -226,7 +226,7 @@ const turbolinks = {
       let name = origin_url.replace(/^http:\/\/localhost\//, '')
       xhr.get(origin_url, (req, res) => {
         res = res.status(status).header('content-type', 'text/html')
-        for(const [name, value] of Object.entries(headers)) {
+        for (const [name, value] of Object.entries(headers)) {
           res = res.header(name, value)
         }
         return res.body(fixture.html(name))
