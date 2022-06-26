@@ -23,6 +23,9 @@ Number.define_methods
   to_s: ->
     @toString()
 
+  to_date: ->
+    new Date(this)
+
   is_integer: ->
     @constructor.isInteger?(this) ? @is_finite() and @floor() is this
 
