@@ -38,7 +38,7 @@ describe('I18n', () => {
   })
 
   it('should use the contextual locale', () => {
-    I18n.with('en', () => {
+    I18n.with_locale('en', () => {
       assert.equal('The name', I18n.t('name'))
     })
   })
