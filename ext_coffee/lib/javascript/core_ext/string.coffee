@@ -1,4 +1,4 @@
-ISO8601_SUPPORT = not isNaN(Date.parse('2011-01-01T12:00:00-05:00'))
+ISO8601_SUPPORT = Date.parse('2011-01-01T12:00:00-05:00').present()
 ISO8601_PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|[-+]?[\d:]+)$/
 HTML_ESCAPES =
   '&': '&amp;'
@@ -61,6 +61,7 @@ String.define_methods
     @toString()
 
   to_date: ->
+    return Date.current() if this is 'now'
     if not ISO8601_SUPPORT and (matches = @match(ISO8601_PATTERN))
       [_, year, month, day, hour, minute, second, zone] = matches
       offset = zone.replace(':', '') if zone isnt 'Z'

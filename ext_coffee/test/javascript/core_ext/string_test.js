@@ -31,6 +31,11 @@ describe('String', () => {
     assert.raise(/invalid/, '{ a: 1 }'.to_h)
   })
 
+  test('#to_date', () => {
+    assert.equal(Date.current(), 'now'.to_date())
+    assert.equal(new Date(Date.UTC(2001, 0, 1, 1, 1, 1, 1.001001)), '2001-01-01 01:01:01.001001001 UTC'.to_date())
+  })
+
   test('#to_html', () => {
     let element = document.createElement('div')
     element.innerHTML = 'Hello'
