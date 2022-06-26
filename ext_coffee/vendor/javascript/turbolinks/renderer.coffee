@@ -3,6 +3,7 @@ class Turbolinks.Renderer
     @controller = Turbolinks.controller
     @old_head_details = @old_snapshot.head_details
     @new_head_details = @new_snapshot.head_details
+    @new_html_tag = @new_snapshot.html_tag
     @new_body = @new_snapshot.body
 
   render: (callback) ->
@@ -12,6 +13,7 @@ class Turbolinks.Renderer
       return @controller.reload('tracked_element_mismatch') unless @error
       @replace_head()
     else
+      @merge_html_tag()
       @merge_head()
     @render_view =>
       @replace_body()
@@ -20,6 +22,10 @@ class Turbolinks.Renderer
 
   render_view: (callback) ->
     @controller.render_view(@new_body, callback, @error, @preview)
+
+  merge_html_tag: ->
+    for [name, value] in @new_html_tag
+      document.documentElement.setAttribute(name, value)
 
   merge_head: ->
     for element in @new_head_details.get_missing_stylesheets(@old_head_details)

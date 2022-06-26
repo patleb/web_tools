@@ -13,16 +13,17 @@ class Turbolinks.Snapshot
     @from_element(documentElement)
 
   @from_element: (element) ->
+    html_tag = Array.wrap(element.attributes).map ({ name, value }) -> [name, value]
     head = element.querySelector('head')
     body = element.querySelector('body') ? document.createElement('body')
     head_details = new Turbolinks.HeadDetails(head)
-    new this head_details, body
+    new this html_tag, head_details, body
 
-  constructor: (@head_details, @body) ->
+  constructor: (@html_tag, @head_details, @body) ->
 
   clone: ->
     { body } = @constructor.from_string(@body.outerHTML)
-    new @constructor @head_details, body
+    new @constructor @html_tag, @head_details, body
 
   get_root_location: ->
     root = @head_details.get_meta_value('turbolinks-root') ? '/'

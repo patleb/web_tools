@@ -41,6 +41,7 @@ describe('Turbolinks Navigation', () => {
       assert.equal('123', event.data.xhr.req.header('X-Xhr-Nonce'))
     }})
     await turbolinks.click('#same-origin-unannotated-link', { headers: { 'X-Xhr-Nonce': '123' }, 'turbolinks:load': (event) => {
+      assert.equal('en', document.documentElement.getAttribute('lang'))
       turbolinks.assert_page(event, 'http://localhost/one', { title: 'One' })
     }})
   })
