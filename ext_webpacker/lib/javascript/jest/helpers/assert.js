@@ -22,6 +22,7 @@ const assert = {
   equal: (exp, act) => (typeof exp === 'object') ? expect_with_not(act).toStrictEqual(exp) : expect_with_not(act).toBe(exp),
   deep_equal: (exp, act) => assert.equal(JSON.stringify(exp), JSON.stringify(act)),
   html_equal: (exp, act) => expect_with_not(act).toEqualIgnoringWhitespace(exp),
+  nan: (act) => expect_with_not(act).toBeNaN(),
   nil: (act) => expect_with_not(act).toBeNil(),
   null: (act) => expect_with_not(act).toBeNull(),
   undefined: (act) => expect_with_not(act).toBeUndefined(),
