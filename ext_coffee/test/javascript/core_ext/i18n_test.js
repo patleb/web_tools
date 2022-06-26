@@ -16,9 +16,10 @@ describe('I18n', () => {
     dom.fire('turbolinks:load')
   })
 
-  it('should set the locale', () => {
+  it('should set the locale and add js_i18n data-translations elements', () => {
     assert.equal('fr', I18n.default_locale)
     assert.equal('fr', I18n.locale)
+    assert.equal('Chien', I18n.t('dog'))
   })
 
   it('should prefer lang attribute locale, use the locale option or use the key if missing', () => {
