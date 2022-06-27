@@ -148,6 +148,7 @@ class Js.Concepts
 
   @add_element: (name, element_class, concept) ->
     element_class::concept = concept
+    element_class::element_name = name.sub(ELEMENT, '').underscore()
     element_class.class_name = element_class::class_name = name
 
     concept.constructor::CONSTANTS.each (name, value) ->

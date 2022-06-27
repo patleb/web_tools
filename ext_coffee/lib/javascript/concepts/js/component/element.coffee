@@ -14,14 +14,18 @@ class Js.ComponentConcept::Element
     else if @storage_get().empty() and @watch_data.is_a Object
       @storage_set(@watch_data)
 
-  $: (args...) ->
-    @element.$(args...)
+  selector: (selector) ->
+    scope = "#{@concept.ELEMENTS}[data-element=#{@element_name}]"
+    if selector? then "#{scope} #{selector}" else scope
 
-  once: (args...) ->
-    @element.once(args...)
+  $: (selector) ->
+    @element.$(selector)
 
-  find: (args...) ->
-    @element.find(args...)
+  once: (selector, callback) ->
+    @element.once(selector, callback)
+
+  find: (selector) ->
+    @element.find(selector)
 
   render: not_implemented
 
