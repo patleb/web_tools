@@ -5,7 +5,9 @@ class Js.TagConcept
 
   HTML_TAGS: [
     'div'
+    'form'
     'input'
+    'time'
   ].to_set()
 
   ready_once: ->
