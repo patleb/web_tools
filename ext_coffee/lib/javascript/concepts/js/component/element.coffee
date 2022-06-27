@@ -20,6 +20,9 @@ class Js.ComponentConcept::Element
   once: (args...) ->
     @element.once(args...)
 
+  find: (args...) ->
+    @element.find(args...)
+
   render: not_implemented
 
   render_element: (changes = {}) ->
