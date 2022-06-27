@@ -32,4 +32,4 @@ class Js.ComponentConcept
       return if scope and scope isnt uid or not scope and element.scoped
       element.render_element(changes); true
     elements.each (uid, element) -> Rails.refresh_csrf_tokens(element)
-    Rails.fire(document, @CHANGE, { elements })
+    Rails.fire(document, @CHANGE, { elements }) unless elements.empty()
