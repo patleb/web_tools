@@ -29,9 +29,11 @@ HTMLElement.define_methods
     Array.wrap(@querySelectorAll(selector))
 
   once: (selector, callback) ->
-    @$("#{selector}:not([data-once])").each (element) ->
+    elements = @$("#{selector}:not([data-once])")
+    elements.each (element) ->
       callback(element)
       element.setAttribute('data-once', true)
+    elements
 
   find: (selector) ->
     @querySelector(selector)
