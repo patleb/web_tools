@@ -15,7 +15,6 @@ const dom = {
       document.documentElement.setAttribute(name, value)
     }
     for (const node of ['head', 'body']) {
-      document_was[node] = document[node]
       document[node].replaceWith(html[node])
     }
     return content
