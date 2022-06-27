@@ -55,4 +55,13 @@ describe('Js.ComponentConcept', () => {
     }})
     Js.Storage.set({ banner: 'changed' })
   })
+
+  it('should allow in-context #document_on', () => {
+    assert.total(1)
+    const card = dom.find(`${Js.Component.ELEMENTS}[data-element=card]`)
+    dom.on_event({ 'click': (event) => {
+      assert.same(card, event.element.node)
+    }})
+    card.find('input').click()
+  })
 })

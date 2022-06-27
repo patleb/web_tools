@@ -114,14 +114,14 @@ class Js.Concepts
       true
 
     concept_class::ready_elements ?= (selector) ->
-      return unless (elements = Rails.$(selector)).present()
+      return unless (nodes = Rails.$(selector)).present()
 
-      @elements = elements.each_with_object {}, (element, memo) =>
-        element_class = "#{type.camelize()}Element" if type = element.getAttribute('data-element')
+      @elements = nodes.each_with_object {}, (node, memo) =>
+        element_class = "#{type.camelize()}Element" if type = node.getAttribute('data-element')
         element_class ||= 'Element'
         uid = Math.uid()
-        element.setAttribute('data-uid', uid)
-        memo[uid] = new this[element_class](element)
+        node.setAttribute('data-uid', uid)
+        memo[uid] = new this[element_class](node)
         memo[uid].uid = uid
 
       @elements.each_with_object [], (uid, element, memo) ->

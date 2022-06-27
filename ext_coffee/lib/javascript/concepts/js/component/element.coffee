@@ -1,9 +1,17 @@
 class Js.ComponentConcept::Element
-  constructor: (@element) ->
-    @static_data = JSON.safe_parse(@element.getAttribute('data-static')) or {}
-    @watch_data = JSON.safe_parse(@element.getAttribute('data-watch')) or []
-    @permanent = @element.hasAttribute('data-turbolinks-permanent')
-    @scoped = @element.hasAttribute('data-scoped')
+  @$: (selector) ->
+    scope = "#{@::concept.ELEMENTS}[data-element=#{@::element_name}]"
+    if selector? then "#{scope} #{selector}" else scope
+
+  @element: (target) ->
+    element = target.closest(@$())
+    @::concept.elements[element.getAttribute('data-uid')]
+
+  constructor: (@node) ->
+    @static_data = JSON.safe_parse(@node.getAttribute('data-static')) or {}
+    @watch_data = JSON.safe_parse(@node.getAttribute('data-watch')) or []
+    @permanent = @node.hasAttribute('data-turbolinks-permanent')
+    @scoped = @node.hasAttribute('data-scoped')
     @static = @watch_data.empty()
     @watch = @watch_data.map (name) -> name
 
@@ -14,18 +22,14 @@ class Js.ComponentConcept::Element
     else if @storage_get().empty() and @watch_data.is_a Object
       @storage_set(@watch_data)
 
-  selector: (selector) ->
-    scope = "#{@concept.ELEMENTS}[data-element=#{@element_name}]"
-    if selector? then "#{scope} #{selector}" else scope
-
   $: (selector) ->
-    @element.$(selector)
+    @node.$(selector)
 
   once: (selector, callback) ->
-    @element.once(selector, callback)
+    @node.once(selector, callback)
 
   find: (selector) ->
-    @element.find(selector)
+    @node.find(selector)
 
   render: not_implemented
 
@@ -33,7 +37,7 @@ class Js.ComponentConcept::Element
     changes.each (name, [value]) => this[name] = value
     unless (html = @render() ? '').html_safe()
       html = html.safe_text()
-    @element.innerHTML = html
+    @node.innerHTML = html
 
   storage_value: (name) ->
     @storage_get(name)[name]
