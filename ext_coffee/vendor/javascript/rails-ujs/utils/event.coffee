@@ -39,7 +39,7 @@ window.Rails = Rails.merge
         e.stopPropagation()
 
   document_on: (event_type, selector, handler) ->
-    if typeof selector in ['string', 'object']
+    if typeof selector is 'string' or typeof selector.selector is 'string'
       Rails.delegate(document, selector, event_type, handler)
     else
       handler ?= selector
