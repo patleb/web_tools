@@ -10,7 +10,7 @@ const anchor_click_was = HTMLAnchorElement.prototype.click
 
 const dom = {
   setup_document: (content) => {
-    const html = new DOMParser().parseFromString(content, 'text/html')
+    const html = content instanceof Document ? content : new DOMParser().parseFromString(content, 'text/html')
     for (const { name, value } of Array.prototype.slice.call(html.documentElement.attributes)) {
       document.documentElement.setAttribute(name, value)
     }
