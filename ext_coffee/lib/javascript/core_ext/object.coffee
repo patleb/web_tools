@@ -3,7 +3,7 @@ Object.define_singleton_methods
     for object in others
       for key, value of object
         if target[key]?.is_a?(Object) and value?.is_a?(Object)
-          target[key] = target[key].deep_merge(value)
+          target[key] = Object.deep_merge({}, target[key], value)
         else
           target[key] = value
     target

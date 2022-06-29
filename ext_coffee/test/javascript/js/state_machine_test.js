@@ -70,7 +70,7 @@ describe('Js.StateMachine', () => {
 
     describe('config', () => {
       beforeAll(() => {
-        config = toggle_with_hooks = toggle_base.deep_merge({
+        config = toggle_with_hooks = {}.deep_merge(toggle_base, {
           initialize: (sm) => { sm.initial = 'down' },
           terminal: 'up',
           before: noop,
@@ -141,7 +141,7 @@ describe('Js.StateMachine', () => {
 
       describe('with #cancel called in #before hook', () => {
         beforeAll(() => {
-          config = toggle_with_hooks.deep_merge({
+          config = {}.deep_merge(toggle_with_hooks, {
             before: (sm) => { sm.cancel() },
           })
           js.spy_on(config)
@@ -161,7 +161,7 @@ describe('Js.StateMachine', () => {
 
       describe('with #cancel called in event #before hook', () => {
         beforeAll(() => {
-          config = toggle_with_hooks.deep_merge({
+          config = {}.deep_merge(toggle_with_hooks, {
             events: { toggle: { before: (sm) => { sm.cancel() } } },
           })
           js.spy_on(config)
@@ -181,7 +181,7 @@ describe('Js.StateMachine', () => {
 
       describe('with #cancel called in state #exit hook', () => {
         beforeAll(() => {
-          config = toggle_with_hooks.deep_merge({
+          config = {}.deep_merge(toggle_with_hooks, {
             states: { down: { exit: (sm) => { sm.cancel() } } },
           })
           js.spy_on(config)
@@ -201,7 +201,7 @@ describe('Js.StateMachine', () => {
 
       describe('with #cancel called in state #enter hook', () => {
         beforeAll(() => {
-          config = toggle_with_hooks.deep_merge({
+          config = {}.deep_merge(toggle_with_hooks, {
             states: { up: { enter: (sm) => { sm.cancel() } } },
           })
           js.spy_on(config)
@@ -221,7 +221,7 @@ describe('Js.StateMachine', () => {
 
       describe('with #cancel called in event #after hook', () => {
         beforeAll(() => {
-          config = toggle_with_hooks.deep_merge({
+          config = {}.deep_merge(toggle_with_hooks, {
             events: { toggle: { after: (sm) => { sm.cancel() } } },
           })
           js.spy_on(config)
@@ -241,7 +241,7 @@ describe('Js.StateMachine', () => {
 
       describe('with #stop called in #before hook', () => {
         beforeAll(() => {
-          config = toggle_with_hooks.deep_merge({
+          config = {}.deep_merge(toggle_with_hooks, {
             before: (sm) => { sm.stop() },
           })
           js.spy_on(config)
@@ -262,7 +262,7 @@ describe('Js.StateMachine', () => {
 
       describe('with #defer called in #before hook', () => {
         beforeAll(() => {
-          config = toggle_with_hooks.deep_merge({
+          config = {}.deep_merge(toggle_with_hooks, {
             before: (sm) => { sm.defer() },
           })
           js.spy_on(config)
@@ -344,7 +344,7 @@ describe('Js.StateMachine', () => {
 
     describe('with :states data', () => {
       beforeAll(() => {
-        config = arrow_base.merge({ states: arrow_flags })
+        config = { states: arrow_flags }.merge(arrow_base)
       })
 
       it('should assign data to @states', () => {
@@ -355,7 +355,7 @@ describe('Js.StateMachine', () => {
 
     describe('with :flags at true', () => {
       beforeAll(() => {
-        config = arrow_base.merge({ flags: true })
+        config = { flags: true }.merge(arrow_base)
       })
 
       it('should assign deduced data to @states', () => {
