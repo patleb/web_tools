@@ -1,3 +1,4 @@
+--config_plugin=filesystem
 --config_path=/etc/osquery/osquery.conf
 --config_refresh=10
 --database_path=<%= Setting[:osquery_database_path] %>
@@ -10,6 +11,7 @@
 --audit_allow_sockets=true
 --events_expiry=1
 --events_max=500000
+--logger_plugin=filesystem
 --logger_path=<%= Setting[:osquery_logger_path] %>
 --logger_min_status=<%= Setting[:osquery_logger_level] %>
 --logger_event_type=false

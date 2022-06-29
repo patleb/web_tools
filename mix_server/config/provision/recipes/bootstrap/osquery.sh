@@ -4,6 +4,7 @@ add-apt-repository 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'
 sun.update
 
 sun.install "osquery"
+sun.lock "osquery"
 
 sun.backup_compare "/opt/osquery/share/osquery/osquery.example.conf"
 sun.backup_compare "/opt/osquery/share/osquery/packs/hardware-monitoring.conf"
