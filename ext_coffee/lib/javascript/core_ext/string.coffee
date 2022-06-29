@@ -132,6 +132,9 @@ String.define_methods
   chop: ->
     this[0..-2]
 
+  lchop: ->
+    this[1..-1]
+
   ljust: (length = 0, chars = ' ') ->
     pad = Array(length + 1).join(chars)
     @constructor(this + pad).substring(0, length)
