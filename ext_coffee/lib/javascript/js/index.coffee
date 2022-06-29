@@ -34,23 +34,6 @@ window.Js =
     text ?= ''
     text.toString()
 
-  decode_params: (string) ->
-    params = {}
-    data = decodeURIComponent(string).sub(/^\?/, '')
-    data.split('&').except('').each (pair) ->
-      [name, value] = pair.split('=')
-      if name.match /\[\]$/
-        params[name] ?= []
-        params[name].push value
-      else
-        params[name] = value
-    params
-
-  decode_url: (string) ->
-    link = document.createElement('a')
-    link.href = string
-    link
-
   is_submit_key: (event) ->
     event.which is 13 and not (event.target.matches('textarea') or event.target.isContentEditable)
 
