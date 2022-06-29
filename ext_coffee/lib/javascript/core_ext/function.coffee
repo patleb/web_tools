@@ -38,12 +38,29 @@ Function.override_methods
     this is other
 
 Function.define_methods
+  delegate_to: (base, keys...) ->
+    switch base.constructor
+      when String
+        if base.start_with '@', 'this.'
+          throw 'must specify #delegate_to keys' if keys.empty()
+          ivar_name = base.sub(/^(@|this\.)/, '')
+          keys.each (method) =>
+            this::[method] = ->
+              ivar = this[ivar_name]
+              ivar[method].apply(ivar, arguments)
+        else
+          throw 'invalid #delegate_to base'
+      when Function
+        @constructor.delegate_to(this::, base::, keys...)
+      else
+        @constructor.delegate_to(this::, base, keys...)
+
   new: (args...) ->
     new this(args...)
 
   include: (base, keys...) ->
     @extend base.class_methods() if base.class_methods?
-    @constructor.delegate_to this::, base::, keys...
+    @delegate_to base, keys...
     base.included?.apply(this::)
     return
 
