@@ -160,8 +160,8 @@ class Js.Concepts
 
   @define_constants: (klass) ->
     constants = @unless_defined klass::constants, =>
-      klass::constants().each_with_object {}, (name, value, constants) =>
-        @define_constant(klass, name, value, constants)
+      klass::constants().each_with_object {}, (name, value, memo) =>
+        @define_constant(klass, name, value, memo)
     klass::CONSTANTS = constants or {}
 
   @define_constant: (klass, name, value, constants) ->
@@ -177,10 +177,10 @@ class Js.Concepts
 
   @define_getters: (klass) ->
     getters = @unless_defined klass::getters, ->
-      klass::getters().each_with_object [], (name, callback, all) ->
+      klass::getters().each_with_object [], (name, callback, memo) ->
         klass::[name] = ->
           this["__#{name}"] ?= callback.apply(this, arguments)
-        all.push(name)
+        memo.push(name)
     klass::GETTERS = getters or []
 
   @define_document_on: (context) ->
