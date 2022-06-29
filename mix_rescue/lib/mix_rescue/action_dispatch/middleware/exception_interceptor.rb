@@ -2,6 +2,7 @@ module ActionDispatch
   BAD_REQUEST_ERRORS = [
     EOFError,
     URI::InvalidURIError,
+    Rack::QueryParser::InvalidParameterError,
     ActionController::BadRequest,
     ActionDispatch::Http::MimeNegotiation::InvalidType,
     ActionController::InvalidAuthenticityToken,
