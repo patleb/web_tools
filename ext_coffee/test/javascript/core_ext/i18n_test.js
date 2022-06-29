@@ -13,11 +13,10 @@ describe('I18n', () => {
       },
     }
     dom.setup_document(fixture.html('i18n', { root: 'ext_coffee/test/fixtures/files/core_ext' }))
-    dom.fire('turbolinks:load')
+    dom.fire('DOMContentLoaded')
   })
 
   it('should set the locale and add js_i18n data-translations elements', () => {
-    assert.equal('fr', I18n.default_locale)
     assert.equal('fr', I18n.locale)
     assert.equal('Chien', I18n.t('dog'))
   })

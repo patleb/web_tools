@@ -8,7 +8,7 @@ const create_date = (year, month, day, hour, minute, second) => {
 
 describe('Date', () => {
   beforeAll(() => {
-    dom.fire('turbolinks:load')
+    dom.fire('DOMContentLoaded')
   })
 
   test('#is_a', () => {
