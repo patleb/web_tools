@@ -16,11 +16,7 @@ sun.remove() {
 }
 
 sun.update() {
-  if [[ ! -z "$@" ]]; then
-    sun.mute "$os_package_update"
-  else
-    sun.mute "$os_package_update"
-  fi
+  sun.mute "$os_package_update"
 }
 
 sun.upgrade() {

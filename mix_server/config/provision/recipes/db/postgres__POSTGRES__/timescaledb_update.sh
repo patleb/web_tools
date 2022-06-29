@@ -2,7 +2,7 @@
 TIMESCALEDB="timescaledb-2-postgresql-$__POSTGRES__"
 
 sun.unlock $TIMESCALEDB
-sun.update $TIMESCALEDB
+sun.update
 sun.install $TIMESCALEDB
 sun.lock $TIMESCALEDB
 
