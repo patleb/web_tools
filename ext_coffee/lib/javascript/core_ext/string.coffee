@@ -176,6 +176,8 @@ String.define_methods
     if @match /[^:\w.]+/
       throw 'not a valid module or class name'
     else
+      if (@constructor.constantize ?= {}).has_key this
+        return @constructor.constantize[this]
       object = window
       @replace(/^::/, '').split('.').each (class_scope) ->
         class_scope.split('::').each (prototype_scope, i) ->
@@ -183,7 +185,7 @@ String.define_methods
             object = object[prototype_scope]
           else
             object = object::[prototype_scope]
-      object
+      @constructor.constantize[this] = object
 
   partition: (separator) ->
     if (index = @index(separator))?
