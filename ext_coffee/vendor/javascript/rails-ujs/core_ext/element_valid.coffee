@@ -1,5 +1,5 @@
 HTMLElement::valid = ->
-  return true if (form = @closest('form')) ? Rails.get(form, 'ujs:formnovalidate-button')
+  return true if (form = @closest('form')) and Rails.get(form, 'ujs:formnovalidate-button')
   return true if @formNoValidate
   return @checkValidity() if @checkValidity?
   return @reportValidity() if @reportValidity?
