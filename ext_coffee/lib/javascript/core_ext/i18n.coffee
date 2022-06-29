@@ -23,6 +23,6 @@ class window.I18n
     Rails.$('.js_i18n').each (element) ->
       if translations = element.getAttribute('data-translations')
         if translations = JSON.safe_parse(translations)
-          I18n.translations = I18n.translations.deep_merge(translations)
+          I18n.translations.deep_merge(translations)
 
 Rails.document_on 'turbolinks:load', I18n.on_load

@@ -6,7 +6,7 @@ ACCEPT_HEADERS =
   json: 'application/json, text/javascript'
   script: 'text/javascript, application/javascript, application/ecmascript, application/x-ecmascript'
 
-window.Rails = Rails.merge
+Rails.merge
   ajax: (options) ->
     options = prepare_options(options)
     xhr = create_xhr options, ->

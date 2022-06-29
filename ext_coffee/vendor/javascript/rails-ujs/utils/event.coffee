@@ -1,4 +1,4 @@
-window.Rails = Rails.merge
+Rails.merge
   # Triggers a custom event on an element and returns false if the event result is false
   # obj::
   #   a native DOM element

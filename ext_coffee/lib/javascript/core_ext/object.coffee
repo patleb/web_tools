@@ -1,13 +1,12 @@
 Object.define_singleton_methods
-  deep_merge: (others...) ->
-    result = {}
+  deep_merge: (target, others...) ->
     for object in others
       for key, value of object
-        if result[key]?.is_a?(Object) and value?.is_a?(Object)
-          result[key] = result[key].deep_merge(value)
+        if target[key]?.is_a?(Object) and value?.is_a?(Object)
+          target[key] = target[key].deep_merge(value)
         else
-          result[key] = value
-    result
+          target[key] = value
+    target
 
 Object.define_methods
   __send__: (method, args...) ->

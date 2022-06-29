@@ -1,4 +1,4 @@
-window.Rails = Rails.merge
+Rails.merge
   handle_confirm: (e) ->
     Rails.stop_everything(e) unless allow_action(this)
 

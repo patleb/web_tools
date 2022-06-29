@@ -2,7 +2,7 @@ EXPANDO = '_ujs_data'
 
 csp_nonce = null
 
-window.Rails = Rails.merge
+Rails.merge
   # get and set data on a given element using "expando properties"
   # See: https://developer.mozilla.org/en-US/docs/Glossary/Expando
   get: (element, key) ->

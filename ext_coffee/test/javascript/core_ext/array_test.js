@@ -39,6 +39,14 @@ describe('Array', () => {
     assert.false([].eql({}))
   })
 
+  test('#merge', () => {
+    let array = []
+    assert.equal([1], array.merge([1]))
+    assert.equal([1], array)
+    assert.equal([1, 2, 3, 4], array.merge([2], [3, 4]))
+    assert.equal([1, 2, 3, 4], array)
+  })
+
   test('#has_index', () => {
     assert.true([1, 2, 3].has_index(0))
     assert.true([1, 2, 3].has_index(2))

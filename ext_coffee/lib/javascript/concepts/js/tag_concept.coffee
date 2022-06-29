@@ -4,10 +4,13 @@ class Js.TagConcept
   ID_CLASSES = /^([#.][A-Za-z_-][:\w-]*)+$/
 
   HTML_TAGS: [
+    'a'
+    'button'
     'div'
     'form'
     'input'
-    'time'
+    'select'
+    'textarea', 'time'
   ].to_set()
 
   ready_once: ->
@@ -21,7 +24,7 @@ class Js.TagConcept
     tags.each (tag) => @define_tag(tag)
 
   merge: (tags...) ->
-    @HTML_TAGS = @HTML_TAGS.merge(tags.to_set())
+    @HTML_TAGS.merge(tags.to_set())
 
   # Private
 
@@ -103,7 +106,7 @@ class Js.TagConcept
     classes = classes.split('.')
     if id_classes
       [id, other_classes...] = id_classes.split('.')
-      classes = classes.concat(other_classes)
+      classes.merge(other_classes)
     [id, classes]
 
   merge_classes: (options, classes) ->

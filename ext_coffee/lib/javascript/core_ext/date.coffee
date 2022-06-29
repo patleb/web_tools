@@ -1,7 +1,7 @@
 ### References
 # https://github.com/basecamp/local_time/blob/main/lib/assets/javascripts/src/local-time/helpers/strftime.coffee
 ###
-I18n.translations = I18n.translations.deep_merge
+I18n.translations.deep_merge
   en:
     date:
       days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']

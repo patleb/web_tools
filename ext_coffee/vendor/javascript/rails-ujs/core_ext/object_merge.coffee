@@ -1,9 +1,8 @@
-Object.merge = (objects...) ->
-  result = {}
+Object.merge = (target, objects...) ->
   for object in objects
     for key, value of object
-      result[key] = value
-  result
+      target[key] = value
+  target
 
 Object::merge = (objects...) ->
   @constructor.merge(this, objects...)

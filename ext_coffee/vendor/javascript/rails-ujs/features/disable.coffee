@@ -1,4 +1,4 @@
-window.Rails = Rails.merge
+Rails.merge
   handle_disabled_element: (e) ->
     element = this
     Rails.stop_everything(e) if element.disabled or element.hasAttribute('disabled')

@@ -133,6 +133,8 @@ describe('Object', () => {
   })
 
   test('#deep_merge', () => {
-    assert.equal({ a: { b: 1, c: 2 }, d: null }, { a: { b: 1 }, d: {} }.deep_merge({ a: { c: 2 }, d: null }))
+    const object = { a: { b: 1 }, d: {} }
+    assert.equal({ a: { b: 1, c: 2 }, d: null }, object.deep_merge({ a: { c: 2 }, d: null }))
+    assert.equal({ a: { b: 1, c: 2 }, d: null }, object)
   })
 })

@@ -1,4 +1,4 @@
-window.Rails = Rails.merge
+Rails.merge
   is_remote: (element) ->
     value = element.getAttribute('data-remote')
     value? and value isnt 'false'

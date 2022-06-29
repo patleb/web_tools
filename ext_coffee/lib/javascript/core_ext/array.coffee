@@ -65,6 +65,11 @@ Array.override_methods
   first: ->
     this[0]
 
+  merge: (others...) ->
+    for other in others
+      @push(other...)
+    this
+
 Array.define_methods
   to_s: ->
     @toString()
