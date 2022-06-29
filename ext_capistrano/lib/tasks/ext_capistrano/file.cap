@@ -9,13 +9,6 @@ namespace :file do
     end
   end
 
-  desc 'Clear tmp/config directory'
-  task :clear_tmp_config, [:name] do
-    on release_roles :all do
-      execute "sudo rm -rf /home/deployer/#{fetch(:deploy_dir)}/releases/*/tmp/config"
-    end
-  end
-
   desc 'Create directory'
   task :mkdir, [:dst, :sudo] do |t, args|
     on release_roles :all do

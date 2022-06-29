@@ -46,6 +46,7 @@ namespace :load do
       public/packs
       tmp/files
       tmp/cache
+      tmp/config
       tmp/pids
       tmp/webpacker
     )
