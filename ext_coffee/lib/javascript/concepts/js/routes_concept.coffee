@@ -10,15 +10,19 @@ class Js.RoutesConcept
       memo.merge(JSON.parse(element.getAttribute(@PATHS)))
 
   url_for: (action, params = {}) ->
-    @location(action, params).href
+    return unless path = @paths[action]
+    @location(path, params).href
 
   path_for: (action, params = {}) ->
-    @location(action, params).href.sub(/^.*\/\/[^\/]+/, '')
+    return unless path = @paths[action]
+    @location(path, params).href.sub(/^.*\/\/[^\/]+/, '')
+
+  # Private
 
   # Optional /(:variable) segment not supported
-  location: (action, params = {}) ->
+  location: (path, params = {}) ->
     params = params.dup()
-    location = @decode_url(@paths[action])
+    location = @decode_url(path)
     pathname = location.pathname.split('/').map (segment) ->
       if segment.start_with ':'
         params.delete(segment.lchop())

@@ -14,6 +14,7 @@ describe('Js.RoutesConcept', () => {
   })
 
   test('#path_for', () => {
+    assert.nil(Routes.path_for('404'))
     assert.equal('/', Routes.path_for('root'))
     assert.equal('/home/fr/test', Routes.path_for('home', { lang: 'fr', page: 'test' }))
     assert.equal('/page/1', Routes.path_for('next', { next: 1 }))
