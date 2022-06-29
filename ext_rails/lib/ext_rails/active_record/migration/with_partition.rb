@@ -10,8 +10,10 @@ module ActiveRecord::Migration::WithPartition
       else             "CREATE TABLE #{name} (#{key} BIGINT NOT NULL) PARTITION BY RANGE (#{key})"
       end
     end
-    change_table name do |t|
-      yield t
+    if block_given?
+      change_table name do |t|
+        yield t
+      end
     end
   end
 
