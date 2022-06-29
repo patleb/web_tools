@@ -1,33 +1,18 @@
-const images = require.context('@@/images', true)
-const image_path = (name) => images(name, true)
+var images = require.context('@@/images', true)
+var image_path = function(name) { return images(name, true) }
 
-import $ from 'jquery'
-import _ from 'lodash'
+// https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
 import lru from 'tiny-lru/lib/tiny-lru'
-import Cookies from 'js-cookie'
-import jstz from 'jstz'
-import 'jquery-touch-events'
 
-import Hamster from '@@vendor/hamsterjs/hamster'
-import '@@vendor/jquery-iframe-transport/jquery.iframe-transport'
-
-import '@@lib/ext_coffee/env.coffee.erb'
-import '@@lib/ext_coffee/logger'
-import '@@lib/ext_coffee/core_ext'
+import '@@vendor/rails-ujs/all'
+import '@@vendor/turbolinks/all'
 import '@@lib/ext_coffee/core_ext/all'
-import '@@lib/ext_coffee/state_machine'
-import '@@lib/ext_coffee/state_machine/all'
-import '@@lib/ext_coffee/pjax'
-import '@@lib/ext_coffee/cookie'
-import '@@lib/ext_coffee/concepts'
-import '@@lib/ext_coffee/concepts/all'
+import '@@lib/ext_coffee/rescue'
+import '@@lib/ext_coffee/js/all'
+import '@@lib/ext_coffee/sm/all'
+import '@@lib/ext_coffee/concepts/js/all'
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
   window.$image = image_path
-  window.$ = window.jQuery = $
-  window._ = _
   window.lru = lru
-  window.Cookies = Cookies
-  window.jstz = jstz
-  window.Hamster = Hamster
 })

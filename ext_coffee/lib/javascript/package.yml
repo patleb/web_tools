@@ -1,7 +1,2 @@
 packages:
-  - 'jquery'
-  - 'jquery-touch-events'
-  - 'js-cookie'
-  - 'jstz'
-  - 'lodash'
   - 'tiny-lru'
