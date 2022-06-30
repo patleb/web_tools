@@ -11,5 +11,7 @@ module Rack::Utils
       cookies: request.cookies.try(:reject){ |k, _| k.start_with?('_') && k.end_with?('_session') } || {},
       session: request.session.try(:to_hash) || {},
     }
+  rescue Exception
+    {}
   end
 end

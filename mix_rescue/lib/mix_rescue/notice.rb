@@ -17,7 +17,7 @@ class Notice
     unless exception.is_a? RescueError
       exception = RescueError.new(exception, data: data)
     end
-    log_message = Log.rescue! exception
+    log_message = Log.rescue_not_reportable(exception)
     return if log_message.line_at > MixRescue.config.notice_interval.ago
 
     subject = [subject, "[#{exception.name}]"].compact.join(' ')

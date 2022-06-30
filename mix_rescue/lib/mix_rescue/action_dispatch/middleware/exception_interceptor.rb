@@ -13,9 +13,10 @@ module ActionDispatch
       unless exception.is_a? RescueError
         exception = Rescues::RackError.new(exception, data: Rack::Utils.log_context(request))
       end
-      case exception.base_class
+      case exception.error
       when *BAD_REQUEST_ERRORS
-        Log.rescue! exception
+        # will be reported indirectly through LogLines::App
+        Log.rescue_not_reportable(exception)
       else
         Notice.deliver! exception
       end
