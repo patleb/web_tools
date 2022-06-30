@@ -1,13 +1,13 @@
 module ExtRails
   has_config do
     attr_accessor :i18n_debug
-    attr_writer :sql_debug
-    attr_writer :params_debug
-    attr_writer :skip_discard
-    attr_writer :excluded_models
-    attr_writer :excluded_tables
-    attr_writer :temporary_tables
-    attr_writer :db_partitions
+    attr_writer   :sql_debug
+    attr_writer   :params_debug
+    attr_writer   :skip_discard
+    attr_writer   :excluded_models
+    attr_writer   :excluded_tables
+    attr_writer   :temporary_tables
+    attr_writer   :db_partitions
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
