@@ -2,7 +2,8 @@
 version: "3"
 volumes:
   postgres_14:
-#  geoserver:
+  postgres_13:
+  geoserver:
 services:
   postgres_14:
     build: ./dev/docker/postgres/14
@@ -21,21 +22,38 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_INITDB_ARGS=--data-checksums
-#  geoserver:
-#    image: oscarfonts/geoserver:2.16.0
-#    container_name: geoserver
-#    volumes:
-#      - geoserver:/var/local/geoserver
-#    network_mode: host
-#    restart: on-failure
-#    depends_on:
-#      - postgres_14
-#    healthcheck:
-#      test: curl --fail -s http://localhost:8080/geoserver/web || exit 1
-#      interval: 1m30s
-#      timeout: 10s
-#      retries: 3
-#    logging:
-#      options:
-#        max-size: "10m"
-#        max-file: "5"
+  postgres_13:
+    build: ./dev/docker/postgres/13
+    container_name: postgres_13
+    ports:
+      - 127.0.0.1:5433:5433
+    volumes:
+      - postgres_13:/var/lib/postgresql/data
+      - ./dev/docker/postgres/13/docker-entrypoint-initdb.d/files:/docker-entrypoint-initdb.d/files
+      - ./dev/docker/postgres/13/docker-entrypoint-initdb.d/setup.sh:/docker-entrypoint-initdb.d/setup.sh
+    restart: always
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "5"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_INITDB_ARGS=--data-checksums
+  geoserver:
+    image: oscarfonts/geoserver:2.16.0
+    container_name: geoserver
+    volumes:
+      - geoserver:/var/local/geoserver
+    network_mode: host
+    restart: on-failure
+    depends_on:
+      - postgres_14
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/geoserver/web || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "5"

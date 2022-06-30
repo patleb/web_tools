@@ -10,7 +10,7 @@ RUN apt-get update \
       postgresql-server-dev-14 \
       postgresql-14-repack \
       pgxnclient \
- && pgxn install vector \
- && git clone git://github.com/pjungwir/aggs_for_vecs.git \
+ && pgxn install vector
+RUN git clone -q https://github.com/pjungwir/aggs_for_vecs.git \
  && cd aggs_for_vecs \
  && make && sudo make install
