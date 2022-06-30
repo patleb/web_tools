@@ -220,7 +220,7 @@ module LogLines
         gzip: gzip == '-' ? nil : gzip.to_f,
       }
       global_log = log.path&.end_with?('/access.log')
-      if global_log || status == 404 || MixLog.config.filter_ips.any?{ |net| ip.start_with? net } || path.end_with?(*MixLog.config.filter_endings)
+      if global_log || status == 404 || MixLog.config.filter_subnets.any?(&:include?.with(ip)) || path.end_with?(*MixLog.config.filter_endings)
         method, path, params = nil, '*', nil
       end
       if global_log

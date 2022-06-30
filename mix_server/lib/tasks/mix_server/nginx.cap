@@ -2,8 +2,6 @@ namespace :load do
   task :defaults do
     set :nginx_max_body_size, -> { '100m' }
     set :nginx_satisfy,       -> { false }
-    set :nginx_denied_ips,    -> { [ '74.217.28.0/22' ] } # TODO skip in mix_log --> IPAddr.new("127.0.0.1/8").include? "127.1.10.200"
-    set :nginx_allowed_ips,   -> { [] }
     set :nginx_auth_basic,    -> { false }
     set :nginx_redirects,     -> { {} }
     set :nginx_upstreams,     -> { {} }

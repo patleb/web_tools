@@ -128,10 +128,10 @@ http {
     satisfy '<%= satisfy %>';
   <% end %>
 
-  <% fetch(:nginx_denied_ips).each do |ip| %>
+  <% Setting[:nginx_denied_ips].each do |ip| %>
     deny '<%= ip %>';
   <% end %>
-  <% if (allowed_ips = fetch(:nginx_allowed_ips)).any? %>
+  <% if (allowed_ips = Setting[:nginx_allowed_ips]).any? %>
     <% allowed_ips.each do |ip| %>
       allow '<%= ip %>';
     <% end %>

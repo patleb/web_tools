@@ -77,6 +77,10 @@ module MixLog
       @filter_ips ||= Set.new
     end
 
+    def filter_subnets
+      @filter_subnets ||= filter_ips.to_a.concat(Setting[:nginx_denied_ips]).map{ |subnet| IPAddr.new(subnet) }
+    end
+
     def ided_paths
       @ided_paths ||= {
         %r{^(/packs/.+)(-[a-f0-9]+)((?:\.chunk)?\.[a-z0-9]{1,5})(\.map)?$} => '\1-*\3\4',

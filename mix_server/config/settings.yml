@@ -6,6 +6,8 @@ types:
   authorized_keys: array
   server_master_data: pathname
   server_cluster_data: pathname
+  nginx_denied_ips: array
+  nginx_allowed_ips: array
   osquery_file_paths: array
   osquery_exclude_paths: array
 
@@ -18,6 +20,8 @@ shared:
   owner_name: ubuntu
   deployer_id: 1001
   deployer_name: deployer
+  nginx_denied_ips: ['74.217.28.0/22']
+  nginx_allowed_ips: []
   osquery_logger_path: /var/log/osquery
   osquery_logger_level: 1
   osquery_database_path: /var/osquery/osquery.db
