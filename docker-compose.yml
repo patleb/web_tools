@@ -1,18 +1,18 @@
-# docker-compose down && docker volume rm $(docker volume ls -q) && docker-compose up -d --force-recreate --build postgres
+# docker-compose down && docker volume rm $(docker volume ls -q) && docker-compose up -d --force-recreate --build postgres_14
 version: "3"
 volumes:
-  postgres:
-  geoserver:
+  postgres_14:
+#  geoserver:
 services:
-  postgres:
-    build: ./dev/docker/postgres
-    container_name: postgres
+  postgres_14:
+    build: ./dev/docker/postgres/14
+    container_name: postgres_14
     ports:
-      - 127.0.0.1:5432:5432
+      - 127.0.0.1:5434:5434
     volumes:
-      - postgres:/var/lib/postgresql/data
-      - ./dev/docker/postgres/docker-entrypoint-initdb.d/files:/docker-entrypoint-initdb.d/files
-      - ./dev/docker/postgres/docker-entrypoint-initdb.d/setup.sh:/docker-entrypoint-initdb.d/setup.sh
+      - postgres_14:/var/lib/postgresql/data
+      - ./dev/docker/postgres/14/docker-entrypoint-initdb.d/files:/docker-entrypoint-initdb.d/files
+      - ./dev/docker/postgres/14/docker-entrypoint-initdb.d/setup.sh:/docker-entrypoint-initdb.d/setup.sh
     restart: always
     logging:
       options:
@@ -21,21 +21,21 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_INITDB_ARGS=--data-checksums
-  geoserver:
-    image: oscarfonts/geoserver:2.16.0
-    container_name: geoserver
-    volumes:
-      - geoserver:/var/local/geoserver
-    network_mode: host
-    restart: on-failure
-    depends_on:
-      - postgres
-    healthcheck:
-      test: curl --fail -s http://localhost:8080/geoserver/web || exit 1
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "5"
+#  geoserver:
+#    image: oscarfonts/geoserver:2.16.0
+#    container_name: geoserver
+#    volumes:
+#      - geoserver:/var/local/geoserver
+#    network_mode: host
+#    restart: on-failure
+#    depends_on:
+#      - postgres_14
+#    healthcheck:
+#      test: curl --fail -s http://localhost:8080/geoserver/web || exit 1
+#      interval: 1m30s
+#      timeout: 10s
+#      retries: 3
+#    logging:
+#      options:
+#        max-size: "10m"
+#        max-file: "5"

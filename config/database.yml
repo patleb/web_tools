@@ -30,6 +30,7 @@ default: &default
 
 development: &development
   <<: *default
+  port: 5434
   database: web_tools_development
 
   # The specified database role being used to connect to postgres.
@@ -64,6 +65,7 @@ development: &development
 # Do not set this db to the same as development or production.
 test: &test
   <<: *default
+  port: 5434
   database: web_tools_test
 
 vagrant: &vagrant
