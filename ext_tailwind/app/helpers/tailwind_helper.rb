@@ -3,13 +3,13 @@ module TailwindHelper
   SVG_END = /\s*<\/svg>\s*$/
   SVG_ATTRIBUTES = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', height: 16, width: 16, viewBox: '0 0 16 16', 'aria-hidden': true }
 
-  # https://heroicons.com/
   # https://icon-sets.iconify.design/
   # https://boxicons.com/
   # https://materialdesignicons.com/
   # https://tabler-icons.io/
-  # https://lucide.dev/
   # https://fonts.google.com/icons?selected=Material+Icons
+  # https://heroicons.com/
+  # https://lucide.dev/
   # https://icons.getbootstrap.com/
   def icon(name, **options)
     name = name.to_s.dasherize
