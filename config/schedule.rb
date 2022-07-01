@@ -35,7 +35,7 @@ when 'staging', 'production'
   case @application
   when 'web_tools'
     every :sunday, at: '10:11 am' do
-      rake 'cron:reboot'
+      rake 'system:reboot'
     end
 
     every :day, at: '8:11 am' do
@@ -43,7 +43,7 @@ when 'staging', 'production'
     end
   when 'web_cluster'
     every :sunday, at: '10:01 am' do
-      rake 'cron:reboot'
+      rake 'system:reboot'
     end
 
     every :day, at: '8:01 am' do
