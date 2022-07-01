@@ -1,5 +1,5 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
-const { themes, screens, ext_tailwind } = require('@@ext_tailwind/lib/javascript/tailwind/tailwind.config')
+const { themes, screens, ext_sass } = require('@@ext_sass/lib/javascript/tailwind/tailwind.config')
 
 module.exports = {
   content: {
@@ -29,7 +29,7 @@ module.exports = {
     require('@tailwindcss/typography'),
     require('tailwindcss-debug-screens'),
     require('daisyui'),
-    ext_tailwind({ themes }),
+    ext_sass({ themes }),
   ],
   daisyui: {
     themes,

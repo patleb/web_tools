@@ -28,7 +28,7 @@ const screens = {
   ...defaultTheme.screens,
 }
 const plugin = require('tailwindcss/plugin')
-const ext_tailwind = ({ themes = true, darkTheme = 'dark' } = {}) => {
+const ext_sass = ({ themes = true, darkTheme = 'dark' } = {}) => {
   if (themes === false) {
     themes = ['light']
   }
@@ -65,7 +65,7 @@ const ext_tailwind = ({ themes = true, darkTheme = 'dark' } = {}) => {
 module.exports = {
   themes,
   screens,
-  ext_tailwind,
+  ext_sass,
 }
 // TODO details/summary html tag for accordion/collapsible section
 // https://markodenic.com/css-tips/?source=reddit

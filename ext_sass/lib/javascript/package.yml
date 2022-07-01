@@ -8,4 +8,4 @@ packages:
   - 'daisyui'
 
 tailwind:
-  - '@@ext_tailwind/app/helpers/**/*.rb'
+  - '@@ext_sass/app/helpers/**/*.rb'

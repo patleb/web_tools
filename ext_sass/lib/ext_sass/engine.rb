@@ -1,6 +1,6 @@
 require 'ext_ruby'
 
-module ExtTailwind
+module ExtSass
   class Engine < ::Rails::Engine
   end
 end
