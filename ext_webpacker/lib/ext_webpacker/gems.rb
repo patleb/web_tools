@@ -9,7 +9,7 @@ module ExtWebpacker
     # https://github.com/tailwindlabs/tailwindcss/blob/master/src/lib/expandTailwindAtRules.js#L9-L31
     TAILWIND_EXTRACTOR = <<~JS.strip.indent(6)
       (content) => {
-        let results = content.match(/("[^"]+"|'[^']+')/g) || []
+        let results = content.match(/("[^"]*"|'[^']*')/g) || []
         results = results.map(v => {
           v = v.slice(1, -1)
           if (v.match(/^[#.]/)) {
@@ -76,7 +76,7 @@ module ExtWebpacker
     end
 
     def tailwind_dependencies
-      dependencies[:tailwind].map{ |path| "'#{path}'" }.join(",\n      ")
+      (tailwind.merge(dependencies[:tailwind])).map{ |path| "'#{path}'" }.join(",\n      ")
     end
 
     def dependencies
@@ -106,6 +106,10 @@ module ExtWebpacker
 
     def gems
       @gems ||= Set.new(default_config['gems'] || []).merge(['ext_webpacker'])
+    end
+
+    def tailwind
+      @tailwind ||= Set.new(default_config['tailwind'] || [])
     end
 
     def source_lib_path
