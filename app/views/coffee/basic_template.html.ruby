@@ -48,7 +48,7 @@ h_(
         div_('.grid', [
           input_(type: 'text', name: 'firstname', placeholder: 'First name', 'aria-label': 'First name', required: true),
           input_(type: 'email', name: 'email', placeholder: 'Email address', 'aria-label': 'Email address', required: true),
-          button_('Subscribe', type: 'submit')
+          button_('Subscribe', type: 'submit', disabled: true)
         ]),
         fieldset_(
           label_(for: 'terms') {[
