@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+exec('vendor/bats-core/bats-core/bin/bats', *ARGV)
