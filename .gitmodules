@@ -1,0 +1,12 @@
+[submodule "vendor/bats-core/bats-core"]
+	path = vendor/bats-core/bats-core
+	url = https://github.com/bats-core/bats-core.git
+[submodule "vendor/bats-core/bats-support"]
+	path = vendor/bats-core/bats-support
+	url = https://github.com/bats-core/bats-support.git
+[submodule "vendor/bats-core/bats-assert"]
+	path = vendor/bats-core/bats-assert
+	url = https://github.com/bats-core/bats-assert.git
+[submodule "vendor/bats-core/bats-file"]
+	path = vendor/bats-core/bats-file
+	url = https://github.com/bats-core/bats-file.git
