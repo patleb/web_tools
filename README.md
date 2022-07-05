@@ -69,7 +69,7 @@ Done [db/postgres-13/config]
 Done [utils/packages]
 Done [utils/htop]
 Done [utils/parallel]
-Done [lang/ruby/app-2.7.4]
+Done [lang/ruby/app-2.7.6]
 Done [reboot]
 ```
 

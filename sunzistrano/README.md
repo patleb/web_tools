@@ -126,7 +126,7 @@ For example, the recipe `config/provision/recipes/lang/ruby/app__RBENV_RUBY__.sh
 # config/provision.yml
 ...
 shared:
-  rbenv_ruby: 2.7.4
+  rbenv_ruby: 2.7.6
   ...
 ```
 
@@ -135,7 +135,7 @@ Would be sourced in the compiled role file as:
 ```bash
 # config/roles/system.sh
 ...
-sun.source_recipe "lang/ruby/app__RBENV_RUBY__" 'lang/ruby/app-2.7.4'
+sun.source_recipe "lang/ruby/app__RBENV_RUBY__" 'lang/ruby/app-2.7.6'
 ...
 ```
 

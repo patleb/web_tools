@@ -283,17 +283,17 @@ sudo apt-get -y install libjemalloc-dev
 ...
 git clone git@github.com:rbenv/rbenv.git ~/.rbenv
 ... yes
-git clone git@github.com:rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
-git clone git@github.com:rbenv/rbenv-gem-rehash.git ~/.rbenv/plugins/rbenv-gem-rehash
-git clone git://github.com/dcarley/rbenv-sudo.git ~/.rbenv/plugins/rbenv-sudo
+git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+git clone https://github.com/rbenv/rbenv-gem-rehash.git ~/.rbenv/plugins/rbenv-gem-rehash
+git clone https://github.com/dcarley/rbenv-sudo.git ~/.rbenv/plugins/rbenv-sudo
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
 echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
 echo 'eval "$(rbenv init -)"' >> ~/.bashrc
 echo 'gem: --no-document' > ~/.gemrc
 . ~/.bashrc
 RBENV_OPTIONS='--with-jemalloc --enable-shared --disable-install-doc --disable-install-rdoc --disable-install-capi'
-RUBY_CONFIGURE_OPTS=$RBENV_OPTIONS rbenv install 2.7.4
-rbenv global 2.7.4
+RUBY_CONFIGURE_OPTS=$RBENV_OPTIONS rbenv install 2.7.6
+rbenv global 2.7.6
 echo 'require "irb/ext/save-history"' > ~/.irbrc
 echo 'IRB.conf[:SAVE_HISTORY] = 1000' >> ~/.irbrc
 echo $'IRB.conf[:HISTORY_FILE] = "#{ENV[\'HOME\']}/.irb-history"' >> ~/.irbrc

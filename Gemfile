@@ -71,4 +71,8 @@ gem 'mix_template', path: './mix_template'
 gem 'mix_user', path: './mix_user'
 gem 'sunzistrano', path: './sunzistrano'
 
+gem 'net-ssh', '6.1.0'
+gem 'pundit', '2.1.1'
+gem 'ruby-pg-extras', '3.2.5'
+
 eval File.read('Gemfile.private') if File.exists? 'Gemfile.private'
