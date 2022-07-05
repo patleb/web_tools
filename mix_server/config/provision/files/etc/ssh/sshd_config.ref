@@ -126,6 +126,7 @@ Subsystem sftp	/usr/lib/openssh/sftp-server
 #	PermitTTY no
 #	ForceCommand cvs server
 <% if sun.env.vagrant? -%>
+PasswordAuthentication yes
 UseDNS no
 GSSAPIAuthentication no
 <% elsif sun.ssh_allow_password -%>
