@@ -1,16 +1,17 @@
-sun.current_version() {
-  local name=$1
-  local manifest=$(sun.manifest_path $name)
-  if [[ ! -s "$manifest" ]]; then
-    echo $(apt-cache policy $name | grep Candidate: | awk '{ print $2; }')
-  else
-    echo $(tac "$manifest" | grep -m 1 '.')
-  fi
+sun.major_version() {
+  local version="$1"
+  IFS='.' read -ra version <<< "$version"
+  echo "$(echo ${version[0]} | sed -r 's/^([0-9]+).*/\1/')"
 }
 
-sun.version_is_smaller() {
-  dpkg --compare-versions $1 lt $2
-  return $?
+sun.available_version() {
+  local name=$1
+  echo $(apt-cache policy $name | grep Candidate: | awk '{ print $2; }')
+}
+
+sun.installed_version() {
+  local name=$1
+  echo $(apt-cache policy $name | grep Installed: | awk '{ print $2; }')
 }
 
 sun.manifest_path() {

@@ -17,7 +17,7 @@ wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
 add-apt-repository ppa:timescale/timescaledb-ppa
 sun.update
 
-PG_VERSION="$(sun.current_version postgresql-$__POSTGRES__)"
+PG_VERSION="$(sun.installed_version postgresql-$__POSTGRES__)"
 
 if [[ ! -s "$PG_MANIFEST" ]]; then
   sun.install "$PG_PACKAGES"
@@ -36,7 +36,7 @@ EOF
   echo $PG_DATA_DIR > $(sun.metadata_path 'pg_data_dir')
 else
   PG_OLD_VERSION=$(tac "$PG_MANIFEST" | grep -m 1 '.')
-  PG_OLD_MAJOR=$(sun.pg_major_version "$PG_OLD_VERSION")
+  PG_OLD_MAJOR=$(sun.major_version "$PG_OLD_VERSION")
 
   systemctl stop postgresql
 

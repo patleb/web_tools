@@ -1,6 +1,6 @@
 POSTGRESQL_SERVICE_DIR='/etc/systemd/system/postgresql.service.d'
-PG_VERSION=$(sun.current_version 'postgresql')
-PG_MAJOR=$(sun.pg_major_version "$PG_VERSION")
+PG_VERSION=$(sun.installed_version 'postgresql')
+PG_MAJOR=$(sun.major_version "$PG_VERSION")
 PG_CONF="/etc/postgresql/$PG_MAJOR/main/postgresql.conf"
 PG_HBA="/etc/postgresql/$PG_MAJOR/main/pg_hba.conf"
 PRIVATE_IP=$(sun.private_ip)
