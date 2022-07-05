@@ -1,6 +1,50 @@
+sun.upgrade_move() {
+  sun.remove_defaults $1
+  sun.backup_move $@
+}
+
+sun.upgrade_compile() {
+  sun.remove_defaults $1
+  sun.backup_compile $@
+}
+
+sun.upgrade_compare() {
+  sun.remove_defaults $1
+  sun.backup_compare $1
+}
+
+sun.upgrade_defaults() {
+  sun.remove_defaults $1
+  sun.backup_defaults $1
+}
+
 sun.backup_move() {
   sun.backup_compare $1
   sun.move $@
+}
+
+sun.backup_compile() {
+  sun.backup_compare $1
+  sun.compile $@
+}
+
+sun.backup_compare() {
+  sun.backup_defaults $1
+  sun.compare_defaults $1
+}
+
+sun.backup_defaults() {
+  local bkp="$(sun.defaults_path $1)"
+  if [[ -s $bkp ]]; then
+    echo "$1 already copied"
+  else
+    cp "$1" $bkp
+  fi
+}
+
+sun.remove_defaults() {
+  local bkp="$(sun.defaults_path $1)"
+  rm -f $bkp
 }
 
 sun.move() {
@@ -14,11 +58,6 @@ sun.move() {
   if [[ "${owner}" ]]; then
     chown $owner $dst
   fi
-}
-
-sun.backup_compile() {
-  sun.backup_compare $1
-  sun.compile $@
 }
 
 sun.compile() {
@@ -44,25 +83,6 @@ sun.compile() {
     chown $owner $dst
   fi
   echo "Compiled \"$@\""
-}
-
-sun.backup_compare() {
-  sun.backup_defaults $1
-  sun.compare_defaults $1
-}
-
-sun.backup_defaults() {
-  local bkp="$(sun.defaults_path $1)"
-  if [[ -s $bkp ]]; then
-    echo "$1 already copied"
-  else
-    cp "$1" $bkp
-  fi
-}
-
-sun.remove_defaults() {
-  local bkp="$(sun.defaults_path $1)"
-  rm -f $bkp
 }
 
 sun.compare_defaults() {
