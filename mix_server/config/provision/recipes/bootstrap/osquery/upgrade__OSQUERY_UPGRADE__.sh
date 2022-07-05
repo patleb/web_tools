@@ -4,7 +4,7 @@ if [[ "$__OSQUERY_UPGRADE__" != false ]]; then
 
   sun.unlock "osquery"
   sun.update
-  sudo apt-get install -y osquery
+  sun.upgrade "osquery"
   sun.lock "osquery"
 
   sun.remove_defaults "/opt/osquery/share/osquery/osquery.example.conf"

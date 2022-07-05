@@ -20,7 +20,11 @@ sun.update() {
 }
 
 sun.upgrade() {
-  $os_package_upgrade
+  if [[ $# -eq 0 ]]; then
+    $os_package_upgrade
+  else
+    sun.mute "$os_package_get -y install $@"
+  fi
 }
 
 sun.lock() {
