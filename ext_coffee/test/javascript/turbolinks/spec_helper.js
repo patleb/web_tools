@@ -158,7 +158,7 @@ const turbolinks = {
       return Turbolinks.visit(location, { action })
     })
   },
-  click_button: (selector, handler) => {
+  click_button: (selector, handler) => {
     let button = document.querySelector(selector)
     return new Promise((resolve) => {
       dom.on_event({ 'turbolinks:before-visit': (event) => {

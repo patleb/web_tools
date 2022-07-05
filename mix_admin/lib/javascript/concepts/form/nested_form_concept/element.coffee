@@ -74,7 +74,7 @@ class RailsAdmin.Form.NestedFormConcept::Element
 
   create_nav_tab: =>
     { id } = @button_add().data('association')
-    { tab_pane_id, object_label } = @append_tab_pane(id)
+    { tab_pane_id, object_label } = @append_tab_pane(id)
     @append_nav_tab(tab_pane_id, object_label)
 
   destroy_nav_tab_and_find_next: (button_remove) =>

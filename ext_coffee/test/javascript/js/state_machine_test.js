@@ -71,7 +71,7 @@ describe('Js.StateMachine', () => {
     describe('config', () => {
       beforeAll(() => {
         config = toggle_with_hooks = {}.deep_merge(toggle_base, {
-          initialize: (sm) => { sm.initial = 'down' },
+          initialize: (sm) => { sm.initial = 'down' },
           terminal: 'up',
           before: noop,
           after: noop,

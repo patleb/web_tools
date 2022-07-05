@@ -9,7 +9,7 @@ class Turbolinks.Renderer
   render: (callback) ->
     if not @new_snapshot.is_visitable()
       return @controller.reload('visit_control_is_reload')
-    else if not @same_tracked_signature()
+    else if not @same_tracked_signature()
       return @controller.reload('tracked_element_mismatch') unless @error
       @replace_head()
     else
