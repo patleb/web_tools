@@ -20,18 +20,6 @@ namespace :osquery do
     end
   end
 
-  desc 'Upgrade osquery'
-  task :upgrade do
-    on release_roles :all do
-      invoke 'osquery:stop'
-      execute :sudo, 'apt-mark', 'unhold',  'osquery'
-      execute :sudo, 'apt-get',  'update'
-      execute :sudo, 'apt-get',  'install', 'osquery', '-y'
-      execute :sudo, 'apt-mark', 'hold',    'osquery'
-      invoke 'osquery:start'
-    end
-  end
-
   desc 'Export osquery configuration files'
   task :push do
     on release_roles :all do

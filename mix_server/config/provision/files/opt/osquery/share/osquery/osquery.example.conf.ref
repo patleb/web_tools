@@ -15,8 +15,6 @@
     // This is very helpful to prevent system performance impact when scheduling
     // large numbers of queries that run a smaller or similar intervals.
     //"schedule_splay_percent": "10",
-
-    "utc": "true"
   },
 
   // Define a schedule of queries:
