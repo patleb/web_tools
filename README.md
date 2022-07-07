@@ -82,7 +82,7 @@ After the servers have been provisioned by Sunzistrano, the first deployment mus
 Running the following command:
 
 ```sh
-cap vagrant deploy:push
+cap vagrant provision
 ```
 
 would do just that and have the following output without the details:

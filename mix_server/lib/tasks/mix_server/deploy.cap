@@ -49,49 +49,4 @@ namespace :deploy do
     end
     invoke 'nginx:app:push'
   end
-
-  desc 'Full server deploy after provisioning'
-  task push: %i(
-    osquery:push
-    osquery:restart
-    nginx:push
-    pgrest:push
-    deploy:app:push
-  )
-
-  namespace :app do
-    desc 'App server deploy after provisioning'
-    task push: %i(
-      deploy:check:directories
-      deploy:check:linked_dirs
-      deploy:check:make_linked_dirs
-      deploy:logrotate:push
-      secrets:push
-      nginx:app:push
-      nginx:app:enable
-      nginx:maintenance:push
-      db:pg:create_user
-      db:pg:create_database
-      db:pg:set_superuser
-      whenever:create_cron_log
-      dns:set_hosts
-    ) do
-      old_assets_role = fetch(:assets_roles)
-      old_job_role = fetch(:job_roles)
-      set :assets_roles, false
-      set :job_roles, false
-      invoke 'deploy'
-      set :job_roles, old_job_role
-      invoke 'job:push'
-      invoke! 'job:restart'
-      set :assets_roles, old_assets_role
-      invoke! 'deploy:assets:precompile'
-      invoke! 'deploy:assets:backup_manifest'
-      invoke! 'nginx:reload'
-      puts Time.now
-    ensure
-      set :assets_roles, old_assets_role
-      set :job_roles, old_job_role
-    end
-  end
 end
