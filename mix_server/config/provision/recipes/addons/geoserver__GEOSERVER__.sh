@@ -1,4 +1,4 @@
-__GEOSERVER__=${__GEOSERVER__:-2.16.0}
+__GEOSERVER__=${__GEOSERVER__:-2.21.0}
 export __GEOSERVER_MAX_SIZE__=${__GEOSERVER_MAX_SIZE__:-2048M}
 
 if [[ -d /opt/geoserver ]]; then
