@@ -2,7 +2,7 @@ require_rel 'mix_task'
 
 namespace :task do
   desc 'create available tasks (and delete invalid ones)'
-  task :create_all => :environment do
+  task :delete_or_create_all => :environment do
     Task.delete_or_create_all
   end
 end
