@@ -77,9 +77,9 @@ module ActionController
           head_ {[
             title_("#{title} (#{t("rescue.#{status}.status").presence || status})"),
             meta_(name: 'viewport', content: 'width=device-width,initial-scale=1'),
-            template_status_css
           ]},
-          body_('.rails-default-error-page') do
+          body_('.rails-default-error-page') {[
+            template_status_css,
             div_('.dialog') {[
               div_ {[
                 h1_(title),
@@ -87,7 +87,7 @@ module ActionController
               ]},
               p_(solution)
             ]}
-          end
+          ]}
         ]}
       end
     end
