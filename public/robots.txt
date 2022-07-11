@@ -1,14 +1,1 @@
 # See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
-User-agent: *
-Disallow: /api/
-Disallow: /admin/
-Disallow: /users/
-Disallow: /page/
-Disallow: /rails/active_storage/
-Disallow: /rpc/functions/
-Disallow: /packs/
-Disallow: /storage/
-Disallow: /.well-known/
-Disallow: /_jobs/
-Disallow: /_rescues/
-Disallow: /_information/
