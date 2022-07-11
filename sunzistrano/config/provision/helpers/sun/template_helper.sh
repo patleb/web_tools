@@ -103,10 +103,13 @@ sun.compare_defaults() {
 }
 
 sun.defaults_path() {
-  echo "$HOME/$__DEFAULTS_DIR__/$(echo "$1" | sed 's|/|~|g')"
+  echo "$HOME/$__DEFAULTS_DIR__/$(sun.defaults_name $1)"
 }
 
-# TODO provider (aws, openstack, etc.)
+sun.defaults_name() {
+  echo "$(echo "$1" | sed 's|/|~|g')"
+}
+
 sun.template_path() {
   local base="$(sun.provision_path)/files/$(echo "$1" | sed 's|^/||')"
   local type="$base.$OS"

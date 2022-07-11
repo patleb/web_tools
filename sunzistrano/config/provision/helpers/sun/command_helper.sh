@@ -40,7 +40,3 @@ sun.mute() {
   `$@ >/dev/null 2>&1`
   return $?
 }
-
-sun.provision_path() {
-  echo "$HOME/$__PROVISION_DIR__"
-}

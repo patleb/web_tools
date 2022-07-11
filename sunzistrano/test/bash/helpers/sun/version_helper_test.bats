@@ -1,13 +1,11 @@
 source 'sunzistrano/test/bash/spec_helper.sh'
-source 'sunzistrano/config/provision/helpers/sun/version_helper.sh'
 
 setup() {
-  test.load_bats_plugins
-  test.stub_home
+  sun.test_setup
 }
 
 teardown() {
-  test.unstub_home
+  sun.test_teardown
 }
 
 @test 'sun.major_version' {

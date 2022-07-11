@@ -1,20 +1,3 @@
-<% sun.list_helpers(Sunzistrano.root).each do |file| %>
-  source helpers/<%= file %>
-<% end %>
-
-sun.setup_progress() {
-  if [[ -e "$HOME/$__MANIFEST_LOG__" ]]; then
-    echo "Provisioning already started"
-  else
-    echo "New provisioning"
-    touch "$HOME/$__MANIFEST_LOG__"
-    mkdir "$HOME/$__MANIFEST_DIR__"
-    mkdir "$HOME/$__METADATA_DIR__"
-    mkdir "$HOME/$__DEFAULTS_DIR__"
-  fi
-  echo "Started at $(date '+%Y-%m-%d %H:%M:%S')"
-}
-
 sun.source_recipe() {
   local name=$1
   set +u; local id=$2; set -u
@@ -61,18 +44,7 @@ sun.done() {
   echo "Done [$1]" | tee -a "$HOME/$__MANIFEST_LOG__"
 }
 
-sun.start_time() {
-  echo $(date -u +"%s")
-}
-
-sun.elapsed_time() {
-  local start=$1
-  local finish=$(date -u +"%s")
-  local elapsed_time=$(($finish-$start))
-  echo "$(($elapsed_time / 60)) minutes and $(($elapsed_time % 60)) seconds elapsed."
-}
-
-sun.ensure() {
+sun.on_exit() {
   cd $(sun.provision_path)
   source roles/hook_ensure.sh
   sun.elapsed_time $ROLE_START
@@ -87,9 +59,9 @@ sun.ensure() {
     rm -rf $(sun.provision_path)
   fi
 }
-trap sun.ensure EXIT
 
 sun.rollback() {
   echo "Rollback [$1]"
-  <%= Sh.delete_line! "$HOME/$__MANIFEST_LOG__", "Done [$1]", escape: false %>
+  # Sh.delete_line! "$HOME/$__MANIFEST_LOG__", "Done [$1]", escape: false
+  sed -rzi -- "s%(\n[^\n]*Done\ \[$1\][^\n]*|[^\n]*Done\ \[$1\][^\n]*\n)%%" $HOME/$__MANIFEST_LOG__
 }

@@ -117,7 +117,6 @@ module Sunzistrano
         content << "\n"
         content << around[:after]
         create_file expand_path(:provision, "role.sh"), content, force: true
-        compile_file expand_path(:root, "sun.sh"), expand_path(:provision, "sun.sh")
       end
 
       def compile_file(src, dst)
@@ -186,7 +185,7 @@ module Sunzistrano
       def provision_cmd(server)
         <<~CMD.squish
           #{ssh_add_vagrant} cd #{provision_path} && tar cz . |
-          ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR
+          ssh #{"-p #{sun.port}" if sun.port} -o LogLevel=ERROR
           #{"-o ProxyCommand='ssh -W %h:%p #{sun.owner_name}@#{sun.server}'" if sun.server_cluster?}
           #{sun.owner_name}@#{server}
           '#{provision_remote_cmd}'
@@ -194,9 +193,10 @@ module Sunzistrano
       end
 
       def provision_remote_cmd
+        cleanup = "rm -rf ~/#{Sunzistrano::Context::PROVISION_DIR} &&" unless sun.debug
         <<~CMD.squish
-          rm -rf ~/#{Sunzistrano::Context::PROVISION_DIR} &&
-          mkdir ~/#{Sunzistrano::Context::PROVISION_DIR} &&
+          #{cleanup}
+          mkdir -p ~/#{Sunzistrano::Context::PROVISION_DIR} &&
           cd ~/#{Sunzistrano::Context::PROVISION_DIR} &&
           tar xz &&
           #{'sudo' if sun.sudo} bash role.sh |& tee -a ~/#{Sunzistrano::Context::PROVISION_LOG}
@@ -206,7 +206,7 @@ module Sunzistrano
       def download_cmd(path, ref)
         <<~CMD.squish
           #{ssh_add_vagrant} rsync --rsync-path='sudo rsync' -azvh -e
-          "ssh #{"-p #{sun.port}" if sun.port} -o 'StrictHostKeyChecking no' -o LogLevel=ERROR"
+          "ssh #{"-p #{sun.port}" if sun.port} -o LogLevel=ERROR"
           #{sun.owner_name}@#{sun.server}:#{path} #{ref}
         CMD
       end

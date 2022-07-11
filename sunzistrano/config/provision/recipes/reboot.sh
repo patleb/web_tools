@@ -17,7 +17,7 @@ if [[ "$__ENV__" != 'vagrant' ]]; then
   esac
 fi
 
-sun.ensure
+sun.on_exit
 trap - EXIT
 
 echo 'Rebooting...'

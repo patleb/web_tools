@@ -50,7 +50,10 @@ if [[ "$OS_VERSION" != "$__OS_VERSION__" ]]; then
   exit 1
 fi
 
-source sun.sh
+<% sun.list_helpers(Sunzistrano.root).each do |file| %>
+  source helpers/<%= file %>
+<% end %>
+
 export ROLE_START=$(sun.start_time)
 export REBOOT_RECIPE=false
 export REBOOT_FORCE=false
@@ -59,9 +62,10 @@ export HOME=/home/$__OWNER_NAME__
 export DEBIAN_FRONTEND=noninteractive
 export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 export ARCH=$(dpkg --print-architecture)
-# TODO https://help.ubuntu.com/community/RPM/AlienHowto
 
-sun.setup_progress
+trap sun.on_exit EXIT
+sun.initialize
+
 if [[ "$__DEBUG__" == 'trace' ]]; then
   set -x
 fi
