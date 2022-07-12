@@ -5,7 +5,6 @@ sun.install "libgflags-dev"
 sun.install "libsnappy-dev"
 sun.install "zlib1g-dev"
 sun.install "libbz2-dev"
-sun.install "liblz4-dev"
 sun.install "libzstd-dev"
 
 wget "https://github.com/facebook/rocksdb/archive/v$__ROCKSDB__.zip"

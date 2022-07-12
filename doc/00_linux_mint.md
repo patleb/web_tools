@@ -140,7 +140,7 @@ Fn + Right --> End
 ## Directories/Files (backup/restore)
 
 ```sh
-sudo apt-get install acl
+sudo apt-get install -y acl
 cd /path/to/dir_name && sudo getfacl -R . > permissions.txt
 cd .. && sudo tar -czf dir_name.tar.gz dir_name
 ...
@@ -165,6 +165,7 @@ sudo setfacl --restore=permissions.txt
 ## Terminator
 
 - Preferences / Profiles / Scrolling / Infinite Scrollback [true]
+- TODO dircolors --> https://ubuntuforums.org/showthread.php?p=4779965
 
 ```bash
 vi $HOME/.config/terminator/config
@@ -194,7 +195,7 @@ sudo apt-get -y install \
   git \
   graphviz \
   dirmngr gnupg \
-  imagemagick \
+  imagemagick libpng-dev libjpeg-dev \
   libcurl4-openssl-dev \
   libffi-dev \
   libgdbm5 libgdbm-dev \
@@ -243,7 +244,7 @@ echo '/node_modules/' >> ~/.gitignore_global
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 RELEASE=$(. /etc/os-release && echo $UBUNTU_CODENAME)
 echo "deb [arch=$(dpkg --print-architecture)] http://apt.postgresql.org/pub/repos/apt/ ${RELEASE}"-pgdg main | sudo tee  /etc/apt/sources.list.d/pgdg.list
-sudo apt update && sudo apt-get -y install libpq-dev postgresql-client-13
+sudo apt update && sudo apt-get -y install libpq-dev postgresql-client
 ```
 
 ## Docker
@@ -274,6 +275,7 @@ sudo apt-get -y install nodejs
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb [arch=$(dpkg --print-architecture)] https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 sudo apt update && sudo apt-get -y install yarn
+echo 'export PATH="$(yarn global bin):$PATH"' >> ~/.bashrc
 ```
 
 ## Ruby
@@ -335,7 +337,7 @@ export OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $OSQUERY_KEY
 sudo add-apt-repository 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'
 sudo apt-get update
-sudo apt-get install osquery
+sudo apt-get install -y osquery
 ```
 
 ## RocksDB (optional)
@@ -387,6 +389,12 @@ wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | sudo gpg --no-default-
 sudo add-apt-repository "deb https://qgis.org/ubuntu $UBUNTU_CODENAME main"
 sudo chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
 sudo apt update && sudo apt-get install -y qgis qgis-plugin-grass
+```
+
+## C++
+
+```bash
+sudo apt-get install -y libspdlog-dev libboost-all-dev
 ```
 
 ## VSCode

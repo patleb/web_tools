@@ -11,3 +11,4 @@ echo "deb [arch=$ARCH] https://dl.yarnpkg.com/debian/ stable main" | tee /etc/ap
 sun.update
 sun.install "nodejs"
 sun.install "yarn"
+echo 'export PATH="$(yarn global bin):$PATH"' >> ~/.bashrc

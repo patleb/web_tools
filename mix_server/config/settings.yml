@@ -12,7 +12,7 @@ types:
   osquery_exclude_paths: array
 
 shared:
-  postgres: 13
+  postgres: 14
   postgis: 3
   min_instances: 1
   max_pool_size: 6

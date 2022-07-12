@@ -18,12 +18,13 @@ fi
   cmake
   git
   dirmngr gnupg
-  imagemagick
+  imagemagick libpng-dev libjpeg-dev
   libcurl4-openssl-dev
   libevent-dev
   libffi-dev
   libgdbm6 libgdbm-dev
   libgmp-dev
+  liblz4-dev
   libncurses5-dev
   libpcre2-dev
   libreadline-dev
