@@ -183,9 +183,10 @@ module Sunzistrano
       end
 
       def provision_cmd(server)
+        no_strict_host_key_checking = "-o 'StrictHostKeyChecking no'" if sun.new_host
         <<~CMD.squish
           #{ssh_add_vagrant} cd #{provision_path} && tar cz . |
-          ssh #{"-p #{sun.port}" if sun.port} -o LogLevel=ERROR
+          ssh #{"-p #{sun.port}" if sun.port} #{no_strict_host_key_checking} -o LogLevel=ERROR
           #{"-o ProxyCommand='ssh -W %h:%p #{sun.owner_name}@#{sun.server}'" if sun.server_cluster?}
           #{sun.owner_name}@#{server}
           '#{provision_remote_cmd}'
