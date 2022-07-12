@@ -55,8 +55,8 @@ Object.define_methods
         return false if other[key]?
     true
 
-  tap: (f_this) ->
-    f_this(this)
+  tap: (f_self) ->
+    f_self(this)
     this
 
   has_key: (key) ->

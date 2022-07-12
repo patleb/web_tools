@@ -26,14 +26,6 @@ class Js.TagConcept
   merge: (tags...) ->
     @HTML_TAGS.merge(tags.to_set())
 
-  # Private
-
-  define_tag: (tag) ->
-    tag_ = "#{tag}_"
-    tag$ = "#{tag}$"
-    window[tag_] ?= (args...) => @with_tag(tag_, args...)
-    window[tag$] ?= (args...) => @with_tag(tag$, args...)
-
   h_: (values...) =>
     if values.length is 1 and (text = values[0])?.is_a Function
       values = [text()]
@@ -51,6 +43,14 @@ class Js.TagConcept
   h_unless: (is_true, values...) =>
     return '' unless @continue(unless: is_true)
     @h_(values...)
+
+  # Private
+
+  define_tag: (tag) ->
+    tag_ = "#{tag}_"
+    tag$ = "#{tag}$"
+    window[tag_] ?= (args...) => @with_tag(tag_, args...)
+    window[tag$] ?= (args...) => @with_tag(tag$, args...)
 
   with_tag: (tag, [css_or_content_or_options, content_or_options, options_or_content]...) ->
     if css_or_content_or_options?
