@@ -3,7 +3,7 @@ gems:
   - mix_server
 sudo: true
 debug: false
-reboot: false # TODO implement as cli flag
+reboot: false
 
 shared:
 
