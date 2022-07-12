@@ -69,22 +69,6 @@ class Array
     flat_map{ |e| [e, element] }.tap(&:pop)
   end
 
-  def unsplat
-    if size == 1 && first.is_a?(Array)
-      first.dup
-    else
-      dup
-    end
-  end
-
-  def unsplat!
-    if size == 1 && first.is_a?(Array)
-      replace(first)
-    else
-      self
-    end
-  end
-
   def closest(value)
     return if empty?
     values = Array.wrap(value)

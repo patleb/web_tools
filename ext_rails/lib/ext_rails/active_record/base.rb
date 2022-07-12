@@ -217,11 +217,11 @@ ActiveRecord::Base.class_eval do
   end
 
   def slice(*methods)
-    methods.unsplat.map!{ |method| [method, public_send(method)] }.to_h.with_keyword_access
+    methods.map!{ |method| [method, public_send(method)] }.to_h.with_keyword_access
   end
 
   def except(*methods)
-    slice(attributes.keys.except(*methods.unsplat.map!(&:to_s)))
+    slice(attributes.keys.except(*methods.map!(&:to_s)))
   end
 
   def locking_enabled?
