@@ -14,7 +14,8 @@ PG_PACKAGES="postgresql-$__POSTGRES__ postgresql-server-dev-$__POSTGRES__ postgr
 
 sh -c "echo 'deb [arch=$ARCH] http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
 wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
-add-apt-repository ppa:timescale/timescaledb-ppa
+echo "deb https://packagecloud.io/timescale/timescaledb/ubuntu/ $UBUNTU_CODENAME main" > /etc/apt/sources.list.d/timescaledb.list
+wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | apt-key add -
 sun.update
 
 PG_VERSION="$(sun.installed_version postgresql-$__POSTGRES__)"
