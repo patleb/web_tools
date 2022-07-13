@@ -6,7 +6,7 @@ module LogLines
 
     it 'should parse correctly each line' do
       MixLog.with do |config|
-        log_path = config.log_path(:apt, :history)
+        log_path = config.log_path(:osquery, 'osqueryd.results')
         config.available_paths = [log_path]
 
         file = file_fixture('log/osquery/osqueryd.results.log')

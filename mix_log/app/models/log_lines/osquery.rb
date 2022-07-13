@@ -48,7 +48,7 @@ module LogLines
     end
 
     def self.parse(log, line, **)
-      name, time, diff = JSON.parse(line).values_at('name', 'unixTime', 'diffResults')
+      name, time, diff = JSON.parse(line.tr("\0", '')).values_at('name', 'unixTime', 'diffResults')
       return { filtered: true } unless names.include? name
 
       created_at = Time.at(time).utc
