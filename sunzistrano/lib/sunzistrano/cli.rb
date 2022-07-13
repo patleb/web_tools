@@ -56,6 +56,7 @@ module Sunzistrano
 
       def do_compile(stage, role, **custom_options)
         load_config(stage, role, **custom_options)
+        require_overrides
         copy_files
         build_role
       end
@@ -84,22 +85,23 @@ module Sunzistrano
         @sun = Sunzistrano::Context.new(stage, role, **options.symbolize_keys, **custom_options)
       end
 
+      def require_overrides
+        gems.each_key do |name|
+          require "#{name}/sunzistrano" rescue nil
+        end
+      end
+
       def copy_files
         basenames = "config/provision/{files,helpers,recipes,roles}/**/*"
-
         dirnames = [basenames]
-        (sun.gems || []).each do |name|
-          next unless (root = Gem.root(name))
-          require "#{name}/sunzistrano" rescue nil
+        gems.each_value do |root|
           dirnames << root.expand_path.join(basenames).to_s
         end
         dirnames << Sunzistrano.root.join(basenames).to_s
-
         files = []
         dirnames.each do |dirname|
           files += Dir[dirname].select{ |f| provision? f, files }
         end
-
         files.each do |file|
           compile_file File.expand_path(file), expand_path(:provision, file)
         end
@@ -113,8 +115,7 @@ module Sunzistrano
         end
         content = around[:before]
         content << "\n"
-        (sun.gems || []).each do |name|
-          next unless (root = Gem.root(name))
+        gems.each_value do |root|
           sun.list_helpers(root).each do |file|
             content << "source helpers/#{file}\n"
           end
@@ -122,12 +123,12 @@ module Sunzistrano
         content << File.binread(expand_path(:provision, "roles/#{sun.role}.sh"))
         content << "\n"
         content << around[:after]
-        create_file expand_path(:provision, "role.sh"), content, force: true
+        create_file expand_path(:provision, "role.sh"), content, force: true, verbose: sun.debug
       end
 
       def compile_file(src, dst)
         source_path, destination_path = src.to_s, dst.to_s
-        template src, dst, force: true
+        template src, dst, force: true, verbose: sun.debug
         if source_path.end_with? '.esh'
           ref_path = destination_path.sub(/\.esh$/, '.ref')
           if File.exist? ref_path
@@ -252,6 +253,10 @@ module Sunzistrano
 
       def provision_path
         @provision_path ||= ".provision/#{sun.app}-#{sun.env}"
+      end
+
+      def gems
+        @gems ||= (sun.gems || []).select_map{ |name| [name, Gem.root(name)] if Gem.root(name) }.to_h
       end
     end
   end
