@@ -5,23 +5,26 @@ load_rel 'ext_capistrano/**/*.cap'
 
 namespace :load do
   task :defaults do
-    set :server,              -> { Setting[:server_host] }
-    set :gems,                -> { [] }
-    set :os_name,             -> { 'ubuntu' }
-    set :os_version,          -> { 20.04 }
-    set :format,              -> { :airbrussh }
-    set :format_options,      -> { { truncate: false } }
-    set :owner_name,          -> { Setting[:owner_name] }
+    set :server,         -> { Setting[:server_host] }
+    set :gems,           -> { [] }
+    set :os_name,        -> { 'ubuntu' }
+    set :os_version,     -> { 20.04 }
+    set :format,         -> { :airbrussh }
+    set :format_options, -> { { truncate: false } }
+    set :owner_name,     -> { Setting[:owner_name] }
     # TODO remove :deployer_name config --> it's actually a constant
-    set :deployer_name,       -> { Setting[:deployer_name] }
-    set :deploy_dir,          -> { "#{cap.app}_#{cap.env}" }
-    set :deploy_to,           -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
-    set :rails_app,           -> { fetch(:application) }
+    set :deployer_name,  -> { Setting[:deployer_name] }
+    set :deploy_dir,     -> { "#{cap.app}_#{cap.env}" }
+    set :deploy_to,      -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
+    set :rails_app,      -> { fetch(:application) }
 
-    set :default_env,         -> { { rails_app: fetch(:rails_app) } }
-    set :pty,                 -> { true }
+    set :default_env,    -> { { rails_app: fetch(:rails_app) } }
+    set :pty,            -> { true }
 
-    set :public_dirs,  -> { [] }
+    set :public_dirs, -> { %w(
+      public/css
+      public/js
+    ) }
     set :public_files, -> { %w(
       apple-touch-icon-precomposed.png
       apple-touch-icon.png
@@ -29,14 +32,15 @@ namespace :load do
       robots.txt
     ) }
 
-    set :rbenv_ruby,          -> { RUBY_VERSION }
-    set :rbenv_prefix,        -> { "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec" }
+    set :rbenv_ruby,   -> { RUBY_VERSION }
+    set :rbenv_prefix, -> { "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec" }
 
     set :passenger_roles,           -> { :web }
     set :passenger_restart_command, -> { 'rbenv sudo passenger-config restart-app' }
 
     set :assets_roles,  -> { fetch(:passenger_roles) }
     set :assets_prefix, -> { 'packs' }
+    set :keep_assets,   -> { 10 }
 
     append :linked_dirs, *%w(
       .bundle
