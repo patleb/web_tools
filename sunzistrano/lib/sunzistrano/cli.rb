@@ -113,6 +113,12 @@ module Sunzistrano
         end
         content = around[:before]
         content << "\n"
+        (sun.gems || []).each do |name|
+          next unless (root = Gem.root(name))
+          sun.list_helpers(root).each do |file|
+            content << "source helpers/#{file}\n"
+          end
+        end
         content << File.binread(expand_path(:provision, "roles/#{sun.role}.sh"))
         content << "\n"
         content << around[:after]

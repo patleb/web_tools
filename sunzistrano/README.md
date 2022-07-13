@@ -166,10 +166,4 @@ See [template_helper.sh](./config/provision/helpers/sun/template_helper.sh) for 
 
 ## Helpers
 
-Added Bash **helpers** are located under the folder `config/provision/helpers` and must be manually sourced through `config/provision/roles/hook_before.sh` as follow:
-
-```bash
-<% sun.list_helpers(Rails.root).each do |file| %>
-  source helpers/<%= file %>
-<% end %>
-```
+Added Bash **helpers** are located under the folder `config/provision/helpers`.

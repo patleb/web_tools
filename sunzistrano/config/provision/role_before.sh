@@ -29,10 +29,9 @@ esac
 
 source /etc/os-release
 export TERM=linux
-
-<% sun.attributes.each do |attribute, value| %>
+<% sun.attributes.each do |attribute, value| -%>
   export __<%= attribute.upcase %>__=<%= value.respond_to?(:call) ? value.call : value %>
-<% end %>
+<% end -%>
 export __APP__=$__APPLICATION__
 export __ENV__=$__STAGE__
 export __ROLLBACK__=${__ROLLBACK__:-false}
@@ -50,9 +49,9 @@ if [[ "$OS_VERSION" != "$__OS_VERSION__" ]]; then
   exit 1
 fi
 
-<% sun.list_helpers(Sunzistrano.root).each do |file| %>
+<% sun.list_helpers(Sunzistrano.root).each do |file| -%>
   source helpers/<%= file %>
-<% end %>
+<% end -%>
 
 export ROLE_START=$(sun.start_time)
 export REBOOT_RECIPE=false
