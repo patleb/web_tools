@@ -71,7 +71,7 @@ class Task < LibMainRecord
   end
 
   def notify_editable?
-    updater.nil? || updater.id == Current.user.id
+    !running? || updater.nil? || updater.id == Current.user.id
   end
 
   def perform(arguments)
