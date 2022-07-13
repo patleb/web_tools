@@ -25,3 +25,7 @@ sun.elapsed_time() {
 sun.provision_path() {
   echo "$HOME/$__PROVISION_DIR__"
 }
+
+sun.include() {
+  [[ -f "$1" ]] && source "$1"
+}

@@ -1,5 +1,5 @@
 if [[ "$REBOOT_RECIPE" == false ]]; then
-  $file="roles/${__ROLE__}_after.sh" && test -f $file && source $file
+  sun.include "roles/${__ROLE__}_after.sh"
 fi
 
 if [[ "$__REBOOT__" == true ]]; then

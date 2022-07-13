@@ -69,4 +69,4 @@ if [[ "$__DEBUG__" == 'trace' ]]; then
   set -x
 fi
 
-$file="roles/${__ROLE__}_before.sh" && test -f $file && source $file
+sun.include "roles/${__ROLE__}_before.sh"
