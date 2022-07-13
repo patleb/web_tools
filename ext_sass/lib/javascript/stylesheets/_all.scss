@@ -2,3 +2,9 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 @import "@@vendor/tailwindcss-rails/stylesheets/inter-font";
+
+html.no-js {
+  .js {
+    display: none;
+  }
+}
