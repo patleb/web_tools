@@ -68,4 +68,5 @@ sun.initialize
 if [[ "$__DEBUG__" == 'trace' ]]; then
   set -x
 fi
-source roles/hook_before.sh
+
+$file="roles/${__ROLE__}_before.sh" && test -f $file && source $file

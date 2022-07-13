@@ -1,6 +1,6 @@
 export REBOOT_RECIPE=true
 if [[ "$REBOOT_FORCE" == false ]]; then
-  source roles/hook_after.sh
+  $file="roles/${__ROLE__}_after.sh" && test -f $file && source $file
 fi
 
 REBOOT_LINE='Done [reboot]'

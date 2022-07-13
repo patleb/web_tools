@@ -8,25 +8,25 @@ module Sunzistrano
       true
     end
 
-    desc 'provision [stage] [role] [--recipe] [--new-host] [--no-reboot]', 'Provision sunzistrano project'
+    desc 'provision [stage] [role] [--recipe] [--new-host] [--no-reboot]', 'Provision sunzistrano system'
     method_options recipe: :string, new_host: false, no_reboot: false
     def provision(stage, role = 'system')
       do_provision(stage, role)
     end
 
-    desc 'specialize [stage] [role] [--recipe] [--new-host]', 'Specialize sunzistrano project'
+    desc 'specialize [stage] [role] [--recipe] [--new-host]', 'Specialize sunzistrano system'
     method_options recipe: :string, new_host: false
     def specialize(stage, role = 'system')
       do_provision(stage, role, specialize: true)
     end
 
-    desc 'rollback [stage] [role] [--recipe]', 'Rollback sunzistrano recipe'
+    desc 'rollback [stage] [role] [--recipe]', 'Rollback sunzistrano system recipe'
     method_options recipe: :required, specialize: false
     def rollback(stage, role = 'system')
       do_provision(stage, role, rollback: true)
     end
 
-    desc 'compile [stage] [role] [--recipe] [--rollback] [--specialize] [--no-reboot]', 'Compile sunzistrano project'
+    desc 'compile [stage] [role] [--recipe] [--rollback] [--specialize] [--no-reboot]', 'Compile sunzistrano provisioning'
     method_options recipe: :string, rollback: false, specialize: false, no_reboot: false
     def compile(stage, role = 'system')
       do_compile(stage, role)
@@ -229,8 +229,8 @@ module Sunzistrano
 
       def provision?(file, others)
         File.file?(file) &&
-          !file[/\.keep$/] &&
-          !file[/\/roles\/(?!(#{sun.role}|hook_\w+)\.sh)/] &&
+          !file.match?(/\.keep$/) &&
+          !file.match?(/\/roles\/(?!(#{sun.role}(_(before|after|ensure))?)\.sh)/) &&
           others.none?{ |f| file.end_with? basename(f) }
       end
 

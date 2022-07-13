@@ -1,5 +1,5 @@
 if [[ "$REBOOT_RECIPE" == false ]]; then
-  source roles/hook_after.sh
+  $file="roles/${__ROLE__}_after.sh" && test -f $file && source $file
 fi
 
 if [[ "$__REBOOT__" == true ]]; then

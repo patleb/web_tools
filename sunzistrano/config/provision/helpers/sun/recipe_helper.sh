@@ -46,7 +46,7 @@ sun.done() {
 
 sun.on_exit() {
   cd $(sun.provision_path)
-  source roles/hook_ensure.sh
+  $file="roles/${__ROLE__}_ensure.sh" && test -f $file && source $file
   sun.elapsed_time $ROLE_START
   set +u
   if [[ ! -z "$RECIPE_ID" ]]; then
