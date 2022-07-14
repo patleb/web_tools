@@ -106,11 +106,11 @@ See [system.sh](../mix_server/config/provision/roles/system.sh) for an example.
 
 ### Role Hooks
 
-Role hooks are Bash files located under the folder `config/provision/roles` with the following file names:
+Role hooks are Bash files located under the folder `config/provision/roles` with the following file names for system role:
 
- - `hook_before.sh` is run before the recipes
- - `hook_after.sh` is run after all the recipes ran successfully
- - `hook_ensure.sh` is run before the program exits
+ - `system_before.sh` is run before the recipes
+ - `system_after.sh` is run after all the recipes ran successfully
+ - `system_ensure.sh` is run before the program exits
 
 ## Recipes
 
