@@ -10,7 +10,7 @@ module MixJob
     end
 
     def parent_controller
-      @parent_controller ||= '::ActionController::API'
+      @parent_controller ||= 'ActionController::API'
     end
 
     def json_attributes

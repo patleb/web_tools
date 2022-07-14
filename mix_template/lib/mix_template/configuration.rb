@@ -7,7 +7,7 @@ module MixTemplate
     attr_writer :chart_options
 
     def parent_controller
-      @parent_controller ||= '::ActionController::Base'
+      @parent_controller ||= 'ActionController::Base'
     end
 
     def web_app_capable
