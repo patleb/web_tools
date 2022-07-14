@@ -8,25 +8,25 @@ module Sunzistrano
       true
     end
 
-    desc 'provision [stage] [role] [--recipe] [--new-host] [--no-reboot]', 'Provision sunzistrano system'
+    desc 'provision [stage] [role] [--recipe] [--new-host] [--no-reboot]', 'Provision'
     method_options recipe: :string, new_host: false, no_reboot: false
     def provision(stage, role = 'system')
       do_provision(stage, role)
     end
 
-    desc 'specialize [stage] [role] [--recipe] [--new-host]', 'Specialize sunzistrano system'
+    desc 'specialize [stage] [role] [--recipe] [--new-host]', 'Specialize provisioning'
     method_options recipe: :string, new_host: false
     def specialize(stage, role = 'system')
       do_provision(stage, role, specialize: true)
     end
 
-    desc 'rollback [stage] [role] [--recipe]', 'Rollback sunzistrano system recipe'
+    desc 'rollback [stage] [role] [--recipe]', 'Rollback recipe'
     method_options recipe: :required, specialize: false
     def rollback(stage, role = 'system')
       do_provision(stage, role, rollback: true)
     end
 
-    desc 'compile [stage] [role] [--recipe] [--rollback] [--specialize] [--no-reboot]', 'Compile sunzistrano provisioning'
+    desc 'compile [stage] [role] [--recipe] [--rollback] [--specialize] [--no-reboot]', 'Compile provisioning'
     method_options recipe: :string, rollback: false, specialize: false, no_reboot: false
     def compile(stage, role = 'system')
       do_compile(stage, role)
@@ -87,12 +87,13 @@ module Sunzistrano
 
       def require_overrides
         gems.each_key do |name|
-          require "#{name}/sunzistrano" rescue nil
+          require "#{name}/sunzistrano" if File.exist? "#{name}/sunzistrano"
         end
+        require 'app/libraries/sunzistrano' if File.exist? 'app/libraries/sunzistrano.rb'
       end
 
       def copy_files
-        basenames = "config/provision/{files,helpers,recipes,roles}/**/*"
+        basenames = 'config/provision/{files,helpers,recipes,roles}/**/*'
         dirnames = [basenames]
         gems.each_value do |root|
           dirnames << root.expand_path.join(basenames).to_s
@@ -123,7 +124,7 @@ module Sunzistrano
         content << File.binread(expand_path(:provision, "roles/#{sun.role}.sh"))
         content << "\n"
         content << around[:after]
-        create_file expand_path(:provision, "role.sh"), content, force: true, verbose: sun.debug
+        create_file expand_path(:provision, 'role.sh'), content, force: true, verbose: sun.debug
       end
 
       def compile_file(src, dst)
