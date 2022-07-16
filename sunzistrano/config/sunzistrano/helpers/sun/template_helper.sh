@@ -103,15 +103,11 @@ sun.compare_defaults() {
 }
 
 sun.defaults_path() {
-  echo "$HOME/$__DEFAULTS_DIR__/$(sun.defaults_name $1)"
-}
-
-sun.defaults_name() {
-  echo "$(echo "$1" | sed 's|/|~|g')"
+  echo "$HOME/$__DEFAULTS_DIR__/$(sun.flatten_path $1)"
 }
 
 sun.template_path() {
-  local base="$(sun.provision_path)/files/$(echo "$1" | sed 's|^/||')"
+  local base="$(sun.bash_path)/files/$(echo "$1" | sed 's|^/||')"
   local type="$base.$OS"
   local type_version="$type.$OS_VERSION"
   if [[ -e "$type_version" ]] || [[ -e "$type_version.esh" ]] || [[ -e "$type_version.ref" ]]; then

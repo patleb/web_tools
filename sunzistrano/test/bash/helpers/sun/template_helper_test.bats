@@ -13,9 +13,9 @@ teardown() {
 @test 'sun.backup_defaults and sun.remove_defaults' {
   echo 'default template' > $TMP_TEMPLATE
   run sun.backup_defaults $TMP_TEMPLATE
-  assert_file_contains "$HOME/$__DEFAULTS_DIR__/$(sun.defaults_name $TMP_TEMPLATE)" 'default template'
+  assert_file_contains "$HOME/$__DEFAULTS_DIR__/$(sun.flatten_path $TMP_TEMPLATE)" 'default template'
   run sun.remove_defaults $TMP_TEMPLATE
-  assert_not_exists "$HOME/$__DEFAULTS_DIR__/$(sun.defaults_name $TMP_TEMPLATE)"
+  assert_not_exists "$HOME/$__DEFAULTS_DIR__/$(sun.flatten_path $TMP_TEMPLATE)"
 }
 
 @test 'sun.move' {

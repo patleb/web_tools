@@ -22,7 +22,11 @@ sun.elapsed_time() {
   echo "$(($elapsed_time / 60)) minutes and $(($elapsed_time % 60)) seconds elapsed."
 }
 
-sun.provision_path() {
+sun.flatten_path() {
+  echo "$(echo "$1" | sed 's|/|~|g')"
+}
+
+sun.bash_path() {
   echo "$HOME/$__BASH_DIR__"
 }
 

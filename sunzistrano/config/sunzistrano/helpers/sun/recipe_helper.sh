@@ -11,9 +11,7 @@ sun.source_recipe() {
     fi
   fi
   RECIPE_ID="$id"
-  if [[ "$name" == */all ]]; then
-    source "recipes/$name.sh"
-  elif [[ "$__ROLLBACK__" == true ]]; then
+  if [[ "$__ROLLBACK__" == true ]]; then
     if [[ -e "recipes/$name-rollback.sh" ]]; then
       source "recipes/$name-rollback.sh"
     fi
@@ -22,7 +20,7 @@ sun.source_recipe() {
     local recipe_start=$(sun.start_time)
     source "recipes/$name.sh"
     if [[ "$RECIPE_ID" != 'reboot' ]]; then
-      cd $(sun.provision_path)
+      cd $(sun.bash_path)
       sun.elapsed_time $recipe_start
       sun.done "$id"
     fi
@@ -45,7 +43,7 @@ sun.done() {
 }
 
 sun.on_exit() {
-  cd $(sun.provision_path)
+  cd $(sun.bash_path)
   sun.include "roles/${__ROLE__}_ensure.sh"
   sun.elapsed_time $ROLE_START
   set +u
@@ -56,7 +54,7 @@ sun.on_exit() {
   fi
   set -u
   if [[ "$__DEBUG__" == false ]]; then
-    rm -rf $(sun.provision_path)
+    rm -rf $(sun.bash_path)
   fi
 }
 
