@@ -21,13 +21,6 @@ teardown() {
   assert_file_not_contains "$HOME/$__MANIFEST_LOG__" "Done \[recipe-1]"
 }
 
-@test 'sun.source_recipe all' {
-  run sun.source_recipe 'all'
-  assert_output --partial 'RECIPE_ID=recipe-1'
-  refute_output --partial 'RECIPE_ID=all'
-  assert_file_contains "$HOME/$__MANIFEST_LOG__" "Done \[recipe-1]"
-}
-
 @test 'sun.source_recipe specialize' {
   __SPECIALIZE__=true
   run sun.source_recipe 'recipe__VERSION__' 'recipe-1'
