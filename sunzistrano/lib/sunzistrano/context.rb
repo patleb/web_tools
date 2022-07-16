@@ -167,7 +167,7 @@ module Sunzistrano
 
     def require_overrides
       @gems.each_key do |name|
-        require "#{name}/sunzistrano" if File.exist? "#{name}/sunzistrano"
+        require "#{name}/sunzistrano" if File.exist? "#{name}/sunzistrano.rb"
       end
       require 'app/libraries/sunzistrano' if File.exist? 'app/libraries/sunzistrano.rb'
     end
