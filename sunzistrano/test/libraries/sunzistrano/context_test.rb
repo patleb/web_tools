@@ -47,4 +47,20 @@ class Sunzistrano::ContextTest < Minitest::Spec
       Sunzistrano::Context.new('test', 'system', root: ROOT.join('version_out_of_sync'))
     end
   end
+
+  describe '#list_helpers' do
+    it 'should list Sunzistrano gem helpers' do
+      actual_helpers = Set.new(Sunzistrano::Context.new('test', 'system').list_helpers(Sunzistrano.root))
+      expected_helpers = %w(
+        sun/command_helper.sh
+        sun/recipe_helper.sh
+        sun/template_helper.sh
+        sun/version_helper.sh
+        sun_helper.sh
+      )
+      expected_helpers.each do |helper|
+        assert_includes actual_helpers, helper
+      end
+    end
+  end
 end
