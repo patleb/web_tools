@@ -13,6 +13,8 @@ shared:
   variable: value
   recipes:
     - shared/append
+    - shared/after/second/recipe:
+        after: second/recipe__NO_VARIABLE__
     - shared/before/reboot:
         before: reboot
     - shared/remove:

@@ -48,7 +48,7 @@ if [[ "$OS_VERSION" != "$__OS_VERSION__" ]]; then
   exit 1
 fi
 
-<% sun.list_helpers(Sunzistrano.root).each do |file| -%>
+<% sun.helpers(Sunzistrano.root).each do |file| -%>
   source helpers/<%= file %>
 <% end -%>
 

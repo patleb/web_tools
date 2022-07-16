@@ -48,10 +48,10 @@ class Sunzistrano::ContextTest < Minitest::Spec
     end
   end
 
-  describe '#list_helpers' do
+  describe '#helpers' do
     it 'should list Sunzistrano gem helpers' do
       sun = Sunzistrano::Context.new('test', 'system')
-      actual_helpers = Set.new(sun.list_helpers(Sunzistrano.root))
+      actual_helpers = Set.new(sun.helpers(Sunzistrano.root))
       expected_helpers = %w(
         sun/command_helper.sh
         sun/recipe_helper.sh
@@ -71,6 +71,7 @@ class Sunzistrano::ContextTest < Minitest::Spec
       expected_recipes = %w(
         'first/recipe-value'
         'second/recipe'
+        shared/after/second/recipe
         test/before/shared/append
         shared/append
         test/after/shared/append
@@ -78,7 +79,11 @@ class Sunzistrano::ContextTest < Minitest::Spec
         reboot
       )
       actual_recipes = []
-      sun.role_recipes('reboot', 'first/recipe__VARIABLE__', 'second/recipe__NO_VARIABLE__') do |name, id|
+      sun.role_recipes(*%w(
+        reboot
+        first/recipe__VARIABLE__
+        second/recipe__NO_VARIABLE__
+      )) do |name, id|
         actual_recipes << (id || name)
       end
       assert_equal expected_recipes, actual_recipes

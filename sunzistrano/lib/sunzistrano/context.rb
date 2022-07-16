@@ -22,7 +22,6 @@ module Sunzistrano
         require_overrides
         @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
         remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
-        resolve_recipes! context
         super(context)
       end
     end
@@ -76,7 +75,7 @@ module Sunzistrano
       @_os ||= ActiveSupport::StringInquirer.new(os_name || 'ubuntu')
     end
 
-    def list_helpers(root)
+    def helpers(root)
       base_dir = Pathname.new(root).join(Sunzistrano::CONFIG_PATH, 'helpers')
       Dir[base_dir.join('**/*.sh').to_s].map do |file|
         Pathname.new(file).relative_path_from(base_dir).to_s
@@ -88,20 +87,13 @@ module Sunzistrano
       if (reboot = recipes.delete('reboot'))
         recipes << reboot
       end
-      list_recipes(recipes) do |name, id|
-        yield name, id
-      end
-    end
-
-    def list_recipes(*names, base: nil)
-      recipes = merge_recipes *names, base, remove: true
       if recipe.present?
         recipes.select! do |name|
-          name.end_with?("/all") || name == recipe
+          name == recipe
         end
       end
-      recipes.reject(&:blank?).each do |name|
-        yield name, gsub_variables(name)
+      recipes.each do |name|
+        yield name, gsub_variables(name) unless name.blank?
       end
     end
 
@@ -117,36 +109,22 @@ module Sunzistrano
 
     private
 
-    def merge_recipes(names, base = nil, remove: false)
-      recipes = Array.wrap(names).reject(&:blank?)
-      if base
-        recipes.map!{ |name| "#{base}/#{name}" }
-      end
-      if remove
-        recipes - (remove_recipes || []).reject(&:blank?)
-      else
-        recipes + (append_recipes || []).reject(&:blank?)
-      end
-    end
-
-    def resolve_recipes!(context)
-      remove, append = context.values_at(:remove_recipes, :append_recipes)
-      recipes = (context[:recipes] || []).each_with_object(remove: remove || [], append: append || []) do |recipe, memo|
-        next memo[:append] << recipe if recipe.is_a? String
+    def merge_recipes(names)
+      (recipes || []).each_with_object(names.reject(&:blank?)) do |recipe, memo|
+        next memo << recipe if recipe.is_a? String
         recipe, action = recipe.first
         action, sibling = action&.first
         case action
         when 'remove'
-          memo[:remove] << recipe
+          memo.delete(recipe)
         when 'before'
-          memo[:append].insert_before(sibling, recipe)
+          memo.insert_before(sibling, recipe)
         when 'after'
-          memo[:append].insert_after(sibling, recipe)
+          memo.insert_after(sibling, recipe)
         else
-          memo[:append] << recipe
+          memo << recipe
         end
-      end.transform_keys!{ |key| :"#{key}_recipes" }
-      context.merge! recipes
+      end
     end
 
     def extract_yml(root)

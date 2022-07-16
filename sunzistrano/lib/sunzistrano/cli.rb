@@ -17,7 +17,7 @@ module Sunzistrano
       true
     end
 
-    desc 'provision [stage] [role] [--recipe] [--new-host] [--reboot]', 'Provision'
+    desc 'provision [stage] [role] [--recipe] [--new-host] [--reboot]', 'Provision role'
     method_options recipe: :string, new_host: false, reboot: false
     def provision(stage, role = 'system')
       do_provision(stage, role, provision: true)
@@ -117,7 +117,7 @@ module Sunzistrano
         content = around[:before]
         content << "\n"
         sun.gems.each_value do |root|
-          sun.list_helpers(root).each do |file|
+          sun.helpers(root).each do |file|
             content << "source helpers/#{file}\n"
           end
         end
