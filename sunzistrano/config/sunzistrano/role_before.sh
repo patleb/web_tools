@@ -33,6 +33,7 @@ export TERM=linux
   export __<%= attribute.upcase %>__=<%= value.respond_to?(:call) ? value.call : value %>
 <% end -%>
 export __ROLLBACK__=${__ROLLBACK__:-false}
+export __PROVISION__=${__PROVISION__:-false}
 export __SPECIALIZE__=${__SPECIALIZE__:-false}
 export __DEBUG__=${__DEBUG__:-false}
 export __REBOOT__=${__REBOOT__:-false}
