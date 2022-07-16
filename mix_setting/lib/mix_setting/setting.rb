@@ -115,7 +115,12 @@ class Setting
   end
 
   def self.rails_root
-    Pathname.new(Dir.pwd)
+    case
+    when @root                then @root
+    when ENV['RAILS_ROOT']    then Pathname.new(ENV['RAILS_ROOT']).expand_path
+    when defined?(Rails.root) then Rails.root
+    else Pathname.new(Dir.pwd)
+    end
   end
 
   def self.default_app
