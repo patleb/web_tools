@@ -21,25 +21,25 @@ end
 
 class Sunzistrano::ContextTest < Minitest::Spec
   it 'should build context correctly' do
-    context = Sunzistrano::Context.new('test:app', 'role', option: 'name', root: ROOT)
-    assert_equal DUMMY_GEMS.to_a, context.gems.keys.sort
-    assert_equal 'test', context.env
-    assert_equal 'app', context.app
-    assert_equal 'role', context.role
-    assert_equal 'name', context.option
-    assert_equal 'settings_app_test', context.settings_scope
+    sun = Sunzistrano::Context.new('test:app', 'role', option: 'name', root: ROOT)
+    assert_equal DUMMY_GEMS.to_a, sun.gems.keys.sort
+    assert_equal 'test', sun.env
+    assert_equal 'app', sun.app
+    assert_equal 'role', sun.role
+    assert_equal 'name', sun.option
+    assert_equal 'settings_app_test', sun.settings_scope
     %w(settings settings_second_gem settings_third_gem).each do |root_name|
       %w(shared test app app_test).each do |scope_name|
-        assert context["#{root_name}_#{scope_name}"]
+        assert sun["#{root_name}_#{scope_name}"]
       end
     end
-    assert_equal 'sunzistrano_app_test_role', context.sunzistrano_scope
+    assert_equal 'sunzistrano_app_test_role', sun.sunzistrano_scope
     %w(sunzistrano sunzistrano_first_gem sunzistrano_third_gem).each do |root_name|
       %w(shared role test test_role app app_role app_test app_test_role).each do |scope_name|
-        assert context["#{root_name}_#{scope_name}"]
+        assert sun["#{root_name}_#{scope_name}"]
       end
     end
-    assert_equal 'replaced', context.replaceable
+    assert_equal 'replaced', sun.replaceable
   end
 
   it 'should raise on out-of-sync lock version' do
@@ -50,7 +50,8 @@ class Sunzistrano::ContextTest < Minitest::Spec
 
   describe '#list_helpers' do
     it 'should list Sunzistrano gem helpers' do
-      actual_helpers = Set.new(Sunzistrano::Context.new('test', 'system').list_helpers(Sunzistrano.root))
+      sun = Sunzistrano::Context.new('test', 'system')
+      actual_helpers = Set.new(sun.list_helpers(Sunzistrano.root))
       expected_helpers = %w(
         sun/command_helper.sh
         sun/recipe_helper.sh
@@ -61,6 +62,26 @@ class Sunzistrano::ContextTest < Minitest::Spec
       expected_helpers.each do |helper|
         assert_includes actual_helpers, helper
       end
+    end
+  end
+
+  describe '#role_recipes' do
+    it 'should resolve :(append|remove)_recipes lists' do
+      sun = Sunzistrano::Context.new('test', 'system', root: ROOT)
+      expected_recipes = %w(
+        'first/recipe-value'
+        'second/recipe'
+        test/before/shared/append
+        shared/append
+        test/after/shared/append
+        test/append
+        reboot
+      )
+      actual_recipes = []
+      sun.role_recipes('reboot', 'first/recipe__VARIABLE__', 'second/recipe__NO_VARIABLE__') do |name, id|
+        actual_recipes << (id || name)
+      end
+      assert_equal expected_recipes, actual_recipes
     end
   end
 end

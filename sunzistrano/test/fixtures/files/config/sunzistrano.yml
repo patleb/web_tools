@@ -10,6 +10,13 @@ shared:
   sunzistrano_shared: true
   sunzistrano_scope: sunzistrano_shared
   replaceable!: replaced
+  variable: value
+  recipes:
+    - shared/append
+    - shared/before/reboot:
+        before: reboot
+    - shared/remove:
+        remove: true
 
 role:
   sunzistrano_role: true
@@ -18,6 +25,14 @@ role:
 test:
   sunzistrano_test: true
   sunzistrano_scope: sunzistrano_test
+  recipes:
+    - test/after/shared/append:
+        after: shared/append
+    - test/append:
+    - test/before/shared/append:
+        before: shared/append
+    - shared/before/reboot:
+        remove: true
 
 test_role:
   sunzistrano_test_role: true

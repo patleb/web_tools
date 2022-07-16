@@ -22,6 +22,7 @@ module Sunzistrano
         require_overrides
         @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
         remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
+        resolve_recipes! context
         super(context)
       end
     end
@@ -126,6 +127,26 @@ module Sunzistrano
       else
         recipes + (append_recipes || []).reject(&:blank?)
       end
+    end
+
+    def resolve_recipes!(context)
+      remove, append = context.values_at(:remove_recipes, :append_recipes)
+      recipes = (context[:recipes] || []).each_with_object(remove: remove || [], append: append || []) do |recipe, memo|
+        next memo[:append] << recipe if recipe.is_a? String
+        recipe, action = recipe.first
+        action, sibling = action&.first
+        case action
+        when 'remove'
+          memo[:remove] << recipe
+        when 'before'
+          memo[:append].insert_before(sibling, recipe)
+        when 'after'
+          memo[:append].insert_after(sibling, recipe)
+        else
+          memo[:append] << recipe
+        end
+      end.transform_keys!{ |key| :"#{key}_recipes" }
+      context.merge! recipes
     end
 
     def extract_yml(root)
