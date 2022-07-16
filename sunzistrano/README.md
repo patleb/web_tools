@@ -145,10 +145,6 @@ See [mix_server/config/provision/recipes](https://github1s.com/patleb/web_tools/
 
 The `sun.source_recipe` Bash helper must be used to source the **recipe** and make sure that it runs only once. It's also required for more advanced features like the **specialize** and **rollback** commands.
 
-The `sun.list_recipes` Ruby helper let you group recipes within `all.sh` files and outputs the names of the recipes that include variables with the actual values.
-
-See [bootstrap/all.sh](../mix_server/config/provision/recipes/bootstrap/all.sh) for an example.
-
 ## Files
 
 Transferred **files** are located under the folder `config/provision/files` and must follow the actual location of the remote machine. For example, if the file `/etc/hosts` is expected to be replaced, then the file path would be `config/provision/files/etc/hosts`.
