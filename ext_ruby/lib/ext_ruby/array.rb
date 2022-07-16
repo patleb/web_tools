@@ -49,8 +49,12 @@ class Array
     self - values
   end
 
+  def insert_before(anchor, value)
+    insert((index(anchor) || 0), value)
+  end
+
   def insert_after(anchor, value)
-    insert((index(anchor) || -1) + 1, value)
+    insert((index(anchor) || -2) + 1, value)
   end
 
   def switch(old_value, new_value)
