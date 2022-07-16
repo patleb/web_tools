@@ -1,11 +1,10 @@
 lock: 0.1.0
 gems:
   - mix_server
-sudo: true
-debug: false
-reboot: false
 
 shared:
+  sudo: true
+  debug: false
 
 system:
   append_recipes:
