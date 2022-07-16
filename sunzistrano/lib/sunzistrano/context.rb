@@ -4,29 +4,31 @@ module Sunzistrano
   class Context < OpenStruct
     VARIABLES = /__([A-Z0-9_]+)__/
 
+    attr_reader :gems
+
     def self.root
       Pathname.new(Dir.pwd)
     end
 
     def initialize(stage, role, root: self.class.root, **options)
       validate_config_presence! root
-      @stage, @application = stage.split(':', 2)
-      settings = Setting.load(env: @stage, app: @application, root: root)
-      @application ||= Setting.default_app
-      @role = role
-      @gems = {}
-      context = { stage: @stage, application: @application }.with_keyword_access
-      context.merge! settings
-      context.merge! extract_yml(root)
-      context.merge!(role: @role, gems: @gems).merge!(options)
-      require_overrides
-      @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
-      remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
-      super(context)
+      @env, @app = stage.split(':', 2)
+      Setting.with(env: @env, app: @app, root: root) do |settings|
+        @app ||= Setting.default_app
+        @role = role
+        @gems = {}
+        context = settings.merge(extract_yml(root))
+        context.merge! options
+        require_overrides
+        @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
+        remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
+        super(context)
+      end
     end
 
     def attributes
       to_h.reject{ |_, v| (v != false && v.blank?) || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
+        role: role,
         env: env,
         app: app,
         os_name: os,
@@ -57,12 +59,16 @@ module Sunzistrano
       self[:owner_private_key].presence && "'#{self[:owner_private_key]}'"
     end
 
+    def role
+      @_role ||= ActiveSupport::StringInquirer.new(@role.to_s)
+    end
+
     def env
-      @_env ||= ActiveSupport::StringInquirer.new(stage.to_s)
+      @_env ||= ActiveSupport::StringInquirer.new(@env.to_s)
     end
 
     def app
-      @_app ||= ActiveSupport::StringInquirer.new(application.to_s)
+      @_app ||= ActiveSupport::StringInquirer.new(@app.to_s)
     end
 
     def os
@@ -136,14 +142,14 @@ module Sunzistrano
         end
       end
       role_yml = (yml['shared'] || {}).union!(yml[@role] || {})
-      env_yml = (yml[@stage] || {})
-      env_yml.union!(yml["#{@stage}_#{@role}"] || {})
+      env_yml = (yml[@env] || {})
+      env_yml.union!(yml["#{@env}_#{@role}"] || {})
       role_yml.union!(env_yml)
-      if @application
-        app_yml = (yml[@application] || {})
-        app_yml.union!(yml["#{@application}_#{@role}"] || {})
-        app_yml.union!(yml["#{@application}_#{@stage}"] || {})
-        app_yml.union!(yml["#{@application}_#{@stage}_#{@role}"] || {})
+      if @app
+        app_yml = (yml[@app] || {})
+        app_yml.union!(yml["#{@app}_#{@role}"] || {})
+        app_yml.union!(yml["#{@app}_#{@env}"] || {})
+        app_yml.union!(yml["#{@app}_#{@env}_#{@role}"] || {})
         role_yml.union!(app_yml)
       end
       yml = (gems_yml || {}).union!(role_yml)
