@@ -23,7 +23,7 @@ sun.elapsed_time() {
 }
 
 sun.provision_path() {
-  echo "$HOME/$__PROVISION_DIR__"
+  echo "$HOME/$__BASH_DIR__"
 }
 
 sun.include() {

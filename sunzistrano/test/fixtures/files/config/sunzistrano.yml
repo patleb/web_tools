@@ -1,0 +1,40 @@
+lock: <%= Sunzistrano::VERSION %>
+gems:
+  - first_gem
+  - second_gem
+  - third_gem
+
+shared:
+  sudo: true
+  debug: false
+  sunzistrano_shared: true
+  sunzistrano_scope: sunzistrano_shared
+  replaceable!: replaced
+
+role:
+  sunzistrano_role: true
+  sunzistrano_scope: sunzistrano_role
+
+test:
+  sunzistrano_test: true
+  sunzistrano_scope: sunzistrano_test
+
+test_role:
+  sunzistrano_test_role: true
+  sunzistrano_scope: sunzistrano_test_role
+
+app:
+  sunzistrano_app: true
+  sunzistrano_scope: sunzistrano_app
+
+app_role:
+  sunzistrano_app_role: true
+  sunzistrano_scope: sunzistrano_app_role
+
+app_test:
+  sunzistrano_app_test: true
+  sunzistrano_scope: sunzistrano_app_test
+
+app_test_role:
+  sunzistrano_app_test_role: true
+  sunzistrano_scope: sunzistrano_app_test_role

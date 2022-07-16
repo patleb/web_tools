@@ -1,0 +1,20 @@
+gems:
+  - first_gem
+  - second_gem
+  - third_gem
+
+shared:
+  settings_shared: true
+  settings_scope: settings_shared
+
+test:
+  settings_test: true
+  settings_scope: settings_test
+
+app:
+  settings_app: true
+  settings_scope: settings_app
+
+app_test:
+  settings_app_test: true
+  settings_scope: settings_app_test

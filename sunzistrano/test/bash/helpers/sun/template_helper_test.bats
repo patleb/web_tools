@@ -20,7 +20,7 @@ teardown() {
 
 @test 'sun.move' {
   local template=$(sun.template_path $TMP_TEMPLATE)
-  assert_equal $template "$HOME/$__PROVISION_DIR__/files$TMP_TEMPLATE"
+  assert_equal $template "$HOME/$__BASH_DIR__/files$TMP_TEMPLATE"
   cp $template "$template.bkp"
   run sun.move $TMP_TEMPLATE
   assert_file_contains $TMP_TEMPLATE 'overriden template'

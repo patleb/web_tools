@@ -1,4 +1,13 @@
 module Sunzistrano
+  CONFIG_PATH = 'config/sunzistrano'
+  CONFIG_YML = 'config/sunzistrano.yml'
+  BASH_LOG = 'sunzistrano.log'
+  BASH_DIR = 'sunzistrano'
+  MANIFEST_LOG = 'sun_manifest.log'
+  MANIFEST_DIR = 'sun_manifest'
+  METADATA_DIR = 'sun_metadata'
+  DEFAULTS_DIR = 'sun_defaults'
+
   class Cli < Thor
     include Thor::Actions
 
@@ -8,10 +17,10 @@ module Sunzistrano
       true
     end
 
-    desc 'provision [stage] [role] [--recipe] [--new-host] [--no-reboot]', 'Provision'
-    method_options recipe: :string, new_host: false, no_reboot: false
+    desc 'provision [stage] [role] [--recipe] [--new-host] [--reboot]', 'Provision'
+    method_options recipe: :string, new_host: false, reboot: false
     def provision(stage, role = 'system')
-      do_provision(stage, role)
+      do_provision(stage, role, provision: true)
     end
 
     desc 'specialize [stage] [role] [--recipe] [--new-host]', 'Specialize provisioning'
@@ -26,8 +35,8 @@ module Sunzistrano
       do_provision(stage, role, rollback: true)
     end
 
-    desc 'compile [stage] [role] [--recipe] [--rollback] [--specialize] [--no-reboot]', 'Compile provisioning'
-    method_options recipe: :string, rollback: false, specialize: false, no_reboot: false
+    desc 'compile [stage] [role] [--recipe] [--rollback] [--specialize] [--reboot]', 'Compile provisioning'
+    method_options recipe: :string, rollback: false, specialize: false, reboot: false
     def compile(stage, role = 'system')
       do_compile(stage, role)
     end
@@ -50,13 +59,11 @@ module Sunzistrano
 
       def do_provision(stage, role, **custom_options)
         do_compile(stage, role, **custom_options)
-        validate_version!
-        run_provision_cmd
+        run_role_cmd
       end
 
       def do_compile(stage, role, **custom_options)
         load_config(stage, role, **custom_options)
-        require_overrides
         copy_files
         build_role
       end
@@ -65,10 +72,10 @@ module Sunzistrano
         load_config(stage, role)
         path = sun.path
         ref = Pathname.new(Dir.pwd).expand_path
-        ref = ref.join('config', 'provision', 'files', "#{path.delete_prefix('/')}.ref")
+        ref = ref.join(CONFIG_PATH, "files/#{path.delete_prefix('/')}.ref")
         FileUtils.mkdir_p File.dirname(ref)
         if sun.defaults
-          path = "/home/#{sun.owner_name}/#{Sunzistrano::Context::DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
+          path = "/home/#{sun.owner_name}/#{Sunzistrano::DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
         end
         unless system download_cmd(path, ref)
           puts "Cannot transfer [#{path}] to [#{ref}]".red
@@ -81,50 +88,43 @@ module Sunzistrano
       end
 
       def load_config(stage, role, **custom_options)
-        validate_config_presence!
         @sun = Sunzistrano::Context.new(stage, role, **options.symbolize_keys, **custom_options)
       end
 
-      def require_overrides
-        gems.each_key do |name|
-          require "#{name}/sunzistrano" if File.exist? "#{name}/sunzistrano"
-        end
-        require 'app/libraries/sunzistrano' if File.exist? 'app/libraries/sunzistrano.rb'
-      end
-
       def copy_files
-        basenames = 'config/provision/{files,helpers,recipes,roles}/**/*'
+        basenames = "#{CONFIG_PATH}/{files,helpers,recipes,roles}/**/*"
         dirnames = [basenames]
-        gems.each_value do |root|
+        sun.gems.each_value do |root|
           dirnames << root.expand_path.join(basenames).to_s
         end
         dirnames << Sunzistrano.root.join(basenames).to_s
         files = []
         dirnames.each do |dirname|
-          files += Dir[dirname].select{ |f| provision? f, files }
+          files += Dir[dirname].select{ |f| copy? f, files }
         end
         files.each do |file|
-          compile_file File.expand_path(file), expand_path(:provision, file)
+          compile_file File.expand_path(file), bash_path(file)
         end
       end
 
       def build_role
         around = %i(before after).each_with_object({}) do |hook, memo|
-          path = expand_path(:provision, "role_#{hook}.sh")
-          compile_file expand_path(:root, "role_#{hook}.sh"), path
-          memo[hook] = File.binread(path)
+          src = Sunzistrano.root.join(CONFIG_PATH, basename("role_#{hook}.sh")).expand_path
+          dst = bash_path("role_#{hook}.sh")
+          compile_file src, dst
+          memo[hook] = File.binread(dst)
         end
         content = around[:before]
         content << "\n"
-        gems.each_value do |root|
+        sun.gems.each_value do |root|
           sun.list_helpers(root).each do |file|
             content << "source helpers/#{file}\n"
           end
         end
-        content << File.binread(expand_path(:provision, "roles/#{sun.role}.sh"))
+        content << File.binread(bash_path("roles/#{sun.role}.sh"))
         content << "\n"
         content << around[:after]
-        create_file expand_path(:provision, 'role.sh'), content, force: true, verbose: sun.debug
+        create_file bash_path('role.sh'), content, force: true, verbose: sun.debug
       end
 
       def compile_file(src, dst)
@@ -143,22 +143,12 @@ module Sunzistrano
         end
       end
 
-      def validate_version!
-        unless sun.lock.nil? || sun.lock == Sunzistrano::VERSION
-          abort "Sunzistrano version [#{Sunzistrano::VERSION}] is different from locked version [#{sun.lock}]"
-        end
-      end
-
-      def validate_config_presence!
-        abort 'You must have a provision.yml'.red unless Sunzistrano::Context.provision_yml.exist?
-      end
-
-      def run_provision_cmd
+      def run_role_cmd
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
-          run_provison_cmd_for(server)
+          run_role_cmd_for(server)
         end
         run_reset_known_hosts if sun.new_host
-        FileUtils.rm_rf(provision_path) unless sun.debug
+        FileUtils.rm_rf(bash_dir) unless sun.debug
       end
 
       def run_reset_known_hosts
@@ -172,8 +162,8 @@ module Sunzistrano
         end
       end
 
-      def run_provison_cmd_for(server)
-        Open3.popen3(provision_cmd(server)) do |stdin, stdout, stderr|
+      def run_role_cmd_for(server)
+        Open3.popen3(role_cmd(server)) do |stdin, stdout, stderr|
           stdin.close
           t = Thread.new do
             while (line = stderr.gets)
@@ -190,25 +180,25 @@ module Sunzistrano
         end
       end
 
-      def provision_cmd(server)
+      def role_cmd(server)
         no_strict_host_key_checking = "-o 'StrictHostKeyChecking no'" if sun.new_host
         <<~CMD.squish
-          #{ssh_add_vagrant} cd #{provision_path} && tar cz . |
+          #{ssh_add_vagrant} cd #{bash_dir} && tar cz . |
           ssh #{"-p #{sun.port}" if sun.port} #{no_strict_host_key_checking} -o LogLevel=ERROR
           #{"-o ProxyCommand='ssh -W %h:%p #{sun.owner_name}@#{sun.server}'" if sun.server_cluster?}
           #{sun.owner_name}@#{server}
-          '#{provision_remote_cmd}'
+          '#{role_remote_cmd}'
         CMD
       end
 
-      def provision_remote_cmd
-        cleanup = "rm -rf ~/#{Sunzistrano::Context::PROVISION_DIR} &&" unless sun.debug
+      def role_remote_cmd
+        cleanup = "rm -rf ~/#{Sunzistrano::BASH_DIR} &&" unless sun.debug
         <<~CMD.squish
           #{cleanup}
-          mkdir -p ~/#{Sunzistrano::Context::PROVISION_DIR} &&
-          cd ~/#{Sunzistrano::Context::PROVISION_DIR} &&
+          mkdir -p ~/#{Sunzistrano::BASH_DIR} &&
+          cd ~/#{Sunzistrano::BASH_DIR} &&
           tar xz &&
-          #{'sudo' if sun.sudo} bash role.sh |& tee -a ~/#{Sunzistrano::Context::PROVISION_LOG}
+          #{'sudo' if sun.sudo} bash role.sh |& tee -a ~/#{Sunzistrano::BASH_LOG}
         CMD
       end
 
@@ -229,35 +219,23 @@ module Sunzistrano
         CMD
       end
 
-      def provision?(file, others)
+      def copy?(file, others)
         File.file?(file) &&
           !file.match?(/\.keep$/) &&
           !file.match?(/\/roles\/(?!(#{sun.role}(_(before|after|ensure))?)\.sh)/) &&
           others.none?{ |f| file.end_with? basename(f) }
       end
 
-      def expand_path(type, file = type)
-        case type
-        when :root
-          file = Sunzistrano.root.join("config/provision/#{basename(file)}")
-        when :provision
-          file = "#{provision_path}/#{basename(file)}"
-        else
-          file = "config/provision/#{basename(file)}"
-        end
-        File.expand_path(file)
+      def bash_path(file)
+        File.expand_path("#{bash_dir}/#{basename(file)}")
+      end
+
+      def bash_dir
+        @bash_dir ||= ".#{BASH_DIR}/#{[sun.app, sun.env, sun.role].compact.join('-')}"
       end
 
       def basename(file)
-        file.sub(/.*config\/provision\//, '')
-      end
-
-      def provision_path
-        @provision_path ||= ".provision/#{sun.app}-#{sun.env}"
-      end
-
-      def gems
-        @gems ||= (sun.gems || []).select_map{ |name| [name, Gem.root(name)] if Gem.root(name) }.to_h
+        file.sub(/.*#{CONFIG_PATH}\//, '')
       end
     end
   end

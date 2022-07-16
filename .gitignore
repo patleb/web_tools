@@ -46,7 +46,7 @@ yarn-debug.log*
 !/.vagrant/
 !/.vagrant/private_key
 *.box
-/.provision/*
+/.sunzistrano/*
 /.local_repo/*
 /.vscode/*
 /.idea/*

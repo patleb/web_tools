@@ -1,0 +1,34 @@
+gems:
+  - second_gem
+
+shared:
+  sunzistrano_third_gem_shared: true
+  sunzistrano_scope: sunzistrano_third_gem_shared
+
+role:
+  sunzistrano_third_gem_role: true
+  sunzistrano_scope: sunzistrano_third_gem_role
+
+test:
+  sunzistrano_third_gem_test: true
+  sunzistrano_scope: sunzistrano_third_gem_test
+
+test_role:
+  sunzistrano_third_gem_test_role: true
+  sunzistrano_scope: sunzistrano_third_gem_test_role
+
+app:
+  sunzistrano_third_gem_app: true
+  sunzistrano_scope: sunzistrano_third_gem_app
+
+app_role:
+  sunzistrano_third_gem_app_role: true
+  sunzistrano_scope: sunzistrano_third_gem_app_role
+
+app_test:
+  sunzistrano_third_gem_app_test: true
+  sunzistrano_scope: sunzistrano_third_gem_app_test
+
+app_test_role:
+  sunzistrano_third_gem_app_test_role: true
+  sunzistrano_scope: sunzistrano_third_gem_app_test_role

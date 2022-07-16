@@ -1,7 +1,7 @@
-source 'sunzistrano/config/provision/helpers/sun_helper.sh'
-source 'sunzistrano/config/provision/helpers/sun/recipe_helper.sh'
-source 'sunzistrano/config/provision/helpers/sun/template_helper.sh'
-source 'sunzistrano/config/provision/helpers/sun/version_helper.sh'
+source 'sunzistrano/config/sunzistrano/helpers/sun_helper.sh'
+source 'sunzistrano/config/sunzistrano/helpers/sun/recipe_helper.sh'
+source 'sunzistrano/config/sunzistrano/helpers/sun/template_helper.sh'
+source 'sunzistrano/config/sunzistrano/helpers/sun/version_helper.sh'
 
 assert_file_not_contains() {
   local -r file="$1"
@@ -24,8 +24,8 @@ sun.test_setup() {
   HOME_STUB="$TEST/fixtures/files/home"
   HOME_WAS=$HOME
   HOME=$HOME_STUB
-  __PROVISION_LOG__=sun_provision.log
-  __PROVISION_DIR__=sun_provision
+  __BASH_LOG__=sunzistrano.log
+  __BASH_DIR__=sunzistrano
   __MANIFEST_LOG__=sun_manifest.log
   __MANIFEST_DIR__=sun_manifest
   __METADATA_DIR__=sun_metadata

@@ -2,7 +2,7 @@ source 'sunzistrano/test/bash/spec_helper.sh'
 
 setup() {
   sun.test_setup
-  cd "$HOME/$__PROVISION_DIR__"
+  cd "$HOME/$__BASH_DIR__"
 }
 
 teardown() {
