@@ -1,4 +1,3 @@
-# TODO https://github.com/rails/rails/pull/42106
 require 'ext_ruby'
 require 'active_support/message_encryptor'
 require 'inifile'
@@ -52,7 +51,7 @@ class Setting
     all(true, **options)
   end
 
-  def self.all(force = false, env: rails_env, app: rails_app, freeze: true)
+  def self.all(force = false, env: rails_env, app: rails_app, root: rails_root, freeze: true)
     if force
       current = instance_variables.except(:@default_app).reject{ |ivar| ivar.end_with?('_was') }
       current.each{ |ivar| instance_variable_set("#{ivar}_was", instance_variable_get(ivar)) }
@@ -64,7 +63,7 @@ class Setting
 
       @env = env.to_s
       @app = app&.to_s
-      @root = Pathname.new('').expand_path
+      @root = root
       @types = {}.with_keyword_access
       @gems = {}
       @secrets = parse_secrets_yml
@@ -100,19 +99,23 @@ class Setting
 
   def self.rails_env
     case
-    when @env             then @env
-    when ENV['RAILS_ENV'] then ENV['RAILS_ENV']
-    when defined?(Rails)  then Rails.env.to_s
+    when @env                then @env
+    when ENV['RAILS_ENV']    then ENV['RAILS_ENV']
+    when defined?(Rails.env) then Rails.env.to_s
     end
   end
 
   def self.rails_app
     case
-    when @app             then @app
-    when ENV['RAILS_APP'] then ENV['RAILS_APP']
-    when defined?(Rails)  then Rails.app.to_s
+    when @app                then @app
+    when ENV['RAILS_APP']    then ENV['RAILS_APP']
+    when defined?(Rails.app) then Rails.app.to_s
     else default_app
     end
+  end
+
+  def self.rails_root
+    Pathname.new(Dir.pwd)
   end
 
   def self.default_app
@@ -134,7 +137,7 @@ class Setting
     yield(host || '127.0.0.1', port || 5432, database, username, password)
   end
 
-  private_class_method
+  # private_class_method
 
   def self.gem_root(name)
     @gems[name] ||= Gem.root(name) or raise "gem [#{name}] not found"
