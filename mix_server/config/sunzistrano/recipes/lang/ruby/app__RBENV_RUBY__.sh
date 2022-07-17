@@ -1,30 +1,29 @@
 sun.install "libjemalloc-dev"
 
-sudo su - $__DEPLOYER_NAME__ << 'EOF'
-  DEPLOYER_NAME=<%= sun.deployer_name %>
-  PLUGINS_PATH=/home/$DEPLOYER_NAME/.rbenv/plugins
-  PROFILE=/home/$DEPLOYER_NAME/.bashrc
+sudo su - deployer << 'EOF'
+  PLUGINS_PATH=/home/deployer/.rbenv/plugins
+  PROFILE=/home/deployer/.bashrc
   RUBY_VERSION=<%= sun.rbenv_ruby %>
   RBENV_OPTIONS='--with-jemalloc <%= '--enable-shared' if sun.ruby_cpp %> --disable-install-doc --disable-install-rdoc --disable-install-capi'
 
-  if [[ ! -s "/home/$DEPLOYER_NAME/.rbenv" ]]; then
-    git clone https://github.com/sstephenson/rbenv.git /home/$DEPLOYER_NAME/.rbenv
+  if [[ ! -s "/home/deployer/.rbenv" ]]; then
+    git clone https://github.com/sstephenson/rbenv.git /home/deployer/.rbenv
     git clone https://github.com/sstephenson/ruby-build.git $PLUGINS_PATH/ruby-build
     git clone https://github.com/sstephenson/rbenv-gem-rehash.git $PLUGINS_PATH/rbenv-gem-rehash
     git clone https://github.com/dcarley/rbenv-sudo.git $PLUGINS_PATH/rbenv-sudo
 
-    echo '<%= Sh.rbenv_export(sun.deployer_name) %>' >> $PROFILE
+    echo '<%= Sh.rbenv_export %>' >> $PROFILE
     echo '<%= Sh.rbenv_init %>' >> $PROFILE
-    echo 'gem: --no-document' > /home/$DEPLOYER_NAME/.gemrc
+    echo 'gem: --no-document' > /home/deployer/.gemrc
   else
-    cd /home/$DEPLOYER_NAME/.rbenv && git remote set-url origin https://github.com/sstephenson/rbenv.git && git pull
+    cd /home/deployer/.rbenv && git remote set-url origin https://github.com/sstephenson/rbenv.git && git pull
     cd $PLUGINS_PATH/ruby-build && git remote set-url origin https://github.com/sstephenson/ruby-build.git && git pull
     cd $PLUGINS_PATH/rbenv-gem-rehash && git remote set-url origin https://github.com/sstephenson/rbenv-gem-rehash.git && git pull
     cd $PLUGINS_PATH/rbenv-sudo && git remote set-url origin https://github.com/dcarley/rbenv-sudo.git && git pull
-    cd /home/$DEPLOYER_NAME
+    cd /home/deployer
   fi
 
-  <%= Sh.rbenv_export(sun.deployer_name) %>
+  <%= Sh.rbenv_export %>
   <%= Sh.rbenv_init %>
 
   RUBY_CONFIGURE_OPTS=$RBENV_OPTIONS rbenv install $RUBY_VERSION

@@ -1,6 +1,6 @@
 module Sh::Rbenv
-  def rbenv_export(deployer_name)
-    %{export PATH="/home/#{deployer_name}/.rbenv/bin:/home/#{deployer_name}/.rbenv/plugins/ruby-build/bin:$PATH"}
+  def rbenv_export
+    %{export PATH="/home/deployer/.rbenv/bin:/home/deployer/.rbenv/plugins/ruby-build/bin:$PATH"}
   end
 
   def rbenv_init

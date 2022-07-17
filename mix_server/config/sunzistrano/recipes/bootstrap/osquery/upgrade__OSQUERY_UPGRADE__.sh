@@ -1,5 +1,5 @@
-__OSQUERY_UPGRADE__=${__OSQUERY_UPGRADE__:-false}
-if [[ "$__OSQUERY_UPGRADE__" != false ]]; then
+osquery_upgrade=${osquery_upgrade:-false}
+if [[ "${osquery_upgrade}" != false ]]; then
   sudo osqueryctl stop
 
   sun.unlock "osquery"

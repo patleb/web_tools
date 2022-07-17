@@ -1,5 +1,5 @@
-if fdisk -l | grep -Fq $__DATA_PARTITION__; then
-  export NEW_PG_DATA_DIR=$__DATA_DIRECTORY__/postgresql-$__POSTGRES__-main
+if fdisk -l | grep -Fq ${data_partition}; then
+  export NEW_PG_DATA_DIR=${data_directory}/postgresql-${postgres}-main
   if [[ -d "$NEW_PG_DATA_DIR" ]]; then
     : # do nothing --> already created
   else

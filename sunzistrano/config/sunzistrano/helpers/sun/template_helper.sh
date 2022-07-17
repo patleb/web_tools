@@ -103,7 +103,7 @@ sun.compare_defaults() {
 }
 
 sun.defaults_path() {
-  echo "$HOME/$__DEFAULTS_DIR__/$(sun.flatten_path $1)"
+  echo "$HOME/${defaults_dir}/$(sun.flatten_path $1)"
 }
 
 sun.template_path() {

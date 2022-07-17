@@ -1,4 +1,4 @@
-__SWAP_SIZE__=${__SWAP_SIZE__:-1024M}
+swap_size=${swap_size:-1024M}
 SWAP_NAME=/swap
 
 if [[ $(swapon -s | grep $SWAP_NAME | awk '{ print $1; }') == "$SWAP_NAME" ]]; then
@@ -7,8 +7,8 @@ if [[ $(swapon -s | grep $SWAP_NAME | awk '{ print $1; }') == "$SWAP_NAME" ]]; t
   rm -f $SWAP_NAME
 fi
 
-if [[ ${__SWAP_SIZE__::1} != '0' ]] && [[ $__SWAP_SIZE__ != false ]]; then
-  fallocate -l $__SWAP_SIZE__ $SWAP_NAME
+if [[ ${swap_size::1} != '0' ]] && [[ ${swap_size} != false ]]; then
+  fallocate -l ${swap_size} $SWAP_NAME
   chmod 600 $SWAP_NAME
   mkswap $SWAP_NAME
   swapon -p 0 $SWAP_NAME

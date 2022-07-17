@@ -26,7 +26,7 @@ module ExtCapistrano
       environment = environment.map do |name, value|
         %{#{name.is_a?(Symbol) ? name.to_s.upcase : name}="#{value.to_s.gsub(/"/, '\"')}"}
       end
-      rbenv_ruby = "#{Sh.rbenv_export(fetch(:deployer_name))}; #{Sh.rbenv_init};"
+      rbenv_ruby = "#{Sh.rbenv_export}; #{Sh.rbenv_init};"
       rbenv_sudo = "rbenv sudo #{environment.join(' ')}" if sudo
       context = environment.map{ |value| "export #{value};" }.join(' ') unless sudo
       path = " cd #{current_path};"
@@ -76,7 +76,7 @@ module ExtCapistrano
     end
 
     def send_files(server, root, folder, user: false)
-      run_locally{ execute "rsync --progress -rutzvh #{"--chown=#{fetch(:deployer_name)}:#{fetch(:deployer_name)}" if user} -e 'ssh -p #{fetch(:port, 22)}' #{root}/#{folder} #{server.user}@#{server.hostname}:#{shared_path}/#{root}/" }
+      run_locally{ execute "rsync --progress -rutzvh #{"--chown=deployer:deployer" if user} -e 'ssh -p #{fetch(:port, 22)}' #{root}/#{folder} #{server.user}@#{server.hostname}:#{shared_path}/#{root}/" }
     end
 
     def get_files(server, root, folder)
@@ -84,11 +84,11 @@ module ExtCapistrano
     end
 
     def upload_file(server, source, destination, user: false)
-      run_locally{ execute "rsync #{RSYNC_ARCHIVE_OPTIONS} #{"--chown=#{fetch(:deployer_name)}:#{fetch(:deployer_name)}" if user} -e 'ssh -p #{fetch(:port, 22)}' #{source} #{fetch(:deployer_name)}@#{server.hostname}:#{destination}" }
+      run_locally{ execute "rsync #{RSYNC_ARCHIVE_OPTIONS} #{"--chown=deployer:deployer" if user} -e 'ssh -p #{fetch(:port, 22)}' #{source} deployer@#{server.hostname}:#{destination}" }
     end
 
     def download_file(server, source, destination)
-      run_locally{ execute "rsync #{RSYNC_ARCHIVE_OPTIONS} -e 'ssh -p #{fetch(:port, 22)}' #{fetch(:deployer_name)}@#{server.hostname}:#{source} '#{destination}'" }
+      run_locally{ execute "rsync #{RSYNC_ARCHIVE_OPTIONS} -e 'ssh -p #{fetch(:port, 22)}' deployer@#{server.hostname}:#{source} '#{destination}'" }
     end
 
     def upload_erb(source, destination)

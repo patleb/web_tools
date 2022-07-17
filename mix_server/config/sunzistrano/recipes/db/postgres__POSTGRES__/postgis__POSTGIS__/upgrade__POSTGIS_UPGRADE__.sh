@@ -1,7 +1,7 @@
-__POSTGIS_UPGRADE__=${__POSTGIS_UPGRADE__:-false}
+postgis_upgrade=${postgis_upgrade:-false}
 
-if [[ "$__POSTGIS_UPGRADE__" != false ]]; then
-  PGIS_PACKAGES="postgresql-$__POSTGRES__-postgis-$__POSTGIS__ postgresql-$__POSTGRES__-postgis-$__POSTGIS__-scripts"
+if [[ "${postgis_upgrade}" != false ]]; then
+  PGIS_PACKAGES="postgresql-${postgres}-postgis-${postgis} postgresql-${postgres}-postgis-${postgis}-scripts"
 
   sun.unlock "$PGIS_PACKAGES"
   sun.update

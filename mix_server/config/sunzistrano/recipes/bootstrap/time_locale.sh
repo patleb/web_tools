@@ -1,8 +1,8 @@
-__TIMEZONE__=${__TIMEZONE__:-Etc/UTC}
-__LOCALE__=${__LOCALE__:-en_US}
-LC="$__LOCALE__.UTF-8"
+timezone=${timezone:-Etc/UTC}
+locale=${locale:-en_US}
+LC="${locale}.UTF-8"
 
-sun.mute "timedatectl set-timezone $__TIMEZONE__"
+sun.mute "timedatectl set-timezone ${timezone}"
 sun.mute "timedatectl set-local-rtc 0"
 
 sun.install "ntp"
@@ -14,7 +14,7 @@ fi
 export LANGUAGE=$LC
 export LANG=$LC
 export LC_ALL=$LC
-sun.mute "locale-gen $__LOCALE__ $LC"
+sun.mute "locale-gen ${locale} $LC"
 sun.mute "dpkg-reconfigure locales"
 
 systemctl enable ntp

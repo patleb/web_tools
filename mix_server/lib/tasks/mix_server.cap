@@ -10,6 +10,6 @@ namespace :load do
     append :gems, 'mix_server'
 
     # command = [fetch(:passenger_restart_command), fetch(:passenger_restart_options)].join(' ')
-    # %{exec "/usr/bin/sudo -u #{fetch(:deployer_name)} -H sh -c '/home/#{fetch(:deployer_name)}/.rbenv/bin/#{command}'"}
+    # %{exec "/usr/bin/sudo -u deployer -H sh -c '/home/deployer/.rbenv/bin/#{command}'"}
   end
 end

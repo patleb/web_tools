@@ -12,10 +12,8 @@ namespace :load do
     set :format,         -> { :airbrussh }
     set :format_options, -> { { truncate: false } }
     set :owner_name,     -> { Setting[:owner_name] }
-    # TODO remove :deployer_name config --> it's actually a constant
-    set :deployer_name,  -> { Setting[:deployer_name] }
     set :deploy_dir,     -> { "#{cap.app}_#{cap.env}" }
-    set :deploy_to,      -> { "/home/#{fetch(:deployer_name)}/#{fetch(:deploy_dir)}" }
+    set :deploy_to,      -> { "/home/deployer/#{fetch(:deploy_dir)}" }
     set :rails_app,      -> { fetch(:application) }
 
     set :default_env,    -> { { rails_app: fetch(:rails_app) } }

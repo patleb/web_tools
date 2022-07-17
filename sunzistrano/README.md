@@ -52,8 +52,8 @@ system:
 ```bash
 # Bash file
 ...
-$__SWAP_SIZE__
-$__OWNER_NAME__
+${swap_size}
+${owner_name}
 ```
 
 It's important to note that collections (array or hash), empty strings, null values, discontinuous strings or ERB strings aren't accessible through global variables.

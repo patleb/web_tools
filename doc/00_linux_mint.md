@@ -344,15 +344,15 @@ sudo apt-get install -y osquery
 
 ```bash
 sudo apt-get install -y libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev liblz4-dev libzstd-dev
-export __ROCKSDB__=6.20.3
-sudo wget "https://github.com/facebook/rocksdb/archive/v$__ROCKSDB__.zip"
-sudo unzip "v$__ROCKSDB__.zip"
-cd "rocksdb-$__ROCKSDB__"
+export rocksdb=6.20.3
+sudo wget "https://github.com/facebook/rocksdb/archive/v${rocksdb}.zip"
+sudo unzip "v${rocksdb}.zip"
+cd "rocksdb-${rocksdb}"
 sudo make -j8 static_lib && sudo make install-static
 sudo make clean && sudo make -j8 shared_lib && sudo make install-shared
 sudo ldconfig
-sudo rm -f "v$__ROCKSDB__.zip"
-sudo rm -rf "rocksdb-$__ROCKSDB__"
+sudo rm -f "v${rocksdb}.zip"
+sudo rm -rf "rocksdb-${rocksdb}"
 ```
 
 ## VirtualBox + Vagrant

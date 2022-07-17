@@ -1,2 +1,2 @@
-sun.install "postgresql-$__POSTGRES__-repack"
-sun.lock "postgresql-$__POSTGRES__-repack"
+sun.install "postgresql-${postgres}-repack"
+sun.lock "postgresql-${postgres}-repack"

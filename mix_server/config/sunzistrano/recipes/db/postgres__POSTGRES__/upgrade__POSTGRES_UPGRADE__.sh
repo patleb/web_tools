@@ -1,15 +1,15 @@
-__POSTGRES_UPGRADE__=${__POSTGRES_UPGRADE__:-false}
+postgres_upgrade=${postgres_upgrade:-false}
 
-if [[ "$__POSTGRES_UPGRADE__" != false ]]; then
-  PG_PACKAGES="postgresql-$__POSTGRES__ postgresql-server-dev-$__POSTGRES__ postgresql-common libpq-dev"
+if [[ "${postgres_upgrade}" != false ]]; then
+  PG_PACKAGES="postgresql-${postgres} postgresql-server-dev-${postgres} postgresql-common libpq-dev"
 
   sun.update
 
-  PG_VERSION="$(sun.available_version postgresql-$__POSTGRES__)"
-  PG_OLD_VERSION="$(sun.installed_version postgresql-$__POSTGRES__)"
+  PG_VERSION="$(sun.available_version postgresql-${postgres})"
+  PG_OLD_VERSION="$(sun.installed_version postgresql-${postgres})"
   PG_OLD_MAJOR=$(sun.major_version "$PG_OLD_VERSION")
 
-  if [[ "$PG_OLD_MAJOR" != "$__POSTGRES__" ]]; then
+  if [[ "$PG_OLD_MAJOR" != "${postgres}" ]]; then
     echo "can't upgrade major version directly"
     exit 1
   fi

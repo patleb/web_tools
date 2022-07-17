@@ -1,3 +1,3 @@
-__EMPTY_SIZE__=${__EMPTY_SIZE__:-2G}
-fallocate -l $__EMPTY_SIZE__ /opt/empty
+empty_size=${empty_size:-2G}
+fallocate -l ${empty_size} /opt/empty
 chmod 770 /opt/empty

@@ -1,5 +1,5 @@
-KEY="/etc/nginx/ssl/$__SERVER_HOST__.ca.key"
-CRT="/etc/nginx/ssl/$__SERVER_HOST__.ca.crt"
+KEY="/etc/nginx/ssl/${server_host}.ca.key"
+CRT="/etc/nginx/ssl/${server_host}.ca.crt"
 
 mkdir -p /etc/nginx/ssl
 chmod 700 /etc/nginx/ssl
@@ -8,23 +8,23 @@ chmod 700 /etc/nginx/ssl
   echo -e "<%= sun.ssl_ca_key.escape_newlines %>" > $KEY
   echo -e "<%= sun.ssl_ca_crt.escape_newlines %>" > $CRT
 <% else %>
-  openssl rand -writerand /home/$__OWNER_NAME__/.rnd
+  openssl rand -writerand /home/${owner_name}/.rnd
   openssl req \
     -new \
     -newkey rsa:4096 \
     -days 7300 \
     -nodes \
     -x509 \
-    -keyout $__SERVER_HOST__.ca.key \
-    -out $__SERVER_HOST__.ca.crt \
+    -keyout ${server_host}.ca.key \
+    -out ${server_host}.ca.crt \
     -subj "/C=${__SSL_COUNTRY__:-CA}"\
 "/ST=${__SSL_STATE__:-QC}"\
 "/L=${__SSL_CITY__:-Quebec}"\
 "/O=${__SSL_ORG__:-self-signed}"\
-"/CN=$__SERVER_HOST__"
+"/CN=${server_host}"
 
-  mv $__SERVER_HOST__.ca.key /etc/nginx/ssl/
-  mv $__SERVER_HOST__.ca.crt /etc/nginx/ssl/
+  mv ${server_host}.ca.key /etc/nginx/ssl/
+  mv ${server_host}.ca.crt /etc/nginx/ssl/
 
   echo "$KEY should be kept encrypted in your settings.yml as :ssl_ca_key"
   <%= Sh.escape_newlines "$KEY" %>

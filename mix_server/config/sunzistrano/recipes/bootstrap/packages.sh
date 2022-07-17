@@ -1,4 +1,4 @@
-if [[ "$__ENV__" != 'vagrant' ]]; then
+if [[ "${env}" != 'vagrant' ]]; then
   case "$OS" in
   ubuntu)
     sun.backup_compare '/etc/apt/apt.conf.d/50unattended-upgrades'

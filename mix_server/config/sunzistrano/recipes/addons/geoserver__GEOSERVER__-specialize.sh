@@ -1,4 +1,4 @@
-export __GEOSERVER_MAX_SIZE__=${__GEOSERVER_MAX_SIZE__:-2048M}
+export geoserver_max_size=${geoserver_max_size:-2048M}
 
 sun.compile '/etc/systemd/system/geoserver.service'
 systemctl daemon-reload

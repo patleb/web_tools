@@ -1,14 +1,14 @@
 export REBOOT_RECIPE=true
 if [[ "$REBOOT_FORCE" == false ]]; then
-  sun.include "roles/${__ROLE__}_after.sh"
+  sun.include "roles/${role}_after.sh"
 fi
 
 REBOOT_LINE='Done [reboot]'
-if [[ ! $(grep -Fx "$REBOOT_LINE" "$HOME/$__MANIFEST_LOG__") ]]; then
+if [[ ! $(grep -Fx "$REBOOT_LINE" "$HOME/${manifest_log}") ]]; then
   sun.done "reboot"
 fi
 
-if [[ "$__ENV__" != 'vagrant' ]]; then
+if [[ "${env}" != 'vagrant' ]]; then
   case "$OS" in
   ubuntu)
     echo 'Running "unattended-upgrade"'

@@ -1,6 +1,6 @@
-__POSTGRES_PRIVATE_MASK__=${__POSTGRES_PRIVATE_MASK__:-24}
+postgres_private_mask=${postgres_private_mask:-24}
 PRIVATE_IP=$(sun.private_ip)
-PRIVATE_NETWORK=$(sun.network $PRIVATE_IP $__POSTGRES_PRIVATE_MASK__)/$__POSTGRES_PRIVATE_MASK__
+PRIVATE_NETWORK=$(sun.network $PRIVATE_IP ${postgres_private_mask})/${postgres_private_mask}
 
 <%= Sh.delete_lines! '$(sun.pg_hba_file)', '$PRIVATE_NETWORK', escape: false %>
 

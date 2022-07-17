@@ -132,4 +132,4 @@ GSSAPIAuthentication no
 <% elsif sun.ssh_allow_password -%>
 PasswordAuthentication yes
 <% end -%>
-AllowUsers <%= ([sun.owner_name, sun.deployer_name] + Array.wrap(sun.ssh_allow_users)).uniq.join(' ') %>
+AllowUsers <%= ([sun.owner_name, 'deployer'] + Array.wrap(sun.ssh_allow_users)).uniq.join(' ') %>

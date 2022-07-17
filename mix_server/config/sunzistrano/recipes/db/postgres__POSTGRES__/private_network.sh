@@ -2,7 +2,7 @@ __POSTGRES_PRIVATE_MASK__=${__POSTGRES_PRIVATE_MASK__:-24}
 PG_CONFIG_FILE=$(sun.pg_config_file)
 PG_HBA_FILE=$(sun.pg_hba_file)
 PRIVATE_IP=$(sun.private_ip)
-PRIVATE_NETWORK=$(sun.network $PRIVATE_IP $__POSTGRES_PRIVATE_MASK__)/$__POSTGRES_PRIVATE_MASK__
+PRIVATE_NETWORK=$(sun.network $PRIVATE_IP ${postgres_private_mask})/${postgres_private_mask}
 
 <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'listen_addresses =' %>
 echo "listen_addresses = 'localhost, $PRIVATE_IP'" >> $PG_CONFIG_FILE

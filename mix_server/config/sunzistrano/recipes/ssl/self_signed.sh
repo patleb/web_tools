@@ -1,5 +1,5 @@
-KEY="/etc/nginx/ssl/$__SERVER_HOST__.server.key"
-CRT="/etc/nginx/ssl/$__SERVER_HOST__.server.crt"
+KEY="/etc/nginx/ssl/${server_host}.server.key"
+CRT="/etc/nginx/ssl/${server_host}.server.crt"
 
 <% if sun.ssl_server_key.present? %>
   echo -e '<%= sun.ssl_server_key.escape_newlines %>' > $KEY
@@ -10,28 +10,28 @@ CRT="/etc/nginx/ssl/$__SERVER_HOST__.server.crt"
     -new \
     -newkey rsa:4096 \
     -nodes \
-    -keyout $__SERVER_HOST__.server.key \
-    -out $__SERVER_HOST__.server.csr \
+    -keyout ${server_host}.server.key \
+    -out ${server_host}.server.csr \
     -subj "/C=${__SSL_COUNTRY:-CA}"\
 "/ST=${__SSL_STATE__:-QC}"\
 "/L=${__SSL_CITY__:-Quebec}"\
 "/O=${__SSL_ORG__:-self-signed}"\
-"/CN=*.$__SERVER_HOST__"
+"/CN=*.${server_host}"
 
   # New server certificate
   openssl x509 \
     -req \
     -days 7299 \
-    -in $__SERVER_HOST__.server.csr \
-    -CA /etc/nginx/ssl/$__SERVER_HOST__.ca.crt \
-    -CAkey /etc/nginx/ssl/$__SERVER_HOST__.ca.key \
+    -in ${server_host}.server.csr \
+    -CA /etc/nginx/ssl/${server_host}.ca.crt \
+    -CAkey /etc/nginx/ssl/${server_host}.ca.key \
     -set_serial 01 \
-    -out $__SERVER_HOST__.server.crt
-  rm -f $__SERVER_HOST__.server.csr
+    -out ${server_host}.server.crt
+  rm -f ${server_host}.server.csr
 
   # Move keys to nginx folder
-  mv $__SERVER_HOST__.server.key /etc/nginx/ssl/
-  mv $__SERVER_HOST__.server.crt /etc/nginx/ssl/
+  mv ${server_host}.server.key /etc/nginx/ssl/
+  mv ${server_host}.server.crt /etc/nginx/ssl/
 
   echo "$KEY should be kept encrypted in your settings.yml as :ssl_server_key"
   <%= Sh.escape_newlines "$KEY" %>

@@ -1,4 +1,4 @@
-DH="/etc/nginx/ssl/$__SERVER_HOST__.server.dh"
+DH="/etc/nginx/ssl/${server_host}.server.dh"
 
 <% if sun.ssl_server_dh.present? %>
   echo -e '<%= sun.ssl_server_dh.escape_newlines %>' > $DH

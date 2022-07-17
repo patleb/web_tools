@@ -1,5 +1,5 @@
 # TODO more flexible recipe or less dependent on pg_default_url --> doesn't work on new machine
-TIMESCALEDB="timescaledb-2-postgresql-$__POSTGRES__"
+TIMESCALEDB="timescaledb-2-postgresql-${postgres}"
 
 sun.unlock $TIMESCALEDB
 sun.update

@@ -4,14 +4,14 @@ sun.source_recipe() {
   if [[ ! "${id}" ]]; then
     id=$name
   fi
-  if [[ "$__SPECIALIZE__" == true ]]; then
+  if [[ "${specialize}" == true ]]; then
     if [[ -e "recipes/$name-specialize.sh" ]]; then
       name="$name-specialize"
       id="$id-specialize"
     fi
   fi
   RECIPE_ID="$id"
-  if [[ "$__ROLLBACK__" == true ]]; then
+  if [[ "${rollback}" == true ]]; then
     if [[ -e "recipes/$name-rollback.sh" ]]; then
       source "recipes/$name-rollback.sh"
     fi
@@ -29,7 +29,7 @@ sun.source_recipe() {
 }
 
 sun.to_be_done() {
-  if [[ ! $(grep -Fx "Done [$1]" "$HOME/$__MANIFEST_LOG__") ]]; then
+  if [[ ! $(grep -Fx "Done [$1]" "$HOME/${manifest_log}") ]]; then
     echo "Recipe [$1]"
     return 0
   else
@@ -39,12 +39,12 @@ sun.to_be_done() {
 }
 
 sun.done() {
-  echo "Done [$1]" | tee -a "$HOME/$__MANIFEST_LOG__"
+  echo "Done [$1]" | tee -a "$HOME/${manifest_log}"
 }
 
 sun.on_exit() {
   cd $(sun.bash_path)
-  sun.include "roles/${__ROLE__}_ensure.sh"
+  sun.include "roles/${role}_ensure.sh"
   sun.elapsed_time $ROLE_START
   set +u
   if [[ ! -z "$RECIPE_ID" ]]; then
@@ -53,13 +53,13 @@ sun.on_exit() {
     fi
   fi
   set -u
-  if [[ "$__DEBUG__" == false ]]; then
+  if [[ "${debug}" == false ]]; then
     rm -rf $(sun.bash_path)
   fi
 }
 
 sun.rollback() {
   echo "Rollback [$1]"
-  # Sh.delete_line! "$HOME/$__MANIFEST_LOG__", "Done [$1]", escape: false
-  sed -rzi -- "s%(\n[^\n]*Done\ \[$1\][^\n]*|[^\n]*Done\ \[$1\][^\n]*\n)%%" $HOME/$__MANIFEST_LOG__
+  # Sh.delete_line! "$HOME/${manifest_log}", "Done [$1]", escape: false
+  sed -rzi -- "s%(\n[^\n]*Done\ \[$1\][^\n]*|[^\n]*Done\ \[$1\][^\n]*\n)%%" $HOME/${manifest_log}
 }

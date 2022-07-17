@@ -47,13 +47,13 @@ echo -e "\n# Restrict key exchange, cipher, and MAC algorithms, as per sshaudit.
 
 mkdir -p $HOME/.ssh
 chmod 700 $HOME/.ssh
-<%= Sh.concat('$HOME/.ssh/authorized_keys', "$__OWNER_PUBLIC_KEY__ #{sun.env}", escape: false, unique: true) %>
+<%= Sh.concat('$HOME/.ssh/authorized_keys', "${owner_public_key} #{sun.env}", escape: false, unique: true) %>
 chmod 600 $HOME/.ssh/authorized_keys
-echo -e "$__OWNER_PRIVATE_KEY__" > $HOME/.ssh/id_rsa
+echo -e "${owner_private_key}" > $HOME/.ssh/id_rsa
 chmod 600 $HOME/.ssh/id_rsa
-chown -R $__OWNER_NAME__:$__OWNER_NAME__ $HOME/.ssh
+chown -R ${owner_name}:${owner_name} $HOME/.ssh
 
-if [[ "$__ENV__" == 'production' ]]; then
+if [[ "${env}" == 'production' ]]; then
   <%= Sh.delete_line! '$HOME/.ssh/authorized_keys', 'staging', escape: false %>
 fi
 

@@ -10,7 +10,7 @@ sun.pg_restart_force() {
 }
 
 sun.pg_default_hba_file() {
-  echo "/etc/postgresql/$__POSTGRES__/main/pg_hba.conf"
+  echo "/etc/postgresql/${postgres}/main/pg_hba.conf"
 }
 
 sun.pg_hba_file() {
@@ -18,7 +18,7 @@ sun.pg_hba_file() {
 }
 
 sun.pg_default_config_file() {
-  echo "/etc/postgresql/$__POSTGRES__/main/postgresql.conf"
+  echo "/etc/postgresql/${postgres}/main/postgresql.conf"
 }
 
 sun.pg_config_file() {
@@ -26,7 +26,7 @@ sun.pg_config_file() {
 }
 
 sun.pg_default_data_dir() {
-  echo "/var/lib/postgresql/$__POSTGRES__/main"
+  echo "/var/lib/postgresql/${postgres}/main"
 }
 
 sun.pg_data_dir() {
@@ -34,7 +34,7 @@ sun.pg_data_dir() {
 }
 
 sun.pg_default_url() {
-  echo "postgresql://$__DB_USERNAME__:$__DB_PASSWORD__@$__DB_HOST__:5432/$__DB_DATABASE__"
+  echo "postgresql://${db_username}:${db_password}@${db_host}:5432/${db_database}"
 }
 
 sun.psql() {

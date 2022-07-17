@@ -1,4 +1,4 @@
-rm -f "/etc/nginx/ssl/$__SERVER_HOST__.ca.key"
-rm -f "/etc/nginx/ssl/$__SERVER_HOST__.ca.crt"
+rm -f "/etc/nginx/ssl/${server_host}.ca.key"
+rm -f "/etc/nginx/ssl/${server_host}.ca.crt"
 
 source 'recipes/ssl/ca.sh'

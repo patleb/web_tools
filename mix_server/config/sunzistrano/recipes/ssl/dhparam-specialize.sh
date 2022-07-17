@@ -1,3 +1,3 @@
-rm -f "/etc/nginx/ssl/$__SERVER_HOST__.server.dh"
+rm -f "/etc/nginx/ssl/${server_host}.server.dh"
 
 source 'recipes/ssl/dhparam.sh'

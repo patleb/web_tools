@@ -95,10 +95,10 @@ stages.each do |stage|
       # TODO [DEPRECATED] `Bundler.with_clean_env` has been deprecated in favor of `Bundler.with_unbundled_env`
       if Setting[:server_cluster]
         Cloud.server_cluster_ips.each do |server|
-          server server, user: fetch(:deployer_name), roles: %i(web app)
+          server server, user: 'deployer', roles: %i(web app)
         end
       else
-        server fetch(:server), user: fetch(:deployer_name), roles: %i(web app)
+        server fetch(:server), user: 'deployer', roles: %i(web app)
       end
     end
     configure_scm

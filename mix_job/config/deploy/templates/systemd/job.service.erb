@@ -3,9 +3,9 @@ Description=Background worker
 After=network.target
 
 [Service]
-User=<%= fetch(:deployer_name) %>
+User=deployer
 WorkingDirectory=<%= fetch(:deploy_to) %>/current
-ExecStart=/home/<%= fetch(:deployer_name) %>/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true RAILS_ENV=<%= cap.env %> RAILS_APP=<%= cap.app %> bin/rake job:watch -- --queue=<%= fetch(:job_queue_name) %>
+ExecStart=/home/deployer/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true RAILS_ENV=<%= cap.env %> RAILS_APP=<%= cap.app %> bin/rake job:watch -- --queue=<%= fetch(:job_queue_name) %>
 Restart=always
 StandardInput=null
 StandardOutput=append:<%= fetch(:deploy_to) %>/current/log/job.log

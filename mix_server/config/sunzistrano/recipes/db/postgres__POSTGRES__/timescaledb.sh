@@ -4,7 +4,7 @@
 PG_CONFIG_FILE=$(sun.pg_config_file)
 
 sun.update
-sun.install "timescaledb-2-postgresql-$__POSTGRES__"
-sun.lock "timescaledb-2-postgresql-$__POSTGRES__"
+sun.install "timescaledb-2-postgresql-${postgres}"
+sun.lock "timescaledb-2-postgresql-${postgres}"
 
 source 'recipes/db/postgres__POSTGRES__/timescaledb_tune.sh'

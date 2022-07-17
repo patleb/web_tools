@@ -2,7 +2,7 @@ namespace :authorized_keys do
   desc 'push deployer authorized_keys'
   task :push do
     on release_roles :all do
-      execute Sh.build_authorized_keys(fetch(:deployer_name))
+      execute Sh.build_authorized_keys
     end
   end
 

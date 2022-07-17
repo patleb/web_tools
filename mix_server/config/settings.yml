@@ -19,7 +19,6 @@ shared:
   owner_id: 1000
   owner_name: ubuntu
   deployer_id: 1001
-  deployer_name: deployer
   nginx_denied_ips: ['74.217.28.0/22']
   nginx_allowed_ips: []
   osquery_logger_path: /var/log/osquery
@@ -106,7 +105,7 @@ vagrant:
   geoserver_path: /geoserver/api
   pgrest_path: /pgrest/api
   ftp_host: $ALIAS server_host
-  ftp_username: $ALIAS deployer_name
+  ftp_username: deployer
   ftp_password: $ALIAS deployer_password
   ftp_host_path: $METHOD
   ftp_drive_path: /

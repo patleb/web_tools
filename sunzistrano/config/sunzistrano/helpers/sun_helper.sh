@@ -1,12 +1,12 @@
 sun.initialize() {
-  if [[ -e "$HOME/$__MANIFEST_LOG__" ]]; then
+  if [[ -e "$HOME/${manifest_log}" ]]; then
     echo "Provisioning already started"
   else
     echo "New provisioning"
-    touch "$HOME/$__MANIFEST_LOG__"
-    mkdir "$HOME/$__MANIFEST_DIR__"
-    mkdir "$HOME/$__METADATA_DIR__"
-    mkdir "$HOME/$__DEFAULTS_DIR__"
+    touch "$HOME/${manifest_log}"
+    mkdir "$HOME/${manifest_dir}"
+    mkdir "$HOME/${metadata_dir}"
+    mkdir "$HOME/${defaults_dir}"
   fi
   echo "Started at $(date '+%Y-%m-%d %H:%M:%S')"
 }
@@ -27,7 +27,7 @@ sun.flatten_path() {
 }
 
 sun.bash_path() {
-  echo "$HOME/$__BASH_DIR__"
+  echo "$HOME/${bash_dir}"
 }
 
 sun.include() {

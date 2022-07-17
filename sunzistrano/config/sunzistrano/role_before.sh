@@ -30,21 +30,21 @@ esac
 source /etc/os-release
 export TERM=linux
 <% sun.attributes.each do |attribute, value| -%>
-  export __<%= attribute.upcase %>__=<%= value.respond_to?(:call) ? value.call : value %>
+  export <%= attribute %>=<%= value.respond_to?(:call) ? value.call : value %>
 <% end -%>
-export __ROLLBACK__=${__ROLLBACK__:-false}
-export __PROVISION__=${__PROVISION__:-false}
-export __SPECIALIZE__=${__SPECIALIZE__:-false}
-export __DEBUG__=${__DEBUG__:-false}
-export __REBOOT__=${__REBOOT__:-false}
+export rollback=${rollback:-false}
+export provision=${provision:-false}
+export specialize=${specialize:-false}
+export debug=${debug:-false}
+export reboot=${reboot:-false}
 
-if [[ "$OS" != "$__OS_NAME__" ]]; then
-  echo "'$OS' != '$__OS_NAME__'"
+if [[ "$OS" != "${os_name}" ]]; then
+  echo "'$OS' != '${os_name}'"
   exit 1
 fi
 
-if [[ "$OS_VERSION" != "$__OS_VERSION__" ]]; then
-  echo "'$OS_VERSION' != '$__OS_VERSION__'"
+if [[ "$OS_VERSION" != "${os_version}" ]]; then
+  echo "'$OS_VERSION' != '${os_version}'"
   exit 1
 fi
 
@@ -55,7 +55,7 @@ fi
 export ROLE_START=$(sun.start_time)
 export REBOOT_RECIPE=false
 export REBOOT_FORCE=false
-export HOME=/home/$__OWNER_NAME__
+export HOME=/home/${owner_name}
 
 export DEBIAN_FRONTEND=noninteractive
 export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
@@ -64,8 +64,8 @@ export ARCH=$(dpkg --print-architecture)
 trap sun.on_exit EXIT
 sun.initialize
 
-if [[ "$__DEBUG__" == 'trace' ]]; then
+if [[ "${debug}" == 'trace' ]]; then
   set -x
 fi
 
-sun.include "roles/${__ROLE__}_before.sh"
+sun.include "roles/${role}_before.sh"

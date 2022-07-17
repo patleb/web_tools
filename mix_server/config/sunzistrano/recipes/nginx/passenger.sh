@@ -23,7 +23,7 @@ rm -f /etc/nginx/modules-enabled/50-mod-nchan.conf
 
 sun.backup_compare "/etc/nginx/nginx.conf"
 sun.backup_compile "/etc/logrotate.d/nginx"
-chown $__DEPLOYER_NAME__:adm /var/log/nginx
+chown deployer:adm /var/log/nginx
 
 systemctl enable nginx
 systemctl restart nginx

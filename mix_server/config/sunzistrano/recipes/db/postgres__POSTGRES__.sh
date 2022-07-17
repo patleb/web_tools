@@ -10,7 +10,7 @@ PG_DATA_DIR=$(sun.pg_default_data_dir)
 PG_CONFIG_FILE=$(sun.pg_default_config_file)
 PG_HBA_FILE=$(sun.pg_default_hba_file)
 
-PG_PACKAGES="postgresql-$__POSTGRES__ postgresql-server-dev-$__POSTGRES__ postgresql-common libpq-dev"
+PG_PACKAGES="postgresql-${postgres} postgresql-server-dev-${postgres} postgresql-common libpq-dev"
 
 sh -c "echo 'deb [arch=$ARCH] http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
 wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
@@ -18,7 +18,7 @@ echo "deb https://packagecloud.io/timescale/timescaledb/ubuntu/ $UBUNTU_CODENAME
 wget --quiet -O - https://packagecloud.io/timescale/timescaledb/gpgkey | apt-key add -
 sun.update
 
-PG_VERSION="$(sun.installed_version postgresql-$__POSTGRES__)"
+PG_VERSION="$(sun.installed_version postgresql-${postgres})"
 
 if [[ ! -s "$PG_MANIFEST" ]]; then
   sun.install "$PG_PACKAGES"
@@ -26,8 +26,8 @@ if [[ ! -s "$PG_MANIFEST" ]]; then
   sun.install "timescaledb-tools"
 
   sudo su - postgres << EOF
-    pg_dropcluster --stop "$__POSTGRES__" main
-    pg_createcluster --locale "$__LOCALE__.UTF-8" --start "$__POSTGRES__" main <%= '-- --data-checksums' unless sun.pg_checksums == false %>
+    pg_dropcluster --stop "${postgres}" main
+    pg_createcluster --locale "${locale}.UTF-8" --start "${postgres}" main <%= '-- --data-checksums' unless sun.pg_checksums == false %>
 EOF
   systemctl restart postgresql
 
@@ -45,13 +45,13 @@ else
   sun.install "$PG_PACKAGES"
   sun.lock "$PG_PACKAGES"
 
-  if [[ "$PG_OLD_MAJOR" != "$__POSTGRES__" ]]; then
+  if [[ "$PG_OLD_MAJOR" != "${postgres}" ]]; then
     # pg_lsclusters
     sun.backup_compare "$PG_CONFIG_FILE"
     sun.backup_compare "$PG_HBA_FILE"
     sudo su - postgres << EOF
-      pg_dropcluster --stop "$__POSTGRES__" main
-      pg_upgradecluster -v "$__POSTGRES__" "$PG_OLD_MAJOR" main
+      pg_dropcluster --stop "${postgres}" main
+      pg_upgradecluster -v "${postgres}" "$PG_OLD_MAJOR" main
       pg_dropcluster --stop "$PG_OLD_MAJOR" main
 EOF
   fi

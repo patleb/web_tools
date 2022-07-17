@@ -1,4 +1,4 @@
-if [[ "$__ENV__" != 'vagrant' ]]; then
+if [[ "${env}" != 'vagrant' ]]; then
   sun.backup_move '/etc/default/motd-news'
 fi
 sun.backup_compare '/etc/default/grub'

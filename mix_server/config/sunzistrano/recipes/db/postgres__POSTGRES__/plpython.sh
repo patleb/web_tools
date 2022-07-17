@@ -1,2 +1,2 @@
-sun.install "postgresql-plpython-$__POSTGRES__"
-sun.lock "postgresql-plpython-$__POSTGRES__"
+sun.install "postgresql-plpython-${postgres}"
+sun.lock "postgresql-plpython-${postgres}"

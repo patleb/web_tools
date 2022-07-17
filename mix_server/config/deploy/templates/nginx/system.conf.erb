@@ -1,4 +1,4 @@
-# user <%= fetch(:deployer_name) %> <%= fetch(:deployer_name) %>;
+# user deployer deployer;
 worker_processes auto;
 worker_rlimit_nofile 4096;
 pid /run/nginx.pid;
@@ -99,7 +99,7 @@ http {
   ##
 
   passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
-  passenger_ruby /home/<%= fetch(:deployer_name) %>/.rbenv/shims/ruby;
+  passenger_ruby /home/deployer/.rbenv/shims/ruby;
   passenger_pool_idle_time 300;
   passenger_min_instances <%= Setting[:min_instances] %>;
   passenger_max_request_queue_size 1000;

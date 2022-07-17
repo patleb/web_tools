@@ -24,24 +24,24 @@ sun.test_setup() {
   HOME_STUB="$TEST/fixtures/files/home"
   HOME_WAS=$HOME
   HOME=$HOME_STUB
-  __BASH_LOG__=sunzistrano.log
-  __BASH_DIR__=sunzistrano
-  __MANIFEST_LOG__=sun_manifest.log
-  __MANIFEST_DIR__=sun_manifest
-  __METADATA_DIR__=sun_metadata
-  __DEFAULTS_DIR__=sun_defaults
-  __ROLLBACK__=${__ROLLBACK__:-false}
-  __SPECIALIZE__=${__SPECIALIZE__:-false}
-  __DEBUG__=${__DEBUG__:-false}
+  bash_log=sunzistrano.log
+  bash_dir=sunzistrano
+  manifest_log=sun_manifest.log
+  manifest_dir=sun_manifest
+  metadata_dir=sun_metadata
+  defaults_dir=sun_defaults
+  rollback=${rollback:-false}
+  specialize=${specialize:-false}
+  debug=${debug:-false}
   sun.initialize
 }
 
 sun.test_teardown() {
   if [[ "$HOME" == "$HOME_STUB" ]]; then
-    rm -rf "$HOME/$__DEFAULTS_DIR__"
-    rm -rf "$HOME/$__MANIFEST_DIR__"
-    rm -rf "$HOME/$__METADATA_DIR__"
-    rm -f "$HOME/$__MANIFEST_LOG__"
+    rm -rf "$HOME/${defaults_dir}"
+    rm -rf "$HOME/${manifest_dir}"
+    rm -rf "$HOME/${metadata_dir}"
+    rm -f "$HOME/${manifest_log}"
   fi
   HOME=$HOME_WAS
 }

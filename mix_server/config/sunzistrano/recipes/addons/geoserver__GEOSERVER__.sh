@@ -1,5 +1,5 @@
-__GEOSERVER__=${__GEOSERVER__:-2.21.0}
-export __GEOSERVER_MAX_SIZE__=${__GEOSERVER_MAX_SIZE__:-2048M}
+geoserver=${geoserver:-2.21.0}
+export geoserver_max_size=${geoserver_max_size:-2048M}
 
 if [[ -d /opt/geoserver ]]; then
   systemctl stop geoserver
@@ -11,16 +11,16 @@ if [[ -d /opt/geoserver ]]; then
   sun.remove_defaults '/opt/geoserver/webapps/geoserver/WEB-INF/web.xml'
 fi
 
-wget -q "http://sourceforge.net/projects/geoserver/files/GeoServer/$__GEOSERVER__/geoserver-$__GEOSERVER__-bin.zip"
-unzip -q "geoserver-$__GEOSERVER__-bin.zip"
-mv "geoserver-$__GEOSERVER__" /opt/geoserver
+wget -q "http://sourceforge.net/projects/geoserver/files/GeoServer/${geoserver}/geoserver-${geoserver}-bin.zip"
+unzip -q "geoserver-${geoserver}-bin.zip"
+mv "geoserver-${geoserver}" /opt/geoserver
 
 # https://www.shellhacks.com/systemd-service-file-example/
 sun.compile '/etc/systemd/system/geoserver.service'
 
 # https://www.google.ca/search?q=geoserver+behind+nginx&oq=geoserver+behind+nginx
 # proxy through Nginx
-if [[ "$__ENV__" == 'vagrant' ]]; then
+if [[ "${env}" == 'vagrant' ]]; then
   ufw allow 8080/tcp
   ufw reload
 fi
