@@ -22,9 +22,9 @@
   #{'ssl/ca' if sun.server_ssl}
   #{'ssl/self_signed' if sun.server_ssl}
   #{'ssl/dhparam' if sun.server_ssl}
-  lang/ruby/system-{ruby}
+  lang/ruby/system
   lang/nodejs/system-{nodejs}
-  lang/python/system-{python}
+  lang/python/system
   #{'addons/pgrest-{pgrest}' if sun.pgrest_enabled}
   #{'addons/gis_packages' if sun.postgis_enabled}
   #{'db/postgres-{postgres}/postgis-{postgis}' if sun.postgis_enabled}

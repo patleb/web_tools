@@ -46,7 +46,7 @@ module Sunzistrano
     end
 
     def servers
-      @servers ||= server_cluster ? Cloud.server_cluster_ips : [server]
+      @servers ||= server_cluster ? Cloud.server_cluster_ips : [server_host]
     end
 
     def server_cluster?
@@ -167,10 +167,11 @@ module Sunzistrano
     end
 
     def require_overrides
-      @gems.each_key do |name|
-        require "#{name}/sunzistrano" if File.exist? "#{name}/sunzistrano.rb"
+      @gems.each_value do |root|
+        path = root.join('config/sunzistrano.rb')
+        require path.to_s if path.exist?
       end
-      require 'app/libraries/sunzistrano' if File.exist? 'app/libraries/sunzistrano.rb'
+      require 'config/sunzistrano' if File.exist? 'config/sunzistrano.rb'
     end
 
     def validate_version!(lock)

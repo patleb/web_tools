@@ -3,11 +3,10 @@ gems:
   - mix_server
 
 shared:
-  sudo: true
   debug: false
 
 system:
-  append_recipes:
+  recipes:
     # - app_packages
     - reboot
 

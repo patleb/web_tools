@@ -1,0 +1,7 @@
+shared:
+  git_branch: origin/master
+  os_version: "20.04"
+  rbenv_ruby: "<%= RUBY_VERSION %>"
+
+system:
+  sudo: true
