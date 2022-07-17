@@ -21,7 +21,7 @@ Each Bash file can be embedded with Ruby using the [ERB](https://puppet.com/docs
   sun provision vagrant custom
 
   # run only one recipe
-  sun provision vagrant --recipe=lang/ruby/app__RBENV_RUBY__
+  sun provision vagrant --recipe=lang/ruby/app-{rbenv_ruby}
 
   # reset ssh known hosts afterward
   sun provision vagrant --new-host
@@ -120,7 +120,7 @@ The recipe name is the file path in the recipes folder without the extension (.s
 
 **uppercased variable name with 2 leading and 2 trailing underscores**
 
-For example, the recipe `config/provision/recipes/lang/ruby/app__RBENV_RUBY__.sh` with the configuration
+For example, the recipe `config/provision/recipes/lang/ruby/app-{rbenv_ruby}.sh` with the configuration
 
 ```yaml
 # config/provision.yml
@@ -135,7 +135,7 @@ Would be sourced in the compiled role file as:
 ```bash
 # config/roles/system.sh
 ...
-sun.source_recipe "lang/ruby/app__RBENV_RUBY__" 'lang/ruby/app-2.7.6'
+sun.source_recipe "lang/ruby/app-{rbenv_ruby}" 'lang/ruby/app-2.7.6'
 ...
 ```
 
