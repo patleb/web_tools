@@ -7,4 +7,4 @@ sun.update
 sun.install "timescaledb-2-postgresql-${postgres}"
 sun.lock "timescaledb-2-postgresql-${postgres}"
 
-source 'recipes/db/postgres__POSTGRES__/timescaledb_tune.sh'
+source 'recipes/db/postgres-{postgres}/timescaledb_tune.sh'

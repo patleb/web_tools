@@ -17,10 +17,10 @@ chmod 700 /etc/nginx/ssl
     -x509 \
     -keyout ${server_host}.ca.key \
     -out ${server_host}.ca.crt \
-    -subj "/C=${__SSL_COUNTRY__:-CA}"\
-"/ST=${__SSL_STATE__:-QC}"\
-"/L=${__SSL_CITY__:-Quebec}"\
-"/O=${__SSL_ORG__:-self-signed}"\
+    -subj "/C=${ssl_country:-CA}"\
+"/ST=${ssl_state:-QC}"\
+"/L=${ssl_city:-Quebec}"\
+"/O=${ssl_org:-self-signed}"\
 "/CN=${server_host}"
 
   mv ${server_host}.ca.key /etc/nginx/ssl/

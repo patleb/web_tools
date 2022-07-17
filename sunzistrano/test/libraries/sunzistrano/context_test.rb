@@ -81,8 +81,8 @@ class Sunzistrano::ContextTest < Minitest::Spec
       actual_recipes = []
       sun.role_recipes(*%w(
         reboot
-        first/recipe__VARIABLE__
-        second/recipe__NO_VARIABLE__
+        first/recipe-{variable}
+        second/recipe-{no_variable}
       )) do |name, id|
         actual_recipes << (id || name)
       end

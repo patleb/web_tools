@@ -1,8 +1,8 @@
 <% sun.role_recipes(*%W(
-  bootstrap/upgrade__UPGRADE__
+  bootstrap/upgrade-{upgrade}
   bootstrap/time_locale
   bootstrap/files
-  bootstrap/swap__SWAP_SIZE__
+  bootstrap/swap-{swap_size}
   bootstrap/limits
   bootstrap/packages
   bootstrap/ssh
@@ -13,29 +13,29 @@
   bootstrap/osquery
   bootstrap/clamav
   user/deployer
-  db/postgres__POSTGRES__
-  db/postgres__POSTGRES__/pgxnclient
-  #{'db/postgres__POSTGRES__/vector' if sun.vector_enabled}
-  #{'db/postgres__POSTGRES__/pg_repack' if sun.pgrepack_enabled}
+  db/postgres-{postgres}
+  db/postgres-{postgres}/pgxnclient
+  #{'db/postgres-{postgres}/vector' if sun.vector_enabled}
+  #{'db/postgres-{postgres}/pg_repack' if sun.pgrepack_enabled}
   nginx/passenger
   nginx/htpasswd
   #{'ssl/ca' if sun.server_ssl}
   #{'ssl/self_signed' if sun.server_ssl}
   #{'ssl/dhparam' if sun.server_ssl}
-  lang/ruby/system__RUBY__
-  lang/nodejs/system__NODEJS__
-  lang/python/system__PYTHON__
-  #{'addons/pgrest__PGREST__' if sun.pgrest_enabled}
+  lang/ruby/system-{ruby}
+  lang/nodejs/system-{nodejs}
+  lang/python/system-{python}
+  #{'addons/pgrest-{pgrest}' if sun.pgrest_enabled}
   #{'addons/gis_packages' if sun.postgis_enabled}
-  #{'db/postgres__POSTGRES__/postgis__POSTGIS__' if sun.postgis_enabled}
-  #{'db/postgres__POSTGRES__/timescaledb' if sun.timescaledb_enabled}
-  #{'db/postgres__POSTGRES__/tune' unless sun.timescaledb_enabled}
-  db/postgres__POSTGRES__/config
+  #{'db/postgres-{postgres}/postgis-{postgis}' if sun.postgis_enabled}
+  #{'db/postgres-{postgres}/timescaledb' if sun.timescaledb_enabled}
+  #{'db/postgres-{postgres}/tune' unless sun.timescaledb_enabled}
+  db/postgres-{postgres}/config
   utils/packages
   utils/htop
   #{'utils/mailcatcher' if sun.env.vagrant?}
   utils/parallel
-  lang/ruby/app__RBENV_RUBY__
+  lang/ruby/app-{rbenv_ruby}
 )) do |name, id| -%>
   sun.source_recipe "<%= name %>" <%= id %>
 <% end -%>

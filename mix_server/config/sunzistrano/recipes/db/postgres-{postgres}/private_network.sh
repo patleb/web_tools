@@ -1,4 +1,4 @@
-__POSTGRES_PRIVATE_MASK__=${__POSTGRES_PRIVATE_MASK__:-24}
+postgres_private_mask=${postgres_private_mask:-24}
 PG_CONFIG_FILE=$(sun.pg_config_file)
 PG_HBA_FILE=$(sun.pg_hba_file)
 PRIVATE_IP=$(sun.private_ip)

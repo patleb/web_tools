@@ -2,7 +2,9 @@
 
 module Sunzistrano
   class Context < OpenStruct
-    VARIABLES = /__([A-Z0-9_]+)__/
+    VARIABLE_PREFIX = '-{'
+    VARIABLE_SUFFIX = '}'
+    VARIABLES = /(#{VARIABLE_PREFIX}[a-z0-9_]+#{VARIABLE_SUFFIX})/
 
     attr_reader :gems
 
@@ -101,7 +103,7 @@ module Sunzistrano
       has_variables = false
       segments = name.gsub(VARIABLES) do |segment|
         has_variables = true
-        segment.gsub!(/(^__|__$)/, '').downcase!
+        segment.delete_prefix!(VARIABLE_PREFIX).delete_suffix!(VARIABLE_SUFFIX)
         (value = try(segment)) ? "-#{value}" : ''
       end
       "'#{segments}'" if has_variables

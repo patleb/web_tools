@@ -9,4 +9,4 @@ if [[ "$RULE" ]]; then
   yes | ufw delete $RULE
 fi
 
-source 'recipes/db/postgres__POSTGRES__/private_network.sh'
+source 'recipes/db/postgres-{postgres}/private_network.sh'

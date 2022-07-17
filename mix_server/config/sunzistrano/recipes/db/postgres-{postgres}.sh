@@ -4,7 +4,7 @@
 # https://github.com/reorg/pg_repack
 # https://www.modio.se/scaling-past-the-single-machine.html
 # https://askubuntu.com/questions/732431/how-to-uninstall-specific-versions-of-postgres
-__LOCALE__=${__LOCALE__:-en_US}
+locale=${locale:-en_US}
 PG_MANIFEST=$(sun.manifest_path 'postgresql')
 PG_DATA_DIR=$(sun.pg_default_data_dir)
 PG_CONFIG_FILE=$(sun.pg_default_config_file)

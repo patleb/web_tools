@@ -14,7 +14,7 @@ shared:
   recipes:
     - shared/append
     - shared/after/second/recipe:
-        after: second/recipe__NO_VARIABLE__
+        after: second/recipe-{no_variable}
     - shared/before/reboot:
         before: reboot
     - shared/remove:
