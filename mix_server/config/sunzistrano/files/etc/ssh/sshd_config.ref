@@ -117,7 +117,7 @@ PrintMotd no
 AcceptEnv LANG LC_*
 
 # override default of no subsystems
-Subsystem sftp	/usr/lib/openssh/sftp-server
+Subsystem	sftp	/usr/lib/openssh/sftp-server
 
 # Example of overriding settings on a per-user basis
 #Match User anoncvs
@@ -125,10 +125,8 @@ Subsystem sftp	/usr/lib/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
-<% if sun.env.vagrant? -%>
-PasswordAuthentication yes
 UseDNS no
 GSSAPIAuthentication no
-<% elsif sun.ssh_allow_password -%>
+<% if sun.ssh_allow_password -%>
 PasswordAuthentication yes
 <% end -%>
