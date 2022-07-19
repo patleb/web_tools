@@ -56,7 +56,7 @@ Include /etc/ssh/sshd_config.d/*.conf
 
 # To disable tunneled clear text passwords, change to no here!
 <% if sun.env.vagrant? || sun.ssh_allow_password -%>
-#PasswordAuthentication yes
+PasswordAuthentication yes
 <% else -%>
 PasswordAuthentication no
 <% end -%>
@@ -127,7 +127,4 @@ Subsystem	sftp	/usr/lib/openssh/sftp-server
 #	ForceCommand cvs server
 UseDNS no
 GSSAPIAuthentication no
-<% if sun.env.vagrant? || sun.ssh_allow_password -%>
-PasswordAuthentication yes
-<% end -%>
 AllowUsers <%= ([sun.owner_name, 'deployer'] + Array.wrap(sun.ssh_allow_users)).uniq.join(' ') %>
