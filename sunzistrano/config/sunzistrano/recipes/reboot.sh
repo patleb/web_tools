@@ -4,7 +4,7 @@ if [[ "$REBOOT_FORCE" == false ]]; then
 fi
 
 REBOOT_LINE='Done [reboot]'
-if [[ ! $(grep -Fx "$REBOOT_LINE" "$HOME/${manifest_log}") ]]; then
+if [[ ! $(grep -Fx "$REBOOT_LINE" "${manifest_log}") ]]; then
   sun.done "reboot"
 fi
 

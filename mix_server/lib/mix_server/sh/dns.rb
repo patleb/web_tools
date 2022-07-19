@@ -1,8 +1,8 @@
 module Sh::Dns
   # TODO make it coherent with cap dns:set_hosts
-  def build_hosts(owner_name, server)
+  def build_hosts(server)
     entries = (Setting[:dns_hosts] || []).map{ |name| "$PRIVATE_IP  #{name}" }.join("\\n")
-    hosts_defaults = "/home/#{owner_name}/#{Sunzistrano::DEFAULTS_DIR}/#{'~etc~hosts'}"
+    hosts_defaults = Sunzistrano.owner_path :defaults_dir, '~etc~hosts'
     <<~SH
       PRIVATE_IP=$(#{Sh.private_ip})
       cp #{hosts_defaults} /etc/hosts

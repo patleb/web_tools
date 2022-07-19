@@ -15,9 +15,9 @@ sun.installed_version() {
 }
 
 sun.manifest_path() {
-  echo "$HOME/${manifest_dir}/$1.log"
+  echo "${manifest_dir}/$1.log"
 }
 
 sun.metadata_path() {
-  echo "$HOME/${metadata_dir}/$1"
+  echo "${metadata_dir}/$1"
 }

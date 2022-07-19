@@ -1,7 +1,10 @@
 shared:
-  git_branch: origin/master
+  git_branch: master
   os_version: "20.04"
   rbenv_ruby: "<%= RUBY_VERSION %>"
 
 system:
   sudo: true
+
+web:
+  ssh_user: deployer

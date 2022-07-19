@@ -13,14 +13,14 @@ teardown() {
 @test 'sun.backup_defaults and sun.remove_defaults' {
   echo 'default template' > $TMP_TEMPLATE
   run sun.backup_defaults $TMP_TEMPLATE
-  assert_file_contains "$HOME/${defaults_dir}/$(sun.flatten_path $TMP_TEMPLATE)" 'default template'
+  assert_file_contains "${defaults_dir}/$(sun.flatten_path $TMP_TEMPLATE)" 'default template'
   run sun.remove_defaults $TMP_TEMPLATE
-  assert_not_exists "$HOME/${defaults_dir}/$(sun.flatten_path $TMP_TEMPLATE)"
+  assert_not_exists "${defaults_dir}/$(sun.flatten_path $TMP_TEMPLATE)"
 }
 
 @test 'sun.move' {
   local template=$(sun.template_path $TMP_TEMPLATE)
-  assert_equal $template "$HOME/${bash_dir}/files$TMP_TEMPLATE"
+  assert_equal $template "${bash_dir}/files$TMP_TEMPLATE"
   cp $template "$template.bkp"
   run sun.move $TMP_TEMPLATE
   assert_file_contains $TMP_TEMPLATE 'overriden template'

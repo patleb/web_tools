@@ -51,7 +51,7 @@ class Setting
     all(true, **options)
   end
 
-  def self.all(force = false, env: rails_env, app: rails_app, root: rails_root, freeze: true)
+  def self.all(force = false, env: nil, app: nil, root: nil, freeze: true)
     if force
       current = instance_variables.except(:@default_app).reject{ |ivar| ivar.end_with?('_was') }
       current.each{ |ivar| instance_variable_set("#{ivar}_was", instance_variable_get(ivar)) }
@@ -59,11 +59,8 @@ class Setting
       remove_instance_variable(:@encryptor) if instance_variable_defined? :@encryptor
     end
     @all ||= begin
-      raise 'environment must be specified or configured' unless env
-
-      @env = env.to_s
-      @app = app&.to_s
-      @root = root
+      @env, @app, @root = (env || rails_env).to_s, (app || rails_app).to_s, (root || rails_root)
+      raise 'environment must be specified or configured' unless @env.present?
       @types = {}.with_keyword_access
       @gems = {}
       @secrets = parse_secrets_yml

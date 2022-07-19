@@ -66,7 +66,7 @@ module Db
           sh su_postgres "pg_basebackup -v -Xnone -cfast -Ft #{pg_options} #{output}"
         end
         manifest_path = dump_path.join("#{today}-#{MixServer.current_version}")
-        sh "sudo cp /home/#{Setting[:owner_name]}/#{Sunzistrano::MANIFEST_DIR}/postgresql.log #{manifest_path}"
+        sh "sudo cp #{Sunzistrano.owner_path :manifest_dir, 'postgresql.log'} #{manifest_path}"
       end
 
       def pg_receivewal

@@ -21,7 +21,8 @@ end
 
 class Sunzistrano::ContextTest < Minitest::Spec
   it 'should build context correctly' do
-    sun = Sunzistrano::Context.new('test:app', 'role', option: 'name', root: ROOT)
+    Setting.reload(env: 'test', app: 'app', root: ROOT)
+    sun = Sunzistrano::Context.new(role: 'role', option: 'name')
     assert_equal DUMMY_GEMS.to_a, sun.gems.keys.sort
     assert_equal 'test', sun.env
     assert_equal 'app', sun.app
@@ -44,13 +45,15 @@ class Sunzistrano::ContextTest < Minitest::Spec
 
   it 'should raise on out-of-sync lock version' do
     assert_raises(Exception) do
-      Sunzistrano::Context.new('test', 'system', root: ROOT.join('version_out_of_sync'))
+      Setting.reload(env: 'test', root: ROOT.join('version_out_of_sync'))
+      Sunzistrano::Context.new
     end
   end
 
   describe '#helpers' do
     it 'should list Sunzistrano gem helpers' do
-      sun = Sunzistrano::Context.new('test', 'system')
+      Setting.reload(env: 'test')
+      sun = Sunzistrano::Context.new
       actual_helpers = Set.new(sun.helpers(Sunzistrano.root))
       expected_helpers = %w(
         sun/command_helper.sh
@@ -67,7 +70,8 @@ class Sunzistrano::ContextTest < Minitest::Spec
 
   describe '#role_recipes' do
     it 'should resolve :(append|remove)_recipes lists' do
-      sun = Sunzistrano::Context.new('test', 'system', root: ROOT)
+      Setting.reload(env: 'test', root: ROOT)
+      sun = Sunzistrano::Context.new
       expected_recipes = %w(
         'first/recipe-value'
         'second/recipe'

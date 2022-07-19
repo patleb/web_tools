@@ -20,7 +20,7 @@ namespace :dns do
     desc 'push /etc/hosts defined by :dns_hosts'
     task :push do
       on release_roles :all do
-        execute_bash(Sh.build_hosts(fetch(:owner_name), fetch(:server)), sudo: true)
+        execute_bash(Sh.build_hosts(fetch(:server)), sudo: true)
       end
     end
   end

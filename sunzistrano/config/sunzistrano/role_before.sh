@@ -32,9 +32,12 @@ export TERM=linux
 <% sun.attributes.each do |attribute, value| -%>
   export <%= attribute %>=<%= value.respond_to?(:call) ? value.call : value %>
 <% end -%>
-export rollback=${rollback:-false}
+export HOME_WAS=$HOME
+export HOME=/home/${ssh_user}
+export deploy=${deploy:-false}
 export provision=${provision:-false}
 export specialize=${specialize:-false}
+export rollback=${rollback:-false}
 export debug=${debug:-false}
 export reboot=${reboot:-false}
 
@@ -55,7 +58,6 @@ fi
 export ROLE_START=$(sun.start_time)
 export REBOOT_RECIPE=false
 export REBOOT_FORCE=false
-export HOME=/home/${owner_name}
 
 export DEBIAN_FRONTEND=noninteractive
 export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1

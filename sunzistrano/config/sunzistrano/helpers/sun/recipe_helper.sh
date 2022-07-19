@@ -20,7 +20,7 @@ sun.source_recipe() {
     local recipe_start=$(sun.start_time)
     source "recipes/$name.sh"
     if [[ "$RECIPE_ID" != 'reboot' ]]; then
-      cd $(sun.bash_path)
+      cd "${bash_dir}"
       sun.elapsed_time $recipe_start
       sun.done "$id"
     fi
@@ -29,7 +29,7 @@ sun.source_recipe() {
 }
 
 sun.to_be_done() {
-  if [[ ! $(grep -Fx "Done [$1]" "$HOME/${manifest_log}") ]]; then
+  if [[ ! $(grep -Fx "Done [$1]" "${manifest_log}") ]]; then
     echo "Recipe [$1]"
     return 0
   else
@@ -39,11 +39,11 @@ sun.to_be_done() {
 }
 
 sun.done() {
-  echo "Done [$1]" | tee -a "$HOME/${manifest_log}"
+  echo "Done [$1]" | tee -a "${manifest_log}"
 }
 
 sun.on_exit() {
-  cd $(sun.bash_path)
+  cd "${bash_dir}"
   sun.include "roles/${role}_ensure.sh"
   sun.elapsed_time $ROLE_START
   set +u
@@ -54,12 +54,12 @@ sun.on_exit() {
   fi
   set -u
   if [[ "${debug}" == false ]]; then
-    rm -rf $(sun.bash_path)
+    rm -rf "${bash_dir}"
   fi
 }
 
 sun.rollback() {
   echo "Rollback [$1]"
-  # Sh.delete_line! "$HOME/${manifest_log}", "Done [$1]", escape: false
-  sed -rzi -- "s%(\n[^\n]*Done\ \[$1\][^\n]*|[^\n]*Done\ \[$1\][^\n]*\n)%%" $HOME/${manifest_log}
+  # Sh.delete_line! "${manifest_log}", "Done [$1]", escape: false
+  sed -rzi -- "s%(\n[^\n]*Done\ \[$1\][^\n]*|[^\n]*Done\ \[$1\][^\n]*\n)%%" ${manifest_log}
 }

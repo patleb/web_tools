@@ -8,6 +8,15 @@ module Sunzistrano
   METADATA_DIR = 'sun_metadata'
   DEFAULTS_DIR = 'sun_defaults'
 
+  def self.owner_path(dir, name = nil)
+    base_dir = ['system', Setting.rails_env, Setting.rails_app].join('-')
+    if name
+      const_name = dir.to_s.upcase
+      name = const_name.end_with?('_DIR') && const_defined?(const_name) ? "#{const_get(const_name)}/#{name}" : dir
+    end
+    "/home/#{Setting[:owner_name]}/#{base_dir}/#{name}"
+  end
+
   class Cli < Thor
     include Thor::Actions
 
@@ -17,39 +26,46 @@ module Sunzistrano
       true
     end
 
-    desc 'provision [stage] [role] [--recipe] [--new-host] [--reboot]', 'Provision role'
-    method_options recipe: :string, new_host: false, reboot: false
-    def provision(stage, role = 'system')
-      do_provision(stage, role, provision: true)
+    desc 'deploy [stage] [--role="web"]', 'Deploy role'
+    method_options role: 'web'
+    def deploy(stage)
+      do_provision(stage, deploy: true, revision: true)
     end
 
-    desc 'specialize [stage] [role] [--recipe] [--new-host]', 'Specialize provisioning'
-    method_options recipe: :string, new_host: false
-    def specialize(stage, role = 'system')
-      do_provision(stage, role, specialize: true)
+    desc 'provision [stage] [--new-host] [--reboot] [--recipe]', 'Provision system'
+    method_options new_host: false, reboot: false, recipe: :string
+      def provision(stage)
+      do_provision(stage, provision: true)
     end
 
-    desc 'rollback [stage] [role] [--recipe]', 'Rollback recipe'
-    method_options recipe: :required, specialize: false
-    def rollback(stage, role = 'system')
-      do_provision(stage, role, rollback: true)
+    desc 'specialize [stage] [--new-host] [--recipe]', 'Specialize provisioning'
+    method_options new_host: false, recipe: :string
+      def specialize(stage)
+      do_provision(stage, specialize: true)
     end
 
-    desc 'compile [stage] [role] [--recipe] [--rollback] [--specialize] [--reboot]', 'Compile provisioning'
-    method_options recipe: :string, rollback: false, specialize: false, reboot: false
-    def compile(stage, role = 'system')
-      do_compile(stage, role)
+    desc 'rollback [stage] [--specialize]', 'Rollback provisioned recipe'
+    method_options specialize: false, recipe: :required
+      def rollback(stage)
+      do_provision(stage, rollback: true)
     end
 
-    desc 'download [stage] [role] [--path] [--defaults]', 'Dowload the file meant to be used as .ref template'
-    method_options path: :required, defaults: false
-    def download(stage, role = 'system')
-      do_download(stage, role)
+    desc 'compile [stage] [--role="system"] [--specialize] [--rollback] [--reboot] [--recipe]', 'Compile provisioning'
+    method_options role: 'system', specialize: false, rollback: false, reboot: false, recipe: :string
+    def compile(stage)
+      command_options = options.role == 'system' ? { provision: true } : { deploy: true, revision: true }
+      do_compile(stage, **command_options)
     end
 
-    desc 'reset_ssh [stage] [role]', 'Reset ssh known hosts'
-    def reset_ssh(stage, role = 'system')
-      do_reset_ssh(stage, role)
+    desc 'download [stage] [--defaults]', 'Dowload the file meant to be used as .ref template'
+    method_options defaults: false, path: :required
+      def download(stage)
+      do_download(stage)
+    end
+
+    desc 'reset_ssh [stage]', 'Reset ssh known hosts'
+    def reset_ssh(stage)
+      do_reset_ssh(stage)
     end
 
     no_tasks do
@@ -57,38 +73,44 @@ module Sunzistrano
         File.expand_path('../../', __FILE__)
       end
 
-      def do_provision(stage, role, **custom_options)
-        do_compile(stage, role, **custom_options)
+      def do_provision(stage, **command_options)
+        do_compile(stage, **command_options)
         run_role_cmd
       end
 
-      def do_compile(stage, role, **custom_options)
-        load_config(stage, role, **custom_options)
-        copy_files
-        build_role
-      end
-
-      def do_download(stage, role)
-        load_config(stage, role)
-        path = sun.path
-        ref = Pathname.new(Dir.pwd).expand_path
-        ref = ref.join(CONFIG_PATH, "files/#{path.delete_prefix('/')}.ref")
-        FileUtils.mkdir_p File.dirname(ref)
-        if sun.defaults
-          path = "/home/#{sun.owner_name}/#{Sunzistrano::DEFAULTS_DIR}/#{path.gsub(/\//, '~')}"
-        end
-        unless system download_cmd(path, ref)
-          puts "Cannot transfer [#{path}] to [#{ref}]".red
+      def do_compile(stage, **command_options)
+        with_context(stage, **command_options) do
+          copy_files
+          build_role
         end
       end
 
-      def do_reset_ssh(stage, role)
-        load_config(stage, role)
-        run_reset_known_hosts
+      def do_download(stage)
+        with_context(stage) do
+          path = sun.path
+          ref = Setting.rails_root.join(CONFIG_PATH, "files/#{path.delete_prefix('/')}.ref")
+          FileUtils.mkdir_p File.dirname(ref)
+          if sun.defaults
+            path = Sunzistrano.owner_path :defaults_dir, path.gsub(/\//, '~')
+          end
+          unless system download_cmd(path, ref)
+            puts "Cannot transfer [#{path}] to [#{ref}]".red
+          end
+        end
       end
 
-      def load_config(stage, role, **custom_options)
-        @sun = Sunzistrano::Context.new(stage, role, **options.symbolize_keys, **custom_options)
+      def do_reset_ssh(stage)
+        with_context(stage) do
+          run_reset_known_hosts
+        end
+      end
+
+      def with_context(stage, **command_options)
+        env, app = stage.split(':', 2)
+        Setting.with(env: env, app: app) do
+          @sun = Sunzistrano::Context.new(**options.symbolize_keys, **command_options)
+          yield
+        end
       end
 
       def copy_files
@@ -184,29 +206,29 @@ module Sunzistrano
         no_strict_host_key_checking = "-o 'StrictHostKeyChecking no'" if sun.new_host
         <<~CMD.squish
           #{ssh_add_vagrant} cd #{bash_dir} && tar cz . |
-          ssh #{"-p #{sun.port}" if sun.port} #{no_strict_host_key_checking} -o LogLevel=ERROR
-          #{"-o ProxyCommand='ssh -W %h:%p #{sun.owner_name}@#{sun.server}'" if sun.server_cluster?}
-          #{sun.owner_name}@#{server}
+          ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} #{no_strict_host_key_checking} -o LogLevel=ERROR
+          #{"-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?}
+          #{sun.ssh_user}@#{server}
           '#{role_remote_cmd}'
         CMD
       end
 
       def role_remote_cmd
-        cleanup = "rm -rf ~/#{Sunzistrano::BASH_DIR} &&" unless sun.debug
+        cleanup = "rm -rf #{bash_dir_remote} &&" unless sun.debug
         <<~CMD.squish
           #{cleanup}
-          mkdir -p ~/#{Sunzistrano::BASH_DIR} &&
-          cd ~/#{Sunzistrano::BASH_DIR} &&
+          mkdir -p #{bash_dir_remote} &&
+          cd #{bash_dir_remote} &&
           tar xz &&
-          #{'sudo' if sun.sudo} bash role.sh |& tee -a ~/#{Sunzistrano::BASH_LOG}
+          #{'sudo' if sun.sudo} bash role.sh |& tee -a #{bash_log_remote}
         CMD
       end
 
       def download_cmd(path, ref)
         <<~CMD.squish
           #{ssh_add_vagrant} rsync --rsync-path='sudo rsync' -azvh -e
-          "ssh #{"-p #{sun.port}" if sun.port} -o LogLevel=ERROR"
-          #{sun.owner_name}@#{sun.server}:#{path} #{ref}
+          "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR"
+          #{sun.ssh_user}@#{sun.server_host}:#{path} #{ref}
         CMD
       end
 
@@ -231,7 +253,15 @@ module Sunzistrano
       end
 
       def bash_dir
-        @bash_dir ||= ".#{BASH_DIR}/#{[sun.app, sun.env, sun.role].compact.join('-')}"
+        @bash_dir ||= ".#{BASH_DIR}/#{sun.provision_dir}"
+      end
+
+      def bash_dir_remote
+        sun.provisioned_path BASH_DIR
+      end
+
+      def bash_log_remote
+        sun.provisioned_path BASH_LOG
       end
 
       def basename(file)

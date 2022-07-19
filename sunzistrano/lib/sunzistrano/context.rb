@@ -8,41 +8,52 @@ module Sunzistrano
 
     attr_reader :gems
 
-    def self.root
-      Pathname.new(Dir.pwd)
-    end
-
-    def initialize(stage, role, root: self.class.root, **options)
-      validate_config_presence! root
-      @env, @app = stage.split(':', 2)
-      Setting.with(env: @env, app: @app, root: root) do |settings|
-        @app ||= Setting.default_app
-        @role = role
-        @gems = {}
-        context = settings.merge(extract_yml(root))
-        context.merge! options
-        require_overrides
-        @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
-        remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
-        super(context)
-      end
+    def initialize(role: 'system', **options)
+      validate_config_presence!
+      @role, @env, @app = role, Setting.rails_env, Setting.rails_app
+      settings = Setting.all
+      @gems = {}
+      context = settings.merge(extract_yml(Setting.rails_root))
+      context.merge! options
+      require_overrides
+      @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
+      remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
+      super(context)
     end
 
     def attributes
       to_h.reject{ |_, v| (v != false && v.blank?) || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
+        revision: revision,
+        ssh_user: ssh_user,
+        owner_public_key: owner_public_key,
+        owner_private_key: owner_private_key&.escape_newlines,
         role: role,
         env: env,
         app: app,
         os_name: os,
-        owner_public_key: owner_public_key,
-        owner_private_key: owner_private_key&.escape_newlines,
-        bash_log: Sunzistrano::BASH_LOG,
-        bash_dir: Sunzistrano::BASH_DIR,
-        manifest_log: Sunzistrano::MANIFEST_LOG,
-        manifest_dir: Sunzistrano::MANIFEST_DIR,
-        metadata_dir: Sunzistrano::METADATA_DIR,
-        defaults_dir: Sunzistrano::DEFAULTS_DIR,
+        linked_dirs: linked_dirs,
+        linked_files: linked_files,
+        bash_log: provisioned_path(Sunzistrano::BASH_LOG),
+        bash_dir: provisioned_path(Sunzistrano::BASH_DIR),
+        manifest_log: provisioned_path(Sunzistrano::MANIFEST_LOG),
+        manifest_dir: provisioned_path(Sunzistrano::MANIFEST_DIR),
+        metadata_dir: provisioned_path(Sunzistrano::METADATA_DIR),
+        defaults_dir: provisioned_path(Sunzistrano::DEFAULTS_DIR),
       )
+    end
+
+    def provisioned_path(name)
+      "/home/#{ssh_user}/#{provision_dir}/#{name}"
+    end
+
+    def provision_dir
+      base_dir = [role, env, app].join('-')
+      revision ? "#{base_dir}/release-#{revision}" : base_dir
+    end
+
+    def revision
+      return @revision if defined? @revision
+      @revision = self[:revision] ? `git rev-parse --short origin/#{git_branch}`.strip : nil
     end
 
     def servers
@@ -51,6 +62,10 @@ module Sunzistrano
 
     def server_cluster?
       server_cluster
+    end
+
+    def ssh_user
+      self[:ssh_user] || owner_name
     end
 
     def owner_public_key
@@ -75,6 +90,14 @@ module Sunzistrano
 
     def os
       @_os ||= ActiveSupport::StringInquirer.new(os_name || 'ubuntu')
+    end
+
+    def linked_dirs
+      self[:linked_dirs].presence && "'#{self[:linked_dirs].join(' ')}'"
+    end
+
+    def linked_files
+      self[:linked_files].presence && "'#{self[:linked_files].join(' ')}'"
     end
 
     def helpers(root)
@@ -180,8 +203,8 @@ module Sunzistrano
       end
     end
 
-    def validate_config_presence!(root)
-      raise 'You must have a sunzistrano.yml' unless root.join(Sunzistrano::CONFIG_YML).exist?
+    def validate_config_presence!
+      raise 'You must have a sunzistrano.yml' unless Setting.rails_root.join(Sunzistrano::CONFIG_YML).exist?
     end
   end
 end
