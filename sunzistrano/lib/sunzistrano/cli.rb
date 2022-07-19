@@ -29,6 +29,7 @@ module Sunzistrano
     desc 'deploy [stage] [--role="web"]', 'Deploy role'
     method_options role: 'web'
     def deploy(stage)
+      raise 'deploy role cannot be "system"' if options.role == 'system'
       do_provision(stage, deploy: true, revision: true)
     end
 
@@ -94,7 +95,7 @@ module Sunzistrano
             path = Sunzistrano.owner_path :defaults_dir, path.gsub(/\//, '~')
           end
           unless system download_cmd(path, ref)
-            puts "Cannot transfer [#{path}] to [#{ref}]".red
+            raise "Cannot transfer [#{path}] to [#{ref}]"
           end
         end
       end
@@ -257,11 +258,11 @@ module Sunzistrano
       end
 
       def bash_dir_remote
-        sun.provisioned_path BASH_DIR
+        sun.provision_path BASH_DIR
       end
 
       def bash_log_remote
-        sun.provisioned_path BASH_LOG
+        sun.provision_path BASH_LOG
       end
 
       def basename(file)

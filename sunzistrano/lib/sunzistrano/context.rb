@@ -11,10 +11,8 @@ module Sunzistrano
     def initialize(role: 'system', **options)
       validate_config_presence!
       @role, @env, @app = role, Setting.rails_env, Setting.rails_app
-      settings = Setting.all
       @gems = {}
-      context = settings.merge(extract_yml(Setting.rails_root))
-      context.merge! options
+      context = Setting.all.merge(extract_yml(Setting.rails_root)).merge! options
       require_overrides
       @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
       remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
@@ -33,16 +31,16 @@ module Sunzistrano
         os_name: os,
         linked_dirs: linked_dirs,
         linked_files: linked_files,
-        bash_log: provisioned_path(Sunzistrano::BASH_LOG),
-        bash_dir: provisioned_path(Sunzistrano::BASH_DIR),
-        manifest_log: provisioned_path(Sunzistrano::MANIFEST_LOG),
-        manifest_dir: provisioned_path(Sunzistrano::MANIFEST_DIR),
-        metadata_dir: provisioned_path(Sunzistrano::METADATA_DIR),
-        defaults_dir: provisioned_path(Sunzistrano::DEFAULTS_DIR),
+        bash_log: provision_path(BASH_LOG),
+        bash_dir: provision_path(BASH_DIR),
+        manifest_log: provision_path(MANIFEST_LOG),
+        manifest_dir: provision_path(MANIFEST_DIR),
+        metadata_dir: provision_path(METADATA_DIR),
+        defaults_dir: provision_path(DEFAULTS_DIR),
       )
     end
 
-    def provisioned_path(name)
+    def provision_path(name)
       "/home/#{ssh_user}/#{provision_dir}/#{name}"
     end
 
@@ -54,6 +52,10 @@ module Sunzistrano
     def revision
       return @revision if defined? @revision
       @revision = self[:revision] ? `git rev-parse --short origin/#{git_branch}`.strip : nil
+    end
+
+    def git_branch
+      self[:git_branch] || 'master'
     end
 
     def servers
@@ -101,7 +103,7 @@ module Sunzistrano
     end
 
     def helpers(root)
-      base_dir = Pathname.new(root).join(Sunzistrano::CONFIG_PATH, 'helpers')
+      base_dir = Pathname.new(root).join(CONFIG_PATH, 'helpers')
       Dir[base_dir.join('**/*.sh').to_s].map do |file|
         Pathname.new(file).relative_path_from(base_dir).to_s
       end
@@ -153,7 +155,7 @@ module Sunzistrano
     end
 
     def extract_yml(root)
-      path = root.join(Sunzistrano::CONFIG_YML)
+      path = root.join(CONFIG_YML)
       return {} unless path.exist?
 
       yml = YAML.safe_load(ERB.new(path.read).result(binding))
@@ -198,13 +200,13 @@ module Sunzistrano
     end
 
     def validate_version!(lock)
-      unless lock.nil? || lock == Sunzistrano::VERSION
-        raise "Sunzistrano version [#{Sunzistrano::VERSION}] is different from locked version [#{lock}]"
+      unless lock.nil? || lock == VERSION
+        raise "Sunzistrano version [#{VERSION}] is different from locked version [#{lock}]"
       end
     end
 
     def validate_config_presence!
-      raise 'You must have a sunzistrano.yml' unless Setting.rails_root.join(Sunzistrano::CONFIG_YML).exist?
+      raise 'You must have a sunzistrano.yml' unless Setting.rails_root.join(CONFIG_YML).exist?
     end
   end
 end
