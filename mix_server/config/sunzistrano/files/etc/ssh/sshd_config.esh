@@ -125,11 +125,9 @@ Subsystem	sftp	/usr/lib/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
-<% if sun.env.vagrant? -%>
-PasswordAuthentication yes
 UseDNS no
 GSSAPIAuthentication no
-<% elsif sun.ssh_allow_password -%>
+<% if sun.env.vagrant? || sun.ssh_allow_password -%>
 PasswordAuthentication yes
 <% end -%>
 AllowUsers <%= ([sun.owner_name, 'deployer'] + Array.wrap(sun.ssh_allow_users)).uniq.join(' ') %>
