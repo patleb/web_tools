@@ -18,14 +18,14 @@
   //}
 
   .dropdown-header {
-    padding: ($grid-gutter-width / 2) ($grid-gutter-width / 2) 3px;
+    padding: calc($grid-gutter-width / 2) calc($grid-gutter-width / 2) 3px;
     font-weight: bold;
     color: $gray;
     text-transform: uppercase;
   }
 
   > .nav-stacked > li > a {
-    padding: $padding-base-vertical ($grid-gutter-width / 2);
+    padding: $padding-base-vertical calc($grid-gutter-width / 2);
     border-radius: 0;
     white-space: nowrap;
     overflow: hidden;

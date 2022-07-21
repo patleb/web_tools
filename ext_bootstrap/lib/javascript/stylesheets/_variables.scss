@@ -1,5 +1,5 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
-@import '~font-awesome/scss/variables';
+@import '~@@/ext_bootstrap/stylesheets/font_awesome/scss/variables';
 
 $screen_min_width: 320px !default;
 $screen_mini_breakpoint: $screen-xs-min !default;

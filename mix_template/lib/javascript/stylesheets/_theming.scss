@@ -61,7 +61,7 @@
 @include screen_mobile {
   #js_page_title {
     display: inline;
-    max-width: $grid-float-breakpoint-max / 2;
+    max-width: calc($grid-float-breakpoint-max / 2);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
