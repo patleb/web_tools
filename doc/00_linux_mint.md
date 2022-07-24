@@ -283,7 +283,7 @@ echo 'export PATH="$(yarn global bin):$PATH"' >> ~/.bashrc
 ```bash
 sudo apt-get -y install libjemalloc-dev
 ...
-git clone git@github.com:rbenv/rbenv.git ~/.rbenv
+git clone https://github.com/rbenv/rbenv.git ~/.rbenv
 ... yes
 git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
 git clone https://github.com/rbenv/rbenv-gem-rehash.git ~/.rbenv/plugins/rbenv-gem-rehash
@@ -417,7 +417,7 @@ Download and install [https://code.visualstudio.com/docs/setup/linux](VSCode)
 sudo apt-get install -y dkms v4l-utils
 v4l2-ctl --list-devices
 ...
-git clone git@github.com:webcamoid/akvcam.git
+git clone https://github.com/webcamoid/akvcam.git
 cd akvcam/src
 make
 VERSION=1.1.1
