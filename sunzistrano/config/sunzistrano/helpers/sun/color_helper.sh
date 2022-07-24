@@ -17,7 +17,7 @@ echo.green() {
   sun.color "0;32" "$@"
 }
 
-echo.orange() {
+echo.yellow() {
   sun.color "0;33" "$@"
 }
 
@@ -25,7 +25,7 @@ echo.blue() {
   sun.color "0;34" "$@"
 }
 
-echo.purple() {
+echo.magenta() {
   sun.color "0;35" "$@"
 }
 
@@ -49,7 +49,7 @@ echo.lightgreen() {
   sun.color "1;32" "$@"
 }
 
-echo.yellow() {
+echo.lightyellow() {
   sun.color "1;33" "$@"
 }
 
@@ -57,7 +57,7 @@ echo.lightblue() {
   sun.color "1;34" "$@"
 }
 
-echo.lightpurple() {
+echo.lightmagenta() {
   sun.color "1;35" "$@"
 }
 

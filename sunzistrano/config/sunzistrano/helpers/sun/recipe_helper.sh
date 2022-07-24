@@ -33,7 +33,7 @@ sun.to_be_done() {
     echo.cyan "Recipe [$1]"
     return 0
   else
-    echo.orange "Done   [$1]"
+    echo.yellow "Done   [$1]"
     return 1
   fi
 }
@@ -59,7 +59,7 @@ sun.on_exit() {
 }
 
 sun.rollback() {
-  echo.yellow "Rollback [$1]"
+  echo.lightyellow "Rollback [$1]"
   # Sh.delete_line! "${manifest_log}", "Done   [$1]", escape: false
   sed -rzi -- "s%(\n[^\n]*Done\ \ \ \[$1\][^\n]*|[^\n]*Done\ \ \ \[$1\][^\n]*\n)%%" ${manifest_log}
 }

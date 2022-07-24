@@ -204,7 +204,8 @@ module Sunzistrano
             print "[#{server}] "
             print line
           end
-          puts "[#{server}] #{Time.now}"
+          print "[#{server}] "
+          puts Time.now.to_s.yellow
           t.join
         end
       end
