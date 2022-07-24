@@ -98,7 +98,7 @@ module Sunzistrano
           ref = Setting.rails_root.join(CONFIG_PATH, "files/#{path.delete_prefix('/')}.ref")
           FileUtils.mkdir_p File.dirname(ref)
           if sun.defaults
-            path = Sunzistrano.owner_path :defaults_dir, path.gsub(/\//, '~')
+            path = Sunzistrano.owner_path :defaults_dir, path.tr('/', '~')
           end
           unless system download_cmd(path, ref)
             raise "Cannot transfer [#{path}] to [#{ref}]"
