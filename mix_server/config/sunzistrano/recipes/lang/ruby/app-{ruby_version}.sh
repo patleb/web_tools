@@ -3,7 +3,7 @@ sun.install "libjemalloc-dev"
 sudo su - deployer << 'EOF'
   PLUGINS_PATH=/home/deployer/.rbenv/plugins
   PROFILE=/home/deployer/.bashrc
-  RUBY_VERSION=<%= sun.rbenv_ruby %>
+  RUBY_VERSION=<%= sun.ruby_version %>
   RBENV_OPTIONS='--with-jemalloc <%= '--enable-shared' if sun.ruby_cpp %> --disable-install-doc --disable-install-rdoc --disable-install-capi'
 
   if [[ ! -s "/home/deployer/.rbenv" ]]; then

@@ -35,7 +35,7 @@
   utils/htop
   #{'utils/mailcatcher' if sun.env.vagrant?}
   utils/parallel
-  lang/ruby/app-{rbenv_ruby}
+  lang/ruby/app-{ruby_version}
 )) do |name, id| -%>
   sun.source_recipe "<%= name %>" <%= id %>
 <% end -%>
