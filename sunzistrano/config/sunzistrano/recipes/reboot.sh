@@ -9,7 +9,7 @@ if [[ ! $(grep -Fx "$REBOOT_LINE" "${manifest_log}") ]]; then
 fi
 
 if [[ "${env}" != 'vagrant' ]]; then
-  case "$OS" in
+  case "$OS_NAME" in
   ubuntu)
     echo 'Running "unattended-upgrade"'
     unattended-upgrade -d

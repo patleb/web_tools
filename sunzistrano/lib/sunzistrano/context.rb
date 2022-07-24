@@ -21,14 +21,17 @@ module Sunzistrano
 
     def attributes
       to_h.reject{ |_, v| (v != false && v.blank?) || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
+        repo_url: repo_url,
+        branch: branch,
         revision: revision,
-        ssh_user: ssh_user,
         owner_public_key: owner_public_key,
         owner_private_key: owner_private_key&.escape_newlines,
         role: role,
         env: env,
         app: app,
-        os_name: os,
+        os_name: os_name,
+        os_version: os_version,
+        ruby_version: ruby_version,
         linked_dirs: linked_dirs,
         linked_files: linked_files,
         bash_log: provision_path(BASH_LOG),
@@ -40,22 +43,39 @@ module Sunzistrano
       )
     end
 
+    def has_key?(name)
+      @table.has_key? name
+    end
+
     def provision_path(name)
       "/home/#{ssh_user}/#{provision_dir}/#{name}"
     end
 
     def provision_dir
       base_dir = [role, env, app].join('-')
-      revision ? "#{base_dir}/release-#{revision}" : base_dir
+      revision ? "#{base_dir}/releases/#{revision}" : base_dir
+    end
+
+    def sudo
+      has_key?(:sudo) ? self[:sudo] : !deploy
+    end
+
+    def ssh_user
+      self[:ssh_user] || (deploy ? 'deployer' : owner_name)
+    end
+
+    def repo_url
+      return @repo_url if defined? @repo_url
+      @repo_url = self[:repo_url] || `git config --get remote.origin.url`.strip
+    end
+
+    def branch
+      self[:branch] || 'master'
     end
 
     def revision
       return @revision if defined? @revision
-      @revision = self[:revision] ? `git rev-parse --short origin/#{git_branch}`.strip : nil
-    end
-
-    def git_branch
-      self[:git_branch] || 'master'
+      @revision = deploy ? `git rev-parse origin/#{branch}`.strip : self[:revision]
     end
 
     def servers
@@ -64,10 +84,6 @@ module Sunzistrano
 
     def server_cluster?
       server_cluster
-    end
-
-    def ssh_user
-      self[:ssh_user] || owner_name
     end
 
     def owner_public_key
@@ -90,16 +106,24 @@ module Sunzistrano
       @_app ||= ActiveSupport::StringInquirer.new(@app.to_s)
     end
 
-    def os
-      @_os ||= ActiveSupport::StringInquirer.new(os_name || 'ubuntu')
+    def os_name
+      self[:os_name] || 'ubuntu'
+    end
+
+    def os_version
+      self[:os_version] || '20.04'
+    end
+
+    def ruby_version
+      self[:ruby_version] || RUBY_VERSION
     end
 
     def linked_dirs
-      self[:linked_dirs].presence && "'#{self[:linked_dirs].join(' ')}'"
+      self[:linked_dirs].presence && "'#{self[:linked_dirs].join(' ')}'" || "''"
     end
 
     def linked_files
-      self[:linked_files].presence && "'#{self[:linked_files].join(' ')}'"
+      self[:linked_files].presence && "'#{self[:linked_files].join(' ')}'" || "''"
     end
 
     def helpers(root)
@@ -129,7 +153,9 @@ module Sunzistrano
       segments = name.gsub(VARIABLES) do |segment|
         has_variables = true
         segment.delete_prefix!(VARIABLE_PREFIX).delete_suffix!(VARIABLE_SUFFIX)
-        (value = try(segment)) ? "-#{value}" : ''
+        value = try(segment)
+        value = value == true ? segment : value
+        value ? "-#{value}" : ''
       end
       "'#{segments}'" if has_variables
     end

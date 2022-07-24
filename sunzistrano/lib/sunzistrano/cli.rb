@@ -26,11 +26,17 @@ module Sunzistrano
       true
     end
 
-    desc 'deploy [stage] [--role="web"]', 'Deploy role'
-    method_options role: 'web'
+    desc 'rake [stage] [--role="web"] [--sudo] [--nohup] [--verbose]', 'Execute a rake task'
+    method_options role: 'web', sudo: false, nohup: false, verbose: false, task: :required
+    def rake(stage)
+      # TODO
+    end
+
+    desc 'deploy [stage] [--role="web"] [--system]', 'Deploy role'
+    method_options role: 'web', system: false
     def deploy(stage)
       raise 'deploy role cannot be "system"' if options.role == 'system'
-      do_provision(stage, deploy: true, revision: true)
+      do_provision(stage, deploy: true)
     end
 
     desc 'provision [stage] [--new-host] [--reboot] [--recipe]', 'Provision system'

@@ -10,9 +10,9 @@ sun.os_version() {
   hostnamectl | grep Operating | grep -o -E '[0-9]+' | head -n2 | paste -sd '.'
 }
 
-export OS=$(sun.os_name)
+export OS_NAME=$(sun.os_name)
 export OS_VERSION=$(sun.os_version)
-case "$OS" in
+case "$OS_NAME" in
 ubuntu)
   export os_package_get='apt-get'
   export os_package_update='apt-get update'
@@ -33,16 +33,17 @@ export TERM=linux
   export <%= attribute %>=<%= value.respond_to?(:call) ? value.call : value %>
 <% end -%>
 export HOME_WAS=$HOME
-export HOME=/home/${ssh_user}
+export HOME=/home/<%= sun.ssh_user %>
 export deploy=${deploy:-false}
+export system=${system:-false}
 export provision=${provision:-false}
 export specialize=${specialize:-false}
 export rollback=${rollback:-false}
 export debug=${debug:-false}
 export reboot=${reboot:-false}
 
-if [[ "$OS" != "${os_name}" ]]; then
-  echo "'$OS' != '${os_name}'"
+if [[ "$OS_NAME" != "${os_name}" ]]; then
+  echo "'$OS_NAME' != '${os_name}'"
   exit 1
 fi
 

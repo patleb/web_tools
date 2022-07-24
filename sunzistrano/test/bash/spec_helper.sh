@@ -24,24 +24,38 @@ sun.test_setup() {
   HOME_STUB="$TEST/fixtures/files/home"
   HOME_WAS=$HOME
   HOME=$HOME_STUB
+  role=${1:-system}
+  env=test
+  app=local_app
+  repo_url="$TEST/fixtures/files/local_app.git"
+  branch=develop
+  revision=c686b37dcf12835aa406450b6aa9c64a2ac0fbc9
   bash_log=$HOME/sunzistrano.log
   bash_dir=$HOME/sunzistrano
   manifest_log=$HOME/sun_manifest.log
   manifest_dir=$HOME/sun_manifest
   metadata_dir=$HOME/sun_metadata
   defaults_dir=$HOME/sun_defaults
-  rollback=${rollback:-false}
+  deploy=${deploy:-false}
+  system=${system:-false}
+  provision=${provision:-false}
   specialize=${specialize:-false}
+  rollback=${rollback:-false}
   debug=${debug:-false}
   sun.initialize
+  source 'sunzistrano/config/sunzistrano/recipes/deploy.sh'
 }
 
 sun.test_teardown() {
+  cd $ROOT
   if [[ "$HOME" == "$HOME_STUB" ]]; then
     rm -rf "${defaults_dir}"
     rm -rf "${manifest_dir}"
     rm -rf "${metadata_dir}"
     rm -f "${manifest_log}"
+  fi
+  if [[ $deploy_path == "$HOME/web-test-local_app" ]]; then
+    rm -rf $deploy_path
   fi
   HOME=$HOME_WAS
 }

@@ -6,7 +6,6 @@ setup() {
 }
 
 teardown() {
-  cd $ROOT
   sun.test_teardown
 }
 

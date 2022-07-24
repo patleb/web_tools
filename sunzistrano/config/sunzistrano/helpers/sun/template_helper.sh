@@ -108,7 +108,7 @@ sun.defaults_path() {
 
 sun.template_path() {
   local base="${bash_dir}/files/$(echo "$1" | sed 's|^/||')"
-  local type="$base.$OS"
+  local type="$base.$OS_NAME"
   local type_version="$type.$OS_VERSION"
   if [[ -e "$type_version" ]] || [[ -e "$type_version.esh" ]] || [[ -e "$type_version.ref" ]]; then
     echo "$type_version"
