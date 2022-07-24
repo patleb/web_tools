@@ -3,8 +3,7 @@ if [[ "$REBOOT_FORCE" == false ]]; then
   sun.include "roles/${role}_after.sh"
 fi
 
-REBOOT_LINE='Done [reboot]'
-if [[ ! $(grep -Fx "$REBOOT_LINE" "${manifest_log}") ]]; then
+if [[ ! $(grep "Done   \[reboot\]" "${manifest_log}") ]]; then
   sun.done "reboot"
 fi
 

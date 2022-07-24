@@ -1,12 +1,12 @@
 module Sunzistrano
   CONFIG_PATH = 'config/sunzistrano'
   CONFIG_YML = 'config/sunzistrano.yml'
-  BASH_LOG = 'sunzistrano.log'
-  BASH_DIR = 'sunzistrano'
-  MANIFEST_LOG = 'sun_manifest.log'
-  MANIFEST_DIR = 'sun_manifest'
-  METADATA_DIR = 'sun_metadata'
+  BASH_DIR = '.sunzistrano'
+  BASH_LOG = 'sun_bash.log'
   DEFAULTS_DIR = 'sun_defaults'
+  MANIFEST_DIR = 'sun_manifest'
+  MANIFEST_LOG = 'sun_manifest.log'
+  METADATA_DIR = 'sun_metadata'
 
   def self.owner_path(dir, name = nil)
     base_dir = ['system', Setting.rails_env, Setting.rails_app].join('-')
@@ -202,7 +202,7 @@ module Sunzistrano
           end
           while (line = stdout.gets)
             print "[#{server}] "
-            print line.green
+            print line
           end
           puts "[#{server}] #{Time.now}"
           t.join
@@ -260,7 +260,7 @@ module Sunzistrano
       end
 
       def bash_dir
-        @bash_dir ||= ".#{BASH_DIR}/#{sun.provision_dir}"
+        @bash_dir ||= "#{BASH_DIR}/#{sun.provision_dir}"
       end
 
       def bash_dir_remote

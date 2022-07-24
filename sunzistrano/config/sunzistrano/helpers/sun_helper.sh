@@ -1,6 +1,6 @@
 sun.initialize() {
   if [[ -e "${manifest_log}" ]]; then
-    echo "Provisioning already started"
+    echo "Existing provisioning"
   else
     echo "New provisioning"
     touch "${manifest_log}"

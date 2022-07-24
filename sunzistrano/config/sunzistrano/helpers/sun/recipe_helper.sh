@@ -29,17 +29,17 @@ sun.source_recipe() {
 }
 
 sun.to_be_done() {
-  if [[ ! $(grep -Fx "Done [$1]" "${manifest_log}") ]]; then
-    echo "Recipe [$1]"
+  if [[ ! $(grep "Done   \[$1\]" "${manifest_log}") ]]; then
+    echo.cyan "Recipe [$1]"
     return 0
   else
-    echo "Done [$1]"
+    echo.orange "Done   [$1]"
     return 1
   fi
 }
 
 sun.done() {
-  echo "Done [$1]" | tee -a "${manifest_log}"
+  echo.green "Done   [$1]" | tee -a "${manifest_log}"
 }
 
 sun.on_exit() {
@@ -49,7 +49,7 @@ sun.on_exit() {
   set +u
   if [[ ! -z "$RECIPE_ID" ]]; then
     if [[ "$RECIPE_ID" != 'reboot' ]]; then
-      echo ERROR
+      echo.red ERROR
     fi
   fi
   set -u
@@ -59,7 +59,7 @@ sun.on_exit() {
 }
 
 sun.rollback() {
-  echo "Rollback [$1]"
-  # Sh.delete_line! "${manifest_log}", "Done [$1]", escape: false
-  sed -rzi -- "s%(\n[^\n]*Done\ \[$1\][^\n]*|[^\n]*Done\ \[$1\][^\n]*\n)%%" ${manifest_log}
+  echo.yellow "Rollback [$1]"
+  # Sh.delete_line! "${manifest_log}", "Done   [$1]", escape: false
+  sed -rzi -- "s%(\n[^\n]*Done\ \ \ \[$1\][^\n]*|[^\n]*Done\ \ \ \[$1\][^\n]*\n)%%" ${manifest_log}
 }

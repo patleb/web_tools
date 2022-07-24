@@ -34,12 +34,12 @@ module Sunzistrano
         ruby_version: ruby_version,
         linked_dirs: linked_dirs,
         linked_files: linked_files,
-        bash_log: provision_path(BASH_LOG),
         bash_dir: provision_path(BASH_DIR),
-        manifest_log: provision_path(MANIFEST_LOG),
-        manifest_dir: provision_path(MANIFEST_DIR),
-        metadata_dir: provision_path(METADATA_DIR),
+        bash_log: provision_path(BASH_LOG),
         defaults_dir: provision_path(DEFAULTS_DIR),
+        manifest_dir: provision_path(MANIFEST_DIR),
+        manifest_log: provision_path(MANIFEST_LOG),
+        metadata_dir: provision_path(METADATA_DIR),
       )
     end
 

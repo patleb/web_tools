@@ -1,4 +1,4 @@
-echo 'Clean up old releases'
+desc 'Clean up old releases'
 kept_releases=($(ls -dt ${releases_path}/* | head -n ${keep_releases}))
 releases=($(ls -dt ${releases_path}/*))
 for release in "${releases[@]}"; do

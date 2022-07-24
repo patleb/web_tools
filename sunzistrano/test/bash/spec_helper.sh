@@ -1,4 +1,5 @@
 source 'sunzistrano/config/sunzistrano/helpers/sun_helper.sh'
+source 'sunzistrano/config/sunzistrano/helpers/sun/color_helper.sh'
 source 'sunzistrano/config/sunzistrano/helpers/sun/recipe_helper.sh'
 source 'sunzistrano/config/sunzistrano/helpers/sun/template_helper.sh'
 source 'sunzistrano/config/sunzistrano/helpers/sun/version_helper.sh'
@@ -30,12 +31,12 @@ sun.test_setup() {
   repo_url="$TEST/fixtures/files/local_app.git"
   branch=develop
   revision=c686b37dcf12835aa406450b6aa9c64a2ac0fbc9
-  bash_log=$HOME/sunzistrano.log
-  bash_dir=$HOME/sunzistrano
-  manifest_log=$HOME/sun_manifest.log
-  manifest_dir=$HOME/sun_manifest
-  metadata_dir=$HOME/sun_metadata
+  bash_dir=$HOME/.sunzistrano
+  bash_log=$HOME/sun_bash.log
   defaults_dir=$HOME/sun_defaults
+  manifest_dir=$HOME/sun_manifest
+  manifest_log=$HOME/sun_manifest.log
+  metadata_dir=$HOME/sun_metadata
   deploy=${deploy:-false}
   system=${system:-false}
   provision=${provision:-false}
@@ -43,11 +44,12 @@ sun.test_setup() {
   rollback=${rollback:-false}
   debug=${debug:-false}
   sun.initialize
-  source 'sunzistrano/config/sunzistrano/recipes/deploy.sh'
+  source 'sunzistrano/config/sunzistrano/roles/web_before.sh'
 }
 
 sun.test_teardown() {
   cd $ROOT
+  source 'sunzistrano/config/sunzistrano/roles/web_ensure.sh'
   if [[ "$HOME" == "$HOME_STUB" ]]; then
     rm -rf "${defaults_dir}"
     rm -rf "${manifest_dir}"
@@ -56,6 +58,7 @@ sun.test_teardown() {
   fi
   if [[ $deploy_path == "$HOME/web-test-local_app" ]]; then
     rm -rf $deploy_path
+    rm "$HOME/.gitconfig"
   fi
   HOME=$HOME_WAS
 }
