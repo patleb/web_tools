@@ -154,6 +154,11 @@ module Sunzistrano
         content << "\n"
         content << around[:after]
         create_file bash_path('role.sh'), content, force: true, verbose: sun.debug
+        %i(before after ensure).each do |hook|
+          next unless (files = sun["role_#{hook}"]).present?
+          content = files.map{ |file| "source roles/#{file}.sh" }.join("\n")
+          create_file bash_path("roles/#{sun.role}_#{hook}.sh"), content, force: true, verbose: sun.debug
+        end
       end
 
       def compile_file(src, dst)
@@ -252,7 +257,7 @@ module Sunzistrano
       def copy?(file, others)
         File.file?(file) &&
           !file.match?(/\.keep$/) &&
-          !file.match?(/\/roles\/(?!(#{sun.role}(_(before|after|ensure))?)\.sh)/) &&
+          !file.match?(/\/roles\/(?!((#{sun.role}|shared)(\/.+)?)\.sh)/) &&
           others.none?{ |f| file.end_with? basename(f) }
       end
 

@@ -1,12 +1,5 @@
-sun.color() {
-  local color="$1"
-  local options=$2
-  set +u; local text=$3; set -u
-  if [[ -z "${text}" ]]; then
-    text=$options
-    options=''
-  fi
-  echo -e $options "\e[${color}m${text}\e[0m"
+desc() {
+  echo.lightgray "$@"
 }
 
 echo.red() {
@@ -67,4 +60,15 @@ echo.lightcyan() {
 
 echo.white() {
   sun.color "1;37" "$@"
+}
+
+sun.color() {
+  local color="$1"
+  local options=$2
+  set +u; local text=$3; set -u
+  if [[ -z "${text}" ]]; then
+    text=$options
+    options=''
+  fi
+  echo -e $options "\e[${color}m${text}\e[0m"
 }

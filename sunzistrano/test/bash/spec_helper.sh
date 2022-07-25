@@ -44,12 +44,15 @@ sun.test_setup() {
   rollback=${rollback:-false}
   debug=${debug:-false}
   sun.initialize
-  source 'sunzistrano/config/sunzistrano/roles/web_before.sh'
+  source 'sunzistrano/config/sunzistrano/roles/web/load_defaults.sh'
+  source 'sunzistrano/config/sunzistrano/roles/web/git_wrapper.sh'
 }
 
 sun.test_teardown() {
   cd $ROOT
-  source 'sunzistrano/config/sunzistrano/roles/web_ensure.sh'
+  if [[ -f $GIT_SSH ]]; then
+    rm -f $GIT_SSH
+  fi
   if [[ "$HOME" == "$HOME_STUB" ]]; then
     rm -rf "${defaults_dir}"
     rm -rf "${manifest_dir}"
