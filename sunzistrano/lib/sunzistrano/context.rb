@@ -1,10 +1,6 @@
-# frozen_string_literal: true
-
 module Sunzistrano
   class Context < OpenStruct
-    VARIABLE_PREFIX = '-{'
-    VARIABLE_SUFFIX = '}'
-    VARIABLES = /(#{VARIABLE_PREFIX}[a-z0-9_]+#{VARIABLE_SUFFIX})/
+    VARIABLES = /(-?\{[a-z0-9_]+})/
 
     attr_reader :gems
 
@@ -144,7 +140,9 @@ module Sunzistrano
         end
       end
       recipes.each do |name|
-        yield name, gsub_variables(name) unless name.blank?
+        id = gsub_variables(name)
+        id = "'#{id}'" if id
+        yield name, id unless name.blank?
       end
     end
 
@@ -152,12 +150,13 @@ module Sunzistrano
       has_variables = false
       segments = name.gsub(VARIABLES) do |segment|
         has_variables = true
-        segment.delete_prefix!(VARIABLE_PREFIX).delete_suffix!(VARIABLE_SUFFIX)
+        dash = '-' if segment.delete_prefix! '-'
+        segment.delete_prefix!('{').delete_suffix! '}'
         value = try(segment)
         value = value == true ? segment : value
-        value ? "-#{value}" : ''
+        value ? "#{dash}#{value}" : ''
       end
-      "'#{segments}'" if has_variables
+      segments if has_variables
     end
 
     private

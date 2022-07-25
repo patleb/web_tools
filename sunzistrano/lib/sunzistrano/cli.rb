@@ -138,7 +138,7 @@ module Sunzistrano
           files += Dir[dirname].select{ |f| copy? f, files }
         end
         files.each do |file|
-          compile_file File.expand_path(file), bash_path(file)
+          compile_file File.expand_path(file), bash_path(file), basetype(file)
         end
       end
 
@@ -146,7 +146,7 @@ module Sunzistrano
         role = %i(before after).each_with_object({}) do |hook, memo|
           src = Sunzistrano.root.join(CONFIG_PATH, basename("role_#{hook}.sh")).expand_path
           dst = bash_path("role_#{hook}.sh")
-          compile_file src, dst
+          template src, dst, force: true, verbose: sun.debug
           memo[hook] = File.binread(dst)
           remove_file dst, verbose: false
         end
@@ -184,13 +184,14 @@ module Sunzistrano
         end
       end
 
-      def compile_file(src, dst)
-        source_path, destination_path = src.to_s, dst.to_s
+      def compile_file(src, dst, type)
+        dst = dst.delete_suffix('.erb') if src.end_with? '.erb'
+        dst = sun.gsub_variables(dst) || dst if type == 'file'
         template src, dst, force: true, verbose: sun.debug
-        if source_path.end_with? '.esh'
-          ref_path = destination_path.sub(/\.esh$/, '.ref')
+        if src.end_with? '.esh'
+          ref_path = dst.sub(/\.esh$/, '.ref')
           if File.exist? ref_path
-            esh_text, ref_file = Pathname.new(destination_path).read, Pathname.new(ref_path)
+            esh_text, ref_file = Pathname.new(dst).read, Pathname.new(ref_path)
             ref_file.each_line do |line|
               if line.match? /[^\\][`$]/
                 raise "unescaped ` or $ in '#{basename(src)}' file" if esh_text.include? line.strip
@@ -298,6 +299,10 @@ module Sunzistrano
 
       def bash_log_remote
         sun.provision_path BASH_LOG
+      end
+
+      def basetype(file)
+        basename(file).split('/').first.delete_suffix('s')
       end
 
       def basename(file)
