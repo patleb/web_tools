@@ -142,6 +142,7 @@ module Sunzistrano
           dst = bash_path("role_#{hook}.sh")
           compile_file src, dst
           memo[hook] = File.binread(dst)
+          remove_file dst
         end
         content = around[:before]
         content << "\n"
