@@ -137,28 +137,44 @@ module Sunzistrano
       end
 
       def build_role
-        around = %i(before after).each_with_object({}) do |hook, memo|
+        role = %i(before after).each_with_object({}) do |hook, memo|
           src = Sunzistrano.root.join(CONFIG_PATH, basename("role_#{hook}.sh")).expand_path
           dst = bash_path("role_#{hook}.sh")
           compile_file src, dst
           memo[hook] = File.binread(dst)
-          remove_file dst
+          remove_file dst, verbose: false
         end
-        content = around[:before]
-        content << "\n"
-        sun.gems.each_value do |root|
+        role[:helpers] = sun.gems.each_with_object([]) do |(_name, root), memo|
           sun.helpers(root).each do |file|
-            content << "source helpers/#{file}\n"
+            memo << "source helpers/#{file}"
           end
-        end
-        content << File.binread(bash_path("roles/#{sun.role}.sh"))
-        content << "\n"
-        content << around[:after]
+        end.join("\n")
+        role[:recipes] = File.binread(bash_path("roles/#{sun.role}.sh"))
+        content = role.values_at(:before, :helpers, :recipes, :after).join("\n")
         create_file bash_path('role.sh'), content, force: true, verbose: sun.debug
+        remove_unsourced role[:recipes]
         %i(before after ensure).each do |hook|
           next unless (files = sun["role_#{hook}"]).present?
           content = files.map{ |file| "source roles/#{file}.sh" }.join("\n")
           create_file bash_path("roles/#{sun.role}_#{hook}.sh"), content, force: true, verbose: sun.debug
+        end
+      end
+
+      def remove_unsourced(recipes)
+        sourced = Set.new
+        recipes.each_line(chomp: true) do |line|
+          next unless line.include? 'sun.source_recipe'
+          recipe = bash_path("recipes/#{line.squish.split(' ')[1].tr('"', '')}")
+          sourced << "#{recipe}.sh"
+          sourced << "#{recipe}-specialize.sh"
+          sourced << "#{recipe}-rollback.sh"
+        end
+        Dir[bash_path('recipes/**/*.sh')].each do |file|
+          remove_file file, verbose: false unless sourced.include? file
+        end
+        Dir[bash_path('recipes/**/*')].select{ |dir| File.directory? dir }.reverse_each do |dir|
+          next unless (Dir.entries(dir) - %w(. ..)).empty?
+          Dir.rmdir(dir)
         end
       end
 
