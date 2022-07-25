@@ -32,6 +32,12 @@ module Sunzistrano
       # TODO
     end
 
+    desc 'bash [stage] [--role="web"] [--sudo] [--nohup] [--verbose]', 'Execute a bash script'
+    method_options role: 'web', sudo: false, nohup: false, verbose: false, script: :required
+    def bash(stage)
+      # TODO
+    end
+
     desc 'deploy [stage] [--role="web"] [--system]', 'Deploy role'
     method_options role: 'web', system: false
     def deploy(stage)
@@ -163,11 +169,11 @@ module Sunzistrano
       def remove_unsourced(recipes)
         sourced = Set.new
         recipes.each_line(chomp: true) do |line|
-          next unless line.include? 'sun.source_recipe'
-          recipe = bash_path("recipes/#{line.squish.split(' ')[1].tr('"', '')}")
-          sourced << "#{recipe}.sh"
-          sourced << "#{recipe}-specialize.sh"
-          sourced << "#{recipe}-rollback.sh"
+          next unless (recipe = line.match(/sun\.source_recipe\s*["'\s]([^"'\s]+)/)&.captures&.first)
+          file = bash_path("recipes/#{recipe}")
+          sourced << "#{file}.sh"
+          sourced << "#{file}-specialize.sh"
+          sourced << "#{file}-rollback.sh"
         end
         Dir[bash_path('recipes/**/*.sh')].each do |file|
           remove_file file, verbose: false unless sourced.include? file
