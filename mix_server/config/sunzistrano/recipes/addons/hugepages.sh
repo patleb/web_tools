@@ -10,7 +10,7 @@ echo "*               hard    memlock           $MEMLOCK_MAX" >> /etc/security/l
 sysctl -p
 
 <% if sun.disable_thp %>
-  sun.move '/etc/systemd/system/disable_thp.service'
+  sun.copy '/etc/systemd/system/disable_thp.service'
   systemctl enable disable_thp
   systemctl start disable_thp
 <% end %>

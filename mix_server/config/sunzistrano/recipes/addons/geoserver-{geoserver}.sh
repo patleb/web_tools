@@ -30,9 +30,9 @@ fi
 # https://docs.geoserver.org/latest/en/user/production/java.html
 # https://github.com/kartoza/docker-geoserver/blob/master/scripts/setup.sh
 # TODO disable unused services --> /opt/geoserver/data_dir/*.xml
-sun.backup_move '/opt/geoserver/start.ini' 0644 root:root
-sun.backup_move '/opt/geoserver/data_dir/logging.xml' 0644 root:root
-sun.backup_move '/opt/geoserver/webapps/geoserver/WEB-INF/web.xml' 0644 root:root
+sun.backup_copy '/opt/geoserver/start.ini' 0644 root:root
+sun.backup_copy '/opt/geoserver/data_dir/logging.xml' 0644 root:root
+sun.backup_copy '/opt/geoserver/webapps/geoserver/WEB-INF/web.xml' 0644 root:root
 
 systemctl enable geoserver
 systemctl start geoserver

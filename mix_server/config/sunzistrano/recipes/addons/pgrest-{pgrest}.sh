@@ -6,7 +6,7 @@ tar Jxf "$PACKAGE_NAME.tar.xz"
 mkdir -p /opt/pgrest/bin
 mv postgrest /opt/pgrest/bin
 
-sun.move '/etc/systemd/system/pgrest.service'
+sun.copy '/etc/systemd/system/pgrest.service'
 
 if [[ "${env}" == 'vagrant' ]]; then
   ufw allow 4000/tcp

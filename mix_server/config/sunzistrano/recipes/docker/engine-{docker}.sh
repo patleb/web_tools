@@ -19,7 +19,7 @@ if [[ ! -s "$DOCKER_MANIFEST" ]]; then
   <%= Sh.sub! '/etc/default/grub', %{GRUB_CMDLINE_LINUX="#{'net.ifnames=0 biosdevname=0 ' if sun.env.vagrant?}"}, 'GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"' %>
   update-grub
 
-  sun.move '/etc/logrotate.d/docker' 0440 root:root
+  sun.copy '/etc/logrotate.d/docker' 0440 root:root
   mkdir -p '/opt/docker_data'
   # printf '{ "userns-remap" : "default" , "storage-driver" : "overlay2" }' > /etc/docker/daemon.json
 else

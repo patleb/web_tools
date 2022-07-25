@@ -4,7 +4,7 @@ FTP_CONF=/etc/vsftpd.conf
 export FTP_LIST=/etc/vsftpd.userlist
 
 sun.install "vsftpd"
-sun.move $FTP_LIST
+sun.copy $FTP_LIST
 
 sun.backup_compile $FTP_CONF
 echo deployer >> $FTP_LIST

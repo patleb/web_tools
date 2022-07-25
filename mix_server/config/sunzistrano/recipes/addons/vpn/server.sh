@@ -14,8 +14,8 @@ CLIENTS_KEYS="$CLIENTS_DIR/keys"
 sun.backup_compile '/etc/ufw/before.rules' 0640
 sun.backup_compile '/etc/ufw/sysctl.conf'
 
-sun.move '/etc/fail2ban/filter.d/openvpn.conf'
-sun.move '/etc/fail2ban/jail.d/openvpn.conf'
+sun.copy '/etc/fail2ban/filter.d/openvpn.conf'
+sun.copy '/etc/fail2ban/jail.d/openvpn.conf'
 
 sun.install 'openvpn'
 sun.install 'easy-rsa'
@@ -26,7 +26,7 @@ sun.backup_compile $SERVER_CONF
 sun.backup_compile $CLIENT_CONF
 
 make-cadir $CA_DIR
-sun.backup_move $CA_VARS
+sun.backup_copy $CA_VARS
 
 mkdir -p $CLIENTS_KEYS
 chmod 700 $CLIENTS_KEYS

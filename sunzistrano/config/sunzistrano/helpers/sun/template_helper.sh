@@ -1,6 +1,6 @@
-sun.upgrade_move() {
+sun.upgrade_copy() {
   sun.remove_defaults $1
-  sun.backup_move $@
+  sun.backup_copy $@
 }
 
 sun.upgrade_compile() {
@@ -18,9 +18,9 @@ sun.upgrade_defaults() {
   sun.backup_defaults $1
 }
 
-sun.backup_move() {
+sun.backup_copy() {
   sun.backup_compare $1
-  sun.move $@
+  sun.copy $@
 }
 
 sun.backup_compile() {
@@ -47,17 +47,10 @@ sun.remove_defaults() {
   rm -f $bkp
 }
 
-sun.move() {
+sun.copy() {
   local dst="$1"
-  mv "$(sun.template_path $dst)" $dst
-  set +u; local permissions=$2; set -u
-  if [[ "${permissions}" ]]; then
-    chmod $permissions $dst
-  fi
-  set +u; local owner=$3; set -u
-  if [[ "${owner}" ]]; then
-    chown $owner $dst
-  fi
+  cp "$(sun.template_path $dst)" $dst
+  sun.permit $@
 }
 
 sun.compile() {
@@ -74,14 +67,7 @@ sun.compile() {
   echo 'EOF_COMPILE'       >> $tmp
   bash -u $tmp > $dst
   rm -f $tmp
-  set +u; local permissions=$2; set -u
-  if [[ "${permissions}" ]]; then
-    chmod $permissions $dst
-  fi
-  set +u; local owner=$3; set -u
-  if [[ "${owner}" ]]; then
-    chown $owner $dst
-  fi
+  sun.permit $@
   echo "Compiled \"$@\""
 }
 
@@ -119,4 +105,16 @@ sun.template_path() {
     return
   fi
   echo $base
+}
+
+sun.permit() {
+  local dst="$1"
+  set +u; local permissions=$2; set -u
+  if [[ "${permissions}" ]]; then
+    chmod $permissions $dst
+  fi
+  set +u; local owner=$3; set -u
+  if [[ "${owner}" ]]; then
+    chown $owner $dst
+  fi
 }

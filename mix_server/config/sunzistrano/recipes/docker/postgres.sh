@@ -18,6 +18,6 @@ ufw reload
 systemctl restart postgresql
 
 mkdir -p $POSTGRESQL_SERVICE_DIR
-sun.move "$POSTGRESQL_SERVICE_DIR/reload.conf"
+sun.copy "$POSTGRESQL_SERVICE_DIR/reload.conf"
 
 systemctl enable postgresql_restart

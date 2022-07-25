@@ -18,13 +18,11 @@ teardown() {
   assert_not_exists "${defaults_dir}/$(sun.flatten_path $TMP_TEMPLATE)"
 }
 
-@test 'sun.move' {
+@test 'sun.copy' {
   local template=$(sun.template_path $TMP_TEMPLATE)
   assert_equal $template "${bash_dir}/files$TMP_TEMPLATE"
-  cp $template "$template.bkp"
-  run sun.move $TMP_TEMPLATE
+  run sun.copy $TMP_TEMPLATE
   assert_file_contains $TMP_TEMPLATE 'overriden template'
-  mv "$template.bkp" $template
 }
 
 @test 'sun.compile' {

@@ -8,4 +8,4 @@ sun.install "goaccess"
 # TODO https://flamy.ca/blog/2020-03-13-goaccess-as-google-analytics-replacement.html
 # sun.install "geoip-database"
 
-sun.backup_move '/etc/goaccess/goaccess.conf'
+sun.backup_copy '/etc/goaccess/goaccess.conf'
