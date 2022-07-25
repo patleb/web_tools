@@ -79,8 +79,8 @@ sunzistrano/test/fixtures/files/local_app/
 ### AFTER .gitignore ###
 
 web_tools-*.gem
-Gemfile.lock
-Gemfile.private
+# Gemfile.lock
+Gemfile.private*
 /lib/web_tools/private.rb
 /private
-yarn.lock
+# yarn.lock

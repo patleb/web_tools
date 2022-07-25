@@ -42,7 +42,7 @@ gemspec
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
-gem 'ext_bootstrap', path: './ext_bootstrap'
+# gem 'ext_admin', path: './ext_admin'
 gem 'ext_capistrano', path: './ext_capistrano'
 gem 'ext_coffee', path: './ext_coffee'
 gem 'ext_rails', path: './ext_rails'
