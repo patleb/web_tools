@@ -5,8 +5,10 @@ web:
   recipes:
     - deploy/rbenv:
         after: deploy/stage
+    - deploy/secrets-{system}:
+        before: deploy/update
     - deploy/bundler:
-        before: deploy/updated
+        after: deploy/update
     - deploy/migrate:
         after: deploy/updated
     - deploy/assets:
@@ -21,3 +23,5 @@ web:
     - tmp/cache
     - tmp/pids
     - tmp/webpacker
+  linked_files:
+    - config/secrets.yml
