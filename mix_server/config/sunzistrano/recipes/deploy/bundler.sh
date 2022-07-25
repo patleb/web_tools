@@ -4,7 +4,7 @@ cd ${release_path}
 
 desc 'Bundler config'
 bin/bundle config --local deployment true
-bin/bundle config --local bundle_path "${shared_path}/bundle"
+bin/bundle config --local bundle_path "$shared_path/bundle"
 bin/bundle config --local without development:test
 
 desc 'Bundler install'
