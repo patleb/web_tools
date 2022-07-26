@@ -21,11 +21,11 @@ web:
     - deploy/assets:
         after: deploy/bundler
     - deploy/migrate:
-        after: deploy/updated
+        before: deploy/updated
     - deploy/nginx/reload-system:
-        before: deploy/publish
-    - deploy/passenger:
         after: deploy/publish
+    - deploy/passenger:
+        before: deploy/published
   linked_dirs:
     - log
     - node_modules
