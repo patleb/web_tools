@@ -2,9 +2,8 @@ web:
   role_before:
     - web/load_defaults
     - web/git_wrapper
+    - web/rbenv
   recipes:
-    - deploy/rbenv:
-        after: deploy/stage
     - deploy/secrets-{system}:
         before: deploy/update
     - deploy/bundler:

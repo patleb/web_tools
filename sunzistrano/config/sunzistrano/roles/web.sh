@@ -1,5 +1,4 @@
 <% sun.role_recipes(*%W(
-  deploy/stage
   deploy/start-{system}
   deploy/started
   deploy/update
