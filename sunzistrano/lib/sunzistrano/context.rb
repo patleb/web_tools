@@ -71,7 +71,7 @@ module Sunzistrano
 
     def revision
       return @revision if defined? @revision
-      @revision = deploy ? `git rev-parse origin/#{branch}`.strip : self[:revision]
+      @revision = deploy ? `git rev-parse origin/#{branch}`.strip : self[:revision] || '-'
     end
 
     def servers
