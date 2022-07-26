@@ -10,6 +10,8 @@ web:
         before: deploy/update
     - deploy/nginx/config-system:
         before: deploy/update
+    - deploy/database-system:
+        before: deploy/update
     - deploy/bundler:
         after: deploy/update
     - deploy/assets:
@@ -30,6 +32,7 @@ web:
     - tmp/webpacker
   linked_files:
     - config/secrets.yml
+  git_config_url: true
   git_shallow_clone: true
   nginx_satisfy: false
   nginx_auth_basic: false
