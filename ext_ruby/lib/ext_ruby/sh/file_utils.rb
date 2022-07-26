@@ -44,7 +44,7 @@ module Sh::FileUtils
 
   private
 
-  def sed_replace(path, old, new, escape: true, delimiter: '%', ignore: nil, no_newline: nil, **options)
+  def sed_replace(path, old, new, sudo: false, escape: true, delimiter: '%', ignore: nil, no_newline: nil, **options)
     inline = 'i' if options[:inline]
     global = 'g' if options[:global]
     quote = "'"
@@ -65,7 +65,7 @@ module Sh::FileUtils
     else
       <<~SH.squish
         if grep -qP #{[quote, old, quote].join} "#{path}"; then
-          #{sed};
+          #{'sudo' if sudo} #{sed};
         else
           echo 'file "#{path}" does not include "#{old}"' && exit 1;
         fi
