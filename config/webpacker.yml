@@ -7,7 +7,9 @@ default: &default
   public_output_path: packs
   cache_path: tmp/webpacker
   webpack_compile_output: true
-  gems: [ext_pjax, ext_tailwind]
+  gems:
+    - 'ext_coffee'
+    - 'ext_sass'
 
   # Additional paths webpack should look up modules
   # ['app/assets', 'engine/foo/app/assets']
