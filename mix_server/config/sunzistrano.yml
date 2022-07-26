@@ -4,7 +4,7 @@ web:
     - web/git_wrapper
     - web/rbenv
   recipes:
-    - deploy/secrets-{system}:
+    - deploy/secrets:
         before: deploy/update
     - deploy/bundler:
         after: deploy/update
