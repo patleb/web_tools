@@ -25,6 +25,7 @@ sun.test_setup() {
   HOME_STUB="$TEST/fixtures/files/home"
   HOME_WAS=$HOME
   HOME=$HOME_STUB
+  stage=test-local_app
   role=${1:-system}
   env=test
   app=local_app

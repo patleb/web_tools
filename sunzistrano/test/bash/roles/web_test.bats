@@ -17,19 +17,15 @@ teardown() {
   sun.test_teardown
 }
 
-@test 'deploy/start-{system}.sh recipe' {
-  run source 'recipes/deploy/start-{system}.sh'
-  assert_dir_exists $dir_logs
-  assert_dir_exists $dir_pids
-  system=false
-  touch $file_503
-  touch $file_robots
-  run source 'recipes/deploy/start-{system}.sh'
+@test 'deploy/start.sh recipe' {
+  run source 'recipes/deploy/start.sh'
+  assert_dir_exists $shared_path
+  assert_dir_exists $releases_path
   assert_success
 }
 
 @test 'deploy/update.sh recipe' {
-  source 'recipes/deploy/start-{system}.sh'
+  source 'recipes/deploy/start.sh'
   touch $file_503
   touch $file_robots
   run source 'recipes/deploy/update.sh'
@@ -44,7 +40,7 @@ teardown() {
 }
 
 @test 'deploy/publish.sh recipe' {
-  source 'recipes/deploy/start-{system}.sh'
+  source 'recipes/deploy/start.sh'
   touch $file_503
   touch $file_robots
   source 'recipes/deploy/update.sh'
@@ -54,7 +50,7 @@ teardown() {
 }
 
 @test 'deploy/finish.sh recipe' {
-  source 'recipes/deploy/start-{system}.sh'
+  source 'recipes/deploy/start.sh'
   touch $file_503
   touch $file_robots
   for i in {1..4}; do
