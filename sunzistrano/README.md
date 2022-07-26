@@ -15,7 +15,7 @@ Each Bash file can be embedded with Ruby using the [ERB](https://puppet.com/docs
   sun provision vagrant
 
   # 'vagrant' stage and 'app_name' application
-  sun provision vagrant:app_name
+  sun provision vagrant-app_name
 
   # 'custom' role specified (default is 'system')
   sun provision vagrant custom

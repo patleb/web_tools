@@ -1,5 +1,4 @@
-export deploy_dir="${env}-${app}"
-export deploy_path="$HOME/${deploy_dir}"
+export deploy_path="$HOME/${stage}"
 export current_path="${deploy_path}/current"
 export releases_path="${deploy_path}/releases"
 export release_path="${releases_path}/${revision}"

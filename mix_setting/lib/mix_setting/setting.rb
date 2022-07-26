@@ -91,7 +91,7 @@ class Setting
   end
 
   def self.rails_stage
-    rails_app == default_app ? rails_env : "#{rails_env}:#{rails_app}"
+    "#{rails_env}-#{rails_app}"
   end
 
   def self.rails_env

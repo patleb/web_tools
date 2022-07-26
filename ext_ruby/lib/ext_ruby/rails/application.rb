@@ -13,7 +13,7 @@ end
 
 module Rails
   def self.stage
-    @_stage ||= app.base? ? env.to_s : "#{env}:#{app}"
+    @_stage ||= "#{env}-#{app}"
   end
 
   def self.app

@@ -22,6 +22,7 @@ module Sunzistrano
         revision: revision,
         owner_public_key: owner_public_key,
         owner_private_key: owner_private_key&.escape_newlines,
+        stage: stage,
         role: role,
         env: env,
         app: app,
@@ -43,13 +44,16 @@ module Sunzistrano
       @table.has_key? name
     end
 
+    def deploy_path(name)
+      "/home/#{ssh_user}/#{stage}/#{name}"
+    end
+
     def provision_path(name)
       "/home/#{ssh_user}/#{provision_dir}/#{name}"
     end
 
     def provision_dir
-      base_dir = "#{env}-#{app}"
-      revision ? "#{base_dir}/releases/#{revision}" : base_dir
+      revision ? "#{stage}/releases/#{revision}" : stage
     end
 
     def sudo
@@ -88,6 +92,10 @@ module Sunzistrano
 
     def owner_private_key
       self[:owner_private_key].presence && "'#{self[:owner_private_key]}'"
+    end
+
+    def stage
+      "#{env}-#{app}"
     end
 
     def role

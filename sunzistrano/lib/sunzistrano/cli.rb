@@ -13,7 +13,7 @@ module Sunzistrano
       const_name = dir.to_s.upcase
       name = const_name.end_with?('_DIR') && const_defined?(const_name) ? "#{const_get(const_name)}/#{name}" : dir
     end
-    "/home/#{Setting[:owner_name]}/#{Setting.rails_env}-#{Setting.rails_app}/#{name}"
+    "/home/#{Setting[:owner_name]}/#{Setting.rails_stage}/#{name}"
   end
 
   class Cli < Thor
@@ -118,7 +118,7 @@ module Sunzistrano
       end
 
       def with_context(stage, **command_options)
-        env, app = stage.split(':', 2)
+        env, app = stage.split('-', 2)
         Setting.with(env: env, app: app) do
           @sun = Sunzistrano::Context.new(**options.symbolize_keys, **command_options)
           yield
@@ -185,7 +185,7 @@ module Sunzistrano
 
       def compile_file(src, dst, type)
         dst = dst.delete_suffix('.erb') if src.end_with? '.erb'
-        dst = sun.gsub_variables(dst) || dst if type == 'file'
+        dst = sun.gsub_variables(dst) || dst if type == :file
         template src, dst, force: true, verbose: sun.debug
         if src.end_with? '.esh'
           ref_path = dst.sub(/\.esh$/, '.ref')
@@ -301,7 +301,7 @@ module Sunzistrano
       end
 
       def basetype(file)
-        basename(file).split('/').first.delete_suffix('s')
+        basename(file).split('/').first.delete_suffix('s').to_sym
       end
 
       def basename(file)
