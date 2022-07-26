@@ -97,7 +97,7 @@ server {
       access_log /var/log/nginx/<%= sun.stage %>_packs.access.log mix_server_access_log;
     }
 
-    <%- sun.public_dirs.each do |root| -%>
+    <%- (sun.public_dirs || []).each do |root| -%>
       location /<%= root %>/ {
         expires 1M;
         add_header Cache-Control public;
@@ -106,7 +106,7 @@ server {
       }
     <%- end -%>
 
-    <%- sun.public_files.each do |root| -%>
+    <%- (sun.public_files || []).each do |root| -%>
       location /<%= root %> {
         expires 1M;
         add_header Cache-Control public;
@@ -116,7 +116,7 @@ server {
   <%- end -%>
 }
 
-<%- if sun.nginx_redirects.any? -%>
+<%- if sun.nginx_redirects.present? -%>
   server {
     listen 80;
     listen [::]:80;
