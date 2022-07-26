@@ -55,6 +55,7 @@ sun.copy() {
     sun.sudo "cp $(sun.template_path $dst) $dst"
   fi
   sun.permit $@
+  echo "Copied \"$@\""
 }
 
 sun.compile() {
