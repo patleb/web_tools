@@ -1,4 +1,4 @@
-export deploy_dir="${role}-${env}-${app}"
+export deploy_dir="${env}-${app}"
 export deploy_path="$HOME/${deploy_dir}"
 export current_path="${deploy_path}/current"
 export releases_path="${deploy_path}/releases"

@@ -9,7 +9,7 @@ module Sunzistrano
   METADATA_DIR = 'sun_metadata'
 
   def self.owner_path(dir, name = nil)
-    base_dir = ['system', Setting.rails_env, Setting.rails_app].join('-')
+    base_dir = [Setting.rails_env, Setting.rails_app].join('-')
     if name
       const_name = dir.to_s.upcase
       name = const_name.end_with?('_DIR') && const_defined?(const_name) ? "#{const_get(const_name)}/#{name}" : dir

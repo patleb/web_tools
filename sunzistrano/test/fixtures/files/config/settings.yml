@@ -15,6 +15,6 @@ app:
   settings_app: true
   settings_scope: settings_app
 
-app_test:
-  settings_app_test: true
-  settings_scope: settings_app_test
+test_app:
+  settings_test_app: true
+  settings_scope: settings_test_app

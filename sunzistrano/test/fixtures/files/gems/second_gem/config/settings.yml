@@ -13,6 +13,6 @@ app:
   settings_second_gem_app: true
   settings_scope: settings_second_gem_app
 
-app_test:
-  settings_second_gem_app_test: true
-  settings_scope: settings_second_gem_app_test
+test_app:
+  settings_second_gem_test_app: true
+  settings_scope: settings_second_gem_test_app

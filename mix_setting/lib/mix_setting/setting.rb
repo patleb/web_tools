@@ -208,7 +208,7 @@ class Setting
 
     env_yml = (yml['shared'] || {}).union!(yml[@env] || {})
     if @app
-      app_yml = (yml[@app] || {}).union!(yml["#{@app}_#{@env}"] || {})
+      app_yml = (yml[@app] || {}).union!(yml["#{@env}_#{@app}"] || {})
       env_yml.union!(app_yml)
     end
     (gems_yml || {}).union!(env_yml)

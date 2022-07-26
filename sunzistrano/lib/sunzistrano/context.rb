@@ -48,7 +48,7 @@ module Sunzistrano
     end
 
     def provision_dir
-      base_dir = [role, env, app].join('-')
+      base_dir = [env, app].join('-')
       revision ? "#{base_dir}/releases/#{revision}" : base_dir
     end
 
@@ -194,13 +194,13 @@ module Sunzistrano
       end
       role_yml = (yml['shared'] || {}).union!(yml[@role] || {})
       env_yml = (yml[@env] || {})
-      env_yml.union!(yml["#{@env}_#{@role}"] || {})
+      env_yml.union!(yml["#{@role}_#{@env}"] || {})
       role_yml.union!(env_yml)
       if @app
         app_yml = (yml[@app] || {})
-        app_yml.union!(yml["#{@app}_#{@role}"] || {})
-        app_yml.union!(yml["#{@app}_#{@env}"] || {})
-        app_yml.union!(yml["#{@app}_#{@env}_#{@role}"] || {})
+        app_yml.union!(yml["#{@env}_#{@app}"] || {})
+        app_yml.union!(yml["#{@role}_#{@app}"] || {})
+        app_yml.union!(yml["#{@role}_#{@env}_#{@app}"] || {})
         role_yml.union!(app_yml)
       end
       yml = (gems_yml || {}).union!(role_yml)

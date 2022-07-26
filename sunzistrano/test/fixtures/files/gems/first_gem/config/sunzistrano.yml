@@ -15,22 +15,22 @@ test:
   sunzistrano_first_gem_test: true
   sunzistrano_scope: sunzistrano_first_gem_test
 
-test_role:
-  sunzistrano_first_gem_test_role: true
-  sunzistrano_scope: sunzistrano_first_gem_test_role
+role_test:
+  sunzistrano_first_gem_role_test: true
+  sunzistrano_scope: sunzistrano_first_gem_role_test
 
 app:
   sunzistrano_first_gem_app: true
   sunzistrano_scope: sunzistrano_first_gem_app
 
-app_role:
-  sunzistrano_first_gem_app_role: true
-  sunzistrano_scope: sunzistrano_first_gem_app_role
+test_app:
+  sunzistrano_first_gem_test_app: true
+  sunzistrano_scope: sunzistrano_first_gem_test_app
 
-app_test:
-  sunzistrano_first_gem_app_test: true
-  sunzistrano_scope: sunzistrano_first_gem_app_test
+role_app:
+  sunzistrano_first_gem_role_app: true
+  sunzistrano_scope: sunzistrano_first_gem_role_app
 
-app_test_role:
-  sunzistrano_first_gem_app_test_role: true
-  sunzistrano_scope: sunzistrano_first_gem_app_test_role
+role_test_app:
+  sunzistrano_first_gem_role_test_app: true
+  sunzistrano_scope: sunzistrano_first_gem_role_test_app

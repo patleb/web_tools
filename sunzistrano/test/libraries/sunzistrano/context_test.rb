@@ -28,15 +28,15 @@ class Sunzistrano::ContextTest < Minitest::Spec
     assert_equal 'app', sun.app
     assert_equal 'role', sun.role
     assert_equal 'name', sun.option
-    assert_equal 'settings_app_test', sun.settings_scope
+    assert_equal 'settings_test_app', sun.settings_scope
     %w(settings settings_second_gem settings_third_gem).each do |root_name|
-      %w(shared test app app_test).each do |scope_name|
+      %w(shared test app test_app).each do |scope_name|
         assert sun["#{root_name}_#{scope_name}"]
       end
     end
-    assert_equal 'sunzistrano_app_test_role', sun.sunzistrano_scope
+    assert_equal 'sunzistrano_role_test_app', sun.sunzistrano_scope
     %w(sunzistrano sunzistrano_first_gem sunzistrano_third_gem).each do |root_name|
-      %w(shared role test test_role app app_role app_test app_test_role).each do |scope_name|
+      %w(shared role test role_test app test_app role_app role_test_app).each do |scope_name|
         assert sun["#{root_name}_#{scope_name}"]
       end
     end
