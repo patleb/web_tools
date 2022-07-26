@@ -49,7 +49,11 @@ sun.remove_defaults() {
 
 sun.copy() {
   local dst="$1"
-  cp "$(sun.template_path $dst)" $dst
+  if [[ $# == 1 ]]; then
+    cp "$(sun.template_path $dst)" $dst
+  else
+    sun.sudo "cp $(sun.template_path $dst) $dst"
+  fi
   sun.permit $@
 }
 
@@ -65,8 +69,12 @@ sun.compile() {
   cat $src                 >> $tmp
   echo ''                  >> $tmp
   echo 'EOF_COMPILE'       >> $tmp
-  bash -u $tmp > $dst
-  rm -f $tmp
+  if [[ $# == 1 ]]; then
+    bash -eu $tmp > $dst
+  else
+    sun.sudo "bash -eu $tmp > $dst"
+  fi
+  sudo rm -f $tmp
   sun.permit $@
   echo "Compiled \"$@\""
 }
@@ -111,10 +119,14 @@ sun.permit() {
   local dst="$1"
   set +u; local permissions=$2; set -u
   if [[ "${permissions}" ]]; then
-    chmod $permissions $dst
+    sudo chmod $permissions $dst
   fi
   set +u; local owner=$3; set -u
   if [[ "${owner}" ]]; then
-    chown $owner $dst
+    sudo chown $owner $dst
   fi
+}
+
+sun.sudo() {
+  sudo -E bash -c "$@"
 }
