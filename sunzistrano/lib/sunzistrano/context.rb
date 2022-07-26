@@ -48,7 +48,7 @@ module Sunzistrano
     end
 
     def provision_dir
-      base_dir = [env, app].join('-')
+      base_dir = "#{env}-#{app}"
       revision ? "#{base_dir}/releases/#{revision}" : base_dir
     end
 
