@@ -1,11 +1,11 @@
 types:
   mail_to: emails
-  server_ssl: boolean
   backup_dir: pathname
 
 shared:
   default_url_options: $METHOD
   server: $METHOD
+  server_ssl: true
   mail_to: admin@email.example.com
   mail_from: noreply@email.example.com
   mail_address: localhost
@@ -17,17 +17,18 @@ shared:
 test:
   server_host: localhost
   server_port: 3000
+  server_ssl: false
   mail_domain: $ALIAS server
   backup_dir: ./tmp/backup
 
 development:
   server_host: localhost
   server_port: 3000
+  server_ssl: false
   mail_domain: $ALIAS server
   backup_dir: ./tmp/backup
 
 vagrant:
-  server_ssl: true
   server_host: vagrant-web.test
   mail_domain: email.vagrant-web.test
 

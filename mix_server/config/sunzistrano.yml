@@ -8,12 +8,16 @@ web:
         before: deploy/update
     - deploy/secrets-system:
         before: deploy/update
+    - deploy/nginx/config-system:
+        before: deploy/update
     - deploy/bundler:
         after: deploy/update
     - deploy/assets:
         after: deploy/bundler
     - deploy/migrate:
         after: deploy/updated
+    - deploy/nginx/reload-system:
+        before: deploy/publish
     - deploy/passenger:
         after: deploy/publish
   linked_dirs:
@@ -27,3 +31,15 @@ web:
   linked_files:
     - config/secrets.yml
   git_shallow_clone: true
+  nginx_satisfy: false
+  nginx_auth_basic: false
+  nginx_deferred: false
+  nginx_redirects: {}
+  public_dirs:
+    - css
+    - js
+  public_files:
+    - robots.txt
+
+web_production:
+  nginx_deferred: <%= Setting[:passenger] %>

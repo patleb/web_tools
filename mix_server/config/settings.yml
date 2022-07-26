@@ -14,11 +14,13 @@ types:
 shared:
   postgres: 14
   postgis: 3
+  passenger: true
   min_instances: 1
   max_pool_size: 6
   owner_id: 1000
   owner_name: ubuntu
   deployer_id: 1001
+  nginx_max_body_size: 100m
   nginx_denied_ips: ['74.217.28.0/22']
   nginx_allowed_ips: []
   osquery_logger_path: /var/log/osquery
