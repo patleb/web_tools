@@ -59,7 +59,7 @@ sun.test_teardown() {
     rm -rf "${metadata_dir}"
     rm -f "${manifest_log}"
   fi
-  if [[ $deploy_path == "$HOME/web-test-local_app" ]]; then
+  if [[ $deploy_path == "$HOME/test-local_app" ]]; then
     rm -rf $deploy_path
     rm "$HOME/.gitconfig"
   fi
