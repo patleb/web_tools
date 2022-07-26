@@ -22,9 +22,9 @@ web:
         after: deploy/bundler
     - deploy/migrate:
         before: deploy/updated
-    - deploy/nginx/reload-system:
-        after: deploy/publish
     - deploy/passenger:
+        after: deploy/publish
+    - deploy/nginx/reload-system:
         before: deploy/published
   linked_dirs:
     - log
