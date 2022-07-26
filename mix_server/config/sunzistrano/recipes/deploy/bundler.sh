@@ -8,7 +8,7 @@ bin/bundle config --local bundle_path "$shared_path/bundle"
 bin/bundle config --local without development:test
 
 desc 'Bundler install'
-if bin/bundle check; then
+if bin/bundle check > /dev/null 2>&1; then
   echo "The Gemfile's dependencies are satisfied, skipping installation"
 else
   bin/bundle install --quiet --jobs ${bundle_jobs}
