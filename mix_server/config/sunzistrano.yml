@@ -10,6 +10,8 @@ web:
         before: deploy/update
     - deploy/secrets-system:
         before: deploy/update
+    - deploy/private_dns-system:
+        before: deploy/update
     - deploy/nginx/config-system:
         before: deploy/update
     - deploy/database-system:
