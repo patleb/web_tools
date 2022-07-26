@@ -7,7 +7,7 @@ class ArrayTest < Minitest::Spec
     assert_equal [2, 1], array.insert_before(1, 2)
     assert_equal [3, 2, 1], array.insert_before(2, 3)
     assert_equal [3, 2, 4, 1], array.insert_before(1, 4)
-    assert_equal [5, 3, 2, 4, 1], array.insert_before(0, 5)
+    assert_equal [3, 2, 4, 1, 5], array.insert_before(0, 5)
   end
 
   it 'should insert after elements' do

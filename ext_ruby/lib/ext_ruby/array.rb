@@ -50,7 +50,7 @@ class Array
   end
 
   def insert_before(anchor, value)
-    insert((index(anchor) || 0), value)
+    insert((index(anchor) || -1), value)
   end
 
   def insert_after(anchor, value)
