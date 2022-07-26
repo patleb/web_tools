@@ -20,6 +20,7 @@ module Sunzistrano
         repo_url: repo_url,
         branch: branch,
         revision: revision,
+        server_cluster: !!server_cluster,
         owner_public_key: owner_public_key,
         owner_private_key: owner_private_key&.escape_newlines,
         stage: stage,
