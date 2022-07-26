@@ -34,6 +34,7 @@ desc 'Symlink linked directories'
 for linked_dir in ${linked_dirs}; do
   target="$release_path/$linked_dir"
   source="$shared_path/$(sun.flatten_path $linked_dir)"
+  mkdir -p $source
   if [[ ! -L $target ]]; then
     if [[ -d $target ]]; then
       rm -rf $target
@@ -46,6 +47,10 @@ desc 'Symlink linked files'
 for linked_file in ${linked_files}; do
   target="$release_path/$linked_file"
   source="$shared_path/$(sun.flatten_path $linked_file)"
+  if [[ ! -f $source ]]; then
+    echo.red "$source doesn't exist"
+    exit 1
+  fi
   if [[ ! -L $target ]]; then
     if [[ -f $target ]]; then
       rm $target
