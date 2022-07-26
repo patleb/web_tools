@@ -8,10 +8,10 @@ web:
         before: deploy/update
     - deploy/bundler:
         after: deploy/update
+    - deploy/assets:
+        after: deploy/bundler
     - deploy/migrate:
         after: deploy/updated
-    - deploy/assets:
-        after: deploy/migrate
     - deploy/passenger:
         after: deploy/publish
   linked_dirs:
