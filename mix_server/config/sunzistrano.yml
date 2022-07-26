@@ -4,9 +4,9 @@ web:
     - web/git_wrapper
     - web/rbenv
   recipes:
-    - deploy/logrotate-{system}:
+    - deploy/logrotate-system:
         before: deploy/update
-    - deploy/secrets-{system}:
+    - deploy/secrets-system:
         before: deploy/update
     - deploy/bundler:
         after: deploy/update

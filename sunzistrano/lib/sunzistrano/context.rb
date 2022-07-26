@@ -163,9 +163,13 @@ module Sunzistrano
 
     def merge_recipes(names)
       (recipes || []).each_with_object(names.reject(&:blank?)) do |recipe, memo|
-        next memo << recipe if recipe.is_a? String
+        if recipe.is_a? String
+          next if recipe.end_with?('-system') && !self[:system]
+          next memo << recipe
+        end
         recipe, action = recipe.first
         action, sibling = action&.first
+        next if recipe.end_with?('-system') && !self[:system]
         case action
         when 'remove'
           memo.delete(recipe)
