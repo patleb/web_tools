@@ -15,6 +15,7 @@ web:
     - deploy/passenger:
         after: deploy/publish
   linked_dirs:
+    - bundle
     - log
     - node_modules
     - public/packs
