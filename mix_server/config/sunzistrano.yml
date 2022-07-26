@@ -4,6 +4,8 @@ web:
     - web/git_wrapper
     - web/rbenv
   recipes:
+    - deploy/cron_log-system:
+        before: deploy/update
     - deploy/logrotate-system:
         before: deploy/update
     - deploy/secrets-system:
