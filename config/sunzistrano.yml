@@ -14,6 +14,7 @@ web:
   recipes:
     - deploy/lock_files:
         before: deploy/bundler
+  git_shallow_clone: true
 
 vagrant:
   swap_size: 0
