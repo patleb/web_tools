@@ -1,4 +1,7 @@
 desc 'Clone the repo to the cache'
+if [[ "${git_shallow_clone}" == true ]]; then
+  git_shallow_clone=1
+fi
 if [[ -f "${repo_path}/HEAD" ]]; then
   echo "Mirror exists at ${repo_path}"
 elif [[ "${git_shallow_clone}" != false ]]; then
