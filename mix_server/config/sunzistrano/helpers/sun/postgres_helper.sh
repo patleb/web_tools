@@ -34,23 +34,10 @@ sun.pg_data_dir() {
 }
 
 sun.pg_default_url() {
-  echo "postgresql://${db_username}:${db_password}@${db_host}:5432/${db_database}"
+  echo "postgresql://${db_username}:${db_password}@${db_host:-127.0.0.1}:${db_port:-5432}/${db_database}"
 }
 
 sun.psql() {
   local cmd="$1"
-  case "$#" in
-  1)
-    sudo su - postgres << EOF | head -n1
-      psql -d postgres -tAc "$cmd"
-EOF
-  ;;
-  2|3)
-    psql -qtAb -c "$cmd" ${@:2}
-  ;;
-  *)
-    echo "sun.psql: invalid number of arguments (1 <= args <= 3)"
-    exit 1
-  ;;
-  esac
+  sudo -u postgres psql -d postgres -qtAb -c "$cmd" ${@: 2}
 }
