@@ -10,6 +10,11 @@ system:
     # - app_packages
     - reboot
 
+web:
+  recipes:
+    - deploy/lock_files:
+        before: deploy/bundler
+
 vagrant:
   swap_size: 0
 
