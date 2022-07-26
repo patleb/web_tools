@@ -25,3 +25,4 @@ web:
     - tmp/webpacker
   linked_files:
     - config/secrets.yml
+  git_shallow_clone: true
