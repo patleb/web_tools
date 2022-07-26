@@ -12,4 +12,4 @@ echo -e "${owner_private_key}" > $DEPLOYER_PATH/.ssh/id_rsa
 chmod 600 $DEPLOYER_PATH/.ssh/id_rsa
 chown -R deployer:deployer $DEPLOYER_PATH
 
-sun.compile "/etc/sudoers.d/deployer" 0440 root:root
+sun.copy "/etc/sudoers.d/deployer" 0440 root:root
