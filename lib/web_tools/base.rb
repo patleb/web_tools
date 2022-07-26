@@ -1,4 +1,3 @@
-require 'ext_bootstrap'
 require 'ext_capistrano'
 require 'ext_coffee'
 # require 'ext_minitest'
