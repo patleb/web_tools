@@ -65,7 +65,7 @@ module Sunzistrano
     desc 'compile [stage] [--role="system"] [--system] [--specialize] [--rollback] [--reboot] [--recipe]', 'Compile provisioning'
     method_options role: 'system', system: false, specialize: false, rollback: false, reboot: false, recipe: :string
     def compile(stage)
-      command_options = options.role == 'system' ? { provision: true } : { deploy: true, revision: true }
+      command_options = options.role == 'system' ? { provision: true } : { deploy: true }
       do_compile(stage, **command_options)
     end
 
