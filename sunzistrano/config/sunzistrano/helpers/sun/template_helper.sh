@@ -74,9 +74,9 @@ sun.compile() {
     bash -eu $tmp > $dst
   else
     sun.sudo "bash -eu $tmp > $dst"
+    sun.permit $@
   fi
   sudo rm -f $tmp
-  sun.permit $@
   echo "Compiled \"$@\""
 }
 
