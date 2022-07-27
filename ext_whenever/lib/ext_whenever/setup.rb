@@ -3,9 +3,8 @@ set :output, "#{Whenever.path}/log/cron.log"
 
 Setting.load(env: @environment, app: @application)
 
-deployer   = Dir.pwd.match(/home\/(\w+)\//)[1]
-rbenv_ruby = "#{Sh.rbenv_export(deployer)}; #{Sh.rbenv_init};"
-rbenv_sudo = "/home/#{deployer}/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true :environment_variable=:environment :application_variable=:application"
+rbenv_ruby = "#{Sh.rbenv_export}; #{Sh.rbenv_init};"
+rbenv_sudo = "/home/deployer/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true :environment_variable=:environment :application_variable=:application"
 context    = "export RAKE_OUTPUT=true; export :environment_variable=:environment; :application_variable=:application;"
 path       = "cd :path &&"
 flock      = "flock -n #{Whenever.path}/tmp/locks/:task.lock"
