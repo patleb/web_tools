@@ -3,6 +3,7 @@ if [[ "${db_host}" == '127.0.0.1' || "${db_host}" == 'localhost' ]]; then
     desc 'Create database user'
     if sun.psql "CREATE USER ${db_username} WITH PASSWORD '${db_password}'"; then
       echo "User ${db_username} created successfully"
+
       desc 'Set as superuser'
       if sun.psql "ALTER USER ${db_username} WITH SUPERUSER"; then
         echo "User ${db_username} as superuser"
