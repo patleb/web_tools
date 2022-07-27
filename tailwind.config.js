@@ -20,10 +20,10 @@ module.exports = {
       "@@/app/javascript/**/*.{js,coffee}",
       "@@/app/presenters/**/*.rb",
       "@@/app/views/**/*.html.{erb,ruby}",
-      "ExtWebpacker::Gems::TAILWIND_DEPENDENCIES",
+      "Webpacker::TAILWIND_DEPENDENCIES",
     ],
     extract: {
-      DEFAULT: 'ExtWebpacker::Gems::TAILWIND_EXTRACTOR',
+      DEFAULT: 'Webpacker::TAILWIND_EXTRACTOR',
     }
   },
   theme: {

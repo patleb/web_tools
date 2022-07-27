@@ -1,5 +1,5 @@
 require "ext_ruby"
-require "ext_webpacker/gems"
+require "ext_webpacker/webpacker/with_gems"
 require "webpacker"
 
 Webpacker::Env.class_eval do
@@ -21,4 +21,8 @@ Webpacker::Compiler.class_eval do
   end
 end
 
-ExtWebpacker::Gems.install
+module Webpacker
+  extend self::WithGems
+end
+
+Webpacker.install

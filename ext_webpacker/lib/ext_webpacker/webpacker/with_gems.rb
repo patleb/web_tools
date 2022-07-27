@@ -1,28 +1,26 @@
-module ExtWebpacker
-  module Gems
-    extend self
+module Webpacker
+  # https://github.com/tailwindlabs/tailwindcss/blob/master/src/lib/expandTailwindAtRules.js#L9-L31
+  TAILWIND_EXTRACTOR = <<~JS.strip.indent(6)
+    (content) => {
+      let results = content.match(/("[^"]*"|'[^']*')/g) || []
+      results = results.map(v => {
+        v = v.slice(1, -1)
+        if (v.match(/^[#.]/)) {
+          v = v.split('.')
+        } else if (v.includes(' ')) {
+          v = v.split(' ')
+        }
+        return v
+      }).flat()
+      return results
+    }
+  JS
 
-    class CoffeeScriptVersion < StandardError; end
-    class MissingDependency < StandardError; end
-    class MissingGem < StandardError; end
+  class CoffeeScriptVersion < StandardError; end
+  class MissingDependency < StandardError; end
+  class MissingGem < StandardError; end
 
-    # https://github.com/tailwindlabs/tailwindcss/blob/master/src/lib/expandTailwindAtRules.js#L9-L31
-    TAILWIND_EXTRACTOR = <<~JS.strip.indent(6)
-      (content) => {
-        let results = content.match(/("[^"]*"|'[^']*')/g) || []
-        results = results.map(v => {
-          v = v.slice(1, -1)
-          if (v.match(/^[#.]/)) {
-            v = v.split('.')
-          } else if (v.includes(' ')) {
-            v = v.split(' ')
-          }
-          return v
-        }).flat()
-        return results
-      }
-    JS
-
+  module WithGems
     # webpacker --profile --json > tmp/stats.json && yarn webpack-bundle-analyzer tmp/stats.json
     def install
       verify_dependencies!
@@ -68,8 +66,8 @@ module ExtWebpacker
     def compile_tailwind_config
       return unless package_dependencies.include?('tailwindcss') && (file = Pathname.new('./tailwind.config.js')).exist?
       tailwind = file.read
-      tailwind.sub!(/["']ExtWebpacker::Gems::TAILWIND_EXTRACTOR["']/, TAILWIND_EXTRACTOR)
-      tailwind.sub!(/["']ExtWebpacker::Gems::TAILWIND_DEPENDENCIES["']/, tailwind_dependencies)
+      tailwind.sub!(/["']Webpacker::TAILWIND_EXTRACTOR["']/, TAILWIND_EXTRACTOR)
+      tailwind.sub!(/["']Webpacker::TAILWIND_DEPENDENCIES["']/, tailwind_dependencies)
       tailwind.gsub!(%r{@@[\w-]+}){ |name| Gem.root(name.tr('@', '')).to_s }
       tailwind.gsub! '@@', Bundler.root.to_s
       Pathname.new('./tmp/tailwind.config.js').write(tailwind)
