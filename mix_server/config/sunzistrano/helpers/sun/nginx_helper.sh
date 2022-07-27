@@ -1,9 +1,11 @@
 sun.nginx_reload() {
-  if sudo systemctl reload nginx; then
-    echo 'Nginx reloaded'
-  else
-    echo.red 'Could not reload Nginx, trying start.'
-    sudo systemctl start nginx
+  if sun.nginx_check; then
+    if sudo systemctl reload nginx; then
+      echo 'Nginx reloaded'
+    else
+      echo.red 'Could not reload Nginx, trying start.'
+      sudo systemctl start nginx
+    fi
   fi
 }
 
