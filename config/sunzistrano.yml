@@ -12,7 +12,7 @@ system:
 
 web:
   recipes:
-    - deploy/lock_files:
+    - deploy/add_gitignored_files:
         before: deploy/bundler
 
 vagrant:

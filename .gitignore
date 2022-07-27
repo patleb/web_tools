@@ -80,7 +80,7 @@ sunzistrano/test/fixtures/files/local_app/
 
 web_tools-*.gem
 Gemfile.lock
-Gemfile.private*
-/lib/web_tools/private.rb
+Gemfile.private
+private.rb
 /private
 yarn.lock
