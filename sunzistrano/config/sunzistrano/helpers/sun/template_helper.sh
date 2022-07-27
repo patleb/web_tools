@@ -71,9 +71,9 @@ sun.compile() {
   echo ''                  >> $tmp
   echo 'EOF_COMPILE'       >> $tmp
   if [[ $# == 1 ]]; then
-    bash -eu $tmp > $dst
+    bash -e -u $tmp > $dst
   else
-    sun.sudo "bash -eu $tmp > $dst"
+    sun.sudo "bash -e -u $tmp > $dst"
     sun.permit $@
   fi
   sudo rm -f $tmp
