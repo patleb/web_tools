@@ -168,7 +168,7 @@ module Sunzistrano
       def remove_unsourced(recipes)
         sourced = Set.new
         recipes.each_line(chomp: true) do |line|
-          next unless (recipe = line.match(/sun\.source_recipe\s*["'\s]([^"'\s]+)/)&.captures&.first)
+          next unless (recipe = line.match(/^ *sun\.source_recipe\s*["'\s]([^"'\s]+)/)&.captures&.first)
           file = bash_path("recipes/#{recipe}")
           sourced << "#{file}.sh"
           sourced << "#{file}-specialize.sh"
