@@ -13,6 +13,7 @@ shared:
   variable: value
   recipes:
     - shared/append
+    - shared/skipped-system
     - shared/after/second/recipe:
         after: second/recipe-{no_variable}
     - shared/before/reboot:
