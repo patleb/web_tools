@@ -14,7 +14,7 @@ sun.nginx_check() {
     echo 'Config [OK]'
     return 0
   else
-    echo.red "Nginx configuration is invalid! (Make sure nginx configuration files are readable and correctly formated.)"
+    echo.red 'Nginx configuration is invalid! (Make sure nginx configuration files are readable and correctly formated.)'
     exit 1
   fi
 }

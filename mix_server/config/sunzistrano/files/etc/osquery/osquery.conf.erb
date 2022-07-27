@@ -25,162 +25,162 @@
     "schedule": {
       "query": "select name, interval, executions, output_size, wall_time, (user_time/executions) as avg_user_time, (system_time/executions) as avg_system_time, average_memory, last_executed, denylisted from osquery_schedule",
       "removed": false,
-      "interval": <%= Setting[:osquery_2_hrs] %>
+      "interval": <%= sun.osquery_2_hrs %>
     },
     "events": {
       "query": "select name, publisher, type, subscriptions, events, active from osquery_events",
       "removed": false,
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "osquery_info": {
       "query": "select i.*, p.resident_size, p.user_time, p.system_time, time.minutes as counter from osquery_info i, processes p, time where p.pid = i.pid",
       "removed": false,
-      "interval": <%= Setting[:osquery_10_min] %>
+      "interval": <%= sun.osquery_10_min %>
     },
     // https://github.com/osquery/osquery/blob/master/packs/incident-response.conf
     "crontab": {
       "query" : "select * from crontab",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "etc_hosts": {
       "query" : "select * from etc_hosts",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "kernel_modules": {
       "query" : "select * from kernel_modules",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "last": {
       "query" : "select * from last",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "open_sockets": {
       "query" : "select distinct pid, family, protocol, local_address, local_port, remote_address, remote_port, path from process_open_sockets where path <> '' or remote_address <> ''",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "open_files": {
       "query" : "select distinct pid, path from process_open_files where path not like '/private/var/folders%' and path not like '/System/Library/%' and path not in ('/dev/null', '/dev/urandom', '/dev/random')",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "logged_in_users": {
       "query" : "select liu.*, p.name, p.cmdline, p.cwd, p.root from logged_in_users liu, processes p where liu.pid = p.pid",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "ip_forwarding": {
       "query" : "select * from system_controls where oid = '4.30.41.1' union select * from system_controls where oid = '4.2.0.1'",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "process_env": {
       "query" : "select * from process_envs",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "mounts": {
       "query" : "SELECT device, device_alias, path, type, blocks_size, flags FROM mounts",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "shell_history": {
       "query" : "select * from users join shell_history using (uid)",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "ramdisk": {
       "query" : "select * from block_devices where type = 'Virtual Interface'",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "listening_ports": {
       "query": "SELECT pid, port, processes.path, cmdline, cwd FROM listening_ports JOIN processes USING (pid) WHERE port != 0",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "suid_bin": {
       "query" : "select * from suid_bin",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "process_memory": {
       "query" : "select * from process_memory_map",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "arp_cache": {
       "query" : "select * from arp_cache",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "disk_encryption": {
       "query" : "select * from disk_encryption",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "iptables": {
       "query" : "select * from iptables",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     // https://github.com/osquery/osquery/blob/master/packs/it-compliance.conf
     "kernel_info": {
       "query" : "select * from kernel_info",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "os_version": {
       "query" : "select * from os_version",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "deb_packages": {
       "query" : "select * from deb_packages",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "apt_sources": {
       "query" : "select * from apt_sources",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     // https://github.com/osquery/osquery/blob/master/packs/vuln-management.conf
     "backdoored_python_packages": {
       "query" : "select name as package_name, version as package_version, path as package_path from python_packages where package_name in ('acqusition', 'apidev-coop', 'bzip', 'crypt', 'django-server', 'pwd', 'setup-tools', 'telnet', 'urlib3', 'urllib')",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     // https://github.com/palantir/osquery-configuration/blob/master/Classic/Servers/Linux/osquery.conf
     "process_events":{
       "query": "SELECT auid, cmdline, ctime, cwd, egid, euid, gid, parent, path, pid, time, uid FROM process_events",
-      "interval": <%= Setting[:osquery_10_sec] %>
+      "interval": <%= sun.osquery_10_sec %>
     },
     "socket_events":{
       "query": "SELECT action, auid, family, local_address, local_port, socket_events.path AS path, cmdline, pid, remote_address, remote_port, success, time FROM socket_events JOIN processes USING (pid) WHERE success=1",
-      "interval": <%= Setting[:osquery_10_sec] %>
+      "interval": <%= sun.osquery_10_sec %>
     },
     "file_events": {
       "query": "SELECT * FROM file_events",
       "removed": false,
-      "interval": <%= Setting[:osquery_10_sec] %>
+      "interval": <%= sun.osquery_10_sec %>
     },
     "authorized_keys": {
       "query": "SELECT * FROM users JOIN authorized_keys USING (uid)",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "behavioral_reverse_shell": {
       "query": "SELECT DISTINCT(processes.pid), processes.parent, processes.name, processes.path, processes.cmdline, processes.cwd, processes.root, processes.uid, processes.gid, processes.start_time, process_open_sockets.remote_address, process_open_sockets.remote_port, (SELECT cmdline FROM processes AS parent_cmdline WHERE pid=processes.parent) AS parent_cmdline FROM processes JOIN process_open_sockets USING (pid) LEFT OUTER JOIN process_open_files ON processes.pid = process_open_files.pid WHERE (name='sh' OR name='bash') AND remote_address NOT IN ('0.0.0.0', '::', '') AND remote_address NOT LIKE '10.%' AND remote_address NOT LIKE '192.168.%'",
-      "interval": <%= Setting[:osquery_10_min] %>
+      "interval": <%= sun.osquery_10_min %>
     },
     "dns_resolvers": {
       "query": "SELECT * FROM dns_resolvers",
-      "interval": <%= Setting[:osquery_hour] %>
+      "interval": <%= sun.osquery_hour %>
     },
     "ld_preload": {
       "query": "SELECT process_envs.pid, process_envs.key, process_envs.value, processes.name, processes.path, processes.cmdline, processes.cwd FROM process_envs join processes USING (pid) WHERE key = 'LD_PRELOAD'",
-      "interval": <%= Setting[:osquery_minute] %>
+      "interval": <%= sun.osquery_minute %>
     },
     "network_interfaces": {
       "query": "SELECT a.interface, a.address, d.mac FROM interface_addresses a JOIN interface_details d USING (interface)",
-      "interval": <%= Setting[:osquery_10_min] %>
+      "interval": <%= sun.osquery_10_min %>
     },
     "processes": {
       "query": "select name, path, cmdline, cwd, on_disk from processes",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "system_info": {
       "query": "SELECT * FROM system_info",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "user_ssh_keys": {
       "query": "SELECT * FROM users JOIN user_ssh_keys USING (uid)",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     },
     "users": {
       "query": "SELECT * FROM users",
-      "interval": <%= Setting[:osquery_day] %>
+      "interval": <%= sun.osquery_day %>
     }
   },
 
@@ -219,12 +219,12 @@
       "/usr/lib/passenger/support-binaries/%"
     ],
     "extra": [
-      <%= Setting[:osquery_file_paths].map{ |path| %{"#{path}"} }.join(",\n      ") %>
+      <%= sun.osquery_file_paths.map{ |path| %{"#{path}"} }.join(",\n      ") %>
     ]
   },
   "exclude_paths": {
     "extra": [
-      <%= Setting[:osquery_exclude_paths].map{ |path| %{"#{path}"} }.join(",\n      ") %>
+      <%= sun.osquery_exclude_paths.map{ |path| %{"#{path}"} }.join(",\n      ") %>
     ]
   },
   "events": {

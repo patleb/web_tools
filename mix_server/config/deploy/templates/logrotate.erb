@@ -1,9 +1,0 @@
-<%= fetch(:deploy_to) %>/current/log/*.log {
-  daily
-  missingok
-  rotate 28
-  compress
-  delaycompress
-  notifempty
-  copytruncate
-}

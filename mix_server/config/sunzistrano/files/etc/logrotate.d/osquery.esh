@@ -1,4 +1,4 @@
-<%= Setting[:osquery_logger_path] %>/*.log {
+${osquery_logger_path}/*.log {
   daily
   missingok
   rotate 365
