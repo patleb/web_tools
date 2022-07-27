@@ -41,8 +41,8 @@ set :repo_url, "git@github.com:patleb/web_tools.git"
 set :job_roles, :all
 
 # set :nginx_upstreams, -> {
-#   Setting.slice(:pgrest_nginx_upstream, :geoserver_nginx_upstream).values.reduce(&:merge)
+#   Setting.slice(:geoserver_nginx_upstream).values.reduce(&:merge)
 # }
 # set :nginx_locations, -> {
-#   Setting.slice(:pgrest_nginx_location, :geoserver_nginx_location_wms).values.reduce(&:merge)
+#   Setting.slice(:geoserver_nginx_location_wms).values.reduce(&:merge)
 # }

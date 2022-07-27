@@ -3,7 +3,6 @@ task provision: %i(
   osquery:push
   osquery:restart
   nginx:push
-  pgrest:push
   provision:app
 )
 

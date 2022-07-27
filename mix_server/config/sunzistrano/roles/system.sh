@@ -25,7 +25,6 @@
   lang/ruby/system
   lang/nodejs/system-{nodejs}
   lang/python/system
-  #{'addons/pgrest-{pgrest}' if sun.pgrest_enabled}
   #{'addons/gis_packages' if sun.postgis_enabled}
   #{'db/postgres-{postgres}/postgis-{postgis}' if sun.postgis_enabled}
   #{'db/postgres-{postgres}/timescaledb' if sun.timescaledb_enabled}

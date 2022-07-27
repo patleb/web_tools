@@ -16,7 +16,7 @@ Rails.application.config.content_security_policy do |policy|
 
 #   # Specify URI for violation reports
 #   # policy.report_uri "/csp-violation-report-endpoint"
-#   urls = Setting.slice(:pgrest_url, :geoserver_url).each_with_object([]) do |(_name, url), urls|
+#   urls = Setting.slice(:geoserver_url).each_with_object([]) do |(_name, url), urls|
 #     urls << url.gsub(%r{([^:/])/.*$}, '\1') unless url.include? "://#{Setting[:server]}/"
 #   end
   urls = []

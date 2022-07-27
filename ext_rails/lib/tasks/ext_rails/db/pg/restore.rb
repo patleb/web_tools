@@ -23,7 +23,6 @@ module Db
           append:      ['--[no-]append',              'Append data for pg_restore'],
           new_server:  ['--[no-]new-server',          'Reset current server centralized log'],
           timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
-          pgrest:      ['--[no-]pgrest',              'Specify if PostgREST API is used for pg_restore'],
           pg_options:  ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
         }
       end
@@ -136,7 +135,6 @@ module Db
           end
           post_restore_timescaledb if options.timescaledb
           unless data_append?
-            post_restore_pgrest if options.pgrest
             post_restore_environment
             post_restore_server if options.new_server
             post_restore_tasks
@@ -191,13 +189,6 @@ module Db
         psql! <<-SQL.strip_sql
           SELECT timescaledb_post_restore();
         SQL
-      end
-
-      def post_restore_pgrest
-        psql! <<-SQL.strip_sql
-          DELETE FROM #{ActiveRecord::Base.schema_migrations_table_name} WHERE version = '20010000000820'
-        SQL
-        run_task 'db:migrate'
       end
 
       def post_restore_environment

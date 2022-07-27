@@ -61,7 +61,6 @@ module MixServer
 
     initializer 'mix_server.append_migrations' do |app|
       append_migrations(app)
-      append_migrations(app, scope: 'pgrest') if Setting[:pgrest_enabled]
     end
 
     initializer 'mix_server.prepend_routes', before: 'ext_rails.append_routes' do |app|

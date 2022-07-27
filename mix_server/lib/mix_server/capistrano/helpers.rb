@@ -1,13 +1,5 @@
 module MixServer
   module Helpers
-    def pgrest_reload
-      test :sudo, "systemctl reload pgrest"
-    end
-
-    def pgrest_restart
-      execute :sudo, "systemctl restart pgrest"
-    end
-
     def nginx_reload!
       unless nginx_reload
         error "Could not reload Nginx, trying start."
