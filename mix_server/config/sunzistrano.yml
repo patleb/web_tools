@@ -5,6 +5,8 @@ web:
     - web/rbenv
     - web/rails_env
   recipes:
+    - deploy/authorized_keys-system:
+        before: deploy/start
     - deploy/logrotate-system:
         before: deploy/update
     - deploy/secrets-system:
