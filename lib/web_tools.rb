@@ -3,7 +3,7 @@ require 'web_tools/base'
 module WebTools
   def self.private_gems
     @private_gems ||= (!File.exist?('Gemfile.private') ? [] : File.readlines('Gemfile.private')
-      .select_map{ |line| line.match(/(?:^| +)gem +["']([^"']+)["']/)&.captures&.first })
+      .select_map{ |line| line.match(/^ *gem +["']([^"']+)["']/)&.captures&.first })
       .flat_map{ |name| subgems Gem.root(name) }
       .map{ |d| [d, Gem.root(d)] }
       .to_h.with_indifferent_access
