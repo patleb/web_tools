@@ -198,8 +198,7 @@ module Sunzistrano
 
       yml = YAML.safe_load(ERB.new(path.read).result(binding))
       validate_version! yml['lock']
-      gems = (yml['gems'] || []) << 'sunzistrano'
-      gems_yml = gems.reduce({}) do |gems_yml, name|
+      gems_yml = (['sunzistrano'] + (yml['gems'] || [])).reduce({}) do |gems_yml, name|
         if @gems.has_key? name
           gems_yml
         else

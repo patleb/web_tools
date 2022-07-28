@@ -103,7 +103,7 @@ module Webpacker
     end
 
     def gems
-      @gems ||= Set.new(default_config['gems'] || []).merge(['ext_webpacker'])
+      @gems ||= Set.new(['ext_webpacker'] + (default_config['gems'] || []))
     end
 
     def tailwind
