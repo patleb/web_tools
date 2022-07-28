@@ -1,7 +1,5 @@
 web:
   role_before:
-    - web/load_defaults
-    - web/git_wrapper
     - web/rbenv
     - web/rails_env
   recipes:
