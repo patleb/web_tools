@@ -5,8 +5,6 @@ web:
     - web/rbenv
     - web/rails_env
   recipes:
-    - deploy/cron_log-system:
-        before: deploy/update
     - deploy/logrotate-system:
         before: deploy/update
     - deploy/secrets-system:
@@ -26,8 +24,6 @@ web:
     - deploy/nginx/reload-system:
         after: deploy/publish
     - deploy/passenger:
-        before: deploy/published
-    - deploy/whenever:
         before: deploy/published
     - deploy/osquery-system:
         after: deploy/finished

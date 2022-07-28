@@ -1,0 +1,8 @@
+web:
+  recipes:
+    - deploy/whenever/config-system:
+        before: deploy/update
+    - deploy/whenever/update:
+        before: deploy/published
+  linked_dirs:
+    - tmp/locks

@@ -2,6 +2,7 @@ lock: 0.1.0
 gems:
   - mix_server
   - mix_job
+  - ext_whenever
 
 shared:
   debug: false
