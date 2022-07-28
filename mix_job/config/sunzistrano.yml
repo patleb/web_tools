@@ -1,0 +1,7 @@
+web:
+  recipes:
+    - deploy/job-system:
+        before: deploy/published
+  linked_dirs:
+    - tmp/jobs
+  job_queue: default
