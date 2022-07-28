@@ -5,12 +5,12 @@ After=postgresql@${postgres}-main.service
 [Service]
 User=deployer
 WorkingDirectory=$current_path
-ExecStart=/home/deployer/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true RAILS_ENV=${env} RAILS_APP=${app} bin/rake job:watch -- --queue=default
+ExecStart=/home/deployer/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true RAILS_ENV=${env} RAILS_APP=${app} bin/rake job:watch -- --queue=${job_queue}
 Restart=always
 StandardInput=null
 StandardOutput=append:$current_path/log/job.log
 StandardError=append:$current_path/log/job.log
-SyslogIdentifier=$job_service
+SyslogIdentifier=${job_service}
 KillMode=mixed
 KillSignal=SIGTERM
 SendSIGHUP=yes

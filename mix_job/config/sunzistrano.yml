@@ -1,6 +1,8 @@
 web:
   recipes:
-    - deploy/job-system:
+    - deploy/job/config-system:
+        before: deploy/published
+    - deploy/job/restart:
         before: deploy/published
   linked_dirs:
     - tmp/jobs
