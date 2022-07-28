@@ -1,27 +1,4 @@
 namespace :deploy do
-  namespace :logrotate do
-    desc 'upload app logrotate'
-    task :push do
-      on release_roles fetch(:bundle_roles) do
-        logrotate_path = "/etc/logrotate.d/#{fetch(:deploy_dir)}"
-        template_push 'logrotate', logrotate_path
-        execute :sudo, :chown, 'root:root', logrotate_path
-        execute :sudo, :chmod, 644, logrotate_path
-      end
-    end
-  end
-
-  desc 'Clobber assets'
-  task :clobber_assets => [:set_rails_env] do
-    on release_roles(fetch(:assets_roles)) do
-      within release_path do
-        with rails_env: fetch(:rails_env) do
-          execute :rake, "webpacker:clobber"
-        end
-      end
-    end
-  end
-
   desc 'link dev shared folder'
   task :link_dev do
     next unless cap.env.vagrant?

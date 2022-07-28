@@ -1,3 +1,23 @@
+sun.osquery_start() {
+  if sun.osquery_check; then
+    if sudo osqueryctl start; then
+      echo 'Osquery started'
+    else
+      echo.red 'Could not start Osquery.'
+      exit 1
+    fi
+  fi
+}
+
+sun.osquery_stop() {
+  if sudo osqueryctl stop; then
+    echo 'Osquery stopped'
+  else
+    echo.red 'Could not stop Osquery.'
+    exit 1
+  fi
+}
+
 sun.osquery_restart() {
   if sun.osquery_check; then
     if sudo osqueryctl restart; then
