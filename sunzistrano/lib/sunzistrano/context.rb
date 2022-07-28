@@ -176,20 +176,34 @@ module Sunzistrano
           next if recipe.end_with?('-system') && !self[:system]
           next memo << recipe
         end
-        recipe, action = recipe.first
-        action, sibling = action&.first
-        next if recipe.end_with?('-system') && !self[:system]
-        case action
-        when 'remove'
-          memo.delete(recipe) if sibling
-        when 'before'
-          memo.insert_before(sibling, recipe)
-        when 'after'
-          memo.insert_after(sibling, recipe)
-        else
+        recipe, options = recipe.first
+        case
+        when recipe.end_with?('-system') && !self[:system]
+          next
+        when options.nil?
           memo << recipe
+        when (sibling = options['before'])
+          memo.insert_before(sibling, recipe) if continue(options)
+        when (sibling = options['after'])
+          memo.insert_after(sibling, recipe) if continue(options)
+        when options.has_key?('remove')
+          memo.delete(recipe) if options['remove']
+        else
+          memo << recipe if continue(options)
         end
       end
+    end
+
+    def continue(options)
+      if options.has_key? 'if'
+        is_true = options['if']
+        return false unless is_true
+      end
+      if options.has_key? 'unless'
+        is_true = options['unless']
+        return false if is_true
+      end
+      true
     end
 
     def extract_yml(root)

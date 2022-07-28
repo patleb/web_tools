@@ -14,16 +14,25 @@ shared:
   recipes:
     - shared/append
     - shared/skipped-system
+    - shared/remove_if_exist
     - shared/after/second/recipe:
         after: second/recipe-{no_variable}
+        if: true
     - shared/before/reboot:
         before: reboot
+        unless: false
     - "<%= 'shared/skipped' if Setting[:keep] %>": # Note: only use Setting for ERB, since :sun isn't available in yml
         after: reboot
     - shared/remove:
         remove: true
     - shared/append:
         remove: false
+    - shared/remove_if_exist:
+        remove: true
+    - shared/append_if_true:
+        if: false
+    - shared/append_unless_false:
+        unless: true
 
 role:
   sunzistrano_role: true
