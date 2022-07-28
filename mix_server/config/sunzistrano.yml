@@ -42,7 +42,6 @@ web:
   linked_files:
     - config/secrets.yml
     - public/503.html
-  git_config_url: true
   git_shallow_clone: true
   nginx_satisfy: false
   nginx_auth_basic: false

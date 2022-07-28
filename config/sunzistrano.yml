@@ -15,6 +15,7 @@ web:
   recipes:
     - deploy/add_gitignored_files:
         before: deploy/bundler
+  git_config_url: true
 
 vagrant:
   swap_size: 0
