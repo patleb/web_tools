@@ -60,8 +60,6 @@ web:
   osquery_2_hrs: 7200
   osquery_10_min: 600
   osquery_10_sec: 10
-  osquery_file_paths: []
-  osquery_exclude_paths: []
 
 web_development:
   osquery_logger_level: 0

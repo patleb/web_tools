@@ -219,12 +219,12 @@
       "/usr/lib/passenger/support-binaries/%"
     ],
     "extra": [
-      <%= sun.osquery_file_paths.map{ |path| %{"#{path}"} }.join(",\n      ") %>
+      <%= (sun.osquery_file_paths || []).map{ |path| %{"#{path}"} }.join(",\n      ") %>
     ]
   },
   "exclude_paths": {
     "extra": [
-      <%= sun.osquery_exclude_paths.map{ |path| %{"#{path}"} }.join(",\n      ") %>
+      <%= (sun.osquery_exclude_paths || []).map{ |path| %{"#{path}"} }.join(",\n      ") %>
     ]
   },
   "events": {
