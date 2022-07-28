@@ -9,7 +9,7 @@ if [[ "${passenger}" == true ]]; then
 
   desc 'Restart job service'
   sun.job_restart
-  export $JOB_RESTART=false
+  export JOB_RESTART=false
 elif systemctl list-unit-files | grep enabled | grep -Fq ${job_service}; then
   desc 'Stop job service'
   sun.job_stop
