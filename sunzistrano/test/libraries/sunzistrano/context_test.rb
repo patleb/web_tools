@@ -23,7 +23,7 @@ class Sunzistrano::ContextTest < Minitest::Spec
   it 'should build context correctly' do
     Setting.reload(env: 'test', app: 'app', root: ROOT)
     sun = Sunzistrano::Context.new(role: 'role', option: 'name')
-    assert_equal DUMMY_GEMS.to_a, sun.gems.keys.sort
+    assert_equal DUMMY_GEMS.to_a, sun.gems.keys.sort.except('sunzistrano')
     assert_equal 'test', sun.env
     assert_equal 'app', sun.app
     assert_equal 'role', sun.role

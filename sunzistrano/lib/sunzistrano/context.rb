@@ -181,7 +181,7 @@ module Sunzistrano
         next if recipe.end_with?('-system') && !self[:system]
         case action
         when 'remove'
-          memo.delete(recipe)
+          memo.delete(recipe) if sibling
         when 'before'
           memo.insert_before(sibling, recipe)
         when 'after'

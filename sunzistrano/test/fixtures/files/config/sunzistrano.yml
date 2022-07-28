@@ -18,10 +18,12 @@ shared:
         after: second/recipe-{no_variable}
     - shared/before/reboot:
         before: reboot
-    - "<%= 'shared/skipped' if false %>":
+    - "<%= 'shared/skipped' if Setting[:keep] %>": # Note: only use Setting for ERB, since :sun isn't available in yml
         after: reboot
     - shared/remove:
         remove: true
+    - shared/append:
+        remove: false
 
 role:
   sunzistrano_role: true
