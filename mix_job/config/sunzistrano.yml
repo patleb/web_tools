@@ -4,7 +4,7 @@ web:
         before: deploy/published
     - deploy/job/restart:
         before: deploy/published
-        if: sun.passenger
+        if: 'sun.passenger'
   linked_dirs:
     - tmp/jobs
   job_queue: default
