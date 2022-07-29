@@ -3,7 +3,7 @@ if [[ "$REBOOT_FORCE" == false ]]; then
   sun.include "roles/${role}_after.sh"
 fi
 
-if [[ ! $(grep "Done   \[reboot\]" "${manifest_log}") ]]; then
+if [[ ! $(grep -F "Done   [reboot]" "${manifest_log}") ]]; then
   sun.done "reboot"
 fi
 

@@ -29,7 +29,7 @@ sun.source_recipe() {
 }
 
 sun.to_be_done() {
-  if [[ ! $(grep "Done   \[$1\]" "${manifest_log}") ]]; then
+  if [[ ! $(grep -F "Done   [$1]" "${manifest_log}") ]]; then
     echo.cyan "Recipe [$1]"
     return 0
   else
