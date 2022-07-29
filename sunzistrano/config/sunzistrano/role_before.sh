@@ -6,7 +6,7 @@ sun.check_os
 export REBOOT_RECIPE=false
 export REBOOT_FORCE=false
 
-trap sun.on_exit EXIT
+trap sun.recipe_ensure EXIT
 
 sun.start_role
 

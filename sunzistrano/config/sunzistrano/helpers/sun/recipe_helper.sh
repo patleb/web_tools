@@ -42,7 +42,7 @@ sun.done() {
   echo.green "Done   [$1]" | tee -a "${manifest_log}"
 }
 
-sun.on_exit() {
+sun.recipe_ensure() {
   cd "${bash_dir}"
   sun.include "roles/${role}_ensure.sh"
   sun.elapsed_time $ROLE_START
