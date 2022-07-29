@@ -21,8 +21,9 @@ shared:
     - shared/before/reboot:
         before: reboot
         unless: false
-    - "<%= 'shared/skipped' if Setting[:keep] %>": # Note: only use Setting for ERB, since :sun isn't available in yml
+    - shared/skipped:
         after: reboot
+        if: sun.keep
     - shared/remove:
         remove: true
     - shared/append:
@@ -32,7 +33,7 @@ shared:
     - shared/append_if_true:
         if: false
     - shared/append_unless_false:
-        unless: 1 + 1
+        unless: sun.variable
 
 role:
   sunzistrano_role: true
