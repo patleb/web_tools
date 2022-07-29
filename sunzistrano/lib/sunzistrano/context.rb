@@ -2,11 +2,13 @@ module Sunzistrano
   class Context < OpenStruct
     VARIABLES = /(-?\{[a-z0-9_]+})/
 
+    attr_reader :sun
     attr_reader :gems
 
     def initialize(role: 'system', **options)
       validate_config_presence!
       @role, @env, @app = role, Setting.rails_env, Setting.rails_app
+      @sun = self
       @gems = {}
       context = Setting.all.merge(extract_yml(Setting.rails_root)).merge! options
       require_overrides
@@ -198,11 +200,11 @@ module Sunzistrano
     def continue(options)
       if options.has_key? 'if'
         is_true = options['if']
-        return false unless is_true
+        return false unless instance_eval(is_true)
       end
       if options.has_key? 'unless'
         is_true = options['unless']
-        return false if is_true
+        return false if instance_eval(is_true)
       end
       true
     end
