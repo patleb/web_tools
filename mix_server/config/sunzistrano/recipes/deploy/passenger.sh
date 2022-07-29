@@ -1,6 +1,6 @@
-cd ${release_path}
+PASSENGER_RESTART=${PASSENGER_RESTART:-true}
 
-desc 'Restart your Passenger application'
-rbenv sudo passenger-config restart-app ${deploy_path} --ignore-app-not-running
-
-cd - > /dev/null
+if [[ "$PASSENGER_RESTART" == true ]]; then
+  desc 'Restart your Passenger application'
+  sun.passenger_restart
+fi

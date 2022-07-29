@@ -15,6 +15,7 @@ web:
         before: deploy/update
     - deploy/database-system:
         before: deploy/update
+        if: %w(127.0.0.1 localhost).include? sun.db_host
     - deploy/bundler:
         after: deploy/update
     - deploy/assets:
@@ -25,6 +26,7 @@ web:
         after: deploy/publish
     - deploy/passenger:
         before: deploy/published
+        if: sun.passenger
     - deploy/osquery-system:
         after: deploy/finished
   linked_dirs:

@@ -1,3 +1,3 @@
 desc 'Reload nginx service'
 sun.nginx_reload
-sleep 5
+export PASSENGER_RESTART=false
