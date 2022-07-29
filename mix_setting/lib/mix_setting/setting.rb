@@ -69,6 +69,7 @@ class Setting
       settings = @database.merge! parse_settings_yml(settings)
       settings = @secrets.merge! settings
       require_overrides
+      @gems = @gems.to_a.reverse.to_h
       resolve_keywords! settings
       cast_values! settings
       FREED_IVARS.each{ |ivar| remove_instance_variable(ivar) if instance_variable_defined? ivar }

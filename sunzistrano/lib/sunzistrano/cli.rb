@@ -144,7 +144,7 @@ module Sunzistrano
       def build_role
         role = {}
         role[:recipes] = File.binread(bash_path("roles/#{sun.role}.sh"))
-        role[:helpers] = sun.gems.each_with_object([]) do |(_name, root), memo|
+        role[:helpers] = ([Setting.rails_root] + sun.gems.values).each_with_object([]) do |root, memo|
           sun.helpers(root).each do |file|
             memo << "source helpers/#{file}\n"
           end

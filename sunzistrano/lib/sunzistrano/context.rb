@@ -10,10 +10,10 @@ module Sunzistrano
       @gems = {}
       context = Setting.all.merge(extract_yml(Setting.rails_root)).merge! options
       require_overrides
+      @gems = @gems.to_a.reverse.to_h
       @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
       remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
       super(context)
-      @gems = @gems.to_a.reverse.to_h
     end
 
     def attributes
@@ -245,11 +245,10 @@ module Sunzistrano
     end
 
     def require_overrides
-      @gems.each_value do |root|
+      (@gems.values << Setting.rails_root).each do |root|
         path = root.join('config/sunzistrano.rb')
         require path.to_s if path.exist?
       end
-      require 'config/sunzistrano' if File.exist? 'config/sunzistrano.rb'
     end
 
     def validate_version!(lock)
