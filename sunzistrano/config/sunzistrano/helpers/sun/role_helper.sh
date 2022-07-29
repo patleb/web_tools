@@ -28,8 +28,7 @@ sun.setup_system_globals() {
 }
 
 sun.check_os() {
-  if [[
-  } "$OS_NAME" != "${os_name}" ]]; then
+  if [[ "$OS_NAME" != "${os_name}" ]]; then
     echo "'$OS_NAME' != '${os_name}'"
     exit 1
   fi

@@ -1,5 +1,5 @@
 sun.start_role() {
-  export ROLE_START=$(sun.start_time)
+  export ROLE_START=$(sun.current_time)
   if [[ -e "${manifest_log}" ]]; then
     echo "Existing provisioning"
   else
@@ -15,13 +15,13 @@ sun.start_role() {
   fi
 }
 
-sun.start_time() {
+sun.current_time() {
   echo $(date -u +"%s")
 }
 
 sun.elapsed_time() {
   local start=$1
-  local finish=$(date -u +"%s")
+  local finish=$(sun.current_time)
   local elapsed_time=$(($finish-$start))
   echo "$(($elapsed_time / 60)) minutes and $(($elapsed_time % 60)) seconds elapsed."
 }
