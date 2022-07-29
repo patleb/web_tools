@@ -44,7 +44,7 @@ sun.test_setup() {
   specialize=${specialize:-false}
   rollback=${rollback:-false}
   debug=${debug:-false}
-  sun.initialize
+  sun.start_role
   source 'sunzistrano/config/sunzistrano/roles/web/load_defaults.sh'
   source 'sunzistrano/config/sunzistrano/roles/web/git_wrapper.sh'
 }

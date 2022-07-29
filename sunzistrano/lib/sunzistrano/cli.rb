@@ -28,6 +28,7 @@ module Sunzistrano
     desc 'rake [stage] [--role="web"] [--sudo] [--nohup] [--verbose]', 'Execute a rake task'
     method_options role: 'web', sudo: false, nohup: false, verbose: false, task: :required
     def rake(stage)
+      raise 'rake role cannot be "system"' if options.role == 'system'
       # TODO
     end
 
@@ -131,7 +132,6 @@ module Sunzistrano
         sun.gems.each_value do |root|
           dirnames << root.expand_path.join(basenames).to_s
         end
-        dirnames << Sunzistrano.root.join(basenames).to_s
         files = []
         dirnames.each do |dirname|
           files += Dir[dirname].select{ |f| copy? f, files }
@@ -142,20 +142,21 @@ module Sunzistrano
       end
 
       def build_role
-        role = %i(before after).each_with_object({}) do |hook, memo|
+        role = {}
+        role[:recipes] = File.binread(bash_path("roles/#{sun.role}.sh"))
+        role[:helpers] = sun.gems.each_with_object([]) do |(_name, root), memo|
+          sun.helpers(root).each do |file|
+            memo << "source helpers/#{file}\n"
+          end
+        end.join
+        %i(before after).each do |hook|
           src = Sunzistrano.root.join(CONFIG_PATH, basename("role_#{hook}.sh")).expand_path
           dst = bash_path("role_#{hook}.sh")
           template src, dst, force: true, verbose: sun.debug
-          memo[hook] = File.binread(dst)
+          role[hook] = File.binread(dst)
           remove_file dst, verbose: false
         end
-        role[:helpers] = sun.gems.each_with_object([]) do |(_name, root), memo|
-          sun.helpers(root).each do |file|
-            memo << "source helpers/#{file}"
-          end
-        end.join("\n")
-        role[:recipes] = File.binread(bash_path("roles/#{sun.role}.sh"))
-        content = role.values_at(:before, :helpers, :recipes, :after).join("\n")
+        content = role.values_at(:helpers, :before, :recipes, :after).join("\n")
         create_file bash_path('role.sh'), content, force: true, verbose: sun.debug
         remove_unsourced role[:recipes]
         %i(before after ensure).each do |hook|
@@ -250,13 +251,12 @@ module Sunzistrano
       end
 
       def role_remote_cmd
-        cleanup = "rm -rf #{bash_dir_remote} &&" unless sun.debug
         <<~CMD.squish
-          #{cleanup}
+          rm -rf #{bash_dir_remote} &&
           mkdir -p #{bash_dir_remote} &&
           cd #{bash_dir_remote} &&
           tar xz &&
-          #{'sudo' if sun.sudo} bash role.sh |& tee -a #{bash_log_remote}
+          #{'sudo' if sun.sudo} bash -e -u role.sh |& tee -a #{bash_log_remote}
         CMD
       end
 

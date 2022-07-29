@@ -13,6 +13,7 @@ module Sunzistrano
       @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
       remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
       super(context)
+      @gems = @gems.to_a.reverse.to_h
     end
 
     def attributes

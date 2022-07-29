@@ -53,9 +53,6 @@ sun.on_exit() {
     fi
   fi
   set -u
-  if [[ "${debug}" == false ]]; then
-    rm -rf "${bash_dir}"
-  fi
 }
 
 sun.rollback() {
