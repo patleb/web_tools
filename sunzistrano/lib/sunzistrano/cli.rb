@@ -132,8 +132,9 @@ module Sunzistrano
         used = Set.new
         (sun.scripts || []).each do |file|
           used << (dst = bash_path("scripts/#{file}.sh"))
+          script[:name] = "export script=#{file}"
           script[:code] = File.binread(dst)
-          content = script.values_at(:before, :code, :after).join("\n")
+          content = script.values_at(:name, :before, :code, :after).join("\n")
           create_file dst, content, force: true, verbose: sun.debug
         end
         remove_all_unused :script, used

@@ -1,5 +1,6 @@
 require 'whenever'
 require 'mix_setting'
+require 'sunzistrano'
 
 module ExtWhenever
   def self.setup(context)

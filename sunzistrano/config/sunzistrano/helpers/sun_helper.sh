@@ -8,7 +8,11 @@ sun.start_provision() {
     mkdir "${metadata_dir}"
     mkdir "${defaults_dir}"
   fi
-  echo "Started at $(date '+%Y-%m-%d %H:%M:%S')"
+  echo "Started at $(sun.timestamp)"
+}
+
+sun.timestamp() {
+  echo $(date '+%Y-%m-%d %H:%M:%S')
 }
 
 sun.current_time() {

@@ -31,6 +31,9 @@ ExtWhenever.setup(self)
 
 case @environment
 when 'vagrant'
+  every :minute do
+    bash 'version'
+  end
 when 'staging', 'production'
   case @application
   when 'web_tools'
