@@ -46,7 +46,7 @@ module Rake
       base_dir = Pathname.new("tmp/#{"#{scope}/" if scope}#{File.dirname(src).delete_prefix('/')}")
       new_file = base_dir.join(File.basename(src))
       FileUtils.mkdir_p base_dir
-      FileUtils.chown_R('deployer', 'deployer', base_dir) if deployer && !(defined?(Rails) && Rails.env.dev_or_test?)
+      FileUtils.chown_R('deployer', 'deployer', base_dir) if deployer && !(defined?(Rails.env) && Rails.env.dev_or_test?)
       File.open(new_file, 'w') do |f|
         source_erb = "#{src}.erb"
 

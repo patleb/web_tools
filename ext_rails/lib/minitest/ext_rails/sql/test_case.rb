@@ -137,7 +137,7 @@ module Sql
         elsif @sql_file_path.present?
           tmp_path = @sql_file_path
         else
-          root = defined?(Rails) ? Rails.root.to_s : Dir.pwd
+          root = defined?(Rails.root) ? Rails.root.to_s : Dir.pwd
           tmp_path = "#{root}#{self.class.config.path}"
         end
         @virtual_path = "#{tmp_path}/#{name}"
