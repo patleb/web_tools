@@ -119,25 +119,29 @@ module Sunzistrano
       end
 
       def build_scripts
-        script = %i(before after).map do |hook|
-          [hook, copy_hook("script_#{hook}.sh")]
-        end.to_h
+        copy_hooks :script
+        script = {
+          before: "source script_before.sh\n",
+          after: "source script_after.sh\n",
+        }
         used = Set.new
         (sun.scripts || []).each do |file|
-          used << (script_path = bash_path("scripts/#{file}.sh"))
-          script[:code] = File.binread(script_path)
+          used << (dst = bash_path("scripts/#{file}.sh"))
+          script[:code] = File.binread(dst)
           content = script.values_at(:before, :code, :after).join("\n")
-          create_file script_path, content, force: true, verbose: sun.debug
+          create_file dst, content, force: true, verbose: sun.debug
         end
         remove_all_unused :script, used
       end
 
       def build_role
-        role = %i(before after).map do |hook|
-          [hook, copy_hook("role_#{hook}.sh")]
-        end.to_h
+        copy_hooks :role
+        role = {
+          before: "source role_before.sh\n",
+          recipes: File.binread(bash_path("roles/#{sun.role}.sh")).strip_heredoc,
+          after: "source role_after.sh\n"
+        }
         used = Set.new
-        role[:recipes] = File.binread(bash_path("roles/#{sun.role}.sh")).strip_heredoc
         role[:recipes].each_line(chomp: true) do |line|
           next unless (recipe = line.match(/^ *sun\.source_recipe\s*["'\s]([^"'\s]+)/)&.captures&.first)
           file = bash_path("recipes/#{recipe}")
@@ -203,11 +207,13 @@ module Sunzistrano
         end
       end
 
-      def copy_hook(file)
-        src = Sunzistrano.root.join(CONFIG_PATH, basename(file)).expand_path
-        dst = bash_path(file)
-        copy_file src, dst, force: true, verbose: sun.debug
-        "source #{file}\n"
+      def copy_hooks(type)
+        %i(before after).each do |hook|
+          file = "#{type}_#{hook}.sh"
+          src = Sunzistrano.root.join(CONFIG_PATH, basename(file)).expand_path
+          dst = bash_path(file)
+          copy_file src, dst, force: true, verbose: sun.debug
+        end
       end
 
       def run_role_cmd
