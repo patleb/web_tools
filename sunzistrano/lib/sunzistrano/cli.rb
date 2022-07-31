@@ -277,7 +277,8 @@ module Sunzistrano
           mkdir -p #{bash_dir_remote} &&
           cd #{bash_dir_remote} &&
           tar xz &&
-          #{'sudo' if sun.sudo} bash -e -u role.sh |& tee -a #{bash_log_remote}
+          #{'sudo' if sun.sudo} bash -e -u role.sh |&
+          tee -a #{bash_log_remote}
         CMD
       end
 
@@ -294,7 +295,8 @@ module Sunzistrano
       def script_remote_cmd
         <<~CMD.squish
           cd #{bash_dir_remote} &&
-          #{'sudo' if sun.sudo} bash -e -u scripts/#{sun.script.sub(/\.sh$/, '')}.sh |& tee -a #{bash_log_remote}
+          #{'sudo' if sun.sudo} bash -e -u scripts/#{sun.script.gsub(/(^scripts\/|\.sh$)/, '')}.sh |&
+          tee -a #{bash_log_remote}
         CMD
       end
 
