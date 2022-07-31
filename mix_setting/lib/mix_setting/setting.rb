@@ -95,12 +95,20 @@ class Setting
     "#{rails_env}-#{rails_app}"
   end
 
+  def self.rails_env?(*names)
+    names.any?{ |name| name.to_sym == rails_env.to_sym }
+  end
+
   def self.rails_env
     case
     when @env                then @env
     when ENV['RAILS_ENV']    then ENV['RAILS_ENV']
     when defined?(Rails.env) then Rails.env.to_s
     end
+  end
+
+  def self.rails_app?(*names)
+    names.any?{ |name| name.to_sym == rails_app.to_sym }
   end
 
   def self.rails_app
