@@ -1,7 +1,55 @@
-web:
+provision:
+  recipes:
+    - bootstrap/upgrade-{upgrade}
+    - bootstrap/time_locale
+    - bootstrap/files
+    - bootstrap/swap-{swap_size}
+    - bootstrap/limits
+    - bootstrap/packages
+    - bootstrap/ssh
+    - bootstrap/firewall
+    - bootstrap/firewall/deny_mail
+    - bootstrap/fail2ban
+    - bootstrap/private_ip
+    - bootstrap/osquery
+    - bootstrap/clamav
+    - user/deployer
+    - db/postgres-{postgres}
+    - db/postgres-{postgres}/pgxnclient
+    - db/postgres-{postgres}/vector:
+        if: 'sun.vector_enabled'
+    - db/postgres-{postgres}/pg_repack:
+        if: 'sun.pgrepack_enabled'
+    - nginx/passenger
+    - nginx/htpasswd
+    - ssl/ca:
+        if: 'sun.server_ssl'
+    - ssl/self_signed:
+        if: 'sun.server_ssl'
+    - ssl/dhparam:
+        if: 'sun.server_ssl'
+    - lang/ruby/system
+    - lang/nodejs/system-{nodejs}
+    - lang/python/system
+    - addons/gis_packages:
+        if: 'sun.postgis_enabled'
+    - db/postgres-{postgres}/postgis-{postgis}:
+        if: 'sun.postgis_enabled'
+    - db/postgres-{postgres}/timescaledb:
+        if: 'sun.timescaledb_enabled'
+    - db/postgres-{postgres}/tune:
+        unless: 'sun.timescaledb_enabled'
+    - db/postgres-{postgres}/config
+    - utils/packages
+    - utils/htop
+    - utils/mailcatcher:
+        if: 'sun.env.vagrant?'
+    - utils/parallel
+    - lang/ruby/app-{ruby_version}
+deploy:
   role_before:
-    - web/rbenv
-    - web/rails_env
+    - deploy/rbenv
+    - deploy/rails_env
   recipes:
     - deploy/authorized_keys-system:
         before: deploy/start
@@ -59,7 +107,7 @@ web:
   osquery_10_min: 600
   osquery_10_sec: 10
 
-web_development:
+deploy_development:
   osquery_logger_level: 0
   osquery_database_path: ./tmp/osquery/osquery.db
   #  osquery_day: 10
@@ -69,5 +117,5 @@ web_development:
   #  osquery_10_min: 10
   #  osquery_10_sec: 10
 
-web_production:
+deploy_production:
   nginx_deferred: <%= Setting[:passenger] %>

@@ -1,5 +1,4 @@
-sun.start_role() {
-  export ROLE_START=$(sun.current_time)
+sun.start_provision() {
   if [[ -e "${manifest_log}" ]]; then
     echo "Existing provisioning"
   else
@@ -10,9 +9,6 @@ sun.start_role() {
     mkdir "${defaults_dir}"
   fi
   echo "Started at $(date '+%Y-%m-%d %H:%M:%S')"
-  if [[ "${debug}" == 'trace' ]]; then
-    set -x
-  fi
 }
 
 sun.current_time() {

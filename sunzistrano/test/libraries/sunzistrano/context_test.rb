@@ -22,7 +22,7 @@ end
 class Sunzistrano::ContextTest < Minitest::Spec
   it 'should build context correctly' do
     Setting.reload(env: 'test', app: 'app', root: ROOT)
-    sun = Sunzistrano::Context.new(role: 'role', option: 'name')
+    sun = Sunzistrano::Context.new('role', option: 'name')
     assert_equal DUMMY_GEMS.to_a, sun.gems.keys.sort.except('sunzistrano')
     assert_equal 'test', sun.env
     assert_equal 'app', sun.app
@@ -53,7 +53,7 @@ class Sunzistrano::ContextTest < Minitest::Spec
   describe '#helpers' do
     it 'should list Sunzistrano gem helpers' do
       Setting.reload(env: 'test')
-      sun = Sunzistrano::Context.new
+      sun = Sunzistrano::Context.new('provision')
       actual_helpers = Set.new(sun.helpers(Sunzistrano.root))
       expected_helpers = %w(
         sun/command_helper.sh
@@ -71,7 +71,7 @@ class Sunzistrano::ContextTest < Minitest::Spec
   describe '#role_recipes' do
     it 'should resolve :(append|remove)_recipes lists' do
       Setting.reload(env: 'test', root: ROOT)
-      sun = Sunzistrano::Context.new
+      sun = Sunzistrano::Context.new('provision')
       expected_recipes = %w(
         'first/recipe-value'
         'second/recipe'

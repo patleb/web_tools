@@ -1,7 +1,7 @@
 source 'sunzistrano/test/bash/spec_helper.sh'
 
 setup() {
-  sun.test_setup 'web'
+  sun.test_setup 'deploy'
   cd "$ROOT/sunzistrano/config/sunzistrano"
   linked_dirs='tmp/logs tmp/pids'
   linked_files='public/503.html public/robots.txt'

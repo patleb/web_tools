@@ -25,49 +25,35 @@ module Sunzistrano
       true
     end
 
-    desc 'rake [stage] [--role="web"] [--sudo] [--nohup] [--verbose]', 'Execute a rake task'
-    method_options role: 'web', sudo: false, nohup: false, verbose: false, task: :required
-    def rake(stage)
-      raise 'rake role cannot be "system"' if options.role == 'system'
-      # TODO
+    desc 'rake [stage] [task] [--sudo] [--nohup]', 'Execute a rake task'
+    method_options sudo: false, nohup: false
+    def rake(stage, task)
+      # TODO verbose if nohup (RAKE_OUTPUT=true)
     end
 
-    desc 'bash [stage] [--role="web"] [--sudo] [--nohup] [--verbose]', 'Execute a bash script'
-    method_options role: 'web', sudo: false, nohup: false, verbose: false, script: :required
-    def bash(stage)
-      # TODO
+    desc 'bash [stage] [script] [--sudo] [--nohup]', 'Execute a bash script'
+    method_options sudo: false, nohup: false
+    def bash(stage, script)
+      do_bash(stage, script)
     end
 
-    desc 'deploy [stage] [--role="web"] [--system]', 'Deploy role'
-    method_options role: 'web', system: false
+    desc 'deploy [stage] [--system]', 'Deploy application'
+    method_options system: false
     def deploy(stage)
-      raise 'deploy role cannot be "system"' if options.role == 'system'
-      do_provision(stage, deploy: true)
+      do_provision(stage, :deploy)
     end
 
-    desc 'provision [stage] [--new-host] [--reboot] [--recipe]', 'Provision system'
-    method_options new_host: false, reboot: false, recipe: :string
-      def provision(stage)
-      do_provision(stage, provision: true)
+    desc 'provision [stage] [--specialize] [--rollback] [--recipe] [--reboot] [--new-host]', 'Provision system'
+    method_options specialize: false, rollback: false, recipe: :string, reboot: false, new_host: false
+    def provision(stage)
+      raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
+      do_provision(stage, :provision)
     end
 
-    desc 'specialize [stage] [--new-host] [--recipe]', 'Specialize provisioning'
-    method_options new_host: false, recipe: :string
-      def specialize(stage)
-      do_provision(stage, specialize: true)
-    end
-
-    desc 'rollback [stage] [--specialize]', 'Rollback provisioned recipe'
-    method_options specialize: false, recipe: :required
-      def rollback(stage)
-      do_provision(stage, rollback: true)
-    end
-
-    desc 'compile [stage] [--role="system"] [--system] [--specialize] [--rollback] [--reboot] [--recipe]', 'Compile provisioning'
-    method_options role: 'system', system: false, specialize: false, rollback: false, reboot: false, recipe: :string
+    desc 'compile [stage] [--deploy] [--system] [--specialize] [--rollback] [--recipe] [--reboot]', 'Compile provisioning'
+    method_options deploy: false, system: false, specialize: false, rollback: false, recipe: :string, reboot: false
     def compile(stage)
-      command_options = options.role == 'system' ? { provision: true } : { deploy: true }
-      do_compile(stage, **command_options)
+      do_compile(stage, options.deploy ? :deploy : :provision)
     end
 
     desc 'download [stage] [--defaults]', 'Dowload the file meant to be used as .ref template'
@@ -86,15 +72,23 @@ module Sunzistrano
         File.expand_path('../../', __FILE__)
       end
 
-      def do_provision(stage, **command_options)
-        do_compile(stage, **command_options)
+      def do_bash(stage, script)
+        with_context(stage, :deploy) do
+          # TODO run_script
+        end
+      end
+
+      def do_provision(stage, role, **command_options)
+        do_compile(stage, role, **command_options)
         run_role_cmd
       end
 
-      def do_compile(stage, **command_options)
-        with_context(stage, **command_options) do
+      def do_compile(stage, role, **command_options)
+        with_context(stage, role, **command_options) do
           copy_files
+          build_helpers
           build_role
+          build_scripts
         end
       end
 
@@ -103,9 +97,7 @@ module Sunzistrano
           path = sun.path
           ref = Setting.rails_root.join(CONFIG_PATH, "files/#{path.delete_prefix('/')}.ref")
           FileUtils.mkdir_p File.dirname(ref)
-          if sun.defaults
-            path = Sunzistrano.owner_path :defaults_dir, path.tr('/', '~')
-          end
+          path = Sunzistrano.owner_path :defaults_dir, path.tr('/', '~') if sun.defaults
           unless system download_cmd(path, ref)
             raise "Cannot transfer [#{path}] to [#{ref}]"
           end
@@ -118,16 +110,69 @@ module Sunzistrano
         end
       end
 
-      def with_context(stage, **command_options)
+      def with_context(stage, role = nil, **command_options)
         env, app = stage.split('-', 2)
         Setting.with(env: env, app: app) do
-          @sun = Sunzistrano::Context.new(**options.symbolize_keys, **command_options)
+          @sun = Sunzistrano::Context.new(role, **options.symbolize_keys, **command_options)
           yield
         end
       end
 
+      def build_scripts
+        script = %i(before after).map do |hook|
+          [hook, copy_hook("script_#{hook}.sh")]
+        end.to_h
+        used = Set.new
+        (sun.scripts || []).each do |file|
+          used << (script_path = bash_path("scripts/#{file}.sh"))
+          script[:code] = File.binread(script_path)
+          content = script.values_at(:before, :code, :after).join("\n")
+          create_file script_path, content, force: true, verbose: sun.debug
+        end
+        remove_all_unused :script, used
+      end
+
+      def build_role
+        role = %i(before after).map do |hook|
+          [hook, copy_hook("role_#{hook}.sh")]
+        end.to_h
+        used = Set.new
+        role[:recipes] = File.binread(bash_path("roles/#{sun.role}.sh")).strip_heredoc
+        role[:recipes].each_line(chomp: true) do |line|
+          next unless (recipe = line.match(/^ *sun\.source_recipe\s*["'\s]([^"'\s]+)/)&.captures&.first)
+          file = bash_path("recipes/#{recipe}")
+          used << "#{file}.sh"
+          used << "#{file}-specialize.sh"
+          used << "#{file}-rollback.sh"
+        end
+        content = role.values_at(:before, :recipes, :after).join("\n")
+        create_file bash_path('role.sh'), content, force: true, verbose: sun.debug
+        remove_all_unused :recipe, used
+        %i(before after ensure).each do |hook|
+          next unless (files = sun["role_#{hook}"]).present?
+          content = files.map{ |file| "source roles/#{file}.sh" }.join("\n")
+          create_file bash_path("roles/#{sun.role}_#{hook}.sh"), content, force: true, verbose: sun.debug
+        end
+      end
+
+      def remove_all_unused(type, used)
+        Dir[bash_path("#{type}s/**/*.sh")].each do |file|
+          remove_file file, verbose: false unless used.include? file
+        end
+        Dir[bash_path("#{type}s/**/*")].select{ |dir| File.directory? dir }.reverse_each do |dir|
+          next unless (Dir.entries(dir) - %w(. ..)).empty?
+          Dir.rmdir(dir)
+        end
+      end
+
+      def build_helpers
+        src = Sunzistrano.root.join(CONFIG_PATH, 'helpers.sh').expand_path
+        dst = bash_path('helpers.sh')
+        template src, dst, force: true, verbose: sun.debug
+      end
+
       def copy_files
-        basenames = "#{CONFIG_PATH}/{files,helpers,recipes,roles}/**/*"
+        basenames = "#{CONFIG_PATH}/{files,helpers,recipes,roles,scripts}/**/*"
         dirnames = [basenames]
         sun.gems.each_value do |root|
           dirnames << root.expand_path.join(basenames).to_s
@@ -138,49 +183,6 @@ module Sunzistrano
         end
         files.each do |file|
           compile_file File.expand_path(file), bash_path(file), basetype(file)
-        end
-      end
-
-      def build_role
-        role = {}
-        role[:recipes] = File.binread(bash_path("roles/#{sun.role}.sh"))
-        role[:helpers] = ([Setting.rails_root] + sun.gems.values).each_with_object([]) do |root, memo|
-          sun.helpers(root).each do |file|
-            memo << "source helpers/#{file}\n"
-          end
-        end.join
-        %i(before after).each do |hook|
-          src = Sunzistrano.root.join(CONFIG_PATH, basename("role_#{hook}.sh")).expand_path
-          dst = bash_path("role_#{hook}.sh")
-          template src, dst, force: true, verbose: sun.debug
-          role[hook] = File.binread(dst)
-          remove_file dst, verbose: false
-        end
-        content = role.values_at(:helpers, :before, :recipes, :after).join("\n")
-        create_file bash_path('role.sh'), content, force: true, verbose: sun.debug
-        remove_unsourced role[:recipes]
-        %i(before after ensure).each do |hook|
-          next unless (files = sun["role_#{hook}"]).present?
-          content = files.map{ |file| "source roles/#{file}.sh" }.join("\n")
-          create_file bash_path("roles/#{sun.role}_#{hook}.sh"), content, force: true, verbose: sun.debug
-        end
-      end
-
-      def remove_unsourced(recipes)
-        sourced = Set.new
-        recipes.each_line(chomp: true) do |line|
-          next unless (recipe = line.match(/^ *sun\.source_recipe\s*["'\s]([^"'\s]+)/)&.captures&.first)
-          file = bash_path("recipes/#{recipe}")
-          sourced << "#{file}.sh"
-          sourced << "#{file}-specialize.sh"
-          sourced << "#{file}-rollback.sh"
-        end
-        Dir[bash_path('recipes/**/*.sh')].each do |file|
-          remove_file file, verbose: false unless sourced.include? file
-        end
-        Dir[bash_path('recipes/**/*')].select{ |dir| File.directory? dir }.reverse_each do |dir|
-          next unless (Dir.entries(dir) - %w(. ..)).empty?
-          Dir.rmdir(dir)
         end
       end
 
@@ -199,6 +201,13 @@ module Sunzistrano
             end
           end
         end
+      end
+
+      def copy_hook(file)
+        src = Sunzistrano.root.join(CONFIG_PATH, basename(file)).expand_path
+        dst = bash_path(file)
+        copy_file src, dst, force: true, verbose: sun.debug
+        "source #{file}\n"
       end
 
       def run_role_cmd

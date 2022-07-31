@@ -1,4 +1,4 @@
-web:
+deploy:
   recipes:
     - deploy/whenever/config-system:
         before: deploy/update

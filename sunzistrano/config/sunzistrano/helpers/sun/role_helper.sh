@@ -51,11 +51,4 @@ sun.setup_attributes() {
   <% sun.attributes.each do |attribute, value| -%>
     export <%= attribute %>=<%= value.respond_to?(:call) ? value.call : value %>
   <% end -%>
-  export deploy=${deploy:-false}
-  export system=${system:-false}
-  export provision=${provision:-false}
-  export specialize=${specialize:-false}
-  export rollback=${rollback:-false}
-  export debug=${debug:-false}
-  export reboot=${reboot:-false}
 }

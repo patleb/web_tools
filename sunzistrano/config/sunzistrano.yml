@@ -1,4 +1,8 @@
-web:
+deploy:
   role_before:
-    - web/load_defaults
-    - web/git_wrapper
+    - deploy/load_defaults
+    - deploy/git_wrapper
+  role_ensure:
+    - deploy/git_cleanup
+  scripts:
+    - version

@@ -5,12 +5,12 @@ module Sunzistrano
     attr_reader :sun
     attr_reader :gems
 
-    def initialize(role: 'system', **options)
+    def initialize(role, **options)
       validate_config_presence!
-      @role, @env, @app = role, Setting.rails_env, Setting.rails_app
+      @role, @env, @app = role.to_s, Setting.rails_env, Setting.rails_app
       @sun = self
       @gems = {}
-      context = Setting.all.merge(extract_yml(Setting.rails_root)).merge! options
+      context = Setting.all.merge(extract_yml(Setting.rails_root)).merge!(options).merge!(role => true)
       require_overrides
       @gems = @gems.to_a.reverse.to_h
       @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
@@ -23,7 +23,7 @@ module Sunzistrano
         repo_url: repo_url,
         branch: branch,
         revision: revision,
-        server_cluster: !!server_cluster,
+        server_cluster: server_cluster.to_b,
         owner_public_key: owner_public_key,
         owner_private_key: owner_private_key&.escape_newlines,
         stage: stage,
@@ -41,6 +41,13 @@ module Sunzistrano
         manifest_dir: provision_path(MANIFEST_DIR),
         manifest_log: provision_path(MANIFEST_LOG),
         metadata_dir: provision_path(METADATA_DIR),
+        deploy: deploy.to_b,
+        system: self[:system].to_b,
+        provision: provision.to_b,
+        specialize: specialize.to_b,
+        rollback: rollback.to_b,
+        debug: debug.to_b,
+        reboot: reboot.to_b,
       )
     end
 
@@ -132,6 +139,14 @@ module Sunzistrano
 
     def linked_files
       self[:linked_files].presence && "'#{self[:linked_files].join(' ')}'" || "''"
+    end
+
+    def role_helpers
+      ([Setting.rails_root] + gems.values).each do |root|
+        helpers(root).each do |file|
+          yield "helpers/#{file}"
+        end
+      end
     end
 
     def helpers(root)

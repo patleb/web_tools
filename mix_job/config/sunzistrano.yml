@@ -1,4 +1,4 @@
-web:
+deploy:
   recipes:
     - deploy/job/config-system:
         before: deploy/published

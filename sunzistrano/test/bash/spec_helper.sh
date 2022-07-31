@@ -26,7 +26,7 @@ sun.test_setup() {
   HOME_WAS=$HOME
   HOME=$HOME_STUB
   stage=test-local_app
-  role=${1:-system}
+  role=${1:-provision}
   env=test
   app=local_app
   repo_url="$TEST/fixtures/files/local_app.git"
@@ -44,16 +44,14 @@ sun.test_setup() {
   specialize=${specialize:-false}
   rollback=${rollback:-false}
   debug=${debug:-false}
-  sun.start_role
-  source 'sunzistrano/config/sunzistrano/roles/web/load_defaults.sh'
-  source 'sunzistrano/config/sunzistrano/roles/web/git_wrapper.sh'
+  sun.start_provision
+  source 'sunzistrano/config/sunzistrano/roles/deploy/load_defaults.sh'
+  source 'sunzistrano/config/sunzistrano/roles/deploy/git_wrapper.sh'
 }
 
 sun.test_teardown() {
   cd $ROOT
-  if [[ -f $GIT_SSH ]]; then
-    rm -f $GIT_SSH
-  fi
+  source 'sunzistrano/config/sunzistrano/roles/deploy/git_cleanup.sh'
   if [[ "$HOME" == "$HOME_STUB" ]]; then
     rm -rf "${defaults_dir}"
     rm -rf "${manifest_dir}"

@@ -7,12 +7,12 @@ gems:
 shared:
   debug: false
 
-system:
+provision:
   recipes:
     # - app_packages
     - reboot
 
-web:
+deploy:
   recipes:
     - deploy/add_gitignored_files:
         before: deploy/bundler

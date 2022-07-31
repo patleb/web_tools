@@ -9,7 +9,7 @@ class Sunzistrano::CliTest < Minitest::Spec
   end
 
   it 'should compile' do
-    Sunzistrano::Cli.start(['compile', 'test:app', '--role=web'])
+    Sunzistrano::Cli.start(['compile', 'test:app', '--deploy'])
     FileUtils.rm_rf "#{Sunzistrano::BASH_DIR}/test-app"
     Setting.rollback!
   end
