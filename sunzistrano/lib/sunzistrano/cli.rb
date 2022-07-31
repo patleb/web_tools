@@ -123,7 +123,7 @@ module Sunzistrano
         copy_hooks :script
         script = {
           before: <<~SH,
-            PWD_WAS=$(pwd)
+            export PWD_WAS=$(pwd)
             cd "#{bash_dir_remote}"
             source script_before.sh
           SH
