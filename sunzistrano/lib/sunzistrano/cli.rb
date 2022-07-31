@@ -73,8 +73,8 @@ module Sunzistrano
       end
 
       def do_bash(stage, script)
-        with_context(stage, :deploy) do
-          # TODO run_script
+        with_context(stage, :deploy, script: script) do
+          run_script_cmd
         end
       end
 
@@ -216,9 +216,15 @@ module Sunzistrano
         end
       end
 
+      def run_script_cmd
+        Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
+          run_command :script_cmd, server
+        end
+      end
+
       def run_role_cmd
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
-          run_role_cmd_for(server)
+          run_command :role_cmd, server
         end
         run_reset_known_hosts if sun.new_host
         FileUtils.rm_rf(bash_dir) unless sun.debug
@@ -235,8 +241,8 @@ module Sunzistrano
         end
       end
 
-      def run_role_cmd_for(server)
-        Open3.popen3(role_cmd(server)) do |stdin, stdout, stderr|
+      def run_command(cmd_name, server)
+        Open3.popen3(send(cmd_name, server)) do |stdin, stdout, stderr|
           stdin.close
           t = Thread.new do
             while (line = stderr.gets)
@@ -272,6 +278,23 @@ module Sunzistrano
           cd #{bash_dir_remote} &&
           tar xz &&
           #{'sudo' if sun.sudo} bash -e -u role.sh |& tee -a #{bash_log_remote}
+        CMD
+      end
+
+      def script_cmd(server)
+        <<~CMD.squish
+          #{ssh_add_vagrant}
+          ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR
+          #{"-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?}
+          #{sun.ssh_user}@#{server}
+          '#{script_remote_cmd}'
+        CMD
+      end
+
+      def script_remote_cmd
+        <<~CMD.squish
+          cd #{bash_dir_remote} &&
+          #{'sudo' if sun.sudo} bash -e -u scripts/#{sun.script.sub(/\.sh$/, '')}.sh |& tee -a #{bash_log_remote}
         CMD
       end
 

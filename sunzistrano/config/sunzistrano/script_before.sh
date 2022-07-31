@@ -1,5 +1,6 @@
 source helpers.sh
 
+sun.setup_commands
 sun.setup_system_globals
 sun.setup_attributes
 
