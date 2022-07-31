@@ -34,6 +34,7 @@ module Sunzistrano
     desc 'bash [stage] [script] [--sudo] [--nohup]', 'Execute a bash script'
     method_options sudo: false, nohup: false
     def bash(stage, script)
+      # TODO option for printing only after completion --> grouped by server
       do_bash(stage, script)
     end
 
@@ -121,7 +122,11 @@ module Sunzistrano
       def build_scripts
         copy_hooks :script
         script = {
-          before: "source script_before.sh\n",
+          before: <<~SH,
+            PWD_WAS=$(pwd)
+            cd "#{bash_dir_remote}"
+            source script_before.sh
+          SH
           after: "source script_after.sh\n",
         }
         used = Set.new
