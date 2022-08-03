@@ -8,4 +8,4 @@ packages:
   - 'resolve-url-loader'
   - 'sass-resources-loader'
   - 'vue-loader'
-  - 'vue-template-compiler'
+  - '@vue/compiler-sfc'

@@ -16,17 +16,14 @@ case 'development':
   environment.config.merge({ devtool: 'eval-source-map' })
   break
 case 'production':
-  // environment.config.merge({ devtool: false })
+  environment.config.merge({ devtool: false })
   break
 }
 
 environment.plugins.prepend('VueLoaderPlugin', new VueLoaderPlugin())
 environment.plugins.prepend('Provide', new webpack.ProvidePlugin({
-  $:       'jquery',
-  jQuery:  'jquery',
-  Vue:     ['vue/dist/vue.runtime.esm.js',   'default'],
-  Vuex:    ['vuex/dist/vuex.esm.js',         'default'],
-  VueI18n: ['vue-i18n/dist/vue-i18n.esm.js', 'default'],
+  $:      'jquery',
+  jQuery: 'jquery',
 }))
 environment.loaders.prepend('erb', erb)
 environment.loaders.prepend('vue', vue)

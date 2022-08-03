@@ -1,3 +1,5 @@
+window.Js ||= {}
+
 class Js.Cookie
   @set: (key, value = '') ->
     Cookies.set("js.#{key}", value, secure: (window.location.protocol == 'https:'))
