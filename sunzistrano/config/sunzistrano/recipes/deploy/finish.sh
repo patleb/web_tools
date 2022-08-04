@@ -1,14 +1,7 @@
 desc 'Clean up old releases'
-kept_releases=($(ls -dt ${releases_path}/* | head -n ${keep_releases}))
-releases=($(ls -dt ${releases_path}/*))
-for release in "${releases[@]}"; do
-  remove=true
-  for kept in "${kept_releases[@]}"; do
-    if [[ $release == $kept ]]; then
-      remove=false
-    fi
-  done
-  if [[ $remove == true ]]; then
-    rm -rf $release
-  fi
-done
+kept_releases=$(cat $revision_log | grep deployed | awk '{ print $2; }' | sed "s|^|${releases_path}/|")
+releases=$(ls -dt ${releases_path}/*)
+sun.remove_missing_files "$releases" "$kept_releases $release_path"
+kept_releases=$(ls -dt ${releases_path}/* | head -n ${keep_releases})
+releases=$(ls -dt ${releases_path}/*)
+sun.remove_missing_files "$releases" "$kept_releases"

@@ -35,3 +35,19 @@ sun.include() {
     source "$1"
   fi
 }
+
+sun.remove_missing_files() {
+  local all_files=($1)
+  local kept_files=($2)
+  for file in "${all_files[@]}"; do
+    local remove=true
+    for kept in "${kept_files[@]}"; do
+      if [[ $file == $kept ]]; then
+        remove=false
+      fi
+    done
+    if [[ $remove == true ]]; then
+      rm -rf $file
+    fi
+  done
+}

@@ -60,7 +60,7 @@ sun.test_teardown() {
   fi
   if [[ $deploy_path == "$HOME/test-local_app" ]]; then
     rm -rf $deploy_path
-    rm "$HOME/.gitconfig"
+    rm -f "$HOME/.gitconfig"
   fi
   HOME=$HOME_WAS
 }

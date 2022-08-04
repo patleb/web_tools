@@ -53,6 +53,7 @@ teardown() {
   source 'recipes/deploy/start.sh'
   touch $file_503
   touch $file_robots
+  echo '' > $revision_log
   for i in {1..4}; do
     dir_i="$releases_path/$i"
     if [[ -d $dir_i ]]; then
@@ -61,12 +62,15 @@ teardown() {
     mkdir $dir_i
     sleep 0.001
     touch $dir_i
+    if (( $i != 4 )); then
+      echo "deployed $i" >> $revision_log
+    fi
   done
   source 'recipes/deploy/update.sh'
   source 'recipes/deploy/publish.sh'
   run source 'recipes/deploy/finish.sh'
+  assert_dir_exists "$releases_path/2"
   assert_dir_exists "$releases_path/3"
-  assert_dir_exists "$releases_path/4"
   assert_dir_exists "$release_path"
   assert_equal $(ls -d ${releases_path}/* | wc -l) 3
   assert_success
