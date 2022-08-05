@@ -30,6 +30,7 @@ module Sunzistrano
         role: role,
         env: env,
         app: app,
+        root: Setting.rails_root.to_s,
         os_name: os_name,
         os_version: os_version,
         ruby_version: ruby_version,
