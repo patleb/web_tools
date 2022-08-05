@@ -9,5 +9,5 @@ if process.env.NODE_ENV is 'production'
       rescue_string = JSON.stringify(rescue)
       if rescues_caught.exclude(rescue_string)
         rescues_caught.push(rescue_string)
-        Rails.ajax(url: '/_rescues/javascripts', type: 'POST', data_type: 'json', data: { rescues_javascript: rescue })
+        Rails.ajax(url: '/_rescues/javascript', type: 'POST', data_type: 'json', data: { rescues_javascript: rescue })
     Rails.stop_everything(event)

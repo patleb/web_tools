@@ -1,5 +1,5 @@
 module Rescues
-  class JavascriptsController < ActionController::API
+  class JavascriptController < ActionController::API
     include ActionController::RequestForgeryProtection
 
     prepend_before_action :set_format
