@@ -1,6 +1,6 @@
 Setting.class_eval do
   def self.ftp_host_path
-    "/#{rails_app}/#{rails_env}"
+    "/#{app}/#{env}"
   end
 
   def self.geoserver_local_url
