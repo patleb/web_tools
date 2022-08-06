@@ -59,7 +59,7 @@ class Setting
       remove_instance_variable(:@encryptor) if instance_variable_defined? :@encryptor
     end
     @all ||= begin
-      @env, @app, @root = (env || rails_env).to_s, (app || rails_app).to_s, (root || rails_root)
+      @env, @app, @root = (env || self.env).to_s, (app || self.app).to_s, (root || self.root)
       raise 'environment must be specified or configured' unless @env.present?
       @types = {}.with_keyword_access
       @gems = {}
@@ -91,15 +91,15 @@ class Setting
     encryptor.decrypt_and_verify(value.delete_prefix(SECRET).strip).unescape_newlines
   end
 
-  def self.rails_stage
-    "#{rails_env}-#{rails_app}"
+  def self.stage
+    "#{env}-#{app}"
   end
 
-  def self.rails_env?(*names)
-    names.any?{ |name| name.to_sym == rails_env.to_sym }
+  def self.env?(*names)
+    names.any?{ |name| name.to_sym == env.to_sym }
   end
 
-  def self.rails_env
+  def self.env
     case
     when @env                then @env
     when ENV['RAILS_ENV']    then ENV['RAILS_ENV']
@@ -107,11 +107,11 @@ class Setting
     end
   end
 
-  def self.rails_app?(*names)
-    names.any?{ |name| name.to_sym == rails_app.to_sym }
+  def self.app?(*names)
+    names.any?{ |name| name.to_sym == app.to_sym }
   end
 
-  def self.rails_app
+  def self.app
     case
     when @app                then @app
     when ENV['RAILS_APP']    then ENV['RAILS_APP']
@@ -120,7 +120,7 @@ class Setting
     end
   end
 
-  def self.rails_root
+  def self.root
     case
     when @root                then @root
     when ENV['RAILS_ROOT']    then Pathname.new(ENV['RAILS_ROOT']).expand_path
@@ -199,7 +199,7 @@ class Setting
 
     case type
     when :database
-      yml = YAML.safe_load(gsub_rails_secrets(path.read), aliases: true)
+      yml = YAML.safe_load(gsub_secrets(path.read), aliases: true)
     when :settings
       yml = YAML.safe_load(path.read)
       validate_version! yml['lock']
@@ -223,7 +223,7 @@ class Setting
     (gems_yml || {}).union!(env_yml)
   end
 
-  def self.gsub_rails_secrets(content)
+  def self.gsub_secrets(content)
     content.gsub(/<%=\s*Rails\.application\.secrets\.([a-zA-Z_]\w+)\s*%>/) do
       @secrets[$1]
     end

@@ -1,14 +1,14 @@
 # TODO rotate :secret_key_base
 namespace :setting do
   task :context => :environment do
-    puts "{ env: #{Setting.rails_env}, app: #{Setting.rails_app} }"
+    puts "{ env: #{Setting.env}, app: #{Setting.app} }"
   end
 
   task :dump, [:env, :app, :file] do |t, args|
     raise 'argument [:file] must be specified' unless (file = args[:file]).present?
     with_stage! args do
       Pathname.new(file).expand_path.write(Setting.to_yaml)
-      puts "[#{Setting.rails_app}_#{Setting.rails_env}] settings written to file [#{file}]"
+      puts "[#{Setting.app}_#{Setting.env}] settings written to file [#{file}]"
     end
   end
 

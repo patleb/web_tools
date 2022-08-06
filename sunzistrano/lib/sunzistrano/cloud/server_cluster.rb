@@ -6,7 +6,7 @@ module Cloud::ServerCluster
   end
 
   def server_master
-    @server_master ||= if Setting.rails_env? :development, :test
+    @server_master ||= if Setting.env? :development, :test
       '127.0.0.1'
     elsif Setting[:server_master_ip].present?
       Setting[:server_master_ip]
@@ -35,7 +35,7 @@ module Cloud::ServerCluster
 
   # TODO run_locally --> so Openstack credentials don't need to be shared
   def server_cluster_list
-    @server_cluster_list ||= if Setting.rails_env? :development, :test
+    @server_cluster_list ||= if Setting.env? :development, :test
       {}
     else
       case Setting[:server_cluster_provider]

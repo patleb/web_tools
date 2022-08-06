@@ -7,10 +7,10 @@ module Sunzistrano
 
     def initialize(role, **options)
       validate_config_presence!
-      @role, @env, @app = role.to_s, Setting.rails_env, Setting.rails_app
+      @role, @env, @app = role.to_s, Setting.env, Setting.app
       @sun = self
       @gems = {}
-      context = Setting.all.merge(extract_yml(Setting.rails_root)).merge!(options).merge!(role => true)
+      context = Setting.all.merge(extract_yml(Setting.root)).merge!(options).merge!(role => true)
       require_overrides
       @gems = @gems.to_a.reverse.to_h
       @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
@@ -30,7 +30,7 @@ module Sunzistrano
         role: role,
         env: env,
         app: app,
-        root: Setting.rails_root.to_s,
+        root: Setting.root.to_s,
         os_name: os_name,
         os_version: os_version,
         ruby_version: ruby_version,
@@ -143,7 +143,7 @@ module Sunzistrano
     end
 
     def role_helpers
-      ([Setting.rails_root] + gems.values).each do |root|
+      ([Setting.root] + gems.values).each do |root|
         helpers(root).each do |file|
           yield "helpers/#{file}"
         end
@@ -263,7 +263,7 @@ module Sunzistrano
     end
 
     def require_overrides
-      (@gems.values << Setting.rails_root).each do |root|
+      (@gems.values << Setting.root).each do |root|
         path = root.join('config/sunzistrano.rb')
         require path.to_s if path.exist?
       end
@@ -276,7 +276,7 @@ module Sunzistrano
     end
 
     def validate_config_presence!
-      raise 'You must have a sunzistrano.yml' unless Setting.rails_root.join(CONFIG_YML).exist?
+      raise 'You must have a sunzistrano.yml' unless Setting.root.join(CONFIG_YML).exist?
     end
   end
 end

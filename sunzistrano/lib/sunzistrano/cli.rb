@@ -13,7 +13,7 @@ module Sunzistrano
       const_name = dir.to_s.upcase
       name = const_name.end_with?('_DIR') && const_defined?(const_name) ? "#{const_get(const_name)}/#{name}" : dir
     end
-    "/home/#{Setting[:owner_name]}/#{Setting.rails_stage}/#{name}"
+    "/home/#{Setting[:owner_name]}/#{Setting.stage}/#{name}"
   end
 
   class Cli < Thor
@@ -96,7 +96,7 @@ module Sunzistrano
       def do_download(stage)
         with_context(stage) do
           path = sun.path
-          ref = Setting.rails_root.join(CONFIG_PATH, "files/#{path.delete_prefix('/')}.ref")
+          ref = Setting.root.join(CONFIG_PATH, "files/#{path.delete_prefix('/')}.ref")
           FileUtils.mkdir_p File.dirname(ref)
           path = Sunzistrano.owner_path :defaults_dir, path.tr('/', '~') if sun.defaults
           unless system download_cmd(path, ref)
