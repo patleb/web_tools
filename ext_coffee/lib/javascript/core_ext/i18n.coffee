@@ -1,15 +1,19 @@
 class window.I18n
   @locale: 'en'
+  @fallback: 'en'
   @translations: {}
 
   @t: (key, options = {}) ->
     escape = options.delete('escape') ? true
     locale = options.delete('locale') ? @locale
-    if (string = @translations[locale]?.dig(key))?
+    fallback = options.delete('fallback') ? @fallback
+    result = @translations[locale]?.dig(key)
+    result ?= @translations[fallback]?.dig(key) unless locale is fallback
+    if result?.is_a String
       for name, value of options
-        string = string.replace("%{#{name}}", value)
-      string = string.html_safe?(true) unless escape
-    string ? key.gsub('.', ' ').humanize()
+        result = result.replace("%{#{name}}", value)
+      result = result.html_safe?(true) unless escape
+    result ? key.gsub('.', ' ').humanize()
 
   @with_locale: (locale, callback) ->
     locale_was = @locale

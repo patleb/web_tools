@@ -9,7 +9,8 @@ describe('I18n', () => {
         var: 'Hello %{name}!'
       },
       en: {
-        name: 'The name'
+        name: 'The name',
+        fall: 'back',
       },
     }
     dom.setup_document(fixture.html('i18n', { root: 'ext_coffee/test/fixtures/files/core_ext' }))
@@ -40,5 +41,9 @@ describe('I18n', () => {
     I18n.with_locale('en', () => {
       assert.equal('The name', I18n.t('name'))
     })
+  })
+
+  it('should fallback to en', () => {
+    assert.equal('back', I18n.t('fall'))
   })
 })
