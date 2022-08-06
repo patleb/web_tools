@@ -25,16 +25,9 @@ module Sunzistrano
       true
     end
 
-    desc 'rake [stage] [task] [--sudo] [--nohup]', 'Execute a rake task'
-    method_options sudo: false, nohup: false
-    def rake(stage, task)
-      # TODO verbose if nohup (RAKE_OUTPUT=true)
-    end
-
     desc 'bash [stage] [script] [--sudo] [--nohup]', 'Execute a bash script'
     method_options sudo: false, nohup: false
     def bash(stage, script)
-      # TODO option for printing only after completion --> grouped by server
       do_bash(stage, script)
     end
 
@@ -75,7 +68,7 @@ module Sunzistrano
 
       def do_bash(stage, script)
         with_context(stage, :deploy, script: script) do
-          run_script_cmd
+          run_job_cmd :bash
         end
       end
 
@@ -99,7 +92,7 @@ module Sunzistrano
           ref = Setting.root.join(CONFIG_PATH, "files/#{path.delete_prefix('/')}.ref")
           FileUtils.mkdir_p File.dirname(ref)
           path = Sunzistrano.owner_path :defaults_dir, path.tr('/', '~') if sun.defaults
-          unless system download_cmd(path, ref)
+          unless run_download_cmd(path, ref)
             raise "Cannot transfer [#{path}] to [#{ref}]"
           end
         end
@@ -216,9 +209,10 @@ module Sunzistrano
         end
       end
 
-      def run_script_cmd
+      def run_job_cmd(type)
+        raise 'run_job_cmd type cannot be "role"' if type.to_sym == :role
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
-          run_command :script_cmd, server
+          run_command :job_cmd, type, server
         end
       end
 
@@ -228,6 +222,14 @@ module Sunzistrano
         end
         run_reset_known_hosts if sun.new_host
         FileUtils.rm_rf(bash_dir) unless sun.debug
+      end
+
+      def run_download_cmd(path, ref)
+        system <<-SH.squish
+          #{ssh_add_vagrant} rsync --rsync-path='sudo rsync' -azvh -e
+          "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR"
+          #{sun.ssh_user}@#{sun.server_host}:#{path} #{ref}
+        SH
       end
 
       def run_reset_known_hosts
@@ -260,61 +262,53 @@ module Sunzistrano
         end
       end
 
+      def job_cmd(type, server)
+        <<-SH.squish
+          #{ssh_add_vagrant}
+          ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR
+          #{"-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?}
+          #{sun.ssh_user}@#{server}
+          '#{send "#{type}_remote_cmd"}'
+        SH
+      end
+
+      def bash_remote_cmd
+        <<-SH.squish
+          cd #{bash_dir_remote} &&
+          #{'sudo' if sun.sudo} bash -e -u scripts/#{sun.script.gsub(/(^scripts\/|\.sh$)/, '')}.sh |&
+          tee -a #{bash_log_remote}
+        SH
+      end
+
       def role_cmd(server)
         no_strict_host_key_checking = "-o 'StrictHostKeyChecking no'" if sun.new_host
-        <<~CMD.squish
+        <<-SH.squish
           #{ssh_add_vagrant} cd #{bash_dir} && tar cz . |
           ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} #{no_strict_host_key_checking} -o LogLevel=ERROR
           #{"-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?}
           #{sun.ssh_user}@#{server}
           '#{role_remote_cmd}'
-        CMD
+        SH
       end
 
       def role_remote_cmd
-        <<~CMD.squish
+        <<-SH.squish
           rm -rf #{bash_dir_remote} &&
           mkdir -p #{bash_dir_remote} &&
           cd #{bash_dir_remote} &&
           tar xz &&
           #{'sudo' if sun.sudo} bash -e -u role.sh |&
           tee -a #{bash_log_remote}
-        CMD
-      end
-
-      def script_cmd(server)
-        <<~CMD.squish
-          #{ssh_add_vagrant}
-          ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR
-          #{"-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?}
-          #{sun.ssh_user}@#{server}
-          '#{script_remote_cmd}'
-        CMD
-      end
-
-      def script_remote_cmd
-        <<~CMD.squish
-          cd #{bash_dir_remote} &&
-          #{'sudo' if sun.sudo} bash -e -u scripts/#{sun.script.gsub(/(^scripts\/|\.sh$)/, '')}.sh |&
-          tee -a #{bash_log_remote}
-        CMD
-      end
-
-      def download_cmd(path, ref)
-        <<~CMD.squish
-          #{ssh_add_vagrant} rsync --rsync-path='sudo rsync' -azvh -e
-          "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR"
-          #{sun.ssh_user}@#{sun.server_host}:#{path} #{ref}
-        CMD
+        SH
       end
 
       def ssh_add_vagrant
-        <<~CMD.squish if sun.env.vagrant?
+        <<-SH.squish if sun.env.vagrant?
           if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then
             eval $(ssh-agent);
           fi
           && ssh-add .vagrant/private_key 2> /dev/null &&
-        CMD
+        SH
       end
 
       def copy?(file, others)
@@ -350,3 +344,5 @@ module Sunzistrano
     end
   end
 end
+
+load 'Sunfile' if File.exist? 'Sunfile'
