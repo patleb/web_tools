@@ -121,42 +121,36 @@ module Sunzistrano
 
       def build_scripts
         copy_hooks :script
-        script = {
-          before: <<~SH,
-            export PWD_WAS=$(pwd)
-            cd "#{bash_dir_remote}"
-            source script_before.sh
-          SH
-          after: "source script_after.sh\n",
-        }
         used = Set.new
         (sun.scripts || []).each do |file|
           used << (dst = bash_path("scripts/#{file}.sh"))
-          script[:name] = "export script=#{file}"
-          script[:code] = File.binread(dst)
-          content = script.values_at(:name, :before, :code, :after).join("\n")
-          create_file dst, content, force: true, verbose: sun.debug
+          create_file dst, <<~SH, force: true, verbose: sun.debug
+            export script=#{file}
+            export PWD_WAS=$(pwd)
+            cd "#{bash_dir_remote}"
+            source script_before.sh
+            \n#{File.read(dst)}
+            source script_after.sh
+          SH
         end
         remove_all_unused :script, used
       end
 
       def build_role
         copy_hooks :role
-        role = {
-          before: "source role_before.sh\n",
-          recipes: File.binread(bash_path("roles/#{sun.role}.sh")).strip_heredoc,
-          after: "source role_after.sh\n"
-        }
         used = Set.new
-        role[:recipes].each_line(chomp: true) do |line|
+        File.foreach(bash_path("roles/#{sun.role}.sh")) do |line|
           next unless (recipe = line.match(/^ *sun\.source_recipe\s*["'\s]([^"'\s]+)/)&.captures&.first)
           file = bash_path("recipes/#{recipe}")
           used << "#{file}.sh"
           used << "#{file}-specialize.sh"
           used << "#{file}-rollback.sh"
         end
-        content = role.values_at(:before, :recipes, :after).join("\n")
-        create_file bash_path('role.sh'), content, force: true, verbose: sun.debug
+        create_file bash_path('role.sh'), <<~SH, force: true, verbose: sun.debug
+          source role_before.sh
+          source roles/#{sun.role}.sh
+          source role_after.sh
+        SH
         remove_all_unused :recipe, used
         %i(before after ensure).each do |hook|
           next unless (files = sun["role_#{hook}"]).present?
@@ -335,7 +329,7 @@ module Sunzistrano
       end
 
       def bash_dir
-        @bash_dir ||= "#{BASH_DIR}/#{sun.provision_dir}"
+        @bash_dir ||= [BASH_DIR, sun.revision, sun.stage].compact.join('/')
       end
 
       def bash_dir_remote
