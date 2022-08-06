@@ -69,11 +69,11 @@ module Sunzistrano
     end
 
     def sudo
-      has_key?(:sudo) ? self[:sudo] : !deploy
+      has_key?(:sudo) ? self[:sudo] : !revision
     end
 
     def ssh_user
-      self[:ssh_user] || (deploy ? 'deployer' : owner_name)
+      self[:ssh_user] || (revision ? 'deployer' : owner_name)
     end
 
     def repo_url
