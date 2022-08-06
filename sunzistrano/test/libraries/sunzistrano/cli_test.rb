@@ -10,7 +10,9 @@ class Sunzistrano::CliTest < Minitest::Spec
 
   it 'should compile' do
     Sunzistrano::Cli.start(['compile', 'test-app', '--deploy'])
-    FileUtils.rm_rf "#{Sunzistrano::BASH_DIR}/test-app"
+    revision = `git rev-parse origin/master`.strip
+    FileUtils.rm_rf "#{Sunzistrano::BASH_DIR}/#{revision}/test-app"
+    FileUtils.rmdir "#{Sunzistrano::BASH_DIR}/#{revision}" rescue nil
     Setting.rollback!
   end
 end
