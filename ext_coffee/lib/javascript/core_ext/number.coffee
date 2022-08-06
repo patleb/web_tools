@@ -1,3 +1,11 @@
+Number.define_singleton_methods
+  with_decimals: (method, value, precision) ->
+    string = value.toString()
+    if (string.split('.')[1]?.length ? parseInt(string.split('e')[1] or 0)) is precision
+      return value.valueOf()
+    modifier = 10 ** precision
+    Math[method](value * modifier * (1 + Number.EPSILON)) / modifier
+
 Number.override_methods
   blank: ->
     isNaN(this)
@@ -41,14 +49,17 @@ Number.define_methods
   odd: ->
     Math.abs(this % 2) is 1
 
-  ceil: ->
-    Math.ceil(this)
+  ceil: (precision = 0) ->
+    Number.with_decimals 'ceil', this, precision
 
-  floor: ->
-    Math.floor(this)
+  floor: (precision = 0) ->
+    Number.with_decimals 'floor', this, precision
 
-  round: ->
-    Math.round(this)
+  round: (precision = 0) ->
+    Number.with_decimals 'round', this, precision
+
+  trunc: (precision = 0) ->
+    Number.with_decimals 'trunc', this, precision
 
   html_safe: ->
     true
