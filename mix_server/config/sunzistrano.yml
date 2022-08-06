@@ -68,6 +68,7 @@ deploy:
         after: deploy/update
     - deploy/assets:
         after: deploy/bundler
+        if: 'sun.passenger'
     - deploy/migrate:
         before: deploy/updated
     - deploy/nginx/reload-system:
