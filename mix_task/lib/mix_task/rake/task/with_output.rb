@@ -9,7 +9,7 @@ module Rake::Task::WithOutput
 
   def puts_started(args)
     Log.task(name, args: args.to_h.merge(argv: ARGV.drop(1).except('--')).reject{ |_, v| v.blank? })
-    puts "[#{Time.current.utc}]#{MixTask::STARTED}[#{Process.pid}] #{name}".blue
+    puts "[#{Time.current.utc}]#{MixTask::STARTED}[#{Process.pid}] #{name}".cyan
   end
 
   def puts_success(total)
