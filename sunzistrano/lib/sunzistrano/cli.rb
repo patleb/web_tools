@@ -29,8 +29,8 @@ module Sunzistrano
       true
     end
 
-    desc 'bash [stage] [script] [--sudo] [--nohup]', 'Execute a bash script'
-    method_options sudo: false, nohup: false
+    desc 'bash [stage] [script] [--sudo]', 'Execute a bash script'
+    method_options sudo: false
     def bash(stage, script)
       do_bash(stage, script)
     end
@@ -158,7 +158,7 @@ module Sunzistrano
         end
         Dir[bash_path("#{type}s/**/*")].select{ |dir| File.directory? dir }.reverse_each do |dir|
           next unless (Dir.entries(dir) - %w(. ..)).empty?
-          Dir.rmdir(dir)
+          FileUtils.rmdir(dir)
         end
       end
 
@@ -221,7 +221,10 @@ module Sunzistrano
           run_command :role_cmd, server
         end
         run_reset_known_hosts if sun.new_host
-        FileUtils.rm_rf(bash_dir) unless sun.debug
+        unless sun.debug
+          FileUtils.rm_rf(bash_dir)
+          FileUtils.rmdir(File.dirname(bash_dir)) if sun.revision
+        end
       end
 
       def run_download_cmd(path, ref)
@@ -275,7 +278,7 @@ module Sunzistrano
       def bash_remote_cmd
         <<-SH.squish
           cd #{bash_dir_remote} &&
-          #{'sudo' if sun.sudo} bash -e -u scripts/#{sun.script.gsub(/(^scripts\/|\.sh$)/, '')}.sh |&
+          #{'sudo' if sun.sudo} bash -e -u scripts/#{sun.script}.sh |&
           tee -a #{bash_log_remote}
         SH
       end
