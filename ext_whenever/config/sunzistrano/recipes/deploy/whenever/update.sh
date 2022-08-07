@@ -1,2 +1,2 @@
 desc "Update application's crontab entries using Whenever"
-sun.whenever_update
+source 'scripts/whenever/update.sh'

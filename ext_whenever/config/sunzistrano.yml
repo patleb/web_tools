@@ -4,5 +4,8 @@ deploy:
         before: deploy/update
     - deploy/whenever/update:
         before: deploy/published
+  scripts:
+    - whenever/update
+    - whenever/clear
   linked_dirs:
     - tmp/locks
