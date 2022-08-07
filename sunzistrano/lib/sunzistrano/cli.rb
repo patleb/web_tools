@@ -303,9 +303,9 @@ module Sunzistrano
 
       def bash_remote_cmd
         <<-SH.squish
-          cd #{bash_dir_remote} &&
+          cd #{sun.deploy_path :current, BASH_DIR} &&
           #{'sudo' if sun.sudo} bash -e -u scripts/#{sun.script}.sh |&
-          tee -a #{bash_log_remote}
+          tee -a #{sun.deploy_path :current, BASH_LOG}
         SH
       end
 
@@ -322,7 +322,7 @@ module Sunzistrano
         <<-SH.squish
           rm -rf #{bash_dir_remote} && mkdir -p #{bash_dir_remote} && cd #{bash_dir_remote} && tar xz &&
           #{'sudo' if sun.sudo} bash -e -u role.sh |&
-          tee -a #{bash_log_remote}
+          tee -a #{sun.provision_path BASH_LOG}
         SH
       end
 
@@ -360,10 +360,6 @@ module Sunzistrano
 
       def bash_dir_remote
         sun.provision_path BASH_DIR
-      end
-
-      def bash_log_remote
-        sun.provision_path BASH_LOG
       end
 
       def basetype(file)

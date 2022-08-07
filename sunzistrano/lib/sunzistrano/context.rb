@@ -56,12 +56,12 @@ module Sunzistrano
       @table.has_key? name
     end
 
-    def deploy_path(name = nil)
-      "/home/#{ssh_user}/#{stage}/#{name}"
+    def deploy_path(*segments)
+      "/home/#{ssh_user}/#{stage}/#{segments.join('/')}"
     end
 
-    def provision_path(name = nil)
-      "/home/#{ssh_user}/#{provision_dir}/#{name}"
+    def provision_path(*segments)
+      "/home/#{ssh_user}/#{provision_dir}/#{segments.join('/')}"
     end
 
     def provision_dir

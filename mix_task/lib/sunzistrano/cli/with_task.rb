@@ -18,7 +18,7 @@ module Sunzistrano
         rbenv_ruby = "#{Sh.rbenv_export}; #{Sh.rbenv_init};"
         rbenv_sudo = "rbenv sudo #{environment.join(' ')}" if sun.sudo
         context = environment.map{ |value| "export #{value};" }.join(' ') unless sun.sudo
-        path = "cd #{sun.provision_path}"
+        path = "cd #{sun.deploy_path :current};"
         command = "bin/rake #{sun.task}"
         if sun.nohup
           filename = nohup_basename(command)
@@ -29,7 +29,7 @@ module Sunzistrano
         else
           <<-SH.squish
             #{rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command} |&
-            tee -a #{bash_log_remote}
+            tee -a #{sun.deploy_path :current, BASH_LOG}
           SH
         end
       end
