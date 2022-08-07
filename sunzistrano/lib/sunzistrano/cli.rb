@@ -234,7 +234,7 @@ module Sunzistrano
       def run_job_cmd(type)
         raise 'run_job_cmd type cannot be "role"' if type.to_sym == :role
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
-          run_command :job_cmd, type, server
+          run_command :job_cmd, server, type
         end
       end
 
@@ -278,8 +278,8 @@ module Sunzistrano
         end
       end
 
-      def run_command(cmd_name, server)
-        Open3.popen3(send(cmd_name, server)) do |stdin, stdout, stderr|
+      def run_command(cmd_name, server, *args)
+        Open3.popen3(send(cmd_name, server, *args)) do |stdin, stdout, stderr|
           stdin.close
           error = Thread.new do
             while (line = stderr.gets)
@@ -294,7 +294,7 @@ module Sunzistrano
         end
       end
 
-      def job_cmd(type, server)
+      def job_cmd(server, type)
         <<-SH.squish
           #{ssh_add_vagrant}
           #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{send "#{type}_remote_cmd"}'
