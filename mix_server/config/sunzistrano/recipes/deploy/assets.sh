@@ -8,4 +8,4 @@ bin/rake assets:precompile
 desc 'Cleanup expired assets'
 bin/rake assets:clean[${keep_assets}]
 
-cd - > /dev/null
+cd.back

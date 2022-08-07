@@ -1,7 +1,7 @@
 sun.passenger_restart() {
   cd ${release_path}
   rbenv sudo passenger-config restart-app ${deploy_path} --ignore-app-not-running
-  cd - > /dev/null
+  cd.back
 }
 
 sun.nginx_recover() {

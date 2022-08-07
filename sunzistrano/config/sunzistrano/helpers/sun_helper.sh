@@ -1,3 +1,11 @@
+echo.info() {
+  echo "[$(sun.timestamp)] $@"
+}
+
+cd.back() {
+  cd - > /dev/null
+}
+
 sun.start_provision() {
   if [[ -e "${manifest_log}" ]]; then
     echo.info 'Existing provisioning'
@@ -8,10 +16,6 @@ sun.start_provision() {
     mkdir "${metadata_dir}"
     mkdir "${defaults_dir}"
   fi
-}
-
-echo.info() {
-  echo "[$(sun.timestamp)] $@"
 }
 
 sun.timestamp() {

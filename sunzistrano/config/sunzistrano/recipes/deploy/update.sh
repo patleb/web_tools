@@ -27,7 +27,7 @@ desc 'Copy repo to releases'
 mkdir -p "$release_path"
 git archive ${branch} | tar -x -f - -C $release_path
 
-cd - > /dev/null
+cd.back
 
 desc 'Place a REVISION file with the current revision SHA in the current release path'
 echo "${revision}" > "$release_path/REVISION"

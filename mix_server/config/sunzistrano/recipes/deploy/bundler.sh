@@ -14,4 +14,4 @@ else
   bin/bundle install --quiet --jobs ${bundle_jobs}
 fi
 
-cd - > /dev/null
+cd.back

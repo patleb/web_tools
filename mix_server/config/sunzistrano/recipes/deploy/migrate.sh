@@ -3,4 +3,4 @@ cd ${release_path}
 desc 'Runs rake db:migrate'
 bin/rake db:migrate
 
-cd - > /dev/null
+cd.back
