@@ -1,5 +1,21 @@
 desc() {
-  echo.lightgray "$@"
+  echo.lightgray "[$(sun.timestamp)] $@"
+}
+
+echo.started() {
+  echo.cyan "[$(sun.timestamp)] $@"
+}
+
+echo.success() {
+  echo.green "[$(sun.timestamp)] $@"
+}
+
+echo.failure() {
+  echo.red "[$(sun.timestamp)] $@"
+}
+
+echo.warning() {
+  echo.yellow "[$(sun.timestamp)] $@"
 }
 
 echo.red() {

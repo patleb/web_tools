@@ -1,14 +1,17 @@
 sun.start_provision() {
   if [[ -e "${manifest_log}" ]]; then
-    echo "Existing provisioning"
+    echo.info 'Existing provisioning'
   else
-    echo "New provisioning"
+    echo.info 'New provisioning'
     touch "${manifest_log}"
     mkdir "${manifest_dir}"
     mkdir "${metadata_dir}"
     mkdir "${defaults_dir}"
   fi
-  echo "Started at $(sun.timestamp)"
+}
+
+echo.info() {
+  echo "[$(sun.timestamp)] $@"
 }
 
 sun.timestamp() {

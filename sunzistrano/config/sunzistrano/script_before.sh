@@ -13,6 +13,6 @@ if [[ "${debug}" == 'trace' ]]; then
   set -x
 fi
 
-echo.cyan "[$(sun.timestamp)] Script [${script}]"
+echo.started "Script [${script}]"
 
 sun.include "roles/deploy_before.sh"
