@@ -7,6 +7,7 @@ module Sunzistrano
   MANIFEST_DIR = 'sun_manifest'
   MANIFEST_LOG = 'sun_manifest.log'
   METADATA_DIR = 'sun_metadata'
+  RSYNC_OPTIONS = '--archive --compress --partial --inplace --progress --verbose --human-readable' # equivalent to '-azPvh'
 
   def self.owner_path(dir, name = nil)
     if name
@@ -54,10 +55,16 @@ module Sunzistrano
       do_compile(stage, options.deploy ? :deploy : :provision)
     end
 
-    desc 'download [stage] [--defaults]', 'Dowload the file meant to be used as .ref template'
-    method_options defaults: false, path: :required
-      def download(stage)
-      do_download(stage)
+    desc 'download [stage] [--deploy] [--dir] [--ref] [--from-defaults]', 'Download file(s)'
+    method_options deploy: false, dir: :string, ref: false, from_defaults: false, path: :required
+    def download(stage)
+      do_download(stage, options.deploy ? :deploy : :provision)
+    end
+
+    desc 'upload [stage] [--deploy] [--chown] [--chmod]', 'Upload file(s)'
+    method_options deploy: false, chown: :string, chmod: :string, dir: :required, path: :required
+    def upload(stage)
+      do_upload(stage, options.deploy ? :deploy : :provision)
     end
 
     desc 'reset_ssh [stage]', 'Reset ssh known hosts'
@@ -86,14 +93,28 @@ module Sunzistrano
         end
       end
 
-      def do_download(stage)
-        with_context(stage) do
-          path = sun.path
-          ref = Setting.root.join(CONFIG_PATH, "files/#{path.delete_prefix('/')}.ref")
-          FileUtils.mkdir_p File.dirname(ref)
-          path = Sunzistrano.owner_path :defaults_dir, path.tr('/', '~') if sun.defaults
-          unless run_download_cmd(path, ref)
-            raise "Cannot transfer [#{path}] to [#{ref}]"
+      def do_download(stage, role)
+        with_context(stage, role) do
+          src = sun.path
+          if sun.ref
+            dst = Setting.root.join(CONFIG_PATH, "files/#{src.delete_prefix('/')}.ref")
+            dst.parent.mkpath
+            src = Sunzistrano.owner_path :defaults_dir, src.tr('/', '~') if sun.from_defaults
+          else
+            dst = sun.dir.present? ? Pathname.new(sun.dir).expand_path : Setting.root.join(BASH_DIR, 'downloads')
+            dst.mkpath
+          end
+          unless run_download_cmd(src, dst)
+            raise "Cannot transfer [#{src}] to [#{dst}]"
+          end
+        end
+      end
+
+      def do_upload(stage, role)
+        with_context(stage, role) do
+          src, dst = sun.path, sun.dir
+          unless run_upload_cmd(src, dst)
+            raise "Cannot transfer [#{src}] to [#{dst}]"
           end
         end
       end
@@ -227,11 +248,21 @@ module Sunzistrano
         end
       end
 
-      def run_download_cmd(path, ref)
+      def run_download_cmd(src, dst)
         system <<-SH.squish
-          #{ssh_add_vagrant} rsync --rsync-path='sudo rsync' -azvh -e
-          "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR"
-          #{sun.ssh_user}@#{sun.server_host}:#{path} #{ref}
+          #{ssh_add_vagrant}
+          rsync --rsync-path='sudo rsync' #{RSYNC_OPTIONS} -e
+          '#{ssh}' '#{sun.ssh_user}@#{sun.server_host}:#{src}' '#{dst}'
+        SH
+      end
+
+      def run_upload_cmd(src, dst)
+        chown = sun.chown.presence || "#{sun.ssh_user}:#{sun.ssh_user}"
+        chmod = "--chmod='#{sun.chmod}'" if sun.chmod.present?
+        system <<-SH.squish
+          #{ssh_add_vagrant}
+          rsync --rsync-path='sudo rsync' #{RSYNC_OPTIONS} --chown='#{chown}' #{chmod} -e
+          '#{ssh}' '#{src}' '#{sun.ssh_user}@#{sun.server_host}:#{dst}'
         SH
       end
 
@@ -249,29 +280,23 @@ module Sunzistrano
       def run_command(cmd_name, server)
         Open3.popen3(send(cmd_name, server)) do |stdin, stdout, stderr|
           stdin.close
-          t = Thread.new do
+          error = Thread.new do
             while (line = stderr.gets)
-              print "[#{server}] "
-              print line.red
+              print "[#{server}] #{line.red}"
             end
           end
           while (line = stdout.gets)
-            print "[#{server}] "
-            print line
+            print "[#{server}] #{line}"
           end
-          print "[#{server}] "
-          puts Time.now.to_s.yellow
-          t.join
+          puts "[#{server}] #{Time.now.to_s.yellow}"
+          error.join
         end
       end
 
       def job_cmd(type, server)
         <<-SH.squish
           #{ssh_add_vagrant}
-          ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR
-          #{"-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?}
-          #{sun.ssh_user}@#{server}
-          '#{send "#{type}_remote_cmd"}'
+          #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{send "#{type}_remote_cmd"}'
         SH
       end
 
@@ -286,23 +311,26 @@ module Sunzistrano
       def role_cmd(server)
         no_strict_host_key_checking = "-o 'StrictHostKeyChecking no'" if sun.new_host
         <<-SH.squish
-          #{ssh_add_vagrant} cd #{bash_dir} && tar cz . |
-          ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} #{no_strict_host_key_checking} -o LogLevel=ERROR
-          #{"-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?}
-          #{sun.ssh_user}@#{server}
-          '#{role_remote_cmd}'
+          #{ssh_add_vagrant}
+          cd #{bash_dir} && tar cz . |
+          #{ssh} #{no_strict_host_key_checking} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{role_remote_cmd}'
         SH
       end
 
       def role_remote_cmd
         <<-SH.squish
-          rm -rf #{bash_dir_remote} &&
-          mkdir -p #{bash_dir_remote} &&
-          cd #{bash_dir_remote} &&
-          tar xz &&
+          rm -rf #{bash_dir_remote} && mkdir -p #{bash_dir_remote} && cd #{bash_dir_remote} && tar xz &&
           #{'sudo' if sun.sudo} bash -e -u role.sh |&
           tee -a #{bash_log_remote}
         SH
+      end
+
+      def ssh
+        "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR"
+      end
+
+      def ssh_proxy
+        "-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?
       end
 
       def ssh_add_vagrant
