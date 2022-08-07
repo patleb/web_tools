@@ -1,7 +1,3 @@
-desc() {
-  echo.lightgray "[$(sun.timestamp)] $@"
-}
-
 echo.started() {
   echo.cyan "[$(sun.timestamp)] $@"
 }

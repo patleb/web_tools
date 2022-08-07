@@ -1,3 +1,7 @@
+desc() {
+  echo.info "$@"
+}
+
 echo.info() {
   echo "[$(sun.timestamp)] $@"
 }
