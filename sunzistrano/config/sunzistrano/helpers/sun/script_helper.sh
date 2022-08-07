@@ -1,3 +1,7 @@
+sun.source_script() {
+  source "scripts/$1.sh"
+}
+
 sun.script_ensure() {
   cd "${bash_dir}"
   sun.include "roles/deploy_ensure.sh"
