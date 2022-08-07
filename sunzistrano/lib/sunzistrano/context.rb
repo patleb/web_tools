@@ -65,7 +65,7 @@ module Sunzistrano
     end
 
     def provision_dir
-      revision ? "#{stage}/releases/#{revision}" : stage
+      deploy ? "#{stage}/releases/#{revision}" : stage
     end
 
     def system
@@ -73,11 +73,11 @@ module Sunzistrano
     end
 
     def sudo
-      has_key?(:sudo) ? self[:sudo] : !revision
+      has_key?(:sudo) ? self[:sudo] : !deploy
     end
 
     def ssh_user
-      self[:ssh_user] || (revision ? 'deployer' : owner_name)
+      self[:ssh_user] || (deploy ? 'deployer' : owner_name)
     end
 
     def repo_url
