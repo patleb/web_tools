@@ -21,6 +21,10 @@ module Sunzistrano
 
     attr_reader :sun
 
+    def self.source_root
+      File.expand_path('../../', __FILE__)
+    end
+
     def self.exit_on_failure?
       true
     end
@@ -62,10 +66,6 @@ module Sunzistrano
     end
 
     no_tasks do
-      def self.source_root
-        File.expand_path('../../', __FILE__)
-      end
-
       def do_bash(stage, script)
         with_context(stage, :deploy, script: script) do
           run_job_cmd :bash
