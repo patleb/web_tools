@@ -43,7 +43,7 @@ module Sunzistrano
         manifest_log: provision_path(MANIFEST_LOG),
         metadata_dir: provision_path(METADATA_DIR),
         deploy: deploy.to_b,
-        system: self[:system].to_b,
+        system: system,
         provision: provision.to_b,
         specialize: specialize.to_b,
         rollback: rollback.to_b,
@@ -66,6 +66,10 @@ module Sunzistrano
 
     def provision_dir
       revision ? "#{stage}/releases/#{revision}" : stage
+    end
+
+    def system
+      self[:system].to_b
     end
 
     def sudo
@@ -192,12 +196,12 @@ module Sunzistrano
     def merge_recipes(names)
       (recipes || []).each_with_object(names.reject(&:blank?)) do |recipe, memo|
         if recipe.is_a? String
-          next if recipe.end_with?('-system') && !self[:system]
+          next if recipe.end_with?('-system') && !system
           next memo << recipe
         end
         recipe, options = recipe.first
         case
-        when recipe.end_with?('-system') && !self[:system]
+        when recipe.end_with?('-system') && !system
           next
         when options.nil?
           memo << recipe
