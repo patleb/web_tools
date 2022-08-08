@@ -148,8 +148,8 @@ module Sunzistrano
     end
 
     def role_helpers
-      ([Setting.root] + gems.values).each do |root|
-        helpers(root).each do |file|
+      (gems.values.reverse << Setting.root).each do |root|
+        helpers(root).sort.each do |file|
           yield "helpers/#{file}"
         end
       end
