@@ -32,8 +32,12 @@ ExtWhenever.setup(self)
 case @environment
 when 'vagrant'
   every :minute do
-    bash 'version'
-    bash_helper 'sun.timestamp'
+    ### NOTE
+    # can't have several bash scripts/helpers at the same time, they pollute each other environment
+    # instead, use a single script (cron/every_minute) or helper (cron.every_minute)
+    ###
+    # bash 'version'
+    # bash_helper 'sun.timestamp'
   end
 when 'staging', 'production'
   case @application
