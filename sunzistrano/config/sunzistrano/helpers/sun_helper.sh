@@ -23,7 +23,7 @@ sun.start_provision() {
 }
 
 sun.timestamp() {
-  echo $(date '+%Y-%m-%d %H:%M:%S')
+  echo $(date '+%Y-%m-%d %H:%M:%S %Z')
 }
 
 sun.current_time() {
