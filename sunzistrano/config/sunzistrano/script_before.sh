@@ -6,6 +6,7 @@ sun.setup_attributes
 
 export SCRIPT_DONE=false
 export SCRIPT_START=$(sun.current_time)
+export helper=${helper:-''}
 
 trap sun.script_ensure EXIT
 
