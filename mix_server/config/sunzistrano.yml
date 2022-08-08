@@ -92,7 +92,6 @@ deploy:
   git_shallow_clone: true
   nginx_satisfy: false
   nginx_auth_basic: false
-  nginx_deferred: false
   nginx_redirects: {}
   public_dirs:
     - css
@@ -117,6 +116,3 @@ deploy_development:
   #  osquery_2_hrs: 10
   #  osquery_10_min: 10
   #  osquery_10_sec: 10
-
-deploy_production:
-  nginx_deferred: <%= Setting[:passenger] %>

@@ -1,7 +1,57 @@
+export nginx_maintenance_enable_before=()
+export nginx_maintenance_enable_after=()
+export nginx_maintenance_disable_before=()
+export nginx_maintenance_disable_after=()
+
 passenger.restart() {
   cd ${release_path}
   rbenv sudo passenger-config restart-app ${deploy_path} --ignore-app-not-running
   cd.back
+}
+
+nginx.maintenance_enable() {
+  for before in "${nginx_maintenance_enable_before[@]}"; do
+    $before
+  done
+  nginx.compile_503
+  nginx.compile_stage 'maintenance'
+  nginx.reload
+  for after in "${nginx_maintenance_enable_after[@]}"; do
+    $after
+  done
+}
+
+nginx.maintenance_disable() {
+  for before in "${nginx_maintenance_disable_before[@]}"; do
+    $before
+  done
+  nginx.compile_stage
+  nginx.reload
+  for after in "${nginx_maintenance_disable_after[@]}"; do
+    $after
+  done
+}
+
+nginx.compile_stage() {
+  set +u; local maintenance=$1; set -u
+  if [[ "$maintenance" == maintenance ]]; then
+    export nginx_early_return='return 503;'
+  elif [[ ${passenger} == false ]]; then
+    export nginx_early_return='return 200;'
+  else
+    export nginx_early_return=''
+  fi
+  local site_available="/etc/nginx/sites-available/${stage}"
+  local site_enabled="/etc/nginx/sites-enabled/${stage}"
+  sun.compile $site_available 0644 root:root
+  if [[ ! -h $site_enabled ]]; then
+    sudo ln -nfs $site_available $site_enabled
+  fi
+}
+
+nginx.compile_503() {
+  export nginx_maintenance_message=${nginx_maintenance_message:-"It'll be back shortly."}
+  sun.compile "$shared_path/$(sun.flatten_path public/503.html)"
 }
 
 nginx.recover() {

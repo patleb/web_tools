@@ -19,6 +19,6 @@
 
   <p>The system is down for maintenance</p>
 
-  <p><%= ENV['MESSAGE'].presence || "It'll be back shortly." %></p>
+  <p>$nginx_maintenance_message</p>
 </body>
 </html>

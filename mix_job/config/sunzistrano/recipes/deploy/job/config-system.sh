@@ -8,11 +8,11 @@ if [[ "${passenger}" == true ]]; then
   sudo systemctl daemon-reload
 
   desc 'Restart job service'
-  sun.job_restart
+  job.restart
   export JOB_RESTART=false
 elif systemctl list-unit-files | grep enabled | grep -Fq ${job_service}; then
   desc 'Stop job service'
-  sun.job_stop
+  job.stop
 
   desc 'Remove job systemd service'
   systemctl disable ${job_service}
