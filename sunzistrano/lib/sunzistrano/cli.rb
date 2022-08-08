@@ -30,6 +30,11 @@ module Sunzistrano
       true
     end
 
+    desc 'bash-list [stage]', 'List bash scripts'
+    def bash_list(stage)
+      do_bash_list(stage)
+    end
+
     desc 'bash [stage] [script] [--sudo]', 'Execute a bash script'
     method_options sudo: false
     def bash(stage, script)
@@ -74,6 +79,12 @@ module Sunzistrano
     end
 
     no_tasks do
+      def do_bash_list(stage)
+        with_context(stage, :deploy) do
+          puts (sun.scripts || []).sort
+        end
+      end
+
       def do_bash(stage, script)
         with_context(stage, :deploy, script: script) do
           run_job_cmd :bash
