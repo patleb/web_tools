@@ -59,5 +59,5 @@ raise "Setting[:monit_interval] < 1.minute" unless Setting[:monit_interval] >= 1
 raise "Setting[:monit_interval] > 20.minutes" unless Setting[:monit_interval] <= 20.minutes
 
 every Setting[:monit_interval] do
-  runner 'Monit.capture'
+  rake 'task:runner[Monit.capture]'
 end
