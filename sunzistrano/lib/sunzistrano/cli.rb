@@ -41,8 +41,8 @@ module Sunzistrano
       do_bash(stage, script_or_helper)
     end
 
-    desc 'deploy [STAGE] [--system] [--rollback] [--recipe]', 'Deploy application'
-    method_options system: false, rollback: false, recipe: :string
+    desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force]', 'Deploy application'
+    method_options system: false, rollback: false, recipe: :string, force: false
     def deploy(stage)
       raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
       do_provision(stage, :deploy)

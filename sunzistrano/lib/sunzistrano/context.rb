@@ -49,6 +49,7 @@ module Sunzistrano
         rollback: rollback.to_b,
         debug: debug.to_b,
         reboot: reboot.to_b,
+        force: force.to_b,
       )
     end
 

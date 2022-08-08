@@ -11,11 +11,15 @@ sun.source_recipe() {
     fi
   fi
   RECIPE_ID="$id"
+  if [[ "${force}" == true ]]; then
+    sun.undone "$id"
+  fi
   if [[ "${rollback}" == true ]]; then
     if [[ -e "recipes/$name-rollback.sh" ]]; then
       source "recipes/$name-rollback.sh"
     fi
-    sun.rollback "$id"
+    echo.warning "Rollback [$id]"
+    sun.undone "$id"
   elif sun.to_be_done "$id"; then
     local recipe_start=$(sun.current_time)
     source "recipes/$name.sh"
@@ -55,8 +59,7 @@ sun.recipe_ensure() {
   set -u
 }
 
-sun.rollback() {
-  echo.warning "Rollback [$1]"
+sun.undone() {
   # Sh.delete_line! "${manifest_log}", "Done   [$1]", escape: false
   sed -rzi -- "s%(\n[^\n]*Done\ \ \ \[$1\][^\n]*|[^\n]*Done\ \ \ \[$1\][^\n]*\n)%%" ${manifest_log}
 }
