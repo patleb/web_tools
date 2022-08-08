@@ -1,1 +1,1 @@
-require 'sunzistrano/cli/with_task'
+require 'mix_task/sunzistrano/cli/with_task'
