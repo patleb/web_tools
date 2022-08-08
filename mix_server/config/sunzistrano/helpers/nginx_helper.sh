@@ -32,6 +32,10 @@ nginx.maintenance_disable() {
   done
 }
 
+nginx.copy_system_conf() {
+  sun.copy '/etc/nginx/nginx.conf' 0644 root:root
+}
+
 nginx.compile_stage() {
   set +u; local maintenance=$1; set -u
   if [[ "$maintenance" == maintenance ]]; then

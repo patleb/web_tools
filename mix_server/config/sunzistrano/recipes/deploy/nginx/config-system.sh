@@ -1,5 +1,5 @@
 desc 'Add /etc/nginx/nginx.conf'
-sun.copy '/etc/nginx/nginx.conf' 0644 root:root
+nginx.copy_system_conf
 
 desc "Add /etc/nginx/sites-available/${stage}"
 nginx.compile_stage
