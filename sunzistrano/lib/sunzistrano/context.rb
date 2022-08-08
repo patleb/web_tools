@@ -47,7 +47,7 @@ module Sunzistrano
         provision: provision.to_b,
         specialize: specialize.to_b,
         rollback: rollback.to_b,
-        debug: debug.to_b,
+        debug: debug == 'trace' ? debug : debug.to_b,
         reboot: reboot.to_b,
         force: force.to_b,
       )
