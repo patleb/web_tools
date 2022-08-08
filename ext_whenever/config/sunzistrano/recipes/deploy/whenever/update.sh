@@ -1,1 +1,2 @@
-sun.source_script whenever/update
+desc "Update application's crontab entries using Whenever"
+whenever.update
