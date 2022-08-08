@@ -19,7 +19,7 @@ module Sunzistrano
         rbenv_sudo = "rbenv sudo #{environment.join(' ')}" if sun.sudo
         context = environment.map{ |value| "export #{value};" }.join(' ') unless sun.sudo
         path = "cd #{sun.deploy_path :current};"
-        command = "bin/rake #{sun.task}"
+        command = %{bin/rake '#{sun.task.escape_single_quotes.escape_spaces}'}
         if sun.nohup
           filename = nohup_basename(command)
           command = "#{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid"

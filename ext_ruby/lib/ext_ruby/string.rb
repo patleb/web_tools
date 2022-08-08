@@ -131,6 +131,10 @@ class String
     gsub(/\\n/, "\n")
   end
 
+  def escape_spaces
+    gsub(' ', "\\\\ ")
+  end
+
   def partition_at(truncate_at, separator: nil, fallback: nil)
     return [self, ''] unless size > truncate_at
 
