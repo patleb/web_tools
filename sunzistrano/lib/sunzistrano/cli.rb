@@ -30,50 +30,50 @@ module Sunzistrano
       true
     end
 
-    desc 'bash-list [stage]', 'List bash scripts'
+    desc 'bash-list [STAGE]', 'List bash scripts'
     def bash_list(stage)
       do_bash_list(stage)
     end
 
-    desc 'bash [stage] [script] [--sudo]', 'Execute a bash script'
+    desc 'bash [STAGE] [SCRIPT or HELPER] [--sudo]', 'Execute a bash script or helper function'
     method_options sudo: false
-    def bash(stage, script)
-      do_bash(stage, script)
+    def bash(stage, script_or_helper)
+      do_bash(stage, script_or_helper)
     end
 
-    desc 'deploy [stage] [--system] [--rollback] [--recipe]', 'Deploy application'
+    desc 'deploy [STAGE] [--system] [--rollback] [--recipe]', 'Deploy application'
     method_options system: false, rollback: false, recipe: :string
     def deploy(stage)
       raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
       do_provision(stage, :deploy)
     end
 
-    desc 'provision [stage] [--specialize] [--rollback] [--recipe] [--reboot] [--new-host]', 'Provision system'
+    desc 'provision [STAGE] [--specialize] [--rollback] [--recipe] [--reboot] [--new-host]', 'Provision system'
     method_options specialize: false, rollback: false, recipe: :string, reboot: false, new_host: false
     def provision(stage)
       raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
       do_provision(stage, :provision)
     end
 
-    desc 'compile [stage] [--deploy] [--system] [--specialize] [--rollback] [--recipe] [--reboot]', 'Compile provisioning'
+    desc 'compile [STAGE] [--deploy] [--system] [--specialize] [--rollback] [--recipe] [--reboot]', 'Compile provisioning'
     method_options deploy: false, system: false, specialize: false, rollback: false, recipe: :string, reboot: false
     def compile(stage)
       do_compile(stage, options.deploy ? :deploy : :provision)
     end
 
-    desc 'download [stage] [--deploy] [--dir] [--ref] [--from-defaults]', 'Download file(s)'
+    desc 'download [STAGE] [--deploy] [--dir] [--ref] [--from-defaults]', 'Download file(s)'
     method_options deploy: false, dir: :string, ref: false, from_defaults: false, path: :required
     def download(stage)
       do_download(stage, options.deploy ? :deploy : :provision)
     end
 
-    desc 'upload [stage] [--deploy] [--chown] [--chmod]', 'Upload file(s)'
+    desc 'upload [STAGE] [--deploy] [--chown] [--chmod]', 'Upload file(s)'
     method_options deploy: false, chown: :string, chmod: :string, dir: :required, path: :required
     def upload(stage)
       do_upload(stage, options.deploy ? :deploy : :provision)
     end
 
-    desc 'reset_ssh [stage]', 'Reset ssh known hosts'
+    desc 'reset_ssh [STAGE]', 'Reset ssh known hosts'
     def reset_ssh(stage)
       do_reset_ssh(stage)
     end
@@ -85,8 +85,13 @@ module Sunzistrano
         end
       end
 
-      def do_bash(stage, script)
-        with_context(stage, :deploy, script: script) do
+      def do_bash(stage, script_or_helper)
+        if script_or_helper.include? '.'
+          command_options = { helper: script_or_helper, script: 'helper' }
+        else
+          command_options = { script: script_or_helper}
+        end
+        with_context(stage, :deploy, **command_options) do
           run_job_cmd :bash
         end
       end
@@ -148,7 +153,7 @@ module Sunzistrano
       def build_scripts
         copy_hooks :script
         used = Set.new
-        (sun.scripts || []).each do |file|
+        (['helper'] + (sun.scripts || [])).each do |file|
           used << (dst = bash_path("scripts/#{file}.sh"))
           create_file dst, <<~SH, force: true, verbose: sun.debug
             export script=#{file}
@@ -315,7 +320,7 @@ module Sunzistrano
       def bash_remote_cmd
         <<-SH.squish
           cd #{sun.deploy_path :current, BASH_DIR} &&
-          #{'sudo' if sun.sudo} bash -e -u scripts/#{sun.script}.sh |&
+          export helper=#{sun.helper}; #{'sudo -E' if sun.sudo} bash -e -u scripts/#{sun.script}.sh |&
           tee -a #{sun.deploy_path :current, BASH_LOG}
         SH
       end

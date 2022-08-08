@@ -13,6 +13,10 @@ if [[ "${debug}" == 'trace' ]]; then
   set -x
 fi
 
-echo.started "Script [${script}]"
+if [[ ! -z "${helper}" ]]; then
+  echo.started "Script [${script}-${helper}]"
+else
+  echo.started "Script [${script}]"
+fi
 
 sun.include "roles/deploy_before.sh"

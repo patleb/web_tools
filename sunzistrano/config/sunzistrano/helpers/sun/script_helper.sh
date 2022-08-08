@@ -7,7 +7,11 @@ sun.script_ensure() {
   sun.include "roles/deploy_ensure.sh"
   sun.elapsed_time $SCRIPT_START
   if [[ "$SCRIPT_DONE" == true ]]; then
-    echo.success "Done   [${script}]"
+    if [[ ! -z "${helper}" ]]; then
+      echo.success "Done   [${script}-${helper}]"
+    else
+      echo.success "Done   [${script}]"
+    fi
   else
     echo.failure 'ERROR'
   fi
