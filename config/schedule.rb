@@ -33,6 +33,7 @@ case @environment
 when 'vagrant'
   every :minute do
     bash 'version'
+    bash_helper 'sun.timestamp'
   end
 when 'staging', 'production'
   case @application

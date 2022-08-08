@@ -320,7 +320,7 @@ module Sunzistrano
       def bash_remote_cmd
         <<-SH.squish
           cd #{sun.deploy_path :current, BASH_DIR} &&
-          export helper=#{sun.helper}; #{'sudo -E' if sun.sudo} bash -e -u scripts/#{sun.script}.sh |&
+          export helper='#{sun.helper}'; #{'sudo -E' if sun.sudo} bash -e -u scripts/#{sun.script}.sh |&
           tee -a #{sun.deploy_path :current, BASH_LOG}
         SH
       end
