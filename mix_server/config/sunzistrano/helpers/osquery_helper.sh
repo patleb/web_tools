@@ -1,5 +1,5 @@
-sun.osquery_start() {
-  if sun.osquery_check; then
+osquery.start() {
+  if osquery.check; then
     if sudo osqueryctl start; then
       echo 'Osquery started'
     else
@@ -9,7 +9,7 @@ sun.osquery_start() {
   fi
 }
 
-sun.osquery_stop() {
+osquery.stop() {
   if sudo osqueryctl stop; then
     echo 'Osquery stopped'
   else
@@ -18,8 +18,8 @@ sun.osquery_stop() {
   fi
 }
 
-sun.osquery_restart() {
-  if sun.osquery_check; then
+osquery.restart() {
+  if osquery.check; then
     if sudo osqueryctl restart; then
       echo 'Osquery restarted'
     else
@@ -29,7 +29,7 @@ sun.osquery_restart() {
   fi
 }
 
-sun.osquery_check() {
+osquery.check() {
   if [[ $(sudo osqueryctl config-check 2>&1 >/dev/null | grep -c 'Error reading') -eq 0 ]]; then
     echo 'Config [OK]'
     return 0

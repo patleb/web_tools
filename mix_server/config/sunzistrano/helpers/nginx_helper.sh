@@ -1,17 +1,17 @@
-sun.passenger_restart() {
+passenger.restart() {
   cd ${release_path}
   rbenv sudo passenger-config restart-app ${deploy_path} --ignore-app-not-running
   cd.back
 }
 
-sun.nginx_recover() {
-  sun.nginx_stop
-  sun.nginx_kill
-  sun.nginx_start
+nginx.recover() {
+  nginx.stop
+  nginx.kill
+  nginx.start
 }
 
-sun.nginx_start() {
-  if sun.nginx_check; then
+nginx.start() {
+  if nginx.check; then
     if sudo systemctl start nginx; then
       echo 'Nginx started'
     else
@@ -21,7 +21,7 @@ sun.nginx_start() {
   fi
 }
 
-sun.nginx_stop() {
+nginx.stop() {
   if sudo systemctl stop nginx; then
     echo 'Nginx stopped'
   else
@@ -30,18 +30,18 @@ sun.nginx_stop() {
   fi
 }
 
-sun.nginx_reload() {
-  if sun.nginx_check; then
+nginx.reload() {
+  if nginx.check; then
     if sudo systemctl reload nginx; then
       echo 'Nginx reloaded'
     else
       echo.red 'Could not reload Nginx, trying start.'
-      sun.nginx_start
+      nginx.start
     fi
   fi
 }
 
-sun.nginx_check() {
+nginx.check() {
   if [[ $(sudo nginx -t | grep -c 'failed') -eq 0 ]]; then
     echo 'Config [OK]'
     return 0
@@ -51,6 +51,6 @@ sun.nginx_check() {
   fi
 }
 
-sun.nginx_kill() {
+nginx.kill() {
   <%= Sh.kill('nginx', '-o') %>
 }
