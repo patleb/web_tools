@@ -1,5 +1,5 @@
 module Sh::Dns
-  # TODO make it coherent with cap dns:set_hosts
+  # TODO make it coherent with deploy/private_dns-system.sh
   def build_hosts(server)
     entries = (Setting[:dns_hosts] || []).map{ |name| "$PRIVATE_IP  #{name}" }.join("\\n")
     hosts_defaults = Sunzistrano.owner_path :defaults_dir, '~etc~hosts'

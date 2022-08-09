@@ -1,9 +1,0 @@
-namespace :load do
-  task :defaults do
-    append :linked_dirs, *%w(
-      public/storage
-      storage
-    )
-    append :public_dirs, 'storage'
-  end
-end

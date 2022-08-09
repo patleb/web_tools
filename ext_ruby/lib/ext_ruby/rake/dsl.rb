@@ -35,7 +35,6 @@ module Rake
       Pathname.new(dst).write(value)
     end
 
-    # TODO scope under env:app to allow parallel deploys (capistrano)
     def template(src, gems = nil, scope: nil)
       tmp_file = compile(src, gems, scope: scope, deployer: false)
       mv tmp_file, src, force: true

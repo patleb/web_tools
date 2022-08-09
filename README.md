@@ -2,6 +2,7 @@
 
 ## Administration tools
 
+<!-- dot -Tpng doc/images/admin_tools.dot > doc/images/admin_tools.png -->
 ![alt text](./doc/images/admin_tools.png)
 
 ### Standard environments
@@ -82,7 +83,7 @@ After the servers have been provisioned by Sunzistrano, the first deployment mus
 Running the following command:
 
 ```sh
-cap vagrant provision
+sun deploy vagrant --system
 ```
 
 would do just that and have the following output without the details:
@@ -130,13 +131,7 @@ would do just that and have the following output without the details:
 After that first deployment, only the following command is necessary for updating the application:
 
 ```sh
-cap vagrant deploy
-```
-
-The list of administrative tasks is available through the following command:
-
-```sh
-cap -T
+sun deploy vagrant
 ```
 
 ### Rake
@@ -152,13 +147,13 @@ rake db:migrate
 It could be used conjointly with Capistrano:
 
 ```sh
-cap vagrant rake TASK=db:migrate
+sun rake vagrant db:migrate
 ```
 
 There is also a nohup version for scenarios where the task might take too long to execute:
 
 ```sh
-cap vagrant nohup:rake TASK=db:migrate
+sun rake vagrant db:migrate --nohup
 ```
 
 The list of administrative tasks is available through the following command:

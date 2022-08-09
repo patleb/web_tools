@@ -31,15 +31,11 @@ module Rake
       end
     end
 
-    def cap_task(task_name, environment = {})
-      environment = environment.with_keyword_access
-      stage = [environment.delete(:env).presence || Rails.env, environment.delete(:app)].compact.join(':')
-      environment = environment.each_with_object('RAILS_ENV=development') do |(name, value), string|
-        string << " #{name.to_s.upcase}=#{value}"
-      end
-      environment << ' DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
-      cap = File.file?('bin/cap') ? 'bin/cap' : 'bundle exec cap'
-      sh "#{environment} #{cap} #{stage} #{task_name}"
+    def sun_task(task_string, env: Rails.env, app: Rails.app, host: nil)
+      no_color = 'DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
+      host = "--host=#{host}" if host.present?
+      task = [task_string, no_color].compact.join(' ')
+      sh "bin/sun rake #{[env, app].compact.join('-')} '#{task.escape_single_quotes}' #{host}"
     end
   end
 end

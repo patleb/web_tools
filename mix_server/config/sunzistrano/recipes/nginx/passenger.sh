@@ -28,4 +28,4 @@ chown deployer:adm /var/log/nginx
 systemctl enable nginx
 systemctl restart nginx
 
-# configured with ext_capistrano gem
+# configured with sun deploy [STAGE] --system

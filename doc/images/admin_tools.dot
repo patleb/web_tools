@@ -3,7 +3,6 @@ digraph G {
   subgraph cluster_local {
     label="Local Machine (Test | Development)"
     sun [shape=box label="Sunzistrano"]
-    cap [shape=box label="Capistrano"]
     rake_local [shape=box label="Rake"]
   }
   subgraph cluster_remote {
@@ -11,7 +10,6 @@ digraph G {
     whenever [shape=box label="Whenever"]
     rake_remote [shape=box label="Rake"]
   }
-  cap -> whenever [label="ssh" lhead=cluster_remote]
   sun -> whenever [label="ssh" lhead=cluster_remote]
   whenever -> rake_remote [constraint=false]
 }

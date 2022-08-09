@@ -96,6 +96,7 @@ deploy:
   public_dirs:
     - css
     - js
+  # https://evilmartians.com/chronicles/how-to-favicon-in-2021-six-files-that-fit-most-needs
   public_files:
     - robots.txt
   osquery_logger_level: 1

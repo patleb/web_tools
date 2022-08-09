@@ -28,5 +28,5 @@ Afterward, to use this box exclusively from now on et free up some space, execut
 Then prepare the first snapshot:
 
     $ sun provision vagrant
-    $ cap vagrant provision
+    $ sun deploy vagrant --system
     $ vagrant snapshot save provision

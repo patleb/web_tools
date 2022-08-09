@@ -1,0 +1,6 @@
+deploy:
+  linked_dirs:
+    - public/storage
+    - storage
+  public_dirs:
+    - storage

@@ -1,8 +1,8 @@
 module Host
   VAGRANT  = 'vagrant-hostmanager'
-  SERVER   = 'cap:dns-set_hosts-server'
-  HOSTNAME = 'cap:dns-set_hosts-hostname'
-  MASTER   = 'cap:dns-set_hosts-master'
+  SERVER   = 'sh:dns-set_hosts-server'
+  HOSTNAME = 'sh:dns-set_hosts-hostname'
+  MASTER   = 'sh:dns-set_hosts-master'
 
   def self.domains
     @domains ||= constants.each_with_object({}.with_keyword_access) do |constant, memo|

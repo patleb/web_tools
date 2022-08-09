@@ -34,7 +34,7 @@ See [cli.rb](./lib/sunzistrano/cli.rb) for more commands.
 
 ## Configuration
 
-The configuration file is a YAML file located at `config/provision.yml` and is integrated with **[capistrano](../ext_capistrano/README.md)** and **[mix_setting](../mix_setting/README.md)** to reuse their configuration files as well.
+The configuration file is a YAML file located at `config/provision.yml` and is integrated with **[mix_setting](../mix_setting/README.md)** to reuse the configuration files as well.
 
 Configurations are accessible in Bash through global variables with the following convention:
 

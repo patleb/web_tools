@@ -2,6 +2,9 @@ lock: 0.1.0
 gems:
   - mix_server
   - mix_job
+  - mix_file
+  - mix_geo
+  - ext_rails
   - ext_whenever
 
 shared:

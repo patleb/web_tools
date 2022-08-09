@@ -58,7 +58,6 @@ module WebTools
             # gem 'web_tools', path: '~/projects/web_tools'
           RB
         end
-        # bin/rake ext_capistrano:setup
         # bin/rake ext_minitest:setup
         # bin/rake ext_webpacker:setup
         # bin/rake ext_rails:setup
