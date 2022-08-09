@@ -61,11 +61,11 @@ module ActiveSupport::LazyLoadHooks::Autoload
           require_dependency file
           base.send type, ActiveSupport._get_module_const(base, module_name)
         rescue NameError
-          raise unless Rails.env.dev_or_vagrant?
+          raise unless Rails.env.development?
           load file
           base.send type, ActiveSupport._get_module_const(base, module_name)
         rescue ActiveSupport::Concern::MultipleIncludedBlocks
-          raise unless Rails.env.dev_or_vagrant?
+          raise unless Rails.env.development?
           base.send type, ActiveSupport._get_module_const(base, module_name)
         ensure
           ActiveSupport.autoloaded_hooks_count += 1
