@@ -44,6 +44,7 @@ sun.test_setup() {
   specialize=${specialize:-false}
   rollback=${rollback:-false}
   debug=${debug:-false}
+  force=${force:-false}
   sun.start_provision
   source 'sunzistrano/config/sunzistrano/roles/deploy/load_defaults.sh'
   source 'sunzistrano/config/sunzistrano/roles/deploy/git_wrapper.sh'
