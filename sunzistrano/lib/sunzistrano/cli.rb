@@ -58,19 +58,25 @@ module Sunzistrano
     desc 'compile [STAGE] [--deploy] [--system] [--specialize] [--rollback] [--recipe] [--reboot]', 'Compile provisioning'
     method_options deploy: false, system: false, specialize: false, rollback: false, recipe: :string, reboot: false
     def compile(stage)
-      do_compile(stage, options.deploy ? :deploy : :provision)
+      do_compile(stage)
     end
 
-    desc 'download [STAGE] [--deploy] [--dir] [--ref] [--from-defaults]', 'Download file(s)'
-    method_options deploy: false, dir: :string, ref: false, from_defaults: false, path: :required
-    def download(stage)
-      do_download(stage, options.deploy ? :deploy : :provision)
+    desc 'exist [STAGE] [PATH] [--deploy] [--from-defaults]', 'Check if path exists'
+    method_options deploy: false, from_defaults: false
+    def exist(stage, path)
+      do_exist(stage, path)
     end
 
-    desc 'upload [STAGE] [--deploy] [--chown] [--chmod]', 'Upload file(s)'
-    method_options deploy: false, chown: :string, chmod: :string, dir: :required, path: :required
-    def upload(stage)
-      do_upload(stage, options.deploy ? :deploy : :provision)
+    desc 'download [STAGE] [PATH] [--dir] [--ref] [--deploy] [--from-defaults]', 'Download file(s)'
+    method_options dir: :string, ref: false, deploy: false, from_defaults: false
+    def download(stage, path)
+      do_download(stage, path)
+    end
+
+    desc 'upload [STAGE] [PATH] [DIR] [--deploy] [--chown] [--chmod]', 'Upload file(s)'
+    method_options deploy: false, chown: :string, chmod: :string
+    def upload(stage, path, dir)
+      do_upload(stage, path, dir)
     end
 
     desc 'reset_ssh [STAGE]', 'Reset ssh known hosts'
@@ -96,13 +102,13 @@ module Sunzistrano
         end
       end
 
-      def do_provision(stage, role, **command_options)
-        do_compile(stage, role, **command_options)
+      def do_provision(stage, role)
+        do_compile(stage, role)
         run_role_cmd
       end
 
-      def do_compile(stage, role, **command_options)
-        with_context(stage, role, **command_options) do
+      def do_compile(stage, role = nil)
+        with_context(stage, role) do
           copy_files
           build_helpers
           build_role
@@ -110,26 +116,33 @@ module Sunzistrano
         end
       end
 
-      def do_download(stage, role)
-        with_context(stage, role) do
-          src = sun.path
+      def do_exist(stage, path)
+        with_context(stage) do
+          path = Sunzistrano.owner_path :defaults_dir, path.tr('/', '~') if sun.from_defaults
+          run_exist_cmd(path)
+        end
+      end
+
+      def do_download(stage, path)
+        with_context(stage) do
+          src = path
           if sun.ref
             dst = Setting.root.join(CONFIG_PATH, "files/#{src.delete_prefix('/')}.ref")
             dst.parent.mkpath
-            src = Sunzistrano.owner_path :defaults_dir, src.tr('/', '~') if sun.from_defaults
           else
             dst = sun.dir.present? ? Pathname.new(sun.dir).expand_path : Setting.root.join(BASH_DIR, 'downloads')
             dst.mkpath
           end
+          src = Sunzistrano.owner_path :defaults_dir, src.tr('/', '~') if sun.from_defaults
           unless run_download_cmd(src, dst)
             raise "Cannot transfer [#{src}] to [#{dst}]"
           end
         end
       end
 
-      def do_upload(stage, role)
-        with_context(stage, role) do
-          src, dst = sun.path, sun.dir
+      def do_upload(stage, path, dir)
+        with_context(stage) do
+          src, dst = path, dir
           unless run_upload_cmd(src, dst)
             raise "Cannot transfer [#{src}] to [#{dst}]"
           end
@@ -144,6 +157,7 @@ module Sunzistrano
 
       def with_context(stage, role = nil, **command_options)
         env, app = stage.split('-', 2)
+        role ||= options.deploy ? :deploy : :provision
         Setting.with(env: env, app: app) do
           @sun = Sunzistrano::Context.new(role, **options.symbolize_keys, **command_options)
           yield
@@ -265,6 +279,14 @@ module Sunzistrano
         end
       end
 
+      def run_exist_cmd(path)
+        test = sun.sudo ? "sudo test -e #{path}" : "[[ -e #{path} ]]"
+        system <<-SH.squish
+          #{ssh_add_vagrant}
+          #{ssh} #{sun.ssh_user}@#{sun.server_host} '#{test} && echo "true" || echo "false"'
+        SH
+      end
+
       def run_download_cmd(src, dst)
         system <<-SH.squish
           #{ssh_add_vagrant}
@@ -305,7 +327,7 @@ module Sunzistrano
           while (line = stdout.gets)
             print "[#{server}] #{line}"
           end
-          puts "[#{server}] #{Time.now.to_s.yellow}"
+          puts "[#{server}]  #{Time.now.to_s.yellow}"
           error.join
         end
       end
