@@ -35,8 +35,8 @@ module Sunzistrano
       do_bash_list(stage)
     end
 
-    desc 'bash [STAGE] [SCRIPT or HELPER] [--sudo]', 'Execute a bash script or helper function'
-    method_options sudo: false
+    desc 'bash [STAGE] [SCRIPT or HELPER] [--host] [--sudo]', 'Execute a bash script or helper function'
+    method_options host: :string, sudo: false
     def bash(stage, script_or_helper)
       do_bash(stage, script_or_helper)
     end
@@ -263,7 +263,7 @@ module Sunzistrano
 
       def run_job_cmd(type)
         raise 'run_job_cmd type cannot be "role"' if type.to_sym == :role
-        Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
+        Parallel.each(Array.wrap(options.host.presence || sun.servers), in_threads: Float::INFINITY) do |server|
           run_command :job_cmd, server, type
         end
       end

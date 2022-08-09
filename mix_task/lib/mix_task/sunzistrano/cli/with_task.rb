@@ -1,7 +1,7 @@
 module Sunzistrano
   Cli.class_eval do
-    desc 'rake [stage] [task] [--sudo] [--nohup] [--verbose] [--kill]', 'Execute a rake task'
-    method_options sudo: false, nohup: false, verbose: false, kill: false
+    desc 'rake [stage] [task] [--host] [--sudo] [--nohup] [--verbose] [--kill]', 'Execute a rake task'
+    method_options host: :string, sudo: false, nohup: false, verbose: false, kill: false
     def rake(stage, task)
       do_rake(stage, task)
     end
