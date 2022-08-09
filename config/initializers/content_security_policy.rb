@@ -25,11 +25,7 @@ Rails.application.config.content_security_policy do |policy|
   else
     policy.connect_src :self, *urls
   end
-  if defined? WebConsole
-    policy.script_src  :self, :https, :unsafe_inline
-  else
-    policy.script_src  :self, :https
-  end
+  policy.script_src  :self, :https
 end
 
 # If you are using UJS then enable automatic nonce generation

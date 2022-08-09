@@ -68,21 +68,6 @@ module UsersHelper
     [Devise.sign_out_via].flatten.first
   end
 
-  def remote_console
-    if defined?(::WebConsole) && Current.user.deployer?
-      console if params[:_remote_console].to_b
-    end
-  end
-
-  def remote_console_link
-    if defined?(::WebConsole) && Current.user.deployer?
-      a_(href: '?_remote_console=1') {[
-        i_('.fa.fa-terminal'),
-        span_('Console'),
-      ]}
-    end
-  end
-
   def user_view_link
     return unless defined?(MixAdmin) && !Current.controller.try(:admin?)
     if Current.as_user?

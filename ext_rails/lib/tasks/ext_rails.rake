@@ -1,7 +1,5 @@
 require_rel 'ext_rails'
 
-# TODO task to clear tmp/console.txt in cron job
-
 namespace :backup do
   desc "-- [options] Backup Git"
   task :git => :environment do |t|

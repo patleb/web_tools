@@ -11,12 +11,10 @@ append :sidebar, [
     li_(login_link),
     li_(edit_user_link),
     li_(locale_select),
-    li_(remote_console_link),
     li_(logout_link)
   ])
 ]
 
 extends 'layouts/mix_template/main', [
   yield,
-  remote_console
 ]

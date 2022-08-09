@@ -12,14 +12,6 @@ module MixUser
     require 'pundit'
     require 'mix_template'
 
-    config.before_configuration do |app|
-      if (file = Rails.root.join('tmp/console.txt')).exist? && (ips = file.read.lines.reject(&:blank?).map(&:strip)).any?
-        require 'web-console'
-        app.config.web_console.allowed_ips = ips
-        app.config.web_console.development_only = false
-      end
-    end
-
     config.before_initialize do
       autoload_models_if_admin('User')
     end
