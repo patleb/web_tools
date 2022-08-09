@@ -3,6 +3,7 @@ export nginx_maintenance_enable_after=()
 export nginx_maintenance_disable_before=()
 export nginx_maintenance_disable_after=()
 
+# %{exec "/usr/bin/sudo -u deployer -H sh -c '/home/deployer/.rbenv/bin/#{passenger_command}'"}
 passenger.restart() {
   cd ${release_path}
   rbenv sudo passenger-config restart-app ${deploy_path} --ignore-app-not-running
