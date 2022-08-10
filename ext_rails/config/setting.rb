@@ -2,7 +2,7 @@ Setting.class_eval do
   def self.default_url_options
     case @env.to_sym
     when :development
-      if Rails.env.dev_ngrok?
+      if defined?(Rails.env) && Rails.env.dev_ngrok?
         { host: "#{ENV['NGROK']}.ngrok.io" }
       else
         { host: self[:server_host], port: self[:server_port] }
