@@ -115,6 +115,10 @@ class String
     gsub("'", '&#39;')
   end
 
+  def escape_double_quotes
+    gsub(/"/, '\\x22')
+  end
+
   def escape_single_quotes
     gsub(/'/, '\\x27')
   end
