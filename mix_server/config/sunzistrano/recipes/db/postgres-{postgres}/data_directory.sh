@@ -3,8 +3,8 @@ if fdisk -l | grep -Fq ${data_partition}; then
   if [[ -d "$NEW_PG_DATA_DIR" ]]; then
     : # do nothing --> already created
   else
-    PG_CONFIG_FILE=$(sun.pg_config_file)
-    OLD_PG_DATA_DIR=$(sun.pg_data_dir)
+    PG_CONFIG_FILE=$(pg.config_file)
+    OLD_PG_DATA_DIR=$(pg.data_dir)
 
     systemctl stop postgresql
 

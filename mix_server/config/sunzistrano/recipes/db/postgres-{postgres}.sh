@@ -5,8 +5,8 @@
 # https://www.modio.se/scaling-past-the-single-machine.html
 # https://askubuntu.com/questions/732431/how-to-uninstall-specific-versions-of-postgres
 locale=${locale:-en_US}
-config=$(sun.pg_default_config_file)
-pg_hba=$(sun.pg_default_hba_file)
+config=$(pg.default_config_file)
+pg_hba=$(pg.default_hba_file)
 
 sh -c "echo 'deb [arch=$ARCH] http://apt.postgresql.org/pub/repos/apt/ $UBUNTU_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list"
 wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
@@ -29,6 +29,6 @@ sun.backup_compare "$pg_hba"
 sun.backup_copy "/etc/logrotate.d/postgresql-common" 0440 root:root
 
 echo "$postgresql_version" >> $(sun.manifest_path 'postgresql')
-echo "$(sun.pg_default_data_dir)" > $(sun.metadata_path 'pg_data_dir')
+echo "$(pg.default_data_dir)" > $(sun.metadata_path 'pg_data_dir')
 
 systemctl restart postgresql

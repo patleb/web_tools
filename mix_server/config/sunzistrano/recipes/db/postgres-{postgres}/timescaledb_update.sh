@@ -8,5 +8,5 @@ sun.lock $TIMESCALEDB
 
 systemctl restart postgresql
 sleep 5
-sun.psql 'ALTER EXTENSION timescaledb UPDATE' -X $(sun.pg_default_url)
+sun.psql 'ALTER EXTENSION timescaledb UPDATE' -X $(pg.default_url)
 systemctl restart postgresql

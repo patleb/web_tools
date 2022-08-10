@@ -1,6 +1,6 @@
 postgres_private_mask=${postgres_private_mask:-24}
-PG_CONFIG_FILE=$(sun.pg_config_file)
-PG_HBA_FILE=$(sun.pg_hba_file)
+PG_CONFIG_FILE=$(pg.config_file)
+PG_HBA_FILE=$(pg.hba_file)
 PRIVATE_IP=$(sun.private_ip)
 PRIVATE_NETWORK=$(sun.network $PRIVATE_IP ${postgres_private_mask})/${postgres_private_mask}
 
@@ -14,4 +14,4 @@ echo "host    all             all             $PRIVATE_NETWORK         md5" >> $
 ufw allow in from $PRIVATE_NETWORK to $PRIVATE_IP port 5432
 ufw reload
 
-sun.pg_restart_force
+pg.restart_force

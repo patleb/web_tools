@@ -1,4 +1,4 @@
-PG_CONFIG_FILE=$(sun.pg_config_file)
+PG_CONFIG_FILE=$(pg.config_file)
 pg_log_min_messages=${pg_log_min_messages:-error}
 pg_log_checkpoints=${pg_log_checkpoints:-on}
 pg_log_lock_waits=${pg_log_lock_waits:-on}
@@ -57,9 +57,9 @@ echo "jit = ${pg_jit}" >> "$PG_CONFIG_FILE"
   fi
 <% end -%>
 
-if [[ ! -z "$(sun.shared_preload_libraries)" ]]; then
+if [[ ! -z "$(pg.shared_preload_libraries)" ]]; then
   <%= Sh.delete_lines! '$PG_CONFIG_FILE', 'shared_preload_libraries =' %>
-  echo "shared_preload_libraries = '$(sun.shared_preload_libraries)'" >> "$PG_CONFIG_FILE"
+  echo "shared_preload_libraries = '$(pg.shared_preload_libraries)'" >> "$PG_CONFIG_FILE"
 fi
 
 <% if sun.pgstats_enabled -%>
@@ -81,4 +81,4 @@ fi
   echo "track_activity_query_size = ${pg_track_activity_query_size}" >> "$PG_CONFIG_FILE"
 <% end -%>
 
-sun.pg_restart_force
+pg.restart_force

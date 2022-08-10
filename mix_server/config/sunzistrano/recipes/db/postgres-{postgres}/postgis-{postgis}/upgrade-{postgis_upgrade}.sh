@@ -10,5 +10,5 @@ if [[ "${postgis_upgrade}" != false ]]; then
   done
   sun.lock "$PGIS_PACKAGES"
 
-  sun.pg_restart_force
+  pg.restart_force
 fi

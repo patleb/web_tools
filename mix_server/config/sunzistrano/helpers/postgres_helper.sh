@@ -1,39 +1,39 @@
-sun.shared_preload_libraries() {
+pg.shared_preload_libraries() {
   echo '<%= { pg_stat_statements: sun.pgstats_enabled, timescaledb: sun.timescaledb_enabled }.select{ |_, v| v }.keys.join(',') %>'
 }
 
-sun.pg_restart_force() {
+pg.restart_force() {
   if ! systemctl restart postgresql; then
     systemctl reset-failed postgresql
     systemctl start postgresql
   fi
 }
 
-sun.pg_default_hba_file() {
+pg.default_hba_file() {
   echo "/etc/postgresql/${postgres}/main/pg_hba.conf"
 }
 
-sun.pg_hba_file() { # PUBLIC
+pg.hba_file() { # PUBLIC
   sun.psql 'SHOW hba_file'
 }
 
-sun.pg_default_config_file() {
+pg.default_config_file() {
   echo "/etc/postgresql/${postgres}/main/postgresql.conf"
 }
 
-sun.pg_config_file() { # PUBLIC
+pg.config_file() { # PUBLIC
   sun.psql 'SHOW config_file'
 }
 
-sun.pg_default_data_dir() {
+pg.default_data_dir() {
   echo "/var/lib/postgresql/${postgres}/main"
 }
 
-sun.pg_data_dir() { # PUBLIC
+pg.data_dir() { # PUBLIC
   sun.psql 'SHOW data_directory'
 }
 
-sun.pg_default_url() {
+pg.default_url() {
   echo "postgresql://${db_username}:${db_password}@${db_host:-127.0.0.1}:${db_port:-5432}/${db_database}"
 }
 
