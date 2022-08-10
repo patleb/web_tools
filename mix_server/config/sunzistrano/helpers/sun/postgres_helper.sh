@@ -13,7 +13,7 @@ sun.pg_default_hba_file() {
   echo "/etc/postgresql/${postgres}/main/pg_hba.conf"
 }
 
-sun.pg_hba_file() {
+sun.pg_hba_file() { # PUBLIC
   sun.psql 'SHOW hba_file'
 }
 
@@ -21,7 +21,7 @@ sun.pg_default_config_file() {
   echo "/etc/postgresql/${postgres}/main/postgresql.conf"
 }
 
-sun.pg_config_file() {
+sun.pg_config_file() { # PUBLIC
   sun.psql 'SHOW config_file'
 }
 
@@ -29,7 +29,7 @@ sun.pg_default_data_dir() {
   echo "/var/lib/postgresql/${postgres}/main"
 }
 
-sun.pg_data_dir() {
+sun.pg_data_dir() { # PUBLIC
   sun.psql 'SHOW data_directory'
 }
 

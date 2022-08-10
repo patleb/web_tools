@@ -147,13 +147,13 @@ module Db
         tables = output.lines.select_map{ |line| line.match(/TABLE public (#{TABLE}) /)&.captures&.first }
         if only.any?
           tables.select! do |t|
-            only.any?{ |t_only| table_match? t, t_only }
+            only.any?{ |t_only| t.match_glob? t_only }
           end
           only.replace(tables.flat_map{ |table| [table, "#{table}_id_seq"] }) unless skip.any?
         end
         if skip.any?
           tables.reject! do |t|
-            skip.any?{ |t_skip| table_match? t, t_skip }
+            skip.any?{ |t_skip| t.match_glob? t_skip }
           end
           only.replace(tables.flat_map{ |table| [table, "#{table}_id_seq"] })
         end
@@ -229,14 +229,6 @@ module Db
 
       def data_append?
         options.data_only && options.append
-      end
-
-      def table_match?(table, pattern)
-        if pattern.include? '*'
-          table.match? Regexp.new('^' << pattern.gsub('*', '\w*') << '$')
-        else
-          table == pattern
-        end
       end
     end
   end

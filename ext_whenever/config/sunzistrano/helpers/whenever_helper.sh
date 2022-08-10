@@ -1,10 +1,10 @@
-whenever.update() {
+whenever.update() { # PUBLIC
   cd ${release_path}
   bin/whenever --update-crontab ${stage} --set "environment=${env}&application=${app}"
   cd.back
 }
 
-whenever.clear() {
+whenever.clear() { # PUBLIC
   cd ${release_path}
   bin/whenever --clear-crontab ${stage}
   cd.back

@@ -1,4 +1,4 @@
-osquery.start() {
+osquery.start() { # PUBLIC
   if osquery.check; then
     if sudo osqueryctl start; then
       echo 'Osquery started'
@@ -9,7 +9,7 @@ osquery.start() {
   fi
 }
 
-osquery.stop() {
+osquery.stop() { # PUBLIC
   if sudo osqueryctl stop; then
     echo 'Osquery stopped'
   else
@@ -18,7 +18,7 @@ osquery.stop() {
   fi
 }
 
-osquery.restart() {
+osquery.restart() { # PUBLIC
   if osquery.check; then
     if sudo osqueryctl restart; then
       echo 'Osquery restarted'
@@ -29,7 +29,7 @@ osquery.restart() {
   fi
 }
 
-osquery.check() {
+osquery.check() { # PUBLIC
   if [[ $(sudo osqueryctl config-check 2>&1 >/dev/null | grep -c 'Error reading') -eq 0 ]]; then
     echo 'Config [OK]'
     return 0

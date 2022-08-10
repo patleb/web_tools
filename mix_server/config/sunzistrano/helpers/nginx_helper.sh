@@ -4,7 +4,7 @@ export nginx_maintenance_disable_before=()
 export nginx_maintenance_disable_after=()
 
 # %{exec "/usr/bin/sudo -u deployer -H sh -c '/home/deployer/.rbenv/bin/#{passenger_command}'"}
-passenger.restart() {
+passenger.restart() { # PUBLIC
   cd ${release_path}
   rbenv sudo passenger-config restart-app ${deploy_path} --ignore-app-not-running
   cd.back
@@ -33,11 +33,11 @@ nginx.maintenance_disable() {
   done
 }
 
-nginx.copy_system_conf() {
+nginx.copy_system_conf() { # PUBLIC
   sun.copy '/etc/nginx/nginx.conf' 0644 root:root
 }
 
-nginx.compile_stage() {
+nginx.compile_stage() { # PUBLIC
   set +u; local maintenance=$1; set -u
   if [[ "$maintenance" == maintenance ]]; then
     export nginx_early_return='return 503;'
@@ -54,18 +54,18 @@ nginx.compile_stage() {
   fi
 }
 
-nginx.compile_503() {
-  export nginx_maintenance_message=${nginx_maintenance_message:-"It'll be back shortly."}
+nginx.compile_503() { # PUBLIC
+  export message_503=${message_503:-"It'll be back shortly."}
   sun.compile "$shared_path/$(sun.flatten_path public/503.html)"
 }
 
-nginx.recover() {
+nginx.recover() { # PUBLIC
   nginx.stop
   nginx.kill
   nginx.start
 }
 
-nginx.start() {
+nginx.start() { # PUBLIC
   if nginx.check; then
     if sudo systemctl start nginx; then
       echo 'Nginx started'
@@ -76,7 +76,7 @@ nginx.start() {
   fi
 }
 
-nginx.stop() {
+nginx.stop() { # PUBLIC
   if sudo systemctl stop nginx; then
     echo 'Nginx stopped'
   else
@@ -85,7 +85,7 @@ nginx.stop() {
   fi
 }
 
-nginx.reload() {
+nginx.reload() { # PUBLIC
   if nginx.check; then
     if sudo systemctl reload nginx; then
       echo 'Nginx reloaded'
@@ -96,7 +96,7 @@ nginx.reload() {
   fi
 }
 
-nginx.check() {
+nginx.check() { # PUBLIC
   if [[ $(sudo nginx -t | grep -c 'failed') -eq 0 ]]; then
     echo 'Config [OK]'
     return 0
@@ -106,6 +106,6 @@ nginx.check() {
   fi
 }
 
-nginx.kill() {
+nginx.kill() { # PUBLIC
   <%= Sh.kill('nginx', '-o') %>
 }

@@ -23,8 +23,7 @@ sudo su - deployer << 'EOF'
     cd /home/deployer
   fi
 
-  <%= Sh.rbenv_export %>
-  <%= Sh.rbenv_init %>
+  <%= Sh.rbenv_ruby %>
 
   RUBY_CONFIGURE_OPTS=$RBENV_OPTIONS rbenv install $RUBY_VERSION
   rbenv global $RUBY_VERSION

@@ -39,11 +39,11 @@ sun.check_os() {
   fi
 }
 
-sun.os_name() {
+sun.os_name() { # PUBLIC
   hostnamectl | grep Operating | cut -d ':' -f2 | cut -d ' ' -f2 | tr '[:upper:]' '[:lower:]'
 }
 
-sun.os_version() {
+sun.os_version() { # PUBLIC
   hostnamectl | grep Operating | grep -o -E '[0-9]+' | head -n2 | paste -sd '.'
 }
 

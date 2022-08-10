@@ -1,6 +1,6 @@
 module Sunzistrano
   Cli.class_eval do
-    desc 'console [stage] [--host] [--sudo] [--sandbox]', 'Start a rails console'
+    desc 'console [STAGE] [--host] [--sudo] [--sandbox]', 'Start a rails console'
     method_options host: :string, sudo: false, sandbox: false
     def console(stage)
       do_console(stage)
@@ -19,7 +19,6 @@ module Sunzistrano
 
       def console_remote_cmd
         environment = ["RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
-        rbenv_ruby = "#{Sh.rbenv_export}; #{Sh.rbenv_init};"
         if sun.sudo
           rbenv_sudo = "rbenv sudo #{environment.join(' ')}"
         else
@@ -29,7 +28,7 @@ module Sunzistrano
         sandbox = '--sandbox' if sun.sandbox
         command = "bin/rails console #{sandbox}"
         <<-SH.squish
-          #{rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command}
+          #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command}
         SH
       end
     end

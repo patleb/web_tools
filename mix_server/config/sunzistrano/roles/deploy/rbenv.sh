@@ -4,5 +4,4 @@ if [[ ! -d $rbenv_ruby_dir ]]; then
   exit 1
 fi
 
-<%= Sh.rbenv_export %>
-<%= Sh.rbenv_init %>
+<%= Sh.rbenv_ruby %>

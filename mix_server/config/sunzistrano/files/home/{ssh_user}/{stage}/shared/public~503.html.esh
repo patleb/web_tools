@@ -19,6 +19,6 @@
 
   <p>The system is down for maintenance</p>
 
-  <p>$nginx_maintenance_message</p>
+  <p>$message_503</p>
 </body>
 </html>

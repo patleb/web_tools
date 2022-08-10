@@ -8,26 +8,25 @@ module Sunzistrano
 
     no_tasks do
       def do_rake(stage, task)
-        with_context(stage, :deploy, task: task) do
-          run_job_cmd :rake
+        with_context(stage, :deploy) do
+          run_job_cmd :rake, task
         end
       end
 
-      def rake_remote_cmd
+      def rake_remote_cmd(task)
         environment = ["RAKE_OUTPUT=#{sun.verbose.to_b}", "RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
-        rbenv_ruby = "#{Sh.rbenv_export}; #{Sh.rbenv_init};"
         if sun.sudo
           rbenv_sudo = "rbenv sudo #{environment.join(' ')}"
         else
           context = environment.map{ |value| "export #{value};" }.join(' ')
         end
         path = "cd #{sun.deploy_path :current};"
-        command = "bin/rake '#{sun.task.escape_single_quotes.escape_spaces}'"
+        command = "bin/rake #{task.escape_single_quotes}"
         if sun.nohup
           filename = nohup_basename(command)
           command = "#{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid"
           <<-SH.squish
-            #{rbenv_ruby} #{context} #{path} nohup #{rbenv_sudo} #{command}
+            #{Sh.rbenv_ruby} #{path} #{context} nohup #{rbenv_sudo} #{command}
           SH
         elsif sun.kill
           filename = nohup_basename(command)
@@ -37,7 +36,7 @@ module Sunzistrano
           SH
         else
           <<-SH.squish
-            #{rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command} |&
+            #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command} |&
             tee -a #{sun.deploy_path :current, BASH_LOG}
           SH
         end

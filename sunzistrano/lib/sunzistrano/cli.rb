@@ -18,6 +18,10 @@ module Sunzistrano
   end
 
   class Cli < Thor
+    SCRIPT = /^\w+[\w\/]+(\[|$)/
+    HELPER = /^\w+\.[\w.]+(\[|$)/
+    EXPORT = /^\w+=/
+
     include Thor::Actions
 
     attr_reader :sun
@@ -30,15 +34,16 @@ module Sunzistrano
       true
     end
 
-    desc 'bash-list [STAGE]', 'List bash scripts'
-    def bash_list(stage)
-      do_bash_list(stage)
+    desc 'bash-list [--stage]', 'List bash scripts and helpers'
+    method_options stage: :string
+    def bash_list
+      do_bash_list(options.stage.presence || 'production')
     end
 
-    desc 'bash [STAGE] [SCRIPT or HELPER] [--host] [--sudo]', 'Execute a bash script or helper function'
+    desc 'bash [STAGE] [TASK] [--host] [--sudo]', 'Execute bash script(s) and/or helper function(s)'
     method_options host: :string, sudo: false
-    def bash(stage, script_or_helper)
-      do_bash(stage, script_or_helper)
+    def bash(stage, task)
+      do_bash(stage, task)
     end
 
     desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force]', 'Deploy application'
@@ -87,18 +92,20 @@ module Sunzistrano
     no_tasks do
       def do_bash_list(stage)
         with_context(stage, :deploy) do
-          puts (sun.scripts || []).sort
+          if sun.bash_scripts.any?
+            puts 'scripts >'
+            sun.bash_scripts.each{ |script| puts script.indent(2) }
+          end
+          if sun.bash_helpers.any?
+            puts 'helpers >'
+            sun.bash_helpers.each{ |helper| puts helper.indent(2) }
+          end
         end
       end
 
-      def do_bash(stage, script_or_helper)
-        if script_or_helper.include? '.'
-          command_options = { helper: script_or_helper, script: 'helper' }
-        else
-          command_options = { script: script_or_helper}
-        end
-        with_context(stage, :deploy, **command_options) do
-          run_job_cmd :bash
+      def do_bash(stage, task)
+        with_context(stage, :deploy) do
+          run_job_cmd :bash, task
         end
       end
 
@@ -155,11 +162,11 @@ module Sunzistrano
         end
       end
 
-      def with_context(stage, role = nil, **command_options)
+      def with_context(stage, role = nil)
         env, app = stage.split('-', 2)
         role ||= options.deploy ? :deploy : :provision
         Setting.with(env: env, app: app) do
-          @sun = Sunzistrano::Context.new(role, **options.symbolize_keys, **command_options)
+          @sun = Sunzistrano::Context.new(role, **options.symbolize_keys)
           yield
         end
       end
@@ -167,7 +174,7 @@ module Sunzistrano
       def build_scripts
         copy_hooks :script
         used = Set.new
-        (['helper'] + (sun.scripts || [])).each do |file|
+        (sun.bash_scripts + ['helper']).each do |file|
           used << (dst = bash_path("scripts/#{file}.sh"))
           create_file dst, <<~SH, force: true, verbose: sun.debug
             export script=#{file}
@@ -261,10 +268,10 @@ module Sunzistrano
         end
       end
 
-      def run_job_cmd(type)
+      def run_job_cmd(type, *args)
         raise 'run_job_cmd type cannot be "role"' if type.to_sym == :role
         Parallel.each(Array.wrap(options.host.presence || sun.servers), in_threads: Float::INFINITY) do |server|
-          run_command :job_cmd, server, type
+          run_command :job_cmd, server, type, *args
         end
       end
 
@@ -306,6 +313,7 @@ module Sunzistrano
       end
 
       def run_reset_known_hosts
+        return if Setting.env? :development, :test
         hosts = sun.servers.map{ |server| `getent hosts #{server}`.squish.split }.flatten.uniq
         if hosts.any?
           hosts.each do |host|
@@ -317,7 +325,9 @@ module Sunzistrano
       end
 
       def run_command(cmd_name, server, *args)
-        Open3.popen3(send(cmd_name, server, *args)) do |stdin, stdout, stderr|
+        command = send(cmd_name, server, *args)
+        return puts command if Setting.env? :development, :test
+        Open3.popen3(command) do |stdin, stdout, stderr|
           stdin.close
           error = Thread.new do
             while (line = stderr.gets)
@@ -332,19 +342,53 @@ module Sunzistrano
         end
       end
 
-      def job_cmd(server, type)
+      def job_cmd(server, type, *args)
         <<-SH.squish
           #{ssh_add_vagrant}
-          #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{send "#{type}_remote_cmd"}'
+          #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{send "#{type}_remote_cmd", *args}'
         SH
       end
 
-      def bash_remote_cmd
-        <<-SH.squish
-          cd #{sun.deploy_path :current, BASH_DIR} &&
-          export helper='#{sun.helper}'; #{'sudo -E' if sun.sudo} bash -e -u scripts/#{sun.script}.sh |&
-          tee -a #{sun.deploy_path :current, BASH_LOG}
-        SH
+      def bash_remote_cmd(task)
+        task.shellsplit.each_with_object([]) do |token, memo|
+          case token
+          when SCRIPT
+            name, args = parse_bash_task(token)
+            raise "script '#{name}' is not available" unless sun.bash_scripts.include? name
+            memo << <<-SH.squish
+              cd #{sun.deploy_path :current, BASH_DIR} &&
+              #{'sudo -E' if sun.sudo} bash -e -u scripts/#{name}.sh #{args.join(' ').escape_single_quotes} |&
+              tee -a #{sun.deploy_path :current, BASH_LOG}
+            SH
+          when HELPER
+            name, args = parse_bash_task(token)
+            raise "helper '#{name}' is not available" unless sun.bash_helpers.include? name
+            memo << <<-SH.squish
+              cd #{sun.deploy_path :current, BASH_DIR} &&
+              export helper=#{name} &&
+              #{'sudo -E' if sun.sudo} bash -e -u scripts/helper.sh #{args.join(' ').escape_single_quotes} |&
+              tee -a #{sun.deploy_path :current, BASH_LOG} && unset helper
+            SH
+          when EXPORT
+            memo << "export #{token.escape_single_quotes}"
+          else
+            raise "invalid token '#{token}'"
+          end
+        end.join(' && ')
+      end
+
+      def parse_bash_task(token)
+        /^([^\[]+)\[(.*)\]$/ =~ token
+        name, rest = $1, $2
+        return token, [] unless name
+        return name,  [] unless rest.any?
+        args = []
+        begin
+          /\s*((?:[^\\,]|\\.)*?)\s*(?:,\s*(.*))?$/ =~ rest
+          rest = $2
+          args << $1.gsub(/\\(.)/, '\1')
+        end while rest
+        return name, args
       end
 
       def role_cmd(server)
@@ -406,6 +450,16 @@ module Sunzistrano
 
       def basename(file)
         file.sub(/.*#{CONFIG_PATH}\//, '')
+      end
+
+      def system(*args)
+        return puts args if Setting.env? :development, :test
+        Kernel.system(*args)
+      end
+
+      def exec(*args)
+        return puts args if Setting.env? :development, :test
+        Kernel.exec(*args)
       end
     end
   end

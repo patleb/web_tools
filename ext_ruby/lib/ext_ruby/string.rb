@@ -44,6 +44,14 @@ class String
     YAML.safe_load args
   end
 
+  def match_glob?(pattern)
+    if pattern.include? '*'
+      match? Regexp.new('^' << pattern.gsub('*', '\w*') << '$')
+    else
+      self == pattern
+    end
+  end
+
   def html_blank?
     gsub(HTML_BLANK, '').blank?
   end

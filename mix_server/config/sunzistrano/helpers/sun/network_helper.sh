@@ -36,10 +36,10 @@ sun.default_interface() {
   <%= Sh.default_interface %>
 }
 
-sun.public_ip() {
+sun.public_ip() { # PUBLIC
   <%= Sh.public_ip %>
 }
 
-sun.private_ip() {
+sun.private_ip() { # PUBLIC
   <%= Sh.private_ip %>
 }
