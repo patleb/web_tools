@@ -1,8 +1,7 @@
 module Sunzistrano
-  class Context < OpenStruct
-    HELPER_PUBLIC = /^([\w.]+)\s*\(\)\s*\{\s*#\s*public\s*$/i
-    VARIABLES = /(-?\{[a-z0-9_]+})/
+  VARIABLES = /(-?\{[a-z0-9_]+})/
 
+  class Context < OpenStruct
     attr_reader :sun
     attr_reader :gems
 
@@ -146,23 +145,6 @@ module Sunzistrano
 
     def linked_files
       self[:linked_files].presence && "'#{self[:linked_files].join(' ')}'" || "''"
-    end
-
-    def bash_scripts
-      @bash_scripts ||= SortedSet.new(sun.scripts || [])
-    end
-
-    def bash_helpers
-      @bash_helpers ||= begin
-        files = []; role_helpers{ |file, root| files << root.join(CONFIG_PATH, file) }
-        helpers = files.each_with_object([]) do |file, memo|
-          Pathname.new(file).each_line do |line|
-            name = line.match(HELPER_PUBLIC)&.captures&.first
-            memo << name if name
-          end
-        end
-        SortedSet.new(helpers)
-      end
     end
 
     def role_helpers

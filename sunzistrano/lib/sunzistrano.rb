@@ -2,7 +2,6 @@ require 'thor'
 require 'mix_setting'
 require 'sunzistrano/cli'
 require 'sunzistrano/cloud'
-require 'sunzistrano/context'
 require 'sunzistrano/version'
 
 module Sunzistrano

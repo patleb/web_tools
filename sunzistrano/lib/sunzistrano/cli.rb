@@ -1,3 +1,5 @@
+require 'sunzistrano/context'
+
 module Sunzistrano
   CONFIG_PATH = 'config/sunzistrano'
   CONFIG_YML = 'config/sunzistrano.yml'
@@ -7,7 +9,6 @@ module Sunzistrano
   MANIFEST_DIR = 'sun_manifest'
   MANIFEST_LOG = 'sun_manifest.log'
   METADATA_DIR = 'sun_metadata'
-  RSYNC_OPTIONS = '--archive --compress --partial --inplace --progress --verbose --human-readable' # equivalent to '-azPvh'
 
   def self.owner_path(dir, name = nil)
     if name
@@ -18,10 +19,6 @@ module Sunzistrano
   end
 
   class Cli < Thor
-    SCRIPT = /^\w+[\w\/]+(\[|$)/
-    HELPER = /^\w+\.[\w.]+(\[|$)/
-    EXPORT = /^\w+=/
-
     include Thor::Actions
 
     attr_reader :sun
@@ -32,18 +29,6 @@ module Sunzistrano
 
     def self.exit_on_failure?
       true
-    end
-
-    desc 'bash-list [--stage]', 'List bash scripts and helpers'
-    method_options stage: :string
-    def bash_list
-      do_bash_list(options.stage.presence || 'production')
-    end
-
-    desc 'bash [STAGE] [TASK] [--host] [--sudo]', 'Execute bash script(s) and/or helper function(s)'
-    method_options host: :string, sudo: false
-    def bash(stage, task)
-      do_bash(stage, task)
     end
 
     desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force]', 'Deploy application'
@@ -66,49 +51,12 @@ module Sunzistrano
       do_compile(stage)
     end
 
-    desc 'exist [STAGE] [PATH] [--deploy] [--from-defaults]', 'Check if path exists'
-    method_options deploy: false, from_defaults: false
-    def exist(stage, path)
-      do_exist(stage, path)
-    end
-
-    desc 'download [STAGE] [PATH] [--dir] [--ref] [--deploy] [--from-defaults]', 'Download file(s)'
-    method_options dir: :string, ref: false, deploy: false, from_defaults: false
-    def download(stage, path)
-      do_download(stage, path)
-    end
-
-    desc 'upload [STAGE] [PATH] [DIR] [--deploy] [--chown] [--chmod]', 'Upload file(s)'
-    method_options deploy: false, chown: :string, chmod: :string
-    def upload(stage, path, dir)
-      do_upload(stage, path, dir)
-    end
-
     desc 'reset_ssh [STAGE]', 'Reset ssh known hosts'
     def reset_ssh(stage)
       do_reset_ssh(stage)
     end
 
     no_tasks do
-      def do_bash_list(stage)
-        with_context(stage, :deploy) do
-          if sun.bash_scripts.any?
-            puts 'scripts >'
-            sun.bash_scripts.each{ |script| puts script.indent(2) }
-          end
-          if sun.bash_helpers.any?
-            puts 'helpers >'
-            sun.bash_helpers.each{ |helper| puts helper.indent(2) }
-          end
-        end
-      end
-
-      def do_bash(stage, task)
-        with_context(stage, :deploy) do
-          run_job_cmd :bash, task
-        end
-      end
-
       def do_provision(stage, role)
         do_compile(stage, role)
         run_role_cmd
@@ -119,40 +67,6 @@ module Sunzistrano
           copy_files
           build_helpers
           build_role
-          build_scripts
-        end
-      end
-
-      def do_exist(stage, path)
-        with_context(stage) do
-          path = Sunzistrano.owner_path :defaults_dir, path.tr('/', '~') if sun.from_defaults
-          run_exist_cmd(path)
-        end
-      end
-
-      def do_download(stage, path)
-        with_context(stage) do
-          src = path
-          if sun.ref
-            dst = Setting.root.join(CONFIG_PATH, "files/#{src.delete_prefix('/')}.ref")
-            dst.parent.mkpath
-          else
-            dst = sun.dir.present? ? Pathname.new(sun.dir).expand_path : Setting.root.join(BASH_DIR, 'downloads')
-            dst.mkpath
-          end
-          src = Sunzistrano.owner_path :defaults_dir, src.tr('/', '~') if sun.from_defaults
-          unless run_download_cmd(src, dst)
-            raise "Cannot transfer [#{src}] to [#{dst}]"
-          end
-        end
-      end
-
-      def do_upload(stage, path, dir)
-        with_context(stage) do
-          src, dst = path, dir
-          unless run_upload_cmd(src, dst)
-            raise "Cannot transfer [#{src}] to [#{dst}]"
-          end
         end
       end
 
@@ -169,23 +83,6 @@ module Sunzistrano
           @sun = Sunzistrano::Context.new(role, **options.symbolize_keys)
           yield
         end
-      end
-
-      def build_scripts
-        copy_hooks :script
-        used = Set.new
-        (sun.bash_scripts + ['helper']).each do |file|
-          used << (dst = bash_path("scripts/#{file}.sh"))
-          create_file dst, <<~SH, force: true, verbose: sun.debug
-            export script=#{file}
-            export PWD_WAS=$(pwd)
-            cd "#{bash_dir_remote}"
-            source script_before.sh
-            \n#{File.read(dst)}
-            source script_after.sh
-          SH
-        end
-        remove_all_unused :script, used
       end
 
       def build_role
@@ -286,32 +183,6 @@ module Sunzistrano
         end
       end
 
-      def run_exist_cmd(path)
-        test = sun.sudo ? "sudo test -e #{path}" : "[[ -e #{path} ]]"
-        system <<-SH.squish
-          #{ssh_add_vagrant}
-          #{ssh} #{sun.ssh_user}@#{sun.server_host} '#{test} && echo "true" || echo "false"'
-        SH
-      end
-
-      def run_download_cmd(src, dst)
-        system <<-SH.squish
-          #{ssh_add_vagrant}
-          rsync --rsync-path='sudo rsync' #{RSYNC_OPTIONS} -e
-          '#{ssh}' '#{sun.ssh_user}@#{sun.server_host}:#{src}' '#{dst}'
-        SH
-      end
-
-      def run_upload_cmd(src, dst)
-        chown = sun.chown.presence || "#{sun.ssh_user}:#{sun.ssh_user}"
-        chmod = "--chmod='#{sun.chmod}'" if sun.chmod.present?
-        system <<-SH.squish
-          #{ssh_add_vagrant}
-          rsync --rsync-path='sudo rsync' #{RSYNC_OPTIONS} --chown='#{chown}' #{chmod} -e
-          '#{ssh}' '#{src}' '#{sun.ssh_user}@#{sun.server_host}:#{dst}'
-        SH
-      end
-
       def run_reset_known_hosts
         return if Setting.env? :development, :test
         hosts = sun.servers.map{ |server| `getent hosts #{server}`.squish.split }.flatten.uniq
@@ -347,48 +218,6 @@ module Sunzistrano
           #{ssh_add_vagrant}
           #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{send "#{type}_remote_cmd", *args}'
         SH
-      end
-
-      def bash_remote_cmd(task)
-        task.shellsplit.each_with_object([]) do |token, memo|
-          case token
-          when SCRIPT
-            name, args = parse_bash_task(token)
-            raise "script '#{name}' is not available" unless sun.bash_scripts.include? name
-            memo << <<-SH.squish
-              cd #{sun.deploy_path :current, BASH_DIR} &&
-              #{'sudo -E' if sun.sudo} bash -e -u scripts/#{name}.sh #{args.join(' ').escape_single_quotes} |&
-              tee -a #{sun.deploy_path :current, BASH_LOG}
-            SH
-          when HELPER
-            name, args = parse_bash_task(token)
-            raise "helper '#{name}' is not available" unless sun.bash_helpers.include? name
-            memo << <<-SH.squish
-              cd #{sun.deploy_path :current, BASH_DIR} &&
-              export helper=#{name} &&
-              #{'sudo -E' if sun.sudo} bash -e -u scripts/helper.sh #{args.join(' ').escape_single_quotes} |&
-              tee -a #{sun.deploy_path :current, BASH_LOG} && unset helper
-            SH
-          when EXPORT
-            memo << "export #{token.escape_single_quotes}"
-          else
-            raise "invalid token '#{token}'"
-          end
-        end.join(' && ')
-      end
-
-      def parse_bash_task(token)
-        /^([^\[]+)\[(.*)\]$/ =~ token
-        name, rest = $1, $2
-        return token, [] unless name
-        return name,  [] unless rest.any?
-        args = []
-        begin
-          /\s*((?:[^\\,]|\\.)*?)\s*(?:,\s*(.*))?$/ =~ rest
-          rest = $2
-          args << $1.gsub(/\\(.)/, '\1')
-        end while rest
-        return name, args
       end
 
       def role_cmd(server)
