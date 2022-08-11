@@ -21,7 +21,7 @@ module Sunzistrano
           context = environment.map{ |value| "export #{value};" }.join(' ')
         end
         path = "cd #{sun.deploy_path :current};"
-        command = "bin/rake #{task.shellescape}"
+        command = "bin/rake #{task.shellsplit.map(&:shellescape).join(' ').gsub(/\\([\[\]])/, '\1')}"
         if sun.nohup
           filename = nohup_basename(command)
           command = "#{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid"

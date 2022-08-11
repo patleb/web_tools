@@ -65,7 +65,7 @@ module Sunzistrano
             raise "script '#{name}' is not available" unless sun.bash_scripts.include? name
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
-              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/#{name}.sh #{args.join(' ').shellescape} |&
+              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/#{name}.sh #{args.map(&:shellescape).join(' ')} |&
               tee -a #{sun.deploy_path :current, BASH_LOG}
             SH
           when BASH_HELPER
@@ -74,7 +74,7 @@ module Sunzistrano
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
               export helper=#{name} &&
-              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/helper.sh #{args.join(' ').shellescape} |&
+              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/helper.sh #{args.map(&:shellescape).join(' ')} |&
               tee -a #{sun.deploy_path :current, BASH_LOG} && unset helper
             SH
           when BASH_EXPORT
