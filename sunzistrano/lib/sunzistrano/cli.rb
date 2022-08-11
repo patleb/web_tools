@@ -196,9 +196,7 @@ module Sunzistrano
       end
 
       def run_command(cmd_name, server, *args)
-        command = send(cmd_name, server, *args)
-        return puts command if Setting.env? :development, :test
-        Open3.popen3(command) do |stdin, stdout, stderr|
+        popen3(cmd_name, server, *args) do |stdin, stdout, stderr|
           stdin.close
           error = Thread.new do
             while (line = stderr.gets)
@@ -281,13 +279,22 @@ module Sunzistrano
         file.sub(/.*#{CONFIG_PATH}\//, '')
       end
 
+      def popen3(cmd_name, server, *args, &block)
+        command = send(cmd_name, server, *args)
+        return puts command if Setting.env? :development, :test
+        puts command if sun.debug
+        Open3.popen3(command, &block)
+      end
+
       def system(*args)
         return puts args if Setting.env? :development, :test
+        puts args if sun.debug
         Kernel.system(*args)
       end
 
       def exec(*args)
         return puts args if Setting.env? :development, :test
+        puts args if sun.debug
         Kernel.exec(*args)
       end
     end
