@@ -8,7 +8,7 @@ context    = "export RAKE_OUTPUT=true; export :environment_variable=:environment
 path       = "cd :path;"
 flock      = "flock -n #{Whenever.path}/tmp/locks/:task.lock"
 rake       = "#{rbenv_sudo} bin/rake"
-bash       = "bash -e -u #{Sunzistrano::BASH_DIR}/scripts"
+bash       = "bash -e -u +H #{Sunzistrano::BASH_DIR}/scripts"
 helper     = "export helper=':task';"
 
 job_type :rake,         "#{Sh.rbenv_ruby} #{path} #{flock} nice -n 19 #{rake} ':task' --silent :output"

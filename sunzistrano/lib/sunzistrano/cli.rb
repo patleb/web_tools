@@ -232,7 +232,7 @@ module Sunzistrano
       def role_remote_cmd
         <<-SH.squish
           rm -rf #{bash_dir_remote} && mkdir -p #{bash_dir_remote} && cd #{bash_dir_remote} && tar xz &&
-          #{'sudo' if sun.sudo} bash -e -u role.sh |&
+          #{'sudo' if sun.sudo} bash -e -u +H role.sh |&
           tee -a #{sun.provision_path BASH_LOG}
         SH
       end
