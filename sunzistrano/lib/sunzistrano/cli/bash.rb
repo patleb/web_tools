@@ -12,8 +12,8 @@ module Sunzistrano
       do_bash_list(options.stage.presence || 'production')
     end
 
-    desc 'bash [STAGE] [TASK] [--host] [--sudo]', 'Execute bash script(s) and/or helper function(s)'
-    method_options host: :string, sudo: false
+    desc 'bash [STAGE] [TASK] [--host] [--sudo] [--no-verbose]', 'Execute bash script(s) and/or helper function(s)'
+    method_options host: :string, sudo: false, verbose: true
     def bash(stage, task)
       do_bash(stage, task)
     end
@@ -58,14 +58,14 @@ module Sunzistrano
       end
 
       def bash_remote_cmd(task)
-        task.shellsplit.each_with_object([]) do |token, memo|
+        task.shellsplit.each_with_object(["BASH_OUTPUT=#{sun.verbose.to_b}"]) do |token, memo|
           case token
           when BASH_SCRIPT
             name, args = parse_bash_task(token)
             raise "script '#{name}' is not available" unless sun.bash_scripts.include? name
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
-              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/#{name}.sh #{args.join(' ').escape_single_quotes} |&
+              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/#{name}.sh #{args.join(' ').shellescape} |&
               tee -a #{sun.deploy_path :current, BASH_LOG}
             SH
           when BASH_HELPER
@@ -74,11 +74,12 @@ module Sunzistrano
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
               export helper=#{name} &&
-              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/helper.sh #{args.join(' ').escape_single_quotes} |&
+              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/helper.sh #{args.join(' ').shellescape} |&
               tee -a #{sun.deploy_path :current, BASH_LOG} && unset helper
             SH
           when BASH_EXPORT
-            memo << "export #{token.escape_single_quotes}"
+            name, value = token.split('=', 2)
+            memo << "export #{name}=#{value.shellescape}"
           else
             raise "invalid token '#{token}'"
           end
@@ -89,7 +90,7 @@ module Sunzistrano
         /^([^\[]+)\[(.*)\]$/ =~ token
         name, rest = $1, $2
         return token, [] unless name
-        return name,  [] unless rest.any?
+        return name,  [] unless rest.present?
         args = []
         begin
           /\s*((?:[^\\,]|\\.)*?)\s*(?:,\s*(.*))?$/ =~ rest
