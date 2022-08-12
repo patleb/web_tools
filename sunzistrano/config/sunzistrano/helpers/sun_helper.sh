@@ -38,6 +38,8 @@ sun.elapsed_time() {
   local seconds=$(($elapsed_time % 60))
   if [[ "$minutes" != 0 || "$seconds" != 0 ]]; then
     echo "$minutes minutes and $seconds seconds elapsed."
+  else
+    echo 'less than 1 second elapsed'
   fi
 }
 
