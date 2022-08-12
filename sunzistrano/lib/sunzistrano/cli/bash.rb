@@ -41,20 +41,23 @@ module Sunzistrano
       alias_method :build_role_without_scripts, :build_role
       def build_role
         build_role_without_scripts
-        copy_hooks :script
         used = Set.new
-        (sun.bash_scripts + ['helper']).each do |file|
-          used << (dst = bash_path("scripts/#{file}.sh"))
-          create_file dst, <<~SH, force: true, verbose: sun.debug
+        unless sun.provision
+          copy_hooks :script
+          (sun.bash_scripts + ['helper']).each do |file|
+            used << (dst = bash_path("scripts/#{file}.sh"))
+            create_file dst, <<~SH, force: true, verbose: sun.debug
             export script=#{file}
             export PWD_WAS=$(pwd)
             cd "#{bash_dir_remote}"
             source script_before.sh
             \n#{File.read(dst)}
             source script_after.sh
-          SH
+            SH
+          end
         end
         remove_all_unused :script, used
+        FileUtils.rmdir(bash_path('scripts')) if sun.provision
       end
 
       def bash_remote_cmd(task)
