@@ -81,8 +81,7 @@ module Sunzistrano
               tee -a #{sun.deploy_path :current, BASH_LOG} && unset helper
             SH
           when BASH_EXPORT
-            name, value = token.split('=', 2)
-            memo.unshift "export #{name}=#{value}"
+            memo.unshift "export #{token}"
           else
             raise "invalid token '#{token}'"
           end
