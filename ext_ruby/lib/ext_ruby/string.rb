@@ -123,16 +123,20 @@ class String
     gsub("'", '&#39;')
   end
 
-  def escape_double_quotes
-    gsub(/"/, '\\x22')
+  def escape_single_quotes(type = :ascii)
+    case type
+    when :ascii then gsub(/'/, '\\x27')
+    when :char  then gsub(/'/){ "\\'" }
+    when :shell then gsub(/'/){ "'\\''" }
+    end
   end
 
-  def escape_single_quotes
-    gsub(/'/, '\\x27')
-  end
-
-  def unescape_single_quotes
-    gsub('\\x27', "'")
+  def unescape_single_quotes(type = :ascii)
+    case type
+    when :ascii then gsub('\\x27', "'")
+    when :char  then gsub("\\'", "'")
+    when :shell then gsub("'\\''", "'")
+    end
   end
 
   def escape_newlines
@@ -145,6 +149,20 @@ class String
 
   def escape_spaces
     gsub(' ', "\\\\ ")
+  end
+
+  def split_unquoted(pattern = ' ')
+    words = [['']]
+    scan(/(?:([^"']+)|("[^"]*")|('[^']*'))/) do |word, double, single|
+      if word
+        segments = word.split(pattern)
+        words[-1][-1] << segments.shift
+        words << segments
+      end
+      words[-1][-1] << double if double
+      words[-1][-1] << single if single
+    end
+    words.flatten
   end
 
   def partition_at(truncate_at, separator: nil, fallback: nil)

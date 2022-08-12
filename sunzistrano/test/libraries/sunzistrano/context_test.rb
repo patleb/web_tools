@@ -1,5 +1,4 @@
-require './test/spec_helper'
-require 'sunzistrano'
+require './sunzistrano/test/spec_helper'
 
 ROOT = Sunzistrano.root.join('test/fixtures/files')
 

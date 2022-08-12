@@ -58,14 +58,14 @@ module Sunzistrano
       end
 
       def bash_remote_cmd(task)
-        task.shellsplit.each_with_object(["BASH_OUTPUT=#{sun.verbose.to_b}"]) do |token, memo|
+        task.split_unquoted.each_with_object(["export BASH_OUTPUT=#{sun.verbose.to_b}"]) do |token, memo|
           case token
           when BASH_SCRIPT
             name, args = parse_bash_task(token)
             raise "script '#{name}' is not available" unless sun.bash_scripts.include? name
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
-              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/#{name}.sh #{args.map(&:shellescape).join(' ')} |&
+              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/#{name}.sh #{args.join(' ')} |&
               tee -a #{sun.deploy_path :current, BASH_LOG}
             SH
           when BASH_HELPER
@@ -74,12 +74,12 @@ module Sunzistrano
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
               export helper=#{name} &&
-              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/helper.sh #{args.map(&:shellescape).join(' ')} |&
+              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/helper.sh #{args.join(' ')} |&
               tee -a #{sun.deploy_path :current, BASH_LOG} && unset helper
             SH
           when BASH_EXPORT
             name, value = token.split('=', 2)
-            memo << "export #{name}=#{value.shellescape}"
+            memo.unshift "export #{name}=#{value}"
           else
             raise "invalid token '#{token}'"
           end

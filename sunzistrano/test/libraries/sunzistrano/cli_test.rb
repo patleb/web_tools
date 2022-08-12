@@ -1,5 +1,4 @@
-require './test/spec_helper'
-require 'sunzistrano'
+require './sunzistrano/test/spec_helper'
 
 class Sunzistrano::CliTest < Minitest::Spec
   it 'should build path relative to the owner provisioned dir' do
