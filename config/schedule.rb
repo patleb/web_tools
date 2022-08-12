@@ -2,6 +2,9 @@ require 'ext_whenever'
 
 ExtWhenever.setup(self)
 
+### NOTE
+# https://linuxconfig.org/how-to-execute-less-than-1-minute-intervals-jobs-using-cron-time-based-scheduler
+#
 # Crontab (ubuntu)
 # ----------------
 # hourly  --> on minute 17
@@ -32,12 +35,9 @@ ExtWhenever.setup(self)
 case @environment
 when 'vagrant'
   every :minute do
-    ### NOTE
-    # can't have several bash scripts/helpers at the same time, they pollute each other environment
-    # instead, use a single script (cron/every_minute) or helper (cron.every_minute)
-    ###
     # bash_script 'version'
-    # bash_helper 'sun.timestamp'
+    # bash_helper 'sun.os_name'
+    # rake 'zeitwerk:check'
   end
 when 'staging', 'production'
   case @application

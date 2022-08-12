@@ -5,8 +5,10 @@ sun.source_script() {
 sun.script_ensure() {
   cd "${bash_dir}"
   sun.include "roles/deploy_ensure.sh"
-  if [[ "$BASH_OUTPUT" == true || "${debug}" != false ]]; then
-    sun.elapsed_time $SCRIPT_START
+  if [[ "$BASH_OUTPUT" != false || "${debug}" != false ]]; then
+    if [[ "$BASH_OUTPUT" == true ]]; then
+      sun.elapsed_time $SCRIPT_START
+    fi
     if [[ "$SCRIPT_DONE" == true ]]; then
       if [[ ! -z "${helper}" ]]; then
         echo.success "Done   [${script}-${helper}]"
