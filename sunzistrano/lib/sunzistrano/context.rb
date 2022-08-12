@@ -47,7 +47,7 @@ module Sunzistrano
         provision: provision.to_b,
         specialize: specialize.to_b,
         rollback: rollback.to_b,
-        debug: debug == 'trace' ? debug : debug.to_b,
+        debug: debug,
         reboot: reboot.to_b,
         force: force.to_b,
       )
@@ -67,6 +67,12 @@ module Sunzistrano
 
     def provision_dir
       deploy ? "#{stage}/releases/#{revision}" : stage
+    end
+
+    def debug
+      return @debug if defined? @debug
+      value = ENV['DEBUG'].presence || self[:debug]
+      @debug = value == 'trace' ? value : value.to_b
     end
 
     def system

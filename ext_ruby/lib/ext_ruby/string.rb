@@ -126,16 +126,16 @@ class String
   def escape_single_quotes(type = :ascii)
     case type
     when :ascii then gsub(/'/, '\\x27')
-    when :char  then gsub(/'/){ "\\'" }
     when :shell then gsub(/'/){ "'\\''" }
+    when :char  then gsub(/'/){ "\\'" }
     end
   end
 
   def unescape_single_quotes(type = :ascii)
     case type
     when :ascii then gsub('\\x27', "'")
-    when :char  then gsub("\\'", "'")
     when :shell then gsub("'\\''", "'")
+    when :char  then gsub("\\'", "'")
     end
   end
 

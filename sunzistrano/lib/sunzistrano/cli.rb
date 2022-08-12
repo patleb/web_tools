@@ -213,10 +213,10 @@ module Sunzistrano
 
       def job_cmd(server, type, *args)
         command = send "#{type}_remote_cmd", *args
-        command = command.escape_single_quotes(:char)
+        command = command.escape_single_quotes(:shell)
         <<-SH.squish
           #{ssh_add_vagrant}
-          #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} $'#{command}'
+          #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{command}'
         SH
       end
 
