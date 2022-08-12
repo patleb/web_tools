@@ -206,7 +206,7 @@ module Sunzistrano
           while (line = stdout.gets)
             print "[#{server}] #{line}"
           end
-          puts "[#{server}]  #{Time.now.to_s.yellow}"
+          puts "[#{server}]  #{Time.now.to_s.yellow}" unless options.verbose == false
           error.join
         end
       end
