@@ -1,5 +1,5 @@
 module Sunzistrano
-  HELPER_PUBLIC = /^([\w.]+)\s*\(\)\s*\{\s*#\s*public\s*$/i
+  HELPER_PUBLIC = /^([\w.]+)\s*\(\)\s*\{\s*#\s*PUBLIC\s*$/i
 
   Context.class_eval do
     def bash_scripts
