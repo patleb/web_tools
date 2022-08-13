@@ -1,5 +1,5 @@
 desc() {
-  echo.info "$@"
+  echo.lightgray "$@"
 }
 
 echo.info() {
