@@ -2,7 +2,7 @@ sun.install() {
   if sun.installed "$@"; then
     echo "$@ already installed"
   else
-    sun.mute "$os_package_get -y install $@"
+    sun.mute "sudo $os_package_get -y install $@"
   fi
 }
 
