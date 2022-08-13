@@ -170,10 +170,7 @@ module Sunzistrano
           run_command :role_cmd, server
         end
         run_reset_known_hosts if sun.new_host
-        unless sun.debug
-          FileUtils.rm_rf(bash_dir)
-          FileUtils.rmdir(File.dirname(bash_dir)) if sun.revision
-        end
+        FileUtils.rm_rf(sun.revision ? File.dirname(bash_dir) : bash_dir) unless sun.debug
       end
 
       def run_reset_known_hosts
@@ -193,7 +190,7 @@ module Sunzistrano
           stdin.close
           error = Thread.new do
             while (line = stderr.gets)
-              if line.start_with? 'flock: failed'
+              if cmd_name == :role_cmd && line.start_with?('flock: failed')
                 print "[#{server}] Already running -- : #{line.red}"
               else
                 print "[#{server}] #{line.red}"
@@ -201,7 +198,7 @@ module Sunzistrano
             end
           end
           while (line = stdout.gets)
-            if line.start_with? 'flock:'
+            if cmd_name == :role_cmd && line.start_with?('flock:')
               print "[#{server}] Already running -- : #{line.red}" if line.start_with? 'flock: failed'
             else
               print "[#{server}] #{line}"
