@@ -265,6 +265,12 @@ module Sunzistrano
         file.sub(/.*#{CONFIG_PATH}\//, '')
       end
 
+      def capture2e(*cmd)
+        return puts cmd if Setting.env? :development, :test
+        puts cmd
+        Open3.capture2e(*cmd)
+      end
+
       def popen3(cmd_name, server, *args, &block)
         command = send(cmd_name, server, *args)
         return puts command if Setting.env? :development, :test

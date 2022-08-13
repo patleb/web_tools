@@ -1,4 +1,8 @@
 module Sunzistrano
+  TASK = '[TASK]'.freeze
+  DONE = '[DONE]'.freeze
+  FAIL = '[FAIL]'.freeze
+
   Cli.class_eval do
     desc 'rake [STAGE] [TASK] [--host] [--sudo] [--nohup] [--verbose] [--kill]', 'Execute a rake task'
     method_options host: :string, sudo: false, nohup: false, verbose: false, kill: false
@@ -11,6 +15,25 @@ module Sunzistrano
         with_context(stage, :deploy) do
           run_job_cmd :rake, task
         end
+      end
+
+      alias_method :run_role_cmd_without_local_tasks, :run_role_cmd
+      def run_role_cmd
+        (sun.run_locally || []).reject(&:blank?).each do |task|
+          started_at = Concurrent.monotonic_time
+          command = "RAILS_ENV=#{sun.env} RAILS_APP=#{sun.app} bin/rake #{task}"
+          puts "[#{Time.now.utc}]#{TASK} #{task}".cyan
+          output, status = capture2e(command)
+          total = (Concurrent.monotonic_time - started_at).seconds.ceil(3)
+          if status == 0
+            puts output
+            puts "[#{Time.now.utc}]#{DONE} #{task} -- : #{total} seconds".green
+          else
+            puts "[#{Time.now.utc}]#{FAIL} #{task} -- : #{total} seconds".red
+            raise output
+          end
+        end
+        run_role_cmd_without_local_tasks
       end
 
       def rake_remote_cmd(task)
