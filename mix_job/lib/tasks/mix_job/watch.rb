@@ -375,7 +375,7 @@ module MixJob
 
     def puts_action_success(action, total)
       Log.job_action(action, total)
-      puts "[#{Time.current.utc}]#{MixTask::SUCCESS}[#{Process.pid}]#{ACTION} #{action}: #{distance_of_time total}".green
+      puts "[#{Time.current.utc}]#{MixTask::SUCCESS}[#{Process.pid}]#{ACTION} #{action} -- : #{distance_of_time total}".green
     end
 
     def puts_action_failure(action, exception)

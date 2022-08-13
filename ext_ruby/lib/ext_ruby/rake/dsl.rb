@@ -84,7 +84,7 @@ module Rake
       end
       tag = "[#{tag}]" unless tag.start_with?('[') && tag.end_with?(']')
       text = "[#{Time.current.utc}]#{tag.full_underscore.upcase}[#{Process.pid}] #{text}"
-      text = "#{text}: #{distance_of_time (Concurrent.monotonic_time - started_at).seconds.ceil(3)}" if started_at
+      text = "#{text} -- : #{distance_of_time (Concurrent.monotonic_time - started_at).seconds.ceil(3)}" if started_at
       puts text
     end
 

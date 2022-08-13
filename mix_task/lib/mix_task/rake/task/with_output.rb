@@ -14,7 +14,7 @@ module Rake::Task::WithOutput
 
   def puts_success(total)
     Log.task(name, time: total)
-    puts "[#{Time.current.utc}]#{MixTask::SUCCESS}[#{Process.pid}] #{name}: #{distance_of_time total}".green
+    puts "[#{Time.current.utc}]#{MixTask::SUCCESS}[#{Process.pid}] #{name} -- : #{distance_of_time total}".green
   end
 
   def puts_failure(exception)
