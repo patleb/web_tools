@@ -21,7 +21,7 @@ module Sunzistrano
       def run_role_cmd
         (sun.local_tasks || []).reject(&:blank?).each do |task|
           started_at = Concurrent.monotonic_time
-          context = "RAILS_ENV=#{sun.env} RAILS_APP=#{sun.app} BASH_DIR=#{sun.bash_dir}"
+          context = "RAILS_ENV=#{sun.env} RAILS_APP=#{sun.app} BASH_DIR=#{bash_dir}"
           command = "#{context} bin/rake #{task}"
           puts "[#{Time.now.utc}]#{TASK} #{task}".cyan
           output, status = capture2e(command)
