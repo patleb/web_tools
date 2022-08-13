@@ -19,9 +19,10 @@ module Sunzistrano
 
       alias_method :run_role_cmd_without_local_tasks, :run_role_cmd
       def run_role_cmd
-        (sun.run_locally || []).reject(&:blank?).each do |task|
+        (sun.local_tasks || []).reject(&:blank?).each do |task|
           started_at = Concurrent.monotonic_time
-          command = "RAILS_ENV=#{sun.env} RAILS_APP=#{sun.app} bin/rake #{task}"
+          context = "RAILS_ENV=#{sun.env} RAILS_APP=#{sun.app} BASH_DIR=#{sun.bash_dir}"
+          command = "#{context} bin/rake #{task}"
           puts "[#{Time.now.utc}]#{TASK} #{task}".cyan
           output, status = capture2e(command)
           total = (Concurrent.monotonic_time - started_at).seconds.ceil(3)
