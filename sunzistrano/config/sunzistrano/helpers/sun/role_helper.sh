@@ -9,6 +9,9 @@ sun.setup_commands() {
     export os_package_installed='dpkg -s'
     export os_package_lock='apt-mark hold'
     export os_package_unlock='apt-mark unhold'
+    if ! dpkg -s 'moreutils' >/dev/null 2>&1; then
+      sudo apt-get install -y moreutils >/dev/null 2>&1
+    fi
   ;;
   *)
     echo "Unsupported OS"

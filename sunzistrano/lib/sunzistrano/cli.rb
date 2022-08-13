@@ -193,13 +193,21 @@ module Sunzistrano
           stdin.close
           error = Thread.new do
             while (line = stderr.gets)
-              print "[#{server}] #{line.red}"
+              if line.start_with? 'flock: failed'
+                print "[#{server}] Already running -- : #{line.red}"
+              else
+                print "[#{server}] #{line.red}"
+              end
             end
           end
           while (line = stdout.gets)
-            print "[#{server}] #{line}"
+            if line.start_with? 'flock:'
+              print "[#{server}] Already running -- : #{line.red}" if line.start_with? 'flock: failed'
+            else
+              print "[#{server}] #{line}"
+            end
           end
-          puts "[#{server}]  #{Time.now.to_s.yellow}" unless options.verbose == false
+          puts "[#{server}] #{Time.now.to_s.yellow}" unless options.verbose == false
           error.join
         end
       end
@@ -215,9 +223,11 @@ module Sunzistrano
 
       def role_remote_cmd
         <<-SH.squish
-          rm -rf #{bash_dir_remote} && mkdir -p #{bash_dir_remote} && cd #{bash_dir_remote} && tar xz &&
-          #{'sudo' if sun.sudo} bash -e -u +H role.sh |&
-          tee -a #{sun.provision_path BASH_LOG}
+          mkdir -p #{bash_dir_remote} && cd #{bash_dir_remote} && start=$(mktemp) &&
+          flock --verbose -n #{sun.deploy_path 'role.lock'} tar xz &&
+          flock --verbose -n #{sun.deploy_path 'role.lock'} #{'sudo' if sun.sudo} bash -e -u +H role.sh |&
+          tee -a #{sun.provision_path BASH_LOG} && cd #{bash_dir_remote} &&
+          find . -depth ! -cnewer $start -print0 | sponge /dev/stdout | xargs -r0 rm -d && rm -f $start
         SH
       end
 
