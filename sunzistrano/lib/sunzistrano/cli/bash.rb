@@ -80,7 +80,7 @@ module Sunzistrano
         task.split_unquoted.each_with_object(["export BASH_OUTPUT=#{sun.verbose.to_b}"]) do |token, memo|
           case token
           when BASH_SCRIPT
-            name, args = parse_bash_task(token)
+            name, args = parse_job(token)
             raise "script '#{name}' is not available" unless sun.bash_scripts.include? name
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
@@ -88,7 +88,7 @@ module Sunzistrano
               tee -a #{sun.deploy_path :current, BASH_LOG}
             SH
           when BASH_HELPER
-            name, args = parse_bash_task(token)
+            name, args = parse_job(token)
             raise "helper '#{name}' is not available" unless sun.bash_helpers.include? name
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
@@ -104,7 +104,7 @@ module Sunzistrano
         end.join(' && ')
       end
 
-      def parse_bash_task(token)
+      def parse_job(token)
         /^([^\[]+)\[(.*)\]$/ =~ token
         name, rest = $1, $2
         return token, [] unless name
