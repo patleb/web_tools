@@ -1,5 +1,5 @@
 desc() {
-  echo.lightgray "$@"
+  echo.lightgray "[$(sun.timestamp)] $@"
 }
 
 echo.info() {
