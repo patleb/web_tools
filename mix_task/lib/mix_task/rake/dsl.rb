@@ -31,7 +31,7 @@ module Rake
       end
     end
 
-    def sun_task(task_string, env: Rails.env, app: Rails.app, host: nil)
+    def sun_rake(task_string, env: Rails.env, app: Rails.app, host: nil)
       no_color = 'DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
       host = "--host=#{host}" if host.present?
       task = [task_string, no_color].compact.join(' ')
