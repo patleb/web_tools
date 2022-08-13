@@ -9,6 +9,10 @@ export REBOOT_RECIPE=false
 export REBOOT_FORCE=false
 export ROLE_START=$(sun.current_time)
 
+if ! sun.installed 'moreutils'; then
+  sun.mute "sudo $os_package_get -y install moreutils"
+fi
+
 trap sun.recipe_ensure EXIT
 
 sun.start_provision
