@@ -60,6 +60,22 @@ module Sunzistrano
         FileUtils.rmdir(bash_path('scripts')) if sun.provision
       end
 
+      def run_job_cmd(type, *args)
+        raise 'run_job_cmd type cannot be "role"' if type.to_sym == :role
+        Parallel.each(Array.wrap(options.host.presence || sun.servers), in_threads: Float::INFINITY) do |server|
+          run_command :job_cmd, server, type, *args
+        end
+      end
+
+      def job_cmd(server, type, *args)
+        command = send "#{type}_remote_cmd", *args
+        command = command.escape_single_quotes(:shell)
+        <<-SH.squish
+          #{ssh_add_vagrant}
+          #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{command}'
+        SH
+      end
+
       def bash_remote_cmd(task)
         task.split_unquoted.each_with_object(["export BASH_OUTPUT=#{sun.verbose.to_b}"]) do |token, memo|
           case token

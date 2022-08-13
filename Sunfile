@@ -1,4 +1,2 @@
-require 'sunzistrano/cli/bash'
-require 'sunzistrano/cli/rsync'
 require 'ext_rails/sunzistrano/cli/console'
 require 'mix_task/sunzistrano/cli/rake'

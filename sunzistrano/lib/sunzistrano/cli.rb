@@ -85,45 +85,6 @@ module Sunzistrano
         end
       end
 
-      def build_role
-        copy_hooks :role
-        used = Set.new
-        File.foreach(bash_path("roles/#{sun.role}.sh")) do |line|
-          next unless (recipe = line.match(/^ *sun\.source_recipe\s*["'\s]([^"'\s]+)/)&.captures&.first)
-          file = bash_path("recipes/#{recipe}")
-          used << "#{file}.sh"
-          used << "#{file}-specialize.sh"
-          used << "#{file}-rollback.sh"
-        end
-        create_file bash_path('role.sh'), <<~SH, force: true, verbose: sun.debug
-          source role_before.sh
-          source roles/#{sun.role}.sh
-          source role_after.sh
-        SH
-        remove_all_unused :recipe, used
-        %i(before after ensure).each do |hook|
-          next unless (files = sun["role_#{hook}"]).present?
-          content = files.map{ |file| "source roles/#{file}.sh" }.join("\n")
-          create_file bash_path("roles/#{sun.role}_#{hook}.sh"), content, force: true, verbose: sun.debug
-        end
-      end
-
-      def remove_all_unused(type, used)
-        Dir[bash_path("#{type}s/**/*.sh")].each do |file|
-          remove_file file, verbose: false unless used.include? file
-        end
-        Dir[bash_path("#{type}s/**/*")].select{ |dir| File.directory? dir }.reverse_each do |dir|
-          next unless (Dir.entries(dir) - %w(. ..)).empty?
-          FileUtils.rmdir(dir)
-        end
-      end
-
-      def build_helpers
-        src = Sunzistrano.root.join(CONFIG_PATH, 'helpers.sh').expand_path
-        dst = bash_path('helpers.sh')
-        template src, dst, force: true, verbose: sun.debug
-      end
-
       def copy_files
         basenames = "#{CONFIG_PATH}/{files,helpers,recipes,roles,scripts}/**/*"
         dirnames = [basenames]
@@ -156,6 +117,35 @@ module Sunzistrano
         end
       end
 
+      def build_helpers
+        src = Sunzistrano.root.join(CONFIG_PATH, 'helpers.sh').expand_path
+        dst = bash_path('helpers.sh')
+        template src, dst, force: true, verbose: sun.debug
+      end
+
+      def build_role
+        copy_hooks :role
+        used = Set.new
+        File.foreach(bash_path("roles/#{sun.role}.sh")) do |line|
+          next unless (recipe = line.match(/^ *sun\.source_recipe\s*["'\s]([^"'\s]+)/)&.captures&.first)
+          file = bash_path("recipes/#{recipe}")
+          used << "#{file}.sh"
+          used << "#{file}-specialize.sh"
+          used << "#{file}-rollback.sh"
+        end
+        create_file bash_path('role.sh'), <<~SH, force: true, verbose: sun.debug
+          source role_before.sh
+          source roles/#{sun.role}.sh
+          source role_after.sh
+        SH
+        remove_all_unused :recipe, used
+        %i(before after ensure).each do |hook|
+          next unless (files = sun["role_#{hook}"]).present?
+          content = files.map{ |file| "source roles/#{file}.sh" }.join("\n")
+          create_file bash_path("roles/#{sun.role}_#{hook}.sh"), content, force: true, verbose: sun.debug
+        end
+      end
+
       def copy_hooks(type)
         %i(before after).each do |hook|
           file = "#{type}_#{hook}.sh"
@@ -165,10 +155,13 @@ module Sunzistrano
         end
       end
 
-      def run_job_cmd(type, *args)
-        raise 'run_job_cmd type cannot be "role"' if type.to_sym == :role
-        Parallel.each(Array.wrap(options.host.presence || sun.servers), in_threads: Float::INFINITY) do |server|
-          run_command :job_cmd, server, type, *args
+      def remove_all_unused(type, used)
+        Dir[bash_path("#{type}s/**/*.sh")].each do |file|
+          remove_file file, verbose: false unless used.include? file
+        end
+        Dir[bash_path("#{type}s/**/*")].select{ |dir| File.directory? dir }.reverse_each do |dir|
+          next unless (Dir.entries(dir) - %w(. ..)).empty?
+          FileUtils.rmdir(dir)
         end
       end
 
@@ -209,15 +202,6 @@ module Sunzistrano
           puts "[#{server}]  #{Time.now.to_s.yellow}" unless options.verbose == false
           error.join
         end
-      end
-
-      def job_cmd(server, type, *args)
-        command = send "#{type}_remote_cmd", *args
-        command = command.escape_single_quotes(:shell)
-        <<-SH.squish
-          #{ssh_add_vagrant}
-          #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{command}'
-        SH
       end
 
       def role_cmd(server)
@@ -303,4 +287,6 @@ module Sunzistrano
   end
 end
 
+require 'sunzistrano/cli/bash'
+require 'sunzistrano/cli/rsync'
 load 'Sunfile' if File.exist? 'Sunfile'
