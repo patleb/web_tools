@@ -175,7 +175,10 @@ module Sunzistrano
           run_command :role_cmd, server
         end
         run_reset_known_hosts if sun.new_host
-        FileUtils.rm_rf(sun.deploy ? File.dirname(bash_dir) : bash_dir) unless sun.debug
+        unless sun.debug
+          FileUtils.rm_rf(bash_dir)
+          FileUtils.rmdir(File.dirname(bash_dir)) rescue nil if sun.deploy
+        end
       end
 
       def run_reset_known_hosts

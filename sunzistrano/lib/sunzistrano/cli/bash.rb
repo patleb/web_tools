@@ -47,12 +47,12 @@ module Sunzistrano
           (sun.bash_scripts + ['helper']).each do |file|
             used << (dst = bash_path("scripts/#{file}.sh"))
             create_file dst, <<~SH, force: true, verbose: sun.debug
-            export script=#{file}
-            export PWD_WAS=$(pwd)
-            cd "#{bash_dir_remote}"
-            source script_before.sh
-            \n#{File.read(dst)}
-            source script_after.sh
+              export script=#{file}
+              export PWD_WAS=$(pwd)
+              cd "#{bash_dir_remote}"
+              source script_before.sh
+              \n#{File.read(dst)}
+              source script_after.sh
             SH
           end
         end
