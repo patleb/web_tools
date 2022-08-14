@@ -31,8 +31,8 @@ module Sunzistrano
       true
     end
 
-    desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force]', 'Deploy application'
-    method_options system: false, rollback: false, recipe: :string, force: false
+    desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--no-sync] [--force]', 'Deploy application'
+    method_options system: false, rollback: false, recipe: :string, sync: true, force: false
     def deploy(stage)
       raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
       do_provision(stage, :deploy)
@@ -64,6 +64,7 @@ module Sunzistrano
 
       def do_compile(stage, role = nil)
         with_context(stage, role) do
+          raise 'local and remote commits differ' if out_of_sync?
           copy_files
           build_helpers
           build_role
@@ -83,6 +84,10 @@ module Sunzistrano
           @sun = Sunzistrano::Context.new(role, **options.symbolize_keys)
           yield
         end
+      end
+
+      def out_of_sync?
+        sun.deploy && sun.sync && sun.revision != `git rev-parse HEAD`.strip
       end
 
       def copy_files
@@ -170,7 +175,7 @@ module Sunzistrano
           run_command :role_cmd, server
         end
         run_reset_known_hosts if sun.new_host
-        FileUtils.rm_rf(sun.revision ? File.dirname(bash_dir) : bash_dir) unless sun.debug
+        FileUtils.rm_rf(sun.deploy ? File.dirname(bash_dir) : bash_dir) unless sun.debug
       end
 
       def run_reset_known_hosts
