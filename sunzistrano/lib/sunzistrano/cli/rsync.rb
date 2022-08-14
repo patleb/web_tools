@@ -1,5 +1,7 @@
 module Sunzistrano
-  RSYNC_OPTIONS = '--archive --compress --partial --inplace --progress --verbose --human-readable' # equivalent to '-azPvh'
+  RSYNC_ARCHIVE = '--archive --compress'
+  RSYNC_RESUME = '--partial --inplace'
+  RSYNC_VERBOSE = '--progress --verbose --human-readable'
 
   Cli.class_eval do
     desc 'exist [STAGE] [PATH] [--deploy] [--from-defaults]', 'Check if path exists'
@@ -8,14 +10,14 @@ module Sunzistrano
       do_exist(stage, path)
     end
 
-    desc 'download [STAGE] [PATH] [--dir] [--ref] [--deploy] [--from-defaults]', 'Download file(s)'
-    method_options dir: :string, ref: false, deploy: false, from_defaults: false
+    desc 'download [STAGE] [PATH] [--dir] [--ref] [--deploy] [--from-defaults] [-no-resume] [-no-verbose]', 'Download file(s)'
+    method_options dir: :string, ref: false, deploy: false, from_defaults: false, resume: true, verbose: true
     def download(stage, path)
       do_download(stage, path)
     end
 
-    desc 'upload [STAGE] [PATH] [DIR] [--deploy] [--chown] [--chmod]', 'Upload file(s)'
-    method_options deploy: false, chown: :string, chmod: :string
+    desc 'upload [STAGE] [PATH] [DIR] [--deploy] [--chown] [--chmod] [-no-resume] [-no-verbose]', 'Upload file(s)'
+    method_options deploy: false, chown: :string, chmod: :string, resume: true, verbose: true
     def upload(stage, path, dir)
       do_upload(stage, path, dir)
     end
@@ -65,7 +67,7 @@ module Sunzistrano
       def run_download_cmd(src, dst)
         system <<-SH.squish
           #{ssh_add_vagrant}
-          rsync --rsync-path='sudo rsync' #{RSYNC_OPTIONS} -e
+          rsync --rsync-path='sudo rsync' #{rsync_options} -e
           '#{ssh}' '#{sun.ssh_user}@#{sun.server_host}:#{src}' '#{dst}'
         SH
       end
@@ -75,9 +77,13 @@ module Sunzistrano
         chmod = "--chmod='#{sun.chmod}'" if sun.chmod.present?
         system <<-SH.squish
           #{ssh_add_vagrant}
-          rsync --rsync-path='sudo rsync' #{RSYNC_OPTIONS} --chown='#{chown}' #{chmod} -e
+          rsync --rsync-path='sudo rsync' #{rsync_options} --chown='#{chown}' #{chmod} -e
           '#{ssh}' '#{src}' '#{sun.ssh_user}@#{sun.server_host}:#{dst}'
         SH
+      end
+
+      def rsync_options
+        "#{RSYNC_ARCHIVE} #{RSYNC_RESUME if options.resume} #{RSYNC_VERBOSE if options.verbose}"
       end
     end
   end
