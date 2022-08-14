@@ -23,6 +23,12 @@ if [[ "${git_verify_commit}" != false ]]; then
   git verify-commit ${revision}
 fi
 
+desc 'Check the current revision against the clone'
+if [[ "${revision}" != "$(git rev-parse HEAD)" ]]; then
+  echo.failure 'current and cloned revisions differ'
+  exit 1
+fi
+
 desc 'Copy repo to releases'
 mkdir -p "$release_path"
 git archive ${branch} | tar -x -f - -C $release_path
