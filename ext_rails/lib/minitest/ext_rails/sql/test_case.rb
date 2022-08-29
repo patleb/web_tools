@@ -183,7 +183,7 @@ module Sql
       SQL
 
       procedures.each do |procedure|
-        connection.exec_query "DROP FUNCTION IF EXISTS #{procedure}()"
+        connection.exec_query "DROP FUNCTION IF EXISTS #{procedure}"
       end
     end
 

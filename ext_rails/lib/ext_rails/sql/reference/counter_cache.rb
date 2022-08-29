@@ -37,7 +37,7 @@ module Sql::Reference::CounterCache
     end
 
     def drop_counter_cache(**)
-      "DROP FUNCTION IF EXISTS counter_cache()"
+      "DROP FUNCTION IF EXISTS counter_cache"
     end
 
     # TODO --> ON TRUNCATE (what about partioned tables?)

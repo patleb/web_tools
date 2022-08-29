@@ -21,6 +21,6 @@ class AddNotifyTriggerToLibJobs < ActiveRecord::Migration[6.0]
 
   def down
     exec_query("DROP TRIGGER IF EXISTS job_notify_trigger ON lib_jobs")
-    exec_query("DROP FUNCTION IF EXISTS job_notify()")
+    exec_query("DROP FUNCTION IF EXISTS job_notify")
   end
 end

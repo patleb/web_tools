@@ -29,8 +29,8 @@ class EnableCountEstimate < ActiveRecord::Migration[6.0]
 
   def down
     execute <<-SQL.strip_sql
-      DROP FUNCTION IF EXISTS count_estimate(query text);
-      DROP FUNCTION IF EXISTS table_estimate(name text);
+      DROP FUNCTION IF EXISTS count_estimate;
+      DROP FUNCTION IF EXISTS table_estimate;
     SQL
   end
 end

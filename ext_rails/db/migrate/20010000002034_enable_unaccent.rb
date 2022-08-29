@@ -37,7 +37,7 @@ class EnableUnaccent < ActiveRecord::Migration[6.0]
 
       change.down do
         execute <<-SQL.strip_sql
-          DROP FUNCTION IF EXISTS unaccent_text();
+          DROP FUNCTION IF EXISTS unaccent_text;
         SQL
       end
     end

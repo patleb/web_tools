@@ -24,8 +24,8 @@ class EnablePgcrypto < ActiveRecord::Migration[6.0]
 
       change.down do
         execute <<-SQL.strip_sql
-          DROP FUNCTION IF EXISTS sha1_hex(VARIADIC args ANYARRAY);
-          DROP FUNCTION IF EXISTS sha256_hex(VARIADIC args ANYARRAY);
+          DROP FUNCTION IF EXISTS sha1_hex;
+          DROP FUNCTION IF EXISTS sha256_hex;
         SQL
       end
     end

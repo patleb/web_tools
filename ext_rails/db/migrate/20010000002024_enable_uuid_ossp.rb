@@ -51,9 +51,9 @@ class EnableUuidOssp < ActiveRecord::Migration[6.0]
 
       change.down do
         execute <<-SQL.strip_sql
-          DROP FUNCTION IF EXISTS uuid_v1_from_seq(seq regclass);
-          DROP FUNCTION IF EXISTS uuid_v1_to_timestamp(uuid UUID);
-          DROP FUNCTION IF EXISTS uuid_v1_to_100nsecs(uuid UUID);
+          DROP FUNCTION IF EXISTS uuid_v1_from_seq;
+          DROP FUNCTION IF EXISTS uuid_v1_to_timestamp;
+          DROP FUNCTION IF EXISTS uuid_v1_to_100nsecs;
         SQL
       end
     end

@@ -12,7 +12,7 @@ class CreateAddHealthcheckToRpcSchema < ActiveRecord::Migration[6.1]
       end
       change.down do
         exec_query <<-SQL
-          DROP FUNCTION IF EXISTS rpc.healthcheck();
+          DROP FUNCTION IF EXISTS rpc.healthcheck;
         SQL
       end
     end

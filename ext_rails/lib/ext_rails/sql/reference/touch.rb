@@ -40,7 +40,7 @@ module Sql::Reference::Touch
     end
 
     def drop_touch(**)
-      "DROP FUNCTION IF EXISTS touch()"
+      "DROP FUNCTION IF EXISTS touch"
     end
 
     def create_touch_trigger(from_table, ref_name, **options)
