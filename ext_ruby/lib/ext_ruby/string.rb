@@ -156,11 +156,11 @@ class String
     scan(/(?:([^"']+)|("[^"]*")|('[^']*'))/) do |word, double, single|
       if word
         segments = word.split(pattern)
-        words[-1][-1] << segments.shift
+        words.last[-1] << segments.shift
         words << segments
       end
-      words[-1][-1] << double if double
-      words[-1][-1] << single if single
+      words.last[-1] << double if double
+      words.last[-1] << single if single
     end
     words.flatten
   end
