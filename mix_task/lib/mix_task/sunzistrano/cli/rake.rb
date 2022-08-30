@@ -84,14 +84,15 @@ module Sunzistrano
       end
 
       def parse_wait
-        duration = case sun.wait
-          when /^(\d+)\.(second|minute|hour|day|week)s?$/
-            ($1.to_i.send($2).from_now - Time.now).to_i
+        wait_at = case sun.wait
+          when /^(\d+\.(second|minute|hour|day|week)s?)(\s*\+\s*\d+\.(second|minute|hour|day|week)s?)*$/
+            sun.wait.split(/\s*\+\s*/).map(&:split.with('.')).map{ |(n, unit)| n.to_i.send(unit) }.reduce(:+).from_now
           else
-            (Time.parse(sun.wait) - Time.now).to_i rescue nil
+            Time.parse(sun.wait) rescue return
           end
-        duration = 60 if duration && duration < 60
-        [duration / 60, duration % 60] if duration
+        wait = (wait_at - Time.now).to_i
+        wait = 60 if wait < 60
+        [wait / 60, wait % 60]
       end
     end
   end
