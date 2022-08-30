@@ -131,7 +131,7 @@ Fn + Down  --> Pg Dn
 Fn + Left  --> Home
 Fn + Right --> End
 
-- [https://github.com/ElectricRCAircraftGuy/eRCaGuy_dotfiles/blob/master/useful_scripts/touchpad_toggle.sh](Touchpad Toggle):
+- [Touchpad Toggle](https://github.com/ElectricRCAircraftGuy/eRCaGuy_dotfiles/blob/master/useful_scripts/touchpad_toggle.sh):
 
 ```sh
 
@@ -399,14 +399,14 @@ sudo apt-get install -y libspdlog-dev libboost-all-dev
 
 ## VSCode
 
-Download and install [https://code.visualstudio.com/docs/setup/linux](VSCode)
+Download and install [VSCode](https://code.visualstudio.com/docs/setup/linux)
 
 - https://code.visualstudio.com/docs/supporting/faq#_how-to-disable-telemetry-reporting
 - https://code.visualstudio.com/docs/editor/settings-sync
 
 ## Rubymine
 
-- [https://confluence.jetbrains.com/display/IDEADEV/Inotify+Watches+Limit](inotify):
+- [inotify](https://confluence.jetbrains.com/display/IDEADEV/Inotify+Watches+Limit):
 - File / Settings / Editor / Font / Font [DejaVu Sans Mono], Size [12], Line spacing [1.3]
 - File / Settings / Editor / Color Scheme / Scheme [Classic Light]
 - File / Settings / Editor / Color Scheme / Language Defaults / Italic [false]
@@ -439,4 +439,30 @@ chmod +x webcamoid-installer-*
 rm -rf ~/.config/Webcamoid
 ```
 
-Download and install [https://zoom.us/download?os=linux](Zoom)
+Download and install [Zoom](https://zoom.us/download?os=linux)
+
+## KeePassXC
+
+```sh
+sudo apt-get install -y keepassxc
+```
+
+## SSH Config
+
+Add the following to your `~/.ssh/config` file ([references](https://carlosbecker.dev/posts/ssh-tips-and-tricks/)):
+
+```sh
+# ~/.ssh/config
+# -------------
+Host *
+  ServerAliveInterval   300s
+Host vagrant-*.test
+  UserKnownHostsFile    /dev/null
+  StrictHostKeyChecking no
+Host vagrant-*.test
+  User                  deployer
+  ForwardAgent          yes
+  ControlMaster         auto
+  ControlPath           ~/.ssh/%r@%h:%p.sock
+  ControlPersist        300s
+```
