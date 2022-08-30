@@ -55,7 +55,7 @@ nginx.compile_stage() { # PUBLIC
 }
 
 nginx.compile_503() { # PUBLIC
-  export message_503=${message_503:-"It'll be back shortly."}
+  export message_503=${message_503:-''}
   sun.compile "$shared_path/$(sun.flatten_path public/503.html)"
 }
 
