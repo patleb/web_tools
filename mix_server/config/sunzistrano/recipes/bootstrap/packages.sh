@@ -8,6 +8,7 @@ fi
 
 <% %W(
   apt-transport-https
+  at
   autoconf
   bc
   bison
