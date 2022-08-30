@@ -4,8 +4,8 @@ module Sunzistrano
   FAIL = '[FAIL]'.freeze
 
   Cli.class_eval do
-    desc 'rake [STAGE] [TASK] [--host] [--sudo] [--nohup] [--verbose] [--kill]', 'Execute a rake task'
-    method_options host: :string, sudo: false, nohup: false, verbose: false, kill: false
+    desc 'rake [STAGE] [TASK] [--host] [--sudo] [--nohup] [--wait] [--verbose] [--kill]', 'Execute a rake task'
+    method_options host: :string, sudo: false, nohup: false, wait: :string, verbose: false, kill: false
     def rake(stage, task)
       do_rake(stage, task)
     end
@@ -38,7 +38,8 @@ module Sunzistrano
       end
 
       def rake_remote_cmd(task)
-        environment = ["RAKE_OUTPUT=#{sun.verbose || sun.nohup}", "RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
+        rake_output = sun.verbose || sun.nohup || sun.wait.present?
+        environment = ["RAKE_OUTPUT=#{rake_output}", "RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
         if sun.sudo
           rbenv_sudo = "rbenv sudo #{environment.join(' ')}"
         else
@@ -46,15 +47,24 @@ module Sunzistrano
         end
         path = "cd #{sun.deploy_path :current};"
         command = "bin/rake #{task}"
-        if sun.nohup
-          filename = nohup_basename(command)
-          command = "#{command} >> log/#{filename}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{filename}.pid"
+        if sun.wait.present?
+          minutes, seconds = parse_wait
+          raise "invalid wait '#{sun.wait}'" unless minutes
+          sleep = "sleep #{seconds};" if seconds > 0
+          name = rake_log_basename(command)
+          <<-SH.squish
+            echo -e '#{sleep} #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command} >> log/#{name}.log 2>&1' |
+            at now + #{minutes} minutes
+          SH
+        elsif sun.nohup
+          name = rake_log_basename(command)
+          command = "#{command} >> log/#{name}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{name}.pid"
           <<-SH.squish
             #{Sh.rbenv_ruby} #{path} #{context} nohup #{rbenv_sudo} #{command}
           SH
         elsif sun.kill
-          filename = nohup_basename(command)
-          pid = "#{sun.deploy_path :current}/tmp/pids/#{filename}.pid"
+          name = rake_log_basename(command)
+          pid = "#{sun.deploy_path :current}/tmp/pids/#{name}.pid"
           <<-SH.squish
             sudo pkill '-P' "$(cat #{pid})" && rm -f #{pid} || rm -f #{pid}
           SH
@@ -66,8 +76,19 @@ module Sunzistrano
         end
       end
 
-      def nohup_basename(command)
+      def rake_log_basename(command)
         command.squish.gsub(/[^_\w]/, '-').gsub(/-{2,}/, '-').delete_prefix('-').delete_suffix('-')
+      end
+
+      def parse_wait
+        duration = case sun.wait
+          when /^(\d+)\.(second|minute|hour|day|week)s?$/
+            ($1.to_i.send($2).from_now - Time.now).to_i
+          else
+            (Time.parse(sun.wait) - Time.now).to_i rescue nil
+          end
+        duration = 60 if duration && duration < 60
+        [duration / 60, duration % 60] if duration
       end
     end
   end
