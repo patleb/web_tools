@@ -51,14 +51,13 @@ module Sunzistrano
           minutes, seconds = parse_wait
           raise "invalid wait '#{sun.wait}'" unless minutes
           sleep = "sleep #{seconds};" if seconds > 0
-          name = rake_log_basename(command)
+          command = rake_with_log(command)
           <<-SH.squish
-            echo -e '#{sleep} #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command} >> log/#{name}.log 2>&1' |
+            echo -e '#{sleep} #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command}' |
             at now + #{minutes} minutes
           SH
         elsif sun.nohup
-          name = rake_log_basename(command)
-          command = "#{command} >> log/#{name}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{name}.pid"
+          command = rake_with_log(command)
           <<-SH.squish
             #{Sh.rbenv_ruby} #{path} #{context} nohup #{rbenv_sudo} #{command}
           SH
@@ -77,6 +76,11 @@ module Sunzistrano
             tee -a #{sun.deploy_path :current, BASH_LOG}
           SH
         end
+      end
+
+      def rake_with_log(command)
+        name = rake_log_basename(command)
+        "#{command} >> log/#{name}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{name}.pid"
       end
 
       def rake_log_basename(command)
