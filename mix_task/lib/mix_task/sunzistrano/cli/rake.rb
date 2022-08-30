@@ -4,8 +4,8 @@ module Sunzistrano
   FAIL = '[FAIL]'.freeze
 
   Cli.class_eval do
-    desc 'rake [STAGE] [TASK] [--host] [--sudo] [--nohup] [--wait] [--verbose] [--kill]', 'Execute a rake task'
-    method_options host: :string, sudo: false, nohup: false, wait: :string, verbose: false, kill: false
+    desc 'rake [STAGE] [TASK] [--host] [--sudo] [--nohup] [--wait] [--verbose] [--kill] [--force]', 'Execute a rake task'
+    method_options host: :string, sudo: false, nohup: false, wait: :string, verbose: false, kill: false, force: false
     def rake(stage, task)
       do_rake(stage, task)
     end
@@ -66,7 +66,10 @@ module Sunzistrano
           name = rake_log_basename(command)
           pid = "#{sun.deploy_path :current}/tmp/pids/#{name}.pid"
           <<-SH.squish
-            sudo pkill '-P' "$(cat #{pid})" && rm -f #{pid} || rm -f #{pid}
+            ppid=$(cat #{pid});
+            sudo pkill #{'-9' if sun.force} --parent $ppid &&
+            rm -f #{pid} && echo "killed [$ppid] child processes" ||
+            rm -f #{pid} && echo "could not kill [$ppid] child processes"
           SH
         else
           <<-SH.squish
