@@ -2,6 +2,7 @@ module Sunzistrano
   TASK = '[TASK]'.freeze
   DONE = '[DONE]'.freeze
   FAIL = '[FAIL]'.freeze
+  WAIT_DURATION = /^(\d+\.(second|minute|hour|day|week)s?)(\s*\+\s*\d+\.(second|minute|hour|day|week)s?)*$/
 
   Cli.class_eval do
     desc 'rake [STAGE] [TASK] [--host] [--sudo] [--nohup] [--wait] [--verbose] [--kill] [--force]', 'Execute a rake task'
@@ -51,19 +52,16 @@ module Sunzistrano
           minutes, seconds = parse_wait
           raise "invalid wait '#{sun.wait}'" unless minutes
           sleep = "sleep #{seconds};" if seconds > 0
-          command = rake_with_log(command)
           <<-SH.squish
-            echo -e '#{sleep} #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command}' |
+            echo -e '#{sleep} #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{rake_with_log command}' |
             at now + #{minutes} minutes
           SH
         elsif sun.nohup
-          command = rake_with_log(command)
           <<-SH.squish
-            #{Sh.rbenv_ruby} #{path} #{context} nohup #{rbenv_sudo} #{command}
+            #{Sh.rbenv_ruby} #{path} #{context} nohup #{rbenv_sudo} #{rake_with_log command}
           SH
         elsif sun.kill
-          name = rake_log_basename(command)
-          pid = "#{sun.deploy_path :current}/tmp/pids/#{name}.pid"
+          pid = "#{sun.deploy_path :current}/tmp/pids/#{rake_log_basename(command)}.pid"
           <<-SH.squish
             ppid=$(cat #{pid});
             sudo pkill #{'-9' if sun.force} --parent $ppid &&
@@ -88,12 +86,11 @@ module Sunzistrano
       end
 
       def parse_wait
-        wait_at = case sun.wait
-          when /^(\d+\.(second|minute|hour|day|week)s?)(\s*\+\s*\d+\.(second|minute|hour|day|week)s?)*$/
-            sun.wait.split(/\s*\+\s*/).map(&:split.with('.')).map{ |(n, unit)| n.to_i.send(unit) }.reduce(:+).from_now
-          else
-            Time.parse(sun.wait) rescue return
-          end
+        wait_at = if sun.wait.match? WAIT_DURATION
+          sun.wait.split(/\s*\+\s*/).map(&:split.with('.')).sum{ |(n, unit)| n.to_i.send(unit) }.from_now
+        else
+          Time.parse(sun.wait) rescue return
+        end
         wait = (wait_at - Time.now).to_i
         wait = 60 if wait < 60
         [wait / 60, wait % 60]

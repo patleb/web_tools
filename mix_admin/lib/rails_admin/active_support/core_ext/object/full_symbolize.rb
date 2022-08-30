@@ -24,7 +24,7 @@ class Hash
         when Hash, Array then val.full_symbolize
         when String      then val.to_sym
         else val
-      end
+        end
       res[nkey] = nval
     end
   end
