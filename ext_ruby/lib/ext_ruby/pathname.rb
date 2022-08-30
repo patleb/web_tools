@@ -1,11 +1,6 @@
 require 'pathname'
 
 module Pathname::WithoutRaise
-  def touch
-    FileUtils.touch self
-    self
-  end
-
   def delete(raise_on_no_entry = true)
     raise_on_no_entry ? super() : _delete
   end
@@ -36,4 +31,14 @@ end
 
 class Pathname
   prepend self::WithoutRaise
+
+  def mkdir_p
+    FileUtils.mkdir_p(self) unless exist?
+    self
+  end
+
+  def touch
+    FileUtils.touch self
+    self
+  end
 end
