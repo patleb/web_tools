@@ -24,7 +24,7 @@ module Sunzistrano
     attr_reader :sun
 
     def self.source_root
-      File.expand_path('../../', __FILE__)
+      Sunzistrano.root.join('lib').to_s
     end
 
     def self.exit_on_failure?
