@@ -22,4 +22,10 @@ class ApplicationPolicy < ActionPolicy::Base
   def delete?
     user.admin?
   end
+
+  class Scope < Scope
+    def resolve
+      user.admin? ? scope.all : super
+    end
+  end
 end

@@ -39,7 +39,6 @@ module MixUser
     ActiveSupport.on_load(:active_record) do
       require 'mix_user/active_record/connection_adapters/abstract_adapter'
       require 'mix_user/orm_adapter/active_record'
-      require 'mix_user/pundit/policy_finder'
 
       if defined? MixJob
         MixJob.configure do |config|

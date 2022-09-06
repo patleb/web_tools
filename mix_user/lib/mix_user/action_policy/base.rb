@@ -1,4 +1,6 @@
 module ActionPolicy
+  class NotAuthorizedError < ::StandardError; end
+
   class Base
     include ActiveSupport::LazyLoadHooks::Autorun
 
@@ -26,6 +28,14 @@ module ActionPolicy
       @roles ||= user.class.roles.keys
     end
 
+    def param_key
+      record.class.model_name.param_key
+    end
+
+    def scope(objects)
+      self.class::Scope.new(user, objects).resolve
+    end
+
     def method_missing(name, *args, **options, &block)
       if name.end_with? '?'
         self.class.send(:define_method, name) do
@@ -44,13 +54,13 @@ module ActionPolicy
     class Scope
       attr_reader :user, :scope
 
-      def initialize(user, scope)
+      def initialize(user, collection)
         @user = user
-        @scope = scope
+        @scope = collection.klass
       end
 
       def resolve
-        scope.all
+        scope.null
       end
     end
   end

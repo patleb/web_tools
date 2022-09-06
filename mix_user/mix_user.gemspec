@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   # s.add_dependency 'devise-encryptable', '~> 0.2'
   s.add_dependency 'devise-i18n'
   # TODO https://github.com/ankane/authtrail
-  s.add_dependency 'pundit', '~> 2.1'
   s.add_dependency 'mix_template', version
 end
 # TODO https://abevoelker.com/skipping-the-database-with-stateless-tokens-a-hidden-rails-gem-and-a-useful-web-technique/
