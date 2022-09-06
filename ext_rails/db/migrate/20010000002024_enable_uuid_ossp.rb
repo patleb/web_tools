@@ -29,7 +29,7 @@ class EnableUuidOssp < ActiveRecord::Migration[6.0]
             result TIMESTAMP;
           BEGIN
             SELECT to_timestamp(
-              (uuid_v1_to_100nsecs(uuid)::DOUBLE PRECISION - {{ epoch }} ) / {{ seconds }}
+              (uuid_v1_to_100nsecs(uuid)::DOUBLE PRECISION - [[ epoch ]] ) / [[ seconds ]]
             ) INTO result;
             RETURN result;
           END;
