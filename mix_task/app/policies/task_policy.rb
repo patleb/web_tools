@@ -16,11 +16,7 @@ class TaskPolicy < ApplicationPolicy
   end
 
   def edit?
-    if record.is_a? Task
-      record.visible?
-    else
-      super
-    end
+    record.visible?
   end
 
   def delete?

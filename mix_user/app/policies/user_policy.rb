@@ -8,19 +8,11 @@ class UserPolicy < ApplicationPolicy
   end
 
   def edit?
-    if record.is_a? User
-      super && user.visible_role?(record)
-    else
-      super
-    end
+    super && user.visible_role?(record)
   end
 
   def delete?
-    if record.is_a? User
-      super && user.visible_role?(record)
-    else
-      super
-    end
+    super && user.visible_role?(record)
   end
 
   class Scope < Scope
