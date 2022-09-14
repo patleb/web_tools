@@ -1,9 +1,11 @@
+require 'mix_user/action_policy/finder'
+
 module ActionController::WithPolicy
   extend ActiveSupport::Concern
 
   included do
-    helper :policy_scope
-    helper :policy
+    helper_method :policy_scope
+    helper_method :policy
   end
 
   def policy_scope(objects)
