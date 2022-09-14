@@ -124,7 +124,7 @@ ActiveRecord::Base.class_eval do
   end
 
   def self.total_size
-    m_access(:total_size, threshold: 300) do
+    m_access(:total_size, timeout: 300) do
       result = connection.select_rows(<<-SQL.strip_sql)
         SELECT pg_database.datname AS name, pg_database_size(pg_database.datname) AS size FROM pg_database
       SQL
@@ -146,7 +146,7 @@ ActiveRecord::Base.class_eval do
 
   # TODO doesn't work with native partitions
   def self.sizes(order_by_name: false, indexes: false)
-    m_access(:sizes, order_by_name, indexes, threshold: 300) do
+    m_access(:sizes, order_by_name, indexes, timeout: 300) do
       size = indexes ? 'pg_indexes_size(relid)' :'pg_total_relation_size(relid)'
       result = connection.select_rows(<<-SQL.strip_sql)
         SELECT relname AS name, #{size} AS size

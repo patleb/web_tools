@@ -31,7 +31,7 @@ module MixServer
     started_at = Time.current
     until (idle = _idle?)
       break if (Time.current - started_at) > timeout
-      sleep ExtRuby.config.memoized_at_threshold
+      sleep ExtRuby.config.memoized_at_timeout
     end
     idle
   end

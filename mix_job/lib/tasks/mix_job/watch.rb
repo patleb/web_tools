@@ -350,11 +350,11 @@ module MixJob
     end
 
     def server_request?(path)
-      Process.passenger.requests(threshold: options.server_interval).any?{ |request| request[:path] == path }
+      Process.passenger.requests(timeout: options.server_interval).any?{ |request| request[:path] == path }
     end
 
     def server_available?
-      Process.passenger.available?(threshold: options.server_interval)
+      Process.passenger.available?(timeout: options.server_interval)
     end
 
     def client_available?

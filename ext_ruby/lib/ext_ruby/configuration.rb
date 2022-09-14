@@ -1,7 +1,7 @@
 module ExtRuby
   has_config do
     attr_writer :backtrace_log_lines
-    attr_writer :memoized_at_threshold
+    attr_writer :memoized_at_timeout
     attr_writer :host_disk_partition
     attr_writer :host_snapshot
     attr_writer :worker_snapshot
@@ -10,8 +10,8 @@ module ExtRuby
       @backtrace_log_lines ||= 20
     end
 
-    def memoized_at_threshold
-      @memoized_at_threshold ||= 20.0
+    def memoized_at_timeout
+      @memoized_at_timeout ||= 20.0
     end
 
     def host_disk_partition
