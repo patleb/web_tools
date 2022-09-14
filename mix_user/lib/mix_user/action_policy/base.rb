@@ -32,6 +32,10 @@ module ActionPolicy
       record.class.model_name.param_key
     end
 
+    def params
+      []
+    end
+
     def scope(objects)
       self.class::Scope.new(user, objects).resolve
     end
