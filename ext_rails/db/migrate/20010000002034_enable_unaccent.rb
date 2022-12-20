@@ -19,10 +19,10 @@ class EnableUnaccent < ActiveRecord::Migration[6.0]
             value_changed BOOLEAN = TRUE;
           BEGIN
             FOREACH column_name IN ARRAY TG_ARGV LOOP
-              [[ set_value ]]
+              {{ set_value }}
               IF TG_OP = 'UPDATE' THEN
-                [[ set_value_was ]]
-                [[ set_value_changed ]]
+                {{ set_value_was }}
+                {{ set_value_changed }}
               END IF;
               IF value_changed AND value IS NOT NULL THEN
                 NEW = NEW #= hstore(column_name, unaccent(value));
