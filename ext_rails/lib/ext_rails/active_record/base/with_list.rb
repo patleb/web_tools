@@ -61,12 +61,12 @@ module ActiveRecord::Base::WithList::Position
         decimals = maximum("scale(#{list_column})") || 0
         return unless decimals > 64 # postgres numeric max is 16383, but ruby conversion speed is a concern
         with_table_lock do
-          connection.exec_query(<<-SQL.strip_sql)
-            UPDATE #{quoted_table_name} t_updated SET #{list_column} = t_ordered.i
+          connection.exec_query(<<-SQL.strip_sql(table_name: quoted_table_name, position: list_column, pk: primary_key))
+            UPDATE {{ table_name }} t_updated SET {{ position }} = t_ordered.i
               FROM (
-                SELECT #{primary_key}, (row_number() OVER (ORDER BY #{list_column})) - 1.0 AS i
-                FROM #{quoted_table_name}
-                ORDER BY #{primary_key}
+                SELECT {{ pk }} AS id, (row_number() OVER (ORDER BY {{ position }})) - 1.0 AS i
+                FROM {{ table_name }}
+                ORDER BY id
               ) t_ordered
               WHERE t_updated.id = t_ordered.id
           SQL
