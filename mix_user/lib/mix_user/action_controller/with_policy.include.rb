@@ -1,5 +1,3 @@
-require 'mix_user/action_policy/finder'
-
 module ActionController::WithPolicy
   extend ActiveSupport::Concern
 
@@ -8,9 +6,9 @@ module ActionController::WithPolicy
     helper_method :policy
   end
 
-  def policy_scope(objects)
-    policy = policy(objects.last)
-    policy.scope(objects)
+  def policy_scope(relation)
+    policy = policy(relation.klass)
+    policy.scope(relation)
   end
 
   def policy_params(object, action = action_name)
@@ -21,7 +19,15 @@ module ActionController::WithPolicy
 
   def policy(object)
     (@_policy ||= {})[object] ||= begin
-      policy = ActionPolicy::Finder.new(object).policy
+      policy = if object.nil?
+        ApplicationPolicy
+      else
+        klass = object.is_a?(Class) ? object : object.class
+        "#{klass.name}Policy".to_const ||
+          "#{klass.superclass.name}Policy".to_const ||
+          "#{klass.base_class.name}Policy".to_const ||
+          ApplicationPolicy
+      end
       policy.new(current_user, object)
     end
   end

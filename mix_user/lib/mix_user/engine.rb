@@ -1,3 +1,4 @@
+# TODO preserve user name after delete to prevent impersonisation
 require "mix_user/configuration"
 
 module ActionPolicy
@@ -9,7 +10,6 @@ module MixUser
     require 'devise'
     # require 'devise-encryptable'
     # require 'devise-i18n'
-    require 'pundit'
     require 'mix_template'
 
     config.before_initialize do

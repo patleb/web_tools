@@ -4,20 +4,50 @@ module ActionPolicy
   class Base
     include ActiveSupport::LazyLoadHooks::Autorun
 
-    attr_reader :user, :record
+    attr_reader :user, :object
 
     delegate :actions, to: :class
 
     def self.actions
       @_actions ||= begin
-        index = public_instance_methods.index(:record)
+        index = public_instance_methods.index(:actions)
         public_instance_methods.each_with_index.select_map{ |m, i| m if i < index && m.end_with?('?') }
       end
     end
 
-    def initialize(user, record)
+    def initialize(user, object)
       @user = user
-      @record = record
+      @object = object
+    end
+
+    def param_key
+      relation.model_name.param_key
+    end
+
+    def params
+      []
+    end
+
+    def scope(relation)
+      self.class::Scope.new(user, relation).resolve
+    end
+
+    protected
+
+    def record
+      object if record?
+    end
+
+    def record?
+      !relation?
+    end
+
+    def relation
+      relation? ? object : object.class
+    end
+
+    def relation?
+      object.is_a? Class
     end
 
     def role
@@ -26,18 +56,6 @@ module ActionPolicy
 
     def roles
       @roles ||= user.class.roles.keys
-    end
-
-    def param_key
-      record.class.model_name.param_key
-    end
-
-    def params
-      []
-    end
-
-    def scope(objects)
-      self.class::Scope.new(user, objects).resolve
     end
 
     def method_missing(name, *args, **options, &block)
@@ -56,15 +74,15 @@ module ActionPolicy
     end
 
     class Scope
-      attr_reader :user, :scope
+      attr_reader :user, :relation
 
-      def initialize(user, collection)
+      def initialize(user, relation)
         @user = user
-        @scope = collection.klass
+        @relation = relation
       end
 
       def resolve
-        scope.null
+        relation.none
       end
     end
   end

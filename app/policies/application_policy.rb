@@ -25,7 +25,7 @@ class ApplicationPolicy < ActionPolicy::Base
 
   class Scope < Scope
     def resolve
-      user.admin? ? scope.all : super
+      user.admin? ? relation.all : super
     end
   end
 end
