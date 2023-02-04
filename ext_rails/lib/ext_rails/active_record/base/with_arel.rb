@@ -6,11 +6,11 @@ module ActiveRecord::Base::WithArel
   extend ActiveSupport::Concern
 
   class_methods do
-    def column(name, table = arel_table)
-      table[name]
+    def column(name)
+      arel_table[name]
     end
 
-    def alias_table(alias_name, table_name = self.table_name)
+    def alias_table(alias_name)
       Arel::Table.new(table_name, as: alias_name.to_s)
     end
 
