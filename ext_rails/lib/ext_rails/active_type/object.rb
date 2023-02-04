@@ -11,14 +11,14 @@ ActiveType::Object.class_eval do
       virtual_columns_hash.keys
     end
 
-    def ar_attribute(name, *args)
+    def attribute(name, *args)
       options = args.extract_options!
       type = args.first
 
       super(name, type, **options.dup)
 
       type = :array if options.delete(:array)
-      attribute(name, type, options)
+      at_attribute(name, type, options)
     end
 
     def enum(default: nil, **definition)
