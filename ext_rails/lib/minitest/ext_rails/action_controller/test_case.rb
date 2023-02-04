@@ -6,7 +6,6 @@ ActionController::TestCase.class_eval do
   attr_reader :controller
   delegate :body, to: :response
 
-  let(:controller_class){ base_name.constantize }
   let(:params){ {} }
 
   before do
@@ -28,12 +27,6 @@ ActionController::TestCase.class_eval do
     Rails.application.routes.draw do
       get "/#{action_name}" => "application##{action_name}"
     end
-  end
-
-  alias_method :old_setup_controller_request_and_response, :setup_controller_request_and_response
-  def setup_controller_request_and_response
-    self.class.controller_class = controller_class
-    old_setup_controller_request_and_response
   end
 
   def reset_controller

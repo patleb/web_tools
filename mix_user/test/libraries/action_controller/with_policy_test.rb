@@ -2,7 +2,7 @@ require './test/rails_helper'
 
 module ActionController
   class WithPolicyTest < ActionController::TestCase
-    let(:controller_class){ ApplicationController }
+    tests :application
 
     controller :test_policy_scope do
       scope = policy_scope(User.null)
