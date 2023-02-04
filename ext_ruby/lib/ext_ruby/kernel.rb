@@ -11,4 +11,8 @@ module Kernel
       context.extend const_get(name.camelize)
     end
   end
+
+  def __super__(name, *args, **options, &block)
+    method(name).super_method&.call(*args, **options, &block)
+  end
 end
