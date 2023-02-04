@@ -25,10 +25,12 @@ module DateAndTime
         memo << day
       end
       all += weeks
-      all += (1..months - 1).each_with_object([current_week - 3.weeks]) do |i, memo|
-        day = memo.first - (i * 4).weeks
-        memo << day
-      end if months > 0
+      if months > 0
+        all += (1..months - 1).each_with_object([current_week - 3.weeks]) do |i, memo|
+          day = memo.first - (i * 4).weeks
+          memo << day
+        end
+      end
       format ? all.map{ |day| day.to_date.to_s(&:db).tr('-', '_') } : all
     end
   end
