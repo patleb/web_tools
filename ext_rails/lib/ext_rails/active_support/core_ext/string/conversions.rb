@@ -1,9 +1,45 @@
 class String
+  class ClassCache
+    def initialize
+      @store = Concurrent::Map.new
+    end
+
+    def key?(key)
+      @store.key?(key)
+    end
+
+    def get(key)
+      @store[key] ||= ActiveSupport::Inflector.constantize(key)
+    end
+
+    def safe_get(key)
+      if key? key
+        @store[key]
+      else
+        @store[key] = ActiveSupport::Inflector.safe_constantize(key)
+      end
+    end
+
+    def delete(key)
+      @store.delete(key)
+    end
+
+    def clear!
+      @store.clear
+    end
+  end
+
+  Reference = ClassCache.new
+
   def to_const!
-    ActiveSupport::Dependencies.constantize(self)
+    Reference.get(self)
   end
 
   def to_const
-    ActiveSupport::Dependencies.safe_constantize(self)
+    Reference.safe_get(self)
+  end
+
+  def clear_const
+    Reference.delete(self)
   end
 end
