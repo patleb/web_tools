@@ -3,11 +3,11 @@ module ActionController
     class RequestTimeoutError < StandardError; end
     class InternalServerError < StandardError; end
 
-    def render_400
-      render_404(400)
+    def render_400(*)
+      render_404(status: 400)
     end
 
-    def render_404(status = 404)
+    def render_404(*, status: 404)
       # do not log these errors, they are already in nginx log
       respond_to do |format|
         format.text { render plain: template_status_plain(status), status: status }
