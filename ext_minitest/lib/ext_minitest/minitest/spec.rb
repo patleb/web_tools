@@ -10,6 +10,7 @@ Minitest::Spec::DSL.class_eval do
     # do nothing
   end
   alias_method :xshould, :xit
+  alias_method :xtest, :xit
 
   def describe_for(desc, *additional_desc, &block)
     describe desc, *additional_desc do
