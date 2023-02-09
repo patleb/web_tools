@@ -29,7 +29,7 @@ module Monit
       end
 
       def self.db_indexes
-        m_access(:db_indexes){ db.indexes }
+        m_access(__method__){ db.indexes }
       end
 
       def self.ar_connection

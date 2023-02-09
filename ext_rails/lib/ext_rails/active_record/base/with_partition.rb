@@ -74,7 +74,7 @@ module ActiveRecord::Base::WithPartition
     end
 
     def partitions_buckets(table = table_name)
-      m_access(:partitions_buckets, table) do
+      m_access(__method__, table) do
         partitions(table).map{ |name| partition_bucket(name) }
       end
     end

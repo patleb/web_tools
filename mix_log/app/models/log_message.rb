@@ -53,7 +53,7 @@ class LogMessage < LibMainRecord
   end
 
   def self.report_values
-    m_access(:report_values) do
+    m_access(__method__) do
       times = []
       servers = report_rows.map do |message|
         times << [message.id, message.log_lines.maximum(:created_at)]

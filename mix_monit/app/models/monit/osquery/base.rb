@@ -2,7 +2,7 @@ module Monit
   module Osquery
     class Base < Monit::Base
       def self.osquery
-        m_access(:osquery) do
+        m_access(__method__) do
           result = {}
           path = if Rails.env.dev_or_test?
             MixLog::Engine.root.join('test/fixtures/files/log/osquery/osqueryd.results.log')

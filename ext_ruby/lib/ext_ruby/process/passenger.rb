@@ -58,7 +58,7 @@ module Process
     end
 
     def server(**options)
-      m_access(:server, **options) do
+      m_access(__method__, **options) do
         @stdout, @stderr, @status = passenger_status
         next unless status.success?
         result = ActiveSupport::JSON.decode(stdout) rescue nil
@@ -87,7 +87,7 @@ module Process
     end
 
     def pool(**options)
-      m_access(:pool, **options) do
+      m_access(__method__, **options) do
         @stdout, @stderr, @status = passenger_status(:xml)
         next unless status.success?
         stdout_with_arrays = stdout.gsub(/<(supergroups|processes)(\/)?>/, '<\1 type="array"\2>')

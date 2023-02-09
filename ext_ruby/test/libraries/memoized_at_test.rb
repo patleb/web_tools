@@ -4,7 +4,7 @@ class SimpleClass
   include MemoizedAt
 
   def access_time(**options)
-    m_access(:access_time, **options) do
+    m_access(__method__, **options) do
       Time.now
     end
   end

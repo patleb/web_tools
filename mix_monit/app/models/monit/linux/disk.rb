@@ -18,7 +18,7 @@ module Monit
       end
 
       def self.snapshot
-        m_access(:snapshot){ Host.snapshot&.dig(:disks, disk_path) || { io_size: [0, 0] } }
+        m_access(__method__){ Host.snapshot&.dig(:disks, disk_path) || { io_size: [0, 0] } }
       end
 
       def self.disk_path

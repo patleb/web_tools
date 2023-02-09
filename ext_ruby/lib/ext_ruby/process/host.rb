@@ -121,7 +121,7 @@ module Process
     end
 
     def cpu_load
-      m_access(:load_average){ load_average.to_a.map{ |avg| avg / cpu_count } }
+      m_access(__method__){ load_average.to_a.map{ |avg| avg / cpu_count } }
     end
 
     def cpu_load_increasing?
@@ -135,7 +135,7 @@ module Process
     end
 
     def cpu
-      m_access(:cpu) do
+      m_access(__method__) do
         File.readlines("/proc/stat").each_with_object(size: 0) do |line, memo|
           case line
           when /^cpu /      then line.split(' ', TIMES.size + 1).drop(1).each_with_index{ |v, i| memo[TIMES[i]] = v.to_i }
@@ -172,7 +172,7 @@ module Process
     end
 
     def memory
-      m_access(:memory) do
+      m_access(__method__) do
         memory = File.readlines("/proc/meminfo").each_with_object({}) do |line, memo|
           type = case line
             when /^MemTotal:/     then :ram_total
@@ -198,13 +198,13 @@ module Process
     end
 
     def disks_inodes
-      m_access(:disks_inodes) do
+      m_access(__method__) do
         `df --output=target,ipcent`.lines.drop(1).map(&:split).to_h.transform_values(&:to_i).slice(*disks.keys)
       end
     end
 
     def disks
-      m_access(:disks) do
+      m_access(__method__) do
         File.readlines("/proc/diskstats").each_with_object({}) do |line, memo|
           fields = line.split.drop(2)
           name = fields.shift
@@ -231,7 +231,7 @@ module Process
     end
 
     def networks
-      m_access(:networks) do
+      m_access(__method__) do
         File.readlines("/proc/net/dev").drop(2)
           .map{ |line| line.split(':') }.to_h
           .transform_values{ |v| v.split.values_at(NETWORK_BYTES_IN, NETWORK_BYTES_OUT).map(&:to_i) }
@@ -247,7 +247,7 @@ module Process
         end.transform_values!(&:to_a)
         return worker ? pids.transform_keys{ |pid| Process::Worker.new(pid) } : pids
       end
-      m_access(:sockets) do
+      m_access(__method__) do
         %i(tcp udp).each_with_object({}) do |type, memo|
           File.readlines("/proc/net/#{type}").drop(1).each_with_index do |line, i|
             _, local, remote, state, _, _, _, _, _, inode, *_rest = line.split
@@ -272,13 +272,13 @@ module Process
     end
 
     def pids
-      m_access(:pids) do
+      m_access(__method__) do
         Rake::FileList["/proc/*"].map{ |file| File.basename(file).to_i }.reject(&:zero?)
       end
     end
 
     def inodes
-      m_access(:inodes) do
+      m_access(__method__) do
         workers.each_with_object({}) do |worker, memo|
           pid = worker.pid
           worker.inodes.values.map{ |inodes| Set.new(inodes) }.reduce(&:merge).each{ |inode| memo[inode] = pid }

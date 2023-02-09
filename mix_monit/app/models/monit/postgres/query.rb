@@ -74,7 +74,7 @@ module Monit
       end
 
       def self.vacuum_progress
-        m_access(:vacuum_progress) do
+        m_access(__method__) do
           db.vacuum_progress.index_by{ |q| q[:pid] }
         end
       end

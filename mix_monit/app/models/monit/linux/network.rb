@@ -13,7 +13,7 @@ module Monit
       end
 
       def self.snapshot
-        m_access(:snapshot){ Host.snapshot&.dig(:network) || [0, 0] }
+        m_access(__method__){ Host.snapshot&.dig(:network) || [0, 0] }
       end
     end
   end

@@ -55,7 +55,7 @@ module Monit
       end
 
       def self.settings
-        m_access(:settings) do
+        m_access(__method__) do
           { version: db.server_version }.merge!(
             db.settings,
             db.vacuum_settings,

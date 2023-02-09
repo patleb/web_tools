@@ -35,7 +35,7 @@ module Monit
       end
 
       def self.snapshot
-        m_access(:snapshot){ Global[snapshot_key] }
+        m_access(__method__){ Global[snapshot_key] }
       end
 
       def self.capture

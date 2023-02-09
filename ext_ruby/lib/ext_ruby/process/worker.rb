@@ -39,7 +39,7 @@ module Process
     attr_reader  :pid
 
     def self.all(nohup: nil)
-      m_access(:all, nohup) do
+      m_access(__method__, nohup) do
         host.pids.each_with_object([]) do |pid, memo|
           next if (worker = new(pid)).ppid == PID_DEAD
           next if nohup && worker.ppid != PID_INIT
@@ -57,7 +57,7 @@ module Process
     end
 
     def children
-      m_access(:children) do
+      m_access(__method__) do
         self.class.all.each_with_object([]) do |worker, memo|
           next if worker.ppid != pid
           memo << child
@@ -70,7 +70,7 @@ module Process
     end
 
     def siblings
-      m_access(:siblings) do
+      m_access(__method__) do
         self.class.all.each_with_object([]) do |worker, memo|
           next if worker.pid.in? [PID_INIT, pid, ppid]
           if [worker.ppid, ppid].exclude? PID_INIT
@@ -104,7 +104,7 @@ module Process
     end
 
     def cpu
-      m_access(:cpu) do
+      m_access(__method__) do
         stat = File.read("/proc/#{@pid}/stat")
         comm = stat[STAT_COMM].delete_prefix('(').delete_suffix(')')
         stat.sub! STAT_COMM, '*'
@@ -135,7 +135,7 @@ module Process
     end
 
     def memory
-      m_access(:memory) do
+      m_access(__method__) do
         memory = File.readlines("/proc/#{@pid}/smaps_rollup").each_with_object({}) do |line, memo|
           type = case line
             when /^Rss:/  then :ram_used
@@ -161,7 +161,7 @@ module Process
 
     # readable ones only --> use "rbenv sudo ..."
     def inodes
-      m_access(:inodes) do
+      m_access(__method__) do
         files = Rake::FileList["/proc/#{@pid}/fd/*"]
         files.each_with_object(socket: [], pipe: [], epoll: [], anon: [], dead_device: [], device: [], dead_file: [], file: []) do |file, memo|
           type = case File.readlink(file)
