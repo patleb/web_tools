@@ -151,20 +151,6 @@ class String
     gsub(' ', "\\\\ ")
   end
 
-  def split_unquoted(pattern = ' ')
-    words = [['']]
-    scan(/(?:([^"']+)|("[^"]*")|('[^']*'))/) do |word, double, single|
-      if word
-        segments = word.split(pattern)
-        words.last[-1] << segments.shift
-        words << segments
-      end
-      words.last[-1] << double if double
-      words.last[-1] << single if single
-    end
-    words.flatten
-  end
-
   def partition_at(truncate_at, separator: nil, fallback: nil)
     return [self, ''] unless size > truncate_at
 

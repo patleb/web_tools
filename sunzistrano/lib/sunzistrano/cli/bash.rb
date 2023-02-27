@@ -77,7 +77,7 @@ module Sunzistrano
       end
 
       def bash_remote_cmd(task)
-        task.split_unquoted.each_with_object(["export BASH_OUTPUT=#{sun.verbose.to_b}"]) do |token, memo|
+        split_unquoted(task).each_with_object(["export BASH_OUTPUT=#{sun.verbose.to_b}"]) do |token, memo|
           case token
           when BASH_SCRIPT
             name, args = parse_job(token)
@@ -102,6 +102,20 @@ module Sunzistrano
             raise "invalid token '#{token}'"
           end
         end.join(' && ')
+      end
+
+      def split_unquoted(string)
+        words = [['']]
+        string.scan(/(?:([^"']+)|("[^"]*")|('[^']*'))/) do |word, double, single|
+          if word
+            segments = word.split(' ')
+            words.last[-1] << segments.shift
+            words << segments
+          end
+          words.last[-1] << double if double
+          words.last[-1] << single if single
+        end
+        words.flatten
       end
 
       def parse_job(token)
