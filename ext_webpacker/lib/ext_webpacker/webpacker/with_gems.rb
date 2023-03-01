@@ -17,6 +17,7 @@ module Webpacker
   JS
 
   class CoffeeScriptVersion < StandardError; end
+  class CircularDependency < StandardError; end
   class MissingDependency < StandardError; end
   class MissingGem < StandardError; end
 
@@ -99,6 +100,12 @@ module Webpacker
           children = packages_gems_tailwind(gem)
           result.each_with_index{ |v, i| v.merge(children[i] || []) }
         end
+      end
+    rescue RuntimeError => e
+      if e.message == "can't add a new key into hash during iteration"
+        raise CircularDependency, package
+      else
+        raise
       end
     end
 
