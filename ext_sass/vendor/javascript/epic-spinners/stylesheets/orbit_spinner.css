@@ -1,14 +1,16 @@
-$spinner_duration: 1000ms !default;
-$spinner_size: 50px !default;
-$spinner_color: #ff1d5e !default;
+:root {
+  --spinner_duration: 1000ms;
+  --spinner_size: 50px;
+  --spinner_color: #ff1d5e;
+}
 
 .orbit-spinner, .orbit-spinner * {
   box-sizing: border-box;
 }
 
 .orbit-spinner {
-  height: $spinner_size;
-  width: $spinner_size;
+  height: var(--spinner_size);
+  width: var(--spinner_size);
   border-radius: 50%;
   perspective: 800px;
 }
@@ -24,22 +26,22 @@ $spinner_color: #ff1d5e !default;
 .orbit-spinner .orbit:nth-child(1) {
   left: 0%;
   top: 0%;
-  animation: orbit-spinner-orbit-one-animation $spinner_duration linear infinite;
-  border-bottom: 3px solid $spinner_color;
+  animation: orbit-spinner-orbit-one-animation var(--spinner_duration) linear infinite;
+  border-bottom: 3px solid var(--spinner_color);
 }
 
 .orbit-spinner .orbit:nth-child(2) {
   right: 0%;
   top: 0%;
-  animation: orbit-spinner-orbit-two-animation $spinner_duration linear infinite;
-  border-right: 3px solid $spinner_color;
+  animation: orbit-spinner-orbit-two-animation var(--spinner_duration) linear infinite;
+  border-right: 3px solid var(--spinner_color);
 }
 
 .orbit-spinner .orbit:nth-child(3) {
   right: 0%;
   bottom: 0%;
-  animation: orbit-spinner-orbit-three-animation $spinner_duration linear infinite;
-  border-top: 3px solid $spinner_color;
+  animation: orbit-spinner-orbit-three-animation var(--spinner_duration) linear infinite;
+  border-top: 3px solid var(--spinner_color);
 }
 
 @keyframes orbit-spinner-orbit-one-animation {

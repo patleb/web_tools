@@ -1,0 +1,98 @@
+:root {
+  --spinner_duration: 1200ms;
+  --spinner_size: 15px;
+  --spinner_color: #ff1d5e;
+  --spinner_circles_to_rhombuses: 3; /* max is 9 */
+}
+
+.circles-to-rhombuses-spinner, .circles-to-rhombuses-spinner * {
+  box-sizing: border-box;
+}
+
+.circles-to-rhombuses-spinner {
+  --margin_left: calc(var(--spinner_size) * 1.125);
+  height: var(--spinner_size);
+  width: calc((var(--spinner_size) + var(--margin_left)) * var(--spinner_circles_to_rhombuses));
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
+.circles-to-rhombuses-spinner .circle {
+  height: var(--spinner_size);
+  width: var(--spinner_size);
+  margin-left: calc(var(--spinner_size) * 1.125);
+  transform: rotate(45deg);
+  border-radius: 10%;
+  border: 3px solid var(--spinner_color);
+  overflow: hidden;
+  background: transparent;
+
+  animation: circles-to-rhombuses-animation var(--spinner_duration) linear infinite;
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(1) {
+  animation-delay: calc(150ms);
+  margin-left: 0
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(2) {
+  animation-delay: calc(150ms * 2);
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(3) {
+  animation-delay: calc(150ms * 3);
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(4) {
+  animation-delay: calc(150ms * 4);
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(5) {
+  animation-delay: calc(150ms * 5);
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(6) {
+  animation-delay: calc(150ms * 6);
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(7) {
+  animation-delay: calc(150ms * 7);
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(8) {
+  animation-delay: calc(150ms * 8);
+}
+
+.circles-to-rhombuses-spinner .circle:nth-child(9) {
+  animation-delay: calc(150ms * 9);
+}
+
+@keyframes circles-to-rhombuses-animation {
+  0% {
+    border-radius: 10%;
+  }
+
+  17.5% {
+    border-radius: 10%;
+  }
+
+  50% {
+    border-radius: 100%;
+  }
+
+
+  93.5% {
+    border-radius: 10%;
+  }
+
+  100% {
+    border-radius: 10%;
+  }
+}
+
+@keyframes circles-to-rhombuses-background-animation {
+  50% {
+    opacity: 0.4;
+  }
+}

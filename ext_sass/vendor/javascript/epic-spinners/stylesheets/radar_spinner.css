@@ -1,0 +1,66 @@
+:root {
+  --spinner_duration: 2000ms;
+  --spinner_size: 110px;
+  --spinner_color: #ff1d5e;
+  --spinner_border_width: calc(var(--spinner_size) * 5 / 110);
+}
+
+.radar-spinner, .radar-spinner * {
+  box-sizing: border-box;
+}
+
+.radar-spinner {
+  height: var(--spinner_size);
+  width: var(--spinner_size);
+  position: relative;
+}
+
+.radar-spinner .circle {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  animation: radar-spinner-animation var(--spinner_duration) infinite;
+}
+
+.radar-spinner .circle:nth-child(1) {
+  padding: 0;
+  animation-delay: calc(var(--spinner_duration) * 0.15);
+}
+
+.radar-spinner .circle:nth-child(2) {
+  padding: calc(var(--spinner_border_width) * 2);
+  animation-delay: calc(var(--spinner_duration) * 0.15);
+}
+
+.radar-spinner .circle:nth-child(3) {
+  padding: calc(var(--spinner_border_width) * 4);
+  animation-delay: calc(var(--spinner_duration) * 0.15);
+}
+
+.radar-spinner .circle:nth-child(4) {
+  padding: calc(var(--spinner_border_width) * 6);
+  animation-delay: 0ms;
+}
+
+.radar-spinner .circle-inner, .radar-spinner .circle-inner-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  border: var(--spinner_border_width) solid transparent;
+}
+
+.radar-spinner .circle-inner {
+  border-left-color: var(--spinner_color);
+  border-right-color: var(--spinner_color);
+}
+
+@keyframes radar-spinner-animation {
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}

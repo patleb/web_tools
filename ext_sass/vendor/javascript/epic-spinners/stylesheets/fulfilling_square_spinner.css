@@ -1,26 +1,28 @@
-$spinner_duration: 4000ms !default;
-$spinner_size: 50px !default;
-$spinner_color: #ff1d5e !default;
+:root {
+  --spinner_duration: 4000ms;
+  --spinner_size: 50px;
+  --spinner_color: #ff1d5e;
+}
 
 .fulfilling-square-spinner, .fulfilling-square-spinner * {
   box-sizing: border-box;
 }
 
 .fulfilling-square-spinner {
-  height: $spinner_size;
-  width: $spinner_size;
+  height: var(--spinner_size);
+  width: var(--spinner_size);
   position: relative;
-  border: 4px solid $spinner_color;
-  animation: fulfilling-square-spinner-animation $spinner_duration infinite ease;
+  border: 4px solid var(--spinner_color);
+  animation: fulfilling-square-spinner-animation var(--spinner_duration) infinite ease;
 }
 
 .fulfilling-square-spinner .spinner-inner {
   vertical-align: top;
   display: inline-block;
-  background-color: $spinner_color;
+  background-color: var(--spinner_color);
   width: 100%;
   opacity: 1;
-  animation: fulfilling-square-spinner-inner-animation $spinner_duration infinite ease-in;
+  animation: fulfilling-square-spinner-inner-animation var(--spinner_duration) infinite ease-in;
 }
 
 @keyframes fulfilling-square-spinner-animation {

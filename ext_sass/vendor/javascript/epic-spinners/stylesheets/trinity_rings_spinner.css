@@ -1,15 +1,17 @@
-$spinner_duration: 1500ms !default;
-$spinner_size: 60px !default;
-$spinner_color: #ff1d5e !default;
-$spinner_ring_size: calc(#{$spinner_size} - 6px);
+:root {
+  --spinner_duration: 1500ms;
+  --spinner_size: 60px;
+  --spinner_color: #ff1d5e;
+  --spinner_ring_size: calc(var(--spinner_size) - 6px);
+}
 
 .trinity-rings-spinner, .trinity-rings-spinner * {
   box-sizing: border-box;
 }
 
 .trinity-rings-spinner {
-  height: $spinner_size;
-  width: $spinner_size;
+  height: var(--spinner_size);
+  width: var(--spinner_size);
   padding: 3px;
   position: relative;
   display: flex;
@@ -23,26 +25,26 @@ $spinner_ring_size: calc(#{$spinner_size} - 6px);
   position:absolute;
   display:block;
   border-radius:50%;
-  border: 3px solid $spinner_color;
+  border: 3px solid var(--spinner_color);
   opacity: 1;
 }
 
 .trinity-rings-spinner .circle:nth-child(1) {
-  height: $spinner_ring_size;
-  width: $spinner_ring_size;
-  animation : trinity-rings-spinner-circle1-animation $spinner_duration infinite linear;
+  height: var(--spinner_ring_size);
+  width: var(--spinner_ring_size);
+  animation : trinity-rings-spinner-circle1-animation var(--spinner_duration) infinite linear;
   border-width: 3px;
 }
 .trinity-rings-spinner .circle:nth-child(2) {
-  height: calc(#{$spinner_ring_size} * 0.65);
-  width: calc(#{$spinner_ring_size} * 0.65);
-  animation : trinity-rings-spinner-circle2-animation $spinner_duration infinite linear;
+  height: calc(var(--spinner_ring_size) * 0.65);
+  width: calc(var(--spinner_ring_size) * 0.65);
+  animation : trinity-rings-spinner-circle2-animation var(--spinner_duration) infinite linear;
   border-width: 2px;
 }
 .trinity-rings-spinner .circle:nth-child(3) {
-  height: calc(#{$spinner_ring_size} * 0.1);
-  width: calc(#{$spinner_ring_size} * 0.1);
-  animation:trinity-rings-spinner-circle3-animation $spinner_duration infinite linear;
+  height: calc(var(--spinner_ring_size) * 0.1);
+  width: calc(var(--spinner_ring_size) * 0.1);
+  animation:trinity-rings-spinner-circle3-animation var(--spinner_duration) infinite linear;
   border-width: 1px;
 }
 

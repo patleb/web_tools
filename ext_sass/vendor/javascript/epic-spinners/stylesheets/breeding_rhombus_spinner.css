@@ -1,0 +1,193 @@
+:root {
+  --spinner_duration: 2000ms;
+  --spinner_size: 150px;
+  --spinner_color: #ff1d5e;
+}
+
+.breeding-rhombus-spinner {
+  height: var(--spinner_size);
+  width: var(--spinner_size);
+  position: relative;
+  transform: rotate(45deg);
+}
+
+.breeding-rhombus-spinner, .breeding-rhombus-spinner * {
+  box-sizing: border-box;
+}
+
+.breeding-rhombus-spinner .rhombus {
+  height: calc(var(--spinner_size) / 7.5);
+  width: calc(var(--spinner_size) / 7.5);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 2.3077);
+  left: calc(var(--spinner_size) / 2.3077);
+  background-color: var(--spinner_color);
+  position: absolute;
+  animation-iteration-count: infinite;
+}
+
+.breeding-rhombus-spinner .rhombus:nth-child(2n+0) {
+  margin-right: 0;
+}
+
+.breeding-rhombus-spinner .rhombus.child-1 {
+  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  animation-name: breeding-rhombus-spinner-animation-child-1;
+  height: calc(var(--spinner_size) / 7.5);
+  width: calc(var(--spinner_size) / 7.5);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 2.3077);
+  left: calc(var(--spinner_size) / 2.3077);
+  background-color: var(--spinner_color);
+  animation-delay: calc(var(--delay_modifier) * 2ms);
+}
+
+.breeding-rhombus-spinner .rhombus.child-2 {
+  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  animation-name: breeding-rhombus-spinner-animation-child-2;
+  height: calc(var(--spinner_size) / 7.5);
+  width: calc(var(--spinner_size) / 7.5);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 2.3077);
+  left: calc(var(--spinner_size) / 2.3077);
+  background-color: var(--spinner_color);
+  animation-delay: calc(var(--delay_modifier) * 3ms);
+}
+
+.breeding-rhombus-spinner .rhombus.child-3 {
+  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  animation-name: breeding-rhombus-spinner-animation-child-3;
+  height: calc(var(--spinner_size) / 7.5);
+  width: calc(var(--spinner_size) / 7.5);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 2.3077);
+  left: calc(var(--spinner_size) / 2.3077);
+  background-color: var(--spinner_color);
+  animation-delay: calc(var(--delay_modifier) * 4ms);
+}
+
+.breeding-rhombus-spinner .rhombus.child-4 {
+  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  animation-name: breeding-rhombus-spinner-animation-child-4;
+  height: calc(var(--spinner_size) / 7.5);
+  width: calc(var(--spinner_size) / 7.5);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 2.3077);
+  left: calc(var(--spinner_size) / 2.3077);
+  background-color: var(--spinner_color);
+  animation-delay: calc(var(--delay_modifier) * 5ms);
+}
+
+.breeding-rhombus-spinner .rhombus.child-5 {
+  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  animation-name: breeding-rhombus-spinner-animation-child-5;
+  height: calc(var(--spinner_size) / 7.5);
+  width: calc(var(--spinner_size) / 7.5);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 2.3077);
+  left: calc(var(--spinner_size) / 2.3077);
+  background-color: var(--spinner_color);
+  animation-delay: calc(var(--delay_modifier) * 6ms);
+}
+
+.breeding-rhombus-spinner .rhombus.child-6 {
+  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  animation-name: breeding-rhombus-spinner-animation-child-6;
+  height: calc(var(--spinner_size) / 7.5);
+  width: calc(var(--spinner_size) / 7.5);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 2.3077);
+  left: calc(var(--spinner_size) / 2.3077);
+  background-color: var(--spinner_color);
+  animation-delay: calc(var(--delay_modifier) * 7ms);
+}
+
+.breeding-rhombus-spinner .rhombus.child-7 {
+  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  animation-name: breeding-rhombus-spinner-animation-child-7;
+  height: calc(var(--spinner_size) / 7.5);
+  width: calc(var(--spinner_size) / 7.5);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 2.3077);
+  left: calc(var(--spinner_size) / 2.3077);
+  background-color: var(--spinner_color);
+  animation-delay: calc(var(--delay_modifier) * 8ms);
+}
+
+.breeding-rhombus-spinner .rhombus.child-8 {
+  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  animation-name: breeding-rhombus-spinner-animation-child-8;
+  height: calc(var(--spinner_size) / 7.5);
+  width: calc(var(--spinner_size) / 7.5);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 2.3077);
+  left: calc(var(--spinner_size) / 2.3077);
+  background-color: var(--spinner_color);
+  animation-delay: calc(var(--delay_modifier) * 9ms);
+}
+
+.breeding-rhombus-spinner .rhombus.big {
+  height: calc(var(--spinner_size) / 3);
+  width: calc(var(--spinner_size) / 3);
+  animation-duration: var(--spinner_duration);
+  top: calc(var(--spinner_size) / 3);
+  left: calc(var(--spinner_size) / 3);
+  background-color: var(--spinner_color);
+  animation: breeding-rhombus-spinner-animation-child-big var(--spinner_duration) infinite;
+  animation-delay: 0.5s;
+}
+
+
+@keyframes breeding-rhombus-spinner-animation-child-1 {
+  50% {
+    transform: translate(-325%, -325%);
+  }
+}
+
+@keyframes breeding-rhombus-spinner-animation-child-2 {
+  50% {
+    transform: translate(0, -325%);
+  }
+}
+
+@keyframes breeding-rhombus-spinner-animation-child-3 {
+  50% {
+    transform: translate(325%, -325%);
+  }
+}
+
+@keyframes breeding-rhombus-spinner-animation-child-4 {
+  50% {
+    transform: translate(325%, 0);
+  }
+}
+
+@keyframes breeding-rhombus-spinner-animation-child-5 {
+  50% {
+    transform: translate(325%, 325%);
+  }
+}
+
+@keyframes breeding-rhombus-spinner-animation-child-6 {
+  50% {
+    transform: translate(0, 325%);
+  }
+}
+
+@keyframes breeding-rhombus-spinner-animation-child-7 {
+  50% {
+    transform: translate(-325%, 325%);
+  }
+}
+
+@keyframes breeding-rhombus-spinner-animation-child-8 {
+  50% {
+    transform: translate(-325%, 0);
+  }
+}
+
+@keyframes breeding-rhombus-spinner-animation-child-big {
+  50% {
+    transform: scale(0.5);
+  }
+}

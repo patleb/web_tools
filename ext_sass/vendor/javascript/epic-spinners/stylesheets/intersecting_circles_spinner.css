@@ -1,15 +1,17 @@
-$spinner_duration: 1200ms !default;
-$spinner_size: 70px !default;
-$spinner_color: #ff1d5e !default;
-$spinner_circle_size: calc(#{$spinner_size} / 2);
+:root {
+  --spinner_duration: 1200ms;
+  --spinner_size: 70px;
+  --spinner_color: #ff1d5e;
+  --spinner_circle_size: calc(var(--spinner_size) / 2);
+}
 
 .intersecting-circles-spinner, .intersecting-circles-spinner * {
   box-sizing: border-box;
 }
 
 .intersecting-circles-spinner {
-  height: $spinner_size;
-  width: $spinner_size;
+  height: var(--spinner_size);
+  width: var(--spinner_size);
   position: relative;
   display: flex;
   flex-direction: row;
@@ -18,16 +20,16 @@ $spinner_circle_size: calc(#{$spinner_size} / 2);
 }
 
 .intersecting-circles-spinner .spinnerBlock {
-  animation: intersecting-circles-spinners-animation $spinner_duration linear infinite;
+  animation: intersecting-circles-spinners-animation var(--spinner_duration) linear infinite;
   transform-origin: center;
   display: block;
-  height: $spinner_circle_size;
-  width: $spinner_circle_size;
+  height: var(--spinner_circle_size);
+  width: var(--spinner_circle_size);
 }
 
 .intersecting-circles-spinner .circle {
   display: block;
-  border: 2px solid $spinner_color;
+  border: 2px solid var(--spinner_color);
   border-radius: 50%;
   height: 100%;
   width: 100%;
@@ -42,33 +44,33 @@ $spinner_circle_size: calc(#{$spinner_size} / 2);
 }
 
 .intersecting-circles-spinner .circle:nth-child(2) {
-  left: calc(#{$spinner_circle_size} * -0.36);
-  top: calc(#{$spinner_circle_size} * 0.2);
+  left: calc(var(--spinner_circle_size) * -0.36);
+  top: calc(var(--spinner_circle_size) * 0.2);
 }
 
 .intersecting-circles-spinner .circle:nth-child(3) {
-  left: calc(#{$spinner_circle_size} * -0.36);
-  top: calc(#{$spinner_circle_size} * -0.2);
+  left: calc(var(--spinner_circle_size) * -0.36);
+  top: calc(var(--spinner_circle_size) * -0.2);
 }
 
 .intersecting-circles-spinner .circle:nth-child(4) {
   left: 0;
-  top: calc(#{$spinner_circle_size} * -0.36);
+  top: calc(var(--spinner_circle_size) * -0.36);
 }
 
 .intersecting-circles-spinner .circle:nth-child(5) {
-  left: calc(#{$spinner_circle_size} * 0.36);
-  top: calc(#{$spinner_circle_size} * -0.2);
+  left: calc(var(--spinner_circle_size) * 0.36);
+  top: calc(var(--spinner_circle_size) * -0.2);
 }
 
 .intersecting-circles-spinner .circle:nth-child(6) {
-  left: calc(#{$spinner_circle_size} * 0.36);
-  top: calc(#{$spinner_circle_size} * 0.2);
+  left: calc(var(--spinner_circle_size) * 0.36);
+  top: calc(var(--spinner_circle_size) * 0.2);
 }
 
 .intersecting-circles-spinner .circle:nth-child(7) {
   left: 0;
-  top: calc(#{$spinner_circle_size} * 0.36);
+  top: calc(var(--spinner_circle_size) * 0.36);
 }
 
 @keyframes intersecting-circles-spinners-animation {

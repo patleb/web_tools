@@ -1,14 +1,16 @@
-$spinner_duration: 1500ms !default;
-$spinner_size: 60px !default;
-$spinner_color: #ff1d5e !default;
+:root {
+  --spinner_duration: 1500ms;
+  --spinner_size: 60px;
+  --spinner_color: #ff1d5e;
+}
 
 .fingerprint-spinner, .fingerprint-spinner * {
   box-sizing: border-box;
 }
 
 .fingerprint-spinner {
-  height: $spinner_size;
-  width: $spinner_size;
+  height: var(--spinner_size);
+  width: var(--spinner_size);
   padding: 2px;
   overflow: hidden;
   position: relative;
@@ -18,8 +20,8 @@ $spinner_color: #ff1d5e !default;
   position: absolute;
   border-radius: 50%;
   border: 2px solid transparent;
-  border-top-color: $spinner_color;
-  animation: fingerprint-spinner-animation $spinner_duration cubic-bezier(0.680, -0.750, 0.265, 1.750) infinite forwards;
+  border-top-color: var(--spinner_color);
+  animation: fingerprint-spinner-animation var(--spinner_duration) cubic-bezier(0.680, -0.750, 0.265, 1.750) infinite forwards;
   margin: auto;
   bottom: 0;
   left: 0;
@@ -29,7 +31,7 @@ $spinner_color: #ff1d5e !default;
 
 @for $i from 1 through 9 {
   .fingerprint-spinner .spinner-ring:nth-child(#{$i}) {
-    $ring_base: calc(#{$spinner_size} - 2px * 2) / 9;
+    $ring_base: calc(var(--spinner_size) - 2px * 2) / 9;
     height: calc(#{$ring_base} + (#{$i} - 1) * #{$ring_base});
     width: calc(#{$ring_base} + (#{$i} - 1) * #{$ring_base});
     animation-delay: calc(50ms * #{$i});

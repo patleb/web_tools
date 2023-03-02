@@ -12,7 +12,9 @@ module IconsHelper
   # https://lucide.dev/
   # https://icons.getbootstrap.com/
   def icon(name, **options)
+    name, *classes = name.split('.')
     name = name.to_s.dasherize
+    options[:class] = merge_classes(options, classes)
     text = (@@_icon ||= {})[name] ||= begin
       Pathname.new("node_modules/bootstrap-icons/icons/#{name}.svg").read.sub!(SVG_BEGIN, '').sub!(SVG_END, '').html_safe
     end
@@ -117,12 +119,12 @@ module IconsHelper
   def spinner_variable(type)
     (@@_spinner_variable ||= {})[type] ||= begin
       match = nil
-      %W(application.scss stylesheets/_variables.scss vendor/epic-spinners/stylesheets/_#{type}_spinner.scss).find do |path|
+      %W(application.css stylesheets/variables.css vendor/epic-spinners/stylesheets/#{type}_spinner.css).find do |path|
         next unless (scss = Pathname.new("app/javascript/#{path}")).exist?
-        next unless (scss = scss.read.match(/^\$spinner_#{type}:\s*(\d+)(?:\s*!default)?\s*;\s*$/))
+        next unless (scss = scss.read.match(/^\s*--spinner_#{type}\s*:\s*(\d+)\s*;/))
         match = scss[1].to_i
       end
-      match || raise("can't find scss variable $spinner_#{type}")
+      [match, 9].min.presence || raise("can't find scss variable $spinner_#{type}")
     end
   end
 end

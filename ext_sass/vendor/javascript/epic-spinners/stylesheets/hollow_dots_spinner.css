@@ -1,0 +1,72 @@
+:root {
+  --spinner_duration: 1000ms;
+  --spinner_size: 15px;
+  --spinner_color: #ff1d5e;
+  --spinner_hollow_dots: 3; /* max is 9 */
+}
+
+.hollow-dots-spinner, .hollow-dots-spinner * {
+  box-sizing: border-box;
+}
+
+.hollow-dots-spinner {
+  height: var(--spinner_size);
+  width: calc(var(--spinner_size) * var(--spinner_hollow_dots));
+}
+
+.hollow-dots-spinner .dot {
+  width: var(--spinner_size);
+  height: var(--spinner_size);
+  margin: 0 calc(var(--spinner_size) / 2);
+  border: calc(var(--spinner_size) / 5) solid var(--spinner_color);
+  border-radius: 50%;
+  float: left;
+  transform: scale(0);
+  animation: hollow-dots-spinner-animation var(--spinner_duration) ease infinite 0ms;
+}
+
+.hollow-dots-spinner .dot:nth-child(1) {
+  animation-delay: calc(300ms * 1);
+}
+
+.hollow-dots-spinner .dot:nth-child(2) {
+  animation-delay: calc(300ms * 2);
+}
+
+.hollow-dots-spinner .dot:nth-child(3) {
+  animation-delay: calc(300ms * 3);
+}
+
+.hollow-dots-spinner .dot:nth-child(4) {
+  animation-delay: calc(300ms * 4);
+}
+
+.hollow-dots-spinner .dot:nth-child(5) {
+  animation-delay: calc(300ms * 5);
+}
+
+.hollow-dots-spinner .dot:nth-child(6) {
+  animation-delay: calc(300ms * 6);
+}
+
+.hollow-dots-spinner .dot:nth-child(7) {
+  animation-delay: calc(300ms * 7);
+}
+
+.hollow-dots-spinner .dot:nth-child(8) {
+  animation-delay: calc(300ms * 8);
+}
+
+.hollow-dots-spinner .dot:nth-child(9) {
+  animation-delay: calc(300ms * 9);
+}
+
+@keyframes hollow-dots-spinner-animation {
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

@@ -1,14 +1,16 @@
-$spinner_duration: 1000ms !default;
-$spinner_size: 65px !default;
-$spinner_color: #ff1d5e !default;
+:root {
+  --spinner_duration: 1000ms;
+  --spinner_size: 65px;
+  --spinner_color: #ff1d5e;
+}
 
 .swapping-squares-spinner, .swapping-squares-spinner * {
   box-sizing: border-box;
 }
 
 .swapping-squares-spinner {
-  height: $spinner_size;
-  width: $spinner_size;
+  height: var(--spinner_size);
+  width: var(--spinner_size);
   position: relative;
   display: flex;
   flex-direction: row;
@@ -17,10 +19,10 @@ $spinner_color: #ff1d5e !default;
 }
 
 .swapping-squares-spinner .square {
-  height: calc(#{$spinner_size} * 0.25 / 1.3);
-  width:  calc(#{$spinner_size} * 0.25 / 1.3);
-  animation-duration: $spinner_duration;
-  border: calc(#{$spinner_size} * 0.04 / 1.3) solid $spinner_color;
+  height: calc(var(--spinner_size) * 0.25 / 1.3);
+  width:  calc(var(--spinner_size) * 0.25 / 1.3);
+  animation-duration: var(--spinner_duration);
+  border: calc(var(--spinner_size) * 0.04 / 1.3) solid var(--spinner_color);
   margin-right: auto;
   margin-left: auto;
   position: absolute;
@@ -29,7 +31,7 @@ $spinner_color: #ff1d5e !default;
 
 .swapping-squares-spinner .square:nth-child(1) {
   animation-name: swapping-squares-animation-child-1;
-  animation-delay: calc(#{$spinner_duration} * 0.5);
+  animation-delay: calc(var(--spinner_duration) * 0.5);
 }
 
 .swapping-squares-spinner .square:nth-child(2) {
@@ -39,7 +41,7 @@ $spinner_color: #ff1d5e !default;
 
 .swapping-squares-spinner .square:nth-child(3) {
   animation-name: swapping-squares-animation-child-3;
-  animation-delay: calc(#{$spinner_duration} * 0.5);
+  animation-delay: calc(var(--spinner_duration) * 0.5);
 }
 
 .swapping-squares-spinner .square:nth-child(4) {
