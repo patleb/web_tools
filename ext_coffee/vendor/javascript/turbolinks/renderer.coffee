@@ -25,6 +25,7 @@ class Turbolinks.Renderer
 
   merge_html_tag: ->
     for [name, value] in @new_html_tag
+      value = value.sub(/(^|\s)no-js(\s|$)/, '') if name is 'class'
       document.documentElement.setAttribute(name, value)
 
   merge_head: ->
