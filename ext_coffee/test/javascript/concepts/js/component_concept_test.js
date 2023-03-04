@@ -6,7 +6,7 @@ describe('Js.ComponentConcept', () => {
   })
 
   it('should render elements', () => {
-    const banner = dom.find(`${Js.Component.ELEMENTS}[data-element=banner]:not([data-turbolinks-permanent][data-static])`)
+    const banner = dom.find(`${Js.Component.ELEMENTS}[data-element=banner]:not([data-turbolinks-permanent],[data-static])`)
     const banner_persistent = dom.find(`${Js.Component.ELEMENTS}[data-element=banner][data-turbolinks-permanent]`)
     const banner_static = dom.find(`${Js.Component.ELEMENTS}[data-element=banner][data-static]`)
     const card = dom.find(`${Js.Component.ELEMENTS}[data-element=card]`)
