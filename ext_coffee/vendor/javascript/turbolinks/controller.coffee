@@ -181,10 +181,15 @@ class Turbolinks.Controller
       return if @is_reloadable(url)
       location = new Turbolinks.Location(url)
       action = link.getAttribute('data-turbolinks-action') or 'advance'
+      scroll_only = location.anchor? and link.getAttribute('data-turbolinks-history') is 'false'
       if @location_is_visitable(location)
         unless @dispatch_click(link, location).defaultPrevented
           event.preventDefault()
-          @visit(location, { action })
+          if scroll_only
+            @scroll_to_anchor(location.anchor)
+            @dispatch_scroll()
+          else
+            @visit(location, { action })
 
   on_popstate: (event) =>
     return unless @enabled and @should_handle_popstate()
@@ -210,6 +215,9 @@ class Turbolinks.Controller
 
   dispatch_click: (link, location) ->
     Turbolinks.dispatch('turbolinks:click', target: link, data: { url: location.absolute_url }, cancelable: true)
+
+  dispatch_scroll: ->
+    Turbolinks.dispatch('turbolinks:scroll')
 
   dispatch_before_visit: (location, action) ->
     Turbolinks.dispatch('turbolinks:before-visit', data: { url: location.absolute_url, action }, cancelable: true)
