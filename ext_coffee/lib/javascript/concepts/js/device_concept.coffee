@@ -6,6 +6,11 @@
 class Js.DeviceConcept
   global: true
 
+  constants: ->
+    RESIZE_X: 'js_device:resize_x'
+    RESIZE_Y: 'js_device:resize_y'
+    MOBILE: 'js_device:mobile'
+
   ready_once: ->
     @touched = false
     window.addEventListener('touchstart', @on_touchstart, false)
@@ -31,6 +36,15 @@ class Js.DeviceConcept
     window.removeEventListener('touchstart', @on_touchstart, false)
 
   on_resize: =>
-    @width = window.innerWidth or document.documentElement.clientWidth or document.body.clientWidth
-    @height = window.innerHeight or document.documentElement.clientHeight or document.body.clientHeight
-    @mobile = (@width < @screens.md)
+    @size_was = @size
+    @size =
+      x: window.innerWidth or document.documentElement.clientWidth or document.body.clientWidth
+      y: window.innerHeight or document.documentElement.clientHeight or document.body.clientHeight
+    @full_size =
+      x: document.documentElement.scrollWidth or document.body.scrollWidth
+      y: document.documentElement.scrollHeight or document.body.scrollHeight
+    @mobile_was = @mobile
+    @mobile = (@size.x < @screens.md)
+    Rails.fire(document, @RESIZE_X) if @size.x isnt @size_was?.x
+    Rails.fire(document, @RESIZE_Y) if @size.y isnt @size_was?.y
+    Rails.fire(document, @MOBILE) if @mobile isnt @mobile_was
