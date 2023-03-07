@@ -19,8 +19,8 @@ class Js.Concepts
     if initialized
       return Logger.debug('Js.Concepts already initialized')
     initialized = true
-    Array.wrap(concepts).each (name) => @add_concept(name)
     Array.wrap(modules).each (name) => @add_module(name)
+    Array.wrap(concepts).each (name) => @add_concept(name)
     Rails.document_on 'DOMContentLoaded', @on_load
     Rails.document_on 'turbolinks:before-render', @on_leave
     Rails.document_on 'turbolinks:load', @on_ready
@@ -67,7 +67,7 @@ class Js.Concepts
 
     name = "#{module}.#{name}" if module?
     names = name.split('.')
-    module ||= (names.length and names[0..-2].join('.')) or ''
+    module ||= (names.length and names[0..-2].join('.')) or 'window'
     class_name = names.last()
 
     if uniq_classes[name]
@@ -119,6 +119,8 @@ class Js.Concepts
       @elements = nodes.each_with_object {}, (node, memo) =>
         element_class = "#{type.camelize()}Element" if type = node.getAttribute('data-element')
         element_class ||= 'Element'
+        if Env.local and (node.find(selector) or node.find('[data-element]'))
+          throw "#{element_class} enclosing another #{element_class} or Js.ComponentConcept::Element"
         uid = Math.uid()
         node.setAttribute('data-uid', uid)
         memo[uid] = new this[element_class](node)
