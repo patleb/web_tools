@@ -76,11 +76,11 @@ Rails.merge
         params.push(name: input.name, value: input.value)
     params.push(additional_param) if additional_param
     params.map (param) ->
-      if param.name?
+      if param.name?.present() and param.value?.present()
         "#{encodeURIComponent(param.name)}=#{encodeURIComponent(param.value)}"
-      else
+      else if param?.is_a(String) and param.present()
         param
-    .join('&')
+    .compact().join('&')
 
   # Helper function that returns form elements that match the specified CSS selector
   # If form is actually a "form" element this will return associated elements outside the from that have
