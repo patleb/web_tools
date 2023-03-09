@@ -9,7 +9,9 @@ class Js.DeviceConcept
   constants: ->
     RESIZE_X: 'js_device:resize_x'
     RESIZE_Y: 'js_device:resize_y'
-    MOBILE: 'js_device:mobile'
+    MOBILE:   'js_device:mobile'
+    SCROLL_X: 'js_device:scroll_x'
+    SCROLL_Y: 'js_device:scroll_y'
 
   ready_once: ->
     @touched = false
@@ -19,6 +21,7 @@ class Js.DeviceConcept
     @screens = @screens.reject((k, v) -> v.is_a Object).map((k, v) -> [k, v.to_i()]).to_h()
     @on_resize()
     window.addEventListener('resize', @on_resize.throttle(), false)
+    window.addEventListener('scroll', @on_scroll.throttle(), false)
 
     styles = window.getComputedStyle(document.documentElement, '')
     prefix = try styles.values().join('').match(/-(webkit|moz|ms)-/)?[1]
@@ -49,3 +52,11 @@ class Js.DeviceConcept
     Rails.fire(document, @RESIZE_X) if @size.x isnt @size_was?.x
     Rails.fire(document, @RESIZE_Y) if @size.y isnt @size_was?.y
     Rails.fire(document, @MOBILE) if @mobile isnt @mobile_was
+
+  on_scroll: =>
+    @move_was = @move
+    @move =
+      x: window.scrollX
+      y: window.scrollY
+    Rails.fire(document, @SCROLL_X) if @move.x isnt @move_was?.x
+    Rails.fire(document, @SCROLL_Y) if @move.y isnt @move_was?.y
