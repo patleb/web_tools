@@ -82,14 +82,14 @@ Date.define_methods
         when 'w' then day
         when 'y' then pad(year % 100, flag)
         when 'Y' then year
-        when 'Z' then parse_time_zone(this)
+        when 'Z' then parse_timezone(this)
 
 pad = (num, flag) ->
   switch flag
     when '-' then num
     else ("0#{num}").slice(-2)
 
-parse_time_zone = (time) ->
+parse_timezone = (time) ->
   string = time.toString()
   # Sun Aug 30 2015 10:22:57 GMT-0400 (NAME)
   if name = string.match(/\(([\w\s]+)\)$/)?[1]
