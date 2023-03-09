@@ -40,6 +40,7 @@ class Js.DeviceConcept
     @size =
       x: window.innerWidth or document.documentElement.clientWidth or document.body.clientWidth
       y: window.innerHeight or document.documentElement.clientHeight or document.body.clientHeight
+    @full_size_was = @full_size
     @full_size =
       x: document.documentElement.scrollWidth or document.body.scrollWidth
       y: document.documentElement.scrollHeight or document.body.scrollHeight
