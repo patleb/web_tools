@@ -4,7 +4,12 @@
 @import "@@vendor/tailwindcss-rails/stylesheets/inter-font";
 
 html.no-js {
-  .js {
+  .js_only {
+    display: none;
+  }
+}
+html:not(.no-js) {
+  .css_only {
     display: none;
   }
 }
