@@ -16,6 +16,7 @@ const events = [
   'turbolinks:render',
   'turbolinks:request-start',
   'turbolinks:request-end',
+  'turbolinks:scroll-only',
   'turbolinks:submit',
   'turbolinks:visit',
 ].concat([

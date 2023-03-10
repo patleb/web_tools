@@ -218,7 +218,7 @@ class Turbolinks.Controller
     Turbolinks.dispatch('turbolinks:click', target: link, data: { url: location.absolute_url }, cancelable: true)
 
   dispatch_scroll: ->
-    Turbolinks.dispatch('turbolinks:scroll')
+    Turbolinks.dispatch('turbolinks:scroll-only')
 
   dispatch_before_visit: (location, action) ->
     Turbolinks.dispatch('turbolinks:before-visit', data: { url: location.absolute_url, action }, cancelable: true)

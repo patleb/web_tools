@@ -69,7 +69,7 @@ describe('Turbolinks Anchor', () => {
   })
 
   it('should follow same-anchor on same-page without replace', async () => {
-    await turbolinks.click('#no-history-same-page-anchor', { 'turbolinks:scroll': (event) => {
+    await turbolinks.click('#no-history-same-page-anchor', { 'turbolinks:scroll-only': (event) => {
       assert.called(Element.prototype.scrollIntoView)
     }})
   })
