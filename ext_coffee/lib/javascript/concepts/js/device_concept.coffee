@@ -59,7 +59,7 @@ class Js.DeviceConcept
   on_scroll: =>
     @move_was = @move
     @move =
-      x: window.scrollX
-      y: window.scrollY
+      x: window.scrollX or window.pageXOffset
+      y: window.scrollY or window.pageYOffset
     Rails.fire(document, @SCROLL_X) if @move.x isnt @move_was?.x
     Rails.fire(document, @SCROLL_Y) if @move.y isnt @move_was?.y
