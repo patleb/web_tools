@@ -39,9 +39,6 @@ ReplaceWithPolyfill = (nodes...) ->
       parent.insertBefore(@previousSibling, currentNode)
   return
 
-unless Element::replaceWith
-  Element::replaceWith = ReplaceWithPolyfill
-unless CharacterData::replaceWith
-  CharacterData::replaceWith = ReplaceWithPolyfill
-unless DocumentType::replaceWith
-  DocumentType::replaceWith = ReplaceWithPolyfill
+Element::replaceWith ?= ReplaceWithPolyfill
+CharacterData::replaceWith ?= ReplaceWithPolyfill
+DocumentType::replaceWith ?= ReplaceWithPolyfill
