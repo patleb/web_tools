@@ -53,8 +53,8 @@
   },
   "version": "0.1.0",
   "scripts": {
-    "test": "./bin/coffee compile && TZ=GMT jest --config jest.config.js",
-    "test-clear": "./bin/coffee clobber && jest --config jest.config.js --clearCache"
+    "test": "./bin/coffee compile-lib && TZ=GMT jest --config jest.config.js",
+    "test-clear": "./bin/coffee clobber-lib && jest --config jest.config.js --clearCache"
   },
   "babel": {
     "presets": [
