@@ -61,7 +61,7 @@ Rails.merge
       root = Rails unless root.$?
       root.$("form input[name='#{param}']").forEach (input) -> input.value = token
 
-  serialize_element: (element, additional_param) ->
+  serialize_element: (element, additional_param, blanks = true) ->
     inputs = [element]
     inputs = Array.wrap(element.elements) if element.matches('form')
     params = []
@@ -76,11 +76,17 @@ Rails.merge
         params.push(name: input.name, value: input.value)
     params.push(additional_param) if additional_param
     params.map (param) ->
-      if param.name?.present() and param.value?.present()
+      if Rails.is_present(param.name) and (blanks or Rails.is_present(param.value))
         "#{encodeURIComponent(param.name)}=#{encodeURIComponent(param.value)}"
-      else if param?.is_a(String) and param.present()
+      else if typeof param is 'string' and Rails.is_present(param)
         param
-    .compact().join('&')
+    .filter((item) -> item?).join('&')
+
+  is_present: (object) ->
+    return false unless object?
+    return false if typeof object is 'string' and object.trim().length is 0
+    return false if typeof object is 'object' and Object.keys(object).length is 0
+    true
 
   # Helper function that returns form elements that match the specified CSS selector
   # If form is actually a "form" element this will return associated elements outside the from that have

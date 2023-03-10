@@ -9,18 +9,18 @@ class Js.RoutesConcept
     @paths = Rails.$(@ROUTES).each_with_object {}, (element, memo) =>
       memo.merge(JSON.parse(element.getAttribute(@PATHS)))
 
-  url_for: (action, params = {}) ->
+  url_for: (action, params = {}, blanks = true) ->
     return unless path = @paths[action]
-    @location(path, params).href
+    @location(path, params, blanks).href
 
-  path_for: (action, params = {}) ->
+  path_for: (action, params = {}, blanks = true) ->
     return unless path = @paths[action]
-    @location(path, params).href.sub(/^.*\/\/[^\/]+/, '')
+    @location(path, params, blanks).href.sub(/^.*\/\/[^\/]+/, '')
 
   # Private
 
   # Optional /(:variable) segment not supported
-  location: (path, params = {}) ->
+  location: (path, params = {}, blanks = true) ->
     params = params.dup()
     location = @decode_url(path)
     pathname = location.pathname.split('/').map (segment) ->
@@ -29,7 +29,7 @@ class Js.RoutesConcept
       else
         segment
     location.pathname = pathname.join('/').sub(/\/$/, '')
-    location.search = @encode_params(params) unless params.empty()
+    location.search = @encode_params(params, blanks) unless params.empty()
     location
 
   decode_url: (string) ->
@@ -38,7 +38,7 @@ class Js.RoutesConcept
     link
 
   # Object of Arrays and Array of Objects not supported
-  encode_params: (params) ->
+  encode_params: (params, blanks = true) ->
     params = params.map (param_name, param_value) ->
       switch param_value?.constructor
         when Object
@@ -50,8 +50,10 @@ class Js.RoutesConcept
         else
           [[param_name, param_value]]
     params = params.map (values) ->
-      values.map ([name, value]) -> "#{encodeURIComponent(name)}=#{encodeURIComponent(value)}"
-    params.flatten().join('&')
+      values.map ([name, value]) ->
+        if name?.present() and (blanks or value?.present())
+          "#{encodeURIComponent(name)}=#{encodeURIComponent(value)}"
+    params.flatten().compact().join('&')
 
   decode_params: (string) ->
     params = {}

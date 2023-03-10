@@ -161,7 +161,8 @@ class Turbolinks.Controller
       url = submitter.getAttribute('formaction') ? form.getAttribute('action') ? ''
       return if @is_reloadable(url)
       url = url.replace(/\?[^#]*/, '')
-      params = Rails.serialize_element(form, submitter)
+      blanks = (submitter.getAttribute('data-turbolinks-blanks') or form.getAttribute('data-turbolinks-blanks')) isnt 'false'
+      params = Rails.serialize_element(form, submitter, blanks)
       location = new Turbolinks.Location(Rails.push_query(url, params))
       action = submitter.getAttribute('data-turbolinks-action') or form.getAttribute('data-turbolinks-action') or 'advance'
       if @location_is_visitable(location)

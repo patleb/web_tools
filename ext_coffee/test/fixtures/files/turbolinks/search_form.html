@@ -9,8 +9,9 @@
     <section>
       <h1>Search form</h1>
       <form action="/search_form?page=1#search" accept-charset="UTF-8" method="get">
+        <input type="text" name="blank" id="blank" value=" ">
         <input type="search" name="search" id="search" value="input">
-        <input type="submit" name="commit" value="button">
+        <input type="submit" name="commit" value="button" data-turbolinks-blanks="false">
       </form>
     </section>
   </body>
