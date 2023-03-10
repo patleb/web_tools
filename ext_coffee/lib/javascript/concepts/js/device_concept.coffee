@@ -19,7 +19,6 @@ class Js.DeviceConcept
 
     @screens = JSON.parse(process.env.SCREENS) or { md: 768 }
     @screens = @screens.reject((k, v) -> v.is_a Object).map((k, v) -> [k, v.to_i()]).to_h()
-    @on_resize()
     window.addEventListener('resize', @on_resize.throttle(), false)
     window.addEventListener('scroll', @on_scroll.throttle(), false)
 
@@ -33,6 +32,10 @@ class Js.DeviceConcept
     @safari = /constructor/i.test(window.HTMLElement) or ((p) -> p.toString() is '[object SafariRemoteNotification]')(
       not window.safari or (typeof safari isnt 'undefined' and safari.pushNotification)
     )
+
+  ready: ->
+    @on_resize()
+    @on_scroll()
 
   on_touchstart: =>
     @touched = true
