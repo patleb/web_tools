@@ -9,7 +9,7 @@ Function.define_singleton_methods
     { force, prefix = '' } = keys.extract_options()
     keys = base.keys() if keys.empty()
     keys.except(Function.PROTECTED_METHODS...).each (key) ->
-      if force || !key.start_with('_') # skip private
+      if force or not key.start_with('_') # skip private
         if base[key]?.is_a Function
           delegated_key = if prefix.present() then "#{prefix}_#{key}" else key
           previous = receiver[key]
