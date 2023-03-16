@@ -1,4 +1,6 @@
 class Turbolinks.Controller
+  INPUTS = 'select[name]:not([name=""]):not([disabled]),input[name]:not([name=""]):not([type="hidden"]):not([disabled])'
+
   @cache_size = 10
   @progress_bar_delay = 500
 
@@ -93,11 +95,23 @@ class Turbolinks.Controller
   cache_snapshot: ->
     if @should_cache_snapshot()
       unless @dispatch_before_cache().defaultPrevented
+        @persist_inputs()
         snapshot = @get_snapshot()
         location = @rendered_location or Turbolinks.Location.current_location()
         Function.defer =>
           @cache.put(location, snapshot.clone())
           @dispatch_cache()
+
+  persist_inputs: ->
+    for input in Rails.$(INPUTS)
+      switch input.type
+        when 'select-one', 'select-multiple'
+          for option in Array.wrap(input.options)
+            option.toggleAttribute('selected', option.selected)
+        when 'radio', 'checkbox'
+          input.toggleAttribute('checked', input.checked)
+        else
+          input.setAttribute('value', input.value)
 
   # Scrolling
 
@@ -188,7 +202,7 @@ class Turbolinks.Controller
           event.preventDefault()
           if scroll_only
             @scroll_to_anchor(location.anchor)
-            @dispatch_scroll()
+            @dispatch_scroll_only()
           else
             @visit(location, { action })
 
@@ -217,7 +231,7 @@ class Turbolinks.Controller
   dispatch_click: (link, location) ->
     Turbolinks.dispatch('turbolinks:click', target: link, data: { url: location.absolute_url }, cancelable: true)
 
-  dispatch_scroll: ->
+  dispatch_scroll_only: ->
     Turbolinks.dispatch('turbolinks:scroll-only')
 
   dispatch_before_visit: (location, action) ->
