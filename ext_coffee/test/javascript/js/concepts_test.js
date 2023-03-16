@@ -146,7 +146,7 @@ describe('Js.Concepts', () => {
       dom.fire('hover', { target: body })
       assert.true(body.classes().include(Test.SimpleConcept.TRIGGERED))
       assert.equal(Test.SimpleConcept.Element.prototype.__body, Test.SimpleConcept.Element.prototype.body())
-      assert.equal(['body', 'value'], Test.SimpleConcept.Element.prototype.GETTERS)
+      assert.equal(['body', 'value'], Test.SimpleConcept.Element.prototype.READERS)
       let element = new Test.SimpleConcept.Element()
       assert.not.nil(element.__body)
       assert.equal(Test.SimpleConcept.Element.prototype.__body, element.__body)

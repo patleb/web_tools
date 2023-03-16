@@ -1,7 +1,7 @@
 class Js.StorageConcept
   alias: 'Js.Storage'
 
-  getters: ->
+  readers: ->
     root: -> storage_node(@ROOT)
     root_permanent: -> storage_node(@ROOT_PERMANENT, true)
 

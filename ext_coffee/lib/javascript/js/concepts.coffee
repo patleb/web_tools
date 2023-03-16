@@ -96,7 +96,7 @@ class Js.Concepts
       scope[alias] = concept
 
     @define_constants(concept_class)
-    @define_getters(concept_class)
+    @define_readers(concept_class)
     @unless_defined concept_class::document_on, =>
       @define_document_on(concept)
 
@@ -143,7 +143,7 @@ class Js.Concepts
   # Private
 
   @nullify_on_leave: ->
-    @GETTERS.each (name) => this["__#{name}"] = null
+    @READERS.each (name) => this["__#{name}"] = null
     @each (key, value) =>
       unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
@@ -156,7 +156,7 @@ class Js.Concepts
     concept.constructor::CONSTANTS.each (name, value) ->
       element_class::[name] = value
     @define_constants(element_class)
-    @define_getters(element_class)
+    @define_readers(element_class)
     @unless_defined element_class::document_on, =>
       @define_document_on(element_class::)
 
@@ -177,13 +177,13 @@ class Js.Concepts
       return @define_constant(klass, name, value.apply(klass::), constants)
     constants[name] = klass::[name] = value
 
-  @define_getters: (klass) ->
-    getters = @unless_defined klass::getters, ->
-      klass::getters().each_with_object [], (name, callback, memo) ->
+  @define_readers: (klass) ->
+    readers = @unless_defined klass::readers, ->
+      klass::readers().each_with_object [], (name, callback, memo) ->
         klass::[name] = ->
           this["__#{name}"] ?= callback.apply(this, arguments)
         memo.push(name)
-    klass::GETTERS = getters or []
+    klass::READERS = readers or []
 
   @define_document_on: (context) ->
     context.document_on().each_slice(3).each ([events, selector, handler]) ->

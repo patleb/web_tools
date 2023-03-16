@@ -9,7 +9,7 @@ class Test.SimpleConcept
     CUSTOM: '.js_simple_custom > a'
     BODY_ROWS: -> "#{@BODY} #{@ROWS}"
 
-  getters: ->
+  readers: ->
     rows: ->
       dom.$(@ROWS)
 
@@ -56,7 +56,7 @@ class Test.SimpleConcept::Element
   constants: ->
     NAME: 'js_simple_name'
 
-  getters: ->
+  readers: ->
     body: -> dom.find(@BODY)
     value: -> 'value'
 
@@ -67,7 +67,7 @@ class Test.SimpleConcept::Element
 
 class Test.SimpleConcept::ExtendElement extends Test.SimpleConcept::Element
 
-# it should not redefine #constants, #getters, #ready(_once), #leave and #document_on on extends
+# it should not redefine #constants, #readers, #ready(_once), #leave and #document_on on extends
 class Test.ExtendConcept extends Test.SimpleConcept
   document_on: -> [
     'click', @BODY, @handler
