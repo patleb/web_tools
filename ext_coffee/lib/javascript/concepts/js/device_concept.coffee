@@ -7,17 +7,17 @@ class Js.DeviceConcept
   global: true
 
   constants: ->
+    SCROLL_X: 'js_device:scroll_x'
+    SCROLL_Y: 'js_device:scroll_y'
     RESIZE_X: 'js_device:resize_x'
     RESIZE_Y: 'js_device:resize_y'
     MOBILE:   'js_device:mobile'
-    SCROLL_X: 'js_device:scroll_x'
-    SCROLL_Y: 'js_device:scroll_y'
 
   ready_once: ->
     @touch = false
     window.addEventListener('touchstart', @on_touchstart, false)
-    window.addEventListener('resize', @on_resize.throttle(), false)
     window.addEventListener('scroll', @on_scroll.throttle(), false)
+    window.addEventListener('resize', @on_resize.throttle(), false)
     @screens = JSON.parse(process.env.SCREENS) or { md: 768 }
     @screens = @screens.reject((k, v) -> v.is_a Object).map((k, v) -> [k, v.to_i()]).to_h()
     styles = window.getComputedStyle(document.documentElement, '')
@@ -32,12 +32,20 @@ class Js.DeviceConcept
     )
 
   ready: ->
-    @on_resize()
     @on_scroll()
+    @on_resize()
 
   on_touchstart: =>
     @touch = true
     window.removeEventListener('touchstart', @on_touchstart, false)
+
+  on_scroll: =>
+    @move_was = @move
+    @move =
+      x: window.scrollX or window.pageXOffset
+      y: window.scrollY or window.pageYOffset
+    Rails.fire(document, @SCROLL_X) if @move.x isnt @move_was?.x
+    Rails.fire(document, @SCROLL_Y) if @move.y isnt @move_was?.y
 
   on_resize: =>
     @size_was = @size
@@ -53,11 +61,3 @@ class Js.DeviceConcept
     Rails.fire(document, @RESIZE_X) if @size.x isnt @size_was?.x or @full_size.x isnt @full_size_was?.x
     Rails.fire(document, @RESIZE_Y) if @size.y isnt @size_was?.y or @full_size.y isnt @full_size_was?.y
     Rails.fire(document, @MOBILE) if @mobile isnt @mobile_was
-
-  on_scroll: =>
-    @move_was = @move
-    @move =
-      x: window.scrollX or window.pageXOffset
-      y: window.scrollY or window.pageYOffset
-    Rails.fire(document, @SCROLL_X) if @move.x isnt @move_was?.x
-    Rails.fire(document, @SCROLL_Y) if @move.y isnt @move_was?.y
