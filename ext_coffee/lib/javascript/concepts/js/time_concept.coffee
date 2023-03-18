@@ -19,7 +19,7 @@ class Js.TimeConcept
         @refresh(element)
   ]
 
-  ready_once: =>
+  ready_once: ->
     @zone = try Intl.DateTimeFormat().resolvedOptions().timeZone
     @zone ?= -(new Date().getTimezoneOffset()) * 60
     prepend_to Rails, 'ajax', (options) =>

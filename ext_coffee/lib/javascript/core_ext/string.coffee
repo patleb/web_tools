@@ -48,7 +48,7 @@ String.define_methods
 
   to_i: (base = null) ->
     value = if @toLowerCase().startsWith('0x') then this else @replace(/^0+/, '')
-    return 0 if @length > 0 && value is ''
+    return 0 if @length > 0 and value is ''
     parseInt(value, base)
 
   to_f: ->
