@@ -29,7 +29,7 @@ class Js.Concepts
     # necessary for having accurate heights/widths
     retries = 0
     test = setInterval =>
-      if Env.test or document.styleSheets[0]?.cssRules?.length or retries >= 50
+      if Env.test or (styles = document.styleSheets)[styles.length - 1]?.cssRules?.length or retries >= 50
         Logger.debug("CSS load #{retries * 13} ms")
         clearInterval(test)
         while @instances.ready_once.length
@@ -143,7 +143,7 @@ class Js.Concepts
   # Private
 
   @nullify_on_leave: ->
-    @READERS.each (name) => this["__#{name}"] = null
+    @READERS.each (name) => @nullify(name)
     @each (key, value) =>
       unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
@@ -184,6 +184,8 @@ class Js.Concepts
           this["__#{name}"] ?= callback.apply(this, arguments)
         memo.push(name)
     klass::READERS = readers or []
+    klass::nullify = (name) ->
+      this["__#{name}"] = null
 
   @define_document_on: (context) ->
     context.document_on().each_slice(3).each ([events, selector, handler]) ->
