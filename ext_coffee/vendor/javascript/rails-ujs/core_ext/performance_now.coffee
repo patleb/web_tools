@@ -17,7 +17,7 @@ unless window.performance?.now
       performance.getEntriesByName('__PERFORMANCE_NOW__')[0].startTime
   else if 'now' not of performance
     nowOffset = Date.now()
-    if performance.timing && performance.timing.navigationStart
+    if performance.timing?.navigationStart
       nowOffset = performance.timing.navigationStart
     performance.now = ->
       Date.now() - nowOffset
