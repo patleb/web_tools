@@ -40,12 +40,42 @@ HTMLElement.define_methods
 
   get_value: ->
     return if @disabled or @hasAttribute('disabled')
-    return if @matches('fieldset[disabled] *')
-    if @matches('select')
-      value = []
-      for option in Array.wrap(@options)
-        value.push(option.value) if option.selected
-      value = value[0] unless @multiple
-      value
-    else if @checked or @type not in ['radio', 'checkbox', 'submit']
-      @value
+    switch @type
+      when 'select-one', 'select-multiple'
+        value = []
+        for option in Array.wrap(@options)
+          value.push(option.value) if option.selected
+        value = value[0] unless @multiple
+        value
+      when 'radio', 'checkbox'
+        @checked
+      else
+        @value
+
+  set_value: (value, { event = false } = {}) ->
+    return value if @disabled or @hasAttribute('disabled')
+    switch @type
+      when 'select-one', 'select-multiple'
+        selected_was = []
+        selected = []
+        changed = false
+        for option in Array.wrap(@options)
+          if option.selected
+            selected_was.push(option)
+            changed ||= option.value isnt value
+          if option.value is value
+            selected.push(option)
+            changed ||= not option.selected
+        return value unless changed
+        selected_was.each (option) -> option.selected = false
+        selected.each (option) -> option.selected = true
+      when 'radio', 'checkbox'
+        return value unless @checked isnt value
+        this.checked = value
+      else
+        return value unless @value isnt value
+        this.value = value
+    switch event
+      when 'change', true then Rails.fire(this, 'change')
+      when 'input'        then Rails.fire(this, 'input')
+    value
