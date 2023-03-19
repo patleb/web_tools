@@ -11,15 +11,15 @@ class Js.DeviceConcept
     SCROLL_Y: 'js_device:scroll_y'
     RESIZE_X: 'js_device:resize_x'
     RESIZE_Y: 'js_device:resize_y'
-    MOBILE:   'js_device:mobile'
 
   ready_once: ->
     @touch = false
     window.addEventListener('touchstart', @on_touchstart, false)
     window.addEventListener('scroll', @on_scroll.throttle(), false)
     window.addEventListener('resize', @on_resize.throttle(), false)
-    @screens = JSON.parse(process.env.SCREENS) or { md: 768 }
+    @screens = JSON.parse(process.env.SCREENS) or {}
     @screens = @screens.reject((k, v) -> v.is_a Object).map((k, v) -> [k, v.to_i()]).to_h()
+    @breakpoints = {}
     styles = window.getComputedStyle(document.documentElement, '')
     prefix = try styles.values().join('').match(/-(webkit|moz|ms)-/)?[1]
     @webkit = prefix is 'webkit'
@@ -56,8 +56,9 @@ class Js.DeviceConcept
     @full_size =
       x: document.documentElement.scrollWidth or document.body.scrollWidth
       y: document.documentElement.scrollHeight or document.body.scrollHeight
-    @mobile_was = @mobile
-    @mobile = (@size.x < @screens.md)
-    Rails.fire(document, @RESIZE_X) if @size.x isnt @size_was?.x or @full_size.x isnt @full_size_was?.x
-    Rails.fire(document, @RESIZE_Y) if @size.y isnt @size_was?.y or @full_size.y isnt @full_size_was?.y
-    Rails.fire(document, @MOBILE) if @mobile isnt @mobile_was
+    if @size.x isnt @size_was?.x or @full_size.x isnt @full_size_was?.x
+      @breakpoints_was = @breakpoints.dup()
+      @screens.each (type, size) => @breakpoints[type] = (@size.x >= size)
+      Rails.fire(document, @RESIZE_X)
+    if @size.y isnt @size_was?.y or @full_size.y isnt @full_size_was?.y
+      Rails.fire(document, @RESIZE_Y)
