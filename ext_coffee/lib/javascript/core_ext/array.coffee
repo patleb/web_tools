@@ -124,8 +124,9 @@ Array.define_methods
       left.index - right.index
     .pluck('item')
 
-  last: ->
-    this[@length - 1]
+  last: (n = 1) ->
+    return this[@length - 1] if n is 1
+    this[-n..-1]
 
   find_index: (f_item_index_self) ->
     for i in [0...@length]

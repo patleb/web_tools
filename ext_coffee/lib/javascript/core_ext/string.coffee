@@ -73,8 +73,9 @@ String.define_methods
   to_html: ->
     Array.wrap(new DOMParser().parseFromString(this, 'text/html').body.children)
 
-  last: ->
-    this[@length - 1]
+  last: (n = 1) ->
+    return this[@length - 1] if n is 1
+    this[-n..-1]
 
   chars: ->
     @split('')
