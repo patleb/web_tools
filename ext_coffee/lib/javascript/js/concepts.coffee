@@ -26,23 +26,14 @@ class Js.Concepts
     Rails.document_on 'turbolinks:load', @on_ready
 
   @on_load: =>
-    # necessary for having accurate heights/widths
-    retries = 0
-    test = setInterval =>
-      if Env.test or (styles = document.styleSheets)[styles.length - 1]?.cssRules?.length or retries >= 50
-        Logger.debug("CSS load #{retries * 13} ms")
-        clearInterval(test)
-        while @instances.ready_once.length
-          concept = @instances.ready_once.shift()
-          concept.ready_once()
-          concept.READY_ONCE_IVARS = []
-          concept.each (key, value) ->
-            unless not_nullifyable(key, value)
-              concept.READY_ONCE_IVARS.push(key)
-        @instances.ready.each (concept) -> concept.ready()
-      else
-        retries++
-    , 13
+    while @instances.ready_once.length
+      concept = @instances.ready_once.shift()
+      concept.ready_once()
+      concept.READY_ONCE_IVARS = []
+      concept.each (key, value) ->
+        unless not_nullifyable(key, value)
+          concept.READY_ONCE_IVARS.push(key)
+    @instances.ready.each (concept) -> concept.ready()
 
   @on_leave: (event) =>
     return if event.defaultPrevented
