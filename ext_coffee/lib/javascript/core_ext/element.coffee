@@ -81,12 +81,15 @@ HTMLElement.define_methods
     value
 
   cursor_start: (move = false) ->
-    if move
-      @setSelectionRange?(0, 0)
+    if move isnt false
+      move = 0 if move is true
+      move = 0 if move < 0
+      @setSelectionRange?(move, move)
     @selectionStart || 0
 
   cursor_end: (move = false) ->
-    if move
-      caret_position = @value.length * 2
-      @setSelectionRange?(caret_position, caret_position)
+    if move isnt false
+      move = @value.length * 2 if move is true
+      move = 0 if move < 0
+      @setSelectionRange?(move, move)
     @selectionEnd || 0
