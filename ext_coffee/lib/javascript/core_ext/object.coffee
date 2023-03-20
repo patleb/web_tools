@@ -166,7 +166,7 @@ Object.define_methods
     @select (key, item) -> item?
 
   compact_blank: ->
-    @select (key, item) -> item
+    @select (key, item) -> item?.present()
 
   deep_merge: (others...) ->
     @constructor.deep_merge(this, others...)
