@@ -62,6 +62,9 @@ Array.override_methods
   compact: ->
     @filter (item) -> item?
 
+  compact_blank: ->
+    @filter (item) -> item
+
   first: ->
     this[0]
 
