@@ -79,3 +79,14 @@ HTMLElement.define_methods
       when 'change', true then Rails.fire(this, 'change')
       when 'input'        then Rails.fire(this, 'input')
     value
+
+  cursor_start: (move = false) ->
+    if move
+      @setSelectionRange?(0, 0)
+    @selectionStart || 0
+
+  cursor_end: (move = false) ->
+    if move
+      caret_position = @value.length * 2
+      @setSelectionRange?(caret_position, caret_position)
+    @selectionEnd || 0
