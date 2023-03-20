@@ -197,6 +197,14 @@ String.define_methods
     else
       [this[0..], '', '']
 
+  insert: (start, string, { replace = 0 } = {}) ->
+    start = 0 if start < 0
+    start = @length if start > @length
+    rest = @length - start
+    replace = 0 if replace < 0
+    replace = rest if replace > rest
+    "#{this[0...start]}#{string}#{this[(start + replace)..-1]}"
+
   start_with: (prefixes...) ->
     prefixes.any (prefix) =>
       @match ///^#{prefix.safe_regex()}///
