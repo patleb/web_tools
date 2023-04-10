@@ -177,6 +177,11 @@ class Js.Concepts
     klass::READERS = readers or []
     klass::nullify = (name) ->
       this["__#{name}"] = null
+    klass::store = (name, value) ->
+      if arguments.length is 1
+        (@__store ||= {})[name]
+      else
+        (@__store ||= {})[name] = value
 
   @define_document_on: (context) ->
     context.document_on().each_slice(3).each ([events, selector, handler]) ->
