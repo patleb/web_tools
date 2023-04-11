@@ -10,7 +10,7 @@ html:not(.no-js) {
   .css_only {
     display: none;
   }
-  > body.no-transition * {
+  &.no-transition * {
     transition: none !important;
     animation-duration: 0s !important;
   }

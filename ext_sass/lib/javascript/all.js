@@ -10,7 +10,7 @@ if (window.Turbolinks) {
 
   Rails.document_on('turbolinks:load', function () {
     window.no_transition_timeout = setTimeout(function () {
-      document.body.classList.remove('no-transition')
+      document.documentElement.classList.remove('no-transition')
     }, 250)
   })
 }
