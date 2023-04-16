@@ -8,13 +8,10 @@ import '@@test/ext_coffee/fixtures/files/concepts/js/component/time_element'
 
 Js.Concepts.initialize({ modules: 'Js' })
 
-const page = (name) => {
-  return fixture.html(name, { root: 'ext_coffee/test/fixtures/files/concepts/js' })
-}
-
 const concepts = {
   with_page: (name, before = () => {}) => {
     beforeAll(async () => {
+      fixture.set_root('ext_coffee/test/fixtures/files/concepts/js')
       before()
       concepts.load_document(name)
       await tick()
@@ -23,18 +20,19 @@ const concepts = {
       concepts.enter_page(name)
     })
     afterAll(() => {
+      fixture.reset_root()
       dom.reset_document()
     })
   },
   load_document: (name) => {
     if (name != null) {
-      dom.setup_document(page(name))
+      dom.setup_document(fixture.html(name))
     }
     dom.fire('DOMContentLoaded')
     dom.fire('turbolinks:load', { data: { info: { once: true } } })
   },
   enter_page: (name) => {
-    const document = new DOMParser().parseFromString(page(name), 'text/html')
+    const document = new DOMParser().parseFromString(fixture.html(name), 'text/html')
     const body = document.body
     const event = dom.fire('turbolinks:before-render', { data: { new_body: body } })
     if (!event.defaultPrevented) {
