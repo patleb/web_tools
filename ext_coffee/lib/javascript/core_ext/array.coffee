@@ -33,6 +33,10 @@ Array.override_methods
   all: (f_item_index_self) ->
     @every(f_item_index_self)
 
+  none: (f_item_index_self) ->
+    @every (item, index, self) ->
+      not f_item_index_self(item, index, self)
+
   each: (f_item_index_self) ->
     @forEach(f_item_index_self)
     return

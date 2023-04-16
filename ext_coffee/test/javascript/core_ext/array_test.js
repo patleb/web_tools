@@ -78,6 +78,11 @@ describe('Array', () => {
     assert.false([1, 2].all((v) => v === 1))
   })
 
+  test('#none', () => {
+    assert.true([1, 1].none((v) => v === 2))
+    assert.false([1, 2].none((v) => v === 1))
+  })
+
   test('#include', () => {
     assert.true([1, 2].include(1))
     assert.false([1, 2].include(3))
