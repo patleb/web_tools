@@ -9,7 +9,7 @@ module ActionController::Base::WithXhrRedirect
     super.tap do
       if request.xhr?
         response.headers['X-Xhr-Redirect'] = location
-        session.m_access(:_xhr_redirect){ location }
+        flash[:_xhr_redirect] = location
       end
     end
   end
@@ -17,8 +17,8 @@ module ActionController::Base::WithXhrRedirect
   private
 
   def set_xhr_redirect
-    if session && session.m_access(:_xhr_redirect)
-      response.headers['X-Xhr-Redirect'] = session.m_clear(:_xhr_redirect)
+    if (location = flash[:_xhr_redirect])
+      response.headers['X-Xhr-Redirect'] = location
     end
   end
 end
