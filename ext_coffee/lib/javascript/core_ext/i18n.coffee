@@ -3,7 +3,7 @@ class window.I18n
   @fallback: 'en'
   @translations: {}
 
-  @t: (key, options = {}) ->
+  @t: (key, options = {}) =>
     escape = options.delete('escape') ? true
     locale = options.delete('locale') ? @locale
     fallback = options.delete('fallback') ? @fallback
@@ -15,7 +15,7 @@ class window.I18n
       result = result.html_safe?(true) unless escape
     result ? key.gsub('.', ' ').humanize()
 
-  @with_locale: (locale, callback) ->
+  @with_locale: (locale, callback) =>
     locale_was = @locale
     @locale = locale
     callback()
@@ -35,3 +35,4 @@ class window.I18n
 
 Rails.document_on 'DOMContentLoaded', I18n.on_load
 Rails.document_on 'turbolinks:load', I18n.on_ready
+window.t = I18n.t

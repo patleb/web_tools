@@ -64,10 +64,10 @@ Date.define_methods
     format.replace /%(-?)([%aAbBcdeHIlmMpPSwyYZ])/g, (match, flag, modifier) =>
       switch modifier
         when '%' then '%'
-        when 'a' then I18n.t('date.short_days')[day]
-        when 'A' then I18n.t('date.days')[day]
-        when 'b' then I18n.t('date.short_months')[month]
-        when 'B' then I18n.t('date.months')[month]
+        when 'a' then t('date.short_days')[day]
+        when 'A' then t('date.days')[day]
+        when 'b' then t('date.short_months')[month]
+        when 'B' then t('date.months')[month]
         when 'c' then @toString()
         when 'd' then pad(date, flag)
         when 'e' then date
@@ -76,8 +76,8 @@ Date.define_methods
         when 'l' then (if hour is 0 or hour is 12 then 12 else (hour + 12) % 12)
         when 'm' then pad(month + 1, flag)
         when 'M' then pad(minute, flag)
-        when 'p' then I18n.t("time.#{if hour > 11 then 'pm' else 'am'}").upcase()
-        when 'P' then I18n.t("time.#{if hour > 11 then 'pm' else 'am'}")
+        when 'p' then t("time.#{if hour > 11 then 'pm' else 'am'}").upcase()
+        when 'P' then t("time.#{if hour > 11 then 'pm' else 'am'}")
         when 'S' then pad(second, flag)
         when 'w' then day
         when 'y' then pad(year % 100, flag)
