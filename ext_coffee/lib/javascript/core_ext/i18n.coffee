@@ -18,8 +18,10 @@ class window.I18n
   @with_locale: (locale, callback) =>
     locale_was = @locale
     @locale = locale
-    callback()
-    @locale = locale_was
+    try
+      callback()
+    finally
+      @locale = locale_was
     return
 
   @on_load: ->
