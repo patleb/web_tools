@@ -5,6 +5,9 @@ HTMLElement.define_methods
   to_s: ->
     @outerHTML
 
+  blank: ->
+    false
+
   html_safe: ->
     true
 
@@ -37,6 +40,18 @@ HTMLElement.define_methods
 
   find: (selector) ->
     @querySelector(selector)
+
+  next_siblings: ->
+    sibling = this
+    siblings = []
+    siblings.push(sibling) while sibling = sibling.nextElementSibling
+    siblings
+
+  previous_siblings: ->
+    sibling = this
+    siblings = []
+    siblings.push(sibling) while sibling = sibling.previousElementSibling
+    siblings
 
   get_value: ->
     return if @disabled or @hasAttribute('disabled')
