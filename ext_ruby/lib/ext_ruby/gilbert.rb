@@ -90,30 +90,37 @@ class Gilbert
       end
     end
 
-    if dims == 2 && 2*size[0][0] > 3*size[0][1] # split in x[0] only
-      build x0, grid[1][0], grid[0][1], list: list
-      build x0.add(grid[1][0]), grid[0][0].sub(grid[1][0]), grid[0][1], list: list
-    elsif dims == 3 && 2*size[0][0] > 3*size[0][1] && 2*size[0][0] > 3*size[0][2]
-      build x0, grid[1][0], grid[0][1], grid[0][2], list: list
-      build x0.add(grid[1][0]), grid[0][0].sub(grid[1][0]), grid[0][1], grid[0][2], list: list
-    elsif dims == 3 && 3*size[0][1] > 4*size[0][2] # split in x[0] and x[1] only
-      build x0, grid[1][1], grid[0][2], grid[1][0], list: list
-      build x0.add(grid[1][1]), grid[0][0], grid[0][1].sub(grid[1][1]), grid[0][2], list: list
-      build x0.add(grid[0][0].sub(step[0]), grid[1][1].sub(step[1])), grid[1][1].neg, grid[0][2], grid[0][0].sub(grid[1][0]).neg, list: list
-    elsif dims == 3 && 3*size[0][2] > 4*size[0][1] # split in x[0] and x[2] only
-      build x0, grid[1][2], grid[1][0], grid[0][1], list: list
-      build x0.add(grid[1][2]), grid[0][0], grid[0][1], grid[0][2].sub(grid[1][2]), list: list
-      build x0.add(grid[0][0].sub(step[0]), grid[1][2].sub(step[2])), grid[1][2].neg, grid[0][0].sub(grid[1][0]).neg, grid[0][1], list: list
-    elsif dims == 2 # split in all x
-      build x0, grid[1][1], grid[1][0], list: list
-      build x0.add(grid[1][1]), grid[0][0], grid[0][1].sub(grid[1][1]), list: list
-      build x0.add(grid[0][0].sub(step[0]), grid[1][1].sub(step[1])), grid[1][1].neg, grid[0][0].sub(grid[1][0]).neg, list: list
+    case dims
+    when 2
+      if 2*size[0][0] > 3*size[0][1] # split in x[0] only
+        build x0, grid[1][0], grid[0][1], list: list
+        build x0.add(grid[1][0]), grid[0][0].sub(grid[1][0]), grid[0][1], list: list
+      else # split in all x
+        build x0, grid[1][1], grid[1][0], list: list
+        build x0.add(grid[1][1]), grid[0][0], grid[0][1].sub(grid[1][1]), list: list
+        build x0.add(grid[0][0].sub(step[0]), grid[1][1].sub(step[1])), grid[1][1].neg, grid[0][0].sub(grid[1][0]).neg, list: list
+      end
+    when 3
+      if 2*size[0][0] > 3*size[0][1] && 2*size[0][0] > 3*size[0][2] # split in x[0] only
+        build x0, grid[1][0], grid[0][1], grid[0][2], list: list
+        build x0.add(grid[1][0]), grid[0][0].sub(grid[1][0]), grid[0][1], grid[0][2], list: list
+      elsif 3*size[0][1] > 4*size[0][2] # split in x[0] and x[1] only
+        build x0, grid[1][1], grid[0][2], grid[1][0], list: list
+        build x0.add(grid[1][1]), grid[0][0], grid[0][1].sub(grid[1][1]), grid[0][2], list: list
+        build x0.add(grid[0][0].sub(step[0]), grid[1][1].sub(step[1])), grid[1][1].neg, grid[0][2], grid[0][0].sub(grid[1][0]).neg, list: list
+      elsif 3*size[0][2] > 4*size[0][1] # split in x[0] and x[2] only
+        build x0, grid[1][2], grid[1][0], grid[0][1], list: list
+        build x0.add(grid[1][2]), grid[0][0], grid[0][1], grid[0][2].sub(grid[1][2]), list: list
+        build x0.add(grid[0][0].sub(step[0]), grid[1][2].sub(step[2])), grid[1][2].neg, grid[0][0].sub(grid[1][0]).neg, grid[0][1], list: list
+      else
+        build x0, grid[1][1], grid[1][2], grid[1][0], list: list
+        build x0.add(grid[1][1]), grid[0][2], grid[1][0], grid[0][1].sub(grid[1][1]), list: list
+        build x0.add(grid[1][1].sub(step[1]), grid[0][2].sub(step[2])), grid[0][0], grid[1][1].neg, grid[0][2].sub(grid[1][2]).neg, list: list
+        build x0.add(grid[0][0].sub(step[0]), grid[1][1], grid[0][2].sub(step[2])), grid[0][2].neg, grid[0][0].sub(grid[1][0]).neg, grid[0][1].sub(grid[1][1]), list: list
+        build x0.add(grid[0][0].sub(step[0]), grid[1][1].sub(step[1])), grid[1][1].neg, grid[1][2], grid[0][0].sub(grid[1][0]).neg, list: list
+      end
     else
-      build x0, grid[1][1], grid[1][2], grid[1][0], list: list
-      build x0.add(grid[1][1]), grid[0][2], grid[1][0], grid[0][1].sub(grid[1][1]), list: list
-      build x0.add(grid[1][1].sub(step[1]), grid[0][2].sub(step[2])), grid[0][0], grid[1][1].neg, grid[0][2].sub(grid[1][2]).neg, list: list
-      build x0.add(grid[0][0].sub(step[0]), grid[1][1], grid[0][2].sub(step[2])), grid[0][2].neg, grid[0][0].sub(grid[1][0]).neg, grid[0][1].sub(grid[1][1]), list: list
-      build x0.add(grid[0][0].sub(step[0]), grid[1][1].sub(step[1])), grid[1][1].neg, grid[1][2], grid[0][0].sub(grid[1][0]).neg, list: list
+      raise "unsupported number of dimensions [#{dims}], only 2 or 3 allowed"
     end
   end
   private_class_method :build
