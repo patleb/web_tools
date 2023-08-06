@@ -1,5 +1,9 @@
 ### References
 # https://github.com/jakubcerveny/gilbert
+# generalize to n dimensions:
+# --> https://github.com/adolgert/BijectiveHilbert.jl/blob/main/src/hamilton.jl
+# --> https://github.com/mrkn/ruby-julia
+# actually, try recursively before 3D --> [2D --> 1D, 1D] --> 1D
 class Gilbert
   CACHE_DIR = './tmp/cache/gilbert'
 
@@ -11,7 +15,7 @@ class Gilbert
     unless (dims = x.size).in? [2, 3]
       raise "unsupported number of dimensions [#{dims}], only 2 or 3 allowed"
     end
-    axes = (0...dims).to_a
+    axes = dims.times.to_a
     x0 = [0] * dims
     dims.times.each do |i|
       rest = axes.except(i)
@@ -69,10 +73,10 @@ class Gilbert
     step = grid[0].map{ |row| row.map(&:sign) }
 
     # trivial single axis fill
-    axes = (0...dims).to_a
-    dims.times.each do |i|
+    axes = dims.times.to_a
+    axes.each do |i|
       if axes.except(i).all?{ |j| size[0][j] == 1 }
-        (0...size[0][i]).each do
+        size[0][i].times.each do
           list << x0
           x0 = x0.add(step[i])
         end
@@ -112,7 +116,7 @@ class Gilbert
         build x0, grid[1][2], grid[1][0], grid[0][1], list: list
         build x0.add(grid[1][2]), grid[0][0], grid[0][1], grid[0][2].sub(grid[1][2]), list: list
         build x0.add(grid[0][0].sub(step[0]), grid[1][2].sub(step[2])), grid[1][2].neg, grid[0][0].sub(grid[1][0]).neg, grid[0][1], list: list
-      else
+      else # split in all x
         build x0, grid[1][1], grid[1][2], grid[1][0], list: list
         build x0.add(grid[1][1]), grid[0][2], grid[1][0], grid[0][1].sub(grid[1][1]), list: list
         build x0.add(grid[1][1].sub(step[1]), grid[0][2].sub(step[2])), grid[0][0], grid[1][1].neg, grid[0][2].sub(grid[1][2]).neg, list: list
