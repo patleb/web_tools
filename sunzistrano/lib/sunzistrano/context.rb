@@ -14,7 +14,7 @@ module Sunzistrano
       require_overrides
       @gems = @gems.to_a.reverse.to_h
       @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
-      remove_instance_variable(:@replaced) if instance_variable_defined? :@replaced
+      remove_ivar(:@replaced)
       super(context)
     end
 

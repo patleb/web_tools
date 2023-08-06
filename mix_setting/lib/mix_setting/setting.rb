@@ -36,7 +36,7 @@ class Setting
     if @all_was
       previous = []
       current  = []
-      instance_variables.except(:@default_app).each{ |ivar| ivar.end_with?('_was') ? previous << ivar : current << ivar }
+      ivars.except(:@default_app).each{ |ivar| ivar.end_with?('_was') ? previous << ivar : current << ivar }
       current.each{ |ivar| instance_variable_set(ivar, instance_variable_get("#{ivar}_was")) }
       previous.each{ |ivar| instance_variable_set(ivar, nil) }
     end
@@ -53,10 +53,10 @@ class Setting
 
   def self.all(force = false, env: nil, app: nil, root: nil, freeze: true)
     if force
-      current = instance_variables.except(:@default_app).reject{ |ivar| ivar.end_with?('_was') }
+      current = ivars.except(:@default_app).reject{ |ivar| ivar.end_with?('_was') }
       current.each{ |ivar| instance_variable_set("#{ivar}_was", instance_variable_get(ivar)) }
       current.each{ |ivar| instance_variable_set(ivar, nil) }
-      remove_instance_variable(:@encryptor) if instance_variable_defined? :@encryptor
+      remove_ivar(:@encryptor)
     end
     @all ||= begin
       @env, @app, @root = (env || self.env).to_s, (app || self.app).to_s, (root || self.root)
@@ -72,7 +72,7 @@ class Setting
       @gems = @gems.to_a.reverse.to_h
       resolve_keywords! settings
       cast_values! settings
-      FREED_IVARS.each{ |ivar| remove_instance_variable(ivar) if instance_variable_defined? ivar }
+      FREED_IVARS.each{ |ivar| remove_ivar(ivar) }
       freeze ? IceNine.deep_freeze!(settings) : settings
     end
   end
