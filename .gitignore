@@ -76,6 +76,7 @@ ext_coffee/vendor/javascript/rails-ujs/**/*.js
 !ext_coffee/vendor/javascript/rails-ujs/**/BANNER.js
 !ext_coffee/vendor/javascript/rails-ujs/**/rails-ujs.min.js
 sunzistrano/test/fixtures/files/local_app/
+app/libraries/ext.so
 ### AFTER .gitignore ###
 
 web_tools-*.gem

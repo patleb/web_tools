@@ -1,0 +1,63 @@
+gems:
+
+before_all: >
+  #include "some_code.hpp"
+
+after_all: >
+  #include "some_other_code.hpp"
+
+before_init: >
+  init_some_code();
+
+after_init: >
+  init_some_other_code();
+
+module Root:
+  CONSTANT: 2
+
+  def:
+    self.root:
+
+  class Simple | Root::Simple:
+    def:
+      simple:
+
+  module Name:
+    def:
+      name:
+
+    class Base | Root::Name::BaseAlias:
+      include: 'Root::Name'
+
+      attr_accessor:
+        - both | readWrite
+        - mode
+      attr_reader: [read_only | readOnly]
+      cattr_writer: static_write_only | writeOnly
+
+      def:
+        self.base | base_alias: [arg_1, 'arg_2 = (std::string)"value"']
+        initialize: [int, float]
+
+  class Test | Root::TestAlias < Root::Name::BaseAlias:
+    include: ['Root::Name']
+
+    def:
+      initialize | Root::TestAlias: [[int, arg1], [float, 'arg_2 = 1.2']]
+      test       | static: [arg]
+      outside    | static ::outside:
+      value      | value: { size_t: [] }
+      value=     | value: { void: [size_t] }
+      lambda: >
+        [](Object& self) {
+          return test_hello();
+        }
+
+def:
+  global:
+
+class Global:
+  def:
+    global | ::global:
+
+module Empty:

@@ -44,6 +44,7 @@ gemspec
 
 gem 'ext_coffee', path: './ext_coffee'
 gem 'ext_rails', path: './ext_rails'
+gem 'ext_rice', path: './ext_rice'
 gem 'ext_ruby', path: './ext_ruby'
 gem 'ext_sass', path: './ext_sass'
 gem 'ext_webpacker', path: './ext_webpacker'

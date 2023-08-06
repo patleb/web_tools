@@ -45,8 +45,9 @@ module WebTools
     config.active_record.cache_versioning = false
     config.cache_store = :global_store
 
-    # initializer 'application.libraries' do
-    #   require_relative '../app/libraries/some_override.rb'
-    # end
+    initializer 'app.libraries' do
+      require_relative '../app/libraries/ext' if Rails.root.join('app/libraries/ext.so').exist?
+      # require_relative '../app/libraries/some_override'
+    end
   end
 end
