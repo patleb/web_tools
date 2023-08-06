@@ -2,6 +2,28 @@ require './test/spec_helper'
 require 'ext_ruby'
 
 class ArrayTest < Minitest::Spec
+  it 'should average the elements' do
+    assert_nil [].average
+    assert_equal 2.0, [1, 2, 3].average
+    assert_equal 4.0, [1, 2, 3].average{ |i| i * 2 }
+  end
+
+  it 'should compute the variance' do
+    assert_nil [].variance
+    assert_equal 0.5, [1, 2, 2, 3].variance
+    assert_equal 0.5, [1, 2, 2, 3].variance(2)
+  end
+
+  it 'should compute the percentile' do
+    assert_nil [].median
+    array = [30, 33, 43, 53, 56, 67, 68, 72]
+    assert_equal 30, array.percentile(0.0)
+    assert_equal 40.5, array.percentile(0.25)
+    assert_equal 54.5, array.median
+    assert_equal 67.25, array.percentile(0.75)
+    assert_equal 72, array.percentile(1.0)
+  end
+
   it 'should insert before elements' do
     array = [1]
     assert_equal [2, 1], array.insert_before(1, 2)
@@ -23,5 +45,49 @@ class ArrayTest < Minitest::Spec
     assert_equal [2, 2, 3], array.switch!(1, 2)
     assert_equal [3, 2, 3], array.switch!(2, 3)
     assert_equal [3, 4, 3], array.switch!(2, 4)
+  end
+
+  it 'should negate array' do
+    assert_equal [-2, -3, -4], [2, 3, 4].neg
+  end
+
+  it 'should multiply array by scalar' do
+    assert_equal [4, 6, 8], [2, 3, 4].mul(2)
+  end
+
+  it 'should divide array by scalar' do
+    assert_equal [1, 1.5, 2], [2, 3, 4].div(2.0)
+  end
+
+  it 'should substract array' do
+    assert_equal [1, 2, 3], [2, 3, 4].sub([1, 1, 1])
+    assert_raises 'size mismatch' do
+      [1].sub([1, 2])
+    end
+  end
+
+  it 'should add array' do
+    assert_equal [3, 4, 5], [2, 3, 4].add([1, 1, 1])
+    assert_raises 'size mismatch' do
+      [1].add([1, 2])
+    end
+  end
+
+  it 'should compute the l1 distance' do
+    assert_equal 0.0, [].l1
+    assert_equal 6, [1, -2, 3].l1
+    assert_equal 6, [2, 4, 6].l1([-2, 6, 6])
+    assert_raises 'size mismatch' do
+      [1].l1([1, 2])
+    end
+  end
+
+  it 'should compute the l2 squared' do
+    assert_equal 0.0, [].l2_squared
+    assert_equal 14, [1, -2, 3].l2_squared
+    assert_equal 20, [2, 4, 6].l2_squared([-2, 6, 6])
+    assert_raises 'size mismatch' do
+      [1].l2_squared([1, 2])
+    end
   end
 end

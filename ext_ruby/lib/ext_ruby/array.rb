@@ -1,4 +1,6 @@
 class Array
+  class SizeMismatch < ::StandardError; end
+
   def mode
     return if empty?
     counts = each_with_object(Hash.new(0)){ |v, h| h[v] += 1 }
@@ -6,23 +8,24 @@ class Array
     counts.find{ |_v, count| count == max }.first
   end
 
-  def average(init = 0, &block)
+  def average(&block)
     return if empty?
-    total = sum(init, &block)
+    total = sum(&block)
     total / size.to_f
   end
+  alias_method :mean, :average
 
-  def stddev
+  def stddev(...)
     return if empty?
-    Math.sqrt(variance)
+    Math.sqrt(variance(...))
   end
 
-  def variance
+  def variance(mean = average)
     return if empty?
-    mean = average
-    total = map{ |v| (v - mean) ** 2 }.reduce(&:+)
+    total = sum{ |v| (v - mean) ** 2 }
     total / size.to_f
   end
+  alias_method :var, :variance
 
   def median
     percentile(0.5)
@@ -30,14 +33,15 @@ class Array
 
   def percentile(bucket)
     return if empty?
-    sorted = sort
-    last_i = sorted.size - 1
+    bucket /= 100.0 if bucket > 1.0
+    values = sort
+    last_i = values.size - 1
     upper_i = bucket.to_f * last_i
     lower_i = upper_i.floor
     if lower_i == last_i
-      sorted.last
+      values.last
     else
-      sorted[lower_i] + (upper_i % 1) * (sorted[lower_i + 1] - sorted[lower_i])
+      values[lower_i] + (upper_i % 1) * (values[lower_i + 1] - values[lower_i])
     end
   end
 
@@ -73,35 +77,64 @@ class Array
     flat_map{ |e| [e, element] }.tap(&:pop)
   end
 
-  def closest(value)
-    return if empty?
-    values = Array.wrap(value)
-    if values.size == 1
-      min_by{ |e| (value - e).abs }
-    elsif values.size < 10
-      min_by{ |e| values.sub(Array.wrap(e)).sum{ |v| v * v } }
-    else
-      min_by{ |e| values.sub(Array.wrap(e)).sum(&:abs) }
-    end
-  end
-
   def neg
     map{ |x| -x }
   end
 
   def mul(value)
-    map{ |x| x * value }
+    return map{ |x| x * value } unless value.is_a? Array
+    raise SizeMismatch if size != value.size
+    map.with_index{ |x, i| x * value[i] }
   end
 
   def div(value)
-    map{ |x| x / value }
+    return map{ |x| x / value } unless value.is_a? Array
+    raise SizeMismatch if size != value.size
+    map.with_index{ |x, i| x / value[i] }
   end
 
-  def sub(*others)
-    (others.empty? ? self : [self, *others]).transpose.map{ |x| x.reduce(:-) }
+  def sub(value)
+    return map{ |x| x - value } unless value.is_a? Array
+    raise SizeMismatch if size != value.size
+    map.with_index{ |x, i| x - value[i] }
   end
 
-  def add(*others)
-    (others.empty? ? self : [self, *others]).transpose.map(&:sum)
+  def add(value)
+    return map{ |x| x + value } unless value.is_a? Array
+    raise SizeMismatch if size != value.size
+    map.with_index{ |x, i| x + value[i] }
+  end
+
+  def l0(other = nil)
+    return sum{ |x| !x.zero? } if other.nil?
+    raise SizeMismatch if size != other.size
+    sum_with_index{ |x, i| (x != other[i]).to_f }
+  end
+
+  def l1(other = nil)
+    return sum(&:abs) if other.nil?
+    raise SizeMismatch if size != other.size
+    sum_with_index{ |x, i| (x - other[i]).abs }
+  end
+
+  def l2(...)
+    Math.sqrt(l2_squared(...))
+  end
+
+  def l2_squared(other = nil)
+    return sum{ |x| x ** 2 } if other.nil?
+    raise SizeMismatch if size != other.size
+    sum_with_index{ |x, i| (x - other[i]) ** 2 }
+  end
+
+  def l_infinity(other = nil)
+    return max_by(&:abs) if other.nil?
+    raise SizeMismatch if size != other.size
+    max_by.with_index{ |x, i| (x - other[i]).abs }
+  end
+  alias_method :l_inf, :l_infinity
+
+  def sum_with_index(&block)
+    map.with_index(&block).sum
   end
 end
