@@ -44,6 +44,11 @@ class BigDecimal
   def to_d?; true end
 end
 
+class NilClass
+  def simplify(*)
+  end
+end
+
 class Numeric
   B_PER_KB = BigDecimal(1_024).freeze
   B_PER_MB = BigDecimal(1_048_576).freeze
@@ -51,6 +56,25 @@ class Numeric
   KB_PER_MB = BigDecimal(1_024).freeze
   KB_PER_GB = BigDecimal(1_048_576).freeze
   MB_PER_GB = BigDecimal(1_024).freeze
+
+  def simplify(n = 5)
+    sign, significant_digits, base, exponent = to_d.split
+    raise 'must be for numbers with base 10' if base != 10
+    upper, lower = significant_digits.split('9' * n, 2)
+    if lower.nil?
+      upper, lower = significant_digits.split('0' * n, 2)
+      unless lower.nil?
+        significant_digits = upper.to_i
+      end
+    elsif upper.empty?
+      significant_digits = '1'
+      exponent += 1
+    else
+      significant_digits = (upper.to_i + 1).to_s
+    end
+    result = sign * "0.#{significant_digits}".to_f * (base ** exponent)
+    result.floor(-exponent + significant_digits.size)
+  end
 
   def sign
     self <=> 0
