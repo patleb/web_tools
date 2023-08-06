@@ -79,27 +79,29 @@ module Webpacker
     end
 
     def dependencies
-      @dependencies ||= gems.each_with_object(packages: Set.new, gems: Set.new, tailwind: Set.new) do |gem, result|
-        packages, gems, tailwind = packages_gems_tailwind(gem)
+      @dependencies ||= gems.each_with_object(gems: Set.new, packages: Set.new, tailwind: Set.new) do |name, result|
+        gems, packages, tailwind = gems_packages_tailwind(name)
         missing_gems = []
-        gems = ((gems || []) << gem).map do |name|
-          next (missing_gems << name) unless Gem.exists? name
-          name
+        gems = (gems << name).map do |gem|
+          next (missing_gems << gem) unless Gem.exists? gem
+          gem
         end
         raise MissingGem, missing_gems.join(', ') unless missing_gems.empty?
         result[:gems].merge(gems)
-        result[:packages].merge(packages || [])
-        result[:tailwind].merge(tailwind || [])
-      end.transform_values(&:to_a).transform_values(&:sort)
+        result[:packages].merge(packages)
+        result[:tailwind].merge(tailwind)
+      end.transform_values{ |v| v.to_a.sort }
     end
 
-    def packages_gems_tailwind(name)
+    def gems_packages_tailwind(name)
       if name && (package = Gem.root(name)&.join('lib/javascript/package.yml'))&.exist?
-        parent = YAML.safe_load(package.read).values_at('packages', 'gems', 'tailwind').map{ |v| Set.new(v || []) }
-        (parent[1] || []).each_with_object(parent) do |gem, result|
-          children = packages_gems_tailwind(gem)
-          result.each_with_index{ |v, i| v.merge(children[i] || []) }
+        parent = YAML.safe_load(package.read).values_at('gems', 'packages', 'tailwind').map{ |v| Set.new(v || []) }
+        parent[0].each_with_object(parent) do |gem, parent|
+          children = gems_packages_tailwind(gem)
+          parent.each_with_index{ |v, i| v.merge(children[i]) }
         end
+      else
+        [[], [], []]
       end
     rescue RuntimeError => e
       if e.message == "can't add a new key into hash during iteration"
