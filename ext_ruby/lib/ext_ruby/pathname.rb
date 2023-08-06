@@ -5,6 +5,10 @@ module Pathname::WithoutRaise
     raise_on_no_entry ? super() : _delete
   end
 
+  def rmtree(raise_on_no_entry = true)
+    raise_on_no_entry ? super() : _rmtree
+  end
+
   def symlink(origin, raise_on_exist = true)
     raise_on_exist ? _symlink!(origin) : _symlink(origin)
   end
@@ -13,6 +17,12 @@ module Pathname::WithoutRaise
 
   def _delete
     delete
+  rescue Errno::ENOENT
+    # do nothing
+  end
+
+  def _rmtree
+    rmtree
   rescue Errno::ENOENT
     # do nothing
   end
