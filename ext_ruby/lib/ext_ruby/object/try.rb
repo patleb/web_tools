@@ -45,18 +45,6 @@ module ActiveSupport
     # nil || falsy => true
     # truthy       => false
     alias_method :nil_or_falsy?, :falsy?
-
-    # nil           => true
-    # false || true => false
-    def nil?(*a, **o, &b)
-      a.empty? ? super : try(*a, **o, &b).nil?
-    end
-
-    # false || true => true
-    # nil           => false
-    def not_nil?(...)
-      !nil?(...)
-    end
   end
 end
 
@@ -91,13 +79,5 @@ class NilClass
 
   def nil_or_falsy?(...)
     true
-  end
-
-  def nil?(...)
-    true
-  end
-
-  def not_nil?(...)
-    false
   end
 end
