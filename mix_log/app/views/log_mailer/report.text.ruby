@@ -1,1 +1,1 @@
-@report.pretty_json.gsub(/\n/, "\r\n")
+@report.pretty_json(:text)
