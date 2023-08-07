@@ -22,7 +22,7 @@ void Init_ext() {
   rb_cRoot_dc_Name_dc_BaseAlias.define_method("initialize", &Root::Name::BaseAlias::initialize, Rice::Arg("int"), Rice::Arg("float"));
   Rice::Data_Type<Root::TestAlias> rb_cRoot_dc_TestAlias = Rice::define_class_under<Root::TestAlias, Root::Name::BaseAlias>(rb_mRoot, "Test");
   rb_cRoot_dc_TestAlias.include_module(rb_mRoot_dc_Name);
-  rb_cRoot_dc_TestAlias.define_constructor(Rice::Constructor<Root::TestAlias, int, float>(Rice::Arg("arg1"), Rice::Arg("arg_2") = 1.2));
+  rb_cRoot_dc_TestAlias.define_constructor(Rice::Constructor<Root::TestAlias, int, float>(), Rice::Arg("arg1"), Rice::Arg("arg_2") = 1.2);
   rb_cRoot_dc_TestAlias.define_function("test", &Root::TestAlias::test, Rice::Arg("arg"));
   rb_cRoot_dc_TestAlias.define_function("outside", &::outside);
   typedef size_t (Root::TestAlias::*rb_root_test_alias_value__1__)();

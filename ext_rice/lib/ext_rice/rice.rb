@@ -14,12 +14,9 @@ module Rice
 
   def self.create_makefile(dry_run: false, search_paths: [])
     copy_files
-
     require_numo if $numo
     yield(dst) if block_given?
-
     compile_ext
-
     unless dry_run
       $CXXFLAGS += " -std=c++17 $(optflags) -march=native"
       $srcs = Dir["#{dst}/**/*.cpp"]
@@ -185,8 +182,9 @@ module Rice
       if scope_var && !is_singleton && !is_static && name == 'initialize' && name_alias == scope_alias
         args_types, args_defaults = extract_types_and_defaults(args)
         args_types = ", #{args_types}" if args_types
+        args_defaults = ", #{args_defaults}" if args_defaults
         f.puts <<~CPP.indent(2)
-          #{scope_var}.define_constructor(Rice::Constructor<#{scope_alias}#{args_types}>(#{args_defaults}));
+          #{scope_var}.define_constructor(Rice::Constructor<#{scope_alias}#{args_types}>()#{args_defaults});
         CPP
       else
         case args
