@@ -40,6 +40,7 @@ module Rice
         #{hooks['before_all'].strip}
         #include "all.hpp"
         #{hooks['after_all'].strip}
+        using namespace Rice;
 
         extern "C"
         void Init_ext() {
@@ -100,11 +101,11 @@ module Rice
     scope_var = build_scope_var('class', scope_alias)
     if parent_var
       f.puts <<~CPP.squish.indent(2)
-        Rice::#{class_type} #{scope_var} = Rice::define_class_under#{cpp_class}(#{parent_var}, "#{scope_name}");
+        #{class_type} #{scope_var} = define_class_under#{cpp_class}(#{parent_var}, "#{scope_name}");
       CPP
     else
       f.puts <<~CPP.squish.indent(2)
-        Rice::#{class_type} #{scope_var} = Rice::define_class#{cpp_class}("#{scope_name}");
+        #{class_type} #{scope_var} = define_class#{cpp_class}("#{scope_name}");
       CPP
     end
     scope_var
@@ -115,11 +116,11 @@ module Rice
     scope_var = build_scope_var('module', scope_alias)
     if parent_var
       f.puts <<~CPP.indent(2)
-        Rice::Module #{scope_var} = Rice::define_module_under(#{parent_var}, "#{scope_name}");
+        Module #{scope_var} = define_module_under(#{parent_var}, "#{scope_name}");
       CPP
     else
       f.puts <<~CPP.indent(2)
-        Rice::Module #{scope_var} = Rice::define_module("#{scope_name}");
+        Module #{scope_var} = define_module("#{scope_name}");
       CPP
     end
     scope_var
@@ -148,8 +149,8 @@ module Rice
     singleton = 'singleton_' if attr_type.start_with? 'c'
     access_type = case attr_type
       when /_accessor$/ then ''
-      when /_reader$/   then ', Rice::AttrAccess::Read'
-      when /_writer$/   then ', Rice::AttrAccess::Write'
+      when /_reader$/   then ', AttrAccess::Read'
+      when /_writer$/   then ', AttrAccess::Write'
       end
     Array.wrap(names).each do |name|
       name, name_alias = name.split(ALIAS, 2)
@@ -184,7 +185,7 @@ module Rice
         args_types = ", #{args_types}" if args_types
         args_defaults = ", #{args_defaults}" if args_defaults
         f.puts <<~CPP.indent(2)
-          #{scope_var}.define_constructor(Rice::Constructor<#{scope_alias}#{args_types}>()#{args_defaults});
+          #{scope_var}.define_constructor(Constructor<#{scope_alias}#{args_types}>()#{args_defaults});
         CPP
       else
         case args
@@ -249,6 +250,6 @@ module Rice
   end
 
   def self.wrap_arg(arg)
-    arg.sub(/^([a-zA-Z]\w*)( = )?/, 'Rice::Arg("\1")\2')
+    arg.sub(/^([a-zA-Z]\w*)( = )?/, 'Arg("\1")\2')
   end
 end
