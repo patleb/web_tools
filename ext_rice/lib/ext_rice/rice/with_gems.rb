@@ -103,7 +103,7 @@ module Rice
           SortedSet.new(Array.wrap(parent_val)).merge(Array.wrap(children_val)).to_a
         else
           if parent_val.is_a?(Hash) && children_val.is_a?(Hash)
-            children_val.deep_merge(parent_val)
+            merge_defs! parent_val, children_val
           else
             parent_val
           end
