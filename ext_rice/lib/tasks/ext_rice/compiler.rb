@@ -15,7 +15,7 @@ module ExtRice
       rel_lib_path = Pathname(lib_path).relative_path_from(tmp_path).to_s
       chdir tmp_path do
         load(rel_extconf)
-        if compile &&= Rice.checksum_changed?
+        if compile && Rice.checksum_changed?
           Rice.write_checksum
           Rice.bin_path.delete(false)
           sh make
