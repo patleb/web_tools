@@ -1,5 +1,14 @@
 module ExtRice
   class Compiler < Rake::TaskLib
+    def self.make
+      @make ||= begin
+        paths = ENV["PATH"].split(File::PATH_SEPARATOR).map{ |path| Pathname(path).cleanpath }
+        paths.find{ |path| path.join('make').executable? }.join('make').to_s
+      end
+    end
+
+    delegate :make, to: :class
+
     def run(compile: true)
       argv_was = ARGV.dup
       ARGV << "--srcdir=#{Rice.dst}"
@@ -24,30 +33,6 @@ module ExtRice
       end
     ensure
       ARGV.replace(argv_was)
-    end
-
-    private
-
-    def make
-      @make ||= find_make
-    end
-
-    ### References
-    # rake-compiler
-    def find_make
-      candidates = ["gmake", "make"]
-      paths = (ENV["PATH"] || "").split(File::PATH_SEPARATOR)
-      paths = paths.collect do |path|
-        Pathname(path).cleanpath
-      end
-      exeext = RbConfig::CONFIG["EXEEXT"]
-      candidates.each do |candidate|
-        paths.each do |path|
-          make = path + "#{candidate}#{exeext}"
-          return make.to_s if make.executable?
-        end
-      end
-      nil
     end
   end
 end

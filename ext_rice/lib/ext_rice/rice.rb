@@ -3,13 +3,14 @@ module Rice
 
   class InvalidChecksum < ::StandardError; end
 
+  CHECKSUM = /^[\da-f]{64}$/
   RB_CONSTANT = /((::)?[A-Z]\w*)+/
   CPP_CONSTANT = /((::)?[a-zA-Z][\w <:>]*)+/
   ALIAS = / +\| +/
   INHERIT = / +< +/
   STATIC = /^static +/
   SCOPE_KEYWORDS = /^(module|class) +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?(#{INHERIT}#{CPP_CONSTANT})?$/
-  CONSTANT_KEYWORD = /^[A-Z_][A-Z0-9_]+$/
+  CONSTANT_KEYWORD = /^[A-Z_][A-Z\d_]+$/
   INCLUDES_KEYWORD = 'include'
   ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)$/
   METHODS_KEYWORD = 'def'
@@ -35,16 +36,18 @@ module Rice
     lib_path.join('ext.sha256')
   end
 
-  def self.create_makefile(numo: true, dry_run: false, search_paths: [])
+  def self.create_makefile(numo: true, optflags: nil, native: false, vpaths: nil, dry_run: false)
     copy_files
     require_numo if numo
     yield(dst) if block_given?
     create_ext_file
     unless dry_run
-      $CXXFLAGS += " -std=c++17 $(optflags) -march=native"
+      $CXXFLAGS += " -std=c++17 $(optflags)"
+      $CXXFLAGS += " #{optflags}" if optflags
+      $CXXFLAGS += "  -march=native" if native
       $srcs = Dir["#{dst}/**/*.{c,cc,cpp}"]
       $objs = $srcs.map{ |v| v.sub(/c+p*$/, "o") }
-      $VPATH.concat(search_paths.map(&:to_s))
+      $VPATH.concat((vpaths || []).map(&:to_s))
       Kernel.create_makefile('ext', dst.to_s)
     end
   end
@@ -67,7 +70,7 @@ module Rice
   def self.checksum
     @checksum_sum ||= begin
       sum = `cd #{tmp_path} && tar --mtime='1970-01-01' --exclude='*.o' -cf - src lib/Makefile | sha256sum | awk '{ print $1 }'`.strip
-      raise InvalidChecksum if sum.size != 64
+      raise InvalidChecksum if sum.match? CHECKSUM
       sum
     end
   end
@@ -75,7 +78,7 @@ module Rice
   def self.checksum_was
     if checksum_path.exist?
       sum = checksum_path.read
-      raise InvalidChecksum if sum.size != 64
+      raise InvalidChecksum if sum.match? CHECKSUM
       sum
     end
   end
