@@ -6,8 +6,8 @@ class RiceTest < Minitest::Spec
     fixtures_files = Gem.root('ext_rice').join('test/fixtures/files')
     compiled_files = Bundler.root.join('tmp/rice/test')
 
-    Rice.config(fixtures_files.join('rice.yml'))
-    Rice.dst(compiled_files)
+    ExtRice.config.yml_path = fixtures_files.join('rice.yml')
+    ExtRice.config.dst_path = compiled_files
     Rice.create_makefile(numo: false, dry_run: true)
 
     assert_equal fixtures_files.join('ext.cpp').read, compiled_files.join('ext.cpp').read

@@ -21,34 +21,34 @@ module Rice
   end
 
   def self.bin_path
-    lib_path.join("ext.#{RbConfig::CONFIG['DLEXT']}")
+    ExtRice.config.bin_path
   end
 
   def self.lib_path
-    root.join('app/libraries')
+    ExtRice.config.lib_path
   end
 
   def self.tmp_path
-    root.join('tmp/rice')
+    ExtRice.config.tmp_path
   end
 
   def self.checksum_path
-    lib_path.join('ext.sha256')
+    ExtRice.config.checksum_path
   end
 
   def self.create_makefile(numo: true, optflags: nil, native: false, vpaths: nil, dry_run: false)
     copy_files
     require_numo if numo
-    yield(dst) if block_given?
+    yield(dst_path) if block_given?
     create_ext_file
     unless dry_run
       $CXXFLAGS += " -std=c++17 $(optflags)"
       $CXXFLAGS += " #{optflags}" if optflags
       $CXXFLAGS += "  -march=native" if native
-      $srcs = Dir["#{dst}/**/*.{c,cc,cpp}"]
+      $srcs = Dir["#{dst_path}/**/*.{c,cc,cpp}"]
       $objs = $srcs.map{ |v| v.sub(/c+p*$/, "o") }
       $VPATH.concat((vpaths || []).map(&:to_s))
-      Kernel.create_makefile('ext', dst.to_s)
+      Kernel.create_makefile('ext', dst_path.to_s)
     end
   end
 
@@ -56,7 +56,7 @@ module Rice
     require "numo/narray"
     numo = File.join(Gem.loaded_specs["numo-narray"].require_path, "numo")
     find_header! "numo/narray.h", numo
-    find_header! "numo/numo.hpp", dst
+    find_header! "numo/numo.hpp", dst_path
   end
 
   def self.write_checksum
@@ -84,7 +84,7 @@ module Rice
   end
 
   def self.create_ext_file
-    cpp_path = dst.join('ext.cpp')
+    cpp_path = dst_path.join('ext.cpp')
     hooks = dependencies[:hooks]
     cpp_path.open('w') do |f|
       f.puts <<~CPP

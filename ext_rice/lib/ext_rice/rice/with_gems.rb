@@ -7,8 +7,8 @@ module Rice
 
   module WithGems
     def copy_files
-      dst.rmtree(false)
-      dst.mkdir_p
+      dst_path.rmtree(false)
+      dst_path.mkdir_p
       %i(lib vendor).each do |type|
         dependencies[:gems].each do |name|
           next unless (root = Gem.root(name).join("#{type}/rice")).exist?
@@ -21,18 +21,18 @@ module Rice
           end
         end
       end
-      if (root = self.root.join('vendor/rice')).exist?
+      if (root = ExtRice.config.root.join('vendor/rice')).exist?
         root.children.map do |root|
           compile_files(root, root.basename)
         end
       end
-      if (root = self.root.join('app/rice')).exist?
+      if (root = ExtRice.config.root.join('app/rice')).exist?
         compile_files(root)
       end
     end
 
     def compile_files(src, dst_name = nil)
-      dst_dir = dst_name ? dst.join(dst_name) : dst
+      dst_dir = dst_name ? dst_path.join(dst_name) : dst_path
       dst_dir.mkdir_p
       Dir["#{src}/**/*.{h,hpp,ipp,c,cc,cpp}"].each do |file|
         content = ERB.new(File.read(file), nil, '-').result.strip
@@ -115,20 +115,16 @@ module Rice
       HOOKS.map{ |hook, default| [hook, yml.delete(hook) || default] }.to_h
     end
 
-    def config(path = extconf.dirname.sub_ext('.yml'))
-      @config ||= YAML.safe_load(path.read) || {}
+    def config
+      @config ||= YAML.safe_load(ExtRice.config.yml_path.read) || {}
     end
 
-    def extconf(path = root.join('config/rice/extconf.rb'))
-      @extconf ||= path
+    def extconf_path
+      ExtRice.config.extconf_path
     end
 
-    def dst(path = tmp_path.join('src'))
-      @dst ||= path
-    end
-
-    def root
-      Bundler.root
+    def dst_path
+      ExtRice.config.dst_path
     end
   end
 end

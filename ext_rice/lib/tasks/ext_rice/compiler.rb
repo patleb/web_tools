@@ -11,7 +11,7 @@ module ExtRice
 
     def run(compile: true)
       argv_was = ARGV.dup
-      ARGV << "--srcdir=#{Rice.dst}"
+      ARGV << "--srcdir=#{Rice.dst_path}"
 
       lib_path = Rice.lib_path
       tmp_path = Rice.tmp_path.join('lib')
@@ -20,7 +20,7 @@ module ExtRice
       tmp_path.mkdir_p
       lib_path.mkdir_p
 
-      rel_extconf = Rice.extconf.relative_path_from(tmp_path).to_s
+      rel_extconf = Rice.extconf_path.relative_path_from(tmp_path).to_s
       rel_lib_path = Pathname(lib_path).relative_path_from(tmp_path).to_s
       chdir tmp_path do
         load(rel_extconf)
