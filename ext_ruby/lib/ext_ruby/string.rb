@@ -56,6 +56,10 @@ class String
     gsub(HTML_BLANK, '').blank?
   end
 
+  def quoted
+    self[0] == ?" && self[-1] == ?" ? self : %{"#{self}"}
+  end
+
   def transliterate(locale = :en, replacement = REPLACEMENT)
     ActiveSupport::Inflector.transliterate(self, replacement, locale: locale)
   end

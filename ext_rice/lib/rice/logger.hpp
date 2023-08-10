@@ -28,7 +28,7 @@ class Logger {
   std::ofstream file;
 };
 
-const std::string Logger::LEVELS[] = { <%= ExtRice.config.log_levels.keys.map{ |level| %{"#{level.upcase}"} }.join(', ') %> };
+const std::string Logger::LEVELS[] = { <%= ExtRice.config.log_levels.keys.map(&:upcase).map(&:quoted).join(', ') %> };
 
 auto logger = Logger();
 
