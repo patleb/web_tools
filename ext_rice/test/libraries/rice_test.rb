@@ -8,7 +8,7 @@ class RiceTest < Minitest::Spec
 
     Rice.config(fixtures_files.join('rice.yml'))
     Rice.dst(compiled_files)
-    Rice.create_makefile(dry_run: true)
+    Rice.create_makefile(numo: false, dry_run: true)
 
     assert_equal fixtures_files.join('ext.cpp').read, compiled_files.join('ext.cpp').read
   end

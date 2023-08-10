@@ -1,10 +1,15 @@
 require_relative './ext_rice/compiler'
 
 namespace :rice do
-  desc 'compile c++'
-  task :compile, [:skip_numo] => :environment do |t, args|
-    numo = !flag_on?(args, :skip_numo)
+  desc 'build c++ extension'
+  task :build => :environment do
     compiler = ExtRice::Compiler.new
-    compiler.run(numo)
+    compiler.run(compile: false)
+  end
+
+  desc 'compile c++ extension'
+  task :compile => :environment do
+    compiler = ExtRice::Compiler.new
+    compiler.run
   end
 end

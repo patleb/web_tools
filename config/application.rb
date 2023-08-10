@@ -46,7 +46,7 @@ module WebTools
     config.cache_store = :global_store
 
     initializer 'app.libraries' do
-      require_relative '../app/libraries/ext' if Rails.root.join('app/libraries/ext.so').exist?
+      Rice.require_ext
       # require_relative '../app/libraries/some_override'
     end
   end

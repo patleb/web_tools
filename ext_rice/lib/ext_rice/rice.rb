@@ -1,6 +1,8 @@
 module Rice
   extend WithGems
 
+  class InvalidChecksum < ::StandardError; end
+
   RB_CONSTANT = /((::)?[A-Z]\w*)+/
   CPP_CONSTANT = /((::)?[a-zA-Z][\w <:>]*)+/
   ALIAS = / +\| +/
@@ -12,14 +14,36 @@ module Rice
   ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)$/
   METHODS_KEYWORD = 'def'
 
-  def self.create_makefile(dry_run: false, search_paths: [])
+  def self.require_ext
+    return if ENV['NO_REQUIRE_EXT']
+    require bin_path if bin_path.exist?
+  end
+
+  def self.bin_path
+    lib_path.join("ext.#{RbConfig::CONFIG['DLEXT']}")
+  end
+
+  def self.lib_path
+    root.join('app/libraries')
+  end
+
+  def self.tmp_path
+    root.join('tmp/rice')
+  end
+
+  def self.checksum_path
+    lib_path.join('ext.sha256')
+  end
+
+  def self.create_makefile(numo: true, dry_run: false, search_paths: [])
     copy_files
-    require_numo if $numo
+    require_numo if numo
     yield(dst) if block_given?
-    compile_ext
+    create_ext_file
     unless dry_run
       $CXXFLAGS += " -std=c++17 $(optflags) -march=native"
-      $srcs = Dir["#{dst}/**/*.cpp"]
+      $srcs = Dir["#{dst}/**/*.{c,cc,cpp}"]
+      $objs = $srcs.map{ |v| v.sub(/c+p*$/, "o") }
       $VPATH.concat(search_paths.map(&:to_s))
       Kernel.create_makefile('ext', dst.to_s)
     end
@@ -32,7 +56,31 @@ module Rice
     find_header! "numo/numo.hpp", dst
   end
 
-  def self.compile_ext
+  def self.write_checksum
+    checksum_path.write(checksum)
+  end
+
+  def self.checksum_changed?
+    checksum_was != checksum
+  end
+
+  def self.checksum
+    @checksum_sum ||= begin
+      sum = `cd #{tmp_path} && tar --mtime='1970-01-01' --exclude='*.o' -cf - src lib/Makefile | sha256sum | awk '{ print $1 }'`.strip
+      raise InvalidChecksum if sum.size != 64
+      sum
+    end
+  end
+
+  def self.checksum_was
+    if checksum_path.exist?
+      sum = checksum_path.read
+      raise InvalidChecksum if sum.size != 64
+      sum
+    end
+  end
+
+  def self.create_ext_file
     cpp_path = dst.join('ext.cpp')
     hooks = dependencies[:hooks]
     cpp_path.open('w') do |f|

@@ -34,7 +34,7 @@ module Rice
     def compile_files(src, dst_name = nil)
       dst_dir = dst_name ? dst.join(dst_name) : dst
       dst_dir.mkdir_p
-      Dir["#{src}/**/*.{h,hpp,ipp,c,cpp}"].each do |file|
+      Dir["#{src}/**/*.{h,hpp,ipp,c,cc,cpp}"].each do |file|
         content = ERB.new(File.read(file), nil, '-').result.strip
         has_once = content.include?('#pragma once') || content.include?('#ifndef ')
         is_header = file.end_with? '.h', '.hpp', '.ipp'
@@ -65,7 +65,7 @@ module Rice
     end
 
     def gems
-      @gems ||= Set.new([('ext_rice' if $numo)].concat(config.delete('gems') || []).compact)
+      @gems ||= Set.new(['ext_rice'].concat(config.delete('gems') || []).compact)
     end
 
     def gems_hooks_defs(name)
@@ -123,7 +123,7 @@ module Rice
       @extconf ||= path
     end
 
-    def dst(path = root.join('tmp/rice/src'))
+    def dst(path = tmp_path.join('src'))
       @dst ||= path
     end
 
