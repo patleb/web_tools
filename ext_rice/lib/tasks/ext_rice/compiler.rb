@@ -23,6 +23,9 @@ module ExtRice
           cp Gem.root('rice').join('test', file), config.root_app, verbose: false
         end
         run
+        RICE_TEST_FILES.each do |file|
+          config.root_app.join(file).delete(false)
+        end
       end
     end
 
