@@ -11,7 +11,7 @@ module ExtRice
 
     delegate :make, to: :class
 
-    def test_compile(root:, scope:)
+    def test_compile(root:, scope: ("test/#{root}" if root && !root.to_s.start_with?('/')))
       ExtRice.with do |config|
         config.executable = true
         config.scope = scope
