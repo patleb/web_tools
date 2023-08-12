@@ -28,7 +28,7 @@ module Rice
     copy_files
     require_numo if numo
     yield(dst_path) if block_given?
-    create_init_file unless ExtRice.config.executable?
+    create_init_file unless executable?
     unless dry_run
       $CXXFLAGS += " -std=c++17 $(optflags)"
       $CXXFLAGS += " #{optflags}" if optflags
@@ -36,17 +36,17 @@ module Rice
       $srcs = Dir["#{dst_path}/**/*.{c,cc,cpp}"]
       $objs = $srcs.map{ |v| v.sub(/c+p*$/, "o") }
       $VPATH.concat(Array.wrap(vpaths).map(&:to_s))
-      if ExtRice.config.executable?
-        Kernel.create_makefile(ExtRice.config.target, dst_path.to_s) do |conf|
+      if executable?
+        Kernel.create_makefile(target, dst_path.to_s) do |conf|
           conf << "\n"
-          conf << "#{ExtRice.config.target}: $(OBJS)"
-          conf << "\t$(ECHO) linking executable #{ExtRice.config.target}"
+          conf << "#{target}: $(OBJS)"
+          conf << "\t$(ECHO) linking executable #{target}"
           conf << "\t-$(Q)$(RM) $(@)"
           conf << "\t$(Q) $(CXX) -o $@ $(OBJS) $(LIBPATH) $(LOCAL_LIBS) $(LIBS)"
           conf << "\n"
         end
       else
-        Kernel.create_makefile(ExtRice.config.target, dst_path.to_s)
+        Kernel.create_makefile(target, dst_path.to_s)
       end
     end
   end
@@ -83,7 +83,7 @@ module Rice
   end
 
   def self.create_init_file
-    cpp_path = dst_path.join("#{ExtRice.config.target}.cpp")
+    cpp_path = dst_path.join("#{target}.cpp")
     hooks = dependencies[:hooks]
     cpp_path.open('w') do |f|
       f.puts <<~CPP
@@ -93,7 +93,7 @@ module Rice
         using namespace Rice;
 
         extern "C"
-        void Init_#{ExtRice.config.target}() {
+        void Init_#{target}() {
           #{hooks['before_init'].strip}
       CPP
       define_properties(f, nil, dependencies[:defs])
