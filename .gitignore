@@ -22,11 +22,11 @@
 
 # Ignore uploaded files in development.
 /public/storage/*
-/public/storage-test/*
-/storage/*
-!/storage/
-!/storage/.keep
-/storage_test/*
+/public/storage_test/*
+/private/storage/*
+!/private/storage/
+!/private/storage/.keep
+/private/storage_test/*
 
 /public/assets
 .byebug_history
@@ -78,11 +78,15 @@ ext_coffee/vendor/javascript/rails-ujs/**/*.js
 sunzistrano/test/fixtures/files/local_app/
 app/libraries/ext.so
 app/libraries/ext.sha256
+embed_ruby.*
+unittest.*
 ### AFTER .gitignore ###
 
 web_tools-*.gem
 Gemfile.lock
 Gemfile.private
 private.rb
-/private
+/lib_private
+!/lib_private/.keep
+rice.private.yml
 yarn.lock

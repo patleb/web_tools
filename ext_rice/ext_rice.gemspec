@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.description = "ExtRice"
   s.license     = "AGPL-3.0"
 
-  s.files = Dir["{lib,vendor}/**/*", "LICENSE", "README.md"]
+  s.files = Dir["{config,lib,vendor}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
   s.add_dependency 'rice', '~> 4.1.0'

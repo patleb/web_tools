@@ -1,0 +1,6 @@
+deploy:
+  recipes:
+    - deploy/rice:
+        after: deploy/bundler
+  linked_dirs:
+    - tmp/rice

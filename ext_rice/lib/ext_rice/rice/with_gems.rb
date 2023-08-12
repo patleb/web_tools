@@ -21,12 +21,12 @@ module Rice
           end
         end
       end
-      if (root = ExtRice.config.root.join('vendor/rice')).exist?
+      if (root = ExtRice.config.root_vendor).exist?
         root.children.map do |root|
           compile_files(root, root.basename)
         end
       end
-      if (root = ExtRice.config.root.join('app/rice')).exist?
+      if (root = ExtRice.config.root_app).exist?
         compile_files(root)
       end
     end
@@ -38,7 +38,8 @@ module Rice
         content = ERB.new(File.read(file), nil, '-').result.strip
         has_once = content.include?('#pragma once') || content.include?('#ifndef ')
         is_header = file.end_with? '.h', '.hpp', '.ipp'
-        compiled_path = dst_dir.join(File.basename(file))
+        compiled_path = dst_dir.join(file.delete_prefix("#{src}/"))
+        compiled_path.dirname.mkdir_p
         compiled_path.open('w') do |f|
           f.puts <<~HEADER if is_header && !has_once
           #pragma once
@@ -116,7 +117,11 @@ module Rice
     end
 
     def config
-      @config ||= YAML.safe_load(ExtRice.config.yml_path.read) || {}
+      @config ||= if ExtRice.config.yml_path.exist?
+        YAML.safe_load(ExtRice.config.yml_path.read) || {}
+      else
+        {}
+      end
     end
 
     def extconf_path

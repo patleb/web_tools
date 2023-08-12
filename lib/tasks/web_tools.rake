@@ -3,7 +3,7 @@ require_rel 'web_tools'
 namespace :tools do
   desc 'symlink all private gems'
   task :symlink_all => :environment do
-    root = WebTools.root.join('private')
+    root = WebTools.root.join('lib_private')
     root.mkdir unless root.exist?
     root.children.select(&:symlink?).each(&:delete.with(false))
     WebTools.private_gems.each do |gem_name, gem_path|

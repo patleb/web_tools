@@ -20,35 +20,34 @@ module Rice
     require bin_path if bin_path.exist?
   end
 
-  def self.bin_path
-    ExtRice.config.bin_path
-  end
-
-  def self.lib_path
-    ExtRice.config.lib_path
-  end
-
-  def self.tmp_path
-    ExtRice.config.tmp_path
-  end
-
-  def self.checksum_path
-    ExtRice.config.checksum_path
+  class << self
+    delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :executable?, to: 'ExtRice.config'
   end
 
   def self.create_makefile(numo: true, optflags: nil, native: false, vpaths: nil, dry_run: false)
     copy_files
     require_numo if numo
     yield(dst_path) if block_given?
-    create_ext_file
+    create_init_file unless ExtRice.config.executable?
     unless dry_run
       $CXXFLAGS += " -std=c++17 $(optflags)"
       $CXXFLAGS += " #{optflags}" if optflags
       $CXXFLAGS += "  -march=native" if native
       $srcs = Dir["#{dst_path}/**/*.{c,cc,cpp}"]
       $objs = $srcs.map{ |v| v.sub(/c+p*$/, "o") }
-      $VPATH.concat((vpaths || []).map(&:to_s))
-      Kernel.create_makefile('ext', dst_path.to_s)
+      $VPATH.concat(Array.wrap(vpaths).map(&:to_s))
+      if ExtRice.config.executable?
+        Kernel.create_makefile(ExtRice.config.target, dst_path.to_s) do |conf|
+          conf << "\n"
+          conf << "#{ExtRice.config.target}: $(OBJS)"
+          conf << "\t$(ECHO) linking executable #{ExtRice.config.target}"
+          conf << "\t-$(Q)$(RM) $(@)"
+          conf << "\t$(Q) $(CXX) -o $@ $(OBJS) $(LIBPATH) $(LOCAL_LIBS) $(LIBS)"
+          conf << "\n"
+        end
+      else
+        Kernel.create_makefile(ExtRice.config.target, dst_path.to_s)
+      end
     end
   end
 
@@ -69,8 +68,8 @@ module Rice
 
   def self.checksum
     @checksum_sum ||= begin
-      sum = `cd #{tmp_path} && tar --mtime='1970-01-01' --exclude='*.o' -cf - src lib/Makefile | sha256sum | awk '{ print $1 }'`.strip
-      raise InvalidChecksum if sum.match? CHECKSUM
+      sum = `cd #{tmp_path} && tar --mtime='1970-01-01' --exclude='*.o' -cf - src #{mkmf_path.basename}/Makefile | sha256sum | awk '{ print $1 }'`.strip
+      raise InvalidChecksum unless sum.match? CHECKSUM
       sum
     end
   end
@@ -78,13 +77,13 @@ module Rice
   def self.checksum_was
     if checksum_path.exist?
       sum = checksum_path.read
-      raise InvalidChecksum if sum.match? CHECKSUM
+      raise InvalidChecksum unless sum.match? CHECKSUM
       sum
     end
   end
 
-  def self.create_ext_file
-    cpp_path = dst_path.join('ext.cpp')
+  def self.create_init_file
+    cpp_path = dst_path.join("#{ExtRice.config.target}.cpp")
     hooks = dependencies[:hooks]
     cpp_path.open('w') do |f|
       f.puts <<~CPP
@@ -94,7 +93,7 @@ module Rice
         using namespace Rice;
 
         extern "C"
-        void Init_ext() {
+        void Init_#{ExtRice.config.target}() {
           #{hooks['before_init'].strip}
       CPP
       define_properties(f, nil, dependencies[:defs])
