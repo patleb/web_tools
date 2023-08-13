@@ -20,7 +20,9 @@ class Logger {
 
   template<class... Args>
   void log(const Args& ...messages, const Level level) {
-    (file << "[" << C::timestamp() << "]" << "[" << LEVELS[level] << "]: " << ... << messages) << std::endl;
+    file << "[" << C::timestamp() << "]" << "[" << LEVELS[level] << "]: ";
+    (file << ... << messages);
+    file << std::endl;
   }
 
   private:
@@ -37,7 +39,7 @@ auto logger = Logger();
   template<class... Args>
   void log_<%= level %>(const Args& ...messages) {
     <%- if level_i >= ExtRice.config.log_level_i -%>
-      (logger.log<Args>(messages, Logger::Level::<%= level.upcase %>), ...);
+      logger.log<Args...>(messages..., Logger::Level::<%= level.upcase %>);
     <%- end -%>
   }
 <%- end -%>
