@@ -1,3 +1,7 @@
+### NOTE
+# echo 'set history save on' >> ~/.gdbinit
+# DEBUG=1 rake:test_compile
+# gdb -q tmp/rice/test/.../unittest
 module Rice
   extend WithGems
 
@@ -32,6 +36,7 @@ module Rice
     unless dry_run
       $CXXFLAGS += " -std=c++17 $(optflags)"
       $CXXFLAGS += " #{optflags}" if optflags
+      $CXXFLAGS += " -O0" if ENV['DEBUG']
       $CXXFLAGS += "  -march=native" if native
       $srcs = Dir["#{dst_path}/**/*.{c,cc,cpp}"]
       $objs = $srcs.map{ |v| v.sub(/c+p*$/, "o") }
