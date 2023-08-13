@@ -13,14 +13,17 @@ module ExtRice
     attr_writer :mkmf_path
     attr_writer :dst_path
     attr_writer :root_vendor
+    attr_writer :root_test
     attr_writer :root_app
     attr_writer :root
     attr_writer :scope
     attr_accessor :executable
     alias_method :executable?, :executable
+    attr_accessor :test
+    alias_method :test?, :test
 
     def log_path
-      @log_path ||= root.join("log/rice#{log_suffix}.log")
+      @log_path ||= Bundler.root.join("log/rice#{log_suffix}.log")
     end
 
     def log_levels
@@ -52,7 +55,7 @@ module ExtRice
     end
 
     def tmp_path
-      @tmp_path ||= root.join('tmp/rice', scope)
+      @tmp_path ||= Bundler.root.join('tmp/rice', scope)
     end
 
     def checksum_path
@@ -77,6 +80,10 @@ module ExtRice
 
     def root_vendor
       @root_vendor ||= root.join('vendor/rice')
+    end
+
+    def root_test
+      @root_test ||= root.join('test/rice')
     end
 
     def root_app

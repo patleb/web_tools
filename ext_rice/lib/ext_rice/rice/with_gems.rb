@@ -29,6 +29,9 @@ module Rice
       if (root = ExtRice.config.root_app).exist?
         compile_files(root)
       end
+      if ExtRice.config.test? && (root = ExtRice.config.root_test).exist?
+        compile_files(root)
+      end
     end
 
     def compile_files(src, dst_name = nil)
@@ -70,7 +73,7 @@ module Rice
     end
 
     def gems_hooks_defs(name)
-      if name && (rice = Gem.root(name)&.join('lib/rice.yml'))&.exist?
+      if name && (rice = Gem.root(name)&.join('config/rice.yml'))&.exist?
         defs = YAML.safe_load(rice.read)
         gems = Set.new(defs.delete('gems') || [])
         hooks = extract_hooks! defs

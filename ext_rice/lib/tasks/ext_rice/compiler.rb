@@ -11,20 +11,23 @@ module ExtRice
 
     delegate :make, to: :class
 
-    def test_compile(root:, scope: ("test/#{root}" if root && !root.to_s.start_with?('/')))
+    def test_compile(root: nil, scope: nil)
+      scope ||= root && !root.to_s.start_with?('/') ? "test/#{root}" : 'test'
+      root = root.presence && Pathname.new(root).expand_path
       ExtRice.with do |config|
         config.executable = true
+        config.test = true
+        config.root = root if root
         config.scope = scope
         config.target = 'unittest'
         config.target_path = config.tmp_path
-        config.root_app = Pathname.new(root).expand_path.join('test/rice')
-        config.extconf_path = config.root_app.join('extconf.rb')
+        config.extconf_path = config.root_test.join('extconf.rb')
         RICE_TEST_FILES.each do |file|
-          cp Gem.root('rice').join('test', file), config.root_app, verbose: false
+          cp Gem.root('rice').join('test', file), config.root_test, verbose: false
         end
         run
         RICE_TEST_FILES.each do |file|
-          config.root_app.join(file).delete(false)
+          config.root_test.join(file).delete(false)
         end
       end
     end
