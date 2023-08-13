@@ -63,7 +63,7 @@ module ExtRice
     end
 
     def yml_path
-      @yml_path ||= extconf_path.dirname.sub_ext('.yml')
+      @yml_path ||= root.join('config/rice.yml')
     end
 
     def extconf_path
