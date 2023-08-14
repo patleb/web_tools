@@ -17,10 +17,15 @@ namespace :rice do
     compiler.run
   end
 
-  desc 'compile c++ test executable'
-  task :test_compile, [:root, :scope] => [:no_require_ext, :environment] do |t, args|
-    options = args.to_h.with_keyword_access
+  desc 'compile c++ test suite'
+  task :test_suite, [:root] => [:no_require_ext, :environment] do |t, args|
     compiler = ExtRice::Compiler.new
-    compiler.test_compile(**options)
+    compiler.test_suite(**args)
+  end
+
+  desc 'compile c++ test extension'
+  task :test_extension, [:root] => [:no_require_ext, :environment] do |t, args|
+    compiler = ExtRice::Compiler.new
+    compiler.test_extension(**args)
   end
 end

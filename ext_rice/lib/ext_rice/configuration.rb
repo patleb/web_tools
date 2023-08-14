@@ -19,8 +19,6 @@ module ExtRice
     attr_writer :scope
     attr_accessor :executable
     alias_method :executable?, :executable
-    attr_accessor :test
-    alias_method :test?, :test
 
     def log_path
       @log_path ||= Bundler.root.join("log/rice#{log_suffix}.log")
@@ -31,7 +29,7 @@ module ExtRice
     end
 
     def log_level
-      @log_level ||= 'error'
+      @log_level ||= ENV['DEBUG'] ? 'debug' : (test ? 'info' : 'warning')
     end
 
     def log_level_i
@@ -100,7 +98,12 @@ module ExtRice
     alias_method :scoped?, :scoped
 
     def scope
-      @scope ||= ''
+      @scope ||= test ? "test/#{root.basename.to_s}" : ''
     end
+
+    def test
+      ENV['RAILS_ENV'] == 'test'
+    end
+    alias_method :test?, :test
   end
 end

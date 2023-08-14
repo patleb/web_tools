@@ -11,17 +11,10 @@ module ExtRice
 
     delegate :make, to: :class
 
-    def test_compile(root: nil, scope: nil)
-      scope ||= root && !root.to_s.start_with?('/') ? "test/#{root}" : 'test'
-      root = root.presence && Pathname.new(root).expand_path
+    def test_suite(root: nil)
       ExtRice.with do |config|
         config.executable = true
-        config.test = true
-        config.root = root if root
-        config.scope = scope
-        config.target = 'unittest'
-        config.target_path = config.tmp_path
-        config.extconf_path = config.root_test.join('extconf.rb')
+        configure_test(config, root, target: 'unittest')
         RICE_TEST_FILES.each do |file|
           cp Gem.root('rice').join('test', file), config.root_test, verbose: false
         end
@@ -29,6 +22,13 @@ module ExtRice
         RICE_TEST_FILES.each do |file|
           config.root_test.join(file).delete(false)
         end
+      end
+    end
+
+    def test_extension(root: nil)
+      ExtRice.with do |config|
+        configure_test(config, root)
+        run
       end
     end
 
@@ -61,6 +61,18 @@ module ExtRice
       end
     ensure
       ARGV.replace(argv_was)
+    end
+
+    private
+
+    def configure_test(config, root, target: nil)
+      if root.present?
+        config.root = Pathname.new(root).expand_path
+        config.root_app = config.root.join('lib/rice')
+        config.extconf_path = config.root_test.join('extconf.rb')
+      end
+      config.target = target if target
+      config.target_path = config.tmp_path
     end
   end
 end

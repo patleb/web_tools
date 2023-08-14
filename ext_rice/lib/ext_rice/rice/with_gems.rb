@@ -31,6 +31,11 @@ module Rice
       end
       if ExtRice.config.test? && (root = ExtRice.config.root_test).exist?
         compile_files(root)
+        if ExtRice.config.executable?
+          ExtRice.config.dst_path.join('ext.cpp').delete(false)
+        else
+          ExtRice.config.dst_path.glob('**/*_test.cpp').each(&:delete.with(false))
+        end
       end
     end
 
@@ -69,13 +74,13 @@ module Rice
     end
 
     def gems
-      @gems ||= Set.new(['ext_rice'].concat(config.delete('gems') || []).compact)
+      @gems ||= Set.new(['ext_rice'].concat(Array.wrap(config.delete('gems'))).compact)
     end
 
     def gems_hooks_defs(name)
       if name && (rice = Gem.root(name)&.join('config/rice.yml'))&.exist?
         defs = YAML.safe_load(rice.read)
-        gems = Set.new(defs.delete('gems') || [])
+        gems = Set.new(Array.wrap(defs.delete('gems')))
         hooks = extract_hooks! defs
         gems.each_with_object([gems, hooks, defs]) do |gem_name, (gems, hooks, defs)|
           children_gems, children_hooks, children_defs = gems_hooks_defs(gem_name)
