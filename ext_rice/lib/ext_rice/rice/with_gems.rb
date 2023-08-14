@@ -6,6 +6,8 @@ module Rice
   class MissingGem < StandardError; end
 
   module WithGems
+    delegate :root_vendor, :root_app, :root_test, :test?, :dst_path, :yml_path, :extconf_path, to: 'ExtRice.config'
+
     def copy_files
       dst_path.rmtree(false)
       dst_path.mkdir_p
@@ -21,20 +23,20 @@ module Rice
           end
         end
       end
-      if (root = ExtRice.config.root_vendor).exist?
+      if (root = root_vendor).exist?
         root.children.map do |root|
           compile_files(root, root.basename)
         end
       end
-      if (root = ExtRice.config.root_app).exist?
+      if (root = root_app).exist?
         compile_files(root)
       end
-      if ExtRice.config.test? && (root = ExtRice.config.root_test).exist?
+      if test? && (root = root_test).exist?
         compile_files(root)
-        if ExtRice.config.executable?
-          ExtRice.config.dst_path.join('ext.cpp').delete(false)
+        if executable?
+          dst_path.join('ext.cpp').delete(false)
         else
-          ExtRice.config.dst_path.glob('**/*_test.cpp').each(&:delete.with(false))
+          dst_path.glob('**/*_test.cpp').each(&:delete.with(false))
         end
       end
     end
@@ -125,19 +127,11 @@ module Rice
     end
 
     def config
-      @config ||= if ExtRice.config.yml_path.exist?
-        YAML.safe_load(ExtRice.config.yml_path.read) || {}
+      @config ||= if yml_path.exist?
+        YAML.safe_load(yml_path.read) || {}
       else
         {}
       end
-    end
-
-    def extconf_path
-      ExtRice.config.extconf_path
-    end
-
-    def dst_path
-      ExtRice.config.dst_path
     end
   end
 end
