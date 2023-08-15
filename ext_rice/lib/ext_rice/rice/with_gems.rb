@@ -76,7 +76,7 @@ module Rice
     end
 
     def gems
-      @gems ||= Set.new(['ext_rice'].concat(Array.wrap(config.delete('gems'))).compact)
+      @gems ||= Set.new(Array.wrap(config.delete('gems')))
     end
 
     def gems_hooks_defs(name)
