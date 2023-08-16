@@ -34,7 +34,7 @@ module Rice
     yield(dst_path) if block_given?
     create_init_file unless executable?
     unless dry_run
-      $CXXFLAGS += " -std=c++17 $(optflags)"
+      $CXXFLAGS += " -std=c++17 $(optflags)" # -O3 -ffast-math -fno-associative-math
       $CXXFLAGS += " #{optflags}" if optflags
       $CXXFLAGS += " -O0" if ENV['DEBUG']
       $CXXFLAGS += "  -march=native" if native
@@ -88,9 +88,8 @@ module Rice
   end
 
   def self.create_init_file
-    cpp_path = dst_path.join("#{target}.cpp")
     hooks = dependencies[:hooks]
-    cpp_path.open('w') do |f|
+    dst_path.join("#{target}.cpp").open('w') do |f|
       f.puts <<~CPP
         #{hooks['before_all'].strip}
         #include "all.hpp"
@@ -109,9 +108,21 @@ module Rice
     end
   end
 
+  def self.ext_cpp_body
+    started = false
+    ExtRice.config.root.join('test/fixtures/files/ext.cpp').readlines.each_with_object([]) do |line, lines|
+      if !started && line.start_with?("void Init_ext() {")
+        started = true
+      elsif started
+        break lines if line.start_with? '}'
+        lines << line
+      end
+    end.join
+  end
+
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
-      # TODO enum (symbols), struct, exception, return, etc.
+      # TODO enum (symbols), struct, exception, return, define_(vector|map|...) etc.
       case keyword
       when SCOPE_KEYWORDS
         define_self(f, parent_var, keyword, body)
