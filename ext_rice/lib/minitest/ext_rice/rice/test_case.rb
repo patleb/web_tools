@@ -10,8 +10,12 @@ module Rice
       self.root_name = File.basename(rel_root || Bundler.root)
     end
 
-    def file_fixture_path
+    def self.file_fixture_path(rel_root)
       (rel_root ? Pathname.new(rel_root) : Bundler.root).join('test/fixtures/files').expand_path
+    end
+
+    def file_fixture_path
+      self.class.file_fixture_path(rel_root)
     end
 
     def tmp_path

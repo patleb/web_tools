@@ -2,7 +2,7 @@
 #include "embed_ruby.hpp"
 #include <rice/rice.hpp>
 
-#include "ext_rice/c.hpp"
+#include "all.hpp"
 #include <regex>
 
 using namespace Rice;
