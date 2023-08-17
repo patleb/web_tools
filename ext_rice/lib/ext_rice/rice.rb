@@ -18,6 +18,7 @@ module Rice
   INCLUDES_KEYWORD = 'include'
   ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)$/
   METHODS_KEYWORD = 'def'
+  MEMORY_ACTIONS = { 'NO_COLLECT' => 'keepAlive()', 'AS_VALUE' => 'setValue()', 'NO_DELETE' => 'takeOwnership()' }
 
   def self.require_ext
     return if ENV['NO_REQUIRE_EXT']
@@ -122,7 +123,7 @@ module Rice
 
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
-      # TODO enum (symbols), struct, exception, return, define_(vector|map|...) etc.
+      # TODO enum (symbols), exception, define_(vector|map|...) etc.
       case keyword
       when SCOPE_KEYWORDS
         define_self(f, parent_var, keyword, body)
@@ -316,6 +317,11 @@ module Rice
   end
 
   def self.wrap_arg(arg)
-    arg.sub(/^([a-zA-Z]\w*)( = )?/, 'Arg("\1")\2')
+    name, action = arg.split('.')
+    if (action = MEMORY_ACTIONS[action])
+      name == 'return' ? "Return.#{action}" : name.sub(/^([a-zA-Z]\w*)( = )?/, %{Arg("\\1").#{action}\\2})
+    else
+      arg.sub(/^([a-zA-Z]\w*)( = )?/, 'Arg("\1")\2')
+    end
   end
 end
