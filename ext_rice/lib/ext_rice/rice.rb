@@ -121,9 +121,9 @@ module Rice
     end.join
   end
 
+  # TODO registry, exception, iterator, director, enum, stl define_(vector|map|...) etc.
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
-      # TODO enum (symbols), exception, define_(vector|map|...) etc.
       case keyword
       when SCOPE_KEYWORDS
         define_self(f, parent_var, keyword, body)
