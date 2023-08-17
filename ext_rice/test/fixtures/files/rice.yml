@@ -54,7 +54,7 @@ module Root:
       value        | value: { size_t: [] }
       value=       | value: { void: [size_t] }
       lambda: >
-        [](Object& self) {
+        [](Object& self) -> std::vector<int32_t>& {
           return test_hello();
         }
 

@@ -35,7 +35,7 @@ void Init_ext() {
   rb_cRoot_dc_TestAlias.define_method("value", rb_root_test_alias_value__1__(&Root::TestAlias::value));
   typedef void (Root::TestAlias::*rb_root_test_alias_value__2__)(size_t);
   rb_cRoot_dc_TestAlias.define_method("value=", rb_root_test_alias_value__2__(&Root::TestAlias::value));
-  rb_cRoot_dc_TestAlias.define_method("lambda", [](Object& self) {
+  rb_cRoot_dc_TestAlias.define_method("lambda", [](Object& self) -> std::vector<int32_t>& {
     return test_hello();
   });
   define_global_function("global", &global);
