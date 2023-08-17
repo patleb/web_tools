@@ -73,6 +73,15 @@ class ArrayTest < Minitest::Spec
     end
   end
 
+  it 'should compute the l0 distance' do
+    assert_equal 0.0, [].l0
+    assert_equal 3, [1, -2, 3].l0
+    assert_equal 2, [2, 4, 6].l0([-2, 6, 6])
+    assert_raises 'size mismatch' do
+      [1].l0([1, 2])
+    end
+  end
+
   it 'should compute the l1 distance' do
     assert_equal 0.0, [].l1
     assert_equal 6, [1, -2, 3].l1
@@ -88,6 +97,15 @@ class ArrayTest < Minitest::Spec
     assert_equal 20, [2, 4, 6].l2_squared([-2, 6, 6])
     assert_raises 'size mismatch' do
       [1].l2_squared([1, 2])
+    end
+  end
+
+  it 'should compute the l-inf distance' do
+    assert_equal 0.0, [].l_inf([])
+    assert_equal 3, [1, -2, 3].l_inf([0, 1, 0])
+    assert_equal 4, [2, 4, 6].l_inf([-2, 6, 6])
+    assert_raises 'size mismatch' do
+      [1].l_inf([1, 2])
     end
   end
 end

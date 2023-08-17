@@ -106,7 +106,7 @@ class Array
   end
 
   def l0(other = nil)
-    return sum{ |x| !x.zero? } if other.nil?
+    return sum{ |x| (!x.zero?).to_f } if other.nil?
     raise SizeMismatch if size != other.size
     sum_with_index{ |x, i| (x != other[i]).to_f }
   end
@@ -128,9 +128,9 @@ class Array
   end
 
   def l_infinity(other = nil)
-    return max_by(&:abs) if other.nil?
+    return map(&:abs).max || 0.0 if other.nil?
     raise SizeMismatch if size != other.size
-    max_by.with_index{ |x, i| (x - other[i]).abs }
+    map.with_index{ |x, i| (x - other[i]).abs }.max || 0.0
   end
   alias_method :l_inf, :l_infinity
 
