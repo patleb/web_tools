@@ -55,14 +55,18 @@ module Rice
 
     def self.test_yml(rel_root = nil, yml_path: nil)
       it "should build ext.cpp correctly based on rice.yml:  #{root_name_for rel_root}" do
+        old_numo = ENV['NO_NUMO']
+        ENV['NO_NUMO'] = true
         ExtRice.with do |config|
           config.root = Pathname.new(rel_root).expand_path if rel_root
           config.yml_path = yml_path if yml_path
           config.dst_path = config.dst_path.dirname.join('yml')
-          Rice.create_makefile(numo: false, dry_run: true)
+          Rice.create_makefile(dry_run: true)
 
           assert_equal file_fixture_path.join('ext.cpp').read, config.dst_path.join('ext.cpp').read
         end
+      ensure
+        ENV['NO_NUMO'] = old_numo
       end
     end
   end

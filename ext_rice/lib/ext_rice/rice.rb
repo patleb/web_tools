@@ -21,7 +21,7 @@ module Rice
   MEMORY_ACTIONS = { 'NO_COLLECT' => 'keepAlive()', 'AS_VALUE' => 'setValue()', 'NO_DELETE' => 'takeOwnership()' }
 
   def self.require_ext
-    return if ENV['NO_REQUIRE_EXT']
+    return if ENV['NO_EXT']
     require bin_path if bin_path.exist?
   end
 
@@ -29,9 +29,9 @@ module Rice
     delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :executable?, to: 'ExtRice.config'
   end
 
-  def self.create_makefile(numo: true, optflags: nil, native: false, vpaths: nil, dry_run: false)
+  def self.create_makefile(optflags: nil, native: false, vpaths: nil, dry_run: false)
     copy_files
-    require_numo if numo
+    require_numo unless ENV['NO_NUMO']
     yield(dst_path) if block_given?
     create_init_file unless executable?
     unless dry_run
