@@ -45,14 +45,14 @@ module Root:
     def:
       initialize   | Root::TestAlias: [[int, arg1], [float, 'arg_2 = 1.2']]
       test         | static: [arg]
-      arg_alive    | static: [arg_name.NO_COLLECT]
-      arg_value    | static: [arg_name.AS_VALUE]
-      return_alive | static: [return.NO_COLLECT]
-      return_value | static: [return.AS_VALUE]
-      return_owner | static: [return.NO_DELETE]
       outside      | static ::outside:
       value        | value: { size_t: [] }
       value=       | value: { void: [size_t] }
+      arg_alive:    [arg_name.NO_COLLECT]
+      arg_value:    [arg_name.AS_VALUE]
+      return_alive: [return.NO_COLLECT]
+      return_value: [return.AS_VALUE]
+      return_owner: [return.NO_DELETE]
       lambda: >
         [](Object& self) -> std::vector<int32_t>& {
           return test_hello();

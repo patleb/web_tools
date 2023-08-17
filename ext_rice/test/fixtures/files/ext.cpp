@@ -25,16 +25,16 @@ void Init_ext() {
   rb_cRoot_dc_TestAlias.include_module(rb_mRoot_dc_Name);
   rb_cRoot_dc_TestAlias.define_constructor(Constructor<Root::TestAlias, int, float>(), Arg("arg1"), Arg("arg_2") = 1.2);
   rb_cRoot_dc_TestAlias.define_function("test", &Root::TestAlias::test, Arg("arg"));
-  rb_cRoot_dc_TestAlias.define_function("arg_alive", &Root::TestAlias::arg_alive, Arg("arg_name").keepAlive());
-  rb_cRoot_dc_TestAlias.define_function("arg_value", &Root::TestAlias::arg_value, Arg("arg_name").setValue());
-  rb_cRoot_dc_TestAlias.define_function("return_alive", &Root::TestAlias::return_alive, Return.keepAlive());
-  rb_cRoot_dc_TestAlias.define_function("return_value", &Root::TestAlias::return_value, Return.setValue());
-  rb_cRoot_dc_TestAlias.define_function("return_owner", &Root::TestAlias::return_owner, Return.takeOwnership());
   rb_cRoot_dc_TestAlias.define_function("outside", &::outside);
   typedef size_t (Root::TestAlias::*rb_root_test_alias_value__1__)();
   rb_cRoot_dc_TestAlias.define_method("value", rb_root_test_alias_value__1__(&Root::TestAlias::value));
   typedef void (Root::TestAlias::*rb_root_test_alias_value__2__)(size_t);
   rb_cRoot_dc_TestAlias.define_method("value=", rb_root_test_alias_value__2__(&Root::TestAlias::value));
+  rb_cRoot_dc_TestAlias.define_method("arg_alive", &Root::TestAlias::arg_alive, Arg("arg_name").keepAlive());
+  rb_cRoot_dc_TestAlias.define_method("arg_value", &Root::TestAlias::arg_value, Arg("arg_name").setValue());
+  rb_cRoot_dc_TestAlias.define_method("return_alive", &Root::TestAlias::return_alive, Return.keepAlive());
+  rb_cRoot_dc_TestAlias.define_method("return_value", &Root::TestAlias::return_value, Return.setValue());
+  rb_cRoot_dc_TestAlias.define_method("return_owner", &Root::TestAlias::return_owner, Return.takeOwnership());
   rb_cRoot_dc_TestAlias.define_method("lambda", [](Object& self) -> std::vector<int32_t>& {
     return test_hello();
   });
