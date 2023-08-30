@@ -21,8 +21,12 @@ module Rice
   MEMORY_ACTIONS = { 'NO_COLLECT' => 'keepAlive()', 'AS_VALUE' => 'setValue()', 'NO_DELETE' => 'takeOwnership()' }
 
   def self.require_ext
-    return if ENV['NO_EXT']
-    require bin_path if bin_path.exist?
+    require bin_path if require_ext?
+  end
+
+  def self.require_ext?
+    return @require_ext if defined? @require_ext
+    @require_ext = !ENV['NO_EXT'] && bin_path.exist?
   end
 
   class << self
