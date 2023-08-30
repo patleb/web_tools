@@ -3,7 +3,7 @@
 class Logger {
   public:
 
-  enum Level { <%= ExtRice.config.log_levels.keys.map(&:upcase).join(', ') %> };
+  enum LEVEL { <%= ExtRice.config.log_levels.keys.map(&:upcase).join(', ') %> };
   static const std::string LEVELS[<%= ExtRice.config.log_levels.size %>];
 
   explicit Logger() {
@@ -19,7 +19,7 @@ class Logger {
   Logger& operator=(const Logger&) = delete;
 
   template<class... Args>
-  void log(const Args& ...messages, const Level level) {
+  void log(const Args& ...messages, const LEVEL level) {
     file << "[" << C::timestamp() << "]" << "[" << LEVELS[level] << "]: ";
     (file << ... << messages);
     file << std::endl;
@@ -39,7 +39,7 @@ auto logger = Logger();
   template<class... Args>
   void log_<%= level %>(const Args& ...messages) {
     <%- if level_i >= ExtRice.config.log_level_i -%>
-      logger.log<Args...>(messages..., Logger::Level::<%= level.upcase %>);
+      logger.log<Args...>(messages..., Logger::LEVEL::<%= level.upcase %>);
     <%- end -%>
   }
 <%- end -%>
