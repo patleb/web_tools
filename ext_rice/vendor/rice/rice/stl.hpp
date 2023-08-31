@@ -161,6 +161,11 @@ namespace Rice::detail
   class From_Ruby<std::complex<T>>
   {
   public:
+    bool is_convertible(VALUE value)
+    {
+      return rb_type(value) == RUBY_T_COMPLEX;
+    }
+
     std::complex<T> convert(VALUE value)
     {
       VALUE real = protect(rb_funcallv, value, rb_intern("real"), 0, (const VALUE*)nullptr);
@@ -174,6 +179,11 @@ namespace Rice::detail
   class From_Ruby<std::complex<T>&>
   {
   public:
+    bool is_convertible(VALUE value)
+    {
+      return rb_type(value) == RUBY_T_COMPLEX;
+    }
+
     std::complex<T>& convert(VALUE value)
     {
       VALUE real = protect(rb_funcallv, value, rb_intern("real"), 0, (const VALUE*)nullptr);
@@ -646,13 +656,13 @@ namespace Rice::detail
   {
   public:
     template<typename T>
-    static VALUE convertElement(std::variant<Types...>& data, bool takeOwnership)
+    static VALUE convertElement(const std::variant<Types...>& data, bool takeOwnership)
     {
       return To_Ruby<T>().convert(std::get<T>(data));
     }
 
     template<std::size_t... I>
-    static VALUE convertIterator(std::variant<Types...>& data, bool takeOwnership, std::index_sequence<I...>& indices)
+    static VALUE convertIterator(const std::variant<Types...>& data, bool takeOwnership, std::index_sequence<I...>& indices)
     {
       // Create a tuple of the variant types so we can look over the tuple's types
       using Tuple_T = std::tuple<Types...>;
@@ -665,7 +675,7 @@ namespace Rice::detail
       return result;
     }
 
-    static VALUE convert(std::variant<Types...>& data, bool takeOwnership = false)
+    static VALUE convert(const std::variant<Types...>& data, bool takeOwnership = false)
     {
       auto indices = std::make_index_sequence<std::variant_size_v<std::variant<Types...>>>{};
       return convertIterator(data, takeOwnership, indices);
