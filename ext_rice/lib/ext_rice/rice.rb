@@ -14,6 +14,7 @@ module Rice
   INHERIT = / +< +/
   STATIC = /^static +/
   SCOPE_KEYWORDS = /^(module|class) +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?(#{INHERIT}#{CPP_CONSTANT})?$/
+  ENUM_KEYWORD = /^enum +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?$/
   CONSTANT_KEYWORD = /^[A-Z_][A-Z\d_]+$/
   INCLUDES_KEYWORD = 'include'
   ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)$/
@@ -125,12 +126,14 @@ module Rice
     end.join
   end
 
-  # TODO registry, exception, iterator, director, enum, stl define_(vector|map|...) etc.
+  # TODO registry, exception, iterator, director, stl define_(vector|map|...) etc.
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
       case keyword
       when SCOPE_KEYWORDS
         define_self(f, parent_var, keyword, body)
+      when ENUM_KEYWORD
+        define_enum(f, parent_var, keyword, body)
       when CONSTANT_KEYWORD
         define_constant(f, parent_var, keyword, body)
       when INCLUDES_KEYWORD
@@ -195,6 +198,26 @@ module Rice
       CPP
     end
     scope_var
+  end
+
+  def self.define_enum(f, parent_var, name, values)
+    name, name_alias = name.split(/ +/, 2).last.split(ALIAS, 2)
+    name_alias ||= name
+    enum_var = build_scope_var('enum', name_alias)
+    if parent_var
+      f.puts <<~CPP.indent(2)
+        Enum<#{name_alias}> #{enum_var} = define_enum<#{name_alias}>("#{name}", #{parent_var});
+      CPP
+    else
+      f.puts <<~CPP.indent(2)
+        Enum<#{name_alias}> #{enum_var} = define_enum<#{name_alias}>("#{name}");
+      CPP
+    end
+    values.each do |value|
+      f.puts <<~CPP.indent(2)
+        #{enum_var}.define_value("#{value}", #{name_alias}::#{value});
+      CPP
+    end
   end
 
   def self.define_constant(f, scope_var, name, value)

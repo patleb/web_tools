@@ -15,10 +15,14 @@ after_init: >
 module Root:
   CONSTANT: 2
 
+  enum COLOR | Root::COLOR: [RED, BLUE, GREEN]
+
   def:
     self.root:
 
   class Simple | Root::Simple:
+    enum Props | Root::Simple::PROPS: [VALUE_1, VALUE_2, VALUE_3]
+
     def:
       simple:
 
@@ -66,3 +70,5 @@ class Global:
     global | ::global:
 
 module Empty:
+
+enum SEASON: [SPRING, SUMMER, FALL, WINTER]

@@ -8,8 +8,16 @@ void Init_ext() {
   init_some_code();
   Module rb_mRoot = define_module("Root");
   rb_mRoot.const_set("CONSTANT", 2);
+  Enum<Root::COLOR> rb_eRoot_dc_COLOR = define_enum<Root::COLOR>("COLOR", rb_mRoot);
+  rb_eRoot_dc_COLOR.define_value("RED", Root::COLOR::RED);
+  rb_eRoot_dc_COLOR.define_value("BLUE", Root::COLOR::BLUE);
+  rb_eRoot_dc_COLOR.define_value("GREEN", Root::COLOR::GREEN);
   rb_mRoot.define_singleton_function("root", &Root::root);
   Data_Type<Root::Simple> rb_cRoot_dc_Simple = define_class_under<Root::Simple>(rb_mRoot, "Simple");
+  Enum<Root::Simple::PROPS> rb_eRoot_dc_Simple_dc_PROPS = define_enum<Root::Simple::PROPS>("Props", rb_cRoot_dc_Simple);
+  rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_1", Root::Simple::PROPS::VALUE_1);
+  rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_2", Root::Simple::PROPS::VALUE_2);
+  rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_3", Root::Simple::PROPS::VALUE_3);
   rb_cRoot_dc_Simple.define_method("simple", &Root::Simple::simple);
   Module rb_mRoot_dc_Name = define_module_under(rb_mRoot, "Name");
   rb_mRoot_dc_Name.define_method("name", &Root::Name::name);
@@ -42,5 +50,10 @@ void Init_ext() {
   Class rb_cGlobal = define_class("Global");
   rb_cGlobal.define_method("global", &::global);
   Module rb_mEmpty = define_module("Empty");
+  Enum<SEASON> rb_eSEASON = define_enum<SEASON>("SEASON");
+  rb_eSEASON.define_value("SPRING", SEASON::SPRING);
+  rb_eSEASON.define_value("SUMMER", SEASON::SUMMER);
+  rb_eSEASON.define_value("FALL", SEASON::FALL);
+  rb_eSEASON.define_value("WINTER", SEASON::WINTER);
   init_some_other_code();
 }
