@@ -4,4 +4,5 @@
 # bin/rake is significantly faster
 
 require 'ext_rails/active_support/dependencies/with_profile'
+require 'ext_rails/monkey_patch'
 require 'ext_rails/rake/backtrace'
