@@ -1,13 +1,9 @@
-source 'https://rubygems.org'
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+source "https://rubygems.org"
 
 ruby File.read('.ruby-version').strip
 
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'shakapacker', '6.1.1'
-
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-# gem 'rack-cors'
 
 group :development, :test do
   gem 'ext_minitest', path: './ext_minitest'
@@ -16,13 +12,9 @@ group :development, :test do
 end
 
 group :development do
-  # Display performance information such as SQL time and flame graphs for each request in your browser.
-  # Can be configured to work on production as well see: https://github.com/MiniProfiler/rack-mini-profiler/blob/master/README.md
-  # gem 'rack-mini-profiler', '~> 2.0'
+  # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
+  # gem "rack-mini-profiler"
 end
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # gem 'web_tools', github: 'patleb/web_tools'
 # gem 'web_tools', path: '~/projects/web_tools'

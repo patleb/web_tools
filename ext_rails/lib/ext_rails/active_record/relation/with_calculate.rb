@@ -114,16 +114,16 @@ module ActiveRecord::Relation::WithCalculate
     end
   end
 
-  def operation_over_aggregate_column(column, operation, *args)
+  def operation_over_aggregate_column(column, operation, distinct)
     case operation
     when 'percentile'
-      column.send(operation, *args)
+      column.send(operation, distinct)
     else
       super
     end
   end
 
-  def type_cast_calculated_value(value, operation = nil)
+  def type_cast_calculated_value(value, operation, type)
     case operation
     when 'stddev', 'variance', 'median', 'percentile' then value&.respond_to?(:to_d) ? value.to_d : value
     else super

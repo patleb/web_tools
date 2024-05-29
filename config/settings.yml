@@ -16,6 +16,11 @@ development:
 vagrant:
 
 staging:
+  db_host: 127.0.0.1
+  db_database: web_tools_staging
+  db_username: web_tools
+  db_password: 448cd494862e7d9e8378c5add81320ab
+  deployer_password: 80df882e02a4aba7ba70e2c80b9a1053
   lets_encrypt_test: true
   server_host:
   mail_to:
@@ -24,11 +29,16 @@ staging:
   mail_port:
   mail_domain:
   mail_username:
-  mail_password: $SECRET encrypted_secret
+  # mail_password: $SECRET encrypted_secret
   owner_public_key:
-  owner_private_key: $SECRET encrypted_secret
+  # owner_private_key: $SECRET encrypted_secret
 
 production:
+  db_host: 127.0.0.1
+  db_database: web_tools_production
+  db_username: web_tools
+  db_password: 80f4fef546086575dff29ceea8cc064b
+  deployer_password: 795a9de767931ac69dc8cae53fb5a8e9
   server_host:
   mail_to:
   mail_from:
@@ -36,6 +46,6 @@ production:
   mail_port:
   mail_domain:
   mail_username:
-  mail_password: $SECRET encrypted_secret
+  # mail_password: $SECRET encrypted_secret
   owner_public_key:
-  owner_private_key: $SECRET encrypted_secret
+  # owner_private_key: $SECRET encrypted_secret

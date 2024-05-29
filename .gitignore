@@ -7,6 +7,10 @@
 # Ignore bundler config.
 /.bundle
 
+# Ignore all environment files (except templates).
+/.env*
+!/.env*.erb
+
 # Ignore all logfiles and tempfiles.
 /log/*
 !/log/
@@ -20,16 +24,26 @@
 !/tmp/pids/
 !/tmp/pids/.keep
 
-# Ignore uploaded files in development.
+# Ignore storage (uploaded files in development and any SQLite databases).
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
 /public/storage/*
+!/public/storage/
+!/public/storage/.keep
 /public/storage_test/*
+!/public/storage_test/
+!/public/storage_test/.keep
 /private/storage/*
 !/private/storage/
 !/private/storage/.keep
 /private/storage_test/*
+!/private/storage_test/
+!/private/storage_test/.keep
 
 /public/assets
-.byebug_history
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
@@ -80,6 +94,7 @@ app/libraries/ext.so
 app/libraries/ext.sha256
 embed_ruby.*
 unittest.*
+.gdb_history
 ### AFTER .gitignore ###
 
 web_tools-*.gem

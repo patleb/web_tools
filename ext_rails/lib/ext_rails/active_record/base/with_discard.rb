@@ -40,8 +40,8 @@ module ActiveRecord::Base::WithDiscard
     def inherited(subclass)
       super
       if subclass.name && !(subclass <= ActiveType::Object)
-        if subclass.default_scopes.none?{ |scope| scope.source_location.include?(__FILE__) }
-          subclass.send(:default_scope) { discardable? ? kept : all }
+        if subclass.default_scopes.none?{ |o| o.scope.source_location.include?(__FILE__) }
+          subclass.send(:default_scope, all_queries: true){ discardable? ? kept : all }
         end
       end
     end

@@ -13,7 +13,6 @@ class Task < LibMainRecord
     unknown: 5,
   }
 
-  attribute :durations, :interval, array: true # TODO remove in Rails 7.0
   attribute :_perform, :boolean
   attribute :_from_later, :boolean
 

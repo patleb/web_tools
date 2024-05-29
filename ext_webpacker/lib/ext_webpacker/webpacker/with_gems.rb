@@ -132,7 +132,7 @@ module Webpacker
     end
 
     def default_config
-      @default_config ||= YAML.load(Pathname.new('config/webpacker.yml').read)['default']
+      @default_config ||= YAML.load(Pathname.new('config/webpacker.yml').read, aliases: true)['default']
     end
 
     def package_dependencies

@@ -7,7 +7,7 @@ module MixEmail
 
     config.before_configuration do |app|
       app.config.action_mailer.delivery_method = :smtp
-      app.config.action_mailer.smtp_settings = ActionMailer::SmtpSettings.new(Setting)
+      app.config.action_mailer.smtp_settings = ActionMailer::SmtpSettings.new(Setting).to_h
       app.config.action_mailer.default_url_options = Setting[:default_url_options]
     end
 

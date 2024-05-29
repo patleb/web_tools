@@ -12,22 +12,24 @@ require "action_mailer/railtie"
 # require "action_text/engine"
 require "action_view/railtie"
 # require "action_cable/engine"
-# require "sprockets/railtie"
 require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
-require 'web_tools/admin'
-require 'web_tools/application'
-require 'web_tools/private' if File.exists? 'lib/web_tools/private.rb'
+
+# require 'web_tools/admin'
+# require 'web_tools/application'
 
 module WebTools
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.1
-    # Rails 7.0 https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#key-generator-digest-class-changing-to-use-sha256
-    config.active_support.hash_digest_class = OpenSSL::Digest::SHA256
+    config.load_defaults 7.1
+
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w(tasks web_tools))
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -46,8 +48,22 @@ module WebTools
     config.cache_store = :global_store
 
     initializer 'app.libraries' do
-      Rice.require_ext
       # require_relative '../app/libraries/some_override'
+    end
+
+    initializer 'app.backtrace_silencers' do
+      # You can add backtrace silencers for libraries that you're using but don't wish to see in your backtraces.
+      # Rails.backtrace_cleaner.add_silencer { |line| /my_noisy_library/.match?(line) }
+
+      # You can also remove all the silencers if you're trying to debug a problem that might stem from framework code
+      # by setting BACKTRACE=1 before calling your invocation, like "BACKTRACE=1 ./bin/rails runner 'MyClass.perform'".
+      Rails.backtrace_cleaner.remove_silencers! if ENV["BACKTRACE"]
+      Rails.backtrace_cleaner.add_silencer{ |line| %r{(^(activerecord|activesupport|query_diet) |/lib/ruby/)}.match?(line) }
+    end
+
+    initializer 'app.mime_types' do
+      # Add new mime types for use in respond_to blocks:
+      # Mime::Type.register "text/richtext", :rtf
     end
   end
 end

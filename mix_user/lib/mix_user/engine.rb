@@ -50,19 +50,21 @@ module MixUser
     config.after_initialize do
       ActiveSupport.on_load(:action_controller_base) do |base|
         next unless (index = base.view_paths.paths.index{ |p| p.to_s.include? '/devise-' })
+        paths = base.view_paths.paths.dup
         engines = []
         loop do
-          if (engine = base.view_paths.pop).nil?
+          if (engine = paths.pop).nil?
             break
           elsif engine.to_path.include? '/mix_user'
-            base.view_paths.insert(index, engine)
+            paths.insert(index, engine)
             break
           end
           engines << engine
         end
         while (engine = engines.pop)
-          base.view_paths << engine
+          paths << engine
         end
+        base.view_paths = paths
       end
     end
   end

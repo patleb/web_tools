@@ -29,7 +29,7 @@ module ExtRails
     end
 
     def excluded_tables
-      @excluded_tables ||= Set.new([ActiveRecord::SchemaMigration.table_name, ActiveRecord::InternalMetadata.table_name])
+      @excluded_tables ||= Set.new(['schema_migrations', 'ar_internal_metadata'])
     end
 
     def temporary_tables

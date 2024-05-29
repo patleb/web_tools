@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  root 'main#index'
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  get '/favicon.ico', to: -> (_) { [404, {}, ['']] }
+  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
+  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # get "up" => "rails/health#show", as: :rails_health_check
+
+  # Defines the root path route ("/")
+  # root "posts#index"
 
   # scope path: '/resources', controller: 'resources' do
   #   get '/' => :index
@@ -17,13 +21,5 @@ Rails.application.routes.draw do
   #   end
   # end
 
-  scope path: '/coffee', controller: 'coffee' do
-    get '/' => :basic_template
-    match '/sign_in', action: :sign_in, via: [:get, :post]
-    match '/company', action: :company, via: [:get, :post]
-    get '/error' => :error
-  end
-  get 'sass', to: 'sass#index'
-
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  # MixAdmin::Routes.draw(self)
 end

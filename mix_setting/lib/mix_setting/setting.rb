@@ -11,9 +11,15 @@ class Setting
   METHOD = '$METHOD'.freeze
   ALIAS  = '$ALIAS'.freeze
   REMOVE = '$REMOVE'.freeze
-  FREED_IVARS = %i(@types @secrets @database @aliases @methods @removed @replaced)
+  FREED_IVARS = %i(@types @secrets @settings @aliases @methods @removed @replaced)
+
+  def self.secret_key_base
+    all[:secret_key_base]
+  end
 
   class << self
+    alias_method :key, :secret_key_base
+
     delegate :[], :[]=, :dig, :has_key?, :key?, :values_at, :slice, :except, :select, :select_map, :reject, to: :all
   end
 
@@ -64,9 +70,9 @@ class Setting
       @types = {}.with_keyword_access
       @gems = {}
       @secrets = parse_secrets_yml
-      @database = parse_database_yml
-      settings = extract_yml(:settings, @root)
-      settings = @database.merge! parse_settings_yml(settings)
+      @settings = extract_yml(:settings, @root)
+      database = parse_database_yml
+      settings = database.merge! parse_settings_yml(@settings)
       settings = @secrets.merge! settings
       require_overrides
       @gems = @gems.to_a.reverse.to_h
@@ -199,7 +205,7 @@ class Setting
 
     case type
     when :database
-      yml = YAML.safe_load(gsub_secrets(path.read), aliases: true)
+      yml = YAML.safe_load(gsub_settings(path.read), aliases: true)
     when :settings
       yml = YAML.safe_load(path.read)
       validate_version! yml['lock']
@@ -223,9 +229,9 @@ class Setting
     (gems_yml || {}).union!(env_yml)
   end
 
-  def self.gsub_secrets(content)
-    content.gsub(/<%=\s*Rails\.application\.secrets\.([a-zA-Z_]\w+)\s*%>/) do
-      @secrets[$1]
+  def self.gsub_settings(content)
+    content.gsub(/<%=\s*Setting\[['":]([a-zA-Z_]\w+)['"]?\]\s*%>/) do
+      @settings[$1]
     end
   end
 

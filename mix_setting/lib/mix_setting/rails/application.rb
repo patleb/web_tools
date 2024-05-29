@@ -1,5 +1,5 @@
 Rails::Application.class_eval do
   def credentials
-    secrets
+    Setting
   end
 end

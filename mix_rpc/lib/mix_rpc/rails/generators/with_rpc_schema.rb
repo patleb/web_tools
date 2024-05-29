@@ -1,5 +1,5 @@
-module Rails
-  module Generators::WithRpcSchema
+if defined? Rails::Generators
+  module Rails::Generators::WithRpcSchema
     extend ActiveSupport::Concern
 
     class_methods do
@@ -11,6 +11,6 @@ module Rails
       end
     end
   end
-end
 
-Rails::Generators.prepend Rails::Generators::WithRpcSchema
+  Rails::Generators.prepend Rails::Generators::WithRpcSchema
+end

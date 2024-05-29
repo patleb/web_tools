@@ -36,6 +36,15 @@ module ActiveRecord::Base::WithUser
       Current.user if Current.logged_in?
     end
 
+    protected
+
+    def reload_schema_from_cache(recursive = true)
+      @userstamp_attributes_for_create_in_model = nil
+      @userstamp_attributes_for_update_in_model = nil
+      @all_userstamp_attributes_in_model = nil
+      super
+    end
+
     private
 
     def userstamp_attributes_for_create
@@ -44,13 +53,6 @@ module ActiveRecord::Base::WithUser
 
     def userstamp_attributes_for_update
       ["updater_id"]
-    end
-
-    def reload_schema_from_cache
-      @userstamp_attributes_for_create_in_model = nil
-      @userstamp_attributes_for_update_in_model = nil
-      @all_userstamp_attributes_in_model = nil
-      super
     end
   end
 

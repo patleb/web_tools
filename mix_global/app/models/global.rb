@@ -4,7 +4,6 @@ class Global < LibMainRecord
   belongs_to :server, -> { with_discarded }
 
   attribute :data
-  attribute :interval, :interval # TODO remove in Rails 7.0
 
   enum data_type: {
     string:      0,
