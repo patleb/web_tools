@@ -19,6 +19,7 @@ class Js.RoutesConcept
 
   # Private
 
+  # Anchors not supported
   # Optional /(:variable) segment not supported
   location: (path, params = {}, blanks = true) ->
     params = params.dup()
