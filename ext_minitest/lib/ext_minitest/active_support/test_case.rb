@@ -18,8 +18,4 @@ ActiveSupport::TestCase.class_eval do
     $test = self
     super
   end
-
-  before do
-    VCR.turn_off!
-  end
 end

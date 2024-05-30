@@ -1,5 +1,3 @@
-# TODO make_my_diffs_pretty!
-
 Minitest::Test.class_eval do
   class << self
     alias_method :order_dependent!, :i_suck_and_my_tests_are_order_dependent!

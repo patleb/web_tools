@@ -1,5 +1,3 @@
-# TODO https://gist.github.com/prepor/1758845
-
 Minitest::Spec::DSL.class_eval do
   def xdescribe(desc, &block)
     # do nothing
