@@ -10,18 +10,26 @@ class ThreadGroup
   TIMEOUT = 'timeout'.freeze
 
   module WithThreadPoolExecutor
-    attr_reader :max_length, :largest_length
+    attr_writer :max_length, :largest_length, :timeout_mutex
 
-    alias_method :max_queue, :max_length
-
+    # ThreadGroup::Default doesn't go through #initialize so ivars aren't initialized
     def initialize(max_threads = Float::INFINITY)
       raise MaxThreadsInvalid if !max_threads.is_a?(Numeric) || (max_threads < 1)
-
-      @max_length = max_threads
-      @largest_length = 0
-      @timeout_mutex = Mutex.new
-
+      self.max_length = max_threads
       super()
+    end
+
+    def max_length
+      @max_length ||= Float::INFINITY
+    end
+    alias_method :max_queue, :max_length
+
+    def largest_length
+      @largest_length ||= 0
+    end
+
+    def timeout_mutex
+      @timeout_mutex ||= Mutex.new
     end
 
     def length(with = :alive)
@@ -68,7 +76,7 @@ class ThreadGroup
       raise TimeoutKillPeriodInvalid if kill_on_expired.is_a?(Numeric) && kill_on_expired <= 0
 
       future = Time.now.to_f + seconds
-      @timeout_mutex.synchronize{ @max_length += 1 }
+      timeout_mutex.synchronize{ self.max_length += 1 }
 
       add(*args, name: TIMEOUT, _timeout: true, **options) do |*rest|
         until (expired = future < Time.now.to_f) || thread_shuttingdown?
@@ -85,12 +93,12 @@ class ThreadGroup
           raise TimeoutError
         end
       ensure
-        @timeout_mutex.synchronize{ @max_length -= 1 }
+        timeout_mutex.synchronize{ self.max_length -= 1 }
       end
     end
 
     def post_all(...)
-      @max_length.times{ add(...) }
+      max_length.times{ add(...) }
       self
     end
 
@@ -103,7 +111,7 @@ class ThreadGroup
         super thread(*args, **options, &block)
       end
 
-      @largest_length = length if length > largest_length
+      self.largest_length = length if length > largest_length
 
       self
     end
@@ -116,9 +124,9 @@ class ThreadGroup
 
     def kill(*timeout)
       if timeout.empty?
-        @timeout_mutex.synchronize do
+        timeout_mutex.synchronize do
           list.each do |thread|
-            @max_length -= 1 if thread[:_timeout]
+            self.max_length -= 1 if thread[:_timeout]
             thread.kill
           end
         end
