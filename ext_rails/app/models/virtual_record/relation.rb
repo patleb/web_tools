@@ -1,25 +1,60 @@
 module VirtualRecord
-  class Relation < Kaminari::PaginatableArray
-    TABLE    = /(?:"?(\w+)"?\.)/.freeze
-    COLUMN   = /"?(\w+)"?/.freeze
-    OPERATOR = /(<=|>=|<|>)/.freeze
-    VALUE    = /'?([^']+)'?/.freeze
-    COMPARE  = /^\s*#{TABLE}?#{COLUMN}\s*#{OPERATOR}\s*#{VALUE}\s*$/.freeze
+  class Relation < Array
+    class UnknownOperator < ::StandardError; end
+
+    TABLE    = /(?:"?(?:\w+)"?\.)/.freeze
+    COLUMN   = /#{TABLE}?"?(\w+)"?/.freeze
+    COLUMN_2 = /#{TABLE}?"?(?:\w+)"?/.freeze
+    VALUE    = /\?/.freeze
+    RANGE    = /#{COLUMN} (?:(NOT) BETWEEN|BETWEEN) #{VALUE} AND #{VALUE}/.freeze
+    STRING   = /#{COLUMN} (?:(NOT) ILIKE|ILIKE) #{VALUE}/.freeze
+    BOOLEAN  = /#{COLUMN} (?:IS NULL OR) #{COLUMN_2} (?:(!)=|=)? #{VALUE}/.freeze
+    BLANK    = /#{COLUMN} (?:IS (NOT) NULL|IS NULL)/.freeze
+    ARRAY    = /#{COLUMN} (?:(NOT) IN |IN) (\(#{VALUE}?(?:,#{VALUE})?\))/.freeze
+    OPERATOR = /#{COLUMN} ([=!<>]=?) #{VALUE}/.freeze
+
+    # TODO attr_internal_accessor :value --> @_value
+    attr_reader :order_values
+    attr_reader :limit_value
 
     alias_method :count_estimate, :size
     alias_method :exists?, :any?
 
-    def initialize(original_array = [], limit: original_array.size, offset: nil, total_count: nil, padding: nil)
+    def initialize(array = [], limit: array.size, offset: 0, total_count: nil)
       limit = 1 if limit == 0
-      super
+      @array, @limit_value, @offset_value, @total_count = array, limit, offset, total_count
+      if @total_count
+        array = array.first(@total_count)[@offset_value, @limit_value] if @total_count <= array.size
+      else
+        array = array[@offset_value, @limit_value]
+      end
+      super(array || [])
     end
 
-    def merge(scope)
-      self.class.new(self & scope)
+    def select(*attributes, &block)
+      return self.class.new(super) if attributes.empty?
+      array = @array.map{ |item| item.slice(*attributes) }
+      self.class.new(array, limit: @limit_value, offset: @offset_value, total_count: @total_count)
     end
 
-    def take(n = 1)
-      n == 1 ? first : self.class.new(super)
+    def take(n = nil)
+      n ? self.class.new(super) : first
+    end
+
+    def limit(n)
+      self.class.new(@array, limit: n, offset: @offset_value, total_count: @total_count)
+    end
+
+    def offset(n)
+      self.class.new(@array, limit: @limit_value, offset: n, total_count: @total_count)
+    end
+
+    def total_count
+      @total_count ||= @array.size
+    end
+
+    def none
+      self.class.new([])
     end
 
     def distinct
@@ -30,15 +65,20 @@ module VirtualRecord
       self.class.new(reverse)
     end
 
-    def order(*args)
-      attribute = args.first.sub(TABLE, '').tr('"', '').to_sym
-      self.class.new(sort_by(&attribute))
+    def order(column, nil_first: false)
+      attribute = column.to_s.sub(TABLE, '').tr('"', '').to_sym
+      nil_first, nil_last = nil_first.to_i, (!nil_first).to_i
+      result = sort_by do |item|
+        value = item.public_send(attribute)
+        [value ? nil_first : nil_last, value]
+      end
+      self.class.new(result)
     end
     alias_method :reorder, :order
 
-    def where(query = nil, *params)
-      if query.nil?
-        self
+    def where(query = nil, *values)
+      if query.blank?
+        result = []
       elsif query.is_a? Hash
         result = query.reduce(self) do |memo, (column, value)|
           value = cast_value(column, value)
@@ -48,24 +88,55 @@ module VirtualRecord
             [memo.find{ |item| item.public_send(column) == value }].compact
           end
         end
-        self.class.new(result)
-      elsif params.empty?
-        self
-      elsif (compare = query.match(COMPARE))
-        _query, _table, column, operator, _value = compare.to_a
-        value = cast_value(column, params.last)
-        self.class.new(select{ |item| item.public_send(column).public_send(operator, value) })
       else
-        search = params.last.gsub(/(^%|%$)/, '').downcase
-        attributes = query.gsub(TABLE, '').gsub(/ (I?LIKE|=) \?/i, ' ').tr('(")', '').split('OR').map(&:strip)
-        self.class.new(select{ |item| attributes.any?{ |attr| item.public_send(attr).to_s.downcase.include?(search) } })
+        query = query.delete_prefix('(').delete_suffix(')') if query.include? ') OR ('
+        attributes = query.split(') OR (').map do |statement|
+          case statement
+          when RANGE    then [$1, :range,    $2,  2]
+          when STRING   then [$1, :string,   $2,  1]
+          when BOOLEAN  then [$1, :boolean,  $2,  1] # must be evaluated before BLANK
+          when BLANK    then [$1, :blank,    $2,  0]
+          when ARRAY    then [$1, :array,    $2,  $3.count('?')]
+          when OPERATOR then [$1, :operator, nil, 1, $2]
+          else raise UnknownOperator, statement
+          end
+        end
+        result = select do |item|
+          i = 0
+          attributes.each.any? do |(name, type, not_, count, operator)|
+            item_value = item.public_send(name)
+            item_included = case type
+              when :range
+                value = (cast_value(name, values[i])..cast_value(name, values[i + 1]))
+                not_ ? !value.cover?(item_value) : value.cover?(item_value)
+              when :string
+                item_value, value = item_value.to_s.simplify, values[i].to_s.gsub(/(^%|%$)/, '').simplify
+                not_ ? item_value.exclude?(value) : item_value.include?(value)
+              when :boolean
+                item_value, value = item_value.to_b, values[i].to_b
+                not_ ? item_value != value : item_value == value
+              when :blank
+                not_ ? item_value.present? : item_value.blank?
+              when :array
+                value = cast_value(name, values[i, count])
+                not_ ? value.exclude?(item_value) : value.include?(item_value)
+              when :operator
+                operator = operator == '=' ? '==' : operator
+                value = cast_value(name, values[i])
+                item_value.public_send(operator, value)
+              end
+            i += count
+            item_included
+          end
+        end
       end
+      self.class.new(result)
     end
 
-    def method_missing(name, *args, **options, &block)
+    def method_missing(name, ...)
       if klass.respond_to? name
         klass.use(self) do
-          klass.public_send(name, *args, **options, &block)
+          klass.public_send(name, ...)
         end
       else
         self

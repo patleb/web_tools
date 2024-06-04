@@ -53,12 +53,12 @@ module VirtualRecord
     end
 
     def self.all
-      (Current.virtual_types ||= {})[name] ||= all!
+      (Current.virtual_records ||= {})[name] ||= all!
     end
 
     def self.all!
-      list = self.list.map do |item|
-        item = new(item) if item.is_a? Hash
+      list = self.list.map do |attributes|
+        item = new(attributes)
         item.instance_variable_set(:@new_record, false)
         item
       end
@@ -67,10 +67,10 @@ module VirtualRecord
 
     def self.use(relation)
       old_all = all
-      Current.virtual_types[name] = relation
+      Current.virtual_records[name] = relation
       yield
     ensure
-      Current.virtual_types[name] = old_all if old_all
+      Current.virtual_records[name] = old_all if old_all
     end
 
     def self.list
@@ -82,11 +82,11 @@ module VirtualRecord
     end
 
     def self.reset
-      (Current.virtual_types ||= {})[name] = nil
+      (Current.virtual_records ||= {})[name] = nil
     end
 
     def self.loaded?
-      (Current.virtual_types ||= {}).has_key? name
+      (Current.virtual_records ||= {}).has_key? name
     end
   end
 end
