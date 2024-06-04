@@ -20,11 +20,10 @@ module ActiveRecord::Base::WithNullifyBlanks
 
     def inherited(subclass)
       super
-      if subclass.name \
-      && instance_variable_get(:@_nullify_blanks_options) \
-      && !subclass.instance_variable_get(:@_nullify_blanks_options)
-        subclass.nullify_blanks **@_nullify_blanks_options
-      end
+      return unless subclass.name
+      return unless ivar(:@_nullify_blanks_options)
+      return if subclass.ivar(:@_nullify_blanks_options)
+      subclass.nullify_blanks **@_nullify_blanks_options
     end
 
     def nullify_blanks(**options)
@@ -54,26 +53,31 @@ module ActiveRecord::Base::WithNullifyBlanks
         return false if @nullify_blank_methods_generated
         options = @_nullify_blanks_options
 
-        options[:only] = Array.wrap(options[:only]).map(&:to_s) if options[:only]
-        options[:except] = Array.wrap(options[:except]).map(&:to_s) if options[:except]
-        options[:types] = options[:types] ? Array.wrap(options[:types]).map(&:to_sym) : DEFAULT_TYPES
+        types = options[:types] = options[:types] ? Array.wrap(options[:types]).map(&:to_sym) : DEFAULT_TYPES
 
         cattr_accessor :nullify_blanks_columns
 
-        self.nullify_blanks_columns =
-          if options[:only]
-            options[:only].clone
-          elsif options[:nullables_only] == false
-            columns.select_map{ |c| c.name.to_s if options[:types].include?(c.type) && c.default.nil? }
-          else
-            columns.select_map{ |c| c.name.to_s if c.null && options[:types].include?(c.type) }
+        names = Set.new
+        if respond_to? :columns_hash
+          columns_hash.each do |name, column|
+            names << name if types.include?(column.type || :string)
           end
+        end
+        if respond_to? :virtual_columns_hash
+          virtual_columns_hash.each do |name, column|
+            names << name if types.include?(column.ivar(:@type_caster).ivar(:@type) || :string)
+          end
+        end
+        if respond_to? :attribute_types
+          attribute_types.each do |name, column|
+            names << name if types.include?(column.type || :string)
+          end
+        end
 
-        self.nullify_blanks_columns -= options[:except] if options[:except]
-        self.nullify_blanks_columns = nullify_blanks_columns.map(&:to_s)
+        self.nullify_blanks_columns = names.to_a
 
-        options[:before] ||= :validation
-        send("before_#{options[:before]}", :nullify_blanks)
+        after_initialize  :nullify_blanks
+        before_validation :nullify_blanks
         @nullify_blank_methods_generated = true
       end
     end
@@ -82,9 +86,7 @@ module ActiveRecord::Base::WithNullifyBlanks
   def nullify_blanks
     (nullify_blanks_columns || []).each do |column|
       value = read_attribute(column)
-      next unless value.is_a?(String)
-      next unless value.respond_to?(:blank?)
-
+      next unless value.is_a? String
       write_attribute(column, nil) if value.blank?
     end
   end
