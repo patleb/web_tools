@@ -35,10 +35,7 @@ provision:
         if: 'sun.postgis_enabled'
     - db/postgres-{postgres}/postgis-{postgis}:
         if: 'sun.postgis_enabled'
-    - db/postgres-{postgres}/timescaledb:
-        if: 'sun.timescaledb_enabled'
-    - db/postgres-{postgres}/tune:
-        unless: 'sun.timescaledb_enabled'
+    - db/postgres-{postgres}/tune
     - db/postgres-{postgres}/config
     - utils/packages
     - utils/htop

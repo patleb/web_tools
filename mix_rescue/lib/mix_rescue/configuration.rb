@@ -7,7 +7,7 @@ module MixRescue
 
     def rescue_500
       return @rescue_500 if defined? @rescue_500
-      @rescue_500 = !Rails.env.dev_or_test?
+      @rescue_500 = !Rails.env.local?
     end
 
     def notice_interval

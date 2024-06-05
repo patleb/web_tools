@@ -16,6 +16,8 @@ require 'sorted_set'
 require 'vmstat'
 require 'yaml'
 
+require 'active_support/deprecation'
+require 'active_support/deprecator'
 require 'active_support/concern'
 require 'active_support/core_ext/array/wrap'
 require 'active_support/core_ext/array/grouping'
@@ -72,7 +74,6 @@ require 'ext_ruby/process/host'
 require 'ext_ruby/process/worker'
 require 'ext_ruby/process/os'
 if defined? Rails
-  require 'ext_ruby/string_inquirer'
   require 'ext_ruby/process/passenger'
   require 'ext_ruby/railtie'
 end

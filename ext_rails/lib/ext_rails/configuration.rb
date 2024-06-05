@@ -11,12 +11,12 @@ module ExtRails
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
-      @sql_debug = Rails.env.dev_or_test? if defined? Rails
+      @sql_debug = Rails.env.local? if defined? Rails
     end
 
     def params_debug?
       return @params_debug if defined? @params_debug
-      @params_debug = Rails.env.dev_or_test?
+      @params_debug = Rails.env.local?
     end
 
     def skip_discard?
@@ -25,7 +25,7 @@ module ExtRails
     end
 
     def excluded_models
-      @excluded_models ||= Setting[:timescaledb_enabled] ? Set.new : Set.new(['Timescaledb::Chunk', 'Timescaledb::Table'])
+      @excluded_models ||= Set.new
     end
 
     def excluded_tables

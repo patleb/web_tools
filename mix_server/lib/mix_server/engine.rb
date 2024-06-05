@@ -19,7 +19,7 @@ module MixServer
   end
 
   def self.shared_dir
-    if Rails.env.dev_or_test?
+    if Rails.env.local?
       Rails.root
     else
       Rails.root.join('..', '..', 'shared').expand_path

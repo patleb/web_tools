@@ -4,7 +4,7 @@ module Monit
       def self.osquery
         m_access(__method__) do
           result = {}
-          path = if Rails.env.dev_or_test?
+          path = if Rails.env.local?
             MixLog::Engine.root.join('test/fixtures/files/log/osquery/osqueryd.results.log')
           else
             Pathname.new(MixLog.config.osquery_log_path)

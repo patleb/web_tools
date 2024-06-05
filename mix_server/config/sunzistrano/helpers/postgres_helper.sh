@@ -1,5 +1,5 @@
 pg.shared_preload_libraries() {
-  echo '<%= { pg_stat_statements: sun.pgstats_enabled, timescaledb: sun.timescaledb_enabled }.select{ |_, v| v }.keys.join(',') %>'
+  echo '<%= { pg_stat_statements: sun.pgstats_enabled }.select{ |_, v| v }.keys.join(',') %>'
 }
 
 pg.restart_force() {

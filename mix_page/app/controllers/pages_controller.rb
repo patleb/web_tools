@@ -122,7 +122,7 @@ class PagesController < MixPage.config.parent_controller.constantize
   # TODO https://github.com/basecamp/local_time
   def stale_state?
     return true unless pjax?
-    return true if Rails.env.dev_or_test?
+    return true if Rails.env.local?
     return true if Current.user.role_admin?
     stale? @state, etag: MixServer.current_version, template: @state.template
   end
@@ -133,6 +133,6 @@ class PagesController < MixPage.config.parent_controller.constantize
 
   def load_page
     @page = PageTemplate.find_with_content(@state.id)
-    remove_instance_variable(:@state)
+    remove_ivar(:@state)
   end
 end

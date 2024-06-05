@@ -22,7 +22,6 @@ module Db
           data_only:   ['--[no-]data-only',           'Load only data with disabled triggers for pg_restore'],
           append:      ['--[no-]append',              'Append data for pg_restore'],
           new_server:  ['--[no-]new-server',          'Reset current server centralized log'],
-          timescaledb: ['--[no-]timescaledb',         'Specify if TimescaleDB is used for pg_restore'],
           pg_options:  ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
         }
       end
@@ -96,7 +95,6 @@ module Db
 
       # TODO -j number-of-jobs
       def pg_restore(compress, split)
-        pre_restore_timescaledb if options.timescaledb
         Setting.db do |host, port, database, username, password|
           output = ''
           only = options.includes.reject(&:blank?)
@@ -133,7 +131,6 @@ module Db
               notify!(cmd, stderr) if notify?(stderr)
             end
           end
-          post_restore_timescaledb if options.timescaledb
           unless data_append?
             post_restore_environment
             post_restore_server if options.new_server
@@ -178,19 +175,6 @@ module Db
         end
       end
 
-      def pre_restore_timescaledb
-        psql! <<-SQL.strip_sql
-          CREATE EXTENSION IF NOT EXISTS timescaledb;
-          SELECT timescaledb_pre_restore();
-        SQL
-      end
-
-      def post_restore_timescaledb
-        psql! <<-SQL.strip_sql
-          SELECT timescaledb_post_restore();
-        SQL
-      end
-
       def post_restore_environment
         ActiveRecord::InternalMetadata[:environment] = Rails.env
       end
@@ -204,7 +188,7 @@ module Db
       end
 
       def staged
-        options.staged || options.timescaledb
+        options.staged
       end
 
       def unsplit_cmd

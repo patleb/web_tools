@@ -94,7 +94,7 @@ module MixJob
       # thread groups must be defined after context initialization, otherwise they'll use their own
       @executor = ThreadGroup.new(4)
       @dispatcher = ThreadGroup.new(options.max_pool_size)
-      mkdir_p 'tmp/jobs/actions' if Rails.env.dev_or_test?
+      mkdir_p 'tmp/jobs/actions' if Rails.env.local?
     end
 
     def around_run
@@ -112,13 +112,13 @@ module MixJob
     def check_readiness
       start = Time.current
       sleep 1 while File.exist? WAIT
-      sleep options.server_interval until Rails.env.dev_or_test? || server_available?
+      sleep options.server_interval until Rails.env.local? || server_available?
       @waited = (Time.current - start).to_i
     end
 
     def wait_for_termination
       @executor.wait_for_termination
-      dump_requests unless Rails.env.dev_or_test?
+      dump_requests unless Rails.env.local?
       puts snapshot.except(:time, :thread, :shutdown, :job).pretty_hash
     end
 
