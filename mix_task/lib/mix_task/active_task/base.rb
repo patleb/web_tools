@@ -160,7 +160,7 @@ module ActiveTask
       if (path = path.to_s).end_with? '.gz'
         IO.popen("unpigz -c #{path}", 'rb') do |io|
           until io.eof?
-            next if (line = io.gets).blank?
+            next if (line = io.gets.scrub('*')).blank?
             yield(line.chomp, i) unless i == 0 && first == false
             i += 1
             break if first
@@ -168,7 +168,7 @@ module ActiveTask
         end
       else
         File.foreach(path, chomp: true) do |line|
-          next if line.blank?
+          next if (line = line.scrub('*')).blank?
           yield(line, i) unless i == 0 && first == false
           i += 1
           break if first
@@ -234,7 +234,7 @@ module ActiveTask
       end
       @_environment[:rails_config] = {
         locale: I18n.locale,
-        time_zone: Time.zone,
+        timezone: Time.zone,
       }
 
       yield(@_environment) unless (run_help = _parse_args)
@@ -247,7 +247,7 @@ module ActiveTask
       end
       rails_config = @_environment[:rails_config]
       I18n.locale = rails_config[:locale]
-      Time.zone = rails_config[:time_zone]
+      Time.zone = rails_config[:timezone]
       Setting.rollback!
       @_environment.clear
     end
