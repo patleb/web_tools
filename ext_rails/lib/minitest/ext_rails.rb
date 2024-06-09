@@ -1,6 +1,5 @@
-require 'minitest/ext_rails/action_controller/test_case'
 require 'minitest/ext_rails/action_dispatch/integration_test'
-require 'minitest/ext_rails/action_dispatch/system_test'
 require 'minitest/ext_rails/action_view/template/error'
 require 'minitest/ext_rails/active_job/test_case'
+require 'minitest/ext_rails/active_support/test_case'
 require 'minitest/ext_rails/sql/test_case'

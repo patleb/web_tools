@@ -1,49 +1,23 @@
 require './test/rails_helper'
 
 module ActionController
-  class WithPolicyTest < ActionController::TestCase
-    tests :application
-
-    controller :test_policy_scope do
-      scope = policy_scope(User.null)
-      if scope.empty?
-        head :ok
-      else
-        head :internal_server_error
-      end
-    end
-
-    controller :test_policy_params do
-      params = policy_params(User::Null.new, :show)
-      if params.empty?
-        head :ok
-      else
-        head :internal_server_error
-      end
-    end
-
-    controller :test_policy do
-      policy = policy(User::Null.new)
-      if policy.show?
-        head :internal_server_error
-      else
-        head :ok
-      end
-    end
-
+  class WithPolicyTest < ActionDispatch::IntegrationTest
     test '#policy_scope' do
-      get :test_policy_scope
-      assert_response :ok
+      controller_assert :policy_scope do
+        policy_scope(User.null).empty?
+      end
     end
 
     test '#policy_params' do
-      get :test_policy_params, params: { user_null: { a: 1 } }
-      assert_response :ok
+      controller_assert :policy_params, params: { user_null: { a: 1 } } do
+        policy_params(User::Null.new, :show).empty?
+      end
     end
 
     test '#policy' do
-      get :test_policy
-      assert_response :ok
+      controller_refute :policy do
+        policy(User::Null.new).show?
+      end
     end
   end
 end

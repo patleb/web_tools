@@ -106,6 +106,7 @@ module ExtRails
     initializer 'ext_rails.append_routes' do |app|
       app.routes.append do
         match '/' => 'application#healthcheck', via: [:get, :head], as: :base
+        get '/test/:name' => 'ext_rails/test#show', as: :test if Rails.env.test?
 
         match '(/)*not_found', via: :all, to: 'application#render_404', format: false
       end

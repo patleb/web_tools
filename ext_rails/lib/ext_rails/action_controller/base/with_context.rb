@@ -1,8 +1,6 @@
 module ActionController::Base::WithContext
   extend ActiveSupport::Concern
 
-  class UnpermittedParameterValue < ::ActionController::UnpermittedParameters; end
-
   included do
     prepend_before_action :set_current
     around_action :with_context
@@ -14,94 +12,56 @@ module ActionController::Base::WithContext
     end
   end
 
-  def session?
-    true
-  end
-
   protected
 
   def set_current
     Current.controller = self
     Current.session_id ||= session.try(:id)
     Current.request_id ||= request.uuid
-    set_current_referer
-    set_current_value(:locale, I18n.available_locales.map(&:to_s))
-    set_current_value(:time_zone)
+    set_locale
+    set_timezone
+  end
+
+  def set_locale
+    locale = params[:_locale].presence || request.headers['X-Locale'].presence || cookies[:_locale].presence
+    unless locale && I18n.available_locales.any?{ |l| l.to_s == locale }
+      locale = session[:locale].presence || http_accept_language.compatible_language_from(I18n.available_locales)
+    end
+    locale ||= I18n.default_locale
+    session[:locale] = cookies[:_locale] = locale.to_s
+    Current.locale = locale.to_sym
+  end
+
+  def set_timezone
+    timezone = params[:_timezone].presence || request.headers['X-Timezone'].presence || cookies[:_timezone].presence
+    timezone = timezone.to_i? ? timezone.to_i : timezone
+    unless (timezone = Time.find_zone(timezone)&.name)
+      timezone = session[:timezone].presence
+    end
+    timezone ||= Rails.application.config.time_zone
+    Current.timezone = session[:timezone] = cookies[:_timezone] = timezone
   end
 
   def with_context
     I18n.with_locale(Current.locale) do
-      Time.use_zone(Current.time_zone.presence) do
+      Time.use_zone(Current.timezone.presence) do
         yield
       end
     end
   rescue NoMethodError => e # prevent infinite loop
     backtrace = e.backtrace.first(ExtRuby.config.backtrace_log_lines)
-    message = "undefined method [#{e.name}], did you mean? [#{e.corrections.first rescue nil}]"
+    instead = e.corrections.first rescue nil
+    message = instead ? "undefined method [#{e.name}], did you mean? [#{instead}]" : "undefined method [#{e.name}]"
     message = [message, e.message, "at #{backtrace.join("\n")}"].join! "\n"
-    render_500 NoMethodError.new(message, e.name)
+    exception = NoMethodError.new(message, e.name)
+    MixRescue.config.rescue_500 ? render_500(exception) : raise(exception)
   end
 
-  def without_time_zone(&block)
-    ActiveRecord::Base.without_time_zone(&block)
-  end
-
-  # TODO not good for multiple tabs --> should persist in html page instead
-  # https://www.reddit.com/r/rails/comments/mit6pi/how_to_redirect_to_previous_page_after_sign_in/
-  def set_current_referer
-    if request.get? && request.referer.present?
-      if (uri = URI.parse(request.referer)).host == request.host && ((path = uri.path) != request.path)
-        unless defined?(MixUser) && path.start_with?('/users/')
-          session[:referer] = path
-        end
-      end
-    end
-    Current.referer ||= session[:referer]
-    Current.referer ||= send(:get_root_path) if respond_to?(:get_root_path, true)
-  end
-
-  def set_current_value(name, allowed_values = nil)
-    Current[name] ||= begin
-      param = "_#{name}"
-      js_name = "js.#{name}"
-      if (value = params.delete(param)).present?
-        value = value.cast
-        if allowed_values&.none?{ |v| v == value }
-          raise UnpermittedParameterValue.new([param])
-        elsif session?
-          cookies[js_name] = value
-        else
-          value
-        end
-      elsif session?
-        if (value = cookies[js_name]).present?
-          value = value.cast
-          if allowed_values&.none?{ |v| v == value }
-            raise UnpermittedParameterValue.new([param])
-          end
-          value
-        else
-          cookies[js_name] = default_current_value(name)
-        end
-      else
-        default_current_value(name)
-      end
-    end
-  end
-
-  private
-
-  def default_current_value(name)
-    send("default_#{name}")&.cast
-  end
-
-  def default_locale
-    locale = cookies["js.locale"]
-    locale = I18n.available_locales.find{ |l| l.to_s == locale }
-    locale.presence || http_accept_language.compatible_language_from(I18n.available_locales)
-  end
-
-  def default_time_zone
-    Time.find_zone(cookies["js.time_zone"])&.name
+  def without_timezone(&block)
+    old_value = Current.timezone
+    Current.timezone = 'UTC'
+    ActiveRecord::Base.without_timezone(&block)
+  ensure
+    Current.timezone = old_value
   end
 end
