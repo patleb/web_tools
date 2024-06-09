@@ -1,6 +1,6 @@
 require './test/rails_helper'
 
-class ActionController::WithContextTest < ActionDispatch::IntegrationTest
+class ActionController::Base::WithContextTest < ActionDispatch::IntegrationTest
   describe '#set_locale' do
     test 'default' do
       head '/'
