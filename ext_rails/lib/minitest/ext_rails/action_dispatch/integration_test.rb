@@ -7,7 +7,18 @@ ActionDispatch::IntegrationTest.class_eval do
   delegate :parsed_body, to: :response
   alias_method :body, :parsed_body
 
-  def controller_assert(action_name, **request_options, &block)
+  def controller_assert(...)
+    controller_test(...)
+    assert_response :ok
+  end
+
+  def controller_refute(action_name, **request_options, &block)
+    controller_assert(action_name, **request_options) do
+      !instance_eval(&block)
+    end
+  end
+
+  def controller_test(action_name, **request_options, &block)
     require 'minitest/ext_rails/test_controller'
 
     method_name = "test_#{action_name}"
@@ -16,19 +27,12 @@ ActionDispatch::IntegrationTest.class_eval do
 
     ExtRails::TestController.define_method(method_name) do
       if block_given? && instance_eval(&block)
-        head :ok
+        head :ok unless performed?
       else
         head :internal_server_error
       end
     end
     head "/test/#{action_name}", **request_options
-    assert_response :ok
-  end
-
-  def controller_refute(action_name, **request_options, &block)
-    controller_assert(action_name, **request_options) do
-      !instance_eval(&block)
-    end
   end
 
   alias_method :teardown_without_current, :teardown
