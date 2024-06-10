@@ -5,12 +5,12 @@ class EnableUnaccent < ActiveRecord::Migration[6.0]
 
     reversible do |change|
       change.up do
-        variables = {
+        statements = {
           set_value: Sql.execute(:get_value_cmd, 'column_name', 'value'),
           set_value_was: Sql.execute(:get_value_cmd, 'column_name', 'value_was', record: 'OLD'),
           set_value_changed: Sql.value_changed?('value')
         }
-        execute <<-SQL.strip_sql(variables)
+        execute <<-SQL.strip_sql(**statements)
           CREATE OR REPLACE FUNCTION unaccent_text() RETURNS TRIGGER AS $$
           DECLARE
             column_name TEXT;
