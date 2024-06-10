@@ -1,5 +1,3 @@
-require 'sql_query'
-
 module Sql
   class TestCase < ActiveSupport::TestCase
     MIGRATIONS_DIRNAME = 'db/migrate'.freeze
@@ -20,12 +18,19 @@ module Sql
       end
     end
 
-    class TestQuery < ::SqlQuery
+    class TestQuery
       include Minitest::Assertions
 
-      def initialize(...)
-        super
-        @name = @sql_filename.to_s.gsub(/\W/, '_')
+      cattr_accessor :sql_root
+      attr_reader :file_path, :connection
+
+      def initialize(suite_name, **ivars)
+        @file_path = Rails.root.join("#{sql_root}/#{suite_name}.sql.erb").to_s
+        @connection = ActiveRecord::Base.connection
+        @name = suite_name.full_underscore
+        ivars.except(:file_path, :connection, :name).each do |name, value|
+          ivar(:"@#{name}", value)
+        end
       end
 
       def assertions
@@ -40,7 +45,7 @@ module Sql
         @output << <<~SQL
           CREATE OR REPLACE FUNCTION test_assert_succeeded() RETURNS VOID AS $$
           BEGIN
-            PERFORM test_autonomous('INSERT INTO test_asserts (id) VALUES (DEFAULT);');
+            PERFORM test_autonomous('INSERT INTO test_asserts (id) VALUES (DEFAULT);', '#{dblink_config}');
           END;
           $$ LANGUAGE plpgsql;
 
@@ -91,10 +96,10 @@ module Sql
 
         yield
 
-        @output << <<~SQL
+        @output << <<~END_SQL
           END;
           $$ LANGUAGE plpgsql;
-        SQL
+        END_SQL
       end
 
       def teardown
@@ -107,17 +112,17 @@ module Sql
 
         yield
 
-        @output << <<~SQL
+        @output << <<~END_SQL
           END;
           $$ LANGUAGE plpgsql;
-        SQL
+        END_SQL
       end
 
       def sql
         @output ||= begin
           @output = ''
           @virtual_path = file_path.delete_suffix('.sql.erb')
-          ERB.new(File.read(file_path), nil, nil, "@output").result(binding)
+          ERB.new(File.read(file_path), eoutvar: '@output').result(binding)
         end
       end
 
@@ -134,17 +139,14 @@ module Sql
         partial_name = "#{name.sub(%r{(/?)(\w+)$}, '\1_\2')}.sql.erb"
         if name.exclude?('/') && File.exist?("#{File.dirname(@virtual_path)}/#{partial_name}")
           tmp_path = File.dirname(@virtual_path)
-        elsif @sql_file_path.present?
-          tmp_path = @sql_file_path
         else
-          root = defined?(Rails.root) ? Rails.root.to_s : Dir.pwd
-          tmp_path = "#{root}#{self.class.config.path}"
+          tmp_path = Rails.root.join(sql_root).to_s
         end
         @virtual_path = "#{tmp_path}/#{name}"
         [tmp_path, partial_name].join('/')
       end
 
-      def prepared_for_logs
+      def prepared_sql
         script = sql.strip_sql
         unless script.sub! /(CREATE OR REPLACE FUNCTION )test_suite(\(\) RETURNS VOID AS \$\$)/i, "\\1test_case_#{@name}\\2"
           raise 'test case method must have this exact signature: `CREATE OR REPLACE FUNCTION test_suite() RETURNS VOID AS $$`'
@@ -153,33 +155,36 @@ module Sql
       end
 
       def run_suite
-        execute
-        connection.exec_query("SELECT * FROM test_run_suite('#{@name}')").entries.each do |entry|
+        connection.execute(prepared_sql)
+        connection.exec_query("SELECT * FROM test_run_suite('#{@name}', '#{dblink_config}')").entries.each do |entry|
           assert_equal 'OK', entry['error_message']
         end
       end
+
+      private
+
+      def dblink_config
+        @dblink_config ||= connection.ivar(:@connection_parameters).map(&:join.with('=')).join(' ')
+      end
     end
 
-    before(:all) do
+    before do
       drop_procedures
       run_migrations
-
-      TestQuery.configure do |config|
-        config.path = sql_root.start_with?('/') ? sql_root : "/#{sql_root}"
-      end
+      TestQuery.sql_root = sql_root
     end
 
     private
 
     def drop_procedures
       procedures = connection.select_values(<<-SQL)
-        SELECT proname FROM pg_proc
-        WHERE proname LIKE 'test\_setup\_%'
-          OR  proname LIKE 'test\_precondition\_%'
-          OR  proname LIKE 'test\_case\_%'
-          OR  proname LIKE 'test\_postcondition\_%'
-          OR  proname LIKE 'test\_teardown\_%'
-          OR  proname LIKE 'test\_assert\_%'
+        SELECT oid::regprocedure FROM pg_proc
+        WHERE proname LIKE 'test\\_setup\\_%'
+          OR  proname LIKE 'test\\_precondition\\_%'
+          OR  proname LIKE 'test\\_case\\_%'
+          OR  proname LIKE 'test\\_postcondition\\_%'
+          OR  proname LIKE 'test\\_teardown\\_%'
+          OR  proname LIKE 'test\\_assert\\_%'
       SQL
 
       procedures.each do |procedure|

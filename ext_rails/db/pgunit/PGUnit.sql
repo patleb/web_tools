@@ -11,9 +11,9 @@ create type test_results as (
 --
 -- Use select * from test_run_all() to execute all test cases
 --
-create or replace function test_run_all() returns setof test_results as $$
+create or replace function test_run_all(dblink_config TEXT) returns setof test_results as $$
 begin
-  return query select * from test_run_suite(NULL);
+  return query select * from test_run_suite(NULL, dblink_config);
 end;
 $$ language plpgsql set search_path from current;
 
@@ -29,7 +29,7 @@ $$ language plpgsql set search_path from current;
 --
 -- select * from test_run_suite('my_test'); will run all tests that will have
 -- 'test_case_my_test' prefix.
-create or replace function test_run_suite(p_suite TEXT) returns setof test_results as $$
+create or replace function test_run_suite(p_suite TEXT, dblink_config TEXT) returns setof test_results as $$
 declare
   l_proc RECORD;
   l_sid INTEGER;
@@ -51,7 +51,7 @@ begin
     if l_condition is not null then
       l_cmd := 'DO $body$ begin perform ' || quote_ident(l_proc.nspname) || '.' || quote_ident(l_condition)
         || '(); end; $body$';
-      perform test_autonomous(l_cmd);
+      perform test_autonomous(l_cmd, dblink_config);
     end if;
     l_row.test_name := quote_ident(l_proc.proname);
     -- check for precondition
@@ -75,7 +75,7 @@ begin
     begin
       l_cmd := 'DO $body$ begin ' || l_precondition_cmd || 'perform ' || quote_ident(l_proc.nspname) || '.' || quote_ident(l_proc.proname)
         || '(); ' || l_postcondition_cmd || ' end; $body$';
-      perform test_autonomous(l_cmd);
+      perform test_autonomous(l_cmd, dblink_config);
       l_row.successful := true;
       l_row.failed := false;
       l_row.erroneous := false;
@@ -99,7 +99,7 @@ begin
     if l_condition is not null then
       l_cmd := 'DO $body$ begin perform ' || quote_ident(l_proc.nspname) || '.' || quote_ident(l_condition)
         || '(); end; $body$';
-      perform test_autonomous(l_cmd);
+      perform test_autonomous(l_cmd, dblink_config);
     end if;
   end loop;
 end;
@@ -192,19 +192,12 @@ $$ language sql;
 -- Use: perform test_autonomous('UPDATE|INSERT|DELETE|SELECT sp() ...'); to
 -- change data in a separate transaction.
 --
-create or replace function test_autonomous(p_statement VARCHAR) returns void as $$
+create or replace function test_autonomous(p_statement VARCHAR, dblink_config TEXT) returns void as $$
 declare
     l_error_text character varying;
     l_error_detail character varying;
-    l_dblink_conn_extra character varying;
 begin
-        begin
-	    select current_setting('pgunit.dblink_conn_extra') into l_dblink_conn_extra;
-        exception
-            when undefined_object then
-                select '' into l_dblink_conn_extra;
-        end;
-	perform test_dblink_connect('test_auto', 'dbname=' || current_catalog || ' ' || l_dblink_conn_extra);
+	perform test_dblink_connect('test_auto', dblink_config);
         begin
             perform test_dblink_exec('test_auto', 'BEGIN WORK;');
             perform test_dblink_exec('test_auto', p_statement);
