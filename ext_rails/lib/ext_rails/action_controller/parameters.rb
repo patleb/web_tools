@@ -1,11 +1,10 @@
+MonkeyPatch.add{['actionpack', 'lib/action_controller/metal/strong_parameters.rb', '00ec459ed48c35be561f6b3137fb8220a09695fdc297c73405e894cadcac04a2']}
+
 require 'action_controller/metal/strong_parameters'
 
 module ActionController::Parameters::WithLocation
   def unpermitted_parameters!(params)
-    super
-    if ExtRails.config.params_debug? \
-    && unpermitted_keys(params).any? \
-    && self.class.action_on_unpermitted_parameters == :log
+    if super && ExtRails.config.params_debug?
       puts_caller_location
     end
   end
@@ -28,7 +27,5 @@ end
 ActionController::Parameters.class_eval do
   prepend self::WithLocation
 
-  def with_keyword_access
-    to_hash.with_keyword_access
-  end
+  delegate :with_keyword_access, to: :to_hash
 end
