@@ -12,21 +12,22 @@ ActionDispatch::IntegrationTest.class_eval do
     assert_response :ok
   end
 
-  def controller_refute(action_name, **request_options, &block)
-    controller_assert(action_name, **request_options) do
-      !instance_eval(&block)
+  def controller_refute(name, **request_options, &falsy)
+    controller_assert(name, **request_options) do
+      !instance_eval(&falsy)
     end
   end
 
-  def controller_test(action_name, **request_options, &block)
-    controller_define("test_#{action_name}") do
-      if block_given? && instance_eval(&block)
+  def controller_test(name, **request_options, &truthy)
+    action_name, url = "test_#{name}", "/test/#{name}"
+    controller_define(action_name) do
+      if block_given? && instance_exec(url, action_name, &truthy)
         head :ok unless performed?
       else
         head :internal_server_error
       end
     end
-    head "/test/#{action_name}", **request_options
+    head url, **request_options
   end
 
   def controller_define(method_name, &block)
