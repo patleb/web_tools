@@ -1,3 +1,4 @@
+# NOTE useful for a local server with only its own desktop browser as client
 module ActionController::WithDispatch
   extend ActiveSupport::Concern
 
