@@ -19,13 +19,7 @@ ActionDispatch::IntegrationTest.class_eval do
   end
 
   def controller_test(action_name, **request_options, &block)
-    require 'minitest/ext_rails/test_controller'
-
-    method_name = "test_#{action_name}"
-    raise TestMethodAlreadyDefined, method_name if ExtRails::TestController.method_defined? method_name
-    (@controller_methods ||= Set.new) << method_name
-
-    ExtRails::TestController.define_method(method_name) do
+    controller_define("test_#{action_name}") do
       if block_given? && instance_eval(&block)
         head :ok unless performed?
       else
@@ -33,6 +27,15 @@ ActionDispatch::IntegrationTest.class_eval do
       end
     end
     head "/test/#{action_name}", **request_options
+  end
+
+  def controller_define(method_name, &block)
+    require 'minitest/ext_rails/test_controller'
+
+    raise TestMethodAlreadyDefined, method_name if ExtRails::TestController.method_defined? method_name
+    (@controller_methods ||= Set.new) << method_name
+
+    ExtRails::TestController.define_method(method_name, &block)
   end
 
   alias_method :teardown_without_current, :teardown
