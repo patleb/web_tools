@@ -1,12 +1,15 @@
 require 'action_view/helpers/text_helper'
 require 'mix_setting'
 
-# TODO https://github.com/excid3/noticed
 class Notice
   BODY_START = '[NOTIFICATION]'.freeze
   BODY_END   = '[END]'.freeze
 
   include ActionView::Helpers::TextHelper
+
+  def self.smtp_settings
+    @smtp_settings ||= ActionMailer::SmtpSettings.new(Setting).to_h
+  end
 
   def self.deliver!(exception, **options)
     require 'mail'
@@ -27,15 +30,7 @@ class Notice
       #{BODY_END}
     TEXT
     mail = ::Mail.new
-    mail.delivery_method :smtp, {
-      address: Setting[:mail_address],
-      port: Setting[:mail_port],
-      domain: Setting[:mail_domain],
-      user_name: Setting[:mail_username],
-      password: Setting[:mail_password],
-      authentication: "plain",
-      enable_starttls_auto: true,
-    }
+    mail.delivery_method :smtp, self.class.smtp_settings
     mail.to   = Setting[:mail_to]
     mail.from = Setting[:mail_from]
     mail.subject   = subject

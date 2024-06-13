@@ -10,7 +10,7 @@ module ActionMailer
 
     def settings
       @settings ||= {
-        authentication: :login,
+        authentication: 'login',
         enable_starttls_auto: true
       }.merge!((@_settings.respond_to?(:all) ? @_settings.all : @_settings).slice(*%i(
         mail_address
