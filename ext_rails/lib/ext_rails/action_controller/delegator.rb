@@ -1,5 +1,6 @@
 class ActionController::Delegator
   extend ActiveSupport::DescendantsTracker
+  include ActiveSupport::LazyLoadHooks::Autorun
 
   class << self
     delegate :memoize, to: 'Current.controller'

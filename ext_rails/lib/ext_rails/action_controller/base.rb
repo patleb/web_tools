@@ -9,4 +9,6 @@ ActionController::Base.class_eval do
   include ActionController::Redirecting::WithQueryParams
   include self::WithContext
   include self::WithMemoization
+
+  ActiveSupport.run_load_hooks('ActionController', self, parent: true)
 end

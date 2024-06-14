@@ -6,4 +6,6 @@ ActionController::API.class_eval do
   include ActiveSupport::LazyLoadHooks::Autorun
   include ActionController::MimeResponds
   include ActionController::Redirecting::WithQueryParams
+
+  ActiveSupport.run_load_hooks('ActionController', self, parent: true)
 end

@@ -3,26 +3,15 @@
 module ActiveSupport::LazyLoadHooks::Autorun
   extend ActiveSupport::Concern
 
-  SKIPPED_HOOKS = IceNine.deep_freeze(
-    active_storage_attachment: true,
-    active_storage_blob: true,
-    active_storage_record: true,
-    action_text_rich_text: true,
-    action_text_record: true,
-    action_mailbox_inbound_email: true,
-    action_mailbox_record: true,
-  )
+  included do
+    ActiveSupport.run_load_hooks(name, self)
+  end
 
   class_methods do
     def inherited(subclass)
       super
-      if subclass.name
-        hook_name = subclass.name.full_underscore.to_sym
-        if ENV['RAILS_PROFILE']
-          $profile_loaded_hooks << hook_name
-        end
-        ActiveSupport.run_load_hooks(hook_name, subclass) unless SKIPPED_HOOKS[hook_name]
-      end
+      return unless (hook_name = subclass.name)
+      ActiveSupport.run_load_hooks(hook_name, subclass)
     end
   end
 end

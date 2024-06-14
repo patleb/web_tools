@@ -1,18 +1,13 @@
 module ActiveSupport::LazyLoadHooks::Autoload
   extend ActiveSupport::Concern
 
-  SPECIAL_HOOKS = IceNine.deep_freeze(
-    action_view_base:   :action_view,
-    action_mailer_base: :action_mailer,
-    active_job_base:    :active_job,
-    active_record_base: :active_record,
-  )
-  SPECIAL_BASES = IceNine.deep_freeze(
-    'ActionController::Base' => true,
-    'ActionController::API' => true,
-  )
-
   class_methods do
+    def run_load_hooks(name, base = Object, parent: false)
+      $profile_loaded_hooks << name if ENV['RAILS_PROFILE']
+      _parent_hooks << base.name if parent
+      super(name, base)
+    end
+
     def autoload_hooks_count
       @autoload_hooks_count ||= 0
     end
@@ -36,11 +31,13 @@ module ActiveSupport::LazyLoadHooks::Autoload
 
     def _get_module_const(base, module_name)
       base.const_get(module_name)
-    rescue NameError => e
-      if !SPECIAL_BASES[base.name] && e.message.match?(/^uninitialized constant #{module_name}$/)
-        raise
-      end
+    rescue NameError
+      raise unless _parent_hooks.include? base.name
       base.module_parent.const_get(module_name)
+    end
+
+    def _parent_hooks
+      @_parent_hooks ||= Set.new
     end
 
     private
@@ -50,24 +47,15 @@ module ActiveSupport::LazyLoadHooks::Autoload
         module_path = file.relative_path_from(base_dir)
         module_path = module_path.sub(/^\w+\//, '')
         parent_name, module_name = module_path.split
-        hook_name = parent_name.to_s.full_underscore.to_sym
-        hook_name = SPECIAL_HOOKS[hook_name] if SPECIAL_HOOKS[hook_name]
+        hook_name = parent_name.to_s.camelize
         file = file.to_s
         module_name, type = module_name.to_s.split('.').first(2)
         module_name = module_name.camelize
 
         ActiveSupport.autoload_hooks_count += 1
         on_load(hook_name) do |base|
-          require_dependency file
-          base.send type, ActiveSupport._get_module_const(base, module_name)
-        rescue NameError
-          raise unless Rails.env.development?
           load file
           base.send type, ActiveSupport._get_module_const(base, module_name)
-        rescue ActiveSupport::Concern::MultipleIncludedBlocks
-          raise unless Rails.env.development?
-          base.send type, ActiveSupport._get_module_const(base, module_name)
-        ensure
           ActiveSupport.autoloaded_hooks_count += 1
         end
       end
@@ -75,4 +63,4 @@ module ActiveSupport::LazyLoadHooks::Autoload
   end
 end
 
-ActiveSupport.include ActiveSupport::LazyLoadHooks::Autoload
+ActiveSupport.prepend ActiveSupport::LazyLoadHooks::Autoload

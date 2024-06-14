@@ -14,6 +14,4 @@ class Current < ActiveSupport::CurrentAttributes
   def timezone
     timezone_without_default || Rails.application.config.time_zone
   end
-
-  ActiveSupport.run_load_hooks(:current, self)
 end
