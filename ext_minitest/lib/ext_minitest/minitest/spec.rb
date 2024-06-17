@@ -9,11 +9,4 @@ Minitest::Spec::DSL.class_eval do
   end
   alias_method :xshould, :xit
   alias_method :xtest, :xit
-
-  def describe_for(desc, *additional_desc, &block)
-    describe desc, *additional_desc do
-      subject{ desc.new }
-      instance_eval(&block)
-    end
-  end
 end
