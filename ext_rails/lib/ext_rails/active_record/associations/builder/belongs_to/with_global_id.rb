@@ -1,3 +1,5 @@
+MonkeyPatch.add{['activerecord', 'lib/active_record/associations/builder/singular_association.rb', '1c82c4fc4f087d25a00788db3704af86771d55985babae4a19ba96a05d236319']}
+
 module ActiveRecord::Associations::Builder::BelongsTo::WithGlobalId
   extend ActiveSupport::Concern
 
@@ -14,11 +16,11 @@ module ActiveRecord::Associations::Builder::BelongsTo::WithGlobalId
 
     def define_global_id_methods(mixin, name)
       mixin.define_method "#{name}_global_id" do
-        send(name).to_global_id
+        public_send(name).to_global_id
       end
 
       mixin.define_method "#{name}_global_id=" do |global_id|
-        send("#{name}=", global_id.present? ? GlobalID::Locator.locate(global_id) : nil)
+        public_send("#{name}=", global_id.present? ? GlobalID::Locator.locate(global_id) : nil)
       end
     end
   end
