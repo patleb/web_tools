@@ -13,7 +13,6 @@ module VirtualRecord
     ARRAY    = /#{COLUMN} (?:(NOT) IN |IN) (\(#{VALUE}?(?:,#{VALUE})?\))/.freeze
     OPERATOR = /#{COLUMN} ([=!<>]=?) #{VALUE}/.freeze
 
-    # TODO attr_internal_accessor :value --> @_value
     attr_reader :order_values
     attr_reader :limit_value
 
