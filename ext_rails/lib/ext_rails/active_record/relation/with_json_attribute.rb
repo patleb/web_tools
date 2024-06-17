@@ -1,7 +1,8 @@
 module ActiveRecord::Relation::WithJsonAttribute
   extend ActiveSupport::Concern
 
-  POSTGRESQL_OPERATORS = /^(!|NOT )?(=|~\*?|[<>]=?|IS( NOT)?|I?LIKE|SIMILAR TO|BETWEEN|IN|ANY|ALL)$/i
+  self::QUERYING_METHODS = [:where_not].freeze
+  self::POSTGRESQL_OPERATORS = /^(!|NOT )?(=|~\*?|[<>]=?|IS( NOT)?|I?LIKE|SIMILAR TO|BETWEEN|IN|ANY|ALL)$/i
 
   prepended do
     delegate :json_accessors, :json_key, :jk, to: :klass
@@ -63,17 +64,17 @@ module ActiveRecord::Relation::WithJsonAttribute
     json_accessors ? super(*attributes.map{ |name| json_key(name) }) : super
   end
 
-  def order_group(*attributes, **opts)
+  def order_group(*attributes, **)
     if json_accessors
-      super(*attributes.map{ |name| json_key(name) }, **opts)
+      super(*attributes.map{ |name| json_key(name) }, **)
     else
       super
     end
   end
 
-  def calculate_from(operation, from, from_operation, from_column = '*', **opts)
-    if json_accessors && from_column && from_column != '*'
-      super(operation, from, from_operation, json_key(from_column), **opts)
+  def calculate_from(operation, from, from_operation, from_column, from_arg = nil, **)
+    if json_accessors
+      super(operation, from, from_operation, json_key(from_column), from_arg, **)
     else
       super
     end
@@ -87,9 +88,9 @@ module ActiveRecord::Relation::WithJsonAttribute
     end
   end
 
-  def calculate(operation, column = nil, *args)
+  def calculate(operation, column = nil, *)
     if json_accessors && column
-      super(operation, json_key(column), *args)
+      super(operation, json_key(column), *)
     else
       super
     end

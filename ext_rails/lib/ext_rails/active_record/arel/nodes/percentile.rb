@@ -1,20 +1,19 @@
 module Arel
   module Nodes
     class Percentile < Arel::Nodes::Function
-      attr_accessor :percentile, :discrete
+      attr_accessor :percentile
 
-      def initialize(expr, percentile, discrete = false, aliaz = nil)
+      def initialize(expr, percentile, aliaz = nil)
         super(expr, aliaz)
         @percentile = percentile
-        @discrete = discrete
       end
 
       def hash
-        [@expressions, @alias, @distinct, @percentile, @discrete].hash
+        [@expressions, @alias, @distinct, @percentile].hash
       end
 
       def eql?(other)
-        super && self.percentile == other.percentile && self.discrete == other.discrete
+        super && self.percentile == other.percentile
       end
     end
   end

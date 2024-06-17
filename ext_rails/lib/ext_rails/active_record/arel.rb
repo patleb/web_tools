@@ -1,16 +1,5 @@
 require 'arel_extensions'
-require_rel './arel'
-
-module ArelExtensions
-  module Attributes
-    # use :eq instead
-    def ==(other)
-      eql? other
-    end
-
-    # use :not_eq insead
-    def !=(other)
-      !eql?(other)
-    end
-  end
-end
+require 'ext_rails/active_record/arel/expressions'
+require 'ext_rails/active_record/arel/visitors'
+require 'ext_rails/active_record/arel/nodes/percentile'
+require 'ext_rails/active_record/arel/nodes/median'

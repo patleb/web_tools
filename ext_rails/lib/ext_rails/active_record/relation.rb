@@ -1,6 +1,8 @@
-require_rel 'relation'
+require 'ext_rails/active_record/relation/with_atomic_operations'
+require 'ext_rails/active_record/relation/with_calculate'
+require 'ext_rails/active_record/relation/with_json_attribute'
+require 'ext_rails/active_record/relation/with_returning_column'
 
-# TODO https://github.com/jhollinger/occams-record
 ActiveRecord::Relation.class_eval do
   prepend self::WithAtomicOperations
   include self::WithCalculate
@@ -16,19 +18,12 @@ ActiveRecord::Relation.class_eval do
     relation = reverse ? order(aliases.map{ |column| [column, :desc] }.to_h) : order(*aliases)
     relation.group(*columns)
   end
-
-  def count_estimate
-    return 0 if none? # values[:extending]&.include? ActiveRecord::NullRelation
-
-    sql = limit(nil).offset(nil).reorder(nil).to_sql
-    connection.select_value("SELECT count_estimate(#{connection.quote(sql)})")
-  end
 end
 
 ActiveRecord::Base.class_eval do
   class << self
-    delegate :select_without, :where_not, :order_group, :count_estimate, to: :all
-    delegate :stddev, :variance, :median, :percentile, to: :all
-    delegate :group_by_period, :top_group_calculate, :calculate_from, :calculate_multi, to: :all
+    delegate :select_without, :order_group, to: :all
+    delegate *ActiveRecord::Relation::WithCalculate::QUERYING_METHODS, to: :all
+    delegate *ActiveRecord::Relation::WithJsonAttribute::QUERYING_METHODS, to: :all
   end
 end

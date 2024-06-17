@@ -1,4 +1,35 @@
+MonkeyPatch.add{['activerecord', 'lib/active_record/relation/calculations.rb', '0e6796097f82d27b9f099efa14999de2f7a218237a6abbd6d430695c158ed694']}
+
 module ActiveRecord::Relation::WithCalculate
+  self::QUERYING_METHODS = [
+    :stddev, :variance, :median, :percentile, :count_estimate,
+    :group_by_period, :top_group_calculate, :calculate_from, :calculate_multi
+  ].freeze
+
+  def stddev(column)
+    calculate(:stddev, column)
+  end
+
+  def variance(column)
+    calculate(:variance, column)
+  end
+
+  def median(column)
+    calculate(:median, column)
+  end
+
+  def percentile(column, percentile)
+    calculate(:percentile, column, percentile)
+  end
+
+  def count_estimate
+    return 0 if none? # values[:extending]&.include? ActiveRecord::NullRelation
+
+    sql = limit(nil).offset(nil).reorder(nil).to_sql
+    connection.select_value("SELECT count_estimate(#{connection.quote(sql)})")
+  end
+
+  # NOTE must be used with an aggregate method like #calculate
   def group_by_period(period, column: :created_at, reverse: false, seconds: nil, time_range: nil)
     column = klass.quote_column(column)
     group_clause = case period
@@ -8,9 +39,13 @@ module ActiveRecord::Relation::WithCalculate
       when :day_of_month   then "EXTRACT(DAY FROM #{column})::INTEGER"
       when :day_of_year    then "EXTRACT(DOY FROM #{column})::INTEGER"
       when :month_of_year  then "EXTRACT(MONTH FROM #{column})::INTEGER"
-      when :week           then "(DATE_TRUNC('day', #{column} - INTERVAL '1 day' * ((13 + EXTRACT(DOW FROM #{column})::INTEGER) % 7)))"
-      when :custom         then ["TO_TIMESTAMP(FLOOR(EXTRACT(EPOCH FROM #{column}) / ?) * ?)", seconds, seconds]
-      else                      ["DATE_TRUNC(?, #{column})", period]
+      when :week
+        "(DATE_TRUNC('day', #{column} - INTERVAL '1 day' * ((13 + EXTRACT(DOW FROM #{column})::INTEGER) % 7)))"
+      when :custom
+        seconds = seconds.to_i
+        "TO_TIMESTAMP(FLOOR(EXTRACT(EPOCH FROM #{column}) / #{seconds}) * #{seconds})"
+      else
+        ["DATE_TRUNC(?, #{column})", period]
       end
     group_clause = group_clause.is_a?(Array) ? sanitize_sql_array(group_clause) : group_clause
     where_clause = case time_range
@@ -28,42 +63,26 @@ module ActiveRecord::Relation::WithCalculate
       else
         ["#{column} IS NOT NULL"]
       end
-    relation = order(column_alias_for(group_clause.to_s.dup).downcase => (reverse ? :desc : :asc))
+    relation = order(column_alias_for(group_clause) => (reverse ? :desc : :asc))
     relation.where(*where_clause).group(group_clause)
   end
 
-  def top_group_calculate(*groups, operation, column: nil, reverse: true, **opts)
-    order("1 #{reverse ? 'DESC' : 'ASC'}").order_group(*groups, **opts).calculate(operation, column)
+  def top_group_calculate(*groups, operation, column: nil, arg: nil, reverse: true)
+    order("1 #{reverse ? 'DESC' : 'ASC'}").order_group(*groups).calculate(operation, column, arg)
   end
 
-  def calculate_from(operation, from, from_operation, from_column, distinct: nil)
-    select = operation_sql(from_operation, from_column, from.distinct_value) # /^SELECT (.+?)(?= FROM)/
-    from.distinct!(false)
+  def calculate_from(operation, from, from_operation, from_column, from_arg = nil, distinct: nil, arg: nil)
+    select = operation_sql(from_operation, from_column, from.distinct_value || from_arg)
+    from = from.distinct(false)
     from.select_values = from.group_values_as
     from.select_values << (from_column ? "#{select} AS result" : "#{select.sub(/\*\)$/, '')}\\1) AS result")
-    relation = base_class.from("(#{from.to_sql}) AS t")
+    relation = base_class.unscoped.from("(#{from.to_sql}) AS t")
     relation = relation.distinct if distinct
-    relation.calculate(operation, 'result')
-  end
-
-  def stddev(column)
-    calculate(:stddev, column)
-  end
-
-  def variance(column)
-    calculate(:variance, column)
-  end
-
-  def median(column, discrete = false)
-    calculate(:median, column, discrete)
-  end
-
-  def percentile(column, percentile, discrete = false)
-    calculate(:percentile, column, percentile, discrete)
+    relation.calculate(operation, 'result', arg)
   end
 
   def calculate_multi(columns)
-    selects = columns.map{ |operation_column_args| operation_sql(*operation_column_args).sql_safe }
+    selects = columns.map{ |operation_column_arg| operation_sql(*operation_column_arg).sql_safe }
     relation = distinct!(false)
     if group_values.any?
       select_aliases = group_values_as
@@ -80,60 +99,61 @@ module ActiveRecord::Relation::WithCalculate
     end
   end
 
-  def calculate(operation, column = nil, *args)
+  def calculate(operation, column, arg = nil)
     case operation
     when Array
       calculate_multi(operation)
     when :percentile
       if has_include? column
-        apply_join_dependency.calculate(operation, column, *args)
+        apply_join_dependency.calculate(operation, column, arg)
       else
-        perform_calculation(operation, column, *args)
+        perform_calculation(operation, column, arg)
       end
     else
       super(operation, column)
     end
   end
 
+  protected
+
   def group_values_as
-    group_values.map{ |field| "#{field} AS #{column_alias_for(field.to_s.dup).downcase}".sql_safe }
+    group_values.map{ |field| "#{field} AS #{column_alias_for(field)}".sql_safe }
   end
 
   private
 
-  def perform_calculation(operation, column, *args)
-    case (operation = operation.to_s)
+  def column_alias_for(field)
+    ActiveRecord::Calculations::ColumnAliasTracker.new(connection).alias_for(field.to_s.downcase)
+  end
+
+  def perform_calculation(operation, column, arg = nil)
+    case (operation = operation.to_s.downcase)
     when 'percentile'
       if group_values.any?
-        execute_grouped_calculation(operation, column, *args)
+        execute_grouped_calculation(operation, column, arg)
       else
-        execute_simple_calculation(operation, column, *args)
+        execute_simple_calculation(operation, column, arg)
       end
     else
       super(operation, column)
     end
   end
 
-  def operation_over_aggregate_column(column, operation, distinct)
+  def operation_over_aggregate_column(column, operation, arg)
     case operation
     when 'percentile'
-      column.send(operation, distinct)
+      column.public_send(operation, arg)
     else
       super
     end
   end
 
-  def type_cast_calculated_value(value, operation, type)
-    case operation
-    when 'stddev', 'variance', 'median', 'percentile' then value&.respond_to?(:to_d) ? value.to_d : value
-    else super
-    end
-  end
-
-  def operation_sql(operation, column = nil, *args)
-    operation = Arel.star.send(operation, *args.compact).to_sql
+  def operation_sql(operation, column, arg = nil)
+    operation = Arel.star.send(operation, *Array.wrap(arg)).to_sql
     if (column = column.to_s).present?
-      operation << '::' << column.split('::').last unless operation.upcase.start_with?('COUNT')
+      unless column.exclude?('::') || operation.upcase.start_with?('COUNT')
+        operation << '::' << column.split('::').last
+      end
       operation.sub! '*', klass.quote_column(column)
     end
     operation
