@@ -1,0 +1,6 @@
+<% (1..ENV['TEST_RECORDS']&.to_i || 5).each do |i| %>
+test_related_record_<%= i %>:
+  id: <%= i %>
+  name: related <%= i %>
+  record_id: <%= i %>
+<% end %>

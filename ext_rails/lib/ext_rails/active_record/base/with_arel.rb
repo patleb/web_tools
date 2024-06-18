@@ -1,7 +1,3 @@
-# TODO
-# https://gist.github.com/phlegx/add77d24ebc57f211e8b
-# https://gist.github.com/hadees/cff6af2b53d340b9b4b2
-# http://radar.oreilly.com/2014/05/more-than-enough-arel.html
 module ActiveRecord::Base::WithArel
   extend ActiveSupport::Concern
 
@@ -18,14 +14,14 @@ module ActiveRecord::Base::WithArel
       arel_table.join(table.is_a?(ActiveRecord::Base) ? table.arel_table : table)
     end
 
-    def greatest(*columns, **options)
-      with_columns_as(columns, **options) do |columns, as|
+    def greatest(*columns, **)
+      with_columns_as(columns, **) do |columns, as|
         Arel::Nodes::NamedFunction.new('GREATEST', columns, as)
       end
     end
 
-    def least(*columns, **options)
-      with_columns_as(columns, **options) do |columns, as|
+    def least(*columns, **)
+      with_columns_as(columns, **) do |columns, as|
         Arel::Nodes::NamedFunction.new('LEAST', columns, as)
       end
     end
@@ -41,7 +37,7 @@ module ActiveRecord::Base::WithArel
           attr
         end
       end
-      yield(columns, as)
+      yield(columns, as.to_s)
     end
   end
 end
