@@ -18,6 +18,12 @@ ActiveRecord::Relation.class_eval do
     relation = reverse ? order(aliases.map{ |column| [column, :desc] }.to_h) : order(*aliases)
     relation.group(*columns)
   end
+
+  alias_method :invert_where_without_scope, :invert_where
+  def invert_where(scope = nil)
+    return invert_where_without_scope unless scope
+    where(scope.arel.constraints.reduce(:and).not)
+  end
 end
 
 ActiveRecord::Base.class_eval do

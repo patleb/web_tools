@@ -19,8 +19,8 @@ class ActiveRecord::Relation::WithCalculateTest < ActiveSupport::TestCase
     assert_equal 4.62, Test::Record.percentile(:decimal, 0.8)
   end
 
-  test '.count_estimate' do
-    assert Test::Record.even.count_estimate >= 1
+  test '.count_estimate, .invert_where' do
+    assert Test::Record.odd.count_estimate >= 1
     assert_equal 0, Test::Record.none.count_estimate
   end
 
