@@ -1,3 +1,5 @@
+MonkeyPatch.add{['activerecord', 'lib/active_record/timestamp.rb', '579bc56cdb873a63fb0b0cdaa235f5d78b6655cf6a614735da32f0fe0c19b4b1']}
+
 module ActiveRecord::Base::WithUser
   extend ActiveSupport::Concern
 
@@ -48,11 +50,11 @@ module ActiveRecord::Base::WithUser
     private
 
     def userstamp_attributes_for_create
-      ["creator_id"]
+      ["creator_id"].map!{ |name| attribute_aliases[name] || name }
     end
 
     def userstamp_attributes_for_update
-      ["updater_id"]
+      ["updater_id"].map!{ |name| attribute_aliases[name] || name }
     end
   end
 
@@ -63,9 +65,7 @@ module ActiveRecord::Base::WithUser
       current_user_id = current_user&.id
 
       all_userstamp_attributes_in_model.each do |column|
-        unless attribute_present?(column)
-          write_attribute(column, current_user_id)
-        end
+        _write_attribute(column, current_user_id) unless _read_attribute(column)
       end
     end
 
@@ -73,20 +73,24 @@ module ActiveRecord::Base::WithUser
   end
 
   def _update_record
+    record_update_userstamps
+    super
+  end
+
+  def record_update_userstamps
     if @_touch_record && should_record_userstamps?
       current_user_id = current_user&.id
 
       userstamp_attributes_for_update_in_model.each do |column|
         next if will_save_change_to_attribute?(column)
-        write_attribute(column, current_user_id)
+        _write_attribute(column, current_user_id)
       end
     end
-
-    super
+    yield if block_given?
   end
 
   def should_record_userstamps?
-    record_userstamps && (!partial_writes? || has_changes_to_save?)
+    record_userstamps && (!partial_updates? || has_changes_to_save?)
   end
 
   def userstamp_attributes_for_create_in_model
@@ -109,7 +113,7 @@ module ActiveRecord::Base::WithUser
   def clear_userstamp_attributes
     all_userstamp_attributes_in_model.each do |attribute_name|
       self[attribute_name] = nil
-      clear_attribute_changes([attribute_name])
+      clear_attribute_change(attribute_name)
     end
   end
 end
