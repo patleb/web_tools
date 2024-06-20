@@ -1,20 +1,92 @@
+### References
+# https://github.com/jhawthorn/discard
 module ActiveRecord::Base::WithDiscard
   extend ActiveSupport::Concern
 
   included do
-    include Discard::Model
-
+    class_attribute :discard_column
     self.discard_column = :deleted_at
 
-    scope :only_discarded, -> { with_discarded.discarded }
+    scope :undiscarded,    -> { where(discard_column => nil) }
+    scope :discarded,      -> { with_discarded.where.not(discard_column => nil) }
+    scope :with_discarded, -> { unscope(where: discard_column) }
 
-    alias_method :show?, :kept?
+    alias_method :show?, :undiscarded?
+
+    define_model_callbacks :discard
+    define_model_callbacks :undiscard
+  end
+
+  class_methods do
+    def inherited(subclass)
+      super
+      if subclass.name && !(subclass <= ActiveType::Object)
+        if subclass.default_scopes.none?{ |o| o.scope.source_location.include?(__FILE__) }
+          subclass.send(:default_scope){ discardable? ? undiscarded : all }
+        end
+      end
+    end
+
+    def discardable?
+      return @_discardable if defined? @_discardable
+      @_discardable = !ExtRails.config.skip_discard? && column_names.include?(discard_column.to_s)
+    end
+
+    def discard_all
+      all.each(&:discard)
+    end
+
+    def discard_all!
+      all.each(&:discard!)
+    end
+
+    def undiscard_all
+      discarded.each(&:undiscard)
+    end
+
+    def undiscard_all!
+      discarded.each(&:undiscard!)
+    end
+  end
+
+  def discarded?
+    self[discard_column].present?
+  end
+
+  def undiscarded?
+    !discarded?
+  end
+
+  def discard
+    return false if discarded?
+    with_transaction_returning_status do
+      run_callbacks(:discard) do
+        update_attribute(discard_column, Time.current)
+      end
+    end
+  end
+
+  def discard!
+    discard or raise ActiveRecord::ActiveRecordError, 'Failed to discard the record'
+  end
+
+  def undiscard
+    return false unless discarded?
+    with_transaction_returning_status do
+      run_callbacks(:undiscard) do
+        update_attribute(discard_column, nil)
+      end
+    end
+  end
+
+  def undiscard!
+    undiscard or raise ActiveRecord::ActiveRecordError, "Failed to undiscard the record"
   end
 
   def discard_all(has_many, raise_on_error = false)
     discard_name = raise_on_error ? :discard_all! : :discard_all
     without_default_scope_on_association(has_many) do |association|
-      association.send(discard_name)
+      association.public_send(discard_name)
     end
   end
 
@@ -28,43 +100,11 @@ module ActiveRecord::Base::WithDiscard
       if self.class.column_names.include?('updated_at') && klass.column_names.include?('updated_at')
         association = association.where(klass.column(:updated_at) >= updated_at - 1.second)
       end
-      association.send(undiscard_name)
+      association.public_send(undiscard_name)
     end
   end
 
   def undiscard_all!(has_many)
     undiscard_all(has_many, true)
-  end
-
-  class_methods do
-    def inherited(subclass)
-      super
-      if subclass.name && !(subclass <= ActiveType::Object)
-        if subclass.default_scopes.none?{ |o| o.scope.source_location.include?(__FILE__) }
-          subclass.send(:default_scope, all_queries: true){ discardable? ? kept : all }
-        end
-      end
-    end
-
-    def discardable?
-      return @_discardable if defined? @_discardable
-      @_discardable = (!ExtRails.config.skip_discard? && column_names.include?(try(:discard_column).to_s)).to_b
-    end
-
-    def discard_all
-      all.each(&:discard)
-    end
-
-    def discard_all!
-      all.each(&:discard!)
-    end
-
-    def undiscard_all
-      only_discarded.each(&:undiscard)
-    end
-
-    def undiscard_all!
-      only_discarded.each(&:undiscard!)
-    end
   end
 end
