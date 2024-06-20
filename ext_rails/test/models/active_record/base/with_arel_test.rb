@@ -2,10 +2,10 @@ require './test/rails_helper'
 
 Test::Record.class_eval do
   def self.find_2nd_int_with_related
-    relateds = Test::RelatedRecord.alias_table(:relateds)
+    r = Test::RelatedRecord.alias_table(:r)
     even.where(integer: 2)
-      .joins(join(relateds).on(column(:id) == relateds[:record_id]).join_sources)
-      .select(:id, greatest(:string, :text, relateds[:name], as: :label))
+      .joins(join(r).on(column(:id) == r[:record_id]).join_sources)
+      .select(:id, greatest(:string, :text, r[:name], as: :label))
       .take
   end
 end
