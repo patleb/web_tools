@@ -36,6 +36,13 @@ module ActiveSupport::LazyLoadHooks::Autoload
       base.module_parent.const_get(module_name)
     end
 
+    def _unload_module_const(base, module_name)
+      module_const = _get_module_const(base, module_name)
+      module_const.module_parent.__send__(:remove_const, module_name)
+    rescue NameError
+      # do nothing
+    end
+
     def _parent_hooks
       @_parent_hooks ||= Set.new
     end
@@ -54,6 +61,7 @@ module ActiveSupport::LazyLoadHooks::Autoload
 
         ActiveSupport.autoload_hooks_count += 1
         on_load(hook_name) do |base|
+          ActiveSupport._unload_module_const(base, module_name) if Rails.env.local?
           load file
           base.send type, ActiveSupport._get_module_const(base, module_name)
           ActiveSupport.autoloaded_hooks_count += 1
