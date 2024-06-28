@@ -2,8 +2,10 @@ module ActiveRecord
   module Type
     class Encrypted < ActiveRecord::Type::Text
       def serialize(value)
-        if value.to_s.start_with? Setting::SECRET
-          Setting.decrypt(value)
+        if value&.start_with? Setting::SECRET
+          memoize(__method__, value) do
+            Setting.decrypt(value)
+          end
         else
           value
         end
@@ -12,10 +14,12 @@ module ActiveRecord
       private
 
       def cast_value(value)
-        if value.to_s.start_with? Setting::SECRET
+        if value&.start_with? Setting::SECRET
           value
-        else
-          Setting.encrypt(value.to_s) if value.present?
+        elsif value
+          memoize(__method__, value) do
+            Setting.encrypt(value)
+          end
         end
       end
     end
