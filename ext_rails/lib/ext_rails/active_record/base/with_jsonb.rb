@@ -8,7 +8,7 @@ module ActiveRecord::Base::WithJsonb
   end
 
   class_methods do
-    def serialize(attr_name, class_name_or_coder = Object, **options)
+    def serialize(attr_name, ...)
       return if columns_hash[attr_name.to_s].sql_type == 'jsonb'
       super
     rescue UndefinedTable
