@@ -30,7 +30,7 @@ module ActiveRecord::Relation::WithCalculate
   end
 
   # NOTE must be used with an aggregate method like #calculate
-  def group_by_period(period, column: :created_at, reverse: false, seconds: nil, time_range: nil)
+  def group_by_period(period, column: :created_at, reverse: false, time_range: nil)
     column = klass.quote_column(column)
     group_clause = case period
       when :minute_of_hour then "EXTRACT(MINUTE FROM #{column})::INTEGER"
@@ -41,9 +41,9 @@ module ActiveRecord::Relation::WithCalculate
       when :month_of_year  then "EXTRACT(MONTH FROM #{column})::INTEGER"
       when :week
         "(DATE_TRUNC('day', #{column} - INTERVAL '1 day' * ((13 + EXTRACT(DOW FROM #{column})::INTEGER) % 7)))"
-      when :custom
-        seconds = seconds.to_i
-        "TO_TIMESTAMP(FLOOR(EXTRACT(EPOCH FROM #{column}) / #{seconds}) * #{seconds})"
+      when ActiveSupport::Duration, Numeric
+        period = period.to_i
+        "TO_TIMESTAMP(FLOOR(EXTRACT(EPOCH FROM #{column}) / #{period}) * #{period})"
       else
         ["DATE_TRUNC(?, #{column})", period]
       end

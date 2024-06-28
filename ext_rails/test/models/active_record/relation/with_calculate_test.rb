@@ -39,15 +39,15 @@ class ActiveRecord::Relation::WithCalculateTest < ActiveSupport::TestCase
       minute:         {Time.utc(2000,2,3,4,5)=>1, Time.utc(2000,3,4,5,6)=>1, Time.utc(2000,4,5,6,7)=>1, Time.utc(2000,5,6,7,8)=>1, Time.utc(2000,6,7,8,9)=>1},
       hour:           {Time.utc(2000,2,3,4)=>1, Time.utc(2000,3,4,5)=>1, Time.utc(2000,4,5,6)=>1, Time.utc(2000,5,6,7)=>1, Time.utc(2000,6,7,8)=>1},
     }.each do |period, value|
-      assert_equal value, Test::Record.group_by_period(period, column: :date_time).count
+      assert_equal value, Test::Record.group_by_period(period, column: :datetime).count
     end
     assert_equal(
       {Time.utc(2000,2,3)=>1, Time.utc(2000,3,4)=>1, Time.utc(2000,4,5)=>1, Time.utc(2000,5,6)=>1, Time.utc(2000,6,7)=>1},
-      Test::Record.group_by_period(:custom, column: :date_time, seconds: 1.day).count
+      Test::Record.group_by_period(1.day, column: :datetime).count
     )
     assert_equal(
       {Time.utc(2000,2,3)=>1},
-      Test::Record.group_by_period(:day, column: :date_time, time_range: Time.utc(2000,1,1)..Time.utc(2000,3,1)).count
+      Test::Record.group_by_period(:day, column: :datetime, time_range: Time.utc(2000,1,1)..Time.utc(2000,3,1)).count
     )
   end
 
