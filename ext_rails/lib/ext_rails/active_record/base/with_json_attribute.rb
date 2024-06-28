@@ -1,9 +1,10 @@
-# TODO https://github.com/guyboertje/arel-pg-json
+### References
+# https://github.com/madeintandem/jsonb_accessor
 module ActiveRecord::Base::WithJsonAttribute
   extend ActiveSupport::Concern
 
-  POSTGRESQL_JSON_ACCESSORS = %w(->> #>>)
-  POSTGRESQL_TYPES = {
+  self::POSTGRESQL_JSON_ACCESSORS = %w(->> #>>)
+  self::POSTGRESQL_JSON_TYPES = {
     big_integer: 'BIGINT',
     boolean: 'BOOLEAN',
     date: 'DATE',
@@ -19,7 +20,7 @@ module ActiveRecord::Base::WithJsonAttribute
   }.with_keyword_access
 
   prepended do
-    class_attribute :json_accessors, instance_accessor: false, instance_predicate: false
+    class_attribute :json_accessors, instance_reader: true, instance_accessor: false, instance_predicate: false
 
     delegate :json_attribute?, to: :class
   end
@@ -29,86 +30,78 @@ module ActiveRecord::Base::WithJsonAttribute
       json_accessors[:json_data]
     end
 
-    def json_attribute(field_types)
-      json_accessor(:json_data, field_types)
+    def json_attribute(fields)
+      json_accessor(:json_data, fields)
     end
 
-    def json_attribute?(name)
+    def json_attribute?(name, *_keys)
       return false unless json_accessors
-      json_accessors[:json_data].has_key? Array.wrap(name).first
+      json_accessors[:json_data].has_key? name
     end
 
-    def json_translate(field_types)
-      field_types.each do |field, type|
-        if type.is_a?(Array) && (options = type.last).is_a?(Hash) && options.key?(:default)
-          default = options.delete(:default)
+    def json_translate(fields)
+      fields = json_normalize_fields(fields)
+      defaults = json_extract_defaults! fields
+      fields.each do |name, type_options|
+        localized_fields = I18n.available_locales.each_with_object({}) do |locale, memo|
+          memo.merge! "#{name}_#{locale}": type_options
         end
+        json_attribute(localized_fields)
+        default = defaults[name]
 
-        json_attribute(I18n.available_locales.each_with_object({}) { |locale, json|
-          json.merge! "#{field}_#{locale}": type
-        })
-
-        define_method field do |locale = nil, fallback = nil|
-          locale ||= Current.locale || I18n.default_locale
-          send("#{field}_#{locale}").presence ||
-            send("#{field}_#{fallback || I18n.available_locales.except(locale.to_sym).first}").presence ||
-            (default.is_a?(Proc) ? I18n.with_locale(locale){ default.call(self) } : default)
+        define_method name do |locale = nil, fallback = nil|
+          locale ||= Current.locale
+          value = public_send("#{name}_#{locale}")
+          return value unless value.nil?
+          fallback ||= I18n.available_locales.except(locale.to_sym).first
+          value = public_send("#{name}_#{fallback}")
+          return value unless value.nil?
+          return I18n.with_locale(locale){ default.call(self, locale) } if default.is_a? Proc
+          default
         end
       end
     end
 
-    def json_key(name, as: nil, cast: nil)
+    def json_key(name, *keys, as: nil, cast: nil)
       return name unless json_attribute? name
-      name, *keys = Array.wrap(name)
       if keys.present?
+        type = cast || :text
         key = "#{quote_column(:json_data)}#>>'{#{name},#{keys.join(',')}}'"
-        key = "(#{key})::#{POSTGRESQL_TYPES[cast || :text]}"
       else
+        type = cast || json_accessors[:json_data][name].first
         key = "#{quote_column(:json_data)}->>'#{name}'"
-        key = "(#{key})::#{POSTGRESQL_TYPES[cast || Array.wrap(json_accessors[:json_data][name]).first]}"
       end
+      key = "(#{key})::#{POSTGRESQL_JSON_TYPES[type]}"
       return "#{key} AS #{as == true ? [name, *keys].join('_') : as}".sql_safe if as.present?
       key.sql_safe
     end
-    alias_method :jk, :json_key
 
-    def json_accessor(column, field_types)
+    # NOTE column (ex.: :json_data) is updated only before validations, but fields are updated when column is updated
+    def json_accessor(column, fields)
       self.json_accessors ||= {}.with_keyword_access
-      self.json_accessors[column] ||= {}.with_keyword_access
-      field_types = Array.wrap(field_types).map{ |name| [name, :string] }.to_h unless field_types.is_a? Hash
-      defaults = field_types.each_with_object({}.with_keyword_access) do |(name, type), defaults|
-        next unless type.is_a?(Array) && (options = type.last).is_a?(Hash) && options.key?(:default)
-        defaults[name] = options.delete(:default)
-      end
-      self.json_accessors[column].merge! field_types
-
-      field_types.each do |name, type|
-        options = type.is_a?(Array) ? type.extract_options! : {}
-        attribute name, *type, **options
+      json_accessors[column] ||= {}.with_keyword_access
+      fields = json_normalize_fields(fields)
+      defaults = json_extract_defaults! fields
+      previous_keys = json_accessors[column].keys
+      json_accessors[column].merge! fields
+      fields.each do |name, (type, options)|
+        attribute name, type, **options
       end
 
       accessors = Module.new do
-        field_types.each_key do |name|
-          define_method "#{name}=" do |value|
-            super(value)
-            values = public_send(column).merge(name => public_send(name))
-            write_attribute(column, values)
-          end
-
-          next unless defaults.has_key? name
-          default = defaults[name]
-
+        defaults.each do |name, default|
           define_method name do
-            if (value = super()).nil?
-              (default.is_a?(Proc) ? default.call(self) : default)
-            else
-              value
-            end
+            value = super()
+            return value unless value.nil?
+            return default.call(self) if default.is_a? Proc
+            default
           end
         end
 
+        next unless previous_keys.empty?
+
         define_method "#{column}=" do |new_values|
-          new_values = (new_values || {}).with_keyword_access.slice(*self.class.json_accessors[column].keys)
+          new_values = (new_values || {}).with_keyword_access.slice(*json_accessors[column].keys)
           nil_values = public_send(column).except(*new_values.keys)
           super(new_values)
           nil_values.each_key do |name|
@@ -120,22 +113,54 @@ module ActiveRecord::Base::WithJsonAttribute
         end
 
         define_method "initialize_#{column}" do
-          return unless has_attribute? column
-          (public_send(column) || {}).each do |name, value|
+          return unless (values = public_send(column)).present?
+          values.each do |name, value|
             next unless has_attribute? name
             write_attribute(name, value)
             clear_attribute_change(name) if persisted?
           end
         end
-      end
-      include accessors # TODO test if could be called several times
 
-      after_initialize :"initialize_#{column}"
+        define_method "nullify_blanks_#{column}" do
+          values = json_accessors[column].each_with_object({}) do |(name, (type, _options)), memo|
+            value = read_attribute(name)
+            next if value.nil?
+            memo[name] = value
+          end
+          write_attribute(column, values)
+        end
+      end
+      include accessors
+
+      if previous_keys.empty?
+        after_initialize  :"initialize_#{column}"
+        before_validation :"nullify_blanks_#{column}"
+      end
     end
 
     def quote_column(name)
       return name if name.is_a?(Arel::Nodes::SqlLiteral) || POSTGRESQL_JSON_ACCESSORS.any?{ |op| name.to_s.include? op }
       super
+    end
+
+    private
+
+    def json_normalize_fields(fields)
+      if fields.is_a? Hash
+        fields.transform_values do |(type, options)|
+          type, options = :string, type if type.is_a? Hash
+          [type, options || {}]
+        end
+      else
+        Array.wrap(fields).map{ |name| [name, [:string, {}]] }.to_h
+      end
+    end
+
+    def json_extract_defaults!(fields)
+      fields.each_with_object({}.with_keyword_access) do |(name, (type, options)), defaults|
+        next unless options.has_key?(:default)
+        defaults[name] = options.delete(:default)
+      end
     end
   end
 end

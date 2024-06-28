@@ -5,7 +5,7 @@ module ActiveRecord::Relation::WithJsonAttribute
   self::POSTGRESQL_OPERATORS = /^(!|NOT )?(=|~\*?|[<>]=?|IS( NOT)?|I?LIKE|SIMILAR TO|BETWEEN|IN|ANY|ALL)$/i
 
   prepended do
-    delegate :json_accessors, :json_key, :jk, to: :klass
+    delegate :json_accessors, :json_key, to: :klass
   end
 
   def select(*attributes, as: true)
