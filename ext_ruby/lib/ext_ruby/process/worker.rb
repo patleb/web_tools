@@ -31,7 +31,7 @@ module Process
       Z: :zombie,
       P: :parked,
       I: :idle,
-    }.with_keyword_access.freeze
+    }.with_indifferent_access.freeze
     PID_DEAD = -1
     PID_INIT = 1
 

@@ -1,13 +1,25 @@
 class Symbol
-  def with(*args, **options, &block)
-    -> (caller, *rest) { caller.send(self, *rest, *args, **options, &block) }
+  def with(...)
+    -> (caller, *rest) { caller.send(self, *rest, ...) }
   end
 
-  def pluralize(*args)
-    to_s.pluralize(*args).to_sym
+  def pluralize(...)
+    to_s.pluralize(...).to_sym
   end
 
-  def singularize(*args)
-    to_s.singularize(*args).to_sym
+  def singularize(...)
+    to_s.singularize(...).to_sym
+  end
+
+  def camelize(...)
+    to_s.camelize(...).to_sym
+  end
+
+  def underscore(...)
+    to_s.underscore(...).to_sym
+  end
+
+  def full_underscore(...)
+    to_s.full_underscore(...).to_sym
   end
 end

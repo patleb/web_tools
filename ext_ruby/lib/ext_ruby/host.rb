@@ -5,7 +5,7 @@ module Host
   MASTER   = 'sh:dns-set_hosts-master'
 
   def self.domains
-    @domains ||= constants.each_with_object({}.with_keyword_access) do |constant, memo|
+    @domains ||= constants.each_with_object({}.with_indifferent_access) do |constant, memo|
       tag = const_get(constant)
       first, last = "#{tag}-start", "#{tag}-end"
       list = Pathname.new('/etc/hosts').readlines

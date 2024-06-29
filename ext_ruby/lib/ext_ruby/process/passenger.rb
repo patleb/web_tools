@@ -63,7 +63,7 @@ module Process
         next unless status.success?
         result = ActiveSupport::JSON.decode(stdout) rescue nil
         next unless result
-        result.except('threads').values.each_with_object({}.with_keyword_access) do |thread, process|
+        result.except('threads').values.each_with_object({}.with_indifferent_access) do |thread, process|
           thread.each do |key, value|
             case key
             when *SERVER_PROCESS_KEYS
@@ -93,7 +93,7 @@ module Process
         stdout_with_arrays = stdout.gsub(/<(supergroups|processes)(\/)?>/, '<\1 type="array"\2>')
         result = Hash.from_xml(stdout_with_arrays) rescue nil
         next unless result
-        result['info'].with_keyword_access
+        result['info'].with_indifferent_access
       end
     end
 
