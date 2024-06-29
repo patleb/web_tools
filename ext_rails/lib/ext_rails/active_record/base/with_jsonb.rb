@@ -1,3 +1,4 @@
+# NOTE to force ActiveStorage::Blob.store to use postgres serializer
 module ActiveRecord::Base::WithJsonb
   extend ActiveSupport::Concern
 
