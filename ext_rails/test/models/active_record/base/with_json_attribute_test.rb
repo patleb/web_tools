@@ -35,7 +35,7 @@ class ActiveRecord::Base::WithJsonAttributeTest < ActiveSupport::TestCase
     assert_equal 'Nouveau Titre', record.title
     assert_equal 'New Title', record.title(:en)
 
-    assert record.json_data.is_a?(ActiveSupport::HashWithKeywordAccess)
+    assert record.json_data.is_a?(ActiveSupport::HashWithIndifferentAccess)
   end
 
   test '.json_key' do

@@ -29,7 +29,7 @@ module Rack::Utils
 
   def parse_url(url)
     uri = URI.parse(url)
-    params = parse_nested_query(uri.query).with_keyword_access
+    params = parse_nested_query(uri.query).with_indifferent_access
 
     [uri, params]
   end

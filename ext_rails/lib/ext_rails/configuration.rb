@@ -37,7 +37,7 @@ module ExtRails
     end
 
     def db_partitions
-      @db_partitions ||= {}.with_keyword_access
+      @db_partitions ||= {}.with_indifferent_access
     end
 
     def backup_excludes
