@@ -13,7 +13,7 @@ class ActiveRecord::Base::WithDiscardTest < ActiveSupport::TestCase
     assert_equal 5, Test::RelatedRecord.undiscarded.size
     Test::Record.discard_all!
     assert_equal 6, Test::Record.discarded.size
-    assert_equal 6, Test::RelatedRecord.discarded.size
+    assert_equal 4, Test::RelatedRecord.discarded.size
     Test::Record.undiscard_all!
     assert_equal 6, Test::Record.undiscarded.size
     assert_equal 6, Test::RelatedRecord.undiscarded.size

@@ -113,6 +113,7 @@ module ActiveRecord::Base::WithJsonAttribute
         end
 
         define_method "initialize_#{column}" do
+          return unless has_attribute? column
           return unless (values = public_send(column)).present?
           values.each do |name, value|
             next unless has_attribute? name
