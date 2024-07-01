@@ -6,7 +6,7 @@ class User::Null < ActiveType::NullObject
     attribute name, type
   end
 
-  alias_attribute :user_id, :id
+  alias_method :user_id, :id
 
   def discarded
     false
