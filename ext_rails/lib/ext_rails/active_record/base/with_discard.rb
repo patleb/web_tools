@@ -22,15 +22,16 @@ module ActiveRecord::Base::WithDiscard
       super
       if subclass.name && !(subclass <= ActiveType::Object)
         if subclass.default_scopes.none?{ |o| o.scope.source_location.include?(__FILE__) }
-          subclass.send(:default_scope){ discardable? ? undiscarded : all }
+          subclass.send(:default_scope){ discardable ? undiscarded : all }
         end
       end
     end
 
-    def discardable?
-      return @_discardable if defined? @_discardable
-      @_discardable = !ExtRails.config.skip_discard? && column_names.include?(discard_column.to_s)
+    def discardable
+      return @discardable if defined? @discardable
+      @discardable = !ExtRails.config.skip_discard? && column_names.include?(discard_column.to_s)
     end
+    alias_method :discardable?, :discardable
 
     def discard_all
       all.each(&:discard)
@@ -49,13 +50,15 @@ module ActiveRecord::Base::WithDiscard
     end
   end
 
-  def discarded?
+  def discarded
     self[discard_column].present?
   end
+  alias_method :discarded?, :discarded
 
-  def undiscarded?
-    !discarded?
+  def undiscarded
+    !discarded
   end
+  alias_method :undiscarded?, :undiscarded
 
   def discard
     return false if discarded?
