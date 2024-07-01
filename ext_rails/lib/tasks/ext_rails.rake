@@ -1,4 +1,4 @@
-require_rel 'ext_rails'
+require_dir __FILE__, 'ext_rails'
 
 namespace :backup do
   desc "-- [options] Backup Git"
