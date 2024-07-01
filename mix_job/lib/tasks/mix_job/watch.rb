@@ -337,7 +337,7 @@ module MixJob
       when 0          then return
       when @jobs.size then @jobs.shift
       end
-      @jobs << { time: Time.current.utc, thread: Thread.current[:name] }.with_keyword_access.merge!(job_snapshot)
+      @jobs << { time: Time.current.utc, thread: Thread.current[:name] }.with_indifferent_access.merge!(job_snapshot)
     end
 
     def perform_error?

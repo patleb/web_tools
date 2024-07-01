@@ -23,8 +23,8 @@ module MixSetting::Type
         when :json
           case value
           when Array then value
-          when Hash  then value.with_keyword_access
-          else ActiveSupport::JSON.decode(value).with_keyword_access
+          when Hash  then value.with_indifferent_access
+          else ActiveSupport::JSON.decode(value).with_indifferent_access
           end
         when :boolean
           value.to_b

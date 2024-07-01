@@ -65,7 +65,7 @@ module GlobalCache
     end
 
     def write_multi(hash, **options)
-      hash.each_with_object({}.with_keyword_access) do |(name, value), memo|
+      hash.each_with_object({}.with_indifferent_access) do |(name, value), memo|
         record = write_record(name, value, **options)
         memo[key_name(record)] = value
       end

@@ -15,7 +15,7 @@ module Cloud::Openstack
     raise DoesNotExist if (security_group = openstack_security_group_list(project).first).nil?
     raise DoesNotExist if openstack_keypair_list(keypair).empty?
 
-    openstack_execute(<<-CMD.squish).map(&:values).to_h.transform_keys(&:underscore).with_keyword_access
+    openstack_execute(<<-CMD.squish).map(&:values).to_h.transform_keys(&:underscore).with_indifferent_access
       nova boot --poll
         --flavor #{flavor}
         --nic net-id=#{network[:id]}
@@ -98,7 +98,7 @@ module Cloud::Openstack
     filters = filters.reject(&:blank?)
     header = openstack_cells(lines.shift).map(&:underscore)
     lines.each_with_object([]) do |line, rows|
-      row = openstack_cells(line).each_with_object({}.with_keyword_access).with_index do |(cell, row), i|
+      row = openstack_cells(line).each_with_object({}.with_indifferent_access).with_index do |(cell, row), i|
         row[header[i]] = cell
       end
       rows << row if filters.empty? || filters.all?{ |filter| row.any?{ |_, v| v.include? filter } }

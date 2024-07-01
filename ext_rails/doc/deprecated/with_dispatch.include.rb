@@ -4,7 +4,7 @@ module ActionController::WithDispatch
 
   class_methods do
     def dispatch_now(url_or_controller, action = nil, params: {}, request_params: {}, session: nil, local: nil)
-      params = params.with_keyword_access
+      params = params.with_indifferent_access
       if request_params.has_key? :_method
         params[:method] = request_params[:_method] || 'post'
       end
