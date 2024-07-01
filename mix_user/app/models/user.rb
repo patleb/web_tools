@@ -7,7 +7,7 @@ class User < MixUser.config.parent_model.constantize
 
   json_attribute MixUser.config.json_attributes
 
-  alias_attribute :user_id, :id
+  alias_method :user_id, :id
 
   enum role: MixUser.config.available_roles
 
