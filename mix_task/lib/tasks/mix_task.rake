@@ -1,4 +1,4 @@
-require_rel 'mix_task'
+require_dir __FILE__, 'mix_task'
 
 namespace :task do
   desc 'run "Some.ruby(code)" or filename.rb'

@@ -1,4 +1,4 @@
-require_rel 'web_tools'
+require_dir __FILE__, 'web_tools'
 
 namespace :tools do
   desc 'symlink all private gems'

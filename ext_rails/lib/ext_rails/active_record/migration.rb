@@ -1,4 +1,4 @@
-require_rel 'migration'
+require_dir __FILE__, 'migration'
 
 ActiveRecord::Migration.class_eval do
   include self::WithPartition

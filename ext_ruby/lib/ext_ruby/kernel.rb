@@ -1,11 +1,22 @@
 module Kernel
-  # TODO 2.6 Binding#source_location
   def caller_location(start = 1)
     caller_locations(2, start)[start - 1]
   end
 
+  def load_dir(location, dir = nil, ext: 'rb')
+    Dir["#{File.dirname(location)}/#{dir}/**/*.#{ext}"].sort.each do |file|
+      load file
+    end
+  end
+
+  def require_dir(location, dir = nil, ext: 'rb')
+    Dir["#{File.dirname(location)}/#{dir}/**/*.#{ext}"].sort.each do |file|
+      require file
+    end
+  end
+
   def require_and_extend(location, context)
-    Dir[File.join(File.expand_path(File.dirname(location)), "#{context.name.underscore}/**/*.rb")].each do |file|
+    Dir["#{File.dirname(location)}/#{context.name.underscore}/**/*.rb"].sort.each do |file|
       require file
       name = File.basename(file, '.rb')
       context.extend const_get(name.camelize)

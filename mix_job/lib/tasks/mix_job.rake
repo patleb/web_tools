@@ -1,4 +1,4 @@
-require_rel 'mix_job'
+require_dir __FILE__, 'mix_job'
 
 namespace :job do
   desc '-- [options] Watch jobs and send to workers if ready'

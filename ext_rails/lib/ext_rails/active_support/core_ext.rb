@@ -1,10 +1,2 @@
-require "ext_rails/active_support/core_ext/date_and_time/conversions"
-require "ext_rails/active_support/core_ext/hash/conversions"
-require "ext_rails/active_support/core_ext/string/conversions"
-require "ext_rails/active_support/core_ext/date"
-require "ext_rails/active_support/core_ext/date_time"
-require "ext_rails/active_support/core_ext/kernel"
-require "ext_rails/active_support/core_ext/numeric"
-require "ext_rails/active_support/core_ext/string"
-require "ext_rails/active_support/core_ext/time"
-require "ext_rails/active_support/parameter_filter/with_regexp"
+require 'ext_rails/active_support/core_ext/date_and_time/conversions'
+require_dir __FILE__, 'core_ext'

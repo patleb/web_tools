@@ -1,8 +1,6 @@
 module Sql::Reference
   extend ActiveSupport::Concern
 
-  require_rel 'reference'
-
   included do
     # foreign_key: {...}          --> :dependent
     prepend self::CounterCache #  --> :counter_cache

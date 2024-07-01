@@ -1,4 +1,4 @@
-require_rel 'base'
+require_dir __FILE__, 'base'
 
 ActionController::Base.class_eval do
   helper  MixTemplate::Engine.helpers

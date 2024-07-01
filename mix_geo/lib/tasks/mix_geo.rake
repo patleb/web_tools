@@ -1,4 +1,4 @@
-require_rel 'mix_geo'
+require_dir __FILE__, 'mix_geo'
 
 namespace :geo do
   desc 'import geo ips' # takes about 2m40s on 8 cores (GeoIp: 279 MB including 110 MB of indexes)

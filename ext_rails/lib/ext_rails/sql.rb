@@ -1,5 +1,5 @@
 module Sql
-  require_rel 'sql'
+  require_dir __FILE__, 'sql'
 
   include self::Reference
 
