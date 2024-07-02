@@ -3,7 +3,7 @@
 module ActiveRecord::Base::WithNullifyBlanks
   extend ActiveSupport::Concern
 
-  self::DEFAULT_TYPES = [:string, :text, :citext]
+  DEFAULT_TYPES = [:string, :text, :citext]
 
   prepended do
     class_attribute :nullify_blanks_types, instance_writer: false, instance_predicate: false, default: DEFAULT_TYPES

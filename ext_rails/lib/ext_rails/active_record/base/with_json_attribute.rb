@@ -3,8 +3,8 @@
 module ActiveRecord::Base::WithJsonAttribute
   extend ActiveSupport::Concern
 
-  self::POSTGRESQL_JSON_ACCESSORS = %w(->> #>>)
-  self::POSTGRESQL_JSON_TYPES = {
+  POSTGRESQL_JSON_ACCESSORS = %w(->> #>>)
+  POSTGRESQL_JSON_TYPES = {
     big_integer: 'BIGINT',
     boolean: 'BOOLEAN',
     date: 'DATE',

@@ -1,8 +1,8 @@
 module ActiveRecord::Relation::WithJsonAttribute
   extend ActiveSupport::Concern
 
-  self::QUERYING_METHODS = [:where_not].freeze
-  self::POSTGRESQL_OPERATORS = /^(!|NOT )?(=|~\*?|[<>]=?|IS( NOT)?|I?LIKE|SIMILAR TO|BETWEEN|IN|ANY|ALL)$/i
+  QUERYING_METHODS = [:where_not].freeze
+  POSTGRESQL_OPERATORS = /^(!|NOT )?(=|~\*?|[<>]=?|IS( NOT)?|I?LIKE|SIMILAR TO|BETWEEN|IN|ANY|ALL)$/i
 
   prepended do
     delegate :json_accessors, :json_key, to: :klass
