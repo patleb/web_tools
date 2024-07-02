@@ -15,7 +15,7 @@ class ActiveRecord::Base::WithListTest < ActiveSupport::TestCase
 
   let(:no_retry){ true }
 
-  test '#list_prev_id, #list_next_id, #list_change_only, .list_reorganize' do
+  test '#list_prev_id, #list_next_id, #list_change_only, .list_reorganize, .listables' do
     record = Test::Record.find(1)
     related = record.related_records
     assert_equal 4, related.size
