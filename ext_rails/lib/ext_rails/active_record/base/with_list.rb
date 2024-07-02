@@ -1,38 +1,28 @@
-# TODO subqueries
-# http://joshfrankel.me/blog/constructing-a-sql-select-from-subquery-in-activerecord/
-# https://pganalyze.com/blog/active-record-subqueries-rails
-# TODO Re-Shuffle elements in a cron job (replace by integers from the last at the count value)
-# TODO generalize with as separate ltree table for levels
 module ActiveRecord::Base::WithList
   extend ActiveSupport::Concern
 
-  prepended do
-    self.skip_locking_attributes += ['position']
-  end
-
   class_methods do
-    def has_list
-      class_attribute :list_column, instance_writer: false, default: :position
-      class_attribute :list_push_on_create, instance_writer: false, default: true
+    def has_list(column: :position, push_on_create: true)
+      self.skip_locking_attributes += [column.to_s]
 
-      ### NOTE
-      # cannot update position with other attributes --> lock prevents it
-      attribute :list_prev_id, :integer
-      attribute :list_next_id, :integer
+      class_attribute :list_column, instance_writer: false, instance_predicate: false, default: column
+      class_attribute :list_push_on_create, instance_writer: false, instance_predicate: false, default: push_on_create
+
+      attr_accessor :list_prev_id
+      attr_accessor :list_next_id
 
       include ActiveRecord::Base::WithList::Position
+
+      validate :list_change_only
     end
 
     def belongs_to(name, *, **options)
-      if options.has_key?(:list_parent)
-        if !options.has_key?(:class_name) && options[:list_parent].is_a?(Class)
-          options[:class_name] = options[:list_parent].name
-          options[:list_parent] = true
-        end
-        if options[:list_parent] && !(options.has_key?(:optional) || options.has_key?(:required))
-          options[:optional] = true
-        end
+      return super if options[:class_name] || !(parent = options[:list_parent])
+      case parent
+      when Class  then options[:class_name] = parent.name
+      when String then options[:class_name] = parent
       end
+      options[:list_parent] = true
       super
     end
 
@@ -56,19 +46,22 @@ module ActiveRecord::Base::WithList::Position
   extend ActiveSupport::Concern
 
   class_methods do
-    def list_reorganize
+    def list_reorganize(force: false)
       without_default_scope do
         decimals = maximum("scale(#{list_column})") || 0
-        return unless decimals > 64 # postgres numeric max is 16383, but ruby conversion speed is a concern
+        return unless force || decimals >= 32 # postgres numeric max is 16383, but storage size and ruby conversion speed is a concern, 38 decimals is about 128 bits
         with_table_lock do
           connection.exec_query(<<-SQL.strip_sql(table_name: quoted_table_name, position: list_column, pk: primary_key))
             UPDATE {{ table_name }} t_updated SET {{ position }} = t_ordered.i
               FROM (
-                SELECT {{ pk }} AS id, (row_number() OVER (ORDER BY {{ position }})) - 1.0 AS i
+                SELECT {{ pk }} AS id, (-row_number() OVER (ORDER BY {{ position }})) + 1.0 AS i
                 FROM {{ table_name }}
                 ORDER BY id
               ) t_ordered
               WHERE t_updated.id = t_ordered.id
+          SQL
+          connection.exec_query(<<-SQL.strip_sql(table_name: quoted_table_name, position: list_column))
+            UPDATE {{ table_name }} SET {{ position }} = -{{ position }}
           SQL
         end
       end
@@ -76,34 +69,31 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def create_or_update(...)
-    if list_column
-      if new_record?
-        if list_prev_id
-          list_with_prev_record do |prev_record|
-            list_insert_after(prev_record){ super }
-          end
-        elsif list_next_id
-          list_with_next_record do |next_record|
-            list_insert_before(next_record) { super }
-          end
-        else
-          list_push_on_create ? list_push { super } : list_unshift { super }
+    return super unless list_column
+    if new_record?
+      if list_prev_id
+        list_with_prev_record do |prev_record|
+          list_insert_after(prev_record) { super }
+        end
+      elsif list_next_id
+        list_with_next_record do |next_record|
+          list_insert_before(next_record) { super }
         end
       else
-        if list_prev_id
-          list_with_prev_record do |prev_record|
-            list_move_after(prev_record) { super }
-          end
-        elsif list_next_id
-          list_with_next_record do |next_record|
-            list_move_before(next_record) { super }
-          end
-        else
-          super
-        end
+        list_push_on_create ? list_push { super } : list_unshift { super }
       end
     else
-      super
+      if list_prev_id
+        list_with_prev_record do |prev_record|
+          list_move_after(prev_record) { super }
+        end
+      elsif list_next_id
+        list_with_next_record do |next_record|
+          list_move_before(next_record) { super }
+        end
+      else
+        super
+      end
     end
   end
 
@@ -113,8 +103,11 @@ module ActiveRecord::Base::WithList::Position
 
   private
 
+  def list_change_only
+    errors.add(:base, :list_change_only) if changed?
+  end
+
   def list_with_prev_record
-    clear_attribute_changes [:list_next_id]
     prev_record = self.class.without_default_scope { self.class.base_class.find(list_prev_id) }
     old_id = list_prev_id
     self.list_prev_id = nil
@@ -124,7 +117,6 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_with_next_record
-    clear_attribute_changes [:list_prev_id]
     next_record = self.class.without_default_scope { self.class.base_class.find(list_next_id) }
     old_id = list_next_id
     self.list_next_id = nil

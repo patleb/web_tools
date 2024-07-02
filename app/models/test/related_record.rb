@@ -1,7 +1,9 @@
 module Test
-  class RelatedRecord < ActiveRecord::Base
-    self.table_name_prefix = 'test_'
+  class RelatedRecord < ApplicationRecord
+    has_list
 
-    belongs_to :record
+    belongs_to :record, list_parent: true
+
+    json_attribute options: :json
   end
 end
