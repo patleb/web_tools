@@ -31,7 +31,7 @@ module LogLines
     end
 
     def self.conf
-      @@conf ||= JSON.parse(Pathname.new('/etc/osquery/osquery.conf').read).with_keyword_access
+      @@conf ||= JSON.parse(Pathname.new('/etc/osquery/osquery.conf').read).with_indifferent_access
     end
 
     def self.flags
@@ -39,7 +39,7 @@ module LogLines
         Pathname.new('/etc/osquery/osquery.flags').readlines(chomp: true).select_map do |line|
           next unless line.delete_prefix! '--'
           line.split('=', 2)
-        end.to_h.with_keyword_access.transform_values(&:cast)
+        end.to_h.with_indifferent_access.transform_values(&:cast)
       end
     end
 
@@ -94,7 +94,7 @@ module LogLines
           memo << [path, local.join(':'), remote.join(':')].join('/')
         end
       else
-        message = { text: "threat #{name}", level: :fatal }
+        message = { text: "threat #{name}", level: :fatal } unless diff['added'].empty?
       end
       return { filtered: true } unless message
 
