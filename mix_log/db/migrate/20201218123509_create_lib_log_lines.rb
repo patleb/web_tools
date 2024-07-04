@@ -3,7 +3,7 @@
 # also, if there was a default for :created_at, it could be null on insert and defaults aren't used for uniqueness check
 class CreateLibLogLines < ActiveRecord::Migration[6.0]
   def change
-    create_partioned_table :lib_log_lines, key: :created_at do |t|
+    create_partitioned_table :lib_log_lines, key: :created_at do |t|
       t.integer    :type,        null: false
       t.belongs_to :log,         null: false,  index: false, foreign_key: false
       t.belongs_to :log_message, index: false, foreign_key: false

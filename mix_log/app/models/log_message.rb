@@ -1,7 +1,6 @@
-# TODO NginxAccess[status, method, path] --> SELECT * FROM UNNEST((regexp_split_to_array(text_tiny, ' '))[1:3])
 class LogMessage < LibMainRecord
-  belongs_to :log
-  has_many   :log_lines
+  has_many :log_lines
+  has_many :logs, -> { distinct }, through: :log_lines
 
   class << self
     undef_method :warn # defined in Kernel
@@ -21,11 +20,11 @@ class LogMessage < LibMainRecord
 
   scope :reportable, -> { where((column(:level) >= levels[:error]).and(column(:monitor).eq nil).or(column(:monitor).eq true)) }
 
-  def self.select_by_hashes(log_id, levels, hashes)
-    connection.exec_query(sanitize_sql_array([<<-SQL.strip_sql, hashes, levels, log_id]))
+  def self.select_by_hashes(levels, hashes)
+    connection.exec_query(sanitize_sql_array([<<-SQL.strip_sql, hashes, levels]))
       SELECT #{table_name}.* FROM UNNEST(ARRAY[?]::TEXT[], ARRAY[?]::INTEGER[]) WITH ORDINALITY hashes(h, l, i)
         LEFT JOIN LATERAL (
-          SELECT #{table_name}.* FROM #{table_name} WHERE log_id = ? AND text_hash = h AND level = l LIMIT 1
+          SELECT #{table_name}.* FROM #{table_name} WHERE text_hash = h AND level = l LIMIT 1
         ) #{table_name} ON TRUE
       ORDER BY i
     SQL

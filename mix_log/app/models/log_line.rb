@@ -1,6 +1,7 @@
-# TODO https://pgdash.io/blog/postgres-observability.html
 class LogLine < LibMainRecord
   class IncompatibleLogLine < ::StandardError; end
+
+  has_partition column: :created_at, size: :week
 
   belongs_to :log
   belongs_to :log_message
@@ -39,7 +40,7 @@ class LogLine < LibMainRecord
   end
 
   def self.last_messages(text_tiny: nil, **conditions)
-    query = LogMessage.where(log: Log.db_log(name))
+    query = LogMessage.all
     query = query.where('text_tiny LIKE ?', text_tiny) if text_tiny
     query = query.where(**conditions) if conditions.present?
     query.order(updated_at: :desc)
@@ -111,7 +112,7 @@ class LogLine < LibMainRecord
     line[:json_data]&.reject!{ |_, v| v.blank? }
     log_message = nil
     with_message(line.delete(:message)) do |text_hash, text_tiny, text, level, monitor|
-      log_message = LogMessage.find_or_create_by! log_id: log_id, level: level, text_hash: text_hash do |record|
+      log_message = LogMessage.find_or_create_by! level: level, text_hash: text_hash do |record|
         record.assign_attributes(text_tiny: text_tiny, text: text, monitor: monitor, log_lines_type: name)
       end
       line[:log_message_id] = log_message.id
@@ -141,7 +142,7 @@ class LogLine < LibMainRecord
       with_message(line.delete(:message)) do |text_hash, text_tiny, text, level, monitor|
         result << {
           text_hash: text_hash, text_tiny: text_tiny, text: text,
-          log_id: log_id, log_lines_type: name, level: level, monitor: monitor,
+          log_lines_type: name, level: level, monitor: monitor,
           line_i: i
         }
       end
@@ -149,7 +150,7 @@ class LogLine < LibMainRecord
     LogMessage.insert_all(texts.map(&:except.with(:line_i)).uniq(&:values_at.with(:text_hash, :level)))
     levels = texts.map(&:[].with(:level))
     hashes = texts.map(&:[].with(:text_hash))
-    log_messages = LogMessage.select_by_hashes(log_id, levels, hashes).pluck('id')
+    log_messages = LogMessage.select_by_hashes(levels, hashes).pluck('id')
     log_messages.each_with_index do |id, i|
       lines[texts[i][:line_i]][:log_message_id] = id
     end
@@ -184,21 +185,6 @@ class LogLine < LibMainRecord
     text_tiny ||= squish(text)
     text_hash ||= text_tiny
     yield Digest.sha256_hex(text_hash), text_tiny[0...256], text, LogMessage.levels[level], monitor
-  end
-
-  def self.insert_all!(attributes, **)
-    attributes.each{ |row| row[:type] = name }
-    with_partition(attributes, column: :created_at){ super }
-  end
-
-  def self.insert_all(attributes, **)
-    attributes.each{ |row| row[:type] = name }
-    with_partition(attributes, column: :created_at){ super }
-  end
-
-  def self.upsert_all(attributes, **)
-    attributes.each{ |row| row[:type] = name }
-    with_partition(attributes, column: :created_at){ super }
   end
 
   def self.merge_paths(paths)

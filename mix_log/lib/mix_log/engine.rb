@@ -10,10 +10,6 @@ module MixLog
       append_migrations(app)
     end
 
-    initializer 'mix_log.db_partitions' do
-      ExtRails.config.db_partitions[:lib_log_lines] = :week
-    end
-
     ActiveSupport.on_load(:active_record) do
       ::USER_AGENT_PARSER = UserAgentParser::Parser.new
     end

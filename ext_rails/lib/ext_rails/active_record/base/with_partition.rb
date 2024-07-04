@@ -17,27 +17,50 @@ module ActiveRecord::Base::WithPartition
     end
   end
 
-  TIME_PARTITION_BUCKETS = %i(month week day)
-  TIME = /\d{4}_\d{2}_\d{2}$/
-  NUMBER = /\d{10}$/
+  DATE_PARTITION_BUCKETS = %i(month week day)
+  DATE = /\d{4}_\d{2}_\d{2}$/
+  NUMBER = /\d{19}$/ # support BIGINT
+
+  prepended do
+    class_attribute :partition_column, instance_accessor: false, instance_predicate: false
+    class_attribute :partition_size, instance_accessor: false, instance_predicate: false
+  end
 
   class_methods do
-    def with_partition(attributes, table = table_name, column:)
+    def has_partition(column: :id, size: nil)
+      self.partition_column = column
+      self.partition_size = size
+    end
+
+    def partitioned?
+      !!partition_column
+    end
+
+    def insert_all!(rows, **)
+      partitioned? ? with_partition(rows){ super } : super
+    end
+
+    def insert_all(rows, **)
+      partitioned? ? with_partition(rows){ super } : super
+    end
+
+    def upsert_all(rows, **)
+      partitioned? ? with_partition(rows){ super } : super
+    end
+
+    def with_partition(rows, table = table_name, column: partition_column, size: partition_size)
       yield
     rescue MissingPartition
-      size = partition_size(table)
-      attributes.each{ |row| create_partition_for(row[column], table, size: size) }
+      rows.each{ |row| create_partition_for(row[column], table, size: size) }
       retry
     end
 
-    def create_all_partitions(buckets, table = table_name)
-      size = partition_size(table, buckets)
-      buckets.each{ |key| create_partition_for(key, table, size: size) }
+    def create_all_partitions(keys, table = table_name, size: partition_size)
+      keys.each{ |key| create_partition_for(key, table, size: size) }
     end
 
-    def drop_all_partitions(buckets, table = table_name)
-      size = partition_size(table, buckets)
-      buckets.each{ |key| drop_partition_for(key, table, size: size) }
+    def drop_all_partitions(keys, table = table_name, size: partition_size)
+      keys.each{ |key| drop_partition_for(key, table, size: size) }
     end
 
     def create_partition(name)
@@ -48,7 +71,7 @@ module ActiveRecord::Base::WithPartition
       drop_partition_for(*partition_key_table(name))
     end
 
-    def create_partition_for(key, table = table_name, size: partition_size(table))
+    def create_partition_for(key, table = table_name, size: partition_size)
       partition = partition_for(key, table, size: size)
       return if partitions(table).include? partition[:name]
       connection.exec_query(<<-SQL.strip_sql)
@@ -60,8 +83,10 @@ module ActiveRecord::Base::WithPartition
       (@_partitions ||= {})[table] = nil
     end
 
-    def drop_partition_for(key, table = table_name, size: partition_size(table))
-      connection.exec_query("DROP TABLE IF EXISTS #{partition_for(key, table, size: size)[:name]}")
+    def drop_partition_for(key, table = table_name, size: partition_size)
+      partition = partition_for(key, table, size: size)
+      return if partitions(table).exclude? partition[:name]
+      connection.exec_query("DROP TABLE IF EXISTS #{partition[:name]}")
       (@_partitions ||= {})[table] = nil
     end
 
@@ -74,13 +99,11 @@ module ActiveRecord::Base::WithPartition
     end
 
     def partitions_buckets(table = table_name)
-      m_access(__method__, table) do
-        partitions(table).map{ |name| partition_bucket(name) }
-      end
+      partitions(table).map{ |name| partition_bucket(name) }
     end
 
     def partition_bucket(name)
-      if (date = name[TIME])
+      if (date = name[DATE])
         Time.find_zone('UTC').parse(date.dasherize).utc
       else
         name[NUMBER].to_i
@@ -91,15 +114,15 @@ module ActiveRecord::Base::WithPartition
       connection.select_value("SELECT count(*) FROM (SELECT 1 FROM #{name} LIMIT 1) AS t") != 1
     end
 
-    def partition_for(key, table = table_name, size: partition_size(table))
+    def partition_for(key, table = table_name, size: partition_size)
       case key
       when Integer
         size = size.to_i
         bucket = (key / size) * size
-        from = bucket.to_s.rjust(10, '0')
-        to = (bucket + size).to_s.rjust(10, '0')
+        from = bucket.to_s.rjust(19, '0')
+        to = (bucket + size).to_s.rjust(19, '0')
       when Time, Date, DateTime
-        raise UnsupportedPartitionBucket, "size: [#{size}]" unless size.to_sym.in? TIME_PARTITION_BUCKETS
+        raise UnsupportedPartitionBucket, "size: [#{size}]" unless size.to_sym.in? DATE_PARTITION_BUCKETS
         date = key.send("beginning_of_#{size}")
         from = date.strftime('%Y_%m_%d')
         to = (date + 1.send(size)).strftime('%Y_%m_%d')
@@ -112,28 +135,10 @@ module ActiveRecord::Base::WithPartition
     private
 
     def partition_key_table(name)
-      key_table = name.split(/_(#{TIME}|#{NUMBER})/).reverse
+      key_table = name.split(/_(#{DATE}|#{NUMBER})$/).reverse
       raise InvalidPartitionName, "name: [#{name}]" unless key_table.size == 2
       key, table = key_table
       [partition_bucket(key), table]
-    end
-
-    # TODO make size variable in the future, but frozen in the past by bucket
-    def partition_size(table, buckets = [])
-      ExtRails.config.db_partitions[table] || raise(UnknownPartitionSize, "table: [#{table}]")
-      # if buckets.size < 2
-      #   return ExtRails.config.db_partitions[table] || raise(UnknownPartitionSize, "table: [#{table}]")
-      # end
-      # size = buckets[1..-1].map.with_index{ |bucket, i| bucket - buckets[i] }.min.to_i
-      # if buckets.first.is_a? Time
-      #   size = case size.to_days.first
-      #     when 1      then :day
-      #     when 7      then :week
-      #     when 28..31 then :month
-      #     else raise UnsupportedPartitionBucket, "size: [#{size.to_days.first} days]"
-      #     end
-      # end
-      # size
     end
   end
 end

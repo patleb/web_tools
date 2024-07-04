@@ -4,7 +4,7 @@ class Log < LibMainRecord
 
   belongs_to :server, -> { with_discarded }
   has_many   :log_lines
-  has_many   :log_messages
+  has_many   :log_messages, -> { distinct }, through: :log_lines
 
   enum log_lines_type: MixLog.config.available_types
 

@@ -7,7 +7,6 @@ module ExtRails
     attr_writer   :excluded_models
     attr_writer   :excluded_tables
     attr_writer   :temporary_tables
-    attr_writer   :db_partitions
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
@@ -34,10 +33,6 @@ module ExtRails
 
     def temporary_tables
       @temporary_tables ||= Set.new
-    end
-
-    def db_partitions
-      @db_partitions ||= {}.with_indifferent_access
     end
 
     def backup_excludes

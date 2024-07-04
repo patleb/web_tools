@@ -12,7 +12,7 @@ module MixLog
 
     def dates
       @dates ||= begin
-        size = ExtRails.config.db_partitions[:lib_log_lines]
+        size = LogLine.partition_size
         interval = 1.send(size)
         started_at = MixLog.config.partitions_total_size.ago.utc.send("beginning_of_#{size}")
         continue_at = Time.current.utc.send("beginning_of_#{size}") + interval
