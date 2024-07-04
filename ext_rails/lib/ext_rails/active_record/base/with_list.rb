@@ -13,7 +13,7 @@ module ActiveRecord::Base::WithList
 
       include ActiveRecord::Base::WithList::Position
 
-      validate :list_change_only
+      validate :list_change_only, if: :list_changed?
     end
 
     def belongs_to(name, *, **options)
@@ -98,7 +98,7 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_changed?
-    send("#{list_column}_changed?") || list_prev_id_changed? || list_next_id_changed?
+    send("#{list_column}_changed?")
   end
 
   private
