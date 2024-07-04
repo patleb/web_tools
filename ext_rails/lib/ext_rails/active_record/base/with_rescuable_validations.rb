@@ -12,7 +12,7 @@ module ActiveRecord::Base::WithRescuableValidations
     _handle_columns_exception(e, INVALID_FOREIGN_KEY_COLUMN, :required)
   rescue ActiveRecord::ValueTooLong => e
     _handle_base_exception(e, VALUE_TOO_LONG_COUNT, :too_long, &:to_i)
-    # rescue ActiveRecord::RangeError => e
+    # rescue ActiveModel::RangeError => e
   rescue ActiveRecord::NotNullViolation => e
     _handle_columns_exception(e, NOT_NULL_VIOLATION_COLUMN, :blank)
     # rescue ActiveRecord::SerializationFailure => e
