@@ -1,17 +1,19 @@
+# frozen_string_literal: true
+
 module VirtualRecord
   class Relation < Array
     class UnknownOperator < ::StandardError; end
 
-    TABLE    = /(?:"?(?:\w+)"?\.)/.freeze
-    COLUMN   = /#{TABLE}?"?(\w+)"?/.freeze
-    COLUMN_2 = /#{TABLE}?"?(?:\w+)"?/.freeze
-    VALUE    = /\?/.freeze
-    RANGE    = /#{COLUMN} (?:(NOT) BETWEEN|BETWEEN) #{VALUE} AND #{VALUE}/.freeze
-    STRING   = /#{COLUMN} (?:(NOT) ILIKE|ILIKE) #{VALUE}/.freeze
-    BOOLEAN  = /#{COLUMN} (?:IS NULL OR) #{COLUMN_2} (?:(!)=|=)? #{VALUE}/.freeze
-    BLANK    = /#{COLUMN} (?:IS (NOT) NULL|IS NULL)/.freeze
-    ARRAY    = /#{COLUMN} (?:(NOT) IN |IN) (\(#{VALUE}?(?:,#{VALUE})?\))/.freeze
-    OPERATOR = /#{COLUMN} ([=!<>]=?) #{VALUE}/.freeze
+    TABLE    = /(?:"?(?:\w+)"?\.)/
+    COLUMN   = /#{TABLE}?"?(\w+)"?/
+    COLUMN_2 = /#{TABLE}?"?(?:\w+)"?/
+    VALUE    = /\?/
+    RANGE    = /#{COLUMN} (?:(NOT) BETWEEN|BETWEEN) #{VALUE} AND #{VALUE}/
+    STRING   = /#{COLUMN} (?:(NOT) ILIKE|ILIKE) #{VALUE}/
+    BOOLEAN  = /#{COLUMN} (?:IS NULL OR) #{COLUMN_2} (?:(!)=|=)? #{VALUE}/
+    BLANK    = /#{COLUMN} (?:IS (NOT) NULL|IS NULL)/
+    ARRAY    = /#{COLUMN} (?:(NOT) IN |IN) (\(#{VALUE}?(?:,#{VALUE})?\))/
+    OPERATOR = /#{COLUMN} ([=!<>]=?) #{VALUE}/
 
     attr_reader :order_values
     attr_reader :limit_value

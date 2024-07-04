@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module ActiveRecord::Base::WithRescuableValidations
-  RECORD_NOT_UNIQUE_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) already exists/.freeze
-  INVALID_FOREIGN_KEY_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) is not present in table/.freeze
-  VALUE_TOO_LONG_COUNT = /varying\((?<count>\d+)\)/.freeze
-  NOT_NULL_VIOLATION_COLUMN = /column "(\w+)"(?: of relation "\w+")? violates not-null constraint/.freeze
+  RECORD_NOT_UNIQUE_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) already exists/
+  INVALID_FOREIGN_KEY_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) is not present in table/
+  VALUE_TOO_LONG_COUNT = /varying\((?<count>\d+)\)/
+  NOT_NULL_VIOLATION_COLUMN = /column "(\w+)"(?: of relation "\w+")? violates not-null constraint/
 
   def save(...)
     super
