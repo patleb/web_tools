@@ -79,7 +79,7 @@ module ActiveTask
 
     def initialize(rake, task, args = {}, **defaults)
       @rake, @task = rake, task
-      @options = self.class.defaults.with_keyword_access.merge!(defaults).merge!(args.to_h)
+      @options = self.class.defaults.with_indifferent_access.merge!(defaults).merge!(args.to_h)
       @_debug = ENV['DEBUG'].to_b
       @_success = true
       if self.class.const_defined? :WithCount
