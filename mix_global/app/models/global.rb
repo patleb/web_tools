@@ -122,14 +122,14 @@ class Global < LibMainRecord
     case names
     when Array
       keys = names.map{ |name| normalize_key(name) }
-      where(id: keys).find_each.with_object({}.with_keyword_access) do |record, memo|
+      where(id: keys).find_each.with_object({}.with_indifferent_access) do |record, memo|
         name = names[keys.index(record.id)]
         version = normalize_version(name, **options)
         memo[key_name(record)] = record unless record._sync_stale_state(version).stale?
       end
     when String, Regexp
       version = normalize_version(**options)
-      where(column(:id).matches key_matcher(names, **options)).find_each.with_object({}.with_keyword_access) do |record, memo|
+      where(column(:id).matches key_matcher(names, **options)).find_each.with_object({}.with_indifferent_access) do |record, memo|
         memo[key_name(record)] = record unless record._sync_stale_state(version).stale?
       end
     else
