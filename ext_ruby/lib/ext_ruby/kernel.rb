@@ -3,19 +3,12 @@ module Kernel
     caller_locations(2, start)[start - 1]
   end
 
-  def load_dir(location, dir = nil, ext: 'rb')
-    Dir["#{File.dirname(location)}/#{dir}/**/*.#{ext}"].sort.each do |file|
-      load file
-    end
+  def load_dir(*, **)
+    require_or_load_dir(*, true, **)
   end
 
-  def require_dir(location, dir = nil, ext: 'rb', sort: false, reverse: false)
-    files = Dir["#{File.dirname(location)}/#{dir}/**/*.#{ext}"]
-    files = files.sort if sort
-    files = files.reverse if reverse
-    files.each do |file|
-      require file
-    end
+  def require_dir(*, **)
+    require_or_load_dir(*, false, **)
   end
 
   def require_and_extend(location, context)
@@ -28,5 +21,16 @@ module Kernel
 
   def __super__(name, *args, **options, &block)
     method(name).super_method&.call(*args, **options, &block)
+  end
+
+  private
+
+  def require_or_load_dir(location, dir = nil, _load = false, ext: 'rb', sort: false, reverse: false)
+    files = Dir["#{File.dirname(location)}/#{dir}/**/*.#{ext}"]
+    files = files.sort if sort
+    files = files.reverse if reverse
+    files.each do |file|
+      _load ? load(file) : require(file)
+    end
   end
 end
