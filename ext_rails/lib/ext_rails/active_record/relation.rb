@@ -1,7 +1,4 @@
-require 'ext_rails/active_record/relation/with_atomic_operations'
-require 'ext_rails/active_record/relation/with_calculate'
-require 'ext_rails/active_record/relation/with_json_attribute'
-require 'ext_rails/active_record/relation/with_returning_column'
+require_dir __FILE__, 'relation'
 
 ActiveRecord::Relation.class_eval do
   prepend self::WithAtomicOperations
