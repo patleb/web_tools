@@ -1,6 +1,9 @@
-<% (1..ENV['TEST_RECORDS']&.to_i || 5).each do |i| %>
+<% (0..ENV['TEST_RECORDS']&.to_i || 5).each do |i| %>
 test_related_record_<%= i %>:
   id: <%= i %>
-  name: related <%= i %>
-  record_id: <%= i %>
+  name: related to <%= i == 2 ? 1 : i % 2 %>
+  record_id: <%= i == 2 ? 1 : i % 2 %>
+  position: <%= i %>
+  lock_version: 1
+  deleted_at: <%= i == 0 ? Time.current : 'null' %>
 <% end %>

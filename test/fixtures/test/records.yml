@@ -1,15 +1,18 @@
-<% (1..ENV['TEST_RECORDS']&.to_i || 5).each do |i| %>
+<% (0..ENV['TEST_RECORDS']&.to_i || 5).each do |i| %>
 test_record_<%= i %>:
   id: <%= i %>
+  big_integer: <%= i * i %>
   boolean: <%= i.odd? %>
   date: <%= i.days.ago.to_date %>
-  date_time: <%= (DateTime.new(2000, 1, 2, 3, 4, 5) + i.months + i.days + i.hours + i.minutes + i.seconds).utc %>
+  datetime: <%= (DateTime.new(2000, 1, 2, 3, 4, 5) + i.months + i.days + i.hours + i.minutes + i.seconds).utc %>
   decimal: <%= i %>.<%= i %>
-  deleted_at: null
+  deleted_at: <%= i == 0 ? Time.current : 'null' %>
+  double: <%= i * i %>.<%= i * i %>
   integer: <%= i %>
   json: { int: <%= i %>, str: '<script>alert("<%= i %>")</script>' }
+  json_data: { name: 'Name' }
   lock_version: 1
-  password: password
+  password: <%= i == 1 ? '""' : 'password' %>
   string: string-<%= i %>
   text: text-<%= i %> Lorem Ipsum
   time: <%= i.hours.ago.to_time %>
