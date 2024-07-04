@@ -1,5 +1,17 @@
 require 'arel_extensions'
-require 'ext_rails/active_record/arel/expressions'
-require 'ext_rails/active_record/arel/visitors'
-require 'ext_rails/active_record/arel/nodes/percentile'
-require 'ext_rails/active_record/arel/nodes/median'
+require_dir 'ext_rails/active_record/arel'
+
+module ArelExtensions
+  module Attributes
+    ### NOTE ActiveRecord aliases == to eql?
+    # use :eq instead
+    def ==(other)
+      eql? other
+    end
+
+    # use :not_eq insead
+    def !=(other)
+      !eql?(other)
+    end
+  end
+end
