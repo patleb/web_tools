@@ -14,7 +14,7 @@ class CreateTestRecords < ActiveRecord::Migration[6.1]
       t.jsonb    :json_data,    null: false, default: {}
       t.integer  :lock_version, null: false, default: 0
       t.string   :password
-      t.string   :string
+      t.string   :string, limit: 50
       t.text     :text
       t.time     :time
       t.uuid     :uuid
