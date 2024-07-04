@@ -1,0 +1,5 @@
+en:
+  activerecord:
+    errors:
+      messages:
+        list_change_only: Cannot modify position with other fields
