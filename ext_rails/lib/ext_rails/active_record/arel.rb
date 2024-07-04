@@ -1,5 +1,5 @@
 require 'arel_extensions'
-require_dir 'ext_rails/active_record/arel'
+require_dir __FILE__, 'arel', reverse: true
 
 module ArelExtensions
   module Attributes

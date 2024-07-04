@@ -9,8 +9,11 @@ module Kernel
     end
   end
 
-  def require_dir(location, dir = nil, ext: 'rb')
-    Dir["#{File.dirname(location)}/#{dir}/**/*.#{ext}"].sort.each do |file|
+  def require_dir(location, dir = nil, ext: 'rb', sort: false, reverse: false)
+    files = Dir["#{File.dirname(location)}/#{dir}/**/*.#{ext}"]
+    files = files.sort if sort
+    files = files.reverse if reverse
+    files.each do |file|
       require file
     end
   end
