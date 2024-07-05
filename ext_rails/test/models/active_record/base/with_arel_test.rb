@@ -4,7 +4,7 @@ Test::Record.class_eval do
   def self.first_odd_with_related
     r = Test::RelatedRecord.alias_table(:r)
     odd.where(integer: 1)
-      .joins(join(r).on(column(:id) == r[:record_id]).join_sources)
+      .joins(join(r).on(column(:id).eq r[:record_id]).join_sources)
       .select(:id, greatest(:string, :text, r[:name], as: :label))
       .take
   end
