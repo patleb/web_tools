@@ -1,26 +1,44 @@
-require_rel 'base'
+# frozen_string_literal: true
+
+MonkeyPatch.add{['activerecord', 'lib/active_record/attribute_methods.rb', 'bf394beec42739e1ca2fd3ce0dc87ce21ae8cbd13f25b8d4ac6fc288abc331fa']}
+MonkeyPatch.add{['activerecord', 'lib/active_record/enum.rb', '3822404e7b275407cb12c8a2a5719f4a0d12260dc059f471d304f9faaf702cb9']}
+
+require_dir __FILE__, 'base'
 
 ActiveRecord::Base.class_eval do
-  class_attribute :skip_locking_attributes, instance_writer: false, instance_predicate: false,
-    default: Set.new(['id', 'updated_at'])
+  SKIP_LOCKING_ATTRIBUTES = Set.new([
+    'id',
+    'updated_at'
+  ])
+  EXCLUDED_MODEL_SUFFIXES = %w(
+    .include.rb
+    .prepend.rb
+    _admin.rb
+    _decorator.rb
+    /current.rb
+    /null.rb
+    /base.rb
+    /main.rb
+  )
+
+  class_attribute :skip_locking_attributes, instance_writer: false, instance_predicate: false, default: SKIP_LOCKING_ATTRIBUTES
 
   extend MemoizedAt
   include ActiveSupport::LazyLoadHooks::Autorun
   include self::WithArel
-  prepend self::WithCreateState
   include self::WithDiscard
   prepend self::WithJsonb
   prepend self::WithJsonAttribute
-  include self::WithNullifyBlanks
-  include self::WithPartition
+  prepend self::WithNullifyBlanks
+  prepend self::WithPartition
   prepend self::WithRequiredBelongsTo
   prepend self::WithList
   include self::WithRescuableValidations
-  include self::WithViableModels
-
-  nullify_blanks nullables_only: false
 
   alias_method :decrypted, :read_attribute_before_type_cast
+  alias_method :new?, :previously_new_record?
+
+  delegate :slice, :except, to: :attributes!
 
   class << self
     alias_method :without_default_scope, :evaluate_default_scope
@@ -29,6 +47,12 @@ ActiveRecord::Base.class_eval do
     def scope(name, body, &block)
       super if name.match?(/^[a-z_][a-z0-9_]*$/)
     end
+  end
+
+  self.store_base_sti_class = false
+
+  def self.enum!(*, **)
+    enum(*, _scopes: false, _instance_methods: false, **)
   end
 
   def self.with_raw_connection
@@ -48,11 +72,11 @@ ActiveRecord::Base.class_eval do
     end
   end
 
-  def self.without_time_zone(&block)
-    with_time_zone('UTC', &block)
+  def self.without_timezone(&block)
+    with_timezone('UTC', &block)
   end
 
-  def self.with_time_zone(zone, &block)
+  def self.with_timezone(zone, &block)
     old_value = time_zone_aware_attributes
     self.time_zone_aware_attributes = false
     Time.use_zone(zone, &block)
@@ -81,16 +105,11 @@ ActiveRecord::Base.class_eval do
     @encoding ||= connection.select_one("SELECT ''::text AS str;").values.first.encoding
   end
 
-  def self.timescaledb_tables
-    @timescaledb_tables ||= Setting[:timescaledb_enabled] ? connection.select_rows(<<-SQL.strip_sql).to_h : {}
-      SELECT table_name AS name, id FROM _timescaledb_catalog.hypertable
-    SQL
-  end
-
   def self.sanitize_matcher(regex)
-    like = sanitize_sql_like(regex.source).gsub "\\/", '/'
-    like.gsub!('.*', '%')
-    like.gsub!('.', '_')
+    like = sanitize_sql_like(regex.source)
+    like.gsub! "\\/", '/'
+    like.gsub! '.*', '%'
+    like.gsub! '.', '_'
     like.delete_prefix!('^') || like.prepend('%')
     like.delete_suffix!('$') || like.concat('%')
   end
@@ -110,60 +129,6 @@ ActiveRecord::Base.class_eval do
     result = [table, connection.quote_column_name(column)].join('.')
     result = [result, type].join('::') if type
     result.sql_safe
-  end
-
-  def self.shared_buffers
-    @shared_buffers ||= connection.select_value(<<-SQL.strip_sql)
-      SELECT setting::BIGINT * pg_size_bytes(unit) AS bytes FROM pg_settings WHERE name = 'shared_buffers'
-    SQL
-  end
-
-  def self.pretty_total_size
-    total_size.to_s(:human_size)
-  end
-
-  def self.total_size
-    m_access(__method__, timeout: 300) do
-      result = connection.select_rows(<<-SQL.strip_sql)
-        SELECT pg_database.datname AS name, pg_database_size(pg_database.datname) AS size FROM pg_database
-      SQL
-      result.find{ |(name, _size)| name == connection_config[:database] }.last
-    end
-  end
-
-  def self.pretty_size
-    size.to_s(:human_size)
-  end
-
-  def self.size
-    sizes[table_name]
-  end
-
-  def self.pretty_sizes(**options)
-    sizes(**options).transform_values(&:to_s.with(:human_size))
-  end
-
-  # TODO doesn't work with native partitions
-  def self.sizes(order_by_name: false, indexes: false)
-    m_access(__method__, order_by_name, indexes, timeout: 300) do
-      size = indexes ? 'pg_indexes_size(relid)' :'pg_total_relation_size(relid)'
-      result = connection.select_rows(<<-SQL.strip_sql)
-        SELECT relname AS name, #{size} AS size
-        FROM pg_catalog.pg_statio_user_tables
-        WHERE relname NOT LIKE '\_hyper\_%'
-        ORDER BY #{order_by_name ? 'name' : "#{size} DESC"};
-      SQL
-      result = result.each_with_object({}.with_keyword_access){ |(name, size), h| h[name] = size }
-
-      if Setting[:timescaledb_enabled]
-        timescaledb_tables.each do |name, id|
-          result[name] = Timescaledb::Table.find(id).total_bytes
-        end
-        result = result.sort_by(&:last).reverse.to_h.with_keyword_access
-      end
-
-      result
-    end
   end
 
   def self.dequeue_all(*columns, limit: nil)
@@ -206,29 +171,92 @@ ActiveRecord::Base.class_eval do
     end
   end
 
-  # TODO integrate with RailsAdmin
-  def can_destroy?
-    self.class.reflect_on_all_associations.all? do |assoc|
-      [:restrict_with_error, :restrict_with_exception].exclude?(assoc.options[:dependent]) \
-        || (assoc.macro == :has_one && self.send(assoc.name).nil?) \
-        || (assoc.macro == :has_many && self.send(assoc.name).empty?)
+  def self.viable_models
+    @viable_models ||= Rails.viable_names('models', ExtRails.config.excluded_models, EXCLUDED_MODEL_SUFFIXES)
+  end
+
+  def self.sti_parents
+    @sti_parents ||= begin
+      all = viable_models.each_with_object({}) do |model_name, parents|
+        with_model(model_name) do |model|
+          if model.sti? && model.base_class?
+            parents[model.name] ||= Set.new(model.inherited_types)
+          end
+        end
+      end
+      all.transform_values!(&:to_a)
+      all
     end
   end
 
-  def slice(*methods)
-    methods.map!{ |method| [method, public_send(method)] }.to_h.with_keyword_access
+  def self.polymorphic_parents
+    @polymorphic_parents ||= begin
+      all = viable_models.each_with_object({}) do |model_name, parents|
+        with_model(model_name) do |model|
+          model.reflect_on_all_associations.each do |association|
+            if association.options[:polymorphic]
+              (parents[model.name] ||= {})[association.name] ||= Set.new
+            elsif (as = association.options[:as])
+              next if association.through_reflection?
+              ((parents[association.klass.name] ||= {})[as.to_sym] ||= Set.new) << model
+            end
+          end
+        end
+      end
+      all.each_value{ |associations| associations.transform_values!(&:to_a) }
+      all
+    end
   end
 
-  def except(*methods)
-    slice(attributes.keys.except(*methods.map!(&:to_s)))
+  def self.sti?
+    has_attribute?(inheritance_column)
   end
 
-  def locking_enabled?
-    super && changed.any?{ |attribute| skip_locking_attributes.exclude? attribute }
+  def self.self_and_inherited_types
+    [base_class].concat inherited_types
+  end
+
+  def self.inherited_types
+    @inherited_types ||= base_class.descendants.reject(&:abstract_class?).select{ |klass| klass.connection == connection }
+  end
+
+  def self.with_model(model_name)
+    model = begin
+      model_name.to_const!
+    rescue LoadError, NameError
+      puts model_name if Rails.env.development?
+      return
+    end
+    return if     model < ::ActiveType::Object
+    return unless model < ::ActiveRecord::Base
+    return if     model.abstract_class?
+    return unless model.connection == connection
+    yield model
+  end
+  private_class_method :with_model
+
+  def attribute_names!
+    attributes!.keys
+  end
+
+  def attributes!
+    @attributes.to_hash.with_indifferent_access
   end
 
   def destroyed!
     @destroyed = true
     freeze
+  end
+
+  def can_destroy?
+    self.class.reflect_on_all_associations.all? do |association|
+      [:restrict_with_error, :restrict_with_exception].exclude?(association.options[:dependent]) \
+        || (association.macro == :has_one && public_send(association.name).nil?) \
+        || (association.macro == :has_many && public_send(association.name).empty?)
+    end
+  end
+
+  def locking_enabled?
+    super && changed.any?{ |attribute| skip_locking_attributes.exclude? attribute }
   end
 end

@@ -25,20 +25,14 @@ module Rails
   end
 
   def self.viable_names(type, excluded_names = Set.new, excluded_suffixes = [])
-    included_names = ([application] + Engine.subclasses).map do |app|
-      paths = app.config.paths["app/#{type}"].to_a + app.config.eager_load_paths.select(&:end_with?.with("/#{type}"))
-      paths.uniq.map do |load_path|
-        Dir.glob(app.root.join(load_path)).map do |load_dir|
-          Dir.glob(load_dir + '/**/*.rb').map do |filename|
-            unless filename.include?('/concerns/') || filename.end_with?(*excluded_suffixes)
-              filename.delete_prefix("#{app.root.join(load_dir)}/").delete_suffix('.rb').camelize
-            end
-          end.compact
+    ([application] + Engine.subclasses).each_with_object(SortedSet.new) do |app, names|
+      app.config.paths["app/#{type}"].each do |load_path|
+        Dir.glob(app.root.join(load_path, '**', '*.rb')).each do |file|
+          next if file.include?('/concerns/') || file.end_with?(*excluded_suffixes)
+          model = file.delete_prefix("#{app.root.join(load_path)}/").delete_suffix('.rb').camelize
+          names << model unless excluded_names.include? model
         end
       end
-    end.flatten
-    included_names.reject do |model|
-      excluded_names.include? model
-    end.sort
+    end.to_a
   end
 end

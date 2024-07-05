@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ExtRails
   has_config do
     attr_accessor :i18n_debug
@@ -24,7 +26,15 @@ module ExtRails
     end
 
     def excluded_models
-      @excluded_models ||= Set.new
+      @excluded_models ||= Set.new([
+        'ApplicationRecord',
+        'ApplicationMainRecord',
+        'LibRecord',
+        'LibMainRecord',
+        'Test',
+        'Test::ApplicationRecord',
+        'VirtualRecord::Relation'
+      ])
     end
 
     def excluded_tables
