@@ -1,5 +1,13 @@
 module DateAndTime
   module Conversions
+    extend ActiveSupport::Concern
+
+    class_methods do
+      def from_f(...)
+        Time.at(...)
+      end
+    end
+
     # NOTE $(date +%FT%T%z) --> YYYY-MM-DDTHH:MM:SS+ZZZZ
     # TODO `$(date +%s%N)`
     def to_nanoseconds
