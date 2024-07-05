@@ -3,13 +3,13 @@ module ActiveRecord::Base::WithList
 
   class_methods do
     def has_list(column: :position, push_on_create: true)
-      self.skip_locking_attributes += [column.to_s]
+      self.skip_locking_attributes += [column.to_s] # NOTE allows admin user to edit records regardless of position changes
 
-      class_attribute :list_column, instance_writer: false, instance_predicate: false, default: column
+      class_attribute :list_column, instance_writer: false, instance_predicate: false, default: column.to_sym
       class_attribute :list_push_on_create, instance_writer: false, instance_predicate: false, default: push_on_create
 
-      attr_accessor :list_prev_id
-      attr_accessor :list_next_id
+      attribute :list_prev_id, :integer
+      attribute :list_next_id, :integer
 
       include ActiveRecord::Base::WithList::Position
 
@@ -98,16 +98,17 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_changed?
-    send("#{list_column}_changed?")
+    list_prev_id_changed? || list_next_id_changed?
   end
 
   private
 
   def list_change_only
-    errors.add(:base, :list_change_only) if changed?
+    errors.add(:base, :list_change_only) unless changes.except(:list_prev_id, :list_next_id).empty?
   end
 
   def list_with_prev_record
+    clear_attribute_changes [:list_next_id]
     prev_record = self.class.without_default_scope { self.class.base_class.find(list_prev_id) }
     old_id = list_prev_id
     self.list_prev_id = nil
@@ -117,6 +118,7 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_with_next_record
+    clear_attribute_changes [:list_prev_id]
     next_record = self.class.without_default_scope { self.class.base_class.find(list_next_id) }
     old_id = list_next_id
     self.list_next_id = nil

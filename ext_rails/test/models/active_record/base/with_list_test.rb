@@ -3,7 +3,7 @@ require './test/rails_helper'
 Test::RelatedRecord.class_eval do
   alias_method :list_after_without_retry, :list_after
   def list_after(prev_record, &block)
-    return list_after_without_retry(prev_record, &block) if $test.no_retry || @retried
+    return list_after_without_retry(prev_record, &block) unless $test.try(:retry) && !@retried
     @retried = true
     self[:position] = 5.0
     yield
@@ -13,7 +13,7 @@ end
 class ActiveRecord::Base::WithListTest < ActiveSupport::TestCase
   fixtures 'test/records', 'test/related_records'
 
-  let(:no_retry){ true }
+  let(:retry){ false }
 
   test '#list_prev_id, #list_next_id, #list_change_only, .list_reorganize, .listables' do
     record = Test::Record.find(1)
@@ -57,7 +57,7 @@ class ActiveRecord::Base::WithListTest < ActiveSupport::TestCase
   end
 
   describe 'with retry' do
-    let(:no_retry){ false }
+    let(:retry){ true }
 
     test 'uniqueness' do
       r3 = Test::RelatedRecord.find(3)

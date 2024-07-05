@@ -1,11 +1,17 @@
 require './test/rails_helper'
 
 Test::RelatedRecord.class_eval do
-  clear_validators!
+  alias_method :list_change_only_without_skip, :list_change_only
+  def list_change_only
+    return if $test.try(:skip_list_change_only)
+    list_change_only_without_skip
+  end
 end
 
 class ActiveRecord::Base::WithRescuableValidationsTest < ActiveSupport::TestCase
   fixtures 'test/records', 'test/related_records'
+
+  let(:skip_list_change_only){ true }
 
   test '#_handle_columns_exception, #_handle_base_exception' do
     record = Test::RelatedRecord.create(id: 1, name: 'related to 1', record_id: 1)
