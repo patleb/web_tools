@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 MonkeyPatch.add{['actionpack', 'lib/action_controller/metal/strong_parameters.rb', '00ec459ed48c35be561f6b3137fb8220a09695fdc297c73405e894cadcac04a2']}
 
 require 'action_controller/metal/strong_parameters'
@@ -27,5 +29,5 @@ end
 ActionController::Parameters.class_eval do
   prepend self::WithLocation
 
-  delegate :with_keyword_access, to: :to_hash
+  delegate :with_indifferent_access, to: :to_hash
 end
