@@ -220,6 +220,22 @@ ActiveRecord::Base.class_eval do
     @inherited_types ||= base_class.descendants.reject(&:abstract_class?).select{ |klass| klass.connection == connection }
   end
 
+  def self.types_hash
+    @types_hash ||= begin
+      hash = {}.with_indifferent_access
+      if respond_to? :columns_hash
+        hash.merge! columns_hash.transform_values{ |c| c.type || :string }
+      end
+      if respond_to? :virtual_columns_hash
+        hash.merge! virtual_columns_hash.transform_values{ |c| c.ivar(:@type_caster).ivar(:@type) || :string }
+      end
+      if respond_to? :attribute_types
+        hash.merge! attribute_types.transform_values{ |c| c.type || :string }
+      end
+      hash
+    end
+  end
+
   def self.with_model(model_name)
     model = begin
       model_name.to_const!
