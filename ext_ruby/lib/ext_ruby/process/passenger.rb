@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ### References
 # https://www.phusionpassenger.com/library/admin/nginx/overall_status_report.html
 module Process
@@ -8,7 +10,7 @@ module Process
   class Passenger
     include MemoizedAt
 
-    SERVER = IceNine.deep_freeze(
+    SERVER = {
       'active_client_count' =>       :active_clients,
       'disconnected_client_count' => :disconnected_clients,
       'peak_active_client_count' =>  :peak_active_clients,
@@ -17,13 +19,13 @@ module Process
       'total_bytes_consumed' =>      :total_bytes,
       'total_clients_accepted' =>    :total_clients,
       'total_requests_begun' =>      :total_requests,
-    )
-    CLIENT = IceNine.deep_freeze(
+    }
+    CLIENT = {
       'connected_at.local' => :connected_at,
       'connection_state' =>   :state,
       'requests_begun' =>     :requests,
-    )
-    REQUEST = IceNine.deep_freeze(
+    }
+    REQUEST = {
       'flags.https' =>      :https,
       'host' =>             :host,
       'method' =>           :method,
@@ -31,10 +33,10 @@ module Process
       'session.pid' =>      :pid,
       'started_at.local' => :started_at,
       'sticky_session' =>   :sticky_session,
-    )
-    SERVER_PROCESS_KEYS = IceNine.deep_freeze(['pid', 'server_state'])
+    }
+    SERVER_PROCESS_KEYS = ['pid', 'server_state']
     SERVER_THREAD_KEYS = SERVER.keys.except(*SERVER_PROCESS_KEYS).freeze
-    SERVER_CLIENT_KEYS = IceNine.deep_freeze(['active_clients', 'disconnected_clients'])
+    SERVER_CLIENT_KEYS = ['active_clients', 'disconnected_clients']
 
     attr_reader :stdout, :stderr, :status
 
