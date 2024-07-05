@@ -2,7 +2,7 @@ module Test
   class TimeSerie < ApplicationRecord
     has_partition column: :created_at, size: :week
 
-    enum type: {
+    enum! type: {
       'Test::TimeSeries::DataPoint' => 1,
     }
 

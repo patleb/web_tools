@@ -3,7 +3,7 @@ module Test
     scope :even, -> { where('"test_records"."id" % 2 = 0') }
     scope :odd,  -> { invert_where(even) }
 
-    has_many :related_records, discardable: true
+    has_many :related_records, discardable: true, dependent: :restrict_with_error
 
     json_attribute :name
     json_attribute info:  [default: ->(record) { "Info for '#{record.name}'" }]
