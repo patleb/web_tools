@@ -10,7 +10,12 @@ test_record_<%= i %>:
   double: <%= i * i %>.<%= i * i %>
   integer: <%= i %>
   json: { int: <%= i %>, str: '<script>alert("<%= i %>")</script>' }
-  json_data: { name: 'Name' }
+  json_data:
+    name: 'Name'
+    j_boolean: <%= i.odd? %>
+    j_decimal: <%= i %>.<%= i %>
+    j_integer: <%= i == 1 ? 'null' : i %>
+    j_string: '<%= "j_string-#{i}" %>'
   lock_version: 1
   password: <%= i == 1 ? '""' : 'password' %>
   string: string-<%= i %>
