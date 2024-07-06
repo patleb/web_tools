@@ -11,8 +11,8 @@ module Kernel
     require_or_load_dir(*, false, **)
   end
 
-  def require_and_extend(location, context)
-    Dir["#{File.dirname(location)}/#{context.name.underscore}/**/*.rb"].sort.each do |file|
+  def require_and_extend(location, context, sort: false, reverse: false)
+    files_for "#{File.dirname(location)}/#{context.name.underscore}/**/*.rb", sort, reverse do |file|
       require file
       name = File.basename(file, '.rb')
       context.extend const_get(name.camelize)
@@ -26,11 +26,17 @@ module Kernel
   private
 
   def require_or_load_dir(location, dir = nil, _load = false, ext: 'rb', sort: false, reverse: false)
-    files = Dir["#{File.dirname(location)}/#{dir}/**/*.#{ext}"]
+    files_for "#{File.dirname(location)}/#{dir}/**/*.#{ext}", sort, reverse do |file|
+      _load ? load(file) : require(file)
+    end
+  end
+
+  def files_for(path, sort, reverse)
+    files = Dir[path]
     files = files.sort if sort
     files = files.reverse if reverse
     files.each do |file|
-      _load ? load(file) : require(file)
+      yield file
     end
   end
 end
