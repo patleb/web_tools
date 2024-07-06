@@ -9,13 +9,13 @@ class ActiveRecord::Base::WithJsonAttributeTest < ActiveSupport::TestCase
 
     assert_equal 'Name', record.name
     record.update! name: 'New Name'
-    assert_equal({ name: 'New Name' }, record.json_data)
+    assert_equal({ name: 'New Name', j_boolean: true, j_decimal: '1.1', j_string: 'j_string-1' }, record.json_data)
 
     assert_equal "Info for 'New Name'", record.info
 
     record.update! name: ''
     assert_nil record.name
-    assert_equal({}, record.json_data)
+    assert_equal({ j_boolean: true, j_decimal: '1.1', j_string: 'j_string-1' }, record.json_data)
 
     now = Time.current
     record.update! j_datetime: now
