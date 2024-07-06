@@ -19,7 +19,7 @@ module ActiveRecord::Relation::WithJsonAttribute
         operator, value = extract_operator(value)
         binds, *values = case value
           when Array then ['(?)', value]
-          when Range then ['(?) AND (?)', value.begin, value.end]
+          when Range then ['(?) AND (?)', value.min, value.max]
           else            ['?', value]
           end
         result << super("#{json_key(name)} #{operator} #{binds}", *values)
