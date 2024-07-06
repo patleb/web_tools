@@ -16,6 +16,6 @@ module ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::WithUnaccent
   private
 
   def unaccent_trigger_name(table, columns)
-    "unaccent_on_#{columns.join('_')}_of_#{table}"[0..62]
+    "unaccent_on_#{columns.join('_')}_of_#{table}"[0..max_index_name_size]
   end
 end

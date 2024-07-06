@@ -57,7 +57,7 @@ module Sql::Reference::CounterCache
     end
 
     def counter_cache_trigger_name(from_table, ref_name)
-      "count_#{from_table}_of_#{ref_name}"[0..62]
+      "count_#{from_table}_of_#{ref_name}"[0..max_index_name_size]
     end
 
     def decrement_target(count = 1, **options)

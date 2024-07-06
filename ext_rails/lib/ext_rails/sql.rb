@@ -3,6 +3,10 @@ module Sql
 
   include self::Reference
 
+  def self.max_index_name_size
+    62
+  end
+
   def self.slice(name, keys)
     keys.map{ |key| "'#{key}', #{name}->'#{key}'" }.join(', ')
   end
@@ -48,11 +52,10 @@ module Sql
     SQL
   end
 
-  private_class_method
-
   def self.get_value_cmd(column, variable, record: 'NEW', **)
     <<-SQL.compile_sql
       SELECT ($1).[#{column}] [INTO #{variable}] [USING #{record}]
     SQL
   end
+  private_class_method :get_value_cmd
 end

@@ -58,7 +58,7 @@ module Sql::Reference::Touch
     end
 
     def touch_trigger_name(from_table, ref_name)
-      "touch_#{ref_name}_of_#{from_table}"[0..62]
+      "touch_#{ref_name}_of_#{from_table}"[0..max_index_name_size]
     end
 
     def touch_target(**options)

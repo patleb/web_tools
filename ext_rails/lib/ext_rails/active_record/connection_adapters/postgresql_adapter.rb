@@ -3,7 +3,6 @@ require 'ext_rails/sql'
 require_dir __FILE__, 'postgresql'
 require_dir __FILE__, 'postgresql_adapter'
 
-# TODO https://jetrockets.pro/blog/how-to-store-large-json-in-postgresql-with-rails-attributes-api
 ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.class_eval do
   include self::WithReference
   include self::WithUnaccent
