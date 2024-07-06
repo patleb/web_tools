@@ -13,8 +13,6 @@ end
 class ActiveRecord::Base::WithListTest < ActiveSupport::TestCase
   fixtures 'test/records', 'test/related_records'
 
-  let(:retry){ false }
-
   test '#list_prev_id, #list_next_id, #list_change_only, .list_reorganize, .listables' do
     record = Test::Record.find(1)
     related = record.related_records
@@ -56,7 +54,7 @@ class ActiveRecord::Base::WithListTest < ActiveSupport::TestCase
     assert_equal ['Test::RelatedRecord'], Test::ApplicationRecord.listables.map(&:name)
   end
 
-  describe 'with retry' do
+  context 'with retry' do
     let(:retry){ true }
 
     test 'uniqueness' do

@@ -1,40 +1,34 @@
 require './test/rails_helper'
 
 class ActiveRecord::BaseTest < ActiveSupport::TestCase
-  context 'with records' do
-    fixtures 'test/records'
+  fixtures 'test/records', 'test/related_records'
 
-    let(:record){ Test::Record.find(1) }
+  let(:record){ Test::Record.find(1) }
 
-    test '.with_timezone' do
-      time = Time.current
-      assert_equal 'UTC', time.time_zone.name
-      record.datetime = time
-      ActiveRecord::Base.with_timezone('America/New_York') do
-        assert_equal false, ActiveRecord::Base.time_zone_aware_attributes
-        assert_equal 'America/New_York', record.datetime.time_zone.name
-      end
+  test '.with_timezone' do
+    time = Time.current
+    assert_equal 'UTC', time.time_zone.name
+    record.datetime = time
+    ActiveRecord::Base.with_timezone('America/New_York') do
+      assert_equal false, ActiveRecord::Base.time_zone_aware_attributes
+      assert_equal 'America/New_York', record.datetime.time_zone.name
     end
+  end
 
-    test '#slice, #except, #attribute_names!, #attributes!' do
-      assert_equal({ id: 1, name: 'Name' }, record.slice(:id, :name))
-      assert_equal({ id: 1, name: 'Name' }, record.except(*record.attribute_names!.except(:id, :name)))
-    end
+  test '#slice, #except, #attribute_names!, #attributes!' do
+    assert_equal({ id: 1, name: 'Name' }, record.slice(:id, :name))
+    assert_equal({ id: 1, name: 'Name' }, record.except(*record.attribute_names!.except(:id, :name)))
+  end
 
-    context 'with related records' do
-      fixtures 'test/related_records'
+  test '#can_destroy?' do
+    assert_equal false, record.can_destroy?
+  end
 
-      test '#can_destroy?' do
-        assert_equal false, record.can_destroy?
-      end
-
-      test '#locking_enabled?' do
-        record = Test::RelatedRecord.find(1)
-        lock_was = record.lock_version
-        record.touch
-        assert_equal lock_was, record.lock_version
-      end
-    end
+  test '#locking_enabled?' do
+    record = Test::RelatedRecord.find(1)
+    lock_was = record.lock_version
+    record.touch
+    assert_equal lock_was, record.lock_version
   end
 
   test '.scope' do
