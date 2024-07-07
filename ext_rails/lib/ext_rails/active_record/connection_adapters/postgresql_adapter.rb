@@ -5,6 +5,7 @@ require_dir __FILE__, 'postgresql_adapter'
 
 ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.class_eval do
   include self::WithReference
+  prepend self::WithReturningColumn
   include self::WithUnaccent
   prepend self::WithTypeMap
 
@@ -19,5 +20,12 @@ ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.class_eval do
 
   def trigger_exists?(table, name)
     select_value("SELECT COUNT(*) FROM pg_trigger WHERE NOT tgisinternal AND tgrelid = '#{table}'::regclass AND tgname = '#{name}'").to_i > 0
+  end
+
+  def with(**options)
+    (Thread.current[:sql_options] ||= {})[self] = options
+    yield
+  ensure
+    Thread.current[:sql_options].delete(self)
   end
 end
