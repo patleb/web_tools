@@ -56,7 +56,6 @@ class ActiveRecord::Relation::WithJsonAttributeTest < ActiveSupport::TestCase
 
   def ids_for(_not: false, order: nil, **conditions)
     scope = _not ? Test::Record.where_not(conditions) : Test::Record.where(conditions)
-    scope = scope.order(**order) if order
-    scope.pluck(:id)
+    order ? scope.order(**order).pluck(:id) : scope.pluck(:id).sort
   end
 end
