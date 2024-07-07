@@ -3,9 +3,7 @@ module ActiveRecord
     class Encrypted < ActiveRecord::Type::Text
       def serialize(value)
         if value&.start_with? Setting::SECRET
-          memoize(__method__, value) do
-            Setting.decrypt(value)
-          end
+          Setting.decrypt(value)
         else
           value
         end
@@ -17,9 +15,7 @@ module ActiveRecord
         if value&.start_with? Setting::SECRET
           value
         elsif value
-          memoize(__method__, value) do
-            Setting.encrypt(value)
-          end
+          Setting.encrypt(value)
         end
       end
     end
