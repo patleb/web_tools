@@ -30,7 +30,7 @@ class VirtualRecordTest < ActiveSupport::TestCase
   let(:paginated){ values[6, 6] }
 
   around do |test|
-    travel_to DateTime.new(2000, 1, 1, 1, 1, 1) do
+    travel_to Time.utc(2000, 1, 1, 1, 1, 1) do
       test.call
     end
   end
@@ -68,7 +68,7 @@ class VirtualRecordTest < ActiveSupport::TestCase
     assert_equal(resources(*0.step(10, 2)), resources_for(['odd IS NULL OR odd = ?', false]))
     assert_equal(resources(*0.step(10, 2)), resources_for(['odd IS NULL OR odd != ?', true]))
     assert_equal(resources(1, 2),           resources_for(['id IN (?,?)', 1, 2]))
-    assert_equal(resources(1, 2),           resources_for(['date BETWEEN ? AND ?', '2000-01-02', DateTime.new(2000, 1, 3)]))
+    assert_equal(resources(1, 2),           resources_for(['date BETWEEN ? AND ?', '2000-01-02', Time.utc(2000, 1, 3)]))
   end
 
   private
