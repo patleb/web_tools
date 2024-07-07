@@ -6,6 +6,7 @@ module Test
     has_many :related_records, discardable: true, dependent: :restrict_with_error
 
     json_attribute :name
+    json_attribute secret: :encrypted
     json_attribute info:  [default: ->(record) { "Info for '#{record.name}'" }]
     json_translate title: [default: ->(_record, locale){ locale == :fr ? 'Titre' : 'Title' }]
     json_attribute(

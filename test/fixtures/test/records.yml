@@ -12,6 +12,7 @@ test_record_<%= i %>:
   json: { int: <%= i %>, str: '<script>alert("<%= i %>")</script>' }
   json_data:
     name: 'Name'
+    secret: <%= i == 1 ? Setting.encrypt('test') : 'null' %>
     j_boolean: <%= i.odd? %>
     j_decimal: <%= i %>.<%= i %>
     j_integer: <%= i == 1 ? 'null' : i %>
