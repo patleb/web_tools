@@ -3,6 +3,7 @@ require './test/rails_helper'
 class ActiveRecord::BaseTest < ActiveSupport::TestCase
   fixtures 'test/records', 'test/related_records'
 
+  let(:run_timeout){ 2 }
   let(:record){ Test::Record.find(1) }
 
   test '.with_timezone' do
