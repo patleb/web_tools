@@ -15,9 +15,9 @@ class ActiveRecord::BaseTest < ActiveSupport::TestCase
     end
   end
 
-  test '#slice, #except, #attribute_names!, #attributes!' do
+  test '#slice, #except, #attribute_keys, #attributes_hash' do
     assert_equal({ id: 1, name: 'Name' }, record.slice(:id, :name))
-    assert_equal({ id: 1, name: 'Name' }, record.except(*record.attribute_names!.except(:id, :name)))
+    assert_equal({ id: 1, name: 'Name' }, record.except(*record.attribute_keys.except(:id, :name)))
   end
 
   test '#can_destroy?' do

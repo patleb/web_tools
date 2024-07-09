@@ -38,7 +38,7 @@ ActiveRecord::Base.class_eval do
   alias_method :decrypted, :read_attribute_before_type_cast
   alias_method :new?, :previously_new_record?
 
-  delegate :slice, :except, to: :attributes!
+  delegate :slice, :except, to: :attributes_hash
 
   class << self
     alias_method :without_default_scope, :evaluate_default_scope
@@ -251,11 +251,11 @@ ActiveRecord::Base.class_eval do
   end
   private_class_method :with_model
 
-  def attribute_names!
-    attributes!.keys
+  def attribute_keys
+    attributes_hash.keys
   end
 
-  def attributes!
+  def attributes_hash
     @attributes.to_hash.with_indifferent_access
   end
 
