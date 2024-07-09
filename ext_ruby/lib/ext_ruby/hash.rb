@@ -46,6 +46,6 @@ class Hash
     return unless present?
     hash = self
     hash = hash.sort_by{ |k, _| k.to_s }.to_h if sort
-    hash.cast.to_s.gsub(/:(\w+)=>/, '\1: ')
+    hash.cast_self.to_s.gsub(/:(\w+)=>/, '\1: ')
   end
 end

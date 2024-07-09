@@ -1,35 +1,35 @@
 module Boolean
-  def cast
+  def cast_self
     self
   end
 end
 
 class Numeric
-  def cast
+  def cast_self
     self
   end
 end
 
 class Symbol
-  def cast
+  def cast_self
     self
   end
 end
 
 class Time
-  def cast
+  def cast_self
     self
   end
 end
 
 class Pathname
-  def cast
+  def cast_self
     to_s
   end
 end
 
 class String
-  def cast
+  def cast_self
     case
     when blank?                   then nil
     when to_f?                    then to_f
@@ -42,16 +42,16 @@ class String
 end
 
 class Array
-  def cast
-    map{ |v| v&.cast }
+  def cast_self
+    map{ |v| v&.cast_self }
   end
 end
 
 class Hash
   KEYWORD = /^[a-z_][a-z0-9_]*[!?]?$/i.freeze
 
-  def cast
-    deep_transform_keys{ |key| _cast_key(key) }.transform_values{ |v| v&.cast }
+  def cast_self
+    deep_transform_keys{ |key| _cast_key(key) }.transform_values{ |v| v&.cast_self }
   end
 
   private

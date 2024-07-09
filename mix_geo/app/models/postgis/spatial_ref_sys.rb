@@ -172,7 +172,7 @@ module Postgis
     def proj4
       if auth_name == 'none'
         proj4text.split('+').reject(&:blank?).map{ |kv| kv.include?('=') ? kv.split('=') : [kv, true] }.to_h
-          .symbolize_keys!.transform_values!{ |v| v.is_a?(String) ? v.strip.cast : v }
+          .symbolize_keys!.transform_values!{ |v| v.is_a?(String) ? v.strip.cast_self : v }
       else
         { init: "epsg:#{srid}" }
       end

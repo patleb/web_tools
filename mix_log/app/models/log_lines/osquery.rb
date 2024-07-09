@@ -39,7 +39,7 @@ module LogLines
         Pathname.new('/etc/osquery/osquery.flags').readlines(chomp: true).select_map do |line|
           next unless line.delete_prefix! '--'
           line.split('=', 2)
-        end.to_h.with_indifferent_access.transform_values(&:cast)
+        end.to_h.with_indifferent_access.transform_values(&:cast_self)
       end
     end
 

@@ -36,7 +36,7 @@ class String
   def to_bytes(standard = :db)
     value, units = upcase.split
     value = value.tr(',', '.') if BYTES.has_key?(units) && units.include?('O')
-    (value.cast * (standard == :db ? DB_BYTES[units] : BYTES[units])).to_i
+    (value.cast_self * (standard == :db ? DB_BYTES[units] : BYTES[units])).to_i
   end
 
   def to_args
