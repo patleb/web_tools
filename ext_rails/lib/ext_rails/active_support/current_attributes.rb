@@ -1,3 +1,5 @@
+MonkeyPatch.add{['activesupport', 'lib/active_support/current_attributes.rb', '99d25fb3fa37e9afc576ceed47ae8ae62824d23ff90aca6e507d528d815e1622']}
+
 ActiveSupport::CurrentAttributes.class_eval do
   include ActiveSupport::LazyLoadHooks::Autorun
 
