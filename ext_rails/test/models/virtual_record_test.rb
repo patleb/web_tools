@@ -1,24 +1,8 @@
 require './test/rails_helper'
 
-class Resource < VirtualRecord::Base
-  scope :even, -> { select{ |record| record.id.even? } }
-
-  ar_attribute :name
-  attribute    :date, :date,     default: ->(record) { record.id.days.from_now.to_date }
-  attribute    :odd,  :boolean,  default: ->(record) { record.id.odd? }
-
-  def self.list
-    11.times.map{ |i| { id: i, name: "Name #{i}" } } << { id: -1, name: '' }
-  end
-
-  def values
-    attributes.symbolize_keys
-  end
-end
-
 class VirtualRecordTest < ActiveSupport::TestCase
   let(:values) do
-    Resource.list.map do |r|
+    Test::VirtualRecord.list.map do |r|
       r[:date] = r[:id].days.from_now.to_date
       r[:odd] = r[:id].odd?
       r[:name] = nil if r[:name].blank?
@@ -36,27 +20,27 @@ class VirtualRecordTest < ActiveSupport::TestCase
   end
 
   test '.all' do
-    assert_equal values, Resource.all.map(&:values)
+    assert_equal values, Test::VirtualRecord.all.map(&:values)
   end
 
   test '.find' do
-    assert_equal(resource(5), Resource.find(5).values)
+    assert_equal(resource(5), Test::VirtualRecord.find(5).values)
   end
 
   test '.scope' do
-    assert_equal even, Resource.even.map(&:values)
+    assert_equal even, Test::VirtualRecord.even.map(&:values)
   end
 
   test '.order and .reverse_order' do
-    assert_equal sorted, Resource.order(:name).reverse_order.map(&:values)
+    assert_equal sorted, Test::VirtualRecord.order(:name).reverse_order.map(&:values)
   end
 
   test '.limit and .offset' do
-    assert_equal paginated, Resource.limit(10).offset(6).map(&:values)
+    assert_equal paginated, Test::VirtualRecord.limit(10).offset(6).map(&:values)
   end
 
   test '.where' do
-    assert_equal(resource(5),               Resource.where(id: 5, name: 'Name 5').take.values)
+    assert_equal(resource(5),               Test::VirtualRecord.where(id: 5, name: 'Name 5').take.values)
     assert_equal(resources(1, 2),           resources_for([id: [1, 2]]))
     assert_equal(resources(-1),             resources_for([name: nil]))
     assert_equal(resources(-1),             resources_for(['name IS NULL'])) # blank
@@ -74,7 +58,7 @@ class VirtualRecordTest < ActiveSupport::TestCase
   private
 
   def resources_for(*sqls)
-    sqls.reduce(Resource){ |scope, (sql, *values)| scope.where(sql, *values) }.map(&:values)
+    sqls.reduce(Test::VirtualRecord){ |scope, (sql, *values)| scope.where(sql, *values) }.map(&:values)
   end
 
   def resources(*ids)
