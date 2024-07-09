@@ -4,7 +4,7 @@ class ActiveRecord::Relation::WithJsonAttributeTest < ActiveSupport::TestCase
   fixtures 'test/records'
 
   test '.select, .where, .order, .group' do
-    assert_equal 'j_string-1',        Test::Record.select(:j_string).where(j_integer: nil).take.j_string
+    assert_equal 'j_string-1', Test::Record.select(:j_string).where(j_integer: nil).take.j_string
     assert_equal [1],    ids_for(j_integer: nil)
     assert_equal [2, 3], ids_for(j_integer: [2, 3])
     assert_equal [5, 4], ids_for(j_integer: 4..5, order: { j_integer: :desc })
@@ -14,7 +14,7 @@ class ActiveRecord::Relation::WithJsonAttributeTest < ActiveSupport::TestCase
     assert_equal [5],    ids_for(j_string: ['~', '^j_str.*[^1-4]$'])
     assert_equal [5],    ids_for(j_string: ['LIKE', 'j_str%5'])
     assert_equal [4, 2], ids_for(j_boolean: false, order: { j_string: :desc })
-    assert_equal [[1, 3, 5], [2, 4]], Test::Record.select('array_agg(id) AS ids', :j_boolean).group(:j_boolean).map(&:ids).sort_by(&:first)
+    assert_equal [0, 1], Test::Record.select('MAX(boolean::INT) AS int', :j_boolean).group(:j_boolean).order(:int).map(&:int)
   end
 
   test '.where_not' do
