@@ -6,14 +6,6 @@ module VirtualRecord
 
     class << self
       delegate :count_estimate, :size, :all?, :empty?, :reverse_order, to: :all
-
-      def scope(name, body)
-        raise ArgumentError, "The scope body needs to be callable." unless body.respond_to? :call
-        return unless name.match? /^[a-z_][a-z0-9_]*$/
-        singleton_class.define_method(name) do |*args|
-          body.call(*args)
-        end
-      end
     end
 
     def self.inherited(subclass)
@@ -36,10 +28,6 @@ module VirtualRecord
       when :main then ActiveRecord::Main.connection
       when :base then ActiveRecord::Base.connection
       end
-    end
-
-    def self.encoding
-      "UTF-8"
     end
 
     def self.find(id)

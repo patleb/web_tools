@@ -81,12 +81,14 @@ module VirtualRecord
       if query.blank?
         result = []
       elsif query.is_a? Hash
-        result = query.reduce(self) do |memo, (column, value)|
-          value = cast_value(column, value)
-          if value.is_a? Array
-            memo.select{ |item| value.include? item.public_send(column) }
-          else
-            [memo.find{ |item| item.public_send(column) == value }].compact
+        result = select do |item|
+          query.all? do |column, value|
+            case (value = cast_value(column, value))
+            when Array
+              value.include? item.public_send(column)
+            else
+              item.public_send(column) == value
+            end
           end
         end
       else
@@ -140,7 +142,7 @@ module VirtualRecord
           klass.public_send(name, ...)
         end
       else
-        self
+        super
       end
     end
 
@@ -155,7 +157,8 @@ module VirtualRecord
       when Array
         value.map{ |item| cast_value(column, item) }
       else
-        klass.virtual_columns_hash[column.to_s].type_cast(value)
+        column = column.to_s
+        (klass.virtual_columns_hash[column] || klass.attribute_types[column]).cast(value)
       end
     end
   end

@@ -20,6 +20,11 @@ ActiveRecord::Base.class_eval do
     /base.rb
     /main.rb
   )
+  TYPES_HASH = %i(
+    columns_hash
+    virtual_columns_hash
+    attribute_types
+  )
 
   class_attribute :skip_locking_attributes, instance_writer: false, instance_predicate: false, default: SKIP_LOCKING_ATTRIBUTES
 
@@ -221,18 +226,8 @@ ActiveRecord::Base.class_eval do
   end
 
   def self.types_hash
-    @types_hash ||= begin
-      hash = {}.with_indifferent_access
-      if respond_to? :columns_hash
-        hash.merge! columns_hash.transform_values{ |c| c.type || :string }
-      end
-      if respond_to? :virtual_columns_hash
-        hash.merge! virtual_columns_hash.transform_values{ |c| c.ivar(:@type_caster).ivar(:@type) || :string }
-      end
-      if respond_to? :attribute_types
-        hash.merge! attribute_types.transform_values{ |c| c.type || :string }
-      end
-      hash
+    @types_hash ||= TYPES_HASH.each_with_object({}.with_indifferent_access) do |attributes_method, hash|
+      hash.merge! public_send(attributes_method) if respond_to? attributes_method
     end
   end
 
@@ -250,10 +245,6 @@ ActiveRecord::Base.class_eval do
     yield model
   end
   private_class_method :with_model
-
-  def attribute_keys
-    attributes_hash.keys
-  end
 
   def attributes_hash
     @attributes.to_hash.with_indifferent_access

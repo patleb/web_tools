@@ -1,7 +1,4 @@
-### References
-# TODO https://github.com/makandra/active_type/issues/32
-require 'ext_rails/active_type/record_extension/inheritance'
-require 'ext_rails/active_type/type_caster'
-require "ext_rails/active_type/object"
-require "ext_rails/active_type/null_object"
-require "ext_rails/active_type/root_object"
+MonkeyPatch.add{['active_type', 'lib/active_type/virtual_attributes.rb', 'e65f8bb07406491e253ce8117d0e67165aabe7d4a08a9172e92ad6e9a055e713']}
+
+require 'active_type/record_extension/inheritance'
+require_dir __FILE__, 'active_type'

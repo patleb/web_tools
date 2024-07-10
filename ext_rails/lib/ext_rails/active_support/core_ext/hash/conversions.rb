@@ -5,8 +5,4 @@ class Hash
   def attributes_hash
     to_hash.with_indifferent_access
   end
-
-  def attribute_keys
-    attributes_hash.keys
-  end
 end

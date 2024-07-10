@@ -3,7 +3,7 @@
 module ActiveRecord::Base::WithNullifyBlanks
   extend ActiveSupport::Concern
 
-  DEFAULT_TYPES = [:string, :text, :citext]
+  DEFAULT_TYPES = [nil, :string, :text, :citext]
 
   prepended do
     class_attribute :nullify_blanks_types, instance_writer: false, instance_predicate: false, default: DEFAULT_TYPES
@@ -23,7 +23,9 @@ module ActiveRecord::Base::WithNullifyBlanks
       generated_attribute_methods.synchronize do
         return false if @nullify_blank_methods_generated
 
-        self.nullify_blanks_columns = types_hash.select_map{ |name, type| name if nullify_blanks_types.include? type }.to_set
+        self.nullify_blanks_columns = types_hash.select_map do |name, attribute|
+          name if nullify_blanks_types.include? attribute.type
+        end.to_set
 
         @nullify_blank_methods_generated = true
       end
