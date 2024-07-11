@@ -4,6 +4,7 @@ ActionDispatch::IntegrationTest.class_eval do
   include Devise::Test::IntegrationHelpers if defined? Devise
 
   attr_accessor :current
+  attr_accessor :result
   delegate :parsed_body, to: :response
   alias_method :body, :parsed_body
 
@@ -46,15 +47,16 @@ ActionDispatch::IntegrationTest.class_eval do
       ExtRails::TestController.remove_method method_name
     end
     self.current = nil
+    self.result = nil
     teardown_without_current
   end
 
   def [](name)
-    controller.send(:instance_variable_get, name)
+    controller.ivar(name)
   end
 
   def []=(name, value)
-    controller.send(:instance_variable_set, name, value)
+    controller.ivar(name, value)
   end
 end
 
