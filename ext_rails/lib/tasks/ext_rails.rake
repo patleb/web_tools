@@ -1,12 +1,5 @@
 require_dir __FILE__, 'ext_rails'
 
-namespace :backup do
-  desc "-- [options] Backup Git"
-  task :git => :environment do |t|
-    ExtRails::Backup::Git.new(self, t).run!
-  end
-end
-
 namespace :gem do
   desc 'destroy gem'
   task :destroy, [:name] do |t, args|
