@@ -1,4 +1,6 @@
-require "rake/backtrace"
+# frozen_string_literal: true
+
+require 'rake/backtrace'
 
 module Rake
   module Backtrace
