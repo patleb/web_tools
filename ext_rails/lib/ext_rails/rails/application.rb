@@ -1,3 +1,5 @@
+MonkeyPatch.add{['railties', 'lib/rails/application.rb', '0fe08201f388b716b11f31edc61ca5c562c4ad5cdb25fe7c01b4058d4fabd248']}
+
 Rails::Application.class_eval do
   alias_method :old_initialize!, :initialize!
   def initialize!(group = :default)
