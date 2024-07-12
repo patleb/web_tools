@@ -26,4 +26,3 @@ Gem::Specification.new do |s|
   s.add_dependency 'shoulda-matchers'
   s.add_dependency 'ext_ruby', version
 end
-# TODO capybara rack test and/or https://evilmartians.com/chronicles/system-of-a-test-2-robust-rails-browser-testing-with-siteprism

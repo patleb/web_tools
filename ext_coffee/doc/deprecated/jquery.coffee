@@ -120,7 +120,6 @@ jQuery.define_singleton_methods
       $(input).valid()
 
   is_meta_click: (event) ->
-    # TODO https://github.com/rails/rails/pull/34573/files
     # Middle click, cmd click, and ctrl click should open links in a new tab as normal.
     event.which > 1 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey
 
