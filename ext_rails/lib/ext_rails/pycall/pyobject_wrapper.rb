@@ -1,4 +1,3 @@
-# TODO nested equality doesn't works well (must cast every objets)
 module PyCall
   module PyObjectWrapper
     def to_a

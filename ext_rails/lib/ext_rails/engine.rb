@@ -1,8 +1,8 @@
-require 'routes_lazy_routes'
+# frozen_string_literal: true
 
-module ActionService
-  autoload :Base, 'ext_rails/action_service/base'
-end
+MonkeyPatch.add{['rake', 'lib/rake/backtrace.rb', 'd7717ccd2d224fd94f37d07f8f9333274494486bcfc2a143cc4dc079f14e66c6']}
+
+require 'routes_lazy_routes'
 
 module ExtRails
   module Routes
@@ -29,12 +29,13 @@ module ExtRails
   end
 
   class Engine < ::Rails::Engine
+    require 'active_record_extended'
     require 'active_type'
     require 'date_validator'
-    require 'discard'
     require 'http_accept_language'
     require 'monogamy'
     require 'pg'
+    require 'rounding'
     require 'stateful_enum'
     require 'rails-i18n'
     if Rails.env.development?
@@ -42,14 +43,17 @@ module ExtRails
       require 'null_logger'
     end
 
-    require 'sunzistrano/context'
+    require 'sunzistrano'
     require 'ext_rails/active_support/abstract_class'
     require 'ext_rails/active_support/core_ext'
     require 'ext_rails/active_support/lazy_load_hooks/autorun'
     require 'ext_rails/active_support/current_attributes'
-    require 'ext_rails/active_support/string_inquirer'
-    require 'ext_rails/active_support/dependencies/with_nilable_cache'
+    require 'ext_rails/active_support/dependencies/with_cache'
+    require 'ext_rails/active_support/parameter_filter/with_regexp'
+    require 'ext_rails/action_controller/delegator'
+    require 'ext_rails/action_view/delegator'
     require 'ext_rails/configuration'
+    require 'ext_rails/geared_pagination'
     require 'ext_rails/money_rails'
     require 'ext_rails/parallel'
     require 'ext_rails/rack/utils'
@@ -60,18 +64,18 @@ module ExtRails
       require 'ext_rails/rails/application'
       require 'ext_rails/rails/initializable/collection'
       require 'ext_rails/pycall'
+      require 'ext_rails/user_agent_parser/parser/with_regexp'
 
       app.config.active_record.schema_format = :sql
-      # app.config.action_view.embed_authenticity_token_in_remote_forms = true
-      # app.config.active_record.time_zone_aware_attributes = false
       app.config.i18n.default_locale = :fr
       app.config.i18n.available_locales = [:fr, :en]
       app.config.i18n.fallbacks = [:en]
       # app.config.i18n.fallbacks = true
+      app.config.time_zone = 'UTC'
 
       $stdout.sync = true
 
-      if Rails.env.dev_or_test?
+      if Rails.env.local?
         host, port = Setting[:default_url_options].values_at(:host, :port)
         app.config.asset_host = "#{host}#{":#{port}" if port}"
         app.config.logger = ActiveSupport::Logger.new(app.config.paths['log'].first, 5)
@@ -80,33 +84,27 @@ module ExtRails
     end
 
     config.before_initialize do |app|
-      app.config.middleware.insert_after ActionDispatch::Static, Rack::Deflater if Rails.env.dev_ngrok?
-
-      %w(libraries tasks).each do |directory|
-        ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/app/#{directory}")
+      %w(app/libraries app/tasks).each do |directory|
+        ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/#{directory}")
       end
-
-      unless Setting[:timescaledb_enabled]
-        Rails.autoloaders.main.ignore("#{root}/app/models/concerns/timescaledb")
-        Rails.autoloaders.main.ignore("#{root}/app/models/timescaledb")
-      end
-
       ENV["BACKTRACE"] = true
     end
 
     initializer 'ext_rails.append_migrations' do |app|
       append_migrations(app)
-      append_migrations(app, scope: 'pgunit') if Rails.env.dev_or_test?
+      append_migrations(app, scope: 'pgunit') if Rails.env.local?
       append_migrations(app, scope: 'vector') if Setting[:vector_enabled]
       append_migrations(app, scope: 'pgstats') if Setting[:pgstats_enabled]
       append_migrations(app, scope: 'pgrepack') if Setting[:pgrepack_enabled]
-      append_migrations(app, scope: 'timescaledb') if Setting[:timescaledb_enabled]
     end
 
     initializer 'ext_rails.append_routes' do |app|
       app.routes.append do
         match '/' => 'application#healthcheck', via: [:get, :head], as: :base
+
         get '/test/:name' => 'ext_rails/test#show', as: :test if Rails.env.test?
+
+        get '/favicon.ico', to: -> (_) { [404, {}, ['']] } if Rails.env.local?
 
         match '(/)*not_found', via: :all, to: 'application#render_404', format: false
       end
@@ -116,12 +114,13 @@ module ExtRails
       app.routes.default_url_options = Setting[:default_url_options]
     end
 
-    initializer 'ext_rails.i18n' do
-      if defined? I18n::Debug
-        unless ExtRails.config.i18n_debug
-          I18n::Debug.logger = NullLogger.new
-        end
+    initializer 'ext_rails.i18n' do |app|
+      (app.config.i18n.available_locales & %i(es fr it kk nb pt_br tr)).each do |locale|
+        require "ext_rails/active_support/inflections/#{locale}"
       end
+
+      I18n::Backend::Simple.prepend I18n::Backend::Memoize
+      I18n::Debug.logger = NullLogger.new if defined?(I18n::Debug) && !ExtRails.config.i18n_debug
 
       MoneyRails.configure do |config|
         config.default_currency = :cad
@@ -138,15 +137,6 @@ module ExtRails
         require 'ext_rails/rack_lineprof'
         app.middleware.use Rack::Lineprof, profile: matcher
       end
-    end
-
-    ActiveSupport.on_load(:action_dispatch_response) do
-      require 'ext_rails/action_dispatch/journey/formatter/with_params_fix'
-      require 'ext_rails/action_dispatch/routing/url_for/with_only_path'
-    end
-
-    ActiveSupport.on_load(:action_dispatch_request) do
-      require 'ext_rails/action_dispatch/request/session/with_memoized_at'
     end
 
     ActiveSupport.on_load(:action_controller, run_once: true) do
@@ -166,19 +156,22 @@ module ExtRails
     end
 
     ActiveSupport.on_load(:active_record) do
-      # TODO https://stackoverflow.com/questions/41399788/use-rails-select-to-add-not-overwrite-selected-attributes
       require 'store_base_sti_class'
       require 'ext_rails/active_type'
       require 'ext_rails/active_record/associations/builder/belongs_to/with_global_id'
       require 'ext_rails/active_record/associations/builder/belongs_to/with_list'
+      require 'ext_rails/active_record/associations/builder/has_many/with_discard'
+      require 'ext_rails/active_record/associations/builder/has_one/with_discard'
       require 'ext_rails/active_record/connection_adapters/postgresql_adapter'
       require 'ext_rails/active_record/arel'
       require 'ext_rails/active_record/base'
       require 'ext_rails/active_record/migration'
       require 'ext_rails/active_record/reflection/belongs_to_reflection/with_list'
+      require 'ext_rails/active_record/reflection/has_many_reflection/with_discard'
+      require 'ext_rails/active_record/reflection/has_one_reflection/with_discard'
       require 'ext_rails/active_record/relation'
       require 'ext_rails/active_record/tasks/database_tasks/with_single_env'
-      require 'ext_rails/active_record/type/json/with_keyword_access'
+      require 'ext_rails/active_record/type/json/with_indifferent_access'
       require 'ext_rails/active_record/type/encrypted'
 
       ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables = Rails.env.test?
