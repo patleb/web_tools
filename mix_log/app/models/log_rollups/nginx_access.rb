@@ -47,7 +47,7 @@ class LogRollups::NginxAccess < LogRollup
   end
 
   def self.total_bytes_out
-    where(period: 1.week).period.sum(:bytes_out).to_s(:human_size)
+    where(period: 1.week).period.sum(:bytes_out).to_fs(:human_size)
   end
 
   def self.requests_by(period_or_group)
