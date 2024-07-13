@@ -324,7 +324,7 @@ class Global < LibMainRecord
     when Float, BigDecimal       then 'decimal'
     when Date, Time, DateTime    then 'datetime'
     when ActiveSupport::Duration then 'interval'
-    when String, nil             then 'string'
+    when String, Symbol, nil     then 'string'
     else                              'serialized'
     end
   end
