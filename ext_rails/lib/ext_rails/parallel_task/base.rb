@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ParallelTask
   class Base < ActiveTask::Base
     def self.args

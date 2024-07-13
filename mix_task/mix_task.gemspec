@@ -17,15 +17,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency "rake"
-  # TODO https://github.com/tessi/malloc_trim
-  s.add_dependency "dotiw"
-  s.add_dependency "ext_ruby", version
-  s.add_dependency "mix_setting"
-  s.add_dependency "mix_rescue", version
-  # TODO https://github.com/stevehodges/attribute_stats
-  # TODO https://github.com/thoughtbot/terrapin
-
-  s.add_development_dependency "railties"
-  s.add_development_dependency 'ext_minitest', version
+  s.add_dependency "ext_rails", version
 end

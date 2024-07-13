@@ -4,6 +4,14 @@ MonkeyPatch.add{['rake', 'lib/rake/backtrace.rb', 'd7717ccd2d224fd94f37d07f8f933
 
 require 'routes_lazy_routes'
 
+module ActiveTask
+  autoload :Base, 'ext_rails/active_task/base'
+end
+
+module ParallelTask
+  autoload :Base, 'ext_rails/parallel_task/base'
+end
+
 module ExtRails
   module Routes
     def self.base_url
@@ -32,8 +40,10 @@ module ExtRails
     require 'active_record_extended'
     require 'active_type'
     require 'date_validator'
+    require 'dotiw'
     require 'http_accept_language'
     require 'monogamy'
+    require 'optparse'
     require 'pg'
     require 'rounding'
     require 'stateful_enum'
@@ -57,11 +67,14 @@ module ExtRails
     require 'ext_rails/money_rails'
     require 'ext_rails/parallel'
     require 'ext_rails/rack/utils'
+    require 'ext_rails/rake/dsl'
+    require 'ext_rails/rake/task'
     require 'ext_rails/rails/engine'
     require 'ext_rails/rails/initializable/initializer'
 
     config.before_configuration do |app|
       require 'ext_rails/rails/application'
+      require 'ext_rails/rails/engine/with_task'
       require 'ext_rails/rails/initializable/collection'
       require 'ext_rails/pycall'
       require 'ext_rails/user_agent_parser/parser/with_regexp'
@@ -72,6 +85,7 @@ module ExtRails
       app.config.i18n.fallbacks = [:en]
       # app.config.i18n.fallbacks = true
       app.config.time_zone = 'UTC'
+      app.paths.add "app/tasks", glob: "**/*.rake"
 
       $stdout.sync = true
 

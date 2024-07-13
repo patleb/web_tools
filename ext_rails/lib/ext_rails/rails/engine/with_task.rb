@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rails::Engine::WithTask
   def load_tasks(app = self)
     return self if @tasks_loaded
@@ -5,7 +7,7 @@ module Rails::Engine::WithTask
     Rake::TaskManager.record_task_metadata = true
     super
     tasks = Rake.application.instance_variable_get('@tasks')
-    unless MixTask.config.keep_install_migrations
+    unless ExtRails.config.keep_install_migrations
       tasks.each do |t|
         if (task_name = t.first).end_with? ':install:migrations'
           tasks.delete(task_name)

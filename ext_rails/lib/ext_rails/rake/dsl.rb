@@ -1,4 +1,11 @@
 module Rake
+  STARTED = '[STARTED]'
+  SUCCESS = '[SUCCESS]'
+  FAILURE = '[FAILURE]'
+  STEP    = '[STEP]'
+  CANCEL  = '[CANCEL]'
+  RUNNING = '[RUNNING]'
+
   module DSL
     def with_argv(task_name, **argv)
       if argv.any?
@@ -29,13 +36,6 @@ module Rake
       with_argv(task_name, **argv) do
         Rake::Task[task_name].invoke!(*args)
       end
-    end
-
-    def sun_rake(task_string, env: Rails.env, app: Rails.app, host: nil)
-      no_color = 'DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
-      host = "--host=#{host}" if host.present?
-      task = [task_string, no_color].compact.join(' ')
-      sh "bin/sun rake #{[env, app].compact.join('-')} '#{task.escape_single_quotes}' #{host}"
     end
   end
 end

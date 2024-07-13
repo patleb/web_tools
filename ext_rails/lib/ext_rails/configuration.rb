@@ -9,6 +9,7 @@ module ExtRails
     attr_writer   :excluded_models
     attr_writer   :excluded_tables
     attr_writer   :temporary_tables
+    attr_accessor :keep_install_migrations
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug

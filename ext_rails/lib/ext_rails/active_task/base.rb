@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActiveTask
   class Base
     include ActionView::Helpers::DateHelper
@@ -6,22 +8,22 @@ module ActiveTask
 
     EXIT_CODE_HELP = 10
 
-    STEPS_ARGS = IceNine.deep_freeze(%i(
+    STEPS_ARGS = %i(
       only
       skip
       goto
-    ))
-    RAILS_ARGS = IceNine.deep_freeze(%i(
+    )
+    RAILS_ARGS = %i(
       env
       app
       root
-    ))
-    GEMS_ARGS = IceNine.deep_freeze(%i(
+    )
+    GEMS_ARGS = %i(
       trace
       silent
       format
       require
-    ))
+    )
 
     attr_reader :rake, :task, :options
 
@@ -142,13 +144,11 @@ module ActiveTask
     def after_ensure(exception); end
 
     def puts_step(name)
-      Log.task("+#{name}")
-      puts "[#{Time.current.utc}]#{MixTask::STEP}[#{Process.pid}] #{name}".yellow
+      puts "[#{Time.current.utc}]#{Rake::STEP}[#{Process.pid}] #{name}".yellow
     end
 
     def puts_cancel
-      Log.task('-cancel')
-      puts "[#{Time.current.utc}]#{MixTask::CANCEL}[#{Process.pid}]".magenta
+      puts "[#{Time.current.utc}]#{Rake::CANCEL}[#{Process.pid}]".magenta
     end
 
     def read_header(path)
@@ -348,5 +348,7 @@ module ActiveTask
         end
       end
     end
+
+    ActiveSupport.run_load_hooks(:active_task, self)
   end
 end

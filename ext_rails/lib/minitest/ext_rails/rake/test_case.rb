@@ -3,6 +3,7 @@ module Rake
     Rails.application.load_tasks
 
     class_attribute :task_namespace
+    class_attribute :task_name, instance_predicate: false, instance_accessor: false
 
     protected
 
@@ -13,7 +14,9 @@ module Rake
     end
 
     def task_name
-      if task_namespace.present?
+      if self.class.task_name.present?
+        self.class.task_name
+      elsif task_namespace.present?
         namespace = "#{task_namespace}:"
       end
       "#{namespace}#{base_name.sub(/^(Mix|Ext)([A-Z])/, '\2').sub(/Task$/, '').underscore.tr('/', ':')}"

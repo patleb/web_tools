@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module Sunzistrano
-  TASK = '[TASK]'.freeze
-  DONE = '[DONE]'.freeze
-  FAIL = '[FAIL]'.freeze
+  TASK = '[TASK]'
+  DONE = '[DONE]'
+  FAIL = '[FAIL]'
   WAIT_DURATION = /^(\d+\.(second|minute|hour|day|week)s?)(\s*\+\s*\d+\.(second|minute|hour|day|week)s?)*$/
 
   Cli.class_eval do

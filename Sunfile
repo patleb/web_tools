@@ -1,2 +1,2 @@
 require 'ext_rails/sunzistrano/cli/console'
-require 'mix_task/sunzistrano/cli/rake'
+require 'ext_rails/sunzistrano/cli/rake'

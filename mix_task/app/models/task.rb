@@ -3,8 +3,8 @@ class Task < LibMainRecord
 
   has_userstamp
 
-  enum name: MixTask.config.available_names
-  enum state: {
+  enum! name: MixTask.config.available_names
+  enum  state: {
     ready: 0,
     running: 1,
     success: 2,
@@ -97,7 +97,7 @@ class Task < LibMainRecord
       else
         Current.flash_later = true
         TaskJob.perform_later(name, *arguments)
-        self.output = "[#{Time.current.utc}]#{MixTask::RUNNING} #{name}"
+        self.output = "[#{Time.current.utc}]#{Rake::RUNNING} #{name}"
         self.state = :running
       end
     end
@@ -112,11 +112,11 @@ class Task < LibMainRecord
 
     result = output.lines.reject(&:blank?).last
     case
-    when result&.include?(MixTask::FAILURE) || status != 0
+    when result&.include?(Rake::FAILURE) || status != 0
       set_error_state :failure
-    when output&.include?(MixTask::CANCEL)
+    when output&.include?(Rake::CANCEL)
       set_error_state :cancelled
-    when result&.include?(MixTask::SUCCESS)
+    when result&.include?(Rake::SUCCESS)
       durations.shift until durations.size < MixTask.config.durations_max_size
       self.durations << (Concurrent.monotonic_time - started_at).seconds.ceil(3)
       self.state = :success
