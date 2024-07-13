@@ -10,9 +10,9 @@ class PageField < LibMainRecord
   belongs_to :fieldable, -> { with_discarded }, optional: true, polymorphic: true
   belongs_to :parent, -> { with_discarded }, list_parent: self
 
-  enum type: MixPage.config.available_field_types
-  enum name: MixPage.config.available_field_names
-  enum fieldable_type: MixPage.config.available_fieldables
+  enum! type: MixPage.config.available_field_types
+  enum! name: MixPage.config.available_field_names
+  enum! fieldable_type: MixPage.config.available_fieldables
 
   attr_readonly *%i(
     type

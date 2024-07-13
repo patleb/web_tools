@@ -9,7 +9,7 @@ class PageTemplate < Page
     validates "description_#{locale}", length: { maximum: 360 }
   end
 
-  enum view: MixPage.config.available_templates
+  enum! view: MixPage.config.available_templates
 
   json_translate(
     title: [:string, default: ->(record) { record.default_title }],
@@ -107,7 +107,7 @@ class PageTemplate < Page
   end
 
   def slug(locale = nil, fallback = nil)
-    locale ||= Current.locale || I18n.default_locale
+    locale ||= Current.locale
     value = title(locale, fallback)&.slugify
     [value, locale].join('-') if value
   end

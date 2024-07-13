@@ -6,7 +6,7 @@ class LogMessage < LibMainRecord
     undef_method :warn # defined in Kernel
   end
 
-  enum! level: {
+  enum level: {
     debug:   0,
     info:    1,
     warn:    2,
