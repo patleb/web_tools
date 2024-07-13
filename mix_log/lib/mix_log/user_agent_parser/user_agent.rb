@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 UA = %i(name version os_name os_version hw_brand hw_model).map.with_index.to_h
 
 UserAgentParser::UserAgent.class_eval do
