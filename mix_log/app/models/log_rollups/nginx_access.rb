@@ -23,7 +23,7 @@ class LogRollups::NginxAccess < LogRollup
     hours: :json,
   )
 
-  enum group_name: {
+  enum! group_name: {
     period: 0,
     path: 10,
     status: 20,

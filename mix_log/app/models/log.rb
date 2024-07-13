@@ -6,7 +6,7 @@ class Log < LibMainRecord
   has_many   :log_lines
   has_many   :log_messages, -> { distinct }, through: :log_lines
 
-  enum log_lines_type: MixLog.config.available_types
+  enum! log_lines_type: MixLog.config.available_types
 
   attr_readonly *%i(
     log_lines_type
