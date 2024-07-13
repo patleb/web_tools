@@ -1,10 +1,8 @@
 ActiveSupport::TestCase.class_eval do
-  class_attribute :clear_logs, instance_accessor: false, instance_predicate: false, default: true
-
   alias_method :run_without_clear_logs, :run
   def run(...)
     result = run_without_clear_logs(...)
-    clear_logs if self.class.clear_logs
+    clear_logs unless use_transactional_tests
     result
   end
 
