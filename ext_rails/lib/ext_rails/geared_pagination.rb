@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 MonkeyPatch.add{['geared_pagination', 'lib/geared_pagination/controller.rb', '066490ae54efc396b1a9c2c3bd9aaf6eba34e72f744bb3d4fe9d9afb82ce86df']}
 MonkeyPatch.add{['geared_pagination', 'lib/geared_pagination/cursor.rb', 'd2c93d0993f0d3b06c3ed25cbe578fecbb7ac29eca2efb7cd65bd282b9fd4324']}
 MonkeyPatch.add{['geared_pagination', 'lib/geared_pagination/engine.rb', 'f9c9d6bdf3e88fb661f202957cccbc06317a6b5c7a17638ab697a4a75ca76834']}
@@ -6,7 +8,7 @@ MonkeyPatch.add{['geared_pagination', 'lib/geared_pagination/portions/portion_at
 MonkeyPatch.add{['geared_pagination', 'lib/geared_pagination/portions/portion_at_offset.rb', 'abe049f7c6eca2136ea7372ba17e303416c6bfb0232da89885489720953eec62']}
 
 require 'active_support/deprecation'
-require "geared_pagination/version"
+require 'geared_pagination/version'
 
 module GearedPagination
   def self.rails_7_1?
@@ -14,11 +16,13 @@ module GearedPagination
   end
 
   def self.deprecator
-    @deprecator ||= ActiveSupport::Deprecation.new(VERSION, "GearedPagination")
+    @deprecator ||= ActiveSupport::Deprecation.new(VERSION, 'GearedPagination')
   end
 end
 
 class GearedPagination::Engine < ::Rails::Engine
+  self.called_from = Gem.root('geared_pagination').join('lib/geared_pagination').to_s
+
   require 'geared_pagination/recordset'
   require 'geared_pagination/headers'
 
