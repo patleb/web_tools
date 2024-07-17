@@ -48,7 +48,7 @@ module Rice
       $objs = $srcs.map{ |v| v.sub(/c+p*$/, "o") }
       $VPATH.concat(Array.wrap(vpaths).map(&:to_s))
       if executable?
-        Kernel.create_makefile(target, dst_path.to_s) do |conf|
+        MakeMakefile.create_makefile(target, dst_path.to_s) do |conf|
           conf << "\n"
           conf << "#{target}: $(OBJS)"
           conf << "\t$(ECHO) linking executable #{target}"
@@ -57,7 +57,7 @@ module Rice
           conf << "\n"
         end
       else
-        Kernel.create_makefile(target, dst_path.to_s)
+        MakeMakefile.create_makefile(target, dst_path.to_s)
       end
     end
   end
