@@ -60,7 +60,7 @@ module Rake
           end
         end
 
-        f.puts ERB.new(File.read(source_erb), nil, '-').result(binding)
+        f.puts ERB.new(File.read(source_erb), trim_mode: '-').result(binding)
       end
       new_file
     end
