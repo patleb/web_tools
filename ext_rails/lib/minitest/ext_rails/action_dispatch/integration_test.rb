@@ -40,17 +40,6 @@ ActionDispatch::IntegrationTest.class_eval do
     ExtRails::TestController.define_method(method_name, &block)
   end
 
-  alias_method :teardown_without_current, :teardown
-  def teardown
-    @controller_methods&.each do |method_name|
-      next unless ExtRails::TestController.method_defined? method_name
-      ExtRails::TestController.remove_method method_name
-    end
-    self.current = nil
-    self.result = nil
-    teardown_without_current
-  end
-
   def [](name)
     controller.ivar(name)
   end
@@ -58,6 +47,19 @@ ActionDispatch::IntegrationTest.class_eval do
   def []=(name, value)
     controller.ivar(name, value)
   end
+
+  module self::WithTeardown
+    def teardown
+      @controller_methods&.each do |method_name|
+        next unless ExtRails::TestController.method_defined? method_name
+        ExtRails::TestController.remove_method method_name
+      end
+      self.current = nil
+      self.result = nil
+      super
+    end
+  end
+  prepend self::WithTeardown
 end
 
 ActionDispatch::Integration::Session.class_eval do

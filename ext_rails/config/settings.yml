@@ -11,7 +11,7 @@ shared:
   mail_address: localhost
   mail_port: 1025
   pgstats_enabled: true
-  backup_split_size: 4
+  backup_split_size: 4GB
   backup_dir: /opt/storage/backup
 
 test:
@@ -19,7 +19,7 @@ test:
   server_port: 3000
   server_ssl: false
   mail_domain: $ALIAS server
-  backup_dir: ./tmp/backup
+  backup_dir: ./tmp/test/backup
 
 development:
   server_host: localhost
@@ -31,6 +31,7 @@ development:
 vagrant:
   server_host: vagrant-web.test
   mail_domain: email.vagrant-web.test
+  backup_split_size: 4MB
 
 staging:
 

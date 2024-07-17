@@ -5,6 +5,8 @@ module Rake
     class_attribute :task_namespace
     class_attribute :task_name, instance_predicate: false, instance_accessor: false
 
+    attr_accessor :result
+
     protected
 
     def run_task(*args, **argv)
@@ -14,12 +16,14 @@ module Rake
     end
 
     def task_name
-      if self.class.task_name.present?
-        self.class.task_name
-      elsif task_namespace.present?
-        namespace = "#{task_namespace}:"
-      end
+      return self.class.task_name if self.class.task_name.present?
+      namespace = "#{task_namespace}:" if task_namespace.present?
       "#{namespace}#{base_name.sub(/^(Mix|Ext)([A-Z])/, '\2').sub(/Task$/, '').underscore.tr('/', ':')}"
+    end
+
+    def teardown
+      self.result = nil
+      super
     end
   end
 end

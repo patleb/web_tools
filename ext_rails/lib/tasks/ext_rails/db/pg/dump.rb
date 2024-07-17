@@ -1,10 +1,8 @@
-# TODO https://www.postgresql.org/docs/13/logical-replication.html
 module Db
   module Pg
     class Dump < Base
-      SPLIT_SCALE = Rails.env.vagrant? ? 'MB' : 'GB'
-      SPLIT_SIZE = Setting[:backup_split_size]
-      PIGZ_CORES = (cores = (Etc.nprocessors / 2.0).ceil) > 24 ? 24 : cores
+      SPLIT_SIZE = /\d+([KMGT]B?)$/
+      PIGZ_CORES = (cores = (Etc.nprocessors / 2.0).ceil) > 32 ? 32 : cores # https://github.com/neurolabusc/pigz-bench
       EXTENSIONS = /\.[\w.-]+$/
       VERSION    = /[a-f0-9]{7}/
 
@@ -14,18 +12,19 @@ module Db
           base_dir:   ['--base-dir=BASE_DIR',          'Dump file(s) base directory (default to Setting[:backup_dir])'],
           version:    ['--[no-]version',               'Add a git version number to the dump'],
           rotate:     ['--[no-]rotate',                'Rotate dumps (only for pg_dump)'],
-          days:       ['--days=DAYS',         Integer, 'Number of days in rotation (default to 5, min 5, max 6)'],
-          weeks:      ['--weeks=WEEKS',       Integer, 'Number of weeks in rotation (default to 3, min 1, max 3)'],
-          months:     ['--months=MONTHS',     Integer, 'Number of months in rotation (default to 2, min 0)'],
+          days:       ['--days=DAYS',         Integer, 'Number of days in rotation (default to 5)'],
+          weeks:      ['--weeks=WEEKS',       Integer, 'Number of weeks in rotation (default to 3)'],
+          months:     ['--months=MONTHS',     Integer, 'Number of months in rotation (default to 2)'],
           includes:   ['--includes=INCLUDES', Array,   'Included tables (only for pg_dump and COPY command)'],
           excludes:   ['--excludes=EXCLUDES', Array,   'Excluded tables (only for pg_dump and COPY command)'],
           compress:   ['--[no-]compress',              'Compress the dump (default to true)'],
           split:      ['--[no-]split',                 'Compress and split the dump'],
+          size:       ['--size=SIZE',                  'Split size (ex.: 4GB or 100MB)'],
           md5:        ['--[no-]md5',                   'Generate md5 file after successful dump'],
           physical:   ['--[no-]physical',              'Use pg_basebackup instead of pg_dump'],
           wal:        ['--[no-]wal',                   'Use pg_receivewal with pg_basebackup (default to true)'],
           csv:        ['--[no-]csv',                   'Use COPY command instead of pg_dump'],
-          where:      ['--where=WHERE',                'WHERE condition for the COPY command'],
+          where:      ['--where=WHERE',       Array,   'WHERE condition(s) for the COPY command'],
           pg_options: ['--pg_options=PG_OPTIONS',      'Extra postgres options'],
         }
       end
@@ -38,6 +37,7 @@ module Db
           excludes: [],
           compress: true,
           wal: true,
+          where: [],
         }
       end
 
@@ -59,7 +59,7 @@ module Db
         sh "sudo chmod +r #{dump_path}", verbose: false
         pg_receivewal do
           output = case
-            when options.split    then "-D- | #{split_cmd(tar_file)}"
+            when options.split    then "-D- | #{compress_split_cmd(tar_file)}"
             when options.compress then "-D- | #{compress_cmd(tar_file)}"
             else "-D #{dump_path}"
             end
@@ -97,16 +97,19 @@ module Db
 
       def copy_to
         dump_path.dirname.mkpath
-        where = "WHERE #{options.where}" if options.where.present?
         tables = (options.includes.reject(&:blank?) - options.excludes.reject(&:blank?)).uniq
-        tables.each do |table|
+        wheres = options.where.map{ |where| "WHERE #{where}" }
+        if wheres.size > 1 && wheres.size != tables.size
+          raise "must have the same number of where conditions[#{wheres.size}] and tables[#{tables.size}]"
+        end
+        tables.each_with_index do |table, i|
           file = csv_file(table)
           output = case
-            when options.split    then "PROGRAM '#{split_cmd(file)}'"
+            when options.split    then "PROGRAM '#{compress_split_cmd(file)}'"
             when options.compress then "PROGRAM '#{compress_cmd(file)}'"
             else "'#{file}'"
             end
-          psql! "\\COPY (SELECT * FROM #{table} #{where}) TO #{output} DELIMITER ',' CSV #{pg_options}"
+          psql! "\\COPY (SELECT * FROM #{table} #{wheres[i] || wheres[0]}) TO #{output} DELIMITER ',' CSV #{pg_options}"
         end
       end
 
@@ -127,7 +130,7 @@ module Db
             #{database}
           CMD
           output = case
-            when options.split    then "| #{split_cmd(pg_file)}"
+            when options.split    then "| #{compress_split_cmd(pg_file)}"
             when options.compress then "| #{compress_cmd(pg_file)}"
             else pg_file
             end
@@ -155,22 +158,23 @@ module Db
         dump_versions.each(&:delete)
       end
 
-      # TODO make split size configurable for CSV dump: would allow faster parallel restore
-      def split_cmd(file)
+      def compress_split_cmd(file)
         if options.md5
-          md5sum = %{echo $(md5sum | cut -d " " -f 1 | tr -d "\\n") " "$FILE > $FILE.md5}
-          md5sum = %{tee >(#{md5sum}) > $FILE}
+          md5sum = "tee >(#{md5_cmd '$FILE'}) > $FILE"
           md5sum = %{--filter="#{md5sum.gsub(/(["$])/, "\\\\\\1")}"}
         end
-        "pigz -p #{PIGZ_CORES} | split -d -a 6 -b #{SPLIT_SIZE}#{SPLIT_SCALE} #{md5sum} - #{file}.gz-"
+        "pigz -p #{PIGZ_CORES} | split -d -a 6 -b #{split_size} #{md5sum} - #{file}.gz-"
       end
 
       def compress_cmd(file)
         if options.md5
-          md5sum = %{echo $(md5sum | cut -d " " -f 1 | tr -d "\\n") " "#{file}.gz > #{file}.gz.md5}
-          md5sum = %{| tee >(#{md5sum})}
+          md5sum = "| tee >(#{md5_cmd file})"
         end
         "pigz -p #{PIGZ_CORES} #{md5sum} > #{file}.gz"
+      end
+
+      def md5_cmd(file)
+        %{echo $(md5sum | cut -d " " -f 1 | tr -d "\\n") " "#{file} > #{file}.md5}
       end
 
       def tar_file
@@ -194,7 +198,7 @@ module Db
       end
 
       def slot_name
-        @slot_name ||= dump_path.to_s.full_underscore
+        @slot_name ||= dump_path.to_s.full_underscore.reverse[0..Sql.max_index_name_size].reverse
       end
 
       def dump_wal_dir
@@ -220,7 +224,15 @@ module Db
       end
 
       def today
-        Time.current.beginning_of_day.to_date.to_s(:db).tr('-', '_')
+        Time.current.beginning_of_day.to_date.to_fs(:db).tr('-', '_')
+      end
+
+      def split_size
+        @split_size ||= if options.size&.match? SPLIT_SIZE
+          options.size
+        else
+          Setting[:backup_split_size]
+        end
       end
     end
   end

@@ -51,9 +51,6 @@ namespace :db do
       sh Sh.psql 'DROP OWNED BY CURRENT_USER', Setting.db_url
     end
 
-    # https://www.dbrnd.com/2018/04/postgresql-9-5-brin-index-maintenance-using-brin_summarize_new_values-add-new-data-page-in-brin-index/
-    # https://www.postgresql.org/docs/11/brin-intro.html
-    # https://www.postgresql.org/docs/10/functions-admin.html
     desc 'BRIN summarize'
     task :brin_summarize, [:index] => :environment do |t, args|
       sh Sh.psql "SELECT brin_summarize_new_values('#{args[:index]}')", Setting.db_url
