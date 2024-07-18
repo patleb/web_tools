@@ -6,7 +6,7 @@ module Rails::Engine::WithTask
     require 'rake'
     Rake::TaskManager.record_task_metadata = true
     super
-    tasks = Rake.application.instance_variable_get('@tasks')
+    tasks = Rake.application.ivar('@tasks')
     unless ExtRails.config.keep_install_migrations
       tasks.each do |t|
         if (task_name = t.first).end_with? ':install:migrations'

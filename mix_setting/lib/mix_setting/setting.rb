@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ext_ruby'
 require 'active_support/message_encryptor'
 require 'inifile'
@@ -6,11 +8,11 @@ require 'mix_setting/type'
 class Setting
   include MixSetting::Type
 
-  CIPHER = 'aes-256-gcm'.freeze
-  SECRET = '$SECRET'.freeze
-  METHOD = '$METHOD'.freeze
-  ALIAS  = '$ALIAS'.freeze
-  REMOVE = '$REMOVE'.freeze
+  CIPHER = 'aes-256-gcm'
+  SECRET = '$SECRET'
+  METHOD = '$METHOD'
+  ALIAS  = '$ALIAS'
+  REMOVE = '$REMOVE'
   FREED_IVARS = %i(@types @secrets @settings @aliases @methods @removed @replaced)
 
   def self.secret_key_base
@@ -42,9 +44,9 @@ class Setting
     if @all_was
       previous = []
       current  = []
-      ivars.except(:@default_app).each{ |ivar| ivar.end_with?('_was') ? previous << ivar : current << ivar }
-      current.each{ |ivar| instance_variable_set(ivar, instance_variable_get("#{ivar}_was")) }
-      previous.each{ |ivar| instance_variable_set(ivar, nil) }
+      ivars.except(:@default_app).each{ |name| name.end_with?('_was') ? previous << name : current << name }
+      current.each{ |name| ivar(name, ivar("#{name}_was")) }
+      previous.each{ |name| ivar(name, nil) }
     end
     @all
   end
@@ -59,9 +61,9 @@ class Setting
 
   def self.all(force = false, env: nil, app: nil, root: nil, freeze: true)
     if force
-      current = ivars.except(:@default_app).reject{ |ivar| ivar.end_with?('_was') }
-      current.each{ |ivar| instance_variable_set("#{ivar}_was", instance_variable_get(ivar)) }
-      current.each{ |ivar| instance_variable_set(ivar, nil) }
+      current = ivars.except(:@default_app).reject{ |name| name.end_with?('_was') }
+      current.each{ |name| ivar("#{name}_was", ivar(name)) }
+      current.each{ |name| ivar(name, nil) }
       remove_ivar(:@encryptor)
     end
     @all ||= begin

@@ -47,7 +47,7 @@ module VirtualRecord
     def self.all!
       list = self.list.map do |attributes|
         item = new(attributes)
-        item.instance_variable_set(:@new_record, false)
+        item.ivar(:@new_record, false)
         item
       end
       self::Relation.new(list)

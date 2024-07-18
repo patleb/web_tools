@@ -53,9 +53,9 @@ module ActiveTask
         with_count = const_defined?(:WithCount) ? const_get(:WithCount) : const_set(:WithCount, Module.new)
         with_count.module_eval do
           define_method name do |*args, **options, &block|
-            instance_variable_get("#{method_count_ivar}_mutex").synchronize do
-              count = instance_variable_get(method_count_ivar)
-              instance_variable_set(method_count_ivar, count += 1)
+            ivar("#{method_count_ivar}_mutex").synchronize do
+              count = ivar(method_count_ivar)
+              ivar(method_count_ivar, count += 1)
             end
             super(*args, **options, &block)
           end
@@ -89,8 +89,8 @@ module ActiveTask
         self.class.prepend with_count
         with_count.instance_methods.each do |name|
           method_count_ivar = "@#{self.class.track_count_as(name)}"
-          instance_variable_set("#{method_count_ivar}_mutex", Mutex.new)
-          instance_variable_set(method_count_ivar, 0)
+          ivar("#{method_count_ivar}_mutex", Mutex.new)
+          ivar(method_count_ivar, 0)
         end
       end
     end

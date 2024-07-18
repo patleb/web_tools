@@ -20,7 +20,7 @@ module Rpc
 
     def self.call!(schema: 'rpc', id:, args:, params: {})
       function = new(schema: schema, id: id, args: args)
-      function.instance_variable_set(:@new_record, false)
+      function.ivar(:@new_record, false)
       function.call! params: params
       function.result
     end
