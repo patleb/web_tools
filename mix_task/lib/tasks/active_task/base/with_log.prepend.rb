@@ -13,5 +13,3 @@ module ActiveTask::Base::WithLog
     super
   end
 end
-
-ActiveTask::Base.prepend ActiveTask::Base::WithLog

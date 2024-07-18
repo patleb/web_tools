@@ -5,6 +5,7 @@ module ActiveTask
     include ActionView::Helpers::DateHelper
     include ActionView::Helpers::TextHelper
     include ActionView::Helpers::NumberHelper
+    include ActiveSupport::LazyLoadHooks::Autorun
 
     EXIT_CODE_HELP = 10
 
@@ -348,7 +349,5 @@ module ActiveTask
         end
       end
     end
-
-    ActiveSupport.run_load_hooks(:active_task, self)
   end
 end

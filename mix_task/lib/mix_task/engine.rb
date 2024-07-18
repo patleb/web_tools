@@ -19,10 +19,6 @@ module MixTask
       MixLog.config.available_types['LogLines::Task'] = 120
     end
 
-    ActiveSupport.on_load(:active_task) do
-      require 'mix_task/active_task/base/with_log'
-    end
-
     ActiveSupport.on_load('Task') do
       Rails.application.load_tasks
     end
