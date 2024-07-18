@@ -160,7 +160,7 @@ module ActiveTask
       if (path = path.to_s).end_with? '.gz'
         IO.popen("unpigz -c #{path}", 'rb') do |io|
           until io.eof?
-            next if (line = io.gets.scrub('*')).blank?
+            next if (line = io.gets&.scrub('*')).blank?
             yield(line.chomp, i) unless i == 0 && first == false
             i += 1
             break if first
