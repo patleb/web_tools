@@ -3,6 +3,7 @@ require 'mocha/minitest'
 require 'webmock/minitest'
 
 require 'ext_ruby'
+require 'active_support/testing/time_helpers'
 ENV['MT_NO_EXPECTATIONS'] = true
 require 'ext_minitest/minitest/assertions'
 require 'ext_minitest/minitest/test'
