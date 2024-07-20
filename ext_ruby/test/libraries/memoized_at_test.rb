@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/spec_helper'
 
 class SimpleClass
   include MemoizedAt
@@ -10,7 +10,7 @@ class SimpleClass
   end
 end
 
-class MemoizedAtTest < ActiveSupport::TestCase
+class MemoizedAtTest < Minitest::TestCase
   subject{ SimpleClass.new }
 
   describe '#m_access' do

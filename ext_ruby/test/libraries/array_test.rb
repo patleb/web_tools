@@ -1,20 +1,19 @@
 require './test/spec_helper'
-require 'ext_ruby'
 
-class ArrayTest < Minitest::Spec
-  it 'should average the elements' do
+class ArrayTest < Minitest::TestCase
+  test '#average' do
     assert_nil [].average
     assert_equal 2.0, [1, 2, 3].average
     assert_equal 4.0, [1, 2, 3].average{ |i| i * 2 }
   end
 
-  it 'should compute the variance' do
+  test '#variance' do
     assert_nil [].variance
     assert_equal 0.5, [1, 2, 2, 3].variance
     assert_equal 0.5, [1, 2, 2, 3].variance(2)
   end
 
-  it 'should compute the percentile' do
+  test '#percentile, #median' do
     assert_nil [].median
     array = [30, 33, 43, 53, 56, 67, 68, 72]
     assert_equal 30, array.percentile(0.0)
@@ -24,7 +23,7 @@ class ArrayTest < Minitest::Spec
     assert_equal 72, array.percentile(1.0)
   end
 
-  it 'should insert before elements' do
+  test '#insert_before' do
     array = [1]
     assert_equal [2, 1], array.insert_before(1, 2)
     assert_equal [3, 2, 1], array.insert_before(2, 3)
@@ -32,7 +31,7 @@ class ArrayTest < Minitest::Spec
     assert_equal [3, 2, 4, 1, 5], array.insert_before(0, 5)
   end
 
-  it 'should insert after elements' do
+  test '#insert_after' do
     array = [1]
     assert_equal [1, 2], array.insert_after(1, 2)
     assert_equal [1, 2, 3], array.insert_after(2, 3)
@@ -40,40 +39,40 @@ class ArrayTest < Minitest::Spec
     assert_equal [1, 4, 2, 3, 5], array.insert_after(-1, 5)
   end
 
-  it 'should switch elements' do
+  test '#switch' do
     array = [1, 2, 3]
     assert_equal [2, 2, 3], array.switch!(1, 2)
     assert_equal [3, 2, 3], array.switch!(2, 3)
     assert_equal [3, 4, 3], array.switch!(2, 4)
   end
 
-  it 'should negate array' do
+  test '#neg' do
     assert_equal [-2, -3, -4], [2, 3, 4].neg
   end
 
-  it 'should multiply array by scalar' do
+  test '#mul' do
     assert_equal [4, 6, 8], [2, 3, 4].mul(2)
   end
 
-  it 'should divide array by scalar' do
+  test '#div' do
     assert_equal [1, 1.5, 2], [2, 3, 4].div(2.0)
   end
 
-  it 'should substract array' do
+  test '#sub' do
     assert_equal [1, 2, 3], [2, 3, 4].sub([1, 1, 1])
     assert_raises 'size mismatch' do
       [1].sub([1, 2])
     end
   end
 
-  it 'should add array' do
+  test '#add' do
     assert_equal [3, 4, 5], [2, 3, 4].add([1, 1, 1])
     assert_raises 'size mismatch' do
       [1].add([1, 2])
     end
   end
 
-  it 'should compute the l0 distance' do
+  test '#l0' do
     assert_equal 0.0, [].l0
     assert_equal 3, [1, -2, 3].l0
     assert_equal 2, [2, 4, 6].l0([-2, 6, 6])
@@ -82,7 +81,7 @@ class ArrayTest < Minitest::Spec
     end
   end
 
-  it 'should compute the l1 distance' do
+  test '#l1' do
     assert_equal 0.0, [].l1
     assert_equal 6, [1, -2, 3].l1
     assert_equal 6, [2, 4, 6].l1([-2, 6, 6])
@@ -91,7 +90,7 @@ class ArrayTest < Minitest::Spec
     end
   end
 
-  it 'should compute the l2 squared' do
+  test '#l2_squared' do
     assert_equal 0.0, [].l2_squared
     assert_equal 14, [1, -2, 3].l2_squared
     assert_equal 20, [2, 4, 6].l2_squared([-2, 6, 6])
@@ -100,7 +99,7 @@ class ArrayTest < Minitest::Spec
     end
   end
 
-  it 'should compute the l-inf distance' do
+  test '#l_inf' do
     assert_equal 0.0, [].l_inf([])
     assert_equal 3, [1, -2, 3].l_inf([0, 1, 0])
     assert_equal 4, [2, 4, 6].l_inf([-2, 6, 6])

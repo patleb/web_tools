@@ -1,7 +1,6 @@
 require './test/spec_helper'
-require 'ext_ruby'
 
-class NumericTest < Minitest::Spec
+class NumericTest < Minitest::TestCase
   it 'should simplify numbers with at least 5x 9s or 0s after the leading numbers' do
     assert_equal 0.19999, 0.19999.simplify
     assert_equal 0.2, 0.199999.simplify

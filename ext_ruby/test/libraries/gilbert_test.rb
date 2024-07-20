@@ -1,7 +1,6 @@
 require './test/spec_helper'
-require 'ext_ruby'
 
-class GilbertTest < Minitest::Spec
+class GilbertTest < Minitest::TestCase
   it 'should support 2D grids' do
     curve = [[0, 0], [0, 1], [1, 1], [1, 0], [2, 0], [2, 1], [2, 2], [2, 3], [1, 3], [1, 2], [0, 2], [0, 3]]
     grid  = [[0, 1, 10, 11], [3, 2, 9, 8], [4, 5, 6, 7]]

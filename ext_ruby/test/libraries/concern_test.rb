@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/spec_helper'
 
 class ParentClass
   def self.overridden(*callers)
@@ -62,7 +62,7 @@ module PrependModule
   end
 end
 
-class PrependableTest < ActiveSupport::TestCase
+class PrependableTest < Minitest::TestCase
   let(:overridden_class){ BaseClass.overridden }
   let(:overridden_instance){ BaseClass.new.overridden }
   let(:redefined){ BaseClass.new.redefined }
@@ -96,7 +96,7 @@ class PrependableTest < ActiveSupport::TestCase
       end
     end
 
-    it do
+    test do
       assert_equal ["Prepend", "Base", "Include", "Extend", "Parent"], overridden_class
       assert_equal ["Prepend", "Base", "Include", "Parent"], overridden_instance
     end
@@ -111,7 +111,7 @@ class PrependableTest < ActiveSupport::TestCase
       end
     end
 
-    it do
+    test do
       assert_equal ["Prepend", "Base", "Extend", "Include", "Parent"], overridden_class
       assert_equal ["Prepend", "Base", "Include", "Parent"], overridden_instance
     end
@@ -125,7 +125,7 @@ class PrependableTest < ActiveSupport::TestCase
       end
     end
 
-    it do
+    test do
       assert_equal ["Prepended", "Included", "Base", "Parent"], redefined
     end
   end
@@ -138,7 +138,7 @@ class PrependableTest < ActiveSupport::TestCase
       end
     end
 
-    it do
+    test do
       assert_equal ["Included", "Prepended", "Base", "Parent"], redefined
     end
   end

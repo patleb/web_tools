@@ -1,4 +1,5 @@
 require 'bcrypt'
+require 'bigdecimal/util'
 require 'colorize'
 require 'csv'
 require 'erb'

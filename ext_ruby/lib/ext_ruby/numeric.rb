@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TrueClass
   def to_i; 1; end
   def to_f; 1.0; end
@@ -50,12 +52,12 @@ class NilClass
 end
 
 class Numeric
-  B_PER_KB = BigDecimal(1_024).freeze
-  B_PER_MB = BigDecimal(1_048_576).freeze
-  B_PER_GB = BigDecimal(1_073_741_824).freeze
-  KB_PER_MB = BigDecimal(1_024).freeze
-  KB_PER_GB = BigDecimal(1_048_576).freeze
-  MB_PER_GB = BigDecimal(1_024).freeze
+  B_PER_KB = BigDecimal(1_024)
+  B_PER_MB = BigDecimal(1_048_576)
+  B_PER_GB = BigDecimal(1_073_741_824)
+  KB_PER_MB = BigDecimal(1_024)
+  KB_PER_GB = BigDecimal(1_048_576)
+  MB_PER_GB = BigDecimal(1_024)
 
   def simplify(n = 5)
     sign, significant_digits, base, exponent = to_d.split
