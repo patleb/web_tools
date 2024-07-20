@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'minitest'
   s.add_dependency 'minitest-retry'
-  s.add_dependency 'maxitest'
   s.add_dependency 'mocha'
   s.add_dependency 'webmock'
   s.add_dependency 'ext_ruby', version

@@ -1,4 +1,7 @@
 ActiveSupport::TestCase.class_eval do
+  extend Minitest::Spec::DSL
+  include Minitest::Spec::DSL::SpecBehavior
+
   # Run tests in parallel with specified workers
   # parallelize(workers: :number_of_processors)
 
@@ -6,8 +9,6 @@ ActiveSupport::TestCase.class_eval do
   # fixtures :all
 
   # Add more helper methods to be used by all tests here...
-
-  let(:base_name){ $test.class.name.match(/^([\w:]+)Test(?:$|::)/)[1] }
 
   def self.order_dependent!
     Minitest::Test.order_dependent!

@@ -168,7 +168,7 @@ module Sql
       end
     end
 
-    before do
+    before(:all) do
       drop_procedures
       run_migrations
       TestQuery.sql_root = sql_root
