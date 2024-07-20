@@ -1,11 +1,11 @@
 ### References
 # https://github.com/grosser/maxitest
+# https://github.com/metaskills/minitest-spec-rails
 
 Minitest::Spec::DSL.class_eval do
   remove_method :before
   remove_method :after
   alias_method :test, :it
-  alias_method :context, :describe
 
   def xdescribe(desc)
     xit desc
@@ -74,6 +74,14 @@ Minitest::Spec::DSL.class_eval do
     end
 
     class_methods do
+      def describe(*args, &block)
+        stack = Minitest::Spec.describe_stack
+        stack.push self if stack.empty?
+        super(*args){ class_eval(&block) }
+        stack.pop if stack.length == 1
+      end
+      alias_method :context, :describe
+
       def before(type = :each, &block)
         if type == :all
           count = self.before_all_count += 1
