@@ -1,22 +1,9 @@
-require './test/rails_helper'
-
-Open3.class_eval do
-  class << self
-    let_stub :capture3, :dry_run do |*cmd|
-      ($test.result ||= []).concat cmd
-    end
-  end
-end
-
-Db::Pg::Base.class_eval do
-  protected
-
-  let_stub :notify?, :dry_run do
-    false
-  end
-end
+require './test/test_helper'
+require_relative './stubs'
 
 class Db::Pg::DumpTest < Rake::TestCase
+  self.task_name = 'db:pg:dump'
+
   fixtures 'test/records'
 
   let(:dry_run){ true }
@@ -36,7 +23,7 @@ class Db::Pg::DumpTest < Rake::TestCase
   ]}
 
   def self.test_dump(**options, &block)
-    test 'db:pg:dump' do
+    test task_name do
       raise 'must be tested in environment without stubs' if options[:physical]
       run_task(base_dir: base_dir, **options)
       case
@@ -85,7 +72,7 @@ class Db::Pg::DumpTest < Rake::TestCase
         let(:dry_run){ false }
         let(:filename){ "dump_#{today}-#{version}.pg.gz-000000" }
 
-        test 'db:pg:dump' do
+        test task_name do
           options = {
             version: true,
             rotate: true,
@@ -139,7 +126,7 @@ class Db::Pg::DumpTest < Rake::TestCase
         FileUtils.rm_rf(base_dir)
       end
 
-      test 'db:pg:dump' do
+      test task_name do
         run_task(base_dir: base_dir, csv: true, includes: 'test_records', where: 'id > 1', compress: false, pg_options: 'HEADER')
         assert_equal false, backup.empty?
       end

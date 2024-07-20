@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 Test::RelatedRecord.class_eval do
   alias_method :list_change_only_without_skip, :list_change_only

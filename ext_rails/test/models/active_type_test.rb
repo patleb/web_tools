@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class ActiveTypeTest < ActiveSupport::TestCase
   test '.ar_attribute, .enum' do

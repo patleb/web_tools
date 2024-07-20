@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class ActionController::Redirecting::WithQueryParamsTest < ActionDispatch::IntegrationTest
   let(:params){ { a: 1, b: [2, 3] } }

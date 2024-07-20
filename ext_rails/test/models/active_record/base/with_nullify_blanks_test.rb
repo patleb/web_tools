@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class ActiveRecord::Base::WithNullifyBlanksTest < ActiveSupport::TestCase
   fixtures 'test/records'

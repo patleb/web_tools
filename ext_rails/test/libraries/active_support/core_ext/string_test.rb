@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class StringTest < ActiveSupport::TestCase
   test '#strip_sql' do

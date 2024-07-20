@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class Rack::UtilsTest < ActiveSupport::TestCase
   test '.merge_url' do

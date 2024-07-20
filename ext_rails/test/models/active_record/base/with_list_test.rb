@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 Test::RelatedRecord.class_eval do
   alias_method :list_after_without_retry, :list_after

@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class GearedPagination::ControllerTest < ActionDispatch::IntegrationTest
   let(:scope){ Test::Record.all }
@@ -48,6 +48,7 @@ class GearedPagination::ControllerTest < ActionDispatch::IntegrationTest
       scope, count, number, next_n, first, last = $test.result.values_at(:scope, :count, :number, :next, :first, :last)
       assert_equal result, scope.pluck(:id)
       assert next_n
+      assert count > 0
       case number
       when 1
         assert_equal true, first
@@ -63,6 +64,7 @@ class GearedPagination::ControllerTest < ActionDispatch::IntegrationTest
       scope, count, number, next_n, first, last, pages = $test.result.values_at(:scope, :count, :number, :next, :first, :last, :pages)
       assert_equal result, scope.order(:id).pluck(:id)
       assert_equal 3, pages
+      assert_equal 5, count
       case n
       when nil, 0, 1
         assert_equal 1, number
@@ -76,6 +78,5 @@ class GearedPagination::ControllerTest < ActionDispatch::IntegrationTest
         assert_equal n == 3, last
       end
     end
-    assert_equal 5, count
   end
 end

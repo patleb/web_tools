@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 Test::Record.class_eval do
   def self.first_odd_with_related

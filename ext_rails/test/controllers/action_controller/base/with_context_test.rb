@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class ActionController::Base::WithContextTest < ActionDispatch::IntegrationTest
   describe '#set_locale' do

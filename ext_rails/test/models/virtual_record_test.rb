@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class VirtualRecordTest < ActiveSupport::TestCase
   let(:values) do

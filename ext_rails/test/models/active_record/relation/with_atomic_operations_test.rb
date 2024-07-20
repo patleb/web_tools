@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 module ActiveRecord::Relation::WithRetry
   def find_or_create_by!(...)

@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class ActiveRecord::Relation::WithCalculateTest < ActiveSupport::TestCase
   fixtures 'test/records'

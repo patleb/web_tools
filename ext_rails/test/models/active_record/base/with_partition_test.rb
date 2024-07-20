@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class ActiveRecord::Base::WithPartitionTest < ActiveSupport::TestCase
   self.use_transactional_tests = false

@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 class ActiveRecord::ConnectionAdapters::PostgreSQLAdapterTest < ActiveSupport::TestCase
   test 'TableDefinition' do
