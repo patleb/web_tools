@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rblineprof'
   s.add_dependency 'routes_lazy_routes'
   s.add_dependency 'rounding'
+  s.add_dependency 'shoulda-matchers'
   s.add_dependency 'stateful_enum'
   s.add_dependency 'store_base_sti_class'
   s.add_dependency 'mix_setting'

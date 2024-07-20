@@ -1,5 +1,4 @@
 require './test/spec_helper'
-require 'ext_ruby'
 
 class ObjectArgs
   def self.hello(a, b, c = nil, *d, e: nil, f:, **g, &block)
@@ -11,12 +10,14 @@ class ObjectArgs
   end
 end
 
-class Object::ArgsTest < Minitest::Spec
-  it 'should return args and keyargs' do
+class Object::ArgsTest < Minitest::TestCase
+  test '.method_args, .method_keyargs' do
     assert_equal [:a, :b, :c], ObjectArgs.method_args(:hello).sort
     assert_equal [:e, :f], ObjectArgs.method_keyargs(:hello).sort
     assert_equal [:a, :b, :c, :e, :f], ObjectArgs.hello(nil, nil, f: nil).sort
+  end
 
+  test '#method_args, #method_keyargs' do
     assert_equal [:h, :i, :j], ObjectArgs.new.method_args(:hello).sort
     assert_equal [:l, :m], ObjectArgs.new.method_keyargs(:hello).sort
     assert_equal [:h, :i, :j, :l, :m], ObjectArgs.new.hello(nil, nil, m: nil).sort

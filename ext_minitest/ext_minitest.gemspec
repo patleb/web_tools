@@ -15,14 +15,12 @@ Gem::Specification.new do |s|
   s.description = "ExtMinitest"
   s.license     = "AGPL-3.0"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
+  s.files = Dir["lib/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'minitest'
-  s.add_dependency 'minitest-spec-rails'
   s.add_dependency 'minitest-retry'
   s.add_dependency 'maxitest'
   s.add_dependency 'mocha'
   s.add_dependency 'webmock'
-  s.add_dependency 'shoulda-matchers'
   s.add_dependency 'ext_ruby', version
 end
