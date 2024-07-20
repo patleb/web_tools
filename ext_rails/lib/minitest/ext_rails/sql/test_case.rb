@@ -1,6 +1,6 @@
 module Sql
   class TestCase < ActiveSupport::TestCase
-    MIGRATIONS_DIRNAME = 'db/migrate'.freeze
+    MIGRATIONS_DIRNAME = 'db/migrate'
 
     class_attribute :migrations_root, :migrations, :adapter, :sql_root
 

@@ -1,7 +1,3 @@
-### Documentation
-# http://mattsears.com/articles/2011/12/10/minitest-quick-reference/
-# http://docs.seattlerb.org/minitest/Minitest/Expectations.html
-
 require 'minitest/autorun'
 require 'mocha/minitest'
 require 'webmock/minitest'
