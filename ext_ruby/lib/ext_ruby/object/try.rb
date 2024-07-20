@@ -9,7 +9,7 @@ module ActiveSupport
     # truthy       => true
     # nil || falsy => false
     def truthy?(...)
-      try(...).to_b
+      !!try(...)
     end
 
     # false       => true
@@ -21,26 +21,24 @@ module ActiveSupport
     # nil || falsy => true
     # truthy       => false
     def falsy?(...)
-      !truthy?(...)
+      !try(...)
     end
 
     # nil || true => true
     # false       => false
     def nil_or_true?(...)
-      !false?(...)
+      (result = try(...)).nil? || result == true
     end
 
     # nil || truthy => true
-    # !nil && falsy => false
+    # false         => false
     def nil_or_truthy?(...)
-      (result = try(...)).nil? || result.to_b
+      (result = try(...)).nil? || !!result
     end
 
     # nil || false => true
     # true         => false
-    def nil_or_false?(...)
-      !true?(...)
-    end
+    alias_method :nil_or_false?, :falsy?
 
     # nil || falsy => true
     # truthy       => false
