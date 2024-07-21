@@ -1,5 +1,3 @@
-require 'pathname'
-
 module Pathname::WithoutRaise
   def delete(raise_on_no_entry = true)
     raise_on_no_entry ? super() : _delete
