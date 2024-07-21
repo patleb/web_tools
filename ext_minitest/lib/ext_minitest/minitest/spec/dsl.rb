@@ -109,7 +109,7 @@ Minitest::Spec::DSL.class_eval do
       end
 
       def after(type = :each, &block)
-        raise ArgumentError, ':all is not supported in after' if type == :all
+        raise ArgumentError, ':all is not supported in after, use Minitest.after_run' if type == :all
         mod = Module.new do
           define_method :teardown do
             instance_eval(&block)
