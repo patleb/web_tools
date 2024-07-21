@@ -8,9 +8,9 @@ module Rake
 
     protected
 
-    def run_task(*args, **argv)
-      Rake::DSL.with_argv(task_name, **argv) do
-        Rake::Task[task_name].invoke!(*args)
+    def run_task(*args, as: task_name, **argv)
+      Rake::DSL.with_argv(as, **argv) do
+        Rake::Task[as].invoke!(*args)
       end
     end
 
