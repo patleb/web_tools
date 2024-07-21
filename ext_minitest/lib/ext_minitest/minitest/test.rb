@@ -22,7 +22,6 @@ Minitest::Test.class_eval do
       return Minitest::Result.from(self)
     end
   end
-  prepend self::WithTimeout
 
   module self::WithAround
     def run(...)
@@ -35,5 +34,7 @@ Minitest::Test.class_eval do
       end
     end
   end
+
   prepend self::WithAround
+  prepend self::WithTimeout
 end

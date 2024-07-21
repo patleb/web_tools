@@ -1,5 +1,5 @@
 require './test/test_helper'
-require_relative './stubs'
+require_relative './test_help'
 
 class Db::Pg::DumpTest < Rake::TestCase
   self.task_name = 'db:pg:dump'
@@ -8,7 +8,7 @@ class Db::Pg::DumpTest < Rake::TestCase
 
   let(:dry_run){ true }
   let(:backup){ Pathname.new(base_dir).join(filename) }
-  let(:base_dir){ Setting[:backup_dir] }
+  let(:base_dir){ Setting[:backup_dir].join('dump') }
   let(:filename){ 'dump.pg.gz' }
   let(:split){ false }
   let(:pg_options){}
@@ -91,13 +91,13 @@ class Db::Pg::DumpTest < Rake::TestCase
 
   context 'with includes and excludes' do
     let(:pg_options){[
-      "--table='lib_page*'",
-      "--table='lib_page*_id_seq'",
-      "--exclude-table='lib_page_fields'",
-      "--exclude-table='lib_page_fields_id_seq'",
+      "--table='test_*'",
+      "--table='test_*_id_seq'",
+      "--exclude-table='test_related_records'",
+      "--exclude-table='test_related_records_id_seq'",
     ].join(' ')}
 
-    test_dump includes: ['lib_page*'], excludes: ['lib_page_fields']
+    test_dump includes: ['test_*'], excludes: ['test_related_records']
   end
 
   context 'with split' do

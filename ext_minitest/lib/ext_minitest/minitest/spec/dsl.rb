@@ -73,6 +73,15 @@ Minitest::Spec::DSL.class_eval do
       class_attribute :before_all_count, instance_predicate: false, instance_writer: false, default: 0
     end
 
+    def let(name, value)
+      name = name.to_s
+      value_was = public_send(name)
+      @_memoized[name] = value
+      yield if block_given?
+    ensure
+      @_memoized[name] = value_was if block_given?
+    end
+
     class_methods do
       def describe(*args, &block)
         stack = Minitest::Spec.describe_stack
@@ -99,7 +108,8 @@ Minitest::Spec::DSL.class_eval do
         end
       end
 
-      def after(_type = :each, &block)
+      def after(type = :each, &block)
+        raise ArgumentError, ':all is not supported in after' if type == :all
         mod = Module.new do
           define_method :teardown do
             instance_eval(&block)

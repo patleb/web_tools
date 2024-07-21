@@ -21,11 +21,12 @@ module Kernel
   end
 
   def let_stub(method_name, let_name, &block)
-    method_was = :"#{method_name}_without_#{let_name}"
-    alias_method method_was, method_name
-    define_method method_name do |*args, **opts|
-      return send(method_was, *args, **opts) unless $test.try(let_name)
-      instance_exec(*args, **opts, &block)
+    mod = Module.new do
+      define_method method_name do |*args, **opts|
+        return super(*args, **opts) unless $test.try(let_name)
+        instance_exec(*args, **opts, &block)
+      end
     end
+    prepend mod
   end
 end
