@@ -153,7 +153,7 @@ class Db::Pg::DumpTest < Rake::TestCase
   end
 
   def today
-    @today ||= Time.current.beginning_of_day.to_date.to_fs(:db).tr('-', '_')
+    @today ||= Time.today.db_date
   end
 
   def cores

@@ -224,7 +224,7 @@ module Db
       end
 
       def today
-        Time.current.beginning_of_day.to_date.to_fs(:db).tr('-', '_')
+        Time.today.db_date
       end
 
       def split_size
