@@ -1,6 +1,6 @@
 module Test
   class MuchRecord < ApplicationRecord
-    has_partition size: 5
+    self.partition_size = 5
 
     belongs_to :relatable, polymorphic: true
 

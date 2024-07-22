@@ -1,7 +1,7 @@
 class LogLine < LibMainRecord
   class IncompatibleLogLine < ::StandardError; end
 
-  has_partition column: :created_at, size: :week
+  self.partition_size = :week
 
   belongs_to :log
   belongs_to :log_message

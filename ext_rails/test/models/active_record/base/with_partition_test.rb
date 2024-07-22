@@ -8,12 +8,12 @@ class ActiveRecord::Base::WithPartitionTest < ActiveSupport::TestCase
   let(:count){ keys.size }
 
   after do
-    Test::MuchRecord.drop_all_partitions(keys)
-    Test::TimeSeries::DataPoint.drop_all_partitions(dates)
+    Test::MuchRecord.drop_all_partitions!
+    Test::TimeSeries::DataPoint.drop_all_partitions!
   end
 
   test '.has_partition' do
-    Test::MuchRecord.insert_all! keys.map{ |i| { id: i, name: "Name #{i}" } }
+    Test::MuchRecord.insert_all! keys.map{ |i| { name: "Name #{i}" } }
     assert_equal count, Test::MuchRecord.count
     assert_equal (count / Test::MuchRecord.partition_size + 1), Test::MuchRecord.partitions.size
     assert_equal false, Test::MuchRecord.partition_empty?('test_much_records_0000000000000000015')

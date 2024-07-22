@@ -2,7 +2,7 @@ module ActiveRecord::Base::WithPartition
   extend ActiveSupport::Concern
 
   class UnsupportedPartitionBucket < ::StandardError; end
-  class UnknownPartitionSize < ::StandardError; end
+  class InvalidPartitionColumn < ::StandardError; end
   class InvalidPartitionName < ::StandardError; end
 
   class DuplicatePartition < ActiveRecord::StatementInvalid
@@ -20,35 +20,38 @@ module ActiveRecord::Base::WithPartition
   DATE_PARTITION_BUCKETS = %i(year quarter month week day)
   DATE = /\d{4}_\d{2}_\d{2}$/
   NUMBER = /\d{19}$/ # support BIGINT
+  COLUMN_VALUE = /Partition key of the failing row contains \((\w+)\) = \(([\d :.-]+)\)/i
 
   prepended do
-    class_attribute :partition_column, instance_accessor: false, instance_predicate: false
     class_attribute :partition_size, instance_accessor: false, instance_predicate: false
   end
 
   class_methods do
-    def has_partition(column: :id, size: nil)
-      self.partition_column = column
-      self.partition_size = size
-    end
-
     def insert_all!(rows, **)
-      partition_column ? with_partition(rows){ super } : super
+      partition_size ? with_partition(rows){ super } : super
     end
 
     def insert_all(rows, **)
-      partition_column ? with_partition(rows){ super } : super
+      partition_size ? with_partition(rows){ super } : super
     end
 
     def upsert_all(rows, **)
-      partition_column ? with_partition(rows){ super } : super
+      partition_size ? with_partition(rows){ super } : super
     end
 
-    def with_partition(rows, table = table_name, column: partition_column, size: partition_size)
+    def with_partition(rows, table = table_name, size: partition_size)
       yield
-    rescue MissingPartition
+    rescue MissingPartition => error
+      column, value = error.message.match(COLUMN_VALUE).captures
       column = column.to_sym
-      rows.each{ |row| create_partition_for(row[column], table, size: size) }
+      if rows.dig(0, column)
+        rows.each{ |row| create_partition_for(row[column], table, size: size) }
+      elsif primary_key && primary_key.to_sym == column
+        value = value.to_i
+        (value...(value + rows.size)).each{ |key| create_partition_for(key, table, size: size) }
+      else
+        raise InvalidPartitionColumn, "column: [#{column}], value: [#{value}]"
+      end
       retry
     end
 
@@ -58,6 +61,14 @@ module ActiveRecord::Base::WithPartition
 
     def drop_all_partitions(keys, table = table_name, size: db_partition_size(table))
       keys.each{ |key| drop_partition_for(key, table, size: size) }
+    end
+
+    def drop_all_partitions!(table = table_name)
+      partitions(table).each do |name|
+        connection.exec_query("DROP TABLE IF EXISTS #{name}")
+      end
+      connection.exec_query("TRUNCATE TABLE #{table} RESTART IDENTITY")
+      reset_partitions(table)
     end
 
     def create_partition(name)
@@ -75,16 +86,16 @@ module ActiveRecord::Base::WithPartition
         CREATE TABLE #{partition[:name]} PARTITION OF #{table}
           FOR VALUES FROM ('#{partition[:from]}') TO ('#{partition[:to]}')
       SQL
-      (@_partitions ||= {})[table] = nil
+      reset_partitions(table)
     rescue DuplicatePartition
-      (@_partitions ||= {})[table] = nil
+      reset_partitions(table)
     end
 
     def drop_partition_for(key, table = table_name, size: db_partition_size(table))
       partition = partition_for(key, table, size: size)
       return if partitions(table).exclude? partition[:name]
       connection.exec_query("DROP TABLE IF EXISTS #{partition[:name]}")
-      (@_partitions ||= {})[table] = nil
+      reset_partitions(table)
     end
 
     def partitions(table = table_name)
@@ -133,11 +144,17 @@ module ActiveRecord::Base::WithPartition
       else
         raise UnsupportedPartitionBucket, "key: [#{key}]"
       end
-      { name: "#{table}_#{from}", from: from, to: to }
+      { name: "#{table}_#{from}", from: from, to: to } # 'from' is inclusive, 'to' is exclusive
     end
 
     def db_partition_size(table = table_name)
       ExtRails.config.db_partitions[table] || partition_size
+    end
+
+    private
+
+    def reset_partitions(table)
+      (@_partitions ||= {})[table] = nil
     end
   end
 end
