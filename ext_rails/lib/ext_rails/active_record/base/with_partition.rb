@@ -32,21 +32,16 @@ module ActiveRecord::Base::WithPartition
       self.partition_size = size
     end
 
-    def partitioned?(table = table_name)
-      return @partitioned if defined? @partitioned
-      @partitioned = ExtRails.config.db_partitions.has_key?(table) || !!partition_column
-    end
-
     def insert_all!(rows, **)
-      partitioned? ? with_partition(rows){ super } : super
+      partition_column ? with_partition(rows){ super } : super
     end
 
     def insert_all(rows, **)
-      partitioned? ? with_partition(rows){ super } : super
+      partition_column ? with_partition(rows){ super } : super
     end
 
     def upsert_all(rows, **)
-      partitioned? ? with_partition(rows){ super } : super
+      partition_column ? with_partition(rows){ super } : super
     end
 
     def with_partition(rows, table = table_name, column: partition_column, size: partition_size)
