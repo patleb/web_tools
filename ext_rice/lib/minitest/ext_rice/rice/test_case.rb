@@ -1,5 +1,5 @@
 module Rice
-  class TestCase < Minitest::Spec
+  class TestCase < Minitest::TestCase
     let(:run_timeout){ false }
 
     cattr_accessor :root_name, :rel_root
