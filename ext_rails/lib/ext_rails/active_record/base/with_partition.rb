@@ -123,9 +123,9 @@ module ActiveRecord::Base::WithPartition
         to = (bucket + size).to_s.rjust(19, '0')
       when Time, Date, DateTime
         raise UnsupportedPartitionBucket, "size: [#{size}]" unless size.to_sym.in? DATE_PARTITION_BUCKETS
-        date = key.send("beginning_of_#{size}")
-        from = date.strftime('%Y_%m_%d')
-        to = (date + 1.send(size)).strftime('%Y_%m_%d')
+        time = key.public_send("beginning_of_#{size}")
+        from = time.date_tag
+        to = (time + 1.public_send(size)).date_tag
       else
         raise UnsupportedPartitionBucket, "key: [#{key}]"
       end

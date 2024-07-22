@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DateAndTime
   module Conversions
     extend ActiveSupport::Concern
@@ -6,6 +8,10 @@ module DateAndTime
       def from_f(...)
         Time.at(...)
       end
+    end
+
+    def date_tag
+      strftime('%Y_%m_%d')
     end
 
     def to_nanoseconds
