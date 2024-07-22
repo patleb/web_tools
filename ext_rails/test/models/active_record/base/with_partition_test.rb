@@ -23,8 +23,8 @@ class ActiveRecord::Base::WithPartitionTest < ActiveSupport::TestCase
     assert_equal 4, Test::TimeSeries::DataPoint.partitions.size
   end
 
-  test '.partition_key_table' do
-    assert_equal [15, 'test_much_records'], ActiveRecord::Base.partition_key_table('test_much_records_0000000000000000015')
-    assert_equal [Time.utc(2024, 7, 15), 'test_time_series'], ActiveRecord::Base.partition_key_table('test_time_series_2024_07_15')
+  test '.partition_bucket' do
+    assert_equal 15, ActiveRecord::Base.partition_bucket('test_much_records_0000000000000000015')
+    assert_equal Time.utc(2024, 7, 15), ActiveRecord::Base.partition_bucket('test_time_series_2024_07_15')
   end
 end

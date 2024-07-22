@@ -3,7 +3,7 @@ module ActiveRecord::Base::WithPartition
 
   class UnsupportedPartitionBucket < ::StandardError; end
   class InvalidPartitionColumn < ::StandardError; end
-  class InvalidPartitionName < ::StandardError; end
+  class MissingPartitionSize < ::StandardError; end
 
   class DuplicatePartition < ActiveRecord::StatementInvalid
     def self.===(exception)
@@ -27,6 +27,16 @@ module ActiveRecord::Base::WithPartition
   end
 
   class_methods do
+    def has_partition(size: nil)
+      if size
+        self.partition_size = ExtRails.config.db_partitions[table_name] = size
+      elsif (size = ExtRails.config.db_partitions[table_name])
+        self.partition_size = size
+      else
+        raise MissingPartitionSize, "#{name}: [#{table_name}]"
+      end
+    end
+
     def insert_all!(rows, **)
       partition_size ? with_partition(rows){ super } : super
     end
@@ -39,28 +49,28 @@ module ActiveRecord::Base::WithPartition
       partition_size ? with_partition(rows){ super } : super
     end
 
-    def with_partition(rows, table = table_name, size: partition_size)
+    def with_partition(rows, table = table_name)
       yield
     rescue MissingPartition => error
       column, value = error.message.match(COLUMN_VALUE).captures
       column = column.to_sym
       if rows.dig(0, column)
-        rows.each{ |row| create_partition_for(row[column], table, size: size) }
+        rows.each{ |row| create_partition(row[column], table) }
       elsif primary_key && primary_key.to_sym == column
         value = value.to_i
-        (value...(value + rows.size)).each{ |key| create_partition_for(key, table, size: size) }
+        (value...(value + rows.size)).each{ |key| create_partition(key, table) }
       else
         raise InvalidPartitionColumn, "column: [#{column}], value: [#{value}]"
       end
       retry
     end
 
-    def create_all_partitions(keys, table = table_name, size: db_partition_size(table))
-      keys.each{ |key| create_partition_for(key, table, size: size) }
+    def create_all_partitions(keys, table = table_name)
+      keys.each{ |key| create_partition(key, table) }
     end
 
-    def drop_all_partitions(keys, table = table_name, size: db_partition_size(table))
-      keys.each{ |key| drop_partition_for(key, table, size: size) }
+    def drop_all_partitions(keys, table = table_name)
+      keys.each{ |key| drop_partition(key, table) }
     end
 
     def drop_all_partitions!(table = table_name)
@@ -71,16 +81,7 @@ module ActiveRecord::Base::WithPartition
       reset_partitions(table)
     end
 
-    def create_partition(name)
-      create_partition_for(*partition_key_table(name))
-    end
-
-    def drop_partition(name)
-      drop_partition_for(*partition_key_table(name))
-    end
-
-    def create_partition_for(key, table = table_name, size: db_partition_size(table))
-      partition = partition_for(key, table, size: size)
+    def create_partition(key, table = table_name, partition: partition_for(key, table))
       return if partitions(table).include? partition[:name]
       connection.exec_query(<<-SQL.strip_sql)
         CREATE TABLE #{partition[:name]} PARTITION OF #{table}
@@ -91,8 +92,7 @@ module ActiveRecord::Base::WithPartition
       reset_partitions(table)
     end
 
-    def drop_partition_for(key, table = table_name, size: db_partition_size(table))
-      partition = partition_for(key, table, size: size)
+    def drop_partition(key, table = table_name, partition: partition_for(key, table))
       return if partitions(table).exclude? partition[:name]
       connection.exec_query("DROP TABLE IF EXISTS #{partition[:name]}")
       reset_partitions(table)
@@ -118,13 +118,6 @@ module ActiveRecord::Base::WithPartition
       end
     end
 
-    def partition_key_table(name)
-      key_table = name.split(/_(#{DATE}|#{NUMBER})$/).reverse
-      raise InvalidPartitionName, "name: [#{name}]" unless key_table.size == 2
-      key, table = key_table
-      [partition_bucket(key), table]
-    end
-
     def partition_empty?(name)
       connection.select_value("SELECT count(*) FROM (SELECT 1 FROM #{name} LIMIT 1) AS t") != 1
     end
@@ -138,9 +131,11 @@ module ActiveRecord::Base::WithPartition
         to = (bucket + size).to_s.rjust(19, '0')
       when Time, Date, DateTime
         raise UnsupportedPartitionBucket, "size: [#{size}]" unless size.to_sym.in? DATE_PARTITION_BUCKETS
-        time = key.public_send("beginning_of_#{size}")
-        from = time.date_tag
-        to = (time + 1.public_send(size)).date_tag
+        bucket = key.public_send("beginning_of_#{size}")
+        from = bucket.date_tag
+        to = (bucket + 1.public_send(size)).date_tag
+      when String
+        return partition_for(partition_bucket(key), table, size: size)
       else
         raise UnsupportedPartitionBucket, "key: [#{key}]"
       end
@@ -148,7 +143,7 @@ module ActiveRecord::Base::WithPartition
     end
 
     def db_partition_size(table = table_name)
-      ExtRails.config.db_partitions[table] || partition_size
+      ExtRails.config.db_partitions[table]
     end
 
     private

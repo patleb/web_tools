@@ -1,6 +1,6 @@
 module Test
   class TimeSerie < ApplicationRecord
-    self.partition_size = :week
+    has_partition size: :week
 
     enum! type: {
       'Test::TimeSeries::DataPoint' => 1,
