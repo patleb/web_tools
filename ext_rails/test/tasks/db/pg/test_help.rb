@@ -1,3 +1,5 @@
+require_relative './test_case'
+
 Open3.class_eval do
   class << self
     let_stub :capture3, :dry_run do |*cmd|

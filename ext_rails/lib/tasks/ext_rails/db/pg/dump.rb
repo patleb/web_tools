@@ -224,7 +224,7 @@ module Db
       end
 
       def today
-        Time.today.db_date
+        Time.today.date_tag
       end
 
       def split_size

@@ -1,7 +1,7 @@
 require './test/test_helper'
 require_relative './test_help'
 
-class Db::Pg::DumpTest < Rake::TestCase
+class Db::Pg::DumpTest < Db::Pg::TestCase
   self.task_name = 'db:pg:dump'
 
   fixtures 'test/records'
@@ -146,14 +146,6 @@ class Db::Pg::DumpTest < Rake::TestCase
 
   def pg_dump_split
     pg_dump[0..-2].compact.join(' ') << " | split -d -a 6 -b #{split} - #{backup.expand_path.to_s}-"
-  end
-
-  def version
-    @version ||= `git rev-parse --short HEAD`.strip.first(7)
-  end
-
-  def today
-    @today ||= Time.today.db_date
   end
 
   def cores

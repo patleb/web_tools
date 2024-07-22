@@ -7,7 +7,7 @@ class Time
     current.beginning_of_day
   end
 
-  def db_date
+  def date_tag
     to_date.to_fs(:db).tr('-', '_')
   end
 end

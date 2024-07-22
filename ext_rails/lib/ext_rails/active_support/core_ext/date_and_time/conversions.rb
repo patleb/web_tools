@@ -18,7 +18,7 @@ module DateAndTime
       weeks = rotations_for(weeks, :week)
       months = rotations_for(months, :month)
       all = SortedSet.new(days + weeks + months).to_a.reverse
-      format ? all.map(&:db_date) : all
+      format ? all.map(&:date_tag) : all
     end
 
     private
