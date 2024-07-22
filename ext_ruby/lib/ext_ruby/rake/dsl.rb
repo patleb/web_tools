@@ -114,7 +114,7 @@ module Rake
         end
         row[:permissions] = permissions.to_i
         row[:size] = row[:size].to_i
-        row[:updated_at] = Time.parse("#{row.delete(:date)}T#{row.delete(:time)} #{row.delete(:zone)}")
+        row[:updated_at] = Time.parse_utc("#{row.delete(:date)}T#{row.delete(:time)} #{row.delete(:zone)}")
         row
       end
     end

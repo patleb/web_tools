@@ -3,9 +3,9 @@ module MemoizedAt
     @m_access_at ||= Concurrent::Hash.new
     @m_access_cache ||= Concurrent::Hash.new
     access_key = m_access_key(name, constants)
-    if force || !@m_access_cache.has_key?(access_key) || (Time.now - @m_access_at[access_key]) > timeout
+    if force || !@m_access_cache.has_key?(access_key) || (Time.current - @m_access_at[access_key]) > timeout
       value = @m_access_cache[access_key] = block_given? ? yield : send(name, *constants)
-      @m_access_at[access_key] = Time.now
+      @m_access_at[access_key] = Time.current
     else
       value = @m_access_cache[access_key]
     end

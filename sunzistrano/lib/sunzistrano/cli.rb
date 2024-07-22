@@ -212,7 +212,7 @@ module Sunzistrano
               print "[#{server}] #{line}"
             end
           end
-          puts "[#{server}] #{Time.now.to_s.yellow}" unless options.verbose == false
+          puts "[#{server}] #{Time.current.to_s.yellow}" unless options.verbose == false
           error.join
         end
       end

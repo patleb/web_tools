@@ -22,6 +22,14 @@ sun.start_provision() {
   fi
 }
 
+sun.standard_time() {
+  echo $(date +%FT%T%z) # YYYY-MM-DDTHH:MM:SS+ZZZZ
+}
+
+sun.nanoseconds() {
+  echo $(date +%s%N)
+}
+
 sun.timestamp() {
   echo $(date '+%Y-%m-%d %H:%M:%S %Z')
 }

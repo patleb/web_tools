@@ -18,7 +18,7 @@ module LogLines
 
     def self.parse(log, line, previous:, **)
       if (values = line.match(START_DATE))
-        created_at = Time.parse("#{values.captures.first} UTC")
+        created_at = Time.parse_utc(values.captures.first)
         message = { text: "look in apt/history.log", level: :info }
       elsif (values = line.match(COMMAND))
         anchored = true

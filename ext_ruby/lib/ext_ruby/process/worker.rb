@@ -92,7 +92,7 @@ module Process
     end
 
     def uptime
-      (Time.now - start_time).ceil(3)
+      (Time.current - start_time).ceil(3)
     end
 
     def start_time

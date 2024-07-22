@@ -5,7 +5,7 @@ class SimpleClass
 
   def access_time(**options)
     m_access(__method__, **options) do
-      Time.now
+      Time.current
     end
   end
 end

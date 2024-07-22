@@ -30,8 +30,8 @@ module LogLines
         level = :error
       elsif (values = line.match(SHUTDOWN))
         created_at, pid, text, timestamp = values.captures
-        json_data = { event: 'shutdown', stopped_at: Time.parse(timestamp) }
-        level = host(log)&.was_rebooted?(Time.parse(created_at)) ? :warn : :error
+        json_data = { event: 'shutdown', stopped_at: Time.parse_utc(timestamp) }
+        level = host(log)&.was_rebooted?(Time.parse_utc(created_at)) ? :warn : :error
       elsif (values = line.match(READY))
         created_at, pid, text = values.captures
         json_data = { event: 'ready' }
@@ -53,13 +53,13 @@ module LogLines
         json_data = { event: 'timeout' }
         level = :error
       elsif (values = line.match(ANCHOR))
-        return { created_at: Time.parse(values.captures.first).utc, filtered: true }
+        return { created_at: Time.parse_utc(values.captures.first), filtered: true }
       else
         return { filtered: true }
       end
       message = { text: [json_data[:event], lock, text].join!(': '), level: level }
 
-      { created_at: Time.parse(created_at), pid: pid.to_i, message: message, json_data: json_data }
+      { created_at: Time.parse_utc(created_at), pid: pid.to_i, message: message, json_data: json_data }
     end
   end
 end

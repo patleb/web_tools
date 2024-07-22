@@ -75,11 +75,11 @@ class ThreadGroup
       raise TimeoutInvalid if !seconds.is_a?(Numeric) || (seconds <= 0)
       raise TimeoutKillPeriodInvalid if kill_on_expired.is_a?(Numeric) && kill_on_expired <= 0
 
-      future = Time.now.to_f + seconds
+      future = Time.current.to_f + seconds
       timeout_mutex.synchronize{ self.max_length += 1 }
 
       add(*args, name: TIMEOUT, _timeout: true, **options) do |*rest|
-        until (expired = future < Time.now.to_f) || thread_shuttingdown?
+        until (expired = future < Time.current.to_f) || thread_shuttingdown?
           sleep 0.01
         end
 

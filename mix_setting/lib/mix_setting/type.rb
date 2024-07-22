@@ -33,7 +33,7 @@ module MixSetting::Type
         when :decimal
           BigDecimal(value)
         when :datetime, :time
-          Time.parse(value)
+          Time.parse_utc(value)
         when :interval
           ActiveSupport::Duration.build(ChronicDuration.parse(value || '', keep_zero: true))
         when :pathname

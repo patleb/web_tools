@@ -322,7 +322,7 @@ class Global < LibMainRecord
     when Boolean                 then 'boolean'
     when Integer                 then 'integer'
     when Float, BigDecimal       then 'decimal'
-    when Date, Time, DateTime    then 'datetime'
+    when Time, Date, DateTime    then 'datetime'
     when ActiveSupport::Duration then 'interval'
     when String, Symbol, nil     then 'string'
     else                              'serialized'

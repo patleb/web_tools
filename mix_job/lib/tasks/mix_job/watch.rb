@@ -1,29 +1,24 @@
-# TODO helpers for tmp/jobs/actions with Cron jobs and Incron watchers
-# TODO self watch ram used
-# TODO add folder for long jobs instead of polling passenger, check the files --> leaks some RAM otherwise
-# https://github.com/SamSaffron/memory_profiler
-# https://layerci.com/blog/postgres-is-the-answer/
+# frozen_string_literal: true
+
 module MixJob
   class Watch < ActiveTask::Base
     # TERM --> by System Monitor
     # HUP  --> by Closing Terminal
     # INT  --> by Systemd / Ctrl-C / IDE
-    SHUTDOWN_SIGNALS = IceNine.deep_freeze(ENV['DEBUGGER_HOST'] ? %w(TERM HUP): %w(TERM HUP INT))
-    SHUTDOWN_SIGNAL  = 'TERM'.freeze # used in tests
-    INSPECT_SIGNAL   = 'USR1'.freeze
-    EXECUTE_SIGNAL   = 'USR2'.freeze
-    SIGNALS = IceNine.deep_freeze(
-      SHUTDOWN_SIGNALS.map{ |signal| [signal, :shutdown] }.to_h.merge!(
-        INSPECT_SIGNAL => :inspect,
-        EXECUTE_SIGNAL => :execute,
-      )
+    SHUTDOWN_SIGNALS = ENV['DEBUGGER_HOST'] ? %w(TERM HUP): %w(TERM HUP INT)
+    SHUTDOWN_SIGNAL  = 'TERM' # used in tests
+    INSPECT_SIGNAL   = 'USR1'
+    EXECUTE_SIGNAL   = 'USR2'
+    SIGNALS = SHUTDOWN_SIGNALS.map{ |signal| [signal, :shutdown] }.to_h.merge!(
+      INSPECT_SIGNAL => :inspect,
+      EXECUTE_SIGNAL => :execute,
     )
-    INSPECT  = '[INSPECT]'.freeze
-    SHUTDOWN = '[SHUTDOWN]'.freeze
-    ACTION   = '[ACTION]'.freeze
-    WAIT     = 'tmp/jobs/wait.txt'.freeze
-    ACTIONS  = 'tmp/jobs/actions'.freeze
-    REQUESTS = 'tmp/jobs/requests.txt'.freeze
+    INSPECT  = '[INSPECT]'
+    SHUTDOWN = '[SHUTDOWN]'
+    ACTION   = '[ACTION]'
+    WAIT     = 'tmp/jobs/wait.txt'
+    ACTIONS  = 'tmp/jobs/actions'
+    REQUESTS = 'tmp/jobs/requests.txt'
 
     track_count_of :on_signal
     track_count_of :on_request
@@ -375,12 +370,12 @@ module MixJob
 
     def puts_action_success(action, total)
       Log.job_action(action, total)
-      puts "[#{Time.current.utc}]#{MixTask::SUCCESS}[#{Process.pid}]#{ACTION} #{action} -- : #{distance_of_time total}".green
+      puts "[#{Time.current.utc}]#{Rake::SUCCESS}[#{Process.pid}]#{ACTION} #{action} -- : #{distance_of_time total}".green
     end
 
     def puts_action_failure(action, exception)
       Notice.deliver! Jobs::ActionError.new(exception, data: { action: action })
-      puts "[#{Time.current.utc}]#{MixTask::FAILURE}[#{Process.pid}]#{ACTION} #{action}".red
+      puts "[#{Time.current.utc}]#{Rake::FAILURE}[#{Process.pid}]#{ACTION} #{action}".red
     end
 
     def actions

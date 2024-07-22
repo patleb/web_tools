@@ -26,14 +26,14 @@ module Sunzistrano
           started_at = Concurrent.monotonic_time
           context = "RAILS_ENV=#{sun.env} RAILS_APP=#{sun.app} BASH_DIR=#{bash_dir}"
           command = "#{context} bin/rake #{task}"
-          puts "[#{Time.now.utc}]#{TASK} #{task}".cyan
+          puts "[#{Time.current.utc}]#{TASK} #{task}".cyan
           output, status = capture2e(command)
           total = (Concurrent.monotonic_time - started_at).seconds.ceil(3)
           if status == 0
             puts output
-            puts "[#{Time.now.utc}]#{DONE} #{task} -- : #{total} seconds".green
+            puts "[#{Time.current.utc}]#{DONE} #{task} -- : #{total} seconds".green
           else
-            puts "[#{Time.now.utc}]#{FAIL} #{task} -- : #{total} seconds".red
+            puts "[#{Time.current.utc}]#{FAIL} #{task} -- : #{total} seconds".red
             raise output
           end
         end
@@ -91,9 +91,9 @@ module Sunzistrano
         wait_at = if sun.wait.match? WAIT_DURATION
           sun.wait.split(/\s*\+\s*/).map(&:split.with('.')).sum{ |(n, unit)| n.to_i.send(unit) }.from_now
         else
-          Time.parse(sun.wait) rescue return
+          Time.parse_utc(sun.wait) rescue return
         end
-        wait = (wait_at - Time.now).to_i
+        wait = (wait_at - Time.current).to_i
         wait = 60 if wait < 60
         [wait / 60, wait % 60]
       end

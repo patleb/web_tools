@@ -13,7 +13,7 @@ module LogLines
     def self.parse(log, line, previous:, **)
       if (values = line.match(FATAL))
         created_at, pid, uuid = values.captures
-        created_at, pid = Time.parse("#{created_at} UTC"), pid.to_i
+        created_at, pid = Time.parse_utc(created_at), pid.to_i
         message = { text: 'look in rails log', level: :fatal } # wasn't able to anchor the next line
       elsif (values = line.match(MESSAGE))
         uuid, text = values.captures

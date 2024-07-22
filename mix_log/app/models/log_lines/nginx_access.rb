@@ -157,10 +157,10 @@ module LogLines
       end
       hours = success.group_by_period(:hour).count
       (days = groups[[:day, :period]]).each do |day, row|
-        row << (0...24).map{ |hour| hours[day + hour.hours] || 0 }
+        row << 24.times.map{ |hour| hours[day + hour.hours] || 0 }
       end
       groups[[:week, :period]].each do |week, row|
-        row << (0...24).map{ |hour| (0..7).sum{ |day| (days[week + day.days] || [[]]).last[hour] || 0 } }
+        row << 24.times.map{ |hour| (0..7).sum{ |day| (days[week + day.days] || [[]]).last[hour] || 0 } }
       end
       groups.transform_values! do |group|
         group.transform_values! do |row|

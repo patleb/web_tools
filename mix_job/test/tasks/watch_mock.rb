@@ -82,8 +82,8 @@ module MixJob::WatchMock
     assert_after(_bad_actions.size){ execute_error_count }
     assert_after(_bad_actions.size){ ActionMailer::Base.deliveries.size }
     assert_until(_actions.size)    { _output.scan(self.class::ACTION).size }
-    assert_equal _good_actions.size, _output.scan(MixTask::SUCCESS).size
-    assert_equal _bad_actions.size,  _output.scan(MixTask::FAILURE).size
+    assert_equal _good_actions.size, _output.scan(Rake::SUCCESS).size
+    assert_equal _bad_actions.size,  _output.scan(Rake::FAILURE).size
     _bad_actions.values.each do |exception|
       assert_equal true, LogMessage.where('text_tiny LIKE ?', "%#{exception}%").take.reported?
     end

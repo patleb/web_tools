@@ -33,7 +33,7 @@ class Job < LibRecord
 
   def self.parse_notification(message)
     queue_i, scheduled_at, *_ = message.split(',')
-    [queue_names.key(queue_i.to_i), Time.parse(scheduled_at)]
+    [queue_names.key(queue_i.to_i), Time.parse_utc(scheduled_at)]
   end
 
   def self.enqueue(attributes)

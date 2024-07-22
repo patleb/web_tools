@@ -179,7 +179,7 @@ class UUID
           t = time
           if t.nil?
             # UUID epoch is 1582/Oct/15
-            tt = Time.now
+            tt = Time.current
             t = tt.to_i*10000000 + tt.tv_usec*10 + 0x01B21DD213814000
           end
           c = c.succ # important; increment here

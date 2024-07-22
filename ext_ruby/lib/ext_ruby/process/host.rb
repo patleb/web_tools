@@ -77,7 +77,7 @@ module Process
     end
 
     def uptime
-      (Time.now - boot_time).ceil(3)
+      (Time.current - boot_time).ceil(3)
     end
 
     def boot_time
