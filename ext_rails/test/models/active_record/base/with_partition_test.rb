@@ -24,7 +24,7 @@ class ActiveRecord::Base::WithPartitionTest < ActiveSupport::TestCase
   end
 
   test '.partition_key_table' do
-    assert_equal [15, 'test_much_records'], ActiveRecord::Base.send(:partition_key_table, 'test_much_records_0000000000000000015')
-    assert_equal [Time.utc(2024, 7, 15), 'test_time_series'], ActiveRecord::Base.send(:partition_key_table, 'test_time_series_2024_07_15')
+    assert_equal [15, 'test_much_records'], ActiveRecord::Base.partition_key_table('test_much_records_0000000000000000015')
+    assert_equal [Time.utc(2024, 7, 15), 'test_time_series'], ActiveRecord::Base.partition_key_table('test_time_series_2024_07_15')
   end
 end

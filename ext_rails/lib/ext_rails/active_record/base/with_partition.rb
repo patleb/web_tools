@@ -17,7 +17,7 @@ module ActiveRecord::Base::WithPartition
     end
   end
 
-  DATE_PARTITION_BUCKETS = %i(month week day)
+  DATE_PARTITION_BUCKETS = %i(year quarter month week day)
   DATE = /\d{4}_\d{2}_\d{2}$/
   NUMBER = /\d{19}$/ # support BIGINT
 
@@ -32,8 +32,9 @@ module ActiveRecord::Base::WithPartition
       self.partition_size = size
     end
 
-    def partitioned?
-      !!partition_column
+    def partitioned?(table = table_name)
+      return @partitioned if defined? @partitioned
+      @partitioned = ExtRails.config.db_partitions.has_key?(table) || !!partition_column
     end
 
     def insert_all!(rows, **)
@@ -51,15 +52,16 @@ module ActiveRecord::Base::WithPartition
     def with_partition(rows, table = table_name, column: partition_column, size: partition_size)
       yield
     rescue MissingPartition
+      column = column.to_sym
       rows.each{ |row| create_partition_for(row[column], table, size: size) }
       retry
     end
 
-    def create_all_partitions(keys, table = table_name, size: partition_size)
+    def create_all_partitions(keys, table = table_name, size: db_partition_size(table))
       keys.each{ |key| create_partition_for(key, table, size: size) }
     end
 
-    def drop_all_partitions(keys, table = table_name, size: partition_size)
+    def drop_all_partitions(keys, table = table_name, size: db_partition_size(table))
       keys.each{ |key| drop_partition_for(key, table, size: size) }
     end
 
@@ -71,7 +73,7 @@ module ActiveRecord::Base::WithPartition
       drop_partition_for(*partition_key_table(name))
     end
 
-    def create_partition_for(key, table = table_name, size: partition_size)
+    def create_partition_for(key, table = table_name, size: db_partition_size(table))
       partition = partition_for(key, table, size: size)
       return if partitions(table).include? partition[:name]
       connection.exec_query(<<-SQL.strip_sql)
@@ -83,7 +85,7 @@ module ActiveRecord::Base::WithPartition
       (@_partitions ||= {})[table] = nil
     end
 
-    def drop_partition_for(key, table = table_name, size: partition_size)
+    def drop_partition_for(key, table = table_name, size: db_partition_size(table))
       partition = partition_for(key, table, size: size)
       return if partitions(table).exclude? partition[:name]
       connection.exec_query("DROP TABLE IF EXISTS #{partition[:name]}")
@@ -110,11 +112,18 @@ module ActiveRecord::Base::WithPartition
       end
     end
 
+    def partition_key_table(name)
+      key_table = name.split(/_(#{DATE}|#{NUMBER})$/).reverse
+      raise InvalidPartitionName, "name: [#{name}]" unless key_table.size == 2
+      key, table = key_table
+      [partition_bucket(key), table]
+    end
+
     def partition_empty?(name)
       connection.select_value("SELECT count(*) FROM (SELECT 1 FROM #{name} LIMIT 1) AS t") != 1
     end
 
-    def partition_for(key, table = table_name, size: partition_size)
+    def partition_for(key, table = table_name, size: db_partition_size(table))
       case key
       when Integer
         size = size.to_i
@@ -132,13 +141,8 @@ module ActiveRecord::Base::WithPartition
       { name: "#{table}_#{from}", from: from, to: to }
     end
 
-    private
-
-    def partition_key_table(name)
-      key_table = name.split(/_(#{DATE}|#{NUMBER})$/).reverse
-      raise InvalidPartitionName, "name: [#{name}]" unless key_table.size == 2
-      key, table = key_table
-      [partition_bucket(key), table]
+    def db_partition_size(table = table_name)
+      ExtRails.config.db_partitions[table] || partition_size
     end
   end
 end
