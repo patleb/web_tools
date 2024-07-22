@@ -112,7 +112,7 @@ module ActiveRecord::Base::WithPartition
 
     def partition_bucket(name)
       if (date = name[DATE])
-        Time.find_zone('UTC').parse(date.dasherize).utc
+        Time.parse_utc(date.dasherize)
       else
         name[NUMBER].to_i
       end

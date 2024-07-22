@@ -85,6 +85,7 @@ require 'ext_ruby/string'
 require 'ext_ruby/symbol'
 require 'ext_ruby/thread'
 require 'ext_ruby/thread_group'
+require 'ext_ruby/time'
 require 'ext_ruby/timeout'
 require 'ext_ruby/uuid'
 
