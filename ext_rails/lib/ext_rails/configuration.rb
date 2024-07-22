@@ -14,7 +14,7 @@ module ExtRails
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
-      @sql_debug = Rails.env.local? if defined? Rails
+      @sql_debug = Rails.env.local?
     end
 
     def params_debug?
