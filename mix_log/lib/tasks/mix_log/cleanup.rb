@@ -5,7 +5,7 @@ module MixLog
     def cleanup
       past_dates, current_dates = LogLine.partitions_buckets.partition{ |date| date < dates.first }
       raise IntervalMismatch if (current_dates - dates).any?
-      LogLine.drop_all_partitions(past_dates)
+      LogLine.drop_all_partitions! past_dates
     end
 
     private

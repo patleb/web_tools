@@ -8,8 +8,8 @@ class ActiveRecord::Base::WithPartitionTest < ActiveSupport::TestCase
   let(:count){ keys.size }
 
   after do
-    Test::MuchRecord.drop_all_partitions!
-    Test::TimeSeries::DataPoint.drop_all_partitions!
+    Test::MuchRecord._drop_all_partitions!
+    Test::TimeSeries::DataPoint._drop_all_partitions!
   end
 
   test '.has_partition' do
