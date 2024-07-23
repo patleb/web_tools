@@ -7,7 +7,7 @@ class Db::Pg::DumpTest < Db::Pg::TestCase
   fixtures 'test/records'
 
   let(:dry_run){ true }
-  let(:backup){ Pathname.new(base_dir).join(filename) }
+  let(:backup){ base_dir.join(filename) }
   let(:base_dir){ Setting[:backup_dir].join('dump') }
   let(:filename){ 'dump.pg.gz' }
   let(:split){ false }
@@ -39,7 +39,6 @@ class Db::Pg::DumpTest < Db::Pg::TestCase
       instance_eval(&block) if block_given?
     end
   end
-
   def self.xtest_dump(**); end
 
   test_dump
