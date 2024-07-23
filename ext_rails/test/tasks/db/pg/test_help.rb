@@ -21,5 +21,6 @@ Db::Pg::Base.class_eval do
 end
 
 Minitest.after_run do
+  Test::MuchRecord._drop_all_partitions!
   FileUtils.rm_rf(Setting[:backup_dir])
 end
