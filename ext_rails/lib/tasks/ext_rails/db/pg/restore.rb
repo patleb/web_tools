@@ -1,6 +1,3 @@
-# TODO https://www.depesz.com/2007/07/05/how-to-insert-data-to-database-as-fast-as-possible/
-# TODO https://ossc-db.github.io/pg_bulkload/index.html
-# TODO PITR --> https://www.scalingpostgres.com/tutorials/postgresql-backup-point-in-time-recovery/
 module Db
   module Pg
     class Restore < Base
@@ -10,19 +7,18 @@ module Db
       COMPRESS = /\.gz/
       SPLIT = /-\*/
       MATCHER = /(?:~(#{TABLE}))?\.(tar|csv|pg)(#{COMPRESS})?(#{SPLIT})?$/
-      PARTITION = /\d{4}_\d{2}_\d{2}|\d{10}/
+      PARTITION = /\d{4}_\d{2}_\d{2}|\d{19}/
 
       def self.args
         {
-          path:        ['--path=PATH',                'Dump path', :required],
-          includes:    ['--includes=INCLUDES', Array, 'Included tables for pg_restore'],
-          excludes:    ['--excludes=EXCLUDES', Array, 'Excluded tables for pg_restore'],
-          md5:         ['--[no-]md5',                 'Check md5 files if present (default to true)'],
-          staged:      ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
-          data_only:   ['--[no-]data-only',           'Load only data with disabled triggers for pg_restore'],
-          append:      ['--[no-]append',              'Append data for pg_restore'],
-          new_server:  ['--[no-]new-server',          'Reset current server centralized log'],
-          pg_options:  ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
+          path:       ['--path=PATH',                'Dump path', :required],
+          includes:   ['--includes=INCLUDES', Array, 'Included tables for pg_restore'],
+          excludes:   ['--excludes=EXCLUDES', Array, 'Excluded tables for pg_restore'],
+          md5:        ['--[no-]md5',                 'Check md5 files if present (default to true)'],
+          staged:     ['--[no-]staged',              'Force restore in 3 phases for pg_restore (pre-data, data, post-data)'],
+          data_only:  ['--[no-]data-only',           'Load only data with disabled triggers for pg_restore'],
+          append:     ['--[no-]append',              'Append data for pg_restore'],
+          pg_options: ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
         }
       end
 
@@ -80,20 +76,17 @@ module Db
         sh 'sudo systemctl start postgresql'
         Db::Pg::Truncate.new(rake, task, cascade: true, includes: ExtRails.config.temporary_tables.to_a).run!
         post_restore_environment
-        post_restore_server if options.new_server
-        post_restore_tasks
       end
 
       def copy_from(table, compress, split)
         input = case
-          when split    then "PROGRAM '#{unsplit_cmd}'"
+          when split    then "PROGRAM '#{unsplit_uncompress_cmd}'"
           when compress then "PROGRAM '#{uncompress_cmd}'"
           else "'#{dump_path}'"
           end
         psql! "\\COPY #{table} FROM #{input} CSV"
       end
 
-      # TODO -j number-of-jobs
       def pg_restore(compress, split)
         Setting.db do |host, port, database, username, password|
           output = ''
@@ -114,7 +107,7 @@ module Db
               --dbname #{database}
             CMD
             input = case
-              when split    then "#{unsplit_cmd} |"
+              when split    then "#{unsplit_uncompress_cmd} |"
               when compress then "#{uncompress_cmd} |"
               else nil
               end
@@ -131,11 +124,7 @@ module Db
               notify!(cmd, stderr) if notify?(stderr)
             end
           end
-          unless data_append?
-            post_restore_environment
-            post_restore_server if options.new_server
-            post_restore_tasks
-          end
+          post_restore_environment unless data_append?
           output
         end
       end
@@ -146,13 +135,13 @@ module Db
           tables.select! do |t|
             only.any?{ |t_only| t.match_glob? t_only }
           end
-          only.replace(tables.flat_map{ |table| [table, "#{table}_id_seq"] }) unless skip.any?
+          only.replace(intersperse_with_sequences(tables)) unless skip.any?
         end
         if skip.any?
           tables.reject! do |t|
             skip.any?{ |t_skip| t.match_glob? t_skip }
           end
-          only.replace(tables.flat_map{ |table| [table, "#{table}_id_seq"] })
+          only.replace(intersperse_with_sequences(tables))
         end
         return unless options.data_only
 
@@ -168,30 +157,28 @@ module Db
         partitions = output.lines.each_with_object({}) do |line, list|
           next unless (table, bucket = line.match(/TABLE public (#{TABLE})_(#{PARTITION}) /)&.captures)
           next unless tables.include? table
-          (list[table] ||= []) << ActiveRecord::Base.partition_bucket(bucket)
+          (list[table] ||= []) << bucket
         end
         partitions.each do |table, buckets|
-          ActiveRecord::Base.create_all_partitions(buckets, table)
+          buckets.sort.each_with_index do |key, i|
+            if (next_key = buckets[i + 1])
+              ActiveRecord::Base.create_partition(table: table, from: key, to: next_key)
+            else
+              ActiveRecord::Base.create_partition(key, table: table)
+            end
+          end
         end
       end
 
       def post_restore_environment
-        ActiveRecord::InternalMetadata[:environment] = Rails.env
-      end
-
-      def post_restore_server
-        Server.current.discard! unless Server.current.new?
-      end
-
-      def post_restore_tasks
-        Task.where(state: :running).update_all(state: :unknown) if defined? Task
+        ActiveRecord::Base.connection.internal_metadata[:environment] = Rails.env
       end
 
       def staged
         options.staged
       end
 
-      def unsplit_cmd
+      def unsplit_uncompress_cmd
         "cat #{dump_path} | unpigz -c"
       end
 
@@ -213,6 +200,10 @@ module Db
 
       def data_append?
         options.data_only && options.append
+      end
+
+      def intersperse_with_sequences(tables)
+        tables.flat_map{ |table| table.match?(/#{TABLE}_#{PARTITION}/) ? table :  [table, "#{table}_id_seq"] }
       end
     end
   end
