@@ -47,24 +47,24 @@ class Db::Pg::RestoreTest < Db::Pg::TestCase
     assert_equal pg_restore, result.first.squish
   end
 
-  context 'as real' do
-    let(:dry_run){ false }
-
-    before do
-      assert_equal 0, Test::MuchRecord.partitions.size
-      assert_equal 0, Test::MuchRecord.count
-    end
-
-    test_restore data_only: true, append: true, md5: true, includes: 'test_much_records*' do
-      assert_equal 5, Test::MuchRecord.partitions.size
-      assert_equal 22, Test::MuchRecord.count
-      Test::MuchRecord._drop_all_partitions!
-    end
-  end
-
   context 'with md5' do
     test_restore md5: true do
       assert_equal pg_restore, result.first.squish
+    end
+
+    context 'as real' do
+      let(:dry_run){ false }
+
+      before do
+        assert_equal 0, Test::MuchRecord.partitions.size
+        assert_equal 0, Test::MuchRecord.count
+      end
+
+      test_restore md5: true, data_only: true, append: true, includes: 'test_much_records*' do
+        assert_equal 5, Test::MuchRecord.partitions.size
+        assert_equal 22, Test::MuchRecord.count
+        Test::MuchRecord._drop_all_partitions!
+      end
     end
   end
 
