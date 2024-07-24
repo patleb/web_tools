@@ -180,7 +180,7 @@ module Process
             when /^SwapTotal:/    then :swap_total
             when /^SwapFree:/     then :swap_free
             end
-          memo[type] = line.split.second.to_i if type
+          memo[type] = line.split[1].to_i if type
         end
         memory[:ram_used] = memory[:ram_total] - memory.delete(:ram_free)
         memory[:swap_used] = memory[:swap_total] - memory.delete(:swap_free)
@@ -192,7 +192,7 @@ module Process
             when /^pswpin /  then :swap_in
             when /^pswpout / then :swap_out
             end
-          memo[type] = (line.split.second.to_i * pagesize) if type
+          memo[type] = (line.split[1].to_i * pagesize) if type
         end
       end
     end
@@ -265,7 +265,7 @@ module Process
       @mounts ||= File.readlines("/proc/mounts").each_with_object({}) do |line, memo|
         next unless line.start_with? '/dev/'
         dev, mount, _ = line.split(' ', 3)
-        next if mount.start_with? '/boot', '/snap/', '/media/'
+        next if mount.start_with? '/boot', '/snap/', '/media/', '/run/'
         dev = ExtRuby.config.host_disk_partition if mount == '/'
         memo[dev.delete_prefix('/dev/')] = mount
       end
@@ -273,7 +273,7 @@ module Process
 
     def pids
       m_access(__method__) do
-        Rake::FileList["/proc/*"].map{ |file| File.basename(file).to_i }.reject(&:zero?)
+        Dir["/proc/*"].map{ |file| File.basename(file).to_i }.reject(&:zero?)
       end
     end
 
