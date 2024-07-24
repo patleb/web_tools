@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Process
   def self.worker
     @@worker ||= Worker.new(pid)
@@ -20,7 +22,7 @@ module Process
       18 => :nice,
       19 => :threads,
       21 => :start_time,
-    }.freeze
+    }
     PROCESS_STATES = {
       R: :running,
       S: :sleeping,
@@ -31,7 +33,7 @@ module Process
       Z: :zombie,
       P: :parked,
       I: :idle,
-    }.with_indifferent_access.freeze
+    }.with_indifferent_access
     PID_DEAD = -1
     PID_INIT = 1
 
@@ -40,10 +42,10 @@ module Process
 
     def self.all(nohup: nil)
       m_access(__method__, nohup) do
-        host.pids.each_with_object([]) do |pid, memo|
+        host.pids.select_map do |pid|
           next if (worker = new(pid)).ppid == PID_DEAD
           next if nohup && worker.ppid != PID_INIT
-          memo << worker
+          worker
         end
       end
     end
@@ -52,16 +54,21 @@ module Process
       @pid = pid
     end
 
+    def ==(other)
+      pid == other.pid
+    end
+
+    def !=(other)
+      pid != other.pid
+    end
+
     def parent
       self.class.new(ppid)
     end
 
     def children
       m_access(__method__) do
-        self.class.all.each_with_object([]) do |worker, memo|
-          next if worker.ppid != pid
-          memo << child
-        end
+        self.class.all.select{ |worker| worker.ppid == pid }
       end
     end
 
@@ -71,14 +78,13 @@ module Process
 
     def siblings
       m_access(__method__) do
-        self.class.all.each_with_object([]) do |worker, memo|
+        self.class.all.select do |worker|
           next if worker.pid.in? [PID_INIT, pid, ppid]
           if [worker.ppid, ppid].exclude? PID_INIT
-            next if worker.ppid != ppid
+            worker.ppid == ppid
           else
-            next if worker.cmdline != cmdline
+            worker.cmdline == cmdline
           end
-          memo << worker
         end
       end
     end
@@ -141,7 +147,7 @@ module Process
             when /^Rss:/  then :ram_used
             when /^Swap:/ then :swap_used
             end
-          memo[type] = line.split.second.to_i.kb_to_bytes if type
+          memo[type] = line.split[1].to_i.kb_to_bytes if type
         end
         File.readlines("/proc/#{@pid}/io").each_with_object(memory) do |line, memo|
           type = case line
@@ -162,7 +168,7 @@ module Process
     # readable ones only --> use "rbenv sudo ..."
     def inodes
       m_access(__method__) do
-        files = Rake::FileList["/proc/#{@pid}/fd/*"]
+        files = Dir["/proc/#{@pid}/fd/*"]
         files.each_with_object(socket: [], pipe: [], epoll: [], anon: [], dead_device: [], device: [], dead_file: [], file: []) do |file, memo|
           type = case File.readlink(file)
             when /^socket:/                  then :socket

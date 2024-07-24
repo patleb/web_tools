@@ -3,7 +3,7 @@ require './test/spec_helper'
 class Process::HostTest < Minitest::TestCase
   let(:host){ Process.host }
 
-  test '.host' do
+  test '.host, #snapshot' do
     assert_match /[\w-]/, host.name
     assert_match /[a-f0-9]+/, host.machine_id
     assert_match /(\d{1,3}\.){3}\d{1,3}/, host.private_ip
@@ -47,7 +47,10 @@ class Process::HostTest < Minitest::TestCase
     assert 0 < host.pagesize
     assert 0 < host.hertz
 
+    assert_nil host.snapshot
     host.snapshot!
+    assert_equal (ExtRuby.config.host_snapshot + [:created_at]).sort, host.snapshot.keys.sort
+
     host.network_usage.each{ |usage| assert_equal 0, usage }
     host.network.each_with_index{ |size, i| assert size > host.network_usage[i] }
     assert cpu_work > host.cpu_work
