@@ -9,4 +9,4 @@ require 'ext_minitest/minitest/assertions'
 require 'ext_minitest/minitest/test'
 require 'ext_minitest/minitest/spec/dsl'
 require 'ext_minitest/minitest/test_case'
-require 'ext_minitest/minitest/unexpected_error'
+require 'ext_minitest/minitest/unexpected_error' if ENV['RM_INFO'].present?
