@@ -1,6 +1,6 @@
 require 'mix_setting/version'
 require 'mix_setting/setting'
-require 'mix_setting/railtie' if defined? Rails
+require 'mix_setting/railtie' if defined? Rails.env
 
 module MixSetting
   def self.root

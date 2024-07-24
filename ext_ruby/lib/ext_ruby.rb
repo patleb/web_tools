@@ -74,7 +74,7 @@ require 'ext_ruby/process/snapshot'
 require 'ext_ruby/process/host'
 require 'ext_ruby/process/worker'
 require 'ext_ruby/process/os'
-if defined? Rails
+if defined? Rails.env
   require 'ext_ruby/process/passenger'
   require 'ext_ruby/railtie'
 end

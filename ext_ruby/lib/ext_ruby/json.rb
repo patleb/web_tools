@@ -1,4 +1,4 @@
-if defined? Rails
+if defined? Rails.env
   require 'active_support/json'
   require 'oj'
 

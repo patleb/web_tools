@@ -3,7 +3,7 @@ require 'mix_setting'
 require 'sunzistrano/cli'
 require 'sunzistrano/cloud'
 require 'sunzistrano/version'
-require 'sunzistrano/rake/dsl' if defined? Rails
+require 'sunzistrano/rake/dsl' if defined? Rails.env
 
 module Sunzistrano
   def self.root
