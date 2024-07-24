@@ -1,6 +1,6 @@
 require './test/test_helper'
 
-class Process::PassengerTest < Minitest::TestCase
+class Process::PassengerTest < ActiveSupport::TestCase
   let(:run_timeout){ 10 }
   let(:passenger){ Process.passenger }
 

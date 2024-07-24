@@ -74,10 +74,6 @@ require 'ext_ruby/process/snapshot'
 require 'ext_ruby/process/host'
 require 'ext_ruby/process/worker'
 require 'ext_ruby/process/os'
-if defined? Rails.env
-  require 'ext_ruby/process/passenger'
-  require 'ext_ruby/railtie'
-end
 require 'ext_ruby/rake/dsl'
 require 'ext_ruby/secure_random'
 require 'ext_ruby/sh'
