@@ -25,7 +25,7 @@ class Process::HostTest < Minitest::TestCase
     assert 0.0 < host.swap_total
     assert 0.0 < host.swap_used
     assert_equal %i(ram_in ram_out ram_total ram_used swap_in swap_out swap_total swap_used).sort, host.memory.keys.sort
-    if true # ENV['CI'].present?
+    if ENV['CI'].present?
       host.disks_inodes.each_value{ |inodes| assert 0 < inodes }
       host.disks.each_value do |values|
         assert_equal %i(fs_total fs_used io_size io_time).sort, values.keys.sort
