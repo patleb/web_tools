@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby File.read('.ruby-version').strip
+ruby File.read('.ruby-version').strip if File.exist? '.ruby-version'
 
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'shakapacker', '6.1.1'
@@ -14,6 +14,10 @@ end
 group :development do
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem "rack-mini-profiler"
+end
+
+group :test do
+  gem 'passenger'
 end
 
 # gem 'web_tools', github: 'patleb/web_tools'

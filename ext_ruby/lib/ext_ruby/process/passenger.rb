@@ -38,30 +38,28 @@ module Process
     SERVER_THREAD_KEYS = SERVER.keys.except(*SERVER_PROCESS_KEYS).freeze
     SERVER_CLIENT_KEYS = ['active_clients', 'disconnected_clients']
 
-    attr_reader :stdout, :stderr, :status
-
     def clear
       m_clear(:server)
       m_clear(:pool)
     end
 
-    def available?(**options)
-      pool(**options).try(:[], :group_count).to_i > 0
+    def available?(**)
+      pool(**).try(:[], :group_count).to_i > 0
     end
 
-    def requests(**options)
-      clients(**options).try :map do |client|
+    def requests(**)
+      clients(**).try :map do |client|
         client[:request]
       end
     end
 
-    def clients(**options)
-      server(**options).try(:[], :clients)
+    def clients(**)
+      server(**).try(:[], :clients)
     end
 
-    def server(**options)
-      m_access(__method__, **options) do
-        @stdout, @stderr, @status = passenger_status
+    def server(**)
+      m_access(__method__, **) do
+        stdout, status = passenger_status(:server)
         next unless status.success?
         result = ActiveSupport::JSON.decode(stdout) rescue nil
         next unless result
@@ -88,9 +86,9 @@ module Process
       end
     end
 
-    def pool(**options)
-      m_access(__method__, **options) do
-        @stdout, @stderr, @status = passenger_status(:xml)
+    def pool(**)
+      m_access(__method__, **) do
+        stdout, status = passenger_status(:xml)
         next unless status.success?
         stdout_with_arrays = stdout.gsub(/<(supergroups|processes)(\/)?>/, '<\1 type="array"\2>')
         result = Hash.from_xml(stdout_with_arrays) rescue nil
@@ -101,10 +99,9 @@ module Process
 
     private
 
-    def passenger_status(show = :server)
-      show = :xml unless show == :server
-      cmd = "#{Rails.env.development? ? 'bundle exec' : 'sudo'} passenger-status --show=#{show} --no-header"
-      Open3.capture3(cmd)
+    def passenger_status(show)
+      cmd = "#{Rails.env.local? ? 'bundle exec' : 'sudo'} passenger-status --show=#{show} --no-header"
+      Open3.capture2(cmd)
     end
   end
 end
