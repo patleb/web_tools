@@ -15,7 +15,6 @@ ActiveRecord::Base.class_eval do
     .prepend.rb
     _admin.rb
     _decorator.rb
-    /current.rb
     /null.rb
     /base.rb
     /main.rb

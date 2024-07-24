@@ -31,10 +31,9 @@ module ExtRails
       @excluded_models ||= Set.new([
         'ApplicationRecord',
         'ApplicationMainRecord',
+        'Current',
         'LibRecord',
         'LibMainRecord',
-        'Test',
-        'Test::ApplicationRecord',
         'VirtualRecord::Relation'
       ])
     end
