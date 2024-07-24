@@ -19,6 +19,7 @@ module Rake
     ensure
       ARGV.replace(old_argv) if old_argv
     end
+    module_function :with_argv
 
     def run_task(task_name, *args, **argv)
       with_argv(task_name, **argv) do
