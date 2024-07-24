@@ -1,6 +1,10 @@
 require './test/spec_helper'
 
 class ArrayTest < Minitest::TestCase
+  test '#mode' do
+    assert_equal 2.0, [1.0, 2.0, 2.0, 3.0, 4.0].mode
+  end
+
   test '#average' do
     assert_nil [].average
     assert_equal 2.0, [1, 2, 3].average
@@ -21,6 +25,14 @@ class ArrayTest < Minitest::TestCase
     assert_equal 54.5, array.median
     assert_equal 67.25, array.percentile(0.75)
     assert_equal 72, array.percentile(1.0)
+  end
+
+  test '#join!' do
+    assert_equal '1abc23e', [1, 'abc', nil, '', 2, nil, 3, 'e', ''].join!
+  end
+
+  test '#except' do
+    assert_equal [1, 5], [1, 2, 3, 4, 5].except(2, 3, 4)
   end
 
   test '#insert_before' do
@@ -46,6 +58,10 @@ class ArrayTest < Minitest::TestCase
     assert_equal [3, 4, 3], array.switch!(2, 4)
   end
 
+  test '#intersperse' do
+    assert_equal [1, 4, 2, 4, 3, 4, 1], [1, 2, 3, 1].intersperse(4)
+  end
+
   test '#neg' do
     assert_equal [-2, -3, -4], [2, 3, 4].neg
   end
@@ -59,6 +75,7 @@ class ArrayTest < Minitest::TestCase
   end
 
   test '#sub' do
+    assert_equal [0, 2], [4, 4].sub([2, 1], [2, 1])
     assert_equal [1, 2, 3], [2, 3, 4].sub([1, 1, 1])
     assert_raises 'size mismatch' do
       [1].sub([1, 2])
@@ -66,6 +83,7 @@ class ArrayTest < Minitest::TestCase
   end
 
   test '#add' do
+    assert_equal [8, 6], [4, 4].add([2, 1], [2, 1])
     assert_equal [3, 4, 5], [2, 3, 4].add([1, 1, 1])
     assert_raises 'size mismatch' do
       [1].add([1, 2])

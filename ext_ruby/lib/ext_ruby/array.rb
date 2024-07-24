@@ -93,27 +93,23 @@ class Array
     map.with_index{ |x, i| x / value[i] }
   end
 
-  def sub(*values)
-    if (value = values.first).is_a? Array
-      (values.empty? ? self : [self, *values]).transpose.map{ |x| x.reduce(:-) }
-    elsif values.size == 1
-      map{ |x| x - value }
-    elsif values.size != size
-      raise SizeMismatch
+  def sub(other, *others)
+    if others.empty?
+      return map{ |x| x - other } unless other.is_a? Array
+      raise SizeMismatch if size != other.size
+      map.with_index{ |x, i| x - other[i] }
     else
-      map.with_index{ |x, i| x - values[i] }
+      [self, other, *others].transpose.map{ |x| x.reduce(:-) }
     end
   end
 
-  def add(*values)
-    if (value = values.first).is_a? Array
-      (values.empty? ? self : [self, *values]).transpose.map(&:sum)
-    elsif values.size == 1
-      map{ |x| x + value }
-    elsif values.size != size
-      raise SizeMismatch
+  def add(other, *others)
+    if others.empty?
+      return map{ |x| x + other } unless other.is_a? Array
+      raise SizeMismatch if size != other.size
+      map.with_index{ |x, i| x + other[i] }
     else
-      map.with_index{ |x, i| x + values[i] }
+      [self, other, *others].transpose.map(&:sum)
     end
   end
 
