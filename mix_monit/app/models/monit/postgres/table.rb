@@ -42,7 +42,7 @@ module Monit
           next unless public? row, :schemaname
           next unless row[:type] == 'table'
           next unless row[:bloat] >= Setting[:monit_table_bloat_factor]
-          next unless (bloat_bytes = row[:waste].to_bytes) >= Setting[:monit_table_bloat_bytes]
+          next unless (bloat_bytes = row[:waste].to_bytes(:db)) >= Setting[:monit_table_bloat_bytes]
           memo[row[:object_name]] = { bloat_bytes: bloat_bytes }
         end
         vacuum_thresholds = exec_statement(:vacuum_stats).each_with_object({}) do |row, memo|

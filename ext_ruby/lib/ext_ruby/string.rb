@@ -33,7 +33,7 @@ class String
     'OCTET' => 1, 'OCTETS' => 1, 'KO' => 1024, 'MO' => 1000*1024, 'GO' => 1000*1024**2, 'TO' => 1000*1024**3, 'PO' => 1000*1024**4,
   }
 
-  def to_bytes(standard = :db)
+  def to_bytes(standard = nil)
     value, units = upcase.split
     value = value.tr(',', '.') if BYTES.has_key?(units) && units.include?('O')
     (value.cast_self * (standard == :db ? DB_BYTES[units] : BYTES[units])).to_i
