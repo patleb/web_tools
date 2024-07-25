@@ -1,10 +1,6 @@
 module Enumerable
   alias_method :select_map, :filter_map
 
-  def max_by_index
-    each_with_index.max_by{ |obj, _i| yield(obj) }&.last
-  end
-
   def stable_sort_by
     sort_by.with_index{ |obj, i| [yield(obj), i] }
   end
