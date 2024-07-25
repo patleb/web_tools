@@ -128,7 +128,7 @@ module Sql
 
       def partial(name)
         previous_path = @virtual_path
-        result = ERB.tempplate(partial_path(name), binding)
+        result = ERB.template(partial_path(name), binding)
         result.sub! /CREATE OR REPLACE FUNCTION \w+\(\) RETURNS VOID AS \$\$\s+DECLARE\s+(BEGIN\s+)?/i, ''
         result.sub /(\s+BEGIN)?\s+END;\s+\$\$ LANGUAGE plpgsql;/i, ''
       ensure
