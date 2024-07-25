@@ -13,7 +13,7 @@ module Sunzistrano
       context = Setting.all.merge(extract_yml(Setting.root)).merge!(options).merge!(role => true)
       require_overrides
       @gems = @gems.to_a.reverse.to_h
-      @replaced&.each{ |key| context[key.delete_suffix(Hash::REPLACE)] = context.delete(key) }
+      @replaced&.each{ |key| context[key.delete_suffix(Setting::REPLACE)] = context.delete(key) }
       remove_ivar(:@replaced)
       super(context)
     end
@@ -262,7 +262,7 @@ module Sunzistrano
       end
       yml = (gems_yml || {}).union!(role_yml)
       yml.each_key do |key|
-        if key.end_with? Hash::REPLACE
+        if key.end_with? Setting::REPLACE
           (@replaced ||= Set.new) << key
         end
       end

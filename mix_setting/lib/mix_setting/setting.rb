@@ -13,6 +13,7 @@ class Setting
   METHOD = '$METHOD'
   ALIAS  = '$ALIAS'
   REMOVE = '$REMOVE'
+  REPLACE = '!'
   FREED_IVARS = %i(@types @secrets @settings @aliases @methods @removed @replaced)
 
   def self.secret_key_base
@@ -258,7 +259,7 @@ class Setting
           next
         end
       else
-        if key.end_with? Hash::REPLACE
+        if key.end_with? REPLACE
           (@replaced ||= Set.new) << key
         end
       end
@@ -284,7 +285,7 @@ class Setting
       end
     end
     @removed&.each{ |key| settings.delete(key) }
-    @replaced&.each{ |key| settings[key.delete_suffix(Hash::REPLACE)] = settings.delete(key) }
+    @replaced&.each{ |key| settings[key.delete_suffix(REPLACE)] = settings.delete(key) }
   end
 
   def self.require_overrides
