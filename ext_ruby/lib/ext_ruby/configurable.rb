@@ -3,7 +3,9 @@ class Module
     cvar(:@@config, nil)
 
     define_singleton_method :configure do |&block|
-      config = cvar(:@@config){ const_get(:Configuration).new }
+      unless (config = cvar(:@@config))
+        config = cvar(:@@config, const_get(:Configuration).new)
+      end
       block.call(config) if block
       config
     end
