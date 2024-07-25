@@ -1,23 +1,19 @@
 class Module
   def has_config(&configuration)
-    class_variable_set(:@@config, nil)
+    cvar(:@@config, nil)
 
     define_singleton_method :configure do |&block|
-      unless (config = class_variable_get(:@@config))
-        config = class_variable_set(:@@config, const_get(:Configuration).new)
-      end
-
+      config = cvar(:@@config){ const_get(:Configuration).new }
       block.call(config) if block
-
       config
     end
 
     define_singleton_method :config do
-      class_variable_get(:@@config) || configure
+      cvar(:@@config) || configure
     end
 
     define_singleton_method :reset do
-      class_variable_set(:@@config, nil)
+      cvar(:@@config, nil)
       self
     end
 
@@ -25,7 +21,7 @@ class Module
       old_config = config.deep_dup
       block.call(config)
     ensure
-      class_variable_set(:@@config, old_config)
+      cvar(:@@config, old_config)
     end
 
     const_set :Configuration, Class.new(&configuration)
