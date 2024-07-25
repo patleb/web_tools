@@ -1,6 +1,6 @@
 require './ext_coffee/test/spec_helper'
 
-class JsTest < Minitest::Spec
+class JsTest < Minitest::TestCase
   let(:run_timeout){ false }
 
   after do

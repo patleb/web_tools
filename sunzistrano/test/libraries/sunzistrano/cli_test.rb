@@ -1,6 +1,6 @@
 require './sunzistrano/test/spec_helper'
 
-class Sunzistrano::CliTest < Minitest::Spec
+class Sunzistrano::CliTest < Minitest::TestCase
   it 'should build path relative to the owner provisioned dir' do
     Setting.reload(env: 'test')
     path = Sunzistrano.owner_path :manifest_dir, 'version'

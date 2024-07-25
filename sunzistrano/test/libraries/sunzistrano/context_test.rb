@@ -18,7 +18,7 @@ module Gem
   end
 end
 
-class Sunzistrano::ContextTest < Minitest::Spec
+class Sunzistrano::ContextTest < Minitest::TestCase
   it 'should build context correctly' do
     Setting.reload(env: 'test', app: 'app', root: ROOT)
     sun = Sunzistrano::Context.new('role', option: 'name')

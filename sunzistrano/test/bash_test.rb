@@ -1,6 +1,6 @@
 require './sunzistrano/test/spec_helper'
 
-class Sunzistrano::BashTest < Minitest::Spec
+class Sunzistrano::BashTest < Minitest::TestCase
   let(:run_timeout){ false }
 
   it 'should execute bash tests successfully' do
