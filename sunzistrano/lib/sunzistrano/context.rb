@@ -240,7 +240,7 @@ module Sunzistrano
       path = root.join(CONFIG_YML)
       return {} unless path.exist?
 
-      yml = YAML.safe_load(ERB.new(path.read).result(binding))
+      yml = YAML.safe_load(ERB.template(path, binding))
       validate_version! yml['lock']
       gems_yml = (['sunzistrano'] + (yml['gems'] || [])).reduce({}) do |gems_yml, name|
         if @gems.has_key? name

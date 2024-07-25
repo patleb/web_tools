@@ -29,7 +29,7 @@ module Rake
           end
         end
 
-        f.puts ERB.new(File.read(source_erb), trim_mode: '-').result(binding)
+        f.puts ERB.template(source_erb, binding, trim_mode: '-')
       end
       new_file
     end

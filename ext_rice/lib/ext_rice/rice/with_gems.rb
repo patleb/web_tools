@@ -45,7 +45,7 @@ module Rice
       dst_dir = dst_name ? dst_path.join(dst_name) : dst_path
       dst_dir.mkdir_p
       Dir["#{src}/**/*.{h,hpp,ipp,c,cc,cpp}"].each do |file|
-        content = ERB.new(File.read(file), trim_mode: '-').result.strip
+        content = ERB.template(file, trim_mode: '-').strip
         has_once = content.include?('#pragma once') || content.include?('#ifndef ')
         is_header = file.end_with? '.h', '.hpp', '.ipp'
         compiled_path = dst_dir.join(file.delete_prefix("#{src}/"))

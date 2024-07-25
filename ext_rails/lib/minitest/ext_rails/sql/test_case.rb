@@ -122,13 +122,13 @@ module Sql
         @output ||= begin
           @output = ''
           @virtual_path = file_path.delete_suffix('.sql.erb')
-          ERB.new(File.read(file_path), eoutvar: '@output').result(binding)
+          ERB.template(file_path, binding, eoutvar: '@output')
         end
       end
 
       def partial(name)
         previous_path = @virtual_path
-        result = ERB.new(File.read(partial_path(name))).result(binding)
+        result = ERB.tempplate(partial_path(name), binding)
         result.sub! /CREATE OR REPLACE FUNCTION \w+\(\) RETURNS VOID AS \$\$\s+DECLARE\s+(BEGIN\s+)?/i, ''
         result.sub /(\s+BEGIN)?\s+END;\s+\$\$ LANGUAGE plpgsql;/i, ''
       ensure
