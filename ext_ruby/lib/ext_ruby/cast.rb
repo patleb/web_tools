@@ -4,6 +4,12 @@ module Boolean
   end
 end
 
+class Object
+  def cast_self
+    self
+  end
+end
+
 class Numeric
   def cast_self
     self
@@ -18,7 +24,7 @@ end
 
 class Time
   def cast_self
-    self
+    iso8601
   end
 end
 
@@ -32,10 +38,10 @@ class String
   def cast_self
     case
     when blank?                   then nil
+    when match?(/^(true|false)$/) then to_b
+    when to_i?                    then to_i
     when to_f?                    then to_f
     when to_d?                    then to_d
-    when to_i?                    then to_i
-    when match?(/^(true|false)$/) then to_b
     else self
     end
   end

@@ -24,8 +24,8 @@ end
 
 class String
   def to_i?; to_i.to_s == self end
-  def to_f?; to_f.to_s == self end
-  def to_d?; to_d.to_s == self end
+  def to_f?; Float(self, exception: false)&.finite? end
+  def to_d?; !!BigDecimal(self, exception: false) end
 end
 
 class Integer
