@@ -1,9 +1,5 @@
 ### References
 # https://github.com/jakubcerveny/gilbert
-# generalize to n dimensions:
-# --> https://github.com/adolgert/BijectiveHilbert.jl/blob/main/src/hamilton.jl
-# --> https://github.com/mrkn/ruby-julia
-# actually, try recursively before 3D --> [2D --> 1D, 1D] --> 1D
 class Gilbert
   CACHE_DIR = './tmp/cache/gilbert'
 
