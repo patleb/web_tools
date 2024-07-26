@@ -1,3 +1,17 @@
+# frozen_string_literal: true
+
+if ENV['DEBUGGER_HOST']
+  DEBUGGER_ENCODING = Encoding.find('ASCII-8BIT')
+
+  module ActiveSupport::Inflector
+    alias_method :translirerate_without_debugger, :transliterate
+    def transliterate(string, *, **)
+      string = string.force_encoding(Encoding::UTF_8) if string.encoding == DEBUGGER_ENCODING
+      translirerate_without_debugger(string, *, **)
+    end
+  end
+end
+
 class NilClass
   def upcase_first
     ''
@@ -16,20 +30,20 @@ end
 
 class String
   REPLACEMENT = ' '
-  NIL_VALUE = /([(\[{,] *)(nil)( *[,\]})])/.freeze
-  NULL_VALUE = '\1null\3'.freeze
-  HTML_BLANK = /(<\/?p>|&nbsp;|<br>)/.freeze
-  OBJECT_INSPECT = /(#<)([^>]+)(>)/.freeze
-  HEXADECIMAL = /0x[0-9a-f]+/i.freeze
-  MD5_HEX = /[0-9a-f]{32}/i.freeze
-  DECIMAL = /[-+]?(\d+(\.\d+)*(e[-+]?\d+)?|infinity)/i.freeze
-  UUID = /[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}/i.freeze
+  NIL_VALUE = /([(\[{,:] *)(nil)( *[,\]})])/
+  NULL_VALUE = '\1null\3'
+  HTML_BLANK = /(< *\/?p *\/?>|&nbsp;|< *br *\/?>)/
+  OBJECT_INSPECT = /(#<)([^>]+)(>)/
+  HEXADECIMAL = /0x[0-9a-f]+/i
+  MD5_HEX = /[0-9a-f]{32}/i
+  DECIMAL = /[-+]?(\d+(\.\d+)*(e[-+]?\d+)?|infinity)/i
+  UUID = /[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}/i
   BYTES = {
-    'BYTE' => 1, 'BYTES' => 1, 'KB' => 1024, 'MB' => 1024**2, 'GB' => 1024**3, 'TB' => 1024**4, 'PB' => 1024**5,
+    'BYTE' => 1,  'BYTES' => 1,  'KB' => 1024, 'MB' => 1024**2, 'GB' => 1024**3, 'TB' => 1024**4, 'PB' => 1024**5,
     'OCTET' => 1, 'OCTETS' => 1, 'KO' => 1024, 'MO' => 1024**2, 'GO' => 1024**3, 'TO' => 1024**4, 'PO' => 1024**5,
   }
   DB_BYTES = {
-    'BYTE' => 1, 'BYTES' => 1, 'KB' => 1024, 'MB' => 1000*1024, 'GB' => 1000*1024**2, 'TB' => 1000*1024**3, 'PB' => 1000*1024**4,
+    'BYTE' => 1,  'BYTES' => 1,  'KB' => 1024, 'MB' => 1000*1024, 'GB' => 1000*1024**2, 'TB' => 1000*1024**3, 'PB' => 1000*1024**4,
     'OCTET' => 1, 'OCTETS' => 1, 'KO' => 1024, 'MO' => 1000*1024, 'GO' => 1000*1024**2, 'TO' => 1000*1024**3, 'PO' => 1000*1024**4,
   }
 
@@ -46,7 +60,7 @@ class String
 
   def match_glob?(pattern)
     if pattern.include? '*'
-      match? Regexp.new('^' << pattern.gsub('*', '\w*') << '$')
+      match? Regexp.new("^#{pattern.gsub('*', '\w*')}$")
     else
       self == pattern
     end
@@ -67,7 +81,7 @@ class String
   # Convert to Base36 + space separators
   def simplify(locale = :en)
     string = transliterate(locale)
-    string.gsub! /[^\w\s]+/, ' '
+    string.gsub! /[^A-Za-z0-9 ]+/, ' '
     string.squish!
     string.downcase!
     string
@@ -84,7 +98,8 @@ class String
   def similarity(other, locale = :en)
     left = trigrams(locale)
     right = other.trigrams(locale)
-    return 0.0 if left.empty? && right.empty?
+    return 0.0 if left.empty? || right.empty?
+    return 1.0 if left == right
     (left & right).size / (left | right).size.to_f
   end
 
@@ -96,8 +111,8 @@ class String
     parameterize.dasherize
   end
 
-  def full_underscore(separator = '_')
-    underscore.tr('/', separator).delete_prefix(separator).delete_suffix(separator)
+  def full_underscore
+    underscore.tr('/', '_').delete_prefix('_').delete_suffix('_')
   end
 
   def escape_inspect_delimiters(delimiters = '[]')
@@ -151,10 +166,6 @@ class String
     gsub(/\\n/, "\n")
   end
 
-  def escape_spaces
-    gsub(' ', "\\\\ ")
-  end
-
   def partition_at(truncate_at, separator: nil, fallback: nil)
     return [self, ''] unless size > truncate_at
 
@@ -169,11 +180,12 @@ class String
   end
 
   def index_n(match, n = 1)
+    return if n < 1
     to_enum(:scan, match).find.with_index(1){ |_, i| n == i } ? Regexp.last_match.begin(0) : nil
   end
 
   def index_all(match, n = 1)
-    return if n < 1
+    return [] if n < 1
     indexes = to_enum(:scan, match).map{ Regexp.last_match.begin(0) }
     indexes = indexes[(n - 1)..-1] if n > 1
     indexes
