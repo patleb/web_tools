@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ### References
 # https://ruby-concurrency.github.io/concurrent-ruby/Concurrent/ThreadPoolExecutor.html
 class ThreadGroup
@@ -7,7 +9,7 @@ class ThreadGroup
   class TimeoutKillPeriodInvalid < ::ArgumentError; end
   class TimeoutError < ::StandardError; end
 
-  TIMEOUT = 'timeout'.freeze
+  TIMEOUT = 'timeout'
 
   module WithThreadPoolExecutor
     attr_writer :max_length, :largest_length, :timeout_mutex
@@ -67,7 +69,7 @@ class ThreadGroup
     end
 
     def shuttingdown?
-      @shutdown.to_b && running?
+      !!@shutdown && running?
     end
 
     def timeout(seconds, *args, kill_on_expired: false, **options)
@@ -93,7 +95,7 @@ class ThreadGroup
           raise TimeoutError
         end
       ensure
-        timeout_mutex.synchronize{ self.max_length -= 1 }
+        timeout_mutex.synchronize{ self.max_length -= 1 } if future
       end
     end
 
@@ -117,8 +119,8 @@ class ThreadGroup
     end
     alias_method :post, :add
 
-    def join(*timeout)
-      list(without_self: true).each(&:join.with(*timeout))
+    def join(*)
+      list(without_self: true).each(&:join.with(*))
     end
     alias_method :wait_for_termination, :join
 

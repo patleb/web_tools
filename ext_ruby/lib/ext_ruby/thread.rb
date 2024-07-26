@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kernel
   def thread(*args, priority: nil, **options)
     Thread.new(*args) do |*rest|
@@ -16,7 +18,7 @@ module Kernel
 end
 
 class Thread
-  SLEEP = 'sleep'.freeze
+  SLEEP = 'sleep'
 
   def shuttingdown?
     group.shuttingdown?
