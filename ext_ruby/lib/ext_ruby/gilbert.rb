@@ -13,7 +13,7 @@ class Gilbert
     end
     axes = dims.times.to_a
     x0 = [0] * dims
-    dims.times.each do |i|
+    axes.each do |i|
       rest = axes.except(i)
       if rest.all?{ |j| x[i] >= x[j] }
         list = build x0, *[i, *rest].map{ |j| x0.dup.tap{ |xn| xn[j] = x[j] } }
@@ -72,7 +72,7 @@ class Gilbert
     axes = dims.times.to_a
     axes.each do |i|
       if axes.except(i).all?{ |j| size[0][j] == 1 }
-        size[0][i].times.each do
+        size[0][i].times do
           list << x0
           x0 = x0.add(step[i])
         end
@@ -84,7 +84,7 @@ class Gilbert
     size << grid[1].map(&:sum).map(&:abs)
 
     # prefer even steps
-    dims.times.each do |i|
+    axes.each do |i|
       if (size[1][i] % 2) != 0 && size[0][i] > 2
         grid[1][i] = grid[1][i].add(step[i])
       end
