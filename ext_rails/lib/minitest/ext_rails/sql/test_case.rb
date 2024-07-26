@@ -42,10 +42,10 @@ module Sql
       end
 
       def setup
-        @output << <<~SQL
+        @output << <<-SQL.strip_sql(name: @name, config: dblink_config)
           CREATE OR REPLACE FUNCTION test_assert_succeeded() RETURNS VOID AS $$
           BEGIN
-            PERFORM test_autonomous('INSERT INTO test_asserts (id) VALUES (DEFAULT);', '#{dblink_config}');
+            PERFORM test_autonomous('INSERT INTO test_asserts (id) VALUES (DEFAULT);', '{{ config }}');
           END;
           $$ LANGUAGE plpgsql;
 
@@ -77,12 +77,12 @@ module Sql
           end;
           $$ LANGUAGE plpgsql SET search_path FROM CURRENT IMMUTABLE;
 
-          CREATE OR REPLACE FUNCTION test_setup_#{@name}() RETURNS VOID AS $$
+          CREATE OR REPLACE FUNCTION test_setup_{{ name }}() RETURNS VOID AS $$
           BEGIN
-            IF EXISTS(SELECT 1 FROM pg_proc WHERE proname = 'test_teardown_#{@name}') THEN
+            IF EXISTS(SELECT 1 FROM pg_proc WHERE proname = 'test_teardown_{{ name }}') THEN
               SET client_min_messages TO WARNING;
               BEGIN
-                PERFORM test_teardown_#{@name}();
+                PERFORM test_teardown_{{ name }}();
               EXCEPTION
                 WHEN OTHERS THEN
                   NULL;
@@ -96,26 +96,26 @@ module Sql
 
         yield
 
-        @output << <<~END_SQL
+        @output << <<-SQL.strip_sql
           END;
           $$ LANGUAGE plpgsql;
-        END_SQL
+        SQL
       end
 
       def teardown
-        @output << <<~SQL
-          CREATE OR REPLACE FUNCTION test_teardown_#{@name}() RETURNS VOID AS $$
+        @output << <<-SQL.strip_sql(name: @name)
+          CREATE OR REPLACE FUNCTION test_teardown_{{ name }}() RETURNS VOID AS $$
           BEGIN
-            RAISE NOTICE '[%] [%] asserts in test suite "#{@name}"', LOCALTIME, (SELECT COUNT(*) FROM test_asserts);
+            RAISE NOTICE '[%] [%] asserts in test suite "{{ name }}"', LOCALTIME, (SELECT COUNT(*) FROM test_asserts);
             DROP TABLE IF EXISTS test_asserts;
         SQL
 
         yield
 
-        @output << <<~END_SQL
+        @output << <<-SQL.strip_sql
           END;
           $$ LANGUAGE plpgsql;
-        END_SQL
+        SQL
       end
 
       def sql
