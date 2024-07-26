@@ -1,6 +1,6 @@
 class Symbol
   def with(...)
-    -> (caller, *rest) { caller.send(self, *rest, ...) }
+    -> (caller, *rest) { caller.public_send(self, *rest, ...) }
   end
 
   def pluralize(...)
