@@ -1,4 +1,6 @@
+require 'ext_ruby'
 require 'mix_setting/version'
+require 'mix_setting/type'
 require 'mix_setting/setting'
 require 'mix_setting/railtie' if defined? Rails.env
 

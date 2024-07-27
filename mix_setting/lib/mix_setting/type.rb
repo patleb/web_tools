@@ -1,8 +1,3 @@
-require 'active_support/core_ext/date_time'
-require 'active_support/json'
-require 'active_support/duration'
-require 'chronic_duration'
-
 module MixSetting::Type
   extend ActiveSupport::Concern
 

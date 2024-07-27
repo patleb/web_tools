@@ -17,7 +17,4 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby'
-  s.add_dependency 'activesupport'
-  s.add_dependency 'chronic_duration'
-  s.add_dependency 'inifile'
 end

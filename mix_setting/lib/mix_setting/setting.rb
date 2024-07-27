@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require 'ext_ruby'
-require 'active_support/message_encryptor'
-require 'inifile'
-require 'mix_setting/type'
-
 class Setting
   include MixSetting::Type
 
