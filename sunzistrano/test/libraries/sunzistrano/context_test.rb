@@ -1,7 +1,7 @@
 require './sunzistrano/test/spec_helper'
 
 class Sunzistrano::ContextTest < Minitest::TestCase
-  let!(:root){ Sunzistrano.root.join('test/fixtures/files') }
+  let(:root){ Sunzistrano.root.join('test/fixtures/files') }
 
   after do
     Setting.rollback!
