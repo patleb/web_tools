@@ -1,6 +1,10 @@
 require './sunzistrano/test/spec_helper'
 
 class Sunzistrano::CliTest < Minitest::TestCase
+  after do
+    Setting.rollback!
+  end
+
   it 'should build path relative to the owner provisioned dir' do
     Setting.reload(env: 'test')
     path = Sunzistrano.owner_path :manifest_dir, 'version'
@@ -38,6 +42,5 @@ class Sunzistrano::CliTest < Minitest::TestCase
       FileUtils.rm_rf stage_path
       FileUtils.rmdir revision_dir rescue nil
     end
-    Setting.rollback!
   end
 end

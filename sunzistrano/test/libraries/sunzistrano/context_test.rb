@@ -1,26 +1,14 @@
 require './sunzistrano/test/spec_helper'
 
-ROOT = Sunzistrano.root.join('test/fixtures/files')
-
-DUMMY_GEMS = Set.new(%w(
-  first_gem
-  second_gem
-  third_gem
-))
-
-module Gem
-  def self.root(name)
-    if DUMMY_GEMS.include? name
-      ROOT.join('gems', name)
-    elsif (spec = Gem.loaded_specs[name])
-      Pathname.new(spec.gem_dir)
-    end
-  end
-end
-
 class Sunzistrano::ContextTest < Minitest::TestCase
+  let!(:root){ Sunzistrano.root.join('test/fixtures/files') }
+
+  after do
+    Setting.rollback!
+  end
+
   it 'should build context correctly' do
-    Setting.reload(env: 'test', app: 'app', root: ROOT)
+    Setting.reload(env: 'test', app: 'app', root: root)
     sun = Sunzistrano::Context.new('role', option: 'name')
     assert_equal DUMMY_GEMS.to_a, sun.gems.keys.sort.except('sunzistrano')
     assert_equal 'test', sun.env
@@ -28,13 +16,13 @@ class Sunzistrano::ContextTest < Minitest::TestCase
     assert_equal 'role', sun.role
     assert_equal 'name', sun.option
     assert_equal 'settings_test_app', sun.settings_scope
-    %w(settings settings_second_gem settings_third_gem).each do |root_name|
+    %w(settings settings_2nd_gem settings_3rd_gem).each do |root_name|
       %w(shared test app test_app).each do |scope_name|
         assert sun["#{root_name}_#{scope_name}"]
       end
     end
     assert_equal 'sunzistrano_role_test_app', sun.sunzistrano_scope
-    %w(sunzistrano sunzistrano_first_gem sunzistrano_third_gem).each do |root_name|
+    %w(sunzistrano sunzistrano_1st_gem sunzistrano_3rd_gem).each do |root_name|
       %w(shared role test role_test app test_app role_app role_test_app).each do |scope_name|
         assert sun["#{root_name}_#{scope_name}"]
       end
@@ -44,7 +32,7 @@ class Sunzistrano::ContextTest < Minitest::TestCase
 
   it 'should raise on out-of-sync lock version' do
     assert_raises(Exception) do
-      Setting.reload(env: 'test', root: ROOT.join('version_out_of_sync'))
+      Setting.reload(env: 'test', root: root.join('version_out_of_sync'))
       Sunzistrano::Context.new
     end
   end
@@ -69,7 +57,7 @@ class Sunzistrano::ContextTest < Minitest::TestCase
 
   describe '#role_recipes' do
     it 'should resolve :(append|remove)_recipes lists' do
-      Setting.reload(env: 'test', root: ROOT)
+      Setting.reload(env: 'test', root: root)
       sun = Sunzistrano::Context.new('provision')
       expected_recipes = %w(
         'first/recipe-value'

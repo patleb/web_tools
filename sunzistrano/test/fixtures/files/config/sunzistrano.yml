@@ -1,8 +1,8 @@
 lock: <%= Sunzistrano::VERSION %>
 gems:
-  - first_gem
-  - second_gem
-  - third_gem
+  - 1st_gem
+  - 2nd_gem
+  - 3rd_gem
 
 shared:
   sudo: true
