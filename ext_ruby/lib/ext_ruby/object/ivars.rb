@@ -3,12 +3,12 @@ class Object
   alias_method :ivar_defined?, :instance_variable_defined?
 
   def remove_ivar(name)
-    remove_instance_variable(name) if instance_variable_defined? name
+    remove_instance_variable(name) if ivar_defined? name
   end
 
   def ivar(name, *value)
     if block_given?
-      instance_variable_defined?(name) ? instance_variable_get(name) : instance_variable_set(name, yield)
+      ivar_defined?(name) ? instance_variable_get(name) : instance_variable_set(name, yield)
     elsif value.empty?
       instance_variable_get(name)
     else
