@@ -53,6 +53,7 @@ module MixJob
         poll_interval:   ['--poll-interval=POLL_INTERVAL',     Float,   'Polling interval in seconds',                greater_than: 0],
         server_interval: ['--server-interval=SERVER_INTERVAL', Float,   'Check interval for server requests/status',  greater_than: 0],
         max_pool_size:   ['--max-pool-size=MAX_POOL_SIZE',     Integer, 'Maximum number of HTTP clients',             greater_or_equal: 1],
+        kill_timout:     ['--kill-timeout=KILL_TIMEOUT',       Float,   'Kill timeout in seconds',                    greater_than: 0],
         keep_jobs:       ['--keep-jobs=KEEP_JOBS',             Integer, 'Number of jobs to keep for inspection',      greater_or_equal: 0],
       }
     end
@@ -66,6 +67,7 @@ module MixJob
         poll_interval:   10,
         server_interval: 20,
         max_pool_size:   max_pool_size,
+        kill_timeout:    60, # systemd timeout is by default 90s
         keep_jobs:       0
       }
     end
@@ -75,11 +77,9 @@ module MixJob
     def before_run
       STDOUT.sync = true
       $task_snapshot = proc{ snapshot }
+      thread_channels :@signals, :@requests, :@responses
+      @clients = Concurrent::AtomicFixnum.new
       @host = ExtRails::Routes.base_url
-      @signals = Queue.new
-      @requests = Queue.new
-      @responses = Queue.new
-      @clients = Queue.new
       @jobs = []
       @job = nil
       @waited = nil
@@ -87,8 +87,8 @@ module MixJob
       @perform_error = nil
       @dequeue_mutex = Mutex.new
       # thread groups must be defined after context initialization, otherwise they'll use their own
-      @executor = ThreadGroup.new(4)
-      @dispatcher = ThreadGroup.new(options.max_pool_size)
+      @executor = ThreadGroup.new(max_threads: 4)
+      @dispatcher = ThreadGroup.new(max_threads: options.max_pool_size)
       mkdir_p 'tmp/jobs/actions' if Rails.env.local?
     end
 
@@ -112,13 +112,13 @@ module MixJob
     end
 
     def wait_for_termination
-      @executor.wait_for_termination
+      @executor.join_all
       dump_requests unless Rails.env.local?
       puts snapshot.except(:time, :thread, :shutdown, :job).pretty_hash
     end
 
     def restore_signals
-      actions.each{ @signals << :execute }
+      actions.each{ thread_send :@signals, :execute }
     end
 
     def restore_requests
@@ -132,16 +132,15 @@ module MixJob
     def setup_trapping
       SIGNALS.each do |signal, symbol|
         trap(signal) do
-          @signals << symbol
+          thread_send :@signals, symbol
         end
       end
     end
 
     def setup_signaling
       post(name: 'signal') do
-        until thread_shuttingdown?
-          on_signal @signals.pop
-          Thread.pass
+        thread_receive :@signals do |value|
+          on_signal value
         end
       end
     end
@@ -153,22 +152,24 @@ module MixJob
           @restored.increment
         end
         client_ready!
-        until thread_shuttingdown?
-          @responses << on_request(**@requests.pop)
+        thread_receive :@requests do |request|
+          thread_send :@responses, on_request(request) do |response|
+            on_response response
+          end
         end
       end
     end
 
     def setup_responding
       post(name: 'response') do
-        until thread_shuttingdown?
-          on_response @responses.pop
+        thread_receive :@responses do |value|
+          on_response value
         end
       end
     end
 
     def setup_listening
-      post(name: 'listen', priority: 1) do |pg_conn|
+      @listener = post(name: 'listen', priority: 1) do |pg_conn|
         channel = pg_conn.escape_identifier Job::NOTIFY_CHANNEL
         pg_conn.exec("LISTEN #{channel}")
 
@@ -189,10 +190,10 @@ module MixJob
     end
 
     def setup_polling
-      post(name: 'poll') do
+      @poller = post(name: 'poll') do
         until thread_shuttingdown?
           on_poll
-          sleep(options.poll_interval)
+          thread_sleep(options.poll_interval)
         end
       end
     end
@@ -208,7 +209,7 @@ module MixJob
         shutdown: @executor.shuttingdown?,
         signals: @signals.size,
         actions: actions.size,
-        clients: @clients.size,
+        clients: @clients.value,
         on_signal: on_signal_count,
         on_request: on_request_count,
         on_response: on_response_count,
@@ -233,11 +234,16 @@ module MixJob
 
     def shutdown
       puts_info SHUTDOWN
-      until @dispatcher.shutdown?
-        @dispatcher.shutdown!
-        Thread.pass
-      end
       @executor.shutdown!
+      @signals.close
+      @requests.close
+      @responses.close
+      @dispatcher.kill_all(options.kill_timeout)
+      Thread.pass until @dispatcher.shutdown?
+      Thread.pass until @poller.dead? || @poller.asleep?
+      @poller.kill
+      Thread.pass until @listener.dead? || @listener.asleep?
+      @listener.kill
     end
 
     def inspect
@@ -270,7 +276,7 @@ module MixJob
       # use for count
     end
 
-    def on_request(**request)
+    def on_request(request)
       begin
         response = nil
         HTTP.persistent(@host) do |http|
@@ -307,8 +313,7 @@ module MixJob
       if @dequeue_mutex.try_lock
         if client_available? && job_dequeue
           client_busy!
-          perform
-          performed = true
+          performed = perform
         end
         @dequeue_mutex.unlock
       end
@@ -318,7 +323,7 @@ module MixJob
     def job_dequeue
       if perform_error?
         until thread_shuttingdown? || server_available?
-          sleep(options.server_interval)
+          thread_sleep(options.server_interval)
         end
         @perform_error = false
       else
@@ -327,12 +332,17 @@ module MixJob
     end
 
     def perform
-      @requests << @job.request
+      performed = true
+      thread_send :@requests, @job.request do
+        Job.create! @job
+        performed = @job = nil
+      end
       case options.keep_jobs
-      when 0          then return
+      when 0          then return performed
       when @jobs.size then @jobs.shift
       end
       @jobs << { time: Time.current.utc, thread: Thread.current[:name] }.with_indifferent_access.merge!(job_snapshot)
+      performed
     end
 
     def perform_error?
@@ -353,15 +363,15 @@ module MixJob
     end
 
     def client_available?
-      @clients.size > 0
+      @clients.value > 0
     end
 
     def client_ready!
-      @clients << true
+      @clients.increment
     end
 
     def client_busy!
-      @clients.pop
+      @clients.decrement
     end
 
     def job_snapshot

@@ -28,7 +28,7 @@ module MixJob::WatchMock
   def before_run
     @_output = ''
     super
-    @executor.timeout(1, kill_on_expired: true) do |expired|
+    @executor.timeout(1) do |expired|
       puts inspect if expired
     end
   end

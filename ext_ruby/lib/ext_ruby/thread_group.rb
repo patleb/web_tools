@@ -1,67 +1,42 @@
 # frozen_string_literal: true
 
-### References
-# https://ruby-concurrency.github.io/concurrent-ruby/Concurrent/ThreadPoolExecutor.html
 class ThreadGroup
   class MaxThreadsInvalid < ::ArgumentError; end
   class MaxThreadsReached < ::StandardError; end
   class TimeoutInvalid < ::ArgumentError; end
-  class TimeoutKillPeriodInvalid < ::ArgumentError; end
-  class TimeoutError < ::StandardError; end
 
   TIMEOUT = 'timeout'
 
-  module WithThreadPoolExecutor
-    attr_writer :max_length, :largest_length, :timeout_mutex
-
+  module WithThreadPool
     # ThreadGroup::Default doesn't go through #initialize so ivars aren't initialized
-    def initialize(max_threads = Float::INFINITY)
+    def initialize(max_threads: Float::INFINITY)
       raise MaxThreadsInvalid if !max_threads.is_a?(Numeric) || (max_threads < 1)
-      self.max_length = max_threads
+      @max_threads = max_threads
       super()
     end
 
-    def max_length
-      @max_length ||= Float::INFINITY
-    end
-    alias_method :max_queue, :max_length
-
-    def largest_length
-      @largest_length ||= 0
+    def max_threads
+      @max_threads ||= Float::INFINITY
     end
 
-    def timeout_mutex
-      @timeout_mutex ||= Mutex.new
+    def max_size
+      @max_size ||= 0
     end
 
-    def length(with = :alive)
-      if with == :awake
-        list.count(&:awake?)
-      else
-        list.size
-      end
+    def size
+      list.size
     end
-    alias_method :queue_length, :length
 
-    def remaining_capacity(with = :alive)
-      if with == :asleep
-        max_length - length(:awake)
-      else
-        max_length - length
-      end
+    def remaining_threads
+      max_threads - size
     end
 
     def running?
       list.any?
     end
 
-    def shutdown
-      @shutdown = true
-    end
-
     def shutdown!
-      shutdown
-      list.select(&:asleep?).each(&:kill)
+      @shutdown = true
     end
 
     def shutdown?
@@ -69,83 +44,66 @@ class ThreadGroup
     end
 
     def shuttingdown?
-      !!@shutdown && running?
+      !!@shutdown
     end
 
-    def timeout(seconds, *args, kill_on_expired: false, **options)
+    def [](name)
+      list.find{ |thread| thread[:name] == name }
+    end
+
+    def timeout(seconds, *, **)
       return if ENV['DEBUGGER_HOST']
       raise TimeoutInvalid if !seconds.is_a?(Numeric) || (seconds <= 0)
-      raise TimeoutKillPeriodInvalid if kill_on_expired.is_a?(Numeric) && kill_on_expired <= 0
-
       future = Time.current.to_f + seconds
-      timeout_mutex.synchronize{ self.max_length += 1 }
-
-      add(*args, name: TIMEOUT, _timeout: true, **options) do |*rest|
+      timeout_mutex.synchronize{ @max_threads += 1 }
+      post(*, **, name: TIMEOUT, _timeout: true) do |*args|
         until (expired = future < Time.current.to_f) || thread_shuttingdown?
           sleep 0.01
         end
-
-        yield expired, *rest if block_given?
-
-        if expired
-          case (grace_period = kill_on_expired)
-          when true    then kill
-          when Numeric then kill(grace_period)
-          end
-          raise TimeoutError
-        end
+        yield expired, *args
+        kill_all if expired
       ensure
-        timeout_mutex.synchronize{ self.max_length -= 1 } if future
+        timeout_mutex.synchronize{ @max_threads -= 1 } if future
       end
     end
 
-    def post_all(...)
-      max_length.times{ add(...) }
+    def post_all(*, **, &)
+      raise MaxThreadsInvalid if max_threads.infinite?
+      max_threads.times{ |i| post(*, i, **, i: i, &) }
       self
     end
 
-    def add(*args, **options, &block)
-      raise MaxThreadsReached if remaining_capacity == 0
-
-      if args.first.is_a? Thread
-        super args.first
-      else
-        super thread(*args, **options, &block)
-      end
-
-      self.largest_length = length if length > largest_length
-
-      self
+    def post(...)
+      raise MaxThreadsReached if remaining_threads == 0
+      group_thread = thread(...)
+      add group_thread
+      @max_size = size if size > max_size
+      group_thread
     end
-    alias_method :post, :add
 
-    def join(*)
-      list(without_self: true).each(&:join.with(*))
+    def join_all(*)
+      list.each(&:join.with(*))
     end
-    alias_method :wait_for_termination, :join
 
-    def kill(*timeout)
+    def kill_all(*timeout)
       if timeout.empty?
         timeout_mutex.synchronize do
           list.each do |thread|
-            self.max_length -= 1 if thread[:_timeout]
             thread.kill
+            @max_threads -= 1 if thread[:_timeout]
           end
         end
       else
-        shutdown!
-        join(*timeout)
-        yield list.select(&:awake?) if block_given?
-        kill
+        join_all(*timeout)
+        kill_all
       end
     end
 
-    def list(without_self: false)
-      threads = super()
-      current = threads.delete(Thread.current)
-      threads << current if !without_self && current
-      threads
+    private
+
+    def timeout_mutex
+      @timeout_mutex ||= Mutex.new
     end
   end
-  prepend WithThreadPoolExecutor
+  prepend WithThreadPool
 end
