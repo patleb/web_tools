@@ -203,7 +203,7 @@ module ActiveTask
       _steps.each do |step|
         break if cancel?
         puts_step step if task.rake_ouput?
-        result = public_send(step)
+        result = send(step)
       end
       result
     end
