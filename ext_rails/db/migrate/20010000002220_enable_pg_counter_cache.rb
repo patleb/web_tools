@@ -1,4 +1,4 @@
-class EnablePgCounterCache < ActiveRecord::Migration[6.0]
+class EnablePgCounterCache < ActiveRecord::Migration[7.1]
   def up
     create_function_counter_cache
   end

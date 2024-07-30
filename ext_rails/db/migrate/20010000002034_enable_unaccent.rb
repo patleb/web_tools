@@ -1,4 +1,4 @@
-class EnableUnaccent < ActiveRecord::Migration[6.0]
+class EnableUnaccent < ActiveRecord::Migration[7.1]
   def change
     # Note --> for accent-insensitive search, add an index with unaccent(col)
     enable_extension 'unaccent'

@@ -1,4 +1,4 @@
-class EnablePgDblink < ActiveRecord::Migration[6.0]
+class EnablePgDblink < ActiveRecord::Migration[7.1]
   def change
     enable_extension 'dblink'
   end

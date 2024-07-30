@@ -1,4 +1,4 @@
-class EnablePgStatStatements < ActiveRecord::Migration[6.1]
+class EnablePgStatStatements < ActiveRecord::Migration[7.1]
   def change
     enable_extension 'pg_stat_statements'
   end
