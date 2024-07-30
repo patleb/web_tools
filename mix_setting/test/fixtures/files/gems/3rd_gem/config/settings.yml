@@ -1,0 +1,19 @@
+gems:
+  - 2nd_gem
+
+shared:
+  settings_3rd_gem_shared: true
+  settings_scope: settings_3rd_gem_shared
+  db_3rd_database: $ALIAS db_database
+
+test:
+  settings_3rd_gem_test: true
+  settings_scope: settings_3rd_gem_test
+
+app:
+  settings_3rd_gem_app: true
+  settings_scope: settings_3rd_gem_app
+
+test_app:
+  settings_3rd_gem_test_app: true
+  settings_scope: settings_3rd_gem_test_app

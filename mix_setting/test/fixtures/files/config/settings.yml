@@ -1,0 +1,46 @@
+gems:
+  - 1st_gem
+  - 2nd_gem
+  - 3rd_gem
+
+types:
+  csv: csv
+  emails: emails
+  booleans: booleans
+  integers: integers
+  array: array
+  json: json
+  decimal: decimal
+  interval: interval
+  pathname: pathname
+
+shared:
+  settings_shared: true
+  settings_scope: settings_shared
+  csv: "1, 2.0, true,'false'"
+  emails: a@b.com, c@d.com; e@f.com g@h.com ; i@j.com
+  booleans: true, t, yes, 1, false, F, no, 0
+  integers: 1, 2, 3, 4, 5
+  array: value
+  json: '{"a": 1, "b": 2}'
+  decimal: 1e1000
+  interval: 2 days, 1 minute
+  pathname: tmp/test
+
+test:
+  settings_test: true
+  settings_scope: settings_test
+  db_database: main_name
+  secret_value: $SECRET BcodmeOa4vhbCMZolnSpTs+LW/9YquZ8d1PnVCXzhvLW2PKytCg1d5xhCRzlStyxBWk49u9BOcTNV0KU--/ik/pjmG1DwJjccs--23Zi6/ghBK+5Yu9DxCg6vg==
+  method_value: $METHOD
+  method_1st_value: $METHOD method_1st_alias
+  remove_2nd_value: $REMOVE
+  replace_2nd_value!: overwrite
+
+app:
+  settings_app: true
+  settings_scope: settings_app
+
+test_app:
+  settings_test_app: true
+  settings_scope: settings_test_app

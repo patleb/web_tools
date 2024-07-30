@@ -1,0 +1,3 @@
+Some text file
+with multi line
+text to escape.

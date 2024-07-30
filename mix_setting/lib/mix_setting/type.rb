@@ -1,14 +1,19 @@
+# frozen_string_literal: true
+
 module MixSetting::Type
   extend ActiveSupport::Concern
 
-  CSV_OR_EMAILS = %w(csv emails)
-
   class_methods do
+    private
+
     def cast(value, type)
       type = type.to_s
-      if type.in? CSV_OR_EMAILS
+      case type
+      when 'emails'
         value&.split(/[\s\t,;]/)&.reject(&:blank?)
-      elsif type.end_with? 's'
+      when 'csv'
+        value.is_a?(String) ? CSV.parse_line(value, converters: [:numeric], strip: true) : value
+      when /s$/
         type = type.chop
         (value || '').split(',').map!{ |element| cast(element.strip, type) }
       else

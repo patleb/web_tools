@@ -81,10 +81,6 @@ class Setting
     end
   end
 
-  def self.all=(settings)
-    @all = settings
-  end
-
   def self.encrypt(value)
     raise "secrets.yml ['secret_key_base'] is missing" unless encryptor
     "#{SECRET} #{encryptor.encrypt_and_sign(value.escape_newlines)}"
@@ -148,151 +144,151 @@ class Setting
   end
 
   def self.db
-    host, port, database, username, password = values_at(:db_host, :db_port, :db_database, :db_username, :db_password)
-    yield(host || '127.0.0.1', port || 5432, database, username, password)
+    yield *values_at(:db_host, :db_port, :db_database, :db_username, :db_password)
   end
 
-  # private_class_method
+  class << self
+    private
 
-  def self.gem_root(name)
-    @gems[name] ||= Gem.root(name) or raise "gem [#{name}] not found"
-  end
-
-  def self.encryptor?
-    !!encryptor
-  end
-
-  def self.encryptor
-    if defined? @encryptor
-      @encryptor
-    elsif (key = (@secrets || all)[:secret_key_base])
-      size = ActiveSupport::MessageEncryptor.key_len(CIPHER)
-      @encryptor = ActiveSupport::MessageEncryptor.new([key[0...(size * 2)]].pack("H*"), cipher: CIPHER)
-    else
-      @encryptor = false
+    def gem_root(name)
+      @gems[name] ||= Gem.root(name) or raise "gem [#{name}] not found"
     end
-  end
 
-  def self.parse_secrets_yml
-    extract_yml(:secrets, @root).with_indifferent_access
-  end
-
-  def self.parse_database_yml
-    yml = extract_yml(:database, @root)
-    scope_database_keys(yml)
-  end
-
-  def self.scope_database_keys(database)
-    database.each_with_object({}) do |(key, value), memo|
-      memo["db_#{key}"] = value
+    def encryptor?
+      !!encryptor
     end
-  end
 
-  def self.parse_settings_yml(root_or_settings)
-    if root_or_settings.is_a? Hash
-      settings = root_or_settings
-    else
-      settings = extract_yml(:settings, root_or_settings)
-    end
-    gsub_keywords(settings)
-  end
-
-  def self.extract_yml(type, root)
-    path = root.join('config', "#{type}.yml")
-    return {} unless path.exist?
-
-    case type
-    when :database
-      yml = YAML.safe_load(gsub_settings(path.read), aliases: true)
-    when :settings
-      yml = YAML.safe_load(path.read)
-      validate_version! yml['lock']
-      @types.merge!(yml['types'] || {})
-      gems_yml = (yml['gems'] || []).reduce({}) do |gems_yml, name|
-        if @gems.has_key? name
-          gems_yml
-        else
-          gems_yml.union! parse_settings_yml(gem_root(name))
-        end
+    def encryptor
+      if defined? @encryptor
+        @encryptor
+      elsif (key = (@secrets || all)[:secret_key_base])
+        size = ActiveSupport::MessageEncryptor.key_len(CIPHER)
+        @encryptor = ActiveSupport::MessageEncryptor.new([key[0...(size * 2)]].pack("H*"), cipher: CIPHER)
+      else
+        @encryptor = false
       end
-    else
-      yml = YAML.safe_load(path.read)
     end
 
-    env_yml = (yml['shared'] || {}).union!(yml[@env] || {})
-    if @app
-      app_yml = (yml[@app] || {}).union!(yml["#{@env}_#{@app}"] || {})
-      env_yml.union!(app_yml)
+    def parse_secrets_yml
+      extract_yml(:secrets, @root).with_indifferent_access
     end
-    (gems_yml || {}).union!(env_yml)
-  end
 
-  def self.gsub_settings(content)
-    content.gsub(/<%=\s*Setting\[['":]([a-zA-Z_]\w+)['"]?\]\s*%>/) do
-      @settings[$1]
+    def parse_database_yml
+      yml = extract_yml(:database, @root)
+      scope_database_keys(yml)
     end
-  end
 
-  def self.gsub_keywords(settings)
-    settings.each_with_object({}) do |(key, value), memo|
-      if value.is_a? String
-        if encryptor? && value.start_with?(SECRET)
-          begin
-            value = decrypt(value)
-          rescue ActiveSupport::MessageEncryptor::InvalidMessage
-            raise ActiveSupport::MessageEncryptor::InvalidMessage,
-              "secrets.yml ['secret_key_base'] or settings.yml ['#{key}'] #{SECRET}* is invalid"
+    def scope_database_keys(database)
+      database.each_with_object({}) do |(key, value), memo|
+        memo["db_#{key}"] = value
+      end
+    end
+
+    def parse_settings_yml(root_or_settings)
+      if root_or_settings.is_a? Hash
+        settings = root_or_settings
+      else
+        settings = extract_yml(:settings, root_or_settings)
+      end
+      gsub_keywords(settings)
+    end
+
+    def extract_yml(type, root)
+      path = root.join('config', "#{type}.yml")
+      return {} unless path.exist?
+
+      case type
+      when :database
+        yml = YAML.safe_load(gsub_settings(path.read), aliases: true)
+      when :settings
+        yml = YAML.safe_load(path.read)
+        validate_version! yml['lock']
+        @types.merge!(yml['types'] || {})
+        gems_yml = (yml['gems'] || []).reduce({}) do |gems_yml, name|
+          if @gems.has_key? name
+            gems_yml
+          else
+            gems_yml.union! parse_settings_yml(gem_root(name))
           end
-        elsif value.start_with? METHOD
-          (@methods ||= {})[key] = (value.delete_prefix(METHOD).strip.presence || key)
-          next
-        elsif value.start_with? ALIAS
-          (@aliases ||= {})[key] = value.delete_prefix(ALIAS).strip
-          next
-        elsif value.start_with? REMOVE
-          (@removed ||= Set.new) << key
-          next
         end
       else
+        yml = YAML.safe_load(path.read)
+      end
+
+      env_yml = (yml['shared'] || {}).union!(yml[@env] || {})
+      if @app
+        app_yml = (yml[@app] || {}).union!(yml["#{@env}_#{@app}"] || {})
+        env_yml.union!(app_yml)
+      end
+      (gems_yml || {}).union!(env_yml)
+    end
+
+    def gsub_settings(content)
+      content.gsub(/<%=\s*Setting\[['":]([a-zA-Z_]\w+)['"]?\]\s*%>/) do
+        @settings[$1]
+      end
+    end
+
+    def gsub_keywords(settings)
+      settings.each_with_object({}) do |(key, value), memo|
+        if value.is_a? String
+          if encryptor? && value.start_with?(SECRET)
+            begin
+              value = decrypt(value)
+            rescue ActiveSupport::MessageEncryptor::InvalidMessage
+              raise ActiveSupport::MessageEncryptor::InvalidMessage,
+                "secrets.yml ['secret_key_base'] or settings.yml ['#{key}'] #{SECRET}* is invalid"
+            end
+          elsif value.start_with? METHOD
+            (@methods ||= {})[key] = (value.delete_prefix(METHOD).strip.presence || key)
+            next
+          elsif value.start_with? ALIAS
+            (@aliases ||= {})[key] = value.delete_prefix(ALIAS).strip
+            next
+          elsif value.start_with? REMOVE
+            (@removed ||= Set.new) << key
+            next
+          end
+        end
         if key.end_with? REPLACE
           (@replaced ||= Set.new) << key
         end
-      end
-      memo[key] = value
-    end
-  end
-
-  def self.cast_values!(settings)
-    @types.each do |name, type|
-      settings[name] = cast(settings[name], type)
-    end
-  end
-
-  def self.resolve_keywords!(settings)
-    @all = settings
-    @aliases&.each{ |key, old_name| settings[key] = settings[old_name] }
-    @methods&.each{ |key, method_name| settings[key] = send(method_name) unless @removed&.include? key }
-    @aliases&.each do |key, old_name|
-      if @removed&.include? old_name
-        settings.delete(old_name)
-      else
-        settings[key] = settings[old_name]
+        memo[key] = value
       end
     end
-    @removed&.each{ |key| settings.delete(key) }
-    @replaced&.each{ |key| settings[key.delete_suffix(REPLACE)] = settings.delete(key) }
-  end
 
-  def self.require_overrides
-    (@gems.values << @root).each do |root|
-      path = root.join('config/setting.rb')
-      require path.to_s if path.exist?
+    def cast_values!(settings)
+      @types.each do |name, type|
+        settings[name] = cast(settings[name], type)
+      end
     end
-  end
 
-  def self.validate_version!(lock)
-    unless lock.nil? || lock == MixSetting::VERSION
-      raise "Setting version [#{MixSetting::VERSION}] is different from locked version [#{lock}]"
+    def resolve_keywords!(settings)
+      @all = settings
+      @aliases&.each{ |key, old_name| settings[key] = settings[old_name] }
+      @methods&.each{ |key, method_name| settings[key] = public_send(method_name) unless @removed&.include? key }
+      @aliases&.each do |key, old_name|
+        if @removed&.include? old_name
+          settings.delete(old_name)
+        else
+          settings[key] = settings[old_name]
+        end
+      end
+      @removed&.each{ |key| settings.delete(key) }
+      @replaced&.each{ |key| settings[key.delete_suffix(REPLACE)] = settings.delete(key) }
+    end
+
+    def require_overrides
+      (@gems.values << @root).each do |root|
+        path = root.join('config/setting.rb')
+        require path.to_s if path.exist?
+      end
+    end
+
+    def validate_version!(lock)
+      unless lock.nil? || lock == MixSetting::VERSION
+        raise "Setting version [#{MixSetting::VERSION}] is different from locked version [#{lock}]"
+      end
     end
   end
 end

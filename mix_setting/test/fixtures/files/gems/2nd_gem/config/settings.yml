@@ -1,0 +1,22 @@
+gems:
+  - 1st_gem
+
+shared:
+  settings_2nd_gem_shared: true
+  settings_scope: settings_2nd_gem_shared
+  db_host: 127.0.0.2
+  remove_2nd_value: remove this
+
+test:
+  settings_2nd_gem_test: true
+  settings_scope: settings_2nd_gem_test
+  db_username: 2nd_name
+  replace_2nd_value: replace this
+
+app:
+  settings_2nd_gem_app: true
+  settings_scope: settings_2nd_gem_app
+
+test_app:
+  settings_2nd_gem_test_app: true
+  settings_scope: settings_2nd_gem_test_app

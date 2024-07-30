@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "MixSetting"
   s.license     = "AGPL-3.0"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
+  s.files = Dir["lib/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby'
 end
