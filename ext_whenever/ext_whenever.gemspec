@@ -15,8 +15,8 @@ Gem::Specification.new do |s|
   s.description = "ExtWhenever"
   s.license     = "AGPL-3.0"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
+  s.files = Dir["{config,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency "whenever"
-  s.add_dependency "mix_setting"
+  s.add_dependency "sunzistrano"
 end
