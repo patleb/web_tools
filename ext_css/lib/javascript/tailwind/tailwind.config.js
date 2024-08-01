@@ -30,7 +30,7 @@ const screens = {
   ...defaultTheme.screens,
 }
 const plugin = require('tailwindcss/plugin')
-const ext_sass = ({ themes = true, darkTheme = 'dark' } = {}) => {
+const ext_css = ({ themes = true, darkTheme = 'dark' } = {}) => {
   if (themes === false) {
     themes = ['light']
   }
@@ -108,5 +108,5 @@ const ext_sass = ({ themes = true, darkTheme = 'dark' } = {}) => {
 module.exports = {
   themes,
   screens,
-  ext_sass,
+  ext_css,
 }

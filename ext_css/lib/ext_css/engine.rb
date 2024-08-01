@@ -1,6 +1,6 @@
 require 'ext_ruby'
 
-module ExtSass
+module ExtCss
   class Engine < ::Rails::Engine
   end
 end
