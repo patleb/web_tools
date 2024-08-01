@@ -11,7 +11,7 @@ import '@@lib/ext_coffee/core_ext/all'
 import '@@lib/ext_coffee/rescue'
 import '@@lib/ext_coffee/js/all'
 import '@@lib/ext_coffee/sm/all'
-import '@@lib/ext_coffee/concepts/js/all'
+import '@@lib/ext_coffee/concepts/all'
 
 document.addEventListener('DOMContentLoaded', function() {
   window.$image = image_path
