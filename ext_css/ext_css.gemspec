@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.description = "ExtCss"
   s.license     = "AGPL-3.0"
 
-  s.files = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE", "README.md"]
+  s.files = Dir["{app,lib,vendor}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
 end
