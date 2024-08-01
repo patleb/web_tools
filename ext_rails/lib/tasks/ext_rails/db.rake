@@ -16,7 +16,7 @@ namespace :db do
     versions = gem.join('db').glob('**/*.rb').select_map do |path|
       path.basename('.rb').to_s.match(/(\d+)_\w+$/).captures.first
     end
-    (versions & ActiveRecord::SchemaMigration.all_versions).sort.reverse.each do |version|
+    (versions & ActiveRecord::SchemaMigration.all_versions).sort.reverse_each do |version|
       old_version = ENV['VERSION']
       ENV['VERSION'] = version
       run_task! 'db:migrate:down'

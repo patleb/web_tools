@@ -202,7 +202,7 @@ module Sql
         memo << [number, name.camelize.constantize.new]
       end.sort_by(&:first).map(&:last)
 
-      migrations.reverse.each(&:migrate.with(:down))
+      migrations.reverse_each(&:migrate.with(:down))
       migrations.each(&:migrate.with(:up))
     end
   end
