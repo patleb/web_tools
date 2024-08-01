@@ -1,4 +1,3 @@
-// TODO make it classless like https://github.com/stackhackerio/classless
 // node_modules/tailwindcss/stubs/defaultConfig.stub.js
 const defaultTheme = require('tailwindcss/defaultTheme')
 const daisyui_themes = require('daisyui/src/colors/themes')
@@ -19,12 +18,15 @@ const themes = [{
     ...theme_options,
 }}]
 const screens = {
-  'sm-1': { max: `${parseInt(defaultTheme.screens.sm) - 1}px` }, // mini < 640
-  'md-1': { max: `${parseInt(defaultTheme.screens.md) - 1}px` }, // phone < 768
-  'lg-1': { max: `${parseInt(defaultTheme.screens.lg) - 1}px` }, // tablet < 1024
-  'xl-1': { max: `${parseInt(defaultTheme.screens.xl) - 1}px` }, // laptop < 1280
+  '2xs-1': { max: '319px' }, // micro < 320
+  'xs-1':  { max: '479px' }, // mini < 480
+  'sm-1':  { max: `${parseInt(defaultTheme.screens.sm) - 1}px` }, // small < 640
+  'md-1':  { max: `${parseInt(defaultTheme.screens.md) - 1}px` }, // phone < 768
+  'lg-1':  { max: `${parseInt(defaultTheme.screens.lg) - 1}px` }, // tablet < 1024
+  'xl-1':  { max: `${parseInt(defaultTheme.screens.xl) - 1}px` }, // laptop < 1280
   '2xl-1': { max: `${parseInt(defaultTheme.screens['2xl']) - 1}px` }, // desktop < 1536
-  xs: '320px',
+  '2xs':   '320px', // >= 320
+  'xs':    '480px', // >= 480
   ...defaultTheme.screens,
 }
 const plugin = require('tailwindcss/plugin')
@@ -45,7 +47,6 @@ const ext_sass = ({ themes = true, darkTheme = 'dark' } = {}) => {
     }
     const theme_colors = theme[theme_name]
     Object.entries(theme_colors).forEach(([color, value]) => {
-      // https://stackoverflow.com/questions/55329996/how-to-create-color-shades-using-css-variables-similar-to-darken-of-sass
       if (!color.startsWith('--')) {
         if (i === 0) {
           colors[':root'] = colors[':root'] || {}
@@ -56,9 +57,51 @@ const ext_sass = ({ themes = true, darkTheme = 'dark' } = {}) => {
       }
     })
   })
-  return plugin(({ addBase }) => {
-    addBase(colors);
-    // addComponent?
+  return plugin(({ addBase, addComponents, theme }) => {
+    addBase(colors)
+    addComponents({
+      '.line-clamp-wrap': {
+        'white-space': 'pre-line',
+        'overflow-wrap': 'break-word',
+        'word-wrap': 'break-word',
+      },
+      '.scrollbar-sm': {
+        '&::-webkit-scrollbar': {
+          'width': '0.5rem',
+          'height': '0.5rem',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          'background-color': theme('colors.gray.400'),
+        },
+        '&::-webkit-scrollbar-track': {
+          'background-color': theme('colors.gray.200'),
+        },
+      },
+      '.scrollbar-xs': {
+        '&::-webkit-scrollbar': {
+          'width': '0.375rem',
+          'height': '0.375rem',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          'background-color': theme('colors.gray.400'),
+        },
+        '&::-webkit-scrollbar-track': {
+          'background-color': theme('colors.gray.200'),
+        },
+      },
+      '.border-right': {
+        'border-right': '1px solid var(--base-300)',
+      },
+      '.border-left': {
+        'border-left': '1px solid var(--base-300)',
+      },
+      '.border-active': {
+        'border-color': 'hsl(var(--p) / var(--tw-border-opacity))',
+      },
+      '.box-shadow': {
+        'box-shadow': '1px 1px 4px hsl(var(--n) / var(--tw-border-opacity))',
+      },
+    })
   })
 }
 
@@ -67,5 +110,3 @@ module.exports = {
   screens,
   ext_sass,
 }
-// TODO details/summary html tag for accordion/collapsible section
-// https://markodenic.com/css-tips/?source=reddit

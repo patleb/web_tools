@@ -1,15 +1,10 @@
+# frozen_string_literal: true
+
 module IconsHelper
   SVG_BEGIN = /^\s*<svg [^>]+>\s*/
   SVG_END = /\s*<\/svg>\s*$/
   SVG_ATTRIBUTES = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', height: 16, width: 16, viewBox: '0 0 16 16', 'aria-hidden': true }
 
-  # https://icon-sets.iconify.design/
-  # https://boxicons.com/
-  # https://materialdesignicons.com/
-  # https://tabler-icons.io/
-  # https://fonts.google.com/icons?selected=Material+Icons
-  # https://heroicons.com/
-  # https://lucide.dev/
   # https://icons.getbootstrap.com/
   def icon(name, **options)
     name, *classes = name.split('.')
@@ -20,6 +15,57 @@ module IconsHelper
     end
     svg_attributes = SVG_ATTRIBUTES.merge(options[:svg] || {})
     i_(svg_(text, svg_attributes), options.except(:svg))
+  end
+
+  def ascii(name, times: nil)
+    @@_ascii ||= {
+      space:            'nbsp',
+      hyphen:           '#8209',  # -
+      dash:             'ndash',  # –
+      copyright:        'copy',   # ©
+      registered:       'reg',    # ®
+      trademark:        'trade',  # ™
+      arrow_left:       'larr',   # ←
+      arrow_left_x2:    'laquo',  # «
+      arrow_right:      'rarr',   # →
+      arrow_right_x2:   'raquo',  # »
+      arrow_up:         'uarr',   # ↑
+      arrow_up_left:    'lsh',    # ↰
+      arrow_up_right:   'rsh',    # ↱
+      arrow_down:       'darr',   # ↓
+      arrow_down_left:  'ldsh',   # ↲
+      arrow_down_right: 'rdsh',   # ↳
+      arrow_x:          'harr',   # ↔
+      arrow_y:          'varr',   # ↕
+      triangle_up:      '#9651',  # △
+      triangle_down:    '#9661',  # ▽
+      degree:           'deg',    # °
+      degree_c:         '#8451',  # ℃
+      degree_f:         '#8457',  # ℉
+      micro:            'micro',  # µ
+      plus_minus:       'plusmn', # ±
+      plus:             'plus',   # +
+      minus:            'minus',  # −
+      multiply:         'times',  # ×
+      x:                'times',  # ×
+      divide:           'divide', # ÷
+      equal:            'equals', # =
+      approx:           'asymp',  # ≈
+      not_equal:        'ne',     # ≠
+      squared:          'sup2',   # ²
+      cubed:            'sup3',   # ³
+      quarter:          'frac14', # ¼
+      half:             'frac12', # ½
+      three_quarters:   'frac34', # ¾
+      bullet:           '#8226',  # •
+      ellipsis:         '#8230',  # …
+      check:            'check',  # ✓
+      cross:            'cross',  # ✗
+    }
+    code = @@_ascii[name.to_sym] || raise("unsupported ascii name '#{name}'")
+    code = "&#{code};"
+    code = code * times if times
+    code.html_safe
   end
 
   def spinner(type = :atom, **options)
@@ -124,7 +170,7 @@ module IconsHelper
         next unless (scss = scss.read.match(/^\s*--spinner_#{type}\s*:\s*(\d+)\s*;/))
         match = scss[1].to_i
       end
-      [match, 9].min.presence || raise("can't find scss variable $spinner_#{type}")
+      [match, 9].min.presence || raise("can't find css variable --spinner_#{type}")
     end
   end
 end
