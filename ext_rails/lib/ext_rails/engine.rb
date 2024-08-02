@@ -4,6 +4,14 @@ MonkeyPatch.add{['rake', 'lib/rake/backtrace.rb', 'd7717ccd2d224fd94f37d07f8f933
 
 require 'routes_lazy_routes'
 
+module ActionController
+  autoload :Delegator, 'ext_rails/action_controller/delegator'
+end
+
+module ActionView
+  autoload :Delegator, 'ext_rails/action_view/delegator'
+end
+
 module ActiveTask
   autoload :Base, 'ext_rails/active_task/base'
 end
@@ -159,7 +167,6 @@ module ExtRails
     end
 
     ActiveSupport.on_load(:action_controller, run_once: true) do
-      require 'ext_rails/action_controller/delegator'
       require 'ext_rails/action_controller/parameters'
     end
 
@@ -172,7 +179,6 @@ module ExtRails
     end
 
     ActiveSupport.on_load(:action_view) do
-      require 'ext_rails/action_view/delegator'
       require 'ext_rails/action_view/helpers/asset_url_helper/with_memoize'
       require 'ext_rails/action_view/helpers/tag_helper/tag_builder/with_data_option'
       require 'ext_rails/action_view/helpers/capture_helper'
