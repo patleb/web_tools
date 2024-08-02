@@ -111,8 +111,8 @@ class String
     parameterize.dasherize
   end
 
-  def full_underscore
-    underscore.tr('/', '_').delete_prefix('_').delete_suffix('_')
+  def full_underscore(separator = '_')
+    underscore.tr('/', separator).delete_prefix(separator).delete_suffix(separator)
   end
 
   def escape_inspect_delimiters(delimiters = '[]')
