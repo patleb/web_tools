@@ -115,6 +115,10 @@ describe('Object', () => {
     assert.equal({ b: 2 }, { a: 1, b: 2, c: 3 }.select((k, v) => v === 2))
   })
 
+  test('#select_map', () => {
+    assert.equal(['b'], { a: 1, b: 2, c: 3 }.select_map((k, v) => v === 2 ? k : null))
+  })
+
   test('#reject', () => {
     assert.equal({ a: 1, c: 3 }, { a: 1, b: 2, c: 3 }.reject((k, v) => v === 2))
   })

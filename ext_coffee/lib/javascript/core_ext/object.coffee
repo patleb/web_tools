@@ -144,6 +144,12 @@ Object.define_methods
       result[key] = item
     result
 
+  select_map: (f_key_item) ->
+    result = []
+    for key, item of this when (value = f_key_item(key, item))
+      result.push(value)
+    result
+
   reject: (f_key_item) ->
     result = {}
     for key, item of this when not f_key_item(key, item)

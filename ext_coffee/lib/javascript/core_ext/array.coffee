@@ -56,6 +56,9 @@ Array.override_methods
   select: (f_item_index_self) ->
     @filter(f_item_index_self)
 
+  select_map: (f_item_index_self) ->
+    value for item, i in this when (value = f_item_index_self(item, i, this))
+
   reject: (f_item_index_self) ->
     @filter (item, index, self) ->
       not f_item_index_self(item, index, self)

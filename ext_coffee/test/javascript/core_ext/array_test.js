@@ -120,6 +120,10 @@ describe('Array', () => {
     assert.equal([2], [1, 2, 3].select((v) => v === 2))
   })
 
+  test('#select_map', () => {
+    assert.equal(['b'], [1, 2, 3].select_map((v) => v === 2 ? 'b' : false))
+  })
+
   test('#reject', () => {
     assert.equal([1, 3], [1, 2, 3].reject((v) => v === 2))
   })
