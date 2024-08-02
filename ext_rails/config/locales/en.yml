@@ -1,4 +1,12 @@
 en:
+  lib:
+    js:
+      :true: "True"
+      :false: "False"
+    navigation: Navigation
+    toggle_navigation: Toggle navigation
+    back_to_site: Back to site
+    language: Language
   activerecord:
     errors:
       messages:

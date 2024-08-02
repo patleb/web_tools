@@ -34,6 +34,10 @@ module Rails
 end
 
 Rails::Application.class_eval do
+  def title
+    @_title ||= name.titleize
+  end
+
   def name
     @_name ||= engine_name.delete_suffix('_application')
   end

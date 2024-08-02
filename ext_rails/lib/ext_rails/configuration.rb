@@ -11,6 +11,11 @@ module ExtRails
     attr_writer   :temporary_tables
     attr_writer   :db_partitions
     attr_accessor :keep_install_migrations
+    attr_writer   :theme
+    attr_accessor :css_only_support
+    alias_method  :css_only_support?, :css_only_support
+    attr_accessor :favicon_ico
+    alias_method  :favicon_ico?, :favicon_ico
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
@@ -52,6 +57,10 @@ module ExtRails
 
     def backup_excludes
       excluded_tables + temporary_tables
+    end
+
+    def theme
+      @theme ||= 'light'
     end
   end
 end

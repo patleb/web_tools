@@ -1,4 +1,12 @@
 fr:
+  lib:
+    js:
+      :true: "Vrai"
+      :false: "Faux"
+    navigation: Navigation
+    toggle_navigation: Basculer menu de navigation
+    back_to_site: Retour au site
+    language: Langue
   activerecord:
     errors:
       messages:

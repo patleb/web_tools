@@ -27,4 +27,8 @@ class String
     result.gsub! /\s*' \|\| (INTO|USING) /i, "' \\1 "
     result
   end
+
+  def strip_tags
+    Nokogiri::HTML(self).text
+  end
 end

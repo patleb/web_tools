@@ -1,3 +1,5 @@
+require 'ext_rails/action_controller/delegator'
+
 class ActionView::Delegator < ActionController::Delegator
   def self.method_missing(name, *args, **options, &block)
     if Current.view.respond_to? name

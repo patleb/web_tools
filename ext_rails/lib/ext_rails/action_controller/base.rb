@@ -1,5 +1,4 @@
-require 'ext_rails/action_controller/base/with_context'
-require 'ext_rails/action_controller/base/with_memoization'
+require_dir __FILE__, 'base'
 require 'ext_rails/action_controller/redirecting/with_query_params'
 
 ActionController::Base.class_eval do
@@ -9,6 +8,7 @@ ActionController::Base.class_eval do
   include ActionController::Redirecting::WithQueryParams
   include self::WithContext
   include self::WithMemoization
+  prepend self::BeforeRender
 
   ActiveSupport.run_load_hooks('ActionController', self, parent: true)
 end

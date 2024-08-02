@@ -13,6 +13,8 @@ module ParallelTask
 end
 
 module ExtRails
+  ERROR_SEPARATOR = '<br>- '
+
   module Routes
     def self.base_url
       @base_url ||= url_for
@@ -60,8 +62,6 @@ module ExtRails
     require 'ext_rails/active_support/current_attributes'
     require 'ext_rails/active_support/dependencies/with_cache'
     require 'ext_rails/active_support/parameter_filter/with_regexp'
-    require 'ext_rails/action_controller/delegator'
-    require 'ext_rails/action_view/delegator'
     require 'ext_rails/configuration'
     require 'ext_rails/geared_pagination'
     require 'ext_rails/money_rails'
@@ -73,6 +73,7 @@ module ExtRails
     require 'ext_rails/rails/initializable/initializer'
 
     config.before_configuration do |app|
+      require 'ext_rails/action_dispatch/routing/mapper/resources'
       require 'ext_rails/rails/application'
       require 'ext_rails/rails/engine/with_task'
       require 'ext_rails/rails/initializable/collection'
@@ -118,7 +119,7 @@ module ExtRails
 
         get '/test/:name' => 'ext_rails/test#show', as: :test if Rails.env.test?
 
-        get '/favicon.ico', to: -> (_) { [404, {}, ['']] } if Rails.env.local?
+        get '/favicon.ico', to: -> (_) { [404, {}, ['']] } unless ExtRails.config.favicon_ico?
 
         match '(/)*not_found', via: :all, to: 'application#render_404', format: false
       end
@@ -153,7 +154,12 @@ module ExtRails
       end
     end
 
+    config.after_initialize do
+      ActionView::Helpers::FormTagHelper.embed_authenticity_token_in_remote_forms = ExtRails.config.css_only_support?
+    end
+
     ActiveSupport.on_load(:action_controller, run_once: true) do
+      require 'ext_rails/action_controller/delegator'
       require 'ext_rails/action_controller/parameters'
     end
 
@@ -163,6 +169,17 @@ module ExtRails
 
     ActiveSupport.on_load(:action_controller_base) do
       require 'ext_rails/action_controller/base'
+    end
+
+    ActiveSupport.on_load(:action_view) do
+      require 'ext_rails/action_view/delegator'
+      require 'ext_rails/action_view/helpers/asset_url_helper/with_memoize'
+      require 'ext_rails/action_view/helpers/tag_helper/tag_builder/with_data_option'
+      require 'ext_rails/action_view/helpers/capture_helper'
+      require 'ext_rails/action_view/helpers/output_safety_helper'
+      require 'ext_rails/action_view/helpers/tag_helper'
+      require 'ext_rails/action_view/helpers/text_helper'
+      require 'ext_rails/action_view/template_renderer/with_virtual_path'
     end
 
     ActiveSupport.on_load(:active_job) do
