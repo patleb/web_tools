@@ -41,6 +41,7 @@ html {
   }
   #main {
     @apply flex flex-col flex-grow lg-1:self-center gap-8 lg-1:mx-auto mr-auto;
+    @apply w-full lg:w-[calc(100vw-20.5rem)];
   }
   #footer {
     @apply bg-base-100 text-base-content mt-4 max-w-[calc(100vw-2rem)];
@@ -76,6 +77,23 @@ html {
     a {
       @apply align-middle pr-1.5 text-primary font-medium;
       @apply max-w-[14rem] overflow-x-hidden text-ellipsis inline-block whitespace-nowrap;
+    }
+  }
+  table {
+    @apply w-full lg:w-[calc(100vw-20.5rem)];
+  }
+  .table_wrapper {
+    @apply scrollbar-sm;
+    @apply bg-base-200 shadow-xl rounded-none overflow-x-auto max-w-[calc(100vw-2.5rem)];
+  }
+  thead {
+    th {
+      @apply text-center;
+    }
+  }
+  tbody {
+    td {
+      @apply table-cell text-center;
     }
   }
 }
