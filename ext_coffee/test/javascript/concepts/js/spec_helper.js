@@ -1,7 +1,7 @@
 import '@@vendor/rails-ujs/all'
 import '@@lib/ext_coffee/core_ext/all'
 import '@@lib/ext_coffee/js/all'
-import '@@lib/ext_coffee/concepts/js/all'
+import '@@lib/ext_coffee/concepts/all'
 import '@@test/ext_coffee/fixtures/files/concepts/js/component/banner_element'
 import '@@test/ext_coffee/fixtures/files/concepts/js/component/card_element'
 import '@@test/ext_coffee/fixtures/files/concepts/js/component/time_element'
