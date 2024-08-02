@@ -7,6 +7,7 @@ class LibControllerTest < ActionDispatch::IntegrationTest
     assert_equal '/', self[:@meta][:root]
     assert_equal 'Web Tools', self[:@meta][:app]
     assert_equal 'Web Tools', self[:@meta][:title]
+    assert_select '#notice ~ .alert-info'
     assert_select '.table_wrapper'
     assert_select '.sticky'
     refute self[:@presenters].empty?

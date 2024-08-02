@@ -37,7 +37,7 @@ module LibHelper
       end
     css_class = case key
       when :alert  then 'alert-error'
-      when :notice then 'alert-info' # TODO persist option
+      when :notice then 'alert-info'
       else raise "unsupported flash key: #{key}"
       end
     h_(
