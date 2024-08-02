@@ -1,21 +1,2 @@
 @import "@@vendor/tailwindcss-rails/stylesheets/inter-font";
-
-html.no-js {
-  .js_only {
-    display: none;
-  }
-}
-
-html:not(.no-js) {
-  .css_only {
-    display: none;
-  }
-  &.no-transition * {
-    transition: none !important;
-    animation-duration: 0s !important;
-  }
-}
-
-body {
-  min-width: theme('screens.2xs');
-}
+@import "@@lib/ext_css/stylesheets/index";
