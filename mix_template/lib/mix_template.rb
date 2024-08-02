@@ -1,3 +1,0 @@
-module MixTemplate
-  # Your code goes here...
-end

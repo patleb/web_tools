@@ -62,7 +62,6 @@ gem 'mix_log', path: './mix_log'
 gem 'mix_page', path: './mix_page'
 gem 'mix_rescue', path: './mix_rescue'
 gem 'mix_task', path: './mix_task'
-gem 'mix_template', path: './mix_template'
 gem 'mix_user', path: './mix_user'
 gem 'sunzistrano', path: './sunzistrano'
 
