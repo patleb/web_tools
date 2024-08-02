@@ -21,7 +21,7 @@ html_('.no-js.no-transition', lang: Current.locale, data: { theme: Current.theme
     title_{ @meta[:title] },
   ]),
   body_('.drawer', tabindex: -1, class: [body_layout, body_template, ('debug-screens' if Rails.env.development?)]) {[
-    area(:html_data),
+    area(:data),
     input_('#sidebar.drawer-toggle', type: 'checkbox'),
     div_('.drawer-content') {[
       header_('#header', [
