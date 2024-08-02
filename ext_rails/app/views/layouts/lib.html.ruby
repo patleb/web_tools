@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 html_('.no-js.no-transition', lang: Current.locale, data: { theme: Current.theme }) {[
   head_([
     area(:fonts),

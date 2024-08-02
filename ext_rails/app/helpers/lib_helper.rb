@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LibHelper
   def current_layout
     layouts.first

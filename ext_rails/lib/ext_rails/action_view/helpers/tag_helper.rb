@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActionView::Helpers::TagHelper
   HTML5_TAGS = Set.new(%w(
     a abbr address area article aside audio
