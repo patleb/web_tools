@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.description = "ExtCoffee"
   s.licenses    = ["AGPL-3.0", "MIT"]
 
-  s.files = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE", "README.md"]
+  s.files = Dir["{app,config,lib,vendor}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
 end
