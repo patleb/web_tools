@@ -17,3 +17,7 @@ html:not(.no-js) {
 body {
   min-width: theme('screens.2xs');
 }
+
+.debug {
+  border: 1px solid red !important;
+}
