@@ -64,6 +64,7 @@ describe('Js.TagConcept', () => {
       assert.equal('<div id="id" class="class"></div>', div_('.class#id').to_s())
       assert.equal('<div id="id" class="class_0 class_1"></div>', div_('#id.class_0.class_1').to_s())
       assert.equal('<div id="id" class="class_0 class_1"></div>', div_('#id.class_0', { class: 'class_1' }).to_s())
+      assert.equal('<div id="id" class="class_0 class_2"></div>', div_('#id.class_0', { class: { class_1: false, class_2: true } }).to_s())
       assert.equal('<div id="option" class="class"></div>', div_('#id.class', { id: 'option' }).to_s())
       assert.equal('<div class="class_0 class_1 class_2"></div>', div_('.class_0', { class: ['class_1', 'class_2'] }).to_s())
       assert.equal('<div class="class_0 class_1 class_2"></div>', div_({ class: ['class_0 class_1', 'class_2'] }).to_s())

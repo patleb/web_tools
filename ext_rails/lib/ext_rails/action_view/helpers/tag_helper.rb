@@ -116,8 +116,8 @@ module ActionView::Helpers::TagHelper
       options[:id] ||= id
       options[:class] = merge_classes(options, classes)
     end
-    if options[:class].is_a? Array
-      options[:class] = options[:class].select(&:present?).join(' ')
+    if (classes = options[:class])
+      options[:class] = classes_to_string(classes)
       options.delete(:class) if options[:class].blank?
     end
     sanitized = options.has_key?(:sanitize) ? options.delete(:sanitize) : false
@@ -183,7 +183,25 @@ module ActionView::Helpers::TagHelper
   end
 
   def classes_to_array(classes)
-    (classes.is_a?(Array) ? classes : classes.try(:split) || [])
+    case classes
+    when Hash
+      classes_to_array(classes.select_map{ |value, condition| value if condition })
+    when Array
+      classes
+    else
+      classes.try(:split) || []
+    end
+  end
+
+  def classes_to_string(classes)
+    case classes
+    when Hash
+      classes.select_map{ |value, condition| value if condition }.join(' ')
+    when Array
+      classes.compact_blank.join(' ')
+    else
+      classes
+    end
   end
 
   def continue(options)

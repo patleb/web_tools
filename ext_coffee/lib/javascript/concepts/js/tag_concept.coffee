@@ -78,8 +78,8 @@ class Js.TagConcept
       options.id ||= id
       options.class = @merge_classes(options, classes)
 
-    if options.class?.is_a Array
-      options.class = options.class.select((item) -> item?.present()).join(' ')
+    if (classes = options.class)
+      options.class = @classes_to_string(classes)
       options.delete('class') if options.class.blank()
 
     if options.data?.is_a Object
@@ -118,10 +118,20 @@ class Js.TagConcept
       @classes_to_array(classes)
 
   classes_to_array: (classes) ->
-    if classes?.is_a Array
+    if classes?.is_a Object
+      @classes_to_array(classes.select_map (value, condition) -> value if condition)
+    else if classes?.is_a Array
       classes
     else
       classes?.split(' ') or []
+
+  classes_to_string: (classes) ->
+    if classes?.is_a Object
+      classes.select_map((value, condition) -> value if condition).join(' ')
+    else if classes?.is_a Array
+      classes.compact_blank().join(' ')
+    else
+      classes
 
   content_tag: (tag, text, options, escape) ->
     tag = document.createElement(tag)
