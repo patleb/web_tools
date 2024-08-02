@@ -67,10 +67,7 @@ module ActionView::Helpers::TagHelper
       end
     else
       super() do
-        args.flatten.each do |value|
-          concat value
-          concat ' ' unless value.blank? || value.try(:no_space?)
-        end
+        args.flatten.each{ |value| concat value }
       end
     end
   end
