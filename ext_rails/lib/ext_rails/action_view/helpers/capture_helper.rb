@@ -6,7 +6,7 @@ module ActionView::Helpers
       layout = layout.to_s
       layout = "layouts/#{layout}" unless layout.include? '/'
       @view_flow.get(:layout).replace capture(&)
-      (@layouts ||= []) << layout.delete_prefix('layouts/')
+      layouts << layout.delete_prefix('layouts/')
       render template: layout
     end
 

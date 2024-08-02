@@ -1,14 +1,18 @@
 module LibHelper
   def current_layout
-    @_current_layout ||= begin
+    layouts.first
+  end
+
+  def layouts
+    @layouts ||= begin
       layout_controller = is_a?(ActionController::Base) ? self : controller
       layout_path = layout_controller.send(:_layout, @lookup_context || @_lookup_context, [:html])
-      (layout_path.is_a?(String) ? layout_path : layout_path.virtual_path).delete_prefix('layouts/')
+      [(layout_path.is_a?(String) ? layout_path : layout_path.virtual_path).delete_prefix('layouts/')]
     end
   end
 
   def body_layout
-    ([current_layout] + (@layouts || [])).map{ |name| [name, 'layout'].join('_').full_underscore }
+    layouts.map{ |name| [name, 'layout'].join('_').full_underscore }
   end
 
   def body_template
