@@ -144,12 +144,12 @@ module ActiveRecord::Base::WithPartition
         from = bucket.to_s.rjust(19, '0')
         to = (bucket + size).to_s.rjust(19, '0')
       when Time, Date, DateTime
-        raise UnsupportedPartitionBucket, "size: [#{size}]" unless size.to_sym.in? DATE_PARTITION_BUCKETS
+        raise UnsupportedPartitionBucket, "size: [#{size}]" unless DATE_PARTITION_BUCKETS.include? size.to_sym
         bucket = key.public_send("beginning_of_#{size}")
         from = bucket.date_tag
         to = (bucket + 1.public_send(size)).date_tag
       when String
-        return partition_for(partition_bucket(key), table, size: size)
+        return partition_for(partition_bucket(key), table)
       when nil
         raise UnsupportedPartitionBucket, "from: [#{from}], to: [#{to}]" unless from.is_a?(String) && to.is_a?(String)
       else
