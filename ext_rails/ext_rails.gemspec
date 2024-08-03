@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'arel_extensions'
   s.add_dependency 'date_validator'
   s.add_dependency 'dotiw'
-  s.add_dependency 'geared_pagination', '1.2.0'
+  s.add_dependency 'geared_pagination'
   s.add_dependency 'http_accept_language'
   s.add_dependency 'i18n-debug'
   s.add_dependency 'money-rails'
