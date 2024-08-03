@@ -10,6 +10,5 @@ ActiveSupport::TestCase.class_eval do
     LogLine.delete_all
     LogMessage.delete_all
     Log.delete_all
-    Server.delete_all
   end
 end
