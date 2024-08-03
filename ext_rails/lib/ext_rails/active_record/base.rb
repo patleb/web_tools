@@ -20,9 +20,9 @@ ActiveRecord::Base.class_eval do
     /main.rb
   )
   TYPES_HASH = %i(
-    columns_hash
     virtual_columns_hash
     attribute_types
+    columns_hash
   )
 
   class_attribute :skip_locking_attributes, instance_writer: false, instance_predicate: false, default: SKIP_LOCKING_ATTRIBUTES

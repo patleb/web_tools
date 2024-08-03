@@ -13,4 +13,20 @@ Setting.class_eval do
   def self.server
     [self[:server_host], self[:server_port]].compact.join(':')
   end
+
+  def self.smtp
+    { authentication: 'login',
+      enable_starttls_auto: true
+    }.merge!(slice(*%i(
+      mail_address
+      mail_port
+      mail_domain
+      mail_username
+      mail_password
+      mail_authentication
+      mail_enable_starttls_auto
+    )).to_h.transform_keys!{ |key|
+      key.to_s.sub(/^mail_/, '').sub('user', 'user_').to_sym
+    })
+  end
 end

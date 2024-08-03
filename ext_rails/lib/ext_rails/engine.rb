@@ -88,6 +88,10 @@ module ExtRails
       require 'ext_rails/pycall'
       require 'ext_rails/user_agent_parser/parser/with_regexp'
 
+      Setting.load
+      app.config.action_mailer.delivery_method = :smtp
+      app.config.action_mailer.smtp_settings = Setting.smtp
+      app.config.action_mailer.default_url_options = Setting[:default_url_options]
       app.config.active_record.schema_format = :sql
       app.config.i18n.default_locale = :fr
       app.config.i18n.available_locales = [:fr, :en]
@@ -107,6 +111,8 @@ module ExtRails
     end
 
     config.before_initialize do |app|
+      app.config.action_mailer.delivery_job = 'LibMailerJob'
+
       %w(app/libraries app/tasks).each do |directory|
         ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/#{directory}")
       end
@@ -176,6 +182,11 @@ module ExtRails
 
     ActiveSupport.on_load(:action_controller_base) do
       require 'ext_rails/action_controller/base'
+    end
+
+    ActiveSupport.on_load(:action_mailer) do
+      require 'ext_rails/action_mailer/base'
+      require 'ext_rails/action_mailer/log_subscriber/with_quiet_info'
     end
 
     ActiveSupport.on_load(:action_view) do

@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'geared_pagination', '1.2.0'
   s.add_dependency 'http_accept_language'
   s.add_dependency 'i18n-debug'
+  s.add_dependency 'mail_interceptor'
   s.add_dependency 'money-rails'
   s.add_dependency 'monogamy'
   s.add_dependency 'null-logger'

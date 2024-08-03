@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_whenever",    version
   s.add_dependency "mix_admin",       version
   s.add_dependency "mix_certificate", version
-  s.add_dependency "mix_email",       version
   s.add_dependency "mix_file",        version
   s.add_dependency "mix_flash",       version
   s.add_dependency "mix_geo",         version

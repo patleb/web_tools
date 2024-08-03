@@ -7,7 +7,7 @@ module ActiveRecord::Base::WithNullifyBlanks
 
   prepended do
     class_attribute :nullify_blanks_types, instance_writer: false, instance_predicate: false, default: DEFAULT_TYPES
-    class_attribute :nullify_blanks_columns, instance_writer: false, instance_predicate: false, default: Set.new
+    class_attribute :nullify_blanks_columns, instance_writer: false, instance_predicate: false
   end
 
   class_methods do
@@ -24,7 +24,8 @@ module ActiveRecord::Base::WithNullifyBlanks
         return false if @nullify_blank_methods_generated
 
         self.nullify_blanks_columns = types_hash.select_map do |name, attribute|
-          name if nullify_blanks_types.include? attribute.type
+          next unless nullify_blanks_types.include? attribute.type
+          name unless attribute.false? :null
         end.to_set
 
         @nullify_blank_methods_generated = true
@@ -37,7 +38,8 @@ module ActiveRecord::Base::WithNullifyBlanks
     nullify_blanks_columns.each do |column|
       value = read_attribute(column)
       next unless value.is_a? String
-      write_attribute(column, nil) if value.blank?
+      next unless value.blank?
+      write_attribute(column, nil)
     end
   end
 

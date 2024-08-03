@@ -7,10 +7,6 @@ class Notice
 
   include ActionView::Helpers::TextHelper
 
-  def self.smtp_settings
-    @smtp_settings ||= ActionMailer::SmtpSettings.new(Setting).to_h
-  end
-
   def self.deliver!(exception, **options)
     require 'mail'
     new.deliver!(exception, **options)
@@ -30,7 +26,7 @@ class Notice
       #{BODY_END}
     TEXT
     mail = ::Mail.new
-    mail.delivery_method :smtp, self.class.smtp_settings
+    mail.delivery_method :smtp, Setting.smtp
     mail.to   = Setting[:mail_to]
     mail.from = Setting[:mail_from]
     mail.subject   = subject

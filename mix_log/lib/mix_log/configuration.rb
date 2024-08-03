@@ -35,6 +35,7 @@ module MixLog
         'LogLines::App'         => 60,
         'LogLines::AptHistory'  => 70,
         'LogLines::Osquery'     => 80,
+        'LogLines::Email'       => 110,
       )
     end
 
