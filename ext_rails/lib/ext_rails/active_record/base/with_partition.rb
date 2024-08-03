@@ -3,7 +3,6 @@ module ActiveRecord::Base::WithPartition
 
   class UnsupportedPartitionBucket < ::StandardError; end
   class InvalidPartitionColumn < ::StandardError; end
-  class MissingPartitionSize < ::StandardError; end
 
   class DuplicatePartition < ActiveRecord::StatementInvalid
     def self.===(exception)
@@ -22,21 +21,7 @@ module ActiveRecord::Base::WithPartition
   NUMBER = /\d{19}$/ # support BIGINT
   COLUMN_VALUE = /Partition key of the failing row contains \((\w+)\) = \(([\d :.-]+)\)/i
 
-  prepended do
-    class_attribute :partition_size, instance_accessor: false, instance_predicate: false
-  end
-
   class_methods do
-    def has_partition(size: nil)
-      if size
-        self.partition_size = ExtRails.config.db_partitions[table_name] = size
-      elsif (size = ExtRails.config.db_partitions[table_name])
-        self.partition_size = size
-      else
-        raise MissingPartitionSize, "#{name}: [#{table_name}]"
-      end
-    end
-
     def insert_all!(rows, **)
       partition_size ? with_partition(rows){ super } : super
     end
@@ -47,6 +32,10 @@ module ActiveRecord::Base::WithPartition
 
     def upsert_all(rows, **)
       partition_size ? with_partition(rows){ super } : super
+    end
+
+    def partition_size(table = table_name)
+      ExtRails.config.db_partitions[table]
     end
 
     def with_partition(rows)
@@ -137,7 +126,7 @@ module ActiveRecord::Base::WithPartition
 
     private
 
-    def partition_for(key, table, size: db_partition_size(table), from: nil, to: nil)
+    def partition_for(key, table, size: partition_size(table), from: nil, to: nil)
       case key
       when Integer
         bucket = (key / size) * size
@@ -156,10 +145,6 @@ module ActiveRecord::Base::WithPartition
         raise UnsupportedPartitionBucket, "key: [#{key}]"
       end
       { name: "#{table}_#{from}", from: from, to: to } # 'from' is inclusive, 'to' is exclusive
-    end
-
-    def db_partition_size(table)
-      ExtRails.config.db_partitions[table]
     end
 
     def reset_partitions(table)
