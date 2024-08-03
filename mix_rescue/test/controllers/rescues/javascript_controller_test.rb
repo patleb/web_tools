@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 require 'action_controller/metal/request_forgery_protection'
 
 module Rescues
