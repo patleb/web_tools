@@ -3,6 +3,7 @@
 module ExtRails
   has_config do
     attr_accessor :i18n_debug
+    attr_accessor :email_debug
     attr_writer   :sql_debug
     attr_writer   :params_debug
     attr_writer   :skip_discard

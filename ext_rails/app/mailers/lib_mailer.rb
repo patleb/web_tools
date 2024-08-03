@@ -3,7 +3,8 @@
 class LibMailer < ActionMailer::Base
   default from: Setting[:mail_from]
 
+  # NOTE :template_path is needed for inheritance, otherwise 'mailer_name' is used
   def healthcheck
-    mail to: Setting[:mail_to], template_path: 'lib_mailer' # needed for inheritance --> mailer_name is used otherwise
+    mail to: Setting[:mail_to], template_path: 'lib_mailer'
   end
 end

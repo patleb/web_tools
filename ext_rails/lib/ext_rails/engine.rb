@@ -186,6 +186,8 @@ module ExtRails
 
     ActiveSupport.on_load(:action_mailer) do
       require 'ext_rails/action_mailer/base'
+      require 'ext_rails/action_mailer/interceptors/email_prefixer' unless Rails.env.production?
+      require 'ext_rails/action_mailer/interceptors/forward_all_to' unless Rails.env.production?
       require 'ext_rails/action_mailer/log_subscriber/with_quiet_info'
     end
 
