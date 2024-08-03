@@ -4,7 +4,9 @@ module ActionDispatch
     URI::InvalidURIError,
     Rack::QueryParser::InvalidParameterError,
     ActionController::BadRequest,
+    ActionController::UnknownFormat,
     ActionDispatch::Http::MimeNegotiation::InvalidType,
+    ActionDispatch::Http::Parameters::ParseError,
     ActionController::InvalidAuthenticityToken,
   ]
 
