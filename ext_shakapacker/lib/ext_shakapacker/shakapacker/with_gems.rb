@@ -1,4 +1,4 @@
-module Webpacker
+module Shakapacker
   # https://github.com/tailwindlabs/tailwindcss/blob/master/src/lib/expandTailwindAtRules.js#L9-L31
   TAILWIND_EXTRACTOR = <<~JS.strip.indent(6)
     (content) => {
@@ -22,7 +22,7 @@ module Webpacker
   class MissingGem < StandardError; end
 
   module WithGems
-    # webpacker --profile --json > tmp/stats.json && yarn webpack-bundle-analyzer tmp/stats.json
+    # shakapacker --profile --json > tmp/stats.json && yarn webpack-bundle-analyzer tmp/stats.json
     def install
       verify_dependencies!
       watched_symlinks = { lib: source_lib_path, vendor: source_vendor_path }.each_with_object([]) do |(type, directory), symlinks|
@@ -44,7 +44,7 @@ module Webpacker
           symlink_path(source_vendor_path, root.basename, root)
         end)
       end
-      Webpacker::Compiler.gems_watched_paths = watched_symlinks.map do |link|
+      Shakapacker::BaseStrategy.gems_watched_paths = watched_symlinks.map do |link|
         link.join("**/*.{js,coffee,css,scss,erb}").to_s # ,png,svg,gif,jpeg,jpg ?
       end
       compile_tailwind_config
@@ -67,8 +67,8 @@ module Webpacker
     def compile_tailwind_config
       return unless package_dependencies.include?('tailwindcss') && (file = Pathname.new('./tailwind.config.js')).exist?
       tailwind = file.read
-      tailwind.sub!(/["']Webpacker::TAILWIND_EXTRACTOR["']/, TAILWIND_EXTRACTOR)
-      tailwind.sub!(/["']Webpacker::TAILWIND_DEPENDENCIES["']/, tailwind_dependencies)
+      tailwind.sub!(/["']Shakapacker::TAILWIND_EXTRACTOR["']/, TAILWIND_EXTRACTOR)
+      tailwind.sub!(/["']Shakapacker::TAILWIND_DEPENDENCIES["']/, tailwind_dependencies)
       tailwind.gsub!(%r{@@[\w-]+}){ |name| Gem.root(name.tr('@', '')).to_s }
       tailwind.gsub! '@@', Bundler.root.to_s
       Pathname.new('./tmp/tailwind.config.js').write(tailwind)
@@ -112,7 +112,7 @@ module Webpacker
     end
 
     def gems
-      @gems ||= Set.new(['ext_webpacker'] + (default_config['gems'] || []))
+      @gems ||= Set.new(['ext_shakapacker'] + (default_config['gems'] || []))
     end
 
     def tailwind
@@ -132,7 +132,7 @@ module Webpacker
     end
 
     def default_config
-      @default_config ||= YAML.load(Pathname.new('config/webpacker.yml').read, aliases: true)['default']
+      @default_config ||= YAML.load(Pathname.new('config/shakapacker.yml').read, aliases: true)['default']
     end
 
     def package_dependencies

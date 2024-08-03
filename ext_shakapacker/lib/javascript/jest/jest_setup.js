@@ -1,7 +1,7 @@
-import '@@lib/ext_webpacker/jest/helpers/assert'
-import '@@lib/ext_webpacker/jest/helpers/dom'
-import '@@lib/ext_webpacker/jest/helpers/fixture'
-import '@@lib/ext_webpacker/jest/helpers/nav'
+import '@@lib/ext_shakapacker/jest/helpers/assert'
+import '@@lib/ext_shakapacker/jest/helpers/dom'
+import '@@lib/ext_shakapacker/jest/helpers/fixture'
+import '@@lib/ext_shakapacker/jest/helpers/nav'
 import xhr from 'xhr-mock'
 
 global.xhr = xhr

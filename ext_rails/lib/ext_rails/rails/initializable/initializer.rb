@@ -28,7 +28,7 @@ module Rails::Initializable::Initializer::SkippedInitializers
   end
 
   def skip_run?
-    if name == :append_assets_path # skip all sprockets initializers (webpacker should be the only tool used)
+    if name == :append_assets_path # skip all sprockets initializers (shakapacker should be the only tool used)
       return false if assets_initializers.include? @context.class.name
       return true
     end

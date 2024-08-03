@@ -1,14 +1,15 @@
-keep_assets=${keep_assets:-10}
+assets_keep=${assets_keep:-10}
+assets_age=${assets_age:-0}
 
 cd ${release_path}
 
 desc 'Install all JavaScript dependencies as specified via Yarn'
-bin/rake webpacker:yarn_install
+bin/rake shakapacker:yarn_install
 
 desc "Compile JavaScript packs using webpack for ${stage} with digests"
-bin/rake webpacker:compile
+bin/rake shakapacker:compile
 
 desc 'Remove old compiled webpacks'
-bin/rake webpacker:clean[${keep_assets}]
+bin/rake shakapacker:clean[${assets_keep},${assets_keep}]
 
 cd.back

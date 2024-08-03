@@ -6,13 +6,13 @@ version = WebTools::VERSION::STRING
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "ext_webpacker"
+  s.name        = "ext_shakapacker"
   s.version     = version
   s.authors     = ["Patrice Lebel"]
   s.email       = ["patleb@users.noreply.github.com"]
-  s.homepage    = "https://github.com/patleb/ext_webpacker"
-  s.summary     = "ExtWebpacker"
-  s.description = "ExtWebpacker"
+  s.homepage    = "https://github.com/patleb/ext_shakapacker"
+  s.summary     = "ExtShakapacker"
+  s.description = "ExtShakapacker"
   s.license     = "AGPL-3.0"
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]

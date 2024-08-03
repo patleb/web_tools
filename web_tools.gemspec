@@ -1,6 +1,6 @@
 # Maintain your gem's version:
 require_relative "./version"
-version = WebTools::VERSION::STRING # TODO rename to web_tools_ce with WebTools
+version = WebTools::VERSION::STRING
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ext_rice",        version
   s.add_dependency "ext_ruby",        version
   s.add_dependency "ext_css",         version
-  s.add_dependency "ext_webpacker",   version
+  s.add_dependency "ext_shakapacker", version
   s.add_dependency "ext_whenever",    version
   s.add_dependency "mix_admin",       version
   s.add_dependency "mix_certificate", version

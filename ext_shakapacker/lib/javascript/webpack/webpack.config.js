@@ -1,7 +1,7 @@
 const path = require('path')
 const require_module = (name) => require(path.resolve('node_modules', name))
 
-const { webpackConfig, config, merge } = require_module('shakapacker')
+const { generateWebpackConfig, config, merge } = require_module('shakapacker')
 const webpack = require_module('webpack')
 const source_path = path.resolve(config.source_path)
 const source_lib_path = path.join(source_path, 'lib')
@@ -27,7 +27,7 @@ screens = { plugins: [new webpack.EnvironmentPlugin(Object.assign(process.env, {
   LOGGER_TRACE: false,
 }))] }
 
-module.exports = merge(webpackConfig, devtool, screens, {
+module.exports = merge(generateWebpackConfig(), devtool, screens, {
   resolve: {
     alias: { '@@': source_path, '@@lib': source_lib_path, '@@vendor': source_vendor_path },
     modules: [path.resolve('node_modules')],

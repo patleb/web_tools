@@ -33,10 +33,10 @@ module.exports = {
       "@@/app/javascript/**/*.{js,coffee}",
       "@@/app/presenters/**/*.rb",
       "@@/app/views/**/*.html.{erb,ruby}",
-      "Webpacker::TAILWIND_DEPENDENCIES",
+      "Shakapacker::TAILWIND_DEPENDENCIES",
     ],
     extract: {
-      DEFAULT: 'Webpacker::TAILWIND_EXTRACTOR',
+      DEFAULT: 'Shakapacker::TAILWIND_EXTRACTOR',
     }
   },
   theme: {

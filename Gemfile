@@ -2,8 +2,7 @@ source "https://rubygems.org"
 
 ruby File.read('.ruby-version').strip if File.exist? '.ruby-version'
 
-# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'shakapacker', '6.1.1'
+gem 'shakapacker', '7.2.3'
 
 group :development, :test do
   gem 'ext_minitest', path: './ext_minitest'
@@ -43,7 +42,7 @@ gem 'ext_rails', path: './ext_rails'
 gem 'ext_rice', path: './ext_rice'
 gem 'ext_ruby', path: './ext_ruby'
 gem 'ext_css', path: './ext_css'
-gem 'ext_webpacker', path: './ext_webpacker'
+gem 'ext_shakapacker', path: './ext_shakapacker'
 gem 'ext_whenever', path: './ext_whenever'
 gem 'mix_admin', path: './mix_admin'
 gem 'mix_certificate', path: './mix_certificate'

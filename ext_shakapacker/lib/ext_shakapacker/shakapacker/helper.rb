@@ -1,4 +1,4 @@
-module Webpacker::Helper
+module Shakapacker::Helper
   def javascript_pack_tag!(...)
     return if Rails.env.test?
     javascript_pack_tag(...)

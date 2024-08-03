@@ -1,16 +1,16 @@
 require "ext_ruby"
-require "ext_webpacker/webpacker/with_gems"
-require "webpacker"
+require "ext_shakapacker/shakapacker/with_gems"
+require "shakapacker"
 
-Webpacker::Env.class_eval do
+Shakapacker::Env.class_eval do
   private
 
   def fallback_env_warning
-    # logger.info "RAILS_ENV=#{Rails.env} environment is not defined in config/webpacker.yml, falling back to #{DEFAULT} environment"
+    # logger.info "RAILS_ENV=#{Rails.env} environment is not defined in config/shakapacker.yml, falling back to #{DEFAULT} environment"
   end
 end
 
-Webpacker::Compiler.class_eval do
+Shakapacker::BaseStrategy.class_eval do
   class_attribute :gems_watched_paths # :watched_paths is deprecated
 
   private
@@ -21,8 +21,8 @@ Webpacker::Compiler.class_eval do
   end
 end
 
-module Webpacker
+module Shakapacker
   extend self::WithGems
 end
 
-Webpacker.install
+Shakapacker.install
