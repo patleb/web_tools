@@ -31,14 +31,12 @@ class TrueClass
   include Boolean
   def to_b; self; end
   def to_b?; true; end
-  alias_method :to_str, :to_s
 end
 
 class FalseClass
   include Boolean
   def to_b; self; end
   def to_b?; true; end
-  alias_method :to_str, :to_s
 end
 
 class NilClass

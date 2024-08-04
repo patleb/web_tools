@@ -1,7 +1,7 @@
 require_relative './ext_rice/compiler'
 
 task :no_ext do
-  ENV['NO_EXT'] = true
+  ENV['NO_EXT'] = 'true'
 end
 
 namespace :rice do

@@ -69,7 +69,6 @@ module ExtRails
     require 'ext_rails/active_support/lazy_load_hooks/autorun'
     require 'ext_rails/active_support/current_attributes'
     require 'ext_rails/active_support/dependencies/with_cache'
-    require 'ext_rails/active_support/parameter_filter/with_regexp'
     require 'ext_rails/configuration'
     require 'ext_rails/geared_pagination'
     require 'ext_rails/money_rails'
@@ -86,7 +85,6 @@ module ExtRails
       require 'ext_rails/rails/engine/with_task'
       require 'ext_rails/rails/initializable/collection'
       require 'ext_rails/pycall'
-      require 'ext_rails/user_agent_parser/parser/with_regexp'
 
       Setting.load
       app.config.action_mailer.delivery_method = :smtp
@@ -116,7 +114,7 @@ module ExtRails
       %w(app/libraries app/tasks).each do |directory|
         ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/#{directory}")
       end
-      ENV["BACKTRACE"] = true
+      ENV["BACKTRACE"] = 'true'
     end
 
     initializer 'ext_rails.append_migrations' do |app|

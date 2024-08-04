@@ -56,7 +56,7 @@ module Rice
     def self.test_yml(rel_root = nil, yml_path: nil)
       it "should build ext.cpp correctly based on rice.yml:  #{root_name_for rel_root}" do
         old_numo = ENV['NO_NUMO']
-        ENV['NO_NUMO'] = true
+        ENV['NO_NUMO'] = 'true'
         ExtRice.with do |config|
           config.root = Pathname.new(rel_root).expand_path if rel_root
           config.yml_path = yml_path if yml_path

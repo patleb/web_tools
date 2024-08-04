@@ -5,7 +5,7 @@ module ActiveRecord::Tasks::DatabaseTasks::WithSingleEnv
 
   class_methods do
     def each_current_configuration(...)
-      ENV['SKIP_TEST_DATABASE'] = true
+      ENV['SKIP_TEST_DATABASE'] = 'true'
       super
     end
   end

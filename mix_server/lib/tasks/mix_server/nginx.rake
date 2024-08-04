@@ -4,9 +4,9 @@ namespace! :nginx do
     task :enable, [:duration] => :environment do |t, args|
       ENV['MESSAGE'] = maintenance_message(args[:duration])
       nginx_maintenance_push
-      ENV['MAINTENANCE'] = true
+      ENV['MAINTENANCE'] = 'true'
       nginx_app_push
-      ENV['MAINTENANCE'] = false
+      ENV['MAINTENANCE'] = nil
     end
 
     desc 'Put the application out of maintenance mode'
