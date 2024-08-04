@@ -1,5 +1,7 @@
 module MixLog
-  class Extract < ParallelTask::Base
+  class Extract < ActiveTask::Base
+    prepend ActiveTask::AsParallel
+
     class AccessDenied < ::StandardError; end
 
     def self.args

@@ -16,10 +16,6 @@ module ActiveTask
   autoload :Base, 'ext_rails/active_task/base'
 end
 
-module ParallelTask
-  autoload :Base, 'ext_rails/parallel_task/base'
-end
-
 module ExtRails
   ERROR_SEPARATOR = '<br>- '
 
@@ -184,9 +180,10 @@ module ExtRails
 
     ActiveSupport.on_load(:action_mailer) do
       require 'ext_rails/action_mailer/base'
-      require 'ext_rails/action_mailer/interceptors/email_prefixer' unless Rails.env.production?
-      require 'ext_rails/action_mailer/interceptors/forward_all_to' unless Rails.env.production?
       require 'ext_rails/action_mailer/log_subscriber/with_quiet_info'
+      next if Rails.env.production?
+      require 'ext_rails/action_mailer/interceptors/email_prefixer'
+      require 'ext_rails/action_mailer/interceptors/forward_all_to'
     end
 
     ActiveSupport.on_load(:action_view) do
@@ -223,6 +220,10 @@ module ExtRails
       require 'ext_rails/active_record/type/encrypted'
 
       ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables = Rails.env.test?
+    end
+
+    ActiveSupport.on_load(:active_task) do
+      require 'ext_rails/active_task/as_parallel'
     end
 
     config.to_prepare do

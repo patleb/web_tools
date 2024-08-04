@@ -1,5 +1,7 @@
 module MixLog
-  class Rollup < ParallelTask::Base
+  class Rollup < ActiveTask::Base
+    prepend ActiveTask::AsParallel
+
     def self.args
       super.merge!(
         all: ['--[no-]all', 'Rebuild all rollups'],

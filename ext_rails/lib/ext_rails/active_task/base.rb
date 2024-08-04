@@ -349,5 +349,7 @@ module ActiveTask
         end
       end
     end
+
+    ActiveSupport.run_load_hooks(:active_task, self)
   end
 end
