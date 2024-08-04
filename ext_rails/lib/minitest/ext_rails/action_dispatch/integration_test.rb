@@ -1,7 +1,7 @@
 ActionDispatch::IntegrationTest.class_eval do
-  class TestMethodAlreadyDefined < ::StandardError; end
-
   include Devise::Test::IntegrationHelpers if defined? Devise
+
+  class TestMethodAlreadyDefined < ::StandardError; end
 
   attr_accessor :current
   attr_accessor :result

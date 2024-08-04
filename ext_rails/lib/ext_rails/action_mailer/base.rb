@@ -1,3 +1,1 @@
-ActionMailer::Base.class_eval do
-  include ActiveSupport::LazyLoadHooks::Autorun
-end
+ActionMailer::Base.include ActiveSupport::LazyLoadHooks::Autorun
