@@ -1,2 +1,2 @@
 @import "@@vendor/tailwindcss-rails/stylesheets/inter-font";
-@import "@@lib/ext_css/stylesheets/index";
+@import "@@lib/ext_css/stylesheets/theming";
