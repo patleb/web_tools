@@ -1,1 +1,1 @@
-@message.gsub(MixTemplate::ERROR_SEPARATOR, "\r\n- ")
+@message.gsub(ExtRails::ERROR_SEPARATOR, "\r\n- ")
