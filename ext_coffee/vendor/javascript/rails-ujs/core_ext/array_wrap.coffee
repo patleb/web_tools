@@ -1,6 +1,6 @@
 Array.wrap = (object) ->
   if object?
-    if Array.as_array(object)
+    if Array.is_array(object)
       Array::slice.call(object)
     else
       [object]

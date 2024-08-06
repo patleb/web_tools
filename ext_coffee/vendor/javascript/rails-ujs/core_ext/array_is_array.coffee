@@ -1,4 +1,4 @@
-Array.as_array = (object) ->
+Array.is_array = (object) ->
   if not object?
     false
   else if typeof window.Symbol is 'function'
