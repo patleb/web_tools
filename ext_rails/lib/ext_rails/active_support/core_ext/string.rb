@@ -1,4 +1,8 @@
 class String
+  def /(other)
+    [self, other].join('/')
+  end
+
   def sql_safe
     Arel.sql(self)
   end
