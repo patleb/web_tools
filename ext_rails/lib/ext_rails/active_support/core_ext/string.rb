@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class String
   def /(other)
-    [self, other].join('/')
+    [self == '/' ? '' : self, other].join('/')
   end
 
   def sql_safe
