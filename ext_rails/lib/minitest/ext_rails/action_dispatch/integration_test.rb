@@ -48,6 +48,11 @@ ActionDispatch::IntegrationTest.class_eval do
     controller.ivar(name, value)
   end
 
+  def assert_recognizes(expected_options, *)
+    expected_options = expected_options.with_indifferent_access
+    super
+  end
+
   module self::WithTeardown
     def teardown
       @controller_methods&.each do |method_name|
