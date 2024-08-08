@@ -19,29 +19,6 @@ end
 module ExtRails
   ERROR_SEPARATOR = '<br>- '
 
-  module Routes
-    def self.base_url
-      @base_url ||= url_for
-    end
-
-    def self.url_for(path = nil)
-      [scheme, '://', host, (':' if port), port, path].join
-    end
-
-    def self.host
-      @host ||= Rails.application.routes.default_url_options[:host] || raise('routes.default_url_options[:host] must be defined')
-    end
-
-    def self.port
-      return @port if defined? @port
-      @port = Rails.application.routes.default_url_options[:port]
-    end
-
-    def self.scheme
-      @scheme ||= "http#{'s' if Setting[:server_ssl]}"
-    end
-  end
-
   class Engine < ::Rails::Engine
     require 'active_record_extended'
     require 'active_type'
@@ -74,6 +51,7 @@ module ExtRails
     require 'ext_rails/rake/task'
     require 'ext_rails/rails/engine'
     require 'ext_rails/rails/initializable/initializer'
+    require 'ext_rails/routes'
 
     config.before_configuration do |app|
       require 'ext_rails/action_dispatch/routing/mapper/resources'
