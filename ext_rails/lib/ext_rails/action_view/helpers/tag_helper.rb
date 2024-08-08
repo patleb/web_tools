@@ -126,24 +126,8 @@ module ActionView::Helpers::TagHelper
     content = options.delete(:text) if options.has_key? :text
     content = h_(&content) if content.is_a? Proc
     content = h_(&block) if content.nil? && block_given?
-    case tag
-    when 'a'
-      options[:rel] = 'noopener' if options[:rel].blank?
-    when 'form'
-      options = html_options_for_form(options.delete(:action) || '', options)
-      content = [extra_tags_for_form(options), content]
-    when 'label'
-      id = options[:for]
-      options[:for] = sanitize_to_id(id) if id.present?
-    when 'input'
-      id = options[:id].presence || options[:name]
-      options[:id] = sanitize_to_id(id) if id.present?
-    when 'select'
-      name = options[:name]
-      id = options[:id].presence || name
-      options[:name] = "#{name}[]" if name.present? && options[:multiple] == true && !name.end_with?("[]")
-      options[:id] = sanitize_to_id(id) if id.present?
-    end
+    tag_options_content = "#{tag}_options_content"
+    content = send(tag_options_content, options, content) if respond_to? tag_options_content
     content = h_(content) if content.is_a? Array
     content = sanitize(content) if sanitized
 
@@ -216,5 +200,35 @@ module ActionView::Helpers::TagHelper
       return false if is_true
     end
     true
+  end
+
+  def a_options_content(options, content)
+    options[:rel] = 'noopener' if options[:rel].blank?
+    content
+  end
+
+  def form_options_content(options, content)
+    options = html_options_for_form(options.delete(:action) || '', options)
+    [extra_tags_for_form(options), content]
+  end
+
+  def label_options_content(options, content)
+    id = options[:for]
+    options[:for] = sanitize_to_id(id) if id.present?
+    content
+  end
+
+  def input_options_content(options, content)
+    id = options[:id].presence || options[:name]
+    options[:id] = sanitize_to_id(id) if id.present?
+    content
+  end
+
+  def select_options_content(options, content)
+    name = options[:name]
+    id = options[:id].presence || name
+    options[:name] = "#{name}[]" if name.present? && options[:multiple] == true && !name.end_with?("[]")
+    options[:id] = sanitize_to_id(id) if id.present?
+    content
   end
 end
