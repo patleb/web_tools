@@ -23,11 +23,11 @@ Rails.merge
     else if element.matches(Rails.submitable_forms)
       disable_inputs(element)
 
-#  Replace element's html with the 'data-disable-with' after storing original html
+#  Replace element's html with the 'data-disable_with' after storing original html
 #  and prevent clicking on it
 disable_link = (element) ->
   return if Rails.get(element, 'ujs:disabled') or element.hasAttribute('disabled')
-  new_text = element.getAttribute('data-disable-with')
+  new_text = element.getAttribute('data-disable_with')
   if new_text?
     Rails.set(element, 'ujs:enable-with', element.innerHTML) # store enabled state
     element.innerHTML = new_text
@@ -46,14 +46,14 @@ enable_link = (element) ->
 
 # Disables form elements:
 #  - Caches element value in 'ujs:enable-with' data store
-#  - Replaces element text with value of 'data-disable-with' attribute
+#  - Replaces element text with value of 'data-disable_with' attribute
 #  - Sets disabled property to true
 disable_inputs = (form) ->
   Rails.form_elements(form, Rails.disableable_inputs).forEach(disable_input)
 
 disable_input = (element) ->
   return if Rails.get(element, 'ujs:disabled') or element.hasAttribute('disabled')
-  new_text = element.getAttribute('data-disable-with')
+  new_text = element.getAttribute('data-disable_with')
   if new_text?
     if element.matches('button')
       Rails.set(element, 'ujs:enable-with', element.innerHTML)

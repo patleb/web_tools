@@ -42,13 +42,13 @@ describe('Rails UJS Disable', () => {
     }})
   })
 
-  it('should disable non-remote link and replace inner text with "data-disable-with" attribute', async () => {
+  it('should disable non-remote link and replace inner text with "data-disable_with" attribute', async () => {
     assert.total(9)
-    rails.assert_enabled({ target: dom.find('a[data-disable-with]') })
-    await rails.click('a[data-disable-with]', { 'click': (event) => {
+    rails.assert_enabled({ target: dom.find('a[data-disable_with]') })
+    await rails.click('a[data-disable_with]', { 'click': (event) => {
       rails.assert_disabled_with(event, 'Click me', 'Processing...')
     }})
-    await rails.click('a[data-disable-with]', { skip: 'click', 'ujs:everythingStopped': (event) => {
+    await rails.click('a[data-disable_with]', { skip: 'click', 'ujs:everythingStopped': (event) => {
       rails.assert_disabled_with(event, 'Click me', 'Processing...')
     }})
   })
@@ -63,10 +63,10 @@ describe('Rails UJS Disable', () => {
 
   it('should not disable link with insignificant clicks', async () => {
     assert.total(4)
-    await rails.click('a[data-disable-with]', { metaKey: true, 'ujs:meta-click': (event) => {
+    await rails.click('a[data-disable_with]', { metaKey: true, 'ujs:meta-click': (event) => {
       rails.assert_enabled(event)
     }})
-    await rails.click('a[data-disable-with]', { button: 1, 'ujs:meta-click': (event) => {
+    await rails.click('a[data-disable_with]', { button: 1, 'ujs:meta-click': (event) => {
       rails.assert_enabled(event)
     }})
   })

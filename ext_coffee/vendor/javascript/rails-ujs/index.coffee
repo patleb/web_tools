@@ -1,6 +1,6 @@
 window.Rails =
   # Link elements bound by rails-ujs
-  clickable_links: 'a[data-confirm], a[data-remote]:not([disabled]), a[data-disable-with], a[data-disable]'
+  clickable_links: 'a[data-confirm], a[data-remote]:not([disabled]), a[data-disable_with], a[data-disable]'
 
   # Button elements bound by rails-ujs
   clickable_buttons:
@@ -17,13 +17,13 @@ window.Rails =
   clickable_inputs: 'form:not([data-turbo=true]) input[type=submit], form:not([data-turbo=true]) input[type=image], form:not([data-turbo=true]) button[type=submit], form:not([data-turbo=true]) button:not([type]), input[type=submit][form], input[type=image][form], button[type=submit][form], button[form]:not([type])',
 
   # Form input elements disabled during form submission
-  disableable_inputs: 'input[data-disable-with]:enabled, button[data-disable-with]:enabled, textarea[data-disable-with]:enabled, input[data-disable]:enabled, button[data-disable]:enabled, textarea[data-disable]:enabled'
+  disableable_inputs: 'input[data-disable_with]:enabled, button[data-disable_with]:enabled, textarea[data-disable_with]:enabled, input[data-disable]:enabled, button[data-disable]:enabled, textarea[data-disable]:enabled'
 
   # Form input elements re-enabled after form submission
-  enableable_inputs: 'input[data-disable-with]:disabled, button[data-disable-with]:disabled, textarea[data-disable-with]:disabled, input[data-disable]:disabled, button[data-disable]:disabled, textarea[data-disable]:disabled'
+  enableable_inputs: 'input[data-disable_with]:disabled, button[data-disable_with]:disabled, textarea[data-disable_with]:disabled, input[data-disable]:disabled, button[data-disable]:disabled, textarea[data-disable]:disabled'
 
   # Link onClick disable selector with possible re-enable after remote submission
-  disableable_links: 'a[data-disable-with], a[data-disable]'
+  disableable_links: 'a[data-disable_with], a[data-disable]'
 
   # Button onClick disable selector with possible re-enable after remote submission
-  disableable_buttons: 'button[data-remote][data-disable-with], button[data-remote][data-disable]'
+  disableable_buttons: 'button[data-remote][data-disable_with], button[data-remote][data-disable]'
