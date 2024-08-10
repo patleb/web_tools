@@ -237,7 +237,7 @@ module ActionView::Helpers::TagHelper
 
   def label_options_content(options, content)
     id = options[:for]
-    as = "#{@_form_as}_" if @_form_as
+    as = "#{@_form_as}_" if @_form_as && options.delete(:as) != false
     if as && id && !id.start_with?(as)
       id = "#{as}#{id}"
     end
