@@ -211,10 +211,12 @@ module ActionView::Helpers::TagHelper
 
   def form_before(options)
     @_form_as = options.delete(:as)
+    @_form_object = ivar("@#{@_form_as}") if @_form_as
   end
 
   def form_after(_options, content)
-    @_form_as = nil
+    remove_ivar(:@_form_as)
+    remove_ivar(:@_form_object)
     content
   end
 
@@ -225,40 +227,58 @@ module ActionView::Helpers::TagHelper
       timezone_tag = input_(type: 'hidden', name: '_timezone', value: Current.timezone.to_s)
       tags = tags.present? ? tags + timezone_tag : timezone_tag
     end
+    if @_form_object
+      options[:id] ||= dom_id(@_form_object)
+      options[:class] ||= dom_class(@_form_object)
+    end
     options[:role] ||= 'form'
     [tags, content]
   end
 
   def label_options_content(options, content)
     id = options[:for]
-    as = "#{@_form_as}_"
-    id = "#{as}#{id}" if @_form_as && id && !id.start_with?(as)
+    as = "#{@_form_as}_" if @_form_as
+    if as && id && !id.start_with?(as)
+      id = "#{as}#{id}"
+    end
     options[:for] = sanitize_to_id(id) if id.present?
     content
   end
 
   def input_options_content(options, content)
-    name = options[:name]
-    as = "#{@_form_as}["
-    options[:name] = "#{as}#{name}]" if @_form_as && name && !name.start_with?(as)
-    id = options[:id].presence || options[:name]
-    options[:id] = sanitize_to_id(id) if id.present?
+    object, name = set_object_name_and_id(options)
     options[:'aria-label'] ||= options[:placeholder]
     case options[:type].to_s
     when 'submit'
+      submit = true
       options[:name] ||= 'commit'
       set_default_disable_with(options[:value], options) if options[:value].present?
     when 'hidden'
       options[:autocomplete] ||= 'off'
     end
+    options[:value] = object.public_send(name) if object && !submit
     content
   end
 
   def select_options_content(options, content)
-    name = options[:name]
-    id = options[:id].presence || name
-    options[:name] = "#{name}[]" if name.present? && options[:multiple] == true && !name.end_with?("[]")
-    options[:id] = sanitize_to_id(id) if id.present?
+    set_object_name_and_id(options)
     content
+  end
+
+  def set_object_name_and_id(options)
+    name = options[:name]
+    if name
+      as = "#{@_form_as}[" if @_form_as && options.delete(:as) != false
+      if as && !name.start_with?('_', as)
+        object = @_form_object
+        options[:name] = "#{as}#{name}]"
+      end
+      if options[:multiple] == true && !name.end_with?('[]')
+        options[:name] = "#{options[:name]}[]"
+      end
+    end
+    id = options[:id].presence || options[:name]
+    options[:id] = sanitize_to_id(id) if id.present?
+    [object, name]
   end
 end
