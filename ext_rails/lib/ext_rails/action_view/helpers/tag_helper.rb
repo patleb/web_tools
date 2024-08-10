@@ -127,21 +127,13 @@ module ActionView::Helpers::TagHelper
     content = h_(&content) if content.is_a? Proc
     content = h_(&block) if content.nil? && block_given?
     tag_options_content = "#{tag}_options_content"
-    content = send(tag_options_content, options, content) if respond_to? tag_options_content
+    content = send(tag_options_content, options, content) if respond_to? tag_options_content, true
     content = h_(content) if content.is_a? Array
     content = sanitize(content) if sanitized
 
     result = content_tag tag, content, options, (sanitized ? false : escape)
     result = [result] * times if times
     result
-  end
-
-  def extra_tags_for_form(html_options)
-    tags = super
-    return tags if html_options.delete('timezone') == false || html_options['method'] == 'get'
-    return tags unless ExtRails.config.css_only_support?
-    timezone_tag = input_(type: 'hidden', name: '_timezone', value: Current.timezone.to_s)
-    tags.present? ? tags + timezone_tag : timezone_tag
   end
 
   def merge_classes(options, classes)
@@ -207,9 +199,21 @@ module ActionView::Helpers::TagHelper
     content
   end
 
+  def button_options_content(options, content)
+    options[:name] ||= 'button'
+    options[:type] ||= 'submit'
+    content
+  end
+
   def form_options_content(options, content)
-    options = html_options_for_form(options.delete(:action) || '', options)
-    [extra_tags_for_form(options), content]
+    options.replace html_options_for_form(options.delete(:action) || '', options)
+    tags = extra_tags_for_form(options)
+    unless options.delete('timezone') == false || options['method'] == 'get' || ExtRails.config.css_only_support?
+      timezone_tag = input_(type: 'hidden', name: '_timezone', value: Current.timezone.to_s)
+      tags = tags.present? ? tags + timezone_tag : timezone_tag
+    end
+    options[:role] ||= 'form'
+    [tags, content]
   end
 
   def label_options_content(options, content)
@@ -221,6 +225,14 @@ module ActionView::Helpers::TagHelper
   def input_options_content(options, content)
     id = options[:id].presence || options[:name]
     options[:id] = sanitize_to_id(id) if id.present?
+    options[:'aria-label'] ||= options[:placeholder]
+    case options[:type].to_s
+    when 'submit'
+      options[:name] ||= 'commit'
+      set_default_disable_with(options[:value], options) if options[:value].present?
+    when 'hidden'
+      options[:autocomplete] ||= 'off'
+    end
     content
   end
 
