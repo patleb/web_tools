@@ -124,12 +124,16 @@ module ActionView::Helpers::TagHelper
     escape = options.has_key?(:escape) ? options.delete(:escape) : true
     times = options.delete(:times) if options.has_key? :times
     content = options.delete(:text) if options.has_key? :text
+    tag_before = "#{tag}_before"
+    send(tag_before, options) if respond_to? tag_before, true
     content = h_(&content) if content.is_a? Proc
     content = h_(&block) if content.nil? && block_given?
     tag_options_content = "#{tag}_options_content"
     content = send(tag_options_content, options, content) if respond_to? tag_options_content, true
     content = h_(content) if content.is_a? Array
     content = sanitize(content) if sanitized
+    tag_after = "#{tag}_after"
+    content = send(tag_after, options, content) if respond_to? tag_after, true
 
     result = content_tag tag, content, options, (sanitized ? false : escape)
     result = [result] * times if times
@@ -205,6 +209,15 @@ module ActionView::Helpers::TagHelper
     content
   end
 
+  def form_before(options)
+    @_form_as = options.delete(:as)
+  end
+
+  def form_after(_options, content)
+    @_form_as = nil
+    content
+  end
+
   def form_options_content(options, content)
     options.replace html_options_for_form(options.delete(:action) || '', options)
     tags = extra_tags_for_form(options)
@@ -218,11 +231,16 @@ module ActionView::Helpers::TagHelper
 
   def label_options_content(options, content)
     id = options[:for]
+    as = "#{@_form_as}_"
+    id = "#{as}#{id}" if @_form_as && id && !id.start_with?(as)
     options[:for] = sanitize_to_id(id) if id.present?
     content
   end
 
   def input_options_content(options, content)
+    name = options[:name]
+    as = "#{@_form_as}["
+    options[:name] = "#{as}#{name}]" if @_form_as && name && !name.start_with?(as)
     id = options[:id].presence || options[:name]
     options[:id] = sanitize_to_id(id) if id.present?
     options[:'aria-label'] ||= options[:placeholder]
