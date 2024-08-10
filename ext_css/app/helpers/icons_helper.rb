@@ -3,18 +3,25 @@
 module IconsHelper
   SVG_BEGIN = /^\s*<svg [^>]+>\s*/
   SVG_END = /\s*<\/svg>\s*$/
-  SVG_ATTRIBUTES = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', height: 16, width: 16, viewBox: '0 0 16 16', 'aria-hidden': true }
+  SVG_OPTIONS = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', height: 16, width: 16, viewBox: '0 0 16 16', 'aria-hidden': true }
 
   # https://icons.getbootstrap.com/
-  def icon(name, **options)
-    name, *classes = name.split('.')
-    name = name.to_s.dasherize
+  def icon(name, tag: nil, svg: {}, **options)
+    name, *classes = name.to_s.split('.')
+    name = name.dasherize
     options[:class] = merge_classes(options, classes)
     text = (@@_icon ||= {})[name] ||= begin
       Pathname.new("node_modules/bootstrap-icons/icons/#{name}.svg").read.sub!(SVG_BEGIN, '').sub!(SVG_END, '').html_safe
     end
-    svg_attributes = SVG_ATTRIBUTES.merge(options[:svg] || {})
-    i_(svg_(text, svg_attributes), options.except(:svg))
+    svg_options = SVG_OPTIONS.merge(svg)
+    case tag
+    when false
+      svg_(text, svg_options)
+    when nil
+      i_(svg_(text, svg_options), options)
+    else
+      with_tag(tag, svg_(text, svg_options), options)
+    end
   end
 
   def ascii(name, times: nil)
