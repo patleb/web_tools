@@ -1,4 +1,4 @@
-module PagesHelper
+module PageHelper
   class TypeAlreadyInUse < StandardError; end
 
   TYPES_MAPPING = MixPage.config.available_field_types.keys.each_with_object({}) do |name, types|
@@ -83,7 +83,7 @@ module PagesHelper
     page_presenter(*args, layout: false, multi: true)
   end
 
-  def page_presenter(name, type, layout: false, multi: false) # TODO allow multiple types
+  def page_presenter(name, type, layout: false, multi: false)
     return unless @page
     name = name.to_s
     (((((@memoized ||= {})[:page_presenter] ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
