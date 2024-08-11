@@ -229,7 +229,7 @@ module ActionView::Helpers::TagHelper
     end
     if @_form_object
       options[:id] ||= dom_id(@_form_object)
-      options[:class] ||= dom_class(@_form_object)
+      options[:class] = merge_classes(options, dom_class(@_form_object))
     end
     options[:role] ||= 'form'
     [tags, content]
