@@ -1,7 +1,6 @@
 packages:
   - '@tailwindcss/aspect-ratio'
   - '@tailwindcss/forms'
-  - '@tailwindcss/line-clamp'
   - '@tailwindcss/typography'
   - 'tailwindcss'
   - 'bootstrap-icons'
