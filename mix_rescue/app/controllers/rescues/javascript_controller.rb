@@ -29,10 +29,5 @@ module Rescues
     def set_format
       request.format = :json
     end
-
-    def browser_bot?
-      browser = USER_AGENT_PARSER.parse(request.user_agent).browser_array
-      browser[UA[:name]] == 'HeadlessChrome' || browser[UA[:hw_brand]] == 'Spider'
-    end
   end
 end

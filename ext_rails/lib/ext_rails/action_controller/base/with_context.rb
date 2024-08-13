@@ -14,6 +14,14 @@ module ActionController::Base::WithContext
 
   protected
 
+  def browser_bot?
+    user_agent[UA[:name]] == 'HeadlessChrome' || user_agent[UA[:hw_brand]] == 'Spider'
+  end
+
+  def user_agent
+    @user_agent ||= USER_AGENT_PARSER.parse(request.user_agent).browser_array
+  end
+
   def set_current
     Current.controller = self
     Current.session_id ||= session.try(:id)
