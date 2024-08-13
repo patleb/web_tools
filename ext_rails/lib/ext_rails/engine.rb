@@ -33,6 +33,7 @@ module ExtRails
     require 'rounding'
     require 'stateful_enum'
     require 'rails-i18n'
+    require 'user_agent_parser'
     if Rails.env.development?
       require 'i18n/debug'
       require 'null_logger'
@@ -54,6 +55,7 @@ module ExtRails
     require 'ext_rails/rails/engine'
     require 'ext_rails/rails/initializable/initializer'
     require 'ext_rails/routes'
+    require 'ext_rails/user_agent_parser/user_agent'
 
     config.before_configuration do |app|
       require 'ext_rails/action_dispatch/routing/mapper/resources'
@@ -198,7 +200,7 @@ module ExtRails
       require 'ext_rails/active_record/tasks/database_tasks/with_single_env'
       require 'ext_rails/active_record/type/json/with_indifferent_access'
       require 'ext_rails/active_record/type/encrypted'
-
+      ::USER_AGENT_PARSER = UserAgentParser::Parser.new
       ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables = Rails.env.test?
     end
 
