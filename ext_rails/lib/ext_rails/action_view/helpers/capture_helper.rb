@@ -19,12 +19,12 @@ module ActionView::Helpers
     end
 
     def append(name, content = nil, &)
-      content = capture(&block) if block_given?
+      content = capture(&) if block_given?
       add_instruction_to_area name, :push, content
     end
 
     def prepend(name, content = nil, &)
-      content = capture(&block) if block_given?
+      content = capture(&) if block_given?
       add_instruction_to_area name, :unshift, content
     end
 
