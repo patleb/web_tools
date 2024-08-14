@@ -110,6 +110,8 @@ class Turbolinks.Controller
             option.toggleAttribute('selected', option.selected)
         when 'radio', 'checkbox'
           input.toggleAttribute('checked', input.checked)
+        when 'password'
+          # do nothing
         else
           input.setAttribute('value', input.value)
 
