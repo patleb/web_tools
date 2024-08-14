@@ -7,7 +7,7 @@ class LibController < ActionController::Base
   protected
 
   def application_path
-    self.class.cvar(:@@application_path){ main_app.try(:root_path) || '/' }
+    self.class.ivar(:@application_path){ main_app.try(:root_path) || '/' }
   end
   helper_method :application_path
 
