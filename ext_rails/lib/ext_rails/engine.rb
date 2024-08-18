@@ -118,6 +118,8 @@ module ExtRails
     end
 
     initializer 'ext_rails.i18n' do |app|
+      require 'ext_rails/active_support/i18n'
+
       (app.config.i18n.available_locales & %i(es fr it kk nb pt_br tr)).each do |locale|
         require "ext_rails/active_support/inflections/#{locale}"
       end
