@@ -26,11 +26,11 @@ module ActionController::Base::WithContext
     Current.controller = self
     Current.session_id ||= session[:session_id]
     Current.request_id ||= request.uuid
-    set_locale
-    set_timezone
+    set_current_locale
+    set_current_timezone
   end
 
-  def set_locale
+  def set_current_locale
     locale = params[:_locale].presence || request.headers['X-Locale'].presence || cookies[:_locale].presence
     unless locale && I18n.available_locales.any?{ |l| l.to_s == locale }
       locale = session[:locale].presence || http_accept_language.compatible_language_from(I18n.available_locales)
@@ -40,7 +40,7 @@ module ActionController::Base::WithContext
     Current.locale = locale.to_sym
   end
 
-  def set_timezone
+  def set_current_timezone
     timezone = params[:_timezone].presence || request.headers['X-Timezone'].presence || cookies[:_timezone].presence
     timezone = timezone.to_i? ? timezone.to_i : timezone
     unless (timezone = Time.find_zone(timezone)&.name)

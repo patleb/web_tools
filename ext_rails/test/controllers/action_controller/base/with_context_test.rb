@@ -1,7 +1,7 @@
 require './test/test_helper'
 
 class ActionController::Base::WithContextTest < ActionDispatch::IntegrationTest
-  describe '#set_locale' do
+  describe '#set_current_locale' do
     test 'default' do
       head '/'
       assert_response :ok
@@ -24,7 +24,7 @@ class ActionController::Base::WithContextTest < ActionDispatch::IntegrationTest
     end
   end
 
-  describe '#set_timezone' do
+  describe '#set_current_timezone' do
     test 'default' do
       head '/'
       assert_timezone 'UTC'
