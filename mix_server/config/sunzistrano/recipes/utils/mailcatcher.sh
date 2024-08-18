@@ -1,4 +1,4 @@
-gem install mailcatcher
+gem install mailcatcher --pre
 
 sun.copy '/etc/systemd/system/mailcatcher.service'
 
