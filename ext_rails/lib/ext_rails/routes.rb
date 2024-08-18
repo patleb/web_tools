@@ -22,6 +22,23 @@ module ExtRails
     end
 
     class_methods do
+      def method_missing(name, ...)
+        if name.end_with?('_url')
+          path_method = name.to_s.sub(/_url$/, '_path')
+          if respond_to? path_method
+            define_singleton_method(name) do |**params|
+              url_for(public_send(path_method, **params))
+            end
+            return public_send(name, ...)
+          end
+        end
+        super
+      end
+
+      def respond_to_missing?(name, _include_private = false)
+        name.end_with?('_url') && respond_to?(name.to_s.sub(/_url$/, '_path')) || super
+      end
+
       def path?(value)
         if value.start_with? '/'
           value.match? %r{^#{root_path}(/|$|\?)}
