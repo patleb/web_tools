@@ -37,17 +37,17 @@ describe('Js.TagConcept', () => {
     })
   })
 
-  describe('#h_if', () => {
+  describe('#if_', () => {
     it('should print if condition is true', () => {
-      assert.equal(safe_values.first(), h_if(true, safe_values.first()))
-      assert.equal('', h_if(false, values.first()))
+      assert.equal(safe_values.first(), if_(true, safe_values.first()))
+      assert.equal('', if_(false, values.first()))
     })
   })
 
-  describe('#h_unless', () => {
+  describe('#unless_', () => {
     it('should print unless condition is true', () => {
-      assert.equal(safe_values.first(), h_unless(false, safe_values.first()))
-      assert.equal('', h_unless(true, safe_values.first()))
+      assert.equal(safe_values.first(), unless_(false, safe_values.first()))
+      assert.equal('', unless_(true, safe_values.first()))
     })
   })
 

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+MonkeyPatch.add{['actionview', 'lib/action_view/helpers/form_tag_helper.rb', 'c826b5f24f8340f9667b4596c75f2ffceb3dc052d859a60b8a9fc91956ecb17e']}
+
 module ActionView::Helpers::TagHelper
   HTML5_TAGS = Set.new(%w(
     a abbr address area article aside audio
@@ -73,12 +75,25 @@ module ActionView::Helpers::TagHelper
   end
   alias_method :h_, :capture
 
-  def h_if(is_true, *values, &block)
+  def if_(is_true, *values, &block)
+    @_if ||= is_true
     return unless continue(if: is_true)
     h_(*values, &block)
   end
 
-  def h_unless(is_false, *values, &block)
+  def elsif_(is_true, *, &)
+    raise 'must call "if_" before' unless defined? @_if
+    if_(!@_if && is_true, *, &)
+  end
+
+  def else_(*, &)
+    raise 'must call "if_" before' unless defined? @_if
+    if_(!@_if, *, &)
+  ensure
+    remove_ivar(:@_if)
+  end
+
+  def unless_(is_false, *values, &block)
     return unless continue(unless: is_false)
     h_(*values, &block)
   end
@@ -256,7 +271,7 @@ module ActionView::Helpers::TagHelper
     when 'hidden'
       options[:autocomplete] ||= 'off'
     end
-    options[:value] = object.public_send(name) if object && !submit
+    options[:value] = object.public_send(name) if object && !submit && !name.start_with?('password')
     content
   end
 

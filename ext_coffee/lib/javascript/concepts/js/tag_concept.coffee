@@ -15,8 +15,8 @@ class Js.TagConcept
 
   ready_once: ->
     window.h_ = @h_
-    window.h_if = @h_if
-    window.h_unless = @h_unless
+    window.if_ = @if_
+    window.unless_ = @unless_
     @HTML_TAGS.each (tag) => @define_tag(tag)
 
   define: (tags...) ->
@@ -36,11 +36,11 @@ class Js.TagConcept
     values = values.join('')
     values.html_safe(true)
 
-  h_if: (is_true, values...) =>
+  if_: (is_true, values...) =>
     return '' unless @continue(if: is_true)
     @h_(values...)
 
-  h_unless: (is_true, values...) =>
+  unless_: (is_true, values...) =>
     return '' unless @continue(unless: is_true)
     @h_(values...)
 

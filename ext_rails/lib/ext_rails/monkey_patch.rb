@@ -15,6 +15,7 @@ module MonkeyPatch
         errors[path] = checksum if checksum != checksum_was
       end
     end
-    raise "\n#{errors.map{ |(path, checksum)| "#{path}: #{checksum}" }.join("\n")}" unless errors.empty?
+    return if errors.empty?
+    raise "\n#{errors.map{ |(path, checksum)| "#{path}: #{checksum}" }.join("\n")}\ncount: #{errors.size}"
   end
 end
