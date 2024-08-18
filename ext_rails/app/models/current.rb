@@ -1,6 +1,6 @@
 class Current < ActiveSupport::CurrentAttributes
   attribute :controller, :controller_was
-  attribute :session_id, :request_id, :referer
+  attribute :session_id, :request_id
   attribute :locale, :timezone
   attribute :theme
   attribute :view
