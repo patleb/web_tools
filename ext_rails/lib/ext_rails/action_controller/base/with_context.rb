@@ -24,7 +24,7 @@ module ActionController::Base::WithContext
 
   def set_current
     Current.controller = self
-    Current.session_id ||= session.try(:id)
+    Current.session_id ||= session[:session_id]
     Current.request_id ||= request.uuid
     set_locale
     set_timezone
