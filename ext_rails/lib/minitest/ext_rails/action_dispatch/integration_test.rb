@@ -71,6 +71,8 @@ ActionDispatch::Integration::Session.class_eval do
   alias_method :old_process, :process
   def process(...)
     old_process(...)
+    Current.request_id = request.uuid
+    Current.session_id = session[:session_id]
     Current.controller = controller
     Current.view = controller.helpers
   end
@@ -80,5 +82,15 @@ Current.class_eval do
   def reset
     $test.current = attributes if $test.is_a? ActionDispatch::IntegrationTest
     super
+  end
+end
+
+ActionController::Base.class_eval do
+  alias_method :old_with_context, :with_context
+  def with_context
+    set_current
+    old_with_context do
+      yield
+    end
   end
 end
