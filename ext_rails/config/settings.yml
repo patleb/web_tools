@@ -10,6 +10,10 @@ shared:
   mail_from: noreply@email.example.com
   mail_address: localhost
   mail_port: 1025
+  mail_username: none
+  mail_password: none
+  mail_authentication: plain
+  mail_enable_starttls_auto: true
   pgstats_enabled: true
   backup_split_size: 4GB
   backup_dir: /opt/storage/backup
@@ -34,5 +38,7 @@ vagrant:
   backup_split_size: 4MB
 
 staging:
+  mail_authentication: login
 
 production:
+  mail_authentication: login

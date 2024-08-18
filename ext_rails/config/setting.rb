@@ -15,9 +15,7 @@ Setting.class_eval do
   end
 
   def self.smtp
-    { authentication: 'login',
-      enable_starttls_auto: true
-    }.merge!(slice(*%i(
+    slice(*%i(
       mail_address
       mail_port
       mail_domain
@@ -27,6 +25,6 @@ Setting.class_eval do
       mail_enable_starttls_auto
     )).to_h.transform_keys!{ |key|
       key.to_s.sub(/^mail_/, '').sub('user', 'user_').to_sym
-    })
+    }
   end
 end
