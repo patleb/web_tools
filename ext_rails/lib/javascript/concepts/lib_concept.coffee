@@ -26,7 +26,7 @@ class window.LibConcept
     if @notice()
       @clear_notice_timeout = setTimeout(=>
         @clear_alert(@notice())
-      , 3200)
+      , 8000)
 
   clear_alert: (alert) ->
     alert.setAttribute('checked', '')
