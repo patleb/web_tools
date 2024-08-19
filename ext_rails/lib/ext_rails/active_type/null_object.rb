@@ -8,5 +8,17 @@ module ActiveType
       return super unless ids.first.to_i == ID
       new
     end
+
+    def nil?
+      true
+    end
+
+    def present?
+      false
+    end
+
+    def blank?
+      true
+    end
   end
 end
