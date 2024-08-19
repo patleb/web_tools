@@ -5,7 +5,7 @@ ActionController::Base.class_eval do
   class_attribute :local
 
   include ActiveSupport::LazyLoadHooks::Autorun
-  include ActionController::Redirecting::WithQueryParams
+  include ActionController::Redirecting::WithStringUrl
   include self::WithContext
   include self::WithMemoization
   prepend self::BeforeRender
