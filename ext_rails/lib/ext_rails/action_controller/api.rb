@@ -1,4 +1,4 @@
-require 'ext_rails/action_controller/redirecting/with_query_params'
+require 'ext_rails/action_controller/redirecting/with_string_url'
 
 ActionController::API.class_eval do
   class_attribute :local

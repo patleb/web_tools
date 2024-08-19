@@ -1,5 +1,5 @@
 require_dir __FILE__, 'base'
-require 'ext_rails/action_controller/redirecting/with_query_params'
+require 'ext_rails/action_controller/redirecting/with_string_url'
 
 ActionController::Base.class_eval do
   class_attribute :local
