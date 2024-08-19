@@ -139,16 +139,14 @@ module ActionView::Helpers::TagHelper
     escape = options.has_key?(:escape) ? options.delete(:escape) : true
     times = options.delete(:times) if options.has_key? :times
     content = options.delete(:text) if options.has_key? :text
-    tag_before = "#{tag}_before"
-    send(tag_before, options) if respond_to? tag_before, true
+    form_before(options) if tag == 'form'
     content = h_(&content) if content.is_a? Proc
     content = h_(&block) if content.nil? && block_given?
     tag_options_content = "#{tag}_options_content"
     content = send(tag_options_content, options, content) if respond_to? tag_options_content, true
     content = h_(content) if content.is_a? Array
     content = sanitize(content) if sanitized
-    tag_after = "#{tag}_after"
-    content = send(tag_after, options, content) if respond_to? tag_after, true
+    content = form_after(options, content) if tag == 'form'
 
     result = content_tag tag, content, options, (sanitized ? false : escape)
     result = [result] * times if times
@@ -229,12 +227,6 @@ module ActionView::Helpers::TagHelper
     @_form_object = ivar("@#{@_form_as}") if @_form_as
   end
 
-  def form_after(_options, content)
-    remove_ivar(:@_form_as)
-    remove_ivar(:@_form_object)
-    content
-  end
-
   def form_options_content(options, content)
     options.replace html_options_for_form(options.delete(:action) || '', options)
     tags = extra_tags_for_form(options)
@@ -248,6 +240,12 @@ module ActionView::Helpers::TagHelper
     end
     options[:role] ||= 'form'
     [tags, content]
+  end
+
+  def form_after(_options, content)
+    remove_ivar(:@_form_as)
+    remove_ivar(:@_form_object)
+    content
   end
 
   def label_options_content(options, content)
