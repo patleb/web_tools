@@ -223,8 +223,13 @@ module ActionView::Helpers::TagHelper
   end
 
   def form_before(options)
-    @_form_as = options.delete(:as)
-    @_form_object = ivar("@#{@_form_as}") if @_form_as
+    if (as = options.delete(:as)).respond_to? :model_name
+      @_form_as = as.model_name.param_key
+      @_form = as
+    elsif as
+      @_form_as = as
+      @_form = ivar("@#{as}")
+    end
   end
 
   def form_options_content(options, content)
@@ -234,9 +239,10 @@ module ActionView::Helpers::TagHelper
       timezone_tag = input_(type: 'hidden', name: '_timezone', value: Current.timezone.to_s)
       tags = tags.present? ? tags + timezone_tag : timezone_tag
     end
-    if @_form_object
-      options[:id] ||= dom_id(@_form_object)
-      options[:class] = merge_classes(options, dom_class(@_form_object))
+    if @_form
+      action = @_form.persisted? ? :edit : :new
+      options[:id] ||= dom_id(@_form, action)
+      options[:class] = merge_classes(options, dom_class(@_form, action))
     end
     options[:role] ||= 'form'
     [tags, content]
@@ -244,7 +250,7 @@ module ActionView::Helpers::TagHelper
 
   def form_after(_options, content)
     remove_ivar(:@_form_as)
-    remove_ivar(:@_form_object)
+    remove_ivar(:@_form)
     content
   end
 
@@ -283,7 +289,7 @@ module ActionView::Helpers::TagHelper
     if name
       as = "#{@_form_as}[" if @_form_as && options.delete(:as) != false
       if as && !name.start_with?('_', as)
-        object = @_form_object
+        object = @_form
         options[:name] = "#{as}#{name}]"
       end
       if options[:multiple] == true && !name.end_with?('[]')
