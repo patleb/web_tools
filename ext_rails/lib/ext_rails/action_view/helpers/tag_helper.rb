@@ -275,7 +275,7 @@ module ActionView::Helpers::TagHelper
     when 'hidden'
       options[:autocomplete] ||= 'off'
     end
-    options[:value] = object.public_send(name) if !submit && object && !name.start_with?('password')
+    options[:value] = object.public_send(name) if !submit && object && name && !name.start_with?('password')
     content
   end
 

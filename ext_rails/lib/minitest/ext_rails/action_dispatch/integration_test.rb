@@ -83,3 +83,13 @@ Current.class_eval do
     old_reset
   end
 end
+
+ActionController::Base.class_eval do
+  alias_method :old_with_context, :with_context
+  def with_context
+    set_current
+    old_with_context do
+      yield
+    end
+  end
+end
