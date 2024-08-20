@@ -1,6 +1,4 @@
 ActionDispatch::IntegrationTest.class_eval do
-  include Devise::Test::IntegrationHelpers if defined? Devise
-
   class TestMethodAlreadyDefined < ::StandardError; end
 
   attr_accessor :current
@@ -59,8 +57,9 @@ ActionDispatch::IntegrationTest.class_eval do
         next unless ExtRails::TestController.method_defined? method_name
         ExtRails::TestController.remove_method method_name
       end
-      self.current = nil
+      self.current = :teardown
       self.result = nil
+      Current.reset
       super
     end
   end
@@ -71,26 +70,16 @@ ActionDispatch::Integration::Session.class_eval do
   alias_method :old_process, :process
   def process(...)
     old_process(...)
-    Current.request_id = request.uuid
-    Current.session_id = session[:session_id]
-    Current.controller = controller
-    Current.view = controller.helpers
+    Current.instance.ivar(:@attributes, $test.current)
   end
 end
 
 Current.class_eval do
+  alias_method :old_reset, :reset
   def reset
-    $test.current = attributes if $test.is_a? ActionDispatch::IntegrationTest
-    super
-  end
-end
-
-ActionController::Base.class_eval do
-  alias_method :old_with_context, :with_context
-  def with_context
-    set_current
-    old_with_context do
-      yield
+    if $test.is_a? ActionDispatch::IntegrationTest
+      $test.current = ($test.current == :teardown) ? nil : attributes
     end
+    old_reset
   end
 end

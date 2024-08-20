@@ -19,8 +19,4 @@ ActiveSupport::TestCase.class_eval do
     $test = self
     super
   end
-
-  after do
-    Current.reset
-  end
 end
