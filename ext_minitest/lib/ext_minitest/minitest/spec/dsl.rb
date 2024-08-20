@@ -2,6 +2,12 @@
 # https://github.com/grosser/maxitest
 # https://github.com/metaskills/minitest-spec-rails
 
+Minitest::Skip.class_eval do
+  def backtrace
+    []
+  end
+end
+
 Minitest::Spec::DSL.class_eval do
   remove_method :before
   remove_method :after
