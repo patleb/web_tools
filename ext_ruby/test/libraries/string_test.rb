@@ -43,6 +43,7 @@ class StringTest < Minitest::TestCase
     assert_equal ['  a',' ab','abc','bc '], 'abc'.trigrams.to_a
     assert_equal ['  a',' ab','ab '], 'ab'.trigrams.to_a
     assert_equal ['  a',' a '], 'a'.trigrams.to_a
+    assert_equal 1.0, token.similarity('lions et éléphants')
     assert_equal 1.0, token.similarity(token)
     assert_equal 0.0, token.similarity('')
     assert_equal 0.55556, token.similarity('éléphants').round(5)
