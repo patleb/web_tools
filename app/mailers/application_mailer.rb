@@ -1,3 +1,3 @@
-class ApplicationMailer < MainMailer
+class ApplicationMailer < LibMailer
   layout 'mailer'
 end
