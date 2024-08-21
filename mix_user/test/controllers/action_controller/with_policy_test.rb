@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 module ActionController
   class WithPolicyTest < ActionDispatch::IntegrationTest

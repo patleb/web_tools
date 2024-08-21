@@ -1,7 +1,37 @@
-class User < MixUser.config.parent_model.constantize
+class User < LibMainRecord
   has_userstamp
+  has_secure_password
 
-  devise *MixUser.config.devise_modules
+  generates_token_for :verified, expires_in: MixUser.config.verification_expires_in do
+    email
+  end
+
+  generates_token_for :password, expires_in: MixUser.config.reset_expires_in do
+    password_salt.last(10)
+  end
+
+  generates_token_for :deleted, expires_in: MixUser.config.restore_expires_in do
+    deleted_at
+  end
+
+  scope :unverified, -> { where(verified_at: nil) }
+  scope :verified,   -> { where.not(verified_at: nil) }
+
+  has_many :user_sessions, dependent: :destroy
+  has_one  :session, -> { current }, class_name: 'UserSession'
+
+  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :password, allow_nil: true, length: { minimum: MixUser.config.min_password_length }
+
+  normalizes :email, with: ->(email) { email.strip.downcase }
+
+  before_validation if: :email_changed?, on: :update do
+    self.verified_at = nil
+  end
+
+  after_update :delete_other_sessions, if: -> { password_digest_previously_changed? || verified_at_previously_changed? }
+
+  after_discard :unverified!
 
   scope :visible_roles, -> (user) { where(column(:role) <= roles[user.as_role]) }
 
@@ -10,10 +40,6 @@ class User < MixUser.config.parent_model.constantize
   alias_method :user_id, :id
 
   enum role: MixUser.config.available_roles
-
-  before_validation :set_login, if: :email_changed?
-
-  after_discard :scramble_email_and_password
 
   validates :role, presence: true, exclusion: { in: ['null'] }
   validate  :check_deployer, if: :deployer?
@@ -48,12 +74,36 @@ class User < MixUser.config.parent_model.constantize
     record.try(:user_id) == id
   end
 
-  def active_for_authentication?
-    super && !discarded?
+  def create_session!(ip_address:, user_agent:)
+    user_sessions.create! cookie_id: Current.session_id, ip_address: ip_address, user_agent: user_agent
   end
 
-  def confirmed?
-    !!confirmed_at
+  def active?
+    verified? && !discarded?
+  end
+
+  def inactive?
+    !active?
+  end
+
+  def verified!
+    update! verified_email: email, verified_at: Time.current
+  end
+
+  def unverified!
+    update! verified_at: nil
+  end
+
+  def verified?
+    !!verified_at
+  end
+
+  def unverified?
+    !verified_at
+  end
+
+  def delete_other_sessions
+    user_sessions.other.delete_all
   end
 
   def role_i
@@ -74,28 +124,7 @@ class User < MixUser.config.parent_model.constantize
     end
   end
 
-  protected
-
-  def password_required?
-    !persisted? || password.present? || password_confirmation.present?
-  end
-
   private
-
-  def set_login
-    # for now force login to be same as email, eventually we will make this configurable, etc.
-    self.login ||= email if email
-  end
-
-  def scramble_email_and_password
-    return true unless MixUser.config.scramble_on_discard
-
-    self.email = SecureRandom.uuid + "@example.net"
-    self.login = email
-    self.password = SecureRandom.hex(8)
-    self.password_confirmation = password
-    save
-  end
 
   def check_deployer
     unless Setting[:authorized_keys].any?{ |key| key.split(' ').last == email }

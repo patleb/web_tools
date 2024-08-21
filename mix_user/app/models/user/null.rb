@@ -20,4 +20,20 @@ class User::Null < ActiveType::NullObject
   def has?(_record)
     false
   end
+
+  def active?
+    false
+  end
+
+  def inactive?
+    !active?
+  end
+
+  def verified?
+    true
+  end
+
+  def unverified?
+    !verified?
+  end
 end

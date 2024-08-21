@@ -1,0 +1,32 @@
+.lib_layout {
+  .nav_sidebar {
+    @apply pb-2;
+
+    .user_logout {
+      @apply pl-4;
+    }
+  }
+}
+
+.users_layout {
+  .card {
+    @apply bg-base-200 shadow-xl rounded-none max-w-lg mx-auto overflow-y-auto min-h-fit flex items-center justify-center p-5;
+
+    .card-title {
+      @apply pb-5;
+    }
+    form {
+      @apply flex flex-col items-center gap-2 max-w-md;
+
+      .tooltip {
+        @apply flex tooltip-right;
+      }
+      .btn {
+        @apply mr-auto mt-2;
+      }
+    }
+    .card-actions {
+      @apply flex flex-col items-stretch py-2 w-full bg-base-200;
+    }
+  }
+}

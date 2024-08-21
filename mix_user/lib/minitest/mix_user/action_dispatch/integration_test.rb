@@ -1,3 +1,13 @@
 ActionDispatch::IntegrationTest.class_eval do
-  include Devise::Test::IntegrationHelpers if defined? Devise
+  alias_method :run_without_clear_users, :run
+  def run(...)
+    result = run_without_clear_users(...)
+    clear_users unless use_transactional_tests
+    result
+  end
+
+  def clear_users
+    UserSession.delete_all
+    User.unscoped.delete_all
+  end
 end

@@ -6,7 +6,7 @@ module Current::WithUser
     attribute :role
 
     def logged_in?
-      user && user.id > ActiveType::NullObject::ID
+      !user.nil?
     end
 
     User.roles.each_key do |role_name|

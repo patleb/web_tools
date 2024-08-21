@@ -1,2 +1,7 @@
+packages:
+
 gems:
-  - 'mix_template'
+
+tailwind:
+  - '@@mix_user/app/helpers/**/*.rb'
+  - '@@mix_user/app/views/**/*.html.{erb,ruby}'

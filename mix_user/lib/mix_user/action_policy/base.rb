@@ -32,22 +32,67 @@ module ActionPolicy
       self.class::Scope.new(user, relation).resolve
     end
 
+    def index?
+      false
+    end
+
+    def export?
+      false
+    end
+
+    def show?
+      false
+    end
+
+    def new?
+      false
+    end
+
+    def edit?
+      false
+    end
+
+    def sort?
+      listable? && edit?
+    end
+
+    def delete?
+      false
+    end
+
+    def trash?
+      discardable? && delete?
+    end
+
+    def restore?
+      trash?
+    end
+
     protected
+
+    def discardable?
+      relation.discardable?
+    end
+
+    def listable?
+      relation.listable?
+    end
 
     def record
       object if record?
     end
 
     def record?
-      !relation?
+      !relation
     end
 
     def relation
-      relation? ? object : object.class
+      return @relation if defined? @relation
+      @relation = object.is_a?(Class) ? object : object.class
     end
 
     def relation?
-      object.is_a? Class
+      !!relation
     end
 
     def role

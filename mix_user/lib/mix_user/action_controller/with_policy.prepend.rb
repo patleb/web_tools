@@ -1,9 +1,16 @@
 module ActionController::WithPolicy
   extend ActiveSupport::Concern
 
-  included do
-    helper_method :policy_scope
-    helper_method :policy
+  prepended do
+    if respond_to? :helper_method
+      helper_method :can?
+      helper_method :policy_scope
+      helper_method :policy
+    end
+  end
+
+  def can?(object, action = action_name)
+    policy(object).public_send("#{action}?")
   end
 
   def policy_scope(relation)
@@ -19,16 +26,33 @@ module ActionController::WithPolicy
 
   def policy(object)
     (@_policy ||= {})[object] ||= begin
-      policy = if object.nil?
-        ApplicationPolicy
-      else
+      policy = if object
         klass = object.is_a?(Class) ? object : object.class
         "#{klass.name}Policy".to_const ||
           "#{klass.superclass.name}Policy".to_const ||
           "#{klass.base_class.name}Policy".to_const ||
           ApplicationPolicy
+      else
+        ApplicationPolicy
       end
-      policy.new(current_user, object)
+      policy.new(Current.user, object)
     end
+  end
+
+  protected
+
+  def set_current
+    super
+    set_current_role
+  end
+
+  def set_current_role
+    role = params[:_role].presence || request.headers['X-Role'].presence || cookies[:_role].presence
+    unless User.roles.has_key? role
+      role = session[:role].presence || Current.user.role
+    end
+    role ||= :null
+    session[:role] = cookies[:_role] = role.to_s
+    Current.role = role.to_sym
   end
 end

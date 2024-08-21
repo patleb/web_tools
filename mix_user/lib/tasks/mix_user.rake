@@ -1,9 +1,9 @@
 namespace :user do
   desc 'create user'
-  task :create, [:email, :password, :role, :confirmed] => :environment do |t, args|
+  task :create, [:email, :password, :role, :verified] => :environment do |t, args|
     attributes = { email: args[:email], password: args[:password], password_confirmation: args[:password], role: args[:role] }
-    if flag_on? args, :confirmed
-      User.create! attributes.merge(confirmed_at: Time.current)
+    if flag_on? args, :verified
+      User.create! attributes.merge(verified_email: args[:email], verified_at: Time.current)
     else
       User.create! attributes
     end
