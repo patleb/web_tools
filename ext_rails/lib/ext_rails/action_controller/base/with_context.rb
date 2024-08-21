@@ -1,10 +1,7 @@
 module ActionController::Base::WithContext
   extend ActiveSupport::Concern
 
-  prepended do
-    prepend_before_action :set_current
-    around_action :with_context
-
+  included do
     attr_accessor :template_virtual_path
     helper_method :template_virtual_path
 
@@ -13,7 +10,7 @@ module ActionController::Base::WithContext
     helper_method :back_path
   end
 
-  def rescue_with_handler(exception)
+  def rescue_with_handler(...)
     with_context do
       super
     end
@@ -58,8 +55,8 @@ module ActionController::Base::WithContext
 
   def set_current
     Current.controller = self
-    Current.session_id ||= session[:session_id]
-    Current.request_id ||= request.uuid
+    Current.session_id = session[:session_id]
+    Current.request_id = request.uuid
     set_current_locale
     set_current_timezone
   end
@@ -108,6 +105,13 @@ module ActionController::Base::WithContext
   end
 
   private
+
+  def process_action(...)
+    set_current
+    with_context do
+      super
+    end
+  end
 
   def _back
     params[:_back].presence || request.headers['X-Back'].presence || request.referer.presence
