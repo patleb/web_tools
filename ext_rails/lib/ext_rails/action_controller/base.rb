@@ -6,9 +6,9 @@ ActionController::Base.class_eval do
 
   include ActiveSupport::LazyLoadHooks::Autorun
   include ActionController::Redirecting::WithStringUrl
-  include self::WithContext
-  include self::WithMemoization
   prepend self::BeforeRender
+  prepend self::WithContext
+  include self::WithMemoization
 
   ActiveSupport.run_load_hooks('ActionController', self, parent: true)
 end

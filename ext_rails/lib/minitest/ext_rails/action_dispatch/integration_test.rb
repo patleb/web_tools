@@ -85,11 +85,11 @@ Current.class_eval do
 end
 
 ActionController::Base.class_eval do
-  alias_method :old_with_context, :with_context
-  def with_context
-    set_current
-    old_with_context do
-      yield
+  module self::RerunSetCurrent
+    def with_context
+      set_current
+      super
     end
   end
+  prepend self::RerunSetCurrent
 end

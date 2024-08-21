@@ -2,9 +2,8 @@ module ActionView::TemplateRenderer::WithVirtualPath
   private
 
   def render_template(view, template, *)
-    Current.view = view
-    controller = view.controller
-    if controller.respond_to? :template_virtual_path
+    if (controller = view.controller).respond_to? :template_virtual_path
+      Current.view = view
       controller.template_virtual_path ||= template.try(:virtual_path)
     end
     super

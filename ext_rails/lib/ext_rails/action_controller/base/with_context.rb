@@ -1,9 +1,16 @@
 module ActionController::Base::WithContext
   extend ActiveSupport::Concern
 
-  included do
+  prepended do
     prepend_before_action :set_current
     around_action :with_context
+
+    attr_accessor :template_virtual_path
+    helper_method :template_virtual_path
+
+    helper_method :application_path
+    helper_method :root_path
+    helper_method :back_path
   end
 
   def rescue_with_handler(exception)
@@ -13,6 +20,33 @@ module ActionController::Base::WithContext
   end
 
   protected
+
+  def application_path
+    self.class.ivar(:@application_path){ main_app.try(:root_path) || '/' }
+  end
+
+  def root_path
+    application_path
+  end
+
+  def back_path
+    back = _back
+    return root_path unless back && _url_host_allowed?(back)
+    back
+  end
+
+  def redirect_back(fallback_location: root_path, **)
+    super(fallback_location: fallback_location, **)
+  end
+
+  def redirect_back_or_to(fallback_location = root_path, allow_other_host: _allow_other_host, **)
+    back = _back
+    if back && (allow_other_host || _url_host_allowed?(back))
+      redirect_to(back, allow_other_host: allow_other_host, **)
+    else
+      redirect_to(fallback_location, **)
+    end
+  end
 
   def browser_bot?
     user_agent[UA[:name]] == 'HeadlessChrome' || user_agent[UA[:hw_brand]] == 'Spider'
@@ -71,5 +105,11 @@ module ActionController::Base::WithContext
     ActiveRecord::Base.without_timezone(&block)
   ensure
     Current.timezone = old_value
+  end
+
+  private
+
+  def _back
+    params[:_back].presence || request.headers['X-Back'].presence || request.referer.presence
   end
 end
