@@ -1,4 +1,4 @@
-module ActionController::Base::WithMemoization
+module ActionController::WithMemoization
   # NOTE referential equality (#equal?) is used instead of value equality (#eql? or #==)
   def memoize(context, method_name, *args)
     values = ((@_memoize ||= {})[context.object_id] ||= {})[method_name] ||= {}

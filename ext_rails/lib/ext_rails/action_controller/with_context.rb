@@ -1,10 +1,7 @@
-module ActionController::Base::WithContext
+module ActionController::WithContext
   extend ActiveSupport::Concern
 
   included do
-    attr_accessor :template_virtual_path
-    helper_method :template_virtual_path
-
     helper_method :application_path
     helper_method :root_path
     helper_method :back_path

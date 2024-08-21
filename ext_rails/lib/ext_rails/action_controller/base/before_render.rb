@@ -5,6 +5,9 @@ module ActionController::Base::BeforeRender
   include ActiveSupport::Callbacks
 
   prepended do
+    attr_accessor :template_virtual_path
+    helper_method :template_virtual_path
+
     define_callbacks :render,
       terminator: -> (controller, result_lambda) { result_lambda.call if result_lambda.is_a?(Proc); controller.performed? },
       skip_after_callbacks_if_terminated: true
