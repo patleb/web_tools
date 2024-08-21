@@ -2,9 +2,11 @@ module ActionController::WithContext
   extend ActiveSupport::Concern
 
   included do
-    helper_method :application_path
-    helper_method :root_path
-    helper_method :back_path
+    if respond_to? :helper_method
+      helper_method :application_path
+      helper_method :root_path
+      helper_method :back_path
+    end
   end
 
   def rescue_with_handler(...)
