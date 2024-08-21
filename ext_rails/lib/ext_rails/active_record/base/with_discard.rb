@@ -61,7 +61,7 @@ module ActiveRecord::Base::WithDiscard
   alias_method :undiscarded?, :undiscarded
 
   def discard
-    return false if discarded?
+    return true if discarded?
     with_transaction_returning_status do
       run_callbacks(:discard) do
         update_attribute(discard_column, Time.current)
@@ -74,7 +74,7 @@ module ActiveRecord::Base::WithDiscard
   end
 
   def undiscard
-    return false unless discarded?
+    return true unless discarded?
     with_transaction_returning_status do
       run_callbacks(:undiscard) do
         update_attribute(discard_column, nil)
