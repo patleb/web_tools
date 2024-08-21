@@ -1,7 +1,7 @@
 module MixUser
   has_config do
-    # NOTE must be modified before initialization with ActiveSupport.on_load(:active_record)
     attr_writer :json_attributes
+    attr_writer :available_roles
     attr_writer :registerable
     attr_writer :restorable
     attr_writer :available_routes
@@ -10,8 +10,6 @@ module MixUser
     attr_writer :reset_expires_in
     attr_writer :restore_expires_in
     attr_writer :min_password_length
-
-    attr_writer :available_roles
 
     def registerable?
       return @registerable if defined? @registerable
@@ -53,6 +51,11 @@ module MixUser
 
     def min_password_length
       @min_password_length ||= 12
+    end
+
+    # NOTE must be modified before initialization with ActiveSupport.on_load(:active_record)
+    def json_attributes
+      @json_attributes ||= {}
     end
 
     # Roles
