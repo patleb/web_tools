@@ -3,6 +3,7 @@
 default: &default
   gems:
     - 'ext_rails'
+    - 'mix_user'
 
   source_path: app/javascript
 

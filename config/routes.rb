@@ -6,20 +6,19 @@ Rails.application.routes.draw do
   # get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "test/application#home"
 
-  # scope path: '/resources', controller: 'resources' do
-  #   get '/' => :index
-  #   get '/new' => :new
-  #   post '/new' => :create
-  #   scope path: '/:id' do
-  #     get '/' => :show
-  #     get '/edit' => :edit
-  #     post '/edit' => :update
-  #     get '/delete' => :delete
-  #     post '/delete' => :destroy
-  #   end
-  # end
+  simple_resources path: '/test/records'
 
   # MixAdmin::Routes.draw(self)
+
+  scope path: '/coffee', controller: 'coffee' do
+    get '/' => :basic_template
+    match '/sign_in', action: :sign_in, via: [:get, :post]
+    match '/company', action: :company, via: [:get, :post]
+    get '/error' => :error
+  end
+  get 'sass', to: 'sass#index'
+
+  # mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 end

@@ -47,6 +47,10 @@ module WebTools
     config.active_record.cache_versioning = false
     config.cache_store = :global_store
 
+    ExtRails.configure do |config|
+      config.sql_debug = false
+    end
+
     initializer 'app.libraries' do
       # require_relative '../app/libraries/some_override'
     end

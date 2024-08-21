@@ -1,12 +1,17 @@
-append(:sidebar_links) {[
-  layout_sidebar,
-  hr_('.separator'),
-  ul_('.nav.nav-pills.nav-stacked') {[
-    li_{ a_ 'Application', href: app_root_path },
-    li_(admin_link)
-  ]},
-]}
+# frozen_string_literal: true
 
-extends 'layouts/pages', [
-  render_pjax,
+# append :fonts, preload_pack_asset('application')
+append :javascripts, javascript_pack_tag!('application', defer: true, 'data-turbolinks-track': 'reload')
+append :stylesheets, stylesheet_pack_tag!('application', media: :all, 'data-turbolinks-track': 'reload')
+append :metas, meta_(name: 'turbolinks-cache-control', content: 'no-preview')
+append :header, [
+  flash_message(:alert),
+  flash_message(:notice),
 ]
+append :sidebar, [
+  user_login_link,
+  user_logout_button
+]
+extends 'layouts/lib' do
+  yield
+end

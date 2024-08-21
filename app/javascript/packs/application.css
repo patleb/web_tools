@@ -5,3 +5,4 @@
 @import "@@vendor/epic-spinners/stylesheets/atom_spinner";
 @import "@@lib/ext_css/stylesheets/all";
 @import "@@lib/ext_rails/stylesheets/all";
+@import "@@lib/mix_user/stylesheets/all";

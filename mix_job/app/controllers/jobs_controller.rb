@@ -18,14 +18,6 @@ class JobsController < MixJob.config.parent_controller.constantize
     head :job_server_error
   end
 
-  def session?
-    false
-  end
-
-  def local?
-    true
-  end
-
   private
 
   def local_request!

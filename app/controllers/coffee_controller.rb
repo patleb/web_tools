@@ -1,22 +1,13 @@
-class CoffeeController < ActionController::Base
+class CoffeeController < LibController
   def basic_template
-    render :basic_template
   end
 
   def sign_in
-    if request.get?
-      render :sign_in
-    else
-      redirect_to '/coffee'
-    end
+    redirect_to '/coffee' unless request.get?
   end
 
   def company
-    if request.get?
-      render :company
-    else
-      redirect_to '/coffee/error'
-    end
+    redirect_to '/coffee/error' unless request.get?
   end
 
   def error
