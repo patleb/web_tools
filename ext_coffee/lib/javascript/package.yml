@@ -1,2 +1,3 @@
 packages:
   - 'tiny-lru'
+  - 'js-cookie'
