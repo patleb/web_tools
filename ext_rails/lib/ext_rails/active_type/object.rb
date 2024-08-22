@@ -20,7 +20,7 @@ ActiveType::Object.class_eval do
     raise 'multiple definitions are not supported' if definition.size > 1
     name, values = definition.first
     raise 'only hash enum is supported' unless values.is_a? Hash
-    default = default.to_s if default.is_a? Symbol
+    default = ActiveSupport::HashWithIndifferentAccess.convert_key(default)
 
     super(name, values, scopes: false, instance_methods: _instance_methods)
 

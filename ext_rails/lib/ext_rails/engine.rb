@@ -192,6 +192,7 @@ module ExtRails
       require 'ext_rails/active_record/connection_adapters/postgresql_adapter'
       require 'ext_rails/active_record/arel'
       require 'ext_rails/active_record/base'
+      require 'ext_rails/active_record/enum/enum_type'
       require 'ext_rails/active_record/migration'
       require 'ext_rails/active_record/reflection/belongs_to_reflection/with_list'
       require 'ext_rails/active_record/reflection/has_many_reflection/with_discard'
