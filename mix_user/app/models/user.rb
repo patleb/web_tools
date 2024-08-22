@@ -14,35 +14,31 @@ class User < LibMainRecord
     deleted_at
   end
 
-  scope :unverified, -> { where(verified_at: nil) }
-  scope :verified,   -> { where.not(verified_at: nil) }
+  scope :unverified,    -> { where(verified_at: nil) }
+  scope :verified,      -> { where.not(verified_at: nil) }
+  scope :visible_roles, -> (user) { where(column(:role) <= roles[user.as_role]) }
 
   has_many :user_sessions, dependent: :destroy
   has_one  :session, -> { current }, class_name: 'UserSession'
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, allow_nil: true, length: { minimum: MixUser.config.min_password_length }
+  validates :role, presence: true, exclusion: { in: [:null] }
+  validate  :check_deployer, if: :role_deployer?
 
   normalizes :email, with: ->(email) { email.strip.downcase }
 
   before_validation if: :email_changed?, on: :update do
     self.verified_at = nil
   end
-
-  after_update :delete_other_sessions, if: -> { password_digest_previously_changed? || verified_at_previously_changed? }
-
+  after_update  :delete_other_sessions, if: -> { password_digest_previously_changed? || verified_at_previously_changed? }
   after_discard :unverified!
-
-  scope :visible_roles, -> (user) { where(column(:role) <= roles[user.as_role]) }
 
   json_attribute MixUser.config.json_attributes
 
   alias_method :user_id, :id
 
   enum role: MixUser.config.available_roles
-
-  validates :role, presence: true, exclusion: { in: ['null'] }
-  validate  :check_deployer, if: :deployer?
 
   def self.enum_roles
     Current.user.visible_roles
@@ -116,9 +112,9 @@ class User < LibMainRecord
 
   def as_role
     if Current.as_admin? && role_i >= self.class.roles[:deployer]
-      'admin'
+      :admin
     elsif Current.as_basic? && role_i >= self.class.roles[:admin]
-      'user'
+      :basic
     else
       role
     end
