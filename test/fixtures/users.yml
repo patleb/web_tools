@@ -1,22 +1,25 @@
 deployer:
   id: 1
   email: deployer@example.com
-  encrypted_password: <%= User.new.send(:password_digest, 'password') %>
-  confirmed_at: <%= Time.current %>
+  password_digest: <%= BCrypt::Password.create('password', cost: 1) %>
+  verified_email: deployer@example.com
+  verified_at: <%= Time.current %>
   role: deployer
   json_data: { first_name: "User", last_name: "Deployer" }
 
 admin:
   id: 2
   email: admin@example.com
-  encrypted_password: <%= User.new.send(:password_digest, 'password') %>
-  confirmed_at: <%= Time.current %>
+  password_digest: <%= BCrypt::Password.create('password', cost: 1) %>
+  verified_email: admin@example.com
+  verified_at: <%= Time.current %>
   role: admin
   json_data: { first_name: "User", last_name: "Admin" }
 
 normal:
   id: 3
   email: user@example.com
-  encrypted_password: <%= User.new.send(:password_digest, 'password') %>
-  confirmed_at: <%= Time.current %>
+  password_digest: <%= BCrypt::Password.create('password', cost: 1) %>
+  verified_email: user@example.com
+  verified_at: <%= Time.current %>
   json_data: { first_name: "User", last_name: "Normal" }
