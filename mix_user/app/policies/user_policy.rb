@@ -4,12 +4,12 @@ class UserPolicy < ApplicationPolicy
   end
 
   def show?
-    false
+    user.basic?
   end
 
   def edit?
     if record?
-      super && user.visible_role?(record)
+      user.basic? && user.visible_role?(record)
     else
       super
     end
@@ -17,7 +17,7 @@ class UserPolicy < ApplicationPolicy
 
   def delete?
     if record?
-      super && user.visible_role?(record)
+      user.basic? && user.visible_role?(record)
     else
       super
     end

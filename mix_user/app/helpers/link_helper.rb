@@ -21,11 +21,11 @@ module LinkHelper
 
   def user_view_link
     return unless defined?(MixAdmin) && !Current.controller.try(:admin?)
-    if Current.as_user?
+    if Current.as_basic?
       a_ href: "?_role=false" do
         span_ '.label.label-danger', t('user.quit_preview')
       end
-    elsif Current.user.admin?
+    elsif Current.as_admin?
       a_ href: "?_role=user" do
         span_ '.label.label-primary', t('user.enter_user_view')
       end

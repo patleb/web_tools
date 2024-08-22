@@ -117,7 +117,7 @@ class User < LibMainRecord
   def as_role
     if Current.as_admin? && role_i >= self.class.roles[:deployer]
       'admin'
-    elsif Current.as_user? && role_i >= self.class.roles[:admin]
+    elsif Current.as_basic? && role_i >= self.class.roles[:admin]
       'user'
     else
       role

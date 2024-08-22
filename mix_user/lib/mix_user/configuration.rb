@@ -64,11 +64,11 @@ module MixUser
 
     # Roles
     #   null: has access to what is available without connection
-    #   user: has access to the application
-    #   admin: has access to the admin interface
+    #   basic: has access to the application and parts of the admin interface
+    #   admin: has access to the admin interface except for the system resources
     #   deployer: has access to all the resources
     def available_roles
-      @available_roles ||= { null: -100, user: 0, admin: 100, deployer: 200 }
+      @available_roles ||= { null: -100, basic: 0, admin: 100, deployer: 200 }
     end
   end
 end

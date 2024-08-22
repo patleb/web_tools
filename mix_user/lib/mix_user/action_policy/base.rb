@@ -83,16 +83,16 @@ module ActionPolicy
     end
 
     def record?
-      !relation
+      !relation?
     end
 
     def relation
       return @relation if defined? @relation
-      @relation = object.is_a?(Class) ? object : object.class
+      @relation = relation? ? object : object.class
     end
 
     def relation?
-      !!relation
+      object.is_a? Class
     end
 
     def role
