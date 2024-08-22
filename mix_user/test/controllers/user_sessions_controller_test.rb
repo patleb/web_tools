@@ -45,11 +45,13 @@ class UserSessionsControllerTest < Users::TestCase
 
     context 'deleted' do
       test '#create' do
+        user.verified!
         user.undiscard!
         assert_no_enqueued_emails do
           post '/user_sessions/new?edit=deleted', params: { user: create_params.slice(:email) }
         end
         user.discard!
+        assert user.unverified?
         assert_enqueued_email_with UserMailer, :restore_user, params: { user: user } do
           post '/user_sessions/new?edit=deleted', params: { user: create_params.slice(:email) }
         end
