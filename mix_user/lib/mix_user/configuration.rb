@@ -55,7 +55,11 @@ module MixUser
 
     # NOTE must be modified before initialization with ActiveSupport.on_load(:active_record)
     def json_attributes
-      @json_attributes ||= {}
+      @json_attributes ||= {
+        first_name: :string,
+        last_name: :string,
+        # login: :string
+      }
     end
 
     # Roles

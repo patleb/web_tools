@@ -2,13 +2,12 @@ class CreateLibUsers < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_users do |t|
       t.uuid     :uuid,            null: false, default: 'gen_random_uuid()', index: { using: :hash }
+      # t.citext   :name,            index: { using: :gist, opclass: :gist_trgm_ops }
+      # t.string   :login,           index: { unique: true }
       t.string   :email,           null: false, index: { unique: true }
       t.string   :password_digest, null: false
       t.string   :verified_email
       t.datetime :verified_at
-
-      t.citext   :full_name, index: { using: :gist, opclass: :gist_trgm_ops }
-      t.integer  :last_name_i
 
       t.integer  :role, null: false, default: 0
 
