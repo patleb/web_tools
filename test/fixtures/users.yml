@@ -16,10 +16,10 @@ admin:
   role: admin
   json_data: { first_name: "User", last_name: "Admin" }
 
-normal:
+basic:
   id: 3
-  email: user@example.com
+  email: basic@example.com
   password_digest: <%= BCrypt::Password.create('password', cost: 1) %>
   verified_email: user@example.com
   verified_at: <%= Time.current %>
-  json_data: { first_name: "User", last_name: "Normal" }
+  json_data: { first_name: "User", last_name: "Basic" }
