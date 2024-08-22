@@ -68,6 +68,5 @@ Rails::Application.class_eval do
     else
       old_initialize! group
     end
-    MonkeyPatch.verify_all!
   end
 end

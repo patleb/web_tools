@@ -1,6 +1,6 @@
 module MonkeyPatch
   def self.add
-    return unless Rails.env.local?
+    return unless Rails.env.test?
     gem_name, file_path, checksum = yield
     ((@files ||= {})[gem_name] ||= {})[file_path] = checksum
   end
