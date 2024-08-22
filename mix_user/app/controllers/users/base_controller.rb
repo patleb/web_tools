@@ -11,6 +11,7 @@ module Users
     def create_session!(user)
       user.create_session! ip_address: request.remote_ip, user_agent: user_agent
       Current.user = user
+      Current.role = user.role
       clear_role
       session[:user_id] = user.id
     end
@@ -18,6 +19,7 @@ module Users
     def destroy_session!(user)
       user.session&.destroy!
       Current.user = User::Null.new
+      Current.role = :null
       clear_role
       session.delete(:user_id)
     end
