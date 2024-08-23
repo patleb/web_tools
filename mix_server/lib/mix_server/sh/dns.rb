@@ -1,17 +1,4 @@
 module Sh::Dns
-  # TODO make it coherent with deploy/private_dns-system.sh
-  def build_hosts(server)
-    entries = (Setting[:dns_hosts] || []).map{ |name| "$PRIVATE_IP  #{name}" }.join("\\n")
-    hosts_defaults = Sunzistrano.owner_path :defaults_dir, '~etc~hosts'
-    <<~SH
-      PRIVATE_IP=$(#{Sh.private_ip})
-      cp #{hosts_defaults} /etc/hosts
-      #{append_host 'sh:dns-build_hosts-hostname', '127.0.0.1', '$(hostname)'}
-      echo "$PRIVATE_IP  #{server}" | tee -a /etc/hosts
-      echo -e "#{entries}" | tee -a /etc/hosts
-    SH
-  end
-
   def append_host(id, address, name, **options)
     <<~SH
    #{"if [[ #{options[:if]} ]]; then" if options[:if] }
