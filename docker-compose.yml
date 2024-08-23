@@ -3,7 +3,6 @@ version: "3"
 volumes:
   postgres_14:
   postgres_13:
-  geoserver:
 services:
   postgres_14:
     build: ./dev/docker/postgres/14
@@ -39,21 +38,3 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_INITDB_ARGS=--data-checksums
-  geoserver:
-    image: oscarfonts/geoserver:2.21.0
-    container_name: geoserver
-    volumes:
-      - geoserver:/var/local/geoserver
-    network_mode: host
-    restart: on-failure
-    depends_on:
-      - postgres_13
-    healthcheck:
-      test: curl --fail -s http://localhost:8080/geoserver/web || exit 1
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "5"

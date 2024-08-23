@@ -58,7 +58,6 @@ module LogLines
     scope :api,           -> { where(path: ['~', '^/api/.+']) }
     scope :pages,         -> { where(path: ['~', "^/[\\w-]+/#{MixPage::URL_SEGMENT}/"]) }
     scope :admin,         -> { where(path: ['~', "^#{RailsAdmin.routes[:root]}(/|$)"]) }
-    scope :geoserver_wms, -> { where(path: "#{Setting[:geoserver_path]}/wms") }
     scope :success,       -> { where(status: ['>=', 200]).where(status: ['<', 300]) }
 
     def self.user
