@@ -1,4 +1,4 @@
-ActionDispatch::IntegrationTest.class_eval do
+ActiveSupport::TestCase.class_eval do
   alias_method :run_without_clear_users, :run
   def run(...)
     result = run_without_clear_users(...)
