@@ -54,30 +54,32 @@ module ActionController::WithContext
 
   def set_current
     Current.controller = self
-    Current.session_id = session[:session_id]
+    Current.session_id = session[:session_id] if respond_to? :session
     Current.request_id = request.uuid
     set_current_locale
     set_current_timezone
   end
 
   def set_current_locale
-    locale = params[:_locale].presence || request.headers['X-Locale'].presence || cookies[:_locale].presence
-    unless locale && I18n.available_locales.any?{ |l| l.to_s == locale }
-      locale = session[:locale].presence || http_accept_language.compatible_language_from(I18n.available_locales)
+    _set_current :locale, symbol: true do |locale|
+      next locale if locale && I18n.available_locales.any?{ |l| l.to_s == locale }
+      session[:locale].presence || http_accept_language.compatible_language_from(I18n.available_locales)
     end
-    locale ||= I18n.default_locale
-    session[:locale] = cookies[:_locale] = locale.to_s
-    Current.locale = locale.to_sym
+  end
+
+  def default_locale
+    I18n.default_locale
   end
 
   def set_current_timezone
-    timezone = params[:_timezone].presence || request.headers['X-Timezone'].presence || cookies[:_timezone].presence
-    timezone = timezone.to_i? ? timezone.to_i : timezone
-    unless (timezone = Time.find_zone(timezone)&.name)
-      timezone = session[:timezone].presence
+    _set_current :timezone do |timezone|
+      timezone = timezone.to_i? ? timezone.to_i : timezone
+      Time.find_zone(timezone)&.name || session[:timezone].presence
     end
-    timezone ||= Rails.application.config.time_zone
-    Current.timezone = session[:timezone] = cookies[:_timezone] = timezone
+  end
+
+  def default_timezone
+    Rails.application.config.time_zone
   end
 
   def with_context
@@ -109,6 +111,19 @@ module ActionController::WithContext
     set_current
     with_context do
       super
+    end
+  end
+
+  def _set_current(name, symbol: false)
+    if respond_to? :session
+      _name = :"_#{name}"
+      xname = "X-#{name.to_s.camelize}"
+      value = params[_name].presence || request.headers[xname].presence || cookies[_name].presence
+      value = yield(value) || send("default_#{name}")
+      session[name] = cookies[_name] = value.to_s
+      Current[name] = symbol ? value.to_sym : value
+    else
+      Current[name] = send("default_#{name}")
     end
   end
 

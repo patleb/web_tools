@@ -50,21 +50,25 @@ module ActionController::WithPolicy
   end
 
   def set_current_user
-    return Current.user = User::Null.new unless respond_to? :session
+    return Current.user = default_user unless respond_to? :session
     user_id = session[:user_id]
     user   = User.with_discarded.joins(:session).where(id: user_id).take if user_id.to_i?
-    user ||= User::Null.new
+    user ||= default_user
     Current.user = user
   end
 
+  def default_user
+    User::Null.new
+  end
+
   def set_current_role
-    return Current.role = :null unless respond_to? :session
-    role = params[:_role].presence || request.headers['X-Role'].presence || cookies[:_role].presence
-    unless User.roles.has_key? role
-      role = session[:role].presence || Current.user.role
+    _set_current :role, symbol: true do |role|
+      next role if User.roles.has_key? role
+      session[:role].presence || Current.user.role
     end
-    role ||= :null
-    session[:role] = cookies[:_role] = role.to_s
-    Current.role = role.to_sym
+  end
+
+  def default_role
+    :null
   end
 end
