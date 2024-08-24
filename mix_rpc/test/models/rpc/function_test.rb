@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 module Rpc
   class FunctionTest < ActiveSupport::TestCase
@@ -11,7 +11,7 @@ module Rpc
       end
     end
 
-    it 'should parse structure.sql correctly' do
+    test '.parse_schema' do
       result = {
         get_json:        [{ name: '_json', hash: true }, { name: '_float_a', array: true }, { name: '_float_a_opt', array: true }],
         get_jsonb:       [{ name: '_text' }, { name: '_bigint' }, { name: '_jsonb', hash: true }, { name: '_integer_opt' }, { name: '_text_opt' }],

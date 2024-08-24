@@ -1,12 +1,7 @@
 module Rpc
-  class FunctionsController < ActionController::API
-    include ActionController::RequestForgeryProtection
-
-    prepend_before_action :set_format
-    # TODO protect_from_forgery with: :exception
-
+  class FunctionsController < LibApiController
     def call
-      function.call! params: params.require(:rpc_function).to_unsafe_h
+      function.call! params: function_params
       render json: function.result
     rescue ActiveRecord::RecordInvalid
       log Rpc::FunctionError.new(function)
@@ -17,12 +12,12 @@ module Rpc
 
     private
 
-    def function
-      @function ||= Rpc::Function.find(params[:id])
+    def function_params
+      params[:rpc_function]&.to_unsafe_h || {}
     end
 
-    def set_format
-      request.format = :json
+    def function
+      @function ||= Rpc::Function.find(params[:id])
     end
   end
 end

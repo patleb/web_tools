@@ -1,4 +1,4 @@
-class CreateAddHealthcheckToRpcSchema < ActiveRecord::Migration[6.1]
+class CreateAddHealthcheckToRpcSchema < ActiveRecord::Migration[7.1]
   def change
     reversible do |change|
       change.up do

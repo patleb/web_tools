@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 Rpc::Function.class_eval do
   private
@@ -25,15 +25,16 @@ module Rpc
       Rpc::FunctionsController.allow_forgery_protection = true
     end
 
-    it 'should correctly call healthcheck function' do
-      post '/rpc/functions/healthcheck', params: { rpc_function: {} }, as: :json
+    test '#call healthcheck' do
+      post '/rpc/healthcheck', as: :json
       assert_response :ok
       assert_equal true, ActiveSupport::JSON.decode(response.body)
     end
 
-    it 'should return :not_found on unknown function name' do
-      post '/rpc/functions/not_found', params: { rpc_function: {} }, as: :json
+    test '#call not_found' do
+      post '/rpc/not_found', params: { rpc_function: {} }
       assert_response :not_found
+      assert_equal :json, request.format.symbol
     end
 
     { 'unknown function' => 'SELECT rpc.unknown()',
@@ -43,8 +44,8 @@ module Rpc
       context type do
         let(:sql){ sql }
 
-        it 'should return :not_acceptable with an error message' do
-          post '/rpc/functions/healthcheck', params: { rpc_function: {} }, as: :json
+        test '#call not_acceptable' do
+          post '/rpc/healthcheck', params: { rpc_function: {} }, as: :json
           assert_response :not_acceptable
           assert_includes LogMessage.first.text, ActiveSupport::JSON.decode(response.body)['error']
         end

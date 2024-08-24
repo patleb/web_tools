@@ -1,22 +1,19 @@
+MonkeyPatch.add{['railties', 'lib/rails/generators/migration.rb', 'd66bf61070ce3445c8eed7ffe1e3d0860f8cce0507144e4830317a6dc9ac43e6']}
+
 require 'ext_ruby'
 require 'mix_rpc/configuration'
 
 module MixRpc
-  def self.routes
-    @routes ||= {
-      rpc: '/rpc/functions/__ID__',
-    }
-  end
-
   class Engine < ::Rails::Engine
+    require 'mix_rpc/routes'
+
     initializer 'mix_rpc.append_migrations' do |app|
       append_migrations(app)
     end
 
     initializer 'mix_rpc.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
-        # TODO https://github.com/heartcombo/devise/wiki/How-To:-Define-resource-actions-that-require-authentication-using-routes.rb
-        post '/rpc/functions/:id' => 'rpc/functions#call', as: :rpc_functions
+        MixRpc::Routes.draw(self)
       end
     end
 

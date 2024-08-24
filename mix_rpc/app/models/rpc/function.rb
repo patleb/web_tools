@@ -27,9 +27,11 @@ module Rpc
 
     def self.list
       return [] unless MixRpc.config.yml_path.exist?
-
-      @all ||= (YAML.safe_load(MixRpc.config.yml_path.read, [Symbol]) || {}).each_with_object([]) do |(id, args), memo|
-        memo << { id: id, args: args }
+      @all ||= begin
+        yml = YAML.safe_load(MixRpc.config.yml_path.read, permitted_classes: [Symbol]) || {}
+        yml.each_with_object([]) do |(id, args), all|
+          all << { id: id, args: args }
+        end
       end
     end
 
