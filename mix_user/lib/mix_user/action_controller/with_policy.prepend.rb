@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActionController::WithPolicy
   extend ActiveSupport::Concern
 
@@ -43,10 +45,20 @@ module ActionController::WithPolicy
 
   def set_current
     super
+    set_current_user
     set_current_role
   end
 
+  def set_current_user
+    return Current.user = User::Null.new unless respond_to? :session
+    user_id = session[:user_id]
+    user   = User.with_discarded.joins(:session).where(id: user_id).take if user_id.to_i?
+    user ||= User::Null.new
+    Current.user = user
+  end
+
   def set_current_role
+    return Current.role = :null unless respond_to? :session
     role = params[:_role].presence || request.headers['X-Role'].presence || cookies[:_role].presence
     unless User.roles.has_key? role
       role = session[:role].presence || Current.user.role

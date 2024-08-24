@@ -13,20 +13,6 @@ module ActionController::Base::WithUser
     end
   end
 
-  protected
-
-  def set_current
-    super
-    set_current_user
-  end
-
-  def set_current_user
-    user_id = session[:user_id]
-    user   = User.with_discarded.joins(:session).where(id: user_id).take if user_id.to_i?
-    user ||= User::Null.new
-    Current.user = user
-  end
-
   private
 
   def require_authentication
