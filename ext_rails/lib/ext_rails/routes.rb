@@ -11,7 +11,7 @@ module ExtRails
       end
 
       module_parent.define_singleton_method :routes do
-        @@routes ||= self::Routes.methods.grep(/^(?!root|build)\w+_path$/).each_with_object({}) do |name, routes|
+        @routes ||= self::Routes.methods.grep(/^(?!root|build)\w+_path$/).each_with_object({}) do |name, routes|
           params = self::Routes.method_keyargs(name)
           params = params.each_with_object({}) do |key, args|
             args[key] = ":#{key}"
