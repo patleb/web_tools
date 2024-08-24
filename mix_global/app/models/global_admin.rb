@@ -25,14 +25,13 @@ module GlobalAdmin
 
       index do
         scopes [:all, :permanent, :expirable, :ongoing, :expired]
-        include_fields :id, :expires, :expires_at, :version, :data_type, :data, :updated_at
+        include_fields :id, :expires, :expires_at, :data_type, :data, :updated_at
       end
 
       edit do
         field :id
         field :expires
         field :expires_at
-        field :version
         Global.data_types.each_key do |type|
           field type do
             visible do

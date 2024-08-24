@@ -1,11 +1,10 @@
-class CreateLibGlobals < ActiveRecord::Migration[6.0]
+class CreateLibGlobals < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_globals, id: false do |t|
       t.primary_key :id, :string
       t.belongs_to  :server,    null: false, foreign_key: { to_table: :lib_servers }
       t.boolean     :expires,   null: false, default: false
       t.datetime    :expires_at
-      t.string      :version
       t.integer     :data_type, null: false, default: 0
       t.string      :string
       t.jsonb       :json

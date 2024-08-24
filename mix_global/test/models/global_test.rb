@@ -1,6 +1,6 @@
-require './test/rails_helper'
+require './test/test_helper'
 
-class GlobalCacheTest < ActiveSupport::TestCase
+class GlobalTest < ActiveSupport::TestCase
   let(:cache){ ActiveSupport::Cache::MemoryStore.new }
   let(:values){ {
     array:      [nil, 0],
@@ -28,14 +28,14 @@ class GlobalCacheTest < ActiveSupport::TestCase
   ] }
   let(:multi_keys){ multi_values.keys + multi_unknowns }
 
-  it 'should act like cache#(write|read|fetch|delete|exist?|clear|clear!)' do
+  test '#write, #read, #fetch, #delete, #exist?, #clear, #clear!' do
     values.each do |name, value|
       cache.write(name, value)
       Global.write(name, value)
       result = Global.read(name)
       assert_equal value, result
       assert_equal cache.read(name), result
-      if name == :serialized
+      if name.in? %i(symbol serialized)
         assert_equal Marshal.dump(value), Marshal.dump(result)
       end
     end
@@ -54,7 +54,7 @@ class GlobalCacheTest < ActiveSupport::TestCase
     assert_equal 0, Global.count
   end
 
-  it 'should act like cache#(write_multi|read_multi|fetch_multi|delete_matched)' do
+  test '#write_multi, #read_multi, #fetch_multi, #delete_matched' do
     cache.write_multi(multi_values)
     Global.write_multi(multi_values)
     assert_equal cache.read_multi(*multi_values.keys), Global.read_multi(*multi_values.keys)
@@ -66,7 +66,7 @@ class GlobalCacheTest < ActiveSupport::TestCase
     assert_equal false, Global.exist?([:key, 0])
   end
 
-  it 'should act like cache#(increment|decrement)' do
+  test '#increment, #decrement' do
     cache.write(:key, 0)
     assert_equal cache.increment(:key), Global.increment(:key)
     assert_equal 2, Global.increment(:key)
@@ -76,7 +76,7 @@ class GlobalCacheTest < ActiveSupport::TestCase
     assert_equal 0, Global.decrement(:key)
   end
 
-  it 'should be expirable' do
+  test '#expirable' do
     MixGlobal.with do |config|
       config.expires_in = 16.seconds
       config.touch_in = 8.seconds

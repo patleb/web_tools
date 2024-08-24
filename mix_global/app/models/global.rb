@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Global < LibMainRecord
   include GlobalCache
 
@@ -14,6 +16,7 @@ class Global < LibMainRecord
     datetime:   50,
     interval:   60,
     serialized: 70,
+    symbol:     80,
   }
 
   scope :expired, -> {
@@ -32,19 +35,19 @@ class Global < LibMainRecord
 
   after_initialize :set_defaults
 
-  def self.past_expires_at(from: ::Time.current)
+  def self.past_expires_at(from: Time.current)
     expires_in.seconds.ago(from)
   end
 
-  def self.future_expires_at(from: ::Time.current)
+  def self.future_expires_at(from: Time.current)
     expires_in.seconds.since(from)
   end
 
-  def self.past_touch_at(from: ::Time.current)
+  def self.past_touch_at(from: Time.current)
     touch_in.seconds.ago(from)
   end
 
-  def self.future_touch_at(from: ::Time.current)
+  def self.future_touch_at(from: Time.current)
     touch_in.seconds.since(from)
   end
 
@@ -56,23 +59,22 @@ class Global < LibMainRecord
     MixGlobal.config.touch_in
   end
 
-  def self.fetch_record!(name, expires: false, **options, &block)
-    fetch_record(name, expires: false, **options, &block)
+  def self.fetch_record!(name, **, &)
+    fetch_record(name, **, expires: false, &)
   end
 
-  def self.fetch_record(name, **options, &block)
+  def self.fetch_record(name, **options, &)
     options = options.reverse_merge expires: true
     if block_given?
       if options.delete(:force)
         write(name, yield, **options)
       else
         key = normalize_key(name)
-        version = normalize_version(name, **options)
         record = find_or_create_by! id: key do |record|
-          record.assign_attributes options.slice(:expires, :expires_in).merge!(id: key, version: version, data: yield)
+          record.assign_attributes options.slice(:expires, :expires_in).merge!(id: key, data: yield)
         end
-        if record._sync(version, &block).destroyed?
-          fetch_record(name, version: version, **options, &block)
+        if record._sync(&).destroyed?
+          fetch_record(name, **options, &)
         end
         record
       end
@@ -83,8 +85,8 @@ class Global < LibMainRecord
     end
   end
 
-  def self.write_record!(*args, expires: false, **options, &block)
-    write_record(*args, expires: false, **options, &block)
+  def self.write_record!(*, **, &)
+    write_record(*, **, expires: false, &)
   end
 
   ### Useful statements for the block:
@@ -97,40 +99,33 @@ class Global < LibMainRecord
     record = fetch_record(name, **options, &block)
     unless record.new?
       record.with_lock do
-        version = normalize_version(name, **options)
         catch(:skip_write) do
-          record.update! options.slice(:expires, :expires_in).merge!(version: version, data: block.call(record))
+          record.update! options.slice(:expires, :expires_in).merge!(data: block.call(record))
         end
       end
     end
     record
   rescue ActiveRecord::RecordNotFound
-    # TODO test it (must not be inside a transaction block?)
-    # https://dev.to/evilmartians/the-silence-of-the-ruby-exceptions-a-railspostgresql-database-transaction-thriller-5e30
     retry
   end
 
-  def self.read_record(name, **options)
+  def self.read_record(name)
     key = normalize_key(name)
     if (record = find_by(id: key))
-      version = normalize_version(name, **options)
-      record unless record._sync_stale_state(version).stale?
+      record unless record._sync_stale_state.stale?
     end
   end
 
-  def self.read_records(names, **options)
+  def self.read_records(names)
     case names
     when Array
       keys = names.map{ |name| normalize_key(name) }
       where(id: keys).find_each.with_object({}.with_indifferent_access) do |record, memo|
-        name = names[keys.index(record.id)]
-        version = normalize_version(name, **options)
-        memo[key_name(record)] = record unless record._sync_stale_state(version).stale?
+        memo[key_name(record)] = record unless record._sync_stale_state.stale?
       end
     when String, Regexp
-      version = normalize_version(**options)
-      where(column(:id).matches key_matcher(names, **options)).find_each.with_object({}.with_indifferent_access) do |record, memo|
-        memo[key_name(record)] = record unless record._sync_stale_state(version).stale?
+      where(column(:id).matches key_matcher(names)).find_each.with_object({}.with_indifferent_access) do |record, memo|
+        memo[key_name(record)] = record unless record._sync_stale_state.stale?
       end
     else
       raise ArgumentError, "Bad type: `Global#read_records` requires names as Array, String or Regexp."
@@ -138,21 +133,25 @@ class Global < LibMainRecord
   end
 
   def self.delete_record(name)
-    key = normalize_key(name)
-    where(id: key).delete_all
+    where(id: normalize_key(name)).delete_all
   end
 
-  def self.delete_records(matcher, **options)
-    case matcher
-    when Array          then matcher = GlobalKey.start_with(matcher)
-    when String, Regexp then # do nothing
-    else raise ArgumentError, "Bad type: `Global#delete_records` requires matcher as Array, String or Regexp."
+  def self.delete_records(matcher = nil, *names)
+    return 0 if matcher.nil?
+    if names.empty?
+      case matcher
+      when Array          then matcher = GlobalKey.start_with(matcher)
+      when String, Regexp then # do nothing
+      else raise ArgumentError, "Bad type: `Global#delete_records` requires matcher as Array, String or Regexp."
+      end
+      where(column(:id).matches key_matcher(matcher)).delete_all
+    else
+      where(id: [matcher].concat(names).map{ |name| normalize_key(name) }).delete_all
     end
-    where(column(:id).matches key_matcher(matcher, **options)).delete_all
   end
 
-  def self.update_integer!(*args, expires: false, **options)
-    update_integer(*args, expires: false, **options)
+  def self.update_integer!(*, **)
+    update_integer(*, **, expires: false)
   end
 
   def self.update_integer(name, amount, **options)
@@ -161,8 +160,7 @@ class Global < LibMainRecord
     options = options.reverse_merge expires: true
     key = normalize_key(name)
     if (result = update_counter(key, amount)).nil?
-      version = normalize_version(name, **options)
-      create! options.slice(:expires, :expires_in).merge!(id: key, version: version, data: amount)
+      create! options.slice(:expires, :expires_in).merge!(id: key, data: amount)
       result = amount
     end
     result
@@ -170,64 +168,54 @@ class Global < LibMainRecord
     retry
   end
 
-  private_class_method
+  class << self
+    private
 
-  def self.update_counter(key, amount)
-    raise ArgumentError, "Bad value: `Global#update_counter` requires amount != 0." if amount == 0
+    def update_counter(key, amount)
+      raise ArgumentError, "Bad value: `Global#update_counter` requires amount != 0." if amount == 0
 
-    operator = amount < 0 ? "-" : "+"
-    quoted_column = connection.quote_column_name(:integer)
-    updates = ["#{quoted_column} = COALESCE(#{quoted_column}, 0) #{operator} #{amount.abs}"]
+      operator = amount < 0 ? "-" : "+"
+      quoted_column = connection.quote_column_name(:integer)
+      updates = ["#{quoted_column} = COALESCE(#{quoted_column}, 0) #{operator} #{amount.abs}"]
 
-    touch_updates = touch_attributes_with_time
-    updates << sanitize_sql_for_assignment(touch_updates)
+      touch_updates = touch_attributes_with_time
+      updates << sanitize_sql_for_assignment(touch_updates)
 
-    unscoped.where(id: key).update_all(updates.join(", "), quoted_column)
-  end
-
-  def self.normalize_key(key, server: true, **)
-    # no namespace functionality implemented on purpose --> https://github.com/kickstarter/rack-attack/issues/370
-    key = expanded_key(key).full_underscore(GlobalKey::SEPARATOR)
-    key = Server.current.id.to_s << GlobalKey::SEPARATOR << key if server
-    key
-  end
-
-  def self.expanded_key(key)
-    return key.cache_key.to_s if key.respond_to? :cache_key
-    case key
-    when Array
-      key = (key.size > 1) ? key.map{ |element| expanded_key(element) } : key.first
-    when Hash
-      key = key.sort_by{ |k, _| k.to_s }.map{ |k, v| "#{k}=#{v}" }
+      unscoped.where(id: key).update_all(updates.join(", "), quoted_column)
     end
-    key.to_param
-  end
 
-  def self.normalize_version(key = nil, version: nil, **)
-    (version&.to_param || expanded_version(key || '')).presence
-  end
-
-  def self.expanded_version(key)
-    case
-    when key.respond_to?(:cache_version) then key.cache_version.to_param
-    when key.is_a?(Array)                then key.map{ |element| expanded_version(element) }.compact.to_param
-    when key.respond_to?(:to_a)          then expanded_version(key.to_a)
+    def normalize_key(key, server: true)
+      # no namespace functionality implemented on purpose --> https://github.com/kickstarter/rack-attack/issues/370
+      key = expanded_key(key).full_underscore(GlobalKey::SEPARATOR)
+      key = Server.current.id.to_s << GlobalKey::SEPARATOR << key if server
+      key
     end
-  end
 
-  def self.key_matcher(pattern, **)
-    regex = pattern.is_a?(Regexp) ? pattern.source : pattern
-    regex = "^#{regex}" unless regex.start_with? '^'
-    regex = regex.tr('/', GlobalKey::SEPARATOR)
-    if regex == '^' || regex.exclude?(GlobalKey::SEPARATOR)
-      raise ArgumentError, "Bad value: `Global#key_matcher` pattern /#{regex}/ matches too many records."
+    def expanded_key(key)
+      return key.cache_key.to_s if key.respond_to? :cache_key
+      case key
+      when Array
+        key = (key.size > 1) ? key.map{ |element| expanded_key(element) } : key.first
+      when Hash
+        key = key.sort_by{ |k, _| k.to_s }.map{ |k, v| "#{k}=#{v}" }
+      end
+      key.to_param
     end
-    regex[0] = Server.current.id.to_s << GlobalKey::SEPARATOR
-    sanitize_matcher /^#{regex}/
-  end
 
-  def self.key_name(record)
-    record.id.delete_prefix([record.server_id, GlobalKey::SEPARATOR].join)
+    def key_matcher(pattern)
+      regex = pattern.is_a?(Regexp) ? pattern.source : pattern
+      regex = "^#{regex}" unless regex.start_with? '^'
+      regex = regex.tr('/', GlobalKey::SEPARATOR)
+      if regex == '^' || regex.exclude?(GlobalKey::SEPARATOR)
+        raise ArgumentError, "Bad value: `Global#key_matcher` pattern /#{regex}/ matches too many records."
+      end
+      regex[0] = Server.current.id.to_s << GlobalKey::SEPARATOR
+      sanitize_matcher /^#{regex}/
+    end
+
+    def key_name(record)
+      record.id.delete_prefix([record.server_id, GlobalKey::SEPARATOR].join)
+    end
   end
 
   def expirable?
@@ -277,9 +265,12 @@ class Global < LibMainRecord
       self[data_type] = nil
       self.data_type = new_type
     end
-    if new_type == 'serialized'
+    case new_type
+    when :serialized
       self[data_type] = Marshal.dump(data)
       self[:data] = data
+    when :symbol
+      self[:data] = self[:string] = data
     else
       self[:data] = self[data_type] = cast(data)
     end
@@ -289,9 +280,9 @@ class Global < LibMainRecord
     destroyed? || changed?
   end
 
-  def _sync(version)
+  def _sync
     return self if new?
-    _sync_stale_state(version)
+    _sync_stale_state
     return self if destroyed?
     if changed?
       with_lock do
@@ -303,13 +294,11 @@ class Global < LibMainRecord
     self
   end
 
-  def _sync_stale_state(version)
+  def _sync_stale_state
     if expired?
       delete
     elsif expired_touch?
       destroyed! unless touch
-    else
-      self.version = version
     end
     self
   end
@@ -318,28 +307,36 @@ class Global < LibMainRecord
 
   def type_of(data)
     case data
-    when Array, Hash             then 'json'
-    when Boolean                 then 'boolean'
-    when Integer                 then 'integer'
-    when Float, BigDecimal       then 'decimal'
-    when Time, Date, DateTime    then 'datetime'
-    when ActiveSupport::Duration then 'interval'
-    when String, Symbol, nil     then 'string'
-    else                              'serialized'
+    when Array, Hash             then :json
+    when Boolean                 then :boolean
+    when Integer                 then :integer
+    when Float, BigDecimal       then :decimal
+    when Time, Date, DateTime    then :datetime
+    when ActiveSupport::Duration then :interval
+    when Symbol                  then :symbol
+    when String, nil             then :string
+    else                              :serialized
     end
   end
 
   def set_defaults
     self.server_id ||= Server.current.id
-    self[:data] = cast(self[data_type])
-    clear_attribute_changes [:data]
+    self[:data] = case data_type
+      when :symbol
+        cast(self[:string])
+      else
+        cast(self[data_type])
+      end
+    clear_attribute_change(:data)
   end
 
   def cast(data)
     return data unless data
-
-    if data_type == 'serialized'
+    case data_type
+    when :serialized
       Marshal.load(data) rescue data
+    when :symbol
+      data.to_sym
     else
       data
     end
