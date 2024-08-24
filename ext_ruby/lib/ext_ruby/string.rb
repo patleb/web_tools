@@ -119,6 +119,12 @@ class String
     gsub(OBJECT_INSPECT, "#{delimiters[0]}\\2#{delimiters[1]}")
   end
 
+  def squish_all(max_length = nil)
+    string = squish_numbers.squish!
+    string = string[0...max_length] if max_length
+    string
+  end
+
   def squish_numbers(placeholder = '*')
     string = gsub(UUID, placeholder)
     string.gsub!(HEXADECIMAL, placeholder)

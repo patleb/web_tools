@@ -172,7 +172,7 @@ class LogLine < LibMainRecord
   end
 
   def self.squish(text)
-    text.squish_numbers.squish!
+    text.squish_all
   end
 
   def self.with_message(message)
