@@ -1,4 +1,4 @@
-class CreateTestRelatedRecords < ActiveRecord::Migration[6.1]
+class CreateTestRelatedRecords < ActiveRecord::Migration[7.1]
   def change
     create_table :test_related_records do |t|
       t.string     :name,         null: false
