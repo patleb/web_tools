@@ -4,12 +4,12 @@ module MixUser
   module Routes
     def self.draw(mapper)
       MixUser.config.available_routes.each do |controller, actions|
-        mapper.simple_resources path: MixUser.config.root / controller, controller: controller, only: actions
+        mapper.simple_resources path: MixUser.config.root_path / controller, controller: controller, only: actions
       end
     end
 
     def self.root_path(**params)
-      append_query MixUser.config.root, params
+      append_query MixUser.config.root_path, params
     end
 
     def self.new_path(**params)
