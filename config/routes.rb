@@ -18,7 +18,7 @@ Rails.application.routes.draw do
     match '/company', action: :company, via: [:get, :post]
     get '/error' => :error
   end
-  get 'sass', to: 'sass#index'
+  get '/sass', to: 'sass#index'
 
   # mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 end
