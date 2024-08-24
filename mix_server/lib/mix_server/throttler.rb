@@ -1,7 +1,13 @@
-module Throttler
-  PREFIX = 'throttler'.freeze
+# frozen_string_literal: true
 
-  def self.status(key:, value: nil, duration: nil)
+module Throttler
+  PREFIX = 'throttler'
+
+  def self.limit?(...)
+    increment(...)[:limit]
+  end
+
+  def self.increment(key:, value: nil, to: 1, within: MixServer.config.throttler_max_duration)
     new_value = normalize(value)
     new_time = Time.current
     throttled = false
@@ -19,31 +25,25 @@ module Throttler
         end
 
         old_time = Time.parse_utc(old_time)
-        if (new_time - old_time).seconds >= (duration || MixRescue.config.throttler_max_duration)
+        if (new_time - old_time).seconds >= within
           next { value: old_value, time: new_time.iso8601, count: 1 }
         end
 
-        if block_given? && !yield(old_time, old_count)
-          next { value: old_value, time: new_time.iso8601, count: 1 }
-        end
-
-        throttled = true
+        throttled = (old_count >= to)
         { value: old_value, time: old_time.iso8601, count: old_count + 1 }
       end
     end
 
     if record.new?
-      { throttled: false }
+      { limit: false }
     else
-      { throttled: throttled, previous: old_value, count: old_count }
+      { limit: throttled, was: [old_value, old_count] }
     end
   end
 
   def self.clear(prefix = nil)
     Global.delete_matched [PREFIX, prefix]
   end
-
-  private_class_method
 
   def self.normalize(value)
     case value
@@ -57,4 +57,5 @@ module Throttler
       value.class.to_s
     end
   end
+  private_class_method :normalize
 end

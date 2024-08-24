@@ -20,7 +20,7 @@ module ActionController
       end
 
       # TODO rack https://github.com/rails/rails/pull/23868/files
-      rescue_from Exception, with: :render_500 if MixRescue.config.rescue_500
+      rescue_from Exception, with: :render_500 if MixServer.config.rescue_500
       rescue_from DbTimeout, with: :render_408
       rescue_from *ActionDispatch::BAD_REQUEST_ERRORS, with: :render_400
     end

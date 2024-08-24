@@ -3,7 +3,7 @@ module LogLines::RescueAdmin
 
   included do
     rails_admin do
-      navigation_label_i18n_key :system
+      navigation_i18n_key :system
       navigation_weight 999
 
       configure :message, :code

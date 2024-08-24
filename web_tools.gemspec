@@ -37,7 +37,6 @@ Gem::Specification.new do |s|
   s.add_dependency "mix_log",         version
   s.add_dependency "mix_monit",       version
   s.add_dependency "mix_page",        version
-  s.add_dependency "mix_rescue",      version
   s.add_dependency "mix_task",        version
   s.add_dependency "mix_user",        version
   s.add_dependency "sunzistrano"
