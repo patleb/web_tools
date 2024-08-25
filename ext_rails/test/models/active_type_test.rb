@@ -4,7 +4,7 @@ class ActiveTypeTest < ActiveSupport::TestCase
   test '.ar_attribute, .enum' do
     record = Test::VirtualRecord.first
     assert_equal 'Name 0', record.name
-    assert_equal 'simple', record.type
+    assert_equal :simple, record.type
     assert_equal true, record.simple?
     assert_equal false, record.complex?
     assert_equal 12, Test::VirtualRecord.all.simple.size

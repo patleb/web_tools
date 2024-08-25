@@ -6,7 +6,7 @@ class VirtualRecordTest < ActiveSupport::TestCase
       r[:date] = r[:id].days.from_now.to_date
       r[:odd] = r[:id].odd?
       r[:name] = nil if r[:name].blank?
-      r[:type] = 'simple'
+      r[:type] = :simple
       r
     end
   end

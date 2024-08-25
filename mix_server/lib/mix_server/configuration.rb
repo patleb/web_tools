@@ -1,6 +1,5 @@
 module MixServer
   has_config do
-    attr_writer :rescue_500
     attr_writer :notice_interval
     attr_writer :skip_notice
     attr_writer :throttler_max_duration
@@ -9,11 +8,6 @@ module MixServer
     attr_writer :minimum_workers
     attr_writer :clamav_dirs
     attr_writer :clamav_false_positives
-
-    def rescue_500
-      return @rescue_500 if defined? @rescue_500
-      @rescue_500 = !Rails.env.local?
-    end
 
     def notice_interval
       @notice_interval ||= 24.hours

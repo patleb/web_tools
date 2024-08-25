@@ -1,6 +1,6 @@
 require './test/test_helper'
 
-class ActionController::Base::WithContextTest < ActionDispatch::IntegrationTest
+class ActionController::WithContextTest < ActionDispatch::IntegrationTest
   describe '#set_current_locale' do
     test 'default' do
       head '/'

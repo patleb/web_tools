@@ -1,7 +1,5 @@
-require 'ext_rails/action_controller/base/before_render'
-require 'ext_rails/action_controller/redirecting/with_string_url'
-require 'ext_rails/action_controller/with_context'
-require 'ext_rails/action_controller/with_memoization'
+require_dir __FILE__, 'base'
+require_dir __FILE__, 'metal', reverse: true
 
 ActionController::Base.class_eval do
   class_attribute :local
@@ -11,6 +9,14 @@ ActionController::Base.class_eval do
   include ActionController::WithContext
   include ActionController::WithMemoization
   prepend self::BeforeRender
+
+  def self.inherited(subclass)
+    super
+    if subclass.superclass == ActionController::Base
+      subclass.include ActionController::WithStatus
+    end
+    subclass.include ActionController::WithErrors
+  end
 
   ActiveSupport.run_load_hooks('ActionController', self, parent: true)
 end

@@ -94,7 +94,7 @@ module ActionController::WithContext
     message = instead ? "undefined method [#{e.name}], did you mean? [#{instead}]" : "undefined method [#{e.name}]"
     message = [message, e.message, "at #{backtrace.join("\n")}"].join! "\n"
     exception = NoMethodError.new(message, e.name)
-    MixServer.config.rescue_500 ? render_500(exception) : raise(exception)
+    ExtRails.config.rescue_500 ? render_500(exception) : raise(exception)
   end
 
   def without_timezone(&block)

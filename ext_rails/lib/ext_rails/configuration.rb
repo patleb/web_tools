@@ -2,6 +2,7 @@
 
 module ExtRails
   has_config do
+    attr_writer   :rescue_500
     attr_accessor :i18n_debug
     attr_accessor :email_debug
     attr_writer   :sql_debug
@@ -17,6 +18,11 @@ module ExtRails
     alias_method  :css_only_support?, :css_only_support
     attr_accessor :favicon_ico
     alias_method  :favicon_ico?, :favicon_ico
+
+    def rescue_500
+      return @rescue_500 if defined? @rescue_500
+      @rescue_500 = !Rails.env.local?
+    end
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug

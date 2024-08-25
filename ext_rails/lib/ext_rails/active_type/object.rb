@@ -31,7 +31,6 @@ ActiveType::Object.class_eval do
 
     return unless _scopes
     values.each_key do |key|
-      key = key.to_s if key.is_a? Symbol
       singleton_class.define_method(key) do
         where(name => key)
       end

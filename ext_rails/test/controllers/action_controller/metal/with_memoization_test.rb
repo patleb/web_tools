@@ -1,6 +1,6 @@
 require './test/test_helper'
 
-class ActionController::Base::WithMemoizationTest < ActionDispatch::IntegrationTest
+class ActionController::WithMemoizationTest < ActionDispatch::IntegrationTest
   test '#memoize' do
     values = { a: 1 }
     controller_define :expensive do
