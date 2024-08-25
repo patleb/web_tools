@@ -54,14 +54,6 @@ class ActionController::WithContextTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'rescue NoMethodError' do
-    assert_raise NoMethodError do
-      controller_refute :no_method do
-        Current.unknown
-      end
-    end
-  end
-
   private
 
   def assert_locale(locale)

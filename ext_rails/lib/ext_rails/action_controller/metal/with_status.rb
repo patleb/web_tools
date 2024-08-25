@@ -1,3 +1,7 @@
+MonkeyPatch.add{['railties', 'lib/rails/generators/rails/app/templates/public/404.html', '41e6541b07f9c3b306a517917eedb53d7c7bfa006faf6673aaad98c9d96f7023']}
+MonkeyPatch.add{['railties', 'lib/rails/generators/rails/app/templates/public/422.html', '848f8a124ddb3a76d24a7eca39f93cef89c4fba00e0cd0b2f0af37433fb88e89']}
+MonkeyPatch.add{['railties', 'lib/rails/generators/rails/app/templates/public/500.html', 'ef38a03155fab5fa59fe6c823f948893fe260204a87860c55522cdeb5672c959']}
+
 module ActionController
   module WithStatus
     class RequestTimeoutError < StandardError; end

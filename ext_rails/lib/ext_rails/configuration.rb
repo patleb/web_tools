@@ -22,7 +22,7 @@ module ExtRails
 
     def rescue_500
       return @rescue_500 if defined? @rescue_500
-      @rescue_500 = !Rails.env.local?
+      @rescue_500 = !Rails.env.development?
     end
 
     def sql_debug?

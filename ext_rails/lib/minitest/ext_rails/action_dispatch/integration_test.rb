@@ -26,7 +26,7 @@ ActionDispatch::IntegrationTest.class_eval do
         head :internal_server_error
       end
     end
-    head url, **request_options
+    get url, **request_options
   end
 
   def controller_define(method_name, &block)

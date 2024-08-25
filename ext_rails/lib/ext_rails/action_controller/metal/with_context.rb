@@ -88,13 +88,6 @@ module ActionController::WithContext
         yield
       end
     end
-  rescue NoMethodError => e # prevent infinite loop
-    backtrace = e.backtrace.first(ExtRuby.config.backtrace_log_lines)
-    instead = e.corrections.first rescue nil
-    message = instead ? "undefined method [#{e.name}], did you mean? [#{instead}]" : "undefined method [#{e.name}]"
-    message = [message, e.message, "at #{backtrace.join("\n")}"].join! "\n"
-    exception = NoMethodError.new(message, e.name)
-    ExtRails.config.rescue_500 ? render_500(exception) : raise(exception)
   end
 
   def without_timezone(&block)
