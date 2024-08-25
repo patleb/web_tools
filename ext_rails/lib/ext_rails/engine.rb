@@ -104,13 +104,13 @@ module ExtRails
 
     initializer 'ext_rails.append_routes' do |app|
       app.routes.append do
-        match '/' => 'application#healthcheck', via: [:get, :head], as: :base
+        match '/' => 'lib_api#healthcheck', via: [:get, :head], as: :base
 
         get '/test/:name' => 'ext_rails/test#show', as: :test if Rails.env.test?
 
         get '/favicon.ico', to: -> (_) { [404, {}, ['']] } unless ExtRails.config.favicon_ico?
 
-        match '(/)*not_found', via: :all, to: 'application#render_404', format: false
+        match '(/)*not_found', via: :all, to: 'lib#render_404', format: false
       end
     end
 
