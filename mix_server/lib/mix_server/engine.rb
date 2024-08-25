@@ -98,7 +98,7 @@ module MixServer
     end
 
     ActiveSupport.on_load(:action_controller) do |base|
-      base.include ActionController::WithLogger
+      base.prepend ActionController::WithLogger
     end
   end
 end

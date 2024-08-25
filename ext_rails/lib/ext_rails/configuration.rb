@@ -2,6 +2,7 @@
 
 module ExtRails
   has_config do
+    attr_accessor :default_logger
     attr_writer   :rescue_500
     attr_accessor :i18n_debug
     attr_accessor :email_debug
