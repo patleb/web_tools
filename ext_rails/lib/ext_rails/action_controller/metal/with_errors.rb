@@ -1,4 +1,15 @@
 module ActionController
+  BAD_REQUEST_ERRORS = [
+    EOFError,
+    URI::InvalidURIError,
+    Rack::QueryParser::InvalidParameterError,
+    ActionController::BadRequest,
+    ActionController::UnknownFormat,
+    ActionDispatch::Http::MimeNegotiation::InvalidType,
+    ActionDispatch::Http::Parameters::ParseError,
+    ActionController::InvalidAuthenticityToken,
+  ]
+
   module WithErrors
     extend ActiveSupport::Concern
 
@@ -11,7 +22,7 @@ module ActionController
 
       rescue_from Exception, with: :render_500 if ExtRails.config.rescue_500
       rescue_from ActiveRecord::QueryCanceled, with: :render_408
-      rescue_from *ActionDispatch::BAD_REQUEST_ERRORS, with: :render_400
+      rescue_from *BAD_REQUEST_ERRORS, with: :render_400
     end
   end
 end
