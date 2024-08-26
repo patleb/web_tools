@@ -11,7 +11,7 @@ module ActionController::Base::WithFlash
   end
 
   def render(...)
-    return super unless session? && session[:flash_later].to_b
+    return super unless session[:flash_later].to_b
 
     flashes = Flash.dequeue_all
     flashes.each do |record|
