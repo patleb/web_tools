@@ -1,12 +1,11 @@
 MonkeyPatch.add{['railties', 'lib/rails/generators/migration.rb', 'd66bf61070ce3445c8eed7ffe1e3d0860f8cce0507144e4830317a6dc9ac43e6']}
 
-require 'ext_ruby'
+require 'ext_rails'
 require 'mix_rpc/configuration'
+require 'mix_rpc/routes'
 
 module MixRpc
   class Engine < ::Rails::Engine
-    require 'mix_rpc/routes'
-
     initializer 'mix_rpc.append_migrations' do |app|
       append_migrations(app)
     end

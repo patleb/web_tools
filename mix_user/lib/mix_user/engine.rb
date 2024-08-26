@@ -2,6 +2,7 @@
 
 require 'ext_rails'
 require 'mix_user/configuration'
+require 'mix_user/routes'
 
 module ActionPolicy
   autoload :Base, 'mix_user/action_policy/base'
@@ -9,8 +10,6 @@ end
 
 module MixUser
   class Engine < ::Rails::Engine
-    require 'mix_user/routes'
-
     config.before_initialize do
       autoload_models_if_admin('User')
     end

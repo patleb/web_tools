@@ -3,6 +3,8 @@
 MonkeyPatch.add{['rake', 'lib/rake/backtrace.rb', 'd7717ccd2d224fd94f37d07f8f9333274494486bcfc2a143cc4dc079f14e66c6']}
 
 require 'routes_lazy_routes'
+require 'ext_rails/configuration'
+require 'ext_rails/routes'
 
 module ActionController
   autoload :Delegator, 'ext_rails/action_controller/delegator'
@@ -43,7 +45,6 @@ module ExtRails
     require 'ext_rails/active_support/lazy_load_hooks/autorun'
     require 'ext_rails/active_support/current_attributes'
     require 'ext_rails/active_support/dependencies/with_cache'
-    require 'ext_rails/configuration'
     require 'ext_rails/geared_pagination'
     require 'ext_rails/money_rails'
     require 'ext_rails/parallel'
@@ -52,7 +53,6 @@ module ExtRails
     require 'ext_rails/rake/task'
     require 'ext_rails/rails/engine'
     require 'ext_rails/rails/initializable/initializer'
-    require 'ext_rails/routes'
     require 'ext_rails/sh'
     require 'ext_rails/user_agent_parser/user_agent'
 

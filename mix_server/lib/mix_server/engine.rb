@@ -1,5 +1,6 @@
-require 'ext_ruby'
+require 'ext_rails'
 require 'mix_server/configuration'
+require 'mix_server/routes'
 
 autoload :Notice,    'mix_server/notice'
 autoload :Throttler, 'mix_server/throttler'
@@ -82,17 +83,8 @@ module MixServer
 
     initializer 'mix_server.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
-        get '/_information/ip' => 'servers/information#show_ip', as: :information_ip
-        post '/_rescues/javascript' => 'rescues/javascript#create', as: :rescues_javascript
+        MixUser::Routes.draw(self)
       end
-    end
-
-    ActiveSupport.on_load(:active_record) do
-      MixServer::Log.config.available_types.merge!(
-        'LogLines::Rescue' => 100,
-        'LogLines::Worker' => 150,
-        'LogLines::Clamav' => 160,
-      )
     end
 
     ActiveSupport.on_load(:action_controller, run_once: true) do

@@ -36,7 +36,10 @@ module MixServer
           'LogLines::App'         => 60,
           'LogLines::AptHistory'  => 70,
           'LogLines::Osquery'     => 80,
+          'LogLines::Rescue'      => 100,
           'LogLines::Email'       => 110,
+          'LogLines::Worker'      => 150,
+          'LogLines::Clamav'      => 160,
         )
       end
 
