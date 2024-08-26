@@ -1,9 +1,15 @@
 module MixServer
   module Rescue
     has_config do
+      attr_writer :render_500
       attr_writer :notice_interval
       attr_writer :skip_notice
       attr_writer :throttler_max_duration
+
+      def render_500
+        return @render_500 if defined? @render_500
+        @render_500 = !Rails.env.development?
+      end
 
       def notice_interval
         @notice_interval ||= 24.hours
