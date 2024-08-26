@@ -3,7 +3,7 @@
 module MixServer
   module Routes
     def self.draw(mapper)
-      mapper.get '/_server_ip' => 'servers/information#show_ip', as: :server_ip
+      mapper.get '/_client_ip' => 'servers/information#show_ip', as: :client_ip
       mapper.post '/_rescue_js' => 'rescues/javascript#create', as: :rescue_js
     end
 
@@ -11,8 +11,8 @@ module MixServer
       append_query '/', params
     end
 
-    def self.server_ip_path(**params)
-      build_path '_server_ip', *params
+    def self.client_ip_path(**params)
+      build_path '_client_ip', *params
     end
 
     def self.rescue_js_path(**params)
