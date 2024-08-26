@@ -1,0 +1,90 @@
+2021/11/17 01:18:43 [notice] 490511#490511: signal process started
+[ N 2021-11-17 01:18:43.2408 490513/T1 age/Wat/WatchdogMain.cpp:1373 ]: Starting Passenger watchdog...
+[ N 2021-11-17 01:18:43.2672 490519/T1 age/Cor/CoreMain.cpp:1340 ]: Starting Passenger core...
+[ N 2021-11-17 01:18:43.2673 490519/T1 age/Cor/CoreMain.cpp:256 ]: Passenger core running in multi-application mode.
+[ N 2021-11-17 01:18:43.3421 490519/T1 age/Cor/CoreMain.cpp:1015 ]: Passenger core online, PID 490519
+2021/11/17 01:19:33 [notice] 491030#491030: signal process started
+
+[ N 2021-11-17 01:19:33.8576 490519/T8 age/Cor/CoreMain.cpp:670 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+[ N 2021-11-17 01:19:33.8577 490519/T1 age/Cor/CoreMain.cpp:1245 ]: Received command to shutdown gracefully. Waiting until all clients have disconnected...
+[ N 2021-11-17 01:19:33.8578 490519/T1 age/Cor/CoreMain.cpp:1146 ]: Checking whether to disconnect long-running connections for process 490743, application /home/deployer/web_tools_staging/current (staging)
+[ N 2021-11-17 01:19:33.8584 490519/T8 Ser/Server.h:901 ]: [ServerThr.1] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8585 490519/Tb Ser/Server.h:901 ]: [ServerThr.2] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8585 490519/Tc Ser/Server.h:901 ]: [ServerThr.3] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8585 490519/Tg Ser/Server.h:901 ]: [ServerThr.5] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8585 490519/Tb Ser/Server.h:558 ]: [ServerThr.2] Shutdown finished
+[ N 2021-11-17 01:19:33.8585 490519/Ti Ser/Server.h:901 ]: [ServerThr.6] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8585 490519/Te Ser/Server.h:901 ]: [ServerThr.4] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8585 490519/T8 Ser/Server.h:558 ]: [ServerThr.1] Shutdown finished
+[ N 2021-11-17 01:19:33.8585 490519/Tc Ser/Server.h:558 ]: [ServerThr.3] Shutdown finished
+[ N 2021-11-17 01:19:33.8585 490519/Tl Ser/Server.h:901 ]: [ServerThr.7] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8586 490519/Tg Ser/Server.h:558 ]: [ServerThr.5] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/To Ser/Server.h:901 ]: [ServerThr.9] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8586 490519/Tz Ser/Server.h:901 ]: [ServerThr.14] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8587 490519/T1r Ser/Server.h:901 ]: [ServerThr.28] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8587 490519/T1h Ser/Server.h:901 ]: [ServerThr.23] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8587 490519/T1r Ser/Server.h:558 ]: [ServerThr.28] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/Ti Ser/Server.h:558 ]: [ServerThr.6] Shutdown finished
+[ N 2021-11-17 01:19:33.8587 490519/Tz Ser/Server.h:558 ]: [ServerThr.14] Shutdown finished
+[ N 2021-11-17 01:19:33.8587 490519/T1h Ser/Server.h:558 ]: [ServerThr.23] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/Tr Ser/Server.h:901 ]: [ServerThr.10] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8586 490519/Te Ser/Server.h:558 ]: [ServerThr.4] Shutdown finished
+[ N 2021-11-17 01:19:33.8588 490519/Tr Ser/Server.h:558 ]: [ServerThr.10] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/T11 Ser/Server.h:901 ]: [ServerThr.15] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8589 490519/T11 Ser/Server.h:558 ]: [ServerThr.15] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/Tl Ser/Server.h:558 ]: [ServerThr.7] Shutdown finished
+[ N 2021-11-17 01:19:33.8589 490519/T1s Ser/Server.h:901 ]: [ApiServer] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8589 490519/T1s Ser/Server.h:558 ]: [ApiServer] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/T13 Ser/Server.h:901 ]: [ServerThr.16] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8590 490519/T13 Ser/Server.h:558 ]: [ServerThr.16] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/T1c Ser/Server.h:901 ]: [ServerThr.21] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8590 490519/T1c Ser/Server.h:558 ]: [ServerThr.21] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/T15 Ser/Server.h:901 ]: [ServerThr.17] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8586 490519/T1a Ser/Server.h:901 ]: [ServerThr.20] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8591 490519/T15 Ser/Server.h:558 ]: [ServerThr.17] Shutdown finished
+[ N 2021-11-17 01:19:33.8591 490519/T1a Ser/Server.h:558 ]: [ServerThr.20] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/To Ser/Server.h:558 ]: [ServerThr.9] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/T16 Ser/Server.h:901 ]: [ServerThr.18] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8595 490519/T16 Ser/Server.h:558 ]: [ServerThr.18] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/T1j Ser/Server.h:901 ]: [ServerThr.24] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8596 490519/T1j Ser/Server.h:558 ]: [ServerThr.24] Shutdown finished
+[ N 2021-11-17 01:19:33.8586 490519/Tx Ser/Server.h:901 ]: [ServerThr.13] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8597 490519/Tx Ser/Server.h:558 ]: [ServerThr.13] Shutdown finished
+[ N 2021-11-17 01:19:33.8587 490519/Ts Ser/Server.h:901 ]: [ServerThr.11] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8597 490519/Ts Ser/Server.h:558 ]: [ServerThr.11] Shutdown finished
+[ N 2021-11-17 01:19:33.8587 490519/T18 Ser/Server.h:901 ]: [ServerThr.19] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8597 490519/T18 Ser/Server.h:558 ]: [ServerThr.19] Shutdown finished
+[ N 2021-11-17 01:19:33.8587 490519/Tn Ser/Server.h:901 ]: [ServerThr.8] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8598 490519/Tn Ser/Server.h:558 ]: [ServerThr.8] Shutdown finished
+[ N 2021-11-17 01:19:33.8587 490519/T1e Ser/Server.h:901 ]: [ServerThr.22] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8587 490519/T1m Ser/Server.h:901 ]: [ServerThr.26] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8599 490519/T1e Ser/Server.h:558 ]: [ServerThr.22] Shutdown finished
+[ N 2021-11-17 01:19:33.8599 490519/T1m Ser/Server.h:558 ]: [ServerThr.26] Shutdown finished
+[ N 2021-11-17 01:19:33.8587 490519/T1p Ser/Server.h:901 ]: [ServerThr.27] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8600 490519/T1p Ser/Server.h:558 ]: [ServerThr.27] Shutdown finished
+[ N 2021-11-17 01:19:33.8587 490519/Tu Ser/Server.h:901 ]: [ServerThr.12] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8600 490519/Tu Ser/Server.h:558 ]: [ServerThr.12] Shutdown finished
+[ N 2021-11-17 01:19:33.8587 490519/T1l Ser/Server.h:901 ]: [ServerThr.25] Freed 0 spare client objects
+[ N 2021-11-17 01:19:33.8600 490519/T1l Ser/Server.h:558 ]: [ServerThr.25] Shutdown finished
+[ N 2021-11-17 01:19:33.8603 490519/T1 age/Cor/CoreMain.cpp:1146 ]: Checking whether to disconnect long-running connections for process 490743, application /home/deployer/web_tools_staging/current (staging)
+[ N 2021-11-17 01:19:33.9084 491034/T1 age/Wat/WatchdogMain.cpp:1373 ]: Starting Passenger watchdog...
+[ N 2021-11-17 01:19:33.9350 491037/T1 age/Cor/CoreMain.cpp:1340 ]: Starting Passenger core...
+[ N 2021-11-17 01:19:33.9351 491037/T1 age/Cor/CoreMain.cpp:256 ]: Passenger core running in multi-application mode.
+[ N 2021-11-17 01:19:34.0566 491037/T1 age/Cor/CoreMain.cpp:1015 ]: Passenger core online, PID 491037
+[ N 2021-11-17 01:19:34.4007 490519/T1 age/Cor/CoreMain.cpp:1325 ]: Passenger core shutdown finished
+2021/11/17 08:22:04 [crit] 491062#491062: *594 SSL_do_handshake() failed (SSL: error:141CF06C:SSL routines:tls_parse_ctos_key_share:bad key share) while SSL handshaking, client: 65.49.20.67, server: 0.0.0.0:443
+2021/11/17 20:43:49 [crit] 491062#491062: *710 SSL_do_handshake() failed (SSL: error:141CF06C:SSL routines:tls_parse_ctos_key_share:bad key share) while SSL handshaking, client: 192.241.200.71, server: 0.0.0.0:443
+[ N 2021-11-18 15:13:06.3760 491037/T1s age/Cor/CoreMain.cpp:1146 ]: Checking whether to disconnect long-running connections for process 491262, application /home/deployer/web_tools_staging/current (staging)
+App 787982 output: [2021-11-18 15:17:35 UTC][STARTED][789789] about
+App 787982 output: About your application's environment
+App 787982 output: Rails version             6.1.4.1
+App 787982 output: Ruby version              ruby 2.7.4p191 (2021-07-07 revision a21a3b7d23) [x86_64-linux]
+App 787982 output: RubyGems version          3.1.6
+App 787982 output: Rack version              2.2.3
+App 787982 output: Middleware                ActionDispatch::HostAuthorization, ActionDispatch::SSL, Rack::Sendfile, ActionDispatch::Executor, Rack::Runtime, Rack::MethodOverride, ActionDispatch::RequestId, ActionDispatch::RemoteIp, Rails::Rack::Logger, ActionDispatch::ShowExceptions, ActionDispatch::DebugExceptions, ActionDispatch::ActionableExceptions, ActionDispatch::Callbacks, ActionDispatch::Cookies, ActionDispatch::Session::CookieStore, ActionDispatch::Flash, ActionDispatch::ContentSecurityPolicy::Middleware, ActionDispatch::PermissionsPolicy::Middleware, Rack::Head, Rack::ConditionalGet, Rack::ETag, Rack::TempfileReaper, Warden::Manager, ActionDispatch::IFrame, Rack::Attack, RoutesLazyRoutes::LazyRoutesMiddleware, HttpAcceptLanguage::Middleware, Rack::Attack
+App 787982 output: Application root          /home/deployer/web_tools_staging/releases/20211118151101
+App 787982 output: Environment               staging
+App 787982 output: Database adapter          postgis
+App 787982 output: Database schema version   30010000002036
+App 787982 output: [2021-11-18 15:17:35 UTC][SUCCESS][789789] about: less than 1 second
+[ N 2021-11-18 15:22:36.1179 491037/T4 age/Cor/CoreMain.cpp:1146 ]: Checking whether to disconnect long-running connections for process 789796, application /home/deployer/web_tools_staging/current (staging)
