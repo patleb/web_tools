@@ -10,7 +10,7 @@ module Rescues
     end
 
     test 'catch CSRF error as bad request' do
-      post '/_rescues/javascript', as: :json
+      post '/_rescue_js', as: :json
       assert_response :bad_request
     end
 
@@ -25,11 +25,11 @@ module Rescues
               data: { text: 'Text' },
             }
           }
-          post '/_rescues/javascript', params: params, as: :json
+          post '/_rescue_js', params: params, as: :json
           assert_response :created
           assert_equal true, LogMessage.where('text_tiny LIKE ?', '%JavascriptError%').take.reported?
 
-          post '/_rescues/javascript', params: params, as: :json
+          post '/_rescue_js', params: params, as: :json
           assert_response :too_many_requests
           assert_equal 2, Global.read_multi(/throttler:rescue_js/).values.first[:count]
         end

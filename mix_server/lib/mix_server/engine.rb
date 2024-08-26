@@ -6,12 +6,6 @@ autoload :Notice,    'mix_server/notice'
 autoload :Throttler, 'mix_server/throttler'
 
 module MixServer
-  def self.routes
-    @routes ||= {
-      rescue: '/_rescues/javascript',
-    }
-  end
-
   def self.current_version
     @current_version ||= begin
       version = Rails.root.join('REVISION')
@@ -83,7 +77,7 @@ module MixServer
 
     initializer 'mix_server.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
-        MixUser::Routes.draw(self)
+        MixServer::Routes.draw(self)
       end
     end
 
