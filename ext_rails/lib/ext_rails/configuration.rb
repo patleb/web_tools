@@ -2,7 +2,7 @@
 
 module ExtRails
   has_config do
-    attr_accessor :default_logger
+    attr_writer   :default_logger
     attr_accessor :i18n_debug
     attr_accessor :email_debug
     attr_writer   :sql_debug
@@ -18,6 +18,10 @@ module ExtRails
     alias_method  :css_only_support?, :css_only_support
     attr_accessor :favicon_ico
     alias_method  :favicon_ico?, :favicon_ico
+
+    def default_logger?
+      @default_logger
+    end
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
