@@ -14,7 +14,7 @@ module Rescues
     private
 
     def throttle
-      key = ['rescues_javascript', request.remote_ip, user_agent]
+      key = ['rescue_js', request.remote_ip, user_agent]
       if Throttler.limit? key: key, value: create_params[:message].squish_all(256), within: 1.day
         head :too_many_requests
       end
@@ -29,7 +29,7 @@ module Rescues
     end
 
     def create_params
-      @_create_params ||= params.require(:rescues_javascript).permit(:message, backtrace: [], data: {})
+      @_create_params ||= params.require(:rescue_js).permit(:message, backtrace: [], data: {})
     end
   end
 end

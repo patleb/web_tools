@@ -19,7 +19,7 @@ module Rescues
         Rescues::JavascriptController.allow_forgery_protection = false
         assert_emails(1) do
           params = {
-            rescues_javascript: {
+            rescue_js: {
               message: 'Method undefined',
               backtrace: caller,
               data: { text: 'Text' },
@@ -31,7 +31,7 @@ module Rescues
 
           post '/_rescues/javascript', params: params, as: :json
           assert_response :too_many_requests
-          assert_equal 2, Global.read_multi(/throttler:rescues_javascript/).values.first[:count]
+          assert_equal 2, Global.read_multi(/throttler:rescue_js/).values.first[:count]
         end
         Rescues::JavascriptController.allow_forgery_protection = true
       end
