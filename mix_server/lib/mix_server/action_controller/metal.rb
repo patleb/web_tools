@@ -7,7 +7,7 @@ module ActionController::WithMixServer
     def inherited(subclass)
       super
       if subclass.metal_grandparent?
-        subclass.include ActionController::WithLogger
+        subclass.include ActionController::WithLog
       end
       subclass.include ActionController::WithErrors
     end

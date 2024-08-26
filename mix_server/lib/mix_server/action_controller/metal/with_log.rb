@@ -1,4 +1,4 @@
-module ActionController::WithLogger
+module ActionController::WithLog
   private
 
   def log(exception, subject: nil, **)
