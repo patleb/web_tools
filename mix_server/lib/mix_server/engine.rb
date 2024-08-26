@@ -94,11 +94,14 @@ module MixServer
 
     ActiveSupport.on_load(:action_controller, run_once: true) do
       require 'mix_server/action_dispatch/middleware/exception_interceptor'
-      require 'mix_server/action_controller/with_logger'
     end
 
-    ActiveSupport.on_load(:action_controller) do |base|
-      base.prepend ActionController::WithLogger
+    ActiveSupport.on_load(:action_controller_api) do
+      require 'mix_server/action_controller/api'
+    end
+
+    ActiveSupport.on_load(:action_controller_base) do
+      require 'mix_server/action_controller/base'
     end
   end
 end

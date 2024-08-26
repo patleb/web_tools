@@ -1,6 +1,8 @@
 require './test/test_helper'
 
 class ActionController::WithErrorsTest < ActionDispatch::IntegrationTest
+  self.use_transactional_tests = false
+
   test '#render_500' do
     controller_test :render_500 do
       raise 'error'
