@@ -54,13 +54,12 @@ module MixServer
 
   class Engine < ::Rails::Engine
     require 'mix_global'
-    require 'mix_log'
     require 'mix_server/rack/utils'
     require 'mix_server/rake/dsl'
     require 'mix_server/sh'
 
     config.before_initialize do
-      autoload_models_if_admin('LogLines::Rescue')
+      autoload_models_if_admin(['LogLines::Email', 'LogLines::Rescue'])
 
       if defined? PhusionPassenger
         PhusionPassenger.on_event(:starting_worker_process) do |_forked|
@@ -77,6 +76,10 @@ module MixServer
       append_migrations(app)
     end
 
+    initializer 'mix_server.db_partitions' do
+      ExtRails.config.db_partitions[:lib_log_lines] = :week
+    end
+
     initializer 'mix_server.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
         get '/_information/ip' => 'servers/information#show_ip', as: :information_ip
@@ -85,7 +88,7 @@ module MixServer
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixLog.config.available_types.merge!(
+      MixServer::Log.config.available_types.merge!(
         'LogLines::Rescue' => 100,
         'LogLines::Worker' => 150,
         'LogLines::Clamav' => 160,
@@ -102,6 +105,10 @@ module MixServer
 
     ActiveSupport.on_load(:action_controller_base) do
       require 'mix_server/action_controller/base'
+    end
+
+    ActiveSupport.on_load(:action_mailer) do
+      require 'mix_server/action_mailer/base/with_email_record'
     end
   end
 end

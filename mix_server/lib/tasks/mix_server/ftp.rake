@@ -102,7 +102,7 @@ namespace! :ftp do
     namespace :logs do
       desc 'mirror osquery logs'
       task :mirror => :environment do
-        sh Sh.ftp_mirror("#{MixLog.config.osquery_log_path}*", osquery_folder, sudo: true, parallel: 10), verbose: false
+        sh Sh.ftp_mirror("#{MixServer::Log.config.osquery_log_path}*", osquery_folder, sudo: true, parallel: 10), verbose: false
       end
     end
   end

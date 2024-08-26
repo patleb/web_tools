@@ -19,11 +19,11 @@ module MixMonit
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixLog.config.available_types.merge!(
+      MixServer::Log.config.available_types.merge!(
         'LogLines::Database' => 140,
         'LogLines::Host' => 142,
       )
-      MixLog.config.available_rollups.merge!(
+      MixServer::Log.config.available_rollups.merge!(
         'LogRollups::Database' => 100,
         'LogRollups::Host' => 102,
       )

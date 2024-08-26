@@ -7,7 +7,7 @@ module Monit
           path = if Rails.env.local?
             MixLog::Engine.root.join('test/fixtures/files/log/osquery/osqueryd.results.log')
           else
-            Pathname.new(MixLog.config.osquery_log_path)
+            Pathname.new(MixServer::Log.config.osquery_log_path)
           end
           File.foreach(path, chomp: true) do |line|
             json = JSON.parse(line)

@@ -1,4 +1,3 @@
-require 'mix_log'
 require 'mix_page/configuration'
 require 'mix_file'
 require 'mix_admin'
@@ -37,7 +36,7 @@ module MixPage
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixLog.config.ided_paths[%r{/(#{URL_SEGMENT})/([\w-]+)}] = '/\1/*'
+      MixServer::Log.config.ided_paths[%r{/(#{URL_SEGMENT})/([\w-]+)}] = '/\1/*'
 
       MixFile.configure do |config|
         config.available_records['PageFields::RichText'] = 10

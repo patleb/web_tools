@@ -7,7 +7,7 @@ module Throttler
     increment(...)[:limit]
   end
 
-  def self.increment(key:, value: nil, to: 1, within: MixServer.config.throttler_max_duration)
+  def self.increment(key:, value: nil, to: 1, within: MixServer::Rescue.config.throttler_max_duration)
     new_value = normalize(value)
     new_time = Time.current
     throttled = false

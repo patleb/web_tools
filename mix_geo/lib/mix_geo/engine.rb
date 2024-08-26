@@ -27,7 +27,7 @@ module MixGeo
         require 'mix_geo/active_record/migration/with_raster'
       end
 
-      MixLog.config.filter_parameters += %w(
+      MixServer::Log.config.filter_parameters += %w(
         CRS
         SRS
         TILED

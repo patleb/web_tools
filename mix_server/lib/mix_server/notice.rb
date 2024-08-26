@@ -17,7 +17,7 @@ class Notice
       exception = RescueError.new(exception, data: data)
     end
     log_message = Log.rescue_not_reportable(exception)
-    return if log_message.line_at > MixServer.config.notice_interval.ago
+    return if log_message.line_at > MixServer::Rescue.config.notice_interval.ago
 
     subject = [subject, "[#{exception.name}]"].compact.join(' ')
     message = <<~TEXT
@@ -52,7 +52,7 @@ class Notice
     if Rails.env.test?
       Mail::TestMailer.new({}).deliver! mail
     else
-      mail.deliver! unless MixServer.config.skip_notice
+      mail.deliver! unless MixServer::Rescue.config.skip_notice
     end
     log_message.update_attribute :line_at, log_message.new_line_at
   rescue Exception => e

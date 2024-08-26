@@ -34,7 +34,6 @@ Gem::Specification.new do |s|
   s.add_dependency "mix_server",      version
   s.add_dependency "mix_setting"
   s.add_dependency "mix_job",         version
-  s.add_dependency "mix_log",         version
   s.add_dependency "mix_monit",       version
   s.add_dependency "mix_page",        version
   s.add_dependency "mix_task",        version
