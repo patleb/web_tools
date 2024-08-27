@@ -1,6 +1,47 @@
 require_dir __FILE__, 'configuration'
 
 module MixServer
+  def self.current_version
+    @current_version ||= begin
+      version = Rails.root.join('REVISION')
+      version = version.exist? ? version.read : `git rev-parse --short HEAD`
+      version.strip.first(7)
+    end
+  end
+
+  def self.no_reboot_file
+    shared_dir.join('tmp/files/no_reboot')
+  end
+
+  def self.deploy_dir
+    @deploy_dir ||= "#{Rails.app}_#{Rails.env}"
+  end
+
+  def self.shared_dir
+    if Rails.env.local?
+      Rails.root
+    else
+      Rails.root.join('..', '..', 'shared').expand_path
+    end
+  end
+
+  def self.idle?(timeout: nil)
+    return _idle? unless timeout
+    started_at = Time.current
+    until (idle = _idle?)
+      break if (Time.current - started_at) > timeout
+      sleep ExtRuby.config.memoized_at_timeout
+    end
+    idle
+  end
+
+  def self._idle?
+    # make sure that Passenger extra workers are killed and no extra rake tasks are running
+    min_workers = MixServer.config.minimum_workers + 1 # include the current rake task or rails console
+    Process.passenger.requests.blank? && Process::Worker.all.select{ |w| w.name == 'ruby' }.size <= min_workers
+  end
+  private_class_method :_idle?
+
   has_config do
     attr_writer :available_providers
     attr_writer :minimum_workers
