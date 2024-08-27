@@ -56,7 +56,7 @@ ActiveRecord::Base.class_eval do
   self.store_base_sti_class = false
 
   def self.enum!(*, **)
-    enum(*, _scopes: false, _instance_methods: false, **)
+    enum(*, **, _scopes: false, _instance_methods: false)
   end
 
   def self.with_raw_connection
