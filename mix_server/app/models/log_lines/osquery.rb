@@ -50,11 +50,12 @@ module LogLines
     def self.parse(log, line, **)
       name, time, diff = JSON.parse(line.tr("\0", '')).values_at('name', 'unixTime', 'diffResults')
       return { filtered: true } unless names.include? name
+      return { filtered: true } if (adds = diff['added']).empty?
 
       created_at = Time.at(time).utc
       case name
       when 'osquery_info'
-        pid, ram = diff['added'].first.values_at('pid', 'resident_size')
+        pid, ram = adds.first.values_at('pid', 'resident_size')
         level = ram > (flags[:watchdog_memory_limit] + 100).mb_to_bytes ? :error : :info
         message = { text: name, level: level }
       when 'file_events'
@@ -63,7 +64,7 @@ module LogLines
         was_deployed = host(log)&.was_deployed? created_at
         was_rebooted = host(log)&.was_rebooted? created_at
         ssl_upgrade = task(log)&.ssl_upgrade? created_at
-        message, paths = extract_paths(diff, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
+        message, paths = extract_paths(adds, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
           path = row['target_path']
           next if not_provisioned && path.end_with?("/#{Rails.app}_#{Rails.env}-job-default.service")
           next if was_upgraded && upgraded_binaries.any?{ |dir| path.start_with? dir }
@@ -77,7 +78,7 @@ module LogLines
         end
       when 'socket_events'
         servers = Set.new(Cloud.servers)
-        message, paths = extract_paths(diff, name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
+        message, paths = extract_paths(adds, name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
           next unless %w(connect bind).include? row['action']
           path = row.values_at('cmdline', 'path').reject(&:blank?).first || ''
           local = row.values_at('local_address', 'local_port')
@@ -94,7 +95,7 @@ module LogLines
           memo << [path, local.join(':'), remote.join(':')].join('/')
         end
       else
-        message = { text: "threat #{name}", level: :fatal } unless diff['added'].empty?
+        message = { text: "threat #{name}", level: :fatal }
       end
       return { filtered: true } unless message
 
@@ -110,8 +111,8 @@ module LogLines
       end
     end
 
-    def self.extract_paths(diff, name, tiny: nil)
-      paths = diff['added'].each_with_object(Set.new) do |row, memo|
+    def self.extract_paths(adds, name, tiny: nil)
+      paths = adds.each_with_object(Set.new) do |row, memo|
         yield(row, memo)
       end.to_a.sort
 
