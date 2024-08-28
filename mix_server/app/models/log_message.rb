@@ -54,16 +54,16 @@ class LogMessage < LibMainRecord
   def self.report_values
     m_access(__method__) do
       times = []
-      servers = report_rows.map do |message|
+      servers = report_rows.flat_map do |message|
         times << [message.id, message.log_lines.maximum(:created_at)]
-        [
-          message.log.server.private_ip.to_s,
+        message.logs.map{ |log| [
+          log.server.private_ip.to_s,
           message.level,
           message.updated_at,
           message.log_lines_type.demodulize,
-          message.log.path,
+          log.path,
           message.text_tiny
-        ]
+        ]}
       end
       messages = servers.group_by(&:shift).transform_values! do |levels|
         levels.sort_by!(&:first).reverse.group_by(&:shift).transform_values! do |line_types|
@@ -76,7 +76,7 @@ class LogMessage < LibMainRecord
 
   def self.report_rows
     reportable
-      .includes(log: :server)
+      .includes(logs: :server)
       .joins(:log_lines)
       .where(LogLine.column(:created_at) > column(:line_at))
       .order(updated_at: :desc) # :updated_at is the last time a log line has been added
