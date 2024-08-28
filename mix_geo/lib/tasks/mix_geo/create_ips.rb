@@ -7,8 +7,8 @@ module MixGeo
     GEOLITE2_CSV         = 'geolite2-city-ipv4.csv'
     TMP_GEOLITE2_FOLDER  = 'tmp/geolite2'
     TMP_GEOLITE2_PREFIX  = "#{TMP_GEOLITE2_FOLDER}-ipv4-"
-    GIT_GEOLITE2_CSV_GZ  = "https://raw.githubusercontent.com/sapics/ip-location-db/master/geolite2-city/#{GEOLITE2_CSV}.gz"
-    GIT_GEOLITE2_VERSION = "https://raw.githubusercontent.com/sapics/ip-location-db/master/geolite2-city/package.json"
+    GIT_GEOLITE2_CSV_GZ  = "https://raw.githubusercontent.com/sapics/ip-location-db/main/geolite2-city/#{GEOLITE2_CSV}.gz"
+    GIT_GEOLITE2_VERSION = "https://raw.githubusercontent.com/sapics/ip-location-db/main/geolite2-city/package.json"
 
     def self.args
       {
@@ -121,7 +121,7 @@ module MixGeo
           end
           ips << {
             id: ip_first, state_code: state_code, country_code: country_code, geo_city_id: cities_ids[city],
-            coordinates: [latitude, longitude]
+            coordinates: [latitude || 0.0, longitude || 0.0]
           }
           ips.process
         end
