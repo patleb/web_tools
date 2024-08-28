@@ -145,6 +145,7 @@ module Postgis
 
     def self.py_exec_query(sql, *args)
       py_cursor.execute(sql, args)
+      yield py_cursor if block_given?
     ensure
       py_connection.commit
     end
