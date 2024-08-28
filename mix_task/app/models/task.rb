@@ -18,6 +18,10 @@ class Task < LibMainRecord
 
   validate :perform_later
 
+  def self.running?(name)
+    where(name: name).take&.running?
+  end
+
   def self.perform(name, *arguments)
     find(name).update! arguments: arguments, _perform: true
   end
