@@ -113,6 +113,7 @@ class LogLine < LibMainRecord
       log_message = LogMessage.find_or_create_by! level: level, text_hash: text_hash do |record|
         record.assign_attributes(text_tiny: text_tiny, text: text, monitor: monitor, log_lines_type: name)
       end
+      log_message.update_columns monitor: monitor if log_message.monitor != monitor
       line[:log_message_id] = log_message.id
     end
     insert! line
