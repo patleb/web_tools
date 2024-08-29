@@ -8,6 +8,7 @@ ActiveSupport::TestCase.class_eval do
   end
 
   def clear_logs
+    LogUnknown.delete_all
     LogLine.delete_all
     LogMessage.delete_all
     Log.delete_all

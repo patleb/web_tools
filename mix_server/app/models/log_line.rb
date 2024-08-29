@@ -174,7 +174,7 @@ class LogLine < LibMainRecord
   end
 
   def self.save_and_filter_unknown(line, created_at = nil)
-    unknown = LogUnknown.find_or_create_by! text_hash: line.squish_all(256) do |record|
+    unknown = LogUnknown.find_or_create_by! text_hash: Digest.sha256_hex(squish(line)) do |record|
       record.assign_attributes text: line, log_lines_type: name
     end
     unknown.increment! :log_lines_count, touch: true

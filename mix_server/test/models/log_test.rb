@@ -53,7 +53,7 @@ class LogTest < ActiveSupport::TestCase
 
     log = Log.create! server: Server.current, path: 'log/nginx/web_tools.access.log'
     assert_equal({ created_at: nil, filtered: true }, LogLines::NginxAccess.parse(log, 'invalid'))
-    assert_equal 'invalid', LogUnknown.where(text_hash: 'invalid'.squish_all(256)).pluck(:text).first
+    assert_equal 'invalid', LogUnknown.where(text_hash: text_hash('invalid')).pluck(:text).first
 
     assert_equal({ error: [
       'Rescue => [RescueError] [RESCUE][StandardError] error not a number {}',
@@ -63,5 +63,11 @@ class LogTest < ActiveSupport::TestCase
     assert_emails 1 do
       Log.report!
     end
+  end
+
+  private
+
+  def text_hash(value)
+    Digest.sha256_hex(value.squish_all)
   end
 end
