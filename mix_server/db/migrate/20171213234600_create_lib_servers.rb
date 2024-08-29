@@ -1,4 +1,4 @@
-class CreateLibServers < ActiveRecord::Migration[6.0]
+class CreateLibServers < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_servers do |t|
       t.integer    :provider,   null: false

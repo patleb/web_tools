@@ -1,4 +1,4 @@
-class CreateLibLogs < ActiveRecord::Migration[6.0]
+class CreateLibLogs < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_logs do |t|
       t.belongs_to :server,          null: false, index: false, foreign_key: { to_table: :lib_servers }

@@ -30,13 +30,6 @@ class LogMessage < LibMainRecord
     SQL
   end
 
-  def self.report!
-    if report?
-      LogMailer.report.deliver_now
-      reported!
-    end
-  end
-
   def self.report?
     report.any?
   end

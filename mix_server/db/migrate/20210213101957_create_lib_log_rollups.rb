@@ -1,4 +1,4 @@
-class CreateLibLogRollups < ActiveRecord::Migration[6.0]
+class CreateLibLogRollups < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_log_rollups, id: false do |t|
       t.integer    :type,        null: false

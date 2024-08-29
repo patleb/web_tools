@@ -158,6 +158,12 @@ class LogLine < LibMainRecord
     log_messages.tally.each do |id, count|
       LogMessage.update_counters(id, log_lines_count: count, touch: true)
     end
+  rescue JSON::GeneratorError, ActiveRecord::StatementInvalid, LogLine::IncompatibleLogLine
+    lines.each do |line|
+      push(log, line)
+    rescue JSON::GeneratorError, ActiveRecord::StatementInvalid, LogLine::IncompatibleLogLine
+      save_and_filter_unknown(line)
+    end
   end
 
   def self.parse(log, line, **)
@@ -167,8 +173,11 @@ class LogLine < LibMainRecord
   def self.finalize(log)
   end
 
-  def self.rescue_and_filter(line, created_at = nil)
-    Log.rescue(IncompatibleLogLine.new(line))
+  def self.save_and_filter_unknown(line, created_at = nil)
+    unknown = LogUnknown.find_or_create_by! text_hash: line.squish_all(256) do |record|
+      record.assign_attributes text: line, log_lines_type: name
+    end
+    unknown.increment! :log_lines_count, touch: true
     { created_at: created_at, filtered: true }
   end
 

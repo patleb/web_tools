@@ -15,6 +15,26 @@ class Log < LibMainRecord
 
   before_create :initialize_log_lines_type, if: -> { path.present? }
 
+  def self.report!
+    if report?
+      LogMailer.report.deliver_now
+      reported!
+    end
+  end
+
+  def self.report?
+    LogMessage.report? || LogUnknown.report?
+  end
+
+  def self.report
+    LogMessage.report.merge(unknowns: LogUnknown.report)
+  end
+
+  def self.reported!
+    LogMessage.reported!
+    LogUnknown.reported!
+  end
+
   def self.rescue_not_reportable(exception, data: nil)
     db_log('LogLines::Rescue').push(exception, data: data, monitor: false)
   end
