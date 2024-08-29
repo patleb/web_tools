@@ -1,7 +1,7 @@
 module MixServer
   module Log
     has_config do
-      attr_writer   :log_debug
+      attr_writer   :show_path
       attr_writer   :partitions_total_size
       attr_writer   :available_types
       attr_writer   :available_paths
@@ -15,9 +15,9 @@ module MixServer
       attr_writer   :known_sockets
       attr_accessor :force_read
 
-      def log_debug
-        return @log_debug if defined? @log_debug
-        @log_debug = Rails.env.staging?
+      def show_path?
+        return @show_path if defined? @show_path
+        @show_path = Rails.env.staging?
       end
 
       def partitions_total_size
@@ -159,7 +159,6 @@ module MixServer
         ]
       end
 
-      # TODO incidence analysis tools for /usr/lib/apt/methods/https
       def known_sockets
         @known_sockets ||= {
           path: [
@@ -174,6 +173,7 @@ module MixServer
             '/usr/bin/freshclam -d --foreground=true',
             '/usr/lib/snapd/snapd',
             '/usr/bin/python3 /usr/lib/ubuntu-release-upgrader/check-new-release -q',
+            '/usr/lib/apt/methods/http', # apt update
           ],
           remote: %w(
             127.0.0.1

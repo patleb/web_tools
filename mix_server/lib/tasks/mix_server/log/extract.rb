@@ -15,7 +15,7 @@ module MixLog
 
       parallel(logs) do |log|
         log.rotated_files.select{ |file| file.mtime.to_i > log.mtime.to_i }.each do |file|
-          puts "Processing: #{file}" if MixServer::Log.config.log_debug
+          puts "Processing: #{file}" if MixServer::Log.config.show_path?
           process log, file
         end
         log.finalize
