@@ -20,6 +20,6 @@ class LogUnknown < LibMainRecord
   end
 
   def reported?
-    Global[:log_unknowns_at] && Global[:log_unknowns_at] > created_at
+    Global[:log_unknowns_at] && Global[:log_unknowns_at] > updated_at
   end
 end

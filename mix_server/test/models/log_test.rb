@@ -1,6 +1,9 @@
 require './test/test_helper'
 
 class LogTest < ActiveSupport::TestCase
+  include ActionMailer::TestHelper
+  include ActionMailer::TestCase::ClearTestDeliveries
+
   self.use_transactional_tests = false
 
   test '.fs_type' do
@@ -19,7 +22,7 @@ class LogTest < ActiveSupport::TestCase
     end
   end
 
-  test '.rescue' do
+  test '.rescue, .rescue_not_reportable, .report!' do
     Log.rescue StandardError.new('error')
     message = LogMessage.where('text_tiny LIKE ?', '%error%').take
     assert_match /^error$/, message.text
@@ -41,10 +44,24 @@ class LogTest < ActiveSupport::TestCase
     assert_match /^error 2$/, message.text
     assert_equal nil, message.monitor
 
+    Log.rescue StandardError.new('error not a number')
     log = Log.where(log_lines_type: 'LogLines::Rescue').take
     assert_equal '', log.path
-    assert_equal 4, log.log_lines_count
-    assert_equal 2, log.log_messages.size
+    assert_equal 5, log.log_lines_count
+    assert_equal 3, log.log_messages.size
     assert_equal Server.current, log.server
+
+    log = Log.create! server: Server.current, path: 'log/nginx/web_tools.access.log'
+    assert_equal({ created_at: nil, filtered: true }, LogLines::NginxAccess.parse(log, 'invalid'))
+    assert_equal 'invalid', LogUnknown.where(text_hash: 'invalid'.squish_all(256)).pluck(:text).first
+
+    assert_equal({ error: [
+      'Rescue => [RescueError] [RESCUE][StandardError] error not a number {}',
+      'Rescue => [RescueError] [RESCUE][StandardError] error * {}',
+    ]}, LogMessage.report.first.last)
+    assert_equal 1, LogUnknown.report
+    assert_emails 1 do
+      Log.report!
+    end
   end
 end
