@@ -28,7 +28,7 @@ module ActiveRecord::Migration::WithPartition
       end
       change.down do
         table = sql.match(TABLE).captures[0]
-        exec_query "DROP TABLE IF EXISTS #{table}#{' CASCADE' if partitioned}"
+        drop_table table, if_exists: true, force: (:cascade if partitioned)
       end
     end
   end

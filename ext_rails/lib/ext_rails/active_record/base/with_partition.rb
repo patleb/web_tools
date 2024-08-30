@@ -86,7 +86,7 @@ module ActiveRecord::Base::WithPartition
       name = partition_for(key, table, from: from, to: to)[:name]
       return if !force && partition_empty?(name)
       return if partitions(table).exclude?(name)
-      connection.exec_query("DROP TABLE IF EXISTS #{name}")
+      connection.drop_table name, if_exists: true
       reset_partitions(table)
     end
 
@@ -118,7 +118,7 @@ module ActiveRecord::Base::WithPartition
 
     def _drop_all_partitions!(table = table_name)
       partitions(table).each do |name|
-        connection.exec_query("DROP TABLE IF EXISTS #{name}")
+        connection.drop_table name, if_exists: true
       end
       connection.exec_query("TRUNCATE TABLE #{table} RESTART IDENTITY")
       reset_partitions(table)
