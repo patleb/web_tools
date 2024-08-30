@@ -11,7 +11,8 @@ module ActiveRecord::Relation::WithJsonAttribute
   end
 
   def select(*attributes, as: true)
-    json_accessors ? super(*attributes.map{ |name| json_key(name, as: as) }) : super(*attributes)
+    return super(*attributes) unless json_accessors
+    super(*attributes.map{ |name| json_key(name, as: as) })
   end
 
   def where(*args)
@@ -63,47 +64,38 @@ module ActiveRecord::Relation::WithJsonAttribute
   end
 
   def group(*attributes)
-    json_accessors ? super(*attributes.map{ |name| json_key(name) }) : super
+    return super unless json_accessors
+    super(*attributes.map{ |name| json_key(name) })
   end
 
   def order_group(*attributes, **)
-    if json_accessors
-      super(*attributes.map{ |name| json_key(name) }, **)
-    else
-      super
-    end
+    return super unless json_accessors
+    super(*attributes.map{ |name| json_key(name) }, **)
   end
 
   def calculate_from(operation, from, from_operation, from_column, from_arg = nil, **)
-    if json_accessors
-      super(operation, from, from_operation, json_key(from_column), from_arg, **)
-    else
-      super
-    end
+    return super unless json_accessors
+    super(operation, from, from_operation, json_key(from_column), from_arg, **)
   end
 
   def calculate_multi(columns)
-    if json_accessors
-      super(columns.map{ |(operation, column, *args)| [operation, json_key(column), *args] })
-    else
-      super
-    end
+    return super unless json_accessors
+    super(columns.map{ |(operation, column, *args)| [operation, json_key(column), *args] })
   end
 
   def calculate(operation, column = nil, *)
-    if json_accessors && column
-      super(operation, json_key(column), *)
-    else
-      super
-    end
+    return super unless json_accessors && column
+    super(operation, json_key(column), *)
   end
 
   def pluck(*attributes)
-    json_accessors ? super(*attributes.map{ |name| json_key(name, as: true) }) : super
+    return super unless json_accessors
+    super(*attributes.map{ |name| json_key(name, as: true) })
   end
 
   def pick(*attributes)
-    json_accessors ? super(*attributes.map{ |name| json_key(name, as: true) }) : super
+    return super unless json_accessors
+    super(*attributes.map{ |name| json_key(name, as: true) })
   end
 
   private
