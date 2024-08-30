@@ -1,10 +1,10 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 module LogLines
   class AptHistoryTest < ActiveSupport::TestCase
     self.file_fixture_path = Gem.root('mix_server').join('test/fixtures/files').to_s
 
-    it 'should parse correctly each line' do
+    test '.parse' do
       file = file_fixture('log/apt/history.log')
 
       log = Log.create! server: Server.current, path: file.to_s
