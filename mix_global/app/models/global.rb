@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Global < LibMainRecord
+class Global < MixGlobal.config.parent_model.to_const!
   include GlobalCache
 
   belongs_to :server, -> { with_discarded }
