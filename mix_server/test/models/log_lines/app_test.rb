@@ -1,11 +1,11 @@
-require './test/rails_helper'
+require './test/test_helper'
 require Gem.root('mix_server').join('test/fixtures/files/log/test.rb').to_s
 
 module LogLines
   class AppTest < ActiveSupport::TestCase
     self.file_fixture_path = Gem.root('mix_server').join('test/fixtures/files').to_s
 
-    it 'should parse correctly each line' do
+    test '.parse' do
       file = file_fixture('log/test.log')
 
       previous = nil
