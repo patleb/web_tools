@@ -8,9 +8,12 @@ ActiveSupport::TestCase.class_eval do
   end
 
   def clear_logs
-    LogUnknown.delete_all
-    LogLine.delete_all
-    LogMessage.delete_all
-    Log.delete_all
+    ActiveRecord::Base.connection.execute <<-SQL.strip_sql
+      DELETE FROM "lib_log_unknowns";
+      DELETE FROM "lib_log_messages";
+      DELETE FROM "lib_log_rollups";
+      DELETE FROM "lib_log_lines";
+      DELETE FROM "lib_logs";
+    SQL
   end
 end

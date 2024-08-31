@@ -7,7 +7,9 @@ ActiveSupport::TestCase.class_eval do
   end
 
   def clear_users
-    UserSession.delete_all
-    User.unscoped.delete_all
+    ActiveRecord::Base.connection.execute <<-SQL.strip_sql
+      DELETE FROM "lib_user_sessions";
+      DELETE FROM "lib_users";
+    SQL
   end
 end
