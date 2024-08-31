@@ -1,3 +1,4 @@
+### NOTE nginx has ms resolution
 module LogLines
   class NginxAccess < LogLine
     REMOTE_ADDR     = /(?:[0-9]{1,3}\.){3}[0-9]{1,3}/
@@ -52,13 +53,13 @@ module LogLines
       gzip: :float,
     )
 
-    scope :unique_users,  -> { select(user).distinct.where_not(browser: nil) }
-    scope :referers,      -> { where_not(referer: nil).where_not(referer: ['LIKE', '/%']) }
-    scope :root,          -> { where(path: '/') }
-    scope :api,           -> { where(path: ['~', '^/api/.+']) }
-    scope :pages,         -> { where(path: ['~', "^/[\\w-]+/#{MixPage::URL_SEGMENT}/"]) }
-    scope :admin,         -> { where(path: ['~', "^#{RailsAdmin.routes[:root]}(/|$)"]) }
-    scope :success,       -> { where(status: ['>=', 200]).where(status: ['<', 300]) }
+    scope :unique_users, -> { select(user).distinct.where_not(browser: nil) }
+    scope :referers,     -> { where_not(referer: nil).where_not(referer: ['LIKE', '/%']) }
+    scope :root,         -> { where(path: '/') }
+    scope :rpc,          -> { where(path: ['~', "^#{MixRpc::Routes.root_path}/\\w+"]) }
+    scope :pages,        -> { where(path: ['~', "^/[\\w-]+/#{MixPage::URL_SEGMENT}/"]) }
+    scope :admin,        -> { where(path: ['~', "^#{MixAdmin::Routes.root_path}(/|$)"]) }
+    scope :success,      -> { where(status: ['>=', 200]).where(status: ['<', 300]) }
 
     def self.user
       @user ||= "#{json_key(:ip)} || ' ' || #{json_key(:browser, cast: :text)}".sql_safe
@@ -238,7 +239,6 @@ module LogLines
         text: [status, method, path, params].join!(' '),
         level: level
       }
-
       { created_at: created_at, pid: pid&.to_i, message: message, json_data: json_data }
     rescue Exception => exception
       Log.rescue(exception, data: { line: line })

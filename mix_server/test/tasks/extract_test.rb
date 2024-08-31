@@ -1,10 +1,13 @@
-require './test/rails_helper'
+require './test/test_helper'
 
-module MixLog
+module MixServer::Log
   class ExtractTest < Rake::TestCase
-    it 'should extract syslog files' do
-      MixLog.with do |config|
-        log_path, log_time = config.log_path(:syslog), Time.new(2021, 1, 2, 0, 0, 0, 0)
+    self.task_name = 'log:extract'
+    self.use_transactional_tests = false
+
+    test 'log:extract' do
+      MixServer::Log.with do |config|
+        log_path, log_time = config.log_path(:syslog), Time.utc(2021, 1, 2, 0, 0, 0, 0)
         config.available_paths = [log_path]
         FileUtils.touch log_path, mtime: log_time
         FileUtils.touch "#{log_path}.1", mtime: log_time - 1.day

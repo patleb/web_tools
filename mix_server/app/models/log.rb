@@ -62,20 +62,20 @@ class Log < LibMainRecord
     end
   end
 
-  def rollups!(*args, **options, &block)
-    log_lines_type.to_const!.rollups!(self, *args, **options, &block)
+  def rollups!(...)
+    log_lines_type.to_const!.rollups!(self, ...)
   end
 
-  def push(*args, **options, &block)
-    log_lines_type.to_const!.push(self, *args, **options, &block)
+  def push(...)
+    log_lines_type.to_const!.push(self, ...)
   end
 
   def push_all(lines)
     log_lines_type.to_const!.push_all(self, lines)
   end
 
-  def parse(line, **options)
-    log_lines_type.to_const!.parse(self, line, **options)
+  def parse(line, **)
+    log_lines_type.to_const!.parse(self, line, **)
   end
 
   def finalize

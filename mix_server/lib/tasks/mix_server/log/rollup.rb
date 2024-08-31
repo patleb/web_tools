@@ -1,4 +1,4 @@
-module MixLog
+module MixServer::Log
   class Rollup < ActiveTask::Base
     prepend ActiveTask::AsParallel
 

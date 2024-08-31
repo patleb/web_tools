@@ -50,6 +50,14 @@ class LogRollups::NginxAccess < LogRollup
     where(period: 1.week).period.sum(:bytes_out).to_fs(:human_size)
   end
 
+  def self.total_bytes_in
+    where(period: 1.week).period.sum(:bytes_in).to_fs(:human_size)
+  end
+
+  def self.average_time
+    where(period: 1.week).period.average(:time_avg)
+  end
+
   def self.requests_by(period_or_group)
     case period_or_group
     when :month
@@ -57,11 +65,11 @@ class LogRollups::NginxAccess < LogRollup
         [date.strftime('%Y-%m-%d'), sum.to_i]
       end
     when :week, :day
-      period.where(period: 1.send(period_or_group)).order(period_at: :desc).group(:period_at).sum(:requests).map do |(date, sum)|
+      period.where(period: 1.public_send(period_or_group)).order(period_at: :desc).group(:period_at).sum(:requests).map do |(date, sum)|
         [date.strftime('%Y-%m-%d'), sum.to_i]
       end
     else
-      send(period_or_group).top_group_calculate(:group_value, :sum, column: :requests).map do |(group, sum)|
+      public_send(period_or_group).top_group_calculate(:group_value, :sum, column: :requests).map do |(group, sum)|
         [group, sum.to_i]
       end
     end
@@ -69,7 +77,7 @@ class LogRollups::NginxAccess < LogRollup
 
   def self.users_by(period = :week)
     log_path = MixServer::Log.config.passenger_log_path(:access)
-    joins(:log).period.where(period: 1.send(period), log: { path: log_path }).order(period_at: :desc).map do |row|
+    joins(:log).period.where(period: 1.public_send(period), log: { path: log_path }).order(period_at: :desc).map do |row|
       [row.period_at.strftime('%Y-%m-%d'), row.users]
     end
   end

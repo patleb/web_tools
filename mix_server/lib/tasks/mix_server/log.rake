@@ -3,17 +3,17 @@ require_dir __FILE__, 'log'
 namespace :log do
   desc 'cleanup old log partitions'
   task :cleanup => :environment do |t|
-    MixLog::Cleanup.new(self, t).run!
+    MixServer::Log::Cleanup.new(self, t).run!
   end
 
   desc 'extract server logs'
   task :extract => :environment do |t|
-    MixLog::Extract.new(self, t).run!
+    MixServer::Log::Extract.new(self, t).run!
   end
 
   desc 'rollup server logs'
   task :rollup => :environment do |t|
-    MixLog::Rollup.new(self, t).run!
+    MixServer::Log::Rollup.new(self, t).run!
   end
 
   desc 'report server log errors'
@@ -24,7 +24,7 @@ namespace :log do
   desc 'dump log tables' # 3.6 MB
   task :dump_tables => :environment do |t|
     name = "log_#{Log.maximum(:updated_at).utc.iso8601.tr('-T:Z', '')}"
-    tables = ['lib_servers', 'lib_logs', 'lib_log_messages', 'lib_log_lines*', 'lib_log_rollups']
+    tables = ['lib_servers', 'lib_logs', 'lib_log_messages', 'lib_log_lines*', 'lib_log_rollups', 'lib_log_unknowns']
     Db::Pg::Dump.new(self, t, name: name, includes: tables).run!
   end
 

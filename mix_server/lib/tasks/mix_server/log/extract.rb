@@ -1,4 +1,4 @@
-module MixLog
+module MixServer::Log
   class Extract < ActiveTask::Base
     prepend ActiveTask::AsParallel
 

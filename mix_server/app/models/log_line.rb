@@ -53,7 +53,7 @@ class LogLine < LibMainRecord
         period_at = rollups_class.where(log: log).order(period: :desc, period_at: :desc).pick(:period_at)
         period_at ? where(column(:created_at) >= period_at).where(log: log).rollups : where(log: log).rollups
       when Symbol
-        send(scope).where(log: log).rollups
+        public_send(scope).where(log: log).rollups
       end
     rows = groups.each_with_object([]) do |(key, values), result|
       period, group_name = key
@@ -63,7 +63,7 @@ class LogLine < LibMainRecord
         {
           group_name: group_name,
           group_value: group_value || '',
-          period: 1.send(period),
+          period: 1.public_send(period),
           period_at: period_at,
           json_data: rollups_keys.first(json_data.size).zip(json_data).to_h
         }
@@ -162,7 +162,7 @@ class LogLine < LibMainRecord
     lines.each do |line|
       push(log, line)
     rescue JSON::GeneratorError, ActiveRecord::StatementInvalid, LogLine::IncompatibleLogLine
-      save_and_filter_unknown(line)
+      save_and_filter_unknown(line.pretty_hash!)
     end
   end
 
