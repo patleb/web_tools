@@ -34,9 +34,9 @@ module ActiveRecord::Base::WithJsonAttribute
       json_accessor(:json_data, fields)
     end
 
-    def json_attribute?(name, *_keys)
+    def json_attribute?(name)
       return false unless json_accessors
-      json_accessors[:json_data].has_key? name
+      json_accessors[:json_data].has_key? Array.wrap(name).first
     end
 
     def json_translate(fields)
@@ -62,8 +62,9 @@ module ActiveRecord::Base::WithJsonAttribute
       end
     end
 
-    def json_key(name, *keys, as: nil, cast: nil)
+    def json_key(name, as: nil, cast: nil)
       return name unless json_attribute? name
+      name, *keys = Array.wrap(name)
       if keys.present?
         type = cast || :text
         key = "#{quote_column(:json_data)}#>>'{#{name},#{keys.join(',')}}'"
