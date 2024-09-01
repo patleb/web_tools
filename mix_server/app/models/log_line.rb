@@ -21,13 +21,13 @@ class LogLine < LibMainRecord
 
   def self.host(log)
     return unless Log.db_types.include? 'LogLines::Host'
-    host_log = Log.find_by! server: log.server, log_lines_type: 'LogLines::Host'
+    host_log = Log.find_or_create_by! server: log.server, log_lines_type: 'LogLines::Host'
     LogLines::Host.where(log: host_log)
   end
 
   def self.task(log)
     return unless Log.db_types.include? 'LogLines::Task'
-    task_log = Log.find_by! server: log.server, log_lines_type: 'LogLines::Task'
+    task_log = Log.find_or_create_by! server: log.server, log_lines_type: 'LogLines::Task'
     LogLines::Task.where(log: task_log)
   end
 
