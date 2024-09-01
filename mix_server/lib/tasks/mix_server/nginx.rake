@@ -22,7 +22,7 @@ namespace! :nginx do
 
   def nginx_app_push
     conf = compile 'config/deploy/templates/nginx/app.conf'
-    sh "sudo mv #{conf} /etc/nginx/sites-available/#{MixServer.deploy_dir}"
+    sh "sudo mv #{conf} /etc/nginx/sites-available/#{Rails.stage}"
     nginx_reload
   end
 

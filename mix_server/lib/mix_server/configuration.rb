@@ -13,10 +13,6 @@ module MixServer
     shared_dir.join('tmp/files/no_reboot')
   end
 
-  def self.deploy_dir
-    @deploy_dir ||= "#{Rails.app}_#{Rails.env}"
-  end
-
   def self.shared_dir
     if Rails.env.local?
       Rails.root

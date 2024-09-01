@@ -64,7 +64,7 @@ class SettingTest < Minitest::TestCase
   private
 
   def assert_settings(scope:, shared:, test:, app:, test_app:)
-    assert_equal "#{env}-#{self.app}", Setting.stage
+    assert_equal "#{env}_#{self.app}", Setting.stage
     assert_equal env,                  Setting.env
     assert_equal self.app,             Setting.app
     assert_equal root,                 Setting.root

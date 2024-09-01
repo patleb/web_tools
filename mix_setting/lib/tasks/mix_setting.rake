@@ -8,7 +8,7 @@ namespace :setting do
     raise 'argument [:file] must be specified' unless (file = args[:file]).present?
     with_stage! args do
       Pathname.new(file).expand_path.write(Setting.to_yaml)
-      puts "[#{Setting.app}_#{Setting.env}] settings written to file [#{file}]"
+      puts "[#{Setting.stage}] settings written to file [#{file}]"
     end
   end
 

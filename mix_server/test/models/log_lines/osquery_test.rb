@@ -1,19 +1,17 @@
-require './test/rails_helper'
+require './test/test_helper'
 
 module LogLines
   class OsqueryTest < ActiveSupport::TestCase
     self.file_fixture_path = Gem.root('mix_server').join('test/fixtures/files').to_s
 
-    it 'should parse correctly each line' do
-      MixLog.with do |config|
+    test '.parse' do
+      MixServer::Log.with do |config|
         log_path = config.log_path(:osquery, 'osqueryd.results')
         config.available_paths = [log_path]
 
         file = file_fixture('log/osquery/osqueryd.results.log')
 
         log = Log.create! server: Server.current, path: file.to_s
-        Log.create! server: log.server, log_lines_type: 'LogLines::Task'
-        Log.create! server: log.server, log_lines_type: 'LogLines::Host'
         count, info, files, sockets = 0, 0, 0, 0
         file.each_line do |line|
           line = LogLines::Osquery.parse(log, line)

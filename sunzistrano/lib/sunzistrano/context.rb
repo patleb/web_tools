@@ -118,7 +118,7 @@ module Sunzistrano
     end
 
     def stage
-      "#{env}-#{app}"
+      "#{env}_#{app}"
     end
 
     def role

@@ -92,7 +92,7 @@ class Setting
   end
 
   def self.stage
-    "#{env}-#{app}"
+    "#{env}_#{app}"
   end
 
   def self.env?(*names)

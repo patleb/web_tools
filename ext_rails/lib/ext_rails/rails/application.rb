@@ -9,7 +9,7 @@ end
 
 module Rails
   def self.stage
-    @_stage ||= "#{env}-#{app}"
+    @_stage ||= "#{env}_#{app}"
   end
 
   def self.app

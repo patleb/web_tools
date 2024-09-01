@@ -1,5 +1,5 @@
 require './test/test_helper'
-require Gem.root('mix_server').join('test/fixtures/files/log/nginx/web_tools_test.access.rb').to_s
+require Gem.root('mix_server').join('test/fixtures/files/log/nginx/test_web_tools.access.rb').to_s
 
 module LogLines
   class NginxAccessTest < ActiveSupport::TestCase
@@ -7,7 +7,7 @@ module LogLines
     self.use_transactional_tests = false
 
     test '.parse' do
-      file = file_fixture('log/nginx/web_tools_test.access.log.0')
+      file = file_fixture('log/nginx/test_web_tools.access.log.0')
 
       log = Log.create! server: Server.current, path: file.to_s.delete_suffix('.0')
       file.each_line.with_index do |line, i|
@@ -17,7 +17,7 @@ module LogLines
 
     test 'scopes' do
       MixServer::Log.with do |config|
-        log_path = config.log_path(:nginx, 'web_tools_test.access')
+        log_path = config.log_path(:nginx, 'test_web_tools.access')
         config.available_paths = [log_path]
         Rake::Task['log:extract'].invoke!
         assert_equal Time.utc(2021, 1, 19, 15, 3, 37, 0), LogLines::NginxAccess.requests_begin_at

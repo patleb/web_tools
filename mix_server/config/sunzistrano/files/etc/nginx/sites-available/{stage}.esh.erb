@@ -83,14 +83,14 @@ server {
       etag off;
       expires 1M;
       add_header Cache-Control public;
-      access_log /var/log/nginx/${stage}_packs.access.log mix_server_access_log;
+      access_log /var/log/nginx/${stage}-packs.access.log mix_server_access_log;
     }
 
     <%- (sun.public_dirs || []).each do |root| -%>
       location /<%= root %>/ {
         expires 1M;
         add_header Cache-Control public;
-        access_log /var/log/nginx/${stage}_public.access.log mix_server_access_log;
+        access_log /var/log/nginx/${stage}-public.access.log mix_server_access_log;
         open_file_cache_errors off;
       }
     <%- end -%>
@@ -99,7 +99,7 @@ server {
       location /<%= root %> {
         expires 1M;
         add_header Cache-Control public;
-        access_log /var/log/nginx/${stage}_public.access.log mix_server_access_log;
+        access_log /var/log/nginx/${stage}-public.access.log mix_server_access_log;
       }
     <%- end -%>
   <%- end -%>

@@ -50,7 +50,7 @@ namespace :ssh do
   desc 'Add owner private key to development machine'
   task :add, [:env, :force] => :environment do |t, args|
     with_stage(args) do
-      path = "$HOME/.ssh/id_rsa-#{Setting.app}-#{Setting.env}.pem"
+      path = "$HOME/.ssh/id_rsa-#{Setting.stage}.pem"
       if flag_on? args, :force
         sh %{echo "#{Setting[:owner_private_key]}" > #{path}}, verbose: false
         sh %{chmod 600 #{path}}, verbose: false

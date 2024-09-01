@@ -10,9 +10,9 @@ class LogTest < ActiveSupport::TestCase
     { 'log/test.log'                                                   => 'LogLines::App',
       '/log/apt/history.log'                                           => 'LogLines::AptHistory',
       '/files/log/syslog'                                              => 'LogLines::Syslog',
-      '/fixtures/files/log/nginx/web_tools_test.access.log'            => 'LogLines::NginxAccess',
-      'test/fixtures/files/log/nginx/web_tools_test_packs.access.log'  => 'LogLines::NginxAccess',
-      'test/fixtures/files/log/nginx/web_tools_test_public.access.log' => 'LogLines::NginxAccess',
+      '/fixtures/files/log/nginx/test_web_tools.access.log'            => 'LogLines::NginxAccess',
+      'test/fixtures/files/log/nginx/test_web_tools-packs.access.log'  => 'LogLines::NginxAccess',
+      'test/fixtures/files/log/nginx/test_web_tools-public.access.log' => 'LogLines::NginxAccess',
       'test/fixtures/files/log/nginx/error.log'                        => 'LogLines::NginxError',
       'test/fixtures/files/log/auth.log'                               => 'LogLines::Auth',
       'test/fixtures/files/log/postgresql/postgresql-14-main.log'      => 'LogLines::Postgresql',
@@ -51,7 +51,7 @@ class LogTest < ActiveSupport::TestCase
     assert_equal 3, log.log_messages.size
     assert_equal Server.current, log.server
 
-    log = Log.create! server: Server.current, path: 'log/nginx/web_tools.access.log'
+    log = Log.create! server: Server.current, path: 'log/nginx/test_web_tools.access.log'
     assert_equal({ created_at: nil, filtered: true }, LogLines::NginxAccess.parse(log, 'invalid'))
     assert_equal 'invalid', LogUnknown.where(text_hash: text_hash('invalid')).pluck(:text).first
 

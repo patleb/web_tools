@@ -17,10 +17,10 @@ vagrant:
 
 staging:
   db_host: 127.0.0.1
-  db_database: web_tools_staging
-  db_username: web_tools
-  db_password: 448cd494862e7d9e8378c5add81320ab
-  deployer_password: 80df882e02a4aba7ba70e2c80b9a1053
+  db_database: staging_web_tools
+  db_username: staging_web_tools
+  db_password: $SECRET +60k5KLqKuVpG4Iv6Lun4TFQbeyrki42N47JjYuBxEvmoNIIiDalV3xb--Uyu7eZU9Qxf3AL9B--yNZ5fovUhHbNaW1j00yygw==
+  deployer_password: $SECRET gLF4Wc/KiQyRNYpQkjLsyCI6syOk7BIyIcOKa3gIDmdKmqPNgQr4X4Ow--VKhrY5TgnB3G3JaM--WRKYN1pfNDa6FebpPSALiQ==
   lets_encrypt_test: true
   server_host:
   mail_to:
@@ -35,10 +35,10 @@ staging:
 
 production:
   db_host: 127.0.0.1
-  db_database: web_tools_production
-  db_username: web_tools
-  db_password: 80f4fef546086575dff29ceea8cc064b
-  deployer_password: 795a9de767931ac69dc8cae53fb5a8e9
+  db_database: production_web_tools
+  db_username: production_web_tools
+  db_password: $SECRET YtffoDUpU9coNeJCOcy1kNFgIws5YRIIq1yFWlsH3Pt7cfDZO1mOKNd5--baxA65Grq/SB62wj--ijzwJ90onfjdguFaJ6bbvw==
+  deployer_password: $SECRET tTbqDusnf2eEAtE3TQU7qE+jblKdUh4Y5Lw6ViLnvTPaAjGYfUk9rwL/--FTjht++NLS5KsbIR--Npd45zsd0X8CHUe3Q3uoTQ==
   server_host:
   mail_to:
   mail_from:

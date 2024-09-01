@@ -66,7 +66,7 @@ module LogLines
         ssl_upgrade = task(log)&.ssl_upgrade? created_at
         message, paths = extract_paths(adds, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
           path = row['target_path']
-          next if not_provisioned && path.end_with?("/#{Rails.app}_#{Rails.env}-job-default.service")
+          next if not_provisioned && path.end_with?("/#{Rails.stage}-job.service")
           next if was_upgraded && upgraded_binaries.any?{ |dir| path.start_with? dir }
           next if was_deployed && path.start_with?('/var/spool/cron/crontabs/')
           next if was_rebooted && path.start_with?('/etc/nginx/sites-available/')
@@ -112,9 +112,9 @@ module LogLines
     end
 
     def self.extract_paths(adds, name, tiny: nil)
-      paths = adds.each_with_object(Set.new) do |row, memo|
+      paths = adds.each_with_object(SortedSet.new) do |row, memo|
         yield(row, memo)
-      end.to_a.sort
+      end.to_a
 
       return nil if paths.empty?
 

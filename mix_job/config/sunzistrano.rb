@@ -4,7 +4,7 @@ module Sunzistrano::Context::WithJob
   end
 
   def job_service
-    "#{stage}-job-#{job_queue}"
+    "#{stage}-job"
   end
 end
 
