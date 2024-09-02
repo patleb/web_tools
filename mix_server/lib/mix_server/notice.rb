@@ -1,5 +1,4 @@
 require 'action_view/helpers/text_helper'
-require 'mix_setting'
 
 class Notice
   BODY_START = '[NOTIFICATION]'.freeze
