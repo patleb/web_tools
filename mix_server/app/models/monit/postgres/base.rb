@@ -103,7 +103,7 @@ module Monit
       # (pgmonitor)      :wal_activity
       def self.statements
         @@statements ||= begin
-          pgmonitor_path = MixMonit::Engine.root.join('vendor/pgmonitor/exporter/postgres')
+          pgmonitor_path = MixServer::Engine.root.join('vendor/pgmonitor/exporter/postgres')
           pgmonitor = pgmonitor_path.glob('*.yml').each_with_object({}.with_indifferent_access) do |yml, memo|
             yml = YAML.safe_load(yml.read)
               .transform_keys{ |key| key == 'ccp_locks' ? 'database_locks' : key.delete_prefix('ccp_') }

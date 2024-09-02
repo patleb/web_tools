@@ -7,12 +7,21 @@ autoload :Throttler, 'mix_server/throttler'
 
 module MixServer
   class Engine < ::Rails::Engine
+    require 'pg_query'
     require 'mix_global'
     require 'mix_server/rack/utils'
     require 'mix_server/rake/dsl'
     require 'mix_server/sh'
 
+    config.before_configuration do
+      ENV["PGHERO_CONFIG_PATH"] = root.join('config/pghero.yml').to_s
+      require 'mix_server/pghero'
+    end
+
     config.before_initialize do
+      Rails.autoloaders.main.ignore("#{PgHero::Engine.root}/app/controllers/pg_hero/home_controller")
+      Rails.autoloaders.main.ignore("#{PgHero::Engine.root}/app/helpers/pg_hero/home_helper")
+
       autoload_models_if_admin(['LogLines::Email', 'LogLines::Rescue'])
 
       if defined? PhusionPassenger

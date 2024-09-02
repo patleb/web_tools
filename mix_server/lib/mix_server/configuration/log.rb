@@ -41,6 +41,8 @@ module MixServer
           'LogLines::Email'       => 110,
           'LogLines::Worker'      => 120,
           'LogLines::Clamav'      => 130,
+          'LogLines::Database'    => 140,
+          'LogLines::Host'        => 150,
         )
       end
 
@@ -67,7 +69,9 @@ module MixServer
 
       def available_rollups
         @available_rollups ||= {
-          'LogRollups::NginxAccess' => 10,
+          'LogRollups::NginxAccess' => available_types['LogLines::NginxAccess'],
+          'LogRollups::Database'    => available_types['LogLines::Database'],
+          'LogRollups::Host'        => available_types['LogLines::Host'],
         }
       end
 

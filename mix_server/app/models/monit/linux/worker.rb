@@ -14,7 +14,7 @@ module Monit
 
       def self.list
         host.workers.select_map do |worker|
-          next unless MixMonit.config.available_workers.include? worker.name
+          next unless MixServer.config.available_workers.include? worker.name
           {
             id: worker.pid, ppid: worker.ppid, name: worker.name, command: worker.cmdline,
             **worker.cpu.slice(:state, :nice, :threads, :start_time),

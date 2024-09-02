@@ -39,10 +39,42 @@ module MixServer
   private_class_method :_idle?
 
   has_config do
+    attr_writer :render_500
+    attr_writer :notice_interval
+    attr_writer :skip_notice
+    attr_writer :throttler_max_duration
+    attr_writer :available_workers
     attr_writer :available_providers
     attr_writer :minimum_workers
     attr_writer :clamav_dirs
     attr_writer :clamav_false_positives
+
+    def render_500
+      return @render_500 if defined? @render_500
+      @render_500 = !Rails.env.development?
+    end
+    alias_method :render_500?, :render_500
+
+    def notice_interval
+      @notice_interval ||= 24.hours
+    end
+
+    def skip_notice
+      return @skip_notice if defined? @skip_notice
+      @skip_notice = Rails.env.development?
+    end
+
+    def throttler_max_duration
+      if @throttler_max_duration.is_a? Proc
+        @throttler_max_duration.call
+      else
+        @throttler_max_duration ||= Float::INFINITY.hours
+      end
+    end
+
+    def available_workers
+      @available_workers ||= ['ruby', 'postgres']
+    end
 
     def available_providers
       @available_providers ||= {
