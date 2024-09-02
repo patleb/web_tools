@@ -49,7 +49,9 @@ ActiveType::Object.class_eval do
   end
 
   def attributes_hash
-    attributes.with_indifferent_access
+    hash = attributes
+    hash.merge! attribute_aliases.transform_values{ |v| hash[v] }
+    hash.with_indifferent_access
   end
 
   def write_virtual_attribute(name, value)
