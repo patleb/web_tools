@@ -12,7 +12,7 @@ module LogLines
         file = file_fixture('log/osquery/osqueryd.results.log')
 
         log = Log.create! server: Server.current, path: file.to_s
-        count, info, files, sockets = 0, 0, 0, 0
+        count, filtered, info, files, sockets = 0, 0, 0, 0, 0
         file.each_line do |line|
           line = LogLines::Osquery.parse(log, line)
           case line.dig(:json_data, :name)
@@ -20,9 +20,11 @@ module LogLines
           when 'file_events'   then files += 1
           when 'socket_events' then sockets += 1
           end
+          filtered += 1 if line[:filtered]
           count += 1
         end
         assert_equal 7, count
+        assert_equal 1, filtered
         assert_equal 4, info
         assert_equal 1, files
         assert_equal 1, sockets
