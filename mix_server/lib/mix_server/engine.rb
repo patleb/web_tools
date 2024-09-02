@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ext_rails'
 require 'mix_server/configuration'
 require 'mix_server/routes'

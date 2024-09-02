@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LogLines
   class AptHistory < LogLine
     START_DATE = /^Start-Date: (\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})/
@@ -19,7 +21,7 @@ module LogLines
     def self.parse(log, line, previous:, **)
       if (values = line.match(START_DATE))
         created_at = Time.parse_utc(values.captures.first)
-        message = { text: "look in apt/history.log", level: :info }
+        message = { text: 'look in apt/history.log', level: :info }
       elsif (values = line.match(COMMAND))
         anchored = true
         created_at = previous[:created_at]

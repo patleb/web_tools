@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ### References
 # https://pganalyze.com/docs/log-insights/setup/tuning-log-config-settings
 # https://pganalyze.com/blog/postgresql-log-monitoring-101-deadlocks-checkpoints-blocked-queries

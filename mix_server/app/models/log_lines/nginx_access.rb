@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ### NOTE nginx has ms resolution
 module LogLines
   class NginxAccess < LogLine
@@ -188,7 +190,7 @@ module LogLines
       return save_and_filter_unknown(line) unless (values = line.match(ACCESS))
 
       ip, user, created_at, request, status, bytes_out, bytes_in, referer, user_agent, upstream_time, time, https, gzip, pid = values.captures
-      created_at = Time.strptime(created_at, "%d/%b/%Y:%H:%M:%S %z").utc
+      created_at = Time.strptime(created_at, '%d/%b/%Y:%H:%M:%S %z').utc
       method, path, protocol = request.split
       method = nil unless path
       method, path, protocol = nil, method, path unless protocol

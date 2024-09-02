@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LogLines
   class Auth < LogLine
     include WithRsyslog
@@ -35,7 +37,7 @@ module LogLines
       elsif (values = text.match(SERVER_AUTH))
         port = values.captures.first
         level = host(log)&.was_rebooted?(created_at) ? :warn : :error
-        text_tiny = text.sub("::", '*')
+        text_tiny = text.sub('::', '*')
       elsif (values = text.match(SERVER_EXIT))
         signal = values.captures.first
         level = host(log)&.was_rebooted?(created_at) ? :warn : :error

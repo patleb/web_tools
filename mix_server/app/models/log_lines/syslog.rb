@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LogLines
   class Syslog < LogLine
     include WithRsyslog

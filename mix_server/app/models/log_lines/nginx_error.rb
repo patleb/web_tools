@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LogLines
   class NginxError < LogLine
     TIME          = %r{\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}}
@@ -43,11 +45,11 @@ module LogLines
     def self.parse(log, line, mtime:, **)
       if (values = line.match(ERROR))
         created_at, level, pid, text = values.captures
-        created_at = Time.strptime("#{created_at} UTC", "%Y/%m/%d %H:%M:%S %z").utc
+        created_at = Time.strptime("#{created_at} UTC", '%Y/%m/%d %H:%M:%S %z').utc
       elsif (values = line.match(P_NGINX))
         level, created_at, pid, location, text = values.captures
         level = P_ERROR_LEVELS[level]
-        created_at = Time.strptime("#{created_at} UTC", "%Y-%m-%d %H:%M:%S %z").utc
+        created_at = Time.strptime("#{created_at} UTC", '%Y-%m-%d %H:%M:%S %z').utc
         text = "#{location}: #{text}"
       elsif (values = line.match(P_ERROR))
         level, pid, p_message, text = values.captures

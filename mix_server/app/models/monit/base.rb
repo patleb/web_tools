@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Monit
   class Base < VirtualRecord::Base
     def self.clear

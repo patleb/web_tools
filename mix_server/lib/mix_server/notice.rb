@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'action_view/helpers/text_helper'
 
 class Notice
-  BODY_START = '[NOTIFICATION]'.freeze
-  BODY_END   = '[END]'.freeze
+  BODY_START = '[NOTIFICATION]'
+  BODY_END   = '[END]'
 
   include ActionView::Helpers::TextHelper
 

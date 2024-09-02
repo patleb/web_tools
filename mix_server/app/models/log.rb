@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Log < LibMainRecord
   FS_TYPE = %r{(?:/log|/(\w+)|)/(?:[-\w]+\.)?(?:(\w+)(?:-\w+)*\.log|(\w+log))$}
   FS_TYPE_SKIP = [nil, 'results']

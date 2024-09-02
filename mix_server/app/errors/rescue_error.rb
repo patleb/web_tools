@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class RescueError < ::StandardError
-  RESCUE = '[RESCUE]'.freeze
+  RESCUE = '[RESCUE]'
 
   attr_reader :error, :name, :backtrace, :data
 

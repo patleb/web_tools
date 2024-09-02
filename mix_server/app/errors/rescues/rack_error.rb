@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rescues
   class RackError < RescueError
     def message

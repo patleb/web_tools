@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_dir __FILE__, 'configuration'
 
 module MixServer

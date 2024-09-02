@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Monit
   module Postgres
     class Connection < Base

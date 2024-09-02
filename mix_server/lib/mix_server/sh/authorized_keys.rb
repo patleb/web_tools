@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Sh::AuthorizedKeys
   def build_authorized_keys
     keys = [Setting[:owner_public_key]].concat(Setting[:authorized_keys]).reject(&:blank?)

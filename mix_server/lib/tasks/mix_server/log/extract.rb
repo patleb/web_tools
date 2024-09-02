@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MixServer::Log
   class Extract < ActiveTask::Base
     prepend ActiveTask::AsParallel

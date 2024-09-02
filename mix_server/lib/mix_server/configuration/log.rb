@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MixServer
   module Log
     has_config do

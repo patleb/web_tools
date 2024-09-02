@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Rescues
   class JavascriptController < LibApiController
     rescue_from ActionController::InvalidAuthenticityToken, with: :render_400

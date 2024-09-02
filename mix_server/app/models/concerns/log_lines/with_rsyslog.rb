@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LogLines
   module WithRsyslog
     extend ActiveSupport::Concern
@@ -13,7 +15,7 @@ module LogLines
       def rsyslog_parse(line, mtime)
         return unless (values = line.match(RSYSLOG))
         created_at, program, pid, message = values.captures
-        created_at = Time.strptime("#{mtime.year} #{created_at} UTC", "%Y %b %e %H:%M:%S %z").utc
+        created_at = Time.strptime("#{mtime.year} #{created_at} UTC", '%Y %b %e %H:%M:%S %z').utc
         created_at = created_at.change(year: mtime.year - 1) if created_at.month == 12 && mtime.month < 12
         [created_at, program, pid&.to_i, message]
       end

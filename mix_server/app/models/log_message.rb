@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LogMessage < LibMainRecord
   has_many :log_lines
   has_many :logs, -> { distinct }, through: :log_lines

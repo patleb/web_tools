@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LogLines
   class Fail2ban < LogLine
     TIME     = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/
@@ -23,7 +25,7 @@ module LogLines
       return save_and_filter_unknown(line) unless (values = line.match(FAIL2BAN))
 
       created_at, pid, level, program, text = values.captures
-      created_at = Time.strptime("#{created_at} UTC", "%Y-%m-%d %H:%M:%S %z").utc
+      created_at = Time.strptime("#{created_at} UTC", '%Y-%m-%d %H:%M:%S %z').utc
       return { created_at: created_at, filtered: true } unless program == 'sshd' && FILTERED_LEVELS.exclude?(level)
 
       json_data = { ip: text[FAIL2BAN_IP] }
