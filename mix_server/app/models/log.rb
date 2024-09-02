@@ -44,7 +44,7 @@ class Log < LibMainRecord
   end
 
   def self.db_types
-    @db_types ||= MixServer::Log.config.available_types.except(*fs_types).keys
+    @db_types ||= MixServer::Log.config.available_types.except(*fs_types).reject{ |_, v| v < 100 }.keys
   end
 
   def self.fs_types

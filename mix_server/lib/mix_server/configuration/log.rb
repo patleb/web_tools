@@ -24,6 +24,7 @@ module MixServer
         @partitions_total_size ||= 1.year
       end
 
+      # NOTE db types have a value >= 100
       def available_types
         @available_types ||= (Rails.env.test? ? {
           'LogLines::Syslog'      => 0
@@ -36,10 +37,10 @@ module MixServer
           'LogLines::App'         => 60,
           'LogLines::AptHistory'  => 70,
           'LogLines::Osquery'     => 80,
-          'LogLines::Rescue'      => 90,
-          'LogLines::Email'       => 100,
-          'LogLines::Worker'      => 110,
-          'LogLines::Clamav'      => 120,
+          'LogLines::Rescue'      => 100,
+          'LogLines::Email'       => 110,
+          'LogLines::Worker'      => 120,
+          'LogLines::Clamav'      => 130,
         )
       end
 
