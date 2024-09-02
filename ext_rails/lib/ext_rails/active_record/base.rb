@@ -246,7 +246,9 @@ ActiveRecord::Base.class_eval do
   private_class_method :with_model
 
   def attributes_hash
-    @attributes.to_hash.with_indifferent_access
+    hash = @attributes.to_hash
+    hash.merge! attribute_aliases.except('id_value').transform_values{ |v| hash[v] }
+    hash.with_indifferent_access
   end
 
   def destroyed!
