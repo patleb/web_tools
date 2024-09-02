@@ -1,5 +1,7 @@
 module Rescues
   class JavascriptController < LibApiController
+    rescue_from ActionController::InvalidAuthenticityToken, with: :render_400
+
     before_action :throttle
 
     def create
