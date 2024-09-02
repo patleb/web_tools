@@ -58,8 +58,8 @@ module Monit
         select_all(...).first
       end
 
-      def self.select_all(sql, **options)
-        db.send(:select_all, sql, **options)
+      def self.select_all(...)
+        db.send(:select_all, ...)
       end
 
       ### STATEMENTS (43)

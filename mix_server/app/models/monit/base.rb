@@ -17,7 +17,7 @@ module Monit
       return super unless options[:check]
       check_name = :"#{attribute}_check"
       define_method check_name do
-        if send(attribute)&.issue?
+        if public_send(attribute)&.issue?
           errors.add(attribute, :check_error)
         end
       end
@@ -51,29 +51,29 @@ module Monit
     end
 
     def issue?
-      self.class.ar_issues? ? !valid? : self.class.issue_predicates.any?{ |issue| send(issue) }
+      self.class.ar_issues? ? !valid? : self.class.issue_predicates.any?{ |issue| public_send(issue) }
     end
 
     def issue_names(expand = true, warning: false)
       issue = warning ? :warning : :issue
       has_issue = :"#{issue}?"
-      if self.class.send("ar_#{issue}s?")
-        send(has_issue)
+      if self.class.public_send("ar_#{issue}s?")
+        public_send(has_issue)
         names = errors.attribute_names
         nested_names = names & self.class.nested_attribute_names.map(&:to_sym)
         names = names - nested_names
       else
-        names = self.class.send("#{issue}_predicates").except(:"nested_#{issue}?").select_map do |name|
-          next unless send(name)
+        names = self.class.public_send("#{issue}_predicates").except(:"nested_#{issue}?").select_map do |name|
+          next unless public_send(name)
           name.to_s.delete_suffix("_#{issue}?").to_sym
         end
-        nested_names = self.class.nested_attribute_names.select_map{ |name| send(name)&.send(has_issue) && name.to_sym }
+        nested_names = self.class.nested_attribute_names.select_map{ |name| public_send(name)&.public_send(has_issue) && name.to_sym }
       end
       if expand
         issue_names = "#{issue}_names"
         names.concat(
           nested_names.map do |name|
-            { name => Array.wrap(send(name)).select(&has_issue).map{ |row| { row[:id] => row.send(issue_names) } } }
+            { name => Array.wrap(public_send(name)).select(&has_issue).map{ |row| { row[:id] => row.public_send(issue_names) } } }
           end
         )
       else
@@ -83,11 +83,11 @@ module Monit
     end
 
     def nested_issue?
-      self.class.nested_attribute_names.any?{ |name| send(name)&.issue? }
+      self.class.nested_attribute_names.any?{ |name| public_send(name)&.issue? }
     end
 
     def warning?
-      self.class.warning_predicates.any?{ |warning| send(warning) }
+      self.class.warning_predicates.any?{ |warning| public_send(warning) }
     end
 
     def warning_names(expand = true)
@@ -95,7 +95,7 @@ module Monit
     end
 
     def nested_warning?
-      self.class.nested_attribute_names.any?{ |name| send(name)&.warning? }
+      self.class.nested_attribute_names.any?{ |name| public_send(name)&.warning? }
     end
   end
 end

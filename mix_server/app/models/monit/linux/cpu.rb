@@ -62,7 +62,7 @@ module Monit
 
       def interval_ok?(attribute, threshold)
         last_records = LogLines::Host.last_records.limit(20.minutes / Setting[:monit_interval]).pluck(attribute)
-        last_records.any? && (last_records << send(attribute)).all?{ |value| value >= threshold }
+        last_records.any? && (last_records << public_send(attribute)).all?{ |value| value >= threshold }
       end
     end
   end
