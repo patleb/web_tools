@@ -7,7 +7,6 @@ module ActionDispatch
       case exception.error
       when *ActionController::BAD_REQUEST_ERRORS
         # will be reported indirectly through LogLines::App
-        Log.rescue_not_reportable(exception)
       else
         Notice.deliver! exception
       end
