@@ -1,5 +1,7 @@
-2021-04-20 01:40:12.000 UTC [47] LOG:  starting PostgreSQL 13.2 (Debian 13.2-1.pgdg100+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 8.3.0-6) 8.3.0, 64-bit
-2021-04-20 01:40:12.000 UTC [47] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2021-04-20 01:40:12.000 UTC [47] LOG:  starting PostgreSQL 14.1 (Debian 14.1-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+2021-04-20 01:40:12.000 UTC [47] LOG:  listening on IPv4 address "0.0.0.0", port 5434
+2021-04-20 01:40:12.000 UTC [47] LOG:  listening on IPv6 address "::", port 5434
+2021-04-20 01:40:12.000 UTC [47] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5434"
 2021-04-20 01:40:12.000 UTC [48] LOG:  database system was shut down at 2021-04-20 01:40:12 UTC
 2021-04-20 01:40:12.000 UTC [47] LOG:  database system is ready to accept connections
 2021-04-20 01:40:15.000 UTC [47] LOG:  received fast shutdown request
@@ -21,7 +23,7 @@
 2021-04-20 01:46:33.000 UTC [96] LOG:  checkpoint starting: time
 2021-04-20 01:49:03.000 UTC [96] LOG:  checkpoint complete: wrote 1767 buffers (10.8%); 0 WAL file(s) added, 0 removed, 1 recycled; write=149.794 s, sync=0.030 s, total=149.851 s; sync files=181, longest=0.003 s, average=0.001 s; distance=15295 kB, estimate=17320 kB
 2021-04-20 02:51:14.000 UTC [9804] LOG:  redirecting log output to logging collector process
-2021-04-20 02:51:14.000 UTC [9804] HINT:  Future log output will appear in directory "/var/log/postgresql/postgresql-13-main".
+2021-04-20 02:51:14.000 UTC [9804] HINT:  Future log output will appear in directory "/var/log/postgresql/postgresql-14-main".
 2021-04-20 02:51:14.000 UTC [9806] LOG:  database system was shut down at 2021-04-20 02:51:10 UTC
 2021-04-20 02:51:15.000 UTC [9804] LOG:  database system is ready to accept connections
 2021-04-20 02:51:15.000 UTC [9818] [unknown]@[unknown] LOG:  incomplete startup packet
