@@ -161,8 +161,8 @@ class LogLine < LibMainRecord
   rescue JSON::GeneratorError, ActiveRecord::StatementInvalid, LogLine::IncompatibleLogLine
     lines.each do |line|
       push(log, line)
-    rescue JSON::GeneratorError, ActiveRecord::StatementInvalid, LogLine::IncompatibleLogLine
-      save_and_filter_unknown(line.pretty_hash!)
+    rescue JSON::GeneratorError, ActiveRecord::StatementInvalid, LogLine::IncompatibleLogLine => e
+      save_and_filter_unknown(line.merge(error: e.class.name).pretty_hash!)
     end
   end
 
