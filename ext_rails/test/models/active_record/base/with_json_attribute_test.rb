@@ -43,8 +43,8 @@ class ActiveRecord::Base::WithJsonAttributeTest < ActiveSupport::TestCase
     assert_equal "(#{column}->>'name')::TEXT", Test::Record.json_key(:name)
     assert_equal "(#{column}->>'name')::DATE", Test::Record.json_key(:name, cast: 'date')
     assert_equal "(#{column}->>'j_date')::DATE AS date", Test::Record.json_key(:j_date, as: 'date')
-    assert_equal "(#{column}#>>'{j_json,name}')::TEXT", Test::Record.json_key(:j_json, :name)
-    assert_equal "(#{column}#>>'{j_json,time}')::TEXT AS j_json_time", Test::Record.json_key(:j_json, :time, as: true)
-    assert_equal "(#{column}#>>'{j_json,time}')::TIME", Test::Record.json_key(:j_json, :time, cast: 'time')
+    assert_equal "(#{column}#>>'{j_json,name}')::TEXT", Test::Record.json_key([:j_json, :name])
+    assert_equal "(#{column}#>>'{j_json,time}')::TEXT AS j_json_time", Test::Record.json_key([:j_json, :time], as: true)
+    assert_equal "(#{column}#>>'{j_json,time}')::TIME", Test::Record.json_key([:j_json, :time], cast: 'time')
   end
 end
