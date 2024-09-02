@@ -7,7 +7,6 @@ module ActionController
     ActionController::UnknownFormat,
     ActionDispatch::Http::MimeNegotiation::InvalidType,
     ActionDispatch::Http::Parameters::ParseError,
-    ActionController::InvalidAuthenticityToken,
   ]
 
   module WithErrors
