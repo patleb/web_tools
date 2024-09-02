@@ -1,6 +1,11 @@
 module Monit
   module Osquery
     class Base < Monit::Base
+      def self.clear
+        Monit::Osquery::Base.descendants.each(&:m_clear)
+        reset
+      end
+
       def self.osquery
         m_access(__method__) do
           result = {}

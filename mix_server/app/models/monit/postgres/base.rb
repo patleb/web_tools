@@ -9,6 +9,11 @@ module Monit
 
       delegate :db, to: :class
 
+      def self.clear
+        Monit::Postgres::Base.descendants.each(&:m_clear)
+        reset
+      end
+
       def self.db
         PgHero.primary_database
       end

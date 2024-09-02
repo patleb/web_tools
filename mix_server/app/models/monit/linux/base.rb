@@ -1,6 +1,11 @@
 module Monit
   module Linux
     class Base < Monit::Base
+      def self.clear
+        Monit::Linux::Base.descendants.each(&:m_clear)
+        reset
+      end
+
       def self.host
         Process.host
       end

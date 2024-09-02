@@ -1,5 +1,10 @@
 module Monit
   class Base < VirtualRecord::Base
+    def self.clear
+      Monit::Base.descendants.each(&:m_clear)
+      reset
+    end
+
     def self.current
       first
     end

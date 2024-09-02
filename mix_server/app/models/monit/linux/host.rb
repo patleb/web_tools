@@ -1,4 +1,3 @@
-# TODO https://scoutapm.com/docs/features
 module Monit
   module Linux
     class Host < Base
@@ -44,7 +43,7 @@ module Monit
           snapshot = host.build_snapshot.merge(version: MixServer.current_version)
           Log.host(current)
           Global[snapshot_key] = snapshot
-          reset
+          clear
         end
       end
     end

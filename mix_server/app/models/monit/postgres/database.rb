@@ -1,4 +1,3 @@
-# TODO https://habr.com/en/company/postgrespro/blog/494464/
 module Monit
   module Postgres
     class Database < Base
@@ -89,7 +88,7 @@ module Monit
         last_updated_at = LogLines::Database.last_messages(text_tiny: db_name).pick(:updated_at)
         if last_updated_at.nil? || last_updated_at < (Setting[:monit_interval] - 30.seconds).ago
           Log.database(current)
-          reset
+          clear
         end
       end
 
