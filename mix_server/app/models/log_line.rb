@@ -14,8 +14,8 @@ class LogLine < LibMainRecord
 
   def self.apt_history(log)
     return unless Log.fs_types.include? 'LogLines::AptHistory'
-    apt_history_path = MixServer::Log.config.available_paths.find{ |path| path.end_with? 'apt/history.log'}
-    apt_history_log = Log.find_or_create_by! server: log.server, path: apt_history_path
+    return unless (path = MixServer::Log.config.available_paths.find{ |path| path.end_with? 'apt/history.log'})
+    apt_history_log = Log.find_or_create_by! server: log.server, path: path
     LogLines::AptHistory.where(log: apt_history_log)
   end
 
