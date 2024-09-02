@@ -19,6 +19,7 @@ module Db
           data_only:  ['--[no-]data-only',           'Load only data with disabled triggers for pg_restore'],
           append:     ['--[no-]append',              'Append data for pg_restore'],
           pg_options: ['--pg_options=PG_OPTIONS',    'Extra options passed to pg_restore'],
+          new_server: ['--[no-]new-server',          'Reset current server centralized log'],
         }
       end
 
@@ -172,6 +173,7 @@ module Db
 
       def post_restore_environment
         ActiveRecord::Base.connection.internal_metadata[:environment] = Rails.env
+        Server.current.discard! if options.new_server && !Server.current.new?
       end
 
       def staged
