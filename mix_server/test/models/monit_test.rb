@@ -1,6 +1,8 @@
 require './test/test_helper'
 
 class MonitTest < ActiveSupport::TestCase
+  self.use_transactional_tests = false
+
   let(:run_timeout){ 3 }
 
   test '.capture' do

@@ -1,1 +1,1 @@
-require 'minitest/mix_user/active_support/test_case'
+require 'minitest/mix_global/active_support/test_case'
