@@ -64,20 +64,19 @@ module LogLines
       level = :info
       level = :warn if row.warning?
       level = :error if row.issue?
-      storage = if row.storage
-        {
-          **row.storage.slice(:used, :reads, :writes).transform_keys{ |k| "storage_#{k}" },
-          storage_inodes: row.storage.inodes_usage
-        }
-      else
-        {}
-      end
+      storage = row.storage.nil? ? {} : {
+        **row.storage.slice(:used, :reads, :writes).transform_keys{ |k| "storage_#{k}" },
+        storage_inodes: row.storage.inodes_usage
+      }
+      disk = row.disk.nil? ? {} : {
+        **row.disk.slice(:used, :reads, :writes).transform_keys{ |k| "disk_#{k}" },
+        disk_inodes: row.disk.inodes_usage,
+      }
       json_data = {
         version: row.version,
         **row.cpu.slice(:boot_time, :pids, :load_avg),
         usage: row.cpu.usage, steal: row.cpu.steal,
-        **row.disk.slice(:used, :reads, :writes).transform_keys{ |k| "disk_#{k}" },
-        disk_inodes: row.disk.inodes_usage,
+        **disk,
         **storage,
         ram: row.memory.ram_used, swap: row.memory.swap_used,
         **row.network.slice(:bytes_in, :bytes_out),
