@@ -4,11 +4,11 @@
 # https://github.com/rwz/nestive
 module ActionView::Helpers
   module CaptureHelper
-    def extends(layout, &)
+    def extends(layout, ...)
       layout = layout.to_s
       layout = "layouts/#{layout}" unless layout.include? '/'
-      @view_flow.get(:layout).replace capture(&)
-      layouts << layout.delete_prefix('layouts/')
+      @view_flow.get(:layout).replace capture(...)
+      layouts << layout.delete_prefix('layouts/') if respond_to? :layouts
       render template: layout
     end
 
