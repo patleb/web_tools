@@ -21,7 +21,7 @@ module Monit
             "@#{k[:ip]}"       => k[:ip],
             "/#{k[:database]}" => k[:database],
           }
-          { id: id.reject{ |_key, value| value.blank? }.keys.join, idle: state == IDLE, total: total }
+          { id: id.compact_blank.keys.join, idle: state == IDLE, total: total }
         end
       end
 

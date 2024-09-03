@@ -109,7 +109,7 @@ class LogLine < LibMainRecord
     line[:created_at] ||= Time.current.utc
     line[:pid] ||= Process.pid
     line[:log_id] = log_id = log.id
-    line[:json_data]&.reject!{ |_, v| v.blank? }
+    line[:json_data]&.compact_blank!
     log_message = nil
     with_message(line.delete(:message)) do |text_hash, text_tiny, text, level, monitor|
       log_message = LogMessage.find_or_create_by! level: level, text_hash: text_hash do |record|
@@ -136,7 +136,7 @@ class LogLine < LibMainRecord
     end
     lines.each do |line|
       line[:log_id] = log_id
-      line[:json_data]&.reject!{ |_, v| v.blank? }
+      line[:json_data]&.compact_blank!
       line[:log_message_id] = nil
     end
     texts = lines.each_with_object([]).with_index do |(line, result), i|
