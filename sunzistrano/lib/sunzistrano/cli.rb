@@ -78,7 +78,7 @@ module Sunzistrano
       end
 
       def with_context(stage, role = nil)
-        env, app = stage.split('-', 2)
+        env, app = stage.split('_', 2)
         role ||= options.deploy ? :deploy : :provision
         Setting.with(env: env, app: app) do
           @sun = Sunzistrano::Context.new(role, **options.symbolize_keys)

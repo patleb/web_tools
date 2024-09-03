@@ -5,17 +5,17 @@ class Sunzistrano::CliTest < Minitest::TestCase
     Setting.rollback!
   end
 
-  it 'should build path relative to the owner provisioned dir' do
+  test '.owner_path' do
     Setting.reload(env: 'test')
     path = Sunzistrano.owner_path :manifest_dir, 'version'
     assert_equal '/home/ubuntu/test_web_tools/sun_manifest/version', path
   end
 
-  it 'should compile' do
-    Sunzistrano::Cli.start(['compile', 'test-app', '--deploy'])
+  test '.compile' do
+    Sunzistrano::Cli.start(['compile', 'test_app', '--deploy'])
     revision = `git rev-parse origin/master`.strip
     revision_dir = "#{Sunzistrano::BASH_DIR}/#{revision}"
-    stage_path = "#{revision_dir}/test-app"
+    stage_path = "#{revision_dir}/test_app"
     %w(
       helpers/sun/role_helper.sh
       helpers/sun/recipe_helper.sh

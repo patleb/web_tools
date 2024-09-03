@@ -1,7 +1,7 @@
 require './sunzistrano/test/spec_helper'
 
 class Sunzistrano::Cli::BashTest < Minitest::TestCase
-  it 'should insert task string with escaped single quotes' do
+  test 'sun bash' do
     env_var = %r{ENV_VAR='\\''hello world'\\''}
     version = %r{bash -e -u \+H scripts/version\.sh}
     os_name = %r{helper=sun\.os_name && bash -e -u \+H scripts/helper\.sh 1 "ab c"}

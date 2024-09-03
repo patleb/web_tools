@@ -7,7 +7,7 @@ class Sunzistrano::ContextTest < Minitest::TestCase
     Setting.rollback!
   end
 
-  it 'should build context correctly' do
+  test '.new' do
     Setting.reload(env: 'test', app: 'app', root: root)
     sun = Sunzistrano::Context.new('role', option: 'name')
     assert_equal DUMMY_GEMS.to_a, sun.gems.keys.sort.except('sunzistrano')
@@ -30,54 +30,52 @@ class Sunzistrano::ContextTest < Minitest::TestCase
     assert_equal 'replaced', sun.replaceable
   end
 
-  it 'should raise on out-of-sync lock version' do
-    assert_raises(Exception) do
-      Setting.reload(env: 'test', root: root.join('version_out_of_sync'))
-      Sunzistrano::Context.new
-    end
-  end
-
-  describe '#helpers' do
-    it 'should list Sunzistrano gem helpers' do
-      Setting.reload(env: 'test')
-      sun = Sunzistrano::Context.new('provision')
-      actual_helpers = Set.new(sun.helpers(Sunzistrano.root))
-      expected_helpers = %w(
-        sun/command_helper.sh
-        sun/recipe_helper.sh
-        sun/template_helper.sh
-        sun/version_helper.sh
-        sun_helper.sh
-      )
-      expected_helpers.each do |helper|
-        assert_includes actual_helpers, helper
+  context 'out-of-sync lock version' do
+    test '.new' do
+      assert_raises(Exception) do
+        Setting.reload(env: 'test', root: root.join('version_out_of_sync'))
+        Sunzistrano::Context.new
       end
     end
   end
 
-  describe '#role_recipes' do
-    it 'should resolve :(append|remove)_recipes lists' do
-      Setting.reload(env: 'test', root: root)
-      sun = Sunzistrano::Context.new('provision')
-      expected_recipes = %w(
-        'first/recipe-value'
-        'second/recipe'
-        shared/after/second/recipe
-        test/before/shared/append
-        shared/append
-        test/after/shared/append
-        test/append
-        reboot
-      )
-      actual_recipes = []
-      sun.role_recipes(*%w(
-        reboot
-        first/recipe-{variable}
-        second/recipe-{no_variable}
-      )) do |name, id|
-        actual_recipes << (id || name)
-      end
-      assert_equal expected_recipes, actual_recipes
+  test '#helpers' do
+    Setting.reload(env: 'test')
+    sun = Sunzistrano::Context.new('provision')
+    actual_helpers = Set.new(sun.helpers(Sunzistrano.root))
+    expected_helpers = %w(
+      sun/command_helper.sh
+      sun/recipe_helper.sh
+      sun/template_helper.sh
+      sun/version_helper.sh
+      sun_helper.sh
+    )
+    expected_helpers.each do |helper|
+      assert_includes actual_helpers, helper
     end
+  end
+
+  test '#role_recipes' do
+    Setting.reload(env: 'test', root: root)
+    sun = Sunzistrano::Context.new('provision')
+    expected_recipes = %w(
+      'first/recipe-value'
+      'second/recipe'
+      shared/after/second/recipe
+      test/before/shared/append
+      shared/append
+      test/after/shared/append
+      test/append
+      reboot
+    )
+    actual_recipes = []
+    sun.role_recipes(*%w(
+      reboot
+      first/recipe-{variable}
+      second/recipe-{no_variable}
+    )) do |name, id|
+      actual_recipes << (id || name)
+    end
+    assert_equal expected_recipes, actual_recipes
   end
 end

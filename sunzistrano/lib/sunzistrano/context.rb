@@ -227,11 +227,11 @@ module Sunzistrano
     def continue(options)
       if options.has_key? 'if'
         is_true = options['if']
-        return false unless instance_eval(is_true)
+        return false unless instance_eval(is_true.to_s)
       end
       if options.has_key? 'unless'
         is_true = options['unless']
-        return false if instance_eval(is_true)
+        return false if instance_eval(is_true.to_s)
       end
       true
     end
