@@ -4,6 +4,6 @@ append :style do
   CSS
 end
 
-extends 'layouts/main_mailer', [
+extends 'layouts/lib_mailer', [
   yield,
 ]

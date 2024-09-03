@@ -1,3 +1,3 @@
-extends 'layouts/main_mailer', [
+extends 'layouts/lib_mailer', [
   yield,
 ]
