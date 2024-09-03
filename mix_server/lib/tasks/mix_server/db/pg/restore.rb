@@ -123,7 +123,7 @@ module Db
               notify!(cmd, stderr) if notify?(stderr)
               pre_restore_schema(stdout, only, skip)
             else
-              output << stdout
+              output += stdout
               notify!(cmd, stderr) if notify?(stderr)
             end
           end
