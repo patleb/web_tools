@@ -11,7 +11,7 @@ module MonkeyPatch
   end
 
   def self.verify_all!
-    return unless @files.present?
+    return unless (@files ||= {}).present? || (@values ||= {}).present?
     errors = @files.each_with_object({}) do |(gem_name, files), errors|
       root = Gem.root(gem_name)
       files.each do |file, checksum_was|
