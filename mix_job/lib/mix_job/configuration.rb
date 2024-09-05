@@ -3,16 +3,11 @@ MonkeyPatch.add{['activejob', 'lib/active_job/queue_name.rb', 'b473689c7e9b0b642
 module MixJob
   has_config do
     attr_writer :async
-    attr_writer :parent_controller
     attr_writer :json_attributes
     attr_writer :available_queues
 
     def async?
       @async
-    end
-
-    def parent_controller
-      @parent_controller ||= 'ActionController::API'
     end
 
     def json_attributes
@@ -32,7 +27,7 @@ module MixJob
     def available_queues
       @available_queues ||= {
         ActiveJob::Base.default_queue_name => 0,
-      }.with_indifferent_access
+      }
     end
   end
 end

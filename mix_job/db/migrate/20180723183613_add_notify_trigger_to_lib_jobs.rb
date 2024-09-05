@@ -1,7 +1,7 @@
 ### References
 # https://gist.github.com/bithavoc/f40bbc33b553f2fddf9e1095858acdff
 # https://gist.github.com/colophonemes/9701b906c5be572a40a84b08f4d2fa4e
-class AddNotifyTriggerToLibJobs < ActiveRecord::Migration[6.0]
+class AddNotifyTriggerToLibJobs < ActiveRecord::Migration[7.1]
   def up
     exec_query <<-SQL.strip_sql
       CREATE OR REPLACE FUNCTION job_notify() RETURNS trigger AS $$

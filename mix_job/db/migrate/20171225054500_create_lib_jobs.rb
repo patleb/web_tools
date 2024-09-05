@@ -1,4 +1,4 @@
-class CreateLibJobs < ActiveRecord::Migration[6.0]
+class CreateLibJobs < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_jobs do |t|
       t.integer     :queue_name,   null: false, default: 0

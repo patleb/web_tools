@@ -1,4 +1,4 @@
-require './test/rails_helper'
+require './test/test_helper'
 require_relative './job_adapter_context'
 
 module ActiveJob
@@ -6,39 +6,25 @@ module ActiveJob
     class JobAdapterTest < ActiveSupport::TestCase
       include JobAdapterContext
 
-      around do |test|
-        MixJob.with do |config|
-          config.async = false
-          test.call
-        end
+      test '#perform_now' do
+        SimpleJob.any_instance.expects(:perform).with(*args).returns(:ok)
+        SimpleJob.perform_now(*args)
       end
 
-      describe '#perform_now' do
+      context 'enqueued' do
         before do
-          SimpleJob.any_instance.expects(:perform).with(*args).returns(:ok)
+          SimpleJob.any_instance.expects(:perform).never
         end
 
-        it 'should perform' do
-          SimpleJob.perform_now(*args)
+        test '#perform_later' do
+          SimpleJob.perform_later(*args)
+          assert Job.dequeue
         end
-      end
 
-      describe '#perform_later' do
-        context 'later' do
-          before do
-            SimpleJob.any_instance.expects(:perform).never
-          end
-
-          it 'should enqueue locally' do
-            SimpleJob.perform_later(*args)
-            assert Job.dequeue
-          end
-
-          it 'should enqueue at globally' do
-            SimpleJob.set(wait_until: scheduled_at).perform_later(*args)
-            travel_to 1.second.since(scheduled_at) do
-              assert_equal scheduled_at.to_i, Job.dequeue.scheduled_at.to_i
-            end
+        test '#perform_later wait_until' do
+          SimpleJob.set(wait_until: scheduled_at).perform_later(*args)
+          travel_to 1.second.since(scheduled_at) do
+            assert_equal scheduled_at.to_i, Job.dequeue.scheduled_at.to_i
           end
         end
       end

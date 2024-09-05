@@ -24,6 +24,6 @@ module ActiveJob::Base::WithUser
 
   def deserialize(job_data)
     super
-    self.user = GlobalID::Locator.locate(job_data["user"]) rescue User::Null.new
+    self.user = GlobalID::Locator.locate(job_data[:user]) rescue User::Null.new
   end
 end

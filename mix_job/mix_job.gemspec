@@ -17,7 +17,5 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency 'ext_ruby', version
-  s.add_dependency 'http'
-  # TODO https://github.com/Shopify/job-iteration
+  s.add_dependency 'mix_server', version
 end

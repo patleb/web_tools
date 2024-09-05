@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class Job < LibRecord
-  NOTIFY_CHANNEL = 'job_notify_channel'.freeze
+  NOTIFY_CHANNEL = 'job_notify_channel'
 
   alias_attribute :provider_job_id, :id
   alias_attribute :enqueued_at, :created_at
@@ -18,22 +20,16 @@ class Job < LibRecord
   end
 
   def self.path(...)
-    url(...).delete_prefix(ExtRails::Routes.base_url)
+    MixJob::Routes.job_path(...)
   end
 
-  def self.url(job_class: nil, job_id: nil, **params)
-    url = (@url ||= ExtRails::Routes.url_for(MixJob.routes[:job]))
-    if job_class && job_id
-      url = url.sub('__JOB_CLASS__', job_class).sub('__JOB_ID__', job_id)
-      params.any? ? "#{url}?#{params.to_query}" : url
-    else
-      url
-    end
+  def self.url(...)
+    MixJob::Routes.job_url(...)
   end
 
   def self.parse_notification(message)
     queue_i, scheduled_at, *_ = message.split(',')
-    [queue_names.key(queue_i.to_i), Time.parse_utc(scheduled_at)]
+    [queue_names.key(queue_i.to_i).to_s, Time.parse_utc(scheduled_at)]
   end
 
   def self.enqueue(attributes)

@@ -12,7 +12,7 @@ module ActiveJob::Base::WithJob
     end
 
     def deserialize(job_data)
-      job = job_data["job_class"].to_const!.new
+      job = job_data[:job_class].to_const!.new
       job.deserialize(job_data)
       job
     end
@@ -26,21 +26,21 @@ module ActiveJob::Base::WithJob
 
   def serialize
     super.merge!(
-      "session_id" => session_id,
-      "request_id" => request_id,
+      'session_id' => session_id,
+      'request_id' => request_id,
     )
   end
 
   def deserialize(job_data)
     super
-    self.session_id = job_data["session_id"]
-    self.request_id = job_data["request_id"]
+    self.session_id = job_data[:session_id]
+    self.request_id = job_data[:request_id]
   end
 
   def perform_now
     old_attributes = Current.attributes.dup
     self.class.context.each do |attribute|
-      Current[attribute] = send(attribute)
+      Current[attribute] = public_send(attribute)
     end
     super
   ensure

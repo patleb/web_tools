@@ -1,5 +1,10 @@
-require 'ext_ruby'
+# frozen_string_literal: true
+
+MonkeyPatch.add{['activejob', 'lib/active_job/core.rb', '718ce689f7e5ef955934f86d419c9571f32341c8091f0a5baaffc8f0727d2bf8']}
+
+require 'mix_server'
 require 'mix_job/configuration'
+require 'mix_job/routes'
 
 module ActiveJob
   module QueueAdapters
@@ -8,24 +13,17 @@ module ActiveJob
 end
 
 module MixJob
-  def self.routes
-    @routes ||= {
-      job: '/_jobs/__JOB_CLASS__/__JOB_ID__',
-    }
-  end
-
   class Engine < ::Rails::Engine
     config.before_configuration do |app|
       app.config.active_job.queue_adapter = :job
       app.config.active_record.queues.destroy = :default
       app.config.action_mailer.deliver_later_queue_name = :default
       if app.config.respond_to? :active_storage
-        app.config.active_storage.queues.analysis = :default
-        app.config.active_storage.queues.purge = :default
+        queues = app.config.active_storage.queues
+        queues.analysis = queues.mirror = queues.purge = queues.transform = :default
       end
       if app.config.respond_to? :action_mailbox
-        app.config.action_mailbox.queues.incineration = :default
-        app.config.action_mailbox.queues.routing = :default
+        app.config.action_mailbox.queues.incineration = app.config.action_mailbox.queues.routing = :default
       end
     end
 
@@ -46,12 +44,18 @@ module MixJob
 
     initializer 'mix_job.prepend_routes', before: 'ext_rails.append_routes' do |app|
       app.routes.prepend do
-        post '/_jobs/:job_class/:job_id' => 'jobs#create', as: :jobs
+        MixJob::Routes.draw(self)
       end
     end
 
     initializer 'mix_job.backup' do
       ExtRails.config.temporary_tables << 'lib_jobs'
+    end
+
+    config.after_initialize do |app|
+      MonkeyPatch.add{[__FILE__, app.config.active_record.queues.keys.sort, [:destroy]]}
+      MonkeyPatch.add{[__FILE__, app.config.active_storage.queues.keys.sort, [:analysis, :mirror, :purge, :transform]]} if app.config.respond_to? :active_storage
+      MonkeyPatch.add{[__FILE__, app.config.action_mailbox.queues.keys.sort, [:incineration, :routing]]} if app.config.respond_to? :action_mailbox
     end
 
     ActiveSupport.on_load(:active_record) do

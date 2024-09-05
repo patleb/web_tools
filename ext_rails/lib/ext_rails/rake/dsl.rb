@@ -3,6 +3,7 @@
 module Rake
   STARTED = '[STARTED]'
   SUCCESS = '[SUCCESS]'
+  WARNING = '[WARNING]'
   FAILURE = '[FAILURE]'
   STEP    = '[STEP]'
   CANCEL  = '[CANCEL]'

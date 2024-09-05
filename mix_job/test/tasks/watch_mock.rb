@@ -28,7 +28,7 @@ module MixJob::WatchMock
   def before_run
     @_output = ''
     super
-    @executor.timeout(1) do |expired|
+    @executor.timeout($test.run_timeout) do |expired|
       puts inspect if expired
     end
   end
@@ -76,6 +76,7 @@ module MixJob::WatchMock
 
     _actions.each do |action|
       Pathname.new("#{self.class::ACTIONS}/#{Time.current.to_nanoseconds}.rb").write(action)
+      sleep 0.001
       _signal :execute
     end
     assert_after(_actions.size)    { execute_count }
@@ -112,7 +113,7 @@ module MixJob::WatchMock
       _enqueue :server_error
       _enqueue :client_error
     end
-    assert_until(0){ @clients.size }
+    assert_until(0){ @clients.value }
     assert_after(3){ perform_count }
     assert_after(type: 'Job', result: 'success'){ @jobs.shift.slice(:type, :result) }
     assert_after(type: 'Job', result: 'server_error'){ @jobs.shift.slice(:type, :result) }
@@ -144,11 +145,11 @@ module MixJob::WatchMock
     assert_after(1){ _output.scan(self.class::INSPECT).size }
     assert_after(2){ on_signal_count }
     assert_after(1){ execute_count }
-    assert_after(1){ execute_error_count }
-    assert_after(1){ ActionMailer::Base.deliveries.size }
+    assert_after(0){ execute_error_count }
+    assert_after(0){ ActionMailer::Base.deliveries.size }
     assert_until(1){ _output.scan(self.class::ACTION).size }
 
-    @clients.pop
+    client_busy!
     _enqueue
     assert_until(4){ on_listen_count }
     _dequeue
@@ -170,11 +171,11 @@ module MixJob::WatchMock
     assert_until(1){ ActionMailer::Base.deliveries.size }
 
     _enqueue
-    assert_after(2){ on_listen_count }
+    assert_after(2){ sleep 0.01; on_listen_count }
     assert_until{ !perform_error? }
 
     _broadcast
-    assert_after(3){ on_listen_count }
+    assert_after(3){ sleep 0.01; on_listen_count }
     assert_after(1){ perform_error_count }
     assert_until(2){ on_response_count }
 

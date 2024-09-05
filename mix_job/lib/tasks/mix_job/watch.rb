@@ -16,9 +16,9 @@ module MixJob
     INSPECT  = '[INSPECT]'
     SHUTDOWN = '[SHUTDOWN]'
     ACTION   = '[ACTION]'
-    WAIT     = 'tmp/jobs/wait.txt'
-    ACTIONS  = 'tmp/jobs/actions'
-    REQUESTS = 'tmp/jobs/requests.txt'
+    WAIT     = Rails.env.test? ? 'tmp/test/jobs/wait.txt'     : 'tmp/jobs/wait.txt'
+    ACTIONS  = Rails.env.test? ? 'tmp/test/jobs/actions'      : 'tmp/jobs/actions'
+    REQUESTS = Rails.env.test? ? 'tmp/test/jobs/requests.txt' : 'tmp/jobs/requests.txt'
 
     track_count_of :on_signal
     track_count_of :on_request
@@ -53,7 +53,7 @@ module MixJob
         poll_interval:   ['--poll-interval=POLL_INTERVAL',     Float,   'Polling interval in seconds',                greater_than: 0],
         server_interval: ['--server-interval=SERVER_INTERVAL', Float,   'Check interval for server requests/status',  greater_than: 0],
         max_pool_size:   ['--max-pool-size=MAX_POOL_SIZE',     Integer, 'Maximum number of HTTP clients',             greater_or_equal: 1],
-        kill_timout:     ['--kill-timeout=KILL_TIMEOUT',       Float,   'Kill timeout in seconds',                    greater_than: 0],
+        kill_timeout:    ['--kill-timeout=KILL_TIMEOUT',       Float,   'Kill timeout in seconds',                    greater_than: 0],
         keep_jobs:       ['--keep-jobs=KEEP_JOBS',             Integer, 'Number of jobs to keep for inspection',      greater_or_equal: 0],
       }
     end
@@ -89,17 +89,13 @@ module MixJob
       # thread groups must be defined after context initialization, otherwise they'll use their own
       @executor = ThreadGroup.new(max_threads: 4)
       @dispatcher = ThreadGroup.new(max_threads: options.max_pool_size)
-      mkdir_p 'tmp/jobs/actions' if Rails.env.local?
+      mkdir_p ACTIONS, verbose: false
     end
 
     def around_run
       I18n.with_locale(:en) do
         Time.use_zone('UTC') do
-          Rails.application.reloader.wrap do
-            ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
-              yield
-            end
-          end
+          yield
         end
       end
     end
@@ -240,10 +236,14 @@ module MixJob
       @responses.close
       @dispatcher.kill_all(options.kill_timeout)
       Thread.pass until @dispatcher.shutdown?
-      Thread.pass until @poller.dead? || @poller.asleep?
-      @poller.kill
-      Thread.pass until @listener.dead? || @listener.asleep?
-      @listener.kill
+      if @poller
+        Thread.pass until @poller.dead? || @poller.asleep?
+        @poller.kill
+      end
+      if @listener
+        Thread.pass until @listener.dead? || @listener.asleep?
+        @listener.kill
+      end
     end
 
     def inspect
@@ -254,10 +254,13 @@ module MixJob
       EOF
     end
 
+    # NOTE need to bypass write buffer before sending signal to make sure the file is available
+    # https://stackoverflow.com/questions/1429951/force-flushing-of-output-to-a-file-while-bash-script-is-still-running
+    # https://linux.die.net/man/1/stdbuf
     def execute
       started_at = Concurrent.monotonic_time
-      file = actions.first
-      action = file.readlines.first.strip
+      return unless (file = actions.first)
+      return unless (action = file.readlines.first&.strip).present?
       klass, meth, args, opts = extract_ruby_call(action)
       klass.public_send(meth, *args, **opts)
     rescue Exception => exception
@@ -266,9 +269,11 @@ module MixJob
       file&.delete
       if exception
         puts_action_failure action, exception
-      else
+      elsif action.present?
         total = (Concurrent.monotonic_time - started_at).seconds.ceil(3)
         puts_action_success action, total
+      else
+        puts_missing_action
       end
     end
 
@@ -334,7 +339,7 @@ module MixJob
     def perform
       performed = true
       thread_send :@requests, @job.request do
-        Job.create! @job
+        @job.dup.save!
         performed = @job = nil
       end
       case options.keep_jobs
@@ -388,6 +393,10 @@ module MixJob
       puts "[#{Time.current.utc}]#{Rake::FAILURE}[#{Process.pid}]#{ACTION} #{action}".red
     end
 
+    def puts_missing_action
+      puts "[#{Time.current.utc}]#{Rake::WARNING}[#{Process.pid}]#{ACTION} missing".yellow
+    end
+
     def actions
       Pathname.new(ACTIONS).children.sort_by(&:mtime)
     end
@@ -409,13 +418,13 @@ module MixJob
       meth.delete_prefix! '.'
       args.delete_prefix! '('; args.delete_suffix! ')'
       args = "[#{args}]".to_args
-      [klass.to_const!, meth.to_sym, args, args.extract_options!.symbolize_keys!]
+      [klass.to_const!, meth.to_sym, args, args.extract_options!.with_indifferent_access]
     end
 
     def post(**options)
       @executor.post(**options) do
-        Rails.application.reloader.wrap do
-          ActiveSupport::Dependencies.interlock.permit_concurrent_loads do
+        I18n.with_locale(:en) do
+          Time.use_zone('UTC') do
             ActiveRecord::Base.with_raw_connection do |pg_conn, ar_conn|
               ar_conn.cache{ yield pg_conn }
             end

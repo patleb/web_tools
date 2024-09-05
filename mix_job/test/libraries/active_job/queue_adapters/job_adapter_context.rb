@@ -12,10 +12,20 @@ module JobAdapterContext
   extend ActiveSupport::Concern
 
   included do
-    fixtures :users
+    self.use_transactional_tests = false
 
-    # since Rails 5.2, hash keys are converted to String
-    let(:args){ [users(:admin), { 'a' => 1, 'b' => 2.0, 'c' => [{}.with_indifferent_access] }] }
+    let(:args){ [User::Null.new, { a: 1, b: 2.0, c: [{}.with_indifferent_access] }] }
     let(:scheduled_at){ 5.minutes.from_now }
+
+    around do |test|
+      MixJob.with do |config|
+        config.async = false
+        test.call
+      end
+    end
+  end
+
+  def queue_adapter_for_test
+    ActiveJob::QueueAdapters::JobAdapter.new
   end
 end

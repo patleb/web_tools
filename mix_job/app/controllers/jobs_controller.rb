@@ -1,6 +1,7 @@
-# TODO https://github.com/stitchfix/stitches
-class JobsController < MixJob.config.parent_controller.constantize
+class JobsController < LibApiController
   class ForbiddenRemoteIp < ::StandardError; end
+
+  skip_forgery_protection
 
   before_action :local_request!
 
