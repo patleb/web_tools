@@ -2,8 +2,8 @@ require './test/test_helper'
 require_relative './test_help'
 
 class Db::Pg::RestoreTest < Db::Pg::TestCase
-  self.use_transactional_tests = false
   self.task_name = 'db:pg:restore'
+  self.use_transactional_tests = false
 
   let(:dry_run){ true }
   let(:backup){ base_dir.join(filename).expand_path }
