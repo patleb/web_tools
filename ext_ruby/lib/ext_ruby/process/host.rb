@@ -5,7 +5,7 @@
 # https://www.kernel.org/doc/html/latest/block/stat.html
 module Process
   def self.host
-    @@host ||= Host.new
+    @host ||= Host.new
   end
 
   class Host

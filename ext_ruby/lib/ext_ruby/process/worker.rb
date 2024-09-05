@@ -2,7 +2,7 @@
 
 module Process
   def self.worker
-    @@worker ||= Worker.new(pid)
+    @worker ||= Worker.new(pid)
   end
 
   class Worker

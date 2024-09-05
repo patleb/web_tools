@@ -4,7 +4,7 @@
 # https://www.phusionpassenger.com/library/admin/nginx/overall_status_report.html
 module Process
   def self.passenger
-    @@passenger ||= Passenger.new
+    @passenger ||= Passenger.new
   end
 
   class Passenger

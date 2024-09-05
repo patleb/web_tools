@@ -9,11 +9,11 @@ module LogLines
     )
 
     def self.names
-      @@names ||= Set.new(monitors).merge(threats)
+      @names ||= Set.new(monitors).merge(threats)
     end
 
     def self.monitors
-      @@monitors ||= %w(
+      @monitors ||= %w(
         osquery_info
         file_events
         socket_events
@@ -21,7 +21,7 @@ module LogLines
     end
 
     def self.threats
-      @@threats ||= begin
+      @threats ||= begin
         rootkits = Pathname.new('/opt/osquery/share/osquery/packs/ossec-rootkit.conf')
         rootkits = JSON.parse(rootkits.read)['queries'].keys
         rootkits.concat(%w(
@@ -33,11 +33,11 @@ module LogLines
     end
 
     def self.conf
-      @@conf ||= JSON.parse(Pathname.new('/etc/osquery/osquery.conf').read).with_indifferent_access
+      @conf ||= JSON.parse(Pathname.new('/etc/osquery/osquery.conf').read).with_indifferent_access
     end
 
     def self.flags
-      @@flags ||= begin
+      @flags ||= begin
         Pathname.new('/etc/osquery/osquery.flags').readlines(chomp: true).select_map do |line|
           next unless line.delete_prefix! '--'
           line.split('=', 2)
@@ -46,7 +46,7 @@ module LogLines
     end
 
     def self.upgraded_binaries
-      @@upgraded_binaries ||= conf[:file_paths][:binaries].map(&:delete_suffix.with('%%'))
+      @upgraded_binaries ||= conf[:file_paths][:binaries].map(&:delete_suffix.with('%%'))
     end
 
     def self.parse(log, line, **)
