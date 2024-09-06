@@ -12,7 +12,7 @@ module ActiveJob::Base::WithJob
     end
 
     def deserialize(job_data)
-      job = job_data[:job_class].to_const!.new
+      job = job_data['job_class'].to_const!.new
       job.deserialize(job_data)
       job
     end
@@ -33,8 +33,8 @@ module ActiveJob::Base::WithJob
 
   def deserialize(job_data)
     super
-    self.session_id = job_data[:session_id]
-    self.request_id = job_data[:request_id]
+    self.session_id = job_data['session_id']
+    self.request_id = job_data['request_id']
   end
 
   def perform_now
