@@ -8,3 +8,4 @@ namespace :rpc do
   end
 end
 Rake::Task['db:_dump'].enhance ['rpc:schema:dump']
+Rake::Task['db:migrate'].enhance ['rpc:schema:dump']
