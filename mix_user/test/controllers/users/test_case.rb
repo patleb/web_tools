@@ -5,7 +5,7 @@ class Users::TestCase < ActionDispatch::IntegrationTest
 
   def assert_session_created
     assert_equal session[:user_id], Current.user.id
-    assert_equal session[:session_id], Current.user.session.cookie_id
+    assert_equal session[:session_id], Current.user.session_id
   end
 
   def assert_session_destroyed

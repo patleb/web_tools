@@ -71,7 +71,11 @@ class User < LibMainRecord
   end
 
   def create_session!(ip_address:, user_agent:)
-    user_sessions.create! cookie_id: Current.session_id, ip_address: ip_address, user_agent: user_agent
+    user_sessions.create! session_id: Current.session_id, ip_address: ip_address, user_agent: user_agent
+  end
+
+  def session_id
+    session&.session_id
   end
 
   def active?
