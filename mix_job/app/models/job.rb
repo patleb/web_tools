@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Job < LibRecord
+class Job < MixJob.config.parent_model.to_const!
   NOTIFY_CHANNEL = 'job_notify_channel'
 
   alias_attribute :provider_job_id, :id

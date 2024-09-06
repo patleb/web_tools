@@ -425,7 +425,7 @@ module MixJob
       @executor.post(**options) do
         I18n.with_locale(:en) do
           Time.use_zone('UTC') do
-            ActiveRecord::Base.with_raw_connection do |pg_conn, ar_conn|
+            Job.with_raw_connection do |pg_conn, ar_conn|
               ar_conn.cache{ yield pg_conn }
             end
           end

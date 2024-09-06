@@ -3,11 +3,16 @@ MonkeyPatch.add{['activejob', 'lib/active_job/queue_name.rb', 'b473689c7e9b0b642
 module MixJob
   has_config do
     attr_writer :async
+    attr_writer :parent_model
     attr_writer :json_attributes
     attr_writer :available_queues
 
     def async?
       @async
+    end
+
+    def parent_model
+      @parent_model ||= 'LibRecord'
     end
 
     def json_attributes
