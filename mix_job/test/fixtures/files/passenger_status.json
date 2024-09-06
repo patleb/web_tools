@@ -1,0 +1,318 @@
+{
+  "thread1": {
+    "active_client_count": 0,
+    "active_clients": {},
+    "client_accept_speed": {
+      "1h": {
+        "averaged_over": "1 hour",
+        "per": "minute",
+        "value": 11.6
+      },
+      "1m": {
+        "averaged_over": "1 minute",
+        "per": "minute",
+        "value": 1.6299999999999999
+      }
+    },
+    "disconnected_client_count": 0,
+    "disconnected_clients": {},
+    "free_client_count": 0,
+    "free_request_count": 1,
+    "mbuf_pool": {
+      "active_blocks": 0,
+      "active_memory": {
+        "bytes": 0,
+        "human_readable": "0 bytes"
+      },
+      "chunk_size": 4096,
+      "free_blocks": 2,
+      "offset": 4048,
+      "spare_memory": {
+        "bytes": 8192,
+        "human_readable": "8.0 KB"
+      }
+    },
+    "peak_active_client_count": 1,
+    "pid": 25055,
+    "request_begin_speed": {
+      "1h": {
+        "averaged_over": "1 hour",
+        "per": "minute",
+        "value": 11.6
+      },
+      "1m": {
+        "averaged_over": "1 minute",
+        "per": "minute",
+        "value": 1.6299999999999999
+      }
+    },
+    "server_state": "ACTIVE",
+    "total_bytes_consumed": 1023,
+    "total_clients_accepted": 1,
+    "total_requests_begun": 1,
+    "turbocaching": {
+      "fetches": 0,
+      "hit_ratio": null,
+      "hits": 0,
+      "store_success_ratio": null,
+      "store_successes": 0,
+      "stores": 0
+    }
+  },
+  "thread2": {
+    "active_client_count": 0,
+    "active_clients": {},
+    "client_accept_speed": {
+      "1h": {
+        "averaged_over": "1 hour",
+        "per": "minute",
+        "value": 0.050000000000000003
+      },
+      "1m": {
+        "averaged_over": "1 minute",
+        "per": "minute",
+        "value": 0.58999999999999997
+      }
+    },
+    "disconnected_client_count": 0,
+    "disconnected_clients": {},
+    "free_client_count": 0,
+    "free_request_count": 1,
+    "mbuf_pool": {
+      "active_blocks": 0,
+      "active_memory": {
+        "bytes": 0,
+        "human_readable": "0 bytes"
+      },
+      "chunk_size": 4096,
+      "free_blocks": 2,
+      "offset": 4048,
+      "spare_memory": {
+        "bytes": 8192,
+        "human_readable": "8.0 KB"
+      }
+    },
+    "peak_active_client_count": 1,
+    "pid": 25055,
+    "request_begin_speed": {
+      "1h": {
+        "averaged_over": "1 hour",
+        "per": "minute",
+        "value": 0.050000000000000003
+      },
+      "1m": {
+        "averaged_over": "1 minute",
+        "per": "minute",
+        "value": 0.58999999999999997
+      }
+    },
+    "server_state": "ACTIVE",
+    "total_bytes_consumed": 1392,
+    "total_clients_accepted": 1,
+    "total_requests_begun": 1,
+    "turbocaching": {
+      "fetches": 0,
+      "hit_ratio": null,
+      "hits": 0,
+      "store_success_ratio": null,
+      "store_successes": 0,
+      "stores": 0
+    }
+  },
+  "thread3": {
+    "active_client_count": 1,
+    "active_clients": {
+      "3-1": {
+        "connected_at": {
+          "local": "Tue Aug  7 18:44:13 2018",
+          "relative": "34s ago",
+          "relative_timestamp": -34.259814977645874,
+          "timestamp": 1533681853.1361721
+        },
+        "connection_state": "ACTIVE",
+        "current_request": {
+          "app_response_http_state": "PARSING_HEADERS",
+          "app_sink_state": {
+            "callback_in_progress": false,
+            "initialized": true,
+            "io_watcher_active": false
+          },
+          "app_source_state": {
+            "callback_in_progress": false,
+            "initialized": true,
+            "io_watcher_active": true
+          },
+          "flags": {
+            "dechunk_response": true,
+            "https": false,
+            "request_body_buffering": false
+          },
+          "host": "localhost:3000",
+          "http_major": 1,
+          "http_minor": 1,
+          "http_state": "COMPLETE",
+          "last_data_receive_time": {
+            "local": "Tue Aug  7 18:44:13 2018",
+            "relative": "34s ago",
+            "relative_timestamp": -34.259814977645874,
+            "timestamp": 1533681853.1361041
+          },
+          "last_data_send_time": null,
+          "method": "GET",
+          "path": "/users/sign_in",
+          "refcount": 1,
+          "request_body_already_read": 0,
+          "request_body_fully_read": true,
+          "request_body_type": "NO_BODY",
+          "response_begun": false,
+          "session": {
+            "gupid": "1860914-7ncu1wIgS2",
+            "pid": 25095
+          },
+          "session_checkout_try": 1,
+          "started_at": {
+            "local": "Tue Aug  7 18:44:13 2018",
+            "relative": "34s ago",
+            "relative_timestamp": -34.259814977645874,
+            "timestamp": 1533681853.136142
+          },
+          "state": "WAITING_FOR_APP_OUTPUT",
+          "sticky_session": false,
+          "want_keep_alive": false
+        },
+        "lingering_request_count": 0,
+        "name": "3-1",
+        "number": 1,
+        "output_channel_state": {
+          "bytes_buffered": {
+            "bytes": 0,
+            "human_readable": "0 bytes"
+          },
+          "callback_in_progress": false,
+          "mode": "IN_MEMORY_MODE",
+          "nbuffers": 0,
+          "reader_state": "RS_INACTIVE"
+        },
+        "refcount": 2,
+        "requests_begun": 1
+      }
+    },
+    "client_accept_speed": {
+      "1h": {
+        "averaged_over": "1 hour",
+        "per": "minute",
+        "value": 0.050000000000000003
+      },
+      "1m": {
+        "averaged_over": "1 minute",
+        "per": "minute",
+        "value": 0.58999999999999997
+      }
+    },
+    "disconnected_client_count": 0,
+    "disconnected_clients": {},
+    "free_client_count": 0,
+    "free_request_count": 0,
+    "mbuf_pool": {
+      "active_blocks": 1,
+      "active_memory": {
+        "bytes": 4096,
+        "human_readable": "4.0 KB"
+      },
+      "chunk_size": 4096,
+      "free_blocks": 1,
+      "offset": 4048,
+      "spare_memory": {
+        "bytes": 4096,
+        "human_readable": "4.0 KB"
+      }
+    },
+    "peak_active_client_count": 1,
+    "pid": 25055,
+    "request_begin_speed": {
+      "1h": {
+        "averaged_over": "1 hour",
+        "per": "minute",
+        "value": 0.050000000000000003
+      },
+      "1m": {
+        "averaged_over": "1 minute",
+        "per": "minute",
+        "value": 0.58999999999999997
+      }
+    },
+    "server_state": "ACTIVE",
+    "total_bytes_consumed": 1904,
+    "total_clients_accepted": 1,
+    "total_requests_begun": 1,
+    "turbocaching": {
+      "fetches": 0,
+      "hit_ratio": null,
+      "hits": 0,
+      "store_success_ratio": null,
+      "store_successes": 0,
+      "stores": 0
+    }
+  },
+  "thread4": {
+    "active_client_count": 0,
+    "active_clients": {},
+    "client_accept_speed": {
+      "1h": {
+        "averaged_over": "1 hour",
+        "per": "minute",
+        "value": 0.0
+      },
+      "1m": {
+        "averaged_over": "1 minute",
+        "per": "minute",
+        "value": 0.0
+      }
+    },
+    "disconnected_client_count": 0,
+    "disconnected_clients": {},
+    "free_client_count": 0,
+    "free_request_count": 0,
+    "mbuf_pool": {
+      "active_blocks": 0,
+      "active_memory": {
+        "bytes": 0,
+        "human_readable": "0 bytes"
+      },
+      "chunk_size": 4096,
+      "free_blocks": 0,
+      "offset": 4048,
+      "spare_memory": {
+        "bytes": 0,
+        "human_readable": "0 bytes"
+      }
+    },
+    "peak_active_client_count": 0,
+    "pid": 25055,
+    "request_begin_speed": {
+      "1h": {
+        "averaged_over": "1 hour",
+        "per": "minute",
+        "value": 0.0
+      },
+      "1m": {
+        "averaged_over": "1 minute",
+        "per": "minute",
+        "value": 0.0
+      }
+    },
+    "server_state": "ACTIVE",
+    "total_bytes_consumed": 0,
+    "total_clients_accepted": 0,
+    "total_requests_begun": 0,
+    "turbocaching": {
+      "fetches": 0,
+      "hit_ratio": null,
+      "hits": 0,
+      "store_success_ratio": null,
+      "store_successes": 0,
+      "stores": 0
+    }
+  },
+  "threads": 4
+}

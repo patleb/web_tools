@@ -103,13 +103,13 @@ module MixJob
     def check_readiness
       start = Time.current
       sleep 1 while File.exist? WAIT
-      sleep options.server_interval until Rails.env.local? || server_available?
+      sleep options.server_interval until server_available? unless Rails.env.development?
       @waited = (Time.current - start).to_i
     end
 
     def wait_for_termination
       @executor.join_all
-      dump_requests unless Rails.env.local?
+      dump_requests unless Rails.env.development?
       puts snapshot.except(:time, :thread, :shutdown, :job).pretty_hash
     end
 
@@ -402,7 +402,7 @@ module MixJob
     end
 
     def dump_requests
-      requests = Process.passenger.requests(force: true)&.select_map do |request|
+      requests = Process.passenger.requests(force: true).select_map do |request|
         next unless (path = request[:path]).match? Job.path_regex
         path
       end

@@ -11,6 +11,7 @@ end
 
 Minitest.after_run do
   FileUtils.rm_rf(MixJob::Watch::ACTIONS)
+  FileUtils.rm_f(MixJob::Watch::REQUESTS)
 end
 
 module MixJob
@@ -43,16 +44,22 @@ module MixJob
       keep_jobs: 10,
     } }
     let(:actions){ good_actions + bad_actions.keys }
-    let(:good_actions){ [
+    let(:good_actions){[
       'MixJob::ActionTest.nothing',
       'MixJob::ActionTest.args(null, yes, no, on, off, anystring)',
       'MixJob::ActionTest.args 1.0, "c", { a: 2, b: [ 0, nil ] }',
-    ] }
-    let(:bad_actions){ {
+    ]}
+    let(:bad_actions){{
       'MixJob::ActionTest.error' => StandardError,
       'MixJob::ActionTest.error(2)' => ArgumentError,
       'MixJob::ActionTest.args({ "a" => 2})' => Psych::SyntaxError,
-    } }
+    }}
+    let(:request_missing){ file_fixture('passenger_status.json').read }
+    let(:request_present){ request_missing.sub('/users/sign_in', request_dumped) }
+    let(:request_dumped){ "/_jobs/SimpleJob/#{SecureRandom.uuid}" }
+    let(:status_ok){ status = mock; status.stubs(:success?).returns(true); status }
+    let(:status_failed){ status = mock; status.stubs(:success?).returns(false); status }
+    let(:server_available){ file_fixture('passenger_status.xml').read }
 
     before(:all) do
       FileUtils.mkdir_p MixJob::Watch::ACTIONS
@@ -62,6 +69,13 @@ module MixJob
       mock_request(:success)
       mock_request(:server_error).to_return(status: [500, 'Internal Server Error'])
       mock_request(:client_error).to_timeout
+      Process::Passenger.any_instance.expects(:passenger_status).with(:xml).at_most(3).returns(
+        [server_available, status_ok]
+      )
+      Process::Passenger.any_instance.expects(:passenger_status).with(:server).at_most(1).returns(
+        [request_missing, status_ok]
+      )
+      FileUtils.rm_f(MixJob::Watch::REQUESTS)
     end
 
     test '#restore_signals' do
@@ -69,6 +83,11 @@ module MixJob
         Pathname.new("#{MixJob::Watch::ACTIONS}/#{Time.current.to_nanoseconds}.rb").write(action)
       end
       run_task(goto: 'restore_signals')
+    end
+
+    test '#restore_requests' do
+      Pathname.new(MixJob::Watch::REQUESTS).write(request_dumped)
+      run_task(goto: 'restore_requests')
     end
 
     test '#setup_trapping' do
@@ -79,15 +98,20 @@ module MixJob
       run_task(goto: 'setup_signaling', **options)
     end
 
+    test '#setup_requesting' do
+      Pathname.new(MixJob::Watch::REQUESTS).write(request_dumped)
+      Process::Passenger.any_instance.expects(:passenger_status).with(:server).at_least_once.returns(
+        [request_present, status_ok],
+        [request_missing, status_ok]
+      )
+      run_task(goto: 'setup_requesting', **options)
+    end
+
     test '#setup_listening' do
       run_task(goto: 'setup_listening', **options)
     end
 
     test '#setup_polling' do
-      status = mock; status.stubs(:success?).returns(true)
-      Process::Passenger.any_instance.expects(:passenger_status).at_least_once.returns(
-        [file_fixture('passenger_status.xml').read, status]
-      )
       run_task(goto: 'setup_polling', skip: 'setup_listening', **options.merge(max_pool_size: 1))
     end
 
@@ -97,11 +121,9 @@ module MixJob
 
     context 'with server error' do
       test '#setup_listening' do
-        status = mock; status.stubs(:success?).returns(false)
-        status_next = mock; status_next.stubs(:success?).at_least_once.returns(true)
-        Process::Passenger.any_instance.expects(:passenger_status).at_least_once.returns(
-          ["ERROR: Phusion Passenger doesn't seem to be running.", status],
-          [file_fixture('passenger_status.xml').read, status_next]
+        Process::Passenger.any_instance.expects(:passenger_status).with(:xml).at_least_once.returns(
+          ["ERROR: Phusion Passenger doesn't seem to be running.", status_failed],
+          [server_available, status_ok]
         )
         run_task(test: 'not_dequeue_on_error', skip: 'setup_polling,wait_for_termination', **options)
       end

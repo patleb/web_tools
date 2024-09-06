@@ -48,13 +48,11 @@ module Process
     end
 
     def requests(**)
-      clients(**).try :map do |client|
-        client[:request]
-      end
+      clients(**).map{ |client| client[:request] }
     end
 
     def clients(**)
-      server(**).try(:[], :clients)
+      server(**).try(:[], :clients) || []
     end
 
     def server(**)

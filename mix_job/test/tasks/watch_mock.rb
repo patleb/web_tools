@@ -60,6 +60,13 @@ module MixJob::WatchMock
     shutdown
   end
 
+  def test_restore_requests
+    assert_equal 1, @dumped_requests.size
+
+    FileUtils.rm_f(MixJob::Watch::REQUESTS)
+    shutdown
+  end
+
   def test_setup_trapping
     signals = self.class::SIGNALS.keys
     signals.each{ |signal| Process.kill(signal, Process.pid) }
@@ -94,6 +101,13 @@ module MixJob::WatchMock
     assert_until(1){ _output.scan(self.class::SHUTDOWN).size }
 
     wait_for_termination
+  end
+
+  def test_setup_requesting
+    assert_equal 0, @clients.value
+    assert_until(2){ @clients.value }
+
+    shutdown
   end
 
   def test_setup_listening
