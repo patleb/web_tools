@@ -8,7 +8,7 @@ class SimpleJob < ApplicationJob
   end
 end
 
-module JobAdapterContext
+module JobContext
   extend ActiveSupport::Concern
 
   included do

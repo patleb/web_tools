@@ -1,10 +1,10 @@
 require './test/test_helper'
-require_relative './job_adapter_context'
+require './mix_job/test/support/job_context'
 
 module ActiveJob
   module QueueAdapters
     class JobAdapterTest < ActiveSupport::TestCase
-      include JobAdapterContext
+      include JobContext
 
       test '#perform_now' do
         SimpleJob.any_instance.expects(:perform).with(*args).returns(:ok)

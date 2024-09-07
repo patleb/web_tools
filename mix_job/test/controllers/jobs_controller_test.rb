@@ -1,8 +1,8 @@
 require './test/test_helper'
-require './mix_job/test/libraries/active_job/queue_adapters/job_adapter_context'
+require './mix_job/test/support/job_context'
 
 class JobsControllerTest < ActionDispatch::IntegrationTest
-  include JobAdapterContext
+  include JobContext
 
   test '#create' do
     SimpleJob.perform_later(*args)
