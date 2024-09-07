@@ -92,7 +92,7 @@ class UsersControllerTest < Users::TestCase
       post '/users/password/edit', params: { token: user.generate_token_for(:password), user: update_params }
       assert_redirected_to MixUser::Routes.new_session_path
       assert_notice
-      assert_equal 0, user.reload.user_sessions.size
+      assert_equal 0, user.reload.sessions.size
       assert_session_destroyed
     end
   end

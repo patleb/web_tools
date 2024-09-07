@@ -18,7 +18,7 @@ class User < LibMainRecord
   scope :verified,      -> { where.not(verified_at: nil) }
   scope :visible_roles, -> (user) { where(column(:role) <= roles[user.as_role]) }
 
-  has_many :user_sessions, dependent: :destroy
+  has_many :sessions, class_name: 'UserSession', dependent: :destroy
   has_one  :session, -> { current }, class_name: 'UserSession'
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -71,11 +71,11 @@ class User < LibMainRecord
   end
 
   def create_session!(ip_address:, user_agent:)
-    user_sessions.create! session_id: Current.session_id, ip_address: ip_address, user_agent: user_agent
+    sessions.create! session_id: Current.session_id, ip_address: ip_address, user_agent: user_agent
   end
 
   def session_id
-    session&.session_id
+    session&.sid
   end
 
   def active?
@@ -103,7 +103,7 @@ class User < LibMainRecord
   end
 
   def delete_other_sessions
-    user_sessions.other.delete_all
+    sessions.other.delete_all
   end
 
   def role_i
