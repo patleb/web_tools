@@ -3,7 +3,7 @@ class SearchWord < LibMainRecord
 
   # AND condition is implicit by the spaces in the token
   scope :similar_to, ->(*tokens, locale: :en) {
-    tokens = tokens.compact.map(&:simplify.with(locale)).reject(&:blank?).uniq
+    tokens = tokens.compact.map(&:simplify.with(locale)).reject{ |token| token.size < 3 }.uniq
     return none if tokens.empty?
 
     token_column = quote_column(:token)
