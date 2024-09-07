@@ -1,4 +1,4 @@
-require 'ext_ruby'
+require 'mix_user'
 require 'mix_flash/configuration'
 
 module MixFlash
