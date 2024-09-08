@@ -1,5 +1,7 @@
 module Test
   class Record < ApplicationRecord
+    include Searchable
+
     scope :even, -> { where('"test_records"."id" % 2 = 0') }
     scope :odd,  -> { invert_where(even) }
 
@@ -23,5 +25,9 @@ module Test
       j_time: :time,
       j_interval: :interval
     )
+
+    def raw_search_words
+      [name, info, title, string, text, j_string, j_text].concat(related_records.flat_map(&:name))
+    end
   end
 end

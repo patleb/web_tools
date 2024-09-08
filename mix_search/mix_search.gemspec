@@ -15,8 +15,7 @@ Gem::Specification.new do |s|
   s.description = "MixSearch"
   s.license     = "AGPL-3.0"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
+  s.files = Dir["{app,db,lib}/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency 'ext_ruby', version
-  # TODO https://github.com/ankane/autosuggest
+  s.add_dependency 'ext_rails', version
 end

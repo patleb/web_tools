@@ -1,4 +1,4 @@
-require 'ext_ruby'
+require 'ext_rails'
 require 'mix_search/configuration'
 
 module MixSearch

@@ -2,12 +2,16 @@ class SearchWord < LibMainRecord
   has_many :searches
 
   # AND condition is implicit by the spaces in the token
-  scope :similar_to, ->(*tokens, locale: :en) {
-    tokens = tokens.compact.map(&:simplify.with(locale)).reject{ |token| token.size < 3 }.uniq
+  scope :similar_to, ->(*tokens) {
     return none if tokens.empty?
-
-    token_column = quote_column(:token)
-    where((["#{token_column} % ?"] * tokens.size).join(' OR '), *tokens)
-      .order("(#{tokens.map{ |token| "(#{token_column} <-> #{connection.quote(token)})" }.join(' + ')})".sql_safe)
+    where((["#{token_column} % ?"] * tokens.size).join(' OR '), *tokens).order(similarity(*tokens))
   }
+
+  def self.similarity(*tokens, as: nil)
+    "(#{tokens.map{ |token| "(#{token_column} <-> #{connection.quote(token)})" }.join(' + ')}) #{"AS #{as}" if as}".sql_safe
+  end
+
+  def self.token_column
+    @token_column ||= quote_column(:token)
+  end
 end
