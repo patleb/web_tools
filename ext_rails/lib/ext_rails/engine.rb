@@ -94,7 +94,7 @@ module ExtRails
       ENV["BACKTRACE"] = 'true'
     end
 
-    initializer 'ext_rails.append_migrations' do |app|
+    initializer 'ext_rails.migrations' do |app|
       append_migrations(app)
       append_migrations(app, scope: 'pgunit') if Rails.env.local?
       append_migrations(app, scope: 'vector') if Setting[:vector_enabled]
@@ -102,7 +102,7 @@ module ExtRails
       append_migrations(app, scope: 'pgrepack') if Setting[:pgrepack_enabled]
     end
 
-    initializer 'ext_rails.append_routes' do |app|
+    initializer 'ext_rails.routes' do |app|
       app.routes.append do
         match '/' => 'lib_api#healthcheck', via: [:get, :head], as: :base
 

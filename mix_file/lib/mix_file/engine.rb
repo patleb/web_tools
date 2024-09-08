@@ -8,7 +8,7 @@ module MixFile
     require 'image_optim'
     require 'image_optim_pack'
 
-    initializer 'mix_file.append_migrations' do |app|
+    initializer 'mix_file.migrations' do |app|
       append_migrations(app)
     end
 

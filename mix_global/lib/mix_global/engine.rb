@@ -6,7 +6,7 @@ module MixGlobal
       autoload_models_if_admin('Global')
     end
 
-    initializer 'mix_global.append_migrations' do |app|
+    initializer 'mix_global.migrations' do |app|
       append_migrations(app)
     end
   end

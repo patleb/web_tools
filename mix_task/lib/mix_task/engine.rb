@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'ext_rails'
+require 'mix_server'
+require 'mix_user'
 require 'mix_task/configuration'
 
 module MixTask
@@ -11,7 +12,7 @@ module MixTask
       autoload_models_if_admin(['Task', 'LogLines::Task'])
     end
 
-    initializer 'mix_task.append_migrations' do |app|
+    initializer 'mix_task.migrations' do |app|
       append_migrations(app)
     end
 

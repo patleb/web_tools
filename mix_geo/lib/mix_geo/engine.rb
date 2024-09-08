@@ -11,7 +11,7 @@ module MixGeo
       Rails.autoloaders.main.ignore("#{root}/app/models/postgis") unless Setting[:postgis_enabled]
     end
 
-    initializer 'mix_geo.append_migrations' do |app|
+    initializer 'mix_geo.migrations' do |app|
       append_migrations(app)
       append_migrations(app, scope: 'postgis') if Setting[:postgis_enabled]
     end

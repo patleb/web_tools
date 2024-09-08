@@ -37,7 +37,7 @@ module MixServer
       end
     end
 
-    initializer 'mix_server.append_migrations' do |app|
+    initializer 'mix_server.migrations' do |app|
       append_migrations(app)
     end
 
@@ -45,7 +45,7 @@ module MixServer
       ExtRails.config.db_partitions[:lib_log_lines] = :week
     end
 
-    initializer 'mix_server.prepend_routes', before: 'ext_rails.append_routes' do |app|
+    initializer 'mix_server.routes', before: 'ext_rails.routes' do |app|
       app.routes.prepend do
         MixServer::Routes.draw(self)
       end

@@ -14,11 +14,11 @@ module MixUser
       autoload_models_if_admin('User')
     end
 
-    initializer 'mix_user.append_migrations' do |app|
+    initializer 'mix_user.migrations' do |app|
       append_migrations(app)
     end
 
-    initializer 'mix_user.prepend_routes', before: 'ext_rails.append_routes' do |app|
+    initializer 'mix_user.routes', before: 'ext_rails.routes' do |app|
       app.routes.prepend do
         MixUser::Routes.draw(self)
       end

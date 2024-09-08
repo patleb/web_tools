@@ -6,11 +6,11 @@ require 'mix_rpc/routes'
 
 module MixRpc
   class Engine < ::Rails::Engine
-    initializer 'mix_rpc.append_migrations' do |app|
+    initializer 'mix_rpc.migrations' do |app|
       append_migrations(app)
     end
 
-    initializer 'mix_rpc.prepend_routes', before: 'ext_rails.append_routes' do |app|
+    initializer 'mix_rpc.routes', before: 'ext_rails.routes' do |app|
       app.routes.prepend do
         MixRpc::Routes.draw(self)
       end

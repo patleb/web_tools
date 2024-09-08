@@ -23,11 +23,11 @@ module MixPage
   end
 
   class Engine < ::Rails::Engine
-    initializer 'mix_page.append_migrations' do |app|
+    initializer 'mix_page.migrations' do |app|
       append_migrations(app)
     end
 
-    initializer 'mix_page.append_routes', before: 'ext_rails.append_routes' do |app|
+    initializer 'mix_page.routes', before: 'ext_rails.routes' do |app|
       app.routes.append do
         get "/:slug/#{URL_SEGMENT}(/:uuid)" => 'pages#show', as: :page
         post "/#{URL_SEGMENT}/:uuid/field" => 'pages#field_create', as: :page_field

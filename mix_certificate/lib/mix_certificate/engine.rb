@@ -8,11 +8,11 @@ module MixCertificate
   require 'acme-client'
 
   class Engine < ::Rails::Engine
-    initializer 'mix_certificate.append_migrations' do |app|
+    initializer 'mix_certificate.migrations' do |app|
       append_migrations(app)
     end
 
-    initializer 'mix_certificate.prepend_routes', before: 'ext_rails.append_routes' do |app|
+    initializer 'mix_certificate.routes', before: 'ext_rails.routes' do |app|
       app.routes.prepend do
         get "/#{ACME_CHALLENGE}/:token" => 'certificates#show', type: 'Certificates::LetsEncrypt'
       end

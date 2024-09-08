@@ -31,7 +31,7 @@ module MixJob
       autoload_models_if_admin('Job')
     end
 
-    initializer 'mix_job.append_migrations' do |app|
+    initializer 'mix_job.migrations' do |app|
       append_migrations(app)
     end
 
@@ -42,7 +42,7 @@ module MixJob
       require 'mix_job/http/response/status'
     end
 
-    initializer 'mix_job.prepend_routes', before: 'ext_rails.append_routes' do |app|
+    initializer 'mix_job.routes', before: 'ext_rails.routes' do |app|
       app.routes.prepend do
         MixJob::Routes.draw(self)
       end
