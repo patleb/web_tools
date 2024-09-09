@@ -17,7 +17,7 @@ module Shakapacker
   JS
 
   class CoffeeScriptVersion < StandardError; end
-  class CircularDependency < StandardError; end
+  class NestedDependency < StandardError; end
   class MissingDependency < StandardError; end
   class MissingGem < StandardError; end
 
@@ -105,7 +105,7 @@ module Shakapacker
       end
     rescue RuntimeError => e
       if e.message == "can't add a new key into hash during iteration"
-        raise CircularDependency, package
+        raise NestedDependency, package
       else
         raise
       end

@@ -1,6 +1,8 @@
-packages:
-  - 'hamsterjs'
-  - 'suneditor'
-
-gems:
-  - 'mix_user'
+tailwind:
+  - '@@mix_admin/app/helpers/**/*.rb'
+  - '@@mix_admin/app/views/**/*.html.{erb,ruby}'
+  - '@@mix_admin/lib/admin/field.rb'
+  - '@@mix_admin/lib/admin/fields/*.rb'
+  - '@@mix_admin/lib/admin/model.rb'
+  - '@@mix_admin/lib/admin/section.rb'
+  - '@@mix_admin/lib/admin/sections/**/*.rb'

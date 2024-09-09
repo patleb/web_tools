@@ -1,5 +1,3 @@
-packages:
-
 gems:
   - 'ext_coffee'
   - 'ext_css'
