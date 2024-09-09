@@ -2,7 +2,10 @@
 
 default: &default
   gems:
+    - 'ext_coffee'
+    - 'ext_css'
     - 'ext_rails'
+    - 'mix_user'
     - 'mix_admin'
 
   source_path: app/javascript

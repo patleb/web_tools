@@ -1,7 +1,3 @@
-gems:
-  - 'ext_coffee'
-  - 'ext_css'
-
 tailwind:
   - '@@ext_rails/app/helpers/**/*.rb'
   - '@@ext_rails/app/views/**/*.html.{erb,ruby}'
