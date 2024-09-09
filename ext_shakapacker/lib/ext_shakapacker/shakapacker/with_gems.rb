@@ -93,6 +93,7 @@ module Shakapacker
       end.transform_values{ |v| v.to_a.sort }
     end
 
+    # NOTE can have only one nested level per :gems entry
     def gems_packages_tailwind(name)
       if name && (package = Gem.root(name)&.join('lib/javascript/package.yml'))&.exist?
         parent = YAML.safe_load(package.read).values_at('gems', 'packages', 'tailwind').map{ |v| Set.new(v || []) }
