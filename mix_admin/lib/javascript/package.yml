@@ -1,3 +1,6 @@
+gems:
+  - 'mix_user'
+
 tailwind:
   - '@@mix_admin/app/helpers/**/*.rb'
   - '@@mix_admin/app/views/**/*.html.{erb,ruby}'
