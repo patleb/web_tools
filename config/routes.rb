@@ -10,8 +10,6 @@ Rails.application.routes.draw do
 
   simple_resources path: '/test/records'
 
-  # MixAdmin::Routes.draw(self)
-
   scope path: '/coffee', controller: 'coffee' do
     get '/' => :basic_template
     match '/sign_in', action: :sign_in, via: [:get, :post]
