@@ -1,0 +1,108 @@
+.admin_layout.admin_index_template {
+  .model_info {
+    @apply absolute top-14 xl-1:top-24 left-2 lg:left-[18.5rem] z-30;
+
+    .btn {
+      --btn-focus-scale: 1;
+      @apply bg-base-100 text-base-content;
+    }
+    .card {
+      @apply shadow-xl top-8 bg-base-100 w-max max-w-[calc(100vw-2.5rem)] lg:max-w-[calc(100vw-20.5rem)] max-h-[calc(100vh-5rem)];
+    }
+  }
+  .sort_link {
+    @apply font-thin;
+
+    &.sort_active,
+    &:hover {
+      @apply font-medium text-primary;
+    }
+  }
+  table {
+    th:first-child {
+      .checkbox {
+        @apply absolute;
+      }
+    }
+  }
+  thead {
+    th:first-child {
+      @apply text-left;
+
+      span {
+        @apply pl-9;
+      }
+    }
+  }
+  tbody {
+    th {
+      .field_value {
+        @apply font-normal cursor-default ml-[1.875rem];
+
+        .inline_menu {
+          > label {
+            @apply inline-block align-text-bottom cursor-pointer;
+          }
+          .dropdown-content {
+            @apply flex-row;
+
+            li:not(:first-child) {
+              @apply border-left;
+            }
+          }
+        }
+        > a {
+          @apply ml-1;
+        }
+      }
+    }
+    td {
+      @apply tooltip-top;
+
+      .field_value {
+        @apply line-clamp-1 line-clamp-wrap focus:line-clamp-none;
+      }
+    }
+    &.visible_head td {
+      &:before,
+      &:after {
+        @apply hidden;
+      }
+    }
+    tr:last-child th {
+      @apply p-0 font-normal;
+
+      .dropdown-content {
+        @apply flex-row;
+
+        li:not(:first-child) {
+          @apply border-left;
+        }
+      }
+    }
+  },
+  .bulk_title {
+    @apply cursor-pointer flex text-sm p-2 gap-3 bg-neutral text-neutral-content;
+
+    i {
+      @apply pr-1;
+
+      svg {
+        @apply h-5 w-5;
+      }
+    }
+  }
+  .inline_menu .delete_action,
+  .bulk_menu .delete_action:not(.btn-disabled,[disabled]) {
+    &:not(:hover) {
+      @apply bg-warning text-warning-content;
+    }
+  }
+  .paginate {
+    @apply flex flex-wrap gap-2 max-w-[calc(100vw-2.5rem)];
+
+    .badge {
+      @apply badge-outline text-xs;
+    }
+  }
+}

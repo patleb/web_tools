@@ -1,0 +1,89 @@
+.admin_layout {
+  .search_menu {
+    @apply flex w-full;
+  }
+  .filter_menu {
+    @apply pt-2 pr-2;
+  }
+  .filter_title {
+    @apply cursor-pointer text-sm flex gap-1.5 px-2 py-1.5 bg-neutral text-neutral-content;
+
+    &.active {
+      i svg {
+        @apply text-primary;
+      }
+    }
+    span {
+      @apply max-w-[8ch] xs:max-w-full whitespace-nowrap text-ellipsis overflow-hidden;
+    }
+    i svg {
+      @apply h-5 w-5;
+    }
+  }
+  .filter_list {
+    @apply z-40;
+  }
+  .query_bar {
+    @apply pt-2 pr-[0.675rem];
+
+    .input {
+      @apply w-full min-w-[14ch] font-mono text-xs;
+    }
+  }
+  .query_helper {
+    @apply absolute z-20 sm:top-24 xl:top-14 top-32 sm:right-2.5 sm-1:left-2 lg:max-h-[calc(100vh-6rem)] cursor-auto;
+
+    .collapse-title {
+      @apply mr-1 mb-1 z-20;
+
+      @media screen(sm) {
+        grid-column-start: none;
+      }
+    }
+    .collapse-content {
+      @apply transition-none pb-0;
+
+      .card-body {
+        @apply px-0 pb-[1.875rem];
+      }
+    }
+  }
+  #query_helper {
+    @apply w-6 h-6 min-h-6 z-30;
+
+    @media screen(sm) {
+      grid-column-start: none;
+    }
+    &:checked ~ .collapse-content {
+      @apply transition-none shadow-lg bg-base-100 w-max m-4 sm:left-5 overflow-y-auto;
+      @apply sm-1:max-h-[calc(100vh-10.75rem)] max-h-[calc(100vh-8.75rem)];
+    }
+  }
+  .js_query_datetime {
+    @apply input-bordered input-xs w-full;
+  }
+  .js_query_keyword,
+  .js_query_operator {
+    @apply select select-bordered select-xs w-full;
+  }
+  .js_query_or,
+  .js_query_and,
+  .js_query_field {
+    @apply mr-2;
+
+    + .tooltip {
+      @apply tooltip-bottom inline-flex text-left;
+    }
+  }
+  .js_scroll_menu {
+    @apply fixed z-50 top-5 right-0;
+
+    label {
+      @apply cursor-pointer;
+
+      i svg {
+        @apply h-5 w-5;
+      }
+    }
+  }
+}

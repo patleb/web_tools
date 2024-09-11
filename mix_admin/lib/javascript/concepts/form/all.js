@@ -1,6 +1,0 @@
-import '@@/mix_admin/concepts/form/directory_select_concept'
-import '@@/mix_admin/concepts/form/field_concept'
-import '@@/mix_admin/concepts/form/field_concept/all'
-import '@@/mix_admin/concepts/form/modal_form_concept'
-import '@@/mix_admin/concepts/form/nested_form_concept'
-import '@@/mix_admin/concepts/form/nested_form_concept/element'

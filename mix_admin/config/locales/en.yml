@@ -8,8 +8,8 @@ en:
           then click save. Otherwise, please refresh the page (warning: your changes will be lost).
           See the updated version <a href="" target="_blank" rel="noopener">here</a>.
   adminrecord:
-    navigation_labels:
-      object: Navigation
+    navigation:
+      model: Navigation
       system: System
   admin:
     js:
@@ -31,11 +31,30 @@ en:
       form_save: Save
       form_cancel: Cancel
       placeholder: Start typing...
+    query:
+      'true': True
+      'false': False
+      'null': Empty
+      today: Today
+      past_hour: Past hour
+      past_day: Past day
+      past_week: Past week
+      past_month: Past month
+      past_year: Past year
+    search:
+      title: Search query
+      error:
+        model: invalid field(s)
+        fields: no matching field(s) or type(s)
+        statement: invalid statement
+        value: invalid value
+        operator: invalid operator
+        empty: empty value
     misc:
       new: New
       discarded: TRASH
       remote: Start typing...
-      search: Search
+      search: Search…
       filter: Filter
       refresh:  Refresh
       show_all: Show all
@@ -49,10 +68,21 @@ en:
       clear_all: Clear all
       up: Up
       down: Down
+      root_navigation_label: Navigation
       static_navigation_label: Links
       log_out: Log out
       ago: ago
       more: "Plus %{count} more %{model_name}"
+      top_anchor: 'Top'
+      bottom_anchor: 'Bottom'
+      desc: 'Descending order'
+      asc: 'Ascending order'
+      advanced_search: Advanced search
+      description: Description
+      keywords: Keywords
+      operators: Operators
+      of: of
+      records: record(s)
     flash:
       successful: "%{name} successfully %{action}"
       error: "%{name} failed to be %{action}"
@@ -68,7 +98,7 @@ en:
         title: "Sorted list of %{model_label_plural}"
         menu: Sort
       show:
-        title: "Details for %{model_label} '%{object_label}'"
+        title: "Details for %{model_label} '%{record_label}'"
         menu: Show
       show_in_app:
         menu: Show in app
@@ -78,17 +108,16 @@ en:
         link: Add new
         done: created
       edit:
-        title: "Edit %{model_label} '%{object_label}'"
+        title: "Edit %{model_label} '%{record_label}'"
         menu: Edit
         link: Edit
         done: updated
       delete:
-        title: "Delete %{model_label} '%{object_label}'"
+        title: "Delete %{model_label} '%{record_label}'"
         menu: Delete
-        done: deleted
-      bulk_delete:
-        title: "Delete %{model_label_plural}"
-        menu: Multiple delete
+        link: "Delete '%{record_label}'"
+        bulk_title: "Delete %{model_label_plural}"
+        bulk_menu: Multiple delete
         bulk_link: Delete
         done: deleted
       export:
@@ -104,6 +133,7 @@ en:
       trash:
         title: "Move to trash %{model_label_plural}"
         menu: Trash
+        bulk_link: Move to trash
         done: moved to trash
       restore:
         title: "Restore %{model_label_plural}"

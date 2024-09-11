@@ -2,8 +2,9 @@ module Test
   class Record < ApplicationRecord
     include Searchable
 
-    scope :even, -> { where('"test_records"."id" % 2 = 0') }
-    scope :odd,  -> { invert_where(even) }
+    scope :even,  -> { where('"test_records"."id" % 2 = 0') }
+    scope :odd,   -> { invert_where(even) }
+    scope :today, -> { where(date: Time.current.beginning_of_day..Time.current.end_of_day) }
 
     has_many :related_records, discardable: true, dependent: :restrict_with_error
 

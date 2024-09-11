@@ -2,21 +2,25 @@
 
 require_relative '../config/boot'
 
-APP_ROOT = File.expand_path('..', __dir__)
-LIB_ROOT = File.expand_path(Gem.loaded_specs['ext_coffee'].gem_dir)
+WEB_TOOLS = File.expand_path('..', __dir__)
+# TODO extract from jestConfig.roots in jest.config.js instead
+MIX_ADMIN = File.expand_path(Gem.loaded_specs['mix_admin'].gem_dir)
+EXT_COFFEE = File.expand_path(Gem.loaded_specs['ext_coffee'].gem_dir)
 dirs = %W(
-  app/javascript
-  #{LIB_ROOT}/lib/javascript
-  #{LIB_ROOT}/vendor/javascript
-  #{LIB_ROOT}/test/fixtures/files
+  app/javascript/concepts
+  app/javascript/core_ext
+  #{MIX_ADMIN}/lib/javascript
+  #{EXT_COFFEE}/lib/javascript
+  #{EXT_COFFEE}/vendor/javascript
+  #{EXT_COFFEE}/test/fixtures/files
   test/fixtures/files
 )
 command, *extra_dirs = ARGV
 coffee = 'node_modules/.bin/coffee'
-Dir.chdir(APP_ROOT) do
+Dir.chdir(WEB_TOOLS) do
   dirs.select!{ |dir| Dir.exist? dir }
-  dirs.reject!{ |dir| dir.start_with? LIB_ROOT } if command.end_with? '-app'
-  dirs.select!{ |dir| dir.start_with? LIB_ROOT } if command.end_with? '-lib'
+  dirs.reject!{ |dir| dir.start_with? MIX_ADMIN, EXT_COFFEE } if command.end_with? '-app'
+  dirs.select!{ |dir| dir.start_with? MIX_ADMIN, EXT_COFFEE } if command.end_with? '-lib'
   if File.executable? coffee
     case command
     when 'compile', 'compile-app', 'compile-lib'

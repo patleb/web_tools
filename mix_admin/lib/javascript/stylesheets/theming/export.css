@@ -1,0 +1,38 @@
+.admin_layout.admin_export_template {
+  #main {
+    @apply container;
+  }
+  .export_schema {
+    @apply bg-base-200 shadow-xl w-full max-w-[calc(100vw-2.5rem)] lg:max-w-[calc(100vw-20.5rem)];
+  }
+  .badge {
+    @apply text-xs;
+  }
+  .label {
+    @apply cursor-pointer;
+  }
+  .label-text {
+    @apply mr-2;
+  }
+  label:not(.card-title) > .checkbox {
+    @apply checkbox-primary;
+  }
+  fieldset ~ fieldset {
+    @apply border-t;
+  }
+  fieldset {
+    > input:not(:checked) ~ .collapse-content {
+      @apply hidden;
+    }
+    > .collapse-title {
+      @apply border-b border-neutral font-medium;
+    }
+    > .card-body {
+      @apply grid-cols-none sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2;
+
+      label {
+        @apply bg-base-100 border p-1;
+      }
+    }
+  }
+}

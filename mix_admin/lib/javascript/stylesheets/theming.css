@@ -1,0 +1,13 @@
+.admin_layout {
+  .nav_actions {
+    @apply flex-none align-middle lg-1:border-l-2 mt-3 pr-2;
+  }
+  .nav_action {
+    i {
+      @apply h-5 w-5 -mt-1;
+    }
+    span {
+      @apply -mt-2 pl-0.5 md-1:hidden;
+    }
+  }
+}

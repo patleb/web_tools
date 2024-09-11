@@ -1,9 +1,0 @@
-input.js_datetimepicker {
-  width: auto;
-}
-
-@include screen_mobile {
-  .js_datetimepicker + label {
-    float: left;
-  }
-}

@@ -8,8 +8,8 @@ fr:
           alors cliquez sur enregistrer. Sinon, veuillez rafraîchir la page (attention: vos modifications seront perdues).
           Voir la version mise à jour <a href="" target="_blank" rel="noopener">ici</a>.
   adminrecord:
-    navigation_labels:
-      object: Navigation
+    navigation:
+      model: Navigation
       system: Système
   admin:
     js:
@@ -31,11 +31,30 @@ fr:
       form_save: Enregistrer
       form_cancel: Annuler
       placeholder: Commencer à écrire...
+    query:
+      'true': Vrai
+      'false': Faux
+      'null': Vide
+      today: Aujourd'hui
+      past_hour: Dernière heure
+      past_day: Dernière journée
+      past_week: Dernière semaine
+      past_month: Dernier mois
+      past_year: Dernière année
+    search:
+      title: Requête de recherche
+      error:
+        model: champs invalide(s)
+        fields: aucun(s) champs ou type(s) correspondant(s)
+        statement: requête invalide
+        value: valeur invalide
+        operator: opérateur invalide
+        empty: valeur vide
     misc:
       new: Nouveau(elle)
       discarded: CORBEILLE
       remote: Commencer à écrire...
-      search: Recherche
+      search: Recherche…
       filter: Filtre
       refresh: Rafraîchir
       show_all: Montrer tout
@@ -49,10 +68,21 @@ fr:
       clear_all: Effacer tout
       up: Monter
       down: Descendre
+      root_navigation_label: Navigation
       static_navigation_label: Liens
       log_out: Se déconnecter
       ago: il y a
       more: "Plus %{count} autre(s) %{model_name}"
+      top_anchor: 'Haut de page'
+      bottom_anchor: 'Bas de page'
+      desc: 'Ordre décroissant'
+      asc: 'Ordre croissant'
+      advanced_search: Rercherche avancée
+      description: Description
+      keywords: Mots clés
+      operators: Opérateurs
+      of: des
+      records: enregistrement(s)
     flash:
       successful: "%{name} %{action} avec succès"
       error: "%{name} n'a pas pu être %{action}"
@@ -68,7 +98,7 @@ fr:
         title: "Liste triée des %{model_label_plural}"
         menu: Trier
       show:
-        title: "Détails pour %{model_label} '%{object_label}'"
+        title: "Détails pour %{model_label} '%{record_label}'"
         menu: Voir
       show_in_app:
         menu: Voir dans l'application
@@ -78,18 +108,16 @@ fr:
         link: Ajouter
         done: créé(e)
       edit:
-        title: "Modifier %{model_label} '%{object_label}'"
+        title: "Modifier %{model_label} '%{record_label}'"
         menu: Modifier
         link: Modifier
         done: mis(e) à jour
       delete:
-        title: "Supprimer %{model_label} '%{object_label}'"
+        title: "Supprimer %{model_label} '%{record_label}'"
         menu: Supprimer
-        link: "Supprimer '%{object_label}'"
-        done: supprimé(e)
-      bulk_delete:
-        title: "Supprimer %{model_label_plural}"
-        menu: Suppression multiple
+        link: "Supprimer '%{record_label}'"
+        bulk_title: "Supprimer %{model_label_plural}"
+        bulk_menu: Suppression multiple
         bulk_link: Supprimer
         done: supprimé(e)
       export:
@@ -105,6 +133,7 @@ fr:
       trash:
         title: "Mettre à la corbeille %{model_label_plural}"
         menu: Corbeille
+        bulk_link: Mettre à la corbeille
         done: mis(e) à la corbeille
       restore:
         title: "Restaurer %{model_label_plural}"
