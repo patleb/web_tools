@@ -1,5 +1,5 @@
 module Test
-  class VirtualRecord < VirtualRecord::Base
+  class ObjectRecord < VirtualRecord::Base
     scope :even, -> { select{ |record| record.id.even? } }
 
     ar_attribute :name

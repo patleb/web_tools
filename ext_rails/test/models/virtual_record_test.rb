@@ -2,7 +2,7 @@ require './test/test_helper'
 
 class VirtualRecordTest < ActiveSupport::TestCase
   let(:values) do
-    Test::VirtualRecord.list.map do |r|
+    Test::ObjectRecord.list.map do |r|
       r[:date] = r[:id].days.from_now.to_date
       r[:odd] = r[:id].odd?
       r[:name] = nil if r[:name].blank?
@@ -21,27 +21,27 @@ class VirtualRecordTest < ActiveSupport::TestCase
   end
 
   test '.all' do
-    assert_equal values, Test::VirtualRecord.all.map(&:attributes_hash)
+    assert_equal values, Test::ObjectRecord.all.map(&:attributes_hash)
   end
 
   test '.find' do
-    assert_equal(resource(5), Test::VirtualRecord.find(5).attributes_hash)
+    assert_equal(resource(5), Test::ObjectRecord.find(5).attributes_hash)
   end
 
   test '.scope' do
-    assert_equal even, Test::VirtualRecord.even.map(&:attributes_hash)
+    assert_equal even, Test::ObjectRecord.even.map(&:attributes_hash)
   end
 
   test '.order and .reverse_order' do
-    assert_equal sorted, Test::VirtualRecord.order(:name).reverse_order.map(&:attributes_hash)
+    assert_equal sorted, Test::ObjectRecord.order(:name).reverse_order.map(&:attributes_hash)
   end
 
   test '.limit and .offset' do
-    assert_equal paginated, Test::VirtualRecord.limit(10).offset(6).map(&:attributes_hash)
+    assert_equal paginated, Test::ObjectRecord.limit(10).offset(6).map(&:attributes_hash)
   end
 
   test '.where' do
-    assert_equal(resource(5),               Test::VirtualRecord.where(id: 5, name: 'Name 5').take.attributes_hash)
+    assert_equal(resource(5),               Test::ObjectRecord.where(id: 5, name: 'Name 5').take.attributes_hash)
     assert_equal(resources(1, 2),           resources_for([id: [1, 2]]))
     assert_equal(resources(-1),             resources_for([name: nil]))
     assert_equal(resources(-1),             resources_for(['name IS NULL'])) # blank
@@ -59,7 +59,7 @@ class VirtualRecordTest < ActiveSupport::TestCase
   private
 
   def resources_for(*sqls)
-    sqls.reduce(Test::VirtualRecord){ |scope, (sql, *values)| scope.where(sql, *values) }.map(&:attributes_hash)
+    sqls.reduce(Test::ObjectRecord){ |scope, (sql, *values)| scope.where(sql, *values) }.map(&:attributes_hash)
   end
 
   def resources(*ids)
