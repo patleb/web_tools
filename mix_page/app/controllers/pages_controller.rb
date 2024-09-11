@@ -1,6 +1,6 @@
 # TODO index (search), form (create, show, update, destroy, index)
 # https://dba.stackexchange.com/questions/206616/optimize-a-trigram-search-with-custom-sort-order
-class PagesController < MixPage.config.parent_controller.constantize
+class PagesController < LibController
   before_action :load_state
   before_action :authorized_page!
 
