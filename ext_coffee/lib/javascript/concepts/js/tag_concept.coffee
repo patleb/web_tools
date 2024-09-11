@@ -33,7 +33,7 @@ class Js.TagConcept
       item = '' unless item?
       item = item.safe_text() unless item.html_safe()
       item.to_s()
-    values = values.join('')
+    values = values.join(' ')
     values.html_safe(true)
 
   if_: (is_true, values...) =>

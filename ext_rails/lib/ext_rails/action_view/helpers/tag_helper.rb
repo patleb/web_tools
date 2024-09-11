@@ -2,6 +2,18 @@
 
 MonkeyPatch.add{['actionview', 'lib/action_view/helpers/form_tag_helper.rb', 'c826b5f24f8340f9667b4596c75f2ffceb3dc052d859a60b8a9fc91956ecb17e']}
 
+class Object
+  def no_space?
+    html_safe?
+  end
+end
+
+class Numeric
+  def no_space?
+    false
+  end
+end
+
 module ActionView::Helpers::TagHelper
   HTML5_TAGS = Set.new(%w(
     a abbr address area article aside audio
@@ -69,7 +81,10 @@ module ActionView::Helpers::TagHelper
       end
     else
       super() do
-        args.flatten.each{ |value| concat value }
+        args.flatten.each do |value|
+          concat value
+          concat ' ' unless value.no_space?
+        end
       end
     end
   end
