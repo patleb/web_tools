@@ -1,4 +1,4 @@
-class CreateLibGeoCountries < ActiveRecord::Migration[6.0]
+class CreateLibGeoCountries < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_geo_countries do |t| # must have an :id as integer, since counter_cache triggers are used
       t.citext :name, null: false, index: { unique: true }

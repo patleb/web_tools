@@ -1,4 +1,4 @@
-class CreateLibTasks < ActiveRecord::Migration[6.0]
+class CreateLibTasks < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_tasks, id: false do |t|
       t.primary_key :name, :integer

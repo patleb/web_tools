@@ -1,4 +1,4 @@
-class CreateActiveStorageBackups < ActiveRecord::Migration[6.0]
+class CreateActiveStorageBackups < ActiveRecord::Migration[7.1]
   def change
     create_table :active_storage_backups do |t|
       t.belongs_to :blob,       null: false, foreign_key: { to_table: :active_storage_blobs }

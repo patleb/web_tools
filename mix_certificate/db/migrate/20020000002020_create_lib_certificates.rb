@@ -1,4 +1,4 @@
-class CreateLibCertificates < ActiveRecord::Migration[6.0]
+class CreateLibCertificates < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_certificates, id: false do |t|
       t.primary_key :id, :string

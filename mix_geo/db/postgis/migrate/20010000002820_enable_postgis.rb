@@ -1,4 +1,4 @@
-class EnablePostgis < ActiveRecord::Migration[6.0]
+class EnablePostgis < ActiveRecord::Migration[7.1]
   def change
     enable_extension 'postgis'
     enable_extension 'postgis_topology'

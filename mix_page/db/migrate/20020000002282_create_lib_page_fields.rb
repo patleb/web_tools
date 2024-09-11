@@ -1,9 +1,9 @@
-class CreateLibPageFields < ActiveRecord::Migration[6.0]
+class CreateLibPageFields < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_page_fields do |t|
       t.integer    :type,          null: false
       t.integer    :name,          null: false
-      t.decimal    :position,      null: false, index: { unique: true }
+      t.decimal    :position,      null: false, index: { unique: true } # TODO must take care of the retry on exception
       t.belongs_to :parent,        foreign_key: { to_table: :lib_page_fields }, index: false
       t.belongs_to :page,          null: false, foreign_key: { to_table: :lib_pages }, index: false
       t.bigint     :fieldable_id

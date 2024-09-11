@@ -1,4 +1,4 @@
-class CreateLibGeoIps < ActiveRecord::Migration[6.0]
+class CreateLibGeoIps < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_geo_ips, id: false do |t|
       t.primary_key :id, :inet
