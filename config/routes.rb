@@ -17,6 +17,4 @@ Rails.application.routes.draw do
     get '/error' => :error
   end
   get '/sass', to: 'sass#index'
-
-  # mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
 end
