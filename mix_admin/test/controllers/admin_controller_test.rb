@@ -23,52 +23,52 @@ class AdminControllerTest < ActionDispatch::IntegrationTest
 
   around do |test|
     MixAdmin.with do |config|
+      config.root = '/model'
       config.record_label_methods = []
       test.call
     end
   end
 
-  it 'should return :not_found on empty :model_name' do
-    get '/admin//show/1'
-    assert_response :not_found
-  end
-
-  it 'should return :not_found on unknown model' do
-    get '/model/unknown/show/1'
-    assert_response :not_found
-  end
-
-  it 'should return :not_found on bad id' do
-    get "/model/#{model_name}/-1"
-    assert_response :not_found
-  end
-
-  describe 'denied model' do
-    let(:model_denied){ true }
-
-    it 'should return :not_found on denied model' do
-      get "/model/#{model_name}/1"
+  context '#show' do
+    test 'return :not_found on empty :model_name' do
+      get '/admin//show/1'
       assert_response :not_found
     end
-  end
 
-  describe 'denied presenter' do
-    let(:presenter_denied){ true }
-
-    it 'should return :not_found on denied presenter' do
-      get "/model/#{model_name}/1"
+    test 'return :not_found on unknown model' do
+      get '/model/unknown/show/1'
       assert_response :not_found
     end
-  end
 
-  describe '#show' do
-    it 'should define path helpers' do
-      assert_equal '/model/:model_name/:id', MixAdmin.routes[:show]
-      assert_equal "/model/#{model_name}/1", MixAdmin::Routes.show_path(model_name: model_name, id: 1)
+    test 'return :not_found on bad id' do
+      get "/model/#{model_name}/-1"
+      assert_response :not_found
+    end
+
+    context 'denied model' do
+      let(:model_denied){ true }
+
+      test 'return :not_found on denied model' do
+        get "/model/#{model_name}/1"
+        assert_response :not_found
+      end
+    end
+
+    context 'denied presenter' do
+      let(:presenter_denied){ true }
+
+      test 'return :not_found on denied presenter' do
+        get "/model/#{model_name}/1"
+        assert_response :not_found
+      end
     end
 
     test 'render :show' do
+      assert_equal '/model/:model_name/:id', MixAdmin.routes[:show]
+      assert_equal "/model/#{model_name}/1", MixAdmin::Routes.show_path(model_name: model_name, id: 1)
+
       get "/model/#{model_name}/1"
+
       groups = self[:@section].groups
       group = groups.first
       id_field = group.fields.find{ |f| f.name == :id }
@@ -101,14 +101,13 @@ class AdminControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  describe '#index' do
-    it 'should define path helpers' do
+  context '#index' do
+    test 'render :index' do
       assert_equal '/model/:model_name', MixAdmin.routes[:index]
       assert_equal "/model/#{model_name}", MixAdmin::Routes.index_path(model_name: model_name)
-    end
 
-    test 'render :index' do
       get "/model/#{model_name}", params: { q: '{id}!=_null', f: 'all', s: 'id', r: 'true' }
+
       presenter = self[:@presenters].first
       id, *fields = self[:@section].fields.map{ |f| f.with(presenter: presenter) }
       assert_response :ok
