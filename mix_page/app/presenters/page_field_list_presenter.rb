@@ -1,4 +1,4 @@
-class PageFieldListPresenter < ActionPresenter::Base[:@page]
+class PageFieldListPresenter < ActionView::Delegator[:@page]
   delegate :name, to: 'list.first.object'
 
   def after_initialize
@@ -34,7 +34,7 @@ class PageFieldListPresenter < ActionPresenter::Base[:@page]
   end
 
   def render(list_options = {}, item_options = {})
-    list_options = html_options.with_keyword_access.union!(html_list_options).union!(list_options)
+    list_options = html_options.with_indifferent_access.union!(html_list_options).union!(list_options)
     if block_given?
       yield(list, list_options, pretty_actions)
     else

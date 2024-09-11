@@ -1,4 +1,4 @@
-class PageTemplatePresenter < ActionPresenter::Base
+class PageTemplatePresenter < ActionView::Delegator
   LINK_ICONS = {
     edit:   'fa fa-edit',
     create: 'fa fa-plus-square-o'
@@ -14,7 +14,7 @@ class PageTemplatePresenter < ActionPresenter::Base
   end
 
   def render(**options)
-    options = html_options.with_keyword_access.union!(options)
+    options = html_options.with_indifferent_access.union!(options)
     if block_given?
       div_(**options.except(*TITLE_OPTIONS)) {[
         pretty_title(**options.slice(*TITLE_OPTIONS)),
@@ -54,6 +54,6 @@ class PageTemplatePresenter < ActionPresenter::Base
     @member_actions ||= {
       edit:   admin_path_for(:edit, object, _back: true),
       create: admin_path_for(:create, object, _back: true),
-    }.reject{ |_, v| v.blank? }
+    }.compact_blank
   end
 end

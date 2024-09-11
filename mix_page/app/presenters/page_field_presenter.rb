@@ -1,4 +1,4 @@
-class PageFieldPresenter < ActionPresenter::Base[:@page]
+class PageFieldPresenter < ActionView::Delegator[:@page]
   LINK_ICONS = {
     edit:   'fa fa-pencil',
     delete: 'fa fa-trash-o fa-fw'
@@ -55,7 +55,7 @@ class PageFieldPresenter < ActionPresenter::Base[:@page]
   end
 
   def render(**item_options, &block)
-    html(**html_options.with_keyword_access.union!(item_options), &block)
+    html(**html_options.with_indifferent_access.union!(item_options), &block)
   end
 
   def editable
