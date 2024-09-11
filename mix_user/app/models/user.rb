@@ -31,7 +31,7 @@ class User < LibMainRecord
   before_validation if: :email_changed?, on: :update do
     self.verified_at = nil
   end
-  after_update  :delete_other_sessions, if: -> do
+  after_update :delete_other_sessions, if: -> do
     password_digest_previously_changed? || verified_at_previously_changed? || role_previously_changed?
   end
   after_discard :unverified!
