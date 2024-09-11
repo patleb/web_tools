@@ -27,7 +27,7 @@
     @apply pt-2 pr-[0.675rem];
 
     .input {
-      @apply w-full min-w-[14ch] font-mono text-xs;
+      @apply w-full min-w-[14ch] font-mono input-bordered input-sm text-xs mr-2;
     }
   }
   .query_helper {

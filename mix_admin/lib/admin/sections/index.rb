@@ -116,7 +116,7 @@ module Admin
           search_params.except(:q).map do |name, value|
             input_ name: name, value: value, type: 'hidden'
           end,
-          input_('#q.js_search.input.input-bordered',
+          input_('#q.js_search.input',
             type: 'search',
             name: 'q',
             value: params[:q],
