@@ -7,6 +7,8 @@ class AdminController < LibController
 
   rescue_from RoutingError, ActionController::ParameterMissing, ActiveRecord::RecordNotFound, with: :render_404
 
+  authenticate
+
   before_action :set_action
   before_action :set_model, if: -> { @action.model? }
   before_action :set_presenters, if: -> { @action.presenters? }
