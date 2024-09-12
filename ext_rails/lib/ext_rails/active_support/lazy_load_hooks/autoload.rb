@@ -38,7 +38,8 @@ module ActiveSupport::LazyLoadHooks::Autoload
 
     def _unload_module_const(base, module_name)
       module_const = _get_module_const(base, module_name)
-      module_const.module_parent.__send__(:remove_const, module_name)
+      base = module_const.module_parent unless _parent_hooks.include? base.name
+      base.__send__(:remove_const, module_name)
     rescue NameError
       # do nothing
     end
