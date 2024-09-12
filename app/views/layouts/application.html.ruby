@@ -8,9 +8,12 @@ append :header, [
   flash_message(:alert),
   flash_message(:notice),
 ]
-append :sidebar, [
-  li_(user_login_link)
-]
+append(:sidebar) do
+  ul_ [
+    li_('.menu_divider'),
+    li_(user_link),
+  ]
+end
 extends 'layouts/lib' do
   yield
 end
