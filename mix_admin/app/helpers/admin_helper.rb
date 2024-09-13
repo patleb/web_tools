@@ -2,10 +2,15 @@ module AdminHelper
   FLASH_SEPARATOR = '<br>- '
 
   def admin_link
-    return unless Current.controller.is_a? AdminController
-    if Current.logged_in?
-      a_ t('link.admin'), href: MixAdmin::Routes.root_path
+    if admin_link?
+      a_ '.admin_link.admin_root', t('link.admin'), href: admin_root_path
+    else
+      a_ '.admin_link.app_root', t('link.app'), href: application_path
     end
+  end
+
+  def admin_link?
+    !Current.controller.is_a?(AdminController) && Current.logged_in?
   end
 
   def admin_success_notice(name, action)

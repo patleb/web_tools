@@ -8,9 +8,10 @@ append :header, [
   flash_message(:alert),
   flash_message(:notice),
 ]
-append(:sidebar) do
+append :sidebar do
   ul_ [
     li_('.menu_divider'),
+    li_(admin_link),
     li_(user_link),
   ]
 end

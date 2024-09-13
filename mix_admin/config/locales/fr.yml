@@ -11,6 +11,9 @@ fr:
     navigation:
       model: Navigation
       system: Système
+  link:
+    admin: Admin
+    app: Application
   admin:
     js:
       is_present: Est présent

@@ -2,13 +2,17 @@
 
 module UserHelper
   def user_link
-    if Current.logged_in?
+    if user_link?
+      a_('.user_link.user_login', t('link.log_in'), href: MixUser::Routes.new_session_path)
+    else
       form_ '.user_link.user_logout', action: MixUser::Routes.delete_session_path, remote: true do
         input_ type: 'submit', value: t('link.log_out')
       end
-    else
-      a_('.user_link.user_login', t('link.log_in'), href: MixUser::Routes.new_session_path)
     end
+  end
+
+  def user_link?
+    !Current.logged_in?
   end
 
   def user_links

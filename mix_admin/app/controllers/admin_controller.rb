@@ -21,6 +21,10 @@ class AdminController < LibController
     define_method action.key, action.controller
   end
 
+  def root_path
+    admin_root_path
+  end
+
   def action_type
     action_type_object.first
   end
@@ -71,7 +75,7 @@ class AdminController < LibController
       when :root       then @action.title(:menu)
       end
     (@meta ||= {}).merge!(
-      root: MixAdmin::Routes.root_url,
+      root: root_path,
       app: app_name,
       title: [title.upcase_first, app_name].compact.join(' | '),
     )
