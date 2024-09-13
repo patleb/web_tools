@@ -34,7 +34,7 @@ class Hash
   def pretty_json(format = nil)
     text = JSON.pretty_generate(self, indent: '  ', space: ' ', space_before: '')
     case format
-    when :html then ERB::Util.html_escape(text).gsub(/\r?\n/, '<br>').gsub(' ', '&nbsp;').html_safe
+    when :html then ERB::Util.html_escape(text).gsub(/\r?\n/, '<br>').gsub(' ', '&nbsp;').sub('&nbsp;', '').sub('<br>', '').html_safe
     when :text then text.gsub(/\n/, "\r\n")
     else text
     end
