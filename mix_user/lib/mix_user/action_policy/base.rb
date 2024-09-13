@@ -17,7 +17,7 @@ module ActionPolicy
 
     def initialize(user, object)
       @user = user
-      @object = object
+      @object = object.is_a?(String) ? object.to_const! : object
     end
 
     def param_key

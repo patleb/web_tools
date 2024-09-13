@@ -29,6 +29,7 @@ module ActionController::WithPolicy
   def policy(object)
     (@_policy ||= {})[object] ||= begin
       policy = if object
+        object = object.is_a?(String) ? object.to_const! : object
         klass = object.is_a?(Class) ? object : object.class
         "#{klass.name}Policy".to_const ||
           "#{klass.superclass.name}Policy".to_const ||
