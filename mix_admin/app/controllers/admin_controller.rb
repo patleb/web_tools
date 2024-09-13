@@ -78,6 +78,7 @@ class AdminController < LibController
       root: root_path,
       app: app_name,
       title: [title.upcase_first, app_name].compact.join(' | '),
+      scope: :admin,
     )
   end
 

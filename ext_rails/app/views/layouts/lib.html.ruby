@@ -28,7 +28,10 @@ html_('.no-js.no-transition', lang: Current.locale, data: { theme: Current.theme
         label_('.open_sidebar', for: 'sidebar') do
           span_ [icon('list'), a_('.link', @meta[:title], href: @meta[:root], title: @meta[:title])]
         end,
-        area(:header),
+        area(:header, [
+          flash_message(:alert, scope: @meta[:scope]),
+          flash_message(:notice, scope: @meta[:scope]),
+        ]),
       ]),
       main_('#main', yield),
       footer_('#footer') do
