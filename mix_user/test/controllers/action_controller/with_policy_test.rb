@@ -30,14 +30,12 @@ module ActionController
 
       test '#policy_scope' do
         controller_assert :policy_scope do
-          Current.user = $test.user
           policy_scope(User.basic).size == 1
         end
       end
 
       test '#policy' do
         controller_assert :policy do
-          Current.user = $test.user
           can = policy($test.user)
           !can.index? && !can.export? && can.show? && !can.new? && can.edit? && can.delete?
         end
@@ -49,14 +47,12 @@ module ActionController
 
       test '#policy_scope' do
         controller_assert :policy_scope do
-          Current.user = $test.user
           policy_scope(User.admin).size == 1
         end
       end
 
       test '#policy' do
         controller_assert :policy do
-          Current.user = $test.user
           can = policy($test.user)
           can.index? && !can.export? && can.show? && can.new? && can.edit? && can.delete?
         end
@@ -68,14 +64,12 @@ module ActionController
 
       test '#policy_scope' do
         controller_assert :policy_scope do
-          Current.user = $test.user
           policy_scope(User.deployer).size == 1
         end
       end
 
       test '#policy' do
         controller_assert :policy do
-          Current.user = $test.user
           can = policy($test.user)
           can.index? && !can.export? && can.show? && can.new? && can.edit? && can.delete?
         end
