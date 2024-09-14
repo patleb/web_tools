@@ -4,11 +4,9 @@ module Admin
 
     eager_autoload do
       autoload :Association
-      autoload :Attribute
       autoload :Column
       autoload :Definable
       autoload :Searchable
-      autoload :VirtualColumn
     end
     include Configurable
     extend Definable
@@ -192,8 +190,8 @@ module Admin
       end
 
       def associations_hash
-        @associations_hash ||= klass.reflect_on_all_associations.each_with_object({}) do |association, hash|
-          hash[association.name.to_sym] = Association.new(association, klass)
+        @associations_hash ||= klass.reflect_on_all_associations.each_with_object({}.to_hwia) do |association, hash|
+          hash[association.name] = Association.new(association, klass)
         end
       end
 
@@ -202,25 +200,15 @@ module Admin
       end
 
       def columns_hash
-        @columns_hash ||= begin
-          hash = {}
-          if klass.respond_to? :columns_hash
-            klass.columns_hash.each do |name, column|
-              hash[name.to_sym] = Column.new(column, klass) unless column.type.blank?
-            end
+        @columns_hash ||= {
+          columns_hash: false,
+          attribute_types: true,
+          virtual_columns_hash: true
+        }.each_with_object({}.to_hwia) do |(columns, virtual), hash|
+          next unless klass.respond_to? columns
+          klass.public_send(columns).each do |name, column|
+            hash[name] ||= Column.new(column, klass, name, virtual)
           end
-          # TODO update active_type and add nests_one/nests_many
-          if klass.respond_to? :virtual_columns_hash
-            klass.virtual_columns_hash.each do |name, column|
-              hash[name.to_sym] = VirtualColumn.new(column, klass, name)
-            end
-          end
-          if klass.respond_to? :attribute_types
-            klass.attribute_types.each do |name, column|
-              hash[name.to_sym] ||= Attribute.new(column, klass, name)
-            end
-          end
-          hash
         end
       end
     end

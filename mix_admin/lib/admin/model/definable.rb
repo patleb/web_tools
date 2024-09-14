@@ -68,9 +68,9 @@ module Admin::Model::Definable
     remove_ivar(:@section)
   end
 
-  def group!(name = :default, **options, &block)
+  def group!(name = :default, **, &)
     @grouped = true
-    group(name, **options, &block)
+    group(name, **, &)
   ensure
     remove_ivar(:@grouped)
   end
@@ -96,8 +96,8 @@ module Admin::Model::Definable
     remove_ivar(:@group)
   end
 
-  def field!(name, editable: nil, **options, &block)
-    field(name, editable: true, **options, &block)
+  def field!(name, **, &)
+    field(name, **, editable: true, &)
   end
 
   def field(name, editable: nil, translated: false, **options, &block)
@@ -135,7 +135,7 @@ module Admin::Model::Definable
   end
 
   def property(name)
-    columns_hash[name.to_sym] || associations_hash[name.to_sym]
+    columns_hash[name] || associations_hash[name]
   end
 
   private

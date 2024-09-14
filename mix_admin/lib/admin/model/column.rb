@@ -4,10 +4,11 @@ module Admin
 
     delegate_missing_to :column
 
-    def initialize(column, klass, name = nil)
+    def initialize(column, klass, name, virtual)
       @column = column
       @klass = klass
-      @name = name ? name.to_sym : column.name.to_sym
+      @name = name.to_sym
+      @virtual = virtual
     end
 
     def required?
@@ -15,19 +16,19 @@ module Admin
     end
 
     def readonly?
-      @klass.readonly_attributes.include? @column.name
+      @klass.readonly_attributes.include? @name
     end
 
     def type
-      if serialized? @column.name
+      if @column.type == :binary
         :serialized
       else
-        @column.type
+        @column.type || :string
       end
     end
 
     def virtual?
-      false
+      @virtual
     end
 
     def array?
@@ -36,12 +37,6 @@ module Admin
 
     def association?
       false
-    end
-
-    private
-
-    def serialized?(name)
-      @klass.type_for_attribute(name).class == ActiveRecord::Type::Serialized
     end
   end
 end

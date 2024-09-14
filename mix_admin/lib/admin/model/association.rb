@@ -6,7 +6,7 @@ module Admin
 
     def initialize(reflection, klass)
       @reflection = reflection
-      super(klass.columns_hash[reflection.foreign_key.to_s], klass, reflection.name)
+      super(klass.columns_hash[reflection.foreign_key.to_s], klass, reflection.name, false)
     end
 
     def required?
@@ -22,10 +22,6 @@ module Admin
 
     def type
       @reflection.macro
-    end
-
-    def virtual?
-      false
     end
 
     def association?
