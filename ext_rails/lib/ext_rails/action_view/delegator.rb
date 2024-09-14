@@ -13,16 +13,16 @@ class ActionView::Delegator < ActionController::Delegator
     Current.view.respond_to?(name, include_private) || super
   end
 
-  def method_missing(name, *args, **options, &block)
+  def method_missing(name, ...)
     if @_locals.has_key? name
       self.class.define_method(name) do
         @_locals[name]
       end
       send(name)
     elsif Current.view.respond_to? name
-      Current.view.public_send(name, *args, **options, &block)
+      Current.view.public_send(name, ...)
     elsif Current.controller.respond_to? name, true
-      Current.controller.__send__(name, *args, **options, &block)
+      Current.controller.__send__(name, ...)
     else
       raise NoMethodError.new("No method '#{name}' for #{self.class} or :locals or Current.view or Current.controller", name)
     end

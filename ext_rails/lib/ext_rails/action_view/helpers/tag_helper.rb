@@ -47,7 +47,7 @@ module ActionView::Helpers::TagHelper
     )
   end
 
-  def method_missing(name, *args, &block)
+  def method_missing(name, *, &)
     if name.end_with? '_'
       tag = name.to_s.delete_suffix('_')
       unless HTML5_TAGS.include? tag
@@ -56,7 +56,7 @@ module ActionView::Helpers::TagHelper
       self.class.send(:define_method, name) do |*args, &block|
         with_tag tag, *args, &block
       end
-      send(name, *args, &block)
+      send(name, *, &)
     else
       super
     end

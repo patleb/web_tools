@@ -29,7 +29,7 @@ module PageHelper
   # page_links(name, list_options = {}, item_options = {}, &block)
   # page_link(name, item_options = {})
   #
-  def method_missing(name, *args, &block)
+  def method_missing(name, *, &)
     if (options = page_helper_options(name))
       type = TYPES_MAPPING[options.delete(:type)]
       if options.delete(:render)
@@ -47,7 +47,7 @@ module PageHelper
           page_presenter(name, type, **options)
         end
       end
-      send(name, *args, &block)
+      send(name, *, &)
     else
       super
     end

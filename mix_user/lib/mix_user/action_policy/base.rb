@@ -103,7 +103,7 @@ module ActionPolicy
       @roles ||= user.class.roles.keys
     end
 
-    def method_missing(name, *args, **options, &block)
+    def method_missing(name, ...)
       if name.end_with? '?'
         self.class.send(:define_method, name) do
           false

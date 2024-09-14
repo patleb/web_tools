@@ -21,14 +21,14 @@ class ActionController::Delegator
     Current.controller.respond_to?(name, true)
   end
 
-  def method_missing(name, *args, **options, &block)
+  def method_missing(name, ...)
     if @_locals.has_key? name
       self.class.define_method(name) do
         @_locals[name]
       end
       send(name)
     elsif Current.controller.respond_to? name, true
-      Current.controller.__send__(name, *args, **options, &block)
+      Current.controller.__send__(name, ...)
     else
       raise NoMethodError.new("No method '#{name}' for #{self.class} or :locals or Current.controller", name)
     end

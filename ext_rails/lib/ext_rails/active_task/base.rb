@@ -178,15 +178,15 @@ module ActiveTask
     end
 
     # NOTE needed only if using a different Gemfile
-    def sh_clean(*cmd, &block)
+    def sh_clean(...)
       Bundler.with_unbundled_env do
-        rake.__send__ :sh, *cmd, &block
+        rake.__send__(:sh, ...)
       end
     end
 
-    def method_missing(name, *args, **options, &block)
+    def method_missing(name, ...)
       if rake.respond_to? name, true
-        rake.__send__(name, *args, **options, &block)
+        rake.__send__(name, ...)
       else
         raise NoMethodError.new("No method '#{name}' for #{self.class} or :rake", name)
       end

@@ -262,9 +262,9 @@ module Admin
       record.public_send(name)
     end
 
-    def method_missing(name, *args, **options, &block)
+    def method_missing(name, ...)
       if record.respond_to? name
-        record.public_send(name, *args, **options, &block)
+        record.public_send(name, ...)
       else
         super
       end
