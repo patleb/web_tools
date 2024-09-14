@@ -10,11 +10,10 @@ Rails.application.routes.draw do
 
   simple_resources path: '/test/records'
 
-  scope path: '/coffee', controller: 'coffee' do
+  scope path: '/pico', controller: 'pico' do
     get '/' => :basic_template
     match '/sign_in', action: :sign_in, via: [:get, :post]
     match '/company', action: :company, via: [:get, :post]
     get '/error' => :error
   end
-  get '/sass', to: 'sass#index'
 end

@@ -15,7 +15,7 @@ h_(
           h1_('Sign in'),
           h2_('A minimalist layout for Login pages'),
         ]),
-        form_(action: '/coffee/sign_in', remote: true, multipart: true) {[
+        form_(action: '/pico/sign_in', remote: true, multipart: true) {[
           input_(type: 'text', name: 'login', placeholder: 'Login', 'aria-label': 'Login', autocomplete: 'nickname', required: true),
           input_(type: 'password', name: 'password', placeholder: 'Password', 'aria-label': 'Password', autocomplete: 'current-password', required: true),
           fieldset_(

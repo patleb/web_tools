@@ -1,7 +1,7 @@
 h_(
   header_('.container', [
     hgroup_{[
-      h1_(a_ 'Basic template', href: '/coffee'),
+      h1_(a_ 'Basic template', href: '/pico'),
       h2_('A basic custom template for Pico using only CSS custom properties (variables).')
     ]},
     nav_(
@@ -37,7 +37,7 @@ h_(
   main_('.container', [
     section_('#search', [
       h2_('Search'),
-      form_tag('/coffee#search', method: :get) {[
+      form_tag('/pico#search', method: :get) {[
         search_field_tag('search', params[:search], placeholder: 'Enter your search query here'),
       ]},
     ]),
@@ -78,7 +78,7 @@ h_(
       h3_('Inline text elements'),
       div_('.grid', [
         p_(a_ 'Primary link', href: '#!'),
-        p_(a_ '.secondary', 'Secondary link', href: '/coffee'),
+        p_(a_ '.secondary', 'Secondary link', href: '/pico'),
         p_(a_ '.contrast', 'Contrast link', href: '#'),
       ]),
       div_('.grid', [

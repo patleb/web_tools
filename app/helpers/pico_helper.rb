@@ -1,6 +1,6 @@
-module CoffeeHelper
+module PicoHelper
   def brand
-    a_('.contrast', strong_('Brand'), href: '/coffee')
+    a_('.contrast', strong_('Brand'), href: '/pico')
   end
 
   def theme_menu(direction: nil, **options)
@@ -22,8 +22,8 @@ module CoffeeHelper
         'Examples'
       },
       ul_(role: 'listbox') {[
-        li_(a_ 'Sign in', href: '/coffee/sign_in'),
-        li_(a_ 'Company', href: '/coffee/company'),
+        li_(a_ 'Sign in', href: '/pico/sign_in'),
+        li_(a_ 'Company', href: '/pico/company'),
       ]}
     ]}
   end
