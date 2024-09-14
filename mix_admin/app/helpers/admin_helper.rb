@@ -1,6 +1,4 @@
 module AdminHelper
-  FLASH_SEPARATOR = '<br>- '
-
   def admin_link
     if admin_link?
       a_ '.admin_link.admin_root', t('link.admin'), href: admin_root_path
@@ -34,7 +32,7 @@ module AdminHelper
   def admin_flash_search(messages)
     [I18n.t('admin.search.title')].concat(messages.map do |(error, statement)|
       "#{I18n.t(error, scope: 'admin.search.error')}: #{ERB::Util.html_escape(statement)}"
-    end).join(FLASH_SEPARATOR).html_safe
+    end).join(ExtRails::ERROR_SEPARATOR).html_safe
   end
 
   def admin_actions_menu
