@@ -20,7 +20,7 @@ module Admin
     end
 
     def type
-      if @column.type == :binary
+      if serialized?
         :serialized
       else
         @column.type || :string
@@ -37,6 +37,12 @@ module Admin
 
     def association?
       false
+    end
+
+    private
+
+    def serialized?
+      @klass.type_for_attribute(@name).class == ActiveRecord::Type::Serialized
     end
   end
 end
