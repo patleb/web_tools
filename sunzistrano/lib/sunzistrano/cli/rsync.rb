@@ -10,8 +10,8 @@ module Sunzistrano
       do_exist(stage, path)
     end
 
-    desc 'download [STAGE] [PATH] [--dir] [--ref] [--deploy] [--from-defaults] [-no-resume] [-no-verbose]', 'Download file(s)'
-    method_options dir: :string, ref: false, deploy: false, from_defaults: false, resume: true, verbose: true
+    desc 'download [STAGE] [PATH] [--dir] [--ref] [--deploy] [--from-defaults] [-no-resume] [-no-verbose] [-no-decompress]', 'Download file(s)'
+    method_options dir: :string, ref: false, deploy: false, from_defaults: false, resume: true, decompress: true, verbose: true
     def download(stage, path)
       do_download(stage, path)
     end
@@ -44,6 +44,7 @@ module Sunzistrano
           unless run_download_cmd(src, dst)
             raise "Cannot transfer [#{src}] to [#{dst}]"
           end
+          system "unpigz #{dst}" if sun.decompress && dst.extname == '.gz'
         end
       end
 
