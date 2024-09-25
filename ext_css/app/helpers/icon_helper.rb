@@ -7,6 +7,7 @@ module IconHelper
 
   # https://icons.getbootstrap.com/
   def icon(name, tag: nil, svg: {}, **options)
+    return unless continue(options)
     name, *classes = name.to_s.split('.')
     name = name.dasherize
     options[:class] = merge_classes(options, classes)
@@ -172,10 +173,10 @@ module IconHelper
   def spinner_variable(type)
     (@@_spinner_variable ||= {})[type] ||= begin
       match = nil
-      %W(application.css stylesheets/variables.css vendor/epic-spinners/stylesheets/#{type}_spinner.css).find do |path|
-        next unless (scss = Pathname.new("app/javascript/#{path}")).exist?
-        next unless (scss = scss.read.match(/^\s*--spinner_#{type}\s*:\s*(\d+)\s*;/))
-        match = scss[1].to_i
+      (ExtCss.config.variables + ["vendor/epic-spinners/stylesheets/#{type}_spinner.css"]).find do |path|
+        next unless (css = Pathname.new("app/javascript/#{path}")).exist?
+        next unless (css = css.read.match(/^\s*--spinner_#{type}\s*:\s*(\d+)\s*;/))
+        match = css[1].to_i
       end
       [match, 9].min.presence || raise("can't find css variable --spinner_#{type}")
     end
