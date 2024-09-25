@@ -2,6 +2,9 @@
 
 module LogLines
   class Osquery < LogLine
+    TINY_FILE_PATH = /(([A-Z]+_?)+,?)+/
+    TINY_COMMAND_PATH = /((\d+\.)*\d+:\d+,?)+/
+
     json_attribute(
       name: :string,
       ram: :integer,
@@ -66,38 +69,44 @@ module LogLines
         was_deployed = host(log)&.was_deployed? created_at
         was_rebooted = host(log)&.was_rebooted? created_at
         ssl_upgrade = task(log)&.ssl_upgrade? created_at
-        message, paths = extract_paths(adds, name, tiny: /(([A-Z]+_?)+,?)+/) do |row, memo|
+        message, paths = extract_paths(adds, name, tiny: TINY_FILE_PATH) do |row, memo|
           path = row['target_path']
           next if not_provisioned && path.end_with?("/#{Rails.stage}-job.service")
           next if was_upgraded && upgraded_binaries.any?{ |dir| path.start_with? dir }
           next if was_deployed && path.start_with?('/var/spool/cron/crontabs/')
           next if was_rebooted && path.start_with?('/etc/nginx/sites-available/')
           next if ssl_upgrade && path.start_with?('/etc/nginx/ssl/')
-          next if MixServer::Log.config.known_files.any? do |f|
-            f.is_a?(Regexp) ? path.match?(f) : path == f
+          next if MixServer::Log.config.known_files.any? do |file|
+            file.is_a?(Regexp) ? path.match?(file) : path == file
           end
           memo << [path.delete_suffix('/'), row['action']].join('/')
         end
       when 'socket_events'
         servers = Set.new(Cloud.servers)
-        message, paths = extract_paths(adds, name, tiny: /((\d+\.)*\d+:\d+,?)+/) do |row, memo|
+        message, paths = extract_paths(adds, name, tiny: TINY_COMMAND_PATH) do |row, memo|
           next unless %w(connect bind).include? row['action']
-          path = row.values_at('cmdline', 'path').reject(&:blank?).first || ''
+          path = row.values_at('cmdline', 'path').find(&:present?) || ''
           local = row.values_at('local_address', 'local_port')
           remote = row.values_at('remote_address', 'remote_port')
           next if servers.include? remote.first
           next if MixServer::Log.config.known_sockets.any? do |type, sockets|
-            sockets.any? do |s|
+            sockets.any? do |socket|
               case type
-              when :path   then s.is_a?(Regexp) ? path.match?(s) : path.start_with?(s)
-              when :remote then s.is_a?(Regexp) ? remote.first.match?(s) : remote.first == s
+              when :path   then socket.is_a?(Regexp) ? path.match?(socket) : path.start_with?(socket)
+              when :remote then socket.is_a?(Regexp) ? remote.first.match?(socket) : remote.first == socket
               end
             end
           end
           memo << [path, local.join(':'), remote.join(':')].join('/')
         end
       else
-        message = { text: "threat #{name}", level: :fatal }
+        message, paths = extract_paths(adds, name, tiny: TINY_COMMAND_PATH, level: :fatal) do |row, memo|
+          path = row.values_at('cmdline', 'path', 'package_path', 'package_name').find(&:present?) || ''
+          next if MixServer::Log.config.nonthreats.any? do |nonthreat|
+            nonthreat.is_a?(Regexp) ? path.match?(nonthreat) : path.start_with?(nonthreat)
+          end
+          memo << path
+        end
       end
       return { filtered: true } unless message
 
@@ -107,13 +116,13 @@ module LogLines
     end
 
     def self.finalize(log)
-      if Process.host.workers.select{ |w| w.name == 'osqueryd' }.empty?
+      if Process.host.workers.select{ |worket| worket.name == 'osqueryd' }.empty?
         name = 'osquey_dead'
         push(log, message: { text: name, level: :error }, json_data: { name: name })
       end
     end
 
-    def self.extract_paths(adds, name, tiny: nil)
+    def self.extract_paths(adds, name, tiny:, level: :error)
       paths = adds.each_with_object(SortedSet.new) do |row, memo|
         yield(row, memo)
       end.to_a
@@ -121,8 +130,8 @@ module LogLines
       return nil if paths.empty?
 
       text = [name, merge_paths(paths)].join(' ')
-      text_tiny = text.gsub(/{?#{tiny}}?/, '*') if tiny
-      [{ text: text, text_tiny: text_tiny, level: :error }, paths]
+      text_tiny = text.gsub(/{?#{tiny}}?/, '*')
+      [{ text: text, text_tiny: text_tiny, level: level }, paths]
     end
   end
 end

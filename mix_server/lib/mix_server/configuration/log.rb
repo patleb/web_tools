@@ -15,6 +15,7 @@ module MixServer
       attr_writer   :ided_errors
       attr_writer   :known_errors
       attr_writer   :known_sockets
+      attr_writer   :nonthreats
       attr_accessor :force_read
 
       def show_path?
@@ -194,6 +195,12 @@ module MixServer
             (%w(169.254 172.17 172.18 10 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| /^#{ip}\./ } # private networks + ubuntu ip ranges
           ),
         }
+      end
+
+      def nonthreats
+        @nonthreats ||= [
+          'ruby bin/rails runner Monit.capture',
+        ]
       end
 
       def postgres_log_path
