@@ -4,7 +4,7 @@ test_record_<%= i %>:
   big_integer: <%= i * i %>
   boolean: <%= i.odd? %>
   date: <%= i.days.ago.to_date %>
-  datetime: <%= (Time.utc(2000, 1, 2, 3, 4, 5) + i.months + i.days + i.hours + i.minutes + i.seconds).utc %>
+  datetime: <%= Time.utc(2000, 1, 2, 3, 4, 5) + i.months + i.days + i.hours + i.minutes + i.seconds %>
   decimal: <%= i %>.<%= i %>
   deleted_at: <%= i == 0 ? Time.current : 'null' %>
   double: <%= i * i %>.<%= i * i %>
