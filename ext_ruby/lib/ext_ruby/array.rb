@@ -68,7 +68,7 @@ class Array
   end
 
   def switch!(old_value, new_value)
-    return unless (i = index(old_value))
+    return self unless (i = index(old_value))
     self[i] = new_value
     self
   end
