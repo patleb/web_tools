@@ -70,6 +70,10 @@ a[disabled], button[disabled],
   @apply select-sm;
 }
 
+.textarea {
+  @apply textarea-sm;
+}
+
 .card {
   @apply card-compact;
 }
