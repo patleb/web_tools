@@ -8,9 +8,21 @@ class Object
   end
 end
 
+class NilClass
+  def no_space?
+    true
+  end
+end
+
 class Numeric
   def no_space?
     false
+  end
+end
+
+class String
+  def no_space?
+    blank? || super
   end
 end
 
@@ -161,7 +173,7 @@ module ActionView::Helpers::TagHelper
     content = send(tag_options_content, options, content) if respond_to? tag_options_content, true
     content = h_(content) if content.is_a? Array
     content = sanitize(content) if sanitized
-    content = form_after(options, content) if tag == 'form'
+    form_after if tag == 'form'
 
     result = content_tag tag, content, options, (sanitized ? false : escape)
     result = [result] * times if times
@@ -172,9 +184,9 @@ module ActionView::Helpers::TagHelper
     if options.has_key? :class
       old_array = classes_to_array(options[:class])
       new_array = classes_to_array(classes)
-      (old_array | new_array).reject(&:blank?)
+      (old_array | new_array).compact_blank
     else
-      classes_to_array(classes).reject(&:blank?)
+      classes_to_array(classes).compact_blank
     end
   end
 
@@ -194,7 +206,7 @@ module ActionView::Helpers::TagHelper
     case classes
     when Hash
       classes_to_array(classes.select_map{ |value, condition| value if condition })
-    when Array
+    when Array, Set
       classes
     else
       classes.try(:split) || []
@@ -205,7 +217,7 @@ module ActionView::Helpers::TagHelper
     case classes
     when Hash
       classes.select_map{ |value, condition| value if condition }.join(' ')
-    when Array
+    when Array, Set
       classes.compact_blank.join(' ')
     else
       classes
@@ -263,10 +275,9 @@ module ActionView::Helpers::TagHelper
     [tags, content]
   end
 
-  def form_after(_options, content)
+  def form_after
     remove_ivar(:@_form_as)
     remove_ivar(:@_form)
-    content
   end
 
   def label_options_content(options, content)
@@ -290,11 +301,18 @@ module ActionView::Helpers::TagHelper
     when 'hidden'
       options[:autocomplete] ||= 'off'
     end
-    options[:value] = object.public_send(name) if !submit && object && name && !name.start_with?('password')
+    if !options.has_key?(:value) && !submit && object && name && !name.start_with?('password')
+      options[:value] = object.public_send(name)
+    end
     content
   end
 
   def select_options_content(options, content)
+    set_object_name_and_id(options)
+    content
+  end
+
+  def textarea_options_content(options, content)
     set_object_name_and_id(options)
     content
   end
