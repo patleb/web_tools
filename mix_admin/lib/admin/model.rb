@@ -102,6 +102,13 @@ module Admin
     class << self
       delegate :primary_key, :table_name, to: :klass
 
+      def build(params)
+        if klass.respond_to? :admin_defaults
+          params = params.reverse_merge(klass.admin_defaults)
+        end
+        klass.new(params)
+      end
+
       def allowed_models
         MixAdmin.config.models_pool.select_map do |model_name|
           next unless (model = model_name.to_const.admin_model).allowed? :index
@@ -247,6 +254,8 @@ module Admin
     def record_label
       label = if record.try("#{record_label_method}_changed?")
         record.public_send("#{record_label_method}_was")
+      elsif record.new_record?
+        "#{I18n.t('admin.misc.new')} #{self.class.pretty_name}"
       else
         record.public_send(record_label_method)
       end

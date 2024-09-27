@@ -15,6 +15,7 @@ module Admin
     extend ActiveSupport::Autoload
 
     autoload :Delete
+    autoload :Edit
     autoload :Export
     autoload :Index
     autoload :New
@@ -73,7 +74,6 @@ module Admin
     autoload :Edit
     autoload :Export
     autoload :Index
-    autoload :Nested
     autoload :New
     autoload :Show
   end

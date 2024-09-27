@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Fields
     class Password < String
@@ -9,12 +11,12 @@ module Admin
         '*****'
       end
 
-      register_option :view_helper do
-        :password_field
+      register_option :input_type do
+        :password
       end
 
       def allowed_field?
-        super && section.is_a?(Admin::Sections::Edit)
+        super && section.is_a?(Admin::Sections::New)
       end
 
       def parse_input!(params)

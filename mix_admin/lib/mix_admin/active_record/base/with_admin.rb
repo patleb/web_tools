@@ -33,11 +33,7 @@ module ActiveRecord::Base::WithAdmin
   end
 
   def admin_label
-    if new_record?
-      "#{I18n.t('admin.misc.new')} #{model_name.human}"
-    else
-      "#{model_name.human} ##{public_send(self.class.primary_key)}"
-    end
+    "#{model_name.human} ##{public_send(self.class.primary_key)}"
   end
 end
 

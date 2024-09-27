@@ -28,11 +28,6 @@ module Admin
         [foreign_key]
       end
 
-      def allowed_field?
-        return false if section.is_a? Admin::Sections::Nested
-        super
-      end
-
       def method_name
         nested_options ? "#{name}_attributes".to_sym : foreign_key
       end

@@ -71,6 +71,7 @@ module MixAdmin
         index
         export
         show
+        edit
         new
         delete
         trash

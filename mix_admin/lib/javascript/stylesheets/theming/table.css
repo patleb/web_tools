@@ -1,4 +1,4 @@
-.admin_layout.admin_index_template {
+.admin_layout {
   .model_info {
     @apply absolute top-14 xl-1:top-24 left-2 lg:left-[18.5rem] z-30;
 

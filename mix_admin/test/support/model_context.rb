@@ -79,7 +79,7 @@ module Admin::Test
   end
 
   class ResourceMainPresenter < ResourceBasePresenter
-    register_class_option :base_class_accessor do # overwrite default block
+    register_class_option :base_class_accessor do # overwrite default block, so parent cannot use #super! or __super__
       "main #{super! :base_class_accessor}"
     end
 

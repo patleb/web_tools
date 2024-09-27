@@ -5,8 +5,8 @@ module Admin
         MixAdmin.config.hidden_fields.include? property.name
       end
 
-      register_option :view_helper do
-        :hidden_field
+      register_option :input_type do
+        :hidden
       end
 
       register_option :label do
@@ -18,11 +18,7 @@ module Admin
       end
 
       def allowed_field?
-        super && section.is_a?(Admin::Sections::Edit)
-      end
-
-      def generic_help
-        false
+        super && section.is_a?(Admin::Sections::New)
       end
     end
   end

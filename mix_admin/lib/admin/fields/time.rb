@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Admin
   module Fields
     class Time < DateTime
-      register_option :view_helper, memoize: true do
-        :time_field
+      register_option :input_type do
+        :time
       end
 
       register_option :i18n_scope do
@@ -14,6 +16,10 @@ module Admin
         return unless parent_value
         value_with_tz = parent_value.in_time_zone
         Time.parse_utc(value_with_tz.strftime('%Y-%m-%d %H:%M:%S'))
+      end
+
+      def format_input(value)
+        super&.sub(/^[\d-]+T/, '')
       end
     end
   end

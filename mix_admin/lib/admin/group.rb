@@ -33,6 +33,31 @@ module Admin
       @parent = parent && parent.weight < section_was.weight ? parent.groups_hash[name] : nil
     end
 
+    def fieldset
+      return if (group_fields = fields).empty?
+      group_label = label
+      fields, hidden_fields = group_fields.partition(&:label)
+      fieldset_('.group_fields', [
+        hidden_fields.map(&:pretty_input),
+        legend_('.group', if: group_label) {[
+          h6_('.group_label') { group_label },
+          p_('.group_help', if: help) { help },
+        ]},
+        dl_('.fields') do
+          fields.map do |field|
+            div_('.field', id: "#{field.name}_field") {[
+              dt_('.field_label') do
+                field.pretty_label
+              end,
+              dd_('.field_value', class: field.css_class) do
+                field.pretty_input
+              end,
+            ]}
+          end
+        end
+      ])
+    end
+
     def fields
       fields_hash.values
     end

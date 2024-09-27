@@ -86,6 +86,7 @@ en:
       operators: Operators
       of: of
       records: record(s)
+      help: Help
     flash:
       successful: "%{name} successfully %{action}"
       error: "%{name} failed to be %{action}"

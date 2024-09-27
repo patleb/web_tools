@@ -96,7 +96,7 @@ module Admin
                   when :locale_role   then [Current.locale, Current.user.as_role]
                   when :role          then Current.user.as_role
                   when String, Symbol then public_send(memoized)
-                  else raise("The #{name} :memoized key must be specified as true, :locale or a method name.")
+                  else raise("The #{name} :memoized key is invalid.")
                   end
                 return values[key] if values.has_key? key
               end

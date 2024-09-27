@@ -81,8 +81,7 @@ class Admin::ModelTest < ActiveSupport::TestCase
 
   test '.columns' do
     assert record_model.columns.any?(&:is_a?.with(Admin::Model::Column))
-    assert record_model.columns.any?(&:is_a?.with(Admin::Model::VirtualColumn))
-    assert record_model.columns.any?(&:is_a?.with(Admin::Model::Attribute))
+    assert record_model.columns.any?(&:virtual?)
   end
 
   test 'field inheritance' do

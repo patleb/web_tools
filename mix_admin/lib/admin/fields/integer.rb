@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Fields
     class Integer < Admin::Field
@@ -5,8 +7,8 @@ module Admin
         primary_key?
       end
 
-      register_option :view_helper, memoize: true do
-        :number_field
+      register_option :input_type do
+        :number
       end
 
       def format_value(value)

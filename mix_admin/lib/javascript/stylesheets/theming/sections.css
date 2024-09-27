@@ -1,4 +1,44 @@
 .admin_layout {
+  .group_fields ~ .group_fields {
+    .group {
+      @apply border-t-2 border-neutral;
+    }
+  }
+  .group_fields {
+    .group {
+      @apply border-b border-neutral px-4 py-2.5 w-full mx-auto;
+    }
+    .group_label {
+      @apply font-medium;
+    }
+    .group_help {
+      @apply text-sm mt-1;
+    }
+    .fields {
+      @apply border-t border-neutral;
+    }
+    .field {
+      @apply odd:bg-base-100 even:bg-base-200 sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-4 px-4 py-2.5;
+    }
+    .field_label {
+      @apply text-sm font-medium sm:text-right self-center sm-1:px-1;
+    }
+    .field_value {
+      @apply overflow-x-auto text-sm mt-1 sm:col-span-2 lg:col-span-3 sm:mt-0 px-1;
+
+      .checkbox {
+        @apply mt-1;
+      }
+      .input,
+      .textarea {
+        @apply my-1 max-w-2xl;
+      }
+      .textarea,
+      .input[type='text'] {
+        @apply mx-auto w-full;
+      }
+    }
+  }
   .search_menu {
     @apply flex w-full;
   }
@@ -27,7 +67,7 @@
     @apply pt-2 pr-[0.675rem];
 
     .input {
-      @apply w-full min-w-[14ch] font-mono input-bordered input-sm text-xs mr-2;
+      @apply w-full min-w-[14ch] font-mono input-bordered text-xs mr-2;
     }
   }
   .query_helper {

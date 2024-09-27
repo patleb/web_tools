@@ -12,7 +12,7 @@ module Admin
       end
 
       def method_name
-        nested_options ? "#{name}_attributes".to_sym : "#{name.to_s.singularize}_ids".to_sym
+        "#{name.to_s.singularize}_ids".to_sym
       end
 
       def errors

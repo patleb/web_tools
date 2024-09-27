@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Fields
     class DateTime < Admin::Field
@@ -5,12 +7,8 @@ module Admin
         true
       end
 
-      register_option :view_helper, memoize: true do
-        :datetime_field
-      end
-
-      register_option :html_attributes do
-        __super__(:html_attributes).merge! size: 22
+      register_option :input_type do
+        'datetime-local'
       end
 
       register_option :strftime_format, memoize: :locale do
@@ -50,8 +48,12 @@ module Admin
         end
       end
 
+      def format_input(value)
+        value&.iso8601&.sub(/(Z|[-+]\d{2}:\d{2})$/, '')
+      end
+
       def format_export(value)
-        value&.iso8601
+        value&.utc&.iso8601
       end
 
       def value
@@ -65,6 +67,10 @@ module Admin
         else
           value
         end
+      end
+
+      def default_input_attributes
+        super.merge! size: 22
       end
 
       def search_type

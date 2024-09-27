@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Actions
     class New < Admin::Action
@@ -16,6 +18,17 @@ module Admin
 
         def icon
           'plus-circle'
+        end
+
+        def controller
+          proc do
+            case request.method_symbol
+            when :get
+              render :new
+            when :post
+
+            end
+          end
         end
       end
     end

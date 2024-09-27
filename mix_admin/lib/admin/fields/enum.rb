@@ -7,9 +7,9 @@ module Admin
         klass.respond_to?(method_name) || klass.method_defined?(method_name)
       end
 
-      register_option :render do
-        options = { include_blank: include_blank?, selected: form_value, object: form.object }
-        html_options = html_attributes
+      register_option :input do
+        options = { include_blank: include_blank?, selected: input_value, object: form.object }
+        html_options = input_attributes
         html_options[:multiple] = true if multiple?
         form.select(method_name, enum, options, html_options)
       end

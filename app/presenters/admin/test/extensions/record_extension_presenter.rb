@@ -10,7 +10,9 @@ module Admin::Test
       field :attr_string
       field :attr_text
       field :attr_time
-      field :attr_value
+      field :attr_value do
+        help "Any value"
+      end
 
       base do
         exclude_columns [:json]

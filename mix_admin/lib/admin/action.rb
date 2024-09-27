@@ -18,6 +18,7 @@ module Admin
         name = name.to_sym
         (@@find_class ||= {})[name] ||= all.find{ |action| action.key == name }
       end
+      alias_method :has?, :find_class
 
       def all(type = :all)
         @@all ||= begin
@@ -144,6 +145,21 @@ module Admin
 
     def back_on_cancel?
       true
+    end
+
+    def method_missing(name, ...)
+      if name.end_with?('?') && (key = name[0..-2].to_sym) && self.class.has?(key)
+        self.class.send(:define_method, name) do
+          self.name == key
+        end
+        public_send(name)
+      else
+        super
+      end
+    end
+
+    def respond_to_missing?(name, include_private = false)
+      name.end_with?('?') && self.class.has?(name[0..-2].to_sym) || super
     end
   end
 end

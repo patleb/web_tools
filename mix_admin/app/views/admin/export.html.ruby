@@ -1,11 +1,5 @@
-# create file in job
-# use light_record gem (would be useful for charts as well) with find_each or in batches (uncached queries)
-#   or #in_batches{ |relation| relation.pluck(...).each ... }
-# write each line to tmp file to keep RAM low
-# keep the file through active_storage
-# serve file with nginx
-#   or webrick in dev/test
-#   https://stackoverflow.com/questions/765442/streaming-html-from-webrick
+# frozen_string_literal: true
+
 count = @section.count
 fields = @section.fields
 root_fields = fields.reject{ |field| field.association? && !field.polymorphic? }
@@ -24,7 +18,7 @@ form_('.export_schema.card.indicator', action: @model.url_for(:export, **search_
     div_('.card-body.collapse-content.grid', [
       @section.fields_toggle('.card-title.label', id: "model_#{@model.key}"),
       root_fields.map do |field|
-        h_if(field.association? && field.polymorphic?) {[
+        if_(field.association? && field.polymorphic?) {[
           @section.field_checkbox(field, "#{field.label} [id]"),
           @section.field_checkbox(field, "#{field.label} [type]", @model.columns.find{ |c| field.foreign_type == c.name }.name),
         ]} || (

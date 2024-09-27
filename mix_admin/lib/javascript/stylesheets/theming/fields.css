@@ -16,38 +16,38 @@
       @apply bg-neutral text-neutral-content;
     }
   }
-  .date_type {
-    @apply min-w-[13ch];
-  }
-  .date_time_type {
-    @apply min-w-[20ch];
-  }
   .code_type,
   .json_type {
     @apply font-mono text-xs !important;
   }
-  .password_type {
-    @apply min-w-[5ch];
-  }
-  .time_type {
-    @apply min-w-[11ch];
-  }
-  .timestamp_type {
-    @apply min-w-[19ch];
-  }
-  .uuid_type {
-    @apply min-w-[36ch];
-  }
-  .table_wrapper .field_value {
-    &.integer_type {
+  .table_wrapper {
+    .date_type {
+      @apply min-w-[13ch];
+    }
+    .date_time_type {
+      @apply min-w-[20ch];
+    }
+    .integer_type {
       @apply text-right;
     }
-    &.code_type,
-    &.json_type {
+    .code_type,
+    .json_type {
       @apply text-left whitespace-pre break-words;
     }
-    &.money_type {
+    .money_type {
       @apply text-right;
+    }
+    .password_type {
+      @apply min-w-[5ch];
+    }
+    .time_type {
+      @apply min-w-[11ch];
+    }
+    .timestamp_type {
+      @apply min-w-[19ch];
+    }
+    .uuid_type {
+      @apply min-w-[36ch];
     }
   }
 }

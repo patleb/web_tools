@@ -1,22 +1,22 @@
+# frozen_string_literal: true
+
 module Admin
   module Fields
     class Text < String
-      register_option :view_helper, memoize: true do
-        :text_area
+      register_option :input do
+        textarea_ name: input_name, class: input_css_class, **input_attributes
       end
 
-      register_option :html_attributes do
-        __super__(:html_attributes).merge!(
-          maxlength: max_length,
-          cols: 52,
-          rows: [max_length && (max_length / 52.0).ceil, 3].compact.max,
-        )
+      def input_css_class
+        super
+          .switch!('input', 'textarea')
+          .switch!('input-error', 'textarea-error')
+          .switch!('input-bordered', 'textarea-bordered')
       end
 
-      # TODO
-      # def format_value(value)
-      #   simple_format(value) if value.present?
-      # end
+      def default_input_attributes
+        super.merge! maxlength: max_length
+      end
     end
   end
 end

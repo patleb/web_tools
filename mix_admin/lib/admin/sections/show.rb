@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Sections
     class Show < Admin::Section
@@ -21,8 +23,9 @@ module Admin
       private
 
       def _scroll_items
-        [li_('.menu_divider')] + groups.flat_map(&:fields).map! do |field|
-          li_(a_ [ascii(:arrow_right), field.label], href: "##{field.name}_field", 'data-turbolinks-history': false)
+        [li_('.menu_divider')] + groups.flat_map(&:fields).select_map do |field|
+          next unless (label = field.label)
+          li_(a_ [ascii(:arrow_right), ' ', label], href: "##{field.name}_field", 'data-turbolinks-history': false)
         end
       end
     end

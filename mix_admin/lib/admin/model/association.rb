@@ -61,7 +61,7 @@ module Admin
     end
 
     def nested_options
-      options = @klass.nested_attributes_options.try{ |o| o[@name] }
+      return unless (options = @klass.nested_attributes_options.try{ |o| o[@name] })
       options if options[:update_only]
     end
   end

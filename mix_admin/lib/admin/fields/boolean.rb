@@ -1,15 +1,8 @@
+# frozen_string_literal: true
+
 module Admin
   module Fields
     class Boolean < Admin::Field
-      register_option :render do
-        value = form_value
-        form.send view_helper, method_name, html_attributes.reverse_merge(value: value, checked: value.to_b)
-      end
-
-      register_option :view_helper, memoize: true do
-        :check_box
-      end
-
       register_option :export_format, memoize: true do
         :boolean_and_null
       end
@@ -31,8 +24,19 @@ module Admin
         end
       end
 
-      def generic_help
-        false
+      def input_type
+        :checkbox
+      end
+
+      def input_css_class
+        super
+          .switch!('input', 'checkbox')
+          .switch!('input-error', 'checkbox-error')
+          .switch!('input-bordered', 'checkbox-primary')
+      end
+
+      def default_input_attributes
+        super.merge! checked: input_value.to_b
       end
 
       def search_type

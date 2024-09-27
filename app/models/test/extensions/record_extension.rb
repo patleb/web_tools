@@ -22,6 +22,8 @@ module Test
       attribute :virt_text, :text
       attribute :virt_time, :time
       attribute :virt_value
+
+      validates :attr_value, presence: true
     end
   end
 end

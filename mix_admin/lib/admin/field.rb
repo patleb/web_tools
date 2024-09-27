@@ -46,7 +46,7 @@ module Admin
     end
 
     register_option :required? do
-      next false if property.nil?
+      next false if property.nil? || readonly?
       next true  if property.true?(:required?) && property.try(:default).nil?
       ([name] + children_names).uniq.any? do |column_name|
         klass.validators_on(column_name).any? do |v|
@@ -104,28 +104,24 @@ module Admin
       []
     end
 
-    register_option :render do
-      form.send view_helper, method_name, html_attributes.reverse_merge(value: form_value)
+    register_option :input do
+      input_ type: input_type, name: input_name, class: input_css_class, **input_attributes
     end
 
-    register_option :view_helper, memoize: true do
-      :text_field
+    register_option :input_attributes do
+      default_input_attributes
     end
 
     register_option :default_value do
       property.try(:default)
     end
 
-    register_option :html_attributes do
-      { required: required? }
-    end
-
     register_option :css_class do
-      "#{name}_field #{type_css_class}"
+      "#{name}_field #{type_css_class}#{' readonly' if readonly?}"
     end
 
     register_option :help do
-      readonly ? false : generic_field_help
+      readonly ? false : I18n.t(name, scope: [model.i18n_scope, :help, model.i18n_key], default: default_help)
     end
 
     def parent
@@ -139,26 +135,19 @@ module Admin
       presenter[:persisted?] ? :update : :create
     end
 
-    def generic_field_help
-      translated = I18n.t(name, scope: [model.i18n_scope, :help, model.i18n_key], help: generic_help, default: generic_help)
-      (translated.is_a?(Hash) ? translated.to_a.first[1] : translated).html_safe
-    end
-
-    def generic_help
-      (required? ? I18n.t('admin.form.required') : I18n.t('admin.form.optional')) + '. '
-    end
-
     def property
       return @property if defined? @property
       @property = model.property(name)
     end
 
     def allowed_field?
+      return false if primary_key? && action.new?
       MixAdmin.config.denied_fields.exclude? name
     end
 
     def editable?
       return @editable if defined? @editable
+      return false if action.show?
       return false if MixAdmin.config.readonly_fields.include? name
       (property && presenter[:new_record?]) || !property.nil_or_true?(:readonly?)
     end
@@ -196,12 +185,24 @@ module Admin
       value
     end
 
+    def format_input(value)
+      value
+    end
+
     def format_export(value)
       value
     end
 
     def value
       presenter[name]
+    end
+
+    def inverse_of
+      nil
+    end
+
+    def nested_options
+      false
     end
 
     def method?
@@ -212,8 +213,46 @@ module Admin
       name
     end
 
-    def form_value
-      (presenter[:new_record?] && value.nil?) ? default_value : value
+    def pretty_input
+      return pretty_value if readonly?
+      return input unless label
+      return [input, p_('.text-error', errors.to_sentence)] if errors.present?
+      input
+    end
+
+    def input_type
+      :text
+    end
+
+    def input_name
+      method_name
+    end
+
+    def input_value
+      format_input((presenter[:new_record?] && value.nil?) ? default_value : value)
+    end
+
+    def input_css_class
+      classes = Set.new(['input'])
+      classes << (errors.present? ? 'input-error' : 'input-bordered')
+      classes
+    end
+
+    def default_input_attributes
+      { required: required?, value: input_value }
+    end
+
+    def default_help
+      false
+    end
+
+    def pretty_label
+      text = [label]
+      text, title = text << '*', I18n.t('admin.form.required') if required?
+      h_(
+        label_(text, title: title),
+        icon('info-circle.tooltip', data: { tip: help }, if: help.present?),
+      )
     end
 
     def search_type

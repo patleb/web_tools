@@ -1,6 +1,6 @@
 module Admin
   module Sections
-    class Edit < Admin::Section
+    class Edit < New
     end
   end
 end

@@ -1,6 +1,6 @@
 module Admin
   module Sections
-    class New < Edit
+    class New < Show
     end
   end
 end

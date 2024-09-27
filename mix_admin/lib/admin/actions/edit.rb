@@ -2,21 +2,17 @@
 
 module Admin
   module Actions
-    class Export < Admin::Action
+    class Edit < Admin::Action
       class << self
         def weight
-          1
+          2
         end
 
-        def collection?
+        def member?
           true
         end
 
-        def bulkable?
-          true
-        end
-
-        def searchable?
+        def inline_menu?
           true
         end
 
@@ -24,24 +20,24 @@ module Admin
           [:get, :post]
         end
 
+        def route_fragment?
+          true
+        end
+
         def icon
-          'filetype-csv'
+          'pencil-square'
         end
 
         def controller
           proc do
             case request.method_symbol
             when :get
-              render :export
+              render :edit
             when :post
 
             end
           end
         end
-      end
-
-      def presenters?
-        request.post?
       end
     end
   end

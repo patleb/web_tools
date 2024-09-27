@@ -51,18 +51,22 @@ class AdminController < LibController
   end
 
   def set_presenters
-    scope = policy_scope(@model.scope)
-    records = case
-      when bulk?               then (bulk = true)   && @model.get(scope, @section, ids: params[:ids])
-      when @action.member?     then (member = true) && @model.get(scope, @section, id: params[:id])
-      when @action.collection? then                    @model.search(scope, @section, **search_params)
-      end
+    if (@new = @action.new?)
+      records = [@model.build(params[@model.param_key])]
+    else
+      scope = policy_scope(@model.scope)
+      records = case
+        when bulk?               then (bulk = true)   && @model.get(scope, @section, ids: params[:ids])
+        when @action.member?     then (member = true) && @model.get(scope, @section, id: params[:id])
+        when @action.collection? then                    @model.search(scope, @section, **search_params)
+        end
+    end
     @presenters = records.select_map do |record|
       next unless (presenter = record.admin_presenter).allowed?
       presenter
     end
     raise RoutingError if bulk && @presenters.empty?
-    raise RoutingError if member && (@presenter = @presenters.first).nil?
+    raise RoutingError if (@new || member) && (@presenter = @presenters.first).nil?
     @section = @presenter ? @section.with(presenter: @presenter) : @section.with(presenters: @presenters)
   end
 
@@ -71,7 +75,7 @@ class AdminController < LibController
     app_name = instance_eval(&app_name) if app_name.is_a? Proc
     title = case action_type
       when :member     then @model.label
-      when :collection then @model.label_plural
+      when :collection then @new ? @model.label : @model.label_plural
       when :root       then @action.title(:menu)
       end
     (@meta ||= {}).merge!(
@@ -90,8 +94,9 @@ class AdminController < LibController
   end
 
   def action_type_object
-    @_action_type_object ||= case
-      when @presenter then [:member, @presenter]
+    @action_type_object ||= case
+      when @new       then [:collection, @presenter]
+      when @presenter then [:member,     @presenter]
       when @model     then [:collection, @model]
       else                 [:root, nil]
       end
