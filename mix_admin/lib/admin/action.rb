@@ -10,6 +10,10 @@ module Admin
         end
       end
 
+      def has?(name)
+        !!find_class(name)
+      end
+
       def find(name, **bindings)
         find_class(name)&.new(**bindings)
       end
@@ -18,7 +22,6 @@ module Admin
         name = name.to_sym
         (@@find_class ||= {})[name] ||= all.find{ |action| action.key == name }
       end
-      alias_method :has?, :find_class
 
       def all(type = :all)
         @@all ||= begin
