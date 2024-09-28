@@ -27,21 +27,21 @@ module Admin
         def icon
           'filetype-csv'
         end
-
-        def controller
-          proc do
-            case request.method_symbol
-            when :get
-              render :export
-            when :post
-
-            end
-          end
-        end
       end
 
       def presenters?
         request.post?
+      end
+    end
+
+    controller_for Export do
+      def export
+        case request.method_symbol
+        when :get
+          render :export
+        when :post
+
+        end
       end
     end
   end

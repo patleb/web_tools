@@ -21,12 +21,12 @@ module Admin
         def icon
           'table'
         end
+      end
+    end
 
-        def controller
-          proc do
-            render :index
-          end
-        end
+    controller_for Index do
+      def index
+        render :index
       end
     end
   end

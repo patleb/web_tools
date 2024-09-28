@@ -1,4 +1,12 @@
 module Admin
+  module Actions
+    def self.controller_for(action, &block)
+      action.define_singleton_method :controller do
+        block
+      end
+    end
+  end
+
   class Action < ActionController::Delegator
     class << self
       def allowed?(name)
@@ -114,9 +122,7 @@ module Admin
       end
 
       def controller
-        proc do
-          raise NotImplementedError
-        end
+        raise NotImplementedError
       end
     end
 

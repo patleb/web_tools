@@ -23,5 +23,11 @@ module Admin
         end
       end
     end
+
+    controller_for Delete do
+      def delete
+        raise NotImplementedError
+      end
+    end
   end
 end

@@ -19,16 +19,16 @@ module Admin
         def icon
           'plus-circle'
         end
+      end
+    end
 
-        def controller
-          proc do
-            case request.method_symbol
-            when :get
-              render :new
-            when :post
+    controller_for New do
+      def new
+        case request.method_symbol
+        when :get
+          render :new
+        when :post
 
-            end
-          end
         end
       end
     end

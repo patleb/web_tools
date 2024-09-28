@@ -27,16 +27,16 @@ module Admin
         def icon
           'pencil-square'
         end
+      end
+    end
 
-        def controller
-          proc do
-            case request.method_symbol
-            when :get
-              render :edit
-            when :post
+    controller_for Edit do
+      def edit
+        case request.method_symbol
+        when :get
+          render :edit
+        when :post
 
-            end
-          end
         end
       end
     end

@@ -15,12 +15,12 @@ module Admin
         def icon
           'info-circle'
         end
+      end
+    end
 
-        def controller
-          proc do
-            render :show
-          end
-        end
+    controller_for Show do
+      def show
+        render :show
       end
     end
   end
