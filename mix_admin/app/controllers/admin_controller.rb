@@ -17,8 +17,8 @@ class AdminController < LibController
 
   helper_method :action, :action_type, :action_object, :search_params
 
-  Admin::Action.all.each do |action|
-    class_eval(&action.controller)
+  [Admin::Action.base_controller] + Admin::Action.all.map(&:controller).each do |controller|
+    class_eval(&controller)
   end
 
   def root_path

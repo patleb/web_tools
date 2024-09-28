@@ -1,4 +1,10 @@
 module Admin
+  def self.base_controller_for(action, &block)
+    action.define_singleton_method :base_controller do
+      block
+    end
+  end
+
   module Actions
     def self.controller_for(action, &block)
       action.define_singleton_method :controller do
@@ -122,7 +128,12 @@ module Admin
       end
 
       def controller
-        raise NotImplementedError
+        action_name = key
+        proc do
+          define_method action_name do
+            render action_name
+          end
+        end
       end
     end
 
@@ -169,6 +180,18 @@ module Admin
 
     def respond_to_missing?(name, include_private = false)
       name.end_with?('?') && self.class.has?(name[0..-2].to_sym) || super
+    end
+  end
+
+  base_controller_for Action do
+    def sanitize_params!
+      return unless (target_params = params[@model.param_key]).present?
+      fields = @section.fields
+      allowed_methods = fields.flat_map(&:allowed_methods).uniq
+      target_params.slice! *allowed_methods
+      target_params.permit!
+      fields.each{ |field| field.parse_input! target_params }
+      target_params
     end
   end
 end
