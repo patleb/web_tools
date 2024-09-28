@@ -12,10 +12,7 @@ module Admin
       end
 
       def parse_value(value)
-        parent_value = super(value)
-        return unless parent_value
-        value_with_tz = parent_value.in_time_zone
-        Time.parse_utc(value_with_tz.strftime('%Y-%m-%d %H:%M:%S'))
+        super&.change(year: 2000, month: 1, day: 1)
       end
 
       def format_input(value)
