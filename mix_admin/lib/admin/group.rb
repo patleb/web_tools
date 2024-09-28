@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class Group < ActionView::Delegator
     include Configurable
@@ -20,7 +22,7 @@ module Admin
     end
 
     register_option :label do
-      name == :default ? "#{presenter.record_label}" : name.to_s.humanize
+      name == :default ? presenter.record_label : name.to_s.humanize
     end
 
     register_option :help, memoize: :locale do
