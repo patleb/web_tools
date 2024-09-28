@@ -11,12 +11,6 @@ module ActionController
         end
       end
 
-      test '#policy_params' do
-        controller_assert :policy_params, params: { user_null: { name: 'null' } } do
-          policy_params(User::Null.new, :show).empty?
-        end
-      end
-
       test '#policy' do
         controller_assert :policy do
           can = policy(User::Null.new)

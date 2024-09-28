@@ -20,12 +20,6 @@ module ActionController::WithPolicy
     policy.scope(relation)
   end
 
-  def policy_params(object, action = action_name)
-    policy = policy(object)
-    params_method = policy.respond_to?("params_for_#{action}") ? "params_for_#{action}" : 'params'
-    params.require(policy.param_key).permit(*policy.public_send(params_method))
-  end
-
   def policy(object)
     (@_policy ||= {})[object] ||= begin
       policy = if object
