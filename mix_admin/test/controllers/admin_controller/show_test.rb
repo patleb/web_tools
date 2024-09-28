@@ -53,7 +53,7 @@ class AdminController::ShowTest < ActionDispatch::IntegrationTest
       assert_equal 'default_group', group.css_class
       assert_equal 'Record extension #1', group.label
       assert_nil group.help
-      assert_equal 'id_field integer_type readonly', id_field.css_class
+      assert_equal 'id_field integer_type', id_field.css_class
       assert_equal 'Id', id_field.label
       assert_equal '1', id_field.pretty_value
       assert_equal [self[:@presenter]], self[:@presenters]

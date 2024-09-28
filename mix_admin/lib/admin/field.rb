@@ -46,7 +46,7 @@ module Admin
     end
 
     register_option :required? do
-      next false if property.nil? || action.show?
+      next false if property.nil?
       next true  if property.true?(:required?) && property.try(:default).nil?
       ([name] + children_names).uniq.any? do |column_name|
         klass.validators_on(column_name).any? do |v|
@@ -117,7 +117,7 @@ module Admin
     end
 
     register_option :css_class do
-      "#{name}_field #{type_css_class}#{' readonly' if readonly?}"
+      "#{name}_field #{type_css_class}"
     end
 
     register_option :help do
@@ -146,8 +146,8 @@ module Admin
     end
 
     def editable?
-      return @editable if defined? @editable
       return false if action.show?
+      return @editable if defined? @editable
       return false if MixAdmin.config.readonly_fields.include? name
       (property && presenter[:new_record?]) || !property.nil_or_true?(:readonly?)
     end
@@ -248,7 +248,7 @@ module Admin
 
     def pretty_label
       text = [label]
-      text, title = text << '*', I18n.t('admin.form.required') if required?
+      text, title = text << '*', I18n.t('admin.form.required') if !action.show? && required? && !readonly?
       h_(
         label_(text, title: title),
         icon('info-circle.tooltip', data: { tip: help }, if: help.present?),

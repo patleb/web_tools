@@ -1,8 +1,8 @@
 module Admin
   module Fields
     class Json < Admin::Field
-      register_option :readonly?, memoize: true do
-        true
+      def editable?
+        false
       end
 
       def method?
