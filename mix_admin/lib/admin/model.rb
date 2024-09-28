@@ -178,7 +178,7 @@ module Admin
       end
 
       def param_key
-        @param_key ||= klass.model_name.admin_param_key
+        @param_key ||= klass.model_name.param_key
       end
 
       def pretty_name(...)

@@ -3,7 +3,6 @@ module ActiveModel::Name::WithAdmin
 
   prepended do
     attr_reader :admin_param
-    alias_method :admin_param_key, :singular
   end
 
   def initialize(...)
