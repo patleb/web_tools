@@ -46,7 +46,7 @@ module Admin
     end
 
     register_option :required? do
-      next false if property.nil? || readonly?
+      next false if property.nil? || action.show?
       next true  if property.true?(:required?) && property.try(:default).nil?
       ([name] + children_names).uniq.any? do |column_name|
         klass.validators_on(column_name).any? do |v|
