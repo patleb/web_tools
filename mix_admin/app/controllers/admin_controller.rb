@@ -17,8 +17,8 @@ class AdminController < LibController
 
   helper_method :action, :action_type, :action_object, :search_params
 
-  [Admin::Action.base_controller] + Admin::Action.all.map(&:controller).each do |controller|
-    class_eval(&controller)
+  Admin::Action.all.each do |action|
+    class_eval(&action.controller)
   end
 
   def root_path
@@ -100,5 +100,15 @@ class AdminController < LibController
       when @model     then [:collection, @model]
       else                 [:root, nil]
       end
+  end
+
+  def sanitize_params!
+    return unless (target_params = params[@model.param_key]).present?
+    fields = @section.fields
+    allowed_methods = fields.flat_map(&:allowed_methods).uniq
+    target_params.slice! *allowed_methods
+    target_params.permit!
+    fields.each{ |field| field.parse_input! target_params }
+    target_params
   end
 end
