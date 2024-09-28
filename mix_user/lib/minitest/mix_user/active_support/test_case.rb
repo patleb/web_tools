@@ -1,7 +1,7 @@
 ActionController::Base.class_eval do
   module self::WithTestUser
     def set_current_user
-      Current.user = $test.try(:user)
+      Current.user = $test.try(:current_user)
       super unless Current.user
     end
   end

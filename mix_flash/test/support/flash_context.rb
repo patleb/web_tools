@@ -4,7 +4,7 @@ module FlashContext
   included do
     fixtures :users
 
-    let!(:user) do
+    let!(:current_user) do
       Current.user = users(:basic)
     end
     let!(:session_id) do

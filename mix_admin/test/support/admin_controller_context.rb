@@ -19,7 +19,7 @@ module AdminControllerContext
     fixtures :users
     fixtures 'test/records'
 
-    let(:user){ users(:admin) }
+    let(:current_user){ users(:admin) }
     let(:model_name){ Test::Extensions::RecordExtension.name.to_admin_param }
     let(:model_denied){ false }
     let(:presenter_denied){ false }

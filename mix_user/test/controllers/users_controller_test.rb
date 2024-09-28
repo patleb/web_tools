@@ -5,7 +5,7 @@ class UsersControllerTest < Users::TestCase
   test '#new' do
     get '/users/new'
     assert_response :success
-    assert_no_authentication
+    assert_unauthenticated
     assert_select 'form.new_user'
   end
 
@@ -39,7 +39,7 @@ class UsersControllerTest < Users::TestCase
       get '/users/verified/edit', params: { token: user.generate_token_for(:verified) }
       assert_redirected_to root_path
       assert_notice
-      assert_no_authentication
+      assert_unauthenticated
       assert user.reload.verified?
     end
 

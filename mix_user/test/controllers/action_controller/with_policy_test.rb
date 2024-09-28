@@ -20,7 +20,7 @@ module ActionController
     end
 
     context 'role basic' do
-      let(:user){ users(:basic) }
+      let(:current_user){ users(:basic) }
 
       test '#policy_scope' do
         controller_assert :policy_scope do
@@ -30,14 +30,14 @@ module ActionController
 
       test '#policy' do
         controller_assert :policy do
-          can = policy($test.user)
+          can = policy($test.current_user)
           !can.index? && !can.export? && can.show? && !can.new? && can.edit? && can.delete?
         end
       end
     end
 
     context 'role admin' do
-      let(:user){ users(:admin) }
+      let(:current_user){ users(:admin) }
 
       test '#policy_scope' do
         controller_assert :policy_scope do
@@ -47,14 +47,14 @@ module ActionController
 
       test '#policy' do
         controller_assert :policy do
-          can = policy($test.user)
+          can = policy($test.current_user)
           can.index? && !can.export? && can.show? && can.new? && can.edit? && can.delete?
         end
       end
     end
 
     context 'role deployer' do
-      let(:user){ users(:deployer) }
+      let(:current_user){ users(:deployer) }
 
       test '#policy_scope' do
         controller_assert :policy_scope do
@@ -64,7 +64,7 @@ module ActionController
 
       test '#policy' do
         controller_assert :policy do
-          can = policy($test.user)
+          can = policy($test.current_user)
           can.index? && !can.export? && can.show? && can.new? && can.edit? && can.delete?
         end
       end

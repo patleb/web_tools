@@ -22,11 +22,11 @@ class Users::TestCase < ActionDispatch::IntegrationTest
     assert flash[:notice].present?
   end
 
-  def assert_authenticate
+  def assert_authenticated
     assert Current.user.is_a?(User)
   end
 
-  def assert_no_authentication
+  def assert_unauthenticated
     assert Current.user.is_a?(User::Null)
   end
 end

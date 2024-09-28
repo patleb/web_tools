@@ -5,7 +5,7 @@ class UserSessionsControllerTest < Users::TestCase
   test '#new' do
     get '/user_sessions/new'
     assert_response :success
-    assert_no_authentication
+    assert_unauthenticated
     assert_select 'form.new_user'
   end
 
