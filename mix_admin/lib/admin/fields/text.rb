@@ -15,7 +15,9 @@ module Admin
       end
 
       def default_input_attributes
-        super.merge! maxlength: max_length
+        attributes = super
+        attributes[:text] = attributes.delete(:value)
+        attributes.merge! maxlength: max_length
       end
     end
   end
