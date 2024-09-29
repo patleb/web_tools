@@ -5,7 +5,7 @@ html {
 
 .lib_layout {
   .alert {
-    @apply absolute flex-row top-2.5 max-w-[calc(100vw-2.5rem)] lg:max-w-[calc(100vw-20.5rem)] z-50;
+    @apply absolute flex-row top-2.5 max-w-[calc(100vw-2.5rem)] lg:max-w-[calc(100vw-20.5rem)] z-[100];
 
     .btn {
       @apply absolute top-1 right-1 mt-0;
