@@ -25,6 +25,10 @@ module IconHelper
     end
   end
 
+  def ascii!(...)
+    ascii(...) + ' '.html_safe
+  end
+
   def ascii(name, times: nil)
     @@_ascii ||= {
       space:            'nbsp',

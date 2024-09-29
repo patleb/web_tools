@@ -121,6 +121,7 @@ module ActionController::WithContext
   end
 
   def _back
-    params[:_back].presence || request.headers['X-Back'].presence || request.referer.presence
+    back = params[:_back].presence || request.headers['X-Back'].presence || request.referer.presence
+    back unless back&.delete_prefix(ExtRails::Routes.base_url) == request.original_fullpath
   end
 end

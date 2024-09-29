@@ -6,8 +6,7 @@ i18n = i18n_for(
 )
 append :title, i18n[:log_in]
 
-form_(action: MixUser::Routes.new_session_path, remote: true, as: @user) {[
-  input_(type: 'hidden', name: '_back', value: back_path, as: false),
+form_(action: MixUser::Routes.new_session_path, remote: true, back: true, as: @user) {[
   div_('.form-control', label_('.input-group', [
     icon('envelope', tag: 'span'),
     input_('.input.input-bordered',

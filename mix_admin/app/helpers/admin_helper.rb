@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AdminHelper
   def admin_link
     if admin_link?
@@ -11,20 +13,6 @@ module AdminHelper
     !Current.controller.is_a?(AdminController) && Current.logged_in?
   end
 
-  def admin_success_notice(name, action)
-    I18n.t('admin.flash.successful', name: name, action: I18n.t("admin.actions.#{action}.done"))
-  end
-
-  def admin_error_notice(objects, name, action = nil)
-    notice = action ? I18n.t('admin.flash.error', name: name, action: I18n.t("admin.actions.#{action}.done")) : name
-    Array.wrap(objects).each do |object|
-      unless object.errors.empty?
-        notice += ExtRails::ERROR_SEPARATOR + object.errors.full_messages.join(ExtRails::ERROR_SEPARATOR)
-      end
-    end
-    simple_format! notice
-  end
-
   def admin_flash(key)
     flash_message(key, scope: :admin)
   end
@@ -33,6 +21,20 @@ module AdminHelper
     [I18n.t('admin.search.title')].concat(messages.map do |(error, statement)|
       "#{I18n.t(error, scope: 'admin.search.error')}: #{ERB::Util.html_escape(statement)}"
     end).join(ExtRails::ERROR_SEPARATOR).html_safe
+  end
+
+  def admin_member_actions
+    actions = {
+      save: @model.save_label,
+      new: @model.allowed?(:new) && @model.save_and_add_another_label,
+      edit: @model.allowed?(:edit) && @model.save_and_edit_label,
+      cancel: @model.cancel_label,
+    }
+    div_ '.member_actions' do
+      actions.map do |name, label|
+        input_(class: name, type: 'submit', name: "_#{name}", value: label, if: label)
+      end
+    end
   end
 
   def admin_actions_menu
@@ -123,7 +125,7 @@ module AdminHelper
       url = node.url_for(:index)
       h_(
         li_(class: "bordered{active:#{node.model_name}}") do
-          steps = [ascii(:space, times: level - 1), ascii(:arrow_down_right)] if level > 0
+          steps = [ascii(:space, times: level - 1), ascii!(:arrow_down_right)] if level > 0
           a_ [steps, (icon(link_icon) if link_icon), title], href: url
         end,
         _admin_models_menu_stack(group_nodes, next_nodes, level + 1)

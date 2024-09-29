@@ -149,7 +149,7 @@ module ActionView::Helpers::TagHelper
         options = content_or_options if content_or_options.is_a? Hash
       end
     end
-    options = options ? options.dup : {}
+    options = (options ? options.dup : {}).with_indifferent_access
 
     return unless continue(options)
 
@@ -262,7 +262,7 @@ module ActionView::Helpers::TagHelper
   def form_options_content(options, content)
     options.replace html_options_for_form(options.delete(:action) || '', options)
     tags = extra_tags_for_form(options)
-    unless options.delete('timezone') == false || options['method'] == 'get' || ExtRails.config.css_only_support?
+    unless options.delete(:timezone) == false || options[:method] == 'get' || ExtRails.config.css_only_support?
       timezone_tag = input_(type: 'hidden', name: '_timezone', value: Current.timezone.to_s)
       tags = tags.present? ? tags + timezone_tag : timezone_tag
     end
@@ -272,6 +272,7 @@ module ActionView::Helpers::TagHelper
       options[:class] = merge_classes(options, dom_class(@_form, action))
     end
     options[:role] ||= 'form'
+    tags << input_(type: 'hidden', name: '_back', value: back_path) if options.delete(:back)
     [tags, content]
   end
 
