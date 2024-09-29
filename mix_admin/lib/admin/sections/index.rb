@@ -82,12 +82,12 @@ module Admin
 
       def filter_menu
         active_title = false
-        title = I18n.t('admin.misc.filter')
+        title = t('admin.misc.filter')
         scopes = filters.select_map do |filter|
           next unless model.klass.respond_to? filter
           active = (filter = filter.to_s) == params[:f]
           active_title ||= active
-          label = I18n.t(filter, scope: [model.i18n_scope, :filter, model.i18n_key], default: filter.humanize)
+          label = t(filter, scope: [model.i18n_scope, :filter, model.i18n_key], default: filter.humanize)
           title = label if active
           [filter, label, active]
         end
@@ -120,7 +120,7 @@ module Admin
             type: 'search',
             name: 'q',
             value: params[:q],
-            placeholder: I18n.t('admin.misc.search'),
+            placeholder: t('admin.misc.search'),
             autofocus: true,
             autocomplete: 'off',
             spellcheck: false,
@@ -132,17 +132,17 @@ module Admin
       def query_helper
         return unless advanced_search?
         return if (queryable_fields = fields.select(&:queryable?)).empty?
-        keywords = [option_(I18n.t('admin.misc.operators'), value: '', selected: true, disabled: true)]
-        keywords = keywords + I18n.t('admin.query').map do |name, label|
+        keywords = [option_(t('admin.misc.operators'), value: '', selected: true, disabled: true)]
+        keywords = keywords + t('admin.query').map do |name, label|
           name = "_#{name}"
           option_(name, value: name, title: label)
         end
-        operators = [option_(I18n.t('admin.misc.keywords'), value: '', selected: true, disabled: true)]
+        operators = [option_(t('admin.misc.keywords'), value: '', selected: true, disabled: true)]
         operators = operators + OPERATORS.map do |value|
           option_(value, value: value)
         end
         div_('.query_helper.swap.collapse') {[
-          input_('#query_helper', type: 'checkbox', title: I18n.t('admin.misc.advanced_search')),
+          input_('#query_helper', type: 'checkbox', title: t('admin.misc.advanced_search')),
           div_('.swap-on.collapse-title.btn.btn-circle.btn-xs', ascii(:x)),
           div_('.swap-off.collapse-title.btn.btn-circle.btn-xs', icon('three-dots')),
           div_('.collapse-content.card') do
@@ -170,7 +170,7 @@ module Admin
 
       def bulk_menu
         div_('.bulk_menu.dropdown.dropdown-right.dropdown-end', if: bulk_menu?) {[
-          label_('.bulk_title', icon('check2-square'), tabindex: 0, title: I18n.t('admin.misc.bulk_menu_title')),
+          label_('.bulk_title', icon('check2-square'), tabindex: 0, title: t('admin.misc.bulk_menu_title')),
           ul_('.bulk_list.dropdown-content', bulk_items, tabindex: 0)
         ]}
       end

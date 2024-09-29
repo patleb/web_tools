@@ -11,7 +11,7 @@ nested_fields = fields.select_map do |parent|
   [parent, children]
 end
 form_('.export_schema.card.indicator', action: @model.url_for(:export, **search_params)) {[
-  span_('.indicator-item.indicator-center.badge', [count, I18n.t('admin.misc.records')], if: count),
+  span_('.indicator-item.indicator-center.badge', [count, t('admin.misc.records')], if: count),
   fieldset_('.card.collapse.collapse-arrow', unless: root_fields.empty?) {[
     input_(type: 'checkbox', checked: true),
     div_('.collapse-title', @model.label),

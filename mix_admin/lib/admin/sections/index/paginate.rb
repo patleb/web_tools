@@ -26,7 +26,7 @@ module Admin
         count = current_count
         count = total if count > total
         div_('.paginate.btn-group', pagination_links << span_('.badge', [
-          count, I18n.t('admin.misc.of'), (ascii(:approx) if estimate), total, I18n.t('admin.misc.records')
+          count, t('admin.misc.of'), (ascii(:approx) if estimate), total, t('admin.misc.records')
         ]))
       end
 

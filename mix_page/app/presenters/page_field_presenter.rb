@@ -69,7 +69,7 @@ class PageFieldPresenter < ActionView::Delegator[:@page]
   end
 
   def pretty_blank
-    I18n.t('page_fields.edit', model: object.model_name.human.downcase) if editable?
+    t('page_fields.edit', model: object.model_name.human.downcase) if editable?
   end
 
   def pretty_actions(tag = :div)

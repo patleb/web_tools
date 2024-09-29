@@ -12,7 +12,7 @@ module Admin
       end
 
       register_option :strftime_format, memoize: :locale do
-        I18n.t(pretty_format, scope: i18n_scope)
+        t(pretty_format, scope: i18n_scope)
       end
 
       register_option :pretty_format do

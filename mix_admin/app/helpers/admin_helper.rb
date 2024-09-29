@@ -18,8 +18,8 @@ module AdminHelper
   end
 
   def admin_flash_search(messages)
-    [I18n.t('admin.search.title')].concat(messages.map do |(error, statement)|
-      "#{I18n.t(error, scope: 'admin.search.error')}: #{ERB::Util.html_escape(statement)}"
+    [t('admin.search.title')].concat(messages.map do |(error, statement)|
+      "#{t(error, scope: 'admin.search.error')}: #{ERB::Util.html_escape(statement)}"
     end).join(ExtRails::ERROR_SEPARATOR).html_safe
   end
 

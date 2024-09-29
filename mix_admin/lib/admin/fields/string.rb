@@ -34,14 +34,14 @@ module Admin
       def default_help
         text = super || ''
         if valid_length.present? && valid_length[:is].present?
-          text += "#{I18n.t('admin.form.char_length_of').capitalize} #{valid_length[:is]}."
+          text += "#{t('admin.form.char_length_of').capitalize} #{valid_length[:is]}."
         else
           max, min = max_length, min_length
           if max
             text += if min == 0
-              "#{I18n.t('admin.form.char_length_up_to').capitalize} #{max}."
+              "#{t('admin.form.char_length_up_to').capitalize} #{max}."
             else
-              "#{I18n.t('admin.form.char_length_of').capitalize} #{min}-#{max}."
+              "#{t('admin.form.char_length_of').capitalize} #{min}-#{max}."
             end
           end
         end

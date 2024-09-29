@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Actions
     def self.controller_for(action, &block)
@@ -114,7 +116,7 @@ module Admin
 
       def title(type, object = nil)
         model = object.is_a?(Class) ? object : (presenter = object).model if object
-        I18n.t(type, scope: [:admin, :actions, key],
+        t(type, scope: [:admin, :actions, key],
           model_label: model&.label,
           model_label_plural: model&.label_plural,
           record_label: presenter&.record_label,

@@ -2,8 +2,8 @@ module CoffeeHelper
   def js_i18n(*scopes)
     ((@@js_i18n ||= {})[Current.locale] ||= {})[scopes] ||= begin
       div_('.js_i18n', data: {
-        translations: scopes.each_with_object(I18n.t('js', default: {})) do |scope, all|
-          all.merge! I18n.t('js', scope: scope, default: {})
+        translations: scopes.each_with_object(t('js', default: {})) do |scope, all|
+          all.merge! t('js', scope: scope, default: {})
         end
       })
     end

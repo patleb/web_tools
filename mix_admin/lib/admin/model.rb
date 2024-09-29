@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   class Model < ActionView::Delegator
     extend ActiveSupport::Autoload
@@ -12,7 +14,7 @@ module Admin
     extend Definable
     extend Searchable
 
-    TRASH_ACTIONS = Set.new([:trash, :restore])
+    TRASH_ACTIONS = [:trash, :restore]
 
     register_class_option :scope do
       klass.all
@@ -55,12 +57,12 @@ module Admin
 
     register_class_option :navigation_label, memoize: :locale do
       if navigation_i18n_key
-        I18n.t(navigation_i18n_key, scope: [i18n_scope, :navigation], default:
-          I18n.t(:model, scope: [i18n_scope, :navigation])
+        t(navigation_i18n_key, scope: [i18n_scope, :navigation], default:
+          t(:model, scope: [i18n_scope, :navigation])
         )
       else
-        I18n.t(i18n_key, scope: [i18n_scope, :navigation], default:
-          I18n.t((parent_module = klass.module_parent.name.underscore), scope: [i18n_scope, :navigation], default:
+        t(i18n_key, scope: [i18n_scope, :navigation], default:
+          t((parent_module = klass.module_parent.name.underscore), scope: [i18n_scope, :navigation], default:
             parent_module.humanize
           )
         )
@@ -76,19 +78,19 @@ module Admin
     end
 
     register_class_option :save_label, memoize: :locale do
-      I18n.t(:save, scope: [i18n_scope, :form, i18n_key], default: I18n.t('admin.form.save'))
+      t(:save, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save'))
     end
 
     register_class_option :save_and_add_another_label, memoize: :locale do
-      I18n.t(:save_and_add_another, scope: [i18n_scope, :form, i18n_key], default: I18n.t('admin.form.save_and_add_another'))
+      t(:save_and_add_another, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save_and_add_another'))
     end
 
     register_class_option :save_and_edit_label, memoize: :locale do
-      I18n.t(:save_and_edit, scope: [i18n_scope, :form, i18n_key], default: I18n.t('admin.form.save_and_edit'))
+      t(:save_and_edit, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save_and_edit'))
     end
 
     register_class_option :cancel_label, memoize: :locale do
-      I18n.t(:cancel, scope: [i18n_scope, :form, i18n_key], default: I18n.t('admin.form.cancel'))
+      t(:cancel, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.cancel'))
     end
 
     register_class_option :simplified_search_string?, memoize: true do
@@ -255,11 +257,11 @@ module Admin
       label = if record.try("#{record_label_method}_changed?")
         record.public_send("#{record_label_method}_was")
       elsif record.new_record?
-        "#{I18n.t('admin.misc.new')} #{self.class.pretty_name}"
+        "#{t('admin.misc.new')} #{self.class.pretty_name}"
       else
         record.public_send(record_label_method)
       end
-      label = "#{label} [#{I18n.t('admin.misc.discarded')}]" if discarded?
+      label = "#{label} [#{t('admin.misc.discarded')}]" if discarded?
       label.upcase_first
     end
 

@@ -36,13 +36,13 @@ class PageTemplatePresenter < ActionView::Delegator
   end
 
   def pretty_blank
-    I18n.t('page_template.edit', model: object.model_name.human) if member_actions[:edit]
+    t('page_template.edit', model: object.model_name.human) if member_actions[:edit]
   end
 
   def pretty_actions(tag = :span)
     with_tag(tag, '.page_template_actions', if: member_actions.any?) do
       member_actions.map do |action, path|
-        title = I18n.t("page_template.#{action}", model: object.model_name.human)
+        title = t("page_template.#{action}", model: object.model_name.human)
         a_(class: "#{action}_#{dom_class}", href: path, title: title) do
           i_(class: LINK_ICONS[action])
         end

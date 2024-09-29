@@ -11,7 +11,7 @@ module PageFields::LinkAdmin
       end
       configure :text, weight: 0 do
         index_value do
-          primary_key_link(pretty_value || I18n.t('page_fields.edit', model: object.model_name.human.downcase))
+          primary_key_link(pretty_value || t('page_fields.edit', model: object.model_name.human.downcase))
         end
       end
       field! :active, :boolean

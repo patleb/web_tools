@@ -121,7 +121,7 @@ module Admin
     end
 
     register_option :help do
-      readonly ? false : I18n.t(name, scope: [model.i18n_scope, :help, model.i18n_key], default: default_help)
+      readonly ? false : t(name, scope: [model.i18n_scope, :help, model.i18n_key], default: default_help)
     end
 
     def parent
@@ -248,7 +248,7 @@ module Admin
 
     def pretty_label
       text = [label]
-      text, title = text << '*', I18n.t('admin.form.required') if !action.show? && required? && !readonly?
+      text, title = text << '*', t('admin.form.required') if !action.show? && required? && !readonly?
       h_(
         label_(text, title: title),
         icon('info-circle.tooltip', data: { tip: help }, if: help.present?),
@@ -274,7 +274,7 @@ module Admin
       return unless sortable?
       url, active, reverse = sort_options
       reverse = !active && reverse || active && !reverse
-      title = reverse ? I18n.t('admin.misc.desc') : I18n.t('admin.misc.asc')
+      title = reverse ? t('admin.misc.desc') : t('admin.misc.asc')
       h_(ascii(:space),
         a_('.sort_link', href: url, class: ('sort_active' if active), title: title) {[
           ascii("triangle_#{reverse ? 'down' : 'up'}"),

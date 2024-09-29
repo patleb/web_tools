@@ -31,7 +31,7 @@ module LibHelper
           method_name = [*scope, type].join('_')
           public_send(method_name, messages)
         end
-      when Symbol then I18n.t(message, scope: scope)
+      when Symbol then t(message, scope: scope)
       when String then message
       else raise "unsupported flash object: #{message.class.name}"
       end
@@ -126,7 +126,7 @@ module LibHelper
         other_label = other_value
       end
       if name == :locale
-        a_(".#{name}_select.session_select", href: "?_#{name}=#{other_value}", title: I18n.t('template.language')) {[
+        a_(".#{name}_select.session_select", href: "?_#{name}=#{other_value}", title: t('template.language')) {[
           i_('.fa.fa-flag'),
           span_(other_label.to_s.humanize)
         ]}

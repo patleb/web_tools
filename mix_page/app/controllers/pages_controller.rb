@@ -69,7 +69,7 @@ class PagesController < LibController
   end
 
   def on_not_authorized
-    handle_save_error I18n.t('admin.flash.not_allowed')
+    handle_save_error t('admin.flash.not_allowed')
   end
 
   def on_save_error(field, action)
@@ -77,7 +77,7 @@ class PagesController < LibController
   end
 
   def on_field_not_found
-    handle_save_error I18n.t('admin.flash.object_not_found', model: 'PageField', id: params[:id])
+    handle_save_error t('admin.flash.object_not_found', model: 'PageField', id: params[:id])
   end
 
   def handle_save_error(notice)
@@ -88,11 +88,11 @@ class PagesController < LibController
   end
 
   def success_notice(field, action)
-    admin_success_notice(field.class.model_name.human, action)
+    super(field.class.model_name.human, action)
   end
 
   def error_notice(field, action)
-    admin_error_notice(field, field.class.model_name.human, action)
+    super(field, field.class.model_name.human, action)
   end
 
   def field_params

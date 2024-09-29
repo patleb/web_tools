@@ -7,7 +7,7 @@ h_(
         p_{ @section.description },
       ])
     end,
-    label_('.btn.btn-circle.btn-xs', icon('info-circle'), tabindex: 0, title: I18n.t('admin.misc.description')),
+    label_('.btn.btn-circle.btn-xs', icon('info-circle'), tabindex: 0, title: t('admin.misc.description')),
   ]},
   form_('.js_bulk_form.table_wrapper', method: :get) {[
     table_([

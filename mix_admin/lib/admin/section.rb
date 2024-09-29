@@ -56,8 +56,8 @@ module Admin
 
     def scroll_items
       (@@scroll_items ||= {})[Current.locale] ||= [
-        li_(a_ [icon('arrow-up-circle'), I18n.t('admin.misc.top_anchor')], href: '#header', 'data-turbolinks-history': false),
-        li_(a_ [icon('arrow-down-circle'), I18n.t('admin.misc.bottom_anchor')], href: '#footer', 'data-turbolinks-history': false),
+        li_(a_ [icon('arrow-up-circle'), t('admin.misc.top_anchor')], href: '#header', 'data-turbolinks-history': false),
+        li_(a_ [icon('arrow-down-circle'), t('admin.misc.bottom_anchor')], href: '#footer', 'data-turbolinks-history': false),
       ]
     end
 
