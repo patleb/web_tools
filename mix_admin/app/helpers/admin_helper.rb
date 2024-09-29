@@ -23,20 +23,6 @@ module AdminHelper
     end).join(ExtRails::ERROR_SEPARATOR).html_safe
   end
 
-  def admin_member_actions
-    actions = {
-      save: @model.save_label,
-      new: @model.allowed?(:new) && @model.save_and_add_another_label,
-      edit: @model.allowed?(:edit) && @model.save_and_edit_label,
-      cancel: @model.cancel_label,
-    }
-    div_ '.member_actions' do
-      actions.map do |name, label|
-        input_(class: name, type: 'submit', name: "_#{name}", value: label, if: label)
-      end
-    end
-  end
-
   def admin_actions_menu
     object = action_object
     actions = Admin::Action.all("#{action_type}?").select(&:navigable?)
