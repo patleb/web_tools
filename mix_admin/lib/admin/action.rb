@@ -52,11 +52,6 @@ module Admin
         0
       end
 
-      # TODO :new (in process mem), :show (in DB), :edit[GET] (in DB), :export (in process mem partially --> except counter)
-      def cacheable?
-        false
-      end
-
       # Is the action acting on the root level (Example: /admin/contact)
       def root?
         false
