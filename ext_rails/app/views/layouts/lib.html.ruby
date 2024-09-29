@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-html_('.no-js.no-transition', lang: Current.locale, data: { theme: Current.theme }) {[
+html_('.no-js.no-transition', lang: Current.locale, data: { theme: Current.theme }, class: { debugger_host: ENV['DEBUGGER_HOST']}) {[
   head_([
     area(:fonts),
     area(:javascripts),

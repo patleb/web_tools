@@ -319,7 +319,7 @@ class Turbolinks.Controller
     restoration_data.position = @position
 
   show_progress_bar: =>
-    @progress_bar.show()
+    @progress_bar.show() unless document.documentElement.classList.contains('debugger_host')
 
   hide_progress_bar: ->
     @progress_bar.hide()
