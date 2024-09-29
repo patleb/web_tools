@@ -146,7 +146,7 @@ module Admin
     end
 
     def editable?
-      return false if action.show?
+      return false if action.show? || primary_key?
       return @editable if defined? @editable
       return false if MixAdmin.config.readonly_fields.include? name
       (property && presenter[:new_record?]) || !property.nil_or_true?(:readonly?)
