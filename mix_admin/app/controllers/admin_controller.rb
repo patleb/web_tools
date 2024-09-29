@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class AdminController < LibController
+  class TooManyRows < ::StandardError; end
   class RoutingError < ActionController::RoutingError
     def initialize(*)
       super("No route matches [#{Current.controller.request.path}]")
@@ -10,12 +11,14 @@ class AdminController < LibController
   rescue_from RoutingError, ActionController::ParameterMissing, ActiveRecord::RecordNotFound, with: :render_404
   rescue_from ActiveRecord::RecordInvalid, with: :on_record_invalid
   rescue_from ActiveRecord::StaleObjectError, with: :on_stale_object_error
+  rescue_from ActiveRecord::InvalidForeignKey, with: :on_invalid_foreign_key
+  rescue_from TooManyRows, with: :on_too_many_rows
 
   authenticate
 
   before_action :set_action
   before_action :set_model, if: -> { @action.model? }
-  before_action :redirect_on_cancel
+  before_action :redirect_on_cancel, if: -> { params[:_cancel] }
   before_action :set_presenters, if: -> { @action.presenters? }
   before_action :set_attributes, if: -> { defined?(@new) && (@new || @action.member?) }
 
@@ -50,7 +53,7 @@ class AdminController < LibController
   end
 
   def redirect_on_cancel
-    redirect_back notice: t('admin.flash.noaction') if params[:_cancel]
+    redirect_back notice: t('admin.flash.noaction')
   end
 
   def set_model
@@ -121,22 +124,51 @@ class AdminController < LibController
   end
 
   def on_success
-    notice = success_notice(@model.label)
     if params["_#{action_name}"]
-      flash.now[:notice] = notice
+      flash.now[:notice] = success_notice
       render action_name
-    elsif params[:_save] then redirect_back notice: notice
-    elsif params[:_new]  then redirect_to @model.url_for(:new), notice: notice
-    elsif params[:_edit] then redirect_to @presenter.url_for(:edit), notice: notice
+    elsif params[:_save] then redirect_back notice: success_notice
+    elsif params[:_new]  then redirect_to @model.url_for(:new), notice: success_notice
+    elsif params[:_edit] then redirect_to @presenter.url_for(:edit), notice: success_notice
     end
   end
 
   def on_record_invalid
-
+    render_error
   end
 
   def on_stale_object_error
+    @presenter.errors.add :base, :already_modified_html
+    @presenter.lock_version = @presenter.lock_version_was
+    render_error
+  end
 
+  def on_invalid_foreign_key
+    @presenter.errors.add :base, :dependency_constraints
+    render_error
+  end
+
+  def on_too_many_rows(exception)
+    if @action.export?
+      flash[:error] = exception.message
+      redirect_back
+    else
+      response.set_header('X-Status-Reason', exception.message)
+      head 413
+    end
+  end
+
+  def render_error
+    flash.now[:alert] = error_notice(@presenter)
+    render action_name, status: :not_acceptable
+  end
+
+  def success_notice
+    super(@model.label)
+  end
+
+  def error_notice(presenters)
+    super(presenters, @model.label)
   end
 
   def _back

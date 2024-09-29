@@ -6,7 +6,7 @@ en:
         already_modified_html: >
           Has already been modified by someone else. If you want to save this version anyway,
           then click save. Otherwise, please refresh the page (warning: your changes will be lost).
-          See the updated version <a href="" target="_blank" rel="noopener">here</a>.
+          See the updated version <a href="" target="_blank" rel="noopener"><b>here</b></a>.
   adminrecord:
     navigation:
       model: Navigation

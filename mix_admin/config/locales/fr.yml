@@ -6,7 +6,7 @@ fr:
         already_modified_html: >
           A déjà été modifié par quelqu'un d'autre. Si vous souhaitez quand même enregistrer cette version,
           alors cliquez sur enregistrer. Sinon, veuillez rafraîchir la page (attention: vos modifications seront perdues).
-          Voir la version mise à jour <a href="" target="_blank" rel="noopener">ici</a>.
+          Voir la version mise à jour <a href="" target="_blank" rel="noopener"><b>ici</b></a>.
   adminrecord:
     navigation:
       model: Navigation
