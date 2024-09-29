@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AdminController < LibController
   class RoutingError < ActionController::RoutingError
     def initialize(*)
@@ -6,12 +8,16 @@ class AdminController < LibController
   end
 
   rescue_from RoutingError, ActionController::ParameterMissing, ActiveRecord::RecordNotFound, with: :render_404
+  rescue_from ActiveRecord::RecordInvalid, with: :on_record_invalid
+  rescue_from ActiveRecord::StaleObjectError, with: :on_stale_object_error
 
   authenticate
 
   before_action :set_action
   before_action :set_model, if: -> { @action.model? }
+  before_action :redirect_on_cancel
   before_action :set_presenters, if: -> { @action.presenters? }
+  before_action :set_attributes, if: -> { defined?(@new) && (@new || @action.member?) }
 
   attr_reader :action
 
@@ -43,6 +49,10 @@ class AdminController < LibController
     @action = Admin::Action.find(action_name.to_sym)
   end
 
+  def redirect_on_cancel
+    redirect_back notice: t('admin.flash.noaction') if params[:_cancel]
+  end
+
   def set_model
     model_name = params.require(:model_name).to_admin_name
     raise RoutingError unless MixAdmin.config.models_pool.include? model_name
@@ -52,7 +62,7 @@ class AdminController < LibController
 
   def set_presenters
     if (@new = @action.new?)
-      records = [@model.build(params[@model.param_key])]
+      records = [@model.build]
     else
       scope = policy_scope(@model.scope)
       records = case
@@ -68,6 +78,14 @@ class AdminController < LibController
     raise RoutingError if bulk && @presenters.empty?
     raise RoutingError if (@new || member) && (@presenter = @presenters.first).nil?
     @section = @presenter ? @section.with(presenter: @presenter) : @section.with(presenters: @presenters)
+  end
+
+  def set_attributes
+    return unless (@attributes = params[@model.param_key]).present?
+    fields = @section.fields.reject(&:readonly?)
+    @attributes.slice! *fields.flat_map(&:allowed_methods).uniq
+    @attributes.permit!
+    fields.each{ |field| field.parse_input! @attributes }
   end
 
   def set_meta_values
@@ -102,13 +120,26 @@ class AdminController < LibController
       end
   end
 
-  def sanitize_params!
-    return unless (target_params = params[@model.param_key]).present?
-    fields = @section.fields
-    allowed_methods = fields.flat_map(&:allowed_methods).uniq
-    target_params.slice! *allowed_methods
-    target_params.permit!
-    fields.each{ |field| field.parse_input! target_params }
-    target_params
+  def on_success
+    notice = success_notice(@model.label)
+    if params["_#{action_name}"]
+      flash.now[:notice] = notice
+      render action_name
+    elsif params[:_save] then redirect_back notice: notice
+    elsif params[:_new]  then redirect_to @model.url_for(:new), notice: notice
+    elsif params[:_edit] then redirect_to @presenter.url_for(:edit), notice: notice
+    end
+  end
+
+  def on_record_invalid
+
+  end
+
+  def on_stale_object_error
+
+  end
+
+  def _back
+    super || @model&.allowed_url(:index)
   end
 end

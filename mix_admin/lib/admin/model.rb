@@ -104,11 +104,11 @@ module Admin
     class << self
       delegate :primary_key, :table_name, to: :klass
 
-      def build(params)
+      def build(attributes = nil)
         if klass.respond_to? :admin_defaults
-          params = params.reverse_merge(klass.admin_defaults)
+          attributes = klass.admin_defaults.merge(attributes || {})
         end
-        klass.new(params)
+        klass.new(attributes)
       end
 
       def allowed_models
@@ -259,7 +259,7 @@ module Admin
       elsif record.new_record?
         "#{t('admin.misc.new')} #{self.class.pretty_name}"
       else
-        record.public_send(record_label_method)
+        record.public_send(record_label_method).presence || record.admin_label
       end
       label = "#{label} [#{t('admin.misc.discarded')}]" if discarded?
       label.upcase_first

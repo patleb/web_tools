@@ -17,11 +17,5 @@ module Admin
         end
       end
     end
-
-    controller_for Show do
-      def show
-        render :show
-      end
-    end
   end
 end

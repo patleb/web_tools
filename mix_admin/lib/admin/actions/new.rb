@@ -28,7 +28,9 @@ module Admin
         when :get
           render :new
         when :post
-
+          @presenter.assign_attributes(@attributes) if @attributes.present?
+          @presenter.save!
+          on_success
         end
       end
     end

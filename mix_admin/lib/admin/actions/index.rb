@@ -23,11 +23,5 @@ module Admin
         end
       end
     end
-
-    controller_for Index do
-      def index
-        render :index
-      end
-    end
   end
 end

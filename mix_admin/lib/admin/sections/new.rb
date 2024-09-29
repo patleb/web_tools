@@ -20,8 +20,9 @@ module Admin
           cancel: model.cancel_label,
         }
         div_ '.member_actions' do
-          actions.map do |name, label|
-            input_(class: name, type: 'submit', name: "_#{name}", value: label, if: label)
+          actions.select_map do |name, label|
+            next unless label
+            input_(class: name, type: 'submit', name: "_#{name}", value: label, formnovalidate: name == :cancel)
           end
         end
       end

@@ -146,9 +146,9 @@ module Admin
     end
 
     def editable?
-      return false if action.show? || primary_key?
+      return false if action.show?
       return @editable if defined? @editable
-      return false if MixAdmin.config.readonly_fields.include? name
+      return false if method? || primary_key? || MixAdmin.config.readonly_fields.include?(name)
       (property && presenter[:new_record?]) || !property.nil_or_true?(:readonly?)
     end
 
@@ -251,7 +251,7 @@ module Admin
       text, title = text << '*', t('admin.form.required') if !action.show? && required? && !readonly?
       h_(
         label_(text, title: title),
-        icon('info-circle.tooltip', data: { tip: help }, if: help.present?),
+        icon('info-circle.tooltip', data: { tip: help }, if: !action.show? && help.present?),
       )
     end
 
