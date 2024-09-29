@@ -11,10 +11,6 @@ module Admin
         [:time, :formats, :pretty]
       end
 
-      def parse_value(value)
-        super&.change(year: 2000, month: 1, day: 1)
-      end
-
       def format_input(value)
         super&.sub(/^[\d-]+T/, '')
       end
