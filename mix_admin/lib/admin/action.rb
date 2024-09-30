@@ -88,10 +88,6 @@ module Admin
         bulkable?
       end
 
-      def inline_menu?
-        member?
-      end
-
       # List of methods allowed. Note that you are responsible for correctly handling them in :controller action
       def http_methods
         [:get]

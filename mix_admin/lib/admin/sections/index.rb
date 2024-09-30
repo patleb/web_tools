@@ -198,7 +198,7 @@ module Admin
 
       def inline_items(presenter)
         memoize(self, __method__, bindings, presenter) do
-          Admin::Action.all(:inline_menu?).select_map do |action|
+          Admin::Action.all(:member?).select_map do |action|
             url = presenter.allowed_url(action.key)
             li_(a_ text: action.title(:menu, presenter), href: url, class: action.css_class) if url
           end

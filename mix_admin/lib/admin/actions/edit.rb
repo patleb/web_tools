@@ -12,10 +12,6 @@ module Admin
           true
         end
 
-        def inline_menu?
-          true
-        end
-
         def http_methods
           [:get, :post]
         end
