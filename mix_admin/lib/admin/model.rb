@@ -102,7 +102,7 @@ module Admin
 
     def self.build(attributes = nil)
       if klass.respond_to? :admin_defaults
-        attributes = klass.admin_defaults.merge(attributes || {})
+        attributes = (attributes || {}).reverse_merge(klass.admin_defaults)
       end
       klass.new(attributes)
     end
