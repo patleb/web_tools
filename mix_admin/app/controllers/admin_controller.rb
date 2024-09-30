@@ -175,6 +175,6 @@ class AdminController < LibController
   end
 
   def _back
-    super || @model&.allowed_url(:index)
+    super || @action.trash? && @model&.allowed_url(:trash) || @model&.allowed_url(:index)
   end
 end
