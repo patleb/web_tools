@@ -15,7 +15,7 @@ module Admin
       def member_actions
         actions = {
           save: model.save_label,
-          new: model.allowed?(:new) && model.save_and_add_another_label,
+          new: model.allowed?(:new) && model.save_and_new_label,
           edit: model.allowed?(:edit) && model.save_and_edit_label,
           cancel: model.cancel_label,
         }

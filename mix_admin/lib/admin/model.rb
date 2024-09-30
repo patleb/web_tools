@@ -81,8 +81,8 @@ module Admin
       t(:save, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save'))
     end
 
-    register_class_option :save_and_add_another_label, memoize: :locale do
-      t(:save_and_add_another, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save_and_add_another'))
+    register_class_option :save_and_new_label, memoize: :locale do
+      t(:save_and_new, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save_and_new'))
     end
 
     register_class_option :save_and_edit_label, memoize: :locale do

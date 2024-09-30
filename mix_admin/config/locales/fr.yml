@@ -158,7 +158,7 @@ fr:
       char_length_up_to: longueur maximale
       char_length_of: longueur
       save: Enregistrer
-      save_and_add_another: Enregistrer et ajouter un(e) autre
+      save_and_new: Enregistrer et ajouter un(e) autre
       save_and_edit: Enregister et modifier
       delete: Supprimer
       all_of_the_following_related_items_will_be_deleted: "Tous les éléments relatifs suivants pourraient être également supprimés ou rendus orphelins:"
