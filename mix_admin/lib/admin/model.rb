@@ -57,15 +57,10 @@ module Admin
 
     register_class_option :navigation_label, memoize: :locale do
       if navigation_i18n_key
-        t(navigation_i18n_key, scope: [i18n_scope, :navigation], default:
-          t(:model, scope: [i18n_scope, :navigation])
-        )
+        t(navigation_i18n_key, scope: [i18n_scope, :navigation], default: t(:model, scope: [i18n_scope, :navigation]))
       else
-        t(i18n_key, scope: [i18n_scope, :navigation], default:
-          t((parent_module = klass.module_parent.name.underscore), scope: [i18n_scope, :navigation], default:
-            parent_module.humanize
-          )
-        )
+        parent = klass.module_parent.name.underscore
+        t(i18n_key, scope: [i18n_scope, :navigation], default: t(parent, scope: [i18n_scope, :navigation], default: parent.humanize))
       end.upcase
     end
 
