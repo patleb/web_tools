@@ -3,26 +3,24 @@
 module Admin
   module Actions
     class Edit < Admin::Action
-      class << self
-        def weight
-          2
-        end
+      def self.weight
+        2
+      end
 
-        def member?
-          true
-        end
+      def self.member?
+        true
+      end
 
-        def http_methods
-          [:get, :post]
-        end
+      def self.http_methods
+        [:get, :post]
+      end
 
-        def route_fragment?
-          true
-        end
+      def self.route_fragment?
+        true
+      end
 
-        def icon
-          'pencil-square'
-        end
+      def self.icon
+        'pencil-square'
       end
     end
 

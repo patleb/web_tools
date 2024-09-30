@@ -1,26 +1,24 @@
 module Admin
   module Actions
     class Delete < Admin::Action
-      class << self
-        def weight
-          5
-        end
+      def self.weight
+        5
+      end
 
-        def member?
-          true
-        end
+      def self.member?
+        true
+      end
 
-        def bulkable?
-          true
-        end
+      def self.bulkable?
+        true
+      end
 
-        def http_methods
-          [:get, :post]
-        end
+      def self.http_methods
+        [:get, :post]
+      end
 
-        def icon
-          'trash'
-        end
+      def self.icon
+        'trash'
       end
     end
   end

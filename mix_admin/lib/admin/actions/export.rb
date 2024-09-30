@@ -3,30 +3,28 @@
 module Admin
   module Actions
     class Export < Admin::Action
-      class << self
-        def weight
-          1
-        end
+      def self.weight
+        1
+      end
 
-        def collection?
-          true
-        end
+      def self.collection?
+        true
+      end
 
-        def bulkable?
-          true
-        end
+      def self.bulkable?
+        true
+      end
 
-        def searchable?
-          true
-        end
+      def self.searchable?
+        true
+      end
 
-        def http_methods
-          [:get, :post]
-        end
+      def self.http_methods
+        [:get, :post]
+      end
 
-        def icon
-          'filetype-csv'
-        end
+      def self.icon
+        'filetype-csv'
       end
 
       def presenters?

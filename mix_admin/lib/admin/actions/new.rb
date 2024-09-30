@@ -3,22 +3,20 @@
 module Admin
   module Actions
     class New < Admin::Action
-      class << self
-        def weight
-          3
-        end
+      def self.weight
+        3
+      end
 
-        def collection?
-          true
-        end
+      def self.collection?
+        true
+      end
 
-        def http_methods
-          [:get, :post]
-        end
+      def self.http_methods
+        [:get, :post]
+      end
 
-        def icon
-          'plus-circle'
-        end
+      def self.icon
+        'plus-circle'
       end
     end
 

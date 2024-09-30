@@ -3,18 +3,16 @@
 module Admin
   module Actions
     class Show < Admin::Action
-      class << self
-        def member?
-          true
-        end
+      def self.member?
+        true
+      end
 
-        def route_fragment?
-          false
-        end
+      def self.route_fragment?
+        false
+      end
 
-        def icon
-          'info-circle'
-        end
+      def self.icon
+        'info-circle'
       end
     end
   end

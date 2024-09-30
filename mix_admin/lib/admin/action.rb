@@ -10,116 +10,114 @@ module Admin
   end
 
   class Action < ActionController::Delegator
-    class << self
-      def allowed?(name)
-        name = name.to_sym
-        if (@@allowed ||= {}).has_key? name
-          @@allowed[name]
-        else
-          @@allowed[name] = !!find_class(name)
+    def self.allowed?(name)
+      name = name.to_sym
+      if (@@allowed ||= {}).has_key? name
+        @@allowed[name]
+      else
+        @@allowed[name] = !!find_class(name)
+      end
+    end
+
+    def self.has?(name)
+      !!find_class(name)
+    end
+
+    def self.find(name, **bindings)
+      find_class(name)&.new(**bindings)
+    end
+
+    def self.find_class(name)
+      name = name.to_sym
+      (@@find_class ||= {})[name] ||= all.find{ |action| action.key == name }
+    end
+
+    def self.all(type = :all)
+      @@all ||= begin
+        all = Admin::Actions.constants.each_with_object([]) do |name, all|
+          klass = Admin::Actions.const_get(name)
+          all << klass if MixAdmin.config.actions.include? klass.key
         end
+        all.stable_sort_by(&:weight)
       end
+      type == :all ? @@all : @@all.select(&type.to_sym)
+    end
 
-      def has?(name)
-        !!find_class(name)
-      end
+    def self.key
+      @key ||= name.demodulize.underscore.to_sym
+    end
 
-      def find(name, **bindings)
-        find_class(name)&.new(**bindings)
-      end
+    def self.weight
+      0
+    end
 
-      def find_class(name)
-        name = name.to_sym
-        (@@find_class ||= {})[name] ||= all.find{ |action| action.key == name }
-      end
+    # Is the action acting on the root level (Example: /admin/contact)
+    def self.root?
+      false
+    end
 
-      def all(type = :all)
-        @@all ||= begin
-          all = Admin::Actions.constants.each_with_object([]) do |name, all|
-            klass = Admin::Actions.const_get(name)
-            all << klass if MixAdmin.config.actions.include? klass.key
-          end
-          all.stable_sort_by(&:weight)
-        end
-        type == :all ? @@all : @@all.select(&type.to_sym)
-      end
+    # Is the action on a model scope (Example: /admin/team/export)
+    def self.collection?
+      false
+    end
 
-      def key
-        @key ||= name.demodulize.underscore.to_sym
-      end
+    # Is the action on an object scope (Example: /admin/team/1/edit)
+    def self.member?
+      false
+    end
 
-      def weight
-        0
-      end
+    # NOTE You will need to handle params[:ids] in controller
+    def self.bulkable?
+      false
+    end
 
-      # Is the action acting on the root level (Example: /admin/contact)
-      def root?
-        false
-      end
+    def self.navigable?
+      true
+    end
 
-      # Is the action on a model scope (Example: /admin/team/export)
-      def collection?
-        false
-      end
+    def self.searchable_tab?
+      searchable?
+    end
 
-      # Is the action on an object scope (Example: /admin/team/1/edit)
-      def member?
-        false
-      end
+    def self.searchable?
+      false
+    end
 
-      # NOTE You will need to handle params[:ids] in controller
-      def bulkable?
-        false
-      end
+    def self.bulk_menu?
+      bulkable?
+    end
 
-      def navigable?
-        true
-      end
+    # List of methods allowed. Note that you are responsible for correctly handling them in :controller action
+    def self.http_methods
+      [:get]
+    end
 
-      def searchable_tab?
-        searchable?
-      end
+    def self.route_fragment?
+      true
+    end
 
-      def searchable?
-        false
-      end
+    def self.icon
+      raise NotImplementedError
+    end
 
-      def bulk_menu?
-        bulkable?
-      end
+    def self.css_class
+      "#{key}_action"
+    end
 
-      # List of methods allowed. Note that you are responsible for correctly handling them in :controller action
-      def http_methods
-        [:get]
-      end
+    def self.title(type, object = nil)
+      model = object.is_a?(Class) ? object : (presenter = object).model if object
+      t(type, scope: [:admin, :actions, key],
+        model_label: model&.label,
+        model_label_plural: model&.label_plural,
+        record_label: presenter&.record_label,
+      ).upcase_first
+    end
 
-      def route_fragment?
-        true
-      end
-
-      def icon
-        raise NotImplementedError
-      end
-
-      def css_class
-        "#{key}_action"
-      end
-
-      def title(type, object = nil)
-        model = object.is_a?(Class) ? object : (presenter = object).model if object
-        t(type, scope: [:admin, :actions, key],
-          model_label: model&.label,
-          model_label_plural: model&.label_plural,
-          record_label: presenter&.record_label,
-        ).upcase_first
-      end
-
-      def controller
-        action_name = key
-        proc do
-          define_method action_name do
-            render action_name
-          end
+    def self.controller
+      action_name = key
+      proc do
+        define_method action_name do
+          render action_name
         end
       end
     end
