@@ -89,7 +89,7 @@ module Admin
               thead_('.js_table_head') do
                 tr_([
                   th_(class: ('sticky' if sticky?)) {[
-                    input_('.js_bulk_toggles.js_only.checkbox', type: 'checkbox', disabled: !bulk_menu?),
+                    input_('.js_bulk_toggles.js_only.checkbox', type: 'checkbox', disabled: !bulk_items?),
                     span_(labels[id.name] = id.label),
                     id.sort_link,
                   ]},
@@ -106,7 +106,7 @@ module Admin
                   id = id.with(presenter: presenter)
                   tr_([
                     th_(class: ('sticky' if sticky?)) {[
-                      input_('.js_bulk_checkboxes.checkbox', type: 'checkbox', name: 'ids[]', value: id.value, disabled: !bulk_menu?),
+                      input_('.js_bulk_checkboxes.checkbox', type: 'checkbox', name: 'ids[]', value: id.value, disabled: !bulk_items?),
                       span_('.field_value', class: id.css_class) {[
                         inline_menu(presenter),
                         id.index_value,
@@ -225,15 +225,15 @@ module Admin
         ]}
       end
 
-      def bulk_menu?
-        !bulk_items.empty? && !presenters.empty?
-      end
-
       def bulk_menu
-        div_('.bulk_menu.dropdown.dropdown-right.dropdown-end', if: bulk_menu?) {[
+        div_('.bulk_menu.dropdown.dropdown-right.dropdown-end', if: bulk_items?) {[
           label_('.bulk_title', icon('check2-square'), tabindex: 0, title: t('admin.misc.bulk_menu_title')),
           ul_('.bulk_list.dropdown-content', bulk_items, tabindex: 0)
         ]}
+      end
+
+      def bulk_items?
+        !bulk_items.empty? && !presenters.empty?
       end
 
       def bulk_items
