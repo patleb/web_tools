@@ -8,7 +8,7 @@ module Admin
       end
 
       register_option :pretty_value do
-        '*****'
+        '*' * MixUser.config.min_password_length
       end
 
       register_option :input_type do
