@@ -64,7 +64,7 @@ class PagesController < LibController
   def on_success(field, action)
     respond_to do |format|
       format.html { redirect_to admin_path_for(action, field), params: { _back: true } }
-      format.json { render json: { flash: { success: success_notice(field, action) } } }
+      format.json { render json: { flash: { success: admin_notice(field, action) } } }
     end
   end
 
@@ -73,7 +73,7 @@ class PagesController < LibController
   end
 
   def on_save_error(field, action)
-    handle_save_error error_notice(field, action)
+    handle_save_error admin_alert(field, action)
   end
 
   def on_field_not_found
@@ -87,11 +87,11 @@ class PagesController < LibController
     end
   end
 
-  def success_notice(field, action)
+  def admin_notice(field, action)
     super(field.class.model_name.human, action)
   end
 
-  def error_notice(field, action)
+  def admin_alert(field, action)
     super(field, field.class.model_name.human, action)
   end
 

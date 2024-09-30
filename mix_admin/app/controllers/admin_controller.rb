@@ -125,11 +125,11 @@ class AdminController < LibController
 
   def on_success
     if params["_#{action_name}"]
-      flash.now[:notice] = success_notice
+      flash.now[:notice] = admin_notice
       render action_name
-    elsif params[:_save] then redirect_back notice: success_notice
-    elsif params[:_new]  then redirect_to @model.url_for(:new), notice: success_notice
-    elsif params[:_edit] then redirect_to @presenter.url_for(:edit), notice: success_notice
+    elsif params[:_save] then redirect_back notice: admin_notice
+    elsif params[:_new]  then redirect_to @model.url_for(:new), notice: admin_notice
+    elsif params[:_edit] then redirect_to @presenter.url_for(:edit), notice: admin_notice
     end
   end
 
@@ -158,7 +158,7 @@ class AdminController < LibController
   end
 
   def render_error
-    flash.now[:alert] = error_notice(@presenter)
+    flash.now[:alert] = admin_alert(@presenter)
     render action_name, status: :not_acceptable
   end
 
@@ -166,11 +166,11 @@ class AdminController < LibController
     Rails.env.local? ? render_500(*) : super
   end
 
-  def success_notice
+  def admin_notice
     super(@model.label)
   end
 
-  def error_notice(presenters)
+  def admin_alert(presenters)
     super(presenters, @model.label)
   end
 
