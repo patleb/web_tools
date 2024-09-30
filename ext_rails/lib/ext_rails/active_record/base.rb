@@ -59,6 +59,19 @@ ActiveRecord::Base.class_eval do
     enum(*, **, _scopes: false, _instance_methods: false)
   end
 
+  def self.establish_connection_for(namespace)
+    env = :"#{namespace}_#{Rails.env}"
+    keys = %i(host port database username)
+    config = ActiveRecord::Base.configurations.resolve(env).configuration_hash.slice(*keys)
+    default_config = ActiveRecord::Base.configurations.resolve(Rails.env.to_sym).configuration_hash.slice(*keys)
+    host, default_host = config.delete(:host), default_config.delete(:host)
+    return establish_connection(env) unless config == default_config
+    return if host == default_host
+    return establish_connection(env) unless Host.domains.has_key? :server
+    return if Host.domains[:server].find{ |name, _ip| name == host }&.last == default_host
+    establish_connection(env)
+  end
+
   def self.with_raw_connection
     with_connection do |ar_conn|
       yield ar_conn.raw_connection, ar_conn
