@@ -17,7 +17,9 @@ class ActiveRecord::Relation::WithAtomicOperationsTest < ActiveSupport::TestCase
   let(:retry){ true }
 
   test '.find_or_create_by!!' do
-    record = Test::Record.find_or_create_by!(id: 1)
+    record = Test::Record.find_or_create_by!(id: 1) do |object|
+      object.string = 'string-1'
+    end
     assert_equal true, record.persisted?
     assert_equal 1, record.id
     assert_equal 'Name', record.name

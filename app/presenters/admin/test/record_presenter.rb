@@ -11,7 +11,9 @@ module Admin::Test
     field :json
     field :lock_version
     field :password
-    field :string
+    field :string do
+      help "Any text"
+    end
     field :text
     field :time
     field :uuid

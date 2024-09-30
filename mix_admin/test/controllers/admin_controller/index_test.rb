@@ -77,8 +77,9 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
       assert_equal [false],                                                              search_statements('{string}=,')
       assert_equal [false],                                                              search_statements('{id}<1,2')
       assert_equal [false],                                                              search_statements('{id}=_null')
-      assert_equal [true, "string IS NULL"],                                             search_statements('{string}=_null')
-      assert_equal [true, "string IS NOT NULL"],                                         search_statements('{string}!_null')
+      assert_equal [false],                                                              search_statements('{string}=_null') # required
+      assert_equal [true, "text IS NULL"],                                               search_statements('{text}=_null')
+      assert_equal [true, "text IS NOT NULL"],                                           search_statements('{text}!_null')
       assert_equal [true, "boolean = TRUE"],                                             search_statements('=_true')
       assert_equal [true, "boolean IS NULL OR boolean = FALSE"],                         search_statements('=_false')
       assert_equal [true, "boolean != FALSE"],                                           search_statements('!_false')

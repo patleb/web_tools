@@ -27,6 +27,8 @@ module Test
       j_interval: :interval
     )
 
+    validates :string, presence: true
+
     def raw_search_words
       [name, info, title, string, text, j_string, j_text].concat(related_records.flat_map(&:name))
     end
