@@ -150,8 +150,7 @@ class AdminController < LibController
 
   def on_too_many_rows(exception)
     if @action.export?
-      flash[:error] = exception.message
-      redirect_back
+      redirect_back alert: exception.message
     else
       response.set_header('X-Status-Reason', exception.message)
       head 413
