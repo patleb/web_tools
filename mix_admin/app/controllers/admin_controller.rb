@@ -31,7 +31,7 @@ class AdminController < LibController
   end
 
   def render_404(*)
-    Rails.env.local? ? render_500(*) : super
+    Rails.env.development? ? render_500(*) : super
   end
 
   def root_path
