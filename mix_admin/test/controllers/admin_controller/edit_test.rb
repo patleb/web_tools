@@ -5,7 +5,7 @@ class AdminController::EditTest < ActionDispatch::IntegrationTest
   include AdminControllerContext
 
   context '#edit' do
-    test 'render :edit' do
+    test 'render :edit as GET' do
       assert_equal '/model/:model_name/:id/edit', MixAdmin.routes[:edit]
       assert_equal "/model/#{model_name}/1/edit", MixAdmin::Routes.edit_path(model_name: model_name, id: 1)
 
@@ -40,6 +40,13 @@ class AdminController::EditTest < ActionDispatch::IntegrationTest
         assert_select "[href='##{field.name}_field'][data-turbolinks-history=false]"
       end
       assert_select ".sidebar li.bordered a[href='http://127.0.0.1:3333/model/#{model_name}']"
+    end
+
+    test 'render :edit as POST' do
+      post "/model/#{model_name}/1/edit", params: { model_name.underscore => { string: 'new-string' } }
+
+      record = Test::Extensions::RecordExtension.find(1)
+      assert_equal 'new-string', record.string
     end
   end
 end
