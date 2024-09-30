@@ -272,7 +272,7 @@ module ActionView::Helpers::TagHelper
       options[:class] = merge_classes(options, dom_class(@_form, action))
     end
     options[:role] ||= 'form'
-    tags << input_(type: 'hidden', name: '_back', value: back_path) if options.delete(:back)
+    tags += input_(type: 'hidden', name: '_back', value: back_path) if options.delete(:back)
     [tags, content]
   end
 
