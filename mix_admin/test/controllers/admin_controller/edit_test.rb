@@ -29,8 +29,8 @@ class AdminController::EditTest < ActionDispatch::IntegrationTest
       assert_equal 'Record extension | Web Tools', self[:@meta][:title]
       assert_equal 'Web Tools', self[:@meta][:app]
       assert_selects '.js_scroll_menu', '.js_model'
-      assert_select 'body', class: /admin_layout/
-      assert_select 'body', class: /admin_show_template/
+      assert_select 'body.admin_layout'
+      assert_select 'body.admin_edit_template'
       Admin::Action.all(:member?).select(&:navigable?).each do |action|
         assert_select ".nav_actions .#{action.css_class}"
       end
