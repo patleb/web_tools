@@ -9,18 +9,18 @@ class AdminController < LibController
   end
 
   rescue_from RoutingError, ActionController::ParameterMissing, ActiveRecord::RecordNotFound, with: :render_404
-  rescue_from ActiveRecord::RecordInvalid, with: :on_record_invalid
-  rescue_from ActiveRecord::StaleObjectError, with: :on_stale_object_error
+  rescue_from ActiveRecord::RecordInvalid,     with: :on_record_invalid
+  rescue_from ActiveRecord::StaleObjectError,  with: :on_stale_object_error
   rescue_from ActiveRecord::InvalidForeignKey, with: :on_invalid_foreign_key
-  rescue_from TooManyRows, with: :on_too_many_rows
+  rescue_from TooManyRows,                     with: :on_too_many_rows
 
   authenticate
 
   before_action :set_action
-  before_action :set_model, if: -> { @action.model? }
-  before_action :redirect_on_cancel, if: -> { params[:_cancel] }
-  before_action :set_presenters, if: -> { @action.presenters? }
-  before_action :set_attributes, if: -> { defined?(@new) && (@new || @action.member?) }
+  before_action :set_model,          if: -> { @action.model? }
+  before_action :redirect_on_cancel, if: -> { @model && params[:_cancel] }
+  before_action :set_presenters,     if: -> { @action.presenters? }
+  before_action :set_attributes,     if: -> { defined?(@new) && (@new || @action.member?) }
 
   attr_reader :action
 
@@ -56,15 +56,15 @@ class AdminController < LibController
     @action = Admin::Action.find(action_name.to_sym)
   end
 
-  def redirect_on_cancel
-    redirect_back notice: t('admin.flash.noaction')
-  end
-
   def set_model
     model_name = params.require(:model_name).to_admin_name
     raise RoutingError unless MixAdmin.config.models_pool.include? model_name
     raise RoutingError unless (@model = model_name.to_const.admin_model).allowed?
     @section = @model.section(@action.section_name)
+  end
+
+  def redirect_on_cancel
+    redirect_back notice: t('admin.flash.noaction')
   end
 
   def set_presenters
