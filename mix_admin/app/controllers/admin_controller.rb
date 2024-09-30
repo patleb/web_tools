@@ -162,6 +162,10 @@ class AdminController < LibController
     render action_name, status: :not_acceptable
   end
 
+  def render_404(*)
+    Rails.env.local? ? render_500(*) : super
+  end
+
   def success_notice
     super(@model.label)
   end
