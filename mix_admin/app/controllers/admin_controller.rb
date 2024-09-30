@@ -30,6 +30,10 @@ class AdminController < LibController
     class_eval(&action.controller)
   end
 
+  def render_404(*)
+    Rails.env.local? ? render_500(*) : super
+  end
+
   def root_path
     admin_root_path
   end
@@ -160,10 +164,6 @@ class AdminController < LibController
   def render_error
     flash.now[:alert] = admin_alert(@presenter)
     render action_name, status: :not_acceptable
-  end
-
-  def render_404(*)
-    Rails.env.local? ? render_500(*) : super
   end
 
   def admin_notice
