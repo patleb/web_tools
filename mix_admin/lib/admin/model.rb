@@ -103,121 +103,121 @@ module Admin
 
     class << self
       delegate :primary_key, :table_name, to: :klass
+    end
 
-      def build(attributes = nil)
-        if klass.respond_to? :admin_defaults
-          attributes = klass.admin_defaults.merge(attributes || {})
-        end
-        klass.new(attributes)
+    def self.build(attributes = nil)
+      if klass.respond_to? :admin_defaults
+        attributes = klass.admin_defaults.merge(attributes || {})
       end
+      klass.new(attributes)
+    end
 
-      def allowed_models
-        MixAdmin.config.models_pool.select_map do |model_name|
-          next unless (model = model_name.to_const.admin_model).allowed? :index
-          model
-        end
+    def self.allowed_models
+      MixAdmin.config.models_pool.select_map do |model_name|
+        next unless (model = model_name.to_const.admin_model).allowed? :index
+        model
       end
+    end
 
-      def viewable_url(context = self, **params)
-        return unless (action = viewable_action(context))
-        context.allowed_url(action, **params)
+    def self.viewable_url(context = self, **params)
+      return unless (action = viewable_action(context))
+      context.allowed_url(action, **params)
+    end
+
+    def self.viewable?(...)
+      !!viewable_action(...)
+    end
+
+    def self.viewable_action(context = self)
+      MixAdmin.config.viewable_actions.find{ |action| context.allowed? action }
+    end
+
+    def self.allowed_url(action = action_name, context = self, **params)
+      context.url_for(action, **params) if context.allowed? action
+    end
+
+    def self.allowed?(action = action_name, object = klass)
+      Admin::Action.allowed?(action) && can?(object, action)
+    end
+
+    def self.url_for(action, **params)
+      MixAdmin::Routes.url_for(action: action, model_name: to_param, **params)
+    end
+
+    def self.polymorphic_parents(klass, name)
+      ActiveRecord::Base.polymorphic_parents[klass.name][name] || []
+    end
+
+    def self.pluralize(count)
+      count == 1 ? label : label_plural
+    end
+
+    def self.weight
+      "#{(navigation_weight + 32768).to_s}#{label.downcase}"
+    end
+
+    def self.i18n_scope
+      :adminrecord
+    end
+
+    def self.i18n_key
+      @i18n_key ||= model_name.underscore
+    end
+
+    def self.key
+      @key ||= model_name.full_underscore
+    end
+
+    def self.model_name
+      @model_name ||= name && name.delete_prefix('Admin::').delete_suffix('Presenter')
+    end
+
+    def self.klass
+      @klass ||= model_name.to_const!
+    end
+
+    def self.to_param
+      @to_param ||= klass.model_name.admin_param
+    end
+
+    def self.param_key
+      @param_key ||= klass.model_name.param_key
+    end
+
+    def self.pretty_name(...)
+      klass.model_name.human(...)
+    end
+
+    def self.map_associations(presenter)
+      associations.map do |association|
+        presenters = presenter[association.name].map(&:admin_presenter).select(&:allowed?)
+        yield(association, Array.wrap(presenters))
       end
+    end
 
-      def viewable?(...)
-        !!viewable_action(...)
+    def self.associations
+      associations_hash.values
+    end
+
+    def self.associations_hash
+      @associations_hash ||= klass.reflect_on_all_associations.each_with_object({}.to_hwia) do |association, hash|
+        hash[association.name] = Association.new(association, klass)
       end
+    end
 
-      def viewable_action(context = self)
-        MixAdmin.config.viewable_actions.find{ |action| context.allowed? action }
-      end
+    def self.columns
+      columns_hash.values
+    end
 
-      def allowed_url(action = action_name, context = self, **params)
-        context.url_for(action, **params) if context.allowed? action
-      end
-
-      def allowed?(action = action_name, object = klass)
-        Admin::Action.allowed?(action) && can?(object, action)
-      end
-
-      def url_for(action, **params)
-        MixAdmin::Routes.url_for(action: action, model_name: to_param, **params)
-      end
-
-      def polymorphic_parents(klass, name)
-        ActiveRecord::Base.polymorphic_parents[klass.name][name] || []
-      end
-
-      def pluralize(count)
-        count == 1 ? label : label_plural
-      end
-
-      def weight
-        "#{(navigation_weight + 32768).to_s}#{label.downcase}"
-      end
-
-      def i18n_scope
-        :adminrecord
-      end
-
-      def i18n_key
-        @i18n_key ||= model_name.underscore
-      end
-
-      def key
-        @key ||= model_name.full_underscore
-      end
-
-      def model_name
-        @model_name ||= name && name.delete_prefix('Admin::').delete_suffix('Presenter')
-      end
-
-      def klass
-        @klass ||= model_name.to_const!
-      end
-
-      def to_param
-        @to_param ||= klass.model_name.admin_param
-      end
-
-      def param_key
-        @param_key ||= klass.model_name.param_key
-      end
-
-      def pretty_name(...)
-        klass.model_name.human(...)
-      end
-
-      def map_associations(presenter)
-        associations.map do |association|
-          presenters = presenter[association.name].map(&:admin_presenter).select(&:allowed?)
-          yield(association, Array.wrap(presenters))
-        end
-      end
-
-      def associations
-        associations_hash.values
-      end
-
-      def associations_hash
-        @associations_hash ||= klass.reflect_on_all_associations.each_with_object({}.to_hwia) do |association, hash|
-          hash[association.name] = Association.new(association, klass)
-        end
-      end
-
-      def columns
-        columns_hash.values
-      end
-
-      def columns_hash
-        @columns_hash ||= {
-          columns_hash: false,
-          attribute_types: true,
-          virtual_columns_hash: true
-        }.each_with_object({}.to_hwia) do |(columns, virtual), hash|
-          next unless klass.respond_to? columns
-          klass.public_send(columns).each do |name, column|
-            hash[name] ||= Column.new(column, klass, name, virtual)
-          end
+    def self.columns_hash
+      @columns_hash ||= {
+        columns_hash: false,
+        attribute_types: true,
+        virtual_columns_hash: true
+      }.each_with_object({}.to_hwia) do |(columns, virtual), hash|
+        next unless klass.respond_to? columns
+        klass.public_send(columns).each do |name, column|
+          hash[name] ||= Column.new(column, klass, name, virtual)
         end
       end
     end
