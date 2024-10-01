@@ -7,9 +7,9 @@ module ActiveRecord::Base::WithDiscard
     class_attribute :discard_column
     self.discard_column = :deleted_at
 
-    scope :undiscarded,    -> { where(discard_column => nil) }
-    scope :discarded,      -> { with_discarded.where.not(discard_column => nil) }
-    scope :with_discarded, -> { unscope(where: discard_column) }
+    scope :undiscarded,    -> { discardable ? where(discard_column => nil) : all }
+    scope :discarded,      -> { discardable ? with_discarded.where.not(discard_column => nil) : all }
+    scope :with_discarded, -> { discardable ? unscope(where: discard_column) : all }
 
     alias_method :show?, :undiscarded?
 
