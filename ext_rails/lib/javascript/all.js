@@ -1,1 +1,1 @@
-import '@@lib/ext_rails/concepts/all'
+import '@@lib/ext_rails/concepts/lib_concept'
