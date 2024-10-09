@@ -1,7 +1,14 @@
+# frozen_string_literal: true
+
 module Admin::Model::Searchable
   STATEMENTS = /\s(?=(?:[^"]|"[^"]*")*$)/
+  SPACE = '[:space:]'
+  COMMA = '[:comma:]'
+  QUOTE = '[:quote:]'
   QUOTED_STRING = /^".*"$/
   QUOTES = /(^"\s*|\s*"$)/
+  SINGLE_QUOTED_STRING = /^'.*'$/
+  SINGLE_QUOTES = /(^'\s*|\s*'$)/
   NAME = /[a-z][a-z_0-9]*/
   FIELD = /(_|#{NAME}(?:-#{NAME})*)(?:\.(#{NAME}))?/
   IDEM = '{_}'
@@ -63,18 +70,18 @@ module Admin::Model::Searchable
   end
 
   # NOTE reserved characters
-  # \s: AND condition (ex.: "searching words" --> ... ILIKE 'searching' AND ... ILIKE 'words')
-  # " : preserve query string words grouping (ex.: "in this order" --> ... ILIKE 'in this order')
+  # \s: [escapable] AND condition (ex.: "searching words" --> ... ILIKE 'searching' AND ... ILIKE 'words')
+  # " : [escapable] preserve query string words grouping (ex.: "in this order" --> ... ILIKE 'in this order')
   # ^ : transform string to "starting with%" for ILIKE (ex.: "^starting with")
   # $ : transform string to "%ending with" for ILIKE (ex.: "ending with$")
   # {}: specify semicolon-separated fields (ex.: {namespaced-model_name.field_name|other_field})
   # _ : used in fields {_} to reuse the previous specified fields (ex.: {name}>2 {_}<5))
-  # = : comparison operators == and =
+  # = : comparison operators == and = or ILIKE for string
   # ! : comparison operators != and ! (! is the same as !=)
   # < : comparison operators < and <=
   # > : comparison operators > and >=
   # | : OR condition for multiple fields (ex.: {field_1|field_2}) or operators (ex.: =value_1|=value_2)
-  # , : IN operator for multiple values (ex.: =value_1,value_2 --> ... IN ('value_1','value_2'))
+  # , : [escapable] IN operator for multiple tokens (ex.: =value_1,value_2 --> ... IN ('value_1','value_2'))
   def query_scope(scope, section, query)
     return [scope, []] unless query.is_a?(String) && query.present?
     query_fields = section.query_fields.with_indifferent_access
@@ -139,10 +146,10 @@ module Admin::Model::Searchable
 
   def parse_query(query)
     fields = nil
-    query = query.gsub(/(\S)"/, '\1 "').gsub(/"(\S)/, '" \1').squish
+    query = escape_string(query).gsub(/(\S)"/, '\1 "').gsub(/"(\S)/, '" \1').squish
     query.split(STATEMENTS).each_with_object([[], []]) do |statement, (ands_of_ors, errors)|
       ors = []
-      statement_was = statement
+      statement_was = unescape_string(statement)
       statement, fields = split_statement_fields(statement, fields)
       case statement
       when nil
@@ -285,6 +292,8 @@ module Admin::Model::Searchable
   end
 
   def parse_string(string)
+    string = unescape_string(string)
+    string.gsub! SINGLE_QUOTES, '' if string.match? SINGLE_QUOTED_STRING
     start_with = !!string.delete_prefix!('^')
     end_with = !!string.delete_suffix!('$')
     string = simplified_search_string ? string.simplify : ActiveRecord::Base.sanitize_sql_like(string)
@@ -308,5 +317,13 @@ module Admin::Model::Searchable
     else
       1.public_send(type).ago.public_send("beginning_of_#{type}")..Time.current.end_of_hour
     end
+  end
+
+  def escape_string(string)
+    string.gsub(/\\ /, SPACE).gsub(/\\,/, COMMA).gsub(/\\"/, QUOTE)
+  end
+
+  def unescape_string(string)
+    string.gsub(SPACE, ' ').gsub(COMMA, ',').gsub(QUOTE, '"')
   end
 end
