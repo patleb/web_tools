@@ -3,7 +3,7 @@
 module Admin
   module Fields
     class DateTime < Admin::Field
-      register_option :sort_reverse?, memoize: true do
+      register_option :sort_reverse? do
         true
       end
 

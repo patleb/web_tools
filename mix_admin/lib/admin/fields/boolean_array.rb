@@ -3,7 +3,7 @@ module Admin
     class BooleanArray < Boolean
       prepend Field::AsArray
 
-      register_option :pretty_separator, memoize: true do
+      register_option :pretty_separator do
         '&nbsp;'.html_safe
       end
     end

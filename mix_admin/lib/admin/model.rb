@@ -20,27 +20,15 @@ module Admin
       klass.all
     end
 
-    register_class_option :discardable?, memoize: true do
+    register_class_option :discardable? do
       klass.discardable?
     end
 
-    register_class_option :listable?, memoize: true do
+    register_class_option :listable? do
       klass.listable?
     end
 
-    register_class_option :label, memoize: :locale do
-      pretty_name
-    end
-
-    register_class_option :label_plural, memoize: :locale do
-      if label != (label_plural = pretty_name(count: Float::INFINITY, default: label))
-        label_plural
-      else
-        label.pluralize(Current.locale)
-      end
-    end
-
-    register_class_option :navigation_weight, memoize: true do
+    register_class_option :navigation_weight do
       0
     end
 
@@ -64,32 +52,32 @@ module Admin
       end.upcase
     end
 
-    register_class_option :navigation_i18n_key, memoize: true do
+    register_class_option :navigation_i18n_key do
       nil
     end
 
-    register_class_option :navigation_icon, memoize: true do
+    register_class_option :navigation_icon do
       nil
     end
 
-    register_class_option :save_label, memoize: :locale do
+    register_class_option :save_label do
       t(:save, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save'))
     end
 
-    register_class_option :save_and_new_label, memoize: :locale do
+    register_class_option :save_and_new_label do
       t(:save_and_new, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save_and_new'))
     end
 
-    register_class_option :save_and_edit_label, memoize: :locale do
+    register_class_option :save_and_edit_label do
       t(:save_and_edit, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save_and_edit'))
     end
 
-    register_class_option :cancel_label, memoize: :locale do
+    register_class_option :cancel_label do
       t(:cancel, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.cancel'))
     end
 
-    register_class_option :simplified_search_string?, memoize: true do
-      MixAdmin.config.simplified_search_string?
+    register_class_option :simplify_search_string? do
+      MixAdmin.config.simplify_search_string?
     end
 
     register_class_option :record_label_method, instance_reader: true, memoize: true do
@@ -132,6 +120,7 @@ module Admin
     end
 
     def self.allowed?(action = action_name, object = klass)
+      return false if !discardable? && TRASH_ACTIONS.include?(action.to_sym)
       Admin::Action.allowed?(action) && can?(object, action)
     end
 
@@ -143,8 +132,12 @@ module Admin
       ActiveRecord::Base.polymorphic_parents[klass.name][name] || []
     end
 
-    def self.pluralize(count)
-      count == 1 ? label : label_plural
+    def self.label(*)
+      klass.admin_label(*)
+    end
+
+    def self.label_plural
+      klass.admin_label_plural
     end
 
     def self.weight
@@ -179,14 +172,16 @@ module Admin
       @param_key ||= klass.model_name.param_key
     end
 
-    def self.pretty_name(...)
-      klass.model_name.human(...)
-    end
-
-    def self.map_associations(presenter)
-      associations.map do |association|
-        presenters = presenter[association.name].map(&:admin_presenter).select(&:allowed?)
-        yield(association, Array.wrap(presenters))
+    def self.associated_counts(presenter)
+      associations.each_with_object(allowed: [], restricted: []) do |association, memo|
+        klass, type = association.klass, :restricted
+        if (model = allowed_models.find{ |model| model.klass == klass })
+          type = :allowed
+        else
+          next unless can? klass, :index
+        end
+        next unless (count = presenter[association.name].with_discarded.size) > 0
+        memo[type] << [association, count, model].compact
       end
     end
 
@@ -252,7 +247,7 @@ module Admin
       label = if record.try("#{record_label_method}_changed?")
         record.public_send("#{record_label_method}_was")
       elsif record.new_record?
-        "#{t('admin.misc.new')} #{self.class.pretty_name}"
+        "#{t('admin.misc.new')} #{self.class.label}"
       else
         record.public_send(record_label_method).presence || record.admin_label
       end

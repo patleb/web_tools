@@ -8,23 +8,7 @@ module Admin
         association&.type == :belongs_to ? association : false
       end
 
-      register_option :sortable, memoize: true do
-        if associated_model.columns_hash.has_key? associated_model.record_label_method
-          associated_model.record_label_method
-        else
-          { model.table_name => method_name }
-        end
-      end
-
-      register_option :queryable, memoize: true do
-        if associated_model.columns_hash.has_key? associated_model.record_label_method
-          [associated_model.record_label_method, { klass => method_name }]
-        else
-          { klass => method_name }
-        end
-      end
-
-      register_option :children_names, memoize: true do
+      register_option :children_names do
         [foreign_key]
       end
 

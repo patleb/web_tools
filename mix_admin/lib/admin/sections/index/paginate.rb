@@ -4,19 +4,19 @@ module Admin
       extend ActiveSupport::Concern
 
       included do
-        register_option :paginate?, memoize: true do
+        register_option :paginate? do
           true
         end
 
-        register_option :items_per_page, memoize: true do
+        register_option :items_per_page do
           MixAdmin.config.items_per_page
         end
 
-        register_option :shortcuts, memoize: true do
+        register_option :shortcuts do
           MixAdmin.config.shortcuts
         end
 
-        register_option :countless?, memoize: true do
+        register_option :countless? do
           false
         end
       end

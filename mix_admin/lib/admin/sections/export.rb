@@ -1,7 +1,7 @@
 module Admin
   module Sections
     class Export < Index
-      register_option :encoding, memoize: true do
+      register_option :encoding do
         klass.encoding
       end
 

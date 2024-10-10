@@ -10,7 +10,7 @@ module Admin
 
       OPERATORS = ['=', '!=', '<', '<=', '>', '>=']
 
-      register_option :description, memoize: :locale do
+      register_option :description do
         nil
       end
 
@@ -38,7 +38,7 @@ module Admin
         scope.values[:where].send(:predicates).size > 1
       end
 
-      register_option :sort_by, memoize: true do
+      register_option :sort_by do
         if model.columns_hash.has_key? :updated_at
           :updated_at
         else
@@ -46,7 +46,7 @@ module Admin
         end
       end
 
-      register_option :sticky?, memoize: true do
+      register_option :sticky? do
         MixAdmin.config.sticky?
       end
 
@@ -67,7 +67,7 @@ module Admin
 
       def sort_options(name, reverse = nil)
         field = fields_hash[name.try(:to_sym)] || fields_hash[sort_by]
-        name = field.sort_column
+        name = field.sort_column || "#{model.table_name}.#{sort_by}"
         reverse = field.sort_reverse? if reverse.nil?
         { name: name, reverse: reverse.try(:to_b) }
       end

@@ -105,7 +105,7 @@ module Admin::Model::Searchable
           fields.each do |field|
             table, column = field.query_column.split('.')
             tables << table
-            column = field.query_column if MixAdmin.config.namespaced_query_column?
+            column = field.query_column if field.full_query_column?
             value = parse_search_value(field, value)
             values.concat(Array.wrap(value))
             ors << operator.gsub('{column}', column)
@@ -284,7 +284,7 @@ module Admin::Model::Searchable
       when token.to_f? then [:numeric, token.to_f]
       when token.to_d? then [:numeric, token.to_d]
       when array
-        [:string, simplified_search_string ? token.simplify : token]
+        [:string, simplify_search_string ? token.simplify : token]
       else
         [:string, parse_string(token)]
       end
@@ -296,7 +296,7 @@ module Admin::Model::Searchable
     string.gsub! SINGLE_QUOTES, '' if string.match? SINGLE_QUOTED_STRING
     start_with = !!string.delete_prefix!('^')
     end_with = !!string.delete_suffix!('$')
-    string = simplified_search_string ? string.simplify : ActiveRecord::Base.sanitize_sql_like(string)
+    string = simplify_search_string ? string.simplify : ActiveRecord::Base.sanitize_sql_like(string)
     return string if start_with && end_with
     return string.concat('%') if start_with
     return string.prepend('%') if end_with

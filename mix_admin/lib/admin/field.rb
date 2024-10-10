@@ -58,7 +58,7 @@ module Admin
       end
     end
 
-    register_option :label, memoize: :locale do
+    register_option :label do
       klass.human_attribute_name(name).upcase_first
     end
 
@@ -66,7 +66,7 @@ module Admin
       format_value(value).presence || pretty_blank
     end
 
-    register_option :pretty_blank, memoize: :locale do
+    register_option :pretty_blank do
       '-'.html_safe
     end
 
@@ -83,24 +83,28 @@ module Admin
       end
     end
 
-    register_option :sortable?, memoize: true do
-      !method? || method_searchable? || children_names.first || false
+    register_option :sortable? do
+      queryable
     end
 
-    register_option :sort_reverse?, memoize: true do
+    register_option :sort_reverse? do
       false
     end
 
-    register_option :queryable?, memoize: true do
+    register_option :queryable? do
       !method? || method_searchable? || children_names.first || false
     end
 
-    register_option :method_searchable?, memoize: true do
+    register_option :full_query_column? do
+      MixAdmin.config.full_query_column?
+    end
+
+    register_option :method_searchable? do
       false
     end
 
     # NOTE first one is used for sort/search
-    register_option :children_names, memoize: true do
+    register_option :children_names do
       []
     end
 
@@ -260,9 +264,9 @@ module Admin
     end
 
     def errors
-      ([name] + children_names).uniq.map do |column_name|
+      ([name] + children_names).uniq.flat_map do |column_name|
         presenter[:errors][column_name]
-      end.uniq.flatten
+      end.uniq
     end
 
     def primary_key_link(label = pretty_value)
@@ -300,51 +304,40 @@ module Admin
     end
 
     def sort_column
-      @sort_column ||= case (column_name = sortable)
-        when true           then "#{model.table_name}.#{name}"
-        when false          then "#{model.table_name}.#{section.sort_by}"
-        when String, Symbol then column_name.to_s.include?('.') ? column_name : "#{model.table_name}.#{column_name}"
-        when Hash           then column_name.first.join('.')
-        else                     "#{associated_model.table_name}.#{column_name}" if association?
-        end || raise("invalid :sortable column, can't be nil")
+      return @sort_column if defined? @sort_column
+      @sort_column = column_for(sortable)
     end
 
     def query_column
-      @query_column ||= case (column_name = queryable)
-        when true           then "#{model.table_name}.#{name}"
-        when String, Symbol then column_name.to_s.include?('.') ? column_name : "#{model.table_name}.#{column_name}"
-        when Hash           then column_name.first.join('.') # { table_name: column_name }
-        else                     "#{associated_model.table_name}.#{column_name}" if association?
-        end
+      return @query_column if defined? @query_column
+      @query_column = column_for(queryable)
     end
 
     def query_fields
-      @query_fields ||= case queryable
-        when true  then { model.to_param => { name => self } }
-        when false then {}
+      @query_fields ||= begin
+        field_model = association? ? associated_model : model
+        case (field_name = queryable)
+        when true          then { field_model.to_param => { name => self } }
+        when false, /[.,]/ then {}
+        when String, Symbol
+          field_name = field_name.to_sym
+          fields_hash = association? ? associated_model.section(:index).fields_hash : section.fields_hash
+          { field_model.to_param => { field_name => fields_hash[field_name] } }
         else
-          Array.wrap(queryable).each_with_object({}) do |field_name, hash|
-            case field_name
-            when String, Symbol
-              if association?
-                model_param, fields_hash = associated_model.to_param, associated_model.section(:index).fields_hash
-              else
-                model_param, fields_hash = model.to_param, section.fields_hash
-              end
-              field_name = field_name.to_sym
-              field = fields_hash[field_name]
-              (hash[model_param] ||= {})[field_name] ||= field if field
-            when Hash # { ModelName => [:field_name] }
-              model, field_names = field_name.first
-              model = model.to_const! if model.is_a? String
-              model, field_names = model.admin_model, Array.wrap(field_names).map(&:to_sym)
-              fields_hash = model.section(:index).fields_hash.slice(*field_names)
-              (hash[model.to_param] ||= {}).reverse_merge!(fields_hash) if fields_hash.present?
-            else
-              raise "invalid :queryable field: [#{field_name}]"
-            end
-          end
+          raise "invalid :queryable field: [#{field_name}]"
         end
+      end
+    end
+
+    private
+
+    def column_for(column_name)
+      field_model = association? ? associated_model : model
+      case column_name
+      when true           then "#{field_model.table_name}.#{name}"
+      when /[.,]/         then column_name
+      when String, Symbol then "#{field_model.table_name}.#{column_name}"
+      end
     end
   end
 end

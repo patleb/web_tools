@@ -17,10 +17,10 @@ module MixAdmin
     attr_writer :hidden_fields
     attr_writer :denied_fields
     attr_writer :readonly_fields
-    attr_accessor :simplified_search_string
-    alias_method  :simplified_search_string?, :simplified_search_string
-    attr_accessor :namespaced_query_column
-    alias_method  :namespaced_query_column?, :namespaced_query_column
+    attr_accessor :simplify_search_string
+    alias_method  :simplify_search_string?, :simplify_search_string
+    attr_accessor :full_query_column
+    alias_method  :full_query_column?, :full_query_column
 
     def root_path
       @root_path ||= "/#{root.to_s.delete_prefix('/').delete_suffix('/')}"

@@ -3,7 +3,7 @@
 module Admin
   module Fields
     class Boolean < Admin::Field
-      register_option :export_format, memoize: true do
+      register_option :export_format do
         :boolean_and_null
       end
 

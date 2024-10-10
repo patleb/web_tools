@@ -1,7 +1,7 @@
 module Admin
   module Fields
     class Interval < Admin::Field
-      register_option :pretty_format, memoize: true do
+      register_option :pretty_format do
         :long
       end
 

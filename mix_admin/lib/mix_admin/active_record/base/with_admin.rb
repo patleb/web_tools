@@ -21,6 +21,25 @@ module ActiveRecord::Base::WithAdmin
         end
       end
     end
+
+    def admin_label(count = nil)
+      if count && (Current.locale == :fr ? count > 1 : count != 1)
+        admin_label_plural
+      else
+        (@admin_label ||= {})[Current.locale] ||= model_name.human
+      end
+    end
+
+    def admin_label_plural
+      (@admin_label_plural ||= {})[Current.locale] ||= begin
+        label = admin_label
+        if label != (label_plural = model_name.human(count: Float::INFINITY, default: label))
+          label_plural
+        else
+          label.pluralize(Current.locale)
+        end
+      end
+    end
   end
 
   included do
@@ -33,7 +52,7 @@ module ActiveRecord::Base::WithAdmin
   end
 
   def admin_label
-    "#{model_name.human} ##{public_send(self.class.primary_key)}"
+    "#{self.class.admin_label} ##{public_send(self.class.primary_key)}"
   end
 end
 

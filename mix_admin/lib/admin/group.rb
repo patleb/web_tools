@@ -25,7 +25,7 @@ module Admin
       name == :default ? presenter.record_label : name.to_s.humanize
     end
 
-    register_option :help, memoize: :locale do
+    register_option :help do
       nil
     end
 

@@ -3,7 +3,7 @@
 module Admin
   module Sections
     class Show < Admin::Section
-      register_option :memoize_scroll_items?, memoize: true do
+      register_option :memoize_scroll_items? do
         true
       end
 

@@ -18,11 +18,11 @@ module Admin
         end
       end
 
-      register_option :pretty_separator, memoize: true do
+      register_option :pretty_separator do
         '<br>'.html_safe
       end
 
-      register_option :array_bullet, memoize: true do
+      register_option :array_bullet do
         '- '.html_safe
       end
 
@@ -30,7 +30,7 @@ module Admin
         export_array(value)&.join(export_separator)
       end
 
-      register_option :export_separator, memoize: true do
+      register_option :export_separator do
         "\n"
       end
     end

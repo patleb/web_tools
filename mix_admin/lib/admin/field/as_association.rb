@@ -13,17 +13,20 @@ module Admin
         pretty_association(value).join(pretty_separator).html_safe
       end
 
-      register_option :pretty_separator, memoize: true do
+      register_option :pretty_separator do
         '<br>'.html_safe
       end
 
-      register_option :sanitized?, memoize: true do
+      register_option :sanitized? do
         false
       end
 
-      register_option :query_fields, memoize: true do
-        next __super__(:query_fields) unless queryable == :all
-        associated_model.section(:index).fields
+      register_option :queryable do
+        if associated_model.columns_hash.has_key? associated_model.record_label_method
+          associated_model.record_label_method
+        else
+          method_name
+        end
       end
 
       register_option :eager_load do
@@ -38,20 +41,8 @@ module Admin
         false
       end
 
-      register_option :label, memoize: :locale do
-        klass.human_attribute_name(property.name)
-      end
-
-      register_option :include_blank?, memoize: true do
+      register_option :include_blank? do
         true
-      end
-
-      register_option :removable? do
-        !property.required?
-      end
-
-      register_option :orderable? do
-        false
       end
     end
 

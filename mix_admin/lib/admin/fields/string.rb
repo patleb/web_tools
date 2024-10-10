@@ -3,11 +3,11 @@
 module Admin
   module Fields
     class String < Admin::Field
-      register_option :sanitized?, memoize: true do
+      register_option :sanitized? do
         false
       end
 
-      register_option :length, memoize: true do
+      register_option :length do
         property.try(:length)
       end
 

@@ -6,10 +6,6 @@ module Admin
         association.list_parent?
       end
 
-      def allowed_field?
-        action.sort? && super
-      end
-
       def editable?
         false
       end

@@ -14,7 +14,7 @@ module Admin
         false
       end
 
-      register_option :children_names, memoize: true do
+      register_option :children_names do
         [foreign_key, foreign_type]
       end
 
