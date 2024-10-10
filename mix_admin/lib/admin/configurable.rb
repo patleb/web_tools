@@ -81,35 +81,35 @@ module Admin
             @values[name] = [value, memoized]
           else
             value, memoized = @values[name]
+            case value
+            when Proc
+              memoized_value(name, memoized, memoize, default_memoize){ with_recurring(name, value, default_block) }
+            when nil
+              memoized_value(name, memoized, memoize, default_memoize, &default_block)
+            when Admin::Configurable, Class
+              memoized_value(name, memoized, memoize, default_memoize){ value.with(bindings).public_send(name) }
+            else
+              value
+            end
+          end
+        end
+
+        # NOTE there are max 10 conditions if memoized value is returned, 8 conditions if not memoized
+        unless context.method_defined? :memoized_value
+          context.define_method :memoized_value do |name, memoized, memoize, default_memoize, &block|
             if memoize.nil?
               memoized = default_memoize if memoized.nil?
             else
               memoized = memoize
             end
-            case value
-            when nil, Proc, Admin::Configurable, Class
-              if memoized
-                values = @memoized[name] ||= {}
-                key = case memoized
-                  when true           then memoized
-                  when :locale        then Current.locale
-                  when :locale_role   then [Current.locale, Current.user.as_role]
-                  when :role          then Current.user.as_role
-                  when String, Symbol then public_send(memoized)
-                  else raise("The #{name} :memoized key is invalid.")
-                  end
-                return values[key] if values.has_key? key
-              end
-              case value
-              when nil
-                value = instance_eval(&default_block)
-              when Proc
-                value = with_recurring(name, value, default_block)
-              when Admin::Configurable, Class
-                value = value.with(bindings).public_send(name)
-              end
-              values[key] = value if memoized
+            # memoized = false unless ENV['DEBUGGER_HOST']
+            if memoized
+              values = @memoized[name] ||= {}
+              key = memoized == :locale ? Current.locale : :value
+              return values[key] if values.has_key? key
             end
+            value = instance_eval(&block)
+            values[key] = value if memoized
             value
           end
         end
@@ -177,7 +177,7 @@ module Admin
 
     def with(bindings)
       return self if bindings.empty? || bindings == self.bindings
-      object = clone # TODO referenced ivars aren't copied --> is it problematic?
+      object = clone
       object.bindings = bindings
       object
     end
