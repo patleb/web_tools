@@ -6,7 +6,7 @@ module Admin
       end
 
       def allowed_field?
-        action.trash? && super
+        action.trash? || super
       end
 
       def editable?
