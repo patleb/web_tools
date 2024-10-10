@@ -19,12 +19,11 @@ module Admin
       end
 
       register_option :enum_method, memoize: true do
-        plural_name = name.to_s.pluralize
         method_name = "enum_#{plural_name}"
-        if klass.respond_to?(method_name) || presenter.respond_to?(method_name)
+        if klass.respond_to?(method_name) || model.respond_to?(method_name)
           method_name
         else
-          plural_name
+          name.to_s.pluralize
         end
       end
 
