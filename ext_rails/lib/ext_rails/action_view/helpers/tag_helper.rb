@@ -244,7 +244,11 @@ module ActionView::Helpers::TagHelper
   end
 
   def button_options_content(options, content)
-    options[:name] ||= 'button'
+    if options[:name] == false
+      options.delete(:name)
+    else
+      options[:name] ||= 'button'
+    end
     options[:type] ||= 'submit'
     content
   end
