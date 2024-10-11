@@ -28,8 +28,9 @@ module ActiveRecord::Base::WithDiscard
     end
 
     def discardable
-      return @_discardable if defined? @_discardable
+      return @_discardable && !Current.undiscardable if defined? @_discardable
       @_discardable = !ExtRails.config.skip_discard? && column_names.include?(discard_column.to_s)
+      discardable
     end
     alias_method :discardable?, :discardable
 

@@ -5,6 +5,14 @@ class Current < ActiveSupport::CurrentAttributes
   attribute :theme
   attribute :view
   attribute :virtual_records
+  attribute :undiscardable
+
+  def self.with(**values)
+    old_values = attributes.slice(*values.keys)
+    yield attributes.merge!(values)
+  ensure
+    attributes.merge! old_values
+  end
 
   alias_method :locale_without_default, :locale
   def locale
