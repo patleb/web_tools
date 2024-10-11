@@ -173,15 +173,22 @@ module Admin
     end
 
     def self.associated_counts(presenter)
-      associations.each_with_object(allowed: [], restricted: []) do |association, memo|
-        klass, type = association.klass, :restricted
-        if (model = allowed_models.find{ |model| model.klass == klass })
-          type = :allowed
-        else
-          next unless can? klass, :index
+      Current.with(undiscardable: true) do
+        associations.each_with_object(allowed: [], restricted: []) do |association, memo|
+          klass, type = association.klass, :restricted
+          if (model = allowed_models.find{ |model| model.klass == klass })
+            type = :allowed
+          else
+            next unless can? klass, :index
+          end
+          if association.reflection.macro == :has_many
+            next unless (count = presenter[association.name].size) > 0
+          else
+            next unless presenter[association.name]
+            count = 1
+          end
+          memo[type] << [association, count, model].compact
         end
-        next unless (count = presenter[association.name].with_discarded.size) > 0
-        memo[type] << [association, count, model].compact
       end
     end
 
