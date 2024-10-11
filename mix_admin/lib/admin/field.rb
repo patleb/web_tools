@@ -99,6 +99,10 @@ module Admin
       MixAdmin.config.full_query_column?
     end
 
+    register_option :full_query_name? do
+      false
+    end
+
     register_option :method_searchable? do
       false
     end
@@ -309,20 +313,34 @@ module Admin
     end
 
     def query_column
-      return @query_column if defined? @query_column
-      @query_column = column_for(queryable)
+      @query_column ||= column_for(queryable)
     end
 
-    def query_fields
-      @query_fields ||= begin
-        field_model = association? ? associated_model : model
+    def query_name
+      @query_name ||= begin
+        name = query_field.values.first.keys.first
+        name = "#{query_field.keys.first}.#{name}" if full_query_name?
+        name
+      end
+    end
+
+    def query_label
+      @query_label ||= begin
+        label = query_field.values.first.values.first.label
+        label = [self.label, label].join(', ') if association?
+        label
+      end
+    end
+
+    def query_field
+      @query_field ||= begin
         case (field_name = queryable)
-        when true          then { field_model.to_param => { name => self } }
+        when true          then { as_model.to_param => { name => self } }
         when false, /[.,]/ then {}
         when String, Symbol
           field_name = field_name.to_sym
           fields_hash = association? ? associated_model.section(:index).fields_hash : section.fields_hash
-          { field_model.to_param => { field_name => fields_hash[field_name] } }
+          { as_model.to_param => { field_name => fields_hash[field_name] } }
         else
           raise "invalid :queryable field: [#{field_name}]"
         end
@@ -332,12 +350,15 @@ module Admin
     private
 
     def column_for(column_name)
-      field_model = association? ? associated_model : model
       case column_name
-      when true           then "#{field_model.table_name}.#{name}"
+      when true           then "#{as_model.table_name}.#{name}"
       when /[.,]/         then column_name
-      when String, Symbol then "#{field_model.table_name}.#{column_name}"
+      when String, Symbol then "#{as_model.table_name}.#{column_name}"
       end
+    end
+
+    def as_model
+      association? ? associated_model : model
     end
   end
 end

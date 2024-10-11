@@ -100,7 +100,7 @@ module Admin
     end
 
     def query_fields
-      fields.select_map{ |f| f.query_fields if f.queryable? }.reduce(&:union)
+      fields.select_map{ |f| f.query_field if f.queryable? }.reduce(&:union)
     end
 
     def groups

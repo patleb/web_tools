@@ -85,11 +85,17 @@ module Admin::Model::Searchable
   def query_scope(scope, section, query)
     return [scope, []] unless query.is_a?(String) && query.present?
     query_fields = section.query_fields.with_indifferent_access
+    fields_default = query_fields.transform_values{ |v| v.keys.map(&:to_s).to_set }
     statements, errors = parse_query(query)
     statements.each do |statement|
       tables, ors, values = Set.new, [], []
       statement.each do |type, fields_hash, operator, value, statement_was|
-        fields_hash ||= query_fields.slice(to_param).transform_values{ |v| v.keys.map(&:to_s).to_set }
+        fields_base = fields_hash&.dig(:base)
+        if (fields_hash = fields_hash&.except(:base).presence)
+          fields_hash = fields_default.transform_values{ |v| v & fields_base }.union(fields_hash) if fields_base
+        else
+          fields_hash = fields_base ? fields_default.transform_values{ |v| v & fields_base } : fields_default
+        end
         fields_hash.each do |model_param, fields_set|
           next errors << [:model, statement_was] unless (model_fields = query_fields[model_param])
           fields = fields_set.map{ |field_name| model_fields[field_name] }
@@ -101,7 +107,6 @@ module Admin::Model::Searchable
           else
             fields.select!{ |field| field&.search_type == type }
           end
-          next errors << [:fields, statement_was] if fields.empty?
           fields.each do |field|
             table, column = field.query_column.split('.')
             tables << table
@@ -111,6 +116,7 @@ module Admin::Model::Searchable
             ors << operator.gsub('{column}', column)
           end
         end
+        errors << [:fields, statement_was] if tables.empty?
       end
       scope = ors_scope(scope, tables, ors, values)
     end
@@ -196,7 +202,7 @@ module Admin::Model::Searchable
           model_param, field_name = field.split('.')
           if field_name.nil?
             field_name = model_param
-            model_param = to_param
+            model_param = :base
           end
           (hash[model_param] ||= Set.new) << field_name
         end

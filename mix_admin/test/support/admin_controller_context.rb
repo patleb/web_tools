@@ -17,7 +17,7 @@ module AdminControllerContext
 
   included do
     fixtures :users
-    fixtures 'test/records'
+    fixtures 'test/records', 'test/related_records'
 
     let(:current_user){ users(:admin) }
     let(:model_name){ Test::Extensions::RecordExtension.name.to_admin_param }

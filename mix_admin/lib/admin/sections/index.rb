@@ -186,7 +186,7 @@ module Admin
             autocomplete: 'off',
             spellcheck: false,
           ),
-          button_('.btn.btn-sm.btn-square', icon('search')),
+          button_('.btn.btn-sm.btn-square', icon('search'), name: false),
         ]}
       end
 
@@ -216,8 +216,8 @@ module Admin
               div_([span_('.js_query_and.js_only.btn.btn-circle.btn-xs', '{_}'), span_(text: 'AND idem')]),
               queryable_fields.map do |field|
                 div_([
-                  span_('.js_query_field.js_only.btn.btn-circle.btn-xs', "{#{ascii(:ellipsis)}}", escape: false, data: { field: field.name }),
-                  span_('.tooltip', field.name, data: { tip: field.label })
+                  span_('.js_query_field.js_only.btn.btn-circle.btn-xs', "{#{ascii(:ellipsis)}}", escape: false, data: { field: field.query_name }),
+                  span_(field.query_label)
                 ])
               end
             ]}
