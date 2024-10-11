@@ -327,7 +327,7 @@ module Admin
     def query_label
       @query_label ||= begin
         label = query_field.values.first.values.first.label
-        label = [self.label, label].join(', ') if association?
+        label = [self.label, label].join(': ') if association?
         label
       end
     end
