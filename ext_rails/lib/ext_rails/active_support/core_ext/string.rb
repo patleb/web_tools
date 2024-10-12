@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class String
+  def foreign_key?
+    end_with?("_id")
+  end
+
   def /(other)
     [self == '/' ? '' : self, other].join('/')
   end
