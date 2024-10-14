@@ -53,6 +53,12 @@ module Admin::Model::Searchable
     all ? scope : page_scope(scope, section, **sort_options)
   end
 
+  def search_section
+    search = section(action.name)
+    search = section(:index) unless search.is_a? Admin::Sections::Index
+    search
+  end
+
   private
 
   def select_columns(scope, section)
@@ -90,8 +96,8 @@ module Admin::Model::Searchable
     statements.each do |statement|
       tables, ors, values = Set.new, [], []
       statement.each do |type, fields_hash, operator, value, statement_was|
-        fields_base = fields_hash&.dig(:base)
-        if (fields_hash = fields_hash&.except(:base).presence)
+        fields_base = fields_hash&.dig(:_base)
+        if (fields_hash = fields_hash&.except(:_base).presence)
           fields_hash = fields_default.transform_values{ |v| v & fields_base }.union(fields_hash) if fields_base
         else
           fields_hash = fields_base ? fields_default.transform_values{ |v| v & fields_base } : fields_default
@@ -202,7 +208,7 @@ module Admin::Model::Searchable
           model_param, field_name = field.split('.')
           if field_name.nil?
             field_name = model_param
-            model_param = :base
+            model_param = :_base
           end
           (hash[model_param] ||= Set.new) << field_name
         end
