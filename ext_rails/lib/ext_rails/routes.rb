@@ -56,7 +56,7 @@ module ExtRails
       end
 
       def append_query(path, params)
-        unless (params = params.compact).empty?
+        unless (params = params.compact_blank).empty?
           path = "#{path}?#{params.to_query}"
         end
         path
