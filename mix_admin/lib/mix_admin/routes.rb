@@ -24,6 +24,9 @@ module MixAdmin
             route_fragment = action.route_fragment? ? name : ''
 
             define_singleton_method "#{name}_path" do |model_name:, **params|
+              if params[:q].is_a? Hash
+                params[:q] = params[:q].map{ |(field_name, value)| "{#{field_name}}=#{value}" }.join(' ')
+              end
               build_path model_name, route_fragment, **params
             end
 
