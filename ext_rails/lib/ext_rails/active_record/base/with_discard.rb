@@ -7,10 +7,11 @@ module ActiveRecord::Base::WithDiscard
     class_attribute :discard_column
     self.discard_column = :deleted_at
 
-    scope :undiscarded,    -> { discardable ? where(discard_column => nil) : all }
-    scope :discarded,      -> { discardable ? with_discarded.where.not(discard_column => nil) : all }
-    scope :with_discarded, -> { discardable ? unscope(where: discard_column) : all }
-    scope :as_discardable, ->(record) { record.discarded ? with_discarded : all }
+    scope :as_discardable,  ->(record) { record.discarded ? discarded : undiscarded }
+    scope :all_discardable, -> { Current.discarded ? discarded : undiscarded }
+    scope :undiscarded,     -> { discardable ? where(discard_column => nil) : all }
+    scope :discarded,       -> { discardable ? with_discarded.where.not(discard_column => nil) : all }
+    scope :with_discarded,  -> { discardable ? unscope(where: discard_column) : all }
 
     alias_method :show?, :undiscarded?
 
@@ -29,8 +30,8 @@ module ActiveRecord::Base::WithDiscard
     end
 
     def discardable
-      return @_discardable && !Current.undiscardable if defined? @_discardable
-      @_discardable = !ExtRails.config.skip_discard? && column_names.include?(discard_column.to_s)
+      return @_discardable && Current.discardable? if defined? @_discardable
+      @_discardable = ExtRails.config.discardable? && column_names.include?(discard_column.to_s)
       discardable
     end
     alias_method :discardable?, :discardable

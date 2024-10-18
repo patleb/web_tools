@@ -5,7 +5,7 @@ class Current < ActiveSupport::CurrentAttributes
   attribute :theme
   attribute :view
   attribute :virtual_records
-  attribute :undiscardable
+  attribute :discarded, :discardable
 
   def self.with(**values)
     old_values = attributes.slice(*values.keys)
@@ -28,4 +28,10 @@ class Current < ActiveSupport::CurrentAttributes
   def theme
     theme_without_default || ExtRails.config.theme
   end
+
+  alias_method :discardable_without_default, :discardable
+  def discardable
+    (value = discardable_without_default).is_a?(Boolean) ? value : true
+  end
+  alias_method :discardable?, :discardable
 end

@@ -7,7 +7,7 @@ module ExtRails
     attr_accessor :email_debug
     attr_writer   :sql_debug
     attr_writer   :params_debug
-    attr_writer   :skip_discard
+    attr_writer   :discardable
     attr_writer   :excluded_models
     attr_writer   :excluded_tables
     attr_writer   :temporary_tables
@@ -33,9 +33,9 @@ module ExtRails
       @params_debug = Rails.env.local?
     end
 
-    def skip_discard?
-      return @skip_discard if defined? @skip_discard
-      @skip_discard = ENV['SKIP_DISCARD'].to_b
+    def discardable?
+      return @discardable if defined? @discardable
+      @discardable = ENV.has_key?('DISCARDABLE') ? ENV['DISCARDABLE'].to_b : true
     end
 
     def excluded_models
