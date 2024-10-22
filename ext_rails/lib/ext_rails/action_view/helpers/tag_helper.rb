@@ -327,6 +327,9 @@ module ActionView::Helpers::TagHelper
     if name
       as = "#{@_form_as}[" if @_form_as && options.delete(:as) != false
       if as && !name.start_with?('_', as)
+        if (through = options.delete(:through))
+          as = "#{as}#{through}_attributes]["
+        end
         object = @_form
         options[:name] = "#{as}#{name}]"
       end
