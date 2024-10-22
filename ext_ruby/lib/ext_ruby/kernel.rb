@@ -19,8 +19,12 @@ module Kernel
     end
   end
 
-  def __super__(name, *args, **options, &block)
-    method(name).super_method&.call(*args, **options, &block)
+  def __super__(name, ...)
+    method(name).super_method.call(...)
+  end
+
+  def __call__(name, instance, ...)
+    instance_method(name).bind(instance).call(...)
   end
 
   private
