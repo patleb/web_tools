@@ -99,10 +99,6 @@ module Admin
       end
     end
 
-    def query_fields
-      fields.select_map{ |f| f.query_field if f.queryable? }.reduce(&:union)
-    end
-
     def groups
       groups_hash.values
     end
@@ -113,6 +109,12 @@ module Admin
           group = group.with(bindings)
           hash[name] = group if group.allowed? && group.fields.present?
         end
+      end
+    end
+
+    def associations
+      memoize(self, __method__, bindings) do
+        fields.select(&:through).group_by(&:through)
       end
     end
 

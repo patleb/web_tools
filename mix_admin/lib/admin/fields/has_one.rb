@@ -1,17 +1,15 @@
 module Admin
   module Fields
-    class HasOne < Admin::Field
-      prepend Field::AsAssociation
-
+    class HasOne < Association
       def editable?
-        (nested_options || klass.method_defined?("#{name}_id=")) && super
+        (nested? || klass.method_defined?("#{through}_id=")) && super
       end
 
       def method_name
-        nested_options ? "#{name}_attributes".to_sym : "#{name}_id".to_sym
+        nested? ? "#{through}_attributes".to_sym : through
       end
 
-      def associated_id
+      def property_id
         value.try(property.primary_key)
       end
     end

@@ -90,9 +90,11 @@ class AdminController < LibController
   def set_attributes
     return unless (@attributes = params[@model.param_key]).present?
     fields = @section.fields.reject(&:readonly?)
-    @attributes.slice! *fields.flat_map(&:allowed_methods).uniq
-    @attributes.permit!
-    fields.each{ |field| field.parse_input! @attributes }
+    sanitize_attributes fields, @attributes
+    fields.select(&:nested?).group_by(&:through).each do |through, fields|
+      next unless (attributes = @attributes["#{through}_attributes"])
+      sanitize_attributes fields, attributes, nested: true
+    end
   end
 
   def set_meta_values
@@ -176,5 +178,12 @@ class AdminController < LibController
 
   def _back
     super || @action.trash? && @model&.allowed_url(:trash) || @model&.allowed_url(:index)
+  end
+
+  def sanitize_attributes(fields, params, nested: false)
+    return unless params.present?
+    params.slice! *fields.map(&(nested ? :column_name : :method_name))
+    params.permit!
+    fields.each{ |field| field.parse_input! params }
   end
 end

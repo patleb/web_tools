@@ -5,8 +5,8 @@ fields = @section.fields
 root_fields = fields.reject{ |field| field.association? && !field.polymorphic? }
 nested_fields = fields.select_map do |parent|
   next if !parent.association? || parent.polymorphic?
-  model = parent.associated_model
-  children = model.section(:export).fields.reject(&:association?)
+  model = parent.property_model
+  children = model.export.fields.reject(&:association?)
   next if children.empty?
   [parent, children]
 end

@@ -7,10 +7,6 @@ module Admin
         true
       end
 
-      register_option :input_type do
-        'datetime-local'
-      end
-
       register_option :strftime_format, memoize: :locale do
         t(pretty_format, scope: i18n_scope)
       end
@@ -24,7 +20,7 @@ module Admin
       end
 
       def parse_input!(params)
-        params[name] = parse_value(params[name]) if params[name]
+        params[column_name] = parse_value(params[column_name]) if params[column_name]
       end
 
       def parse_value(value)
@@ -58,6 +54,10 @@ module Admin
         else
           value
         end
+      end
+
+      def input_type
+        'datetime-local'
       end
 
       def default_input_attributes

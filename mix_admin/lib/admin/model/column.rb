@@ -9,6 +9,7 @@ module Admin
       @klass = klass
       @name = name.to_sym
       @virtual = virtual
+      @array = column.true? :array?
     end
 
     def required?
@@ -32,7 +33,7 @@ module Admin
     end
 
     def array?
-      @column.true? :array?
+      @array
     end
 
     def association?

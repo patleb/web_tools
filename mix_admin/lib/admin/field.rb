@@ -4,25 +4,25 @@ module Admin
 
     eager_autoload do
       autoload :AsArray
-      autoload :AsAssociation
       autoload :AsRange
     end
     include Configurable
+    prepend AsArray
+    prepend AsRange
 
-    attr_accessor :weight, :group
+    attr_accessor :weight, :group, :through, :as
     attr_writer :editable
 
     delegate :klass, to: :model
     delegate :type, to: :class
+    delegate :array?, to: :property, allow_nil: true
 
     def self.find_class(section, property)
       @@find_class ||= Admin::Fields.constants.sort.reverse.select_map do |name|
-        next if name.end_with? 'Array'
         klass = Admin::Fields.const_get(name)
         klass if klass.singleton_class.method_defined? :has?
       end
-      klass = @@find_class.find{ |klass| klass.has? section, property }
-      property.array? ? Admin::Fields.const_get("#{klass.name.demodulize}Array") : klass
+      @@find_class.find{ |klass| klass.has? section, property }
     end
 
     def self.type
@@ -37,10 +37,6 @@ module Admin
       allowed_field?
     end
 
-    register_option :allowed_methods do
-      [method_name]
-    end
-
     register_option :readonly? do
       !editable?
     end
@@ -48,8 +44,8 @@ module Admin
     register_option :required? do
       next false if property.nil?
       next true  if property.true?(:required?) && property.try(:default).nil?
-      ([name] + children_names).uniq.any? do |column_name|
-        klass.validators_on(column_name).any? do |v|
+      ([property_name] + association_names).uniq.any? do |name|
+        klass.validators_on(name).any? do |v|
           next if     (v.options[:allow_nil] || v.options[:allow_blank])
           next unless [:presence, :numericality, :attachment_presence].include?(v.kind)
           next unless (v.options[:on] == required_context || v.options[:on].blank?)
@@ -59,7 +55,7 @@ module Admin
     end
 
     register_option :label do
-      klass.human_attribute_name(name).upcase_first
+      klass.human_attribute_name(column_name).upcase_first
     end
 
     register_option :pretty_value do
@@ -92,24 +88,19 @@ module Admin
     end
 
     register_option :queryable? do
-      !method? || method_searchable? || children_names.first || false
+      !method? || method_queryable?
     end
 
-    register_option :full_query_column? do
-      MixAdmin.config.full_query_column?
+    register_option :method_queryable? do
+      false
     end
 
     register_option :full_query_name? do
-      false
+      full_query_column
     end
 
-    register_option :method_searchable? do
-      false
-    end
-
-    # NOTE first one is used for sort/search
-    register_option :children_names do
-      []
+    register_option :full_query_column? do
+      MixAdmin.config.full_query_column? || section.query_column_names_counts[column_name].to_i > 1
     end
 
     register_option :input do
@@ -125,11 +116,11 @@ module Admin
     end
 
     register_option :css_class do
-      "#{name}_field #{type_css_class}"
+      type_css_class
     end
 
     register_option :help do
-      readonly ? false : t(name, scope: [model.i18n_scope, :help, model.i18n_key], default: default_help)
+      readonly ? false : t(column_name, scope: [property_model.i18n_scope, :help, property_model.i18n_key], default: default_help)
     end
 
     def parent
@@ -145,18 +136,19 @@ module Admin
 
     def property
       return @property if defined? @property
-      @property = model.property(name)
+      @property = model.property(property_name)
     end
 
     def allowed_field?
       return false if primary_key? && action.new?
-      MixAdmin.config.denied_fields.exclude? name
+      MixAdmin.config.denied_fields.exclude? column_name
     end
 
     def editable?
       return false if action.show?
       return @editable if defined? @editable
-      return false if method? || primary_key? || MixAdmin.config.readonly_fields.include?(name)
+      return false if presenter[:readonly?]
+      return false if method? || primary_key? || MixAdmin.config.readonly_fields.include?(column_name)
       (property && presenter[:new_record?]) || !property.nil_or_true?(:readonly?)
     end
 
@@ -166,18 +158,14 @@ module Admin
     end
 
     def type_css_class
-      "#{type}_type#{' array_type' if array?}#{' association_type' if association?}"
-    end
-
-    def array?
-      is_a? Field::AsArray
+      "#{name}_field #{type}_type"
     end
 
     def association?
-      is_a? Field::AsAssociation
+      false
     end
 
-    # NOTE overrides params[name]
+    # NOTE overrides params[column_name]
     def parse_input!(params)
     end
 
@@ -202,14 +190,10 @@ module Admin
     end
 
     def value
-      presenter[name]
+      presenter[column_name]
     end
 
-    def inverse_of
-      nil
-    end
-
-    def nested_options
+    def nested?
       false
     end
 
@@ -218,7 +202,11 @@ module Admin
     end
 
     def method_name
-      name
+      column_name
+    end
+
+    def association_names
+      []
     end
 
     def pretty_input
@@ -268,8 +256,8 @@ module Admin
     end
 
     def errors
-      ([name] + children_names).uniq.flat_map do |column_name|
-        presenter[:errors][column_name]
+      ([property_name] + association_names).uniq.flat_map do |name|
+        presenter[:errors][name]
       end.uniq
     end
 
@@ -304,7 +292,7 @@ module Admin
       else
         reverse = sort_reverse?
       end
-      [model.url_for(:index, q: params[:q].presence, f: params[:f].presence, s: name, r: reverse), active, reverse]
+      [model.url_for(action.name, q: params[:q].presence, f: params[:f].presence, s: name, r: reverse), active, reverse]
     end
 
     def sort_column
@@ -318,47 +306,50 @@ module Admin
 
     def query_name
       @query_name ||= begin
-        name = query_field.values.first.keys.first
-        name = "#{query_field.keys.first}.#{name}" if full_query_name?
+        model_param, name, field = query_field
+        name = "#{model_param}.#{name}" if field.full_query_name?
         name
       end
     end
 
-    def query_label
-      @query_label ||= begin
-        label = query_field.values.first.values.first.label
-        label = [self.label, label].join(': ') if association?
-        label
-      end
+    def query_field
+      @query_field ||= case (column_name = queryable)
+        when true
+          [model_param, name, self]
+        when false, nil, /[.,]/
+          []
+        when String, Symbol
+          column_name = column_name.to_sym
+          [model_param, column_name, property_model.search_section.fields_hash[column_name]]
+        else
+          raise "invalid :queryable field: [#{column_name}]"
+        end
     end
 
-    def query_field
-      @query_field ||= begin
-        case (field_name = queryable)
-        when true          then { as_model.to_param => { name => self } }
-        when false, /[.,]/ then {}
-        when String, Symbol
-          field_name = field_name.to_sym
-          fields_hash = association? ? associated_model.section(:index).fields_hash : section.fields_hash
-          { as_model.to_param => { field_name => fields_hash[field_name] } }
-        else
-          raise "invalid :queryable field: [#{field_name}]"
-        end
-      end
+    def model_param
+      property_model.to_param
+    end
+
+    def property_model
+      model
+    end
+
+    def property_name
+      name
+    end
+
+    def column_name
+      name
     end
 
     private
 
-    def column_for(column_name)
-      case column_name
-      when true           then "#{as_model.table_name}.#{name}"
-      when /[.,]/         then column_name
-      when String, Symbol then "#{as_model.table_name}.#{column_name}"
+    def column_for(name)
+      case name
+      when true           then "#{property_model.table_name}.#{column_name}"
+      when /[.,]/         then name
+      when String, Symbol then "#{property_model.table_name}.#{name}"
       end
-    end
-
-    def as_model
-      association? ? associated_model : model
     end
   end
 end

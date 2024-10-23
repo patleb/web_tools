@@ -9,12 +9,12 @@ module Admin
         true
       end
 
-      def parse_value(value)
-        value.present? ? (ActiveSupport::JSON.decode(value) rescue nil) : nil
+      def parse_input!(params)
+        params[column_name] = parse_value(params[column_name]) if params[column_name].is_a? String
       end
 
-      def parse_input!(params)
-        params[name] = parse_value(params[name]) if params[name].is_a? String
+      def parse_value(value)
+        value.present? ? (ActiveSupport::JSON.decode(value) rescue nil) : nil
       end
 
       def format_value(value)

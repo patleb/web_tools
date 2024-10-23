@@ -2,10 +2,10 @@ module Admin
   module Fields
     class Hstore < Admin::Field
       def parse_input!(params)
-        params[name] = if params[name].blank?
+        params[column_name] = if params[column_name].blank?
           nil
         else
-          YAML.safe_load(params[name])
+          YAML.safe_load(params[column_name])
         end
       end
 

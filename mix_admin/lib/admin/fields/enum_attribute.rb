@@ -7,16 +7,16 @@ module Admin
       end
 
       register_option :pretty_value do
-        klass.human_attribute_name("#{name}.#{value}", default: value.humanize)
+        i18n_value(value)
       end
 
       register_option :enum do
         values = enum_values
         if values.is_a? Array
-          values.map{ |value| [klass.human_attribute_name("#{name}.#{value}", default: value), value] }
+          values.map{ |value| [i18n_value(value), value] }
         else
           values.each_with_object([]) do |(key, value), all|
-            all << [klass.human_attribute_name("#{name}.#{key}", default: key), value]
+            all << [i18n_value(key), value]
           end
         end
       end
@@ -26,9 +26,9 @@ module Admin
       end
 
       def parse_input!(params)
-        value = params[name]
+        value = params[column_name]
         return unless value
-        params[name] = klass.attribute_types[name.to_s].deserialize(value)
+        params[column_name] = klass.attribute_types[column_name.to_s].deserialize(value)
       end
 
       def parse_search(value)
@@ -50,6 +50,14 @@ module Admin
       def format_value(value)
         value = parse_value(value)
         (!value.nil? && enum[value]) || value
+      end
+
+      def search_type
+        property.column.type
+      end
+
+      def i18n_value(key)
+        klass.human_attribute_name("#{name}/#{key}", default: key.to_s.humanize)
       end
     end
   end

@@ -1,26 +1,24 @@
 module Admin
   module Fields
-    class BelongsTo < Admin::Field
-      prepend Field::AsAssociation
-
+    class BelongsTo < Association
       def self.has?(section, property)
         association = section.model.associations_hash[property.name]
         association&.type == :belongs_to ? association : false
       end
 
-      register_option :children_names do
-        [foreign_key]
+      def method_name
+        nested? ? "#{through}_attributes".to_sym : foreign_key
       end
 
-      def method_name
-        nested_options ? "#{name}_attributes".to_sym : foreign_key
+      def association_names
+        [foreign_key]
       end
 
       def search_type
         :numeric
       end
 
-      def associated_id
+      def property_id
         presenter[foreign_key]
       end
     end

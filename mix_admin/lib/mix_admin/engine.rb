@@ -26,21 +26,17 @@ module Admin
   module Fields
     extend ActiveSupport::Autoload
 
+    autoload :Association
     autoload :BelongsTo
     autoload :BelongsToListParent
     autoload :BelongsToPolymorphic
     autoload :Boolean
-    autoload :BooleanArray
     autoload :Code
     autoload :Date
-    autoload :DateArray
     autoload :DateTime
-    autoload :DateTimeArray
     autoload :Decimal
-    autoload :DecimalArray
     autoload :Discarded
     autoload :Enum
-    autoload :EnumArray
     autoload :EnumAttribute
     autoload :EnumSti
     autoload :ForeignKey
@@ -49,21 +45,15 @@ module Admin
     autoload :Hidden
     autoload :Hstore
     autoload :Integer
-    autoload :IntegerArray
     autoload :Interval
-    autoload :IntervalArray
     autoload :Json
-    autoload :JsonArray
     autoload :Money
     autoload :Password
     autoload :Serialized
     autoload :String
-    autoload :StringArray
     autoload :Text
     autoload :Time
-    autoload :TimeArray
     autoload :Timestamp
-    autoload :TimestampArray
     autoload :Uuid
   end
 

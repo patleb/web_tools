@@ -11,19 +11,15 @@ module Admin
         '*' * MixUser.config.min_password_length
       end
 
-      register_option :input_type do
-        :password
-      end
-
       def allowed_field?
         super && section.is_a?(Admin::Sections::New)
       end
 
       def parse_input!(params)
-        if params[name].present?
-          params[name] = params[name]
+        if params[column_name].present?
+          params[column_name] = params[column_name] # NOTE in case the password needs to be cleaned
         else
-          params.delete(name)
+          params.delete(column_name)
         end
       end
 
@@ -33,6 +29,10 @@ module Admin
 
       def value
         ''
+      end
+
+      def input_type
+        :password
       end
     end
   end

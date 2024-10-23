@@ -15,6 +15,18 @@ module Admin
         klass.validators_on(name).find{ |v| v.kind == :length }.try(&:options) || {}
       end
 
+      register_option :array_separator do
+        '<br>'.html_safe
+      end
+
+      register_option :array_bullet do
+        '- '.html_safe
+      end
+
+      register_option :export_separator do
+        "\n"
+      end
+
       def format_value(value)
         sanitized ? sanitize(value) : ERB::Util.html_escape(value)
       end

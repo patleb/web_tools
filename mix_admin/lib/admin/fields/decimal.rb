@@ -1,7 +1,7 @@
 module Admin
   module Fields
     class Decimal < Admin::Field
-      register_option :input_type do
+      def input_type
         :number
       end
 

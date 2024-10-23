@@ -18,7 +18,7 @@ module Admin
       end
 
       def parse_input!(params)
-        params[name] = parse_value(params[name]) if params[name].is_a? String
+        params[column_name] = parse_value(params[column_name]) if params[column_name].is_a? String
       end
 
       def parse_value(value)

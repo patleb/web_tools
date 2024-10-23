@@ -52,14 +52,15 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
 
     test '@model.search' do
       get "/model/#{model_name}"
+      name = 'test_related_records.name'
       now = Time.current
       yesterday = 1.day.ago.strftime('%Y-%m-%dT%H:%M:%S')
       tomorrow = 1.day.from_now.strftime('%Y-%m-%dT%H:%M:%S')
       uuid = SecureRandom.uuid
-      assert_equal [true, "(string ILIKE '%test%') OR (text ILIKE '%test%') OR (name ILIKE '%test%')"], search_statements('test')
-      assert_equal [true, "(string ILIKE 'te%') OR (text ILIKE 'te%') OR (name ILIKE 'te%')",
-                          "(string ILIKE '%st') OR (text ILIKE '%st') OR (name ILIKE '%st')"],          search_statements('^te st$')
-      assert_equal [true, "(string ILIKE 'test string') OR (text ILIKE 'test string') OR (name ILIKE 'test string')"], search_statements('"^test string$"')
+      assert_equal [true, "(string ILIKE '%test%') OR (text ILIKE '%test%') OR (#{name} ILIKE '%test%')"], search_statements('test')
+      assert_equal [true, "(string ILIKE 'te%') OR (text ILIKE 'te%') OR (#{name} ILIKE 'te%')",
+                          "(string ILIKE '%st') OR (text ILIKE '%st') OR (#{name} ILIKE '%st')"], search_statements('^te st$')
+      assert_equal [true, "(string ILIKE 'test string') OR (text ILIKE 'test string') OR (#{name} ILIKE 'test string')"], search_statements('"^test string$"')
       assert_equal [true, "(string ILIKE 'test') OR (text ILIKE 'test')"],               search_statements('{string|text}=^test$')
       assert_equal [true, "(string ILIKE 'te%') OR (string ILIKE '%st')"],               search_statements('{string}=^te|==st$')
       assert_equal [true, "(string NOT ILIKE 'te%') OR (string NOT ILIKE '%st')"],       search_statements('{string}!^te|!=st$')
@@ -67,12 +68,12 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
       assert_equal [true, "string NOT IN ('test','string')"],                            search_statements('{string}!test,string')
       assert_equal [true, "integer >= 0", "integer <= 10"],                              search_statements('{integer}>=0 {integer}<=10')
       assert_equal [true, "integer > 2", "integer < 5"],                                 search_statements('{integer}>2 {_}<5')
-      assert_equal [true, "integer > 2", "(id < 5) OR (decimal < 5) OR (integer < 5)"],  search_statements('{integer}>2 <5')
+      assert_equal [true, "integer > 2", "(test_records.id < 5) OR (decimal < 5) OR (integer < 5) OR (test_related_records.id < 5)"], search_statements('{integer}>2 <5')
       assert_equal [true, "decimal > 0.0", "decimal < 10.0"],                            search_statements('{decimal}>0.0 {decimal}<10.0')
       assert_equal [true, "string ILIKE '%test%'"],                                      search_statements("{#{model_name}.string}test")
       assert_equal [false],                                                              search_statements("{#{model_name}.unknown}test")
       assert_equal [false],                                                              search_statements('{unknown.string}test')
-      assert_equal [true, "(string ILIKE '') OR (text ILIKE '') OR (name ILIKE '')"],    search_statements('=^$')
+      assert_equal [true, "(string ILIKE '') OR (text ILIKE '') OR (#{name} ILIKE '')"], search_statements('=^$')
       assert_equal [false],                                                              search_statements('=')
       assert_equal [false],                                                              search_statements('{string}=')
       assert_equal [false],                                                              search_statements('{string}=,')
@@ -92,10 +93,10 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
       assert_equal [true, "(datetime < '#{yesterday.sub('T', ' ')}') OR (datetime > '#{tomorrow.sub('T', ' ')}')"],                    search_statements("{datetime}<#{yesterday}|>#{tomorrow}")
       assert_equal [true, "uuid = '#{uuid}'"],                                           search_statements("=#{uuid}")
       assert_equal [false],                                                              search_statements('{string}=<script></script>')
-      assert_equal [true, "name ILIKE '%related to 1%'"],                                search_statements("{test-related_record.name}=related\\ to\\ 1")
-      assert_equal [true, "(string ILIKE '%to%') OR (name ILIKE '%to%')"],               search_statements('{test-related_record.name|string}=to')
-      assert_equal [true, "name ILIKE '%1%'"],                                           search_statements("{test-related_record.name}='1'")
-      assert_equal [true, "name ILIKE '%related%'"],                                     search_statements('{name}related')
+      assert_equal [true, "#{name} ILIKE '%related to 1%'"],                             search_statements("{test-related_record.name}=related\\ to\\ 1")
+      assert_equal [true, "(string ILIKE '%to%') OR (#{name} ILIKE '%to%')"],            search_statements('{test-related_record.name|string}=to')
+      assert_equal [true, "#{name} ILIKE '%1%'"],                                        search_statements("{test-related_record.name}='1'")
+      assert_equal [true, "#{name} ILIKE '%related%'"],                                  search_statements('{name}related')
     end
   end
 

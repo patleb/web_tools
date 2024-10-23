@@ -1,10 +1,20 @@
 module Admin
   module Fields
-    class HasMany < Admin::Field
-      prepend Field::AsAssociation
+    class HasMany < Association
+      register_option :count do
+        false
+      end
 
-      register_option :scope do
-        nil
+      register_option :eager_load do
+        !count && __super__(:eager_load)
+      end
+
+      def count_link
+        # TODO
+      end
+
+      def array?
+        true
       end
 
       def multiple?
@@ -12,19 +22,7 @@ module Admin
       end
 
       def method_name
-        "#{name.to_s.singularize}_ids".to_sym
-      end
-
-      def errors
-        presenter[:errors][name]
-      end
-
-      private
-
-      def records
-        records = policy_scope(presenter[property.name])
-        records = records.public_send(scope) if scope
-        records
+        "#{through.to_s.singularize}_ids".to_sym
       end
     end
   end

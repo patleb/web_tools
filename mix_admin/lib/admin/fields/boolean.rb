@@ -3,6 +3,10 @@
 module Admin
   module Fields
     class Boolean < Admin::Field
+      register_option :array_separator do
+        true
+      end
+
       register_option :export_format do
         :boolean_and_null
       end

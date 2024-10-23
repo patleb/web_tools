@@ -43,10 +43,16 @@ class AdminController::EditTest < ActionDispatch::IntegrationTest
     end
 
     test 'render :edit as POST' do
-      post "/model/#{model_name}/1/edit", params: { model_name.underscore => { string: 'new-string' } }
+      post "/model/#{model_name}/1/edit", params: { model_name.underscore => {
+        string: 'new-string',
+        nested_record_attributes: { name: 'edited' },
+      } }
 
       record = Test::Extensions::RecordExtension.find(1)
       assert_equal 'new-string', record.string
+      assert_equal 'edited', record.nested_record.name
+      assert_select 'input[name="test_extensions_record_extension[string]"][value="new-string"]'
+      assert_select 'input[name="test_extensions_record_extension[nested_record_attributes][name]"][value="edited"]'
     end
   end
 end

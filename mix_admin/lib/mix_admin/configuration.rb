@@ -102,22 +102,16 @@ module MixAdmin
     def field_aliases
       @field_aliases ||= {
         big_integer: :integer,
-        big_integer_array: :integer_array,
-        citext: :text,
-        citext_array: :string_array,
+        citext: :string,
         datetime: :date_time,
-        datetime_array: :date_time_array,
         float: :decimal,
-        float_array: :decimal_array,
         has_and_belongs_to_many: :has_many,
-        int8range: :integer_array,
+        int8range: :integer,
         inet: :string,
         jsonb: :json,
-        jsonb_array: :json_array,
         ltree: :string,
-        numrange: :decimal_array,
-        text_array: :string_array,
-        tsrange: :timestamp_array,
+        numrange: :decimal,
+        tsrange: :timestamp,
       }
     end
 

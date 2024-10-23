@@ -7,12 +7,20 @@ module Admin
         primary_key?
       end
 
-      register_option :input_type do
-        :number
+      register_option :array_separator do
+        false
+      end
+
+      register_option :array_bullet do
+        false
       end
 
       def format_value(value)
         value&.pretty_int&.gsub(' ', '&nbsp;')&.html_safe
+      end
+
+      def input_type
+        :number
       end
 
       def search_type

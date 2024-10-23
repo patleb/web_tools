@@ -34,8 +34,8 @@ module Admin::Model::Searchable
 
   def search(scope, section, q: nil, f: nil, s: nil, r: nil, all: false)
     associations = section.fields.select(&:association?)
-    eager_load = associations.select_map(&:eager_load)
-    left_joins = associations.select_map(&:left_joins)
+    eager_load = associations.select_map(&:eager_load).uniq
+    left_joins = associations.select_map(&:left_joins).uniq
     sort_options = section.sort_options(s, r)
     scope = select_columns(scope, section)
     scope = scope.public_send(f) if section.filters.any?{ |filter| filter.to_s == f }
@@ -114,9 +114,9 @@ module Admin::Model::Searchable
             fields.select!{ |field| field&.search_type == type }
           end
           fields.each do |field|
-            table, column = field.query_column.split('.')
+            table, column = (full_column = field.query_column).split('.')
             tables << table
-            column = field.query_column if field.full_query_column?
+            column = full_column if field.full_query_column?
             value = parse_search_value(field, value)
             values.concat(Array.wrap(value))
             ors << operator.gsub('{column}', column)

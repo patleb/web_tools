@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Admin
   module Sections
     class Index < Admin::Section
@@ -217,12 +219,36 @@ module Admin
               queryable_fields.map do |field|
                 div_([
                   span_('.js_query_field.js_only.btn.btn-circle.btn-xs', "{#{ascii(:ellipsis)}}", escape: false, data: { field: field.query_name }),
-                  span_(field.query_label)
+                  span_(field.label)
                 ])
               end
             ]}
           end
         ]}
+      end
+
+      def query_fields
+        fields.each_with_object({}) do |f, hash|
+          next unless f.queryable?
+          next if (model_param, name, field = f.query_field).empty?
+          (hash[model_param] ||= {})[name] = field
+        end
+      end
+
+      def query_column_names_counts
+        memoize(self, __method__, bindings) do
+          models = Set.new
+          fields.each_with_object({}) do |field, hash|
+            next if !field.queryable? || field.association? && !field.eager_load
+            model = field.property_model
+            models.include?(model) ? next : models << model
+            model.columns_hash.each do |name, column|
+              next if column.virtual?
+              hash[name] ||= 0
+              hash[name] += 1
+            end
+          end
+        end
       end
 
       def bulk_menu

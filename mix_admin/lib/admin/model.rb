@@ -141,7 +141,7 @@ module Admin
     end
 
     def self.weight
-      "#{(navigation_weight + 32768).to_s}#{label.downcase}"
+      [navigation_weight, label.downcase]
     end
 
     def self.i18n_scope
@@ -173,7 +173,7 @@ module Admin
     end
 
     def self.associated_counts(presenter)
-      Current.with(undiscardable: true) do
+      Current.with(discardable: false) do
         associations.each_with_object(allowed: [], restricted: []) do |association, memo|
           klass, type = association.klass, :restricted
           if (model = allowed_models.find{ |model| model.klass == klass })
@@ -243,7 +243,11 @@ module Admin
     end
 
     def url_for(action, **params)
-      self.class.url_for(action, id: record.public_send(model.primary_key), **params)
+      self.class.url_for(action, id: primary_key_value, **params)
+    end
+
+    def primary_key_value
+      record.public_send(model.primary_key)
     end
 
     def discarded?

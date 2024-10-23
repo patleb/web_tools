@@ -14,20 +14,20 @@ module Admin
         false
       end
 
-      register_option :children_names do
-        [foreign_key, foreign_type]
-      end
-
       def allowed_field?
-        super && associated_model.any?(&:allowed?)
+        super && property_model.any?(&:allowed?)
       end
 
-      def associated_model
-        @associated_model ||= property.klass.map(&:admin_model)
+      def property_model
+        @property_model ||= property.klass.map(&:admin_model)
       end
 
       def method_name
-        "#{name}_global_id".to_sym
+        "#{through}_global_id".to_sym
+      end
+
+      def association_names
+        [foreign_key, foreign_type]
       end
     end
   end

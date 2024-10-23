@@ -45,7 +45,9 @@ module Admin::Model::Definable
       section_fields = ivars[:@fields][section_name] = {}
       fields.each do |field_name, field|
         config = inherit_config_instance(subclass, field, field_name, section, section_fields)
-        config.group = section_groups[field.group.name]
+        config.group    = section_groups[field.group.name]
+        config.through  = field.through   if field.ivar_defined? :@through
+        config.as       = field.as        if field.ivar_defined? :@as
         config.editable = field.editable? if field.ivar_defined? :@editable
       end
     end
@@ -96,6 +98,19 @@ module Admin::Model::Definable
     remove_ivar(:@group)
   end
 
+  def nests(name, weight: nil, **)
+    @through = name.to_sym
+    @weight = weight
+    if block_given?
+      yield
+    else
+      field(primary_key, **)
+    end
+  ensure
+    remove_ivar(:@through)
+    remove_ivar(:@weight)
+  end
+
   def field!(name, **, &)
     field(name, **, editable: true, &)
   end
@@ -109,16 +124,22 @@ module Admin::Model::Definable
     else
       if @section
         if @group
+          weight = options[:weight] || @weight
+          if (through = (options[:through] || @through)&.to_sym)
+            as, name = name, "#{through}_#{name}".to_sym
+          end
           @field = ((@fields ||= {})[@section.name] ||= {})[name] ||= begin
             klass = (klass_name = "#{@section.class.name}::#{name.to_s.camelize}Field").to_const
             klass ||= context_class(self.klass.superclass, @section.name, field: name).to_const
             klass ||= context_class(self.klass.base_class, @section.name, field: name).to_const
-            klass ||= field_class(name, options[:type])
+            klass ||= field_class(through || name, options[:type])
             create_config_instance(@fields, :fields, name, klass, klass_name)
           end
-          @field.group = @group if @grouped || @field.group.nil? || @group.name != :default
-          @field.weight = options[:weight] if options[:weight]
-          @field.editable = editable if editable.is_a? Boolean
+          @field.weight   = weight     if weight
+          @field.group    = @group     if @grouped || @field.group.nil? || @group.name != :default
+          @field.through  = through    if through
+          @field.as       = as         if as
+          @field.editable = editable   if editable.is_a? Boolean
           @field.instance_eval(&block) if block
           @field
         else
@@ -215,7 +236,6 @@ module Admin::Model::Definable
         return klass
       end
       type = property.type
-      type = :"#{type}_array" if property.array?
     end
     type = MixAdmin.config.field_aliases[type] || type || :string
     Admin::Fields.const_get(type.to_s.camelize)
