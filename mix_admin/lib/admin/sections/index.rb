@@ -3,9 +3,7 @@
 module Admin
   module Sections
     class Index < Admin::Section
-      eager_autoload do
-        autoload :Paginate, include: true
-      end
+      autoload :Paginate, include: true
 
       OPERATORS = ['=', '!=', '<', '<=', '>', '>=']
 

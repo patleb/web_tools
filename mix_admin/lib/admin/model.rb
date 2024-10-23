@@ -5,12 +5,10 @@ module Admin
     extend ActiveSupport::Autoload
     include Configurable
 
-    eager_autoload do
-      autoload :Association
-      autoload :Column
-      autoload :Definable, extend: true
-      autoload :Searchable, extend: true
-    end
+    autoload :Association
+    autoload :Column
+    autoload :Definable, extend: true
+    autoload :Searchable, extend: true
 
     TRASH_ACTIONS = [:trash, :restore]
 
