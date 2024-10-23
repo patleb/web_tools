@@ -15,7 +15,7 @@ module Admin
 
     delegate :klass, to: :model
     delegate :type, to: :class
-    delegate :array?, to: :property, allow_nil: true
+    delegate :array?, :association?, to: :property, allow_nil: true
 
     def self.find_class(section, property)
       @@find_class ||= Admin::Fields.constants.sort.reverse.select_map do |name|
@@ -159,10 +159,6 @@ module Admin
 
     def type_css_class
       "#{name}_field #{type}_type"
-    end
-
-    def association?
-      false
     end
 
     # NOTE overrides params[column_name]

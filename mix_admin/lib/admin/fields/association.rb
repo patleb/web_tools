@@ -24,10 +24,6 @@ module Admin
         label.upcase_first
       end
 
-      register_option :sanitized? do
-        false
-      end
-
       register_option :queryable do
         as if eager_load
       end
@@ -46,10 +42,6 @@ module Admin
       end
 
       register_option :include_blank? do
-        true
-      end
-
-      def association?
         true
       end
 

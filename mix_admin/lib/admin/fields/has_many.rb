@@ -5,11 +5,19 @@ module Admin
         false
       end
 
+      register_option :limit do
+        5
+      end
+
       register_option :eager_load do
         !count && __super__(:eager_load)
       end
 
       def count_link
+        # TODO
+      end
+
+      def more_link
         # TODO
       end
 
