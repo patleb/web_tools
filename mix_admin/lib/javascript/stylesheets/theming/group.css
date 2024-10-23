@@ -1,0 +1,35 @@
+.admin_layout {
+  &.admin_show_template {
+    .group_fields ~ .group_fields {
+      @apply -mt-8;
+    }
+  }
+  .group_fields ~ .group_fields {
+    .group {
+      @apply border-t-2 border-neutral;
+    }
+  }
+  .group_fields {
+    .group {
+      @apply border-b border-neutral px-4 py-2.5 w-full mx-auto;
+    }
+    .group_label {
+      @apply font-medium;
+    }
+    .group_help {
+      @apply text-sm mt-1;
+    }
+    .fields {
+      @apply border-t border-neutral;
+    }
+    .field {
+      @apply odd:bg-base-100 even:bg-base-200 sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-4 px-4 py-2.5;
+    }
+    .field_label {
+      @apply text-sm font-medium sm:text-right self-center sm-1:px-1;
+    }
+    .field_value {
+      @apply overflow-x-auto text-sm mt-1 sm:col-span-2 lg:col-span-3 sm:mt-0 px-1;
+    }
+  }
+}

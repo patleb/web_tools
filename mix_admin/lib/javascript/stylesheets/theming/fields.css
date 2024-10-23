@@ -24,18 +24,13 @@
     .date_type {
       @apply min-w-[13ch];
     }
-    .date_time_type {
+    .date_time_type,
+    .discarded_type {
       @apply min-w-[20ch];
-    }
-    .integer_type {
-      @apply text-right;
     }
     .code_type,
     .json_type {
       @apply text-left whitespace-pre break-words;
-    }
-    .money_type {
-      @apply text-right;
     }
     .password_type {
       @apply min-w-[5ch];
@@ -48,6 +43,19 @@
     }
     .uuid_type {
       @apply min-w-[36ch];
+    }
+  }
+  .group_fields .field_value {
+    .checkbox {
+      @apply mt-1;
+    }
+    .input,
+    .textarea {
+      @apply my-1 max-w-2xl;
+    }
+    .textarea,
+    .input[type='text'] {
+      @apply mx-auto w-full;
     }
   }
 }

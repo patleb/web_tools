@@ -1,5 +1,7 @@
 @import '@@lib/mix_admin/stylesheets/theming';
 @import '@@lib/mix_admin/stylesheets/theming/fields';
-@import '@@lib/mix_admin/stylesheets/theming/sections';
-@import '@@lib/mix_admin/stylesheets/theming/table';
-@import '@@lib/mix_admin/stylesheets/theming/templates';
+@import '@@lib/mix_admin/stylesheets/theming/group';
+@import '@@lib/mix_admin/stylesheets/theming/section';
+@import '@@lib/mix_admin/stylesheets/theming/sections/export';
+@import '@@lib/mix_admin/stylesheets/theming/sections/index';
+@import '@@lib/mix_admin/stylesheets/theming/sections/new';

@@ -1,15 +1,3 @@
-.admin_show_template,
-.admin_new_template,
-.admin_edit_template {
-  #main {
-    @apply lg-1:container bg-base-200 shadow-xl grow-0 mb-auto max-w-6xl;
-  }
-}
-.admin_show_template {
-  .group_fields ~ .group_fields {
-    @apply -mt-8;
-  }
-}
 .admin_export_template {
   #main {
     @apply container;
