@@ -4,9 +4,8 @@ module Admin
   module Fields
     class Association < Admin::Field
       eager_autoload do
-        autoload :AsArray
+        autoload :AsArray, prepend: true
       end
-      prepend AsArray
 
       delegate :foreign_key, :foreign_type, :polymorphic?, :list_parent?, :inverse_of, :nested_options, to: :property
       delegate :parse_input!, :parse_search, :parse_value, :format_input, :format_export, :value, to: :property_field, allow_nil: true

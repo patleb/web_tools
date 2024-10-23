@@ -2,6 +2,7 @@
 
 module Admin
   class Section < ActionView::Delegator
+    extend ActiveSupport::Autoload
     include Configurable
 
     class_attribute :weight, instance_writer: false, instance_predicate: false, default: 0

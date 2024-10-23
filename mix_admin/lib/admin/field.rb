@@ -1,14 +1,12 @@
 module Admin
   class Field < ActionView::Delegator
     extend ActiveSupport::Autoload
+    include Configurable
 
     eager_autoload do
-      autoload :AsArray
-      autoload :AsRange
+      autoload :AsArray, prepend: true
+      autoload :AsRange, prepend: true
     end
-    include Configurable
-    prepend AsArray
-    prepend AsRange
 
     attr_accessor :weight, :group, :through, :as
     attr_writer :editable

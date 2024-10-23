@@ -3,16 +3,14 @@
 module Admin
   class Model < ActionView::Delegator
     extend ActiveSupport::Autoload
+    include Configurable
 
     eager_autoload do
       autoload :Association
       autoload :Column
-      autoload :Definable
-      autoload :Searchable
+      autoload :Definable, extend: true
+      autoload :Searchable, extend: true
     end
-    include Configurable
-    extend Definable
-    extend Searchable
 
     TRASH_ACTIONS = [:trash, :restore]
 
