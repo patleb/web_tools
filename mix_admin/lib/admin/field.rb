@@ -14,7 +14,7 @@ module Admin
     delegate :array?, :association?, to: :property, allow_nil: true
 
     def self.find_class(section, property)
-      @@find_class ||= Admin::Fields.constants.sort.reverse.select_map do |name|
+      @@find_class ||= Admin::Fields.constants.except(:Association).sort.reverse.select_map do |name|
         klass = Admin::Fields.const_get(name)
         klass if klass.singleton_class.method_defined? :has?
       end
