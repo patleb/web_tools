@@ -8,10 +8,6 @@ module MixTask
   class Engine < Rails::Engine
     require 'mix_task/rake/task/with_log'
 
-    config.before_initialize do
-      autoload_models_if_admin(['Task', 'LogLines::Task'])
-    end
-
     initializer 'mix_task.migrations' do |app|
       append_migrations(app)
     end

@@ -77,7 +77,6 @@ module MixAdmin
     require 'mix_admin/active_support/core_ext/numeric/conversions'
     require 'mix_admin/active_support/core_ext/object/full_symbolize'
     require 'mix_admin/active_support/core_ext/string'
-    require 'mix_admin/rails/engine'
 
     config.before_configuration do
       require 'mix_admin/active_model/name/with_admin'

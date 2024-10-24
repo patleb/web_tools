@@ -27,10 +27,6 @@ module MixJob
       end
     end
 
-    config.before_initialize do
-      autoload_models_if_admin('Job')
-    end
-
     initializer 'mix_job.migrations' do |app|
       append_migrations(app)
     end

@@ -24,8 +24,6 @@ module MixServer
       Rails.autoloaders.main.ignore("#{PgHero::Engine.root}/app/controllers/pg_hero/home_controller")
       Rails.autoloaders.main.ignore("#{PgHero::Engine.root}/app/helpers/pg_hero/home_helper")
 
-      autoload_models_if_admin(['LogLines::Email', 'LogLines::Rescue'])
-
       if defined? PhusionPassenger
         PhusionPassenger.on_event(:starting_worker_process) do |_forked|
           Log.worker
