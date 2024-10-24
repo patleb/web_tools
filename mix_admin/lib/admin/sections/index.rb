@@ -260,7 +260,7 @@ module Admin
       def bulk_items
         memoize(self, __method__, bindings) do
           Admin::Action.all(:bulk_menu?).select_map do |action|
-            url = action.member? ? model.allowed_url(action.key, id: :bulk) : model.allowed_url(action.key)
+            url = model.allowed_url(action.key)
             li_(button_ '.js_bulk_buttons', action.title(:bulk_link), formaction: url, class: action.css_class) if url
           end
         end

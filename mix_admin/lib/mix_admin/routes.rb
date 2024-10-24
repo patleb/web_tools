@@ -35,9 +35,11 @@ module MixAdmin
           mapper.scope '/:id' do
             Admin::Action.all(:member?).each do |action|
               name = action.key
+              default_id = action.bulkable? ? 'bulk' : nil
               route_fragment = action.route_fragment? ? name : ''
 
-              define_singleton_method "#{name}_path" do |model_name:, id:, **params|
+              define_singleton_method "#{name}_path" do |model_name:, id: default_id, **params|
+                raise 'missing keyword: :id' if id.nil?
                 build_path model_name, id, route_fragment, **params
               end
 
