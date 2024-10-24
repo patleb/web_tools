@@ -1,1 +1,1 @@
-@section.collection_table
+@section.render

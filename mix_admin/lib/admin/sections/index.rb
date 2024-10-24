@@ -69,7 +69,7 @@ module Admin
         { name: name, reverse: reverse.try(:to_b) }
       end
 
-      def collection_table
+      def render
         labels = {}
         id, *fields = self.fields
         h_(

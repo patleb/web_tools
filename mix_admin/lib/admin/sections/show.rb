@@ -12,6 +12,12 @@ module Admin
         @scroll_items ||= {}
       end
 
+      def render
+        groups.html_map do |group|
+          group.fieldset
+        end
+      end
+
       def scroll_items
         if memoize_scroll_items?
           (@scroll_items[Current.locale] ||= {})[Current.user.as_role] ||= super + _scroll_items

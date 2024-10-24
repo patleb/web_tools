@@ -3,7 +3,7 @@
 module Admin
   module Sections
     class New < Show
-      def member_form
+      def render
         form_(action: presenter.url_for(action_name), multipart: true, remote: true, back: true, as: presenter.record) {[
           groups.map do |group|
             group.fieldset
@@ -11,6 +11,8 @@ module Admin
           member_actions,
         ]}
       end
+
+      private
 
       def member_actions
         actions = {

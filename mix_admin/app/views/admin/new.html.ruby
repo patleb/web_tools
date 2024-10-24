@@ -1,1 +1,1 @@
-@section.member_form
+@section.render
