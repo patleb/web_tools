@@ -66,6 +66,7 @@ module Admin
     autoload :Index
     autoload :New
     autoload :Show
+    autoload :Trash
   end
 end
 
