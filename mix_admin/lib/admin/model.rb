@@ -92,9 +92,11 @@ module Admin
     end
 
     def self.allowed_models
-      MixAdmin.config.models_pool.select_map do |model_name|
-        next unless (model = model_name.to_const.admin_model).allowed? :index
-        model
+      memoize(Admin::Model, __method__) do
+        MixAdmin.config.models_pool.select_map do |model_name|
+          next unless (model = model_name.to_const.admin_model).allowed? :index
+          model
+        end
       end
     end
 
