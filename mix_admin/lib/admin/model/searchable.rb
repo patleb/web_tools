@@ -89,6 +89,7 @@ module Admin::Model::Searchable
   # | : OR condition for multiple fields (ex.: {field_1|field_2}) or operators (ex.: =value_1|=value_2)
   # , : [escapable] IN operator for multiple tokens (ex.: =value_1,value_2 --> ... IN ('value_1','value_2'))
   def query_scope(scope, section, query)
+    query = MixAdmin::Routes.format_query_param(query)
     return [scope, []] unless query.is_a?(String) && query.present?
     query_fields = section.query_fields.with_indifferent_access
     fields_default = query_fields.transform_values{ |v| v.keys.map(&:to_s).to_set }

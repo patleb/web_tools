@@ -24,9 +24,7 @@ module MixAdmin
             route_fragment = action.route_fragment? ? name : ''
 
             define_singleton_method "#{name}_path" do |model_name:, **params|
-              if params[:q].is_a? Hash
-                params[:q] = params[:q].map{ |(field_name, value)| "{#{field_name}}=#{value}" }.join(' ')
-              end
+              params[:q] = format_query_param(params[:q])
               build_path model_name, route_fragment, **params
             end
 
@@ -48,6 +46,15 @@ module MixAdmin
           end
         end
       end
+    end
+
+    def self.format_query_param(q)
+      return q unless q.is_a? Hash
+      q = q.map do |(name, value)|
+        value = "^#{value.gsub(/\s/, '\ ')}$" if value.is_a? String
+        "{#{name}}=#{value}"
+      end
+      q.join(' ')
     end
 
     include ExtRails::WithRoutes
