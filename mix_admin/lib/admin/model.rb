@@ -172,20 +172,38 @@ module Admin
 
     def self.associated_counts(presenter)
       Current.with(discardable: false) do
-        associations.each_with_object(allowed: [], restricted: []) do |association, memo|
+        associations.each_with_object(allowed: {}, restricted: {}) do |association, memo|
           klass, type = association.klass, :restricted
           if (model = allowed_models.find{ |model| model.klass == klass })
             type = :allowed
           else
             next unless can? klass, :index
           end
-          if association.reflection.macro == :has_many
+          if association.type == :has_many
             next unless (count = presenter[association.name].size) > 0
           else
             next unless presenter[association.name]
             count = 1
           end
-          memo[type] << [association, count, model].compact
+          if (memo.dig(type, klass, 0) || 0) < count
+            memo[type][klass] = if model
+              field = model && model.index.fields.select do |f|
+                f.association? && f.queryable? && f.property_model == self
+              end.sort_by do |f|
+                next 2 if f.column_name != primary_key.to_sym
+                next 1 if f.property.type == :has_many
+                0
+              end.first
+              url = if field
+                model.url_for(:index, q: { field.query_name => presenter[field.column_name] })
+              else
+                model.url_for(:index)
+              end
+              [count, url]
+            else
+              [count]
+            end
+          end
         end
       end
     end
