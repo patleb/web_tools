@@ -51,7 +51,7 @@ module MixAdmin
     end
 
     def record_label_methods
-      @record_label_methods ||= [:name, :title]
+      @record_label_methods ||= []
     end
 
     def models_pool

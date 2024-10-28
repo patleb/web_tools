@@ -166,5 +166,16 @@ module Admin
       list += parent.public_send(name) if parent
       list
     end
+
+    private
+
+    def buttons(**actions)
+      div_ '.buttons' do
+        actions.select_map do |name, label|
+          next unless label
+          input_(class: name, type: 'submit', name: "_#{name}", value: label, formnovalidate: name == :cancel)
+        end
+      end
+    end
   end
 end

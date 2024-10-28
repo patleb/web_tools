@@ -162,10 +162,11 @@ en:
       save_and_new: Save and add another
       save_and_edit: Save and edit
       delete: Delete
-      all_of_the_following_related_items_will_be_deleted: "The following related items may be deleted or orphaned:"
+      will_be_deleted: "The following related items may be deleted or orphaned:"
       are_you_sure_you_want_to_delete_the_object: "Are you sure you want to delete this %{model_name}"
       confirmation: Yes, I'm sure
       bulk_delete: "The following objects will be deleted, which may delete or orphan some of their related dependencies:"
+      cant_delete: "(will not be deleted: has dependencies restrictions)"
       new_model: "%{name} (new)"
     chart:
       field: Field

@@ -8,25 +8,13 @@ module Admin
           groups.map do |group|
             group.fieldset
           end,
-          member_actions,
+          buttons(
+            save: model.save_label,
+            new: model.allowed?(:new) && model.save_and_new_label,
+            edit: model.allowed?(:edit) && model.save_and_edit_label,
+            cancel: model.cancel_label,
+          ),
         ]}
-      end
-
-      private
-
-      def member_actions
-        actions = {
-          save: model.save_label,
-          new: model.allowed?(:new) && model.save_and_new_label,
-          edit: model.allowed?(:edit) && model.save_and_edit_label,
-          cancel: model.cancel_label,
-        }
-        div_ '.member_actions' do
-          actions.select_map do |name, label|
-            next unless label
-            input_(class: name, type: 'submit', name: "_#{name}", value: label, formnovalidate: name == :cancel)
-          end
-        end
       end
     end
   end

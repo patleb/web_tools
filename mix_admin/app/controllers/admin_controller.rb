@@ -72,6 +72,7 @@ class AdminController < LibController
       records = [@model.build]
     else
       scope = policy_scope(@model.scope)
+      scope = scope.discarded if (Current.discarded = @action.trash?)
       records = case
         when bulk?               then (bulk = true)   && @model.get(scope, @section, ids: params[:ids])
         when @action.member?     then (member = true) && @model.get(scope, @section, id: params[:id])
@@ -84,7 +85,7 @@ class AdminController < LibController
     end
     raise RoutingError if bulk && @presenters.empty?
     raise RoutingError if (@new || member) && (@presenter = @presenters.first).nil?
-    @section = @presenter ? @section.with(presenter: @presenter) : @section.with(presenters: @presenters)
+    @section = @section.with(presenter: @presenter, presenters: @presenters)
   end
 
   def set_attributes

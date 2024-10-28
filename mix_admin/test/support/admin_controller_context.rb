@@ -23,14 +23,6 @@ module AdminControllerContext
     let(:model_name){ Test::Extensions::RecordExtension.name.to_admin_param }
     let(:model_denied){ false }
     let(:presenter_denied){ false }
-
-    around do |test|
-      MixAdmin.with do |config|
-        config.root = '/model'
-        config.record_label_methods = []
-        test.call
-      end
-    end
   end
 
   private

@@ -21,5 +21,16 @@ module Admin
         'trash'
       end
     end
+
+    controller_for Delete do
+      def delete
+        case request.method_symbol
+        when :get
+          render :delete
+        when :post
+
+        end
+      end
+    end
   end
 end

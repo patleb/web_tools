@@ -183,7 +183,7 @@ module Admin
             autocomplete: 'off',
             spellcheck: false,
           ),
-          button_('.btn.btn-sm.btn-square', icon('search'), name: false),
+          button_('.btn.btn-sm.btn-square', icon('search')),
         ]}
       end
 
@@ -260,8 +260,8 @@ module Admin
       def bulk_items
         memoize(self, __method__, bindings) do
           Admin::Action.all(:bulk_menu?).select_map do |action|
-            url = model.allowed_url(action.key)
-            li_(button_ '.js_bulk_buttons', action.title(:bulk_link), formaction: url, class: action.css_class) if url
+            next unless (url = model.allowed_url(action.key))
+            li_(button_ '.js_bulk_buttons', action.title(:bulk_link), formaction: url, class: action.css_class)
           end
         end
       end
