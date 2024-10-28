@@ -11,7 +11,9 @@ class Current < ActiveSupport::CurrentAttributes
     old_values = attributes.slice(*values.keys)
     yield attributes.merge!(values)
   ensure
-    attributes.merge! old_values
+    values.each_key do |name|
+      attributes[name] = old_values[name]
+    end
   end
 
   alias_method :locale_without_default, :locale
