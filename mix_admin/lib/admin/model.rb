@@ -186,6 +186,7 @@ module Admin
             count = 1
           end
           if (memo.dig(type, klass, 0) || 0) < count
+            can_destroy = [:restrict_with_error, :restrict_with_exception].exclude? association.options[:dependent]
             memo[type][klass] = if model
               field = model && model.index.fields.select do |f|
                 f.association? && f.queryable? && f.property_model == self
@@ -199,9 +200,9 @@ module Admin
               else
                 model.url_for(:index)
               end
-              [count, url]
+              [count, url, can_destroy]
             else
-              [count]
+              [count, can_destroy]
             end
           end
         end
