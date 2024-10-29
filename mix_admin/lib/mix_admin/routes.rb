@@ -33,7 +33,7 @@ module MixAdmin
           mapper.scope '/:id' do
             Admin::Action.all(:member?).each do |action|
               name = action.key
-              default_id = action.bulkable? ? 'bulk' : nil
+              default_id = action.bulkable? ? '_bulk' : nil
               route_fragment = action.route_fragment? ? name : ''
 
               define_singleton_method "#{name}_path" do |model_name:, id: default_id, **params|
