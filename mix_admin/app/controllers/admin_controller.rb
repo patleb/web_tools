@@ -8,7 +8,7 @@ class AdminController < LibController
     end
   end
 
-  rescue_from RoutingError, ActionController::ParameterMissing, ActiveRecord::RecordNotFound, with: :render_404
+  rescue_from RoutingError, ActionController::ParameterMissing, ActiveRecord::RecordNotFound, with: :on_routing_error
   rescue_from ActiveRecord::RecordInvalid,     with: :on_record_invalid
   rescue_from ActiveRecord::StaleObjectError,  with: :on_stale_object_error
   rescue_from ActiveRecord::InvalidForeignKey, with: :on_invalid_foreign_key
@@ -17,10 +17,10 @@ class AdminController < LibController
   authenticate
 
   before_action :set_action
-  before_action :set_model,          if: -> { @action.model? }
-  before_action :redirect_on_cancel, if: -> { @model && params[:_cancel] }
-  before_action :set_presenters,     if: -> { @action.presenters? }
-  before_action :set_attributes,     if: -> { defined?(@new) && (@new || @action.member?) }
+  before_action :set_model,      if: -> { @action.model? }
+  before_action :on_cancel,      if: -> { @model && params[:_cancel] }
+  before_action :set_presenters, if: -> { @action.presenters? }
+  before_action :set_attributes, if: -> { defined?(@new) && (@new || @action.member?) }
 
   attr_reader :action
 
@@ -28,10 +28,6 @@ class AdminController < LibController
 
   Admin::Action.all.each do |action|
     class_eval(&action.controller)
-  end
-
-  def render_404(*)
-    Rails.env.development? ? render_500(*) : super
   end
 
   def root_path
@@ -63,10 +59,6 @@ class AdminController < LibController
     @section = @model.section(@action.section_name)
   end
 
-  def redirect_on_cancel
-    redirect_back notice: t('admin.flash.noaction')
-  end
-
   def set_presenters
     if (@new = @action.new?)
       records = [@model.build]
@@ -76,7 +68,7 @@ class AdminController < LibController
       id, ids = params[:id], params[:ids]
       records = case
         when @action.bulkable? && ids.present?  then (bulk = true) && @model.get(scope, @section, ids: ids)
-        when @action.bulkable? && id == '_bulk' then return redirect_on_cancel
+        when @action.bulkable? && id == '_bulk' then return on_empty_bulk
         when @action.member?                    then (member = true) && @model.get(scope, @section, id: id)
         when @action.collection?                then @model.search(scope, @section, **search_params)
         end
@@ -127,7 +119,16 @@ class AdminController < LibController
       end
   end
 
-  def on_success
+  def on_routing_error
+    redirect_back
+  end
+
+  def on_cancel
+    redirect_back notice: t('admin.flash.noaction')
+  end
+  alias_method :on_empty_bulk, :on_cancel
+
+  def on_update_success
     if params["_#{action_name}"]
       flash.now[:notice] = admin_notice
       render action_name

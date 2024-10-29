@@ -28,7 +28,7 @@ module Admin
         when :post
           @presenter.assign_attributes(@attributes) if @attributes.present?
           @presenter.save!
-          on_success
+          on_update_success
         end
       end
     end
