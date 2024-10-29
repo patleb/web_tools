@@ -73,10 +73,12 @@ class AdminController < LibController
     else
       scope = policy_scope(@model.scope)
       scope = scope.discarded if (Current.discarded = @action.trash?)
+      id, ids = params[:id], params[:ids]
       records = case
-        when bulk?               then (bulk = true)   && @model.get(scope, @section, ids: params[:ids])
-        when @action.member?     then (member = true) && @model.get(scope, @section, id: params[:id])
-        when @action.collection? then                    @model.search(scope, @section, **search_params)
+        when @action.bulkable? && ids.present?  then (bulk = true) && @model.get(scope, @section, ids: ids)
+        when @action.bulkable? && id == '_bulk' then return redirect_on_cancel
+        when @action.member?                    then (member = true) && @model.get(scope, @section, id: id)
+        when @action.collection?                then @model.search(scope, @section, **search_params)
         end
     end
     @presenters = records.select_map do |record|
@@ -115,11 +117,6 @@ class AdminController < LibController
   end
 
   private
-
-  # NOTE params[:id] must be present for member actions, but is ignored and set to 'bulk' by default
-  def bulk?
-    @action.bulkable? && params[:ids].present?
-  end
 
   def action_type_object
     @action_type_object ||= case
