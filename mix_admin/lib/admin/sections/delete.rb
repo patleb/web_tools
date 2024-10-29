@@ -35,7 +35,7 @@ module Admin
             ]}
           end,
           buttons(
-            trash: !presenters.first.discarded? && model.allowed?(:trash) && t('admin.form.trash'),
+            trash: can_delete && !presenters.first.discarded? && model.allowed?(:trash) && t('admin.form.trash'),
             delete: can_delete && model.allowed?(:delete) && t('admin.form.delete'),
             cancel: t('admin.form.cancel'),
           ),
