@@ -6,7 +6,7 @@
   }
   .group_fields ~ .group_fields {
     .group {
-      @apply border-t-2 border-neutral;
+      @apply border-t border-neutral;
     }
   }
   .group_fields {
@@ -18,9 +18,6 @@
     }
     .group_help {
       @apply text-sm mt-1;
-    }
-    .fields {
-      @apply border-t border-neutral;
     }
     .field {
       @apply odd:bg-base-100 even:bg-base-200 sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-4 px-4 py-2.5;

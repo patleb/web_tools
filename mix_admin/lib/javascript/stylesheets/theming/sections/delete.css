@@ -1,7 +1,7 @@
 .admin_layout {
   .delete_records {
     legend {
-      @apply border-b-2 border-neutral p-2.5;
+      @apply border-b border-neutral p-2.5;
     }
     fieldset {
       @apply text-sm p-2.5 odd:bg-base-100 even:bg-base-200;
