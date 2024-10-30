@@ -6,8 +6,8 @@ module ActiveRecord::Associations::Builder::HasOne::WithDiscard
       return super unless (discardable = options[:discardable])
       scope = (discardable == :all) ? -> { all_discardable } : ->(record) { as_discardable(record) } unless scope
       reflection = super
-      model.after_discard -> { public_send(name).discard! }
-      model.before_undiscard -> { public_send(name).undiscard! }
+      model.after_discard -> { public_send(name)&.discard! }
+      model.before_undiscard -> { public_send(name)&.undiscard! }
       reflection
     end
 
