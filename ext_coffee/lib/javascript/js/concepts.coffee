@@ -27,7 +27,7 @@ class Js.Concepts
 
   @on_load: =>
     # Slight timeout so that the DOM gets properly initialized
-    setInterval =>
+    setTimeout =>
       while @instances.ready_once.length
         concept = @instances.ready_once.shift()
         concept.ready_once()
