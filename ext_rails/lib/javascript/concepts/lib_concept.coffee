@@ -29,7 +29,7 @@ class window.LibConcept
       , 8000)
 
   clear_alert: (alert) ->
-    alert.setAttribute('checked', '')
+    alert?.setAttribute('checked', '')
 
   adjust_autofocus: ->
     Rails.find('[autofocus]:not([type="email"],[type="number"])')?.cursor_end(true)
