@@ -26,14 +26,17 @@ class Js.Concepts
     Rails.document_on 'turbolinks:load', @on_ready
 
   @on_load: =>
-    while @instances.ready_once.length
-      concept = @instances.ready_once.shift()
-      concept.ready_once()
-      concept.READY_ONCE_IVARS = []
-      concept.each (key, value) ->
-        unless not_nullifyable(key, value)
-          concept.READY_ONCE_IVARS.push(key)
-    @instances.ready.each (concept) -> concept.ready()
+    # Slight timeout so that the DOM gets properly initialized
+    setInterval =>
+      while @instances.ready_once.length
+        concept = @instances.ready_once.shift()
+        concept.ready_once()
+        concept.READY_ONCE_IVARS = []
+        concept.each (key, value) ->
+          unless not_nullifyable(key, value)
+            concept.READY_ONCE_IVARS.push(key)
+      @instances.ready.each (concept) -> concept.ready()
+    , 13
 
   @on_leave: (event) =>
     return if event.defaultPrevented
