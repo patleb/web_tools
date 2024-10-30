@@ -12,7 +12,7 @@ module Admin
       end
 
       def self.bulkable?
-        true
+        !action.trash?
       end
 
       def self.searchable?

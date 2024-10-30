@@ -81,7 +81,7 @@ module Admin
             end,
             label_('.btn.btn-circle.btn-xs', icon('info-circle'), tabindex: 0, title: t('admin.misc.description')),
           ]},
-          form_('.js_bulk_form.table_wrapper', method: :get) {[
+          form_('.js_bulk_form.table_wrapper', **bulk_form_options) {[
             table_([
               thead_('.js_table_head') do
                 tr_([
@@ -246,6 +246,10 @@ module Admin
         end
       end
 
+      def bulk_form_options
+        { method: :get }
+      end
+
       def bulk_menu
         div_('.bulk_menu.dropdown.dropdown-right.dropdown-end', if: bulk_items?) {[
           label_('.bulk_title', icon('check2-square'), tabindex: 0, title: t('admin.misc.bulk_menu_title')),
@@ -260,8 +264,13 @@ module Admin
       def bulk_items
         memoize(self, __method__, bindings) do
           Admin::Action.all(:bulk_menu?).select_map do |action|
-            next unless (url = model.allowed_url(action.key))
-            li_(button_ '.js_bulk_buttons', action.title(:bulk_link), formaction: url, class: action.css_class)
+            name = action.key
+            next unless (url = model.allowed_url(name))
+            options = {}
+            options.merge! name: "_#{name}", value: self.action.name, data: confirm(name) if self.action.trash?
+            li_(
+              button_ '.js_bulk_buttons', action.title(:bulk_link), formaction: url, class: action.css_class, **options
+            )
           end
         end
       end

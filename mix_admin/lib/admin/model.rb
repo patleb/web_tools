@@ -10,8 +10,6 @@ module Admin
     autoload :Definable, extend: true
     autoload :Searchable, extend: true
 
-    TRASH_ACTIONS = [:trash, :restore]
-
     register_class_option :scope do
       klass.all
     end
@@ -118,7 +116,7 @@ module Admin
     end
 
     def self.allowed?(action = action_name, object = klass)
-      return false if !discardable? && TRASH_ACTIONS.include?(action.to_sym)
+      return false if !discardable? && Current.discarded
       Admin::Action.allowed?(action) && can?(object, action)
     end
 
@@ -255,7 +253,7 @@ module Admin
     end
 
     def allowed?(action = action_name)
-      return false if discarded? && TRASH_ACTIONS.exclude?(action.to_sym)
+      return false if discarded? && !Current.discarded
       self.class.allowed? action, record
     end
 

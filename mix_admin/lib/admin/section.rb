@@ -179,10 +179,14 @@ module Admin
             name: "_#{name}",
             value: label,
             formnovalidate: name == :cancel,
-            data: { confirm: (t('admin.misc.confirm') if name == :delete && MixAdmin.config.confirm_delete) }
+            data: confirm(name)
           )
         end
       end
+    end
+
+    def confirm(name)
+      { confirm: (t('admin.misc.confirm') if name == :delete && MixAdmin.config.confirm_delete) }
     end
   end
 end

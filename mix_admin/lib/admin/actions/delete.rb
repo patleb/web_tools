@@ -20,6 +20,10 @@ module Admin
       def self.icon
         'trash'
       end
+
+      def trash?
+        params["_#{name}"] == 'trash'
+      end
     end
 
     controller_for Delete do
