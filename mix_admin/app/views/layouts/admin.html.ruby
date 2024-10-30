@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-append :data, div_('.js_model', data: { name: @model&.to_param })
+append :data, [
+  div_('.js_action', data: { name: @action.name }),
+  div_('.js_model', data: { name: @model&.to_param }),
+]
 append :header, [
   admin_actions_menu,
   @section&.search_menu,

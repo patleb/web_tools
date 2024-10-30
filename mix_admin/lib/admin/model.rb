@@ -14,14 +14,6 @@ module Admin
       klass.all
     end
 
-    register_class_option :discardable? do
-      klass.discardable?
-    end
-
-    register_class_option :listable? do
-      klass.listable?
-    end
-
     register_class_option :navigation_weight do
       0
     end
@@ -116,7 +108,6 @@ module Admin
     end
 
     def self.allowed?(action = action_name, object = klass)
-      return false if !discardable? && Current.discarded
       Admin::Action.allowed?(action) && can?(object, action)
     end
 
@@ -253,7 +244,6 @@ module Admin
     end
 
     def allowed?(action = action_name)
-      return false if discarded? && !Current.discarded
       self.class.allowed? action, record
     end
 

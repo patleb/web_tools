@@ -53,7 +53,7 @@ module ActionPolicy
     end
 
     def sort?
-      listable? && edit?
+      edit? && listable?
     end
 
     def delete?
@@ -61,7 +61,10 @@ module ActionPolicy
     end
 
     def trash?
-      discardable? && delete?
+      return false unless delete?
+      return false if undiscardable? && Current.discarded?
+      return false if discarded? && Current.undiscarded?
+      true
     end
 
     def restore?
@@ -70,13 +73,8 @@ module ActionPolicy
 
     protected
 
-    def discardable?
-      relation.discardable?
-    end
-
-    def listable?
-      relation.listable?
-    end
+    delegate :discardable?, :undiscardable?, :listable?, to: :relation
+    delegate :discarded?, :undiscarded?, to: :record, allow_nil: true
 
     def record
       object if record?

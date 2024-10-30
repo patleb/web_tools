@@ -5,18 +5,6 @@ module Admin
         4
       end
 
-      def self.bulkable?
-        true
-      end
-
-      def self.bulk_menu?
-        false
-      end
-
-      def self.http_methods
-        [:get, :post]
-      end
-
       def self.route_fragment?
         true
       end
@@ -25,7 +13,7 @@ module Admin
         'trash'
       end
 
-      def trash?
+      def trashable?
         true
       end
     end

@@ -36,6 +36,11 @@ module ActiveRecord::Base::WithDiscard
     end
     alias_method :discardable?, :discardable
 
+    def undiscardable
+      !discardable
+    end
+    alias_method :undiscardable?, :undiscardable
+
     def discard_all
       all.each(&:discard)
     end

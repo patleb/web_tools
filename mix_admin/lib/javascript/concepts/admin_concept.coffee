@@ -3,7 +3,7 @@ class window.AdminConcept
 
   readers: ->
     scroll_menu: -> Rails.find('.js_scroll_menu')
-    scroll_x: -> @model() and @bulk_form() and @store('scroll_x')?[@model()]
+    scroll_x: -> @model() and @bulk_form() and @store('scroll_x')?["#{@model()}_#{@action()}"]
     bulk_form: -> Rails.find('.js_bulk_form')
     bulk_toggles: -> Rails.$('.js_bulk_toggles')
     bulk_checkboxes: -> Rails.$('.js_bulk_checkboxes')
@@ -12,6 +12,7 @@ class window.AdminConcept
     table_body: -> Rails.find('.js_table_body')
     export_toggles: -> Rails.$('.js_export_toggles')
     search: -> Rails.find('.js_search')
+    action: -> Rails.find('.js_action').getAttribute('data-name')
     model: -> Rails.find('.js_model')?.getAttribute('data-name')
 
   document_on: -> [
@@ -94,7 +95,7 @@ class window.AdminConcept
 
   persist_scroll_x: ->
     if @model() and @bulk_form()
-      @store('scroll_x', { "#{@model()}": @bulk_form().scrollLeft })
+      @store('scroll_x', { "#{@model()}_#{@action()}": @bulk_form().scrollLeft })
     else
       @store('scroll_x', null)
 

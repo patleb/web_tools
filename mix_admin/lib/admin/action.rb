@@ -83,10 +83,6 @@ module Admin
       false
     end
 
-    def self.bulk_menu?
-      bulkable?
-    end
-
     # List of methods allowed. Note that you are responsible for correctly handling them in :controller action
     def self.http_methods
       [:get]
@@ -140,11 +136,11 @@ module Admin
       !root?
     end
 
-    def trash?
+    def trashable?
       false
     end
 
-    def sort?
+    def sortable?
       false
     end
 

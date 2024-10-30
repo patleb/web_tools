@@ -21,7 +21,7 @@ module Admin
         'trash'
       end
 
-      def trash?
+      def trashable?
         params["_#{name}"] == 'trash'
       end
     end

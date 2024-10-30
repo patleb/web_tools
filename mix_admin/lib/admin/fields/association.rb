@@ -64,11 +64,8 @@ module Admin
 
       def format_value(value, field = property_field)
         return unless (value = field&.format_value(value)).present?
-        if field.presenter.discarded? || !(url = field.presenter.viewable_url)
-          value
-        else
-          a_('.link.text-primary', text: value, href: url)
-        end
+        url = field.presenter.undiscarded? && field.presenter.viewable_url
+        url ? a_('.link.text-primary', text: value, href: url) : value
       end
 
       def input_name

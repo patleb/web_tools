@@ -31,9 +31,21 @@ class Current < ActiveSupport::CurrentAttributes
     theme_without_default || ExtRails.config.theme
   end
 
+  alias_method :discarded?, :discarded
+
+  def undiscarded
+    !discarded
+  end
+  alias_method :undiscarded?, :undiscarded
+
   alias_method :discardable_without_default, :discardable
   def discardable
     (value = discardable_without_default).is_a?(Boolean) ? value : true
   end
   alias_method :discardable?, :discardable
+
+  def undiscardable
+    !discardable
+  end
+  alias_method :undiscardable?, :undiscardable
 end

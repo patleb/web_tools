@@ -263,11 +263,11 @@ module Admin
 
       def bulk_items
         memoize(self, __method__, bindings) do
-          Admin::Action.all(:bulk_menu?).select_map do |action|
+          Admin::Action.all(:bulkable?).select_map do |action|
             name = action.key
             next unless (url = model.allowed_url(name))
             options = {}
-            options.merge! name: "_#{name}", value: self.action.name, data: confirm(name) if self.action.trash?
+            options.merge! name: "_#{name}", value: self.action.name, data: confirm(name) if self.action.trashable?
             li_(
               button_ '.js_bulk_buttons', action.title(:bulk_link), formaction: url, class: action.css_class, **options
             )

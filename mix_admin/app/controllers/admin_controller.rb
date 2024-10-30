@@ -65,7 +65,7 @@ class AdminController < LibController
       records = [@model.build]
     else
       scope = policy_scope(@model.scope)
-      scope = scope.discarded if (Current.discarded = @action.trash?)
+      scope = scope.discarded if (Current.discarded = @action.trashable?)
       ids = params[:ids].presence
       records = case
         when @action.bulkable? && ids then (bulk = true)   && @model.get(scope, @section, ids: ids)
@@ -179,7 +179,7 @@ class AdminController < LibController
   end
 
   def _back
-    super || @action.trash? && @model&.allowed_url(:trash) || @model&.allowed_url(:index)
+    super || @action.trashable? && @model&.allowed_url(:trash) || @model&.allowed_url(:index)
   end
 
   def sanitize_attributes(fields, params, nested: false)

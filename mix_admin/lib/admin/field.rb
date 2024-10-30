@@ -254,7 +254,7 @@ module Admin
     end
 
     def primary_key_link(label = pretty_value)
-      url = !presenter.discarded? && presenter.viewable_url
+      url = presenter.undiscarded? && presenter.viewable_url
       url ? a_('.link.text-primary', label, href: url) : label
     end
 
