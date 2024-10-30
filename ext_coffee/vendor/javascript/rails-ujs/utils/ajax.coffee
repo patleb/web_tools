@@ -94,6 +94,7 @@ create_xhr = (options, done) ->
     # Add X-CSRF-Token
     Rails.csrf_protection(xhr)
   xhr.setRequestHeader('X-Referrer', location.href)
+  xhr.setRequestHeader('Referrer', location.href)
   for name, value of options.headers ? {}
     xhr.setRequestHeader(name, value)
   xhr.withCredentials = !!options.withCredentials

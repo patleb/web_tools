@@ -68,6 +68,7 @@ class Turbolinks.HttpRequest
     @xhr.setRequestHeader('Accept', 'text/html, application/xhtml+xml')
     @xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
     @xhr.setRequestHeader('X-Referrer', @referrer)
+    @xhr.setRequestHeader('Referrer', @referrer)
     @xhr.onload = @request_loaded
     @xhr.onerror = @request_failed
     @xhr.ontimeout = @request_timed_out
