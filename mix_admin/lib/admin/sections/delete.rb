@@ -5,7 +5,7 @@ module Admin
     class Delete < Admin::Section
       def render
         can_delete = false
-        form_('.delete_records', action: model.url_for(action_name), remote: true, back: true) {[
+        form_('.delete_records', action: (presenter || model).url_for(action_name), remote: true, back: true) {[
           legend_(t('admin.form.bulk_delete')),
           presenters.map do |presenter|
             label = presenter.record_label

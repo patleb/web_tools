@@ -19,6 +19,7 @@ class AdminController < LibController
   before_action :set_action
   before_action :set_model,      if: -> { @action.model? }
   before_action :on_cancel,      if: -> { @model && params[:_cancel] }
+  before_action :on_blank_bulk,  if: -> { @action.bulkable? && params[:ids].blank? && params[:id] == '_bulk' }
   before_action :set_presenters, if: -> { @action.presenters? }
   before_action :set_attributes, if: -> { defined?(@new) && (@new || @action.member?) }
 
@@ -67,10 +68,9 @@ class AdminController < LibController
       scope = scope.discarded if (Current.discarded = @action.trash?)
       id, ids = params[:id], params[:ids]
       records = case
-        when @action.bulkable? && ids.present?  then (bulk = true) && @model.get(scope, @section, ids: ids)
-        when @action.bulkable? && id == '_bulk' then return on_empty_bulk
-        when @action.member?                    then (member = true) && @model.get(scope, @section, id: id)
-        when @action.collection?                then @model.search(scope, @section, **search_params)
+        when @action.bulkable? && ids.present? then (bulk = true) && @model.get(scope, @section, ids: ids)
+        when @action.member?                   then (member = true) && @model.get(scope, @section, id: id)
+        when @action.collection?               then @model.search(scope, @section, **search_params)
         end
     end
     @presenters = records.select_map do |record|
@@ -126,7 +126,7 @@ class AdminController < LibController
   def on_cancel
     redirect_back notice: t('admin.flash.noaction')
   end
-  alias_method :on_empty_bulk, :on_cancel
+  alias_method :on_blank_bulk, :on_cancel
 
   def on_update_success
     if params["_#{action_name}"]
@@ -167,12 +167,15 @@ class AdminController < LibController
     render action_name, status: :not_acceptable
   end
 
-  def admin_notice
-    super(@model.label)
+  def admin_notice(presenters = nil, action = nil)
+    count = Array.wrap(presenters).size
+    super(@model.label(count == 0 ? 1 : count), action)
   end
 
-  def admin_alert(presenters)
-    super(presenters, @model.label)
+  def admin_alert(presenters, action = nil)
+    presenters = Array.wrap(presenters)
+    count = presenters.size
+    super(presenters, @model.label(count == 0 ? 1 : count), action)
   end
 
   def _back

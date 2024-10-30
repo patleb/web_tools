@@ -4,7 +4,7 @@
       @apply border-b border-neutral p-2.5;
     }
     fieldset {
-      @apply text-sm p-2.5 odd:bg-base-100 even:bg-base-200;
+      @apply text-sm p-2.5 even:bg-base-100 odd:bg-base-200;
 
       ul {
         @apply text-xs;
