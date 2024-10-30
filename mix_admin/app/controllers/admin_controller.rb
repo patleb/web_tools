@@ -66,11 +66,11 @@ class AdminController < LibController
     else
       scope = policy_scope(@model.scope)
       scope = scope.discarded if (Current.discarded = @action.trash?)
-      id, ids = params[:id], params[:ids]
+      ids = params[:ids].presence
       records = case
-        when @action.bulkable? && ids.present? then (bulk = true) && @model.get(scope, @section, ids: ids)
-        when @action.member?                   then (member = true) && @model.get(scope, @section, id: id)
-        when @action.collection?               then @model.search(scope, @section, **search_params)
+        when @action.bulkable? && ids then (bulk = true)   && @model.get(scope, @section, ids: ids)
+        when @action.member?          then (member = true) && @model.get(scope, @section, id: params[:id])
+        when @action.collection?      then                    @model.search(scope, @section, **search_params)
         end
     end
     @presenters = records.select_map do |record|
