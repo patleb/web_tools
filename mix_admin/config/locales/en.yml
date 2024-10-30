@@ -87,6 +87,7 @@ en:
       of: of
       records: record(s)
       help: Help
+      confirm: Are you sure?
     flash:
       successful: "%{name} successfully %{action}"
       error: "%{name} failed to be %{action}"

@@ -17,6 +17,7 @@ module MixAdmin
     attr_writer :hidden_fields
     attr_writer :denied_fields
     attr_writer :readonly_fields
+    attr_writer :confirm_delete
     attr_accessor :simplify_search_string
     alias_method  :simplify_search_string?, :simplify_search_string
     attr_accessor :full_query_column
@@ -125,6 +126,11 @@ module MixAdmin
 
     def readonly_fields
       @readonly_fields ||= Set.new([:id, :created_at, :updated_at, :creator, :updater, :parent])
+    end
+
+    def confirm_delete
+      return @confirm_delete if defined? @confirm_delete
+      @confirm_delete = true
     end
 
     private

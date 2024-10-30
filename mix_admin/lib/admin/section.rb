@@ -173,7 +173,14 @@ module Admin
       div_ '.buttons' do
         actions.select_map do |name, label|
           next unless label
-          input_(class: name, type: 'submit', name: "_#{name}", value: label, formnovalidate: name == :cancel)
+          input_(
+            class: name,
+            type: 'submit',
+            name: "_#{name}",
+            value: label,
+            formnovalidate: name == :cancel,
+            data: { confirm: (t('admin.misc.confirm') if name == :delete && MixAdmin.config.confirm_delete) }
+          )
         end
       end
     end

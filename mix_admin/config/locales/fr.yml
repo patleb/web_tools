@@ -86,6 +86,7 @@ fr:
       operators: Opérateurs
       of: des
       records: enregistrement(s)
+      confirm: Êtes-vous certain(e)?
     flash:
       successful: "%{name} %{action} avec succès"
       error: "%{name} n'a pas pu être %{action}"
