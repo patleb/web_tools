@@ -83,7 +83,7 @@ module Admin
 
       def page_url(page)
         params = page == 1 ? search_params : search_params.merge(p: page)
-        model.url_for(action.name, **params)
+        model.url(**params)
       end
 
       def total_count

@@ -284,7 +284,7 @@ module Admin
       else
         reverse = sort_reverse?
       end
-      [model.url_for(action.name, q: params[:q].presence, f: params[:f].presence, s: name, r: reverse), active, reverse]
+      [model.url(q: params[:q].presence, f: params[:f].presence, s: name, r: reverse), active, reverse]
     end
 
     def sort_column

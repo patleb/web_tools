@@ -158,10 +158,10 @@ module Admin
             scopes.map do |filter, label, active|
               css_class = "#{filter}_filter"
               if active
-                url = model.url_for(action.name, **search_params.except(:f))
+                url = model.url(**search_params.except(:f))
                 li_(a_ '.active', [label, icon('x-circle')], href: url, class: css_class)
               else
-                url = model.url_for(action.name, f: filter, **search_params.except(:f))
+                url = model.url(f: filter, **search_params.except(:f))
                 li_(a_ text: label, href: url, class: css_class)
               end
             end
@@ -170,7 +170,7 @@ module Admin
       end
 
       def query_bar
-        form_('.query_bar.input-group', action: model.url_for(action_name), method: :get) {[
+        form_('.query_bar.input-group', action: model.url, method: :get) {[
           search_params.except(:q).map do |name, value|
             input_ name: name, value: value, type: 'hidden'
           end,

@@ -17,7 +17,7 @@ module Admin
           next if children.empty?
           [parent, children]
         end
-        form_('.export_schema.card.indicator', action: model.url_for(:export, **search_params)) {[
+        form_('.export_schema.card.indicator', action: model.url(**search_params)) {[
           span_('.indicator-item.indicator-center.badge', [count, t('admin.misc.records')], if: count),
           fieldset_('.card.collapse.collapse-arrow', unless: root_fields.empty?) {[
             input_(type: 'checkbox', checked: true),
@@ -72,7 +72,7 @@ module Admin
 
       def count
         return if countless?
-        model.count(policy_scope(model.scope), self, **search_params)
+        model.count(policy_scope(model.scope), self, **search_params) # TODO bulk
       end
 
       def fields_toggle(label_class, id:)

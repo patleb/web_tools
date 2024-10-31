@@ -111,8 +111,11 @@ module Admin
       Admin::Action.allowed?(action) && can?(object, action)
     end
 
-    def self.url_for(action, **params)
+    def self.url_for(action = action_name, **params)
       MixAdmin::Routes.url_for(action: action, model_name: to_param, **params)
+    end
+    class << self
+      alias_method :url, :url_for
     end
 
     def self.polymorphic_parents(klass, name)
@@ -247,9 +250,10 @@ module Admin
       self.class.allowed? action, record
     end
 
-    def url_for(action, **params)
+    def url_for(action = action_name, **params)
       self.class.url_for(action, id: primary_key_value, **params)
     end
+    alias_method :url, :url_for
 
     def primary_key_value
       record.public_send(model.primary_key)
