@@ -47,7 +47,7 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
       fields.each do |field|
         assert_select "td.tooltip .field_value.#{field.css_class.split.join('.')}"
       end
-      assert_select ".bulk_menu li button[formaction='http://127.0.0.1:3333/model/#{model_name}/bulk/delete']"
+      assert_select ".bulk_menu li button[formaction='http://127.0.0.1:3333/model/#{model_name}/_bulk/delete']"
     end
 
     test '@model.search' do

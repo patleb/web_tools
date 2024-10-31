@@ -23,6 +23,8 @@ module AdminControllerContext
     let(:model_name){ Test::Extensions::RecordExtension.name.to_admin_param }
     let(:model_denied){ false }
     let(:presenter_denied){ false }
+
+    delegate :root_path, to: :controller
   end
 
   private

@@ -5,36 +5,36 @@ class AdminController::ShowTest < ActionDispatch::IntegrationTest
   include AdminControllerContext
 
   context '#show' do
-    test 'return :not_found on empty :model_name' do
-      get '/admin//show/1'
-      assert_response :not_found
+    test 'redirect to :root_path on empty :model_name' do
+      get '/model//1'
+      assert_redirected_to root_path
     end
 
-    test 'return :not_found on unknown model' do
-      get '/model/unknown/show/1'
-      assert_response :not_found
+    test 'redirect to :root_path on unknown model' do
+      get '/model/unknown/1'
+      assert_redirected_to root_path
     end
 
-    test 'return :not_found on bad id' do
+    test 'redirect to :root_path on bad id' do
       get "/model/#{model_name}/-1"
-      assert_response :not_found
+      assert_redirected_to root_path
     end
 
     context 'denied model' do
       let(:model_denied){ true }
 
-      test 'return :not_found on denied model' do
+      test 'redirect to :root_path on denied model' do
         get "/model/#{model_name}/1"
-        assert_response :not_found
+        assert_redirected_to root_path
       end
     end
 
     context 'denied presenter' do
       let(:presenter_denied){ true }
 
-      test 'return :not_found on denied presenter' do
+      test 'redirect to :root_path on denied presenter' do
         get "/model/#{model_name}/1"
-        assert_response :not_found
+        assert_redirected_to root_path
       end
     end
 
