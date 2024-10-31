@@ -88,8 +88,17 @@ module Admin
       [:get]
     end
 
+    def self.route_fragment
+      return '' unless route_fragment?
+      route_private? ? "_#{key}" : key.to_s
+    end
+
     def self.route_fragment?
       true
+    end
+
+    def self.route_private?
+      false
     end
 
     def self.icon

@@ -76,6 +76,7 @@ module MixAdmin
         new
         delete
         trash
+        restore
       ))
     end
 

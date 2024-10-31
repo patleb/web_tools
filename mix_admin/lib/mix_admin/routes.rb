@@ -10,7 +10,7 @@ module MixAdmin
       mapper.scope path: MixAdmin.config.root_path, controller: 'admin', format: false do
         Admin::Action.all(:root?).each do |action|
           name = action.key
-          route_fragment = action.route_fragment? ? name : ''
+          route_fragment = action.route_fragment
 
           define_singleton_method "#{name}_path" do |**params|
             build_path route_fragment, **params
@@ -21,7 +21,7 @@ module MixAdmin
         mapper.scope '/:model_name' do
           Admin::Action.all(:collection?).each do |action|
             name = action.key
-            route_fragment = action.route_fragment? ? name : ''
+            route_fragment = action.route_fragment
 
             define_singleton_method "#{name}_path" do |model_name:, **params|
               params[:q] = format_query_param(params[:q])
@@ -34,7 +34,7 @@ module MixAdmin
             Admin::Action.all(:member?).each do |action|
               name = action.key
               default_id = action.bulkable? ? '_bulk' : nil
-              route_fragment = action.route_fragment? ? name : ''
+              route_fragment = action.route_fragment
 
               define_singleton_method "#{name}_path" do |model_name:, id: default_id, **params|
                 raise 'missing keyword: :id' if id.nil?

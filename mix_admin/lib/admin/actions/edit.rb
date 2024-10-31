@@ -15,10 +15,6 @@ module Admin
         [:get, :post]
       end
 
-      def self.route_fragment?
-        true
-      end
-
       def self.icon
         'pencil-square'
       end
