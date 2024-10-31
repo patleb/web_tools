@@ -14,7 +14,7 @@ end
 
 class NilClass
   def upcase_first
-    ''
+    self
   end
 
   def html_blank?
