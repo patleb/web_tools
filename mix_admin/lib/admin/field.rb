@@ -96,7 +96,7 @@ module Admin
     end
 
     register_option :full_query_column? do
-      MixAdmin.config.full_query_column? || section.query_column_names_counts[column_name].to_i > 1
+      MixAdmin.config.full_query_column? || section.column_name_counts[column_name].to_i > 1
     end
 
     register_option :input do
