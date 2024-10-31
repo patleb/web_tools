@@ -11,7 +11,7 @@ module ActionController::WithPolicy
     end
   end
 
-  def can?(object, action = action_name)
+  def can?(action, object)
     policy(object).public_send("#{action}?")
   end
 

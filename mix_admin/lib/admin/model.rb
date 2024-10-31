@@ -108,7 +108,7 @@ module Admin
     end
 
     def self.allowed?(action = action_name, object = klass)
-      Admin::Action.allowed?(action) && can?(object, action)
+      Admin::Action.allowed?(action) && can?(action, object)
     end
 
     def self.url_for(action = action_name, **params)
@@ -169,7 +169,7 @@ module Admin
           if (model = allowed_models.find{ |model| model.klass == klass })
             type = :allowed
           else
-            next unless can? klass, :index
+            next unless can? :index, klass
           end
           if association.type == :has_many
             count = presenter.respond_to?("#{name}_count") ? presenter["#{name}_count"] : presenter[name].size
