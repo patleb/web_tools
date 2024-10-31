@@ -166,7 +166,7 @@ fr:
       are_you_sure_you_want_to_delete_the_object: "Êtes-vous sûr(e) de vouloir supprimer ce(tte) %{model_name}"
       confirmation: Oui, je suis sûr(e)
       bulk_delete: "Les objets suivants vont être supprimés, ce qui pourrait supprimer ou rendre orphelin certaines de ses dépendances:"
-      cant_delete: "(ne sera pas supprimé: restrictions sur les dépendences)"
+      cant_delete: "(ne peut pas être supprimé: restrictions sur les dépendences)"
       new_model: "nouveau(elle) %{name}"
     chart:
       field: Champ

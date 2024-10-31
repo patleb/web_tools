@@ -165,16 +165,17 @@ module Admin
     def self.associated_counts(presenter)
       Current.with(discardable: false) do
         associations.each_with_object(allowed: {}, restricted: {}) do |association, memo|
-          klass, type = association.klass, :restricted
+          klass, name, type = association.klass, association.name, :restricted
           if (model = allowed_models.find{ |model| model.klass == klass })
             type = :allowed
           else
             next unless can? klass, :index
           end
           if association.type == :has_many
-            next unless (count = presenter[association.name].size) > 0
+            count = presenter.respond_to?("#{name}_count") ? presenter["#{name}_count"] : presenter[name].size
+            next unless count > 0
           else
-            next unless presenter[association.name]
+            next unless presenter[name]
             count = 1
           end
           if (memo.dig(type, klass, 0) || 0) < count
@@ -264,15 +265,18 @@ module Admin
     end
 
     def record_label
-      label = if record.try("#{record_label_method}_changed?")
-        record.public_send("#{record_label_method}_was")
+      label_method = record_label_method
+      label = if record.try("#{label_method}_changed?")
+        record.public_send("#{label_method}_was")
       elsif record.new_record?
         "#{t('admin.misc.new')} #{self.class.label}"
+      elsif label_method == :admin_label
+        record.admin_label.upcase_first
       else
-        record.public_send(record_label_method).presence || record.admin_label
+        record.public_send(label_method)
       end
       label = "#{label} [#{t('admin.misc.discarded')}]" if discarded?
-      label.upcase_first
+      label
     end
 
     def record
