@@ -44,35 +44,14 @@ class AdminController::ShowTest < ActionDispatch::IntegrationTest
 
       get "/model/#{model_name}/1"
 
-      groups = self[:@section].groups
-      group = groups.first
-      id_field = group.fields.find{ |f| f.name == :id }
       assert_response :ok
-      assert_equal [:member, self[:@presenter]], [controller.action_type, controller.action_object]
-      assert_equal [:default, :virtual], groups.map(&:name)
-      assert_equal 'default_group', group.css_class
-      assert_equal 'Record extension #1', group.label
-      assert_nil group.help
-      assert_equal 'id_field integer_type', id_field.css_class
-      assert_equal 'Id', id_field.label
-      assert_equal '1', id_field.pretty_value
-      assert_equal [self[:@presenter]], self[:@presenters]
-      assert_equal "http://127.0.0.1:3333/model/#{model_name}/1", self[:@presenter].allowed_url
-      assert_equal '/model/user', self[:@meta][:root]
-      assert_equal 'Record extension | Web Tools', self[:@meta][:title]
-      assert_equal 'Web Tools', self[:@meta][:app]
-      assert_selects '.js_scroll_menu', '.js_model'
-      assert_select 'body.admin_layout'
-      assert_select 'body.admin_show_template'
-      Admin::Action.all(:member?).select(&:navigable?).each do |action|
-        assert_select ".nav_actions .#{action.css_class}"
+      assert_layout :member, :show, path: '/1'
+      assert_group 'Record extension #1' do |group|
+        id_field = group.fields_hash[:id]
+        assert_equal 'id_field integer_type', id_field.css_class
+        assert_equal 'Id', id_field.label
+        assert_equal '1', id_field.pretty_value
       end
-      assert_select '.nav_actions .index_action'
-      assert_select '.nav_actions .tab-active .show_action'
-      groups.flat_map(&:fields).each do |field|
-        assert_select "[href='##{field.name}_field'][data-turbolinks-history=false]"
-      end
-      assert_select ".sidebar li.bordered a[href='http://127.0.0.1:3333/model/#{model_name}']"
     end
   end
 end

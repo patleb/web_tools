@@ -34,4 +34,35 @@ module AdminControllerContext
       assert_select(selector)
     end
   end
+
+  def assert_layout(type, action_name, path: nil)
+    assert_equal [type, self[:@presenter]], [controller.action_type, controller.action_object]
+    assert_equal [self[:@presenter]], self[:@presenters]
+    assert_equal "http://127.0.0.1:3333/model/#{model_name}#{path}", self[:@presenter].allowed_url
+    assert_equal '/model/user', self[:@meta][:root]
+    assert_equal 'Record extension | Web Tools', self[:@meta][:title]
+    assert_equal 'Web Tools', self[:@meta][:app]
+    assert_selects '.js_scroll_menu', '.js_model', '.js_action'
+    assert_select 'body.admin_layout.lib_layout'
+    assert_select "body.admin_#{action_name}_template"
+    Admin::Action.all("#{type}?").select(&:navigable?).each do |action|
+      assert_select ".nav_actions .#{action.css_class}"
+    end
+    assert_select '.nav_actions .index_action'
+    assert_select ".nav_actions .tab-active .#{action_name}_action"
+    assert_select ".sidebar li.bordered a[href='http://127.0.0.1:3333/model/#{model_name}']"
+  end
+
+  def assert_group(label)
+    groups = self[:@section].groups
+    group = groups.first
+    assert_equal [:default, :virtual], groups.map(&:name)
+    assert_equal 'default_group', group.css_class
+    assert_equal label, group.label
+    assert_nil group.help
+    groups.flat_map(&:fields).select(&:label).each do |field|
+      assert_select "[href='##{field.name}_field'][data-turbolinks-history=false]"
+    end
+    yield group
+  end
 end
