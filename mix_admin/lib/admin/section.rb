@@ -173,14 +173,7 @@ module Admin
       div_ '.buttons' do
         actions.select_map do |name, label|
           next unless label
-          input_(
-            class: name,
-            type: 'submit',
-            name: "_#{name}",
-            value: label,
-            formnovalidate: name == :cancel,
-            data: confirm(name)
-          )
+          input_ class: name, type: 'submit', name: "_#{name}", value: label, formnovalidate: name == :cancel, data: confirm(name)
         end
       end
     end
