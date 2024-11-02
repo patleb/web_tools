@@ -36,13 +36,23 @@ module AdminControllerContext
   end
 
   def assert_layout(type, action_name, path: nil)
-    assert_equal [type, self[:@presenter]], [controller.action_type, controller.action_object]
-    assert_equal [self[:@presenter]], self[:@presenters]
-    assert_equal "http://127.0.0.1:3333/model/#{model_name}#{path}", self[:@presenter].allowed_url
+    if type == :member || action_name == :new
+      assert_equal [type, self[:@presenter]], [controller.action_type, controller.action_object]
+      assert_equal [self[:@presenter]], self[:@presenters]
+      assert_equal "http://127.0.0.1:3333/model/#{model_name}#{path}", self[:@presenter].allowed_url
+      assert_equal 'Record extension | Web Tools', self[:@meta][:title]
+    else
+      assert_equal [type, self[:@model]], [controller.action_type, controller.action_object]
+      assert_equal "http://127.0.0.1:3333/model/#{model_name}#{path}", self[:@model].allowed_url
+      assert_equal 'Record extensions | Web Tools', self[:@meta][:title]
+    end
     assert_equal '/model/user', self[:@meta][:root]
-    assert_equal 'Record extension | Web Tools', self[:@meta][:title]
     assert_equal 'Web Tools', self[:@meta][:app]
-    assert_selects '.js_scroll_menu', '.js_model', '.js_action'
+    assert_selects(
+      '.js_scroll_menu',
+      ".js_model[data-name=#{self[:@model].to_param}]",
+      ".js_action[data-name=#{action_name}]"
+    )
     assert_select 'body.admin_layout.lib_layout'
     assert_select "body.admin_#{action_name}_template"
     Admin::Action.all("#{type}?").select(&:navigable?).each do |action|

@@ -11,11 +11,10 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
 
       get "/model/#{model_name}", params: { q: '{id}!=_null', f: 'all', s: 'id', r: 'true' }
 
+      assert_response :ok
+      assert_layout :collection, :index
       presenter = self[:@presenters].first
       id, *fields = self[:@section].fields.map{ |f| f.with(presenter: presenter) }
-      assert_response :ok
-      assert_equal [:collection, self[:@model]], [controller.action_type, controller.action_object]
-      assert_equal 'Record extensions | Web Tools', self[:@meta][:title]
       assert_selects(
         '.js_scroll_menu',
         '.js_bulk_form',
@@ -23,14 +22,9 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
         '.js_table_head',      '.js_table_body',
         '.js_search',
         '.js_query_datetime',  '.js_query_keyword', '.js_query_operator', '.js_query_or', '.js_query_and', '.js_query_field',
-        ".js_model[data-name=#{self[:@model].to_param}]",
       )
       assert_equal({ q: '{id}!=_null', f: 'all', s: 'id', r: 'true' }, controller.search_params)
       assert_equal 5, self[:@presenters].size
-      Admin::Action.all(:collection?).select(&:navigable?).each do |action|
-        assert_select ".nav_actions .#{action.css_class}"
-      end
-      assert_select '.nav_actions .tab-active .index_action'
       self[:@section].filters.each do |filter|
         assert_select ".filter_menu .#{filter}_filter"
       end
