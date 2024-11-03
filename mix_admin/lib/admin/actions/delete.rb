@@ -42,9 +42,8 @@ module Admin
             flash[:notice] = admin_notice(deleted, delete_action)
           end
           if (not_deleted = processed - deleted).any?
-            redirect_back alert: admin_alert(not_deleted, delete_action)
-          end
-          if _back&.match?(%r{/#{@presenters.first.primary_key_value}(/|$)})
+            flash[:alert] = admin_alert(not_deleted, delete_action)
+          elsif _back&.match?(%r{/#{@presenters.first.primary_key_value}(/|$)})
             @_back = @model.allowed_url(:index)
           end
           redirect_back
