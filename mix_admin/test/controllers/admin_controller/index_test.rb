@@ -12,8 +12,10 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
 
     assert_response :ok
     assert_layout :collection, :index
-    presenter = self[:@presenters].first
-    id, *fields = self[:@section].fields.map{ |f| f.with(presenter: presenter) }
+    section, presenters = self[:@section], self[:@presenters]
+    id, *fields = section.fields.map{ |f| f.with(presenter: presenters.first) }
+    assert_equal 2, section.column_name_counts[:id]
+    assert_equal 5, presenters.size
     assert_selects(
       '.js_scroll_menu',
       '.js_bulk_form',
@@ -23,8 +25,7 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
       '.js_query_datetime',  '.js_query_keyword', '.js_query_operator', '.js_query_or', '.js_query_and', '.js_query_field',
     )
     assert_equal({ q: '{id}!=_null', f: 'all', s: 'id', r: 'true' }, controller.search_params)
-    assert_equal 5, self[:@presenters].size
-    self[:@section].filters.each do |filter|
+    section.filters.each do |filter|
       assert_select ".filter_menu .#{filter}_filter"
     end
     assert_select '.filter_title.active'
