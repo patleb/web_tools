@@ -35,7 +35,7 @@ module AdminControllerContext
     end
   end
 
-  def assert_layout(type, action_name, path: nil)
+  def assert_layout(type, action_name, path: nil, bulk: false)
     if type == :member || action_name == :new
       assert_equal [type, self[:@presenter]], [controller.action_type, controller.action_object]
       assert_equal [self[:@presenter]], self[:@presenters]
@@ -59,7 +59,7 @@ module AdminControllerContext
       assert_select ".nav_actions .#{action.css_class}"
     end
     assert_select '.nav_actions .index_action'
-    assert_select ".nav_actions .tab-active .#{action_name}_action"
+    assert_select ".nav_actions .tab-active .#{action_name}_action" unless bulk
     assert_select ".sidebar li.bordered a[href='http://127.0.0.1:3333/model/#{model_name}']"
   end
 
