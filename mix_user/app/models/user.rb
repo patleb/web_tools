@@ -1,5 +1,5 @@
 class User < LibMainRecord
-  has_userstamp
+  has_userstamps
   has_secure_password
 
   generates_token_for :verified, expires_in: MixUser.config.verification_expires_in do

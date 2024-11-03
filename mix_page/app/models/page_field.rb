@@ -1,7 +1,7 @@
 class PageField < LibMainRecord
   self.skip_locking_attributes += ['parent_id']
 
-  has_userstamp
+  has_userstamps
   has_list
 
   belongs_to :page, -> { with_discarded }

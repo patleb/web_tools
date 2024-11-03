@@ -1,7 +1,7 @@
 class Task < LibMainRecord
   include ActionView::Helpers::DateHelper
 
-  has_userstamp
+  has_userstamps
 
   enum! name: MixTask.config.available_names
   enum  state: {
@@ -41,8 +41,7 @@ class Task < LibMainRecord
   end
 
   def self.path(name)
-    path = (@path ||= RailsAdmin.routes[:edit].sub('__MODEL_NAME__', self.name.to_admin_param))
-    path.sub('__ID__', name)
+    MixAdmin::Routes.edit_path(model_name: self.name.to_admin_param, id: name)
   end
 
   def path

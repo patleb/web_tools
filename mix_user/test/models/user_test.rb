@@ -8,7 +8,7 @@ class UserTest < ActiveSupport::TestCase
   let(:basic){ users(:basic) }
   let(:null){ User::Null.new }
 
-  test '.has_userstamp' do
+  test '.has_userstamps' do
     Current.user = deployer
     basic.update! last_name: 'Normie'
 

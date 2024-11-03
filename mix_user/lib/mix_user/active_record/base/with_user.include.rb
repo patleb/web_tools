@@ -11,26 +11,26 @@ module ActiveRecord::Base::WithUser
 
   def initialize_dup(other)
     super
-    clear_userstamp_attributes
+    clear_userstamps_attributes
   end
 
   class_methods do
-    def has_userstamp
+    def has_userstamps
       belongs_to :creator, class_name: 'User', optional: true
       belongs_to :updater, class_name: 'User', optional: true
     end
 
-    def userstamp_attributes_for_create_in_model
-      @userstamp_attributes_for_create_in_model ||= (userstamp_attributes_for_create & column_names).freeze
+    def userstamps_attributes_for_create_in_model
+      @userstamps_attributes_for_create_in_model ||= (userstamps_attributes_for_create & column_names).freeze
     end
 
-    def userstamp_attributes_for_update_in_model
-      @userstamp_attributes_for_update_in_model ||= (userstamp_attributes_for_update & column_names).freeze
+    def userstamps_attributes_for_update_in_model
+      @userstamps_attributes_for_update_in_model ||= (userstamps_attributes_for_update & column_names).freeze
     end
 
-    def all_userstamp_attributes_in_model
-      @all_userstamp_attributes_in_model ||= (
-        userstamp_attributes_for_create_in_model + userstamp_attributes_for_update_in_model
+    def all_userstamps_attributes_in_model
+      @all_userstamps_attributes_in_model ||= (
+        userstamps_attributes_for_create_in_model + userstamps_attributes_for_update_in_model
       ).freeze
     end
 
@@ -41,19 +41,19 @@ module ActiveRecord::Base::WithUser
     protected
 
     def reload_schema_from_cache(recursive = true)
-      @userstamp_attributes_for_create_in_model = nil
-      @userstamp_attributes_for_update_in_model = nil
-      @all_userstamp_attributes_in_model = nil
+      @userstamps_attributes_for_create_in_model = nil
+      @userstamps_attributes_for_update_in_model = nil
+      @all_userstamps_attributes_in_model = nil
       super
     end
 
     private
 
-    def userstamp_attributes_for_create
+    def userstamps_attributes_for_create
       ["creator_id"].map!{ |name| attribute_aliases[name] || name }
     end
 
-    def userstamp_attributes_for_update
+    def userstamps_attributes_for_update
       ["updater_id"].map!{ |name| attribute_aliases[name] || name }
     end
   end
@@ -64,7 +64,7 @@ module ActiveRecord::Base::WithUser
     if record_userstamps
       current_user_id = current_user&.id
 
-      all_userstamp_attributes_in_model.each do |column|
+      all_userstamps_attributes_in_model.each do |column|
         _write_attribute(column, current_user_id) unless _read_attribute(column)
       end
     end
@@ -81,7 +81,7 @@ module ActiveRecord::Base::WithUser
     if @_touch_record && should_record_userstamps?
       current_user_id = current_user&.id
 
-      userstamp_attributes_for_update_in_model.each do |column|
+      userstamps_attributes_for_update_in_model.each do |column|
         next if will_save_change_to_attribute?(column)
         _write_attribute(column, current_user_id)
       end
@@ -93,16 +93,16 @@ module ActiveRecord::Base::WithUser
     record_userstamps && (!partial_updates? || has_changes_to_save?)
   end
 
-  def userstamp_attributes_for_create_in_model
-    self.class.userstamp_attributes_for_create_in_model
+  def userstamps_attributes_for_create_in_model
+    self.class.userstamps_attributes_for_create_in_model
   end
 
-  def userstamp_attributes_for_update_in_model
-    self.class.userstamp_attributes_for_update_in_model
+  def userstamps_attributes_for_update_in_model
+    self.class.userstamps_attributes_for_update_in_model
   end
 
-  def all_userstamp_attributes_in_model
-    self.class.all_userstamp_attributes_in_model
+  def all_userstamps_attributes_in_model
+    self.class.all_userstamps_attributes_in_model
   end
 
   def current_user
@@ -110,8 +110,8 @@ module ActiveRecord::Base::WithUser
   end
 
   # Clear attributes and changed_attributes
-  def clear_userstamp_attributes
-    all_userstamp_attributes_in_model.each do |attribute_name|
+  def clear_userstamps_attributes
+    all_userstamps_attributes_in_model.each do |attribute_name|
       self[attribute_name] = nil
       clear_attribute_change(attribute_name)
     end
