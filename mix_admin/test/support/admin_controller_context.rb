@@ -20,7 +20,8 @@ module AdminControllerContext
     fixtures 'test/records', 'test/related_records'
 
     let(:current_user){ users(:admin) }
-    let(:model_name){ Test::Extensions::RecordExtension.name.to_admin_param }
+    let(:model_name){ model_klass.name.to_admin_param }
+    let(:model_klass){ Test::Extensions::RecordExtension }
     let(:model_denied){ false }
     let(:presenter_denied){ false }
 
