@@ -2,13 +2,13 @@ Admin::Model.class_eval do
   class << self
     alias_method :old_allowed?, :allowed?
     def allowed?(...)
-      $test.model_denied ? false : old_allowed?(...)
+      $test.try(:model_denied) ? false : old_allowed?(...)
     end
   end
 
   alias_method :old_allowed?, :allowed?
   def allowed?(...)
-    $test.presenter_denied ? false : old_allowed?(...)
+    $test.try(:presenter_denied) ? false : old_allowed?(...)
   end
 end
 
