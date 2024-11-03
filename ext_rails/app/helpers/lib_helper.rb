@@ -43,7 +43,7 @@ module LibHelper
     h_(
       input_(id: key, type: 'checkbox'),
       div_('.alert.shadow-xl', class: css_class) {[
-        span_(message),
+        span_(simple_format! message),
         label_('.btn.btn-circle.btn-xs', ascii(:x), for: key),
       ]},
     )
