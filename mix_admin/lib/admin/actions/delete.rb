@@ -37,11 +37,11 @@ module Admin
             when params[:_trash]  then [:discard, :trash]
             else return on_routing_error
           end
-          processed = @presenters.each(&delete_method)
-          if (deleted = processed.select(&:"#{delete_method}ed?")).any?
+          deleted, not_deleted = @presenters.each(&delete_method).partition(&:"#{delete_method}ed?")
+          if deleted.any?
             flash[:notice] = admin_notice(deleted, delete_action)
           end
-          if (not_deleted = processed - deleted).any?
+          if not_deleted.any?
             flash[:alert] = admin_alert(not_deleted, delete_action)
           elsif _back&.match?(%r{/#{@presenters.first.primary_key_value}(/|$)})
             @_back = @model.allowed_url(:index)
