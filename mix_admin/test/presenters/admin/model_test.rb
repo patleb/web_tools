@@ -2,8 +2,10 @@ require './test/test_helper'
 require './mix_admin/test/support/model_context'
 
 class Admin::ModelTest < ActiveSupport::TestCase
+  fixtures :users
   fixtures 'test/records'
 
+  let(:current_user){ users(:admin) }
   let(:resource_presenter){ resource.admin_presenter }
   let(:resource_model){ resource.admin_model }
   let(:resource){ Test::Resource.new(id: 'resource') }
@@ -21,25 +23,25 @@ class Admin::ModelTest < ActiveSupport::TestCase
 
     assert_equal [:base, :index], resource_model.sections.keys.sort
     assert_equal [
-        Admin::Test::ResourcePresenter::BaseSection,
-        Admin::Test::ResourcePresenter::IndexSection
-      ], resource_model.sections.values.map(&:class)
+      Admin::Test::ResourcePresenter::BaseSection,
+      Admin::Test::ResourcePresenter::IndexSection
+    ], resource_model.sections.values.map(&:class)
 
     assert_equal [:default, :main, :default], resource_model.groups.values.flat_map(&:keys)
     assert_equal [0, 1, 0], resource_model.groups.values.flat_map(&:values).map(&:weight)
     assert_equal [
-        Admin::Test::ResourcePresenter::BaseSection::DefaultGroup,
-        Admin::Test::ResourcePresenter::BaseSection::MainGroup,
-        Admin::Test::ResourcePresenter::IndexSection::DefaultGroup
-      ], resource_model.groups.values.flat_map(&:values).map(&:class)
+      Admin::Test::ResourcePresenter::BaseSection::DefaultGroup,
+      Admin::Test::ResourcePresenter::BaseSection::MainGroup,
+      Admin::Test::ResourcePresenter::IndexSection::DefaultGroup
+    ], resource_model.groups.values.flat_map(&:values).map(&:class)
 
     assert_equal [:base_name, :main_name, :base_name], resource_model.fields.values.flat_map(&:keys)
     assert_equal [0, 1, 0], resource_model.fields.values.flat_map(&:values).map(&:weight)
     assert_equal [
-        Admin::Test::ResourcePresenter::BaseSection::BaseNameField,
-        Admin::Test::ResourcePresenter::BaseSection::MainNameField,
-        Admin::Test::ResourcePresenter::IndexSection::BaseNameField
-      ], resource_model.fields.values.flat_map(&:values).map(&:class)
+      Admin::Test::ResourcePresenter::BaseSection::BaseNameField,
+      Admin::Test::ResourcePresenter::BaseSection::MainNameField,
+      Admin::Test::ResourcePresenter::IndexSection::BaseNameField
+    ], resource_model.fields.values.flat_map(&:values).map(&:class)
   end
 
   test '.register_option' do
@@ -168,5 +170,26 @@ class Admin::ModelTest < ActiveSupport::TestCase
     child = Test::ChildBaseChildBaseParentBase.new(id: 'child').admin_presenter
     section = child.admin_model.section(:base)
     assert_equal pretty_section, section.pretty_section
+  end
+
+  test '.associated_count' do
+    Current.controller = ControllerStub.new
+    create_session!
+    current_user.update! updater: current_user
+    allowed, restricted = User.admin_model.associated_counts(current_user.admin_presenter).values_at(:allowed, :restricted)
+
+    assert_equal 1, allowed.size
+    assert_equal 1, restricted.size
+    allowed.each do |klass, (count, url, can_destroy)|
+      assert_equal User, klass
+      assert_match %r{/model/user$}, url
+      assert_equal 1, count
+      assert can_destroy
+    end
+    restricted.each do |klass, (count, can_destroy)|
+      assert_equal UserSession, klass
+      assert_equal 1, count
+      assert can_destroy
+    end
   end
 end

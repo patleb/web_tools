@@ -335,6 +335,14 @@ class ControllerStub
   def memoize(*)
     yield
   end
+
+  def can?(*)
+    true
+  end
+
+  def action
+    ActiveSupport::StringInquirer.new('unknown')
+  end
 end
 
 ActiveSupport.on_load('Admin::Test::ResourceBasePresenter') do
