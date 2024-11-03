@@ -10,4 +10,12 @@ end
 
 ActiveSupport::TestCase.class_eval do
   delete_tables.concat(['lib_user_sessions', 'lib_users'])
+
+  def create_session!
+    Current.session_id = current_user.sessions.create!(
+      session_id: SecureRandom.hex(16),
+      ip_address: '127.0.0.1',
+      user_agent: []
+    ).sid
+  end
 end
