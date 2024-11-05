@@ -39,7 +39,7 @@ module Admin
       return if (group_fields = fields).empty?
       group_label = label
       fields, hidden_fields = group_fields.partition(&:label)
-      fieldset_('.group_fields', [
+      fieldset_('.group_fields', class: css_class) {[
         hidden_fields.map(&:pretty_input),
         legend_('.group', if: group_label) {[
           h6_('.group_label') { group_label },
@@ -57,7 +57,7 @@ module Admin
             ]}
           end
         end
-      ])
+      ]}
     end
 
     def fields
