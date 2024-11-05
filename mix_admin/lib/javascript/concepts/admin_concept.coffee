@@ -11,6 +11,7 @@ class window.AdminConcept
     table_head: -> { bottom: Device.move.y + e.top + e.height } if (e = Rails.find('.js_table_head')?.getBoundingClientRect())
     table_body: -> Rails.find('.js_table_body')
     export_toggles: -> Rails.$('.js_export_toggles')
+    query_bar: -> Rails.find('.js_query_bar')
     search: -> Rails.find('.js_search')
     action: -> Rails.find('.js_action').getAttribute('data-name')
     model: -> Rails.find('.js_model')?.getAttribute('data-name')
@@ -35,9 +36,8 @@ class window.AdminConcept
 
     'search', '.js_search', @on_blank_search
 
-    'turbolinks:submit', '.js_query_bar', @persist_search
-
-    'turbolinks:before-cache', document, @on_persist_search
+    'turbolinks:submit', '.js_query_bar', ->
+      @query_submitted = true
 
     'change', '.js_query_datetime', (event, target) ->
       @with_search_token(target, (before, token) =>
@@ -92,6 +92,7 @@ class window.AdminConcept
     @restore_scroll_x()
     @toggle_bulk_form()
     @toggle_export_schema()
+    @query_submitted = false
 
   leave: ->
     @persist_scroll_x()
@@ -156,20 +157,9 @@ class window.AdminConcept
     [all_checked, none_checked]
 
   on_blank_search: (event, target) ->
-    return if @_persist_search
+    return if @query_submitted
     unless target.get_value()?.present()
-      @persist_search()
-      location = Turbolinks.Location.current_location()
-      Turbolinks.visit(location.get_path())
-
-  persist_search: ->
-    @_persist_search = true
-
-  on_persist_search: ->
-    return unless @_persist_search
-    @_persist_search = false
-    target = @search()
-    target.set_value(target.defaultValue)
+      Rails.fire @query_bar(), 'submit'
 
   with_search_token: (target, callback, { reset = false, before_size = 2, token = target.get_value() } = {}) ->
     search = @search().get_value() ? ''

@@ -113,7 +113,10 @@ class Turbolinks.Controller
         when 'password'
           # do nothing
         else
-          input.setAttribute('value', input.value)
+          if input.hasAttribute('data-turbolinks-previous')
+            input.setAttribute('value', input.defaultValue)
+          else
+            input.setAttribute('value', input.value)
 
   # Scrolling
 

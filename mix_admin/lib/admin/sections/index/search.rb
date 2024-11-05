@@ -67,6 +67,7 @@ module Admin
             autofocus: true,
             autocomplete: 'off',
             spellcheck: false,
+            'data-turbolinks-previous': true
           ),
           button_('.btn.btn-sm.btn-square', icon('search')),
         ]}
