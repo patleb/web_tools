@@ -33,17 +33,11 @@ class window.AdminConcept
 
     'change', '.js_export_checkboxes', @toggle_export_schema
 
-    'search', '.js_search', (event, target) ->
-      @persist_search = true
-      if target.get_value() is ''
-        location = Turbolinks.Location.current_location()
-        Turbolinks.visit(location.get_path())
+    'search', '.js_search', @on_blank_search
 
-    'turbolinks:before-cache', document, ->
-      if @persist_search
-        @persist_search = false
-        target = @search()
-        target.set_value(target.defaultValue)
+    'turbolinks:submit', '.js_query_bar', @persist_search
+
+    'turbolinks:before-cache', document, @on_persist_search
 
     'change', '.js_query_datetime', (event, target) ->
       @with_search_token(target, (before, token) =>
@@ -160,6 +154,22 @@ class window.AdminConcept
     toggles.each((toggle, i) -> toggle.set_value(false) if none_checked and toggle_checked[i])
     toggles.each((toggle, i) -> toggle.set_value(true) if all_checked and not toggle_checked[i])
     [all_checked, none_checked]
+
+  on_blank_search: (event, target) ->
+    return if @_persist_search
+    unless target.get_value()?.present()
+      @persist_search()
+      location = Turbolinks.Location.current_location()
+      Turbolinks.visit(location.get_path())
+
+  persist_search: ->
+    @_persist_search = true
+
+  on_persist_search: ->
+    return unless @_persist_search
+    @_persist_search = false
+    target = @search()
+    target.set_value(target.defaultValue)
 
   with_search_token: (target, callback, { reset = false, before_size = 2, token = target.get_value() } = {}) ->
     search = @search().get_value() ? ''

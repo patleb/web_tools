@@ -55,7 +55,7 @@ module Admin
       end
 
       def query_bar
-        form_('.query_bar.input-group', action: model.url, method: :get) {[
+        form_('.js_query_bar.input-group', action: model.url, method: :get, 'data-turbolinks-blanks': false) {[
           search_params.except(:q).map do |name, value|
             input_ name: name, value: value, type: 'hidden'
           end,

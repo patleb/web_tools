@@ -34,7 +34,7 @@
   .filter_list {
     @apply z-40;
   }
-  .query_bar {
+  .js_query_bar {
     @apply pt-2 pr-[0.675rem];
 
     .input {
