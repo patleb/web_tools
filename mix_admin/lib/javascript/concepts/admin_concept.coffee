@@ -33,6 +33,18 @@ class window.AdminConcept
 
     'change', '.js_export_checkboxes', @toggle_export_schema
 
+    'search', '.js_search', (event, target) ->
+      @persist_search = true
+      if target.get_value() is ''
+        location = Turbolinks.Location.current_location()
+        Turbolinks.visit(location.get_path())
+
+    'turbolinks:before-cache', document, ->
+      if @persist_search
+        @persist_search = false
+        target = @search()
+        target.set_value(target.defaultValue)
+
     'change', '.js_query_datetime', (event, target) ->
       @with_search_token(target, (before, token) =>
         if @is_after_operator(before)
