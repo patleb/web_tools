@@ -19,13 +19,13 @@ describe('Js.TagConcept', () => {
       let expected = [[safe_values.first()], safe_values]
       expected.each((expect) => {
         let actual = h_(...expect)
-        assert.equal(expect.join(''), actual.to_s())
+        assert.equal(expect.join(' '), actual.to_s())
         assert.true(actual.html_safe())
       })
       expected = [[values.first()], values]
       expected.each((expect) => {
         let actual = h_(...expect)
-        assert.equal(expect.join('').safe_text(), actual.to_s())
+        assert.equal(expect.join(' ').safe_text(), actual.to_s())
         assert.true(actual.html_safe())
       })
       assert.html_equal('<div>Hello</div><div>World!</div>', h_(div$('Hello'), div_('World!'), null))
@@ -99,10 +99,10 @@ describe('Js.TagConcept', () => {
     })
 
     it('should allow text as Array like #html does', () => {
-      assert.equal(`<div>${values.join('')}</div>`, div_(safe_values).to_s())
-      assert.equal(`<div>${values.join('')}</div>`, div_(() => safe_values).to_s())
-      assert.equal(`<div>${values.join('')}</div>`, div_({ text: safe_values }).to_s())
-      assert.equal(`<div id="id">${values.join('')}</div>`, div_('#id', safe_values).to_s())
+      assert.equal(`<div>${values.join(' ')}</div>`, div_(safe_values).to_s())
+      assert.equal(`<div>${values.join(' ')}</div>`, div_(() => safe_values).to_s())
+      assert.equal(`<div>${values.join(' ')}</div>`, div_({ text: safe_values }).to_s())
+      assert.equal(`<div id="id">${values.join(' ')}</div>`, div_('#id', safe_values).to_s())
     })
 
     it('should be able to print defined falsy values', () => {
