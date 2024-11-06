@@ -263,7 +263,7 @@ class Js.StateMachine
 
   add_except_states: (states) ->
     if states.include EXCEPT
-      @add_states(states.split(EXCEPT, 2).last())
+      @add_states(states.split(EXCEPT).last())
     else
       []
 
