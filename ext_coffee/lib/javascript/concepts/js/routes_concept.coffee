@@ -17,6 +17,18 @@ class Js.RoutesConcept
     return unless path = @paths[action]
     @location(path, params, blanks).href.sub(/^.*\/\/[^\/]+/, '')
 
+  # NOTE: modern alternative
+  # decode_params: (url) ->
+  #   return {} unless url.include '?'
+  #   Object.fromEntries(new URLSearchParams(url.partition('?').last()))
+
+  decode_params: (string) ->
+    params = {}
+    data = decodeURIComponent(string).sub(/^\?/, '')
+    data.split('&').except('').each (pair) ->
+      add_param(params, pair.split('='))
+    params
+
   # Private
 
   # Anchors not supported
@@ -55,13 +67,6 @@ class Js.RoutesConcept
         if name?.present() and (blanks or value?.present())
           "#{encodeURIComponent(name)}=#{encodeURIComponent(value)}"
     params.flatten().compact().join('&')
-
-  decode_params: (string) ->
-    params = {}
-    data = decodeURIComponent(string).sub(/^\?/, '')
-    data.split('&').except('').each (pair) ->
-      add_param(params, pair.split('='))
-    params
 
   add_param = (params, [name, value]) ->
     names = name.split('][').map((name) -> name.sub(/\]$/, '').split('[')).flatten()
