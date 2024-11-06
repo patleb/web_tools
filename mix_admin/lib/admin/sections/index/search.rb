@@ -76,12 +76,12 @@ module Admin
       def query_helper
         return unless advanced_search?
         return if (queryable_fields = fields.select(&:queryable?)).empty?
-        keywords = [option_(t('admin.misc.operators'), value: '', selected: true, disabled: true)]
+        keywords = [option_(t('admin.misc.keywords'), value: '', selected: true, disabled: true)]
         keywords = keywords + t('admin.query').map do |name, label|
           name = "_#{name}"
           option_(name, value: name, title: label)
         end
-        operators = [option_(t('admin.misc.keywords'), value: '', selected: true, disabled: true)]
+        operators = [option_(t('admin.misc.operators'), value: '', selected: true, disabled: true)]
         operators = operators + OPERATORS.map do |value|
           option_(value, value: value)
         end
