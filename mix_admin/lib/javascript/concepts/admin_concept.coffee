@@ -158,8 +158,9 @@ class window.AdminConcept
 
   on_blank_search: (event, target) ->
     return if @query_submitted
-    unless target.get_value()?.present()
-      Rails.fire @query_bar(), 'submit'
+    return if target.get_value()?.present()
+    return unless Routes.decode_params().q
+    Rails.fire @query_bar(), 'submit'
 
   with_search_token: (target, callback, { reset = false, before_size = 2, token = target.get_value() } = {}) ->
     search = @search().get_value() ? ''

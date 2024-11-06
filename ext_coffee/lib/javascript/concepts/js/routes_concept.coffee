@@ -22,7 +22,7 @@ class Js.RoutesConcept
   #   return {} unless url.include '?'
   #   Object.fromEntries(new URLSearchParams(url.partition('?').last()))
 
-  decode_params: (string) ->
+  decode_params: (string = window.location.search) ->
     params = {}
     data = decodeURIComponent(string).sub(/^\?/, '')
     data.split('&').except('').each (pair) ->
