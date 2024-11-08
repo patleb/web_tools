@@ -115,11 +115,11 @@ module Admin::Model::Searchable
             fields.select!{ |field| field&.search_type == type }
           end
           fields.each do |field|
-            next if (value = parse_search_value(field, value)) == :_skip
+            next if (field_value = parse_search_value(field, value)) == :_skip
             table, column = (full_column = field.query_column).split('.')
             tables << table
             column = full_column if field.full_query_column?
-            values.concat(Array.wrap(value))
+            values.concat(Array.wrap(field_value))
             ors << field.search_operator(operator).gsub('{column}', column)
           end
         end
