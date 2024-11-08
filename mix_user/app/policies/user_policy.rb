@@ -9,7 +9,7 @@ class UserPolicy < ApplicationPolicy
 
   def edit?
     if record?
-      user.basic? && user.visible_role?(record)
+      user.basic? && user.allowed_role?(record)
     else
       super
     end
@@ -17,7 +17,7 @@ class UserPolicy < ApplicationPolicy
 
   def delete?
     if record?
-      user.basic? && user.visible_role?(record)
+      user.basic? && user.allowed_role?(record)
     else
       super
     end
@@ -25,7 +25,7 @@ class UserPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      relation.visible_roles(user)
+      relation.allowed_roles(user)
     end
   end
 end

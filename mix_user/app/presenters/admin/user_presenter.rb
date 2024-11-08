@@ -4,25 +4,29 @@ module Admin
     navigation_weight 999
     record_label_method :email
 
-    edit do
-      field :email do
-        required true
+    field :id
+    field :email
+    field :role do
+      enum{ Current.user.allowed_roles }
+    end
+
+    new do
+      include_fields :password, :password_confirmation, weight: 1, type: :password do
+        required{ presenter.new_record? }
+        allowed{ Current.user.has?(presenter) || presenter.new_record? }
+        readonly false
       end
       field :role do
-        readonly{ Current.user.has? object }
-      end
-      include_fields :password, :password_confirmation do
-        required{ object.new_record? }
-        allowed{ Current.user.has?(object) || object.new_record? }
+        readonly{ Current.user.has? presenter }
       end
     end
 
     index do
-      field :email do
-        pretty_value{ section.name == :index ? primary_key_link : pretty_value }
-      end
-      field :role
-      include_fields :confirmed_at, :updated_at, :created_at
+      include_fields :verified_at, :deleted_at, :updated_at, :created_at, weight: 1
+    end
+
+    trash do
+      exclude_fields :verified_at
     end
   end
 end

@@ -23,9 +23,9 @@ class UserTest < ActiveSupport::TestCase
   test '#role' do
     assert User.admin_created?
     Current.user = admin
-    assert_equal [:basic, :admin], User.enum_roles.keys
+    assert_equal [:basic, :admin], Current.user.allowed_roles.keys
     Current.role = :basic
-    assert_equal [:basic], User.enum_roles.keys
+    assert_equal [:basic], Current.user.allowed_roles.keys
 
     refute admin.role_deployer?
     assert admin.role_admin?
@@ -37,9 +37,9 @@ class UserTest < ActiveSupport::TestCase
     assert admin.basic?
     assert admin.null?
 
-    refute admin.visible_role?(deployer)
-    refute admin.visible_role?(admin)
-    assert admin.visible_role?(basic)
+    refute admin.allowed_role?(deployer)
+    refute admin.allowed_role?(admin)
+    assert admin.allowed_role?(basic)
 
     refute admin.has?(deployer)
     assert admin.has?(admin)

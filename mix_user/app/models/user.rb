@@ -16,14 +16,15 @@ class User < LibMainRecord
 
   scope :unverified,    -> { where(verified_at: nil) }
   scope :verified,      -> { where.not(verified_at: nil) }
-  scope :visible_roles, -> (user) { where(column(:role) <= roles[user.as_role]) }
+  scope :allowed_roles, -> (user) { where(column(:role) <= roles[user.as_role]) }
 
   has_many :sessions, class_name: 'UserSession', dependent: :destroy
   has_one  :session, -> { current }, class_name: 'UserSession'
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, allow_nil: true, length: { minimum: MixUser.config.min_password_length }
-  validates :role, presence: true, exclusion: { in: [:null] }
+  validates :role, presence: true
+  validate  :check_role
   validate  :check_deployer, if: :role_deployer?
 
   normalizes :email, with: ->(email) { email.strip.downcase }
@@ -42,10 +43,6 @@ class User < LibMainRecord
 
   enum role: MixUser.config.available_roles
 
-  def self.enum_roles
-    Current.user.visible_roles
-  end
-
   def self.admin_created?
     admin.exists?
   end
@@ -60,11 +57,11 @@ class User < LibMainRecord
     end
   end
 
-  def visible_roles
+  def allowed_roles
     self.class.roles.select{ |_, i| i <= as_role_i }.except!(:null)
   end
 
-  def visible_role?(user)
+  def allowed_role?(user)
     user.role_i <= as_role_i
   end
 
@@ -127,6 +124,12 @@ class User < LibMainRecord
   end
 
   private
+
+  def check_role
+    unless allowed_roles.has_key? role
+      errors.add :role, :role_denied
+    end
+  end
 
   def check_deployer
     unless Setting[:authorized_keys].any?{ |key| key.split(' ').last == email }
