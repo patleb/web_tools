@@ -18,7 +18,7 @@ module Admin
         else
           label = klass.human_attribute_name(through)
         end
-        label.upcase_first
+        label.upcase_first.html_safe
       end
 
       register_option :queryable do

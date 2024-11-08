@@ -266,17 +266,15 @@ module Admin
 
     def record_label
       label_method = record_label_method
-      label = if record.try("#{label_method}_changed?")
+      if record.try("#{label_method}_changed?")
         record.public_send("#{label_method}_was")
       elsif record.new_record?
-        "#{t('admin.misc.new')} #{self.class.label}"
+        "#{t('admin.misc.new')} #{self.class.label}".html_safe
       elsif label_method == :admin_label
-        record.admin_label.upcase_first
+        record.admin_label.upcase_first.html_safe
       else
         record.public_send(label_method)
       end
-      label = "#{label} [#{t('admin.misc.discarded')}]" if discarded?
-      label
     end
 
     def record

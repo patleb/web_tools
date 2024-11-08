@@ -51,7 +51,7 @@ module Admin
     end
 
     register_option :label do
-      klass.human_attribute_name(column_name).upcase_first
+      klass.human_attribute_name(column_name).upcase_first.html_safe
     end
 
     register_option :pretty_value do
