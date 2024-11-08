@@ -71,7 +71,7 @@ module AdminControllerContext
     assert_equal 'default_group', group.css_class
     assert_equal label, group.label
     assert_nil group.help
-    groups.flat_map(&:fields).select(&:label).each do |field|
+    groups.flat_map(&:fields).select(&:label).each do |field| # scroll_menu
       assert_select "[href='##{field.name}_field'][data-turbolinks-history=false]"
     end
     yield group
