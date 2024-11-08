@@ -30,7 +30,7 @@ module LibHelper
           raise "unsupported flash type: #{type}" unless type.is_a? Symbol
           method_name = [*scope, type].join('_')
           public_send(method_name, messages)
-        end
+        end.join("\n")
       when Symbol then t(message, scope: scope)
       when String then message
       else raise "unsupported flash object: #{message.class.name}"
