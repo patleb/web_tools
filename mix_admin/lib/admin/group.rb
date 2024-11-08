@@ -43,7 +43,7 @@ module Admin
         ]},
         dl_('.fields') do
           fields.map do |field|
-            div_('.field', id: "#{field.name}_field") {[
+            div_('.field', id: "#{field.name}_field", unless: action.new? && field.readonly?) {[
               dt_('.field_label') do
                 field.pretty_label
               end,
