@@ -139,9 +139,9 @@ module Admin::Model::Searchable
 
   def parse_search_value(field, value)
     return field.parse_search(value) unless value.is_a? Array
-    value = value.select_map do |v|
-      v = field.parse_search(v)
-      v unless v == :_skip
+    value = value.each_with_object([]) do |v, array|
+      next if (v = field.parse_search(v)) == :_skip
+      array << v
     end
     value.empty? ? :_skip : value
   end
