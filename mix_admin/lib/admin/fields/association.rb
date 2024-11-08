@@ -8,10 +8,6 @@ module Admin
       delegate :foreign_key, :foreign_type, :polymorphic?, :list_parent?, :inverse_of, :nested_options, to: :property
       delegate :parse_input!, :parse_input, :parse_search, :format_export, :format_input, :value, to: :property_field, allow_nil: true
 
-      register_option :open? do
-        true
-      end
-
       register_option :label do
         if section.associations[through].size > 1 && as != property_model.primary_key.to_sym
           label = "#{klass.human_attribute_name(through)}: #{__super__ :label}"
@@ -46,20 +42,16 @@ module Admin
         super && property_model.allowed?
       end
 
+      def editable?
+        super && action.edit? && nested?
+      end
+
       def type_css_class
         "#{super} association_type #{column_field&.type_css_class}"
       end
 
-      def multiple?
-        false
-      end
-
       def nested?
         !!nested_options
-      end
-
-      def method?
-        !nested? || super
       end
 
       def format_value(value, field = property_field)

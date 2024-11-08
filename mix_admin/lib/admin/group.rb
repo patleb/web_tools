@@ -13,10 +13,6 @@ module Admin
       true
     end
 
-    register_option :open? do
-      true
-    end
-
     register_option :css_class do
       "#{name}_group"
     end

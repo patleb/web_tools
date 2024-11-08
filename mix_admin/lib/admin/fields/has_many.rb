@@ -25,10 +25,6 @@ module Admin
         true
       end
 
-      def multiple?
-        true
-      end
-
       def method_name
         "#{through.to_s.singularize}_ids".to_sym
       end
