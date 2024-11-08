@@ -323,10 +323,15 @@ module Admin::Test
   class ChildBaseChildBaseParentBasePresenter < ChildBaseParentBasePresenter
     field :name do
       pretty_value{ "base[child_base][child_base]parent_base #{pretty_value}" }
+      index_value{ 'index' }
     end
 
     base do
       pretty_section{ "base[child_base][child_base]parent_base #{pretty_section}" }
+    end
+
+    new do
+      field :name
     end
   end
 end

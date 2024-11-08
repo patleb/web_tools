@@ -128,6 +128,9 @@ class Admin::ModelTest < ActiveSupport::TestCase
     section = child.admin_model.section(:base).with(presenter: child)
     field = section.fields_hash[:name]
     assert_equal pretty_value, field.pretty_value
+    assert_equal 'index', field.index_value
+    field = child.admin_model.section(:new).with(presenter: child).fields_hash[:name]
+    assert_equal 'index', field.index_value
   end
 
   test 'section inheritance' do

@@ -169,7 +169,8 @@ module Admin::Model::Definable
     end
     section = klass.new(name: name, model: self)
     values = section.ivar(:@values)
-    if (parent_section = sections[section.parent_name])
+    section.parent_names.each do |parent_name|
+      next unless (parent_section = sections[parent_name])
       values.reverse_merge! parent_section.values_ref
     end
     if superclass != Admin::Model
@@ -190,7 +191,8 @@ module Admin::Model::Definable
     config = klass.new(name: name, model: self, section: @section, section_was: @section)
     config.weight = configs[@section.name].size
     values = config.ivar(:@values)
-    if (parent_config = configs.dig(@section.parent_name, name))
+    @section.parent_names.each do |parent_name|
+      next unless (parent_config = configs.dig(parent_name, name))
       values.reverse_merge! parent_config.values_ref
     end
     if superclass != Admin::Model

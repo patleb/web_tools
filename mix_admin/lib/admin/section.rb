@@ -9,7 +9,7 @@ module Admin
 
     delegate :model_name, :klass, :group!, :group, :field!, :field, to: :model
 
-    attr_reader :parent_name
+    attr_reader :parent_names
     attr_reader :_no_super, :_exclude_fields, :_fields_of_type
 
     def self.inherited(subclass)
@@ -32,16 +32,19 @@ module Admin
       @_no_super ||= {}
       @_exclude_fields ||= []
       @_fields_of_type ||= []
-      unless name == :base
-        base_class = Admin::Sections.const_get(name.to_s.camelize)
+      @parent_names ||= []
+      current_name = name
+      until current_name == :base
+        base_class = Admin::Sections.const_get(current_name.to_s.camelize)
         parent_class = base_class.superclass
-        @parent_name = (parent_class == Admin::Section) ? :base : parent_class.name.demodulize.underscore.to_sym
+        current_name = (parent_class == Admin::Section) ? :base : parent_class.name.demodulize.underscore.to_sym
+        @parent_names << current_name
       end
     end
 
     def parent
       return @parent if defined? @parent
-      @parent = (model.section(@parent_name) if @parent_name)
+      @parent = (model.section(parent_names.first) unless parent_names.empty?)
     end
 
     def search_menu
