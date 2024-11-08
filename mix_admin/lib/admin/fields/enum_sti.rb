@@ -12,21 +12,17 @@ module Admin
         end
       end
 
-      register_option :pretty_value do
-        model = value.to_const.admin_model
-        model.label || value
-      end
-
-      register_option :multiple? do
-        false
-      end
-
       def allowed_field?
         super && klass.base_class?
       end
 
       def editable?
         false
+      end
+
+      def format_value(value)
+        model = value.to_const.admin_model
+        model.label || value
       end
     end
   end

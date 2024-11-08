@@ -62,13 +62,13 @@ module Admin
       '-'.html_safe
     end
 
-    # NOTE Current.view isn't available
-    register_option :export_value do
-      format_export(value)
+    register_option :pretty_index do
+      format_index(pretty_value)
     end
 
-    register_option :index_value do
-      format_index(pretty_value)
+    # NOTE Current.view isn't available
+    register_option :pretty_export do
+      format_export(value)
     end
 
     register_option :sortable? do
@@ -153,15 +153,31 @@ module Admin
       "#{name}_field #{type}_type"
     end
 
+    def pretty_label
+      text = [label]
+      text, title = text << '*', t('admin.form.required') if !action.show? && required? && !readonly?
+      h_(
+        label_(text, title: title),
+        icon('info-circle.tooltip', data: { tip: help }, if: !action.show? && help.present?),
+      )
+    end
+
+    def pretty_input
+      return pretty_value if readonly?
+      return input unless label
+      return [input, p_('.text-error', errors.to_sentence)] if errors.present?
+      input
+    end
+
     # NOTE overrides params[column_name]
     def parse_input!(params)
     end
 
-    def parse_search(value)
+    def parse_input(value)
       value
     end
 
-    def parse_value(value)
+    def parse_search(value)
       value
     end
 
@@ -201,13 +217,6 @@ module Admin
       []
     end
 
-    def pretty_input
-      return pretty_value if readonly?
-      return input unless label
-      return [input, p_('.text-error', errors.to_sentence)] if errors.present?
-      input
-    end
-
     def input_type
       :text
     end
@@ -232,15 +241,6 @@ module Admin
 
     def default_help
       false
-    end
-
-    def pretty_label
-      text = [label]
-      text, title = text << '*', t('admin.form.required') if !action.show? && required? && !readonly?
-      h_(
-        label_(text, title: title),
-        icon('info-circle.tooltip', data: { tip: help }, if: !action.show? && help.present?),
-      )
     end
 
     def search_type

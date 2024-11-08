@@ -7,10 +7,6 @@ module Admin
         property.name.to_s.match? /(^|_)password(_|$)/
       end
 
-      register_option :pretty_value do
-        '*' * MixUser.config.min_password_length
-      end
-
       def allowed_field?
         super && section.is_a?(Admin::Sections::New)
       end
@@ -24,7 +20,7 @@ module Admin
       end
 
       def format_value(value)
-        ''.html_safe
+        '*' * (min_length || 12)
       end
 
       def value

@@ -18,10 +18,10 @@ module Admin
       end
 
       def parse_input!(params)
-        params[column_name] = parse_value(params[column_name]) if params[column_name].is_a? String
+        params[column_name] = parse_input(params[column_name]) if params[column_name].is_a? String
       end
 
-      def parse_value(value)
+      def parse_input(value)
         value.present? ? (self.class.yaml_load(value) || nil) : nil
       end
 

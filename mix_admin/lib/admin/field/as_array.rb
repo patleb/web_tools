@@ -28,11 +28,11 @@ module Admin
       array? ? raise(NotImplementedError) : super
     end
 
-    def parse_search(value)
+    def parse_input(value)
       array? ? raise(NotImplementedError) : super
     end
 
-    def parse_value(value)
+    def parse_search(value)
       array? ? raise(NotImplementedError) : super
     end
 

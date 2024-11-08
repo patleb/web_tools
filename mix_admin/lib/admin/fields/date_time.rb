@@ -20,10 +20,10 @@ module Admin
       end
 
       def parse_input!(params)
-        params[column_name] = parse_value(params[column_name]) if params[column_name]
+        params[column_name] = parse_input(params[column_name]) if params[column_name]
       end
 
-      def parse_value(value)
+      def parse_input(value)
         ::Time.zone.parse(value) if value.present?
       end
 

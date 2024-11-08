@@ -3,79 +3,78 @@ module Admin
     class Enum < Admin::Field
       def self.has?(section, property)
         klass = section.klass
-        method_name = "enum_#{property.name}"
-        klass.respond_to?(method_name) || klass.method_defined?(method_name)
+        klass.respond_to?(:defined_enums) && klass.defined_enums.has_key?(property.name.to_s)
       end
 
       register_option :input do
-        options = { include_blank: include_blank?, selected: input_value, object: form.object }
-        html_options = input_attributes
-        html_options[:multiple] = true if multiple?
-        form.select(method_name, enum, options, html_options)
-      end
-
-      register_option :enum_labels, memoize: :locale do
-        nil
-      end
-
-      register_option :enum_method, memoize: true do
-        method_name = "enum_#{plural_name}"
-        if klass.respond_to?(method_name) || model.respond_to?(method_name)
-          method_name
-        else
-          name.to_s.pluralize
+        value = input_value
+        options = include_blank ? [option_(' ', value: '', selected: value.blank?)] : []
+        options += _enum.map do |label, option|
+          option_(label, value: option, selected: option == value)
         end
+        select_ options, name: input_name, class: input_css_class, **input_attributes
       end
 
       register_option :enum do
-        enum_values
+        klass.defined_enums[column_name.to_s]
       end
 
       register_option :include_blank? do
-        enum.to_a.map(&:last).none?(&:blank?)
+        !required?
       end
 
-      register_option :multiple? do
-        property && [:serialized].include?(property.type)
+      def parse_input!(params)
+        return unless (value = params[column_name])
+        params[column_name] = klass.attribute_types[column_name.to_s].deserialize(value)
       end
 
-      def enum_values
-        if klass.respond_to? enum_method
-          klass.public_send(enum_method)
+      def parse_search(value)
+        labels = _enum
+        end_with = value.start_with?('%') && !!(value = value.delete_prefix('%'))
+        start_with = value.end_with?('%') && !!(value = value.delete_suffix('%'))
+        value = if value.blank?
+          []
+        elsif start_with && end_with
+          labels.select_map{ |label, db_value| db_value if label.simplify.include? value }
+        elsif start_with
+          labels.select_map{ |label, db_value| db_value if label.simplify.start_with? value }
+        elsif end_with
+          labels.select_map{ |label, db_value| db_value if label.simplify.end_with? value }
         else
-          presenter.public_send(enum_method)
+          labels.select_map{ |label, db_value| db_value if label.simplify == value }
         end
-      end
-
-      def parse_value(value)
-        return unless value.present?
-        case klass.attribute_types[name.to_s]
-        when ActiveModel::Type::Integer
-          value if value.to_i?
-        else
-          value
-        end
+        value.empty? ? :_skip : value
       end
 
       def format_value(value)
-        if (labels = enum_labels)
-          if labels.has_key? value
-            type, text = labels[value]
-            return span_ ".label.label-#{type}", text
+        i18n_value(value)
+      end
+
+      def input_value
+        klass.attribute_types[column_name.to_s].serialize(value)
+      end
+
+      def search_operator(operator)
+        operator.include?('ILIKE') ? '{column} = ?' : operator
+      end
+
+      def _enum
+        (@_enum ||= {})[Current.locale] ||= begin
+          values = enum
+          if values.is_a? Array
+            values.map{ |value| [i18n_value(value), value] }
+          else
+            values.each_with_object([]) do |(key, value), all|
+              all << [i18n_value(key), value]
+            end
           end
-        end
-        value = value.to_s
-        if (list = enum).is_a? Hash
-          list.reject{ |_k, v| v.to_s != value }.keys.first.to_s.presence || value
-        elsif list.is_a?(::Array) && list.first.is_a?(::Array)
-          list.find{ |e| e[1].to_s == value }.try(:first).to_s.presence || value
-        else
-          value
         end
       end
 
-      def search_type
-        :string
+      private
+
+      def i18n_value(key)
+        key.present? ? klass.human_attribute_name("#{name}/#{key}", default: key.to_s.humanize) : key
       end
     end
   end

@@ -6,7 +6,7 @@ module Admin
       autoload :AsArray, prepend: true
 
       delegate :foreign_key, :foreign_type, :polymorphic?, :list_parent?, :inverse_of, :nested_options, to: :property
-      delegate :parse_input!, :parse_search, :parse_value, :format_input, :format_export, :value, to: :property_field, allow_nil: true
+      delegate :parse_input!, :parse_search, :parse_input, :format_input, :format_export, :value, to: :property_field, allow_nil: true
 
       register_option :open? do
         true

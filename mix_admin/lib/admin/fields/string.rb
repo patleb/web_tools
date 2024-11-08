@@ -7,14 +7,6 @@ module Admin
         false
       end
 
-      register_option :length do
-        property.try(:length)
-      end
-
-      register_option :valid_length, memoize: true do
-        klass.validators_on(name).find{ |v| v.kind == :length }.try(&:options) || {}
-      end
-
       register_option :array_separator do
         '<br>'.html_safe
       end
@@ -32,15 +24,20 @@ module Admin
       end
 
       def default_input_attributes
-        super.merge! maxlength: max_length
+        super.merge! minlength: min_length, maxlength: max_length
       end
 
       def max_length
-        @max_length ||= [length, valid_length[:maximum] || nil].compact.min
+        @max_length ||= [property.try(:length), valid_length[:maximum]].compact.min
       end
 
       def min_length
-        @min_length ||= [0, valid_length[:minimum] || nil].compact.max
+        return @min_length if defined? @min_length
+        @min_length = valid_length[:minimum]
+      end
+
+      def valid_length
+        @valid_length ||= klass.validators_on(name).find{ |v| v.kind == :length }.try(&:options) || {}
       end
 
       def default_help
@@ -50,7 +47,7 @@ module Admin
         else
           max, min = max_length, min_length
           if max
-            text += if min == 0
+            text += if min.nil? || min == 0
               "#{t('admin.form.char_length_up_to').capitalize} #{max}."
             else
               "#{t('admin.form.char_length_of').capitalize} #{min}-#{max}."

@@ -38,7 +38,6 @@ module Admin
     autoload :Decimal
     autoload :Discarded
     autoload :Enum
-    autoload :EnumAttribute
     autoload :EnumSti
     autoload :ForeignKey
     autoload :HasMany

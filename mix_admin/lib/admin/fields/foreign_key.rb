@@ -7,14 +7,6 @@ module Admin
         end
       end
 
-      register_option :pretty_value do
-        "#{property_model.label.upcase_first} ##{value}"
-      end
-
-      register_option :index_value do
-        foreign_key_link
-      end
-
       register_option :property_model_name, memoize: true do
         model_name = column_name.to_s.delete_suffix('_id').camelize
         if (namespace = model.model_name.deconstantize).present?
@@ -24,14 +16,21 @@ module Admin
         model_name
       end
 
-      def property_model
-        @property_model ||= property_model_name.to_const.admin_model
+      def format_value(value)
+        "#{property_model.label.upcase_first} ##{value}"
       end
 
-      # TODO redirect discarded :show/:edit to :trash_index with params[:ids] = id
-      def foreign_key_link(label = pretty_value)
+      def format_index(value)
+        foreign_key_link(value)
+      end
+
+      def foreign_key_link(label)
         url = property_model.viewable_url(id: value)
         url ? a_('.link.text-primary', text: label, href: url) : label
+      end
+
+      def property_model
+        @property_model ||= property_model_name.to_const.admin_model
       end
     end
   end
