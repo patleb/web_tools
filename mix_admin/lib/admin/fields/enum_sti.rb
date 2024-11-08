@@ -5,7 +5,7 @@ module Admin
         property.name == section.klass.inheritance_column&.to_sym
       end
 
-      register_option :enum do # TODO filter/sort/search doesn't work
+      register_option :enum do
         klass.self_and_inherited_types.map do |type|
           model = type.admin_model
           [model.label || type.name, type.name]
