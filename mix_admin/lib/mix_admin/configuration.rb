@@ -18,10 +18,8 @@ module MixAdmin
     attr_writer :denied_fields
     attr_writer :readonly_fields
     attr_writer :confirm_delete
-    attr_accessor :simplify_search_string
-    alias_method  :simplify_search_string?, :simplify_search_string
+    attr_writer :simplify_search_string
     attr_accessor :full_query_column
-    alias_method  :full_query_column?, :full_query_column
 
     def root_path
       @root_path ||= "/#{root.to_s.delete_prefix('/').delete_suffix('/')}"
@@ -132,6 +130,11 @@ module MixAdmin
     def confirm_delete
       return @confirm_delete if defined? @confirm_delete
       @confirm_delete = true
+    end
+
+    def simplify_search_string
+      return @simplify_search_string if defined? @simplify_search_string
+      @simplify_search_string = true
     end
 
     private

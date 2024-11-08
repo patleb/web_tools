@@ -63,7 +63,7 @@ module Admin
     end
 
     register_class_option :simplify_search_string? do
-      MixAdmin.config.simplify_search_string?
+      MixAdmin.config.simplify_search_string
     end
 
     register_class_option :record_label_method, instance_reader: true, memoize: true do

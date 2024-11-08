@@ -68,11 +68,7 @@ module Admin
     end
 
     register_option :index_value do
-      if primary_key?
-        primary_key_link
-      else
-        pretty_value
-      end
+      format_index(pretty_value)
     end
 
     register_option :sortable? do
@@ -96,7 +92,7 @@ module Admin
     end
 
     register_option :full_query_column? do
-      MixAdmin.config.full_query_column? || section.column_name_counts[column_name].to_i > 1
+      MixAdmin.config.full_query_column || section.column_name_counts[column_name].to_i > 1
     end
 
     register_option :input do
@@ -177,6 +173,10 @@ module Admin
       value
     end
 
+    def format_index(value)
+      primary_key? ? primary_key_link(value) : value
+    end
+
     def format_export(value)
       value
     end
@@ -247,13 +247,17 @@ module Admin
       :string
     end
 
+    def search_operator(operator)
+      operator
+    end
+
     def errors
       ([property_name] + association_names).uniq.flat_map do |name|
         presenter[:errors][name]
       end.uniq
     end
 
-    def primary_key_link(label = pretty_value)
+    def primary_key_link(label)
       url = presenter.undiscarded? && presenter.viewable_url
       url ? a_('.link.text-primary', label, href: url) : label
     end

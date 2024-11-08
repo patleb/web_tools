@@ -115,12 +115,12 @@ module Admin::Model::Searchable
             fields.select!{ |field| field&.search_type == type }
           end
           fields.each do |field|
+            next if (value = parse_search_value(field, value)) == :_skip
             table, column = (full_column = field.query_column).split('.')
             tables << table
             column = full_column if field.full_query_column?
-            value = parse_search_value(field, value)
             values.concat(Array.wrap(value))
-            ors << operator.gsub('{column}', column)
+            ors << field.search_operator(operator).gsub('{column}', column)
           end
         end
         errors << [:fields, statement_was] if tables.empty?
@@ -138,8 +138,12 @@ module Admin::Model::Searchable
   end
 
   def parse_search_value(field, value)
-    return if value.nil?
-    value.is_a?(Array) ? value.map{ |v| field.parse_search(v) } : field.parse_search(value)
+    return field.parse_search(value) unless value.is_a? Array
+    value = value.select_map do |v|
+      v = field.parse_search(v)
+      v unless v == :_skip
+    end
+    value.empty? ? :_skip : value
   end
 
   def sort_scope(scope, section, name:, reverse:)
