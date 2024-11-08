@@ -31,14 +31,14 @@ module Admin
         Admin::Field::AsArray.__call__(__method__, self, value)
       end
 
-      def format_input(value)
-        array? ? raise(NotImplementedError) : super
-      end
-
       def format_export(value)
         return super unless array?
         value = property_fields.map.with_index{ |field, i| field.format_export(value[i]) }
         Admin::Field::AsArray.__call__(__method__, self, value)
+      end
+
+      def format_input(value)
+        array? ? raise(NotImplementedError) : super
       end
 
       def value

@@ -20,11 +20,11 @@ module Admin
       end
 
       def format_value(value)
-        '*' * (min_length || 12)
+        '*' * (min_length || 12) if value
       end
 
-      def value
-        ''
+      def input_value
+        nil
       end
 
       def input_type

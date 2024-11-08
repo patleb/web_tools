@@ -35,12 +35,12 @@ module Admin
         end
       end
 
-      def format_input(value)
-        value&.iso8601&.sub(/(Z|[-+]\d{2}:\d{2})$/, '')
-      end
-
       def format_export(value)
         value&.utc&.iso8601
+      end
+
+      def format_input(value)
+        value&.iso8601&.sub(/(Z|[-+]\d{2}:\d{2})$/, '')
       end
 
       def value

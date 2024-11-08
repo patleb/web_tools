@@ -55,12 +55,12 @@ module Admin
       end
     end
 
-    def format_input(value)
-      array? ? raise(NotImplementedError) : super
-    end
-
     def format_export(value)
       array? ? value&.map{ |v| super(v) }&.join(export_separator) : super
+    end
+
+    def format_input(value)
+      array? ? raise(NotImplementedError) : super
     end
 
     def method?

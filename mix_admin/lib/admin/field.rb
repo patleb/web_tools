@@ -185,15 +185,15 @@ module Admin
       value
     end
 
-    def format_input(value)
-      value
-    end
-
     def format_index(value)
       primary_key? ? primary_key_link(value) : value
     end
 
     def format_export(value)
+      value
+    end
+
+    def format_input(value)
       value
     end
 
