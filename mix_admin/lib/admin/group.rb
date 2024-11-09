@@ -35,15 +35,16 @@ module Admin
       return if (group_fields = fields).empty?
       group_label = label
       fields, hidden_fields = group_fields.partition(&:label)
+      fields.reject!{ |field| action.new? && field.readonly? }
       fieldset_('.group_fields', class: css_class) {[
         hidden_fields.map(&:pretty_input),
-        legend_('.group', if: group_label) {[
+        legend_('.group', if: group_label, unless: fields.empty?) {[
           h6_('.group_label') { group_label },
           p_('.group_help', if: help) { help },
         ]},
         dl_('.fields') do
           fields.map do |field|
-            div_('.field', id: "#{field.name}_field", unless: action.new? && field.readonly?) {[
+            div_('.field', id: "#{field.name}_field") {[
               dt_('.field_label') do
                 field.pretty_label
               end,
