@@ -247,7 +247,7 @@ module Admin
       :string
     end
 
-    def search_operator(operator)
+    def search_operator(operator, value)
       operator
     end
 

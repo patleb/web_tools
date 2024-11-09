@@ -120,7 +120,7 @@ module Admin::Model::Searchable
             tables << table
             column = full_column if field.full_query_column?
             values.concat(Array.wrap(field_value))
-            ors << field.search_operator(operator).gsub('{column}', column)
+            ors << field.search_operator(operator, field_value).gsub('{column}', column)
           end
         end
         errors << [:fields, statement_was] if tables.empty?

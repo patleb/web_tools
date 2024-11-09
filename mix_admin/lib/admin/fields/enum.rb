@@ -54,8 +54,8 @@ module Admin
         klass.attribute_types[column_name.to_s].serialize(value)
       end
 
-      def search_operator(operator)
-        operator.include?('ILIKE') ? '{column} = ?' : operator
+      def search_operator(operator, value)
+        operator.sub('NOT ', '!').sub('ILIKE', '=')
       end
 
       def _enum
