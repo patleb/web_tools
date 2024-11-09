@@ -28,7 +28,7 @@ module Admin
       end
 
       def max_length
-        @max_length ||= [property.try(:length), valid_length[:maximum]].compact.min
+        @max_length ||= [property.try(:limit), valid_length[:maximum]].compact.min
       end
 
       def min_length
