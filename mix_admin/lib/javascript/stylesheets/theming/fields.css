@@ -35,6 +35,9 @@
     .password_type {
       @apply min-w-[5ch];
     }
+    .text_type {
+      @apply pr-1;
+    }
     .time_type {
       @apply min-w-[11ch];
     }
