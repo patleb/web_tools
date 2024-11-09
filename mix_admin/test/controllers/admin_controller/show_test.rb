@@ -72,12 +72,4 @@ class AdminController::ShowTest < ActionDispatch::IntegrationTest
       assert group.fields_hash.slice(:deleted_at, :lock_version, :password).empty?
     end
   end
-
-  private
-
-  def assert_field(field, css_class, pretty_label, pretty_value)
-    assert_equal css_class, field.css_class
-    assert_equal pretty_label, field.pretty_label
-    assert_equal pretty_value, field.pretty_value
-  end
 end

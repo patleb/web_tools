@@ -41,7 +41,7 @@ class AdminController::NewTest < ActionDispatch::IntegrationTest
         'integer_field enum_type',
         '<label>Integer</label>',
         'Zero',
-        '<select name="integer" class="input input-bordered" value="0" id="integer">'\
+        '<select name="integer" class="input input-bordered" id="integer">'\
           '<option value=""> </option>'\
           '<option value="0" selected="selected">Zero</option>'\
           '<option value="1">One</option>'\
@@ -56,24 +56,8 @@ class AdminController::NewTest < ActionDispatch::IntegrationTest
   end
 
   test 'POST :new' do
-    post "/model/#{model_name}/new", params: { model_name.underscore => { string: 'new-string', integer: 1 } }
+    post "/model/#{model_name}/new", params: { model_name.underscore => { string: 'new-string', integer: 'one' } }
 
     assert Test::Extensions::RecordExtension.find_by(string: 'new-string', integer: 'one')
-  end
-
-  private
-
-  def assert_field(field, css_class, pretty_label, pretty_value, pretty_input)
-    assert_equal css_class, field.css_class
-    case pretty_label
-    when Regexp
-      assert_match pretty_label, field.pretty_label
-    when Boolean
-      assert_equal pretty_label, field.label
-    else
-      assert_equal pretty_label, field.pretty_label
-    end
-    assert_equal pretty_value, field.pretty_value
-    assert_equal pretty_input, field.pretty_input
   end
 end

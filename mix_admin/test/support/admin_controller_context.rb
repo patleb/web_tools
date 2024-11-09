@@ -76,4 +76,18 @@ module AdminControllerContext
     end
     yield group
   end
+
+  def assert_field(field, css_class, pretty_label, pretty_value, *pretty_input)
+    assert_equal css_class, field.css_class
+    case pretty_label
+    when Regexp
+      assert_match pretty_label, field.pretty_label
+    when Boolean
+      assert_equal pretty_label, field.label
+    else
+      assert_equal pretty_label, field.pretty_label
+    end
+    assert_equal pretty_value, field.pretty_value
+    assert_equal pretty_input.first, field.pretty_input unless pretty_input.empty?
+  end
 end

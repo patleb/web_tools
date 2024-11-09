@@ -25,7 +25,9 @@ module Admin
 
       def parse_input!(params)
         return unless (value = params[column_name])
-        params[column_name] = klass.attribute_types[column_name.to_s].deserialize(value)
+        attribute = klass.attribute_types[column_name.to_s]
+        return unless attribute.subtype.is_a?(ActiveModel::Type::Integer) && value.to_i?
+        params[column_name] = attribute.deserialize(value)
       end
 
       def parse_search(value)
@@ -52,6 +54,10 @@ module Admin
 
       def input_value
         klass.attribute_types[column_name.to_s].serialize(value)
+      end
+
+      def default_input_attributes
+        super.except!(:value)
       end
 
       def search_operator(operator, value)
