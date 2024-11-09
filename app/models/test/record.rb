@@ -6,7 +6,11 @@ module Test
     scope :odd,   -> { invert_where(even) }
     scope :today, -> { where(date: Time.current.beginning_of_day..Time.current.end_of_day) }
 
-    has_many :related_records, discardable: true, dependent: :restrict_with_error
+    has_many :related_records, discardable: :all, dependent: :restrict_with_error
+    has_one  :related_record, -> { all_discardable.where(position: 5.0) }, discardable: :all, dependent: :restrict_with_error
+    has_one  :nested_record, -> { all_discardable.where(position: 5.0) }, discardable: :all, class_name: 'Test::RelatedRecord'
+
+    accepts_nested_attributes_for :nested_record, update_only: true
 
     json_attribute :name
     json_attribute secret: :encrypted
@@ -26,6 +30,15 @@ module Test
       j_time: :time,
       j_interval: :interval
     )
+
+    enum _default: :zero, integer: {
+      zero:  0,
+      one:   1,
+      two:   2,
+      three: 3,
+      four:  4,
+      five:  5,
+    }
 
     validates :string, presence: true
 
