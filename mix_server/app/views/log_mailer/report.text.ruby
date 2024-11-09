@@ -1,1 +1,1 @@
-@report.pretty_json(:text)
+@report.pretty_json(:text, depth: 1)

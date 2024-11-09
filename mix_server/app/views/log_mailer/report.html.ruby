@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 code_ style: 'white-space: pre;' do
-  @report.pretty_json(:html)
+  @report.pretty_json(:html, depth: 1)
 end
