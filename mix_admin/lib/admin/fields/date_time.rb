@@ -61,7 +61,7 @@ module Admin
       end
 
       def default_input_attributes
-        super.merge! size: 22
+        super.merge! size: 22, step: 'any'
       end
 
       def search_type

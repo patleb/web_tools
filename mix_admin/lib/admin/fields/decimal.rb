@@ -5,6 +5,10 @@ module Admin
         :number
       end
 
+      def default_input_attributes
+        super.merge! step: 'any'
+      end
+
       def search_type
         :numeric
       end
