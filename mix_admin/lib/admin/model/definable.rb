@@ -104,7 +104,7 @@ module Admin::Model::Definable
     if block_given?
       yield
     else
-      field(primary_key, **)
+      field(associations_hash[name].primary_key, **)
     end
   ensure
     remove_ivar(:@through)
