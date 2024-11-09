@@ -43,7 +43,7 @@ module Admin
       end
 
       def editable?
-        super && action.edit? && nested?
+        super && action.edit? && nested? && property_field
       end
 
       def type_css_class
@@ -90,6 +90,15 @@ module Admin
 
       def column_name
         as
+      end
+
+      private
+
+      def get(id)
+        scope = policy_scope(property_model.scope)
+        section = property_model.search_section
+        records = property_model.get(scope, section, ids: Array.wrap(id))
+        id.is_a?(Array) ? records : records.first
       end
     end
   end
