@@ -46,10 +46,38 @@ class AdminController::ShowTest < ActionDispatch::IntegrationTest
     assert_response :ok
     assert_layout :member, :show, path: '/1'
     assert_group 'Record extension #1' do |group|
-      id_field = group.fields_hash[:id]
-      assert_equal 'id_field integer_type', id_field.css_class
-      assert_equal 'Id', id_field.label
-      assert_equal '1', id_field.pretty_value
+      assert_field(group.fields_hash[:id],
+        'id_field integer_type',
+        '<label>Id</label>',
+        '1'
+      )
+      assert_field(group.fields_hash[:nested_record_name],
+        'nested_record_name_field has_one_type association_type name_field string_type',
+        '<label>Nested record</label>',
+        '<a href="http://127.0.0.1:3333/model/test-related_record/5" class="link text-primary" rel="noopener">related to 1</a>',
+      )
+      assert_field(group.fields_hash[:related_records_id],
+        'related_records_id_field has_many_type array_type association_type id_field integer_type',
+        '<label>Related records</label>',
+        '- <a href="http://127.0.0.1:3333/model/test-related_record/1" class="link text-primary" rel="noopener">1</a>&nbsp;<br>'\
+        '- <a href="http://127.0.0.1:3333/model/test-related_record/2" class="link text-primary" rel="noopener">2</a>&nbsp;<br>'\
+        '- <a href="http://127.0.0.1:3333/model/test-related_record/3" class="link text-primary" rel="noopener">3</a>&nbsp;<br>'\
+        '- <a href="http://127.0.0.1:3333/model/test-related_record/5" class="link text-primary" rel="noopener">5</a>&nbsp;',
+      )
+      assert_field(group.fields_hash[:integer],
+        'integer_field enum_type',
+        '<label>Integer</label>',
+        'One'
+      )
+      assert group.fields_hash.slice(:deleted_at, :lock_version, :password).empty?
     end
+  end
+
+  private
+
+  def assert_field(field, css_class, pretty_label, pretty_value)
+    assert_equal css_class, field.css_class
+    assert_equal pretty_label, field.pretty_label
+    assert_equal pretty_value, field.pretty_value
   end
 end
