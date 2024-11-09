@@ -24,9 +24,12 @@ class window.LibConcept
 
   clear_notice: ->
     if @notice()
+      text_size = @notice().nextSibling.firstChild.innerHTML.length || 30
+      timeout = text_size * 100
+      timeout = 8000 if timeout > 8000
       @clear_notice_timeout = setTimeout(=>
         @clear_alert(@notice())
-      , 8000)
+      , timeout)
 
   clear_alert: (alert) ->
     alert?.setAttribute('checked', '')
