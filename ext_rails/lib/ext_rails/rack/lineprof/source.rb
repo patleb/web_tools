@@ -3,7 +3,7 @@ module Rack
     class Source
       attr_reader :file_name, :raw_samples, :options
 
-      def initialize(file_name, raw_samples, **options)
+      def initialize(file_name, raw_samples, options)
         @file_name, @raw_samples, @options = file_name, raw_samples, options
       end
 
