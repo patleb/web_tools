@@ -60,7 +60,7 @@ module AdminHelper
   end
 
   def admin_models_menu
-    if MixAdmin.config.memoize_models_menu?
+    if MixAdmin.config.memoize_models_menu
       menu = ((@@admin_models_menu ||= {})[Current.locale] ||= {})[Current.user.as_role] ||= _admin_models_menu
       menu.sub(/\{active:#{@model&.model_name}\}/, '').html_safe
     else

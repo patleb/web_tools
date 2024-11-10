@@ -37,7 +37,6 @@ module MixAdmin
       return @memoize_models_menu if defined? @memoize_models_menu
       @memoize_models_menu = true
     end
-    alias_method :memoize_models_menu?, :memoize_models_menu
 
     def navigation_static_links
       @navigation_static_links ||= {
@@ -89,7 +88,6 @@ module MixAdmin
       return @sticky if defined? @sticky
       @sticky = true
     end
-    alias_method :sticky?, :sticky
 
     def items_per_page
       @items_per_page ||= GearedPagination::Ratios::DEFAULTS

@@ -35,7 +35,7 @@ module Admin
       end
 
       register_option :sticky? do
-        MixAdmin.config.sticky?
+        MixAdmin.config.sticky
       end
 
       def fields
