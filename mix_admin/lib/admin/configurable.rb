@@ -17,6 +17,14 @@ module Admin
     end
 
     module Super
+      def supers
+        current, supers = @super, []
+        while current
+          supers << @super; current = @super.ivar(:@super)
+        end
+        supers
+      end
+
       def super_for(name)
         @super if @super&.value?(name)
       end

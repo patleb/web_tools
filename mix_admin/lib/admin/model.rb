@@ -172,7 +172,7 @@ module Admin
             next unless can? :index, klass
           end
           if association.type == :has_many
-            count = presenter.respond_to?("#{name}_count") ? presenter["#{name}_count"] : presenter[name].size
+            count = presenter.associated_count(name, model)
             next unless count > 0
           else
             next unless presenter[name]
@@ -181,14 +181,7 @@ module Admin
           if (memo.dig(type, klass, 0) || 0) < count
             can_destroy = [:restrict_with_error, :restrict_with_exception].exclude? association.options[:dependent]
             memo[type][klass] = if model
-              field = model && model.index.fields.select do |f|
-                f.association? && f.queryable? && f.property_model == self
-              end.sort_by do |f|
-                next 2 if f.column_name != primary_key.to_sym
-                next 1 if f.property.type == :has_many
-                0
-              end.first
-              url = if field
+              url = if (field = associated_field(model))
                 model.url_for(:index, q: { field.query_name => presenter[field.column_name] })
               else
                 model.url_for(:index)
@@ -199,6 +192,20 @@ module Admin
             end
           end
         end
+      end
+    end
+
+    def self.associated_field(model)
+      memoize(self, __method__, model) do
+        model.index.fields.select do |f|
+          next unless f.association? && f.queryable?
+          associated_model = f.property_model
+          [self].concat(supers).any?{ |m| associated_model == m }
+        end.sort_by do |f|
+          next 2 if f.column_name != primary_key.to_sym
+          next 1 if f.property.type == :has_many
+          0
+        end.first
       end
     end
 
@@ -260,8 +267,10 @@ module Admin
       record.public_send(model.primary_key)
     end
 
-    def discarded?
-      record.try(:discarded?)
+    def associated_count(name, model)
+      return self["#{name}_count"] if record.respond_to? "#{name}_count"
+      return self[name].count_estimate if model.index.countless?
+      self[name].size
     end
 
     def record_label
