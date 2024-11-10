@@ -91,16 +91,6 @@ module Admin
       def column_name
         as
       end
-
-      private
-
-      def get(id)
-        model = property_model
-        scope = policy_scope(model.scope)
-        section = model.search_section
-        records = model.get(scope, section, ids: Array.wrap(id))
-        id.is_a?(Array) ? records : records.first
-      end
     end
   end
 end
