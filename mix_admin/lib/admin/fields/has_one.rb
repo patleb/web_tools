@@ -8,10 +8,6 @@ module Admin
       def method_name
         nested? ? "#{through}_attributes".to_sym : through
       end
-
-      def property_id
-        value.try(property.primary_key)
-      end
     end
   end
 end

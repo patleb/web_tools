@@ -17,10 +17,6 @@ module Admin
       def search_type
         :numeric
       end
-
-      def property_id
-        presenter[foreign_key]
-      end
     end
   end
 end
