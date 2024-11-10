@@ -24,9 +24,10 @@ class window.LibConcept
 
   clear_notice: ->
     if @notice()
-      text_size = @notice().nextSibling.firstChild.innerHTML.length || 30
+      text_size = @notice().nextSibling.firstChild.innerHTML.length || 25
       timeout = text_size * 100
-      timeout = 8000 if timeout > 8000
+      timeout = 2500 if timeout < 2500
+      timeout = 7500 if timeout > 7500
       @clear_notice_timeout = setTimeout(=>
         @clear_alert(@notice())
       , timeout)
