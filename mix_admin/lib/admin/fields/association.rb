@@ -95,9 +95,10 @@ module Admin
       private
 
       def get(id)
-        scope = policy_scope(property_model.scope)
-        section = property_model.search_section
-        records = property_model.get(scope, section, ids: Array.wrap(id))
+        model = property_model
+        scope = policy_scope(model.scope)
+        section = model.search_section
+        records = model.get(scope, section, ids: Array.wrap(id))
         id.is_a?(Array) ? records : records.first
       end
     end
