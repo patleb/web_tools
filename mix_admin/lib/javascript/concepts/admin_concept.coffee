@@ -102,9 +102,8 @@ class window.AdminConcept
 
   persist_scroll_x: ->
     if @model() and @bulk_form()
-      @store('scroll_x', { "#{@model()}_#{@action()}": @bulk_form().scrollLeft })
-    else
-      @store('scroll_x', null)
+      stored_scroll_x = @store('scroll_x') || {}
+      @store('scroll_x', stored_scroll_x.merge("#{@model()}_#{@action()}": @bulk_form().scrollLeft))
 
   toggle_bulk_form: ->
     return unless (toggles = @bulk_toggles()).present()
