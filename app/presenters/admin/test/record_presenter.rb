@@ -22,5 +22,8 @@ module Admin::Test
     field :text
     field :time
     field :uuid
+    field :j_code, type: :code do
+      readonly false
+    end
   end
 end

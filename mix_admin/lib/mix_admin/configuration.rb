@@ -13,6 +13,7 @@ module MixAdmin
     attr_writer :sticky
     attr_writer :items_per_page
     attr_writer :shortcuts
+    attr_writer :truncated_length
     attr_writer :field_aliases
     attr_writer :hidden_fields
     attr_writer :denied_fields
@@ -95,6 +96,10 @@ module MixAdmin
 
     def shortcuts
       @shortcuts ||= { left: 1, window: 0, right: 0 }
+    end
+
+    def truncated_length
+      @truncated_length ||= 30
     end
 
     def field_aliases

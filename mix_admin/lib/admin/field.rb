@@ -33,7 +33,7 @@ module Admin
       allowed_field?
     end
 
-    register_option :readonly? do
+    register_option :readonly do
       !editable?
     end
 
@@ -112,7 +112,8 @@ module Admin
     end
 
     register_option :help do
-      readonly ? false : t(column_name, scope: [property_model.i18n_scope, :help, property_model.i18n_key], default: default_help)
+      next false if readonly?
+      t(column_name, scope: [property_model.i18n_scope, :help, property_model.i18n_key], default: default_help)
     end
 
     def parent
@@ -136,8 +137,11 @@ module Admin
       MixAdmin.config.denied_fields.exclude? column_name
     end
 
+    def readonly?
+      action.show? || readonly
+    end
+
     def editable?
-      return false if action.show?
       return @editable if defined? @editable
       return false if presenter[:readonly?]
       return false if method? || primary_key? || MixAdmin.config.readonly_fields.include?(column_name)

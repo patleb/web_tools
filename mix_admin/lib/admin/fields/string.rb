@@ -7,6 +7,10 @@ module Admin
         false
       end
 
+      register_option :truncated? do
+        false
+      end
+
       register_option :array_separator do
         '<br>'.html_safe
       end
@@ -19,8 +23,26 @@ module Admin
         "\n"
       end
 
+      def type_css_class
+        "#{super}#{' truncated' if truncated?}"
+      end
+
       def format_value(value)
         sanitized ? sanitize(value) : ERB::Util.html_escape(value)
+      end
+
+      def format_index(value)
+        return super unless !primary_key? && value.present? && (length = truncated)
+        length = MixAdmin.config.truncated_length if length == true
+        return super unless value.size > length
+        string = value[0, length]
+        string << if (url = presenter.viewable_url(anchor: "#{name}_field"))
+          a_('.link.link-primary', ascii(:ellipsis), href: url)
+        else
+          ascii(:ellipsis)
+        end
+        string.html_safe if value.html_safe?
+        string
       end
 
       def default_input_attributes

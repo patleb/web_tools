@@ -137,7 +137,7 @@
     td {
       @apply tooltip-top;
 
-      .field_value {
+      .field_value:not(.truncated) {
         @apply line-clamp-1 line-clamp-wrap focus:line-clamp-none;
       }
     }

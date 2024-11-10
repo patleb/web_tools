@@ -30,7 +30,11 @@
     }
     .code_type,
     .json_type {
-      @apply text-left whitespace-pre break-words;
+      @apply text-left whitespace-pre break-words !important;
+
+      .link {
+        @apply font-sans text-sm;
+      }
     }
     .password_type {
       @apply min-w-[5ch];

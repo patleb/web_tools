@@ -3,6 +3,10 @@
 module Admin
   module Fields
     class Text < String
+      register_option :truncated? do
+        true
+      end
+
       register_option :input do
         textarea_ name: input_name, class: input_css_class, **input_attributes
       end

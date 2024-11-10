@@ -19,6 +19,7 @@ module Test
     json_attribute(
       j_big_integer: :big_integer,
       j_boolean: :boolean,
+      j_code: :text,
       j_date: :date,
       j_datetime: :datetime,
       j_decimal: :decimal,
