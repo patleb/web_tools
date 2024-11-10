@@ -98,12 +98,14 @@ class window.AdminConcept
     @persist_scroll_x()
 
   restore_scroll_x: ->
-    @bulk_form().scrollLeft = @scroll_x() if @scroll_x()
+    if (scroll_x = @scroll_x())
+      @bulk_form().scrollLeft = scroll_x.left * (@bulk_form().clientWidth / scroll_x.width)
 
   persist_scroll_x: ->
     if @model() and @bulk_form()
+      scroll_x = { left: @bulk_form().scrollLeft, width: @bulk_form().clientWidth }
       stored_scroll_x = @store('scroll_x') || {}
-      @store('scroll_x', stored_scroll_x.merge("#{@model()}_#{@action()}": @bulk_form().scrollLeft))
+      @store('scroll_x', stored_scroll_x.merge("#{@model()}_#{@action()}": scroll_x))
 
   toggle_bulk_form: ->
     return unless (toggles = @bulk_toggles()).present()
