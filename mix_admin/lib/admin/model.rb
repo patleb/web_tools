@@ -267,9 +267,9 @@ module Admin
       record.public_send(model.primary_key)
     end
 
-    def associated_count(name, model)
+    def associated_count(name, model = nil)
       return self["#{name}_count"] if record.respond_to? "#{name}_count"
-      return self[name].count_estimate if model.index.countless?
+      return self[name].count_estimate if model && model.index.countless?
       self[name].size
     end
 
