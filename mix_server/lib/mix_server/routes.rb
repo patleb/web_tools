@@ -12,7 +12,7 @@ module MixServer
     end
 
     def self.client_ip_path(**params)
-      build_path '_client_ip', *params
+      build_path '_client_ip', **params
     end
 
     def self.rescue_js_path(**params)

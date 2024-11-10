@@ -11,7 +11,7 @@ module MixJob
     end
 
     def self.job_path(job_class:, job_id:, **params)
-      build_path job_class, job_id, *params
+      build_path job_class, job_id, **params
     end
 
     include ExtRails::WithRoutes

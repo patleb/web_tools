@@ -11,7 +11,7 @@ module MixRpc
     end
 
     def self.rpc_path(id:, **params)
-      build_path id, *params
+      build_path id, **params
     end
 
     include ExtRails::WithRoutes

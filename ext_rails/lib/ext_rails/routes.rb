@@ -56,8 +56,12 @@ module ExtRails
       end
 
       def append_query(path, params)
+        anchor = params.delete(:anchor)
         unless (params = params.compact).empty?
           path = "#{path}?#{params.to_query}"
+        end
+        if anchor.present?
+          path = "#{path}##{anchor}"
         end
         path
       end
