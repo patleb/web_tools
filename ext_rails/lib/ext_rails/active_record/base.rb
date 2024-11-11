@@ -229,10 +229,6 @@ ActiveRecord::Base.class_eval do
     has_attribute?(inheritance_column)
   end
 
-  def self.self_and_inherited_types
-    [base_class].concat inherited_types
-  end
-
   def self.inherited_types
     @inherited_types ||= base_class.descendants.reject(&:abstract_class?).select{ |klass| klass.connection == connection }
   end

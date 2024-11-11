@@ -2,14 +2,7 @@ module Admin
   module Fields
     class EnumSti < Enum
       def self.has?(section, property)
-        property.name == section.klass.inheritance_column&.to_sym
-      end
-
-      register_option :enum do
-        klass.self_and_inherited_types.map do |type|
-          model = type.admin_model
-          [model.label || type.name, type.name]
-        end
+        super && property.name == section.klass.inheritance_column&.to_sym
       end
 
       def allowed_field?
@@ -20,9 +13,10 @@ module Admin
         false
       end
 
-      def format_value(value)
-        model = value.to_const.admin_model
-        model.label || value
+      private
+
+      def i18n_value(key)
+        key.present? ? key.to_const.admin_label : key
       end
     end
   end
