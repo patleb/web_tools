@@ -20,7 +20,7 @@ class AdminController::NewTest < ActionDispatch::IntegrationTest
         '<input type="text" name="string" class="input input-bordered" required="required" maxlength="50" id="string"></input>',
       )
       assert_field(group.fields_hash[:text],
-        'text_field text_type',
+        'text_field text_type truncated',
         '<label>Text</label>',
         '-',
         %{<textarea name="text" class="textarea textarea-bordered" id="text">\n</textarea>},

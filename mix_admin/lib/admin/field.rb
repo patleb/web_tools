@@ -158,7 +158,7 @@ module Admin
     end
 
     def type_css_class
-      "#{name}_field #{type}_type#{' truncate' unless truncated?}"
+      "#{name}_field #{type}_type#{' truncated' if truncated?}"
     end
 
     def pretty_label
