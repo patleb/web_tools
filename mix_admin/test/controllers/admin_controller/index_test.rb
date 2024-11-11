@@ -21,7 +21,7 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
       '.js_bulk_form',
       '.js_bulk_checkboxes', '.js_bulk_toggles',  '.js_bulk_buttons',
       '.js_table_head',      '.js_table_body',
-      '.js_search',
+      '.js_query_bar',       '.js_search',
       '.js_query_datetime',  '.js_query_keyword', '.js_query_operator', '.js_query_or', '.js_query_and', '.js_query_field',
     )
     assert_equal({ q: '{id}!=_null', f: 'all', s: 'id', r: 'true' }, controller.search_params)

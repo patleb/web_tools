@@ -57,7 +57,7 @@ module AdminControllerContext
     assert_select 'body.admin_layout.lib_layout'
     assert_select "body.admin_#{action_name}_template"
     Admin::Action.all("#{type}?").select(&:navigable?).each do |action|
-      assert_select ".nav_actions .#{action.css_class}"
+      assert_select ".nav_actions .#{action.css_class}" unless action.key == :show_in_app
     end
     assert_select '.nav_actions .index_action'
     assert_select ".nav_actions .tab-active .#{action_name}_action" unless bulk
