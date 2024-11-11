@@ -123,11 +123,11 @@ module MixAdmin
     end
 
     def denied_fields
-      @denied_fields ||= Set.new([:json_data, :deleted_at, :creator_id, :updater_id, :parent_id, :position])
+      @denied_fields ||= Set.new([:json_data, :creator_id, :updater_id, :parent_id, :position])
     end
 
     def readonly_fields
-      @readonly_fields ||= Set.new([:id, :created_at, :updated_at, :creator, :updater, :parent])
+      @readonly_fields ||= Set.new([:id, :deleted_at, :created_at, :updated_at, :creator, :updater, :parent])
     end
 
     def confirm_delete
