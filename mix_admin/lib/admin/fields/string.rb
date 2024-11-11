@@ -32,7 +32,7 @@ module Admin
       end
 
       def format_index(value)
-        return super unless !primary_key? && value.present? && (length = truncated)
+        return super unless (length = truncated)
         length = MixAdmin.config.truncated_length if length == true
         return super unless value.size > length
         string = value[0, length]
@@ -41,7 +41,7 @@ module Admin
         else
           ascii(:ellipsis)
         end
-        string.html_safe if value.html_safe?
+        string = string.html_safe if value.html_safe?
         string
       end
 

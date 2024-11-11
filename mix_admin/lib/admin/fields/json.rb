@@ -1,6 +1,10 @@
 module Admin
   module Fields
     class Json < Admin::Field
+      register_option :truncated? do
+        false
+      end
+
       def editable?
         false
       end
@@ -19,6 +23,18 @@ module Admin
 
       def format_value(value)
         value&.pretty_json(:html)
+      end
+
+      def format_index(value)
+        return super unless truncated && value.include?('<br>')
+        json = value.sub(/<br>.+/, '')
+        json << if (url = presenter.viewable_url(anchor: "#{name}_field"))
+          a_('.link.link-primary', ascii(:ellipsis), href: url)
+        else
+          ascii(:ellipsis)
+        end
+        json = json.html_safe if value.html_safe?
+        json
       end
     end
   end
