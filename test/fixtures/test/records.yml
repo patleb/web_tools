@@ -9,14 +9,15 @@ test_record_<%= i %>:
   deleted_at: <%= i == 0 ? Time.utc(2000, 1, 1, 0, 0, 0) : 'null' %>
   double: <%= i * i %>.<%= i * i %>
   integer: <%= i %>
+  interval: <%= (i.year + i.months + i.days + i.hours + i.minutes + i.seconds).iso8601 %>
   json: { int: <%= i %>, str: '<script>alert("<%= i %>")</script>' }
   json_data:
     name: 'Name'
     secret: <%= i == 1 ? Setting.encrypt('test') : 'null' %>
     j_boolean: <%= i.odd? %>
     j_decimal: <%= i %>.<%= i %>
-    j_integer: <%= i == 1 ? 'null' : i %>
-    j_string: '<%= "j_string-#{i}" %>'
+    j_integer: <%= i == 1 ? 'null' : i * 1_000_000 %>
+    j_string: '<%= (["j_string-#{i}"] * 3).join(' ') %>'
   lock_version: 1
   password: <%= i == 1 ? '""' : 'password' %>
   string: string-<%= i %>

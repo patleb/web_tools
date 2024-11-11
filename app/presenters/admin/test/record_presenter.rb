@@ -15,6 +15,7 @@ module Admin::Test
     field :decimal
     field :deleted_at
     field :integer
+    field :interval
     field :json
     field :lock_version
     field :password
@@ -25,5 +26,7 @@ module Admin::Test
     field :j_code, type: :code do
       readonly false
     end
+    field :j_integer
+    field :j_string
   end
 end
