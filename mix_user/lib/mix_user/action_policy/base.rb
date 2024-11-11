@@ -52,10 +52,6 @@ module ActionPolicy
       false
     end
 
-    def sort?
-      edit? && listable?
-    end
-
     def delete?
       false
     end
