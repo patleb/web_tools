@@ -149,10 +149,6 @@ module Admin
       false
     end
 
-    def sortable?
-      false
-    end
-
     def method_missing(name, ...)
       if name.end_with?('?') && (key = name[0..-2].to_sym) && self.class.has?(key)
         self.class.send(:define_method, name) do
