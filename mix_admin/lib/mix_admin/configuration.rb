@@ -70,8 +70,9 @@ module MixAdmin
         index
         export
         show
-        edit
+        show_in_app
         new
+        edit
         delete
         trash
         restore

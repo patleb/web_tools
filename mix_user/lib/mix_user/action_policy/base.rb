@@ -44,6 +44,10 @@ module ActionPolicy
       false
     end
 
+    def show_in_app?
+      show? && record.respond_to?(:to_url)
+    end
+
     def new?
       false
     end

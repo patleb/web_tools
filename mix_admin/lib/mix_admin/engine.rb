@@ -21,6 +21,7 @@ module Admin
     autoload :New
     autoload :Restore
     autoload :Show
+    autoload :ShowInApp
     autoload :Trash
   end
 
