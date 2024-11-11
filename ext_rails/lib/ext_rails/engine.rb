@@ -43,6 +43,7 @@ module ExtRails
     require 'ext_rails/active_support/abstract_class'
     require 'ext_rails/active_support/autoload'
     require 'ext_rails/active_support/core_ext'
+    require 'ext_rails/active_support/duration'
     require 'ext_rails/active_support/lazy_load_hooks/autorun'
     require 'ext_rails/active_support/current_attributes'
     require 'ext_rails/active_support/dependencies/with_cache'
