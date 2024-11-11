@@ -32,6 +32,7 @@
     .discarded_type {
       @apply min-w-[20ch];
     }
+    .integer_type,
     .interval_type {
       @apply whitespace-pre break-words !important;
     }

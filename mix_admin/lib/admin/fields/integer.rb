@@ -16,7 +16,7 @@ module Admin
       end
 
       def format_value(value)
-        value&.pretty_int&.gsub(' ', '&nbsp;')&.html_safe
+        value.pretty_int.html_safe if value
       end
 
       def input_type
