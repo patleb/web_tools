@@ -48,7 +48,6 @@ module Admin
     autoload :Json
     autoload :Money
     autoload :Password
-    autoload :Serialized
     autoload :String
     autoload :Text
     autoload :Time
