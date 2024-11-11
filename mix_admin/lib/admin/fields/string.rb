@@ -7,10 +7,6 @@ module Admin
         false
       end
 
-      register_option :truncated? do
-        false
-      end
-
       register_option :array_separator do
         '<br>'.html_safe
       end
@@ -21,10 +17,6 @@ module Admin
 
       register_option :export_separator do
         "\n"
-      end
-
-      def type_css_class
-        "#{super}#{' truncated' if truncated?}"
       end
 
       def format_value(value)

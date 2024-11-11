@@ -17,8 +17,12 @@
     }
   }
   .code_type,
-  .json_type {
+  .json_type,
+  .uuid_type {
     @apply font-mono text-xs !important;
+  }
+  .uuid_type {
+    @apply mt-1 !important;
   }
   .table_wrapper {
     .date_type {
@@ -27,6 +31,9 @@
     .date_time_type,
     .discarded_type {
       @apply min-w-[20ch];
+    }
+    .interval_type {
+      @apply whitespace-pre break-words !important;
     }
     .code_type,
     .json_type {

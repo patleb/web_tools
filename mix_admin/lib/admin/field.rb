@@ -107,6 +107,10 @@ module Admin
       property.try(:default)
     end
 
+    register_option :truncated? do
+      false
+    end
+
     register_option :css_class do
       type_css_class
     end
@@ -154,7 +158,7 @@ module Admin
     end
 
     def type_css_class
-      "#{name}_field #{type}_type"
+      "#{name}_field #{type}_type#{' truncate' unless truncated?}"
     end
 
     def pretty_label

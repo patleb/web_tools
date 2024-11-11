@@ -2,7 +2,7 @@ module Admin
   module Fields
     class Interval < Admin::Field
       register_option :pretty_format do
-        :long
+        [:years, :compact]
       end
 
       def editable?
@@ -14,18 +14,10 @@ module Admin
       end
 
       def format_value(value)
-        case pretty_format
-        when :long
-          value&.pretty_days
-        when :short
-          value&.pretty_hours
-        when :ceil
-          value&.pretty_days(ceil: true)
-        when :floor
-          value&.pretty_hours(ceil: true)
-        else
-          value.to_s
-        end
+        return unless value
+        unit, compact = pretty_format
+        value = (unit == :iso8601) ? value.iso8601 : value.to_s(unit, compact: compact == :compact)
+        value.html_safe
       end
     end
   end

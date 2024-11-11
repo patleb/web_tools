@@ -1,10 +1,6 @@
 module Admin
   module Fields
     class Json < Admin::Field
-      register_option :truncated? do
-        false
-      end
-
       def editable?
         false
       end
