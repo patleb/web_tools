@@ -14,13 +14,4 @@ class NumericTest < Minitest::TestCase
     assert_equal 9_999, 9_999.simplify
     assert_equal 100_000, 99_999.simplify
   end
-
-  test '#to_hours, #to_days' do
-    assert_equal [0, 1, 0], 1.minute.to_hours
-    assert_equal [0, 1, 5], (1.minute + 5.seconds).to_hours
-    assert_equal [1, 1, 5], (1.hour + 1.minute + 5.seconds).to_hours
-    assert_equal [0, 1, 1, 5], (1.hour + 1.minute + 5.seconds).to_days
-    assert_equal [1, 0, 0, 0], 1.day.to_days
-    assert_equal [1, 1, 1, 5], (1.day + 1.hour + 1.minute + 5.seconds).to_days
-  end
 end

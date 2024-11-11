@@ -90,18 +90,4 @@ class Numeric
   def gb_to_bytes
     (self * B_PER_GB).to_i
   end
-
-  # NOTE ActiveSupport::Duration#parts gives the same result and also delegates missing to a Numeric object
-  def to_hours
-    mm, ss = divmod(60)
-    ss = ss.ceil
-    hh, mm = mm.divmod(60)
-    [hh, mm, ss]
-  end
-
-  def to_days
-    hh, mm, ss = to_hours
-    dd, hh = hh.divmod(24)
-    [dd, hh, mm, ss]
-  end
 end
