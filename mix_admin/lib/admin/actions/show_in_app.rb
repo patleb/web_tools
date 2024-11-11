@@ -8,7 +8,11 @@ module Admin
       end
 
       def self.icon
-        'eye'
+        'escape'
+      end
+
+      def section_name
+        :show
       end
     end
 

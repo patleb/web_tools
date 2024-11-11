@@ -13,8 +13,6 @@ module ActiveRecord::Base::WithDiscard
     scope :discarded,       -> { discardable ? with_discarded.where.not(discard_column => nil) : all }
     scope :with_discarded,  -> { discardable ? unscope(where: discard_column) : all }
 
-    alias_method :show?, :undiscarded?
-
     define_model_callbacks :discard
     define_model_callbacks :undiscard
   end
