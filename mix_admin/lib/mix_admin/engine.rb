@@ -43,7 +43,6 @@ module Admin
     autoload :HasMany
     autoload :HasOne
     autoload :Hidden
-    autoload :Hstore
     autoload :Integer
     autoload :Interval
     autoload :Json
