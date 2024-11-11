@@ -12,11 +12,7 @@ module Admin
       end
 
       def parse_input!(params)
-        if params[column_name].present?
-          params[column_name] = params[column_name] # NOTE in case the password needs to be cleaned
-        else
-          params.delete(column_name)
-        end
+        params.delete(column_name) unless params[column_name].present?
       end
 
       def format_value(value)
