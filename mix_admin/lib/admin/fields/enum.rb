@@ -56,6 +56,10 @@ module Admin
         klass.attribute_types[column_name.to_s].serialize(value)
       end
 
+      def input_css_class
+        super.switch!('input', 'select')
+      end
+
       def default_input_attributes
         super.except!(:value)
       end

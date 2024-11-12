@@ -65,7 +65,8 @@
       @apply mt-1;
     }
     .input,
-    .textarea {
+    .textarea,
+    .select {
       @apply my-1 max-w-2xl;
     }
     .textarea,
