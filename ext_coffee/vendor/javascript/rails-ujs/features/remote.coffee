@@ -25,9 +25,7 @@ Rails.merge
         data.append(button.name, button.value) if button?
       else
         data = Rails.serialize_element(element, button)
-      if turbolinks_visitable(element) and method isnt 'GET' and (not data_type or data_type is 'html')
-        data_type = 'html'
-        visitable = true
+      visitable = turbolinks_visitable(element, data_type, true)
       Rails.set(element, 'ujs:submit-button', null)
       Rails.set(element, 'ujs:submit-button-formmethod', null)
       Rails.set(element, 'ujs:submit-button-formaction', null)
@@ -35,10 +33,13 @@ Rails.merge
       method = element.getAttribute('data-method')?.toUpperCase() or 'GET'
       url = element.getAttribute('data-url')
       data = Rails.serialize_element(element, element.getAttribute('data-params'))
+      visitable = turbolinks_visitable(element, data_type)
     else
       method = element.getAttribute('data-method')?.toUpperCase() or 'GET'
       url = Rails.href(element)
       data = element.getAttribute('data-params')
+      visitable = turbolinks_visitable(element, data_type)
+    data_type = 'html' if visitable
     data_type ||= 'script'
 
     Rails.ajax({
@@ -85,8 +86,11 @@ Rails.merge
     if Rails.is_meta_click(e, method, data) and Rails.fire(e.target, 'ujs:meta-click')
       e.stopImmediatePropagation()
 
-turbolinks_visitable = (element) ->
-  window.Turbolinks and Turbolinks.is_visitable(element)
+turbolinks_visitable = (element, data_type, submitable_form = false) ->
+  unless submitable_form
+    visit = element.getAttribute('data-visit')
+    return false unless visit? and visit isnt 'false'
+  window.Turbolinks and Turbolinks.is_visitable(element) and (not data_type or data_type is 'html')
 
 turbolinks_started = ->
   Turbolinks.request_started()
