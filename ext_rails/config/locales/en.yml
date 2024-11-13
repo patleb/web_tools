@@ -7,6 +7,9 @@ en:
     toggle_navigation: Toggle navigation
     back_to_site: Back to site
     language: Language
+  locale:
+    fr: French
+    en: English
   rescue:
     default: &template_default
       status: ""

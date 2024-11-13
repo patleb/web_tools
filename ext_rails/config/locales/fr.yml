@@ -7,6 +7,9 @@ fr:
     toggle_navigation: Basculer menu de navigation
     back_to_site: Retour au site
     language: Langue
+  locale:
+    fr: Français
+    en: Anglais
   rescue:
     default: &template_default
       status: ""

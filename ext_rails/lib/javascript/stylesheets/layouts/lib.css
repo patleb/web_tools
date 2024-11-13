@@ -4,6 +4,9 @@ html {
 }
 
 .lib_layout {
+  .locale_select label > span {
+    @apply bg-neutral-content;
+  }
   .alert {
     @apply absolute flex-row top-2.5 max-w-[calc(100vw-2.5rem)] lg:max-w-[calc(100vw-20.5rem)] z-[100];
 

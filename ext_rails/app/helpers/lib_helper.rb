@@ -104,49 +104,30 @@ module LibHelper
   end
 
   def locale_select
-    session_select :locale, I18n.available_locales
+    current = Current.locale
+    choices = I18n.available_locales
+    labels = choices.map{ |locale| [locale, t("locale.#{locale}", locale: locale)] }.to_h
+    case choices.size
+    when 0, 1
+      nil
+    when 2
+      other = choices.find{ |locale| locale != current }
+      li_(a_ '.locale_select', [icon('flag'), labels[other]], remote: true, visit: true, params: { _locale: other })
+    else
+      div_('.locale_select.form-control') {[
+        label_('.input-group', [
+          icon('flag', tag: :span),
+          select_('.select', name: '_locale', remote: true, visit: true) do
+            labels.map do |locale, label|
+              option_ label, value: locale, selected: locale == current
+            end
+          end
+        ])
+      ]}
+    end
   end
 
-  def session_select(name, available_values)
-    if name.is_a? Array
-      current_label = name.first
-      name = name.last
-    else
-      current_label = Current[name]
-    end
-    current_value = Current[name]
-    case available_values.size
-    when 1
-      ''
-    when 2
-      if available_values.first.is_a? Enumerable
-        other_label, other_value = available_values.find{ |_label, value| current_value != value.to_s }
-      else
-        other_value = available_values.find{ |value| current_value != value.to_s }
-        other_label = other_value
-      end
-      if name == :locale
-        a_(".#{name}_select.session_select", href: "?_#{name}=#{other_value}", title: t('template.language')) {[
-          i_('.fa.fa-flag'),
-          span_(other_label.to_s.humanize)
-        ]}
-      else
-        a_ ".#{name}_select.session_select", other_label.to_s.humanize, href: "?_#{name}=#{other_value}"
-      end
-    else
-      other_values = [[current_label.to_s.humanize, ""]]
-      if available_values.first.is_a? Enumerable
-        other_values += available_values.reject{ |_label, value| current_value == value.to_s }.map do |label, value|
-          [label.to_s.humanize, "?_#{name}=#{value}"]
-        end
-      else
-        other_values += available_values.reject{ |value| current_value == value.to_s }.map do |value|
-          [value.to_s.humanize, "?_#{name}=#{value}"]
-        end
-      end
-      div_ ".#{name}_select.session_select" do
-        select_tag name.to_s.pluralize, options_for_select(other_values), onchange: "if(this.value){location = this.value}"
-      end
-    end
+  def locale_url(locale)
+    Rack::Utils.merge_url(request.original_url, params: { _locale: locale })
   end
 end
