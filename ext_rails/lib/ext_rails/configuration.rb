@@ -2,7 +2,7 @@
 
 module ExtRails
   has_config do
-    attr_writer   :default_logger
+    attr_accessor :default_logger
     attr_accessor :i18n_debug
     attr_accessor :email_debug
     attr_writer   :sql_debug
@@ -13,15 +13,9 @@ module ExtRails
     attr_writer   :temporary_tables
     attr_writer   :db_partitions
     attr_accessor :keep_install_migrations
-    attr_writer   :theme
+    attr_writer   :theme, :themes
     attr_accessor :css_only_support
-    alias_method  :css_only_support?, :css_only_support
     attr_accessor :favicon_ico
-    alias_method  :favicon_ico?, :favicon_ico
-
-    def default_logger?
-      @default_logger
-    end
 
     def sql_debug?
       return @sql_debug if defined? @sql_debug
@@ -65,8 +59,12 @@ module ExtRails
       excluded_tables + temporary_tables
     end
 
+    def themes
+      @themes ||= { light: 'sun', dark: 'moon-stars-fill' }.with_indifferent_access
+    end
+
     def theme
-      @theme ||= 'light'
+      @theme ||= themes.keys.first.to_s
     end
   end
 end

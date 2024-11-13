@@ -106,14 +106,15 @@ module LibHelper
   def locale_select
     current = Current.locale
     choices = I18n.available_locales
-    labels = choices.map{ |locale| [locale, t("locale.#{locale}", locale: locale)] }.to_h
     case choices.size
     when 0, 1
       nil
     when 2
       other = choices.find{ |locale| locale != current }
-      li_(a_ '.locale_select', [icon('flag'), labels[other]], remote: true, visit: true, params: { _locale: other })
+      label = t("locale.#{other}", locale: other)
+      li_(a_ '.locale_select', [icon('flag'), label], remote: true, visit: true, params: { _locale: other })
     else
+      labels = choices.map{ |locale| [locale, t("locale.#{locale}", locale: locale)] }.to_h
       div_('.locale_select.form-control') {[
         label_('.input-group', [
           icon('flag', tag: :span),
@@ -127,7 +128,9 @@ module LibHelper
     end
   end
 
-  def locale_url(locale)
-    Rack::Utils.merge_url(request.original_url, params: { _locale: locale })
+  def theme_select
+    current = Current.theme
+    return unless (other, icon_name = ExtRails.config.themes.find{ |theme, _icon| theme.to_s != current })
+    li_(a_ '.theme_select', [icon(icon_name), t("theme.#{other}")], remote: true, visit: true, params: { _theme: other })
   end
 end

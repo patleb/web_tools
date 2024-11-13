@@ -262,7 +262,7 @@ module ActionView::Helpers::TagHelper
   def form_options_content(options, content)
     options.replace html_options_for_form(options.delete(:action) || '', options)
     tags = extra_tags_for_form(options)
-    unless options.delete(:timezone) == false || options[:method] == 'get' || ExtRails.config.css_only_support?
+    unless options.delete(:timezone) == false || options[:method] == 'get' || ExtRails.config.css_only_support
       timezone_tag = input_(type: 'hidden', name: '_timezone', value: Current.timezone.to_s)
       tags = tags.present? ? tags + timezone_tag : timezone_tag
     end

@@ -58,6 +58,7 @@ module ActionController::WithContext
     Current.request_id = request.uuid
     set_current_locale
     set_current_timezone
+    set_current_theme
   end
 
   def set_current_locale
@@ -80,6 +81,16 @@ module ActionController::WithContext
 
   def default_timezone
     Rails.application.config.time_zone
+  end
+
+  def set_current_theme
+    _set_current :theme do |theme|
+      ExtRails.config.themes.has_key?(theme) && theme
+    end
+  end
+
+  def default_theme
+    ExtRails.config.theme
   end
 
   def with_context

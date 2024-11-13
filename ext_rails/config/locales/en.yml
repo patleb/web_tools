@@ -10,6 +10,9 @@ en:
   locale:
     fr: French
     en: English
+  theme:
+    light: Light
+    dark: Dark
   rescue:
     default: &template_default
       status: ""

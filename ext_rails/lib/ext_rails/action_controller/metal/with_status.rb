@@ -69,7 +69,7 @@ module ActionController
     private
 
     def log(exception, **)
-      ExtRails.config.default_logger? ? Rails.logger.error(exception.backtrace_log) : raise(NotImplementedError)
+      ExtRails.config.default_logger ? Rails.logger.error(exception.backtrace_log) : raise(NotImplementedError)
     end
 
     def template_status_plain(status, title: t("rescue.#{status}.title"), problem: t("rescue.#{status}.problem"), solution: t("rescue.#{status}.solution"))
