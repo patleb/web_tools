@@ -240,6 +240,7 @@ module ActionView::Helpers::TagHelper
 
   def a_options_content(options, content)
     options[:rel] = 'noopener' if options[:rel].blank?
+    set_data_remote(options)
     content
   end
 
@@ -334,6 +335,17 @@ module ActionView::Helpers::TagHelper
     end
     id = options[:id].presence || options[:name]
     options[:id] = sanitize_to_id(id) if id.present?
+    set_data_remote(options)
     [object, name]
+  end
+
+  def set_data_remote(options)
+    options['data-remote'] = true if options.delete(:remote)
+    options['data-url'] = options.delete(:url)
+    options['data-params'] = case (params = options.delete(:params))
+      when Hash, Array then params.to_query
+      else params
+      end
+    options['data-visit'] = true if options.delete(:visit)
   end
 end
