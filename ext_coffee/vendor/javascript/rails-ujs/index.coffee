@@ -1,6 +1,6 @@
 window.Rails =
   # Link elements bound by rails-ujs
-  clickable_links: 'a[data-confirm], a[data-remote]:not([disabled]), a[data-disable_with], a[data-disable]'
+  clickable_links: 'a[data-confirm], a[data-method], a[data-remote]:not([disabled]), a[data-disable_with], a[data-disable]'
 
   # Button elements bound by rails-ujs
   clickable_buttons:
