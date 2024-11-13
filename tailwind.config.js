@@ -40,6 +40,9 @@ module.exports = {
   },
   theme: {
     screens,
+    debugScreens: {
+      position: ['bottom', 'right']
+    },
     extend: {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
