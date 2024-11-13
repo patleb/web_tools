@@ -8,9 +8,8 @@ class Turbolinks.Snapshot
       @from_element(value)
 
   @from_string: (html) ->
-    return @from_element(html) if html instanceof HTMLDocument
-    { documentElement } = new DOMParser().parseFromString(html, 'text/html')
-    @from_element(documentElement)
+    html = new DOMParser().parseFromString(html, 'text/html') unless html instanceof HTMLDocument
+    @from_element(html.documentElement)
 
   @from_element: (element) ->
     html_tag = Array.wrap(element.attributes).map ({ name, value }) -> [name, value]
