@@ -3,7 +3,6 @@ append :style do
     /* TODO */
   CSS
 end
-
 extends 'layouts/lib_mailer', [
   yield,
 ]
