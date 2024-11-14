@@ -163,7 +163,7 @@ class AdminController < LibController
   end
 
   def render_error
-    flash.now[:alert] = admin_alert(@presenter)
+    flash.now[:alert] = admin_alert(@presenter || @presenters)
     render action_name, status: :not_acceptable
   end
 
