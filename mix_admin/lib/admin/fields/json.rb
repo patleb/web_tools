@@ -18,7 +18,7 @@ module Admin
       end
 
       def format_value(value)
-        value&.pretty_json(:html)
+        value&.pretty_json(:html, depth: 0)
       end
 
       def format_index(value)
