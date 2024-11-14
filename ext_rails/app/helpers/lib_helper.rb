@@ -104,33 +104,40 @@ module LibHelper
   end
 
   def locale_select
-    current = Current.locale
-    choices = I18n.available_locales
+    param_select :locale, Current.locale, I18n.available_locales, 'flag' do |locale|
+      t("locale.#{locale}", locale: locale)
+    end
+  end
+
+  def theme_select
+    param_select :theme, Current.theme, ExtRails.config.themes, 'circle-half' do |theme|
+      t("theme.#{theme}")
+    end
+  end
+
+  def param_select(name, value, choices, icon_name)
     case choices.size
     when 0, 1
       nil
     when 2
-      other = choices.find{ |locale| locale != current }
-      label = t("locale.#{other}", locale: other)
-      li_(a_ '.locale_select', [icon('flag'), label], remote: true, visit: true, params: { _locale: other })
+      other, other_icon = choices.find{ |choice, *| choice != value }
+      icon_name = other_icon unless other_icon.nil?
+      label = yield(other) || other.to_s.humanize
+      li_ title: t("link.#{name}", default: name.to_s.humanize) do
+        a_ '.param_select', [icon(icon_name), label], remote: true, visit: true, params: { "_#{name}" => other }
+      end
     else
-      labels = choices.map{ |locale| [locale, t("locale.#{locale}", locale: locale)] }.to_h
-      div_('.locale_select.form-control') {[
+      div_('.param_select.form-control', title: t("link.#{name}", default: name.to_s.humanize)) {[
         label_('.input-group', [
-          icon('flag', tag: :span),
-          select_('.select', name: '_locale', remote: true, visit: true) do
-            labels.map do |locale, label|
-              option_ label, value: locale, selected: locale == current
+          icon(icon_name, tag: :span),
+          select_('.select', name: "_#{name}", remote: true, visit: true) do
+            choices.map do |choice, *|
+              label = yield(choice) || label.to_s.humanize
+              option_ label, value: choice, selected: choice == value
             end
           end
         ])
       ]}
     end
-  end
-
-  def theme_select
-    current = Current.theme
-    return unless (other, icon_name = ExtRails.config.themes.find{ |theme, _icon| theme.to_s != current })
-    li_(a_ '.theme_select', [icon(icon_name), t("theme.#{other}")], remote: true, visit: true, params: { _theme: other })
   end
 end

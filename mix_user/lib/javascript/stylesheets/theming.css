@@ -2,8 +2,14 @@
   .nav_sidebar {
     @apply pb-2;
 
-    .user_logout input {
-      @apply text-error cursor-pointer;
+    .user_link > * {
+      @apply badge badge-lg text-sm cursor-pointer;
+    }
+    .user_login > * {
+      @apply badge-warning;
+    }
+    .user_logout > * {
+      @apply badge-error;
     }
   }
 }

@@ -1,16 +1,29 @@
 # frozen_string_literal: true
 
 module AdminHelper
+  def admin_user_link
+    return unless admin_user_link?
+    li_ do
+      a_ '.admin_user_link', [icon('person'), Current.user.email], href: Current.user.admin_presenter.viewable_url
+    end
+  end
+
+  def admin_user_link?
+    Current.logged_in? && Current.user.admin_presenter.viewable?
+  end
+
   def admin_link
-    if admin_link?
-      a_ '.admin_link.admin_root', t('link.admin'), href: admin_root_path
-    else
-      a_ '.admin_link.app_root', t('link.app'), href: application_path
+    li_ do
+      if admin_link?
+        a_ '.admin_link.admin_root', [icon('card-list'), t('link.admin')], href: admin_root_path
+      else
+        a_ '.admin_link.app_root', [icon('eye'), t('link.app')], href: application_path
+      end
     end
   end
 
   def admin_link?
-    !Current.controller.is_a?(AdminController) && Current.logged_in?
+    Current.logged_in? && !Current.controller.is_a?(AdminController)
   end
 
   def admin_flash(key)

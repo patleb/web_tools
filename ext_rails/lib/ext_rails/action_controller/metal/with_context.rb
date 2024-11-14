@@ -84,7 +84,7 @@ module ActionController::WithContext
   end
 
   def set_current_theme
-    _set_current :theme do |theme|
+    _set_current :theme, symbol: true do |theme|
       ExtRails.config.themes.has_key?(theme) && theme
     end
   end

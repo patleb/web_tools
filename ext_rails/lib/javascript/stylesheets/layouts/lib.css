@@ -4,8 +4,13 @@ html {
 }
 
 .lib_layout {
-  .locale_select label > span {
-    @apply bg-neutral-content;
+  .param_select label {
+    > span {
+      @apply bg-transparent pr-1.5;
+    }
+    > select {
+      @apply select-bordered pl-1.5 w-[14.5rem]; // drawer at w-72
+    }
   }
   .alert {
     @apply absolute flex-row top-2.5 max-w-[calc(100vw-2.5rem)] lg:max-w-[calc(100vw-20.5rem)] z-[100];

@@ -1,17 +1,26 @@
 # frozen_string_literal: true
 
 module UserHelper
+  def user_role_select
+    return unless Current.user.role_admin?
+    param_select :role, Current.user.as_role, Current.user.available_roles.keys, 'person-badge' do |role|
+      User.human_attribute_name("role/#{role}", default: role.to_s.humanize)
+    end
+  end
+
   def user_link
-    if user_link?
-      a_('.user_link.user_login', t('link.log_in'), href: MixUser::Routes.new_session_path)
-    else
-      form_ '.user_link.user_logout', action: MixUser::Routes.delete_session_path, remote: true do
-        input_ type: 'submit', value: t('link.log_out')
+    li_ do
+      if user_login_link?
+        a_ '.user_link.user_login', span_(t 'link.log_in'), href: MixUser::Routes.new_session_path
+      else
+        form_ '.user_link.user_logout', action: MixUser::Routes.delete_session_path, remote: true do
+          input_ type: 'submit', value: t('link.log_out')
+        end
       end
     end
   end
 
-  def user_link?
+  def user_login_link?
     !Current.logged_in?
   end
 
