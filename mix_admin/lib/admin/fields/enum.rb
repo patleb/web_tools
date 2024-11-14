@@ -57,7 +57,10 @@ module Admin
       end
 
       def input_css_class
-        super.switch!('input', 'select')
+        super
+          .switch!('input', 'select')
+          .switch!('input-error', 'select-error')
+          .switch!('input-bordered', 'select-bordered')
       end
 
       def default_input_attributes
