@@ -21,7 +21,7 @@ class UserSessionPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      relation.where(user: user)
+      user.deployer? ? super : relation.where(user: user)
     end
   end
 end
