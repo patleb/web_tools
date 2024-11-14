@@ -21,14 +21,12 @@ module Admin
     end
 
     controller_for Edit do
-      def edit
-        case request.method_symbol
-        when :get
-          render :edit
-        when :post
-          @presenter.update! @attributes if @attributes.present?
-          on_update_success
-        end
+      case request.method_symbol
+      when :get
+        render :edit
+      when :post
+        @presenter.update! @attributes if @attributes.present?
+        on_update_success
       end
     end
   end

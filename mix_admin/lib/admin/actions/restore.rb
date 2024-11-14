@@ -31,19 +31,17 @@ module Admin
     end
 
     controller_for Restore do
-      def restore
-        return on_routing_error unless params[:_restore]
-        restored, not_restored = @presenters.each(&:undiscard).partition(&:undiscarded?)
-        if restored.any?
-          flash[:notice] = admin_notice(restored)
-        end
-        if not_restored.any?
-          flash[:alert] = admin_alert(not_restored)
-        end
-        redirect_back
-      rescue ActiveRecord::RecordInvalid
-        redirect_back alert: admin_alert(@presenters)
+      return on_routing_error unless params[:_restore]
+      restored, not_restored = @presenters.each(&:undiscard).partition(&:undiscarded?)
+      if restored.any?
+        flash[:notice] = admin_notice(restored)
       end
+      if not_restored.any?
+        flash[:alert] = admin_alert(not_restored)
+      end
+      redirect_back
+    rescue ActiveRecord::RecordInvalid
+      redirect_back alert: admin_alert(@presenters)
     end
   end
 end

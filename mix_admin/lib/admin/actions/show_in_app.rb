@@ -17,9 +17,7 @@ module Admin
     end
 
     controller_for ShowInApp do
-      def show_in_app
-        redirect_to @presenter.to_url
-      end
+      redirect_to @presenter.to_url
     end
   end
 end

@@ -21,15 +21,13 @@ module Admin
     end
 
     controller_for New do
-      def new
-        case request.method_symbol
-        when :get
-          render :new
-        when :post
-          @presenter.assign_attributes(@attributes) if @attributes.present?
-          @presenter.save!
-          on_update_success
-        end
+      case request.method_symbol
+      when :get
+        render :new
+      when :post
+        @presenter.assign_attributes(@attributes) if @attributes.present?
+        @presenter.save!
+        on_update_success
       end
     end
   end

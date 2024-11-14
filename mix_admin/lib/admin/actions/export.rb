@@ -33,13 +33,11 @@ module Admin
     end
 
     controller_for Export do
-      def export
-        case request.method_symbol
-        when :get
-          render :export
-        when :post
+      case request.method_symbol
+      when :get
+        render :export
+      when :post
 
-        end
       end
     end
   end

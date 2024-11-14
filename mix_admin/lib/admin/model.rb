@@ -74,6 +74,12 @@ module Admin
       delegate :primary_key, :table_name, to: :klass
     end
 
+    def self.controller_for(action_hook, &block)
+      define_singleton_method action_hook do
+        block
+      end
+    end
+
     def self.build(attributes = nil)
       if klass.respond_to? :admin_defaults
         attributes = (attributes || {}).reverse_merge(klass.admin_defaults)

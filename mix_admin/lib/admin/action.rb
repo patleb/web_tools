@@ -3,8 +3,9 @@
 module Admin
   module Actions
     def self.controller_for(action, &block)
+      action_name = action.key
       action.define_singleton_method :controller do
-        block
+        [action_name, block]
       end
     end
   end
@@ -120,11 +121,7 @@ module Admin
 
     def self.controller
       action_name = key
-      proc do
-        define_method action_name do
-          render action_name
-        end
-      end
+      [action_name, proc{ render action_name }]
     end
 
     delegate :root?, :collection?, :member?, :bulkable?, :http_methods, :title, to: :class
