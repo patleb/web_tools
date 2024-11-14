@@ -7,7 +7,7 @@ module Admin
 
     class_attribute :weight, instance_writer: false, instance_predicate: false, default: 0
 
-    delegate :model_name, :klass, :group!, :group, :field!, :field, to: :model
+    delegate :model_name, :klass, :group!, :group, :nests, :field!, :field, to: :model
 
     attr_reader :parent_names
     attr_reader :_no_super, :_exclude_fields, :_fields_of_type

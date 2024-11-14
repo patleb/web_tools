@@ -6,7 +6,7 @@ module Admin
 
     attr_accessor :weight
 
-    delegate :field!, :field, to: :model
+    delegate :nests, :field!, :field, to: :model
     delegate :fields_of_type, :include_fields, :exclude_fields, to: :section
 
     register_option :allowed? do
