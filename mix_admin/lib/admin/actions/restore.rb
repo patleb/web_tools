@@ -41,6 +41,8 @@ module Admin
           flash[:alert] = admin_alert(not_restored)
         end
         redirect_back
+      rescue ActiveRecord::RecordInvalid
+        redirect_back alert: admin_alert(@presenters)
       end
     end
   end

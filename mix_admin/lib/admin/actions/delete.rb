@@ -48,6 +48,8 @@ module Admin
           end
           redirect_back
         end
+      rescue ActiveRecord::RecordInvalid
+        redirect_back alert: admin_alert(@presenters, delete_action)
       end
     end
   end
