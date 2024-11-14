@@ -11,7 +11,7 @@ class UserPolicy < ApplicationPolicy
     if record?
       user.basic? && user.allowed_role?(record)
     else
-      super
+      logged_in?
     end
   end
 
@@ -19,8 +19,14 @@ class UserPolicy < ApplicationPolicy
     if record?
       user.basic? && user.allowed_role?(record)
     else
-      super
+      logged_in?
     end
+  end
+
+  private
+
+  def logged_in?
+    !user.nil?
   end
 
   class Scope < Scope
