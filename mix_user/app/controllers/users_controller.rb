@@ -35,7 +35,9 @@ class UsersController < Users::BaseController
     else
       on_invalid_link
     end
-  rescue ActiveSupport::MessageVerifier::InvalidSignature
+  rescue ActiveRecord::RecordInvalid
+    on_record_invalid :edit
+  rescue ActiveRecord::RecordNotFound, ActiveSupport::MessageVerifier::InvalidSignature
     on_invalid_link
   end
 
@@ -48,7 +50,7 @@ class UsersController < Users::BaseController
     redirect_to MixUser::Routes.new_session_path, notice: t('flash.password_changed')
   rescue ActiveRecord::RecordInvalid
     on_record_invalid :edit
-  rescue ActiveSupport::MessageVerifier::InvalidSignature
+  rescue ActiveRecord::RecordNotFound, ActiveSupport::MessageVerifier::InvalidSignature
     on_invalid_link
   end
 
