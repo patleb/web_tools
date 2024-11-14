@@ -9,7 +9,7 @@ module ActionController::WithContext
     end
   end
 
-  def rescue_with_handler(...)
+  def rescue_with_handler(exception)
     with_context do
       super
     end
