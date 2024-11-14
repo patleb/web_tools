@@ -126,7 +126,7 @@ module ActionView::Helpers::TagHelper
   end
 
   def with_tag(tag, css_or_content_or_options = nil, content_or_options = nil, options_or_content = nil, &block)
-    tag = tag.to_s
+    tag = tag&.to_s
     unless css_or_content_or_options.nil?
       case css_or_content_or_options
       when ID_CLASSES
@@ -175,7 +175,7 @@ module ActionView::Helpers::TagHelper
     content = sanitize(content) if sanitized
     form_after if tag == 'form'
 
-    result = content_tag tag, content, options, (sanitized ? false : escape)
+    result = tag ? content_tag(tag, content, options, (sanitized ? false : escape)) : h_(content)
     result = [result] * times if times
     result
   end
