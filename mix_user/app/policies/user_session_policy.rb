@@ -1,4 +1,8 @@
-class UserSessionPolicy < ApplicationPolicy
+class UserSessionPolicy < ActionPolicy::Base
+  def index?
+    user.admin?
+  end
+
   def export?
     false
   end
@@ -21,7 +25,7 @@ class UserSessionPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      user.deployer? ? super : relation.where(user: user)
+      user.deployer? ? relation.all : relation.where(user: user)
     end
   end
 end
