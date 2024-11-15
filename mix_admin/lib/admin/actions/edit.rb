@@ -20,7 +20,7 @@ module Admin
       end
     end
 
-    controller_for Edit do
+    controller Edit do
       case request.method_symbol
       when :get
         render :edit

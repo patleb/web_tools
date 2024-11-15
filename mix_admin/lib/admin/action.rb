@@ -2,7 +2,7 @@
 
 module Admin
   module Actions
-    def self.controller_for(action, &block)
+    def self.controller(action, &block)
       action_name = action.key
       action.define_singleton_method :controller do
         [action_name, block]

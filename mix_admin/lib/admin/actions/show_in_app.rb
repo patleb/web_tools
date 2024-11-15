@@ -16,7 +16,7 @@ module Admin
       end
     end
 
-    controller_for ShowInApp do
+    controller ShowInApp do
       redirect_to @presenter.to_url
     end
   end

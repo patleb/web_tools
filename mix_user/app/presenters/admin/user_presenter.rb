@@ -28,7 +28,7 @@ module Admin
       exclude_fields :verified_at
     end
 
-    controller_for :after_delete do |presenters|
+    controller :after_delete do |presenters|
       if presenters.any?{ |presenter| presenter.record == Current.user }
         flash_was = flash.to_hash
         destroy_session! Current.user

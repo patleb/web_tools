@@ -26,7 +26,7 @@ module Admin
       end
     end
 
-    controller_for Delete do
+    controller Delete do
       case request.method_symbol
       when :get
         render :delete

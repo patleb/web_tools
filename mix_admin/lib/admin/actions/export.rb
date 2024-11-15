@@ -32,7 +32,7 @@ module Admin
       end
     end
 
-    controller_for Export do
+    controller Export do
       case request.method_symbol
       when :get
         render :export

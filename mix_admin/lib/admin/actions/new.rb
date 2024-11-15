@@ -20,7 +20,7 @@ module Admin
       end
     end
 
-    controller_for New do
+    controller New do
       case request.method_symbol
       when :get
         render :new

@@ -30,7 +30,7 @@ module Admin
       end
     end
 
-    controller_for Restore do
+    controller Restore do
       return on_routing_error unless params[:_restore]
       restored, not_restored = @presenters.each(&:undiscard).partition(&:undiscarded?)
       if restored.any?
