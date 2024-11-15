@@ -280,13 +280,12 @@ module Admin
     end
 
     def record_label
-      label_method = record_label_method
-      if record.try("#{label_method}_changed?")
-        record.public_send("#{label_method}_was")
-      elsif record.new_record?
+      if record.new_record?
         "#{t('admin.misc.new')} #{self.class.label}".html_safe
-      elsif label_method == :admin_label
+      elsif (label_method = record_label_method) == :admin_label
         record.admin_label.upcase_first.html_safe
+      elsif record.try("#{label_method}_changed?") && (label = self["#{label_method}_was"]).present?
+        label
       else
         record.public_send(label_method)
       end
