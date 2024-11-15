@@ -41,7 +41,7 @@ class Task < LibMainRecord
   end
 
   def self.path(name)
-    MixAdmin::Routes.edit_path(model_name: self.name.to_admin_param, id: name)
+    MixAdmin::Routes.edit_path(model_name: self.name.to_class_param, id: name)
   end
 
   def path

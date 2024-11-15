@@ -74,9 +74,6 @@ module MixAdmin
   class Engine < ::Rails::Engine
     require 'mix_global'
     require 'mix_user'
-    require 'mix_admin/active_support/core_ext/numeric/conversions'
-    require 'mix_admin/active_support/core_ext/object/full_symbolize'
-    require 'mix_admin/active_support/core_ext/string'
 
     config.before_configuration do
       require 'mix_admin/active_model/name/with_admin'

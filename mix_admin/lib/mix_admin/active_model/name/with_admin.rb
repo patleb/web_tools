@@ -7,7 +7,7 @@ module ActiveModel::Name::WithAdmin
 
   def initialize(...)
     super
-    @admin_param = @name.to_admin_param
+    @admin_param = @name.to_class_param
   end
 end
 

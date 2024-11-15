@@ -50,13 +50,13 @@ class AdminController < LibController
   protected
 
   def set_action
-    @action = Admin::Action.find(action_name.to_sym)
+    @action = Admin::Action.find(action_name)
   end
 
   def set_model
-    model_name = params.require(:model_name).to_admin_name
-    raise RoutingError unless MixAdmin.config.models_pool.include? model_name
-    raise RoutingError unless (@model = model_name.to_const.admin_model).allowed?
+    klass_name = params.require(:model_name).to_class_name
+    raise RoutingError unless MixAdmin.config.models_pool.include? klass_name
+    raise RoutingError unless (@model = klass_name.to_const.admin_model).allowed?
     @section = @model.section(@action.section_name)
   end
 
@@ -191,21 +191,24 @@ class AdminController < LibController
       return true
     end
     fragments = Rack::Utils.parse_root(path).path.split('/').compact_blank
-    action_name = fragments.pop.delete_prefix '_'
-    model_name = action_name.to_admin_name
-    unless MixAdmin.config.models_pool.exclude? model_name
-      return can? 'index', model_name.to_const
-    end
-    unless MixAdmin.routes.has_key? action_name.to_sym
-      klass, id = fragments.pop.to_const, action_name
-      return can? 'show', (klass.find(id) rescue klass)
-    end
-    model_name = fragments.pop.to_admin_name
-    unless MixAdmin.config.models_pool.exclude? model_name
-      return can? action_name, model_name.to_const
-    end
-    klass, id = fragments.pop.to_admin_name.to_const, model_name
-    can? action_name, (klass.find(id) rescue klass)
+    action_name = fragments.pop.delete_prefix '_'  # /model/:model_name/_restore
+    klass_name = action_name.to_class_name         # /model/:model_name
+    return can? :index, klass_name                 unless MixAdmin.config.models_pool.exclude? klass_name
+    klass_name = fragments.pop.to_class_name       # /model/:model_name/:id
+    return can? :show, klass_name, id: action_name unless MixAdmin.routes.has_key? action_name.to_sym
+    return can? action_name, klass_name            unless MixAdmin.config.models_pool.exclude? klass_name
+    klass_name = fragments.pop.to_class_name       # /model/:model_name/:id/edit
+    can? action_name, klass_name, id: klass_name
+  end
+
+  def can?(action, object, id: nil)
+    return super(action, object) unless id
+    klass = object.is_a?(String) ? object.to_const! : object
+    return false unless (model = klass.admin_model).allowed?
+    section = model.section(Admin::Action.find(action).section_name)
+    scope = policy_scope(model.scope)
+    return false unless (record = model.get(scope, section, id: id, raise_error: false).first)
+    super action, record
   end
 
   def sanitize_attributes(fields, params, nested: false)

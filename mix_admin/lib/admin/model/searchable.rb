@@ -22,9 +22,14 @@ module Admin::Model::Searchable
   EQUAL = '='
   NOT_EQUAL = '!='
 
-  def get(scope, section, ids: nil, id: nil)
+  def get(scope, section, ids: nil, id: nil, raise_error: true)
     scope = select_columns(scope, section)
-    ids ? scope.find(ids) : [scope.find(id)]
+    if raise_error
+      ids ? scope.find(ids) : [scope.find(id)]
+    else
+      id_column = section.model.primary_key
+      ids ? scope.where(id_column => ids).to_a : [scope.where(id_column => id).take]
+    end
   end
 
   def count(scope, section, **options)

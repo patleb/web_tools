@@ -1,4 +1,14 @@
 class String
+  include Numeric::Conversions
+
+  def to_class_param
+    split('::').map(&:underscore).join('-')
+  end
+
+  def to_class_name
+    split('-').map(&:camelize).join('::')
+  end
+
   class ClassCache
     def initialize
       @store = Concurrent::Map.new

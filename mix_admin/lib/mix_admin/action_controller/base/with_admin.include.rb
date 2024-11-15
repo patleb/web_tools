@@ -8,7 +8,7 @@ module ActionController::Base::WithAdmin
   def admin_root_path
     model = MixAdmin.config.root_model_name
     if can? :index, model
-      MixAdmin::Routes.index_path(model_name: model.to_admin_param)
+      MixAdmin::Routes.index_path(model_name: model.to_class_param)
     elsif can? :show, Current.user
       MixAdmin::Routes.show_path(model_name: 'user', id: Current.user.id)
     else
