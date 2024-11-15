@@ -178,6 +178,13 @@ class AdminController < LibController
     super(presenters, @model.label(count == 0 ? 1 : count), action)
   end
 
+  def sanitize_attributes(fields, params, nested: false)
+    return unless params.present?
+    params.slice! *fields.map(&(nested ? :column_name : :method_name))
+    params.permit!
+    fields.each{ |field| field.parse_input! params }
+  end
+
   def _back
     if (path = super)
       path if can_redirect_back? path
@@ -209,12 +216,5 @@ class AdminController < LibController
     scope = policy_scope(model.scope)
     return false unless (record = model.get(scope, section, id: id, raise_error: false).first)
     super action, record
-  end
-
-  def sanitize_attributes(fields, params, nested: false)
-    return unless params.present?
-    params.slice! *fields.map(&(nested ? :column_name : :method_name))
-    params.permit!
-    fields.each{ |field| field.parse_input! params }
   end
 end
