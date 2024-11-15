@@ -44,6 +44,14 @@ en:
         email: Email
         password: Password
         password_confirmation: Password confirmation
+        role: Role
+    errors:
+      models:
+        user:
+          attributes:
+            role:
+              role_denied: unavailable
+              deployer_denied: deployer is denied
   user_mailer:
     verify_email:
       action: Confirm my account
