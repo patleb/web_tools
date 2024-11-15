@@ -39,6 +39,8 @@ module ActionController::WithContext
     back = _back
     if back && (allow_other_host || _url_host_allowed?(back))
       redirect_to(back, allow_other_host: allow_other_host, **)
+    elsif fallback_location == request.original_fullpath
+      redirect_to(application_path, **)
     else
       redirect_to(fallback_location, **)
     end
@@ -133,6 +135,7 @@ module ActionController::WithContext
 
   def _back
     back = @_back.presence || params[:_back].presence || request.headers['X-Back'].presence || request.referer.presence
-    back unless back&.delete_prefix(ExtRails::Routes.base_url) == request.original_fullpath
+    back = back&.delete_prefix(ExtRails::Routes.base_url)
+    back unless back == request.original_fullpath
   end
 end
