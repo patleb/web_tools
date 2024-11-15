@@ -185,7 +185,7 @@ class AdminController < LibController
     fields.each{ |field| field.parse_input! params }
   end
 
-  def _back
+  def _back_path
     if (path = super)
       path if can_redirect_back? path
     elsif @model
