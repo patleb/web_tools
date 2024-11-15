@@ -179,21 +179,33 @@ class AdminController < LibController
   end
 
   def _back
-    return @action.trashable? && @model&.allowed_url(:trash) || @model&.allowed_url(:index) unless (back = super)
-    return back unless back.start_with? "#{MixAdmin.config.root_path}/"
-    return back if can? *parse_action_model(back)
+    if (path = super)
+      path if can_redirect_back? path
+    elsif @model
+      @action.trashable? && @model.allowed_url(:trash) || @model.allowed_url(:index)
+    end
   end
 
-  def parse_action_model(path)
+  def can_redirect_back?(path)
+    unless path.start_with? "#{MixAdmin.config.root_path}/"
+      return true
+    end
     fragments = Rack::Utils.parse_root(path).path.split('/').compact_blank
     action_name = fragments.pop.delete_prefix '_'
     model_name = action_name.to_admin_name
-    return 'index', model_name.to_const     unless MixAdmin.config.models_pool.exclude? model_name
-    return 'show',  fragments.pop.to_const  unless MixAdmin.routes.has_key? action_name.to_sym
+    unless MixAdmin.config.models_pool.exclude? model_name
+      return can? 'index', model_name.to_const
+    end
+    unless MixAdmin.routes.has_key? action_name.to_sym
+      klass, id = fragments.pop.to_const, action_name
+      return can? 'show', (klass.find(id) rescue klass)
+    end
     model_name = fragments.pop.to_admin_name
-    return action_name, model_name.to_const unless MixAdmin.config.models_pool.exclude? model_name
-    model_name = fragments.pop.to_admin_name
-    [action_name, model_name.to_const]
+    unless MixAdmin.config.models_pool.exclude? model_name
+      return can? action_name, model_name.to_const
+    end
+    klass, id = fragments.pop.to_admin_name.to_const, model_name
+    can? action_name, (klass.find(id) rescue klass)
   end
 
   def sanitize_attributes(fields, params, nested: false)

@@ -42,8 +42,6 @@ module Admin
         end
         if not_deleted.any?
           flash[:alert] = admin_alert(not_deleted, delete_action)
-        elsif _back&.match?(%r{/#{deleted.first.primary_key_value}(/|$)})
-          @_back = @model.allowed_url(:index)
         end
         instance_exec(deleted, &@model.after_delete) if @model.respond_to? :after_delete
         redirect_back unless performed?
