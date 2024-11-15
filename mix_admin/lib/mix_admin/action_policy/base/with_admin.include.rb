@@ -29,7 +29,7 @@ module ActionPolicy::Base::WithAdmin
 
   def trash?
     return false unless delete?
-    return false if relation.undiscardable? && Current.discarded?
+    return false if klass.undiscardable? && Current.discarded?
     return false if record&.discarded? && Current.undiscarded?
     true
   end

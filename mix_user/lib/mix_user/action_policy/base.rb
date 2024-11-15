@@ -21,7 +21,7 @@ module ActionPolicy
     end
 
     def param_key
-      relation.model_name.param_key
+      klass.model_name.param_key
     end
 
     def params
@@ -39,15 +39,15 @@ module ActionPolicy
     end
 
     def record?
-      !relation?
+      !klass?
     end
 
-    def relation
-      return @relation if defined? @relation
-      @relation = relation? ? object : object.class
+    def klass
+      return @klass if defined? @klass
+      @klass = klass? ? object : object.class
     end
 
-    def relation?
+    def klass?
       object.is_a? Class
     end
 
