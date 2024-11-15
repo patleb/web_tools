@@ -32,49 +32,7 @@ module ActionPolicy
       self.class::Scope.new(user, relation).resolve
     end
 
-    def index?
-      false
-    end
-
-    def export?
-      false
-    end
-
-    def show?
-      false
-    end
-
-    def show_in_app?
-      show? && record.respond_to?(:to_url)
-    end
-
-    def new?
-      false
-    end
-
-    def edit?
-      false
-    end
-
-    def delete?
-      false
-    end
-
-    def trash?
-      return false unless delete?
-      return false if undiscardable? && Current.discarded?
-      return false if discarded? && Current.undiscarded?
-      true
-    end
-
-    def restore?
-      trash?
-    end
-
     protected
-
-    delegate :discardable?, :undiscardable?, :listable?, to: :relation
-    delegate :discarded?, :undiscarded?, to: :record, allow_nil: true
 
     def record
       object if record?
@@ -91,14 +49,6 @@ module ActionPolicy
 
     def relation?
       object.is_a? Class
-    end
-
-    def role
-      @role ||= user.role.to_sym
-    end
-
-    def roles
-      @roles ||= user.class.roles.keys
     end
 
     def method_missing(name, ...)
