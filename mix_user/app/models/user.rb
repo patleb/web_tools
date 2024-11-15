@@ -24,8 +24,7 @@ class User < LibMainRecord
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, allow_nil: true, length: { minimum: MixUser.config.min_password_length }
   validates :role, presence: true
-  validate  :check_role
-  validate  :check_deployer, if: :role_deployer?
+  validate  :check_role, if: :role_changed?
 
   normalizes :email, with: ->(email) { email.strip.downcase }
 
@@ -55,6 +54,10 @@ class User < LibMainRecord
     define_method "#{name}?" do
       as_role_i >= value
     end
+  end
+
+  def available_roles
+    self.class.roles.select{ |_, i| i <= role_i }.except!(:null)
   end
 
   def allowed_roles
@@ -126,13 +129,10 @@ class User < LibMainRecord
   private
 
   def check_role
-    unless allowed_roles.has_key? role
+    unless available_roles.has_key? role
       errors.add :role, :role_denied
     end
-  end
-
-  def check_deployer
-    unless Setting[:authorized_keys].any?{ |key| key.split(' ').last == email }
+    if role_deployer? && Setting[:authorized_keys].none?{ |key| key.split(' ').last == email }
       errors.add :role, :deployer_denied
     end
   end
