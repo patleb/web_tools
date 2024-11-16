@@ -345,8 +345,12 @@ class ControllerStub
     true
   end
 
+  def action_name
+    'index'
+  end
+
   def action
-    ActiveSupport::StringInquirer.new('unknown')
+    OpenStruct.new(name: 'index')
   end
 end
 

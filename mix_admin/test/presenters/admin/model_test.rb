@@ -179,7 +179,10 @@ class Admin::ModelTest < ActiveSupport::TestCase
     Current.controller = ControllerStub.new
     create_session!
     current_user.update! updater: current_user
-    allowed, restricted = User.admin_model.associated_counts(current_user.admin_presenter).values_at(:allowed, :restricted)
+    allowed, restricted = MixAdmin.with do |config|
+      config.models_pool.delete('UserSession')
+      User.admin_model.associated_counts(current_user.admin_presenter).values_at(:allowed, :restricted)
+    end
 
     assert_equal 1, allowed.size
     assert_equal 1, restricted.size
