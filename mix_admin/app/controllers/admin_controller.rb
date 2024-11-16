@@ -194,9 +194,7 @@ class AdminController < LibController
   end
 
   def can_redirect_back?(path)
-    unless path.start_with? "#{MixAdmin.config.root_path}/"
-      return true
-    end
+    return true unless path.start_with? "#{MixAdmin.config.root_path}/"
     fragments = Rack::Utils.parse_root(path).path.split('/').compact_blank
     action_name = fragments.pop.delete_prefix '_'  # /model/:model_name/_restore
     klass_name = action_name.to_class_name         # /model/:model_name
@@ -214,6 +212,7 @@ class AdminController < LibController
     return false unless (model = klass.admin_model).allowed?
     section = model.section(Admin::Action.find(action).section_name)
     scope = policy_scope(model.scope)
+    scope = scope.discarded if action.trashable?
     return false unless (record = model.get(scope, section, id: id, raise_error: false).first)
     super action, record
   end
