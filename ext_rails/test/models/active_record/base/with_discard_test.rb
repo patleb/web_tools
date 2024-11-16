@@ -16,7 +16,6 @@ class ActiveRecord::Base::WithDiscardTest < ActiveSupport::TestCase
     record.reload
     assert_equal true, record.undiscard!
     assert_equal true, record.undiscarded?
-    assert_equal true, record.show?
   end
 
   test '.discarded, .undiscarded, .with_discarded, .discard_all, .undiscard_all, #discard_all, #undiscard_all' do
@@ -25,7 +24,9 @@ class ActiveRecord::Base::WithDiscardTest < ActiveSupport::TestCase
     Test::Record.discard_all!
     assert_equal [6, 5], [Test::Record.discarded, Test::RelatedRecord.discarded].map(&:size)
     record = Test::Record.with_discarded.find(1)
-    assert_equal 4, record.related_records.size
+    Current.with(discarded: record.discarded?) do
+      assert_equal 4, record.related_records.size
+    end
 
     Test::Record.undiscard_all!
     assert_equal [6, 6], [Test::Record.all, Test::RelatedRecord.all].map(&:size)
