@@ -206,14 +206,14 @@ class AdminController < LibController
     can? action_name, klass_name, id: klass_name
   end
 
-  def can?(action, object, id: nil)
-    return super(action, object) unless id
-    klass = object.is_a?(String) ? object.to_const! : object
-    return false unless (model = klass.admin_model).allowed?
-    section = model.section(Admin::Action.find(action).section_name)
+  def can?(action_name, klass_name, id: nil)
+    return super(action_name, klass_name) unless id
+    return false unless (model = klass_name.to_const!.admin_model).allowed?
+    action = Admin::Action.find(action_name)
+    section = model.section(action.section_name)
     scope = policy_scope(model.scope)
     scope = scope.discarded if action.trashable?
     return false unless (record = model.get(scope, section, id: id, raise_error: false).first)
-    super action, record
+    super action_name, record
   end
 end
