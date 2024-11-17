@@ -22,6 +22,7 @@ module ActiveRecord::Base::WithList
       when Class  then options[:class_name] = parent.name
       when String then options[:class_name] = parent
       end
+      options[:optional] = true unless options.has_key?(:optional) || options.has_key?(:required)
       options[:list_parent] = true
       super
     end
