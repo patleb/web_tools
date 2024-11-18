@@ -4,6 +4,12 @@ class LibController < ActionController::Base
   private
 
   def set_meta_values
-    (@meta ||= {}).merge!(root: root_path, app: (title = Rails.application.title), title: title, description: title)
+    title = Rails.application.title
+    (@meta ||= {}).merge!(
+      root: root_path,
+      app: title,
+      title: title,
+      description: title
+    )
   end
 end
