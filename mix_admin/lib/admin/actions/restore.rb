@@ -25,6 +25,10 @@ module Admin
         true
       end
 
+      def section_name
+        :delete
+      end
+
       def trashable?
         true
       end

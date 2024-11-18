@@ -64,7 +64,6 @@ module Admin
     autoload :Export
     autoload :Index
     autoload :New
-    autoload :Restore
     autoload :Show
     autoload :Trash
   end
