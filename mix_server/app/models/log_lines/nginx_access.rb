@@ -59,7 +59,7 @@ module LogLines
     scope :referers,     -> { where_not(referer: nil).where_not(referer: ['LIKE', '/%']) }
     scope :root,         -> { where(path: '/') }
     scope :rpc,          -> { where(path: ['~', "^#{MixRpc::Routes.root_path}/\\w+"]) }
-    scope :pages,        -> { where(path: ['~', "^/[\\w-]+/#{MixPage::URL_SEGMENT}/"]) }
+    scope :pages,        -> { where(path: ['~', "^/[\\w-]+/#{MixPage::Routes::FRAGMENT}/"]) }
     scope :admin,        -> { where(path: ['~', "^#{MixAdmin::Routes.root_path}(/|$)"]) }
     scope :success,      -> { where(status: ['>=', 200]).where(status: ['<', 300]) }
 
