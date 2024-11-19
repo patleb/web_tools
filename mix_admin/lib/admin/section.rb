@@ -65,6 +65,10 @@ module Admin
       ]
     end
 
+    def include_fields!(*names, **options, &block)
+      names.each{ |f_name| field!(f_name, **options, &block) }
+    end
+
     def include_fields(*names, **options, &block)
       names.each{ |f_name| field(f_name, **options, &block) }
     end
