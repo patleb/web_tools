@@ -35,6 +35,7 @@ ActiveRecord::Base.class_eval do
   prepend self::WithJsonAttribute
   prepend self::WithNullifyBlanks
   prepend self::WithPartition
+  include self::WithPresenter
   prepend self::WithRequiredBelongsTo
   prepend self::WithList
   include self::WithRescuableValidations

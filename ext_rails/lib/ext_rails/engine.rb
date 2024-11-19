@@ -14,6 +14,10 @@ module ActionView
   autoload :Delegator, 'ext_rails/action_view/delegator'
 end
 
+module ActivePresenter
+  autoload :Base, 'ext_rails/active_presenter/base'
+end
+
 module ActiveTask
   autoload :Base, 'ext_rails/active_task/base'
 end

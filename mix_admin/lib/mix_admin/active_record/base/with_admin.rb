@@ -9,16 +9,7 @@ module ActiveRecord::Base::WithAdmin
         klass = (klass_name = "Admin::#{name}Presenter").to_const
         klass ||= "Admin::#{superclass.name}Presenter".to_const
         klass ||= "Admin::#{base_class.name}Presenter".to_const!
-        if klass.name != klass_name
-          klass_name.clear_const
-          subclass = Class.new(klass)
-          parent = name.deconstantize.split('::').reduce(Admin){ |parent, module_name| parent.const_get(module_name) }
-          parent.const_set(klass_name.demodulize, subclass)
-          ActiveSupport.run_load_hooks(subclass.name, subclass)
-          subclass
-        else
-          klass
-        end
+        presenter_subclass(klass, klass_name, Admin)
       end
     end
 
