@@ -56,7 +56,7 @@ module ActiveRecord::Base::WithJsonAttribute
           fallback ||= I18n.available_locales.except(locale.to_sym).first
           value = public_send("#{name}_#{fallback}")
           return value unless value.nil?
-          return I18n.with_locale(locale){ default.call(self, locale) } if default.is_a? Proc
+          return I18n.with_locale(locale){ default.call(self) } if default.is_a? Proc
           default
         end
       end
