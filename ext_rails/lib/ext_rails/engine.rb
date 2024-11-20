@@ -16,6 +16,7 @@ end
 
 module ActivePresenter
   autoload :Base, 'ext_rails/active_presenter/base'
+  autoload :List, 'ext_rails/active_presenter/list'
 end
 
 module ActiveTask
