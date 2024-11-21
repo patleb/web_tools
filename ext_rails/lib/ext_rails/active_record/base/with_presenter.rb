@@ -20,6 +20,8 @@ module ActiveRecord::Base::WithPresenter
       end
     end
 
+    private
+
     def presenter_subclass(klass, klass_name, scope = Object)
       if klass.name != klass_name
         klass_name.clear_const
