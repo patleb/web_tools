@@ -3,7 +3,7 @@
 module Admin
   module Sections
     class Index < Admin::Section
-      autoload :Paginate, include: true
+      autoload :Pagination, include: true
       autoload :Search, include: true
 
       register_option :description do

@@ -1,6 +1,6 @@
 module Admin
   module Sections
-    module Index::Paginate
+    module Index::Pagination
       extend ActiveSupport::Concern
 
       included do
