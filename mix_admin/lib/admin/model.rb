@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Admin
-  class Model < ActionView::Delegator
+  class Model < ActivePresenter::Base
     extend ActiveSupport::Autoload
     include Configurable
 
@@ -289,26 +289,6 @@ module Admin
       else
         record.public_send(label_method)
       end
-    end
-
-    def record
-      @_locals[:record]
-    end
-
-    def [](name)
-      record.public_send(name)
-    end
-
-    def method_missing(name, ...)
-      if record.respond_to? name
-        record.public_send(name, ...)
-      else
-        super
-      end
-    end
-
-    def respond_to_missing?(name, include_private = false)
-      record.respond_to?(name, include_private) || super
     end
   end
 end
