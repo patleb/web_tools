@@ -25,7 +25,7 @@ Rails.merge
         data.append(button.name, button.value) if button?
       else
         data = Rails.serialize_element(element, button)
-      visitable = turbolinks_visitable(element, data_type, true)
+      action = turbolinks_action(element, data_type, true)
       Rails.set(element, 'ujs:submit-button', null)
       Rails.set(element, 'ujs:submit-button-formmethod', null)
       Rails.set(element, 'ujs:submit-button-formaction', null)
@@ -33,13 +33,13 @@ Rails.merge
       method = element.getAttribute('data-method')?.toUpperCase() or 'GET'
       url = element.getAttribute('data-url')
       data = Rails.serialize_element(element, element.getAttribute('data-params'))
-      visitable = turbolinks_visitable(element, data_type)
+      action = turbolinks_action(element, data_type)
     else
       method = element.getAttribute('data-method')?.toUpperCase() or 'GET'
       url = Rails.href(element)
       data = element.getAttribute('data-params')
-      visitable = turbolinks_visitable(element, data_type)
-    data_type = 'html' if visitable
+      action = turbolinks_action(element, data_type)
+    data_type = 'html' if action
     data_type ||= 'script'
 
     Rails.ajax({
@@ -48,21 +48,21 @@ Rails.merge
       data
       data_type
       beforeSend: (xhr, options) ->
-        if Rails.fire(element, 'ajax:beforeSend', [xhr, options, visitable])
-          Rails.fire(element, 'ajax:send', [xhr, visitable])
-          turbolinks_started() if visitable
+        if Rails.fire(element, 'ajax:beforeSend', [xhr, options, action])
+          Rails.fire(element, 'ajax:send', [xhr, action])
+          turbolinks_started() if action
           true
         else
           Rails.fire(element, 'ajax:stopped')
           false
       success: (response, status, xhr) ->
-        Rails.fire(element, 'ajax:success', [response, status, xhr, visitable])
-        turbolinks_visit(response, xhr, url) if visitable
+        Rails.fire(element, 'ajax:success', [response, status, xhr, action])
+        turbolinks_visit(response, xhr, url, action) if action
       error: (response, status, xhr) ->
-        Rails.fire(element, 'ajax:error', [response, status, xhr, visitable])
-        turbolinks_visit(response, xhr, url, true) if visitable
+        Rails.fire(element, 'ajax:error', [response, status, xhr, action])
+        turbolinks_visit(response, xhr, url, action, true) if action
       complete: (xhr, status) ->
-        Rails.fire(element, 'ajax:complete', [xhr, status, visitable])
+        Rails.fire(element, 'ajax:complete', [xhr, status, action])
       crossDomain: Rails.is_cross_domain(url)
       withCredentials: with_credentials? and with_credentials isnt 'false'
     })
@@ -86,16 +86,18 @@ Rails.merge
     if Rails.is_meta_click(e, method, data) and Rails.fire(e.target, 'ujs:meta-click')
       e.stopImmediatePropagation()
 
-turbolinks_visitable = (element, data_type, submitable_form = false) ->
-  unless submitable_form
-    visit = element.getAttribute('data-visit')
-    return false unless visit? and visit isnt 'false'
-  window.Turbolinks and Turbolinks.is_visitable(element) and (not data_type or data_type is 'html')
+turbolinks_action = (element, data_type, submitable_form = false) ->
+  if submitable_form
+    action = 'restore'
+  else
+    action = element.getAttribute('data-visit')
+    return false unless action? and action isnt 'false'
+  window.Turbolinks and Turbolinks.is_visitable(element) and (not data_type or data_type is 'html') and action
 
 turbolinks_started = ->
   Turbolinks.request_started()
 
-turbolinks_visit = (response, xhr, url, error = false) ->
+turbolinks_visit = (response, xhr, url, action, error = false) ->
   Turbolinks.request_finished()
   Turbolinks.clear_cache()
-  Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') or url, action: 'restore', html: response, error: error)
+  Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') or url, action: action, html: response, error: error)

@@ -340,12 +340,14 @@ module ActionView::Helpers::TagHelper
   end
 
   def set_data_remote(options)
-    options['data-remote'] = true if options.delete(:remote)
+    return unless options.delete(:remote)
+    options['data-remote'] = true
+    options['data-method'] = options.delete(:method)
     options['data-url'] = options.delete(:url)
     options['data-params'] = case (params = options.delete(:params))
       when Hash, Array then params.to_query
       else params
       end
-    options['data-visit'] = true if options.delete(:visit)
+    options['data-visit'] = options.delete(:visit)
   end
 end
