@@ -5,7 +5,7 @@ module ActionController::WithPolicy
 
   prepended do
     if respond_to? :helper_method
-      helper_method :can?
+      helper_method :can?, :cannot?
       helper_method :policy_scope
       helper_method :policy
     end
@@ -13,6 +13,10 @@ module ActionController::WithPolicy
 
   def can?(action, object)
     policy(object).public_send("#{action}?")
+  end
+
+  def cannot?(*)
+    !can?(*)
   end
 
   def policy_scope(relation)
