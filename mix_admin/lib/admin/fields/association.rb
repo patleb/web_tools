@@ -47,7 +47,7 @@ module Admin
       end
 
       def type_css_class
-        "#{super} association_type #{column_field&.type_css_class}"
+        "#{super} association_type #{property_field&.type_css_class}"
       end
 
       def nested?
@@ -71,7 +71,7 @@ module Admin
       def property_field
         memoize(self, __method__, bindings) do
           if (record = presenter[through]) && (presenter = record.admin_presenter).allowed?
-            column_field.with(presenter: presenter)
+            property_model.section(section.name).with(presenter: presenter).fields_hash[as]
           end
         end
       end
@@ -82,10 +82,6 @@ module Admin
 
       def property_name
         through
-      end
-
-      def column_field
-        property_model.section(section.name).fields_hash[as]
       end
 
       def column_name
