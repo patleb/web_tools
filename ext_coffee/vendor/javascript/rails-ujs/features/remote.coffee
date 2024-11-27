@@ -92,6 +92,7 @@ turbolinks_action = (element, data_type, submitable_form = false) ->
   else
     action = element.getAttribute('data-visit')
     return false unless action? and action isnt 'false'
+    action = 'restore' if action is 'true'
   window.Turbolinks and Turbolinks.is_visitable(element) and (not data_type or data_type is 'html') and action
 
 turbolinks_started = ->
