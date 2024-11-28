@@ -2,7 +2,7 @@ module Admin
   module Field::AsArray
     extend ActiveSupport::Concern
 
-    prepended do
+    prepended_or_included do
       register_option :array_separator do
         false
       end

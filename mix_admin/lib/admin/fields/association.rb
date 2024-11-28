@@ -3,6 +3,8 @@
 module Admin
   module Fields
     class Association < Admin::Field
+      include Admin::Field::AsArray
+
       autoload :AsArray
 
       delegate :foreign_key, :foreign_type, :polymorphic?, :list_parent?, :inverse_of, :nested_options, to: :property
