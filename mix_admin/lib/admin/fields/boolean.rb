@@ -3,6 +3,8 @@
 module Admin
   module Fields
     class Boolean < Admin::Field
+      prepend AsArray
+
       register_option :array_separator do
         true
       end

@@ -3,6 +3,8 @@
 module Admin
   module Fields
     class String < Admin::Field
+      prepend AsArray
+
       register_option :sanitized? do
         false
       end

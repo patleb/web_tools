@@ -1,6 +1,8 @@
 module Admin
   module Fields
     class Decimal < Admin::Field
+      prepend AsArray
+
       def input_type
         :number
       end

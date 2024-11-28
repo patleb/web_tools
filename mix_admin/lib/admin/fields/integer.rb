@@ -3,6 +3,9 @@
 module Admin
   module Fields
     class Integer < Admin::Field
+      prepend AsArray
+      prepend AsRange
+
       register_option :sort_reverse? do
         primary_key?
       end

@@ -3,8 +3,8 @@ module Admin
     extend ActiveSupport::Autoload
     include Configurable
 
-    autoload :AsArray, prepend: true
-    autoload :AsRange, prepend: true
+    autoload :AsArray
+    autoload :AsRange
 
     attr_accessor :weight, :group, :through, :as
     attr_writer :editable

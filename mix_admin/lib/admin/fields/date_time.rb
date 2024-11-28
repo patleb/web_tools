@@ -3,6 +3,8 @@
 module Admin
   module Fields
     class DateTime < Admin::Field
+      prepend AsArray
+
       register_option :sort_reverse? do
         true
       end

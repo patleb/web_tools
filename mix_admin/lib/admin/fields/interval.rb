@@ -1,6 +1,8 @@
 module Admin
   module Fields
     class Interval < Admin::Field
+      prepend AsArray
+
       register_option :pretty_format do
         [:years, :compact]
       end
