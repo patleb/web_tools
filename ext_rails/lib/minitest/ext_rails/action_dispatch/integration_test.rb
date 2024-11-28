@@ -1,3 +1,8 @@
+ActionDispatch::Integration::Session.class_eval do
+  remove_const :DEFAULT_HOST
+  self::DEFAULT_HOST = Setting.default_url_options[:host]
+end
+
 ActionDispatch::IntegrationTest.class_eval do
   class TestMethodAlreadyDefined < ::StandardError; end
 
