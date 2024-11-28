@@ -1,4 +1,4 @@
-class PicoController < LibController
+class PicoController < ApplicationController
   def basic_template
   end
 

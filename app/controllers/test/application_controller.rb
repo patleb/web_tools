@@ -1,5 +1,5 @@
 module Test
-  class ApplicationController < LibController
+  class ApplicationController < ApplicationController
     layout 'application'
 
     def home
