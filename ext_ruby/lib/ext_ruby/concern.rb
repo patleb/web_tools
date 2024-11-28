@@ -11,5 +11,10 @@ module ActiveSupport
         end
       end
     end
+
+    def prepended_or_included(...)
+      prepended(...)
+      included(...)
+    end
   end
 end
