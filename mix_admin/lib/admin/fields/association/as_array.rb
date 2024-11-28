@@ -50,13 +50,6 @@ module Admin
         array? ? property_fields.map(&:value) : super
       end
 
-      def property_count
-        memoize(self, __method__, bindings) do
-          next unless (model = property_model).allowed?
-          presenter.associated_count(through, model)
-        end
-      end
-
       def property_field
         array? ? property_fields.first : super
       end
@@ -68,6 +61,13 @@ module Admin
             next unless (presenter = record.admin_presenter).allowed?
             section.with(presenter: presenter).fields_hash[as]
           end
+        end
+      end
+
+      def property_count
+        memoize(self, __method__, bindings) do
+          next unless (model = property_model).allowed?
+          presenter.associated_count(through, model)
         end
       end
     end
