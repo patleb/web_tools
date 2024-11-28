@@ -3,7 +3,7 @@
 module Admin
   module Fields
     class Association < Admin::Field
-      autoload :AsArray, prepend: true
+      autoload :AsArray
 
       delegate :foreign_key, :foreign_type, :polymorphic?, :list_parent?, :inverse_of, :nested_options, to: :property
       delegate :parse_input!, :parse_input, :parse_search, :format_export, :format_input, :value, to: :property_field, allow_nil: true

@@ -3,6 +3,8 @@
 module Admin
   module Fields
     class HasMany < Association
+      prepend AsArray
+
       register_option :eager_load do
         !count? && __super__(:eager_load)
       end

@@ -57,6 +57,10 @@ module Admin
         end
       end
 
+      def property_field
+        array? ? property_fields.first : super
+      end
+
       def property_fields
         memoize(self, __method__, bindings) do
           section = property_model.section(self.section.name)
