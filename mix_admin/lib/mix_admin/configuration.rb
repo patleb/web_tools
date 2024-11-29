@@ -58,7 +58,10 @@ module MixAdmin
     end
 
     def included_models
-      @included_models ||= []
+      @included_models ||= %w(
+        User
+        UserSession
+      )
     end
 
     def excluded_models
