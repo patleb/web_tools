@@ -128,7 +128,7 @@ class AdminController < LibController
   end
   alias_method :on_blank_bulk, :on_cancel
 
-  def on_update_success
+  def on_save_success
     if params["_#{action_name}"]
       flash.now[:notice] = admin_notice
       render action_name

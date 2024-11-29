@@ -26,7 +26,7 @@ module Admin
         render :edit
       when :post
         @presenter.update! @attributes if @attributes.present?
-        on_update_success
+        on_save_success
       end
     end
   end
