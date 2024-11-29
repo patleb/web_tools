@@ -4,7 +4,7 @@ module Admin
   module Actions
     class ShowInApp < Admin::Action
       def self.weight
-        6
+        4
       end
 
       def self.member?
