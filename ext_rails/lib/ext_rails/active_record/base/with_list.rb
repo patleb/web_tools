@@ -52,17 +52,20 @@ module ActiveRecord::Base::WithList::Position
         decimals = maximum("scale(#{list_column})") || 0
         return unless force || decimals >= 32 # postgres numeric max is 16383, but storage size and ruby conversion speed is a concern, 38 decimals is about 128 bits
         with_table_lock do
-          connection.exec_query(<<-SQL.strip_sql(table_name: quoted_table_name, position: list_column, pk: primary_key))
+          min = connection.select_value(<<-SQL.strip_sql(table_name: quoted_table_name, position: list_column))
+            SELECT FLOOR(MIN({{ position }})) FROM {{ table_name }}
+          SQL
+          connection.exec_query(<<-SQL.strip_sql(table_name: quoted_table_name, position: list_column, pk: primary_key, min: min))
             UPDATE {{ table_name }} t_updated SET {{ position }} = t_ordered.i
               FROM (
-                SELECT {{ pk }} AS id, (-row_number() OVER (ORDER BY {{ position }})) + 1.0 AS i
+                SELECT {{ pk }} AS id, {{ min }} - (row_number() OVER (ORDER BY {{ position }})) AS i
                 FROM {{ table_name }}
                 ORDER BY id
               ) t_ordered
               WHERE t_updated.id = t_ordered.id
           SQL
-          connection.exec_query(<<-SQL.strip_sql(table_name: quoted_table_name, position: list_column))
-            UPDATE {{ table_name }} SET {{ position }} = -{{ position }}
+          connection.exec_query(<<-SQL.strip_sql(table_name: quoted_table_name, position: list_column, min: min))
+            UPDATE {{ table_name }} SET {{ position }} = {{ min }} - {{ position }} - 1.0
           SQL
         end
       end

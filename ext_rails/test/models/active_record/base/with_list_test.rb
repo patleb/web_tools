@@ -50,6 +50,9 @@ class ActiveRecord::Base::WithListTest < ActiveSupport::TestCase
     assert_equal [0,1,2,4,3,5].zip([0.0, 1.0, 2.5, 4.0, 4.5, 5.0]), all_related_positions
     Test::RelatedRecord.list_reorganize(force: true)
     assert_equal [0,1,2,4,3,5].zip([0.0, 1.0, 2.0, 3.0, 4.0, 5.0]), all_related_positions
+    Test::RelatedRecord.with_discarded.update_all('position = -position') # make sure unique index isn't a concern
+    Test::RelatedRecord.list_reorganize(force: true)
+    assert_equal [5,3,4,2,1,0].zip([0.0, 1.0, 2.0, 3.0, 4.0, 5.0]), all_related_positions
 
     assert_equal ['Test::RelatedRecord'], Test::ApplicationRecord.listables.map(&:name)
   end
