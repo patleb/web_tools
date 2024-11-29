@@ -7,6 +7,8 @@ append :metas, meta_(name: 'turbolinks-cache-control', content: 'no-preview')
 append(:sidebar) {[
   ul_([
     li_('.menu_divider'),
+    app_link,
+    website_link,
     admin_link,
     admin_user_link,
     user_link,

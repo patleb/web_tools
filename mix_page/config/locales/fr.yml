@@ -1,13 +1,15 @@
 fr:
+  link:
+    website: Site web
   page_paginate:
     prev: Précédent
     next: Suivant
   page_template:
+    new: "Ajouter %{model}"
     edit: "%{model} à modifier"
-    create: "Ajouter %{model}"
   page_fields:
+    new: Ajouter
     edit: "Nouveau %{model} à modifier"
-    create: Ajouter
   shared_attributes: &shared_attributes
     creator: Créé par
     updater: Modifié par
@@ -25,6 +27,8 @@ fr:
         uuid: UUID
         view: Modèle
         page_fields: Contenus
+      page/view:
+        home: Accueil
       page_template:
         title: Titre
         title_fr: Titre (français)
@@ -39,12 +43,14 @@ fr:
         rails_admin_object_label: Étiquette
         page_template: Contexte
         name: Nom
+      page_field/name:
+        sidebar: Barre latérale
+        content: Texte de la page
       page_fields/text:
         text: Texte
         text_fr: Texte (français)
         text_en: Texte (anglais)
       page_fields/link:
-        active: Actif
         fieldable: Lien
         text: Titre
         text_fr: Titre (français)

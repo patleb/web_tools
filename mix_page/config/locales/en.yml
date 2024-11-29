@@ -1,13 +1,15 @@
 en:
+  link:
+    website: Website
   page_paginate:
     prev: Previous
     next: Next
   page_template:
+    new: "Add %{model}"
     edit: "%{model} to edit"
-    create: "Add %{model}"
   page_fields:
+    new: Add
     edit: "New %{model} to edit"
-    create: Add
   shared_attributes: &shared_attributes
     creator: Created by
     updater: Modified by
@@ -25,6 +27,8 @@ en:
         uuid: UUID
         view: Template
         page_fields: Contents
+      page/view:
+        home: Home
       page_template:
         title: Title
         title_fr: Title (french)
@@ -39,12 +43,14 @@ en:
         rails_admin_object_label: Label
         page_template: Context
         name: Name
+      page_field/name:
+        sidebar: Sidebar
+        content: Page text
       page_fields/text:
         text: Text
         text_fr: Text (french)
         text_en: Text (english)
       page_fields/link:
-        active: Active
         fieldable: Link
         text: Title
         text_fr: Title (french)
@@ -55,6 +61,8 @@ en:
         title_en: Title (english)
     models:
       page: Page
+      page_layout: Page Layout
+      page_template: Page Template
       page_fields/text: Plain text
       page_fields/rich_text: Text
       page_fields/link: Link

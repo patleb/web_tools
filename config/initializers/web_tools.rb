@@ -1,55 +1,58 @@
-MixPage.configure do |config|
-  config.root_template = 'home'
-  config.max_children_count = 1
-
-  config.available_templates.merge!(
-    'generic_multi' => 0,
-    'home' => 10,
-    'list' => 20,
-    'list/tree' => 30,
-    'list/tree/leaf' => 40,
-    'list/multi' => 25,
-    'list/tree/multi' => 35,
-    'list/tree/leaf/multi' => 45,
-  )
-  config.available_field_names.merge!(
-    'sidebar_links' => 0,
-    'page_list_texts' => 10,
-    'page_texts' => 20,
+ExtRails.configure do |config|
+  config.params_debug = false
+  config.excluded_models.merge(%w(
+    Test::ApplicationRecord
+  ))
+  config.css_only_support = true
+  config.db_partitions.merge!(
+    test_much_records: 5,
+    test_time_series: :week,
   )
 end
 
-RailsAdmin.configure do |config|
-  config.root_model_name = 'PageTemplate'
+MixSearch.config.available_types['Test::Record'] = 20
 
-  config.included_models = %w(
-    Global
-    Email
-    PageTemplate
-    PageField
-    PageFields::%
-    Rescue
-    User
-  )
-  config.excluded_models = %w(
-    PageFields::Text
-  )
+MixTask.configure do |config|
+  config.available_names = {
+    'try:send_email' => 1,
+    'try:send_email_later' => 2,
+    'try:raise_exception' => 3,
+    'try:sleep' => 4,
+  }
+  config.admin_names.concat(%w(
+    try:sleep
+  ))
+end
 
-  config.actions do
-    index
-    # chart
-    export
-    sort
-    new
-    trash
-    show
-    edit
-    # clone
-    delete
-    show_in_app
-    restore
-    bulk_delete
-    # choose
-    # report
-  end
+MixJob.configure do |config|
+  config.async = true
+end
+
+MixServer.configure do |config|
+  # config.render_500 = true
+  config.skip_notice = false
+end
+
+MixPage.configure do |config|
+  config.available_templates.merge!(
+    'text_multi' => 10,
+    'list' => 20,
+    'list/multi' => 25,
+  )
+  config.available_field_names.merge!(
+    page_list_texts: 20,
+    page_multi_texts: 25,
+  )
+end
+
+MixAdmin.configure do |config|
+  config.included_models += %w(
+    Test::%
+  )
+  config.excluded_models += %w(
+    Test::ObjectRecord
+    Test::MuchRecord
+    Test::TimeSerie
+    Test::TimeSeries::DataPoint
+  )
 end

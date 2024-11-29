@@ -1,9 +1,7 @@
 namespace! :page do
   desc 'Create home page'
   task :create_home => :environment do
-    layout = PageLayout.find_or_create_by! view: MixPage.config.layout
-    template = PageTemplate.find_or_create_by! page_layout: layout, view: MixPage.config.root_template
-    template.update! title_en: 'Home', title_fr: 'Accueil', published_at: Time.current
+    Page.create_home!
   end
 
   namespace :images do

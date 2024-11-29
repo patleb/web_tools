@@ -3,7 +3,6 @@ module PageFields
     delegate :title, :view, :uuid, :to_url, to: :fieldable, allow_nil: true
 
     json_translate text: [:string, default: ->(record) { record.title }]
-    json_attribute active: [:boolean, default: true]
 
     with_options on: :update, unless: :list_changed? do
       validates :fieldable, presence: true

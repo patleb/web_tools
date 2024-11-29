@@ -13,17 +13,25 @@ module AdminHelper
   end
 
   def admin_link
+    return unless admin_link?
     li_ do
-      if admin_link?
-        a_ '.admin_link.admin_root', [icon('card-list'), t('link.admin')], href: admin_root_path
-      else
-        a_ '.admin_link.app_root', [icon('eye'), t('link.app')], href: application_path
-      end
+      a_ '.admin_link.admin_root', [icon('layout-text-window-reverse'), t('link.admin')], href: admin_root_path
     end
   end
 
   def admin_link?
     Current.logged_in? && !Current.controller.is_a?(AdminController)
+  end
+
+  def app_link
+    return unless app_link?
+    li_ do
+      a_ '.admin_link.app_root', [icon('eye'), t('link.app')], href: application_path
+    end
+  end
+
+  def app_link?
+    !Current.controller.is_a?(ApplicationController)
   end
 
   def admin_flash(key)

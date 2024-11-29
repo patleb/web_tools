@@ -1,12 +1,9 @@
 fr:
   application:
     copyright: "©%{year} Tous droits réservés, WebTools"
-  page_sidebar:
-    sidebar_links: Site web
   activerecord:
     attributes:
       page/view:
-        home: Accueil
         generic_multi: Modèle générique
         list: Liste
         list/tree: Arbre
@@ -15,6 +12,5 @@ fr:
         list/tree/multi: Page de l'arbre
         list/tree/leaf/multi: Page de la feuille
       page_field/name:
-        sidebar_links: Barre latérale
         page_list_texts: Textes de la liste de pages
         page_texts: Textes de la page

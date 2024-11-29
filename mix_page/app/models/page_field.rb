@@ -1,14 +1,11 @@
 class PageField < LibMainRecord
-  self.skip_locking_attributes += ['parent_id']
-
   has_userstamps
   has_list
 
-  belongs_to :page, -> { with_discarded }
-  belongs_to :page_layout, -> { with_discarded }, foreign_key: :page_id
-  belongs_to :page_template, -> { with_discarded }, foreign_key: :page_id
-  belongs_to :fieldable, -> { with_discarded }, optional: true, polymorphic: true
-  belongs_to :parent, -> { with_discarded }, list_parent: self
+  belongs_to :page
+  belongs_to :page_layout, foreign_key: :page_id
+  belongs_to :page_template, foreign_key: :page_id
+  belongs_to :fieldable, optional: true, polymorphic: true
 
   enum! type: MixPage.config.available_field_types
   enum! name: MixPage.config.available_field_names
@@ -26,14 +23,14 @@ class PageField < LibMainRecord
   end
 
   def show?
-    super && (fieldable.nil? || fieldable.show?)
+    fieldable.nil? || fieldable.show?
   end
 
-  def rails_admin_object_label
-    rails_admin_object_label_values.compact.uniq.join(' - ')
+  def field_label
+    field_label_values.compact.uniq.join(' - ')
   end
 
-  def rails_admin_object_label_values
+  def field_label_values
     [page_template&.title, self.class.human_attribute_name("name.#{name}", default: name)]
   end
 

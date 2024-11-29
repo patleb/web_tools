@@ -1,9 +1,9 @@
+# frozen_string_literal: true
+
 module MixPage
   has_config do
-    attr_writer   :js_routes
-    attr_writer   :parent_controller
     attr_accessor :root_path
-    attr_accessor :root_template
+    attr_writer   :root_template
     attr_writer   :layout
     attr_writer   :available_layouts
     attr_writer   :available_templates
@@ -11,30 +11,29 @@ module MixPage
     attr_writer   :available_field_names
     attr_writer   :available_fieldables
     attr_writer   :member_actions
-    attr_writer   :max_children_count
     attr_writer   :max_image_size
-    attr_accessor :skip_sidebar_link
+    attr_accessor :skip_sidebar
+    attr_accessor :skip_content
 
-    def js_routes
-      @js_routes ||= MixPage.routes
-    end
-
-    def parent_controller
-      @parent_controller ||= 'TemplatesController'
+    def root_template
+      @root_template ||= 'home'
     end
 
     def layout
-      @layout ||= 'application'
+      @layout ||= 'pages'
     end
 
     def available_layouts
       @available_layouts ||= {
-        'application' => 0
+        'application' => 0,
+        'pages' => 10,
       }
     end
 
     def available_templates
-      @available_templates ||= {}
+      @available_templates ||= {
+        'home' => 0,
+      }
     end
 
     def available_field_types
@@ -46,7 +45,10 @@ module MixPage
     end
 
     def available_field_names
-      @available_field_names ||= {}
+      @available_field_names ||= {
+        sidebar: 0,
+        content: 10,
+      }
     end
 
     def available_fieldables
@@ -61,10 +63,6 @@ module MixPage
 
     def max_image_size
       @max_image_size ||= 5.megabytes
-    end
-
-    def max_children_count
-      @max_children_count || Float::INFINITY
     end
   end
 end

@@ -7,12 +7,27 @@ module PageHelper
     types[type] = name
   end
 
-  def layout_sidebar
-    layout_links(:sidebar_links, sidebar: true)
+  def website_link
+    return unless website_link?
+    li_ do
+      a_ '.website_link', [icon('layout-text-sidebar-reverse'), t('link.website')], href: pages_root_path
+    end
   end
 
-  def paginate_sidebar
-    page_paginate(:sidebar_links)
+  def website_link?
+    !Current.controller.is_a?(PagesController)
+  end
+
+  def page_sidebar
+    Pages::SidebarPresenter.render
+  end
+
+  def page_content
+    page_rich_text(:content)
+  end
+
+  def pagination
+    Pages::PaginationPresenter.render
   end
 
   # For the type PageFields::Link, method_missing could define the following helpers:
@@ -23,23 +38,23 @@ module PageHelper
   # page_link_presenters(name)
   # page_link_presenter(name)
   # ----
-  # layout_links(name, list_options = {}, item_options = {}, &block)
-  # layout_link(name, item_options = {})
+  # layout_links(name, list: {}, **item_options, &block)
+  # layout_link(name, **item_options)
   # ----
-  # page_links(name, list_options = {}, item_options = {}, &block)
-  # page_link(name, item_options = {})
+  # page_links(name, list: {}, **item_options, &block)
+  # page_link(name, **item_options)
   #
-  def method_missing(name, *, &)
+  def method_missing(name, ...)
     if (options = page_helper_options(name))
       type = TYPES_MAPPING[options.delete(:type)]
       if options.delete(:render)
         if options[:multi]
-          self.class.send(:define_method, name) do |name, list_options = {}, item_options = {}, &block|
-            page_presenter(name, type, **options)&.render(list_options, item_options, &block)
+          self.class.send(:define_method, name) do |name, **multi_options, &block|
+            page_presenter(name, type, **options).render(**multi_options, &block)
           end
         else
           self.class.send(:define_method, name)do |name, **item_options|
-            page_presenter(name, type, **options)&.render(**item_options)
+            page_presenter(name, type, **options).render(**item_options)
           end
         end
       else
@@ -47,7 +62,7 @@ module PageHelper
           page_presenter(name, type, **options)
         end
       end
-      send(name, *, &)
+      send(name, ...)
     else
       super
     end
@@ -85,63 +100,20 @@ module PageHelper
 
   def page_presenter(name, type, layout: false, multi: false)
     return unless @page
-    name = name.to_s
-    (((((@memoized ||= {})[:page_presenter] ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
+    name = name.to_sym
+    ((((@page_presenters ||= {})[name] ||= {})[type] ||= {})[layout] ||= {})[multi] ||= begin
       scope = layout ? @page.layout : @page
       filter = ->(field) { field.type == type && field.name == name && field.show? }
       if multi
         fields = scope.page_fields.select(&filter)
         fields = [scope.page_fields.create!(type: type, name: name)] if fields.empty?
         fields.map!(&:presenter)
-        list_presenter_class = type && "#{type}ListPresenter".to_const
-        list_presenter_class ||= "#{fields.first.object.class.superclass.name}ListPresenter".to_const
-        list_presenter_class ||= "#{fields.first.object.class.base_class.name}ListPresenter".to_const!
-        list_presenter_class.new(page_id: scope.id, types: [type], list: fields)
+        fields.list_presenter(page_id: scope.id)
       else
         field = scope.page_fields.find(&filter)
         field = scope.page_fields.create!(type: type, name: name) if field.nil?
         field.presenter
       end
     end
-  end
-
-  def page_paginate(name)
-    div_(".page_paginate.page_paginate_#{name}") do
-      [page_prev(name), page_next(name)].compact.join(' | ').html_safe
-    end
-  end
-
-  def page_next(name)
-    page_next_presenter(name)&.render(class: ['page_next']) {[
-      span_{ t('page_paginate.next') },
-      i_('.fa.fa-chevron-circle-right')
-    ]}
-  end
-
-  def page_prev(name)
-    page_prev_presenter(name)&.render(class: ['page_prev']) {[
-      i_('.fa.fa-chevron-circle-left'),
-      span_{ t('page_paginate.prev') }
-    ]}
-  end
-
-  def page_next_presenter(name)
-    with_layout_links(name) do |links, index|
-      links[(index + 1)..-1].find(&:active) if index && index < links.size - 1
-    end
-  end
-
-  def page_prev_presenter(name)
-    with_layout_links(name) do |links, index|
-      links[0..(index - 1)].reverse.find(&:active) if index && index > 0
-    end
-  end
-
-  private
-
-  def with_layout_links(name)
-    links = layout_link_presenters(name)&.list || []
-    index = links.index{ |presenter| presenter.object.fieldable_id == @page.id }
-    yield(links, index)
   end
 end
