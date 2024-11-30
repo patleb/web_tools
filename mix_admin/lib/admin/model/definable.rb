@@ -115,16 +115,17 @@ module Admin::Model::Definable
     field(name, **, editable: true, &)
   end
 
-  def field(name, editable: nil, translated: false, **options, &block)
+  def field(name, translated: false, **options, &block)
     raise "can't have nested field definitions" if @field
     name = name.to_sym
     if translated
-      field(name, **options, &block) if translated == :all
+      field(name, **options.except(:editable), &block) if translated == :all
       I18n.available_locales.each{ |locale| field!("#{name}_#{locale}", **options, &block) }
     else
       if @section
         if @group
           weight = options[:weight] || @weight
+          editable = options[:editable]
           if (through = (options[:through] || @through)&.to_sym)
             as, name = name, "#{through}_#{name}".to_sym
           end
