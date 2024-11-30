@@ -98,13 +98,13 @@ module Admin::Model::Definable
     remove_ivar(:@group)
   end
 
-  def nests(name, weight: nil, **)
+  def nests(name, weight: nil, as: nil, **)
     @through = name.to_sym
     @weight = weight
     if block_given?
       yield
     else
-      field(associations_hash[name].primary_key, **)
+      field(as || associations_hash[name].primary_key, **)
     end
   ensure
     remove_ivar(:@through)
