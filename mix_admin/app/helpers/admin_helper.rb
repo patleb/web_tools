@@ -132,7 +132,7 @@ module AdminHelper
       url = node.url_for(:index)
       h_(
         li_(class: "bordered{active:#{node.model_name}}") do
-          steps = [ascii(:space, times: level - 1), ascii!(:arrow_down_right)] if level > 0
+          steps = [ascii(:space, times: level - 1), ascii_(:arrow_down_right)] if level > 0
           a_ [steps, (icon(link_icon) if link_icon), title], href: url
         end,
         _admin_models_menu_stack(group_nodes, next_nodes, level + 1)

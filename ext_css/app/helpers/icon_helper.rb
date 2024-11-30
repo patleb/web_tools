@@ -5,6 +5,18 @@ module IconHelper
   SVG_END = /\s*<\/svg>\s*$/
   SVG_OPTIONS = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', height: 16, width: 16, viewBox: '0 0 16 16', 'aria-hidden': true }
 
+  def icon_(...)
+     icon(...) + ' '.html_safe
+  end
+
+  def _icon(...)
+    ' '.html_safe + icon(...)
+  end
+
+  def _icon_(...)
+    ' '.html_safe + icon(...) + ' '.html_safe
+  end
+
   # https://icons.getbootstrap.com/
   def icon(name, tag: nil, svg: {}, **options)
     return unless continue(options)
@@ -25,8 +37,16 @@ module IconHelper
     end
   end
 
-  def ascii!(...)
+  def ascii_(...)
     ascii(...) + ' '.html_safe
+  end
+
+  def _ascii(...)
+    ' '.html_safe + ascii(...)
+  end
+
+  def _ascii_(...)
+    ' '.html_safe + ascii(...) + ' '.html_safe
   end
 
   def ascii(name, times: nil)

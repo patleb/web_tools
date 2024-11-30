@@ -31,7 +31,7 @@ module Admin
       def _scroll_items
         [li_('.menu_divider')] + groups.flat_map(&:fields).select_map do |field|
           next unless (label = field.label)
-          li_(a_ [ascii!(:arrow_right), label], href: "##{field.name}_field", 'data-turbolinks-history': false)
+          li_(a_ [ascii_(:arrow_right), label], href: "##{field.name}_field", 'data-turbolinks-history': false)
         end
       end
     end
