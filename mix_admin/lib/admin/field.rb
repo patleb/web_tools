@@ -166,7 +166,7 @@ module Admin
       text, title = text << '*', t('admin.form.required') if !action.show? && required? && !readonly?
       h_(
         label_(text, title: title),
-        icon('info-circle.tooltip', data: { tip: help }, if: !action.show? && help.present?),
+        _icon('info-circle.tooltip', data: { tip: help }, if: !action.show? && help.present?),
       )
     end
 
