@@ -114,7 +114,7 @@ module AdminHelper
   private
 
   def _admin_models_menu
-    nodes_stack = Admin::Model.allowed_models.stable_sort_by(&:weight)
+    nodes_stack = Admin::Model.index_models.stable_sort_by(&:weight)
     model_names = nodes_stack.map(&:model_name)
     group_nodes = nodes_stack.group_by(&:navigation_parent)
     nodes_stack.group_by(&:navigation_label).html_map do |navigation_label, nodes|

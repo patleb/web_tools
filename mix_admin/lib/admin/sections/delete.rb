@@ -23,9 +23,10 @@ module Admin
               ]),
               ul_(if: allowed.present? || restricted.present?) {[
                 allowed.map do |klass, (count, url, _can_destroy)|
+                  count_label = [(ascii!(:approx) if count.is_a? BigDecimal), count, klass.admin_label(count)]
                   li_([
                     span_(ascii!(:arrow_down_right)),
-                    a_('.link.link-primary', [count, klass.admin_label(count)], href: url),
+                    a_('.link.link-primary', count_label, href: url),
                   ])
                 end,
                 restricted.map do |klass, (count, _can_destroy)|

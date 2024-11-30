@@ -32,9 +32,10 @@ module Admin
     register_class_option :navigation_label, memoize: :locale do
       if navigation_i18n_key
         t(navigation_i18n_key, scope: [i18n_scope, :navigation], default: t(:model, scope: [i18n_scope, :navigation]))
-      else
-        parent = klass.module_parent.name.underscore
+      elsif (parent = klass.module_parent.name.underscore) != 'object'
         t(i18n_key, scope: [i18n_scope, :navigation], default: t(parent, scope: [i18n_scope, :navigation], default: parent.humanize))
+      else
+        t('admin.misc.root_navigation_label')
       end.upcase
     end
 
@@ -87,7 +88,7 @@ module Admin
       klass.new(attributes)
     end
 
-    def self.allowed_models
+    def self.index_models
       memoize(Admin::Model, __method__) do
         MixAdmin.config.models_pool.select_map do |model_name|
           next unless (model = model_name.to_const.admin_model).allowed? :index
@@ -171,12 +172,10 @@ module Admin
     def self.associated_counts(presenter)
       Current.with(discardable: false) do
         associations.each_with_object(allowed: {}, restricted: {}) do |association, memo|
-          klass, name, type = association.klass, association.name, :restricted
-          if (model = allowed_models.find{ |model| model.klass == klass })
-            type = :allowed
-          else
-            next unless can? :index, klass
-          end
+          klass, name = association.klass, association.name
+          next if klass.is_a? Array
+          next unless (model = klass.admin_model)
+          type = index_models.include?(model) ? :allowed : :restricted
           if association.type == :has_many
             count = presenter.associated_count(name, model)
             next unless count > 0
@@ -186,7 +185,7 @@ module Admin
           end
           if (memo.dig(type, klass, 0) || 0) < count
             can_destroy = [:restrict_with_error, :restrict_with_exception].exclude? association.options[:dependent]
-            memo[type][klass] = if model
+            memo[type][klass] = if type == :allowed
               url = if (field = associated_field(model))
                 model.url_for(:index, q: { field.query_name => presenter[field.column_name] })
               else
@@ -275,7 +274,7 @@ module Admin
 
     def associated_count(name, model = nil)
       return self["#{name}_count"] if record.respond_to? "#{name}_count"
-      return self[name].count_estimate if model && model.index.countless?
+      return self[name].count_estimate.to_d if model && model.index.countless?
       self[name].size
     end
 

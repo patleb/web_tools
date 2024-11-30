@@ -5,12 +5,11 @@ module ActiveRecord::Base::WithAdmin
     delegate :viewable_url, :allowed_url, to: :admin_model
 
     def admin_model
-      @admin_model ||= begin
-        klass = (klass_name = "Admin::#{name}Presenter").to_const
-        klass ||= "Admin::#{superclass.name}Presenter".to_const
-        klass ||= "Admin::#{base_class.name}Presenter".to_const!
-        presenter_subclass(klass, klass_name, Admin)
-      end
+      return @admin_model if defined? @admin_model
+      klass = (klass_name = "Admin::#{name}Presenter").to_const
+      klass ||= "Admin::#{superclass.name}Presenter".to_const
+      klass ||= "Admin::#{base_class.name}Presenter".to_const
+      @admin_model = klass && presenter_subclass(klass, klass_name, Admin)
     end
 
     def admin_label(count = nil)
