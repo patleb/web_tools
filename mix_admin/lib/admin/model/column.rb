@@ -17,7 +17,7 @@ module Admin
     end
 
     def readonly?
-      @klass.readonly_attributes.include? @name
+      @klass.readonly_attributes.include? @name.to_s
     end
 
     def type

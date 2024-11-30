@@ -149,7 +149,7 @@ module Admin
       return @editable if defined? @editable
       return false if presenter[:readonly?]
       return false if method? || primary_key? || MixAdmin.config.readonly_fields.include?(column_name)
-      property.false?(:readonly?)
+      action.new? || property.false?(:readonly?)
     end
 
     def primary_key?
