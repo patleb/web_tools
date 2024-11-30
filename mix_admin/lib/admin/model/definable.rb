@@ -190,12 +190,14 @@ module Admin::Model::Definable
       @section.class.const_set(klass_name.demodulize, klass)
     end
     config = klass.new(name: name, model: self, section: @section, section_was: @section)
-    config.weight = configs[@section.name].size
     values = config.ivar(:@values)
+    weight = configs[@section.name].size
     @section.parent_names.each do |parent_name|
+      weight += configs[parent_name]&.size.to_i
       next unless (parent_config = configs.dig(parent_name, name))
       values.reverse_merge! parent_config.values_ref
     end
+    config.weight = weight
     if superclass != Admin::Model
       if (super_config = superclass.public_send(configs_name).dig(@section.name, name))
         values.reverse_merge! super_config.values_ref
