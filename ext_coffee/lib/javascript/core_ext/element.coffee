@@ -1,3 +1,41 @@
+Element.polyfill_methods
+  closest: (selector) ->
+    node = this
+    while node
+      return node if node.nodeType is Node.ELEMENT_NODE and node.matches(selector)
+      node = node.parentNode
+
+m = Element::matches or
+  Element::matchesSelector or
+  Element::mozMatchesSelector or
+  Element::msMatchesSelector or
+  Element::oMatchesSelector or
+  Element::webkitMatchesSelector
+
+# Checks if the given native dom element matches the selector
+# element::
+#   native DOM element
+# selector::
+#   CSS selector string or
+#   a JavaScript object with `selector` and `exclude` properties
+#   Examples: "form", { selector: "form", exclude: "form[data-remote='true']"}
+Element.define_methods
+  matches: (selector) ->
+    if typeof selector is 'object' and selector.exclude?
+      m.call(this, selector.selector) and not m.call(this, selector.exclude)
+    else
+      m.call(this, selector)
+
+HTMLElement.decorate_methods
+  focus: (options) ->
+    if @hasAttribute('tabindex')
+      @super(options)
+    else
+      @setAttribute('tabindex', '-1')
+      @super(options)
+      @removeAttribute('tabindex')
+    return
+
 HTMLElement.define_methods
   is_a: (klass) ->
     @constructor is klass
@@ -108,3 +146,13 @@ HTMLElement.define_methods
       move = 0 if move < 0
       @setSelectionRange?(move, move)
     @selectionEnd || 0
+
+  valid: ->
+    return true if (form = @closest('form')) and Rails.get(form, 'ujs:formnovalidate-button')
+    return true if @formNoValidate
+    return @checkValidity() if @checkValidity?
+    return @reportValidity() if @reportValidity?
+    true
+
+  invalid: ->
+    not @valid()

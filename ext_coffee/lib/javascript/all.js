@@ -5,9 +5,8 @@ var image_path = function(name) { return images(name, true) }
 import lru from 'tiny-lru/lib/tiny-lru'
 import Cookies from 'js-cookie'
 
-import '@@vendor/rails-ujs/all'
-import '@@vendor/turbolinks/all'
 import '@@lib/ext_coffee/core_ext/all'
+import '@@vendor/turbolinks/all'
 import '@@lib/ext_coffee/rescue'
 import '@@lib/ext_coffee/js/all'
 import '@@lib/ext_coffee/sm/all'

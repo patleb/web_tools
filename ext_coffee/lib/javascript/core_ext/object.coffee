@@ -1,4 +1,16 @@
 Object.define_singleton_methods
+  dup: (object) ->
+    result = {}
+    for key, value of object
+      result[key] = value
+    result
+
+  merge: (target, objects...) ->
+    for object in objects
+      for key, value of object
+        target[key] = value
+    target
+
   deep_merge: (target, others...) ->
     for object in others
       for key, value of object
@@ -20,6 +32,9 @@ Object.define_methods
 
   instance_eval: (block) ->
     block.apply(this)
+
+  dup: ->
+    @constructor.dup(this)
 
   is_a: (klass) ->
     @constructor is klass
@@ -173,6 +188,9 @@ Object.define_methods
 
   compact_blank: ->
     @select (key, item) -> item?.present()
+
+  merge: (objects...) ->
+    @constructor.merge(this, objects...)
 
   deep_merge: (others...) ->
     @constructor.deep_merge(this, others...)

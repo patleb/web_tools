@@ -88,7 +88,7 @@ Rails.merge
 
 turbolinks_action = (element, data_type, submitable_form = false) ->
   if submitable_form
-    action = 'advance'
+    action = element.getAttribute('data-visit') or 'advance'
   else
     action = element.getAttribute('data-visit')
     return false unless action? and action isnt 'false'

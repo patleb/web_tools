@@ -38,6 +38,10 @@ Date.define_singleton_methods
   current: ->
     new Date(Date.now())
 
+Date.polyfill_singleton_methods
+  now: ->
+    new Date().getTime()
+
 Date.override_methods
   blank: ->
     false
