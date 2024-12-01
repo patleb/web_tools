@@ -7,7 +7,7 @@ module Admin
     autoload :AsRange
 
     attr_accessor :weight, :group, :through, :as
-    attr_writer :editable
+    attr_writer :editable, :index_link
 
     delegate :klass, to: :model
     delegate :type, to: :class
@@ -194,7 +194,7 @@ module Admin
     end
 
     def format_index(value)
-      primary_key? ? primary_key_link(value) : value
+      @index_link ? primary_key_link(value) : value
     end
 
     def format_export(value)

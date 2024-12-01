@@ -48,7 +48,9 @@ module Admin
               all << field
             end
           end
-          id ? [id] + fields : fields
+          fields = [id] + fields if id
+          fields.first.index_link = true
+          fields
         end
       end
 
