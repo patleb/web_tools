@@ -12,18 +12,18 @@ module Admin
     end
 
     new do
-      include_fields :password, :password_confirmation, weight: 1, type: :password do
+      field :role do
+        readonly{ Current.user.has? presenter }
+      end
+      include_fields :password, :password_confirmation, type: :password do
         required{ presenter.new_record? }
         allowed{ Current.user.has?(presenter) || presenter.new_record? }
         readonly false
       end
-      field :role do
-        readonly{ Current.user.has? presenter }
-      end
     end
 
     index do
-      include_fields :verified_at, :deleted_at, :updated_at, :created_at, weight: 1
+      include_fields :verified_at, :deleted_at, :updated_at, :created_at
     end
 
     trash do

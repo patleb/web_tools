@@ -20,9 +20,11 @@ module Admin
     index do
       searchable false
       field :title
-      field :published_at
-      field :updated_at
-      field :created_at
+      include_fields :published_at, :deleted_at, :updated_at, :created_at
+    end
+
+    trash do
+      exclude_fields :published_at
     end
   end
 end
