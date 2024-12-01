@@ -88,11 +88,13 @@ Rails.merge
 
 turbolinks_action = (element, data_type, submitable_form = false) ->
   if submitable_form
-    action = element.getAttribute('data-visit') or 'advance'
+    switch (action = element.getAttribute('data-visit') or 'advance')
+      when 'false' then return false
+      when 'true'  then action = 'advance'
   else
-    action = element.getAttribute('data-visit')
-    return false unless action? and action isnt 'false'
-    action = 'advance' if action is 'true'
+    switch (action = element.getAttribute('data-visit'))
+      when 'false', null then return false
+      when 'true'        then action = 'advance'
   window.Turbolinks and Turbolinks.is_visitable(element) and (not data_type or data_type is 'html') and action
 
 turbolinks_started = ->

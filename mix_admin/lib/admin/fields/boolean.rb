@@ -42,10 +42,7 @@ module Admin
       end
 
       def default_input_attributes
-        attributes = super
-        attributes[:checked] = attributes[:value].to_b
-        attributes[:value] = true
-        attributes
+        super.merge! include_hidden: true
       end
 
       def search_type

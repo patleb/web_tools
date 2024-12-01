@@ -174,10 +174,11 @@ module ActionView::Helpers::TagHelper
     content = h_(content) if content.is_a? Array
     content = sanitize(content) if sanitized
     form_after if tag == 'form'
-
+    before = options.delete(:prepend) || ''.html_safe
+    after  = options.delete(:append)  || ''.html_safe
     result = tag ? content_tag(tag, content, options, (sanitized ? false : escape)) : h_(content)
     result = [result] * times if times
-    result
+    before + result + after
   end
 
   def merge_classes(options, classes)
@@ -261,6 +262,7 @@ module ActionView::Helpers::TagHelper
 
   def form_options_content(options, content)
     options.replace html_options_for_form(options.delete(:action) || '', options)
+    options['data-visit'] = options.delete(:visit)
     tags = extra_tags_for_form(options)
     unless options.delete(:timezone) == false || options[:method] == 'get' || ExtRails.config.css_only_support
       timezone_tag = input_(type: 'hidden', name: '_timezone', value: Current.timezone.to_s)
@@ -296,13 +298,26 @@ module ActionView::Helpers::TagHelper
     options[:'aria-label'] ||= options[:placeholder]
     case options[:type].to_s
     when 'submit'
-      submit = true
+      skip_value = true
       options[:name] ||= 'commit'
       set_default_disable_with(options[:value], options) if options[:value].present?
+    when 'checkbox'
+      if (skip_value = options.delete(:include_hidden))
+        value = if options.has_key? :value
+          options[:value]
+        elsif object && name
+          object.public_send(name)
+        else
+          return content
+        end.to_b
+        options[:value] = 1
+        options[:checked] = value
+        options[:prepend] = input_ type: 'hidden', value: 0, id: nil, **options.slice(:name, :disabled)
+      end
     when 'hidden'
       options[:autocomplete] ||= 'off'
     end
-    if !options.has_key?(:value) && !submit && object && name && !name.start_with?('password')
+    if !skip_value && !options.has_key?(:value) && object && name && !name.start_with?('password')
       options[:value] = object.public_send(name)
     end
     content
@@ -333,8 +348,10 @@ module ActionView::Helpers::TagHelper
         options[:name] = "#{options[:name]}[]"
       end
     end
-    id = options[:id].presence || options[:name]
-    options[:id] = sanitize_to_id(id) if id.present?
+    unless options.has_key? :id
+      id = options[:id].presence || options[:name]
+      options[:id] = sanitize_to_id(id) if id.present?
+    end
     set_data_remote(options)
     [object, name]
   end
