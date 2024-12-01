@@ -16,8 +16,8 @@ test_record_<%= i %>:
     secret: <%= i == 1 ? Setting.encrypt('test') : 'null' %>
     j_boolean: <%= i.odd? %>
     j_decimal: <%= i %>.<%= i %>
-    j_integer: <%= i == 1 ? 'null' : i * 1_000_000 %>
-    j_string: '<%= (["j_string-#{i}"] * 3).join(' ') %>'
+    j_integer: <%= i == 1 ? 'null' : i * (Rails.env.test? ? 1 : 1_000_000) %>
+    j_string: '<%= (["j_string-#{i}"] * (Rails.env.test? ? 1 : 3)).join(' ') %>'
   lock_version: 1
   password: <%= i == 1 ? '""' : 'password' %>
   string: string-<%= i %>

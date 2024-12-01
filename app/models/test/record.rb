@@ -15,7 +15,7 @@ module Test
     json_attribute :name
     json_attribute secret: :encrypted
     json_attribute info:  [default: ->(record) { "Info for '#{record.name}'" }]
-    json_translate title: [default: -> { I18n.locale == :fr ? 'Titre' : 'Title' }]
+    json_translate title: [default: proc{ I18n.locale == :fr ? 'Titre' : 'Title' }]
     json_attribute(
       j_big_integer: :big_integer,
       j_boolean: :boolean,
