@@ -10,8 +10,12 @@ module Admin
           []
         end
 
-        register_option :advanced_search? do
+        register_option :searchable? do
           true
+        end
+
+        register_option :advanced_search? do
+          searchable?
         end
       end
 
@@ -55,6 +59,7 @@ module Admin
       end
 
       def query_bar
+        return unless searchable?
         form_('.js_query_bar.input-group', action: model.url, method: :get, 'data-turbolinks-blanks': false) {[
           search_params.except(:q).map do |name, value|
             input_ name: name, value: value, type: 'hidden'
