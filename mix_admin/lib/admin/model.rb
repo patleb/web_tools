@@ -242,29 +242,30 @@ module Admin
     end
 
     alias_method :model, :class
+    delegate :klass, to: :model
 
     def viewable_url(**params)
-      self.class.viewable_url(self, **params)
+      model.viewable_url(self, **params)
     end
 
     def viewable?
-      self.class.viewable?(self)
+      model.viewable?(self)
     end
 
     def viewable_action
-      self.class.viewable_action(self)
+      model.viewable_action(self)
     end
 
     def allowed_url(action = action_name, **params)
-      self.class.allowed_url(action, self, **params)
+      model.allowed_url(action, self, **params)
     end
 
     def allowed?(action = action_name)
-      self.class.allowed? action, record
+      model.allowed? action, record
     end
 
     def url_for(action = action_name, **params)
-      self.class.url_for(action, id: primary_key_value, **params)
+      model.url_for(action, id: primary_key_value, **params)
     end
     alias_method :url, :url_for
 
@@ -280,14 +281,16 @@ module Admin
 
     def record_label
       if record.new_record?
-        "#{t('admin.misc.new')} #{self.class.label}".html_safe
+        return "#{t('admin.misc.new')} #{model.label}".html_safe
       elsif (label_method = record_label_method) == :admin_label
-        record.admin_label.upcase_first.html_safe
-      elsif record.try("#{label_method}_changed?") && (label = self["#{label_method}_was"]).present?
-        label
-      else
-        record.public_send(label_method)
+        return record.admin_label.upcase_first.html_safe
       end
+      label = record.try("#{label_method}_changed?") && self["#{label_method}_was"].presence
+      label ||= record.public_send(label_method)
+      if defined_enums.has_key? label_method.to_s
+        label = klass.human_attribute_name("#{label_method}.#{label}", default: label.to_s.humanize)
+      end
+      label
     end
   end
 end
