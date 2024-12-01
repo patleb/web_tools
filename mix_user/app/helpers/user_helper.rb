@@ -4,7 +4,7 @@ module UserHelper
   def user_role_select
     return unless Current.user.role_admin?
     param_select :role, Current.user.as_role, Current.user.available_roles.keys, 'person-badge' do |role|
-      User.human_attribute_name("role/#{role}", default: role.to_s.humanize)
+      User.human_attribute_name("role.#{role}", default: role.to_s.humanize)
     end
   end
 

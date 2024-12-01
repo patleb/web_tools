@@ -87,7 +87,7 @@ module Admin
       private
 
       def i18n_value(key)
-        key.present? ? klass.human_attribute_name("#{name}/#{key}", default: key.to_s.humanize) : key
+        key.present? ? klass.human_attribute_name("#{name}.#{key}", default: key.to_s.humanize) : key
       end
     end
   end
