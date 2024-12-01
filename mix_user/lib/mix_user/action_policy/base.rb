@@ -9,10 +9,7 @@ module ActionPolicy
     delegate :actions, to: :class
 
     def self.actions
-      @_actions ||= begin
-        index = public_instance_methods.index(:actions)
-        public_instance_methods.each_with_index.select_map{ |m, i| m if i < index && m.end_with?('?') }
-      end
+      @_actions ||= public_instance_methods(false).select{ |m| m.end_with? '?' }
     end
 
     def initialize(user, object)
