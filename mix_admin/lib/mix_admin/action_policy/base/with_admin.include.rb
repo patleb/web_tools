@@ -12,7 +12,7 @@ module ActionPolicy::Base::WithAdmin
   end
 
   def show_in_app?
-    (show? || edit?) && (klass? || record.respond_to?(:to_url))
+    (show? || edit?) && (model? || record.respond_to?(:to_url))
   end
 
   def new?
@@ -39,5 +39,11 @@ module ActionPolicy::Base::WithAdmin
 
   def restore?
     trash?
+  end
+
+  protected
+
+  def model?
+    klass?
   end
 end
