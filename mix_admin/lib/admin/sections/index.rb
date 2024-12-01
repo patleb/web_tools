@@ -48,8 +48,7 @@ module Admin
               all << field
             end
           end
-          raise "#{model_name} presenter doesn't have a primary key configured" unless id
-          [id] + fields
+          id ? [id] + fields : fields
         end
       end
 
