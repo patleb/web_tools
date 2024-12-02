@@ -47,6 +47,10 @@ module Admin
       nil
     end
 
+    register_class_option :fallback_model do
+      nil
+    end
+
     register_class_option :save_label do
       t(:save, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save'))
     end
@@ -93,6 +97,19 @@ module Admin
         MixAdmin.config.models_pool.select_map do |model_name|
           next unless (model = model_name.to_const.admin_model).allowed? :index
           model
+        end
+      end
+    end
+
+    def self.back_model
+      case (name = fallback_model)
+      when nil    then return
+      when String then name.to_const!.admin_model
+      when Symbol
+        if (association = associations_hash[name]).polymorphic?
+          association.klass.map(&:admin_model).compact.first
+        else
+          association.klass.admin_model
         end
       end
     end

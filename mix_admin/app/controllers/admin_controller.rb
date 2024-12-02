@@ -189,7 +189,9 @@ class AdminController < LibController
     if (path = super)
       path if can_redirect_back? path
     elsif @model
-      @action.trashable? && @model.allowed_url(:trash) || @model.allowed_url(:index)
+      path = @action.trashable? && @model.allowed_url(:trash)
+      path ||= @model.allowed_url(:index)
+      path ||  @model.back_model&.allowed_url(:index)
     end
   end
 
