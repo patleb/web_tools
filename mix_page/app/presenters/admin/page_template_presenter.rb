@@ -2,19 +2,18 @@ module Admin
   class PageTemplatePresenter < Admin::Model
     record_label_method :title
 
-    field :lock_version
-    field :updated_at
-    field :created_at
-
     new do
-      nests :updater, as: :email
-      nests :creator, as: :email
+      field :lock_version
       field :view do
         enum{ klass.available_views }
       end
-      field :publish, editable: true, type: :boolean
-      field :title, translated: true
+      field :title,       translated: true
       field :description, translated: true, type: :text
+      field :publish,     editable:   true, type: :boolean
+      nests :updater, as: :email
+      nests :creator, as: :email
+      field :updated_at
+      field :created_at
     end
 
     index do
