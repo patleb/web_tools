@@ -12,7 +12,7 @@ en:
     edit: "New %{model} to edit"
   shared_attributes: &shared_attributes
     creator: Created by
-    updater: Modified by
+    updater: Updated by
     created_at: Created at
     updated_at: Updated at
     deleted_at: Deleted at
@@ -41,7 +41,7 @@ en:
       page_field:
         <<: *shared_attributes
         rails_admin_object_label: Label
-        page_template: Context
+        page_template: Page
         name: Name
       page_field/name:
         sidebar: Sidebar
@@ -61,8 +61,7 @@ en:
         title_en: Title (english)
     models:
       page: Page
-      page_layout: Page Layout
-      page_template: Page Template
+      page_field: Bloc
       page_fields/text: Plain text
       page_fields/rich_text: Text
       page_fields/link: Link

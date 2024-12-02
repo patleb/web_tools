@@ -39,6 +39,8 @@ en:
       one: "(%{count} character minimum)"
       other: "(%{count} characters minimum)"
   activerecord:
+    models:
+      user: User
     attributes:
       user:
         email: Email

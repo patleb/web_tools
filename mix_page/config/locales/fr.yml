@@ -41,7 +41,7 @@ fr:
       page_field:
         <<: *shared_attributes
         rails_admin_object_label: Étiquette
-        page_template: Contexte
+        page_template: Page
         name: Nom
       page_field/name:
         sidebar: Barre latérale
@@ -61,6 +61,7 @@ fr:
         title_en: Titre (anglais)
     models:
       page: Page
+      page_field: Bloc
       page_fields/text: Texte simple
       page_fields/rich_text: Texte
       page_fields/link: Lien
