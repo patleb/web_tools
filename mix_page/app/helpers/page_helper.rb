@@ -38,31 +38,31 @@ module PageHelper
   # page_link_presenters(name)
   # page_link_presenter(name)
   # ----
-  # layout_links(name, list: {}, **item_options, &block)
+  # layout_links(name, **list_options, &block)
   # layout_link(name, **item_options)
   # ----
-  # page_links(name, list: {}, **item_options, &block)
+  # page_links(name, **list_options, &block)
   # page_link(name, **item_options)
   #
-  def method_missing(name, ...)
-    if (options = page_helper_options(name))
+  def method_missing(helper_name, ...)
+    if (options = page_helper_options(helper_name))
       type = TYPES_MAPPING[options.delete(:type)]
       if options.delete(:render)
         if options[:multi]
-          self.class.send(:define_method, name) do |name, **multi_options, &block|
-            page_presenter(name, type, **options).render(**multi_options, &block)
+          self.class.send(:define_method, helper_name) do |name, **list_options, &block|
+            page_presenter(name, type, **options).render(**list_options, &block)
           end
         else
-          self.class.send(:define_method, name)do |name, **item_options|
+          self.class.send(:define_method, helper_name) do |name, **item_options|
             page_presenter(name, type, **options).render(**item_options)
           end
         end
       else
-        self.class.send(:define_method, name) do |name|
+        self.class.send(:define_method, helper_name) do |name|
           page_presenter(name, type, **options)
         end
       end
-      send(name, ...)
+      send(helper_name, ...)
     else
       super
     end
