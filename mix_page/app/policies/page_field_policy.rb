@@ -1,17 +1,31 @@
-class PageFieldPolicy < ApplicationPolicy
+class PageFieldPolicy < ActionPolicy::Base
   def index?
-    super && !record.base_class?
+    false
   end
 
   def export?
     false
   end
 
-  def new?
-    super && Current.controller_was.try(:pages?)
-  end
-
   def show?
     false
+  end
+
+  def new?
+    user.admin?
+  end
+
+  def edit?
+    user.admin?
+  end
+
+  def delete?
+    edit?
+  end
+
+  class Scope < Scope
+    def resolve
+      user.admin? ? relation.all : super
+    end
   end
 end
