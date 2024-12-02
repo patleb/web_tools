@@ -103,14 +103,16 @@ module Admin
 
     def self.back_model
       case (name = fallback_model)
-      when nil    then return
-      when String then name.to_const!.admin_model
+      when nil, false then return
+      when String     then name.to_const!.admin_model
       when Symbol
         if (association = associations_hash[name]).polymorphic?
           association.klass.map(&:admin_model).compact.first
         else
           association.klass.admin_model
         end
+      else
+        name.admin_model
       end
     end
 
