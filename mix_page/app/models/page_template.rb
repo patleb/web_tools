@@ -127,7 +127,7 @@ class PageTemplate < Page
   end
 
   def create_sidebar
-    links.create! page: page_layout, name: :sidebar
+    create_sidebar! page: page_layout, name: :sidebar
   end
 
   def create_content
