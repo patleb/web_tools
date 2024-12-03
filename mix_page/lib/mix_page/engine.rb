@@ -17,6 +17,7 @@ module MixPage
 
     initializer 'mix_page.admin' do
       MixAdmin.configure do |config|
+        config.root_model_name = 'PageTemplate'
         config.included_models += %w(
           PageTemplate
           PageField
