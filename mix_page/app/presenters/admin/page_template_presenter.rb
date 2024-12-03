@@ -2,6 +2,8 @@ module Admin
   class PageTemplatePresenter < Admin::Model
     record_label_method :title
 
+    field :title
+
     new do
       field :lock_version
       field :view do
@@ -14,11 +16,11 @@ module Admin
       nests :creator, as: :email
       field :updated_at
       field :created_at
+      exclude_fields :title
     end
 
     index do
       searchable false
-      field :title
       include_fields :published_at, :deleted_at, :updated_at, :created_at
     end
 

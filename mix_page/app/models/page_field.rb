@@ -7,6 +7,8 @@ class PageField < LibMainRecord
   belongs_to :page_template, foreign_key: :page_id
   belongs_to :fieldable, optional: true, polymorphic: true
 
+  accepts_nested_attributes_for :fieldable, update_only: true
+
   enum! type: MixPage.config.available_field_types
   enum! name: MixPage.config.available_field_names
   enum! fieldable_type: MixPage.config.available_fieldables
@@ -31,7 +33,7 @@ class PageField < LibMainRecord
   end
 
   def field_label_values
-    [page_template&.title, self.class.human_attribute_name("name.#{name}", default: name)]
+    [self.class.human_attribute_name("name.#{name}", default: name)]
   end
 
   ### Example for when the association should be on the base class but, in our case, the association is on the children.
