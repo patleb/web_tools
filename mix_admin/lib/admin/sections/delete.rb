@@ -23,14 +23,13 @@ module Admin
               ]),
               ul_(if: allowed.present? || restricted.present?) {[
                 allowed.map do |klass, (count, url, _can_destroy)|
-                  count_label = [(ascii_(:approx) if count.is_a? BigDecimal), count, klass.admin_label(count)]
                   li_([
                     span_(ascii_(:arrow_down_right)),
-                    a_('.link.link-primary', count_label, href: url),
+                    a_('.link.link-primary', count_label(klass, count), href: url),
                   ])
                 end,
                 restricted.map do |klass, (count, _can_destroy)|
-                  li_ [ascii_(:arrow_down_right), count, klass.admin_label(count)]
+                  li_ [ascii_(:arrow_down_right), count_label(klass, count)]
                 end,
               ]}
             ]}
@@ -41,6 +40,12 @@ module Admin
             cancel: t('admin.form.cancel'),
           ),
         ]}
+      end
+
+      private
+
+      def count_label(klass, count)
+        [(ascii_(:approx) if count.is_a? BigDecimal), count.to_i, klass.admin_label(count)]
       end
     end
   end
