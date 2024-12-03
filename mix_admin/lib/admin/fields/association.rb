@@ -72,9 +72,7 @@ module Admin
 
       def property_field
         memoize(self, __method__, bindings) do
-          if (record = presenter[through]) && (presenter = record.admin_presenter).allowed?
-            property_model.section(section.name).with(presenter: presenter).fields_hash[as]
-          end
+          field_for presenter[through]
         end
       end
 
@@ -88,6 +86,16 @@ module Admin
 
       def column_name
         as
+      end
+
+      private
+
+      def field_for(record)
+        return unless record && (presenter = record.admin_presenter).allowed?
+        ([section.name] + section.parent_names).find do |section_name|
+          field = presenter.model.section(section_name).with(presenter: presenter).fields_hash[as]
+          return field if field
+        end
       end
     end
   end

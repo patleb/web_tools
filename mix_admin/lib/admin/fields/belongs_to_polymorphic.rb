@@ -15,15 +15,19 @@ module Admin
       end
 
       def allowed_field?
-        super && property_model.any?(&:allowed?)
+        Admin::Field.__call__(__method__, self) && property_models.any?(&:allowed?)
       end
 
       def property_model
-        @property_model ||= property.klass.map(&:admin_model)
+        property_models.first
+      end
+
+      def property_models
+        @property_models ||= property.klass.map(&:admin_model).compact
       end
 
       def method_name
-        "#{through}_global_id".to_sym
+        nested? ? super : "#{through}_global_id".to_sym
       end
 
       def association_names

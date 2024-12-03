@@ -56,10 +56,8 @@ module Admin
 
       def property_fields
         memoize(self, __method__, bindings) do
-          section = property_model.section(self.section.name)
           presenter[through].select_map do |record|
-            next unless (presenter = record.admin_presenter).allowed?
-            section.with(presenter: presenter).fields_hash[as]
+            field_for record
           end
         end
       end
