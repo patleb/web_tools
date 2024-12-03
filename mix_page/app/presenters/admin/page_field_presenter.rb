@@ -9,11 +9,11 @@ module Admin
       end
     end
     field :name
-
-    group :audit do
-      label false
+    group :userstamps, label: false do
       nests :updater, as: :email
       nests :creator, as: :email
+    end
+    group :timestamps, label: false do
       field :updated_at
       field :created_at
     end

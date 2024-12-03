@@ -89,6 +89,7 @@ module Admin::Model::Definable
         create_config_instance(@groups, :groups, name, klass, klass_name)
       end
       @group.weight = options[:weight] if options[:weight]
+      @group.label(false) if options[:label] == false
       @group.instance_eval(&block) if block
       @group
     else
