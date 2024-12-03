@@ -79,6 +79,7 @@ class AdminController < LibController
     end
     raise RoutingError if bulk && @presenters.empty?
     raise RoutingError if (@new || member) && (@presenter = @presenters.first).nil?
+    @section = @section.with(presenter: @presenter, presenters: @presenters)
   end
 
   def set_attributes
