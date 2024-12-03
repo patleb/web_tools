@@ -59,7 +59,7 @@ en:
         <<: *title_attributes
     models:
       page: Page
-      page_field: Bloc
+      page_field: Content
       page_fields/text: Plain text
       page_fields/html: Text
       page_fields/link: Link

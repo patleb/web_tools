@@ -44,9 +44,9 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     let(:current_user){ users(:admin) }
 
     test '#field_create' do
-      post "/page/#{page.uuid}/field", params: { page_field: { type: 'PageFields::Link', name: 'sidebar' } }
-      id = PageFields::Link.order(created_at: :desc).pick(:id)
-      assert_redirected_to MixAdmin::Routes.edit_url(model_name: 'PageFields::Link'.to_class_param, id: id)
+      post "/page/#{page.uuid}/field", params: { page_field: { type: 'PageFields::Html', name: 'content' } }
+      id = PageFields::Html.order(created_at: :desc).pick(:id)
+      assert_redirected_to MixAdmin::Routes.edit_url(model_name: 'PageFields::Html'.to_class_param, id: id)
     end
 
     test '#field_update' do

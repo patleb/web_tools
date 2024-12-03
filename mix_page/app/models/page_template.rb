@@ -4,8 +4,6 @@ class PageTemplate < Page
   MULTI_VIEW = %r{[/_]multi$}
 
   belongs_to :page_layout
-  has_one    :sidebar, -> { where(name: :sidebar) }, class_name: 'PageFields::Link', as: :fieldable
-  has_one    :content, -> { where(name: :content) }, class_name: 'PageFields::Html', foreign_key: :page_id
 
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }
@@ -116,6 +114,14 @@ class PageTemplate < Page
     I18n.available_locales.map{ |locale| slug(locale) }.compact.uniq
   end
 
+  def sidebar
+    links.where(name: :sidebar).take
+  end
+
+  def content
+    page_fields.where(name: :content).take
+  end
+
   private
 
   def set_published_at
@@ -127,10 +133,10 @@ class PageTemplate < Page
   end
 
   def create_sidebar
-    create_sidebar! page: page_layout, name: :sidebar
+    links.create! name: :sidebar, page: page_layout
   end
 
   def create_content
-    create_content! name: :content
+    page_fields.create! name: :content, type: 'PageFields::Html'
   end
 end

@@ -59,7 +59,7 @@ fr:
         <<: *title_attributes
     models:
       page: Page
-      page_field: Bloc
+      page_field: Contenu
       page_fields/text: Texte simple
       page_fields/html: Texte
       page_fields/link: Lien

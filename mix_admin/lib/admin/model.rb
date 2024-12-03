@@ -199,7 +199,7 @@ module Admin
           klass, name = association.klass, association.name
           next if klass.is_a? Array
           next unless (model = klass.admin_model)
-          type = index_models.include?(model) && !klass.sti? ? :allowed : :restricted
+          type = index_models.include?(model) ? :allowed : :restricted
           if association.type == :has_many
             count = presenter.associated_count(name, model)
             next unless count > 0
@@ -218,21 +218,6 @@ module Admin
               [count, url, can_destroy]
             else
               [count, can_destroy]
-            end
-          end
-        end.transform_values do |klass_counts|
-          klass_counts.each_with_object({}) do |(klass, (count, url, can_destroy)), memo|
-            if can_destroy.nil?
-              can_destroy = url
-              if klass.sti?
-                klass.base_class? ? count = 0 : (klass = klass.base_class)
-                result = (memo[klass] ||= [0, true])
-                result[0] += count; result[1] &&= can_destroy
-              else
-                memo[klass] = [count, can_destroy]
-              end
-            else
-              memo[klass] = [count, url, can_destroy]
             end
           end
         end
