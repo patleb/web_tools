@@ -162,9 +162,9 @@ module ActionView::Helpers::TagHelper
       options[:class] = classes_to_string(classes)
       options.delete(:class) if options[:class].blank?
     end
-    sanitized = options.has_key?(:sanitize) ? options.delete(:sanitize) : false
-    escape = options.has_key?(:escape) ? options.delete(:escape) : true
-    times = options.delete(:times) if options.has_key? :times
+    sanitized = options.delete(:sanitize){ false }
+    escape = options.delete(:escape){ true }
+    times = options.delete(:times)
     content = options.delete(:text) if options.has_key? :text
     form_before(options) if tag == 'form'
     content = h_(&content) if content.is_a? Proc
@@ -174,8 +174,8 @@ module ActionView::Helpers::TagHelper
     content = h_(content) if content.is_a? Array
     content = sanitize(content) if sanitized
     form_after if tag == 'form'
-    before = options.delete(:prepend) || ''.html_safe
-    after  = options.delete(:append)  || ''.html_safe
+    before = options.delete(:prepend){ ''.html_safe }
+    after  = options.delete(:append){ ''.html_safe }
     result = tag ? content_tag(tag, content, options, (sanitized ? false : escape)) : h_(content)
     result = [result] * times if times
     before + result + after
