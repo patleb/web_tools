@@ -23,7 +23,7 @@ class AdminController < LibController
   before_action :set_presenters, if: -> { @action.presenters? }
   before_action :set_attributes, if: -> { defined?(@new) && (@new || @action.member?) }
 
-  attr_reader :action
+  attr_reader :action, :presenter, :presenters
 
   helper_method :action, :action_type, :action_object, :search_params
 
@@ -79,7 +79,6 @@ class AdminController < LibController
     end
     raise RoutingError if bulk && @presenters.empty?
     raise RoutingError if (@new || member) && (@presenter = @presenters.first).nil?
-    @section = @section.with(presenter: @presenter, presenters: @presenters)
   end
 
   def set_attributes
