@@ -65,7 +65,7 @@ module ActionView::Helpers::TagHelper
       unless HTML5_TAGS.include? tag
         Rails.logger.info "Tag <#{tag}> isn't HTML5"
       end
-      self.class.send(:define_method, name) do |*args, &block|
+      self.class.define_method(name) do |*args, &block|
         with_tag tag, *args, &block
       end
       send(name, *, &)

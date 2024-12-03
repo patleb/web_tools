@@ -28,7 +28,7 @@ namespace! :page do
   end
 
   def convert_fields(from_url, to_url)
-    PageFields::RichText.all.each do |record|
+    PageFields::Html.all.each do |record|
       texts = I18n.available_locales.map{ |locale| ["text_#{locale}", record["text_#{locale}"]] }.to_h.compact
       next if texts.all?{ |_, text| text.exclude?(from_url) }
       record.update! texts.transform_values{ |text| text.gsub(from_url, to_url) }

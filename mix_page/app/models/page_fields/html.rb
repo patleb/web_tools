@@ -1,7 +1,5 @@
 module PageFields
-  class RichText < Text
-    json_translate title: :string
-
+  class Html < Text
     has_many_attached :images
 
     # TODO sanitize html
@@ -19,10 +17,6 @@ module PageFields
           send("text_#{locale}=", '')
         end
       end
-    end
-
-    def rails_admin_object_label_values
-      super << title
     end
 
     private

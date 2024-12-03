@@ -1,6 +1,6 @@
 require './test/rails_helper'
 
-class PageFields::RichTextTest < ActiveStorage::TestCase
+class PageFields::HtmlTest < ActiveStorage::TestCase
   let(:text){ <<-HTML.strip_heredoc }
     <p><br></p>
     <div class="se-component se-image-container __se__float-none" contenteditable="false">
@@ -14,7 +14,7 @@ class PageFields::RichTextTest < ActiveStorage::TestCase
   let(:url){ <<-HTML.strip_heredoc }
     <div class="se-component se-image-container __se__float-none" contenteditable="false">
       <figure style="margin: 0px;">
-        <img src="http://127.0.0.1:3333/storage-test/#{key[0..1]}/#{key[2..3]}/#{key}" alt="" data-rotate="" data-rotatex="" data-rotatey="" data-size="," data-align="none" data-percentage="auto,auto" data-index="1" data-file-name="circle.png" data-file-size="452" data-origin="," style="">
+        <img src="http://127.0.0.1:3333/storage_test/#{key[0..1]}/#{key[2..3]}/#{key}" alt="" data-rotate="" data-rotatex="" data-rotatey="" data-size="," data-align="none" data-percentage="auto,auto" data-index="1" data-file-name="circle.png" data-file-size="452" data-origin="," style="">
       </figure>
     </div>
   HTML
@@ -35,7 +35,7 @@ class PageFields::RichTextTest < ActiveStorage::TestCase
 
   it 'should replace base64 images with attachments' do
     template = PageTemplate.create! view: PageTemplate.available_views.keys.first
-    field = template.page_fields.create! type: 'PageFields::RichText', name: 'page_texts'
+    field = template.page_fields.create! type: 'PageFields::Html', name: 'page_texts'
     blob = ActiveStorage::Blob.create! key: key, filename: 'no_file.png', content_type: 'image/png', service_name: 'test', byte_size: 0, checksum: Digest::MD5.base64digest('')
     ActiveStorage::Attachment.create! name: 'images', record: field, blob: blob
 
@@ -48,11 +48,11 @@ class PageFields::RichTextTest < ActiveStorage::TestCase
     assert_equal 'ActiveStorage::AnalyzeJob', Job.dequeue.job_class
     assert_equal 'ActiveStorage::MirrorJob', Job.dequeue.job_class
     assert_nil Job.dequeue
-    rich_text = PageFields::RichText.first
-    assert_equal 2, rich_text.images_attachments.count
-    assert_equal 2, rich_text.images_blobs.count
-    assert_equal 1, rich_text.images_blobs.select_map(&:backup).count
-    assert_equal 2, rich_text.text_en.scan(/#{ExtRails::Routes.url_for('/storage-test/')}/).size
-    assert_equal 2, rich_text.text_fr.scan(/#{ExtRails::Routes.url_for('/storage-test/')}/).size
+    html = PageFields::Html.first
+    assert_equal 2, html.images_attachments.count
+    assert_equal 2, html.images_blobs.count
+    assert_equal 1, html.images_blobs.select_map(&:backup).count
+    assert_equal 2, html.text_en.scan(/#{ExtRails::Routes.url_for('/storage_test/')}/).size
+    assert_equal 2, html.text_fr.scan(/#{ExtRails::Routes.url_for('/storage_test/')}/).size
   end
 end

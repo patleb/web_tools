@@ -50,7 +50,7 @@ module ActionPolicy
 
     def method_missing(name, ...)
       if name.end_with? '?'
-        self.class.send(:define_method, name) do
+        self.class.define_method(name) do
           false
         end
         send(name)

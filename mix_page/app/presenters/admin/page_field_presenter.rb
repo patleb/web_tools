@@ -1,5 +1,6 @@
 module Admin
   class PageFieldPresenter < Admin::Model
+    fallback_location{ presenter.page_template&.to_url || pages_root_path }
     record_label_method :field_label
 
     field :lock_version
@@ -9,11 +10,9 @@ module Admin
       end
     end
     field :name
-    group :userstamps, label: false do
+    group :stamps, label: false do
       nests :updater, as: :email
       nests :creator, as: :email
-    end
-    group :timestamps, label: false do
       field :updated_at
       field :created_at
     end

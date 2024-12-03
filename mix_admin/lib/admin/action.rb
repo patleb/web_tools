@@ -148,7 +148,7 @@ module Admin
 
     def method_missing(name, ...)
       if name.end_with?('?') && (key = name[0..-2].to_sym) && self.class.has?(key)
-        self.class.send(:define_method, name) do
+        self.class.define_method(name) do
           self.name == key
         end
         public_send(name)

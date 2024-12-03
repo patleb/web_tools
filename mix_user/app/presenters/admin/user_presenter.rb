@@ -6,8 +6,8 @@ module Admin
     field :id
     field :email
     field :role do
-      pretty_value{ i18n_value presenter[:as_role] }
-      pretty_export{ presenter[:as_role] }
+      pretty_value{ i18n_value presenter.as_role }
+      pretty_export{ presenter.as_role }
       enum{ Current.user.allowed_roles }
     end
 

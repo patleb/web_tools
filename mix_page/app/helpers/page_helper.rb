@@ -23,7 +23,7 @@ module PageHelper
   end
 
   def page_content
-    page_rich_text(:content)
+    page_html(:content)
   end
 
   def pagination
@@ -49,16 +49,16 @@ module PageHelper
       type = TYPES_MAPPING[options.delete(:type)]
       if options.delete(:render)
         if options[:multi]
-          self.class.send(:define_method, helper_name) do |name, **list_options, &block|
+          self.class.define_method(helper_name) do |name, **list_options, &block|
             page_presenter(name, type, **options).render(**list_options, &block)
           end
         else
-          self.class.send(:define_method, helper_name) do |name, **item_options|
+          self.class.define_method(helper_name) do |name, **item_options|
             page_presenter(name, type, **options).render(**item_options)
           end
         end
       else
-        self.class.send(:define_method, helper_name) do |name|
+        self.class.define_method(helper_name) do |name|
           page_presenter(name, type, **options)
         end
       end

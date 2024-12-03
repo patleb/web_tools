@@ -10,12 +10,16 @@ fr:
   page_fields:
     new: Ajouter
     edit: "Nouveau %{model} à modifier"
-  shared_attributes: &shared_attributes
+  stamps_attributes: &stamps_attributes
     creator: Créé par
     updater: Modifié par
     created_at: Créé à
     updated_at: Modifié à
     deleted_at: Supprimé à
+  title_attributes: &title_attributes
+    title: Titre
+    title_fr: Titre (français)
+    title_en: Titre (anglais)
   adminrecord:
     navigation_labels:
       page_template: site web
@@ -23,23 +27,21 @@ fr:
   activerecord:
     attributes:
       page:
-        <<: *shared_attributes
+        <<: *stamps_attributes
         uuid: UUID
         view: Modèle
         page_fields: Contenus
       page/view:
         home: Accueil
       page_template:
-        title: Titre
-        title_fr: Titre (français)
-        title_en: Titre (anglais)
+        <<: *title_attributes
         description: Description
         description_fr: Description (français)
         description_en: Description (anglais)
         publish: Publier
         published_at: Publié à
       page_field:
-        <<: *shared_attributes
+        <<: *stamps_attributes
         rails_admin_object_label: Étiquette
         page_template: Page
         name: Nom
@@ -51,17 +53,13 @@ fr:
         text_fr: Texte (français)
         text_en: Texte (anglais)
       page_fields/link:
+        <<: *title_attributes
         fieldable: Lien
-        text: Titre
-        text_fr: Titre (français)
-        text_en: Titre (anglais)
-      page_fields/rich_text:
-        title: Titre
-        title_fr: Titre (français)
-        title_en: Titre (anglais)
+      page_fields/html:
+        <<: *title_attributes
     models:
       page: Page
       page_field: Bloc
       page_fields/text: Texte simple
-      page_fields/rich_text: Texte
+      page_fields/html: Texte
       page_fields/link: Lien

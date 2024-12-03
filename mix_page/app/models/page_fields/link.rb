@@ -1,18 +1,13 @@
 module PageFields
-  class Link < Text
-    delegate :title, :view, :uuid, :to_url, to: :fieldable, allow_nil: true
+  class Link < PageField
+    delegate :title, :to_url, to: :fieldable
 
-    json_translate text: [:string, default: ->(record) { record.title }]
-
-    with_options on: :update, unless: :list_changed? do
+    with_options unless: :list_changed? do
       validates :fieldable, presence: true
-      validates :fieldable_type, inclusion: { in: [nil, 'PageTemplate'] }
-      I18n.available_locales.each do |locale|
-        validates "text_#{locale}", length: { maximum: 120 }
-      end
+      validates :fieldable_type, inclusion: { in: MixPage.config.available_fieldables }
     end
 
-    def rails_admin_object_label_values
+    def field_label_values
       super << title
     end
   end

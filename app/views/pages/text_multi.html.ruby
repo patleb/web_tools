@@ -1,3 +1,3 @@
 @page.render do
-  page_rich_texts('page_multi_texts')
+  page_htmls('page_multi_texts')
 end

@@ -5,7 +5,7 @@ class PageTemplate < Page
 
   belongs_to :page_layout
   has_one    :sidebar, -> { where(name: :sidebar) }, class_name: 'PageFields::Link', as: :fieldable
-  has_one    :content, -> { where(name: :content) }, class_name: 'PageFields::RichText', foreign_key: :page_id
+  has_one    :content, -> { where(name: :content) }, class_name: 'PageFields::Html', foreign_key: :page_id
 
   validates :view, presence: true
   validates :view, uniqueness: { scope: :page_layout_id }, if: -> { view_changed? && unique? }

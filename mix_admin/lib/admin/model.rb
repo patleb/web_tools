@@ -51,6 +51,10 @@ module Admin
       nil
     end
 
+    register_class_option :fallback_location do
+      nil
+    end
+
     register_class_option :save_label do
       t(:save, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.save'))
     end
@@ -77,6 +81,7 @@ module Admin
 
     class << self
       delegate :primary_key, :table_name, to: :klass
+      alias_method :back_location, :fallback_location
     end
 
     def self.controller(action_hook, &block)

@@ -191,7 +191,8 @@ class AdminController < LibController
     elsif @model
       path = @action.trashable? && @model.allowed_url(:trash)
       path ||= @model.allowed_url(:index)
-      path ||  @model.back_model&.allowed_url(:index)
+      path ||= @model.back_model&.allowed_url(:index)
+      path ||  @model.back_location
     end
   end
 

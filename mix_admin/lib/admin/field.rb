@@ -128,7 +128,7 @@ module Admin
 
     def required_context
       return :nil unless presenter
-      presenter[:persisted?] ? :update : :create
+      presenter.persisted? ? :update : :create
     end
 
     def property
@@ -147,7 +147,7 @@ module Admin
 
     def editable?
       return @editable if defined? @editable
-      return false if presenter[:readonly?]
+      return false if presenter.readonly?
       return false if method? || primary_key? || MixAdmin.config.readonly_fields.include?(column_name)
       action.new? || property.false?(:readonly?)
     end
@@ -234,7 +234,7 @@ module Admin
     end
 
     def input_value
-      format_input((presenter[:new_record?] && value.nil?) ? default_value : value)
+      format_input((presenter.new_record? && value.nil?) ? default_value : value)
     end
 
     def input_css_class
@@ -261,7 +261,7 @@ module Admin
 
     def errors
       ([property_name] + association_names).uniq.flat_map do |name|
-        presenter[:errors][name]
+        presenter.errors[name]
       end.uniq
     end
 
