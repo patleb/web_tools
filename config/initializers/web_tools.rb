@@ -40,8 +40,8 @@ MixPage.configure do |config|
     'list/multi' => 25,
   )
   config.available_field_names.merge!(
-    page_list_texts: 20,
-    page_multi_texts: 25,
+    list_texts: 20,
+    multi_texts: 25,
   )
 end
 

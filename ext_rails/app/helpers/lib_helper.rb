@@ -129,7 +129,7 @@ module LibHelper
     else
       div_('.param_select.form-control', title: t("link.#{name}", default: name.to_s.humanize)) {[
         label_('.input-group', [
-          icon(icon_name, tag: :span),
+          icon(icon_name, tag: 'span'),
           select_('.select', name: "_#{name}", remote: true, visit: true) do
             choices.map do |choice, *|
               label = yield(choice) || label.to_s.humanize
