@@ -1,2 +1,7 @@
-gems:
-  - 'mix_admin'
+packages:
+  - 'html5sortable'
+
+tailwind:
+  - '@@mix_page/app/helpers/**/*.rb'
+  - '@@mix_page/app/presenters/**/*.rb'
+  - '@@mix_page/app/views/**/*.html.{erb,ruby}'

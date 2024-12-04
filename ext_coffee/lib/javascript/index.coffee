@@ -39,3 +39,5 @@ window.Js =
 
   is_form_valid: (inputs) ->
     Array.wrap(inputs).all (input) -> input.valid()
+
+window.Sm = {}

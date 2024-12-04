@@ -1,4 +1,4 @@
-class window.LibConcept
+class Js.LibConcept
   readers: ->
     notice: -> Rails.find('#notice')
 

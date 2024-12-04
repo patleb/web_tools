@@ -1,1 +1,1 @@
-class window.AppConcept
+class Js.AppConcept

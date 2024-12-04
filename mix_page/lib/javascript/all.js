@@ -1,1 +1,1 @@
-import '@@/mix_page/concepts/all'
+import '@@lib/mix_page/concepts/page_concept'

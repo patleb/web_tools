@@ -1,4 +1,4 @@
-class window.AdminConcept
+class Js.AdminConcept
   DATE = /[0-9]{4}-[0-9]{2}-[0-9]{2}/
 
   readers: ->
