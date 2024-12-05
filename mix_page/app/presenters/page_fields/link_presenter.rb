@@ -1,6 +1,7 @@
 module PageFields
   class LinkPresenter < PageFieldPresenter
     def render(**options)
+      return super if block_given?
       super **options do |options, actions|
         div_(options) {[
           actions,
