@@ -9,4 +9,8 @@
   .field_edit {
     @apply self-center;
   }
+
+  .js_page_field_sort {
+    @apply cursor-grabbing !important;
+  }
 }

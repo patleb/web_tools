@@ -68,12 +68,12 @@ class PagesController < LibController
   def on_save_success(field)
     respond_to do |format|
       format.html { redirect_to field.admin_presenter.url_for(:edit) }
-      format.json { render json: { flash: { notice: admin_notice(field.admin_label, :edit) } } }
+      format.json { render json: { flash: { notice: admin_notice(field.admin_presenter.record_label, :edit) } } }
     end
   end
 
   def on_record_invalid(field, action)
-    handle_error admin_alert(field, field.admin_label, action)
+    handle_error admin_alert(field, field.admin_presenter.record_label, action)
   end
 
   def on_argument_error
@@ -92,11 +92,11 @@ class PagesController < LibController
   end
 
   def field_new_params
-    params.require(:page_field).permit(:type, :name)
+    params.require(:page).require(:field).permit(:type, :name)
   end
 
   def field_sort_params
-    params.require(:page_field).permit(:list_prev_id, :list_next_id)
+    params.require(:page).require(:field).permit(:list_prev_id, :list_next_id)
   end
 
   def authorize
