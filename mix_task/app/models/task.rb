@@ -89,7 +89,7 @@ class Task < LibMainRecord
     return unless _perform?
     return perform_now if _from_later?
 
-    clear_attribute_changes [:_perform]
+    clear_attribute_change :_perform
     if notify_changed? && notify_editable?
       save(validate: false)
     end

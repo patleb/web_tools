@@ -112,7 +112,7 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_with_prev_record
-    clear_attribute_changes [:list_next_id]
+    clear_attribute_change :list_next_id
     prev_record = self.class.without_default_scope { self.class.base_class.find(list_prev_id) }
     old_id = list_prev_id
     self.list_prev_id = nil
@@ -122,7 +122,7 @@ module ActiveRecord::Base::WithList::Position
   end
 
   def list_with_next_record
-    clear_attribute_changes [:list_prev_id]
+    clear_attribute_change :list_prev_id
     next_record = self.class.without_default_scope { self.class.base_class.find(list_next_id) }
     old_id = list_next_id
     self.list_next_id = nil
