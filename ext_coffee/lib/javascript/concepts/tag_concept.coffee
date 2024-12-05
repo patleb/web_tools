@@ -9,7 +9,8 @@ class Js.TagConcept
     'div'
     'form'
     'input'
-    'select'
+    'label'
+    'select', 'span'
     'textarea', 'time'
   ].to_set()
 
