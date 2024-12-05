@@ -1,3 +1,5 @@
 packages:
   - 'tiny-lru'
   - 'js-cookie'
+  - 'drag-drop-touch'
+  - 'html5sortable'
