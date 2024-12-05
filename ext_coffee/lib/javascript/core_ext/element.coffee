@@ -79,11 +79,20 @@ HTMLElement.define_methods
   find: (selector) ->
     @querySelector(selector)
 
+  data: (key) ->
+    this.getAttribute("data-#{key}")
+
+  next: ->
+    this.nextElementSibling
+
   next_siblings: ->
     sibling = this
     siblings = []
     siblings.push(sibling) while sibling = sibling.nextElementSibling
     siblings
+
+  previous: ->
+    this.previousElementSibling
 
   previous_siblings: ->
     sibling = this
