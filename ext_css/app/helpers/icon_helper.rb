@@ -50,6 +50,7 @@ module IconHelper
   end
 
   def ascii(name, times: nil)
+    return if times == 0
     @@_ascii ||= {
       space:            'nbsp',
       hyphen:           '#8209',  # -
