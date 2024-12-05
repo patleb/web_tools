@@ -40,7 +40,7 @@ class Js.FlashConcept
     [
       input$ id: "js_#{key}", type: 'checkbox'
       div$ '.alert.shadow-xl', class: "alert-#{key}", -> [
-        span_ message.simple_format()
+        span_ message.simple_format().safe_text().html_safe(true)
         label_ '.btn.btn-circle.btn-xs', '&times;'.html_safe(true), for: "js_#{key}"
       ]
     ]
