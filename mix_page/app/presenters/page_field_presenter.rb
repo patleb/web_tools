@@ -1,107 +1,68 @@
-class PageFieldPresenter < ActionView::Delegator[:@page]
-  LINK_ICONS = {
-    edit:   'fa fa-pencil',
-    delete: 'fa fa-trash-o fa-fw'
-  }
+# frozen_string_literal: true
 
-  attr_accessor :list, :parent_node, :parent_name
-  attr_writer   :level, :children_count
+class PageFieldPresenter < ActivePresenter::Base[:@page]
+  delegate :type, :name, to: :record
 
-  delegate :id, :name, :type, :position, :parent_id, to: :object
-
-  def viable_parent_names
-    []
-  end
-
-  def node_name
-    nil
-  end
-
-  def level
-    @level || 0
-  end
-
-  def children_count
-    @children_count || 0
-  end
-
-  def last?
-    children_count == 0
-  end
-
-  def close?
-    children_count > MixPage.config.max_children_count
-  end
+  attr_reader :new_action, :position
 
   def dom_class
-    ["presenter_#{name}", super(object), 'page_field'].uniq
-  end
-
-  def html_list_options
-    data = { node: (node_name || :_unrelated), close: close? }
-    return { data: data } unless list && editable?
-    {
-      class: ['js_page_field_item'],
-      data: data.merge!(id: id, parent: (parent_name || :_unrelated), level: level, last: last?)
-    }
+    [ 'field',
+      "field_#{name.full_underscore}",
+      "field_#{type.demodulize.underscore}"
+    ]
   end
 
   def html_options
     { class: dom_class }
   end
 
-  def html(**)
-    raise NotImplementedError
+  def item_options
+    sortable? ? { class: ['js_page_field'], data: { id: record.id } } : {}
   end
 
-  def render(**item_options, &block)
-    html(**html_options.with_indifferent_access.union!(item_options), &block)
-  end
-
-  def editable
-    member_actions[:edit]
-  end
-  alias_method :editable?, :editable
-
-  def sortable?
-    return @sortable if defined? @sortable
-    @sortable = list && editable? && last? && (parent_node.nil? || parent_node.children_count > 1)
+  def render(new_action: nil, i: nil, **options)
+    @new_action, @position = new_action, i
+    options = html_options.with_indifferent_access.union! options
+    yield(options, pretty_actions)
   end
 
   def pretty_blank
-    t('page_fields.edit', model: object.model_name.human.downcase) if editable?
+    t('page_fields.edit', model: record.class.admin_label).downcase.upcase_first if can_update?
   end
 
-  def pretty_actions(tag = :div)
-    with_tag(tag, ".page_field_actions.#{'un' unless sortable?}sortable_page_field", if: member_actions.any?) {[
+  def pretty_actions
+    div_('.field_actions', if: can_update?) {[
       sort_action,
-      member_actions.map do |action, path|
-        button_(class: "#{action}_page_field #{action}_#{type.full_underscore} btn btn-default btn-xs", data: { href: path }) do
-          i_(class: LINK_ICONS[action])
-        end
-      end
+      (ascii(:space, times: 3) if sortable?),
+      edit_action,
+      (ascii(:space, times: 3) if can_create?),
+      new_action,
     ]}
+  end
+
+  def can_create?
+    new_action
+  end
+
+  def can_update?
+    return @edit_url if defined? @edit_url
+    @edit_url = edit_url
+  end
+
+  def sortable?
+    list && can_update?
   end
 
   def sort_action
     return unless sortable?
-    span_(class: "js_page_field_sort sort_page_field sort_#{type.full_underscore}") do
-      i_(class: 'fa fa-arrows-v')
-    end
+    span_ '.js_page_field_sort', ascii(:arrow_y)
   end
 
-  def member_actions
-    @member_actions ||= MixPage.config.member_actions.each_with_object({}) do |action, all|
-      path = admin_path_for(action, object, _back: true)
-      all[action] = path if path
-    end
+  def edit_action
+    a_('.field_edit', icon('pencil-square'), href: edit_url)
   end
 
-  def sync_position(previous_node)
-    if (previous_position = previous_node&.position)
-      if previous_position > position
-        object.update! list_prev_id: previous_node.object.id
-      end
-    end
+  def edit_url
+    record.admin_presenter.allowed_url(:edit)
   end
 end

@@ -16,7 +16,7 @@ class PageFieldPolicy < ActionPolicy::Base
   end
 
   def new?
-    user.admin?
+    user.admin? && (model? || record.name.end_with?('s'))
   end
 
   def edit?
@@ -24,7 +24,7 @@ class PageFieldPolicy < ActionPolicy::Base
   end
 
   def delete?
-    edit?
+    edit? && (model? || MixPage.config.permanent_field_names.exclude?(record.name))
   end
 
   class Scope < Scope

@@ -1,59 +1,46 @@
-class PageTemplatePresenter < ActionView::Delegator
-  LINK_ICONS = {
-    edit:   'fa fa-edit',
-    create: 'fa fa-plus-square-o'
-  }
-  TITLE_OPTIONS = %i(weight only_text)
+# frozen_string_literal: true
+
+class PageTemplatePresenter < ActivePresenter::Base
+  delegate :title, to: :record
 
   def dom_class
-    super(object)
+    ['page']
   end
 
   def html_options
-    { class: [dom_class] }
+    { class: dom_class }
   end
 
   def render(**options)
     options = html_options.with_indifferent_access.union!(options)
-    if block_given?
-      div_(**options.except(*TITLE_OPTIONS)) {[
-        pretty_title(**options.slice(*TITLE_OPTIONS)),
-        yield
-      ]}
-    else
-      pretty_title(**options)
-    end
-  end
-
-  def pretty_title(weight: 4, only_text: false, **options)
-    weight = 1 if weight < 1
-    weight = 5 if weight > 5
-    text = object.title
-    with_tag("h#{weight}", **options){[
-      span_{ text.presence || pretty_blank },
-      (pretty_actions unless only_text),
+    div_(options) {[
+      div_('.page_actions', [
+        edit_action,
+        (ascii :space if can_update?),
+        title.presence || pretty_blank,
+      ]),
+      yield,
     ]}
   end
 
   def pretty_blank
-    t('page_template.edit', model: object.model_name.human) if member_actions[:edit]
+    t('page_template.edit', model: record.class.admin_label) if can_update?
   end
 
-  def pretty_actions(tag = :span)
-    with_tag(tag, '.page_template_actions', if: member_actions.any?) do
-      member_actions.map do |action, path|
-        title = t("page_template.#{action}", model: object.model_name.human)
-        a_(class: "#{action}_#{dom_class}", href: path, title: title) do
-          i_(class: LINK_ICONS[action])
-        end
-      end
+  def can_update?
+    return @edit_url if defined? @edit_url
+    @edit_url = edit_url
+  end
+
+  def edit_action
+    return unless can_update?
+    tooltip = t('page_template.edit', model: record.class.admin_label)
+    a_('.page_edit', href: edit_url, title: tooltip) do
+      icon('pencil-square')
     end
   end
 
-  def member_actions
-    @member_actions ||= {
-      edit:   admin_path_for(:edit, object, _back: true),
-      create: admin_path_for(:create, object, _back: true),
-    }.compact_blank
+  def edit_url
+    record.admin_presenter.allowed_url(:edit)
   end
 end

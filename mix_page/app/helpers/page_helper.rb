@@ -19,7 +19,7 @@ module PageHelper
   end
 
   def page_sidebar
-    Pages::SidebarPresenter.render
+    layout_links(:sidebar, divider: true)
   end
 
   def page_content
@@ -38,10 +38,10 @@ module PageHelper
   # page_link_presenters(name)
   # page_link_presenter(name)
   # ----
-  # layout_links(name, **list_options, &block)
+  # layout_links(name, item_options: {}, **list_options, &block)
   # layout_link(name, **item_options)
   # ----
-  # page_links(name, **list_options, &block)
+  # page_links(name, item_options: {}, **list_options, &block)
   # page_link(name, **item_options)
   #
   def method_missing(helper_name, ...)
@@ -49,8 +49,8 @@ module PageHelper
       type = TYPES_MAPPING[options.delete(:type)]
       if options.delete(:render)
         if options[:multi]
-          self.class.define_method(helper_name) do |name, **list_options, &block|
-            page_presenter(name, type, **options).render(**list_options, &block)
+          self.class.define_method(helper_name) do |name, **multi_options, &block|
+            page_presenter(name, type, **options).render(**multi_options, &block)
           end
         else
           self.class.define_method(helper_name) do |name, **item_options|

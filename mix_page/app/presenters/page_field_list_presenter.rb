@@ -1,99 +1,52 @@
-class PageFieldListPresenter < ActionView::Delegator[:@page]
-  delegate :name, to: 'list.first.object'
+# frozen_string_literal: true
 
-  def after_initialize
-    list.each{ |presenter| presenter.list = self }
-  end
-
-  def list
-    @list ||= begin
-      nodes = super
-      list_sync_parents(nodes)
-      group_nodes = nodes.group_by(&:parent_name)
-      flat_nodes = []
-      first_nodes = group_nodes.delete(nil)
-      list_stack group_nodes, flat_nodes, first_nodes
-      flat_nodes
-    end
-  end
-
-  def types
-    @types ||= super.select{ |type| can?(:create, type) }
-  end
+class PageFieldListPresenter < ActivePresenter::List[:@page]
+  delegate :type, :name, to: 'list.first.record'
 
   def dom_class
-    ["presenters_#{name}", self.class.name.full_underscore.delete_suffix('_presenter'), "page_field_list"].uniq
-  end
-
-  def html_list_options
-    list.select(&:editable?).any? ? { class: ['js_page_field_list'] } : {}
+    [ 'field_list',
+      "field_#{name.full_underscore}_list",
+      "field_#{type.demodulize.underscore}_list",
+    ]
   end
 
   def html_options
     { class: dom_class }
   end
 
-  def render(list_options = {}, item_options = {})
-    list_options = html_options.with_indifferent_access.union!(html_list_options).union!(list_options)
+  def list_options
+    list.any?(&:can_update?) ? { class: ['js_page_field_list'] } : {}
+  end
+
+  def render(item_options: {}, divider: false, **options)
+    options = html_options.with_indifferent_access.union!(list_options).union! options
     if block_given?
-      yield(list, list_options, pretty_actions)
+      yield(list, options, new_action)
     else
-      div_(**list_options) {[
-        list.map do |presenter|
-          div_(**presenter.html_list_options) do
-            presenter.render(**item_options)
+      ul_(options) {[
+        li_('.menu_divider', if: divider),
+        list.map.with_index(1) do |presenter, i|
+          li_(presenter.item_options) do
+            presenter.render(**item_options, i: i)
           end
         end,
-        pretty_actions
+        li_(if: can_create?){ new_action },
       ]}
     end
   end
 
-  def pretty_actions
-    div_('.dropup.page_field_list_actions', if: types.any?) {[
-      button_('.btn.btn-default.btn-xs.dropdown-toggle', type: 'button', data: { toggle: 'dropdown' }, aria: { haspopup: true, expanded: false }) {[
-        i_(class: 'fa fa-plus'),
-        span_('.hidden-xs', t('page_fields.create')),
-      ]},
-      ul_('.dropdown-menu') do
-        types.map do |type|
-          li_(".new_page_field.new_#{type.full_underscore}") do
-            a_(href: field_path, data: { method: :post, params: { page_field: { type: type, name: name, page_id: page_id } } }) do
-              type.to_const.model_name.human
-            end
-          end
-        end
-      end
-    ]}
+  def can_create?
+    can?(:new, type) && name.end_with?('s')
   end
 
-  def field_path
-    @field_path ||= page_field_path(uuid: @page.uuid)
-  end
-
-  private
-
-  def list_sync_parents(nodes)
-    names_mapping = nodes.each_with_object({}){ |n, names| names[n.node_name] = n }
-    nodes.each do |node|
-      if node.node_name
-        node.parent_name = node.viable_parent_names.find{ |name| names_mapping[name] }
-        node.parent_node = names_mapping[node.parent_name]
-      end
-      if node.parent_node&.id != node.parent_id
-        node.object.update! parent: node.parent_node&.object
-      end
-    end
-  end
-
-  def list_stack(group_nodes, flat_nodes, nodes, level = 0)
-    nodes.map do |node|
-      next_nodes = group_nodes[node.node_name] || []
-      node.level = level
-      node.sync_position(flat_nodes.last)
-      flat_nodes << node
-      node.children_count += list_stack(group_nodes, flat_nodes, next_nodes, level + 1)
-    end
-    nodes.size + nodes.sum(&:children_count)
+  def new_action
+    return unless can_create?
+    a_ '.field_new', icon('plus-circle'),
+      title: t('page_fields.new'),
+      href: MixPage::Routes.new_page_field_path(uuid: @page.uuid),
+      remote: true,
+      visit: true,
+      method: 'post',
+      params: { page_field: { type: type, name: name } }
   end
 end

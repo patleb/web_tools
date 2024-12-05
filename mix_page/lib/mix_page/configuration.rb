@@ -9,8 +9,8 @@ module MixPage
     attr_writer   :available_templates
     attr_writer   :available_field_types
     attr_writer   :available_field_names
+    attr_writer   :permanent_field_names
     attr_writer   :available_fieldables
-    attr_writer   :member_actions
     attr_writer   :max_image_size
     attr_accessor :skip_sidebar
     attr_accessor :skip_content
@@ -51,14 +51,17 @@ module MixPage
       }
     end
 
+    def permanent_field_names
+      @permanent_field_names ||= Set.new(%i(
+        sidebar
+        content
+      ))
+    end
+
     def available_fieldables
       @available_fieldables ||= {
         'PageTemplate' => 0
       }
-    end
-
-    def member_actions
-      @member_actions ||= %i(edit delete)
     end
 
     def max_image_size

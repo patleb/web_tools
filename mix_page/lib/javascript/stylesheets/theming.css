@@ -1,0 +1,12 @@
+.pages_layout {
+  .page_actions,
+  .field_actions,
+  .field {
+    @apply flex;
+  }
+
+  .page_edit,
+  .field_edit {
+    @apply self-center;
+  }
+}
