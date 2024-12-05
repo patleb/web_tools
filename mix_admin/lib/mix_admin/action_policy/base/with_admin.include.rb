@@ -18,17 +18,14 @@ module ActionPolicy::Base::WithAdmin
   def new?
     false
   end
-  alias_method :create?, :new?
 
   def edit?
     false
   end
-  alias_method :update?, :edit?
 
   def delete?
     false
   end
-  alias_method :destroy?, :delete?
 
   def trash?
     return false unless delete?
