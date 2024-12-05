@@ -5,12 +5,6 @@ module PageFields
     # TODO sanitize html
     before_validation :create_or_purge_images, on: :update
 
-    with_options on: :update, unless: :list_changed? do
-      I18n.available_locales.each do |locale|
-        validates "title_#{locale}", length: { maximum: 120 }
-      end
-    end
-
     I18n.available_locales.each do |locale|
       before_validation do
         if send("text_#{locale}_changed?") && send("text_#{locale}")&.html_blank?
