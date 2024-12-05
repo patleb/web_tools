@@ -21,8 +21,8 @@ html {
   }
   #alert,
   #notice,
-  #js_error,
-  #js_info {
+  #js_alert,
+  #js_notice {
     @apply modal-toggle;
 
     &:checked ~ .alert {
