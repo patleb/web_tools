@@ -20,7 +20,9 @@ html {
     }
   }
   #alert,
-  #notice {
+  #notice,
+  #js_error,
+  #js_info {
     @apply modal-toggle;
 
     &:checked ~ .alert {

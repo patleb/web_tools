@@ -1,3 +1,4 @@
 tailwind:
   - '@@ext_rails/app/helpers/**/*.rb'
   - '@@ext_rails/app/views/**/*.html.{erb,ruby}'
+  - '@@ext_rails/lib/javascript/concepts/**/*.coffee'

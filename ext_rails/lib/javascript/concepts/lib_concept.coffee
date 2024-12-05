@@ -6,7 +6,7 @@ class Js.LibConcept
     Device.RESIZE_X, document, @clear_drawer_toggle
 
     'change', '#alert, #notice', (event, target) ->
-      @clear_alert(target)
+      @clear_flash(target)
   ]
 
   ready: ->
@@ -14,9 +14,8 @@ class Js.LibConcept
     @clear_notice()
 
   leave: ->
-    if @notice()
-      clearTimeout(@clear_notice_timeout)
-      @clear_alert(@notice())
+    clearTimeout(@clear_notice_timeout)
+    @clear_flash(@notice())
 
   clear_drawer_toggle: ->
     if Device.breakpoints_was.lg isnt Device.breakpoints.lg and Device.breakpoints.lg
@@ -24,16 +23,13 @@ class Js.LibConcept
 
   clear_notice: ->
     if @notice()
-      text_size = @notice().nextSibling.firstChild.innerHTML.length || 25
-      timeout = text_size * 100
-      timeout = 2500 if timeout < 2500
-      timeout = 7500 if timeout > 7500
+      timeout = Flash.timeout_for(@notice().nextSibling.firstChild.innerHTML)
       @clear_notice_timeout = setTimeout(=>
-        @clear_alert(@notice())
+        @clear_flash(@notice())
       , timeout)
 
-  clear_alert: (alert) ->
-    alert?.setAttribute('checked', '')
+  clear_flash: (target) ->
+    target?.setAttribute('checked', '')
 
   adjust_autofocus: ->
     Rails.find('[autofocus]:not([type="email"],[type="number"])')?.cursor_end(true)
