@@ -13,8 +13,8 @@ class Js.AdminConcept
     export_toggles: -> Rails.$('.js_export_toggles')
     query_bar: -> Rails.find('.js_query_bar')
     search: -> Rails.find('.js_search')
-    action: -> Rails.find('.js_action').getAttribute('data-name')
-    model: -> Rails.find('.js_model')?.getAttribute('data-name')
+    action: -> Rails.find('.js_action').data('name')
+    model: -> Rails.find('.js_model')?.data('name')
 
   document_on: -> [
     Device.RESIZE_Y, document, @toggle_scoll_menu
@@ -85,7 +85,7 @@ class Js.AdminConcept
           when '}'     then { reopen: true, result: "|#{token}}" }
           when '|' # do nothing
           else " {#{token}}"
-      , token: target.getAttribute('data-field'))
+      , token: target.data('field'))
   ]
 
   ready: ->
