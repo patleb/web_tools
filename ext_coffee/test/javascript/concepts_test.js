@@ -2,7 +2,7 @@ import './spec_helper'
 
 describe('Js.Concepts', () => {
   beforeAll(() => {
-    dom.setup_document(fixture.html('concepts', { root: 'ext_coffee/test/fixtures/files/js' }))
+    dom.setup_document(fixture.html('concepts', { root: 'ext_coffee/test/fixtures/files' }))
     Js.Concepts.initialize({ modules: ['Test'], concepts: ['Test.SimpleConcept'] })
   })
 

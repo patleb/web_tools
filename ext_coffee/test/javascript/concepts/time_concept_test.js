@@ -1,5 +1,5 @@
 import concepts from './spec_helper'
-import rails from '../../rails_ujs/spec_helper'
+import rails from '../rails_ujs/spec_helper'
 
 describe('Js.TimeConcept', () => {
   concepts.with_page('time')

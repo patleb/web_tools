@@ -1,3 +1,1 @@
-import '@@lib/ext_coffee/core_ext/all'
-import '@@lib/ext_coffee/js/all'
-import '@@lib/ext_coffee/sm/all'
+import '@@test/ext_coffee/all'

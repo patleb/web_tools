@@ -1,6 +1,5 @@
-import '@@lib/ext_coffee/core_ext/all'
-import '@@lib/ext_coffee/js/all'
-import '@@test/ext_coffee/fixtures/files/js/concepts'
+import '@@test/ext_coffee/all'
+import '@@test/ext_coffee/fixtures/files/concepts'
 
 const is_type = (object, type) => {
   return object && object.is_a && object.is_a(type)

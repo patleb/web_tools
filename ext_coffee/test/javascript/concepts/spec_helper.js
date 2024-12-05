@@ -1,16 +1,14 @@
-import '@@lib/ext_coffee/core_ext/all'
-import '@@lib/ext_coffee/js/all'
-import '@@lib/ext_coffee/concepts/all'
-import '@@test/ext_coffee/fixtures/files/concepts/js/component/banner_element'
-import '@@test/ext_coffee/fixtures/files/concepts/js/component/card_element'
-import '@@test/ext_coffee/fixtures/files/concepts/js/component/time_element'
+import '@@test/ext_coffee/all'
+import '@@test/ext_coffee/fixtures/files/concepts/component/banner_element'
+import '@@test/ext_coffee/fixtures/files/concepts/component/card_element'
+import '@@test/ext_coffee/fixtures/files/concepts/component/time_element'
 
 Js.Concepts.initialize({ modules: 'Js' })
 
 const concepts = {
   with_page: (name, before = () => {}) => {
     beforeAll(async () => {
-      fixture.set_root('ext_coffee/test/fixtures/files/concepts/js')
+      fixture.set_root('ext_coffee/test/fixtures/files/concepts')
       before()
       concepts.load_document(name)
       await tick()
