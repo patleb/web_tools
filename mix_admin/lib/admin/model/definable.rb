@@ -58,9 +58,9 @@ module Admin::Model::Definable
     raise "can't have nested section definitions" if @section
     name = name.to_sym
     @section = (@sections ||= {})[name] ||= begin
-      klass = (klass_name = "#{self.name}::#{name.to_s.camelize}Section").to_const
-      klass ||= context_class(self.klass.superclass, name).to_const
-      klass ||= context_class(self.klass.base_class, name).to_const
+      klass = (klass_name = section_class_name(name)).to_const
+      klass ||= context_class(self.klass.superclass, name)
+      klass ||= context_class(self.klass.base_class, name)
       klass ||= section_class(name)
       create_section_instance(name, klass, klass_name)
     end
@@ -82,9 +82,9 @@ module Admin::Model::Definable
     name = name.to_sym
     if @section
       @group = ((@groups ||= {})[@section.name] ||= {})[name] ||= begin
-        klass = (klass_name = "#{@section.class.name}::#{name.to_s.camelize}Group").to_const
-        klass ||= context_class(self.klass.superclass, @section.name, group: name).to_const
-        klass ||= context_class(self.klass.base_class, @section.name, group: name).to_const
+        klass = (klass_name = group_class_name(name)).to_const
+        klass ||= context_class(self.klass.superclass, @section.name, group: name)
+        klass ||= context_class(self.klass.base_class, @section.name, group: name)
         klass ||= group_class(name)
         create_config_instance(@groups, :groups, name, klass, klass_name)
       end
@@ -125,17 +125,25 @@ module Admin::Model::Definable
     else
       if @section
         if @group
+          type = options[:type]
           weight = options[:weight] || @weight
           editable = options[:editable]
           if (through = (options[:through] || @through)&.to_sym)
             as, name = name, "#{through}_#{name}".to_sym
           end
           @field = ((@fields ||= {})[@section.name] ||= {})[name] ||= begin
-            klass = (klass_name = "#{@section.class.name}::#{name.to_s.camelize}Field").to_const
-            klass ||= context_class(self.klass.superclass, @section.name, field: name).to_const
-            klass ||= context_class(self.klass.base_class, @section.name, field: name).to_const
-            klass ||= field_class(through || name, options[:type])
+            klass = (klass_name = field_class_name(name)).to_const
+            klass ||= context_class(self.klass.superclass, @section.name, field: name)
+            klass ||= context_class(self.klass.base_class, @section.name, field: name)
+            klass ||= field_class(through || name, type)
             create_config_instance(@fields, :fields, name, klass, klass_name)
+          end
+          if type && @field.type != as_type(type)
+            @field = @fields[@section.name][name] = begin
+              klass_name = field_class_name(name)
+              klass = field_class(through || name, type)
+              create_config_instance(@fields, :fields, name, klass, klass_name)
+            end
           end
           @field.weight   = weight     if weight
           @field.group    = @group     if @grouped || @field.group.nil? || @group.name != :default
@@ -228,12 +236,24 @@ module Admin::Model::Definable
     config
   end
 
+  def section_class_name(name)
+    "#{self.name}::#{name.to_s.camelize}Section"
+  end
+
   def section_class(name)
     name == :base ? Admin::Section : Admin::Sections.const_get(name.to_s.camelize)
   end
 
+  def group_class_name(name)
+    "#{@section.class.name}::#{name.to_s.camelize}Group"
+  end
+
   def group_class(_name)
     Admin::Group
+  end
+
+  def field_class_name(name)
+    "#{@section.class.name}::#{name.to_s.camelize}Field"
   end
 
   def field_class(name, type = nil)
@@ -243,14 +263,17 @@ module Admin::Model::Definable
       end
       type = property.type
     end
-    type = MixAdmin.config.field_aliases[type] || type || :string
-    Admin::Fields.const_get(type.to_s.camelize)
+    Admin::Fields.const_get(as_type(type).to_s.camelize)
   end
 
   def context_class(presenter, section, group: nil, field: nil)
     nodes = { 'Presenter' => presenter.name, 'Section' => section, 'Group' => group, 'Field' => field }.compact
     nodes.reduce('Admin') do |class_name, (type, name)|
       name ? "#{class_name}::#{name.to_s.camelize}#{type}" : class_name
-    end
+    end.to_const
+  end
+
+  def as_type(type)
+    MixAdmin.config.field_aliases[type] || type || :string
   end
 end
