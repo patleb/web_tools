@@ -91,10 +91,10 @@ HTMLElement.define_methods
     siblings.push(sibling) while sibling = sibling.nextElementSibling
     siblings
 
-  previous: ->
+  prev: ->
     this.previousElementSibling
 
-  previous_siblings: ->
+  prev_siblings: ->
     sibling = this
     siblings = []
     siblings.push(sibling) while sibling = sibling.previousElementSibling

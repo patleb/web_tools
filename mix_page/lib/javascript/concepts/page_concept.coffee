@@ -16,7 +16,7 @@ class Js.PageConcept
         item = event.detail.item
         current_id = item.data('id')
         unless (sibling = item.next()) and (list_next_id = sibling.data('id'))
-          unless (sibling = item.previous()) and (list_prev_id = sibling.data('id'))
+          unless (sibling = item.prev()) and (list_prev_id = sibling.data('id'))
             return
         Rails.ajax({
           type: 'POST'
