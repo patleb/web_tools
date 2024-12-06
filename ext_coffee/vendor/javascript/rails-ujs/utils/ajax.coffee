@@ -87,10 +87,9 @@ create_xhr = (options, done) ->
   xhr.setRequestHeader('Accept', options.accept)
   # Set Content-Type only when sending a string
   # Sending FormData will automatically set Content-Type to multipart/form-data
-  switch typeof options.data
-    when 'string'
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
-    when 'object'
+  if typeof options.data is 'string'
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
+  else if options.data?.is_a Object
       xhr.setRequestHeader('Content-Type', 'application/json')
       options.data = JSON.stringify(options.data)
   unless options.crossDomain
