@@ -52,6 +52,9 @@ HTMLElement.define_methods
   classes: ->
     Array.wrap(@classList)
 
+  has_class: (token) ->
+    @classList.contains(token)
+
   add_class: (tokens...) ->
     @classList.add(tokens...)
     this
