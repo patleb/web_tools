@@ -67,7 +67,10 @@ HTMLElement.define_methods
     @classList.replace(old_token, new_token)
 
   toggle_class: (token, force = null) ->
-    @classList.toggle(token, force)
+    if force is null
+      @classList.toggle(token)
+    else
+      @classList.toggle(token, force)
 
   $: (selector) ->
     Array.wrap(@querySelectorAll(selector))
