@@ -177,8 +177,9 @@ module ActionView::Helpers::TagHelper
     before = options.delete(:prepend){ ''.html_safe }
     after  = options.delete(:append){ ''.html_safe }
     result = tag ? content_tag(tag, content, options, (sanitized ? false : escape)) : h_(content)
+    result = before + result + after
     result = [result] * times if times
-    before + result + after
+    result
   end
 
   def merge_classes(options, classes)
