@@ -211,7 +211,7 @@ module ActionView::Helpers::TagHelper
     when Array, Set
       classes
     else
-      classes.try(:split) || []
+      classes.to_s.split
     end
   end
 
