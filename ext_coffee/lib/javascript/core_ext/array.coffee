@@ -118,8 +118,11 @@ Array.define_methods
   has_index: (index) ->
     0 <= index < @length
 
-  clear: ->
-    @length = 0
+  clear: (force = false) ->
+    if force
+      @splice(0)
+    else
+      @length = 0
 
   index: (item, start_index = 0) ->
     if (index = @indexOf(item, start_index)) isnt -1
