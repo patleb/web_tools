@@ -23,16 +23,10 @@ window.Js =
       hex
 
   selected_text: ->
-    text =
-      if window.getSelection
-        window.getSelection()
-      else if document.getSelection
-        document.getSelection()
-      else if document.selection
-        document.selection.createRange().text
-      else
-    text ?= ''
-    text.toString()
+    Js.selection()?.toString() || ''
+
+  selection: ->
+    window.getSelection?() || document.getSelection?()
 
   is_submit_key: (event) ->
     event.which is 13 and not (event.target.matches('textarea') or event.target.isContentEditable)
