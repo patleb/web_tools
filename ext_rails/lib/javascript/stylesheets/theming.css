@@ -71,7 +71,7 @@ a[disabled], button[disabled],
 }
 
 .textarea {
-  @apply textarea-sm;
+  @apply textarea-sm leading-normal;
 }
 
 .card {
