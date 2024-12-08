@@ -52,14 +52,14 @@ class AdminController::DeleteTest < ActionDispatch::IntegrationTest
     )
   end
 
-  test 'redirect to :root_path on empty blank bulk' do
+  test 'redirect back on empty blank bulk' do
     get "/model/#{model_name}/_bulk/delete"
-    assert_redirected_to root_path
+    assert_redirected_to index_path
   end
 
-  test 'redirect to :root_path on cancel' do
+  test 'redirect back on cancel' do
     post "/model/#{model_name}/2/delete", params: { _cancel: true }
-    assert_redirected_to root_path
+    assert_redirected_to index_path
     assert model_klass.exists? id: 2
   end
 
@@ -71,26 +71,26 @@ class AdminController::DeleteTest < ActionDispatch::IntegrationTest
 
   test 'POST :delete with restrictions' do
     post "/model/#{model_name}/1/delete", params: { _delete: true }
-    assert_redirected_to root_path
+    assert_redirected_to index_path
     assert model_klass.exists? id: 1
   end
 
   test 'POST :delete trash' do
     post "/model/#{model_name}/2/delete", params: { _trash: true }
-    assert_redirected_to root_path
+    assert_redirected_to index_path
     refute model_klass.exists? id: 2
     assert model_klass.with_discarded.exists? id: 2
   end
 
   test 'POST bulk :delete' do
     post "/model/#{model_name}/_bulk/delete", params: { _delete: true, ids: [2, 3] }
-    assert_redirected_to root_path
+    assert_redirected_to index_path
     refute model_klass.exists? id: [2, 3]
   end
 
   test 'POST bulk :delete with restrictions' do
     post "/model/#{model_name}/_bulk/delete", params: { _delete: true, ids: [1, 2] }
-    assert_redirected_to root_path
+    assert_redirected_to index_path
     assert model_klass.exists? id: 1
     refute model_klass.exists? id: 2
   end
