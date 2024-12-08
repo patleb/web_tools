@@ -14,6 +14,17 @@ en:
   link:
     admin: Admin
     app: Application
+  markdown_toolbar:
+    fullscreen: Full Screen
+    undo: Undo
+    redo: Redo
+    bold: Bold
+    italic: Italic
+    blockquote: Blockquote
+    code: Code
+    link: Link
+    bulletlist: Bullet List
+    multimedia: Multimedia
   admin:
     js:
       is_present: Is present

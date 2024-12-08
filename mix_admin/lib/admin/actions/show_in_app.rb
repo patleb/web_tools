@@ -12,7 +12,7 @@ module Admin
       end
 
       def self.icon
-        'escape'
+        'box-arrow-up-left'
       end
 
       def section_name

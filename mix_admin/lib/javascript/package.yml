@@ -2,3 +2,4 @@ tailwind:
   - '@@mix_admin/app/helpers/**/*.rb'
   - '@@mix_admin/app/views/**/*.html.{erb,ruby}'
   - '@@mix_admin/lib/admin/**/*.rb'
+  - '@@mix_admin/lib/javascript/concepts/**/*.coffee'

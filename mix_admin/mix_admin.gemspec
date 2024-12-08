@@ -18,4 +18,5 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'mix_user', version
+  s.add_dependency 'redcarpet'
 end

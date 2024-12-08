@@ -46,7 +46,7 @@ class Js.AdminConcept
   persist_scroll_x: ->
     if @model() and @bulk_form()
       scroll_x = { left: @bulk_form().scrollLeft, width: @bulk_form().clientWidth }
-      stored_scroll_x = @store('scroll_x') || {}
+      stored_scroll_x = @store('scroll_x') ? {}
       @store('scroll_x', stored_scroll_x.merge("#{@model()}_#{@action()}": scroll_x))
 
   toggle_bulk_form: ->

@@ -10,6 +10,16 @@
       }
     }
   }
+  .js_markdown_toolbar {
+    @apply flex gap-0.5 pb-0.5;
+
+    button.active {
+      @apply btn-primary;
+      transform: scale(var(--btn-focus-scale, 0.95));
+      transition: none !important;
+      animation-duration: 0s !important;
+    }
+  }
   .buttons {
     @apply flex flex-col border-t border-neutral sm:grid sm-1:w-full sm:grid-cols-3 lg:grid-cols-4 gap-y-0.5 p-5;
 
