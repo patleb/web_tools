@@ -197,7 +197,7 @@ module Admin::Model::Definable
       klass_name.clear_const
       klass_name = klass_name.demodulize
       klass = Class.new(klass)
-      @section.class.send(:remove_const, klass_name) if @section.class.const_defined? klass_name
+      @section.class.send(:remove_const, klass_name) if @section.class.const_defined? klass_name, false
       @section.class.const_set(klass_name, klass)
     end
     config = klass.new(name: name, model: self, section: @section, section_was: @section)
