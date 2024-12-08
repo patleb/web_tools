@@ -6,15 +6,18 @@ module IconHelper
   SVG_OPTIONS = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', height: 16, width: 16, viewBox: '0 0 16 16', 'aria-hidden': true }
 
   def icon_(...)
-     icon(...) + ' '.html_safe
+    html = icon(...)
+    html << ' '.html_safe if html
   end
 
   def _icon(...)
-    ' '.html_safe + icon(...)
+    html = icon(...)
+    ' '.html_safe << html if html
   end
 
   def _icon_(...)
-    ' '.html_safe + icon(...) + ' '.html_safe
+    html = icon(...)
+    ' '.html_safe << html << ' '.html_safe if html
   end
 
   # https://icons.getbootstrap.com/
@@ -38,15 +41,18 @@ module IconHelper
   end
 
   def ascii_(...)
-    ascii(...) + ' '.html_safe
+    html = ascii(...)
+    html << ' '.html_safe if html
   end
 
   def _ascii(...)
-    ' '.html_safe + ascii(...)
+    html = ascii(...)
+    ' '.html_safe << html if html
   end
 
   def _ascii_(...)
-    ' '.html_safe + ascii(...) + ' '.html_safe
+    html = ascii(...)
+    ' '.html_safe << html << ' '.html_safe if html
   end
 
   def ascii(name, times: nil)
