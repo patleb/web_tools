@@ -12,6 +12,12 @@ Admin::Model.class_eval do
   end
 end
 
+AdminController.class_eval do
+  def index_path
+    MixAdmin::Routes.index_url(model_name: @model.klass.name.to_class_param)
+  end
+end
+
 module AdminControllerContext
   extend ActiveSupport::Concern
 
@@ -25,7 +31,14 @@ module AdminControllerContext
     let(:model_denied){ false }
     let(:presenter_denied){ false }
 
-    delegate :root_path, to: :controller
+    delegate :root_path, :index_path, to: :controller
+
+    around do |test|
+      MixAdmin.with do |config|
+        config.root_model_name = 'User'
+        test.call
+      end
+    end
   end
 
   private

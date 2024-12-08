@@ -65,7 +65,7 @@ class AdminController::DeleteTest < ActionDispatch::IntegrationTest
 
   test 'POST :delete' do
     post "/model/#{model_name}/2/delete", params: { _delete: true }
-    assert_redirected_to root_path
+    assert_redirected_to index_path
     refute model_klass.exists? id: 2
   end
 

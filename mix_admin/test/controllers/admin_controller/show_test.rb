@@ -14,9 +14,9 @@ class AdminController::ShowTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
   end
 
-  test 'redirect to :root_path on bad id' do
+  test 'redirect back on bad id' do
     get "/model/#{model_name}/-1"
-    assert_redirected_to root_path
+    assert_redirected_to index_path
   end
 
   context 'denied model' do
@@ -31,9 +31,9 @@ class AdminController::ShowTest < ActionDispatch::IntegrationTest
   context 'denied presenter' do
     let(:presenter_denied){ true }
 
-    test 'redirect to :root_path on denied presenter' do
+    test 'redirect back on denied presenter' do
       get "/model/#{model_name}/1"
-      assert_redirected_to root_path
+      assert_redirected_to index_path
     end
   end
 
