@@ -153,14 +153,14 @@ HTMLElement.define_methods
       move = 0 if move is true
       move = 0 if move < 0
       @setSelectionRange?(move, move)
-    @selectionStart || 0
+    @selectionStart ? 0
 
   cursor_end: (move = false) ->
     if move isnt false
       move = @value.length * 2 if move is true
       move = 0 if move < 0
       @setSelectionRange?(move, move)
-    @selectionEnd || 0
+    @selectionEnd ? 0
 
   valid: ->
     return true if (form = @closest('form')) and Rails.get(form, 'ujs:formnovalidate-button')

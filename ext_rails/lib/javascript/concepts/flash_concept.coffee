@@ -13,7 +13,7 @@ class Js.FlashConcept
     @clear_notice()
 
   timeout_for: (message) ->
-    timeout = (message.length || 25) * 100
+    timeout = (message.length or 25) * 100
     timeout = 2500 if timeout < 2500
     timeout = 7500 if timeout > 7500
     timeout
