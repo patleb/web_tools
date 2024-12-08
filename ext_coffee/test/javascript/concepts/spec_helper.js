@@ -8,8 +8,14 @@ Js.Concepts.initialize({ modules: 'Js' })
 const concepts = {
   with_page: (name, before = () => {}) => {
     beforeAll(async () => {
-      fixture.set_root('ext_coffee/test/fixtures/files/concepts')
-      before()
+      if (before === false) {
+        // do nothing
+      } else if (typeof before === 'string') {
+        fixture.set_root(before)
+      } else {
+        fixture.set_root('ext_coffee/test/fixtures/files/concepts')
+        before()
+      }
       concepts.load_document(name)
       await tick()
     })
