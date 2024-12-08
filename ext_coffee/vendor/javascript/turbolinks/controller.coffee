@@ -1,5 +1,5 @@
 class Turbolinks.Controller
-  INPUTS = 'select[name]:not([name=""]):not([disabled]),input[name]:not([name=""]):not([type="hidden"]):not([disabled])'
+  INPUTS = 'select[name]:not([name=""]):not([disabled]), input[name]:not([name=""]):not([type="hidden"]):not([disabled]), textarea[name]:not([name=""]):not([type="hidden"]):not([disabled])'
 
   @cache_size = 10
   @progress_bar_delay = 500
@@ -110,6 +110,8 @@ class Turbolinks.Controller
             option.toggleAttribute('selected', option.selected)
         when 'radio', 'checkbox'
           input.toggleAttribute('checked', input.checked)
+        when 'textarea'
+          input.innerHTML = input.value
         when 'password'
           # do nothing
         else
