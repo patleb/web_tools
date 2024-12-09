@@ -132,11 +132,10 @@ class Js.Admin.MarkdownConcept
     end_i ?= lines.length - 1
     [textarea, lines, start_i, end_i]
 
-  # NOTE 'textarea.value[start..end]' compiles to 'textarea.value.slice(start, +end + 1 || 9e9)'
   selection_text: (target) ->
     textarea = @textarea(target)
     [start, end] = @start_end(textarea)
-    [textarea, textarea.value.slice(start, end), start, end]
+    [textarea, textarea.value[start..(end - 1)], start, end]
 
   start_end: (textarea) ->
     [textarea.cursor_start(), textarea.cursor_end()]
