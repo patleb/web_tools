@@ -1,4 +1,6 @@
 module Admin::Model::Definable
+  SECTION_METHODS = [:include_fields, :include_fields!, :exclude_fields, :exclude_fields!, :fields_of_type, :fields_of_type!]
+
   attr_reader :sections, :groups, :fields
 
   ([:Base] + Admin::Sections.constants.except(:New)).each do |section|
@@ -7,6 +9,8 @@ module Admin::Model::Definable
       section(section_name, &block)
     end
   end
+
+  delegate *SECTION_METHODS, to: :base
 
   def new(**locals, &block)
     if block
