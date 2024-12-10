@@ -7,7 +7,7 @@ class CreateActiveStorageTables < ActiveRecord::Migration[7.1]
       t.jsonb    :metadata,     null: false, default: {}
       t.string   :service_name, null: false
       t.bigint   :byte_size,    null: false
-      t.string   :checksum,     null: false
+      t.string   :checksum
       t.datetime :created_at,   null: false
 
       t.index [ :key ], unique: true
