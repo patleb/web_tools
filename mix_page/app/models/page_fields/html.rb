@@ -1,9 +1,14 @@
 module PageFields
   class Html < Text
     has_many_attached :images
+    has_one :markdown, foreign_key: :page_field_id, class_name: 'PageFieldMarkdown'
+
+    accepts_nested_attributes_for :markdown, update_only: true
 
     # TODO sanitize html
     before_validation :create_or_purge_images, on: :update
+
+    after_create :create_markdown!
 
     I18n.available_locales.each do |locale|
       before_validation do

@@ -21,6 +21,7 @@ module MixPage
         config.included_models += %w(
           PageTemplate
           PageField
+          PageFieldMarkdown
           PageFields::%
         )
       end

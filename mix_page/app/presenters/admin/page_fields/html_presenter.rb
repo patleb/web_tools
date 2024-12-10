@@ -1,7 +1,7 @@
 module Admin
   module PageFields
-    class HtmlPresenter < TextPresenter
-      field :text, translated: true, type: :html
+    class HtmlPresenter < Admin::PageFieldPresenter
+      nests :markdown, as: :text, translated: true
     end
   end
 end
