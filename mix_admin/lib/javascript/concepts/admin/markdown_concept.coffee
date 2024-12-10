@@ -133,9 +133,11 @@ class Js.Admin.MarkdownConcept
     [textarea, lines, start_i, end_i]
 
   selection_text: (target) ->
+    text = ''
     textarea = @textarea(target)
     [start, end] = @start_end(textarea)
-    [textarea, textarea.value[start..(end - 1)], start, end]
+    text = textarea.value[start..(end - 1)] unless start is end
+    [textarea, text, start, end]
 
   start_end: (textarea) ->
     [textarea.cursor_start(), textarea.cursor_end()]
