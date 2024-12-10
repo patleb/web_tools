@@ -67,6 +67,7 @@ class Js.Admin.MarkdownConcept
     textarea.setRangeText(text, start, end)
     textarea.focus()
     textarea.cursor_start(start + text_size + 3)
+    Rails.fire(textarea, 'change')
 
   wrap_text: (target, token) ->
     [textarea, text, start, end] = @selection_text(target)

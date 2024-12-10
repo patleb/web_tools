@@ -15,7 +15,7 @@ module Admin
 
       def toolbar
         div_('.js_markdown_toolbar', toolbar_actions.map do |action, icon_name|
-          button_('.btn.btn-xs.btn-square', icon(icon_name),
+          button_('.btn.btn-xs.btn-square.btn-ghost', icon(icon_name),
             class: "js_#{action}", title: t(action, scope: 'markdown_toolbar'), type: 'button'
           )
         end)
