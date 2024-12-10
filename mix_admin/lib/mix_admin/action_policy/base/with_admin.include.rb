@@ -12,7 +12,7 @@ module ActionPolicy::Base::WithAdmin
   end
 
   def show_in_app?
-    (show? || edit?) && (model? || record.respond_to?(:to_url))
+    false
   end
 
   def new?

@@ -3,10 +3,6 @@ class UserPolicy < ActionPolicy::Base
     user.admin?
   end
 
-  def export?
-    false
-  end
-
   def show?
     logged_in? && (klass? || allowed_role? || user.has?(record))
   end
