@@ -10,15 +10,6 @@ module Admin
       delegate :foreign_key, :foreign_type, :polymorphic?, :list_parent?, :inverse_of, :nested_options, to: :property
       delegate :parse_input!, :parse_input, :parse_search, :format_export, :format_input, :value, to: :property_field, allow_nil: true
 
-      register_option :label do
-        if section.associations[through].size > 1 && as != property_model.primary_key.to_sym
-          label = "#{klass.human_attribute_name(through)}: #{__super__ :label}"
-        else
-          label = klass.human_attribute_name(through)
-        end
-        label.upcase_first.html_safe
-      end
-
       register_option :queryable do
         as if eager_load
       end
@@ -45,7 +36,8 @@ module Admin
       end
 
       def editable?
-        super && action.edit? && nested? && property_field
+        return false unless nested?
+        super && action.edit? && property_field
       end
 
       def type_css_class
@@ -62,12 +54,28 @@ module Admin
         url ? a_('.link.text-primary', text: value, href: url) : value
       end
 
+      def input_label
+        if section.associations[through].size > 1 && as != property_model.primary_key.to_sym
+          label = "#{klass.human_attribute_name(through)}: #{super}"
+        else
+          label = klass.human_attribute_name(through)
+        end
+        label.upcase_first.html_safe
+      end
+
+      def input_control
+        raise NotImplementedError unless nested?
+        property_field.input_control(**default_input_attributes)
+      end
+
       def input_name
-        nested? ? as : super
+        raise NotImplementedError unless nested?
+        as
       end
 
       def default_input_attributes
-        nested? ? super.merge!(through: through) : super
+        raise NotImplementedError unless nested?
+        property_field.default_input_attributes.merge!(through: through)
       end
 
       def property_field

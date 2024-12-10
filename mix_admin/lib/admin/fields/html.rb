@@ -3,16 +3,12 @@
 module Admin
   module Fields
     class Html < Text
-      register_option :input do
-        [toolbar, __super__(:input)]
+      def input_control(**attributes)
+        [toolbar, super(**attributes)]
       end
 
       def input_css_class
         super << 'js_markdown'
-      end
-
-      def parse_input!(params)
-
       end
 
       private

@@ -51,7 +51,7 @@ module Admin
     end
 
     register_option :label do
-      klass.human_attribute_name(column_name).upcase_first.html_safe
+      input_label
     end
 
     register_option :pretty_value do
@@ -96,7 +96,7 @@ module Admin
     end
 
     register_option :input do
-      input_ type: input_type, name: input_name, class: input_css_class, **input_attributes
+      input_control
     end
 
     register_option :input_attributes do
@@ -225,6 +225,14 @@ module Admin
       []
     end
 
+    def input_label
+      klass.human_attribute_name(column_name).upcase_first.html_safe
+    end
+
+    def input_control(**attributes)
+      input_ type: input_type, **input_attributes, **attributes
+    end
+
     def input_type
       :text
     end
@@ -244,7 +252,7 @@ module Admin
     end
 
     def default_input_attributes
-      { required: required?, value: input_value }
+      { name: input_name, class: input_css_class, value: input_value, required: required? }
     end
 
     def default_help

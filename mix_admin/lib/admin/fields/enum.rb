@@ -6,15 +6,6 @@ module Admin
         klass.respond_to?(:defined_enums) && klass.defined_enums.has_key?(property.name.to_s)
       end
 
-      register_option :input do
-        value = input_value
-        options = include_blank ? [option_(' ', value: '', selected: value.blank?)] : []
-        options += _enum.map do |label, option|
-          option_(label, value: option, selected: option == value)
-        end
-        select_ options, name: input_name, class: input_css_class, **input_attributes
-      end
-
       register_option :enum do
         klass.defined_enums[column_name.to_s]
       end
@@ -50,6 +41,15 @@ module Admin
 
       def format_value(value)
         i18n_value(value)
+      end
+
+      def input_control(**attributes)
+        value = input_value
+        options = include_blank ? [option_(' ', value: '', selected: value.blank?)] : []
+        options += _enum.map do |label, option|
+          option_(label, value: option, selected: option == value)
+        end
+        select_ options, **input_attributes, **attributes
       end
 
       def input_value

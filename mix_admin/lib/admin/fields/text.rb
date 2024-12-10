@@ -7,8 +7,8 @@ module Admin
         true
       end
 
-      register_option :input do
-        textarea_ name: input_name, class: input_css_class, **input_attributes
+      def input_control(**attributes)
+        textarea_ **input_attributes, **attributes
       end
 
       def input_css_class
