@@ -1,8 +1,10 @@
 .pages_layout {
-  .page_actions,
-  .field_actions,
+  .page,
   .field {
-    @apply flex;
+    .page_actions,
+    .field_actions {
+      @apply flex;
+    }
   }
 
   .page_edit,

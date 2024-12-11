@@ -5,7 +5,6 @@ module PageFields
       super **options do |options, actions|
         div_(options) {[
           actions,
-          (ascii :space if actions),
           record.text&.html_safe.presence || p_{ pretty_blank },
         ]}
       end
