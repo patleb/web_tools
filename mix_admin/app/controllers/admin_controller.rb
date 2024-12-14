@@ -135,6 +135,7 @@ class AdminController < LibController
 
   def on_save_success
     if params["_#{action_name}"]
+      @presenter.reload if @action.edit?
       flash.now[:notice] = admin_notice
       render action_name
     elsif params[:_save] then redirect_back notice: admin_notice
