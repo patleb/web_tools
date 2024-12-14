@@ -175,7 +175,7 @@ class Js.Admin.MarkdownConcept
     [textarea, text, start, end] = @selection_text(target)
     @remove_file_input(target)
     text ||= filename
-    text = "![#{text}](#{id})"
+    text = "![#{text}](blob:#{id})"
     textarea.setRangeText(text, start, end)
     textarea.focus()
     textarea.cursor_start(start + text.length)

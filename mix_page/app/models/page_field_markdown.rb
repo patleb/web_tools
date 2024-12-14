@@ -1,4 +1,6 @@
 class PageFieldMarkdown < LibMainRecord
+  BLOB_ID = /!\[[^\]]+\]\(blob:(\d+)\)/
+
   belongs_to :page_field
 
   json_translate text: :string
@@ -23,8 +25,17 @@ class PageFieldMarkdown < LibMainRecord
   def convert_to_html
     I18n.available_locales.each do |locale|
       attribute = "text_#{locale}"
-      page_field[attribute] = self.class.renderer.render(self[attribute] || '')
+      text = self[attribute] || ''
+      text = convert_blobs_to_urls(text)
+      page_field[attribute] = self.class.renderer.render(text)
     end
     page_field.save!
+  end
+
+  def convert_blobs_to_urls(text)
+    text.gsub(BLOB_ID) do |match|
+      blob = ActiveStorage::Blob.find($1)
+      match.sub(/blob:(\d+)/, blob.url)
+    end
   end
 end
