@@ -88,7 +88,7 @@ Rails.merge
 
 turbolinks_action = (element, data_type, submitable_form = false) ->
   if submitable_form
-    switch (action = element.getAttribute('data-visit') or 'advance')
+    switch (action = element.getAttribute('data-visit') or 'restore')
       when 'false' then return false
       when 'true'  then action = 'advance'
   else
@@ -102,5 +102,5 @@ turbolinks_started = ->
 
 turbolinks_visit = (response, xhr, url, action, error = false) ->
   Turbolinks.request_finished()
-  Turbolinks.clear_cache()
+  Turbolinks.clear_cache(true)
   Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') or url, action: action, html: response, error: error)

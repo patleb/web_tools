@@ -48,7 +48,7 @@ class Turbolinks.Controller
       else
         window.location = location
 
-  clear_cache: ->
+  clear_cache: (@cache_next = false) ->
     @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
 
   reload: (reason) ->
@@ -93,6 +93,7 @@ class Turbolinks.Controller
     @get_snapshot().is_cacheable()
 
   cache_snapshot: ->
+    return (@cache_next = false) if @cache_next
     if @should_cache_snapshot()
       unless @dispatch_before_cache().defaultPrevented
         @persist_inputs()

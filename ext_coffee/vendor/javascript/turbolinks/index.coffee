@@ -11,8 +11,8 @@ window.Turbolinks =
   visit: (location, options) ->
     Turbolinks.controller.visit(location, options)
 
-  clear_cache: ->
-    Turbolinks.controller.clear_cache()
+  clear_cache: (cache_next = false) ->
+    Turbolinks.controller.clear_cache(cache_next)
 
   request_started: ->
     Turbolinks.controller.request_started()
