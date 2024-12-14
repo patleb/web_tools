@@ -4,6 +4,8 @@ class Js.Admin.MarkdownConcept
   constants: ->
     TEXTAREA: '.js_markdown'
     TOOLBAR: '.js_markdown_toolbar'
+    FILE_INPUT: '.js_markdown_file'
+    MAX_FILE_SIZE: '.js_markdown_max_file_size'
 
   document_on: -> [
     'change', @TEXTAREA, (event, target) ->
@@ -42,10 +44,16 @@ class Js.Admin.MarkdownConcept
       @prepend_lines target, '- '
 
     'click', "#{@TOOLBAR} .js_multimedia", (event, target) ->
+      @select_file target
 
+    'change',            @FILE_INPUT, @compute_file_uid
+    'blob:uid:computed', @FILE_INPUT, @fetch_blob_id
+    'blob:id:not_found', @FILE_INPUT, @upload_file
+    'blob:id:found',     @FILE_INPUT, @link_image
   ]
 
   ready: ->
+    @max_file_size = Rails.find(@MAX_FILE_SIZE)?.data('value')?.to_i() ? 10000000
     Rails.$(@TEXTAREA).each (textarea) =>
       @get_history(textarea)
 
@@ -67,7 +75,7 @@ class Js.Admin.MarkdownConcept
     textarea.setRangeText(text, start, end)
     textarea.focus()
     textarea.cursor_start(start + text_size + 3)
-    Rails.fire(textarea, 'change')
+    Rails.fire textarea, 'change'
 
   wrap_text: (target, token) ->
     [textarea, text, start, end] = @selection_text(target)
@@ -83,7 +91,7 @@ class Js.Admin.MarkdownConcept
       textarea.setRangeText([token, token].join(''), start, end)
       textarea.focus()
       textarea.cursor_start(start + size)
-    Rails.fire(textarea, 'change')
+    Rails.fire textarea, 'change'
 
   push_history: (textarea) ->
     { push, undo, redo } = @get_history(textarea)
@@ -117,6 +125,62 @@ class Js.Admin.MarkdownConcept
       push[0] = textarea.set_value(value_was) if value_was?
     textarea.focus()
 
+  select_file: (target) ->
+    unless (file_input = target.find(@FILE_INPUT))
+      file_input = input$ @FILE_INPUT, type: 'file', accept: 'image/*', style: 'display:none'
+      target.appendChild(file_input)
+    file_input.click()
+
+  compute_file_uid: (event, target) ->
+    return unless (file = target.files[0])
+    return unless @valid file
+    @read(file)
+      .then (result) ->
+        result = new Uint8Array(result)
+        window.crypto.subtle.digest('SHA-256', result)
+      .then (result) ->
+        uid = [btoa(file.name), btoa(String.fromCharCode(new Uint8Array(result)...))].join(',')
+        Rails.fire target, 'blob:uid:computed', { file, uid }
+
+  fetch_blob_id: ({ detail: { file, uid } }, target) ->
+    Rails.ajax({
+      type: 'GET'
+      url: Routes.path_for('upload', { model_name: Js.AdminConcept.model(), blob: { uid } })
+      data_type: 'json'
+      success: (response) ->
+        if (id = response.blob.id)
+          Rails.fire target, 'blob:id:found', { id, filename: file.name }
+        else
+          Rails.fire target, 'blob:id:not_found', { file }
+      error: =>
+        @on_file_error(target)
+    })
+
+  upload_file: ({ detail: { file } }, target) ->
+    data = new FormData()
+    data.append('blob[filename]', file.name)
+    data.append('blob[data]', file)
+    Rails.ajax({
+      type: 'POST'
+      url: Routes.path_for('upload', { model_name: Js.AdminConcept.model() })
+      data
+      data_type: 'json'
+      success: (response) ->
+        Rails.fire target, 'blob:id:found', { id: response.blob.id, filename: file.name }
+      error: =>
+        @on_file_error(target)
+    })
+
+  link_image: ({ detail: { id, filename } }, target) ->
+    [textarea, text, start, end] = @selection_text(target)
+    @remove_file_input(target)
+    text ||= filename
+    text = "![#{text}](#{id})"
+    textarea.setRangeText(text, start, end)
+    textarea.focus()
+    textarea.cursor_start(start + text.length)
+    Rails.fire textarea, 'change'
+
   # Private
 
   selection_lines: (target) ->
@@ -148,3 +212,25 @@ class Js.Admin.MarkdownConcept
   get_history: (textarea) ->
     name = textarea.getAttribute('name')
     (@history ?= {})[name] ?= { push: [textarea.value], undo: [], redo: [] }
+
+  read: (file) ->
+    new Promise (resolve, _reject) ->
+      reader = new FileReader()
+      reader.onload = => resolve(reader.result)
+      reader.readAsArrayBuffer(file)
+
+  valid: (file) ->
+    unless file.size < @max_file_size
+      Flash.alert "File too large: must be < #{@max_file_size} bytes"
+      return false
+    unless file.type.start_with('image/')
+      Flash.alert "File must be an image"
+      return false
+    true
+
+  on_file_error: (target) ->
+    Flash.alert 'Server Error'
+    @remove_file_input(target)
+
+  remove_file_input: (target) ->
+    target.parentNode.removeChild(target)

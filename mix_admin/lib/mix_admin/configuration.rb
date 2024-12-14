@@ -19,6 +19,7 @@ module MixAdmin
     attr_writer :denied_fields
     attr_writer :readonly_fields
     attr_writer :confirm_delete
+    attr_writer :max_file_size
     attr_writer :simplify_search_string
     attr_accessor :full_query_column
 
@@ -79,6 +80,7 @@ module MixAdmin
         delete
         trash
         restore
+        upload
       ))
     end
 
@@ -137,6 +139,10 @@ module MixAdmin
     def confirm_delete
       return @confirm_delete if defined? @confirm_delete
       @confirm_delete = true
+    end
+
+    def max_file_size
+      @max_file_size ||= 10.megabytes
     end
 
     def simplify_search_string

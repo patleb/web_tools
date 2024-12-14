@@ -89,6 +89,10 @@ module Admin
       [:get]
     end
 
+    def self.http_format
+      false
+    end
+
     def self.route_fragment
       return '' unless route_fragment?
       route_private? ? "_#{key}" : key.to_s
@@ -124,7 +128,7 @@ module Admin
       [action_name, proc{ render action_name }]
     end
 
-    delegate :root?, :collection?, :member?, :bulkable?, :http_methods, :title, to: :class
+    delegate :root?, :collection?, :member?, :bulkable?, :http_methods, :http_format, :title, to: :class
 
     def name
       self.class.key

@@ -17,6 +17,7 @@ class AdminController < LibController
   authenticate
 
   before_action :set_action
+  before_action :set_format
   before_action :set_model,      if: -> { @action.model? }
   before_action :on_cancel,      if: -> { @model && params[:_cancel] }
   before_action :on_blank_bulk,  if: -> { @action.bulkable? && params[:ids].blank? && params[:id] == '_bulk' }
@@ -51,6 +52,10 @@ class AdminController < LibController
 
   def set_action
     @action = Admin::Action.find(action_name)
+  end
+
+  def set_format
+    request.format = @action.http_format if @action.http_format
   end
 
   def set_model

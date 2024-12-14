@@ -23,6 +23,7 @@ module Admin
     autoload :Show
     autoload :ShowInApp
     autoload :Trash
+    autoload :Upload
   end
 
   module Fields

@@ -38,6 +38,10 @@ module ActionPolicy::Base::WithAdmin
     trash?
   end
 
+  def upload?
+    false
+  end
+
   protected
 
   def model?

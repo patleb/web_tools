@@ -71,6 +71,14 @@ module Admin
       t(:cancel, scope: [i18n_scope, :form, i18n_key], default: t('admin.form.cancel'))
     end
 
+    register_class_option :backup_upload? do
+      true
+    end
+
+    register_class_option :max_file_size do
+      MixAdmin.config.max_file_size
+    end
+
     register_class_option :simplify_search_string? do
       MixAdmin.config.simplify_search_string
     end
