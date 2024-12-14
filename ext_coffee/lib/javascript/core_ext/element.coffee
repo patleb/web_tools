@@ -5,6 +5,9 @@ Element.polyfill_methods
       return node if node.nodeType is Node.ELEMENT_NODE and node.matches(selector)
       node = node.parentNode
 
+  remove: ->
+    this.parentNode.removeChild(this)
+
 m = Element::matches or
   Element::matchesSelector or
   Element::mozMatchesSelector or
