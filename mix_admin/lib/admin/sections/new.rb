@@ -4,6 +4,9 @@ module Admin
   module Sections
     class New < Show
       def render
+        append(:data,
+          div_('.js_markdown_max_file_size', data: { value: model.max_file_size })
+        )
         form_(action: presenter.url, multipart: true, remote: true, back: true, as: presenter.record) {[
           groups.map do |group|
             group.fieldset

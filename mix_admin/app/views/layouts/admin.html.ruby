@@ -4,7 +4,6 @@ append :data, [
   div_('.js_action', data: { name: @action.name }),
   div_('.js_model', data: { name: @model&.to_param }),
   div_('.js_routes', data: { paths: MixAdmin.routes }),
-  div_('.js_markdown_max_file_size', data: { value: @model&.max_file_size }),
 ]
 append :header, [
   admin_actions_menu,
