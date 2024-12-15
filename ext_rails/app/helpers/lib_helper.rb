@@ -124,13 +124,13 @@ module LibHelper
       icon_name = other_icon unless other_icon.nil?
       label = yield(other) || other.to_s.humanize
       li_ title: t("link.#{name}", default: name.to_s.humanize) do
-        a_ '.param_select', [icon(icon_name), label], remote: true, visit: true, params: { "_#{name}" => other }
+        a_ '.param_select', [icon(icon_name), label], remote: true, visit: 'replace', params: { "_#{name}" => other }
       end
     else
       div_('.param_select.form-control', title: t("link.#{name}", default: name.to_s.humanize)) {[
         label_('.input-group', [
           icon(icon_name, tag: 'span'),
-          select_('.select', name: "_#{name}", remote: true, visit: true) do
+          select_('.select', name: "_#{name}", remote: true, visit: 'replace') do
             choices.map do |choice, *|
               label = yield(choice) || label.to_s.humanize
               option_ label, value: choice, selected: choice == value
