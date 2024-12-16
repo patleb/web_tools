@@ -11,7 +11,6 @@ module MixPage
     attr_writer   :available_field_names
     attr_writer   :permanent_field_names
     attr_writer   :available_fieldables
-    attr_writer   :max_image_size
     attr_accessor :skip_sidebar
     attr_accessor :skip_content
 
@@ -62,10 +61,6 @@ module MixPage
       @available_fieldables ||= {
         'PageTemplate' => 0
       }
-    end
-
-    def max_image_size
-      @max_image_size ||= 5.megabytes
     end
   end
 end

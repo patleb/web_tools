@@ -31,7 +31,7 @@ module MixPage
       MixServer::Log.config.ided_paths[%r{/(#{MixPage::Routes::FRAGMENT})/([\w-]+)}] = '/\1/*'
 
       MixFile.configure do |config|
-        config.available_records['PageFields::Html'] = 10
+        config.available_records['PageFieldMarkdown'] = 10
         config.available_associations['images'] = 100
       end
     end
