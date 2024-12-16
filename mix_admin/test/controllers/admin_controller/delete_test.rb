@@ -14,7 +14,6 @@ class AdminController::DeleteTest < ActionDispatch::IntegrationTest
     assert_layout :member, :delete, path: '/2/delete'
     assert_selects(
       "form.delete_records[action$='/model/#{model_name}/2/delete'][data-remote=true][method=post]",
-      'input[name="ids[]"][value=2][type=hidden][multiple]',
       'a.link.link-primary',
       'input[name=_trash]',
       'input[name=_delete]',
@@ -43,12 +42,12 @@ class AdminController::DeleteTest < ActionDispatch::IntegrationTest
     assert_layout :collection, :delete, path: '/_bulk/delete', bulk: true
     assert_selects(
       "form.delete_records[action$='/model/#{model_name}/_bulk/delete'][data-remote=true][method=post]",
-      'input[name="ids[]"][value=2][type=hidden][multiple]',
       'a.link.link-error',
       'a.link.link-primary',
       'input[name=_trash]',
       'input[name=_delete]',
       'input[name=_cancel]',
+      'input[name="ids[]"][value=2][type=hidden][multiple]'
     )
   end
 
