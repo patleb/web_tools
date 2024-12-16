@@ -1,5 +1,7 @@
 class Js.AdminConcept
   readers: ->
+    action: -> Rails.find('.js_action').data('name')
+    model: -> Rails.find('.js_model')?.data('name')
     scroll_menu: -> Rails.find('.js_scroll_menu')
     scroll_x: -> @model() and @bulk_form() and @store('scroll_x')?["#{@model()}_#{@action()}"]
     bulk_form: -> Rails.find('.js_bulk_form')
@@ -9,8 +11,6 @@ class Js.AdminConcept
     table_head: -> { bottom: Device.move.y + e.top + e.height } if (e = Rails.find('.js_table_head')?.getBoundingClientRect())
     table_body: -> Rails.find('.js_table_body')
     export_toggles: -> Rails.$('.js_export_toggles')
-    action: -> Rails.find('.js_action').data('name')
-    model: -> Rails.find('.js_model')?.data('name')
 
   document_on: -> [
     Device.RESIZE_Y, document, @toggle_scoll_menu
