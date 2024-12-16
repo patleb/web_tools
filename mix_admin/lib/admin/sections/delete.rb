@@ -4,6 +4,7 @@ module Admin
   module Sections
     class Delete < Admin::Section
       def render
+        bulk = presenter.nil?
         can_delete = false
         form_('.delete_records', action: (presenter || model).url, remote: true, back: true) {[
           legend_(t('admin.form.bulk_delete')),
@@ -13,7 +14,7 @@ module Admin
             can_destroy = allowed.values.all?(&:last) && restricted.values.all?(&:last)
             can_delete ||= can_destroy
             fieldset_{[
-              input_(name: 'ids', value: presenter.primary_key_value, type: 'hidden', multiple: true, if: can_destroy),
+              input_(name: 'ids', value: presenter.primary_key_value, type: 'hidden', multiple: true, if: bulk && can_destroy),
               span_([
                 a_('.link', [label, (t('admin.form.cant_delete') unless can_destroy)],
                   class: { 'link-primary' => can_destroy, 'link-error' => !can_destroy },
