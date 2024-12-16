@@ -84,24 +84,12 @@ class Js.Admin.MarkdownConcept
   undo_history: (event, button) ->
     textarea = @textarea(button)
     { push, undo, redo } = @get_history(textarea)
-    value = textarea.get_value()
-    if (value_was = undo.pop())?
-      redo.push(value) if value?
-      if value_was is value
-        value_was = undo.pop()
-      push[0] = textarea.set_value(value_was) if value_was?
-    textarea.focus()
+    @pop_history(textarea, push, undo, redo)
 
   redo_history: (event, button) ->
     textarea = @textarea(button)
     { push, undo, redo } = @get_history(textarea)
-    value = textarea.get_value()
-    if (value_was = redo.pop())?
-      undo.push(value) if value?
-      if value_was is value
-        value_was = redo.pop()
-      push[0] = textarea.set_value(value_was) if value_was?
-    textarea.focus()
+    @pop_history(textarea, push, redo, undo)
 
   select_file: (event, button) ->
     unless (file_input = button.find(@FILE_INPUT))
@@ -195,6 +183,15 @@ class Js.Admin.MarkdownConcept
 
   textarea: (button) ->
     button.closest(@TOOLBAR).next()
+
+  pop_history: (textarea, push, undo, redo) ->
+    value = textarea.get_value()
+    if (value_was = undo.pop())?
+      redo.push(value) if value?
+      if value_was is value
+        value_was = undo.pop()
+      push[0] = textarea.set_value(value_was) if value_was?
+    textarea.focus()
 
   get_history: (textarea) ->
     name = textarea.getAttribute('name')
