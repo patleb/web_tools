@@ -110,8 +110,9 @@ class Js.Admin.MarkdownConcept
     file_input.click()
 
   link_image: (event, file_input) ->
-    return unless (file = file_input.files[0])
-    return unless @valid file
+    button = file_input.closest('.js_multimedia')
+    file = file_input.files[0]
+    file_input.remove()
     self = this
     @read(file)
       .then (result) ->
@@ -119,23 +120,24 @@ class Js.Admin.MarkdownConcept
         window.crypto.subtle.digest('SHA-256', result)
       .then (result) ->
         uid = [btoa(file.name), btoa(String.fromCharCode(new Uint8Array(result)...))].join(',')
-        self.fetch_blob_id(file_input, file, uid)
+        self.fetch_blob_id(button, file, uid)
 
-  fetch_blob_id: (file_input, file, uid) ->
+  fetch_blob_id: (button, file, uid) ->
     Rails.ajax({
       type: 'GET'
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model(), blob: { uid } })
       data_type: 'json'
       success: (response) =>
         if (id = response.blob.id)
-          @link_blob(file_input, id, file.name)
+          @link_blob(button, id, file.name)
         else
-          @upload_file(file_input, file)
+          @upload_file(button, file)
       error: =>
-        @on_file_error(file_input)
+        @on_file_error()
     })
 
-  upload_file: (file_input, file) ->
+  upload_file: (button, file) ->
+    textarea = @textarea(button)
     data = new FormData()
     data.append('blob[filename]', file.name)
     data.append('blob[data]', file)
@@ -144,15 +146,19 @@ class Js.Admin.MarkdownConcept
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model() })
       data
       data_type: 'json'
+      beforeSend: ->
+        Rails.disable_elements button, textarea
+        true
       success: (response) =>
-        @link_blob(file_input, response.blob.id, file.name)
+        @link_blob(button, response.blob.id, file.name)
       error: =>
-        @on_file_error(file_input)
+        @on_file_error()
+      complete: ->
+        Rails.enable_elements button, textarea
     })
 
-  link_blob: (file_input, id, filename) ->
-    [textarea, text, start, end] = @selection_text(file_input)
-    file_input.remove()
+  link_blob: (button, id, filename) ->
+    [textarea, text, start, end] = @selection_text(button)
     text ||= filename
     text = "![#{text}](blob:#{id})"
     textarea.setRangeText(text, start, end)
@@ -162,8 +168,8 @@ class Js.Admin.MarkdownConcept
 
   # Private
 
-  selection_lines: (target) ->
-    textarea = @textarea(target)
+  selection_lines: (button) ->
+    textarea = @textarea(button)
     lines = textarea.value.split("\n")
     [start, end] = @start_end(textarea)
     [start_i, end_i] = [null, null]
@@ -176,8 +182,8 @@ class Js.Admin.MarkdownConcept
     end_i ?= lines.length - 1
     [textarea, lines, start_i, end_i]
 
-  selection_text: (target) ->
-    textarea = @textarea(target)
+  selection_text: (button) ->
+    textarea = @textarea(button)
     [start, end] = @start_end(textarea)
     text = if start is end then '' else textarea.value[start..(end - 1)]
     [textarea, text, start, end]
@@ -185,15 +191,16 @@ class Js.Admin.MarkdownConcept
   start_end: (textarea) ->
     [textarea.cursor_start(), textarea.cursor_end()]
 
-  textarea: (target) ->
-    target.closest(@TOOLBAR).next()
+  textarea: (button) ->
+    button.closest(@TOOLBAR).next()
 
   get_history: (textarea) ->
     name = textarea.getAttribute('name')
     (@history ?= {})[name] ?= { push: [textarea.value], undo: [], redo: [] }
 
   read: (file) ->
-    new Promise (resolve, _reject) ->
+    return unless file and @valid(file)
+    new Promise (resolve) ->
       reader = new FileReader()
       reader.onload = -> resolve(reader.result)
       reader.readAsArrayBuffer(file)
@@ -207,6 +214,5 @@ class Js.Admin.MarkdownConcept
       return false
     true
 
-  on_file_error: (file_input) ->
+  on_file_error: ->
     Flash.alert 'Server Error'
-    file_input.remove()

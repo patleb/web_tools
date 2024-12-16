@@ -4,7 +4,7 @@ module Admin
   module Fields
     class Html < Text
       def input_control(**attributes)
-        [toolbar, super(**attributes)]
+        [toolbar, super(**attributes, 'data-disable': true)]
       end
 
       def input_css_class
@@ -16,7 +16,7 @@ module Admin
       def toolbar
         div_('.js_markdown_toolbar', toolbar_actions.map do |action, icon_name|
           button_('.btn.btn-xs.btn-square.btn-ghost', icon(icon_name),
-            class: "js_#{action}", title: t(action, scope: 'markdown_toolbar'), type: 'button'
+            class: "js_#{action}", title: t(action, scope: 'markdown_toolbar'), type: 'button', 'data-disable': true
           )
         end)
       end

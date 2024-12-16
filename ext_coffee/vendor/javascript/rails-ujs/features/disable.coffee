@@ -3,6 +3,12 @@ Rails.merge
     element = this
     Rails.stop_everything(e) if element.disabled or element.hasAttribute('disabled')
 
+  enable_elements: (es...) ->
+    es.each (e) -> Rails.enable_element(e)
+
+  disable_elements: (es...) ->
+    es.each (e) -> Rails.disable_element(e)
+
   # Unified function to enable an element (link, button and form)
   enable_element: (e) ->
     element = if e instanceof Event then e.target else e
