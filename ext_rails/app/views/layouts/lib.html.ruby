@@ -29,6 +29,7 @@ html_('.no-js.no-transition', lang: Current.locale, data: { theme: Current.theme
           span_ [icon('list'), a_('.link', @meta[:title], href: @meta[:root], title: @meta[:title])]
         end,
         area(:header, [
+          spinner(ExtRails.config.spinner),
           flash_message(:alert, scope: @meta[:scope]),
           flash_message(:notice, scope: @meta[:scope]),
         ]),

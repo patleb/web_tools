@@ -4,6 +4,11 @@ html {
 }
 
 .lib_layout {
+  .spinner_container {
+    @apply fixed top-12 right-4;
+    --spinner_color: theme('colors.primary');
+    --spinner_size: 3.5rem;
+  }
   .param_select label {
     > span {
       @apply bg-transparent pr-1.5;

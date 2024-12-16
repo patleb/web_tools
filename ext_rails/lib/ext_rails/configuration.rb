@@ -14,6 +14,7 @@ module ExtRails
     attr_writer   :db_partitions
     attr_accessor :keep_install_migrations
     attr_writer   :theme, :themes
+    attr_writer   :spinner
     attr_accessor :css_only_support
     attr_accessor :favicon_ico
 
@@ -65,6 +66,10 @@ module ExtRails
 
     def theme
       @theme ||= themes.keys.first.to_s
+    end
+
+    def spinner
+      @spinner ||= :atom
     end
   end
 end

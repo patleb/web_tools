@@ -148,6 +148,7 @@ class Js.Admin.MarkdownConcept
       data_type: 'json'
       beforeSend: ->
         Rails.disable_elements button, textarea
+        Js.load_spinner()
         true
       success: (response) =>
         @link_blob(button, response.blob.id, file.name)
@@ -155,6 +156,7 @@ class Js.Admin.MarkdownConcept
         @on_file_error()
       complete: ->
         Rails.enable_elements button, textarea
+        Js.clear_spinner()
     })
 
   link_blob: (button, id, filename) ->
