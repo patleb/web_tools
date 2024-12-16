@@ -24,7 +24,7 @@
     @apply flex flex-col border-t border-neutral sm:grid sm-1:w-full sm:grid-cols-3 lg:grid-cols-4 gap-y-0.5 p-5;
 
     input[type='submit'] {
-      @apply col-span-2 sm:col-start-2 sm:ml-2 lg:ml-1.5;
+      @apply whitespace-pre-line col-span-2 sm:col-start-2 sm:ml-2 lg:ml-1.5;
     }
     .save,
     .trash {
