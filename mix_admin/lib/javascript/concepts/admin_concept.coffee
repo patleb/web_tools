@@ -8,7 +8,8 @@ class Js.AdminConcept
     bulk_toggles: -> Rails.$('.js_bulk_toggles')
     bulk_checkboxes: -> Rails.$('.js_bulk_checkboxes')
     bulk_buttons: -> Rails.$('.js_bulk_buttons')
-    table_head: -> { bottom: Device.move.y + e.top + e.height } if (e = Rails.find('.js_table_head')?.getBoundingClientRect())
+    table_head_position: -> { bottom: Device.move.y + e.top + e.height } if (e = @table_head()?.getBoundingClientRect())
+    table_head: -> Rails.find('.js_table_head')
     table_body: -> Rails.find('.js_table_body')
     export_toggles: -> Rails.$('.js_export_toggles')
 
@@ -35,9 +36,14 @@ class Js.AdminConcept
     @restore_scroll_x()
     @toggle_bulk_form()
     @toggle_export_schema()
+    if (table_head = @table_head())
+      @table_head_scroll_x = Hamster(table_head).wheel (event, delta, dx, dy) =>
+        event.preventDefault()
+        @bulk_form().scrollLeft -= 40 * dy
 
   leave: ->
     @persist_scroll_x()
+    @table_head_scroll_x?.unwheel()
 
   restore_scroll_x: ->
     if (scroll_x = @scroll_x())
@@ -71,13 +77,13 @@ class Js.AdminConcept
     @scroll_menu().toggle_class('hidden', not @scrollable)
 
   reset_table_head: ->
-    @nullify('table_head')
+    @nullify('table_head_position')
     @toggle_table_head()
 
   toggle_table_head: ->
-    return unless @table_head()
+    return unless @table_head_position()
     @visible_was = @visible
-    @visible = @table_head().bottom > Device.move.y
+    @visible = @table_head_position().bottom > Device.move.y
     return if @visible is @visible_was
     @table_body().toggle_class('visible_head', @visible)
 

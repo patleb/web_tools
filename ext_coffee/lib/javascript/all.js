@@ -15,11 +15,13 @@ import '@@lib/ext_coffee/state_machine'
 import '@@lib/ext_coffee/concepts/all'
 import '@@lib/ext_coffee/sm/all'
 import '@@vendor/turbolinks/all'
+import Hamster from '@@vendor/hamsterjs/hamster'
 
 document.addEventListener('DOMContentLoaded', function() {
   window.$image = image_path
   window.lru = lru
   window.Cookies = Cookies
   window.sortable = sortable
+  window.Hamster = Hamster
   enableDragDropTouch()
 })
