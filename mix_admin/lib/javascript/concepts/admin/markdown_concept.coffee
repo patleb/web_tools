@@ -16,13 +16,10 @@ class Js.Admin.MarkdownConcept
     'click', "#{@TOOLBAR} .js_italic",     (event, target) -> @wrap_text target, '*'
     'click', "#{@TOOLBAR} .js_blockquote", (event, target) -> @prepend_lines target, '> '
     'click', "#{@TOOLBAR} .js_code",       (event, target) -> @wrap_text target, '`'
-    'click', "#{@TOOLBAR} .js_bulletlist", (event, target) -> @prepend_lines target, '- '
     'click', "#{@TOOLBAR} .js_link",       @link_text
+    'click', "#{@TOOLBAR} .js_bulletlist", (event, target) -> @prepend_lines target, '- '
     'click', "#{@TOOLBAR} .js_multimedia", @select_file
-    'change',            @FILE_INPUT,      @compute_file_uid
-    'blob:uid:computed', @FILE_INPUT,      @fetch_blob_id
-    'blob:id:not_found', @FILE_INPUT,      @upload_file
-    'blob:id:found',     @FILE_INPUT,      @link_image
+    'change', @FILE_INPUT,                 @link_image
   ]
 
   ready: ->
@@ -112,32 +109,33 @@ class Js.Admin.MarkdownConcept
       button.appendChild(file_input)
     file_input.click()
 
-  compute_file_uid: (event, file_input) ->
+  link_image: (event, file_input) ->
     return unless (file = file_input.files[0])
     return unless @valid file
+    self = this
     @read(file)
       .then (result) ->
         result = new Uint8Array(result)
         window.crypto.subtle.digest('SHA-256', result)
       .then (result) ->
         uid = [btoa(file.name), btoa(String.fromCharCode(new Uint8Array(result)...))].join(',')
-        Rails.fire file_input, 'blob:uid:computed', { file, uid }
+        self.fetch_blob_id(file_input, file, uid)
 
-  fetch_blob_id: ({ detail: { file, uid } }, file_input) ->
+  fetch_blob_id: (file_input, file, uid) ->
     Rails.ajax({
       type: 'GET'
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model(), blob: { uid } })
       data_type: 'json'
-      success: (response) ->
+      success: (response) =>
         if (id = response.blob.id)
-          Rails.fire file_input, 'blob:id:found', { id, filename: file.name }
+          @link_blob(file_input, id, file.name)
         else
-          Rails.fire file_input, 'blob:id:not_found', { file }
+          @upload_file(file_input, file)
       error: =>
         @on_file_error(file_input)
     })
 
-  upload_file: ({ detail: { file } }, file_input) ->
+  upload_file: (file_input, file) ->
     data = new FormData()
     data.append('blob[filename]', file.name)
     data.append('blob[data]', file)
@@ -146,17 +144,17 @@ class Js.Admin.MarkdownConcept
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model() })
       data
       data_type: 'json'
-      success: (response) ->
-        Rails.fire file_input, 'blob:id:found', { id: response.blob.id, filename: file.name }
+      success: (response) =>
+        @link_blob(file_input, response.blob.id, file.name)
       error: =>
         @on_file_error(file_input)
     })
 
-  link_image: ({ detail: { id, filename } }, file_input) ->
+  link_blob: (file_input, id, filename) ->
     [textarea, text, start, end] = @selection_text(file_input)
     file_input.remove()
     text ||= filename
-    text = "![#{text}](image:#{id})"
+    text = "![#{text}](blob:#{id})"
     textarea.setRangeText(text, start, end)
     textarea.focus()
     textarea.cursor_start(start + text.length)
@@ -197,7 +195,7 @@ class Js.Admin.MarkdownConcept
   read: (file) ->
     new Promise (resolve, _reject) ->
       reader = new FileReader()
-      reader.onload = => resolve(reader.result)
+      reader.onload = -> resolve(reader.result)
       reader.readAsArrayBuffer(file)
 
   valid: (file) ->
