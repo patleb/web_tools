@@ -44,7 +44,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     let(:current_user){ users(:admin) }
 
     test '#field_create' do
-      post "/page/#{page.uuid}/field", params: { page_field: { type: 'PageFields::Html', name: 'content' } }
+      post "/page/#{page.uuid}/field", params: { page: { field: { type: 'PageFields::Html', name: 'list_texts' } } }
       id = PageFields::Html.order(created_at: :desc).pick(:id)
       assert_redirected_to MixAdmin::Routes.edit_url(model_name: 'PageFields::Html'.to_class_param, id: id)
     end
@@ -53,7 +53,7 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
       link_prev = page.sidebar
       link_next = page.links.create! page_id: page.layout_id, name: :sidebar
       assert link_next.position > link_prev.position
-      post "/page/#{page.uuid}/field/#{link_next.id}", params: { page_field: { list_next_id: link_prev.id } }
+      post "/page/#{page.uuid}/field/#{link_next.id}", params: { page: { field: { list_next_id: link_prev.id } } }
       link_prev.reload; link_next.reload
       assert link_next.position < link_prev.position
       assert body.dig(:flash, :notice)
@@ -63,12 +63,12 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
 
   context '#field_create' do
     test 'with invalid :name' do
-      post "/page/#{page.uuid}/field", params: { page_field: { type: 'PageFields::Link', name: 'unknown' } }
+      post "/page/#{page.uuid}/field", params: { page: { field: { type: 'PageFields::Link', name: 'unknown' } } }
       assert_redirected_to page.to_url
     end
 
     test 'with unauthorized user' do
-      post "/page/#{page.uuid}/field", params: { page_field: { type: 'PageFields::Link', name: 'sidebar' } }
+      post "/page/#{page.uuid}/field", params: { page: { field: { type: 'PageFields::Link', name: 'sidebar' } } }
       assert_redirected_to page.to_url
     end
   end
