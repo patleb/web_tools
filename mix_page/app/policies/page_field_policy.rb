@@ -11,6 +11,10 @@ class PageFieldPolicy < ActionPolicy::Base
     edit? && (model? || MixPage.config.permanent_field_names.exclude?(record.name))
   end
 
+  def trash?
+    false
+  end
+
   class Scope < Scope
     def resolve
       user.admin? ? relation.all : super

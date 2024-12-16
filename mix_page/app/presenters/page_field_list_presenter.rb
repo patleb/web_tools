@@ -47,6 +47,6 @@ class PageFieldListPresenter < ActivePresenter::List[:@page]
       remote: true,
       visit: true,
       method: 'post',
-      params: { page_field: { type: type, name: name } }
+      params: { page: { field: { type: type, name: name } } }
   end
 end

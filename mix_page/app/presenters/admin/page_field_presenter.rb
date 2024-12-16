@@ -1,6 +1,6 @@
 module Admin
   class PageFieldPresenter < Admin::Model
-    fallback_location{ presenter.page_template&.to_url || pages_root_path }
+    fallback_location{ presenter&.page_template&.to_url || pages_root_path }
     record_label_method :field_label
 
     field :lock_version
