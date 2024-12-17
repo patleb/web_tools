@@ -1,7 +1,6 @@
 class CreateLibPages < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_pages do |t|
-      # TODO move uuid V5
       t.uuid       :uuid,                 null: false, default: 'gen_random_uuid()', index: { using: :hash }
       t.integer    :type,                 null: false
       t.integer    :view,                 null: false, index: true
