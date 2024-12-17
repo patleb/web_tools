@@ -19,7 +19,7 @@ module PageHelper
   end
 
   def page_sidebar(**, &)
-    layout_links(:sidebar, divider: true, **, &)
+    layout_links(:sidebar, divider: true, tag_list: 'ul', tag_item: 'li', **, &)
   end
 
   def page_content(**, &)

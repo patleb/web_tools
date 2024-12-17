@@ -11,10 +11,10 @@ class PageTemplatePresenter < ActivePresenter::Base
     { class: dom_class }
   end
 
-  def render(**options)
+  def render(tag: 'h1', **options)
     options = html_options.with_indifferent_access.union!(options)
     div_(options) {[
-      div_('.page_actions', [
+      with_tag(tag, '.page_actions', [
         edit_action,
         title.presence || pretty_blank,
       ]),
