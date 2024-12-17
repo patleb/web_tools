@@ -125,7 +125,10 @@ class AdminController < LibController
   end
 
   def on_routing_error
-    redirect_back
+    respond_to do |format|
+      format.html { redirect_back }
+      format.json { head :not_found }
+    end
   end
 
   def on_cancel
@@ -160,17 +163,28 @@ class AdminController < LibController
   end
 
   def on_too_many_rows(exception)
-    if @action.export?
-      redirect_back alert: exception.message
-    else
-      response.set_header('X-Status-Reason', exception.message)
-      head 413
+    respond_to do |format|
+      format.html do
+        redirect_back alert: exception.message
+      end
+      format.json do
+        response.set_header('X-Status-Reason', exception.message)
+        head 413
+      end
     end
   end
 
   def render_error
-    flash.now[:alert] = admin_alert(@presenter || @presenters)
-    render action_name, status: :not_acceptable
+    notice = admin_alert(@presenter || @presenters)
+    respond_to do |format|
+      format.html do
+        flash.now[:alert] = notice
+        render action_name, status: :not_acceptable
+      end
+      format.json do
+        render json: { flash: { alert: notice } }, status: :not_acceptable
+      end
+    end
   end
 
   def admin_notice(presenters = nil, action = nil)
