@@ -69,9 +69,6 @@ module AdminHelper
     )
   end
 
-  # TODO use root menu for search + markdown syntax info pages
-  # TODO allow user to set their preferred timezone --> time_zone_select
-  # https://github.com/onomojo/i18n-timezones
   def admin_sidebar
     [
       ul_(admin_models_menu),
