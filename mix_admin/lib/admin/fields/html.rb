@@ -14,7 +14,8 @@ module Admin
       private
 
       def toolbar
-        div_('.js_markdown_toolbar', toolbar_actions.map do |action, icon_name|
+        div_('.js_markdown_toolbar', toolbar_actions.select_map do |action, icon_name|
+          next unless icon_name
           button_('.btn.btn-xs.btn-square.btn-ghost', icon(icon_name),
             class: "js_#{action}", title: t(action, scope: 'markdown_toolbar'), type: 'button', 'data-disable': true
           )
@@ -32,7 +33,7 @@ module Admin
           code:       'code-square',
           link:       'link',
           bulletlist: 'list-ul',
-          multimedia: 'image',
+          multimedia: ('image' if model.allowed?(:upload)),
         }
       end
     end
