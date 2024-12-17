@@ -41,5 +41,4 @@ en:
         list/tree/multi: Tree page
         list/tree/leaf/multi: Leaf page
       page_field/name:
-        page_list_texts: List of pages texts
-        page_texts: Page texts
+        list_texts: List of pages texts

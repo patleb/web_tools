@@ -36,12 +36,11 @@ end
 MixPage.configure do |config|
   config.available_templates.merge!(
     'text_multi' => 10,
-    'list' => 20,
+    'list'       => 20,
     'list/multi' => 25,
   )
   config.available_field_names.merge!(
     list_texts: 20,
-    multi_texts: 25,
   )
 end
 

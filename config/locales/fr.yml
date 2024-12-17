@@ -12,5 +12,4 @@ fr:
         list/tree/multi: Page de l'arbre
         list/tree/leaf/multi: Page de la feuille
       page_field/name:
-        page_list_texts: Textes de la liste de pages
-        page_texts: Textes de la page
+        list_texts: Textes de la liste de pages
