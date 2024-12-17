@@ -28,8 +28,7 @@ class PageTemplatePresenter < ActivePresenter::Base
   end
 
   def can_update?
-    return @edit_url if defined? @edit_url
-    @edit_url = edit_url
+    edit_url
   end
 
   def edit_action
@@ -41,6 +40,7 @@ class PageTemplatePresenter < ActivePresenter::Base
   end
 
   def edit_url
-    record.admin_presenter.allowed_url(:edit)
+    return @edit_url if defined? @edit_url
+    @edit_url = record.admin_presenter.allowed_url(:edit)
   end
 end

@@ -11,7 +11,8 @@ module PageFields
     end
 
     def edit_url
-      record.fieldable.admin_presenter.allowed_url(:edit)
+      return @edit_url if defined? @edit_url
+      @edit_url = record.fieldable.admin_presenter.allowed_url(:edit)
     end
   end
 end

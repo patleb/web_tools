@@ -45,8 +45,7 @@ class PageFieldPresenter < ActivePresenter::Base[:@page]
   end
 
   def can_update?
-    return @edit_url if defined? @edit_url
-    @edit_url = edit_url
+    edit_url
   end
 
   def sortable?
@@ -63,6 +62,7 @@ class PageFieldPresenter < ActivePresenter::Base[:@page]
   end
 
   def edit_url
-    record.admin_presenter.allowed_url(:edit)
+    return @edit_url if defined? @edit_url
+    @edit_url = record.admin_presenter.allowed_url(:edit)
   end
 end
