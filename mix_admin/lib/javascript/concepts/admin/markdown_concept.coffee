@@ -81,10 +81,10 @@ class Js.Admin.MarkdownConcept
     if value isnt value_undo
       redo.clear(true)
       undo.shift() if undo.length is MAX_HISTORY_SIZE
-      value_was = push[0]
-      undo.push(value_was) if value_was not in [value_undo, value]
-      undo.push(value)
-    push[0] = value
+      [value_was, cursor_was] = push[0]
+      undo.push([value_was, cursor_was]) if value_was not in [value_undo, value]
+      undo.push([value, textarea.cursor_end()])
+    push[0] = [value, textarea.cursor_end()]
 
   undo_history: (event, button) ->
     textarea = @textarea(button)
@@ -191,16 +191,18 @@ class Js.Admin.MarkdownConcept
 
   pop_history: (textarea, push, undo, redo) ->
     value = textarea.get_value()
-    if (value_was = undo.pop())?
-      redo.push(value) if value?
+    [value_was, cursor_was] = Array.wrap(undo.pop())
+    if value_was?
+      redo.push([value, textarea.cursor_end()]) if value?
       if value_was is value
-        value_was = undo.pop()
-      push[0] = textarea.set_value(value_was) if value_was?
+        [value_was, cursor_was] = Array.wrap(undo.pop())
+      push[0] = [textarea.set_value(value_was), cursor_was] if value_was?
+    textarea.cursor_end(cursor_was)
     textarea.focus()
 
   get_history: (textarea) ->
     name = textarea.getAttribute('name')
-    (@history ?= {})[name] ?= { push: [textarea.value], undo: [], redo: [] }
+    (@history ?= {})[name] ?= { push: [[textarea.value, textarea.cursor_end()]], undo: [], redo: [] }
 
   read: (file) ->
     return unless file and @valid(file)
