@@ -15,7 +15,7 @@ class Js.Admin.MarkdownConcept
     'click', "#{@TOOLBAR} .js_bold",       (event, target) -> @wrap_text target, '**'
     'click', "#{@TOOLBAR} .js_italic",     (event, target) -> @wrap_text target, '*'
     'click', "#{@TOOLBAR} .js_blockquote", (event, target) -> @prepend_lines target, '> '
-    'click', "#{@TOOLBAR} .js_code",       (event, target) -> @wrap_text target, '`'
+    'click', "#{@TOOLBAR} .js_code",       (event, target) -> @wrap_text target, '`', multiline: '```'
     'click', "#{@TOOLBAR} .js_link",       @link_text
     'click', "#{@TOOLBAR} .js_bulletlist", (event, target) -> @prepend_lines target, '- '
     'click', "#{@TOOLBAR} .js_multimedia", @select_file
@@ -33,14 +33,19 @@ class Js.Admin.MarkdownConcept
     field.requestFullscreen().catch (error) ->
       Flash.alert "#{error.name}: #{error.message}"
 
-  wrap_text: (button, token) ->
+  wrap_text: (button, token, { multiline = false } = {}) ->
     [textarea, text, start, end] = @selection_text(button)
     size = token.length
     if text
-      text = if size * 2 <= text.length and text.start_with(token) and text.end_with(token)
+      token_start = token_end = token
+      if multiline and text.include("\n")
+        token = multiline
+        [token_start, token_end] = ["#{token}\n", "\n#{token}"]
+        size = token_start.length
+      text = if size * 2 <= text.length and text.start_with(token_start) and text.end_with(token_end)
         text[size..(-1 - size)]
       else
-        [token, text, token].join('')
+        [token_start, text, token_end].join('')
       textarea.focus()
       textarea.setRangeText(text, start, end)
     else

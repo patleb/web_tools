@@ -21,7 +21,7 @@ module Admin
       def default_input_attributes
         attributes = super
         attributes[:text] = attributes.delete(:value)
-        attributes
+        attributes.merge! rows: 10
       end
     end
   end
