@@ -1,13 +1,10 @@
 module PageFields
   class LinkPresenter < PageFieldPresenter
-    def render(**options)
-      return super if block_given?
-      super **options do |options, actions|
-        div_(options) {[
-          actions,
-          a_(href: record.to_url){ title },
-        ]}
-      end
+    def rendering(**options)
+      div_(options) {[
+        pretty_actions,
+        a_(href: record.to_url){ title },
+      ]}
     end
 
     def edit_url

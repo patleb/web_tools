@@ -18,12 +18,12 @@ module PageHelper
     !Current.controller.is_a?(PagesController)
   end
 
-  def page_sidebar
-    layout_links(:sidebar, divider: true)
+  def page_sidebar(**, &)
+    layout_links(:sidebar, divider: true, **, &)
   end
 
-  def page_content
-    page_html(:content)
+  def page_content(**, &)
+    page_html(:content, **, &)
   end
 
   def pagination
@@ -39,10 +39,10 @@ module PageHelper
   # page_link_presenter(name)
   # ----
   # layout_links(name, item_options: {}, **list_options, &block)
-  # layout_link(name, **item_options)
+  # layout_link(name, **item_options, &block)
   # ----
   # page_links(name, item_options: {}, **list_options, &block)
-  # page_link(name, **item_options)
+  # page_link(name, **item_options, &block)
   #
   def method_missing(helper_name, ...)
     if (options = page_helper_options(helper_name))
@@ -53,8 +53,8 @@ module PageHelper
             page_presenter(name, type, **options).render(**multi_options, &block)
           end
         else
-          self.class.define_method(helper_name) do |name, **item_options|
-            page_presenter(name, type, **options).render(**item_options)
+          self.class.define_method(helper_name) do |name, **item_options, &block|
+            page_presenter(name, type, **options).render(**item_options, &block)
           end
         end
       else

@@ -18,20 +18,24 @@ class PageFieldListPresenter < ActivePresenter::List[:@page]
     list.any?(&:can_update?) ? { class: ['js_page_field_list'] } : {}
   end
 
-  def render(item_options: {}, divider: false, **options)
+  def rendering(item_options: {}, divider: false, **options)
+    ul_(options) {[
+      li_('.menu_divider', if: divider),
+      list.map.with_index(1) do |presenter, i|
+        li_(presenter.item_options) do
+          presenter.render(**item_options, i: i)
+        end
+      end,
+      li_(if: can_create?){ new_action },
+    ]}
+  end
+
+  def render(**options, &block)
     options = html_options.with_indifferent_access.union!(list_options).union! options
     if block_given?
-      yield(list, options, new_action)
+      instance_exec(**options, &block)
     else
-      ul_(options) {[
-        li_('.menu_divider', if: divider),
-        list.map.with_index(1) do |presenter, i|
-          li_(presenter.item_options) do
-            presenter.render(**item_options, i: i)
-          end
-        end,
-        li_(if: can_create?){ new_action },
-      ]}
+      rendering(**options)
     end
   end
 

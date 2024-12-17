@@ -16,7 +16,6 @@ class PageTemplatePresenter < ActivePresenter::Base
     div_(options) {[
       div_('.page_actions', [
         edit_action,
-        (ascii :space if can_update?),
         title.presence || pretty_blank,
       ]),
       yield,

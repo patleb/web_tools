@@ -3,7 +3,7 @@
 class PageFieldPresenter < ActivePresenter::Base[:@page]
   delegate :type, :name, to: :record
 
-  attr_reader :new_action, :position
+  attr_reader :position
 
   def dom_class
     [ 'field',
@@ -20,10 +20,18 @@ class PageFieldPresenter < ActivePresenter::Base[:@page]
     sortable? ? { class: ['js_page_field'], data: { id: record.id } } : {}
   end
 
-  def render(new_action: nil, i: nil, **options)
-    @new_action, @position = new_action, i
+  def rendering(**)
+    raise NotImplementedError
+  end
+
+  def render(i: nil, **options, &block)
     options = html_options.with_indifferent_access.union! options
-    yield(options, pretty_actions)
+    @position = i
+    if block_given?
+      instance_exec(**options, &block)
+    else
+      rendering(**options)
+    end
   end
 
   def pretty_blank
@@ -33,15 +41,8 @@ class PageFieldPresenter < ActivePresenter::Base[:@page]
   def pretty_actions
     div_('.field_actions', if: can_update?) {[
       sort_action,
-      (ascii(:space, times: 3) if sortable?),
       edit_action,
-      (ascii(:space, times: 3) if can_create?),
-      new_action,
     ]}
-  end
-
-  def can_create?
-    new_action
   end
 
   def can_update?
