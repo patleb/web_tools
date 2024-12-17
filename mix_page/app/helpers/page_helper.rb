@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PageHelper
   class TypeAlreadyInUse < StandardError; end
 
