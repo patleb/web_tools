@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Pages
   class PaginationPresenter < ActionView::Delegator[:@page]
     def self.render(**)
