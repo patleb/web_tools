@@ -13,17 +13,15 @@ module Pages
     private
 
     def prev_page
-      prev_page_presenter&.render(class: ['prev_page']) {[
-        i_('.fa.fa-chevron-circle-left'),
-        span_{ t('page_paginate.prev') }
-      ]}
+      prev_page_presenter&.render(class: ['prev_page']) do |options|
+        a_ [icon('arrow-left-circle'), span_{ t('page_paginate.prev') }], href: record.to_url, title: title, **options
+      end
     end
 
     def next_page
-      next_page_presenter&.render(class: ['next_page']) {[
-        span_{ t('page_paginate.next') },
-        i_('.fa.fa-chevron-circle-right')
-      ]}
+      next_page_presenter&.render(class: ['next_page']) do |options|
+        a_ [span_{ t('page_paginate.next') }, icon('arrow-right-circle')], href: record.to_url, title: title, **options
+      end
     end
 
     def prev_page_presenter
