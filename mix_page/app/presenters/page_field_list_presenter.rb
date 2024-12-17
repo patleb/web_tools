@@ -18,15 +18,15 @@ class PageFieldListPresenter < ActivePresenter::List[:@page]
     list.any?(&:can_update?) ? { class: ['js_page_field_list'] } : {}
   end
 
-  def rendering(item_options: {}, divider: false, tag_list: 'div', tag_item: 'div', **options)
-    with_tag(tag_list, options) {[
-      with_tag(tag_item, '.menu_divider', if: divider),
+  def rendering(list_tag: 'div', item_tag: 'div', item_options: {}, divider: false, **options)
+    with_tag(list_tag, options) {[
+      with_tag(item_tag, '.menu_divider', if: divider),
       list.map.with_index(1) do |presenter, i|
-        with_tag(tag_item, presenter.item_options) do
+        with_tag(item_tag, presenter.item_options) do
           presenter.render(**item_options, i: i)
         end
       end,
-      with_tag(tag_item, if: can_create?){ new_action },
+      with_tag(item_tag, if: can_create?){ new_action },
     ]}
   end
 
