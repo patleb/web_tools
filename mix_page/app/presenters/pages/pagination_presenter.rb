@@ -1,11 +1,11 @@
 module Pages
   class PaginationPresenter < ActionView::Delegator[:@page]
-    def self.render
-      new.render
+    def self.render(**)
+      new.render(**)
     end
 
-    def render
-      div_('.pagination') do
+    def render(**options)
+      div_('.pagination', **options) do
         [prev_page, next_page].compact.join(' | ').html_safe
       end
     end

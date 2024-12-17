@@ -26,8 +26,8 @@ module PageHelper
     page_html(:content, **, &)
   end
 
-  def pagination
-    Pages::PaginationPresenter.render
+  def pagination(**)
+    Pages::PaginationPresenter.render(**)
   end
 
   # For the type PageFields::Link, method_missing could define the following helpers:
