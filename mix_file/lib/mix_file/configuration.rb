@@ -19,7 +19,7 @@ module MixFile
 
     ### References
     # https://cft.vanderbilt.edu/wp-content/uploads/sites/59/Image_resolutions.pdf
-    # gems/actiontext-6.1.4.1/app/views/active_storage/blobs/_blob.html.erb
+    # actiontext/app/views/active_storage/blobs/_blob.html.erb
     def image_limit
       @image_limit ||= [1024, 768]
     end
