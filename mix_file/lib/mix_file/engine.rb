@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 MonkeyPatch.add{['activestorage', 'lib/active_storage/engine.rb', '46b069b13a4d1332f5f6849a7e854c0400625a5b4e82c3e671277756f1723ef0']}
 
 require 'ext_ruby'
@@ -18,7 +20,7 @@ module MixFile
       end
     end
 
-    initializer 'mix_file.active_record', after: 'active_storage.reflection' do |app|
+    initializer 'mix_file.active_record', after: 'active_storage.reflection' do
       ActiveSupport.on_load(:active_record) do
         require 'mix_file/active_record/base/with_file'
       end
