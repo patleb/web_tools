@@ -18,9 +18,9 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
-  s.add_dependency 'image_processing', '>= 1.2'
+  s.add_dependency 'image_processing'
   # s.add_dependency 'active_storage_validations'
   # s.add_dependency 'activestorage-validator'
   s.add_dependency 'image_optim'
-  s.add_dependency 'image_optim_pack'
+  s.add_dependency 'image_optim_pack', '0.10.1.20240317'
 end
