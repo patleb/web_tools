@@ -1,8 +1,9 @@
 module MixFile
   has_config do
-    attr_writer :available_records
-    attr_writer :available_associations
-    attr_writer :image_limit
+    attr_writer   :available_records
+    attr_writer   :available_associations
+    attr_writer   :image_limit
+    attr_accessor :draw_active_storage_routes
 
     def available_records
       @available_records ||= { 'ActiveStorage::Blob' => 0 }
