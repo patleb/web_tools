@@ -7,4 +7,9 @@ namespace :file do
       end
     end
   end
+
+  desc 'cleanup unattached blobs'
+  task :cleanup => :environment do
+    ActiveStorage::Blob.unattached.where(created_at: ..2.days.ago).find_each(&:purge)
+  end
 end

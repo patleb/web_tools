@@ -3,6 +3,7 @@ namespace :cron do
     desc 'every day cron jobs cluster'
     task :every_day => :environment do
       run_task 'monit:cleanup'
+      run_task 'file:cleanup'
       run_task 'list:reorganize'
       run_task 'clamav:scan'
       run_task 'log:extract'
