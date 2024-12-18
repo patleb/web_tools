@@ -1,11 +1,17 @@
 module ActiveStorage::Blob::WithUid
   extend ActiveSupport::Concern
 
+  included do
+    validates :uid, presence: true, unless: :composed
+  end
+
   class_methods do
-    def find_or_create_by_uid!(filename, data, backup: true)
+    def find_or_create_by_uid!(filename, data, backup: true, **)
       uid = uid_for(filename, data)
-      unless (blob = ActiveStorage::Blob.find_by(uid: uid))
-        blob = ActiveStorage::Blob.build_after_unfurling(io: data, filename: filename)
+      if (blob = ActiveStorage::Blob.find_by(uid: uid))
+        blob.backup_file(data) if backup && !blob.backuped?
+      else
+        blob = ActiveStorage::Blob.build_after_unfurling(io: data, filename: filename, **)
         blob.uid = uid
         blob.save!
         blob.backup_file(data) if backup
