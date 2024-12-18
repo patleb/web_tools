@@ -1,3 +1,5 @@
+MonkeyPatch.add{['activestorage', 'app/models/active_storage/blob.rb', '4c497a934009af27dbeaefd850853523031514e0e46700123e348317e725662e']}
+
 module ActiveStorage::Blob::WithOptimize
   extend ActiveSupport::Concern
 
@@ -30,8 +32,9 @@ module ActiveStorage::Blob::WithOptimize
       file = image_optim.optimize_image! file
       raise OptimizeError, "blob id [#{id}]" if file.nil?
 
-      self.byte_size, self.checksum = File.size(file), Digest::MD5.file(file).base64digest
       file.open do |io|
+        self.checksum = compute_checksum_in_chunks(io)
+        self.byte_size = io.size
         upload_without_unfurling(io)
       end
     end

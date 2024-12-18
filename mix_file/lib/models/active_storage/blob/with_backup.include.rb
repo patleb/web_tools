@@ -23,7 +23,7 @@ module ActiveStorage::Blob::WithBackup
 
   def backup_file(io)
     create_backup! data: io.read, byte_size: io.size, checksum: checksum
-    unless Digest::MD5.base64digest(backup.data) == checksum
+    unless OpenSSL::Digest::MD5.base64digest(backup.data) == checksum
       backup.destroy!
       raise ActiveStorage::IntegrityError
     end
