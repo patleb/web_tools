@@ -1,4 +1,4 @@
-module RailsAdmin::MainController::WithFile
+module LibApiController::WithFile
   extend ActiveSupport::Concern
 
   included do
