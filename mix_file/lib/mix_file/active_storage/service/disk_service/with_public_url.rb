@@ -18,7 +18,7 @@ module ActiveStorage::Service::DiskService::WithPublicUrl
 
   def public_url(key, **options)
     if public_root
-      ExtRails::Routes.url_for("/#{File.join public_root, folder_for(key), key}")
+      MixFile::Routes.public_url root: public_root, key: key
     else
       super
     end

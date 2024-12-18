@@ -4,6 +4,7 @@ MonkeyPatch.add{['activestorage', 'lib/active_storage/engine.rb', '46b069b13a4d1
 
 require 'ext_rails'
 require 'mix_file/configuration'
+require 'mix_file/routes'
 
 module MixFile
   class Engine < ::Rails::Engine
