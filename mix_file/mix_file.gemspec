@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency 'ext_ruby', version
+  s.add_dependency 'ext_rails', version
   s.add_dependency 'image_processing'
   s.add_dependency 'image_optim'
   s.add_dependency 'image_optim_pack', '0.10.1.20240317'
