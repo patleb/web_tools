@@ -4,7 +4,6 @@ require 'mix_certificate/configuration'
 ACME_CHALLENGE = '.well-known/acme-challenge'.freeze
 
 module MixCertificate
-  require 'openssl'
   require 'acme-client'
 
   class Engine < ::Rails::Engine
