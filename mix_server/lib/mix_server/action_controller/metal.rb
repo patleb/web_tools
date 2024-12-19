@@ -1,6 +1,6 @@
 require_dir __FILE__, 'metal'
 
-module ActionController::WithMixServer
+module ActionController::WithLogErrors
   extend ActiveSupport::Concern
 
   class_methods do
