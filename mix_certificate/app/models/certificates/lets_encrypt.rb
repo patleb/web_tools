@@ -119,7 +119,6 @@ module Certificates
     end
 
     def set_defaults
-      return unless has_attribute? :json_data
       self.id ||= self.class.default_id
       self.key ||= OpenSSL::PKey::RSA.new(4096).to_s
     end
