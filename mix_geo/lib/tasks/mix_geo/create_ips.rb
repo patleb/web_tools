@@ -66,18 +66,20 @@ module MixGeo
     end
 
     def create_countries_and_states
-      countries, states = MixGeo.config.extra_countries.dup, []
+      countries, states, locales = MixGeo.config.extra_countries.dup, [], I18n.available_locales.map(&:to_s)
       ISO3166::Country.countries.each do |country|
         country_code, country_id = country.alpha2.upcase, country.number
-        if country_code.in? MixGeo.config.supported_countries
-          country.states.each do |code, state|
+        if MixGeo.config.supported_countries.include? country_code
+          country.subdivisions.each do |code, state|
             state_code, state_code_prefix = code.upcase, "#{country_code}-"
             state_code = [state_code_prefix, state_code].join unless state_code.start_with? state_code_prefix
-            state_names = [state.name, Array.wrap(state.unofficial_names), state.translations['en']].flatten.compact.uniq
-            states << { code: state_code, names: state_names, country_code: country_code, geo_country_id: country_id }
+            state_names = Set.new(Array.wrap(state.unofficial_names))
+            state_names << state.name
+            state_names.merge state.translations.values_at(*locales).compact
+            states << { code: state_code, names: state_names.to_a, country_code: country_code, geo_country_id: country_id }
           end
         end
-        countries << { id: country_id, code: country_code, name: country.name }
+        countries << { id: country_id, code: country_code, name: country.common_name }
       end
       GeoCountry.insert_all! countries
       GeoState.insert_all! states
