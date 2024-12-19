@@ -7,7 +7,6 @@ class GeoIp < LibMainRecord
     where(column(:id) <= ip).order(id: :desc).take
   end
 
-  # TODO test
   def self.select_by_ips(ips)
     connection.exec_query(sanitize_sql_array([<<-SQL.strip_sql, ips]))
       SELECT #{table_name}.* FROM UNNEST(ARRAY[?]::INET[]) WITH ORDINALITY ips(ip, i)

@@ -5,7 +5,7 @@ module MixGeo
 
     GEO_TABLES           = ['lib_geo_ips', 'lib_geo_cities', 'lib_geo_states', 'lib_geo_countries']
     GEOLITE2_CSV         = 'geolite2-city-ipv4.csv'
-    TMP_GEOLITE2_FOLDER  = 'tmp/geolite2'
+    TMP_GEOLITE2_FOLDER  = Rails.env.test? ? 'tmp/test/geolite2' : 'tmp/geolite2'
     TMP_GEOLITE2_PREFIX  = "#{TMP_GEOLITE2_FOLDER}-ipv4-"
     GIT_GEOLITE2_CSV_GZ  = "https://raw.githubusercontent.com/sapics/ip-location-db/main/geolite2-city/#{GEOLITE2_CSV}.gz"
     GIT_GEOLITE2_VERSION = "https://raw.githubusercontent.com/sapics/ip-location-db/main/geolite2-city/package.json"
@@ -45,11 +45,11 @@ module MixGeo
         end
       elsif options.path.present?
         raise PathWithoutVersion unless options.version.present?
-        @version = Gem::Version.new(options.version)
+        @version  = Gem::Version.new(options.version)
         @csv_file = "#{options.path}/#{GEOLITE2_CSV}"
         raise PathInvalid unless File.exist? gzip_file
       else
-        @version = Gem.loaded_specs['ip_location_db'].version
+        @version  = Gem.loaded_specs['ip_location_db'].version
         @csv_file = Gem.root('ip_location_db').join('geolite2-city', GEOLITE2_CSV).to_s
       end
 
@@ -149,7 +149,7 @@ module MixGeo
     end
 
     def gzip_file
-      @gzip_file ||= "#{@csv_file}.gz"
+      "#{@csv_file}.gz"
     end
   end
 end
