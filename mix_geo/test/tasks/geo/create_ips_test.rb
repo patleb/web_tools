@@ -19,8 +19,13 @@ module MixGeo
         { ip: ['216.82.47.48', '216.82.47.79'], country: 'US', state: 'US-IA', city: 'Coralville' }
       ]
       [(16..31), (32..47), (48..79)].each_with_index do |range, i|
-        GeoIp.select_by_ips(range.map{ |n| "216.82.47.#{n}" }).pluck('geo_city_id').each do |(city_id, *)|
-          assert_equal ips[i][:city], GeoCity.find(city_id).name
+        city = ips[i][:city]
+        range = range.map{ |n| "216.82.47.#{n}" }
+        range.each do |ip|
+          assert_equal city, GeoIp.find_by_ip(ip).geo_city.name
+        end
+        GeoIp.select_by_ips(range).pluck('geo_city_id').each do |(city_id, *)|
+          assert_equal city, GeoCity.find(city_id).name
         end
       end
     end
