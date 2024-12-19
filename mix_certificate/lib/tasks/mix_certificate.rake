@@ -3,7 +3,7 @@ namespace :certificate do
     desc 'Create or renew certificate'
     task :create_or_renew => :environment do
       next unless Rails.env.production? || Rails.env.staging?
-      next unless Setting[:server_ssl] && !Setting[:lets_encrypt_skip]
+      next unless Setting[:server_ssl] && Setting[:lets_encrypt] == false
       next unless (certificate = Certificates::LetsEncrypt.create_or_renew)
       nginx_ssl_path = "/etc/nginx/ssl/#{certificate.server_host}.server"
       system "echo '#{certificate.decrypted(:key).escape_newlines}' | sudo tee #{nginx_ssl_path}.key > /dev/null"

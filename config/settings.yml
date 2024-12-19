@@ -21,7 +21,6 @@ staging:
   db_username: staging_web_tools
   db_password: $SECRET +60k5KLqKuVpG4Iv6Lun4TFQbeyrki42N47JjYuBxEvmoNIIiDalV3xb--Uyu7eZU9Qxf3AL9B--yNZ5fovUhHbNaW1j00yygw==
   deployer_password: $SECRET gLF4Wc/KiQyRNYpQkjLsyCI6syOk7BIyIcOKa3gIDmdKmqPNgQr4X4Ow--VKhrY5TgnB3G3JaM--WRKYN1pfNDa6FebpPSALiQ==
-  lets_encrypt_test: true
   server_host:
   mail_to:
   mail_from:

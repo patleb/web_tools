@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_rails', version
-  s.add_dependency 'acme-client', '~> 2.0.0'
+  s.add_dependency 'acme-client', '~> 2.0.19'
 end
