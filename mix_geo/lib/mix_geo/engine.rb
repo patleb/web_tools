@@ -1,9 +1,6 @@
-require 'ext_ruby'
-require 'reversed'
+require 'ext_rails'
 require 'countries'
-require 'rgeo'
 require 'mix_geo/configuration'
-require 'mix_geo/countries/country'
 
 module MixGeo
   class Engine < ::Rails::Engine
@@ -26,20 +23,6 @@ module MixGeo
         require 'activerecord-postgis-adapter'
         require 'mix_geo/active_record/migration/with_raster'
       end
-
-      MixServer::Log.config.filter_parameters += %w(
-        CRS
-        SRS
-        TILED
-        STYLES
-        TRANSPARENT
-        REQUEST
-        SERVICE
-        VERSION
-        FORMAT
-        FORMAT_OPTIONS
-        HEIGHT
-      )
       MixSearch.config.available_types['GeoState'] = 10
     end
   end

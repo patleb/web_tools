@@ -138,7 +138,7 @@ module Postgis
 
     def self.py_plot
       @py_plot ||= begin
-        require 'matplotlib/pyplot'
+        require 'mix_geo/pycall/matplotlib'
         Matplotlib::Pyplot
       end
     end
