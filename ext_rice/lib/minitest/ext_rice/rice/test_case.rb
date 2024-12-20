@@ -20,7 +20,7 @@ module Rice
 
     def tmp_path
       scope = rel_root ? root_name : ''
-      Pathname.new('tmp/test/rice').join(scope).expand_path
+      Pathname.new('tmp/rice/test').join(scope).expand_path
     end
 
     def self.xtest_ext(...)
