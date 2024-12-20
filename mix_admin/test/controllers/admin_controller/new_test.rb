@@ -23,7 +23,7 @@ class AdminController::NewTest < ActionDispatch::IntegrationTest
         'text_field text_type truncated',
         '<label>Text</label>',
         '-',
-        %{<textarea name="text" class="textarea textarea-bordered" id="text">\n</textarea>},
+        %{<textarea name="text" class="textarea textarea-bordered" rows="10" id="text">\n</textarea>},
       )
       assert_field(group.fields_hash[:lock_version],
         'lock_version_field hidden_type',
