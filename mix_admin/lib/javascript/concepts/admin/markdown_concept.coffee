@@ -77,7 +77,7 @@ class Js.Admin.MarkdownConcept
   push_history: (event, textarea) ->
     { push, undo, redo } = @get_history(textarea)
     value = textarea.get_value()
-    value_undo = undo.last()
+    [value_undo, cursor_undo] = Array.wrap(undo.last())
     if value isnt value_undo
       redo.clear(true)
       undo.shift() if undo.length is MAX_HISTORY_SIZE
