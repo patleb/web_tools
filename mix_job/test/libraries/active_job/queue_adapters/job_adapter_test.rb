@@ -7,7 +7,8 @@ module ActiveJob
       include JobContext
 
       test '#perform_now' do
-        SimpleJob.any_instance.expects(:perform).with(*args).returns(:ok)
+        arg, options = args
+        SimpleJob.any_instance.expects(:perform).with(arg, **options).returns(:ok)
         SimpleJob.perform_now(*args)
       end
 
