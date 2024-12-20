@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-MonkeyPatch.add{['activerecord', 'lib/active_record/attribute_methods.rb', 'bf394beec42739e1ca2fd3ce0dc87ce21ae8cbd13f25b8d4ac6fc288abc331fa']}
-MonkeyPatch.add{['activerecord', 'lib/active_record/enum.rb', '3822404e7b275407cb12c8a2a5719f4a0d12260dc059f471d304f9faaf702cb9']}
+MonkeyPatch.add{['activerecord', 'lib/active_record/attribute_methods.rb', 'a96681cd93fdd1bfdf4acdcd050970a9be2fb194143eea3ec9949ac6c0262955']}
 
 require_dir __FILE__, 'base'
 

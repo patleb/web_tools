@@ -11,7 +11,7 @@ module Rails
               result = migration_lookup_at(dirname).select_map do |file|
                 next if (version = File.basename(file).split('_').first.to_i) >= 30010000002020
                 version
-              end.max.to_i
+              end.max
             end
             result
           end

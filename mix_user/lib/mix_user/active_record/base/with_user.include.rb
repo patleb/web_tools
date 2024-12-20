@@ -1,4 +1,4 @@
-MonkeyPatch.add{['activerecord', 'lib/active_record/timestamp.rb', '579bc56cdb873a63fb0b0cdaa235f5d78b6655cf6a614735da32f0fe0c19b4b1']}
+MonkeyPatch.add{['activerecord', 'lib/active_record/timestamp.rb', '39c0b41b72a1d5dd7fec683f91d06ac434328846c05187c412b47b782969d4da']}
 
 module ActiveRecord::Base::WithUser
   extend ActiveSupport::Concern

@@ -1,4 +1,4 @@
-MonkeyPatch.add{['railties', 'lib/rails/generators/migration.rb', 'd66bf61070ce3445c8eed7ffe1e3d0860f8cce0507144e4830317a6dc9ac43e6']}
+MonkeyPatch.add{['railties', 'lib/rails/generators/migration.rb', '6ab4152c1009d337395253661604550982f69d40db3678cf5cc68982edbc1fef']}
 
 require 'mix_server'
 require 'mix_rpc/configuration'

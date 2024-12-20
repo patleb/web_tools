@@ -1,4 +1,4 @@
-MonkeyPatch.add{['railties', 'lib/rails/application.rb', '0fe08201f388b716b11f31edc61ca5c562c4ad5cdb25fe7c01b4058d4fabd248']}
+MonkeyPatch.add{['railties', 'lib/rails/application.rb', 'e45a26a7d68feae6cbae86523bcfae5d3e917dde2449b59a40d7467f7ec9643d']}
 
 class AppStringInquirer < ActiveSupport::StringInquirer
   def base?

@@ -1,4 +1,4 @@
-MonkeyPatch.add{['activesupport', 'lib/active_support/cache.rb', 'a435ec8911354a0d2418e54145d0a30531fb4a81ec70e2eba403dee81063c846']}
+MonkeyPatch.add{['activesupport', 'lib/active_support/cache.rb', '2d1e6f0b4973371bf10017c07790ca807c936d28ec074fc15c41da0bfa3065a9']}
 
 module ActiveSupport::Cache
   class GlobalStore

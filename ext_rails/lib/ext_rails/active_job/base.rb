@@ -1,4 +1,4 @@
-MonkeyPatch.add{['activejob', 'lib/active_job/execution.rb', 'ff5c0d33d2718d2a6d7d6a9e5df8a2cd89bdc8871bb8c36e44bad2433dd19008']}
+MonkeyPatch.add{['activejob', 'lib/active_job/execution.rb', '4f59c2db707c74ef937cc033a5f1179a9d52951b09484e422681be203fd8cbda']}
 
 ActiveJob::Base.class_eval do
   include ActiveSupport::LazyLoadHooks::Autorun
