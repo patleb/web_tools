@@ -41,6 +41,7 @@ en:
   activerecord:
     models:
       user: User
+      user_session: Session
     attributes:
       user:
         email: Email

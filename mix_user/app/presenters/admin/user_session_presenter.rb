@@ -5,6 +5,7 @@ module Admin
     end
 
     navigation_i18n_key :system
+    navigation_weight 52
     record_label_method :session_id
     simplify_search_string false
 
