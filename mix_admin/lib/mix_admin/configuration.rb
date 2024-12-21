@@ -121,6 +121,7 @@ module MixAdmin
         ltree: :string,
         numrange: :decimal,
         tsrange: :timestamp,
+        symbol: :string,
       }
     end
 

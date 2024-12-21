@@ -42,7 +42,7 @@ module ActiveRecord::Base::WithAdmin
   end
 
   def admin_label
-    "#{self.class.admin_label} ##{public_send(self.class.primary_key)}"
+    "#{self.class.admin_label} ##{public_send(admin_model.primary_key)}"
   end
 end
 
