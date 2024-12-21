@@ -1,25 +1,15 @@
-class GlobalPolicy < ApplicationPolicy
+class GlobalPolicy < ActionPolicy::Base
   def index?
     user.deployer?
-  end
-
-  def export?
-    false
   end
 
   def show?
     user.deployer?
   end
 
-  def new?
-    false
-  end
-
-  def edit?
-    false
-  end
-
-  def delete?
-    user.deployer?
+  class Scope < Scope
+    def resolve
+      user.deployer? ? relation.all : super
+    end
   end
 end
