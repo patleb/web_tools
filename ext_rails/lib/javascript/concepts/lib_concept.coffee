@@ -1,6 +1,7 @@
 class Js.LibConcept
   readers: ->
-    scroll_y: -> @sidebar() and @store('scroll_y')
+    layout: -> Rails.find('.js_layout').data('name')
+    scroll_y: -> @layout() and @sidebar() and @store('scroll_y')?["#{@role()}_#{@layout()}"]
     sidebar: -> Rails.find('.drawer-side')
     notice: -> Rails.find('#notice')
 
@@ -26,9 +27,10 @@ class Js.LibConcept
       @sidebar().scrollTop = scroll_y.top * (@sidebar().clientHeight / scroll_y.height)
 
   persist_sidebar_scroll: ->
-    if @sidebar()
+    if @layout() and @sidebar()
       scroll_y = { top: @sidebar().scrollTop, height: @sidebar().clientHeight }
-      @store('scroll_y', scroll_y)
+      stored_scroll_y = @store('scroll_y') ? {}
+      @store('scroll_y', stored_scroll_y.merge("#{@role()}_#{@layout()}": scroll_y))
 
   clear_drawer_toggle: ->
     if Device.breakpoints_was.lg isnt Device.breakpoints.lg and Device.breakpoints.lg
@@ -46,3 +48,6 @@ class Js.LibConcept
 
   adjust_autofocus: ->
     Rails.find('[autofocus]:not([type="email"],[type="number"])')?.cursor_end(true)
+
+  role: ->
+    Cookie.get('_role') ? 'null'
