@@ -34,7 +34,7 @@ class AdminController::EditTest < ActionDispatch::IntegrationTest
       assert_field(group.fields_hash[:password],
         'password_field password_type',
         '<label>Password</label>',
-        '-',
+        nil,
         '<input type="password" name="password" class="input input-bordered" id="password"></input>',
       )
       assert_field(group.fields_hash[:integer],

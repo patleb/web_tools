@@ -57,7 +57,7 @@ class AdminController::ShowTest < ActionDispatch::IntegrationTest
         '<a href="http://127.0.0.1:3333/model/test-related_record/5" class="link text-primary" rel="noopener">related to 1</a>',
       )
       assert_field(group.fields_hash[:related_records_id],
-        'related_records_id_field has_many_type array_type association_type id_field integer_type',
+        'related_records_id_field has_many_type array_type truncated association_type id_field integer_type',
         '<label>Related records</label>',
         '- <a href="http://127.0.0.1:3333/model/test-related_record/1" class="link text-primary" rel="noopener">1</a>&nbsp;<br>'\
         '- <a href="http://127.0.0.1:3333/model/test-related_record/2" class="link text-primary" rel="noopener">2</a>&nbsp;<br>'\

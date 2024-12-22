@@ -16,13 +16,13 @@ class AdminController::NewTest < ActionDispatch::IntegrationTest
       assert_field(group.fields_hash[:string],
         'string_field string_type',
         /Obligatoire.+String\*.+Longueur maximale 50.+tooltip/,
-        '-',
+        '',
         '<input type="text" name="string" class="input input-bordered" required="required" maxlength="50" id="string"></input>',
       )
       assert_field(group.fields_hash[:text],
         'text_field text_type truncated',
         '<label>Text</label>',
-        '-',
+        '',
         %{<textarea name="text" class="textarea textarea-bordered" rows="10" id="text">\n</textarea>},
       )
       assert_field(group.fields_hash[:lock_version],
@@ -34,7 +34,7 @@ class AdminController::NewTest < ActionDispatch::IntegrationTest
       assert_field(group.fields_hash[:password],
         'password_field password_type',
         '<label>Password</label>',
-        '-',
+        nil,
         '<input type="password" name="password" class="input input-bordered" id="password"></input>',
       )
       assert_field(group.fields_hash[:integer],

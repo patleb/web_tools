@@ -220,7 +220,7 @@ module Admin
     end
 
     def format_value(value)
-      value.to_s
+      value
     end
 
     def format_array_index(value)
