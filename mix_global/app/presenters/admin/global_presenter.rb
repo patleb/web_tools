@@ -4,8 +4,8 @@ module Admin
       'Globals'
     end
 
-    navigation_i18n_key :system
-    navigation_weight 40
+    navigation_key :system
+    navigation_weight 60
 
     field :id
     field :expires

@@ -3,9 +3,6 @@
 module Admin
   module Fields
     class Integer < Admin::Field
-      prepend AsArray
-      prepend AsRange
-
       register_option :sort_reverse? do
         primary_key?
       end
@@ -19,6 +16,7 @@ module Admin
       end
 
       def format_value(value)
+        value = [value.begin, value.end] if value.is_a? Range
         value.pretty_int.html_safe if value
       end
 

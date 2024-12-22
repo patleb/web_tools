@@ -36,14 +36,16 @@ class Js.AdminConcept
     @restore_scroll_x()
     @toggle_bulk_form()
     @toggle_export_schema()
-    if (table_head = @table_head())
-      @table_head_scroll_x = Hamster(table_head).wheel (event, delta, dx, dy) =>
+    @mouse_scroll_x = @bulk_checkboxes()
+    @mouse_scroll_x.push(@table_head()) if @table_head()
+    @mouse_scroll_x = @mouse_scroll_x.map (scroll) =>
+      Hamster(scroll).wheel (event, delta, dx, dy) =>
         event.preventDefault()
         @bulk_form().scrollLeft -= 40 * dy
 
   leave: ->
     @persist_scroll_x()
-    @table_head_scroll_x?.unwheel()
+    @mouse_scroll_x.each (scroll) -> scroll.unwheel()
 
   restore_scroll_x: ->
     if (scroll_x = @scroll_x())

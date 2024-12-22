@@ -114,13 +114,13 @@ module Admin
                       input_('.js_bulk_checkboxes.checkbox', type: 'checkbox', name: 'ids[]', value: id.value, disabled: !bulk_items?),
                       span_('.field_value', class: id.css_class) {[
                         inline_menu(presenter),
-                        id.pretty_index,
+                        id.pretty_index.presence || id.pretty_blank,
                       ]}
                     ]},
                     fields.map do |field|
                       field = field.with(presenter: presenter)
                       td_ '.tooltip', data: { tip: labels[field.name] } do
-                        span_('.field_value', field.pretty_index, class: field.css_class, tabindex: 0)
+                        span_('.field_value', field.pretty_index.presence || field.pretty_blank, class: field.css_class, tabindex: 0)
                       end
                     end
                   ])

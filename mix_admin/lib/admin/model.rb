@@ -30,8 +30,8 @@ module Admin
     end
 
     register_class_option :navigation_label, memoize: :locale do
-      if navigation_i18n_key
-        t(navigation_i18n_key, scope: [i18n_scope, :navigation], default: t(:model, scope: [i18n_scope, :navigation]))
+      if navigation_key
+        t(navigation_key, scope: [i18n_scope, :navigation], default: t(:model, scope: [i18n_scope, :navigation]))
       elsif (parent = klass.module_parent.name.underscore) != 'object'
         t(i18n_key, scope: [i18n_scope, :navigation], default: t(parent, scope: [i18n_scope, :navigation], default: parent.humanize))
       else
@@ -39,7 +39,7 @@ module Admin
       end.upcase
     end
 
-    register_class_option :navigation_i18n_key do
+    register_class_option :navigation_key do
       nil
     end
 
@@ -77,10 +77,6 @@ module Admin
 
     register_class_option :max_file_size do
       MixAdmin.config.max_file_size
-    end
-
-    register_class_option :simplify_search_string? do
-      MixAdmin.config.simplify_search_string
     end
 
     register_class_option :record_label_method, instance_reader: true, memoize: true do

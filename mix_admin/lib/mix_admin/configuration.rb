@@ -20,7 +20,6 @@ module MixAdmin
     attr_writer :readonly_fields
     attr_writer :confirm_delete
     attr_writer :max_file_size
-    attr_writer :simplify_search_string
     attr_accessor :full_query_column
 
     def root_path
@@ -144,11 +143,6 @@ module MixAdmin
 
     def max_file_size
       @max_file_size ||= 10.megabytes
-    end
-
-    def simplify_search_string
-      return @simplify_search_string if defined? @simplify_search_string
-      @simplify_search_string = true
     end
 
     private

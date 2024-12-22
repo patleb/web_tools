@@ -3,9 +3,6 @@ module Admin
     extend ActiveSupport::Autoload
     include Configurable
 
-    autoload :AsArray
-    autoload :AsRange
-
     attr_accessor :weight, :group, :through, :as
     attr_writer :editable, :index_link
 
@@ -55,20 +52,32 @@ module Admin
     end
 
     register_option :pretty_value do
-      format_value(value).presence || pretty_blank
-    end
-
-    register_option :pretty_blank do
-      '-'.html_safe
+      array? ? format_array(value) : format_value(value)
     end
 
     register_option :pretty_index do
-      format_index(pretty_value)
+      array? ? format_array_index(value) : format_index(value)
+    end
+
+    register_option :pretty_blank do
+      span_ '.blank', '-'
     end
 
     # NOTE Current.view isn't available
     register_option :pretty_export do
-      format_export(value)
+      array? ? format_array_export(value) : format_export(value)
+    end
+
+    register_option :array_separator do
+      false
+    end
+
+    register_option :array_bullet do
+      false
+    end
+
+    register_option :array_export_separator do
+      ' '
     end
 
     register_option :sortable? do
@@ -147,6 +156,7 @@ module Admin
 
     def editable?
       return @editable if defined? @editable
+      return false if array?
       return false if presenter.readonly?
       return false if method? || primary_key? || MixAdmin.config.readonly_fields.include?(column_name)
       action.new? || property.false?(:readonly?)
@@ -158,7 +168,7 @@ module Admin
     end
 
     def type_css_class
-      "#{name}_field #{type}_type#{' truncated' if truncated?}"
+      "#{name}_field #{type}_type#{' array_type' if array?}#{' truncated' if truncated?}"
     end
 
     def pretty_label
@@ -171,7 +181,7 @@ module Admin
     end
 
     def pretty_input
-      return pretty_value if readonly?
+      return pretty_value.presence || pretty_blank if readonly?
       return input unless label
       return [input, p_('.text-error', errors.to_sentence)] if errors.present?
       input
@@ -189,12 +199,41 @@ module Admin
       value
     end
 
+    def format_array(value)
+      return pretty_blank unless value.present?
+      array = value.map.with_index do |v, i|
+        (block_given? ? yield(v, i) : format_value(v)).presence || pretty_blank
+      end
+      if array_separator
+        separator = ascii(:space)
+        separator += array_separator unless array_separator == true
+        if array_bullet
+          array = array.join(separator + array_bullet).html_safe
+          array = array_bullet + array if array.present?
+        else
+          array = array.join(separator).html_safe
+        end
+        array + ascii(:space)
+      else
+        array.join(', ').html_safe
+      end
+    end
+
     def format_value(value)
-      value
+      value.to_s
+    end
+
+    def format_array_index(value)
+      format_array(value){ |v| format_index(v) }
     end
 
     def format_index(value)
+      value = format_value(value)
       @index_link ? primary_key_link(value) : value
+    end
+
+    def format_array_export(value)
+      value.map{ |v| format_export(v) }.join(array_export_separator)
     end
 
     def format_export(value)
@@ -214,7 +253,7 @@ module Admin
     end
 
     def method?
-      property.nil_or_true?(:virtual?)
+      array? || property.nil_or_true?(:virtual?)
     end
 
     def method_name
@@ -274,6 +313,7 @@ module Admin
     end
 
     def primary_key_link(label)
+      return unless label
       url = presenter.undiscarded? && presenter.viewable_url
       url ? a_('.link.text-primary', label, href: url) : label
     end

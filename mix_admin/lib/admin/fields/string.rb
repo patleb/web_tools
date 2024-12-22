@@ -3,8 +3,6 @@
 module Admin
   module Fields
     class String < Admin::Field
-      prepend AsArray
-
       register_option :sanitized? do
         false
       end
@@ -17,7 +15,7 @@ module Admin
         '- '.html_safe
       end
 
-      register_option :export_separator do
+      register_option :array_export_separator do
         "\n"
       end
 
@@ -26,9 +24,10 @@ module Admin
       end
 
       def format_index(value)
-        return super unless (length = truncated)
+        value = super
+        return value unless (length = truncated)
         length = MixAdmin.config.truncated_length if length == true
-        return super unless value.size > length
+        return value unless value.size > length
         string = value[0, length]
         string << if (url = presenter.viewable_url(anchor: "#{name}_field"))
           a_('.link.link-primary', ascii(:ellipsis), href: url)

@@ -306,7 +306,7 @@ module Admin::Model::Searchable
       when token.to_f? then [:numeric, token.to_f]
       when token.to_d? then [:numeric, token.to_d]
       when array
-        [:string, simplify_search_string ? token.simplify : token]
+        [:string, token]
       else
         [:string, parse_string(token)]
       end
@@ -318,7 +318,7 @@ module Admin::Model::Searchable
     string.gsub! SINGLE_QUOTES, '' if string.match? SINGLE_QUOTED_STRING
     start_with = !!string.delete_prefix!('^')
     end_with = !!string.delete_suffix!('$')
-    string = simplify_search_string ? string.simplify : ActiveRecord::Base.sanitize_sql_like(string)
+    string = ActiveRecord::Base.sanitize_sql_like(string)
     return string if start_with && end_with
     return string.concat('%') if start_with
     return string.prepend('%') if end_with

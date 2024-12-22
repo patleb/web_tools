@@ -3,10 +3,6 @@
 module Admin
   module Fields
     class Association < Admin::Field
-      include Admin::Field::AsArray
-
-      autoload :AsArray
-
       delegate :foreign_key, :foreign_type, :polymorphic?, :list_parent?, :inverse_of, :nested_options, to: :property
       delegate :parse_input!, :parse_input, :parse_search, :format_export, :format_input, :value, to: :property_field, allow_nil: true
 
@@ -48,10 +44,18 @@ module Admin
         !!nested_options
       end
 
+      def array?
+        false
+      end
+
       def format_value(value, field = property_field)
         return unless (value = field&.format_value(value)).present?
         url = field.presenter.undiscarded? && field.presenter.viewable_url
         url ? a_('.link.text-primary', text: value, href: url) : value
+      end
+
+      def format_index(*)
+        format_value(*)
       end
 
       def input_label
