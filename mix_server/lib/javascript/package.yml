@@ -1,0 +1,3 @@
+tailwind:
+  - '@@mix_server/app/presenters/**/*.rb'
+  - '@@mix_server/app/views/**/*.html.{erb,ruby}'

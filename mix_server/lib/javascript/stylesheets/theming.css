@@ -1,0 +1,5 @@
+.admin_layout {
+  .log_message_text_field {
+    @apply line-clamp-3 line-clamp-wrap focus:line-clamp-none !important;
+  }
+}

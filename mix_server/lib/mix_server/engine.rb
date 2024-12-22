@@ -49,6 +49,15 @@ module MixServer
       end
     end
 
+    initializer 'mix_server.admin' do
+      MixAdmin.configure do |config|
+        config.included_models += %w(
+          LogLines::Email
+          LogLines::Rescue
+        )
+      end
+    end
+
     ActiveSupport.on_load(:action_controller, run_once: true) do
       require 'mix_server/action_dispatch/middleware/exception_interceptor'
     end
