@@ -45,7 +45,7 @@ html {
       @apply overflow-y-visible lg:ml-72; /* drawer-side content at w-72 */
     }
     > .drawer-side {
-      @apply lg:fixed lg:left-0 scroll-smooth;
+      @apply lg:fixed lg:left-0;
     }
   }
   .drawer-content {

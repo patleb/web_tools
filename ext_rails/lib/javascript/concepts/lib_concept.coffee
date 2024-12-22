@@ -1,5 +1,7 @@
 class Js.LibConcept
   readers: ->
+    scroll_y: -> @sidebar() and @store('scroll_y')
+    sidebar: -> Rails.find('.drawer-side')
     notice: -> Rails.find('#notice')
 
   document_on: -> [
@@ -10,12 +12,23 @@ class Js.LibConcept
   ]
 
   ready: ->
+    @restore_sidebar_scroll()
     @adjust_autofocus()
     @clear_notice()
 
   leave: ->
+    @persist_sidebar_scroll()
     clearTimeout(@clear_notice_timeout)
     @clear_flash(@notice())
+
+  restore_sidebar_scroll: ->
+    if (scroll_y = @scroll_y())
+      @sidebar().scrollTop = scroll_y.top * (@sidebar().clientHeight / scroll_y.height)
+
+  persist_sidebar_scroll: ->
+    if @sidebar()
+      scroll_y = { top: @sidebar().scrollTop, height: @sidebar().clientHeight }
+      @store('scroll_y', scroll_y)
 
   clear_drawer_toggle: ->
     if Device.breakpoints_was.lg isnt Device.breakpoints.lg and Device.breakpoints.lg

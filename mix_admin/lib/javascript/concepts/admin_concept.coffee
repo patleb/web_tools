@@ -33,7 +33,7 @@ class Js.AdminConcept
   ]
 
   ready: ->
-    @restore_scroll_x()
+    @restore_bulk_form_scroll()
     @toggle_bulk_form()
     @toggle_export_schema()
     @mouse_scroll_x = @bulk_checkboxes()
@@ -44,14 +44,14 @@ class Js.AdminConcept
         @bulk_form().scrollLeft -= 40 * dy
 
   leave: ->
-    @persist_scroll_x()
+    @persist_bulk_form_scroll()
     @mouse_scroll_x.each (scroll) -> scroll.unwheel()
 
-  restore_scroll_x: ->
+  restore_bulk_form_scroll: ->
     if (scroll_x = @scroll_x())
       @bulk_form().scrollLeft = scroll_x.left * (@bulk_form().clientWidth / scroll_x.width)
 
-  persist_scroll_x: ->
+  persist_bulk_form_scroll: ->
     if @model() and @bulk_form()
       scroll_x = { left: @bulk_form().scrollLeft, width: @bulk_form().clientWidth }
       stored_scroll_x = @store('scroll_x') ? {}
