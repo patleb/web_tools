@@ -11,7 +11,7 @@ module Minitest::Assertions
   def assert_until(*equal, sleep: nil)
     location = caller_location
     expected = equal.first if equal.any?
-    throttle = sleep.to_i > 0 ? sleep : nil
+    throttle = sleep.to_f > 0 ? sleep : nil
     until (result = yield; equal.any? ? (result == expected) : result)
       throttle ? sleep(throttle) : Thread.pass
     end
