@@ -5,6 +5,7 @@ class CreateLibUserSessions < ActiveRecord::Migration[7.1]
       t.string     :session_id, null: false
       t.inet       :ip_address, null: false
       t.string     :user_agent, null: false, array: true
+      t.jsonb      :json_data,  null: false, default: {}
 
       t.timestamps
     end

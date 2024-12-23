@@ -9,6 +9,8 @@ class Flash < LibMainRecord
   validates :session_id, format: { with: Rack::Utils::SESSION_ID }
   validates :messages, presence: true
 
+  after_save :flash_later!
+
   def self.[](type)
     current.messages[type]
   end
@@ -20,11 +22,6 @@ class Flash < LibMainRecord
   def self.current
     raise MustBeLoggedIn unless Current.logged_in?
     Current.flash ||= new(user: Current.user, session_id: Current.session_id, messages: {})
-  end
-
-  def self.later
-    Current.flash_later = true
-    self
   end
 
   def self.messages(hash = {})
@@ -53,5 +50,11 @@ class Flash < LibMainRecord
         ORDER BY #{updated_at}
       SQL
     end
+  end
+
+  private
+
+  def flash_later!
+    user_session.flash_later!
   end
 end

@@ -15,4 +15,8 @@ module Current::WithUser
       end
     end
   end
+
+  def user_session
+    user.session
+  end
 end

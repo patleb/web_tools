@@ -3,9 +3,6 @@ module Current::WithFlash
 
   included do
     attribute :flash
-    attribute :flash_later
-
-    alias_method :flash_later?, :flash_later
 
     def flash?
       flash && flash.messages.present?

@@ -3,11 +3,11 @@ module ActionController::Base::WithFlash
 
   prepended do
     after_action :save_flash, if: -> { Current.flash? }
-    after_action :set_flash_later, if: -> { Current.flash_later? }
   end
 
   def render(...)
-    if session.delete(:flash_later).to_b
+    if request.format.html? && Current.user_session&.flash_later?
+      Current.user_session.flash_now!
       Flash.dequeue_in(flash.now)
     end
     super
@@ -17,9 +17,5 @@ module ActionController::Base::WithFlash
 
   def save_flash
     Current.flash.save!
-  end
-
-  def set_flash_later
-    session[:flash_later] = true
   end
 end

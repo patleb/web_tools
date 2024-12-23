@@ -36,4 +36,8 @@ class User::Null < ActiveType::NullObject
   def unverified?
     !verified?
   end
+
+  def session
+    nil
+  end
 end
