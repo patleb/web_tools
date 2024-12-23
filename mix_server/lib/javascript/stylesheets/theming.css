@@ -1,5 +1,7 @@
-.admin_layout {
-  .log_message_text_field {
-    @apply line-clamp-3 line-clamp-wrap focus:line-clamp-none !important;
+.admin_layout.log_lines_rescue_model {
+  .table_wrapper {
+    .log_message_text_field {
+      @apply line-clamp-3 line-clamp-wrap focus:line-clamp-none !important;
+    }
   }
 }
