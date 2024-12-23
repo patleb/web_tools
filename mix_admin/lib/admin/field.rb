@@ -52,11 +52,15 @@ module Admin
     end
 
     register_option :pretty_value do
-      array? ? format_array(value) : format_value(value)
+      value
+    end
+
+    register_option :pretty_show do
+      array? ? format_array(pretty_value) : format_value(pretty_value)
     end
 
     register_option :pretty_index do
-      array? ? format_array_index(value) : format_index(value)
+      array? ? format_array_index(pretty_value) : format_index(pretty_value)
     end
 
     register_option :pretty_blank do
@@ -181,7 +185,7 @@ module Admin
     end
 
     def pretty_input
-      return pretty_value.presence || pretty_blank if readonly?
+      return pretty_show.presence || pretty_blank if readonly?
       return input unless label
       return [input, p_('.text-error', errors.to_sentence)] if errors.present?
       input
