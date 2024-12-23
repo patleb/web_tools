@@ -14,6 +14,10 @@ module Admin
         !required?
       end
 
+      register_option :translated? do
+        true
+      end
+
       def parse_input!(params)
         return unless (value = params[column_name])
         attribute = klass.attribute_types[column_name.to_s]
@@ -87,7 +91,7 @@ module Admin
       private
 
       def i18n_value(key)
-        key.present? ? klass.human_attribute_name("#{name}.#{key}", default: key.to_s.humanize) : key
+        translated? && key.present? ? klass.human_attribute_name("#{name}.#{key}", default: key.to_s.humanize) : key
       end
     end
   end
