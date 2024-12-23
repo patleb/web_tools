@@ -61,7 +61,7 @@ const ext_css = ({ themes = true, darkTheme = 'dark' } = {}) => {
     addBase(colors)
     addComponents({
       '.line-clamp-wrap': {
-        'white-space': 'pre-line',
+        'white-space': 'pre-wrap',
         'overflow-wrap': 'break-word',
         'word-wrap': 'break-word',
       },
