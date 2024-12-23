@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-MonkeyPatch.add{['activejob', 'lib/active_job/core.rb', '718ce689f7e5ef955934f86d419c9571f32341c8091f0a5baaffc8f0727d2bf8']}
-
 require 'mix_server'
 require 'mix_job/configuration'
 require 'mix_job/routes'

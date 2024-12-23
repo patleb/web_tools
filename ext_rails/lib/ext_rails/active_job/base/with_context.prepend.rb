@@ -1,4 +1,6 @@
-module ActiveJob::Base::WithJob
+MonkeyPatch.add{['activejob', 'lib/active_job/core.rb', '718ce689f7e5ef955934f86d419c9571f32341c8091f0a5baaffc8f0727d2bf8']}
+
+module ActiveJob::Base::WithContext
   extend ActiveSupport::Concern
 
   prepended do
