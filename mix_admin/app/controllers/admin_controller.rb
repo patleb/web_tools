@@ -110,6 +110,7 @@ class AdminController < LibController
       app: app_name,
       title: [title.upcase_first, app_name].compact.join(' | '),
       scope: :admin,
+      class: ("#{@model.key}_model" if @model),
     )
   end
 
