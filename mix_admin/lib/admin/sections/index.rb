@@ -120,7 +120,7 @@ module Admin
                     fields.map do |field|
                       field = field.with(presenter: presenter)
                       td_ '.tooltip', data: { tip: labels[field.name] } do
-                        span_('.field_value', field.pretty_index.presence || field.pretty_blank, class: field.css_class, tabindex: 0)
+                        div_('.field_value', field.pretty_index.presence || field.pretty_blank, class: field.css_class, tabindex: 0)
                       end
                     end
                   ])
