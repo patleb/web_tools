@@ -2,7 +2,6 @@ class CreateLibTasks < ActiveRecord::Migration[7.1]
   def change
     create_table :lib_tasks, id: false do |t|
       t.primary_key :name, :integer
-      t.string      :arguments, null: false, array: true, default: []
       t.integer     :state,     null: false, default: 0
       t.text        :output
       t.boolean     :notify,    null: false, default: false

@@ -10,8 +10,8 @@ fr:
 
   task:
     flash:
-      success_html: "Tâche <a href='%{path}' class='pjax'>%{name}</a> executée avec succès"
-      failure_html: "Tâche <a href='%{path}' class='pjax'>%{name}</a> terminée avec:"
+      success_html: "Tâche <a href='%{path}'>%{name}</a> executée avec succès"
+      failure_html: "Tâche <a href='%{path}'>%{name}</a> terminée avec:"
     email:
       success: "Tâche '%{name}' executée avec succès en %{duration}"
       failure: "Tâche '%{name}' terminée avec: %{errors}"

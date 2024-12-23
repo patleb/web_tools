@@ -22,14 +22,12 @@ class Task < LibMainRecord
     where(name: name).take&.running?
   end
 
-  def self.perform(name, *arguments)
-    find(name).update! arguments: arguments, _perform: true
-  end
-
-  def self.visible_tasks
-    return names.keys if Current.user.deployer?
-    return names.keys & MixTask.config.admin_names if Current.user.admin?
-    return []
+  def self.allowed_tasks
+    case Current.user.as_role
+    when :deployer then names.keys
+    when :admin    then names.keys & MixTask.config.admin_names
+    else []
+    end
   end
 
   def self.delete_or_create_all
@@ -64,20 +62,16 @@ class Task < LibMainRecord
     rake_task.comment
   end
 
-  def visible?
-    self.class.visible_tasks.include? name
-  end
-
-  def arguments_visible?
-    arguments.any?(&:present?) # TODO should be parameters --> add config
+  def allowed?
+    self.class.allowed_tasks.include? name
   end
 
   def notify_editable?
-    !running? || updater.nil? || updater.id == Current.user.id
+    !running? || updater.nil? || updater == Current.user
   end
 
-  def perform(arguments)
-    update! arguments: arguments, _perform: true, _from_later: true
+  def perform
+    update! _perform: true, _from_later: true
   rescue ActiveRecord::RecordInvalid
     save(validate: false)
     raise
@@ -99,7 +93,7 @@ class Task < LibMainRecord
         throw :abort
       else
         Current.flash_later = true
-        TaskJob.perform_later(name, *arguments)
+        TaskJob.perform_later(name)
         self.output = "[#{Time.current.utc}]#{Rake::RUNNING} #{name}"
         self.state = :running
       end
@@ -108,9 +102,8 @@ class Task < LibMainRecord
 
   def perform_now
     started_at = Concurrent.monotonic_time
-    args = "[#{arguments.map{ |arg| "'#{arg.escape_single_quotes}'" if arg.present? }.join(',')}]" if arguments.any?
     env = "RAKE_OUTPUT=true DISABLE_COLORIZATION=true RAILS_ENV=#{Rails.env} RAILS_APP=#{Rails.app}"
-    cmd = "#{env} bin/rake #{name}#{args}"
+    cmd = "#{env} bin/rake #{name}"
     self.output, status = Open3.capture2e(cmd)
 
     result = output.lines.reject(&:blank?).last
