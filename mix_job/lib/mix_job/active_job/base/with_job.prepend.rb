@@ -2,15 +2,12 @@ module ActiveJob::Base::WithJob
   extend ActiveSupport::Concern
 
   prepended do
+    attr_writer   :context
     attr_accessor :session_id
     attr_accessor :request_id
   end
 
   class_methods do
-    def context
-      @context ||= %i(locale timezone session_id request_id)
-    end
-
     def deserialize(job_data)
       job = job_data['job_class'].to_const!.new
       job.deserialize(job_data)
@@ -24,6 +21,10 @@ module ActiveJob::Base::WithJob
     @request_id = Current.request_id
   end
 
+  def context
+    @context ||= []
+  end
+
   def serialize
     super.merge!(
       'session_id' => session_id,
@@ -35,11 +36,12 @@ module ActiveJob::Base::WithJob
     super
     self.session_id = job_data['session_id']
     self.request_id = job_data['request_id']
+    context.concat %i(locale timezone session_id request_id)
   end
 
   def perform_now
     old_attributes = Current.attributes.dup
-    self.class.context.each do |attribute|
+    context.each do |attribute|
       Current[attribute] = public_send(attribute)
     end
     super

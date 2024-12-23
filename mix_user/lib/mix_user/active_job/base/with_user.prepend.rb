@@ -5,12 +5,6 @@ module ActiveJob::Base::WithUser
     attr_accessor :user
   end
 
-  class_methods do
-    def context
-      @context ||= super << :user
-    end
-  end
-
   def initialize(*arguments)
     super
     @user = Current.user || User::Null.new
@@ -25,5 +19,6 @@ module ActiveJob::Base::WithUser
   def deserialize(job_data)
     super
     self.user = GlobalID::Locator.locate(job_data['user']) rescue User::Null.new
+    context << :user
   end
 end
