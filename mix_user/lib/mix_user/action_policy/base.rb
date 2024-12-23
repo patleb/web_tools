@@ -36,15 +36,15 @@ module ActionPolicy
     end
 
     def record?
-      !klass?
+      !model?
     end
 
     def klass
       return @klass if defined? @klass
-      @klass = klass? ? object : object.class
+      @klass = model? ? object : object.class
     end
 
-    def klass?
+    def model?
       object.is_a? Class
     end
 

@@ -41,10 +41,4 @@ module ActionPolicy::Base::WithAdmin
   def upload?
     false
   end
-
-  protected
-
-  def model?
-    klass?
-  end
 end

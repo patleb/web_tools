@@ -4,7 +4,7 @@ class UserPolicy < ActionPolicy::Base
   end
 
   def show?
-    logged_in? && (klass? || allowed_role? || user.has?(record))
+    logged_in? && (model? || allowed_role? || user.has?(record))
   end
 
   def new?
