@@ -4,6 +4,7 @@ class Js.AdminConcept
     model: -> Rails.find('.js_model')?.data('name')
     scroll_menu: -> Rails.find('.js_scroll_menu')
     scroll_x: -> @model() and @bulk_form() and @store('scroll_x')?["#{@model()}_#{@action()}"]
+    bulk_form_scroll_x: -> Rails.$('.js_bulk_form th')
     bulk_form: -> Rails.find('.js_bulk_form')
     bulk_toggles: -> Rails.$('.js_bulk_toggles')
     bulk_checkboxes: -> Rails.$('.js_bulk_checkboxes')
@@ -36,9 +37,7 @@ class Js.AdminConcept
     @restore_bulk_form_scroll()
     @toggle_bulk_form()
     @toggle_export_schema()
-    @mouse_scroll_x = @bulk_checkboxes()
-    @mouse_scroll_x.push(@table_head()) if @table_head()
-    @mouse_scroll_x = @mouse_scroll_x.map (scroll) =>
+    @mouse_scroll_x = @bulk_form_scroll_x().map (scroll) =>
       Hamster(scroll).wheel (event, delta, dx, dy) =>
         event.preventDefault()
         @bulk_form().scrollLeft -= 40 * dy
