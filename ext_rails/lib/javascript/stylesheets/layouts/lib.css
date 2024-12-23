@@ -108,7 +108,7 @@ html {
   }
   tbody {
     td {
-      @apply table-cell text-center;
+      @apply table-cell;
     }
   }
 }
