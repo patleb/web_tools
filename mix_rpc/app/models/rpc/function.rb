@@ -36,7 +36,7 @@ module Rpc
     end
 
     def self.to_yaml
-      parse_schema.to_yaml(line_width: -1).delete_prefix("---\n").delete_prefix("--- {}\n")
+      parse_schema.pretty_yaml
     end
 
     def self.parse_schema

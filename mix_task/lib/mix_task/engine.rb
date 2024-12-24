@@ -21,9 +21,5 @@ module MixTask
     ActiveSupport.on_load(:active_record) do
       MixServer::Log.config.available_types['LogLines::Task'] = 170
     end
-
-    ActiveSupport.on_load('Task') do
-      Rails.application.load_tasks
-    end
   end
 end

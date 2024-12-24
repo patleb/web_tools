@@ -50,4 +50,8 @@ class Hash
     hash = hash.sort_by{ |k, _| k.to_s }.to_h if sort
     hash.cast_self.to_s.gsub(/:(\w+)=>/, '\1: ')
   end
+
+  def pretty_yaml(**options)
+    to_yaml(line_width: -1, **options).delete_prefix("---\n").delete_prefix("--- {}\n")
+  end
 end

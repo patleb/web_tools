@@ -1,8 +1,13 @@
 module MixTask
   has_config do
-    attr_writer   :admin_names
-    attr_writer   :available_names
-    attr_writer   :durations_max_size
+    attr_writer :yml_path
+    attr_writer :admin_names
+    attr_writer :available_names
+    attr_writer :durations_max_size
+
+    def yml_path
+      @yml_path ||= Rails.root.join('config/tasks.yml')
+    end
 
     def admin_names
       @admin_names ||= []

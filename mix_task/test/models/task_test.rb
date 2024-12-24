@@ -15,7 +15,7 @@ class TaskTest < ActiveSupport::TestCase
   let!(:session_id) do
     create_session!
   end
-  let(:run_timeout){ 5 }
+  let(:run_timeout){ 3 }
   let(:task){ Task.find(task_name) }
   let(:task_name){ 'try:send_email' }
 
@@ -55,7 +55,7 @@ class TaskTest < ActiveSupport::TestCase
     task.update! perform: true
     refute task.perform
     assert task.running?
-    assert Task.running? task_name
+    assert Task.running? task.name
     assert_raises ActiveRecord::RecordInvalid do
       task.update! perform: true
     end

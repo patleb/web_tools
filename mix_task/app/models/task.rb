@@ -18,6 +18,8 @@ class Task < LibMainRecord
 
   validate :perform_later
 
+  delegate :rake_tasks, to: :class
+
   def self.running?(name)
     where(name: name).take&.running?
   end
@@ -27,6 +29,23 @@ class Task < LibMainRecord
     when :deployer then names.keys
     when :admin    then names.keys & MixTask.config.admin_names
     else []
+    end
+  end
+
+  def self.rake_tasks
+    return [] unless MixTask.config.yml_path.exist?
+    @rake_tasks ||= YAML.safe_load(MixTask.config.yml_path.read, permitted_classes: [Symbol]) || {}
+  end
+
+  def self.to_yaml
+    extract_tasks.pretty_yaml
+  end
+
+  def self.extract_tasks
+    Rails.application.load_tasks
+    names.each_with_object({}) do |(name, _), tasks|
+      rake_task = Rake::Task[name]
+      tasks[name] = { desc: rake_task.comment, args: rake_task.arg_names }
     end
   end
 
@@ -54,12 +73,12 @@ class Task < LibMainRecord
     distance_of_time(durations.last.seconds)
   end
 
-  def parameters
-    rake_task.arg_names
+  def description
+    rake_tasks[name][:desc]
   end
 
-  def description
-    rake_task.comment
+  def parameters
+    rake_tasks[name][:args]
   end
 
   def allowed?
@@ -123,9 +142,5 @@ class Task < LibMainRecord
   def set_error_state(type)
     errors.add :base, type
     self.state = type
-  end
-
-  def rake_task
-    @rake_task ||= Rake::Task[name]
   end
 end

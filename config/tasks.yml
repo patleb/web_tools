@@ -1,0 +1,13 @@
+try:send_email:
+  :desc: try send email
+  :args:
+  - :later
+try:send_email_later:
+  :desc: try send email later
+  :args: []
+try:raise_exception:
+  :desc: try raise exception
+  :args: []
+try:sleep:
+  :desc: try sleep
+  :args: []
