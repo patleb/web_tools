@@ -1,5 +1,3 @@
-require_dir __FILE__, 'web_tools'
-
 namespace :tools do
   desc 'symlink all private gems'
   task :symlink_all => :environment do
@@ -13,15 +11,17 @@ namespace :tools do
 end
 
 namespace :test do
+  testable_gems = WebTools.gems.merge(WebTools.private_gems).select{ |_name, path| path.join('test').exist? }
+
   desc 'run all tests in WebTools'
   task web_tools: "test:prepare" do
-    WebTools::Runner.test_all
+    Rails::TestUnit::Runner.run_from_rake('test', testable_gems[name].join('test').to_s)
   end
 
-  WebTools::Runner.testable_gems.each_key do |name|
+  testable_gems.each_key do |name|
     desc "run all tests in #{name.camelize}"
-    task name => "test:prepare" do
-      WebTools::Runner.test_all(name)
+    task name do
+      Rails::TestUnit::Runner.run_from_rake 'test', testable_gems[name].join('test').to_s
     end
   end
 end

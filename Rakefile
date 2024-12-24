@@ -4,5 +4,3 @@
 require_relative "config/application"
 
 Rails.application.load_tasks
-
-load_dir __FILE__, 'lib/tasks', ext: 'rake'
