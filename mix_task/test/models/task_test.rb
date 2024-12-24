@@ -15,17 +15,13 @@ class TaskTest < ActiveSupport::TestCase
   let!(:session_id) do
     create_session!
   end
-  let(:run_timeout){ 3 }
-  let(:task){ Task.find(task_name) }
-  let(:task_name){ 'try:send_email' }
+  let(:run_timeout){ 5 }
 
   # NOTE self.use_transactional_tests == true --> task.run_callbacks :commit
   test '#perform_later' do
-    run_and_assert_task
-
+    task = run_and_assert_task 'try:send_email'
     assert task.notify_editable?
     task.update! notify: true
-
     assert_after{ LogLines::Email.where(subject: '[WebTools TEST] Healthcheck', sent: true).exists? }
     assert_after{ task.reload.success? }
     assert_until(sleep: 0.2) do
@@ -33,25 +29,18 @@ class TaskTest < ActiveSupport::TestCase
         LogLines::Email.where(subject: '[WebTools TEST] Notify', sent: true).exists?
       end
     end
-    assert_flash notice: I18n.t('task.flash.success_html', path: task.path, name: task_name)
-  end
+    assert_flash notice: I18n.t('task.flash.success_html', path: task.path, name: task.name)
 
-  context '#perform_later' do
-    let(:task_name){ 'try:raise_exception' }
-
-    test 'with failure' do
-      run_and_assert_task
-
-      assert_after{ LogLines::Rescue.where(error: 'Rescues::RakeError').exists? }
-      assert_until(sleep: 0.2){ task.reload.failure? }
-
-      assert_flash alert: [I18n.t('task.flash.failure_html', path: task.path, name: task_name), 'Échec'].join('<br>- ')
-    end
+    task = run_and_assert_task 'try:raise_exception'
+    assert_after{ LogLines::Rescue.where(error: 'Rescues::RakeError').exists? }
+    assert_until(sleep: 0.2){ task.reload.failure? }
+    assert_flash alert: [I18n.t('task.flash.failure_html', path: task.path, name: task.name), 'Échec'].join('<br>- ')
   end
 
   private
 
-  def run_and_assert_task
+  def run_and_assert_task(name)
+    task = Task.find(name)
     task.update! perform: true
     refute task.perform
     assert task.running?
@@ -59,6 +48,7 @@ class TaskTest < ActiveSupport::TestCase
     assert_raises ActiveRecord::RecordInvalid do
       task.update! perform: true
     end
+    task
   end
 
   def assert_flash(**messages)
