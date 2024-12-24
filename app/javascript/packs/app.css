@@ -4,5 +4,6 @@
 @import "@@lib/mix_user/stylesheets/all";
 @import "@@lib/mix_admin/stylesheets/all";
 @import "@@lib/mix_page/stylesheets/all";
+@import "@@lib/mix_task/stylesheets/all";
 @import "@@lib/mix_server/stylesheets/all";
 @import "@@/stylesheets/theming";
