@@ -13,8 +13,8 @@ class Task < LibMainRecord
     unknown: 5,
   }
 
-  attribute :_perform, :boolean
-  attribute :_from_later, :boolean
+  attribute :perform, :boolean
+  attribute :from_later, :boolean
 
   validate :perform_later
 
@@ -32,7 +32,7 @@ class Task < LibMainRecord
 
   def self.delete_or_create_all
     where.not(name: names.keys).delete_all
-    names.each_key do |name|
+    names.keys.reverse_each do |name|
       task = find_or_initialize_by(name: name)
       task.save(validate: false)
     end
@@ -70,8 +70,8 @@ class Task < LibMainRecord
     !running? || updater.nil? || updater == Current.user
   end
 
-  def perform
-    update! _perform: true, _from_later: true
+  def perform!
+    update! perform: true, from_later: true
   rescue ActiveRecord::RecordInvalid
     save(validate: false)
     raise
@@ -80,10 +80,10 @@ class Task < LibMainRecord
   private
 
   def perform_later
-    return unless _perform?
-    return perform_now if _from_later?
+    return unless perform?
+    return perform_now if from_later?
 
-    clear_attribute_change :_perform
+    clear_attribute_change :perform
     if notify_changed? && notify_editable?
       save(validate: false)
     end
@@ -92,7 +92,6 @@ class Task < LibMainRecord
         errors.add :base, :already_running
         throw :abort
       else
-        Current.flash_later = true
         TaskJob.perform_later(name)
         self.output = "[#{Time.current.utc}]#{Rake::RUNNING} #{name}"
         self.state = :running

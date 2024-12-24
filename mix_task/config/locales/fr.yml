@@ -10,8 +10,8 @@ fr:
 
   task:
     flash:
-      success_html: "Tâche <a href='%{path}'>%{name}</a> executée avec succès"
-      failure_html: "Tâche <a href='%{path}'>%{name}</a> terminée avec:"
+      success_html: "Tâche <a href='%{path}' class='link link-primary'>%{name}</a> executée avec succès"
+      failure_html: "Tâche <a href='%{path}' class='link link-primary'>%{name}</a> terminée avec:"
     email:
       success: "Tâche '%{name}' executée avec succès en %{duration}"
       failure: "Tâche '%{name}' terminée avec: %{errors}"
@@ -28,7 +28,7 @@ fr:
         output: Sortie
         updater: Utilisateur
         notify: Notifier
-        _perform: Exécuter
+        perform: Exécuter
     errors:
       models:
         task:

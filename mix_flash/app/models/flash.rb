@@ -55,6 +55,6 @@ class Flash < LibMainRecord
   private
 
   def flash_later!
-    user_session.flash_later!
+    Current.user_session.flash_later!
   end
 end

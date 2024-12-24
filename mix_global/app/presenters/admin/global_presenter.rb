@@ -5,7 +5,7 @@ module Admin
     end
 
     navigation_key :system
-    navigation_weight 60
+    navigation_weight 80
 
     field :id
     field :expires

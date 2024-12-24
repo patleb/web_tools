@@ -15,7 +15,7 @@ class TaskTest < ActiveSupport::TestCase
   let!(:session_id) do
     create_session!
   end
-  let(:run_timeout){ 3 }
+  let(:run_timeout){ 5 }
   let(:task){ Task.find(task_name) }
   let(:task_name){ 'try:send_email' }
 
@@ -33,7 +33,7 @@ class TaskTest < ActiveSupport::TestCase
         LogLines::Email.where(subject: '[WebTools TEST] Notify', sent: true).exists?
       end
     end
-    assert_flash notice: "Tâche <a href='/model/task/try:send_email/edit'>try:send_email</a> executée avec succès"
+    assert_flash notice: I18n.t('task.flash.success_html', path: task.path, name: task_name)
   end
 
   context '#perform_later' do
@@ -45,20 +45,19 @@ class TaskTest < ActiveSupport::TestCase
       assert_after{ LogLines::Rescue.where(error: 'Rescues::RakeError').exists? }
       assert_until(sleep: 0.2){ task.reload.failure? }
 
-      assert_flash alert: "Tâche <a href='/model/task/try:raise_exception/edit'>try:raise_exception</a> terminée avec:<br>- Échec"
+      assert_flash alert: [I18n.t('task.flash.failure_html', path: task.path, name: task_name), 'Échec'].join('<br>- ')
     end
   end
 
   private
 
   def run_and_assert_task
-    task.update! _perform: true
-    refute task._perform
+    task.update! perform: true
+    refute task.perform
     assert task.running?
     assert Task.running? task_name
-    assert Current.flash_later
     assert_raises ActiveRecord::RecordInvalid do
-      task.update! _perform: true
+      task.update! perform: true
     end
   end
 

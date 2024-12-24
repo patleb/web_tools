@@ -12,6 +12,12 @@ module MixTask
       append_migrations(app)
     end
 
+    initializer 'mix_task.admin' do
+      MixAdmin.configure do |config|
+        config.included_models << 'Task'
+      end
+    end
+
     ActiveSupport.on_load(:active_record) do
       MixServer::Log.config.available_types['LogLines::Task'] = 170
     end

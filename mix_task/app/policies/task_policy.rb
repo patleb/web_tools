@@ -1,31 +1,16 @@
-class TaskPolicy < ApplicationPolicy
+class TaskPolicy < ActionPolicy::Base
   def index?
-    Task.visible_tasks.any?
-  end
-
-  def export?
-    false
-  end
-
-  def show?
-    false
-  end
-
-  def new?
-    false
+    Task.allowed_tasks.present?
   end
 
   def edit?
-    record.visible?
-  end
-
-  def delete?
-    false
+    model? || record.allowed?
   end
 
   class Scope < Scope
     def resolve
-      super.where(name: Task.visible_tasks)
+      names = Task.allowed_tasks
+      names.present? ? relation.where(name: names) : super
     end
   end
 end

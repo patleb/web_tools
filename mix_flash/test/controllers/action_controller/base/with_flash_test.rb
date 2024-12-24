@@ -7,8 +7,8 @@ class ActionController::Base::WithFlashTest < ActionDispatch::IntegrationTest
   test 'Flash.later, Flash.dequeue_in' do
     controller_test :flash_later do
       Current.user.sessions.first.update! session_id: session.id
-      Current.session_id = session.id
-      Flash.later[:alert] = 'Error'
+      Current.session_id = session.id.to_s
+      Flash[:alert] = 'Error'
       render html: 'flash later'
     end
     assert_equal nil, flash.now[:alert]

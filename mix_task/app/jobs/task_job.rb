@@ -3,7 +3,7 @@ class TaskJob < ActiveJob::Base
 
   def perform(name)
     task = Task.find(name)
-    task.perform
+    task.perform!
     Flash[:notice] = I18n.t('task.flash.success_html', name: task.name, path: task.path)
     email_message = I18n.t('task.email.success', name: task.name, duration: task.duration)
   rescue ActiveRecord::RecordInvalid

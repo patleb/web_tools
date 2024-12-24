@@ -9,7 +9,12 @@ module MixTask
     end
 
     def available_names
-      @available_names ||= {}
+      @available_names ||= {
+        'try:send_email'       => 100,
+        'try:send_email_later' => 102,
+        'try:raise_exception'  => 104,
+        'try:sleep'            => 106,
+      }
     end
 
     def durations_max_size

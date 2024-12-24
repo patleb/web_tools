@@ -13,12 +13,6 @@ end
 MixSearch.config.available_types['Test::Record'] = 20
 
 MixTask.configure do |config|
-  config.available_names = {
-    'try:send_email' => 1,
-    'try:send_email_later' => 2,
-    'try:raise_exception' => 3,
-    'try:sleep' => 4,
-  }
   config.admin_names.concat(%w(
     try:sleep
   ))

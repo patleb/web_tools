@@ -1,0 +1,7 @@
+.admin_layout.task_model {
+  .table_wrapper {
+    .description_field {
+      @apply text-left;
+    }
+  }
+}

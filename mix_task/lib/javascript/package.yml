@@ -1,2 +1,2 @@
-gems:
-  - 'mix_admin'
+tailwind:
+  - '@@mix_task/app/presenters/**/*.rb'

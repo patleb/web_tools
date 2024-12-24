@@ -8,6 +8,7 @@ default: &default
     - 'mix_user'
     - 'mix_admin'
     - 'mix_page'
+    - 'mix_task'
     - 'mix_server'
 
   source_path: app/javascript
