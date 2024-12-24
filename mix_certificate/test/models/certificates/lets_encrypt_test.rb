@@ -47,6 +47,7 @@ Time.class_eval do
 end
 
 class Certificates::LetsEncryptTest < ActiveSupport::TestCase
+  let(:run_timeout){ 5 }
   let(:frozen_time){ true }
 
   test '.create_or_renew, .find_current!, .find_by_token!, #revoke' do

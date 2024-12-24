@@ -1,6 +1,10 @@
 require 'web_tools/base'
 
 module WebTools
+  def self.isolated_test_gems
+    @isolated_test_gems ||= Set.new(['ext_ruby', 'mix_geo', 'mix_task'])
+  end
+
   def self.private_gems
     @private_gems ||= (!File.exist?('Gemfile.private') ? [] : File.readlines('Gemfile.private')
       .select_map{ |line| line.match(/^ *gem +["']([^"']+)["']/)&.captures&.first })

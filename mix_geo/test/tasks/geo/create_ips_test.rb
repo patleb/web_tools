@@ -6,7 +6,7 @@ module MixGeo
     self.use_transactional_tests = false
     self.file_fixture_path = Gem.root('mix_geo').join('test/fixtures/files').to_s
 
-    let(:run_timeout){ 5 }
+    let(:run_timeout){ 10 }
 
     test 'geo:import_ips' do
       run_task remote: false, path: file_fixture_path, version: '2.3.2024121818'

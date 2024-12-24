@@ -14,8 +14,18 @@ namespace :test do
   testable_gems = WebTools.gems.merge(WebTools.private_gems).select{ |_name, path| path.join('test').exist? }
 
   desc 'run all tests in WebTools'
-  task web_tools: "test:prepare" do
-    Rails::TestUnit::Runner.run_from_rake('test', testable_gems[name].join('test').to_s)
+  task :web_tools do
+    isolated_tests = testable_gems.each_with_object([{}]) do |(name, path), memo|
+      path = path.join('test').to_s
+      if WebTools.isolated_test_gems.include? name.to_s
+        memo << { name => path }
+      else
+        memo.first[name] = path
+      end
+    end
+    isolated_tests.each do |gems|
+      Rails::TestUnit::Runner.run_from_rake 'test', gems.values
+    end
   end
 
   testable_gems.each_key do |name|

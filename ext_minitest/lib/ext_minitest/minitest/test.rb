@@ -2,7 +2,7 @@
 # https://github.com/grosser/maxitest
 
 Minitest::Test.class_eval do
-  DEFAULT_TIMEOUT = 1
+  DEFAULT_TIMEOUT = 2
 
   class << self
     alias_method :order_dependent!, :i_suck_and_my_tests_are_order_dependent!

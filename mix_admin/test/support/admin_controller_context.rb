@@ -100,7 +100,7 @@ module AdminControllerContext
     else
       assert_equal pretty_label, field.pretty_label
     end
-    assert_equal pretty_value, field.pretty_value
+    assert_equal pretty_value, field.pretty_show
     assert_equal pretty_input.first, field.pretty_input unless pretty_input.empty?
   end
 end
