@@ -5,12 +5,12 @@ class Task < LibMainRecord
 
   enum! name: MixTask.config.available_names
   enum  state: {
-    ready: 0,
-    running: 1,
-    success: 2,
-    failure: 3,
+    ready:     0,
+    running:   1,
+    success:   2,
+    failure:   3,
     cancelled: 4,
-    unknown: 5,
+    unknown:   5,
   }
 
   attribute :perform, :boolean
