@@ -42,6 +42,10 @@ Rails::Application.class_eval do
     @_name ||= engine_name.delete_suffix('_application')
   end
 
+  def credentials
+    Setting
+  end
+
   alias_method :old_initialize!, :initialize!
   def initialize!(group = :default)
     if ENV['RAILS_PROFILE']
