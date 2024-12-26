@@ -2,7 +2,7 @@ require 'web_tools/base'
 
 module WebTools
   def self.isolated_test_gems
-    @isolated_test_gems ||= Set.new(['ext_ruby', 'mix_geo', 'mix_task'])
+    @isolated_test_gems ||= Set.new(['mix_geo', 'mix_task'])
   end
 
   def self.private_gems

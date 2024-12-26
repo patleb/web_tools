@@ -12,18 +12,21 @@ end
 
 namespace :test do
   testable_gems = WebTools.gems.merge(WebTools.private_gems).select{ |_name, path| path.join('test').exist? }
+  minitest_gems = testable_gems.select{ |_name, path| path.glob('test/**/*_test.rb').first.read.include? 'test/spec_helper' }
 
   desc 'run all tests in WebTools'
   task :web_tools do
-    isolated_tests = testable_gems.each_with_object([{}]) do |(name, path), memo|
+    isolated_tests = testable_gems.each_with_object([{}, {}]) do |(name, path), memo|
       path = path.join('test').to_s
       if WebTools.isolated_test_gems.include? name.to_s
-        memo << { name => path }
-      else
+        memo.insert 1, { name => path }
+      elsif minitest_gems.has_key? name.to_s
         memo.first[name] = path
+      else
+        memo.last[name] = path
       end
     end
-    isolated_tests.each do |gems|
+    isolated_tests.compact_blank.each do |gems|
       Rails::TestUnit::Runner.run_from_rake 'test', gems.values
     end
   end

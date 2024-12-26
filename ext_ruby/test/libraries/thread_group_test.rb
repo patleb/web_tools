@@ -83,6 +83,7 @@ class ThreadGroupTest < Minitest::TestCase
     end
 
     test '#timeout' do
+      next if ENV['DEBUGGER_HOST']
       group.post_all do |i|
         thread_sleep 5 until thread_shuttingdown?
         values << i
