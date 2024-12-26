@@ -74,7 +74,7 @@ module Admin
 
       def property_fields
         memoize(self, __method__, bindings) do
-          presenter[through].select_map do |record|
+          presenter[through].order(column_name).select_map do |record|
             field_for record
           end
         end
