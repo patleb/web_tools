@@ -10,7 +10,7 @@ module Sunzistrano
       @role, @env, @app = role.to_s, Setting.env, Setting.app
       @sun = self
       @gems = {}
-      context = Setting.all.merge(extract_yml(Setting.root)).merge!(options).merge!(role => true)
+      context = Setting.all.to_hwia.merge!(extract_yml(Setting.root)).merge!(options).merge!(role => true)
       require_overrides
       @gems = @gems.to_a.reverse.to_h
       @replaced&.each{ |key| context[key.delete_suffix(Setting::REPLACE)] = context.delete(key) }

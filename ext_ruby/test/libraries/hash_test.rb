@@ -26,8 +26,8 @@ class HashTest < Minitest::TestCase
     assert_equal '{"3rd Key"=>"2000-01-01T00:00:00Z", D: nil, a: 0, b: 1.0, true=>false}', complex.sort_by{ |k, _| k.to_s }.reverse.to_h.pretty_hash!
   end
 
-  test 'ActiveSupport::HashWithIndifferentAccess#convert_key' do
-    assert_equal({ a: 0, b: 1.0, '3rd Key' => Time.utc(2000), true => false, D: nil }, complex.with_indifferent_access)
-    assert_equal([:a, :b, '3rd Key', ''], { a: 1, 'b' => 2, '3rd Key' => 3, '' => nil }.with_indifferent_access.keys)
+  test 'HashWithKeywordAccess#convert_key' do
+    assert_equal({ a: 0, b: 1.0, :'3rd Key' => Time.utc(2000), true => false, D: nil }, complex.to_hwka)
+    assert_equal([:a, :b, :'3rd Key', :''], { a: 1, 'b' => 2, '3rd Key' => 3, '' => nil }.to_hwka.keys)
   end
 end

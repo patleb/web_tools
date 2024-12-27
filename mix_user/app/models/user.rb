@@ -40,7 +40,7 @@ class User < LibMainRecord
 
   alias_method :user_id, :id
 
-  enum role: MixUser.config.available_roles
+  enum :role, MixUser.config.available_roles
 
   def self.admin_created?
     admin.exists?

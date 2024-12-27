@@ -11,7 +11,7 @@ class LogRollups::Database < LogRollup
     connections: :integer,
   )
 
-  enum group_name: {
+  enum :group_name, {
     period: 0,
   }
 end

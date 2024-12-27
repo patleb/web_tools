@@ -1,5 +1,5 @@
 class Server < LibMainRecord
-  enum provider: MixServer.config.available_providers
+  enum :provider, MixServer.config.available_providers
 
   def self.provisioned?(time = nil)
     ((time || Time.current) - current.created_at) > 10.minutes

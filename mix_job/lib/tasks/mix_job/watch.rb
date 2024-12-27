@@ -9,7 +9,7 @@ module MixJob
     SHUTDOWN_SIGNAL  = 'TERM' # used in tests
     INSPECT_SIGNAL   = 'USR1'
     EXECUTE_SIGNAL   = 'USR2'
-    SIGNALS = SHUTDOWN_SIGNALS.map{ |signal| [signal, :shutdown] }.to_h.merge!(
+    SIGNALS = SHUTDOWN_SIGNALS.index_with(:shutdown).merge!(
       INSPECT_SIGNAL => :inspect,
       EXECUTE_SIGNAL => :execute,
     )
@@ -346,7 +346,7 @@ module MixJob
       when 0          then return performed
       when @jobs.size then @jobs.shift
       end
-      @jobs << { time: Time.current.utc, thread: Thread.current[:name] }.with_indifferent_access.merge!(job_snapshot)
+      @jobs << { time: Time.current.utc, thread: Thread.current[:name] }.to_hwka.merge!(job_snapshot)
       performed
     end
 
@@ -418,7 +418,7 @@ module MixJob
       meth.delete_prefix! '.'
       args.delete_prefix! '('; args.delete_suffix! ')'
       args = "[#{args}]".to_args
-      [klass.to_const!, meth.to_sym, args, args.extract_options!.with_indifferent_access]
+      [klass.to_const!, meth.to_sym, args, args.extract_options!.to_hwka]
     end
 
     def post(**options)

@@ -36,7 +36,7 @@ module ActiveRecord::Base::WithRescuableValidations
   def _handle_base_exception(exception, values_regex, error_type, &block)
     values = exception.message.match(values_regex).named_captures
     values = values.transform_values(&block) if block_given?
-    errors.add :base, error_type, **values.with_indifferent_access
+    errors.add :base, error_type, **values.to_hwka
     false
   end
 end

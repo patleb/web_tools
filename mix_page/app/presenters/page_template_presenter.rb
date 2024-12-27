@@ -12,7 +12,7 @@ class PageTemplatePresenter < ActivePresenter::Base
   end
 
   def render(tag: 'h1', **options)
-    options = html_options.with_indifferent_access.union!(options)
+    options = html_options.to_hwka.union!(options)
     div_(options) {[
       with_tag(tag, '.page_actions', [
         edit_action,

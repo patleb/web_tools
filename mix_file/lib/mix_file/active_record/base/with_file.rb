@@ -4,7 +4,7 @@ module ActiveRecord::Base::WithFile
   extend ActiveSupport::Concern
 
   prepended do
-    class_attribute :attachment_reflections, instance_writer: false, default: {}.with_indifferent_access
+    class_attribute :attachment_reflections, instance_writer: false, default: {}.to_hwka
   end
 
   class_methods do

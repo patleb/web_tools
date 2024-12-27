@@ -8,7 +8,7 @@ class Job < MixJob.config.parent_model.to_const!
 
   json_attribute MixJob.config.json_attributes
 
-  enum queue_name: MixJob.config.available_queues
+  enum :queue_name, MixJob.config.available_queues
 
   with_options presence: true do
     validates :job_class

@@ -15,7 +15,7 @@ module MixFile
         preview_image: 10,
         embeds:        20,
         raw_email:     30,
-      }.with_indifferent_access
+      }.to_hwka
     end
 
     ### References

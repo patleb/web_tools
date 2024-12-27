@@ -8,7 +8,7 @@ class LogMessage < LibMainRecord
     undef_method :warn # defined in Kernel
   end
 
-  enum level: {
+  enum :level, {
     debug:   0,
     info:    1,
     warn:    2,
@@ -16,7 +16,7 @@ class LogMessage < LibMainRecord
     fatal:   4,
     unknown: 5,
   }
-  enum! log_lines_type: MixServer::Log.config.available_types
+  enum! :log_lines_type, MixServer::Log.config.available_types
 
   attr_accessor :new_line_at
 

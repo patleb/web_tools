@@ -5,8 +5,8 @@ class ActiveRecord::TypeTest < ActiveSupport::TestCase
 
   let(:record){ Test::Record.find(1) }
 
-  it 'should deserialize as hash with_indifferent_access' do
-    assert_equal HashWithIndifferentAccess, record.json.class
+  it 'should deserialize as hash with keyword access' do
+    assert_equal HashWithKeywordAccess, record.json.class
     assert_equal 1, record.json[:int]
   end
 

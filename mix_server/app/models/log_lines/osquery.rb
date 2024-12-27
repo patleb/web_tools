@@ -36,7 +36,7 @@ module LogLines
     end
 
     def self.conf
-      @conf ||= JSON.parse(Pathname.new('/etc/osquery/osquery.conf').read).with_indifferent_access
+      @conf ||= JSON.parse(Pathname.new('/etc/osquery/osquery.conf').read).to_hwka
     end
 
     def self.flags
@@ -44,7 +44,7 @@ module LogLines
         Pathname.new('/etc/osquery/osquery.flags').readlines(chomp: true).select_map do |line|
           next unless line.delete_prefix! '--'
           line.split('=', 2)
-        end.to_h.with_indifferent_access.transform_values(&:cast_self)
+        end.to_h.to_hwka.transform_values(&:cast_self)
       end
     end
 

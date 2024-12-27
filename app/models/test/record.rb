@@ -32,14 +32,14 @@ module Test
       j_interval: :interval
     )
 
-    enum _default: :zero, integer: {
+    enum :integer, {
       zero:  0,
       one:   1,
       two:   2,
       three: 3,
       four:  4,
       five:  5,
-    }
+    }, default: :zero
 
     validates :string, presence: true
 

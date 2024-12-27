@@ -111,7 +111,7 @@ module Monit
       def self.statements
         @@statements ||= begin
           pgmonitor_path = MixServer::Engine.root.join('vendor/pgmonitor/exporter/postgres')
-          pgmonitor = pgmonitor_path.glob('*.yml').each_with_object({}.with_indifferent_access) do |yml, memo|
+          pgmonitor = pgmonitor_path.glob('*.yml').each_with_object({}.to_hwka) do |yml, memo|
             yml = YAML.safe_load(yml.read)
               .transform_keys{ |key| key == 'ccp_locks' ? 'database_locks' : key.delete_prefix('ccp_') }
               .transform_values{ |hash| hash['query'].escape_newlines }
@@ -119,7 +119,7 @@ module Monit
             memo.merge! yml
           end
           pgextras_path = Gem.root('ruby-pg-extras').join('lib/ruby-pg-extras/queries')
-          pgextras = pgextras_path.glob('*.sql').each_with_object({}.with_indifferent_access) do |sql, memo|
+          pgextras = pgextras_path.glob('*.sql').each_with_object({}.to_hwka) do |sql, memo|
             name = sql.basename('.sql').to_s
             next if EXCLUDED_PG_EXTRAS.include? name
             next if (sql = sql.readlines.drop(1).join(' ').strip_sql).include? '%{'

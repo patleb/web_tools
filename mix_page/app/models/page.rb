@@ -6,7 +6,7 @@ class Page < LibMainRecord
 
   scope :with_fields, -> { includes(page_fields: :fieldable) }
 
-  enum! type: {
+  enum! :type, {
     'PageLayout'   => 10,
     'PageTemplate' => 20
   }

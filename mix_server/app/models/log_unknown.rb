@@ -1,5 +1,5 @@
 class LogUnknown < LibMainRecord
-  enum! log_lines_type: MixServer::Log.config.available_types
+  enum! :log_lines_type, MixServer::Log.config.available_types
 
   def self.report?
     report > 0

@@ -21,7 +21,7 @@ namespace :test do
       if WebTools.isolated_test_gems.include? name.to_s
         memo.insert 1, { name => path }
       elsif minitest_gems.has_key? name.to_s
-        memo.first[name] = path
+        # memo.first[name] = path
       else
         memo.last[name] = path
       end

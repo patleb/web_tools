@@ -19,7 +19,7 @@ module LogLines
       'alert'  => :fatal,
       'emerg'  => :fatal,
       'ruby'   => :unknown,
-    }.with_indifferent_access
+    }.to_hwka
 
     P_TIME         = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/
     P_LEVEL        = /\w\d?/

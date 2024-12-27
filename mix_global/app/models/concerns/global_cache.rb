@@ -40,7 +40,7 @@ module GlobalCache
     end
 
     def read_multi(matcher = nil, *names, **)
-      return {}.with_indifferent_access if matcher.nil?
+      return {}.to_hwia if matcher.nil?
       names = matcher.is_a?(Regexp) ? matcher : [matcher].concat(names)
       read_records(names).transform_values!(&:data)
     end
@@ -63,7 +63,7 @@ module GlobalCache
     end
 
     def write_multi(hash, **, &)
-      hash.each_with_object({}.with_indifferent_access) do |(name, value), result|
+      hash.each_with_object({}.to_hwia) do |(name, value), result|
         record = write_record(name, value, **, &)
         result[key_name(record)] = value
       end

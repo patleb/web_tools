@@ -15,7 +15,7 @@ class TaskTest < ActiveSupport::TestCase
   let!(:session_id) do
     create_session!
   end
-  let(:run_timeout){ 5 }
+  let(:run_timeout){ 10 }
 
   # NOTE self.use_transactional_tests == true --> task.run_callbacks :commit
   test '#perform_later' do

@@ -200,14 +200,14 @@ module ExtRails
       require 'ext_rails/active_record/connection_adapters/postgresql_adapter'
       require 'ext_rails/active_record/arel'
       require 'ext_rails/active_record/base'
-      require 'ext_rails/active_record/enum/enum_type'
+      require 'ext_rails/active_record/enum/with_keyword_access'
       require 'ext_rails/active_record/migration'
       require 'ext_rails/active_record/reflection/belongs_to_reflection/with_list'
       require 'ext_rails/active_record/reflection/has_many_reflection/with_discard'
       require 'ext_rails/active_record/reflection/has_one_reflection/with_discard'
       require 'ext_rails/active_record/relation'
       require 'ext_rails/active_record/tasks/database_tasks/with_single_env'
-      require 'ext_rails/active_record/type/json/with_indifferent_access'
+      require 'ext_rails/active_record/type/json/with_keyword_access'
       require 'ext_rails/active_record/type/encrypted'
       ::USER_AGENT_PARSER = UserAgentParser::Parser.new
       ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables = Rails.env.test?

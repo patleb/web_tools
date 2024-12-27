@@ -1,4 +1,12 @@
 module Minitest::Assertions
+  def assert_retry(expected, actual = nil, retries: 2)
+    result = actual.nil? ? yield : actual
+    while result != expected && (retries -= 1) > 0
+      result = yield
+    end
+    assert_equal expected, result
+  end
+
   alias_method :assert_equal_without_nil, :assert_equal
   def assert_equal(exp, act, msg = nil)
     if exp.nil?

@@ -17,7 +17,7 @@ module ActiveRecord::Base::WithJsonAttribute
     text: 'TEXT',
     time: 'TIME',
     interval: 'INTERVAL',
-  }.with_indifferent_access
+  }.to_hwka
 
   prepended do
     class_attribute :json_accessors, instance_reader: true, instance_accessor: false, instance_predicate: false
@@ -79,8 +79,8 @@ module ActiveRecord::Base::WithJsonAttribute
 
     # NOTE column (ex.: :json_data) is updated only before validations, but fields are updated when column is updated
     def json_accessor(column, fields)
-      self.json_accessors ||= {}.with_indifferent_access
-      json_accessors[column] ||= {}.with_indifferent_access
+      self.json_accessors ||= {}.to_hwka
+      json_accessors[column] ||= {}.to_hwka
       fields = json_normalize_fields(fields)
       defaults = json_extract_defaults! fields
       previous_keys = json_accessors[column].keys
@@ -102,7 +102,7 @@ module ActiveRecord::Base::WithJsonAttribute
         next unless previous_keys.empty?
 
         define_method "#{column}=" do |new_values|
-          new_values = (new_values || {}).with_indifferent_access.slice(*json_accessors[column].keys)
+          new_values = (new_values || {}).to_hwka.slice(*json_accessors[column].keys)
           nil_values = public_send(column).except(*new_values.keys)
           super(new_values)
           nil_values.each_key do |name|
@@ -154,12 +154,12 @@ module ActiveRecord::Base::WithJsonAttribute
           [type, options || {}]
         end
       else
-        Array.wrap(fields).map{ |name| [name, [:string, {}]] }.to_h
+        Array.wrap(fields).index_with [:string, {}]
       end
     end
 
     def json_extract_defaults!(fields)
-      fields.each_with_object({}.with_indifferent_access) do |(name, (type, options)), defaults|
+      fields.each_with_object({}.to_hwka) do |(name, (type, options)), defaults|
         next unless options.has_key?(:default)
         defaults[name] = options.delete(:default)
       end

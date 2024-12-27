@@ -65,7 +65,7 @@ class Setting
     @all ||= begin
       @env, @app, @root = (env || self.env).to_s, (app || self.app).to_s, (root || self.root)
       raise 'environment must be specified or configured' unless @env.present?
-      @types = {}.with_indifferent_access
+      @types = {}.to_hwka
       @gems = {}
       @secrets = parse_secrets_yml
       @settings = extract_yml(:settings, @root)
@@ -170,7 +170,7 @@ class Setting
     end
 
     def parse_secrets_yml
-      extract_yml(:secrets, @root).with_indifferent_access
+      extract_yml(:secrets, @root).to_hwka
     end
 
     def parse_database_yml

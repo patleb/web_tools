@@ -3,8 +3,8 @@ class Task < LibMainRecord
 
   has_userstamps
 
-  enum! name: MixTask.config.available_names
-  enum  state: {
+  enum! :name, MixTask.config.available_names
+  enum  :state, {
     ready:     0,
     running:   1,
     success:   2,
@@ -21,7 +21,7 @@ class Task < LibMainRecord
   delegate :rake_tasks, to: :class
 
   def self.running?(name)
-    where(name: name).take&.running?
+    where(name: name).running.exists?
   end
 
   def self.allowed_tasks

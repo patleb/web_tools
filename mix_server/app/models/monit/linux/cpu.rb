@@ -32,7 +32,7 @@ module Monit
         m_access(__method__) do
           keys = [:boot_time, :cpu_load, :cpu_pids, :cpu_work, :cpu_idle, :cpu_steal]
           values = Host.snapshot&.slice(*keys)
-          values || keys.drop(2).map{ |k| [k, 0] }.to_h.merge(boot_time: Time.at(0), cpu_load: [0, 0, 0])
+          values || keys.drop(2).index_with(0).merge(boot_time: Time.at(0), cpu_load: [0, 0, 0])
         end
       end
 

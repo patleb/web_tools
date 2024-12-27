@@ -1,5 +1,5 @@
 module Rice
-  HOOKS = %w(before_all after_all before_init after_init).map{ |hook| [hook, ''] }.to_h
+  HOOKS = %w(before_all after_all before_init after_init).index_with('')
   METHOD_ALIAS_KEYWORD = /^(?!(module|class|enum) +[A-Z]).+ +\| +.+/
 
   class NestedDependency < StandardError; end

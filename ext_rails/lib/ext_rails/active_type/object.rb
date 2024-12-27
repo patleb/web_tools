@@ -13,30 +13,39 @@ ActiveType::Object.class_eval do
   end
 
   def self.enum!(**)
-    enum(_scopes: false, _instance_methods: false, **)
+    enum(scopes: false, instance_methods: false, with_keyword_access: false, **)
   end
 
-  def self.enum(default: nil, _scopes: true, _instance_methods: true, **definition)
-    raise 'multiple definitions are not supported' if definition.size > 1
-    name, values = definition.first
+  def self.enum(name, values = nil, default: nil, scopes: true, instance_methods: true, with_keyword_access: true, **options)
+    values, options = options, {} unless values
     raise 'only hash enum is supported' unless values.is_a? Hash
-    default = ActiveSupport::HashWithIndifferentAccess.convert_key(default)
 
-    super(name, values, scopes: false, instance_methods: _instance_methods)
+    default = _enum_convert_key with_keyword_access, default
+
+    super(name, values, scopes: false, instance_methods: instance_methods, with_keyword_access: with_keyword_access, **options)
 
     attribute name, default: proc{ default }
     define_method "#{name}_for_database" do
       self.class.send(name.to_s.pluralize)[self[name]]
     end
 
-    return unless _scopes
+    return unless scopes
     values.each_key do |key|
+      _enum_convert_key with_keyword_access, key
       singleton_class.define_method(key) do
         where(name => key)
       end
       singleton_class.define_method("not_#{key}") do
         where.not(name => key)
       end
+    end
+  end
+
+  def self._enum_convert_key(with_keyword_access, value)
+    if with_keyword_access
+      HashWithKeywordAccess.convert_key(value)
+    else
+      value.is_a?(Symbol) ? value.to_s : value
     end
   end
 
@@ -51,7 +60,7 @@ ActiveType::Object.class_eval do
   def attributes_hash
     hash = attributes
     hash.merge! attribute_aliases.transform_values{ |v| hash[v] }
-    hash.with_indifferent_access
+    hash.to_hwka
   end
 
   def write_virtual_attribute(name, value)

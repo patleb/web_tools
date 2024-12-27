@@ -12,7 +12,7 @@ class PageTemplate < Page
     validates "description_#{locale}", length: { maximum: 360 }
   end
 
-  enum! view: MixPage.config.available_templates
+  enum! :view, MixPage.config.available_templates
 
   json_translate(
     title: [:string, default: ->(record) { record.default_title }],

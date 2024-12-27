@@ -12,7 +12,7 @@ ActiveRecord::Relation.class_eval do
 
   def order_group(*columns, reverse: false)
     aliases = columns.map{ |field| column_alias_for(field.to_s.dup).downcase }
-    relation = reverse ? order(aliases.map{ |column| [column, :desc] }.to_h) : order(*aliases)
+    relation = reverse ? order(aliases.index_with(:desc)) : order(*aliases)
     relation.group(*columns)
   end
 

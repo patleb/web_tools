@@ -149,7 +149,7 @@ module ActionView::Helpers::TagHelper
         options = content_or_options if content_or_options.is_a? Hash
       end
     end
-    options = (options ? options.dup : {}).with_indifferent_access
+    options = (options ? options.dup : {}).to_hwka
 
     return unless continue(options)
 

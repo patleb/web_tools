@@ -24,7 +24,7 @@ module LogLines
 
     def self.header(message)
       fields = message.header_fields.map{ |f| [f.name.underscore, f.field.to_s] }.to_h
-      fields.slice('from', 'to', 'cc', 'bcc', 'subject').compact_blank.with_indifferent_access
+      fields.slice('from', 'to', 'cc', 'bcc', 'subject').compact_blank.to_hwka
     end
   end
 end

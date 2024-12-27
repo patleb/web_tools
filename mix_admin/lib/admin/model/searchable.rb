@@ -96,7 +96,7 @@ module Admin::Model::Searchable
   def query_scope(scope, section, query)
     query = MixAdmin::Routes.format_query_param(query)
     return [scope, []] unless query.is_a?(String) && query.present?
-    query_fields = section.query_fields.with_indifferent_access
+    query_fields = section.query_fields.to_hwia
     fields_default = query_fields.transform_values{ |v| v.keys.map(&:to_s).to_set }
     statements, errors = parse_query(query)
     statements.each do |statement|

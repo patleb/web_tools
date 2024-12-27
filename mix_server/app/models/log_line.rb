@@ -6,7 +6,7 @@ class LogLine < LibMainRecord
   belongs_to :log
   belongs_to :log_message
 
-  enum! type: MixServer::Log.config.available_types
+  enum! :type, MixServer::Log.config.available_types
 
   attr_readonly *%i(
     created_at

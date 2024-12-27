@@ -3,13 +3,13 @@ module ActiveJob
     class JobAdapter < AsyncAdapter
       def enqueue(job)
         return super if MixJob.config.async?
-        job_data = job.serialize.with_indifferent_access
+        job_data = job.serialize.to_hwka
         Job.enqueue job_data
       end
 
       def enqueue_at(job, timestamp)
         return super if MixJob.config.async?
-        job_data = job.serialize.with_indifferent_access.merge! scheduled_at: Time.at(timestamp)
+        job_data = job.serialize.to_hwka.merge! scheduled_at: Time.at(timestamp)
         Job.enqueue job_data
       end
 

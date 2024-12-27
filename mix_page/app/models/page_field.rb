@@ -9,9 +9,9 @@ class PageField < LibMainRecord
 
   accepts_nested_attributes_for :fieldable, update_only: true
 
-  enum! type: MixPage.config.available_field_types
-  enum! name: MixPage.config.available_field_names
-  enum! fieldable_type: MixPage.config.available_fieldables
+  enum! :type, MixPage.config.available_field_types
+  enum! :name, MixPage.config.available_field_names, with_keyword_access: true
+  enum! :fieldable_type, MixPage.config.available_fieldables
 
   attr_readonly *%i(
     type

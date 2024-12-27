@@ -33,7 +33,7 @@ module Process
       Z: :zombie,
       P: :parked,
       I: :idle,
-    }.with_indifferent_access
+    }.to_hwka
     PID_DEAD = -1
     PID_INIT = 1
 

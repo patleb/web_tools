@@ -3,6 +3,6 @@ class Hash
   alias_method :attribute_names, :keys
 
   def attributes_hash
-    to_hash.with_indifferent_access
+    to_hash.to_hwka
   end
 end

@@ -7,7 +7,7 @@ class Global < MixGlobal.config.parent_model.to_const!
 
   attribute :data
 
-  enum data_type: {
+  enum :data_type, {
     string:      0,
     json:       10,
     boolean:    20,
@@ -120,11 +120,11 @@ class Global < MixGlobal.config.parent_model.to_const!
     case names
     when Array
       keys = names.map{ |name| normalize_key(name) }
-      where(id: keys).find_each.with_object({}.with_indifferent_access) do |record, memo|
+      where(id: keys).find_each.with_object({}.to_hwia) do |record, memo|
         memo[key_name(record)] = record unless record._sync_stale_state.stale?
       end
     when String, Regexp
-      where(column(:id).matches key_matcher(names)).find_each.with_object({}.with_indifferent_access) do |record, memo|
+      where(column(:id).matches key_matcher(names)).find_each.with_object({}.to_hwia) do |record, memo|
         memo[key_name(record)] = record unless record._sync_stale_state.stale?
       end
     else

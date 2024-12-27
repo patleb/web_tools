@@ -25,7 +25,7 @@ class PageFieldPresenter < ActivePresenter::Base[:@page]
   end
 
   def render(i: nil, **options, &block)
-    options = html_options.with_indifferent_access.union! options
+    options = html_options.to_hwka.union! options
     @position = i
     if block_given?
       instance_exec(**options, &block)

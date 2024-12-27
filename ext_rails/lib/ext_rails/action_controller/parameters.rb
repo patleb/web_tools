@@ -29,5 +29,5 @@ end
 ActionController::Parameters.class_eval do
   prepend self::WithLocation
 
-  delegate :with_indifferent_access, to: :to_hash
+  delegate :with_indifferent_access, :with_keyword_access, :to_hwia, :to_hwka, to: :to_hash
 end

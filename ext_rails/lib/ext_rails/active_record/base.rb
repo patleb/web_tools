@@ -56,7 +56,7 @@ ActiveRecord::Base.class_eval do
   self.store_base_sti_class = false
 
   def self.enum!(*, **)
-    enum(*, **, _scopes: false, _instance_methods: false)
+    enum(*, scopes: false, instance_methods: false, with_keyword_access: false, **)
   end
 
   def self.establish_connection_for(namespace)
@@ -234,7 +234,7 @@ ActiveRecord::Base.class_eval do
   end
 
   def self.types_hash
-    @types_hash ||= TYPES_HASH.each_with_object({}.with_indifferent_access) do |attributes_method, hash|
+    @types_hash ||= TYPES_HASH.each_with_object({}.to_hwka) do |attributes_method, hash|
       hash.merge! public_send(attributes_method) if respond_to? attributes_method
     end
   end
@@ -257,7 +257,7 @@ ActiveRecord::Base.class_eval do
   def attributes_hash
     hash = @attributes.to_hash
     hash.merge! attribute_aliases.except('id_value').transform_values{ |v| hash[v] }
-    hash.with_indifferent_access
+    hash.to_hwka
   end
 
   def destroyed!

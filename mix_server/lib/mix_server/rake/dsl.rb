@@ -37,9 +37,9 @@ module Rake
     def run_ftp_list(match, **options)
       `#{Sh.ftp_list(match, **options)}`.lines.map(&:strip).map(&:split).map do |columns|
         if columns.size == 3
-          { size: columns[0].to_i, time: Time.parse_utc(columns[1]), name: columns[2] }.with_indifferent_access
+          { size: columns[0].to_i, time: Time.parse_utc(columns[1]), name: columns[2] }.to_hwka
         else
-          { time: Time.parse_utc(columns[0]), name: columns[1].delete_suffix('/') }.with_indifferent_access
+          { time: Time.parse_utc(columns[0]), name: columns[1].delete_suffix('/') }.to_hwka
         end
       end
     end

@@ -12,7 +12,7 @@ module Process
   end
 
   def self.os_release
-    @os_release ||= Pathname.new('/etc/os-release').readlines.each_with_object({}.with_indifferent_access) do |line, all|
+    @os_release ||= Pathname.new('/etc/os-release').readlines.each_with_object({}.to_hwka) do |line, all|
       next if line.exclude?('=')
       key, value = line.split('=', 2).map{ |part| part.strip.delete_prefix('"').delete_suffix('"').downcase }
       all[key] = value

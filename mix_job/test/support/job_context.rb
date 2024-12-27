@@ -14,7 +14,7 @@ module JobContext
   included do
     self.use_transactional_tests = false
 
-    let(:args){ [User::Null.new, { a: 1, b: 2.0, c: [{}.with_indifferent_access] }] }
+    let(:args){ [User::Null.new, { a: 1, b: 2.0, c: [{}.to_hwka] }] }
     let(:scheduled_at){ 5.minutes.from_now }
 
     around do |test|

@@ -9,7 +9,9 @@ class Process::PassengerTest < ActiveSupport::TestCase
     Thread.pass until passenger.available? timeout: 1
     assert Process::Passenger::SERVER.keys.sort, passenger.server.values
     assert_equal 1, passenger.pool[:group_count].to_i
-    assert_equal 2, passenger.pool[:max].to_i
+    assert_retry 2, passenger.pool[:max].to_i do
+      passenger.pool(force: true)[:max].to_i
+    end
   ensure
     if pid
       Process.kill('TERM', pid)

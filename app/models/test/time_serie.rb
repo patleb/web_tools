@@ -1,6 +1,6 @@
 module Test
   class TimeSerie < ApplicationRecord
-    enum! type: {
+    enum! :type, {
       'Test::TimeSeries::DataPoint' => 1,
     }
 

@@ -9,14 +9,14 @@ module WebTools
     @private_gems ||= (!File.exist?('Gemfile.private') ? [] : File.readlines('Gemfile.private')
       .select_map{ |line| line.match(/^ *gem +["']([^"']+)["']/)&.captures&.first })
       .flat_map{ |name| subgems Gem.root(name) }
-      .map{ |d| [d, Gem.root(d)] }
-      .to_h.with_indifferent_access
+      .index_with{ |d| Gem.root(d) }
+      .to_hwia
   end
 
   def self.gems
     @gems ||= subgems(root)
-      .map{ |d| [d, Gem.root(d)] }
-      .to_h.with_indifferent_access
+      .index_with{ |d| Gem.root(d) }
+      .to_hwia
   end
 
   def self.root

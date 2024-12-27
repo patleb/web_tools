@@ -247,7 +247,7 @@ module Admin
     end
 
     def self.associations_hash
-      @associations_hash ||= klass.reflect_on_all_associations.each_with_object({}.to_hwia) do |association, hash|
+      @associations_hash ||= klass.reflect_on_all_associations.each_with_object({}.to_hwka) do |association, hash|
         hash[association.name] = Association.new(association, klass)
       end
     end
@@ -261,7 +261,7 @@ module Admin
         columns_hash: false,
         attribute_types: true,
         virtual_columns_hash: true
-      }.each_with_object({}.to_hwia) do |(columns, virtual), hash|
+      }.each_with_object({}.to_hwka) do |(columns, virtual), hash|
         next unless klass.respond_to? columns
         klass.public_send(columns).each do |name, column|
           hash[name] ||= Column.new(column, klass, name, virtual)

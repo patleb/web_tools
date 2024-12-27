@@ -53,7 +53,7 @@ module ExtRails
     end
 
     def db_partitions
-      @db_partitions ||= {}.with_indifferent_access
+      @db_partitions ||= {}.to_hwka
     end
 
     def backup_excludes
@@ -61,7 +61,7 @@ module ExtRails
     end
 
     def themes
-      @themes ||= { light: 'sun', dark: 'moon-stars-fill' }.with_indifferent_access
+      @themes ||= { light: 'sun', dark: 'moon-stars-fill' }.to_hwka
     end
 
     def theme
