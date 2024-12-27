@@ -98,10 +98,10 @@ unittest.*
 ### AFTER .gitignore ###
 
 web_tools-*.gem
-Gemfile.lock
+# Gemfile.lock
 Gemfile.private
 private.rb
 /lib_private
 !/lib_private/.keep
 rice.private.yml
-yarn.lock
+# yarn.lock
