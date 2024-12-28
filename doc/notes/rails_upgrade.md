@@ -12,9 +12,9 @@ rails new v8_0_base \
   --skip-system-test \
   --skip-dev-gems \
   --skip-thruster \
-  --skip-rubocup \
+  --skip-rubocop \
   --skip-brakeman \
   --skip-ci \
-  --skip-kemal \
+  --skip-kamal \
   --skip-solid
 ```
