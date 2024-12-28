@@ -1,5 +1,0 @@
-require '<%= plugin_name %>/engine'
-
-module <%= plugin_module %>
-  # Your code goes here...
-end

@@ -1,7 +1,0 @@
-require 'ext_ruby'
-require '<%= plugin_name %>/configuration'
-
-module <%= plugin_module %>
-  class Engine < ::Rails::Engine
-  end
-end
