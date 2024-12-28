@@ -27,7 +27,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'inifile'
   s.add_dependency 'http'
   s.add_dependency 'mutex_m'
-  s.add_dependency 'oj'
   s.add_dependency 'parallel'
   s.add_dependency 'sorted_set'
   s.add_dependency 'vmstat'
