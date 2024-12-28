@@ -18,9 +18,6 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-# require 'web_tools/admin'
-# require 'web_tools/application'
-
 module WebTools
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
