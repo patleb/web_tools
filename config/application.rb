@@ -21,7 +21,7 @@ Bundler.require(*Rails.groups)
 module WebTools
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 8.0
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -43,6 +43,7 @@ module WebTools
     config.active_record.belongs_to_required_by_default = false
     config.active_record.cache_versioning = false
     config.cache_store = :global_store
+    config.yjit = false
 
     ExtRails.configure do |config|
       config.sql_debug = false
@@ -65,6 +66,20 @@ module WebTools
     initializer 'app.mime_types' do
       # Add new mime types for use in respond_to blocks:
       # Mime::Type.register "text/richtext", :rtf
+    end
+
+    initializer 'app.permissions_policy' do
+      # Define an application-wide HTTP permissions policy. For further
+      # information see: https://developers.google.com/web/updates/2018/06/feature-policy
+
+      # Rails.application.config.permissions_policy do |policy|
+      #   policy.camera      :none
+      #   policy.gyroscope   :none
+      #   policy.microphone  :none
+      #   policy.usb         :none
+      #   policy.fullscreen  :self
+      #   policy.payment     :self, "https://secure.example.com"
+      # end
     end
   end
 end

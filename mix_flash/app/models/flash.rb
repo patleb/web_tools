@@ -4,7 +4,7 @@ class Flash < LibMainRecord
   SEPARATOR = '<br>'
 
   belongs_to :user
-  belongs_to :user_session, query_constraints: [:user_id, :session_id]
+  belongs_to :user_session, foreign_key: [:user_id, :session_id]
 
   validates :session_id, format: { with: Rack::Utils::SESSION_ID }
   validates :messages, presence: true

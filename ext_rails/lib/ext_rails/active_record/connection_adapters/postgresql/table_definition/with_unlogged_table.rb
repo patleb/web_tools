@@ -1,4 +1,4 @@
-MonkeyPatch.add{['activerecord', 'lib/active_record/connection_adapters/postgresql/schema_definitions.rb', '67345bc2286f297de37cf20a5164ce5bda8295f74fb2a12dbdc59e0b229e62bf']}
+MonkeyPatch.add{['activerecord', 'lib/active_record/connection_adapters/postgresql/schema_definitions.rb', '1522b88bf7a5756c60ef39b0bde3673da23a88579e1b93e2aacb7542ca0556d2']}
 
 module ActiveRecord::ConnectionAdapters::PostgreSQL::TableDefinition::WithUnloggedTable
   def initialize(*, **options)

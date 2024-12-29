@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-MonkeyPatch.add{['activerecord', 'lib/active_record/attribute_methods.rb', 'a96681cd93fdd1bfdf4acdcd050970a9be2fb194143eea3ec9949ac6c0262955']}
+MonkeyPatch.add{['activerecord', 'lib/active_record/attribute_methods.rb', 'fdeaea70c73f617d126e742981ba57708ad1e62e72bfc48ae122d72516fc8bb7']}
+MonkeyPatch.add{['activerecord', 'lib/active_record/scoping/default.rb', 'f3ef75dde6646c9285199ca8c4c506d2f50cc65aba1c799ac5282c36a01eb135']}
 
 require_dir __FILE__, 'base'
 
@@ -78,10 +79,6 @@ ActiveRecord::Base.class_eval do
     end
   end
 
-  def self.with_connection(&block)
-    connection_pool.with_connection(&block)
-  end
-
   def without_default_scope_on_association(name)
     reflection = self.class.reflect_on_association(name)
     reflection.klass.without_default_scope do
@@ -139,11 +136,11 @@ ActiveRecord::Base.class_eval do
     name, type = name.to_s.split('::')
     table, column = name.split('.', 2)
     if column
-      table = connection.quote_table_name(table)
+      table = adapter_class.quote_table_name(table)
     else
       column, table = table, quoted_table_name
     end
-    result = [table, connection.quote_column_name(column)].join('.')
+    result = [table, adapter_class.quote_column_name(column)].join('.')
     result = [result, type].join('::') if type
     result.sql_safe
   end

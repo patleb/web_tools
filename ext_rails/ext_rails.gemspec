@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency "rails", "~> #{WebTools::RAILS_VERSION::STRING}"
-  s.add_dependency 'active_record_extended'
+  # s.add_dependency 'active_record_extended'
   s.add_dependency 'active_type'
   s.add_dependency 'arel_extensions'
   s.add_dependency 'date_validator'
@@ -33,11 +33,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'pycall'
   s.add_dependency 'rails-i18n'
   s.add_dependency 'rblineprof'
-  s.add_dependency 'routes_lazy_routes'
   s.add_dependency 'rounding'
   s.add_dependency 'shoulda-matchers'
   s.add_dependency 'stateful_enum'
-  s.add_dependency 'store_base_sti_class'
   s.add_dependency 'mix_setting'
   s.add_dependency 'sunzistrano'
   s.add_dependency 'user_agent_parser'

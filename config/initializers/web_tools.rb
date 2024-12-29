@@ -18,10 +18,6 @@ MixTask.configure do |config|
   ))
 end
 
-MixJob.configure do |config|
-  config.async = true
-end
-
 MixServer.configure do |config|
   # config.render_500 = true
   config.skip_notice = false

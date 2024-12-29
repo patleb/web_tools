@@ -1,4 +1,4 @@
-MonkeyPatch.add{['activerecord', 'lib/active_record/tasks/database_tasks.rb', '07b20ece083de6feed23baad3c08d3dafee54bf86ef559a685ef58917c79253a']}
+MonkeyPatch.add{['activerecord', 'lib/active_record/tasks/database_tasks.rb', '812ab061aa89af88ddde31205765bff277ab7b1960252ce3c3dfd4b240551b04']}
 
 module ActiveRecord::Tasks::DatabaseTasks::WithSingleEnv
   extend ActiveSupport::Concern

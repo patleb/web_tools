@@ -18,14 +18,19 @@ en:
       status: ""
       title: ""
       problem: ""
-      solution: If you are the application owner check the logs for more information.
+      solution: If you're the application owner check the logs for more information.
     :400:
       <<: *template_default
-      title: The page request is invalid
+      title: The server cannot process the request due to a client error
+      problem: Please check the request and try again.
     :404:
       <<: *template_default
       title: The page you were looking for doesn't exist
       problem: You may have mistyped the address or the page may have moved.
+    :406:
+      <<: *template_default
+      title: Your browser is not supported
+      solution: Please upgrade your browser to continue.
     :408:
       <<: *template_default
       title: Timeout

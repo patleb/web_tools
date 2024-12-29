@@ -17,7 +17,17 @@ ActiveSupport::TestCase.class_eval do
     self.test_order = :alpha
   end
 
+  def self.test_queue_adapter!
+    around do |test|
+      queue_adapter_was = ActiveJob::Base.queue_adapter
+      ActiveJob::Base.queue_adapter = :test
+      test.call
+      ActiveJob::Base.queue_adapter = queue_adapter_was
+    end
+  end
+
   def before_setup
+    Rails.application.routes_reloader.execute_unless_loaded
     $test = self
     super
   end

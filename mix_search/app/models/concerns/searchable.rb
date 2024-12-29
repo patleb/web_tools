@@ -42,7 +42,7 @@ module Searchable
     old_tokens = tokens_was & tokens_changed
     if new_tokens.any?
       SearchWord.insert_all(new_tokens.map{ |token| { token: token } })
-      new_words = SearchWord.where(token: new_tokens).pluck(:id)
+      new_words = SearchWord.where(token: new_tokens).ids
       new_searches = new_words.map do |word_id|
         { search_word_id: word_id, searchable_id: id, searchable_type: self.class.name }
       end

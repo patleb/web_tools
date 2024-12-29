@@ -20,7 +20,7 @@ module ActiveRecord::Base::WithNullifyBlanks
     def define_nullify_blank_methods
       return false if nullify_blanks_types.blank?
 
-      generated_attribute_methods.synchronize do
+      generated_attribute_methods.class::LOCK.synchronize do
         return false if @nullify_blank_methods_generated
 
         self.nullify_blanks_columns = types_hash.select_map do |name, attribute|

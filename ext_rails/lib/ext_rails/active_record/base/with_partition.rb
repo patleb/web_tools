@@ -22,18 +22,6 @@ module ActiveRecord::Base::WithPartition
   COLUMN_VALUE = /Partition key of the failing row contains \((\w+)\) = \(([\d :.-]+)\)/i
 
   class_methods do
-    def insert_all!(rows, **)
-      partition_size ? with_partition(rows){ super } : super
-    end
-
-    def insert_all(rows, **)
-      partition_size ? with_partition(rows){ super } : super
-    end
-
-    def upsert_all(rows, **)
-      partition_size ? with_partition(rows){ super } : super
-    end
-
     def partition_size(table = table_name)
       ExtRails.config.db_partitions[table]
     end

@@ -1,4 +1,4 @@
-MonkeyPatch.add{['railties', 'lib/rails/application.rb', 'e45a26a7d68feae6cbae86523bcfae5d3e917dde2449b59a40d7467f7ec9643d']}
+MonkeyPatch.add{['railties', 'lib/rails/application.rb', '1b26eb866fda996aa17fc777f386036f12ba3660dd4aefb3a60e25b3a822fb0e']}
 
 class AppStringInquirer < ActiveSupport::StringInquirer
   def base?
@@ -38,6 +38,8 @@ Rails::Application.class_eval do
     @_title ||= name.titleize
   end
 
+  # NOTE override, it was less useful for keys
+  # --> self.class.name.underscore.dasherize.delete_suffix("/application")
   def name
     @_name ||= engine_name.delete_suffix('_application')
   end

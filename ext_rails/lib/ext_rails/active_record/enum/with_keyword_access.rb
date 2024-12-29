@@ -1,4 +1,4 @@
-MonkeyPatch.add{['activerecord', 'lib/active_record/enum.rb', '3116192d0cdb70dc574b359a4d54a8080d8183226b1fb3910e45b2d6512fe1aa']}
+MonkeyPatch.add{['activerecord', 'lib/active_record/enum.rb', '13fa7931de66b72cb3fa05ba03563d968351f3bac921942a90a91ebc4e02fd1b']}
 
 module ActiveRecord::Enum::EnumType::WithKeywordAccess
   def initialize(*, with_keyword_access: false, **)
@@ -24,23 +24,17 @@ module ActiveRecord::Enum
     extend ActiveSupport::Concern
 
     class_methods do
-      def enum(name = nil, values = nil, **options)
-        if name
-          values, options = options, {} unless values
-          return _enum(name, values, **options)
-        end
-
-        # NOTE will be deprecated in Rails 8.0
-        definitions = options.slice!(:_prefix, :_suffix, :_scopes, :_default, :_instance_methods, :_with_keyword_access)
-        options.transform_keys! { |key| :"#{key[1..-1]}" }
-
-        definitions.each { |name, values| _enum(name, values, **options) }
+      def enum(name, values = nil, **options)
+        values, options = options, {} unless values
+        _enum(name, values, **options)
       end
 
       private
 
       def _enum(name, values, prefix: nil, suffix: nil, scopes: true, instance_methods: true, validate: false, with_keyword_access: true, **options)
         assert_valid_enum_definition_values(values)
+        assert_valid_enum_options(options)
+
         # statuses = { }
         enum_values = with_keyword_access ? HashWithKeywordAccess.new : ActiveSupport::HashWithIndifferentAccess.new
         name = name.to_s
@@ -53,7 +47,13 @@ module ActiveRecord::Enum
         detect_enum_conflict!(name, name)
         detect_enum_conflict!(name, "#{name}=")
 
-        attribute(name, **options) do |subtype|
+        if respond_to? :virtual_columns_hash
+          ar_attribute(name, options.delete(:type), **options)
+        else
+          attribute(name, options.delete(:type), **options)
+        end
+
+        decorate_attributes([name]) do |_name, subtype|
           if subtype == ActiveModel::Type.default_value
             raise "Undeclared attribute type for enum '#{name}' in #{self.name}. Enums must be" \
               " backed by a database column or declared with an explicit type" \
@@ -100,6 +100,14 @@ module ActiveRecord::Enum
         end
 
         enum_values.freeze
+      end
+
+      def assert_valid_enum_options(options)
+        invalid_keys = options.keys & %i[_prefix _suffix _scopes _default _instance_methods]
+        unless invalid_keys.empty?
+          raise ArgumentError, "invalid option(s): #{invalid_keys.map(&:inspect).join(", ")}. Valid options are:" \
+            " :type, :prefix, :suffix, :scopes, :default, :instance_methods, :validate and :with_keyword_access."
+        end
       end
     end
   end

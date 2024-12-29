@@ -4,9 +4,8 @@ module ActiveRecord::ConnectionAdapters::PostgreSQLAdapter::WithReturningColumn
     return super unless (column = sql_options&.dig(self, :returning))
     sql, binds = to_sql_and_binds(arel, binds)
     sql = "#{sql} RETURNING #{column}"
-    execute_and_clear(sql, name, binds) do |result|
-      values = result.field_values(column)
-      values.size > 1 ? [values.size, values.first] : values.first
-    end
+    result = internal_execute(sql, name, binds)
+    values = result.field_values(column)
+    values.size > 1 ? [values.size, values.first] : values.first
   end
 end

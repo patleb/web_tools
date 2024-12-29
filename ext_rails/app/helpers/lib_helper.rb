@@ -60,13 +60,13 @@ module LibHelper
           margin: 0;
         }
 
-        .rails-default-error-page div.dialog {
+        .rails-default-error-page main.dialog {
           width: 95%;
           max-width: 33em;
           margin: 4em auto 0;
         }
 
-        .rails-default-error-page div.dialog > div {
+        .rails-default-error-page main.dialog > header {
           border: 1px solid #CCC;
           border-right-color: #999;
           border-left-color: #999;
@@ -85,7 +85,7 @@ module LibHelper
           line-height: 1.5em;
         }
 
-        .rails-default-error-page div.dialog > p {
+        .rails-default-error-page main.dialog > article {
           margin: 0 0 1em;
           padding: 1em;
           background-color: #F7F7F7;

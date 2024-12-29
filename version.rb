@@ -5,9 +5,9 @@ unless defined? WebTools
     end
 
     module RAILS_VERSION
-      MAJOR = 7
-      MINOR = 1
-      PATCH = 0
+      MAJOR = 8
+      MINOR = 0
+      PATCH = 1
 
       STRING = [MAJOR, MINOR, PATCH].compact.join(".")
     end

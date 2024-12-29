@@ -1,5 +1,5 @@
 if defined? Rails.env
-  MonkeyPatch.add{['activesupport', 'lib/active_support/hash_with_indifferent_access.rb', 'd8bed338cef6949309cb6f1ac4bcc79f88f3a892ed9c5961ea8a4cc2470eab23']}
+  MonkeyPatch.add{['activesupport', 'lib/active_support/hash_with_indifferent_access.rb', '371fa188bec8007cdef6dc224cfb92d2ebc5d65561e8b5a4f7ed4ee4bf5db4bb']}
   MonkeyPatch.add{['activesupport', 'lib/active_support/core_ext/hash/indifferent_access.rb', '2165533368d0f6a03c47e1e8d8f5df95777ae2685bbdba9c00e3d097f41bd8ff']}
 end
 
@@ -208,13 +208,14 @@ class HashWithKeywordAccess < Hash
   end
 
   def to_hash
-    _new_hash = Hash.new
-    set_defaults(_new_hash)
+    copy = Hash[self]
+    copy.transform_values! { |v| convert_value_to_hash(v) }
+    set_defaults(copy)
+    copy
+  end
 
-    each do |key, value|
-      _new_hash[key] = convert_value(value, conversion: :to_hash)
-    end
-    _new_hash
+  def to_proc
+    proc { |key| self[key] }
   end
 
   private
@@ -225,16 +226,22 @@ class HashWithKeywordAccess < Hash
 
   def convert_value(value, conversion: nil)
     if value.is_a? Hash
-      if conversion == :to_hash
-        value.to_hash
-      else
-        value.nested_under_keyword_access
-      end
+      value.nested_under_keyword_access
     elsif value.is_a?(Array)
       if conversion != :assignment || value.frozen?
         value = value.dup
       end
       value.map! { |e| convert_value(e, conversion: conversion) }
+    else
+      value
+    end
+  end
+
+  def convert_value_to_hash(value)
+    if value.is_a? Hash
+      value.to_hash
+    elsif value.is_a?(Array)
+      value.map { |e| convert_value_to_hash(e) }
     else
       value
     end

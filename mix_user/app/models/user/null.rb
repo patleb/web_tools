@@ -1,5 +1,5 @@
 class User::Null < ActiveType::NullObject
-  enum :role, MixUser.config.available_roles, default: :null
+  enum :role, MixUser.config.available_roles, type: :integer, default: :null
   alias_method :as_role, :role
 
   MixUser.config.json_attributes.each do |name, type|

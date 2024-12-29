@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-MonkeyPatch.add{['actionpack', 'lib/action_controller/metal/strong_parameters.rb', 'a26476de72255f4cb057dd468caeb9e711ec0734a0397e0e95f45b06a676d0ba']}
+MonkeyPatch.add{['actionpack', 'lib/action_controller/metal/strong_parameters.rb', '90e20ad065d56051e7954d6315cd7c3118458fc29799c575d9dc4f72b97417e6']}
 
 require 'action_controller/metal/strong_parameters'
 
 module ActionController::Parameters::WithLocation
-  def unpermitted_parameters!(params)
+  def unpermitted_parameters!(params, **)
     if super && ExtRails.config.params_debug?
       puts_caller_location
     end

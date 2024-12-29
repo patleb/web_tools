@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-MonkeyPatch.add{['activestorage', 'lib/active_storage/engine.rb', '46b069b13a4d1332f5f6849a7e854c0400625a5b4e82c3e671277756f1723ef0']}
+MonkeyPatch.add{['activestorage', 'lib/active_storage/engine.rb', '2ab665da0d4ea2b5e8897b9d6fcb738438dfd46a49dc3bb81e61a47213f4bab6']}
 
 require 'ext_rails'
 require 'mix_file/configuration'

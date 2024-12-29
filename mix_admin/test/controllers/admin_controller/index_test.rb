@@ -82,10 +82,10 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
     assert_equal [true, "boolean != FALSE"],                                           search_statements('!_false')
     assert_equal [true, "boolean IS NULL OR boolean != TRUE"],                         search_statements('!_true')
     assert_equal [true, "boolean = TRUE", "boolean IS NULL OR boolean = FALSE"],       search_statements('=_true {_}=_false')
-    assert_equal [true, "date BETWEEN '#{now.beginning_of_day.to_fs(:db)}' AND '#{now.end_of_day.to_fs(:db)}.999999'"],              search_statements('{date}=_today')
-    assert_equal [true, "date NOT BETWEEN '#{1.hour.ago.beginning_of_hour.to_fs(:db)}' AND '#{now.end_of_hour.to_fs(:db)}.999999'"], search_statements('{date}!_past_hour')
-    assert_equal [true, "date NOT BETWEEN '#{1.day.ago.beginning_of_day.to_fs(:db)}' AND '#{now.end_of_hour.to_fs(:db)}.999999'"],   search_statements('{date}!_past_day')
-    assert_equal [true, "(datetime < '#{yesterday.sub('T', ' ')}') OR (datetime > '#{tomorrow.sub('T', ' ')}')"],                    search_statements("{datetime}<#{yesterday}|>#{tomorrow}")
+    assert_equal [true, "date BETWEEN '#{now.beginning_of_day.to_fs(:db)}' AND '#{now.end_of_day.to_fs(:db)}'"],              search_statements('{date}=_today')
+    assert_equal [true, "date NOT BETWEEN '#{1.hour.ago.beginning_of_hour.to_fs(:db)}' AND '#{now.end_of_hour.to_fs(:db)}'"], search_statements('{date}!_past_hour')
+    assert_equal [true, "date NOT BETWEEN '#{1.day.ago.beginning_of_day.to_fs(:db)}' AND '#{now.end_of_hour.to_fs(:db)}'"],   search_statements('{date}!_past_day')
+    assert_equal [true, "(datetime < '#{yesterday.sub('T', ' ')}') OR (datetime > '#{tomorrow.sub('T', ' ')}')"],             search_statements("{datetime}<#{yesterday}|>#{tomorrow}")
     assert_equal [true, "uuid = '#{uuid}'"],                                           search_statements("=#{uuid}")
     assert_equal [false],                                                              search_statements('{string}=<script></script>')
     assert_equal [true, "#{name} ILIKE '%related to 1%'"],                             search_statements("{test-related_record.name}=related\\ to\\ 1")
@@ -101,6 +101,24 @@ class AdminController::IndexTest < ActionDispatch::IntegrationTest
     scope = model.search(model.scope, self[:@section], q: query)
     scope = controller.paginator.scope if scope.is_a? Array
     statements = scope.values[:where].send(:predicates).drop(1)
+    statements.map! do |statement|
+      next statement.to_s unless statement.respond_to? :to_sql
+      sql = statement.to_sql
+      statement.positional_binds.each.with_index(1) do |value, i|
+        value = case value
+          when String
+            "'#{value}'"
+          when Boolean
+            value.to_s.upcase
+          when DateTime, Date, Time
+            "'#{value.to_fs(:db)}'"
+          else
+            value.to_s
+          end
+        sql.sub!("$#{i}", value)
+      end
+      sql.delete_prefix('(').delete_suffix(')')
+    end
     statements = [] if statements.last == '1=0'
     success = controller.flash[:alert].blank?
     controller.flash.delete(:alert)

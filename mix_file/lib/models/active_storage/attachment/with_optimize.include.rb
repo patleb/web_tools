@@ -1,4 +1,4 @@
-MonkeyPatch.add{['activestorage', 'app/models/active_storage/attachment.rb', '06f3db38d14ef796eef38568964a97dcfdeeb9b19cf569ba73e22c93025f9d38']}
+MonkeyPatch.add{['activestorage', 'app/models/active_storage/attachment.rb', 'f3ad4d9127b926fcc6b5ac8007075091fdd3e492e9bafc21163404bdcd62b3aa']}
 
 module ActiveStorage::Attachment::WithOptimize
   extend ActiveSupport::Concern

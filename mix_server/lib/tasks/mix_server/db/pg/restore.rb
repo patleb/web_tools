@@ -174,7 +174,7 @@ module Db
       end
 
       def post_restore_environment
-        ActiveRecord::Base.connection.internal_metadata[:environment] = Rails.env
+        ActiveRecord::Base.connection_pool.internal_metadata[:environment] = Rails.env
         Server.current.discard! if options.new_server && !Server.current.new?
       end
 

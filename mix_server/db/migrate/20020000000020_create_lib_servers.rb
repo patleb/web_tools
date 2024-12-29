@@ -9,9 +9,6 @@ class CreateLibServers < ActiveRecord::Migration[7.1]
     end
 
     # https://stackoverflow.com/questions/8289100/create-unique-constraint-with-null-columns
-    add_index :lib_servers, [:private_ip, :deleted_at, :provider], unique: true,
-      name: 'index_lib_servers_on_private_ip_deleted_at_provider', where: 'deleted_at IS NOT NULL'
-    add_index :lib_servers, [:private_ip, :provider], unique: true,
-      name: 'index_lib_servers_on_private_ip_provider', where: 'deleted_at IS NULL'
+    add_index :lib_servers, [:private_ip, :deleted_at, :provider], unique: true, nulls_not_distinct: true
   end
 end

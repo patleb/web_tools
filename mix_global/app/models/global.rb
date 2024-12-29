@@ -174,7 +174,7 @@ class Global < MixGlobal.config.parent_model.to_const!
       raise ArgumentError, "Bad value: `Global#update_counter` requires amount != 0." if amount == 0
 
       operator = amount < 0 ? "-" : "+"
-      quoted_column = connection.quote_column_name(:integer)
+      quoted_column = adapter_class.quote_column_name(:integer)
       updates = ["#{quoted_column} = COALESCE(#{quoted_column}, 0) #{operator} #{amount.abs}"]
 
       touch_updates = touch_attributes_with_time

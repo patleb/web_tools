@@ -4,7 +4,7 @@ module ActiveRecord::Relation::WithJsonAttribute
   extend ActiveSupport::Concern
 
   QUERYING_METHODS = [:where_not].freeze
-  POSTGRESQL_OPERATORS = /^(!|NOT )?(=|~\*?|[<>]=?|IS( NOT)?|I?LIKE|SIMILAR TO|BETWEEN|IN|ANY|ALL)$/i
+  POSTGRESQL_OPERATORS = /^(!|NOT )?(=|~\*?|[<>]=?|IS( NOT)? NULL|I?LIKE|SIMILAR TO|BETWEEN|IN|ANY|ALL)$/i
 
   prepended do
     delegate :json_accessors, :json_key, to: :klass
@@ -21,6 +21,7 @@ module ActiveRecord::Relation::WithJsonAttribute
       if json_attribute? name
         operator, value = extract_operator(value)
         binds, *values = case value
+          when nil   then []
           when Array then ['(?)', value]
           when Range then ['(?) AND (?)', value.min, value.max]
           else            ['?', value]
@@ -45,8 +46,8 @@ module ActiveRecord::Relation::WithJsonAttribute
           when '>'           then '<='
           when '<='          then '>'
           when '>='          then '<'
-          when 'IS'          then 'IS NOT'
-          when 'IS NOT'      then 'IS'
+          when 'IS NULL'     then 'IS NOT NULL'
+          when 'IS NOT NULL' then 'IS NULL'
           when /^NOT (\w+)$/ then $1
           else "NOT #{operator.upcase}"
           end
@@ -103,7 +104,7 @@ module ActiveRecord::Relation::WithJsonAttribute
   def extract_operator(value)
     operator, value = value if value.is_a?(Array) && value[0].is_a?(String) && value[0].match?(POSTGRESQL_OPERATORS)
     operator ||= case value
-      when nil   then 'IS'
+      when nil   then 'IS NULL'
       when Array then 'IN'
       when Range then 'BETWEEN'
       else '='

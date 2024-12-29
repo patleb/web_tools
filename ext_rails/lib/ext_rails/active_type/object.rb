@@ -59,7 +59,7 @@ ActiveType::Object.class_eval do
 
   def attributes_hash
     hash = attributes
-    hash.merge! attribute_aliases.transform_values{ |v| hash[v] }
+    hash.merge! attribute_aliases.except('id_value').transform_values{ |v| hash[v] }
     hash.to_hwka
   end
 

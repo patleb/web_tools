@@ -1,5 +1,5 @@
 class Users::TestCase < ActionDispatch::IntegrationTest
-  self.use_transactional_tests = false
+  test_queue_adapter!
 
   private
 

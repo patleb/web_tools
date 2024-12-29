@@ -33,7 +33,8 @@ module ActiveStorage::Blob::WithUid
     def uid_data_digest(data)
       raise ArgumentError, 'data must be rewindable' unless data.respond_to? :rewind
       sha = Digest::SHA2.new
-      while (chunk = data.read(5.megabytes))
+      chunk = ''.b
+      while data.read(5.megabytes, chunk)
         sha << chunk
       end
       data.rewind

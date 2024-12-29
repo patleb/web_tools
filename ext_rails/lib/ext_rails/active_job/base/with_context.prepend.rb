@@ -1,4 +1,4 @@
-MonkeyPatch.add{['activejob', 'lib/active_job/core.rb', '718ce689f7e5ef955934f86d419c9571f32341c8091f0a5baaffc8f0727d2bf8']}
+MonkeyPatch.add{['activejob', 'lib/active_job/core.rb', 'ecc3f16eaab8ad5033c19d1a239cfa6071b3b65acb07c1131f2caee03aad2d0a']}
 
 module ActiveJob::Base::WithContext
   extend ActiveSupport::Concern

@@ -2,7 +2,6 @@
 
 MonkeyPatch.add{['rake', 'lib/rake/backtrace.rb', 'd7717ccd2d224fd94f37d07f8f9333274494486bcfc2a143cc4dc079f14e66c6']}
 
-require 'routes_lazy_routes'
 require 'ext_rails/configuration'
 require 'ext_rails/routes'
 
@@ -27,7 +26,7 @@ module ExtRails
   ERROR_SEPARATOR = '<br>- '
 
   class Engine < ::Rails::Engine
-    require 'active_record_extended'
+    # require 'active_record_extended'
     require 'active_type'
     require 'date_validator'
     require 'dotiw'
@@ -191,8 +190,8 @@ module ExtRails
     end
 
     ActiveSupport.on_load(:active_record) do
-      require 'store_base_sti_class'
       require 'ext_rails/active_type'
+      require 'ext_rails/active_record/store_base_sti_class'
       require 'ext_rails/active_record/associations/builder/belongs_to/with_global_id'
       require 'ext_rails/active_record/associations/builder/belongs_to/with_list'
       require 'ext_rails/active_record/associations/builder/has_many/with_discard'

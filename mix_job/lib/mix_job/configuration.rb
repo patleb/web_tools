@@ -8,7 +8,8 @@ module MixJob
     attr_writer :available_queues
 
     def async?
-      @async
+      return @async if defined? @async
+      @async = Rails.env.local?
     end
 
     def parent_model

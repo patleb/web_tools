@@ -1,4 +1,4 @@
-MonkeyPatch.add{['activestorage', 'app/models/active_storage/blob.rb', '4c497a934009af27dbeaefd850853523031514e0e46700123e348317e725662e']}
+MonkeyPatch.add{['activestorage', 'app/models/active_storage/blob.rb', 'e3dc112634ce02cb09460f2d123a47c43b3db3cff0ff7f182e4df0bfa797af98']}
 
 module ActiveStorage::Blob::WithOptimize
   extend ActiveSupport::Concern

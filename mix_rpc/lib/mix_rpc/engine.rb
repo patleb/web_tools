@@ -1,5 +1,3 @@
-MonkeyPatch.add{['railties', 'lib/rails/generators/migration.rb', '6ab4152c1009d337395253661604550982f69d40db3678cf5cc68982edbc1fef']}
-
 require 'mix_server'
 require 'mix_rpc/configuration'
 require 'mix_rpc/routes'
@@ -17,6 +15,7 @@ module MixRpc
     end
 
     config.to_prepare do
+      require 'mix_rpc/active_record/migration_context'
       require 'mix_rpc/rails/generators/with_rpc_schema'
     end
   end

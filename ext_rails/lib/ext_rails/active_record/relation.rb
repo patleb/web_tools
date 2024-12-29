@@ -4,6 +4,7 @@ ActiveRecord::Relation.class_eval do
   prepend self::WithAtomicOperations
   include self::WithCalculate
   prepend self::WithJsonAttribute
+  prepend self::WithPartition
   prepend self::WithReturningColumn
 
   def select_without(*fields)

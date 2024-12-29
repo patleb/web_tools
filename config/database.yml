@@ -63,7 +63,6 @@ development: &development
 # Do not set this db to the same as development or production.
 test: &test
   <<: *default
-  pool: 10
   database: test_web_tools
 
 vagrant: &vagrant
@@ -72,7 +71,7 @@ vagrant: &vagrant
   username: vagrant
   password: vagrant
 
-# As with config/secrets.yml, you never want to store sensitive information,
+# As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
 # ever seen by anyone, they now have access to your database.
 #

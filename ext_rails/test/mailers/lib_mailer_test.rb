@@ -1,7 +1,7 @@
 require './test/test_helper'
 
 class LibMailerTest < ActionMailer::TestCase
-  self.use_transactional_tests = false
+  test_queue_adapter!
 
   test '#healthcheck' do
     email = Setting.with(freeze:false) do |settings|

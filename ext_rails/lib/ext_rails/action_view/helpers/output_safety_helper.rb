@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-MonkeyPatch.add{['actionview', 'lib/action_view/helpers/output_safety_helper.rb', '46e1dae16ff52d38bb99cc9c2d59382260eecf25ce3b5bb19152df5ae93d6b23']}
+MonkeyPatch.add{['actionview', 'lib/action_view/helpers/output_safety_helper.rb', 'cf9341729dabdb0e97f4f36b839611c8f85e5583ab7961e05c111a1f3ad3b1f2']}
 
 module ActionView::Helpers::OutputSafetyHelper
   def safe_join(array, sep = $,, options = {})
