@@ -15,7 +15,6 @@ class Global < MixGlobal.config.parent_model.to_const!
     decimal:    40,
     datetime:   50,
     interval:   60,
-    serialized: 70,
     symbol:     80,
   }
 
@@ -266,9 +265,6 @@ class Global < MixGlobal.config.parent_model.to_const!
       self.data_type = new_type
     end
     case new_type
-    when :serialized
-      self[data_type] = Marshal.dump(data)
-      self[:data] = data
     when :symbol
       self[:data] = self[:string] = data
     else
@@ -315,7 +311,7 @@ class Global < MixGlobal.config.parent_model.to_const!
     when ActiveSupport::Duration then :interval
     when Symbol                  then :symbol
     when String, nil             then :string
-    else                              :serialized
+    else raise "unsupported data type: #{data.class}"
     end
   end
 
@@ -333,8 +329,6 @@ class Global < MixGlobal.config.parent_model.to_const!
   def cast(data)
     return data unless data
     case data_type
-    when :serialized
-      Marshal.load(data) rescue data
     when :symbol
       data.to_sym
     else

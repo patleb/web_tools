@@ -13,7 +13,6 @@ class CreateLibGlobals < ActiveRecord::Migration[7.1]
       t.decimal     :decimal
       t.datetime    :datetime
       t.interval    :interval
-      t.binary      :serialized
 
       t.timestamps
     end

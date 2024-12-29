@@ -16,7 +16,6 @@ class GlobalTest < ActiveSupport::TestCase
     string:     'test',
     nil:        nil,
     symbol:     :test,
-    serialized: Setting,
   } }
   let(:multi_values){ {
     [:key, 0].join(GlobalKey::SEPARATOR) => 'key 0',
@@ -35,7 +34,7 @@ class GlobalTest < ActiveSupport::TestCase
       result = Global.read(name)
       assert_equal value, result
       assert_equal cache.read(name), result
-      if name.in? %i(symbol serialized)
+      if name == :symbol
         assert_equal Marshal.dump(value), Marshal.dump(result)
       end
     end
