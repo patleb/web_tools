@@ -97,7 +97,6 @@ module ExtRails
       %w(app/libraries app/tasks).each do |directory|
         ActiveSupport::Dependencies.autoload_paths.delete("#{app.root}/#{directory}")
       end
-      ENV["BACKTRACE"] = 'true'
     end
 
     initializer 'ext_rails.migrations' do |app|
