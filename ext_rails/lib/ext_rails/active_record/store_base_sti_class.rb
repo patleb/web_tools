@@ -35,10 +35,9 @@ module ActiveRecord
         end
 
         if options[:source_type]
-          foreign_type = if ActiveRecord::Base.store_base_sti_class
-            options[:source_type]
-          else
-            ([options[:source_type].to_const] + options[:source_type].to_const.descendants).map(&:to_s)
+          foreign_type = options[:source_type]
+          unless ActiveRecord::Base.store_base_sti_class
+            foreign_type = ([foreign_type.to_const] + foreign_type.to_const.descendants).map(&:to_s)
           end
           scope.where! reflection.foreign_type => foreign_type
         elsif !reflection_scope.where_clause.empty?
@@ -129,7 +128,7 @@ module ActiveRecord
       type = @previous_reflection.foreign_type
       source_type = @previous_reflection.options[:source_type]
       unless ActiveRecord::Base.store_base_sti_class
-        source_type = ([source_type.constantize] + source_type.constantize.descendants).map(&:to_s)
+        source_type = ([source_type.to_const] + source_type.to_const.descendants).map(&:to_s)
       end
       lambda { |object| where(type => source_type) }
     end
