@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module MixPage
   has_config do
     attr_accessor :root_path

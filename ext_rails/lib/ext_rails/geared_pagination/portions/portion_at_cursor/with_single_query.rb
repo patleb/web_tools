@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module GearedPagination
   module PortionAtCursor::WithSingleQuery
     extend ActiveSupport::Concern

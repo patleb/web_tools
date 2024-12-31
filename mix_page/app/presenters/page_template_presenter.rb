@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class PageTemplatePresenter < ActivePresenter::Base
   delegate :title, to: :record
 

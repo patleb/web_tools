@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 ### NOTE nginx has ms resolution
 module LogLines
   class NginxAccess < LogLine

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 MonkeyPatch.add{['rake', 'lib/rake/backtrace.rb', 'd7717ccd2d224fd94f37d07f8f9333274494486bcfc2a143cc4dc079f14e66c6']}
 
 require 'ext_rails/configuration'

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActiveSupport
   Duration.class_eval do
     UNITS = self::PARTS.map.with_index.to_h

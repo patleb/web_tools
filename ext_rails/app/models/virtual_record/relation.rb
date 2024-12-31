@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module VirtualRecord
   class Relation < Array
     class UnknownOperator < ::StandardError; end

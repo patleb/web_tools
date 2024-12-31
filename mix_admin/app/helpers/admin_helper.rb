@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module AdminHelper
   def admin_user_link
     return unless admin_user_link?

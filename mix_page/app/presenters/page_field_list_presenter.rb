@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class PageFieldListPresenter < ActivePresenter::List[:@page]
   delegate :type, :name, to: 'list.first.record'
 

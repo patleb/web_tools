@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module MixRpc
   module Routes
     def self.draw(mapper)

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Rake
   module DSL
     def with_argv(task_name, **argv)

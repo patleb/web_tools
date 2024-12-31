@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 min = MixUser.config.min_password_length
 i18n = i18n_for(
   'activerecord.attributes.user' => [:email, :password, :password_confirmation],

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 MonkeyPatch.add{['activerecord', 'lib/active_record/attribute_methods.rb', 'fdeaea70c73f617d126e742981ba57708ad1e62e72bfc48ae122d72516fc8bb7']}
 MonkeyPatch.add{['activerecord', 'lib/active_record/scoping/default.rb', 'f3ef75dde6646c9285199ca8c4c506d2f50cc65aba1c799ac5282c36a01eb135']}
 

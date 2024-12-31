@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Rails::Engine::WithTask
   def load_tasks(app = self)
     return self if @tasks_loaded

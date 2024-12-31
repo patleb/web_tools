@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class UserSessionsController < Users::BaseController
   authenticate only: [:destroy]
 

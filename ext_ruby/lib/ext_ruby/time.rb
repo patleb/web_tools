@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Time
   def self.today
     current.beginning_of_day

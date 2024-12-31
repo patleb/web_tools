@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Rpc
   class Function < VirtualRecord::Base
     RPC_FUNCTION = 'CREATE FUNCTION rpc.'

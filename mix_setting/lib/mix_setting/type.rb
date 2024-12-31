@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module MixSetting::Type
   extend ActiveSupport::Concern
 

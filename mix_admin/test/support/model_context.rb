@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Test
   class ResourceBase < VirtualRecord::Base
     attribute :base_name

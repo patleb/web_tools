@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class LogRollups::NginxAccess < LogRollup
   OPERATIONS = [
     [:count],

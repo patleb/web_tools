@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AdminController < LibController
   class TooManyRows < ::StandardError; end
   class RoutingError < ActionController::RoutingError

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module MixFile
   module Routes
     def self.root_path(**params)

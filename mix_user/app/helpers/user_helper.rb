@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module UserHelper
   def user_role_select
     return unless Current.user.role_admin?

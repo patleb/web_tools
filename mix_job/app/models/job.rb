@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Job < MixJob.config.parent_model.to_const!
   NOTIFY_CHANNEL = 'job_notify_channel'
 

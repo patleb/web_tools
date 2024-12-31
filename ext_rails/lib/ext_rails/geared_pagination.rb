@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 MonkeyPatch.add{['geared_pagination', 'lib/geared_pagination/controller.rb', '066490ae54efc396b1a9c2c3bd9aaf6eba34e72f744bb3d4fe9d9afb82ce86df']}
 MonkeyPatch.add{['geared_pagination', 'lib/geared_pagination/cursor.rb', 'd2c93d0993f0d3b06c3ed25cbe578fecbb7ac29eca2efb7cd65bd282b9fd4324']}
 MonkeyPatch.add{['geared_pagination', 'lib/geared_pagination/engine.rb', 'f9c9d6bdf3e88fb661f202957cccbc06317a6b5c7a17638ab697a4a75ca76834']}

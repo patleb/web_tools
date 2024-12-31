@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Rake::Task::WithOutput
   extend ActiveSupport::Concern
 

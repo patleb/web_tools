@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Users
   class BaseController < LibController
     no_authentication only: [:new, :create]

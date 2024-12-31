@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Sunzistrano
   TASK = '[TASK]'
   DONE = '[DONE]'

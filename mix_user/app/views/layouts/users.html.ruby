@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 extends 'layouts/application' do
   div_ '.card.card-compact', [
     div_('.card-title', area(:title)),

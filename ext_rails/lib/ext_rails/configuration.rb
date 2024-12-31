@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ExtRails
   has_config do
     attr_accessor :default_logger

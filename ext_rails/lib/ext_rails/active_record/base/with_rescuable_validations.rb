@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActiveRecord::Base::WithRescuableValidations
   RECORD_NOT_UNIQUE_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) already exists/
   INVALID_FOREIGN_KEY_COLUMN = /Key \((["\w\s,]+)\)=\(.*?\) is not present in table/

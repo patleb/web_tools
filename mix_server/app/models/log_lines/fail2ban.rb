@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module LogLines
   class Fail2ban < LogLine
     TIME     = /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/

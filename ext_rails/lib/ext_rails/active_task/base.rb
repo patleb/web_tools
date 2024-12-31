@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActiveTask
   class Base
     include ActionView::Helpers::DateHelper

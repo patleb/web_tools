@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 MonkeyPatch.add{['actionview', 'lib/action_view/helpers/output_safety_helper.rb', 'cf9341729dabdb0e97f4f36b839611c8f85e5583ab7961e05c111a1f3ad3b1f2']}
 
 module ActionView::Helpers::OutputSafetyHelper

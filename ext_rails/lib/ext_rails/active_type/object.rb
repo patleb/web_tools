@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 ActiveType::Object.class_eval do
   def self.encoding
     "UTF-8"

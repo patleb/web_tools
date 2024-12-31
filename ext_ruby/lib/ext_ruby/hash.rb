@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Hash
   def self.deep_union(*)
     union(*, deep: true)

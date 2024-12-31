@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 if ENV['DEBUGGER_HOST']
   DEBUGGER_ENCODING = Encoding.find('ASCII-8BIT')
 

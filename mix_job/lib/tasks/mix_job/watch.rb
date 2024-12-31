@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module MixJob
   class Watch < ActiveTask::Base
     # TERM --> by System Monitor

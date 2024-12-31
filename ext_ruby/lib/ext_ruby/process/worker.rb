@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Process
   def self.worker
     @worker ||= Worker.new(pid)

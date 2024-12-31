@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class PagesController < LibController
   before_action :set_page_state
   before_action :set_format, only: :field_update

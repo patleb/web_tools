@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 ### References
 # https://github.com/rwz/nestive
 module ActionView::Helpers

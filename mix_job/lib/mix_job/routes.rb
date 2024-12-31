@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module MixJob
   module Routes
     def self.draw(mapper)

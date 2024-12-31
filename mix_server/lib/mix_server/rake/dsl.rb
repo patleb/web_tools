@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Rake
   module DSL
     LS_HEADERS = %i(permissions links owner group size date time zone path)

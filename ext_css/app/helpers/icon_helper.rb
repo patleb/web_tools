@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module IconHelper
   SVG_BEGIN = /^\s*<svg [^>]+>\s*/
   SVG_END = /\s*<\/svg>\s*$/

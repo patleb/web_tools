@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class LogLine < LibMainRecord
   class IncompatibleLogLine < ::StandardError; end
 

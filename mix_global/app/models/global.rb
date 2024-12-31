@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Global < MixGlobal.config.parent_model.to_const!
   include GlobalCache
 

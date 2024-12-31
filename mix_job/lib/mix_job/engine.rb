@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'mix_server'
 require 'mix_job/configuration'
 require 'mix_job/routes'

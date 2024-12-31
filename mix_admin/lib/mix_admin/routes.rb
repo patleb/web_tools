@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module MixAdmin
   module Routes
     def self.root_path(**params)

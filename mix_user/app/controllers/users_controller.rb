@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class UsersController < Users::BaseController
   def new
     render_404 and return unless MixUser.config.registerable?

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rake/backtrace'
 
 module Rake

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Sunzistrano
   Cli.class_eval do
     desc 'console [STAGE] [--host] [--sudo] [--sandbox]', 'Start a rails console'

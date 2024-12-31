@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 i18n = i18n_for(
   'activerecord.attributes.user' => [:email, :password],
   'link' => [:log_in, :resend_confirm, :restore_user, :reset_password],

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActionController::WithPolicy
   extend ActiveSupport::Concern
 

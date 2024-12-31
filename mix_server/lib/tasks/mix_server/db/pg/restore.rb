@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Db
   module Pg
     class Restore < Base

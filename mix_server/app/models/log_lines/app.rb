@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module LogLines
   class App < LogLine
     TIME    = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+/

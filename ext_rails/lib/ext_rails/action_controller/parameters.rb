@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 MonkeyPatch.add{['actionpack', 'lib/action_controller/metal/strong_parameters.rb', '90e20ad065d56051e7954d6315cd7c3118458fc29799c575d9dc4f72b97417e6']}
 
 require 'action_controller/metal/strong_parameters'

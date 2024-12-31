@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module LogLines
   class Osquery < LogLine
     TINY_FILE_PATH = /(([A-Z]+_?)+,?)+/

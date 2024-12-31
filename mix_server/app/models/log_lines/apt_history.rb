@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module LogLines
   class AptHistory < LogLine
     START_DATE = /^Start-Date: (\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})/

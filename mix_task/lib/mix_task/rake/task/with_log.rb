@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Rake::Task::WithLog
   def puts_started(args)
     Log.task(name, args: args.to_h.merge(argv: ARGV.drop(1).except('--')).compact_blank)

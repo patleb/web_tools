@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 MonkeyPatch.add{['activestorage', 'lib/active_storage/engine.rb', '2ab665da0d4ea2b5e8897b9d6fcb738438dfd46a49dc3bb81e61a47213f4bab6']}
 
 require 'ext_rails'

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 MonkeyPatch.add{['activerecord', 'lib/active_record/relation/calculations.rb', '6f9b774524ed078131e64b3bd8decee570fdb53dfc42f4b8c9dadb9e99c0ad81']}
 
 module ActiveRecord::Relation::WithCalculate

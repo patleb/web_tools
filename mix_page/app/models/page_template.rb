@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class PageTemplate < Page
   MULTI_VIEW = %r{[/_]multi$}
 

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Rails::Engine.class_eval do
   def append_migrations(app, engine = self, scope: nil)
     unless app.root.to_s == engine.root.to_s

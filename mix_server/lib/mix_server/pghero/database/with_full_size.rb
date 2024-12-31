@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module PgHero::Database::WithFullSize
   def database_size(pretty = false)
     return super() if pretty

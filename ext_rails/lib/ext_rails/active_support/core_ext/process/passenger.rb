@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 ### References
 # https://www.phusionpassenger.com/library/admin/nginx/overall_status_report.html
 module Process
