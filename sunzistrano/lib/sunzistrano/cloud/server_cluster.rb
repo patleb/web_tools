@@ -33,7 +33,6 @@ module Cloud::ServerCluster
     end
   end
 
-  # TODO run_locally --> so Openstack credentials don't need to be shared
   def server_cluster_list
     @server_cluster_list ||= if Setting.env? :development, :test
       {}
