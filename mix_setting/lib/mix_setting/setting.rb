@@ -20,7 +20,7 @@ class Setting
   end
 
   def self.to_yaml
-    all.to_hash.to_yaml(line_width: -1).delete_prefix("---\n")
+    all.to_hash.pretty_yaml
   end
 
   def self.type_of(name)
@@ -91,6 +91,10 @@ class Setting
 
   def self.stage
     "#{env}_#{app}"
+  end
+
+  def self.local?
+    env? :development, :test
   end
 
   def self.env?(*names)
