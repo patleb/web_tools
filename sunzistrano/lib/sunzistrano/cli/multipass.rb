@@ -12,7 +12,9 @@ module Sunzistrano
     desc 'halt [--cluster] [--all]', 'Stop Multipass instance(s)'
     method_options cluster: false, all: false
     def halt
-      do_halt
+      as_virtual do
+        system "multipass stop #{vm_name}" if vm_state == :running
+      end
     end
 
     desc 'destroy [--cluster] [--all]', 'Delete Multipass instance(s)'
@@ -24,13 +26,22 @@ module Sunzistrano
     desc 'status [--cluster] [--all]', 'Output status of Multipass instance(s)'
     method_options cluster: false, all: false
     def status
-      do_status
+      as_virtual do
+        system "multipass info #{vm_name}"
+      end
     end
 
-    desc 'ssh [-c] [--add]', 'Shell into Multipass master instance (or execute -c command)'
-    method_options c: :string, add: false
+    desc 'ssh [-c]', 'Shell into Multipass master instance (or execute -c command)'
+    method_options c: :string
     def ssh
       do_ssh
+    end
+
+    desc 'ssh-add', 'Add Multipass ssh private key'
+    def ssh_add
+      as_virtual do
+        exec 'ssh-add .multipass/private_key 2> /dev/null'
+      end
     end
 
     no_tasks do
@@ -47,15 +58,6 @@ module Sunzistrano
           end
           system cmd
           add_virtual_host
-        end
-      end
-
-      def do_halt
-        as_virtual do
-          case vm_state
-          when :running
-            system "multipass stop #{vm_name}"
-          end
         end
       end
 
@@ -79,19 +81,11 @@ module Sunzistrano
         end
       end
 
-      def do_status
-        as_virtual do
-          system "multipass info #{vm_name}"
-        end
-      end
-
       def do_ssh
         as_virtual do
           case vm_state
           when :running
-            if sun.add
-              exec 'ssh-add .multipass/private_key 2> /dev/null'
-            elsif sun.c.present?
+            if sun.c.present?
               exec "multipass exec #{vm_name} -- #{sun.c}"
             else
               exec "multipass shell #{vm_name}"
