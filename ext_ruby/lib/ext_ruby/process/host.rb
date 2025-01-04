@@ -226,8 +226,17 @@ module Process
       snapshot ? network.map.with_index{ |value, i| (value - snapshot.dig(:network, i)).ceil(6) } : network
     end
 
-    def network
-      networks.find{ |k, _| k.start_with? 'en', 'eth', 'wl' }.last
+    def network_name
+      network :name
+    end
+
+    def network(info = :bytes)
+      network = networks.find{ |k, _| k.start_with? 'en', 'eth', 'wl' }
+      case info
+      when :bytes then network.last
+      when :name  then network.first
+      else network
+      end
     end
 
     def networks
