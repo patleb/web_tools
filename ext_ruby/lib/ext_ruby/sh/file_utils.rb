@@ -61,6 +61,7 @@ module Sh::FileUtils
     end
     sed = %{sed -rz#{inline} -- #{[quote, 's', delimiter, old , delimiter, new, delimiter, global, quote].join} #{path}}
     if ignore
+      sed = "sudo #{sed}" if sudo
       sed
     else
       <<~SH.squish
