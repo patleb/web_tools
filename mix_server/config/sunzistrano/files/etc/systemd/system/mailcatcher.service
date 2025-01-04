@@ -1,6 +1,6 @@
 [Unit]
 Description=Mailcatcher Service
-After=network.service vagrant.mount
+After=systemd-networkd.service
 
 [Service]
 Type=simple

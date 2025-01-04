@@ -71,7 +71,7 @@ module Sunzistrano
         command = send "#{type}_remote_cmd", *args
         command = command.escape_single_quotes(:shell)
         <<-SH.squish
-          #{ssh_add_vagrant}
+          #{ssh_virtual_key}
           #{ssh} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{command}'
         SH
       end

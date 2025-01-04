@@ -32,9 +32,9 @@ development:
   mail_domain: $ALIAS server
   backup_dir: ./tmp/backup
 
-vagrant:
-  server_host: vagrant-web.test
-  mail_domain: email.vagrant-web.test
+virtual:
+  server_host: virtual.test
+  mail_domain: email.virtual.test
   backup_split_size: 4MB
 
 staging:

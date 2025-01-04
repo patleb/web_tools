@@ -60,14 +60,14 @@ module Sunzistrano
       def run_exist_cmd(path)
         test = sun.sudo ? "sudo test -e #{path}" : "[[ -e #{path} ]]"
         system <<-SH.squish
-          #{ssh_add_vagrant}
+          #{ssh_virtual_key}
           #{ssh} #{sun.ssh_user}@#{sun.server_host} '#{test} && echo "true" || echo "false"'
         SH
       end
 
       def run_download_cmd(src, dst)
         system <<-SH.squish
-          #{ssh_add_vagrant}
+          #{ssh_virtual_key}
           rsync --rsync-path='sudo rsync' #{rsync_options} -e
           '#{ssh}' '#{sun.ssh_user}@#{sun.server_host}:#{src}' '#{dst}'
         SH
@@ -77,7 +77,7 @@ module Sunzistrano
         chown = sun.chown.presence || "#{sun.ssh_user}:#{sun.ssh_user}"
         chmod = "--chmod='#{sun.chmod}'" if sun.chmod.present?
         system <<-SH.squish
-          #{ssh_add_vagrant}
+          #{ssh_virtual_key}
           rsync --rsync-path='sudo rsync' #{rsync_options} --chown='#{chown}' #{chmod} -e
           '#{ssh}' '#{src}' '#{sun.ssh_user}@#{sun.server_host}:#{dst}'
         SH

@@ -40,7 +40,7 @@ provision:
     - utils/packages
     - utils/htop
     - utils/mailcatcher:
-        if: 'sun.env.vagrant?'
+        if: 'sun.env.virtual?'
     - utils/parallel
     - lang/ruby/app-{ruby_version}
 deploy:

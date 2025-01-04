@@ -1,0 +1,18 @@
+127.0.0.1       localhost
+
+# 192.168.65.31    test.ca
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+## sun:add_virtual_host-192.168.65.34-start
+192.168.65.34   virtual-web.test
+## sun:add_virtual_host-192.168.65.34-end
+
+## sun:add_virtual_host-192.168.65.44-start
+192.168.65.44   virtual-web.test
+## sun:add_virtual_host-192.168.65.44-end

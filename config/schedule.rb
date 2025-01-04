@@ -33,7 +33,7 @@ ExtWhenever.setup(self)
 # end
 
 case @environment
-when 'vagrant'
+when 'virtual'
   every :minute do
     # bash_script 'version'
     # bash_helper 'sun.os_name'

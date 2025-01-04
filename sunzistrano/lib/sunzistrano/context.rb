@@ -138,7 +138,7 @@ module Sunzistrano
     end
 
     def os_version
-      self[:os_version] || '20.04'
+      self[:os_version] || '24.04'
     end
 
     def ruby_version

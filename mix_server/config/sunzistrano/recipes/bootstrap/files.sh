@@ -1,4 +1,4 @@
-if [[ "${env}" != 'vagrant' ]]; then
+if [[ "${env}" != 'virtual' ]]; then
   sun.backup_copy '/etc/default/motd-news'
 fi
 sun.backup_compare '/etc/default/grub'

@@ -21,7 +21,7 @@ deploy:
         before: deploy/bundler
   git_config_url: true
 
-vagrant:
+virtual:
   swap_size: 0
 
 staging:

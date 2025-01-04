@@ -56,8 +56,9 @@ yarn-debug.log*
 
 /vendor/ruby
 /.vagrant/*
-!/.vagrant/
-!/.vagrant/private_key
+/.multipass/*
+!/.multipass/
+!/.multipass/private_key
 *.box
 /.sunzistrano/*
 /.local_repo/*

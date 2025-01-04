@@ -11,7 +11,7 @@ module Sunzistrano
         with_context(stage, :deploy) do
           raise '--host is required for cluster usage' if sun.server_cluster? && options.host.blank?
           exec <<-SH.squish
-            #{ssh_add_vagrant}
+            #{ssh_virtual_key}
             #{ssh} -t #{sun.ssh_user}@#{options.host.presence || sun.server_host} #{ssh_proxy} '#{console_remote_cmd}'
           SH
         end

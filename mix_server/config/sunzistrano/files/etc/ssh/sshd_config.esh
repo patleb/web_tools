@@ -55,7 +55,7 @@ Include /etc/ssh/sshd_config.d/*.conf
 #IgnoreRhosts yes
 
 # To disable tunneled clear text passwords, change to no here!
-<% if sun.env.vagrant? || sun.ssh_allow_password -%>
+<% if sun.env.virtual? || sun.ssh_allow_password -%>
 PasswordAuthentication yes
 <% else -%>
 PasswordAuthentication no

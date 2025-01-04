@@ -182,7 +182,7 @@ module Sunzistrano
       end
 
       def run_reset_known_hosts
-        return if Setting.env? :development, :test
+        return if Setting.local?
         hosts = sun.servers.map{ |server| `getent hosts #{server}`.squish.split }.flatten.uniq
         if hosts.any?
           hosts.each do |host|
@@ -220,7 +220,7 @@ module Sunzistrano
       def role_cmd(server)
         no_strict_host_key_checking = "-o 'StrictHostKeyChecking no'" if sun.new_host
         <<-SH.squish
-          #{ssh_add_vagrant}
+          #{ssh_virtual_key}
           cd #{bash_dir} && tar cz . |
           #{ssh} #{no_strict_host_key_checking} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{role_remote_cmd}'
         SH
@@ -244,12 +244,12 @@ module Sunzistrano
         "-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?
       end
 
-      def ssh_add_vagrant
-        <<-SH.squish if sun.env.vagrant?
+      def ssh_virtual_key
+        <<-SH.squish if sun.env.virtual?
           if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then
             eval $(ssh-agent);
           fi
-          && ssh-add .vagrant/private_key 2> /dev/null &&
+          && ssh-add .multipass/private_key 2> /dev/null &&
         SH
       end
 
@@ -281,26 +281,26 @@ module Sunzistrano
       end
 
       def capture2e(*cmd)
-        return puts cmd if Setting.env? :development, :test
+        return puts cmd if Setting.local?
         puts cmd
         Open3.capture2e(*cmd)
       end
 
       def popen3(cmd_name, server, *args, &block)
         command = send(cmd_name, server, *args)
-        return puts command if Setting.env? :development, :test
+        return puts command if Setting.local?
         puts command if sun.debug
         Open3.popen3(command, &block)
       end
 
       def system(*args)
-        return puts args if Setting.env? :development, :test
+        return puts args if Setting.local?
         puts args if sun.debug
         Kernel.system(*args)
       end
 
       def exec(*args)
-        return puts args if Setting.env? :development, :test
+        return puts args if Setting.local?
         puts args if sun.debug
         Kernel.exec(*args)
       end
@@ -309,5 +309,6 @@ module Sunzistrano
 end
 
 require 'sunzistrano/cli/bash'
+require 'sunzistrano/cli/multipass'
 require 'sunzistrano/cli/rsync'
 load 'Sunfile' if File.exist? 'Sunfile'

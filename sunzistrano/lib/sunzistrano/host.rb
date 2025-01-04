@@ -1,22 +1,24 @@
 module Host
-  VAGRANT  = 'vagrant-hostmanager'
-  SERVER   = 'sh:dns-set_hosts-server'
-  HOSTNAME = 'sh:dns-set_hosts-hostname'
-  MASTER   = 'sh:dns-set_hosts-master'
+  VIRTUAL  = 'sun:add_virtual_host'
+  SERVER   = 'sh:dns-append_host-server'
+  HOSTNAME = 'sh:dns-append_host-hostname'
+  MASTER   = 'sh:dns-append_host-master'
 
   def self.domains
-    @domains ||= constants.each_with_object({}.to_hwka) do |constant, memo|
+    @domains ||= constants.each_with_object({}.to_hwia) do |constant, domains|
       tag = const_get(constant)
-      first, last = "#{tag}-start", "#{tag}-end"
-      list = Pathname.new('/etc/hosts').readlines
-      list.select!{ |line| true if (line.include?(first) .. line.include?(last)) }
+      first, last = /#{tag}([-.:\w]+)?-start/, /#{tag}([-.:\w]+)?-end/
+      list = host_file_lines
+      list = list.select{ |line| true if (line.match?(first) .. line.match?(last)) }
+      list = list.reject{ |line| line.blank? || line.start_with?('#') }
       next if list.empty?
-      memo[constant.to_s.underscore] = list[1..-2]
-        .reject(&:blank?)
-        .map(&:split)
-        .map{ |(ip, name)| [name, ip] }
-        .sort_by(&:first)
-        .to_h
+      name = constant.to_s.underscore
+      domains[name] = list.map{ |line| line.split(/\s+/).compact_blank.take(2).reverse }.to_h
     end
   end
+
+  def self.host_file_lines
+    @host_file_lines ||= Pathname.new('/etc/hosts').readlines
+  end
+  private_class_method :host_file_lines
 end

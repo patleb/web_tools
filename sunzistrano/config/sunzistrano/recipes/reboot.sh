@@ -7,7 +7,7 @@ if [[ ! $(grep -F "Done   [reboot]" "${manifest_log}") ]]; then
   sun.done "reboot"
 fi
 
-if [[ "${env}" != 'vagrant' ]]; then
+if [[ "${env}" != 'virtual' ]]; then
   case "$OS_NAME" in
   ubuntu)
     echo 'Running "unattended-upgrade"'

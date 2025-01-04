@@ -6,3 +6,10 @@ deploy:
     - deploy/git_cleanup
   scripts:
     - version
+
+virtual:
+  vm_cpu: 2
+  vm_ram: 1GB
+  vm_disk: 10GB
+
+desktop:
