@@ -8,11 +8,10 @@ module Sunzistrano
       do_up
     end
 
-    desc 'halt', 'Stop Multipass instance(s)'
+    desc 'halt [--force]', 'Stop Multipass instance(s)'
+    method_options force: false
     def halt
-      as_virtual do
-        system "multipass stop #{vm_name}" if vm_state == :running
-      end
+      do_halt
     end
 
     desc 'destroy', 'Delete Multipass instance(s)'
@@ -56,6 +55,19 @@ module Sunzistrano
             add_virtual_host
           when :stopped
             system "multipass start #{vm_name}"
+          end
+        end
+      end
+
+      def do_halt
+        as_virtual do
+          case vm_state
+          when :running
+            system "multipass stop #{vm_name} #{'--force' if sun.force}"
+          when :null, :deleted, :stopped
+            # do nothing
+          else
+            system "multipass stop #{vm_name} --force"
           end
         end
       end
