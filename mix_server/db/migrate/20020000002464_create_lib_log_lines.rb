@@ -1,7 +1,7 @@
 ### NOTE
 # can't have unique index on [:log_id, :created_at], because several workers could write at the same time
 # also, if there was a default for :created_at, it could be null on insert and defaults aren't used for uniqueness check
-class CreateLibLogLines < ActiveRecord::Migration[7.1]
+class CreateLibLogLines < ActiveRecord::Migration[8.0]
   def change
     create_partitioned_table :lib_log_lines, key: :created_at do |t|
       t.integer    :type,        null: false

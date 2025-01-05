@@ -1,4 +1,4 @@
-class CreateLibLogMessages < ActiveRecord::Migration[7.1]
+class CreateLibLogMessages < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_log_messages do |t|
       t.integer    :log_lines_type,  null: false

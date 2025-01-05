@@ -1,4 +1,4 @@
-class PgunitInstall < ActiveRecord::Migration[7.1]
+class PgunitInstall < ActiveRecord::Migration[8.0]
   def up
     execute ExtRails::Engine.root.join('db/pgunit/PGUnit.sql').read.strip_sql[1..-1]
   end

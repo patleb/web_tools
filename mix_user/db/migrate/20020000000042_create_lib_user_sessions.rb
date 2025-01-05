@@ -1,4 +1,4 @@
-class CreateLibUserSessions < ActiveRecord::Migration[7.1]
+class CreateLibUserSessions < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_user_sessions, primary_key: [:user_id, :session_id] do |t|
       t.belongs_to :user,       null: false, index: false, foreign_key: { to_table: :lib_users }

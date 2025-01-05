@@ -1,6 +1,6 @@
 ### References
 # https://wiki.postgresql.org/wiki/Count_estimate
-class EnableCountEstimate < ActiveRecord::Migration[7.1]
+class EnableCountEstimate < ActiveRecord::Migration[8.0]
   def up
     execute <<-SQL.strip_sql
       CREATE FUNCTION count_estimate(query text) RETURNS BIGINT AS $$

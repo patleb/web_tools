@@ -1,4 +1,4 @@
-class CreateLibGeoStates < ActiveRecord::Migration[7.1]
+class CreateLibGeoStates < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_geo_states do |t| # must have an :id as integer, since searchable_id is a bigint
       t.citext      :names,        null: false, array: true

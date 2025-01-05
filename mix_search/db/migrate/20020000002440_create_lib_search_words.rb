@@ -1,4 +1,4 @@
-class CreateLibSearchWords < ActiveRecord::Migration[7.1]
+class CreateLibSearchWords < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_search_words do |t|
       t.string :token,          null: false, index: { unique: true }

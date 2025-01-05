@@ -1,4 +1,4 @@
-class EnablePgTouch < ActiveRecord::Migration[7.1]
+class EnablePgTouch < ActiveRecord::Migration[8.0]
   def up
     create_function_touch
   end

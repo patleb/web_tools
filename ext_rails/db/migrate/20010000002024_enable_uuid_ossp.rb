@@ -1,6 +1,6 @@
 ### References
 # https://stackoverflow.com/questions/37713131/postgresql-sort-by-uuid-v1-timestamp
-class EnableUuidOssp < ActiveRecord::Migration[7.1]
+class EnableUuidOssp < ActiveRecord::Migration[8.0]
   def change
     # Example
     #

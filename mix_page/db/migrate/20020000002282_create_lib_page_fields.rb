@@ -1,4 +1,4 @@
-class CreateLibPageFields < ActiveRecord::Migration[7.1]
+class CreateLibPageFields < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_page_fields do |t|
       t.integer    :type,          null: false

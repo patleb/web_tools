@@ -1,4 +1,4 @@
-class CreateLibGlobals < ActiveRecord::Migration[7.1]
+class CreateLibGlobals < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_globals, id: false do |t|
       t.primary_key :id, :string

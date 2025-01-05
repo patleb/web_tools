@@ -1,4 +1,4 @@
-class CreateRpcSchema < ActiveRecord::Migration[7.1]
+class CreateRpcSchema < ActiveRecord::Migration[8.0]
   def change
     reversible do |change|
       change.up do

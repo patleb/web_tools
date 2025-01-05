@@ -1,4 +1,4 @@
-class CreateLibSearches < ActiveRecord::Migration[7.1]
+class CreateLibSearches < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_searches do |t|
       t.belongs_to :search_word,     null: false, index: false, foreign_key: { to_table: :lib_search_words }

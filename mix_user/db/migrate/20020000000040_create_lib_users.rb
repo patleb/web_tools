@@ -1,4 +1,4 @@
-class CreateLibUsers < ActiveRecord::Migration[7.1]
+class CreateLibUsers < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_users do |t|
       t.uuid     :uuid,            null: false, default: 'gen_random_uuid()', index: { using: :hash }

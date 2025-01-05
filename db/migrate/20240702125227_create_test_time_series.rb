@@ -1,4 +1,4 @@
-class CreateTestTimeSeries < ActiveRecord::Migration[7.1]
+class CreateTestTimeSeries < ActiveRecord::Migration[8.0]
   def change
     create_partitioned_table :test_time_series, key: :created_at do |t|
       t.integer :type,      null: false

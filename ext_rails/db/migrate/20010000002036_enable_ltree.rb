@@ -1,4 +1,4 @@
-class EnableLtree < ActiveRecord::Migration[7.1]
+class EnableLtree < ActiveRecord::Migration[8.0]
   def change
     enable_extension 'ltree'
   end

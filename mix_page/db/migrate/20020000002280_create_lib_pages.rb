@@ -1,4 +1,4 @@
-class CreateLibPages < ActiveRecord::Migration[7.1]
+class CreateLibPages < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_pages do |t|
       t.uuid       :uuid,                 null: false, default: 'gen_random_uuid()', index: { using: :hash }

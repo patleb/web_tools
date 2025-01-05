@@ -1,4 +1,4 @@
-class RpcStartingPoint < ActiveRecord::Migration[7.1]
+class RpcStartingPoint < ActiveRecord::Migration[8.0]
   def up
     # do nothing
   end

@@ -1,4 +1,4 @@
-class CreateLibFlashes < ActiveRecord::Migration[7.1]
+class CreateLibFlashes < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_flashes do |t|
       t.bigint :user_id,    null: false
