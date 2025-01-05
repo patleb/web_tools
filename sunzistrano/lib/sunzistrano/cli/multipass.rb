@@ -3,28 +3,24 @@ module Sunzistrano
   TMP_CLOUD_INIT = './tmp/cloud-init.yml'
 
   Cli.class_eval do
-    desc 'up [--cluster] [--all]', 'Start Multipass instance(s)'
-    method_options cluster: false, all: false
+    desc 'up', 'Start Multipass instance(s)'
     def up
       do_up
     end
 
-    desc 'halt [--cluster] [--all]', 'Stop Multipass instance(s)'
-    method_options cluster: false, all: false
+    desc 'halt', 'Stop Multipass instance(s)'
     def halt
       as_virtual do
         system "multipass stop #{vm_name}" if vm_state == :running
       end
     end
 
-    desc 'destroy [--cluster] [--all]', 'Delete Multipass instance(s)'
-    method_options cluster: false, all: false
+    desc 'destroy', 'Delete Multipass instance(s)'
     def destroy
       do_destroy
     end
 
-    desc 'status [--cluster] [--all]', 'Output status of Multipass instance(s)'
-    method_options cluster: false, all: false
+    desc 'status', 'Output status of Multipass instance(s)'
     def status
       as_virtual do
         system "multipass info #{vm_name}"
@@ -53,17 +49,14 @@ module Sunzistrano
     no_tasks do
       def do_up
         as_virtual do
-          cmd = case vm_state
+          case vm_state
           when :null
             compile_cloud_init
-            "multipass launch #{sun.os_version} --name #{vm_name} #{vm_options}"
+            system "multipass launch #{sun.os_version} --name #{vm_name} #{vm_options}"
+            add_virtual_host
           when :stopped
-            "multipass start #{vm_name}"
-          else
-            return
+            system "multipass start #{vm_name}"
           end
-          system cmd
-          add_virtual_host
         end
       end
 
@@ -212,16 +205,26 @@ module Sunzistrano
       def add_virtual_host
         ip = private_ip
         system Sh.append_host "#{Host::VIRTUAL}-#{ip}", ip, sun.server_host
+        private_ip_file.write(ip)
       end
 
       def remove_virtual_host
         ip = private_ip
+        if (ip_was = private_ip_file.read) && ip_was != ip
+          puts "ip has changed [#{ip_was}] --> [#{ip}]".red
+          ip = ip_was
+        end
         yield
-        system Sh.delete_lines! '/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true
+        system Sh.delete_lines! '/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true if ip
+        private_ip_file.delete(false)
       end
 
       def private_ip
         vm_info[:ipv4].first
+      end
+
+      def private_ip_file
+        Pathname.new('.multipass/private_ip')
       end
     end
   end
