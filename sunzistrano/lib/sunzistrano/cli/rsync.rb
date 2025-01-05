@@ -61,7 +61,7 @@ module Sunzistrano
         test = sun.sudo ? "sudo test -e #{path}" : "[[ -e #{path} ]]"
         system <<-SH.squish
           #{ssh_virtual_key}
-          #{ssh} #{sun.ssh_user}@#{sun.server_host} '#{test} && echo "true" || echo "false"'
+          #{ssh_cmd} #{sun.ssh_user}@#{sun.server_host} '#{test} && echo "true" || echo "false"'
         SH
       end
 
@@ -69,7 +69,7 @@ module Sunzistrano
         system <<-SH.squish
           #{ssh_virtual_key}
           rsync --rsync-path='sudo rsync' #{rsync_options} -e
-          '#{ssh}' '#{sun.ssh_user}@#{sun.server_host}:#{src}' '#{dst}'
+          '#{ssh_cmd}' '#{sun.ssh_user}@#{sun.server_host}:#{src}' '#{dst}'
         SH
       end
 
@@ -79,7 +79,7 @@ module Sunzistrano
         system <<-SH.squish
           #{ssh_virtual_key}
           rsync --rsync-path='sudo rsync' #{rsync_options} --chown='#{chown}' #{chmod} -e
-          '#{ssh}' '#{src}' '#{sun.ssh_user}@#{sun.server_host}:#{dst}'
+          '#{ssh_cmd}' '#{src}' '#{sun.ssh_user}@#{sun.server_host}:#{dst}'
         SH
       end
 

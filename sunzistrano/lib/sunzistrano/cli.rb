@@ -222,7 +222,7 @@ module Sunzistrano
         <<-SH.squish
           #{ssh_virtual_key}
           cd #{bash_dir} && tar cz . |
-          #{ssh} #{no_strict_host_key_checking} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{role_remote_cmd}'
+          #{ssh_cmd} #{no_strict_host_key_checking} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{role_remote_cmd}'
         SH
       end
 
@@ -236,7 +236,7 @@ module Sunzistrano
         SH
       end
 
-      def ssh
+      def ssh_cmd
         "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR"
       end
 

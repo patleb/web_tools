@@ -44,6 +44,12 @@ module Sunzistrano
       end
     end
 
+    desc 'snapshot [ACTION] [--name]', 'Save/Restore/List/Delete Multipass snapshot(s)'
+    method_options name: :string
+    def snapshot(action)
+      do_snapshot(action)
+    end
+
     no_tasks do
       def do_up
         as_virtual do
@@ -96,11 +102,67 @@ module Sunzistrano
         end
       end
 
+      def do_snapshot(action)
+        raise "snapshot action [#{action}] unsupported" unless %w(save restore list delete).include? action
+        as_virtual do
+          send "run_snapshot_#{action}_cmd"
+        end
+      end
+
       private
 
+      def run_snapshot_save_cmd
+        name = "--name #{sun.name}" if sun.name.present?
+        cmd = case vm_state
+        when :stopped
+          "multipass snapshot #{name} #{vm_name}"
+        when :running
+          "multipass stop #{vm_name} && multipass snapshot #{name} #{vm_name} && multipass start #{vm_name}"
+        else
+          raise "vm state [#{vm_state}]"
+        end
+        system cmd
+      end
+
+      def run_snapshot_restore_cmd
+        raise 'No snapshots' unless vm_snapshots
+        if (name = sun.name).present?
+          raise "No snapshot [#{name}]" unless vm_snapshots.has_key? name
+        else
+          name = vm_snapshots.sort_by{ |_name, info| info[:created_at] }.last.first
+        end
+        cmd = case vm_state
+        when :stopped
+          "multipass restore #{vm_name}.#{name} --destructive"
+        when :running
+          "multipass stop #{vm_name} && multipass restore #{vm_name}.#{name} --destructive && multipass start #{vm_name}"
+        else
+          raise "vm state [#{vm_state}]"
+        end
+        system cmd
+      end
+
+      def run_snapshot_list_cmd
+        system "multipass list --snapshots | grep -E '^(Instance|#{vm_name})'"
+      end
+
+      def run_snapshot_delete_cmd
+        raise 'Snapshot name required' unless (name = sun.name).present?
+        raise "No snapshot [#{name}]" unless vm_snapshots&.has_key? name
+        cmd = case vm_state
+        when :stopped
+          "multipass delete #{vm_name}.#{name} --purge"
+        when :running
+          "multipass stop #{vm_name} && multipass delete #{vm_name}.#{name} --purge && multipass start #{vm_name}"
+        else
+          raise "vm state [#{vm_state}]"
+        end
+        system cmd
+      end
+
       def vm_state
-        return :null unless vm_ssh_config
-        vm_ssh_config[:state].downcase.to_sym
+        return :null unless vm_info
+        vm_info[:state].downcase.to_sym
       end
 
       def vm_name
@@ -111,11 +173,24 @@ module Sunzistrano
         "--cpus #{sun.vm_cpu} --memory #{sun.vm_ram} --disk #{sun.vm_disk} --cloud-init=#{TMP_CLOUD_INIT}"
       end
 
-      def vm_ssh_config
-        @vm_ssh_config ||= begin
+      def vm_info
+        @vm_info ||= begin
           return unless (json = `multipass info #{vm_name} --format=json`).present?
           return unless (hash = JSON.parse(json).dig('info', vm_name))
-          hash.to_hwia
+          hash.to_hwka
+        end
+      end
+
+      def vm_snapshots
+        @vm_snapshots ||= begin
+          return unless (json = `multipass list --snapshots --format=json`).present?
+          return unless (hash = JSON.parse(json).dig('info', vm_name))
+          hash.each_with_object({}) do |(name, _info), memo|
+            json = `multipass info #{vm_name}.#{name} --format=json`
+            info = JSON.parse(json).dig('info', vm_name, 'snapshots', name)
+            info['created'] = Time.parse(info['created']).in_time_zone('UTC')
+            memo[name] = info.to_hwka
+          end
         end
       end
 
@@ -146,7 +221,7 @@ module Sunzistrano
       end
 
       def private_ip
-        vm_ssh_config[:ipv4].first
+        vm_info[:ipv4].first
       end
     end
   end

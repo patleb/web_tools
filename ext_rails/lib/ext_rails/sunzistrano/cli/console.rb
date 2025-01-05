@@ -12,7 +12,7 @@ module Sunzistrano
           raise '--host is required for cluster usage' if sun.server_cluster? && options.host.blank?
           exec <<-SH.squish
             #{ssh_virtual_key}
-            #{ssh} -t #{sun.ssh_user}@#{options.host.presence || sun.server_host} #{ssh_proxy} '#{console_remote_cmd}'
+            #{ssh_cmd} -t #{sun.ssh_user}@#{options.host.presence || sun.server_host} #{ssh_proxy} '#{console_remote_cmd}'
           SH
         end
       end
