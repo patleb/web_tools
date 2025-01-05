@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = 'bento/ubuntu-20.04'
+  config.vm.box = 'geerlingguy/ubuntu2004'
   # config.vm.box = 'web_tools'
   # config.vm.box_version = '0'
 
@@ -24,7 +24,7 @@ Vagrant.configure("2") do |config|
     config.hostmanager.manage_host = true
   end
 
-  hostname, ip = 'vagrant-web.test', '192.168.65.34'
+  hostname, ip = 'vagrant-web.test', '192.168.65.44'
   public_key = `chmod 600 .vagrant/private_key; ssh-keygen -f .vagrant/private_key -y`.strip
   subdomains = [
   ]
@@ -50,13 +50,14 @@ Vagrant.configure("2") do |config|
       trigger.run = { inline: "cp -f .vagrant/private_key .vagrant/machines/web/virtualbox/private_key" }
     end
     node.trigger.after :up do |trigger|
-      # trigger.run_remote = { inline: 'sudo service ntp stop; sudo ntpd -gq; sudo service ntp start' }
+      trigger.run_remote = { inline: 'sudo service ntp stop; sudo ntpd -gq; sudo service ntp start' }
     end
     if Vagrant.has_plugin?('vagrant-hostmanager') && subdomains.any?
       node.hostmanager.aliases = subdomains.map do |subdomain|
         "#{subdomain}.#{hostname}"
       end
     end
+    # node.vm.synced_folder "#{__dir__}/tmp/vagrant", '/opt/vagrant', owner: 'vagrant', group: 'vagrant'
     if link_dev
       node.vm.synced_folder './', '/vagrant', owner: 'deployer', group: 'deployer'
       # node.vm.synced_folder './tmp/shared_data', '/opt/shared_data', owner: 'deployer', group: 'deployer' # cluster
