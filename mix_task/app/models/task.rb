@@ -34,7 +34,7 @@ class Task < LibMainRecord
 
   def self.rake_tasks
     return [] unless MixTask.config.yml_path.exist?
-    @rake_tasks ||= YAML.safe_load(MixTask.config.yml_path.read) || {}
+    @rake_tasks ||= YAML.safe_load(MixTask.config.yml_path.read, permitted_classes: [Symbol]) || {}
   end
 
   def self.to_yaml
