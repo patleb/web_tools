@@ -17,5 +17,6 @@ class Process::PassengerTest < ActiveSupport::TestCase
       Process.kill('TERM', pid)
       Process.detach pid
     end
+    Pathname.new('./tmp/pids').glob('passenger.3999.*').each(&:delete.with(false))
   end
 end

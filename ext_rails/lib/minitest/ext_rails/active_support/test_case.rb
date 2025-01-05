@@ -18,6 +18,7 @@ ActiveSupport::TestCase.class_eval do
   end
 
   def self.test_queue_adapter!
+    self.use_transactional_tests = false
     around do |test|
       queue_adapter_was = ActiveJob::Base.queue_adapter
       ActiveJob::Base.queue_adapter = :test
