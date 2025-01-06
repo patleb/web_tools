@@ -215,28 +215,33 @@ module Sunzistrano
       end
 
       def add_virtual_host
-        ip = private_ip
+        vm_metadata.mkdir_p
+        ip = vm_private_ip
         system Sh.append_host "#{Host::VIRTUAL}-#{ip}", ip, sun.server_host
-        private_ip_file.write(ip)
+        vm_private_ip_file.write(ip)
       end
 
       def remove_virtual_host
-        ip = private_ip
-        if (ip_was = private_ip_file.read) && ip_was != ip
+        ip = vm_private_ip
+        if (ip_was = vm_private_ip_file.read) && ip_was != ip
           puts "ip has changed [#{ip_was}] --> [#{ip}]".red
           ip = ip_was
         end
         yield
         system Sh.delete_lines! '/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true if ip
-        private_ip_file.delete(false)
+        vm_metadata.rmtree(false)
       end
 
-      def private_ip
+      def vm_private_ip
         vm_info[:ipv4].first
       end
 
-      def private_ip_file
-        Pathname.new('.multipass/private_ip')
+      def vm_private_ip_file
+        vm_metadata.join('private_ip')
+      end
+
+      def vm_metadata
+        Pathname.new(".multipass/#{vm_name}")
       end
     end
   end
