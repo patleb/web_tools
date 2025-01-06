@@ -38,8 +38,8 @@ module Sunzistrano
       do_provision(stage, :deploy)
     end
 
-    desc 'provision [STAGE] [--specialize] [--rollback] [--recipe] [--reboot] [--new-host]', 'Provision system'
-    method_options specialize: false, rollback: false, recipe: :string, reboot: false, new_host: false
+    desc 'provision [STAGE] [--specialize] [--rollback] [--recipe] [--reboot] [--reset-ssh]', 'Provision system'
+    method_options specialize: false, rollback: false, recipe: :string, reboot: false, reset_ssh: false
     def provision(stage)
       raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
       do_provision(stage, :provision)
@@ -174,7 +174,7 @@ module Sunzistrano
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_command :role_cmd, server
         end
-        run_reset_known_hosts if sun.new_host
+        run_reset_known_hosts if sun.reset_ssh
         unless sun.debug
           FileUtils.rm_rf(bash_dir)
           FileUtils.rmdir(File.dirname(bash_dir)) rescue nil if sun.deploy
@@ -218,7 +218,7 @@ module Sunzistrano
       end
 
       def role_cmd(server)
-        no_strict_host_key_checking = "-o 'StrictHostKeyChecking no'" if sun.new_host
+        no_strict_host_key_checking = "-o 'StrictHostKeyChecking no'" if sun.reset_ssh
         <<-SH.squish
           #{ssh_virtual_key}
           cd #{bash_dir} && tar cz . |
