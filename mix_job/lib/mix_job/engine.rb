@@ -51,7 +51,7 @@ module MixJob
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixServer::Log.config.available_types['LogLines::JobAction'] = 160
+      MixServer::Log.config.available_types['LogLines::JobAction'] = MixServer::Log::DB_TYPE + 60
     end
   end
 end

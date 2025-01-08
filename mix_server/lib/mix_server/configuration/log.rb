@@ -1,5 +1,7 @@
 module MixServer
   module Log
+    DB_TYPE = 1000
+
     has_config do
       attr_writer   :show_path
       attr_writer   :partitions_total_size
@@ -25,26 +27,24 @@ module MixServer
         @partitions_total_size ||= 1.year
       end
 
-      # NOTE db types have a value >= 100
       def available_types
-        @available_types ||= (Rails.env.test? ? {
-          'LogLines::Syslog'      => 0
-        } : {}).merge(
+        @available_types ||= {
+          'LogLines::Syslog'      => 0,
           'LogLines::NginxAccess' => 10,
           'LogLines::NginxError'  => 20,
           'LogLines::Auth'        => 30,
-          # 'LogLines::Fail2ban'    => 40,
+          'LogLines::Fail2ban'    => 40,
           'LogLines::Postgresql'  => 50,
           'LogLines::App'         => 60,
           'LogLines::AptHistory'  => 70,
           'LogLines::Osquery'     => 80,
-          'LogLines::Rescue'      => 100,
-          'LogLines::Email'       => 110,
-          'LogLines::Worker'      => 120,
-          'LogLines::Clamav'      => 130,
-          'LogLines::Database'    => 140,
-          'LogLines::Host'        => 150,
-        )
+          'LogLines::Rescue'      => DB_TYPE,
+          'LogLines::Email'       => DB_TYPE + 10,
+          'LogLines::Worker'      => DB_TYPE + 20,
+          'LogLines::Clamav'      => DB_TYPE + 30,
+          'LogLines::Database'    => DB_TYPE + 40,
+          'LogLines::Host'        => DB_TYPE + 50,
+        }
       end
 
       def add_available_path(...)
@@ -60,7 +60,7 @@ module MixServer
           passenger_log_path(:public, :access),
           log_path(:nginx, :error),
           log_path(:auth),
-          # log_path(:fail2ban),
+          log_path(:fail2ban),
           postgres_log_path,
           rails_log_path,
           log_path(:apt, :history),

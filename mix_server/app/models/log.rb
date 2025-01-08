@@ -1,4 +1,5 @@
 class Log < LibMainRecord
+  DB_TYPE = MixServer::Log::DB_TYPE
   FS_TYPE = %r{(?:/log|/(\w+)|)/(?:[-\w]+\.)?(?:(\w+)(?:-\w+)*\.log|(\w+log))$}
   FS_TYPE_SKIP = [nil, 'results']
 
@@ -44,7 +45,7 @@ class Log < LibMainRecord
   end
 
   def self.db_types
-    @db_types ||= MixServer::Log.config.available_types.except(*fs_types).reject{ |_, v| v < 100 }.keys
+    @db_types ||= MixServer::Log.config.available_types.except(*fs_types).reject{ |_, v| v < DB_TYPE }.keys
   end
 
   def self.fs_types

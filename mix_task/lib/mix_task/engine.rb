@@ -17,7 +17,7 @@ module MixTask
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixServer::Log.config.available_types['LogLines::Task'] = 170
+      MixServer::Log.config.available_types['LogLines::Task'] = MixServer::Log::DB_TYPE + 70
     end
   end
 end
