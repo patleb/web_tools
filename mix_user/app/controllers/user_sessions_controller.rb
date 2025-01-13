@@ -1,5 +1,9 @@
 class UserSessionsController < Users::BaseController
-  authenticate only: [:destroy]
+  authenticate only: :destroy
+
+  rate_limit to: 10, within: 3.minutes, only: :create,
+    by: -> { [request.remote_ip].concat(user_agent).compact },
+    with: -> { redirect_back alert: t('flash.too_many_attempts') }
 
   def skip_redirect_current_user
     request.path == MixUser::Routes.delete_session_path

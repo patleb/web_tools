@@ -34,6 +34,7 @@ en:
     restore_user_sent: You will receive an email with instructions on how to restore your account in a few minutes.
     restored: Account restored.
     invalid_link: Email link is invalid, please request a new one.
+    too_many_attempts: Try again later.
   hint:
     minimum_password_length:
       one: "(%{count} character minimum)"

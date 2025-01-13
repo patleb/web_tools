@@ -138,7 +138,7 @@ module ExtRails
     end
 
     initializer 'ext_rails.cookies' do |app|
-      app.config.session_store :cookie_store, key: "_#{Rails.application.name}_session", expire_after: 2.years
+      app.config.session_store :cookie_store, key: "_#{Rails.application.name}_session", expire_after: 400.days
     end
 
     initializer 'ext_rails.rack_lineprof' do |app|
