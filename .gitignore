@@ -59,6 +59,7 @@ yarn-debug.log*
 /.multipass/*
 !/.multipass/
 !/.multipass/private_key
+!/.multipass/private_key.pub
 *.box
 /.sunzistrano/*
 /.local_repo/*
