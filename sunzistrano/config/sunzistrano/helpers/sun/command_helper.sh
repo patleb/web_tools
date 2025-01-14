@@ -40,3 +40,13 @@ sun.mute() {
   `$@ >/dev/null 2>&1`
   return $?
 }
+
+sun.service_enable() {
+  systemctl enable $@
+  systemctl start $@
+}
+
+sun.service_disable() {
+  systemctl stop $@
+  systemctl disable $@
+}

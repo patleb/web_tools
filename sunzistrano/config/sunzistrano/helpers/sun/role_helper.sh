@@ -21,10 +21,21 @@ sun.setup_system_globals() {
   source /etc/os-release
   export TERM=linux
   export DEBIAN_FRONTEND=noninteractive
-  export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
   export ARCH=$(dpkg --print-architecture)
   export HOME_WAS=$HOME
   export HOME=${1:-/home/<%= sun.ssh_user %>}
+  sun.setup_system_locale
+}
+
+sun.setup_system_locale() {
+  local locale=${locale:-en_US}
+  local encoding="${locale}.UTF-8"
+  export LOCALE=$locale
+  export LANGUAGE=$encoding
+  export LANG=$encoding
+  export LC_CTYPE=$encoding
+  export LC_ALL=$encoding
+  export LC=$encoding
 }
 
 sun.check_os() {

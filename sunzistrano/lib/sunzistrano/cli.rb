@@ -170,10 +170,18 @@ module Sunzistrano
         end
       end
 
+      def before_role
+      end
+
+      def after_role
+      end
+
       def run_role_cmd
+        before_role
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_command :role_cmd, server
         end
+        after_role
         run_reset_known_hosts if sun.reset_ssh
         unless sun.debug
           FileUtils.rm_rf(bash_dir)
@@ -233,6 +241,13 @@ module Sunzistrano
           flock --verbose -n #{sun.deploy_path 'role.lock'} #{'sudo' if sun.sudo} bash -e -u +H role.sh |&
           tee -a #{sun.provision_path BASH_LOG} && cd #{bash_dir_remote} &&
           find . -depth ! -cnewer $start -print0 | sponge /dev/stdout | xargs -r0 rm -d && rm -f $start
+        SH
+      end
+
+      def remote_cmd(server, command)
+        <<-SH.squish
+          #{ssh_virtual_key}
+          #{ssh_cmd} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{command}'
         SH
       end
 
@@ -311,4 +326,13 @@ end
 require 'sunzistrano/cli/bash'
 require 'sunzistrano/cli/multipass'
 require 'sunzistrano/cli/rsync'
-load 'Sunfile' if File.exist? 'Sunfile'
+if Gem.exists? 'ext_rails'
+  require 'ext_rails/sunzistrano/cli/console'
+  require 'ext_rails/sunzistrano/cli/rake'
+end
+if Gem.exists? 'mix_server'
+  require 'mix_server/sunzistrano/cli/firewall'
+end
+if File.exist? 'Sunfile'
+  load 'Sunfile'
+end

@@ -5,6 +5,7 @@ sun.install "ufw"
 ufw default deny incoming
 ufw default allow outgoing
 ufw allow ssh
+ufw limit ssh
 ufw allow http
 ufw allow https
 yes | ufw enable
@@ -13,5 +14,4 @@ if systemctl list-unit-files | grep enabled | grep -Fq netfilter-persistent; the
   systemctl disable netfilter-persistent
 fi
 
-systemctl enable ufw
-systemctl start ufw
+sun.service_enable ufw
