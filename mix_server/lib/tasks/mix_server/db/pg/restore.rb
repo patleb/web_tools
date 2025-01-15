@@ -68,7 +68,7 @@ module Db
         if system("sudo ls #{wal_file(compress)}", out: File::NULL, err: File::NULL)
           sh "sudo tar -C #{wal_dir} #{'-I pigz' if compress} -xf #{wal_file(compress)}"
           if system("sudo ls #{wal_dir}/*.partial", out: File::NULL, err: File::NULL)
-            sh "sudo mmv '#{wal_dir}/*.partial' '#{wal_dir}/#1'"
+            sh "sudo rename 's/\\.partial$//' #{wal_dir}/*"
           end
         end
         sh "sudo touch #{pg_data_dir.join('recovery.signal')}"

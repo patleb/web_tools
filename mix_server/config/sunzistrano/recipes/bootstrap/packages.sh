@@ -1,3 +1,9 @@
+### References
+# https://github.com/docker-library/ruby/blob/master/3.4/slim-bookworm/Dockerfile
+# https://github.com/rails/rails/blob/main/railties/lib/rails/generators/rails/app/templates/Dockerfile.tt
+# https://github.com/rails/rails/blob/main/railties/lib/rails/generators/app_base.rb
+# https://github.com/rbenv/ruby-build/wiki
+# https://github.com/docker-library/postgres/blob/master/17/bookworm/Dockerfile
 if [[ "${env}" != 'virtual' ]]; then
   case "$OS_NAME" in
   ubuntu)
@@ -7,48 +13,63 @@ if [[ "${env}" != 'virtual' ]]; then
 fi
 
 <% %W(
-  apt-transport-https
-  at
-  autoconf
-  bc
-  bison
-  build-essential
+  bzip2
   ca-certificates
-  #{'castxml' if sun.ruby_cpp}
-  #{'clang' if sun.ruby_cpp}
-  cmake
-  git
-  dirmngr gnupg
-  imagemagick libpng-dev libjpeg-dev
-  libcurl4-openssl-dev
-  libevent-dev
   libffi-dev
-  libgdbm6 libgdbm-dev
   libgmp-dev
-  liblz4-dev
-  libncurses5-dev
-  libpcre2-dev
-  libreadline-dev
   libssl-dev
-  libxml2-dev libxml2-utils
-  libxslt1-dev
   libyaml-dev
-  m4
-  mmv
-  net-tools
-  openssh-server
-  openssl
+  procps
+  zlib1g-dev
+
+  dpkg-dev
+  libgdbm-dev
+  ruby
+  autoconf
+  g++
+  gcc
+  libbz2-dev
+  libgdbm-compat-dev
+  libglib2.0-dev
+  libncurses-dev
+  libxml2-dev
+  libxslt-dev
+  make
+  wget
+  xz-utils
+
+  curl
+  sqlite3
+  postgresql-client
+  libvips
+  libjemalloc2
+
+  build-essential
+  git
+  pkg-config
+  libpq-dev
+  node-gyp
+  python-is-python3
+
   patch
+  rustc
+  libreadline6-dev
+  libncurses5-dev
+  libgdbm6
+  libdb-dev
+  uuid-dev
+
+  libnss-wrapper
+  zstd
+
+  at
+  golang-go
   pigz
   pssh
   pv
-  sqlite3 libsqlite3-dev
-  software-properties-common
-  time
+  rename
+  ruby
   whois
-  zlib1g-dev
-).reject(&:blank?).each do |package| %>
-
+).compact_blank.each do |package| %>
   sun.install "<%= package %>"
-
 <% end %>

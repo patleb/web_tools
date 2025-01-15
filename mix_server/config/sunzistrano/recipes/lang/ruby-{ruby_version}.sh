@@ -1,10 +1,11 @@
-sun.install "libjemalloc-dev"
+echo 'gem: --no-document' > $HOME/.gemrc
+gem install bundler
 
 sudo su - deployer << 'EOF'
   PLUGINS_PATH=/home/deployer/.rbenv/plugins
   PROFILE=/home/deployer/.bashrc
   RUBY_VERSION=<%= sun.ruby_version %>
-  RBENV_OPTIONS='--with-jemalloc <%= '--enable-shared' if sun.ruby_cpp %> --disable-install-doc --disable-install-rdoc --disable-install-capi'
+  RBENV_OPTIONS='--with-jemalloc <%= '--enable-shared' if sun.rice %> --disable-install-doc --disable-install-rdoc --disable-install-capi'
 
   if [[ ! -s "/home/deployer/.rbenv" ]]; then
     git clone https://github.com/sstephenson/rbenv.git /home/deployer/.rbenv
