@@ -2,6 +2,8 @@ sun.update
 sun.install "nodejs"
 sun.install "npm"
 
+echo "nodejs $(nodejs --version)"
+
 npm install -g corepack
 corepack enable
 

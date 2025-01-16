@@ -11,6 +11,9 @@ export ROLE_START=$(sun.current_time)
 
 if ! sun.installed 'moreutils'; then
   sun.mute "sudo $os_package_get -y install moreutils"
+  sun.mute "sudo $os_package_lock moreutils" # needed, otherwise it could overwrite the 'parallel' package
+else
+  sudo $os_package_lock moreutils > /dev/null
 fi
 
 trap sun.recipe_ensure EXIT

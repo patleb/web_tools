@@ -64,12 +64,25 @@ fi
 
   at
   golang-go
+  parallel
   pigz
   pssh
   pv
+  python3-pip
   rename
+  rsync
   ruby
   whois
 ).compact_blank.each do |package| %>
   sun.install "<%= package %>"
 <% end %>
+
+echo 'export PATH="$HOME/go/bin:$PATH"' >> "$HOME/.bashrc"
+
+echo "nodejs $(nodejs --version)"
+python --version | tr '[:upper:]' '[:lower:]'
+rustc  --version
+go       version
+ruby   --version
+echo "sqlite $(sqlite3 --version)"
+psql   --version

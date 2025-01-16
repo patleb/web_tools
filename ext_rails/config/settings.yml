@@ -14,7 +14,7 @@ shared:
   mail_password: none
   mail_authentication: plain
   mail_enable_starttls_auto: true
-  pgstats_enabled: true
+  pg_stat_statements: true
   backup_split_size: 4GB
   backup_dir: /opt/storage/backup
 

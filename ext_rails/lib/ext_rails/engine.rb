@@ -99,10 +99,10 @@ module ExtRails
 
     initializer 'ext_rails.migrations' do |app|
       append_migrations(app)
+      append_migrations(app, scope: 'aggs_for_vecs')      if Setting[:aggs_for_vecs]
+      append_migrations(app, scope: 'pg_repack')          if Setting[:pg_repack]
+      append_migrations(app, scope: 'pg_stat_statements') if Setting[:pg_stat_statements]
       append_migrations(app, scope: 'pgunit') if Rails.env.local?
-      append_migrations(app, scope: 'vector') if Setting[:vector_enabled]
-      append_migrations(app, scope: 'pgstats') if Setting[:pgstats_enabled]
-      append_migrations(app, scope: 'pgrepack') if Setting[:pgrepack_enabled]
     end
 
     initializer 'ext_rails.routes' do |app|

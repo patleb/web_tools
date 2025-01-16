@@ -1,3 +1,6 @@
+export sun_setup_attributes_before=()
+export sun_setup_attributes_after=()
+
 sun.setup_commands() {
   export OS_NAME=$(sun.os_name)
   export OS_VERSION=$(sun.os_version)
@@ -59,7 +62,13 @@ sun.os_version() { # PUBLIC
 }
 
 sun.setup_attributes() {
+  for before in "${sun_setup_attributes_before[@]}"; do
+    $before
+  done
   <% sun.attributes.each do |attribute, value| -%>
     export <%= attribute %>=<%= value.respond_to?(:call) ? value.call : value %>
   <% end -%>
+  for after in "${sun_setup_attributes_after[@]}"; do
+    $after
+  done
 }

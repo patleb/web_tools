@@ -29,7 +29,7 @@ module Monit
         tables_stats = db.table_stats(table: tables.map(&:[].with(:table)))
         tables_names = Set.new(tables_stats.map(&:[].with(:table)))
         tables.select!{ |row| row[:table].in? tables_names } # partitioned parents are excluded
-        if Setting[:pgstats_enabled]
+        if Setting[:pg_stat_statements]
           tables_sizes = tables_stats.map{ |row| row.slice(:schema, :size_bytes).merge(relation: row[:table]) }
           daily_growth = db.space_growth(days: 1, relation_sizes: tables_sizes).map! do |row|
             row.tap{ |item| item[:daily_bytes] = item.delete(:growth_bytes) }

@@ -6,8 +6,8 @@ gems:
 shared:
   authorized_keys:
     - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSLbcjZM3817COyl7ErGhVU0l0LtO8P6W49ie1Vo7Wm deployer@example.com
-  postgis_enabled: true
-  vector_enabled: true
+  aggs_for_vecs: true
+  pg_repack: true
 
 test:
 

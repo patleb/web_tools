@@ -42,7 +42,7 @@ module Monit
           memo[0][row[:blocked_pid]] = row[:blocked_mode]
           memo[1][row[:blocking_pid]] = row[:blocking_mode]
         end
-        if Setting[:pgstats_enabled]
+        if Setting[:pg_stat_statements]
           historical_queries = db.query_stats(
             historical: true,
             start_at: (Setting[:monit_interval] + 30.seconds).ago,
