@@ -1,30 +1,30 @@
-sun.mute "apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7"
-sh -c "echo deb [arch=$ARCH] https://oss-binaries.phusionpassenger.com/apt/passenger $UBUNTU_CODENAME main > /etc/apt/sources.list.d/passenger.list"
+# https://www.phusionpassenger.com/docs/advanced_guides/install_and_upgrade/nginx/install/oss/noble.html
+sun.install "nginx nginx-extras"
+sun.install "dirmngr gnupg apt-transport-https ca-certificates curl"
+
+curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null
+sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger noble main > /etc/apt/sources.list.d/passenger.list'
 sun.update
+sun.install "libnginx-mod-http-passenger"
 
-sun.install "nginx-extras libnginx-mod-http-passenger"
-
-sun.backup_compare "/etc/nginx/sites-available/default"
-rm -f /etc/nginx/sites-enabled/default
-
+sun.backup_compare "/etc/nginx/nginx.conf"
 sun.backup_compare "/etc/nginx/conf.d/mod-http-passenger.conf"
-rm -f /etc/nginx/conf.d/mod-http-passenger.conf
+sun.backup_compare "/etc/nginx/sites-available/default"
+sun.backup_compile "/etc/logrotate.d/nginx"
 
 if [ ! -f /etc/nginx/modules-enabled/50-mod-http-passenger.conf ]; then
   ln -s /usr/share/nginx/modules-available/mod-http-passenger.load /etc/nginx/modules-enabled/50-mod-http-passenger.conf
 fi
+rm -f /etc/nginx/sites-enabled/default
+rm -f /etc/nginx/conf.d/mod-http-passenger.conf
 
 # https://bugs.launchpad.net/ubuntu/+source/perl/+bug/1897561
 rm -f /etc/nginx/modules-enabled/50-mod-http-perl.conf
 
-# https://www.claudiokuenzler.com/blog/1022/debian-buster-nginx-1.14-nchan-error-logs-memstore-assertion-failed
-rm -f /etc/nginx/modules-enabled/50-mod-nchan.conf
-
-sun.backup_compare "/etc/nginx/nginx.conf"
-sun.backup_compile "/etc/logrotate.d/nginx"
 chown deployer:adm /var/log/nginx
 
-systemctl enable nginx
-systemctl restart nginx
+sun.service_renable nginx
+passenger-config validate-install
+passenger-memory-stats
 
 # configured with sun deploy [STAGE] --system
