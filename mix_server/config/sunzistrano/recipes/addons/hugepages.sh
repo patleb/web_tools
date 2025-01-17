@@ -11,6 +11,5 @@ sysctl -p
 
 <% if sun.disable_thp %>
   sun.copy '/etc/systemd/system/disable_thp.service'
-  systemctl enable disable_thp
-  systemctl start disable_thp
+  sun.service_enable disable_thp
 <% end %>

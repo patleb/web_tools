@@ -17,5 +17,4 @@ sudo chown -R deployer:deployer /home/deployer/ftp
 ufw allow 21/tcp
 ufw reload
 
-systemctl enable vsftpd
-systemctl start vsftpd
+sun.service_enable vsftpd

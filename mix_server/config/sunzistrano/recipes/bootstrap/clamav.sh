@@ -2,8 +2,5 @@
 sun.install "clamav"
 sun.install "clamav-daemon"
 
-systemctl enable clamav-freshclam
-systemctl start clamav-freshclam
-
-systemctl stop clamav-daemon
-systemctl disable clamav-daemon
+sun.service_enable clamav-freshclam
+sun.service_disable clamav-daemon

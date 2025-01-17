@@ -47,6 +47,11 @@ sun.mute() {
   return $?
 }
 
+sun.service_renable() {
+  systemctl enable $@
+  systemctl restart $@
+}
+
 sun.service_enable() {
   systemctl enable $@
   systemctl start $@
