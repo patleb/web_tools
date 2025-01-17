@@ -6,10 +6,6 @@ git.clone() {
   git clone "$@"
 }
 
-pip.install() {
-  pip3 install --break-system-packages "$@"
-}
-
 go.set_bin_path() {
   export PATH="$HOME/go/bin:$PATH"
 }

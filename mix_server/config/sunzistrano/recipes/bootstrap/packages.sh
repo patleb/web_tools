@@ -68,7 +68,6 @@ fi
   pigz
   pssh
   pv
-  python3-pip
   rename
   rsync
   ruby
