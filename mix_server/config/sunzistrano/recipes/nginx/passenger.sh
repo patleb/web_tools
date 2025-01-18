@@ -1,11 +1,12 @@
 # https://www.phusionpassenger.com/docs/advanced_guides/install_and_upgrade/nginx/install/oss/noble.html
-sun.install "nginx nginx-extras"
+sun.install "nginx"
 sun.install "dirmngr gnupg apt-transport-https ca-certificates curl"
 
 curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null
 sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger noble main > /etc/apt/sources.list.d/passenger.list'
 sun.update
 sun.install "libnginx-mod-http-passenger"
+sun.install "nginx-extras"
 
 sun.backup_compare "/etc/nginx/nginx.conf"
 sun.backup_compare "/etc/nginx/conf.d/mod-http-passenger.conf"
