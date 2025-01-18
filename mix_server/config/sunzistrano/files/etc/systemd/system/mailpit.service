@@ -1,0 +1,13 @@
+[Unit]
+Description=Mailpit server
+After=systemd-networkd.service
+
+[Service]
+ExecStart=/usr/local/bin/mailpit -d /var/lib/mailpit/mailpit.db
+Restart=always
+# Restart service after 10 seconds service crashes
+RestartSec=10
+SyslogIdentifier=mailpit
+
+[Install]
+WantedBy=multi-user.target
