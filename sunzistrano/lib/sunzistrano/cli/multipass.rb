@@ -134,7 +134,7 @@ module Sunzistrano
         if (name = sun.name).present?
           raise "No snapshot [#{name}]" unless vm_snapshots.has_key? name
         else
-          name = vm_snapshots.sort_by{ |_name, info| info[:created_at] }.last.first
+          name = vm_snapshots.sort_by{ |_name, info| info[:created] }.last.first
         end
         cmd = case vm_state
         when :stopped
