@@ -1,25 +1,23 @@
 provision:
   recipes:
     - bootstrap/upgrade-{upgrade}
-    - bootstrap/time_locale
+    - bootstrap/timezone_locale
     - bootstrap/files
     - bootstrap/swap-{swap_size}
     - bootstrap/limits
     - bootstrap/packages
     - bootstrap/ssh
     - bootstrap/firewall
-    - bootstrap/firewall/deny_mail
-    - bootstrap/fail2ban
+    - bootstrap/firewall_deny_mail
     - bootstrap/private_ip
     - bootstrap/osquery
     - bootstrap/clamav
     - user/deployer
     - db/postgres-{postgres}
-    - db/postgres-{postgres}/pgxnclient
-    - db/postgres-{postgres}/vector:
-        if: 'sun.vector_enabled'
-    - db/postgres-{postgres}/pg_repack:
-        if: 'sun.pgrepack_enabled'
+    - db/postgres-{postgres}/addons/aggs_for_vecs:
+        if: 'sun.aggs_for_vecs'
+    - db/postgres-{postgres}/addons/pg_repack:
+        if: 'sun.pg_repack'
     - nginx/passenger
     - nginx/htpasswd
     - ssl/ca:
@@ -28,21 +26,17 @@ provision:
         if: 'sun.server_ssl'
     - ssl/dhparam:
         if: 'sun.server_ssl'
-    - lang/ruby/system
-    - lang/nodejs/system-{nodejs}
-    - lang/python/system
-    - addons/gis_packages:
-        if: 'sun.postgis_enabled'
-    - db/postgres-{postgres}/postgis-{postgis}:
-        if: 'sun.postgis_enabled'
+    - addons/python_gis-3.8
+    - db/postgres-{postgres}/addons/postgis-{postgis}:
+        if: 'sun.postgis'
     - db/postgres-{postgres}/tune
     - db/postgres-{postgres}/config
     - utils/packages
     - utils/htop
-    - utils/mailcatcher:
+    - utils/mailpit:
         if: 'sun.env.virtual?'
-    - utils/parallel
-    - lang/ruby/app-{ruby_version}
+    - lang/yarn-{yarn_version}
+    - lang/ruby-{ruby_version}
 deploy:
   role_before:
     - deploy/rbenv
@@ -96,7 +90,6 @@ deploy:
   public_dirs:
     - css
     - js
-  # https://evilmartians.com/chronicles/how-to-favicon-in-2021-six-files-that-fit-most-needs
   public_files:
     - robots.txt
   osquery_logger_level: 1
