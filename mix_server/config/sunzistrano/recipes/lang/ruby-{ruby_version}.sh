@@ -1,6 +1,3 @@
-echo 'gem: --no-document' > $HOME/.gemrc
-gem install bundler
-
 sudo su - deployer << 'EOF'
   PLUGINS_PATH=/home/deployer/.rbenv/plugins
   PROFILE=/home/deployer/.bashrc

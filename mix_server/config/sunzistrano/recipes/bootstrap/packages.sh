@@ -77,6 +77,7 @@ fi
 <% end %>
 
 echo 'export PATH="$HOME/go/bin:$PATH"' >> "$HOME/.bashrc"
+echo 'gem: --no-document' > $HOME/.gemrc
 
 echo "nodejs $(nodejs --version)"
 python --version | tr '[:upper:]' '[:lower:]'
