@@ -1,5 +1,4 @@
 sun.update
-sun.install "nodejs"
 sun.install "npm"
 
 echo "nodejs $(nodejs --version)"
@@ -11,5 +10,4 @@ sudo su - deployer << 'EOF'
   yarn_version=<%= sun.yarn_version || 'stable' %>
 
   yes | yarn set version $yarn_version
-  yarn --version
 EOF
