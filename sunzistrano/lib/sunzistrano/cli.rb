@@ -162,6 +162,7 @@ module Sunzistrano
 
       def remove_all_unused(type, used)
         Dir[bash_path("#{type}s/**/*.sh")].each do |file|
+          next if file.end_with? '/recipes/reboot.sh'
           remove_file file, verbose: false unless used.include? file
         end
         Dir[bash_path("#{type}s/**/*")].select{ |dir| File.directory? dir }.reverse_each do |dir|
