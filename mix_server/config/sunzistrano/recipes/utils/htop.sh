@@ -1,9 +1,10 @@
 DEPLOYER_PATH=/home/deployer
 
 sun.install "htop"
-bash --rcfile ~/.bashrc -ci 'htop > /dev/null 2>&1'
+bash --rcfile ~/.bashrc -ci 'htop > /dev/null 2>&1' > /dev/null 2>&1
 sudo su - deployer << 'EOF'
-  bash --rcfile ~/.bashrc -ci 'htop > /dev/null 2>&1'
+  set -eu
+  bash --rcfile ~/.bashrc -ci 'htop > /dev/null 2>&1' > /dev/null 2>&1
 EOF
 
 sun.backup_defaults "$HOME/.config/htop/htoprc"

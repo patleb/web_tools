@@ -12,6 +12,7 @@ sun.lock "$PG_PACKAGES"
 go install github.com/timescale/timescaledb-tune/cmd/timescaledb-tune@main
 
 sudo su - postgres << EOF
+  set -eu
   pg_dropcluster --stop "${postgres}" main
   pg_createcluster --port="543$((postgres % 10))" --locale "$LC" --start "${postgres}" main <%= '-- --data-checksums' unless sun.pg_checksums == false %>
 EOF

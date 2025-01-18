@@ -42,7 +42,7 @@ fi
   sqlite3
   postgresql-client
   libvips
-  libjemalloc2
+  libjemalloc-dev
 
   build-essential
   git

@@ -1,6 +1,7 @@
 gem update --system
 
 sudo su - deployer << 'EOF'
+  set -eu
   RUBY_VERSION=<%= sun.ruby_version %>
 
   <%= Sh.rbenv_ruby %>

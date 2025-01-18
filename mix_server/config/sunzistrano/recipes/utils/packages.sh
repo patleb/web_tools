@@ -1,7 +1,6 @@
 <% %W(
   iftop
   iotop
-  jq
   nethogs
   nmap
   tree
