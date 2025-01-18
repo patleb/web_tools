@@ -155,10 +155,8 @@ module Sunzistrano
         raise 'Snapshot name required' unless (name = sun.name).present?
         raise "No snapshot [#{name}]" unless vm_snapshots&.has_key? name
         cmd = case vm_state
-        when :stopped
+        when :stopped, :running
           "multipass delete #{vm_name}.#{name} --purge"
-        when :running
-          "multipass stop #{vm_name} && multipass delete #{vm_name}.#{name} --purge && multipass start #{vm_name}"
         else
           raise "vm state [#{vm_state}]"
         end
