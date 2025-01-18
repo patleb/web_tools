@@ -1,13 +1,8 @@
 <% %W(
-  arp-scan
   iftop
   iotop
-  iptraf
-  iputils-ping
-  iputils-tracepath
   jq
   nethogs
-  ngrep
   nmap
   tree
   ncdu
