@@ -117,7 +117,7 @@ module Sunzistrano
       private
 
       def run_snapshot_save_cmd
-        name = "--name #{sun.name}" if sun.name.present?
+        name = "--name #{vm_snapshot sun.name}" if sun.name.present?
         cmd = case vm_state
         when :stopped
           "multipass snapshot #{name} #{vm_name}"
@@ -131,7 +131,7 @@ module Sunzistrano
 
       def run_snapshot_restore_cmd
         raise 'No snapshots' unless vm_snapshots
-        if (name = sun.name).present?
+        if (name = vm_snapshot sun.name).present?
           raise "No snapshot [#{name}]" unless vm_snapshots.has_key? name
         else
           name = vm_snapshots.sort_by{ |_name, info| info[:created] }.last.first
@@ -152,7 +152,7 @@ module Sunzistrano
       end
 
       def run_snapshot_delete_cmd
-        raise 'Snapshot name required' unless (name = sun.name).present?
+        raise 'Snapshot name required' unless (name = vm_snapshot sun.name)
         raise "No snapshot [#{name}]" unless vm_snapshots&.has_key? name
         cmd = case vm_state
         when :stopped, :running
@@ -189,6 +189,7 @@ module Sunzistrano
           return unless (json = `multipass list --snapshots --format=json`).present?
           return unless (hash = JSON.parse(json).dig('info', vm_name))
           hash.each_with_object({}) do |(name, _info), memo|
+            name = vm_snapshot(name)
             json = `multipass info #{vm_name}.#{name} --format=json`
             info = JSON.parse(json).dig('info', vm_name, 'snapshots', name)
             info['created'] = Time.parse(info['created']).in_time_zone('UTC')
@@ -240,6 +241,11 @@ module Sunzistrano
 
       def vm_metadata
         Pathname.new(".multipass/#{vm_name}")
+      end
+
+      def vm_snapshot(name)
+        return unless name.present?
+        name.parameterize.dasherize.downcase
       end
     end
   end
