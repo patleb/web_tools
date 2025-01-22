@@ -76,7 +76,9 @@ fi
   sun.install "<%= package %>"
 <% end %>
 
-echo 'export PATH="$HOME/go/bin:$PATH"' >> "$HOME/.bashrc"
+if ! cat "$HOME/.bashrc" | grep -Fq /go/bin/; then
+  echo 'export PATH="$HOME/go/bin:$PATH"' >> "$HOME/.bashrc"
+fi
 echo 'gem: --no-document' > $HOME/.gemrc
 
 echo "nodejs $(nodejs --version)"
