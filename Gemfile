@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby File.read('.ruby-version').strip if File.exist? '.ruby-version'
+# ruby File.read('.ruby-version').strip if File.exist? '.ruby-version'
 
 gem 'shakapacker', '7.2.3'
 

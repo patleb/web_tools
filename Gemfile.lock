@@ -149,6 +149,7 @@ PATH
     mix_geo (0.3.0)
       countries
       ext_rails (= 0.3.0)
+      ruby-netcdf (>= 0.8.0)
 
 PATH
   remote: mix_global
@@ -431,6 +432,9 @@ GEM
       activerecord (>= 3.2)
     msgpack (1.7.5)
     mutex_m (0.3.0)
+    narray (0.6.1.2)
+    narray_miss (1.4.0)
+      narray
     net-http (0.6.0)
       uri
     net-imap (0.5.4)
@@ -524,6 +528,9 @@ GEM
     rexml (3.4.0)
     rice (4.1.0)
     rounding (1.0.1)
+    ruby-netcdf (0.8.0)
+      narray
+      narray_miss
     ruby-pg-extras (3.2.5)
       filesize
       pg
@@ -606,9 +613,6 @@ DEPENDENCIES
   shakapacker (= 7.2.3)
   sunzistrano!
   web_tools!
-
-RUBY VERSION
-   ruby 3.2.4p170
 
 BUNDLED WITH
    2.5.17
