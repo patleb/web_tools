@@ -24,7 +24,6 @@ fi
 
   dpkg-dev
   libgdbm-dev
-  ruby
   autoconf
   g++
   gcc
@@ -62,6 +61,8 @@ fi
   libnss-wrapper
   zstd
 
+  libnetcdf-dev
+
   at
   golang-go
   parallel
@@ -70,7 +71,6 @@ fi
   pv
   rename
   rsync
-  ruby
   whois
 ).compact_blank.each do |package| %>
   sun.install "<%= package %>"
@@ -79,12 +79,10 @@ fi
 if ! cat "$HOME/.bashrc" | grep -Fq /go/bin/; then
   echo 'export PATH="$HOME/go/bin:$PATH"' >> "$HOME/.bashrc"
 fi
-echo 'gem: --no-document' > $HOME/.gemrc
 
 echo "nodejs $(nodejs --version)"
 python --version | tr '[:upper:]' '[:lower:]'
 rustc  --version
 go       version
-ruby   --version
 echo "sqlite $(sqlite3 --version)"
 psql   --version
