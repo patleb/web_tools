@@ -44,7 +44,7 @@ namespace! :ftp do
 
     desc 'Unmount FTP drive'
     task :unmount => :environment do
-      sh 'sudo pkill -P $(cat /home/deployer/curlftpfs.pid)'
+      sh "sudo pkill -P $(cat /home/#{Setting[:deployer_name]}/curlftpfs.pid)"
     end
   end
 
@@ -109,15 +109,15 @@ namespace! :ftp do
 
   def create_mount_path
     sh "sudo mkdir -p #{Setting[:ftp_mount_path]}"
-    sh "sudo chown -R deployer:deployer #{Setting[:ftp_mount_path]}"
+    sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{Setting[:ftp_mount_path]}"
   end
 
   def drive_mount_cmd(args, nohup: false)
     <<~CMD.squish.gsub('\\', '\\\\\\')
       sudo nohup curlftpfs #{'-f' if nohup} -o '#{drive_options(args).join(',')}'
         '#{Setting[:ftp_host]}:#{Setting[:ftp_drive_path]}' #{Setting[:ftp_mount_path]}
-        >> /home/deployer/curlftpfs.log 2>&1
-        #{'& sleep 1 && echo $! > /home/deployer/curlftpfs.pid' if nohup}
+        >> /home/#{Setting[:deployer_name]}/curlftpfs.log 2>&1
+        #{"& sleep 1 && echo $! > /home/#{Setting[:deployer_name]}/curlftpfs.pid" if nohup}
     CMD
   end
 

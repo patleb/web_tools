@@ -5,7 +5,7 @@
   compress
   delaycompress
   notifempty
-  create 0640 deployer adm
+  create 0640 ${deployer_name} adm
   sharedscripts
   prerotate
     if [ -d /etc/logrotate.d/httpd-prerotate ]; then \

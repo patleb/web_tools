@@ -4,6 +4,10 @@ sun.history() {
   awk '$3 ~ /upgrade/ {print $4"="$5}' /var/log/dpkg.log
 }
 
+sun.add_repo() {
+  sun.mute "$os_package_add_repo -y $@"
+}
+
 sun.install() {
   if sun.installed "$@"; then
     echo "$@ already installed"

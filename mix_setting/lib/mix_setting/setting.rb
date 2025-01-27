@@ -93,8 +93,8 @@ class Setting
     "#{env}_#{app}"
   end
 
-  def self.local?
-    env? :development, :test
+  def self.local?(*others)
+    env? :development, :test, *others
   end
 
   def self.env?(*names)
@@ -203,7 +203,7 @@ class Setting
       when :database
         yml = YAML.safe_load(gsub_settings(path.read), aliases: true)
       when :settings
-        yml = YAML.safe_load(path.read)
+        yml = YAML.safe_load(ERB.template(path, binding))
         validate_version! yml['lock']
         @types.merge!(yml['types'] || {})
         gems_yml = (yml['gems'] || []).reduce({}) do |gems_yml, name|
@@ -213,7 +213,7 @@ class Setting
             gems_yml.union! parse_settings_yml(gem_root(name))
           end
         end
-      else
+      else # :secrets
         yml = YAML.safe_load(path.read)
       end
 

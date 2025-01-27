@@ -127,4 +127,4 @@ Subsystem	sftp	/usr/lib/openssh/sftp-server
 PermitRootLogin no
 LoginGraceTime 20
 X11Forwarding no
-AllowUsers <%= ([sun.owner_name, 'deployer'] + Array.wrap(sun.ssh_allow_users)).uniq.join(' ') %>
+AllowUsers <%= ([sun.owner_name, sun.deployer_name] + Array.wrap(sun.ssh_allow_users)).uniq.join(' ') %>

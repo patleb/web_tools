@@ -3,7 +3,9 @@ mkdir -p /var/lib/mailpit
 
 sun.copy '/etc/systemd/system/mailpit.service'
 
-ufw allow 8025/tcp
-ufw reload
+if [[ "${env}" != 'computer' ]]; then
+  ufw allow 8025/tcp
+  ufw reload
+fi
 
 sun.service_enable mailpit

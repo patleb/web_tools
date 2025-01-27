@@ -132,7 +132,7 @@ module MixServer
       # https://github.com/osquery/osquery/issues/4750
       def known_files
         @known_files ||= [
-          '/home/deployer/.ssh/known_hosts',
+          "/home/#{Setting[:deployer_name]}/.ssh/known_hosts",
           '/root/.ssh/known_hosts',
           '/etc/.pwd.lock',
           '/etc/ssh/sshd_config~',
@@ -157,7 +157,7 @@ module MixServer
           %r{^/etc/osquery/\.osquery\.\w+$},
           %r{^/etc/(localtime|timezone)$},
           %r{^/etc/udev/rules\.d/70-snap\.snapd\.rules(\.\w+~)?$},
-          %r{^/var/spool/cron/crontabs(/tmp\.\w{1,8}|/deployer)?$},
+          %r{^/var/spool/cron/crontabs(/tmp\.\w{1,8}|/#{Setting[:deployer_name]})?$},
           %r{^/usr/bin/(dbxtool|dfu-tool|fwupdagent|fwupdate|fwupdmgr|fwupdtool|fwupdtpmevlog|udisksctl)$},
           '/usr/sbin/umount.udisks2',
         ]
@@ -167,9 +167,9 @@ module MixServer
         @known_sockets ||= {
           path: [
             'node /usr/share/yarn/bin/yarn.js install',
-            %r{^/home/deployer/\.rbenv/versions/[.\d]+/bin/ruby /home/deployer/\.rbenv/versions/[.\d]+/bin/bundle install},
-            %r{^/home/deployer/\.rbenv/versions/[.\d]+/bin/ruby /home/deployer/\.rbenv/versions/[.\d]+/bin/bundle .+ --deployment .+/\.local_repo/},
-            'Passenger RubyApp: /home/deployer/',
+            %r{^/home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/ruby /home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/bundle install},
+            %r{^/home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/ruby /home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/bundle .+ --deployment .+/\.local_repo/},
+            "Passenger RubyApp: /home/#{Setting[:deployer_name]}/",
             'ruby bin/rake cron:every_day', # geolite fetch or email on errors
             'ruby bin/rails runner Monit.capture', # email on errors
             'ruby bin/rake job:watch -- --queue=', # email on errors

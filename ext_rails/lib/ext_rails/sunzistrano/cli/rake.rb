@@ -70,7 +70,7 @@ module Sunzistrano
           SH
         else
           <<-SH.squish
-            #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command} |&
+            #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command} 2>&1 |
             tee -a #{sun.deploy_path :current, BASH_LOG}
           SH
         end

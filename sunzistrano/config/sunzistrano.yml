@@ -1,3 +1,8 @@
+shared:
+  os_name: ubuntu
+  os_version: 24.04
+  branch: master
+
 deploy:
   role_before:
     - deploy/load_defaults
@@ -12,4 +17,6 @@ virtual:
   vm_ram: 1GB
   vm_disk: 10GB
 
-desktop:
+computer:
+  os_name: linuxmint
+  os_version: 22.1

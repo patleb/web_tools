@@ -1,4 +1,4 @@
-sudo add-apt-repository ppa:deadsnakes/ppa
+sun.add_repo ppa:deadsnakes/ppa
 sun.update
 
 sun.install "gdal-bin"

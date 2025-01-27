@@ -21,9 +21,7 @@ module Sunzistrano
     def attributes
       to_h.reject{ |_, v| (v != false && v.blank?) || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
         repo_url: repo_url,
-        branch: branch,
         revision: revision,
-        server_cluster: server_cluster.to_b,
         owner_public_key: owner_public_key,
         owner_private_key: owner_private_key&.escape_newlines,
         stage: stage,
@@ -31,9 +29,6 @@ module Sunzistrano
         env: env,
         app: app,
         root: Setting.root.to_s,
-        os_name: os_name,
-        os_version: os_version,
-        ruby_version: ruby_version,
         linked_dirs: linked_dirs,
         linked_files: linked_files,
         bash_dir: provision_path(BASH_DIR),
@@ -84,16 +79,12 @@ module Sunzistrano
     end
 
     def ssh_user
-      self[:ssh_user] || (deploy ? 'deployer' : owner_name)
+      self[:ssh_user] || (deploy ? deployer_name : owner_name)
     end
 
     def repo_url
       return @repo_url if defined? @repo_url
       @repo_url = self[:repo_url] || `git config --get remote.origin.url`.strip
-    end
-
-    def branch
-      self[:branch] || 'master'
     end
 
     def revision
@@ -103,10 +94,6 @@ module Sunzistrano
 
     def servers
       @servers ||= server_cluster ? Cloud.server_cluster_ips : [server_host]
-    end
-
-    def server_cluster?
-      server_cluster
     end
 
     def owner_public_key
@@ -131,18 +118,6 @@ module Sunzistrano
 
     def app
       @_app ||= ActiveSupport::StringInquirer.new(@app.to_s)
-    end
-
-    def os_name
-      self[:os_name] || 'ubuntu'
-    end
-
-    def os_version
-      self[:os_version] || '24.04'
-    end
-
-    def ruby_version
-      self[:ruby_version] || RUBY_VERSION
     end
 
     def linked_dirs

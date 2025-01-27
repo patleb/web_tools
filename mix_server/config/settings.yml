@@ -5,6 +5,7 @@ types:
   authorized_keys: array
   server_master_data: pathname
   server_cluster_data: pathname
+  server_cluster: boolean
   nginx_denied_ips: array
   nginx_allowed_ips: array
   monit_interval: interval
@@ -15,8 +16,9 @@ shared:
   passenger: true
   min_instances: 1
   max_pool_size: 6
-  owner_id: 1000
   owner_name: ubuntu
+  owner_id: 1000
+  deployer_name: deployer
   deployer_id: 1001
   nginx_max_body_size: 100m
   nginx_denied_ips: ['74.217.28.0/22']
@@ -48,6 +50,11 @@ shared:
   monit_interval: 5 minutes
   monit_from_cron: true
 
+computer:
+  server_host: <%= Process.host.name %>
+  owner_name: <%= ENV['USER'] %>
+  deployer_name: $ALIAS owner_name
+
 test:
   max_pool_size: 2
   server_provider: localhost
@@ -75,7 +82,7 @@ virtual:
   ssh_host_rsa: -----BEGIN OPENSSH PRIVATE KEY-----\n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\n-----END OPENSSH PRIVATE KEY-----
   ssh_host_ed25519: -----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW\nQyNTUxOQAAACCybwxq7hQiLOiKCbmCBb0iGcNM4j1q8OSDCRM7hIexnQAAAJgVcTDAFXEw\nwAAAAAtzc2gtZWQyNTUxOQAAACCybwxq7hQiLOiKCbmCBb0iGcNM4j1q8OSDCRM7hIexnQ\nAAAEDNVEp4pbV1as09SD9BWSWxK4U/cGHoNcYCCwmqo/2047JvDGruFCIs6IoJuYIFvSIZ\nw0ziPWrw5IMJEzuEh7GdAAAAEHJvb3RAdmFncmFudC13ZWIBAgMEBQ==\n-----END OPENSSH PRIVATE KEY-----
   ftp_host: $ALIAS server_host
-  ftp_username: deployer
+  ftp_username: $ALIAS deployer_name
   ftp_password: $ALIAS deployer_password
   ftp_host_path: $METHOD
   ftp_drive_path: /

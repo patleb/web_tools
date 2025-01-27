@@ -99,9 +99,9 @@ module MixServer
     end
 
     def clamav_dirs
-      @clamav_dirs ||= %w(
+      @clamav_dirs ||= %W(
         /tmp
-        /home/deployer
+        /home/#{Setting[:deployer_name]}
         /bin
         /sbin
         /usr/bin

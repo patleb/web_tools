@@ -1,0 +1,11 @@
+Package: chromium*
+Pin: release o=LP-PPA-xtradeb-apps
+Pin-Priority: 750
+
+Package: *filezilla*
+Pin: release o=LP-PPA-xtradeb-apps
+Pin-Priority: 750
+
+Package: *
+Pin: release o=LP-PPA-xtradeb-apps
+Pin-Priority: 450

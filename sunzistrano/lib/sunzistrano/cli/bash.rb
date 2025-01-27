@@ -38,11 +38,15 @@ module Sunzistrano
         end
       end
 
+      def bash?
+        sun.deploy
+      end
+
       alias_method :build_role_without_scripts, :build_role
       def build_role
         build_role_without_scripts
         used = Set.new
-        unless sun.provision
+        if bash?
           copy_hooks :script
           (sun.bash_scripts + ['helper']).each do |file|
             used << (dst = bash_path("scripts/#{file}.sh"))
@@ -57,7 +61,7 @@ module Sunzistrano
           end
         end
         remove_all_unused :script, used
-        FileUtils.rmdir(bash_path('scripts')) if sun.provision
+        FileUtils.rmdir(bash_path('scripts')) unless bash?
       end
 
       def run_job_cmd(type, *args)
@@ -80,7 +84,7 @@ module Sunzistrano
             raise "script '#{name}' is not available" unless sun.bash_scripts.include? name
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
-              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/#{name}.sh #{args.join(' ')} |&
+              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/#{name}.sh #{args.join(' ')} 2>&1 |
               tee -a #{sun.deploy_path :current, BASH_LOG}
             SH
           when BASH_HELPER
@@ -89,7 +93,7 @@ module Sunzistrano
             memo << <<-SH.squish
               cd #{sun.deploy_path :current, BASH_DIR} &&
               export helper=#{name} &&
-              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/helper.sh #{args.join(' ')} |&
+              #{'sudo -E' if sun.sudo} bash -e -u +H scripts/helper.sh #{args.join(' ')} 2>&1 |
               tee -a #{sun.deploy_path :current, BASH_LOG} && unset helper
             SH
           when BASH_EXPORT

@@ -1,3 +1,7 @@
+shared:
+  ruby_version:
+    <%= File.exist?('.ruby-version') ? File.read('.ruby-version').strip : RUBY_VERSION %>
+
 provision:
   recipes:
     - bootstrap/upgrade-{upgrade}
@@ -110,3 +114,23 @@ deploy_development:
   #  osquery_2_hrs: 10
   #  osquery_10_min: 10
   #  osquery_10_sec: 10
+
+computer:
+  recipes:
+    - bootstrap/files
+    - bootstrap/packages
+    - computer/grub
+    - computer/backports
+    - computer/xtradeb
+    - computer/packages
+    - computer/docker
+    - addons/python_gis-3.8
+    - computer/gis/netcdf
+    - computer/gis/qgis
+    - utils/packages
+    - utils/htop
+    - utils/mailpit
+    - lang/yarn-{yarn_version}
+    - lang/ruby-{ruby_version}
+    - computer/vscodium
+    # - computer/akvcam-{akvcam_upgrade}

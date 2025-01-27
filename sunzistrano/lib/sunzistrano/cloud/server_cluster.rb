@@ -6,7 +6,7 @@ module Cloud::ServerCluster
   end
 
   def server_master
-    @server_master ||= if Setting.local?
+    @server_master ||= if Setting.local? :computer
       '127.0.0.1'
     elsif Setting[:server_master_ip].present?
       Setting[:server_master_ip]
@@ -34,7 +34,7 @@ module Cloud::ServerCluster
   end
 
   def server_cluster_list
-    @server_cluster_list ||= if Setting.local?
+    @server_cluster_list ||= if Setting.local? :computer
       {}
     else
       case Setting[:server_cluster_provider]

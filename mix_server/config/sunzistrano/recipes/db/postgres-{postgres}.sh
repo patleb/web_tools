@@ -1,7 +1,7 @@
 PG_CONFIG_FILE=$(pg.default_config_file)
 PG_HBA_FILE=$(pg.default_hba_file)
 
-sun.install postgresql-common
+sun.install "postgresql-common"
 yes | sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
 sun.update
 

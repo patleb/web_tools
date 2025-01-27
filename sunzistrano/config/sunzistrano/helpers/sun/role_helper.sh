@@ -1,3 +1,5 @@
+source /etc/os-release
+
 export sun_setup_attributes_before=()
 export sun_setup_attributes_after=()
 
@@ -5,13 +7,14 @@ sun.setup_commands() {
   export OS_NAME=$(sun.os_name)
   export OS_VERSION=$(sun.os_version)
   case "$OS_NAME" in
-  ubuntu)
+  ubuntu | linuxmint)
     export os_package_get='apt-get'
     export os_package_update='apt-get update'
     export os_package_upgrade='apt-get upgrade'
     export os_package_installed='dpkg -s'
     export os_package_lock='apt-mark hold'
     export os_package_unlock='apt-mark unhold'
+    export os_package_add_repo='add-apt-repository'
   ;;
   *)
     echo "Unsupported OS"
@@ -21,10 +24,10 @@ sun.setup_commands() {
 }
 
 sun.setup_system_globals() {
-  source /etc/os-release
   export TERM=linux
   export DEBIAN_FRONTEND=noninteractive
   export ARCH=$(dpkg --print-architecture)
+  export CODE=${UBUNTU_CODENAME:-$VERSION_CODENAME}
   export HOME_WAS=$HOME
   export HOME=${1:-/home/<%= sun.ssh_user %>}
   sun.setup_system_locale
@@ -54,11 +57,11 @@ sun.check_os() {
 }
 
 sun.os_name() { # PUBLIC
-  hostnamectl | grep Operating | cut -d ':' -f2 | cut -d ' ' -f2 | tr '[:upper:]' '[:lower:]'
+  echo ${ID:-$(hostnamectl | grep Operating | cut -d ':' -f2 | cut -d ' ' -f2)} | tr '[:upper:]' '[:lower:]'
 }
 
 sun.os_version() { # PUBLIC
-  hostnamectl | grep Operating | grep -o -E '[0-9]+' | head -n2 | paste -sd '.'
+  echo ${VERSION_ID:-$(hostnamectl | grep Operating | grep -o -E '[0-9]+' | head -n2 | paste -sd '.')}
 }
 
 sun.setup_attributes() {

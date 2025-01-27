@@ -1,3 +1,3 @@
-git.clone https://github.com/wg/wrk.git
-cd wrk && make
+git.clone wg wrk
+make
 ln -sf $(realpath wrk) /usr/bin/wrk

@@ -18,17 +18,18 @@ namespace :ssh do
 
     desc 'Write cluster_ssh file for parallel-ssh'
     task :parallelize => :environment do
-      File.write('/home/deployer/ssh_cluster', Setting[:server_cluster_ips].map{ |ip| "deployer@#{ip}" }.join("\n") + "\n")
+      ips = Setting[:server_cluster_ips].map{ |ip| "#{Setting[:deployer_name]}@#{ip}" }
+      File.write("/home/#{Setting[:deployer_name]}/ssh_cluster", ips.join("\n") + "\n")
     end
   end
 
   desc 'Mount SSH drive'
   task :mount, [:server, :host_path, :mount_path] => :environment do |t, args|
     sh "sudo mkdir -p #{args[:mount_path]}"
-    sh "sudo chown -R deployer:deployer #{args[:mount_path]}"
+    sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{args[:mount_path]}"
     options = %W(
       allow_other
-      IdentityFile=/home/deployer/.ssh/id_rsa
+      IdentityFile=/home/#{Setting[:deployer_name]}/.ssh/id_rsa
       StrictHostKeyChecking=no
       compression=no
       Ciphers=aes128-ctr
@@ -37,8 +38,8 @@ namespace :ssh do
       ServerAliveCountMax=3
     )
     sh <<~CMD.squish
-      sudo sshfs -o #{options.join(',')},uid=$(id -u deployer),gid=$(id -g deployer)
-        deployer@#{args[:server]}:#{args[:host_path]} #{args[:mount_path]}
+      sudo sshfs -o #{options.join(',')},uid=$(id -u #{Setting[:deployer_name]}),gid=$(id -g #{Setting[:deployer_name]})
+        #{Setting[:deployer_name]}@#{args[:server]}:#{args[:host_path]} #{args[:mount_path]}
     CMD
   end
 

@@ -3,7 +3,7 @@ sun.install "nginx"
 sun.install "dirmngr gnupg apt-transport-https ca-certificates curl"
 
 curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null
-sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger noble main > /etc/apt/sources.list.d/passenger.list'
+sh -c "echo deb https://oss-binaries.phusionpassenger.com/apt/passenger $CODE main > /etc/apt/sources.list.d/passenger.list"
 sun.update
 sun.install "libnginx-mod-http-passenger"
 sun.install "nginx-extras"
@@ -22,7 +22,7 @@ rm -f /etc/nginx/conf.d/mod-http-passenger.conf
 # https://bugs.launchpad.net/ubuntu/+source/perl/+bug/1897561
 rm -f /etc/nginx/modules-enabled/50-mod-http-perl.conf
 
-chown deployer:adm /var/log/nginx
+chown ${deployer_name}:adm /var/log/nginx
 
 sun.service_renable nginx
 passenger-config validate-install

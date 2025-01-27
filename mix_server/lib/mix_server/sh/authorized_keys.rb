@@ -3,6 +3,6 @@ module Sh::AuthorizedKeys
     if (keys = Setting.authorized_keys).empty?
       raise ':owner_public_key or :authorized_keys must be present'
     end
-    "echo -e '#{keys.join("\\n")}' > /home/deployer/.ssh/authorized_keys"
+    "echo -e '#{keys.join("\\n")}' > /home/#{Setting[:deployer_name]}/.ssh/authorized_keys"
   end
 end

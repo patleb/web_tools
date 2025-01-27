@@ -31,15 +31,15 @@ module Sunzistrano
       true
     end
 
-    desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--no-sync] [--force]', 'Deploy application'
-    method_options system: false, rollback: false, recipe: :string, sync: true, force: false
+    desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force] [--no-sync]', 'Deploy application'
+    method_options system: false, rollback: false, recipe: :string, force: false, sync: true
     def deploy(stage)
       raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
       do_provision(stage, :deploy)
     end
 
-    desc 'provision [STAGE] [--specialize] [--rollback] [--recipe] [--reboot] [--reset-ssh]', 'Provision system'
-    method_options specialize: false, rollback: false, recipe: :string, reboot: false, reset_ssh: false
+    desc 'provision [STAGE] [--specialize] [--rollback] [--recipe] [--force] [--reboot] [--reset-ssh]', 'Provision system'
+    method_options specialize: false, rollback: false, recipe: :string, force: false, reboot: false, reset_ssh: false
     def provision(stage)
       raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
       do_provision(stage, :provision)
@@ -65,9 +65,7 @@ module Sunzistrano
       def do_compile(stage, role = nil)
         with_context(stage, role) do
           raise 'local and remote commits differ' if out_of_sync?
-          copy_files
-          build_helpers
-          build_role
+          compile_all
         end
       end
 
@@ -88,6 +86,12 @@ module Sunzistrano
 
       def out_of_sync?
         sun.deploy && sun.sync && sun.revision != `git rev-parse HEAD`.strip
+      end
+
+      def compile_all
+        copy_files
+        build_helpers
+        build_role
       end
 
       def copy_files
@@ -239,9 +243,9 @@ module Sunzistrano
         <<-SH.squish
           mkdir -p #{bash_dir_remote} && cd #{bash_dir_remote} && start=$(mktemp) &&
           flock --verbose -n #{sun.deploy_path 'role.lock'} tar xz &&
-          flock --verbose -n #{sun.deploy_path 'role.lock'} #{'sudo' if sun.sudo} bash -e -u +H role.sh |&
+          flock --verbose -n #{sun.deploy_path 'role.lock'} #{'sudo' if sun.sudo} bash -e -u +H role.sh 2>&1 |
           tee -a #{sun.provision_path BASH_LOG} && cd #{bash_dir_remote} &&
-          find . -depth ! -cnewer $start -print0 | sponge /dev/stdout | xargs -r0 rm -d && rm -f $start
+          find . -depth ! -cnewer $start -print0 | sponge /dev/stdout | xargs -r0 rm -d > /dev/null 2>&1 && rm -f $start
         SH
       end
 
@@ -257,7 +261,7 @@ module Sunzistrano
       end
 
       def ssh_proxy
-        "-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster?
+        "-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster
       end
 
       def ssh_virtual_key
@@ -325,6 +329,7 @@ module Sunzistrano
 end
 
 require 'sunzistrano/cli/bash'
+require 'sunzistrano/cli/computer'
 require 'sunzistrano/cli/multipass'
 require 'sunzistrano/cli/rsync'
 if Gem.exists? 'ext_rails'

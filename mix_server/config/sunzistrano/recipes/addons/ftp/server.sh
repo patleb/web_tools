@@ -7,12 +7,12 @@ sun.install "vsftpd"
 sun.copy $FTP_LIST
 
 sun.backup_compile $FTP_CONF
-echo deployer >> $FTP_LIST
+echo ${deployer_name} >> $FTP_LIST
 
-mkdir -p /home/deployer/ftp/${app}/${env}
-sudo chmod 550 /home/deployer/ftp
-sudo chmod 750 /home/deployer/ftp/${app}/${env}
-sudo chown -R deployer:deployer /home/deployer/ftp
+mkdir -p /home/${deployer_name}/ftp/${app}/${env}
+sudo chmod 550 /home/${deployer_name}/ftp
+sudo chmod 750 /home/${deployer_name}/ftp/${app}/${env}
+sudo chown -R ${deployer_name}:${deployer_name} /home/${deployer_name}/ftp
 
 ufw allow 21/tcp
 ufw reload

@@ -4,7 +4,7 @@
 # https://github.com/rails/rails/blob/main/railties/lib/rails/generators/app_base.rb
 # https://github.com/rbenv/ruby-build/wiki
 # https://github.com/docker-library/postgres/blob/master/17/bookworm/Dockerfile
-if [[ "${env}" != 'virtual' ]]; then
+if [[ "${env}" != 'virtual' && "${env}" != 'computer' ]]; then
   case "$OS_NAME" in
   ubuntu)
     sun.backup_compare '/etc/apt/apt.conf.d/50unattended-upgrades'
@@ -40,7 +40,7 @@ fi
   curl
   sqlite3
   postgresql-client
-  libvips
+  libvips libpng-dev libjpeg-dev
   libjemalloc-dev
 
   build-essential
