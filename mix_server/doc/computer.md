@@ -56,6 +56,15 @@ echo 'export PATH=".git/safe/../../bin:$PATH"' >> ~/.bashrc
 
 Note: run `mkdir -p .git/safe` with every new `git clone` of a trusted project.
 
+## WebTools
+
+```shell
+bundle install
+yarn install
+cp config/secrets.example.yml config/secrets.yml
+sudo chmod 600 .multipass/private_key*
+```
+
 ## VirtualBox
 
 - https://itsfoss.com/install-linux-mint-in-virtualbox/
@@ -130,15 +139,22 @@ echo deb [signed-by=/usr/share/keyrings/vscodium.gpg] https://download.vscodium.
 sudo apt update && sudo apt install codium -y
 ```
 
-- https://code.visualstudio.com/docs/supporting/faq#_how-to-disable-telemetry-reporting
-- https://code.visualstudio.com/docs/editor/settings-sync
+- User > Text Editor > Font > Font Size [12]
+- User > Editor > Line Height [1.7]
+- User > Window > Density > Editor Tab Height [compact]
 
 ## Rubymine
 
 - [inotify](https://confluence.jetbrains.com/display/IDEADEV/Inotify+Watches+Limit):
-- File / Settings / Editor / Font / Font [DejaVu Sans Mono], Size [12], Line spacing [1.3]
-- File / Settings / Editor / Color Scheme / Scheme [Classic Light]
-- File / Settings / Editor / Color Scheme / Language Defaults / Italic [false]
+- Appearance & Behavior > Appearance > Theme [One Dark Vivid]
+- Editor > Font > Font [DejaVu Sans Mono], Size [12], Line spacing [1.3]
+- Editor > Inspections > Proofreading > Typo [false]
+- Editor > Inspections > Ruby > Code metrics [false]
+- Editor > Inspections > Code style issues > Class variable usage [false]
+- Editor > Inspections > Probable bugs > Unresolved reference [false]
+- Plugins: Classic UI
+- Settings > Version Control > Commit > Use non-modal commit interface [false]
+- Settings > Editor > Inlay Hints > Code vision, Parameter names, Types [false]
 
 ## Terminator
 
