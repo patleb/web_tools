@@ -54,6 +54,7 @@ computer:
   server_host: <%= Process.host.name %>
   owner_name: <%= ENV['USER'] %>
   deployer_name: $ALIAS owner_name
+  deployer_id: $ALIAS owner_id
 
 test:
   max_pool_size: 2
