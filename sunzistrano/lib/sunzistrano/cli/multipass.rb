@@ -1,4 +1,7 @@
 module Sunzistrano
+  class MultipassError < ::StandardError; end
+  class EtcHostsError < ::StandardError; end
+
   ERB_CLOUD_INIT = './cloud-init.yml'
   TMP_CLOUD_INIT = './tmp/cloud-init.yml'
 
@@ -22,7 +25,7 @@ module Sunzistrano
     desc 'status', 'Output status of Multipass instance(s)'
     def status
       as_virtual do
-        system "multipass info #{vm_name}"
+        system "multipass info #{vm_name}" or raise(MultipassError)
       end
     end
 
@@ -51,10 +54,10 @@ module Sunzistrano
           case vm_state
           when :null
             compile_cloud_init
-            system "multipass launch #{sun.os_version} --name #{vm_name} #{vm_options}"
+            system "multipass launch #{sun.os_version} --name #{vm_name} #{vm_options}" or raise(MultipassError)
             add_virtual_host
           when :stopped
-            system "multipass start #{vm_name}"
+            system "multipass start #{vm_name}" or raise(MultipassError)
           end
         end
       end
@@ -63,11 +66,11 @@ module Sunzistrano
         as_virtual do
           case vm_state
           when :running
-            system "multipass stop #{vm_name} #{'--force' if sun.force}"
+            system "multipass stop #{vm_name} #{'--force' if sun.force}" or raise(MultipassError)
           when :null, :deleted, :stopped
             # do nothing
           else
-            system "multipass stop #{vm_name} --force"
+            system "multipass stop #{vm_name} --force" or raise(MultipassError)
           end
         end
       end
@@ -87,7 +90,7 @@ module Sunzistrano
             raise "vm state [#{vm_state}]"
           end
           remove_virtual_host do
-            system cmd
+            system cmd or raise(MultipassError)
           end
         end
       end
@@ -126,7 +129,7 @@ module Sunzistrano
         else
           raise "vm state [#{vm_state}]"
         end
-        system cmd
+        system cmd or raise(MultipassError)
       end
 
       def run_snapshot_restore_cmd
@@ -144,11 +147,11 @@ module Sunzistrano
         else
           raise "vm state [#{vm_state}]"
         end
-        system cmd
+        system cmd or raise(MultipassError)
       end
 
       def run_snapshot_list_cmd
-        system "multipass list --snapshots | grep -E '^(Instance|#{vm_name})'"
+        system "multipass list --snapshots | grep -E '^(Instance|#{vm_name})'" or raise(MultipassError)
       end
 
       def run_snapshot_delete_cmd
@@ -160,7 +163,7 @@ module Sunzistrano
         else
           raise "vm state [#{vm_state}]"
         end
-        system cmd
+        system cmd or raise(MultipassError)
       end
 
       def vm_state
@@ -216,7 +219,7 @@ module Sunzistrano
       def add_virtual_host
         vm_metadata.mkdir_p
         ip = vm_private_ip
-        system Sh.append_host "#{Host::VIRTUAL}-#{ip}", ip, sun.server_host
+        system Sh.append_host "#{Host::VIRTUAL}-#{ip}", ip, sun.server_host or raise(EtcHostsError)
         vm_private_ip_file.write(ip)
       end
 
@@ -227,7 +230,7 @@ module Sunzistrano
           ip = ip_was
         end
         yield
-        system Sh.delete_lines! '/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true if ip
+        system Sh.delete_lines! '/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true if ip or raise(EtcHostsError)
         vm_metadata.rmtree(false)
       end
 
