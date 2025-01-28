@@ -129,5 +129,5 @@ sun.permit() {
 }
 
 sun.sudo() {
-  sudo -E bash -c "$@"
+  sudo -E bash -c -e -u "$@"
 }
