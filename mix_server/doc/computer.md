@@ -60,6 +60,7 @@ Note: run `mkdir -p .git/safe` with every new `git clone` of a trusted project.
 
 ```shell
 bundle install
+sudo chown -R $USER:$USER "$HOME/.npm"
 yarn install
 cp config/secrets.example.yml config/secrets.yml
 sudo chmod 600 .multipass/private_key*

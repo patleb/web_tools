@@ -18,5 +18,3 @@ sudo su - ${deployer_name} << 'EOF'
   yes | yarn set version $yarn_version
   echo "yarn $(yarn --version)"
 EOF
-
-sudo chown -R ${deployer_name}:${deployer_name} "/home/${deployer_name}/.npm"
