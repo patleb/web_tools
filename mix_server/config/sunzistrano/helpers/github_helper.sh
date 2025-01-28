@@ -1,6 +1,6 @@
 git.dir() {
   local owner=$1 repo=$2
-  echo "$HOME/github/$owner/$repo"
+  echo "$HOME/github/${owner}/${repo}"
 }
 
 git.dir.latest() {
@@ -9,8 +9,8 @@ git.dir.latest() {
 }
 
 git.dir.release() {
-  local owner=$1 repo=$2 release $3
-  local root_dir = "$HOME/github/${owner}/${repo}-releases"
+  local owner=$1 repo=$2 release=$3
+  local root_dir="$HOME/github/${owner}/${repo}-releases"
   cd $root_dir
   cd.back
   echo "$root_dir/$release"
@@ -18,7 +18,7 @@ git.dir.release() {
 
 git.clone() {
   local owner=$1 repo=$2
-  local root_dir = $HOME/github/$owner
+  local root_dir="$HOME/github/${owner}"
   mkdir -p $root_dir
   cd $root_dir
   git clone "https://github.com/${owner}/${repo}.git"
@@ -29,7 +29,7 @@ git.clone.latest() {
   local owner=$1 repo=$2
   local url=$(curl -Ls -o /dev/null -w %{url_effective} "https://github.com/${owner}/${repo}/releases/latest")
   local tag=$(basename $url)
-  local root_dir = "$HOME/github/${owner}/${repo}-releases"
+  local root_dir="$HOME/github/${owner}/${repo}-releases"
   mkdir -p $root_dir
   cd $root_dir
   if [[ -d "$root_dir/$tag" ]]; then
