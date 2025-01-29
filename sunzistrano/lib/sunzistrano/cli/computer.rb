@@ -41,10 +41,6 @@ module Sunzistrano
         run_command :computer_bash_cmd, sun.server_host
       end
 
-      def computer_bash_cmd(*)
-        bash_remote_cmd(sun.task)
-      end
-
       def computer_install_cmd(*)
         <<-SH.squish
           mkdir -p #{sun.computer_path} && start=$(mktemp) && sleep 0.01 &&
@@ -54,6 +50,10 @@ module Sunzistrano
           tee -a #{sun.provision_path BASH_LOG} && cd #{sun.computer_path} &&
           find . -depth ! -cnewer $start -print0 | sponge /dev/stdout | xargs -r0 rm -d > /dev/null 2>&1 && rm -f $start
         SH
+      end
+
+      def computer_bash_cmd(*)
+        bash_remote_cmd(sun.task)
       end
 
       def as_computer(&block)
