@@ -119,6 +119,7 @@ computer:
   recipes:
     - bootstrap/files
     - bootstrap/packages
+    - db/postgres-{postgres}/client
     - computer/grub
     - computer/backports
     - computer/xtradeb
