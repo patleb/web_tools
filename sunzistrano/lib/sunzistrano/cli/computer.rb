@@ -48,7 +48,7 @@ module Sunzistrano
       def computer_install_cmd(*)
         <<-SH.squish
           mkdir -p #{sun.computer_path} && start=$(mktemp) && sleep 0.01 &&
-          ln -sf #{sun.provision_path} #{sun.provision_path :current} &&
+          ln -nsf #{sun.provision_path} #{sun.provision_path :current} &&
           cp -rTf --no-preserve=timestamps #{bash_dir} #{sun.computer_path} && cd #{sun.computer_path} &&
           #{'sudo' if sun.sudo} bash -e -u +H role.sh 2>&1 |
           tee -a #{sun.provision_path BASH_LOG} && cd #{sun.computer_path} &&
