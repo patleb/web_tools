@@ -9,3 +9,6 @@ sun.update
 sun.install "docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin"
 
 sudo usermod -aG docker ${owner_name}
+
+sudo chmod 666 /var/run/docker.sock
+sudo systemctl restart docker
