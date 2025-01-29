@@ -58,6 +58,5 @@ gem 'mix_user', path: './mix_user'
 gem 'sunzistrano', path: './sunzistrano'
 
 gem 'ruby-pg-extras', '3.2.5'
-gem 'nokogiri', force_ruby_platform: true # TODO remove once on Ubuntu 24.04 / Mint 22
 
 eval File.read('Gemfile.private') if File.exist? 'Gemfile.private'
