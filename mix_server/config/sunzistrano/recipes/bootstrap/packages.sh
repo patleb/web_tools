@@ -64,6 +64,7 @@ fi
   libnetcdf-dev
 
   at
+  lz4
   golang-go
   parallel
   pigz

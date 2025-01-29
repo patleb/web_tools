@@ -59,6 +59,7 @@ Note: run `mkdir -p .git/safe` with every new `git clone` of a trusted project.
 ## WebTools
 
 ```shell
+gem install bundler
 bundle install
 sudo chown -R $USER:$USER "$HOME/.npm"
 yarn install
@@ -74,24 +75,23 @@ sudo chmod 600 .multipass/private_key*
 
 - Mouse and Touchpad / Reverse scrolling direction (deactivate)
 - Firewall (enable)
-- Power Management / Power / Turn off the screen when inactive for (a/c: never, battery: 5 minutes)
+- Power Management / Power / Turn off the screen when inactive for (a/c: never, battery: 10 minutes)
 - Power Management / Power / When the lid is closed (lock screen)
 - Power Management / Power / Perform lid-closed action event with external monitors attached (activate)
-- Power Management / Brightness / Dim screen after inactive for (5 minutes)
+- Power Management / Brightness / Dim screen after inactive for (10 minutes)
 - Power Management / Brightness / Keyboard backlight (0%)
 - Screensaver / Delay before starting the screensaver (never)
 - Login Window > Users > Hide the user list
 - Login Window > Users > Allow Manual Login
 - Login Window > Settings > Hostname (deactivate)
-- Display [1368x768]
-- Font Selection [10 --> 9]
-- Panel / Panel height [22], Font size [8.5pt], Allow the pointer to pass through the edges of the panels [true]
+- Display [1440x810]
+- Panel / Panel height [25]
 - Privacy / Remember recently accessed files [false]
 
 ### Panel buttons (click Preferences / Configure)
 
-- Replace Grouped Window List applet with Window List and Panel Launcher (use Desktop shortcuts to find configs)
-- Show window thumbnails on hover [false]
+- Grouped Window List applet > Middle click action [Launch new app instance] 
+- Window List add applet
 
 ### File explorer
 
@@ -113,6 +113,7 @@ sudo chmod 600 .multipass/private_key*
 - On start-up          > Continue where you left off
 - Languages            > Preferred languages > Move to top "English (United States)"
 - Languages            > Google Translate > Never offer to translate > Add Languages "French"
+- Password Manager     > Offer to save passwords [false]
 
 ## KeePassXC Settings
 
