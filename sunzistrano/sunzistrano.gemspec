@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.homepage      = 'http://github.com/patleb/sunzistrano'
   s.summary       = %q{Server provisioning utility for minimalists}
   s.description   = %q{Server provisioning utility for minimalists}
-  s.licenses      = ["AGPL-3.0", "MIT"]
+  s.licenses      = ["LGPL-2.1", "MIT"]
 
   s.files         = Dir["{bin,config,lib}/**/*", "LICENSE", "README.md"]
   s.executables   = ["sun"]

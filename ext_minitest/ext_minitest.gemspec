@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/ext_minitest"
   s.summary     = "ExtMinitest"
   s.description = "ExtMinitest"
-  s.license     = "AGPL-3.0"
+  s.license     = "LGPL-2.1"
 
   s.files = Dir["lib/**/*", "LICENSE", "README.md"]
 

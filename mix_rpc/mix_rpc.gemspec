@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/mix_rpc"
   s.summary     = "MixRpc"
   s.description = "MixRpc"
-  s.license     = "AGPL-3.0"
+  s.license     = "LGPL-2.1"
 
   s.files = Dir["{app,db,lib}/**/*", "LICENSE", "README.md"]
 

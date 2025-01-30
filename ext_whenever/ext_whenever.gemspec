@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/patleb/ext_whenever"
   s.summary     = "ExtWhenever"
   s.description = "ExtWhenever"
-  s.license     = "AGPL-3.0"
+  s.license     = "LGPL-2.1"
 
   s.files = Dir["{config,lib}/**/*", "LICENSE", "README.md"]
 
