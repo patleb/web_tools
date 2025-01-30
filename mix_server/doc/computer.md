@@ -132,6 +132,8 @@ sudo unzip Nucleo_AlienMind_v5.wsz -d /usr/share/audacious/Skins/NucleoAlienMind
 rm -f Nucleo_AlienMind_v5.wsz
 ```
 
+- File > Settings > Plugins > General > Status Icon [true] > Settings > Close to the system tray [true]
+
 ### VSCodium
 
 ```shell
@@ -144,11 +146,12 @@ sudo apt update && sudo apt install codium -y
 - User > Text Editor > Font > Font Size [12]
 - User > Editor > Line Height [1.7]
 - User > Window > Density > Editor Tab Height [compact]
+- Theme > High contrast
 
 ## Rubymine
 
 - [inotify](https://confluence.jetbrains.com/display/IDEADEV/Inotify+Watches+Limit):
-- Appearance & Behavior > Appearance > Theme [One Dark Vivid]
+- Appearance & Behavior > Appearance > Theme [High Contrast]
 - Editor > Font > Font [DejaVu Sans Mono], Size [12], Line spacing [1.3]
 - Editor > Inspections > Proofreading > Typo [false]
 - Editor > Inspections > Ruby > Code metrics [false]
@@ -171,16 +174,6 @@ vi $HOME/.config/terminator/config
       type = Window
       size = 1320, 800
 ...
-```
-
-## Docker
-
-- https://stackoverflow.com/questions/79243633/error-cgroup-support-missing-memory-features-in-running-kernel
-
-```bash
-sudo sed -ri -- 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cgroup_enable=memory\ swapaccount=1"/' /etc/default/grub
-sudo update-grub
-sudo mkdir -p '/opt/docker_data'
 ```
 
 ## Git
