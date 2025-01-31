@@ -1,5 +1,5 @@
 class Log < LibMainRecord
-  DB_TYPE = MixServer::Log::DB_TYPE
+  DB_TYPE = MixServer::Logs::DB_TYPE
   FS_TYPE = %r{(?:/log|/(\w+)|)/(?:[-\w]+\.)?(?:(\w+)(?:-\w+)*\.log|(\w+log))$}
   FS_TYPE_SKIP = [nil, 'results']
 
@@ -7,7 +7,7 @@ class Log < LibMainRecord
   has_many   :log_lines
   has_many   :log_messages, -> { distinct }, through: :log_lines
 
-  enum! :log_lines_type, MixServer::Log.config.available_types
+  enum! :log_lines_type, MixServer::Logs.config.available_types
 
   attr_readonly *%i(
     log_lines_type
@@ -45,11 +45,11 @@ class Log < LibMainRecord
   end
 
   def self.db_types
-    @db_types ||= MixServer::Log.config.available_types.except(*fs_types).reject{ |_, v| v < DB_TYPE }.keys
+    @db_types ||= MixServer::Logs.config.available_types.except(*fs_types).reject{ |_, v| v < DB_TYPE }.keys
   end
 
   def self.fs_types
-    @fs_types ||= MixServer::Log.config.available_paths.map(&singleton_method(:fs_type)).uniq
+    @fs_types ||= MixServer::Logs.config.available_paths.map(&singleton_method(:fs_type)).uniq
   end
 
   def self.fs_type(path)

@@ -1,5 +1,5 @@
 module MixServer
-  module Log
+  module Logs
     DB_TYPE = 1000
 
     has_config do

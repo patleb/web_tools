@@ -5,7 +5,7 @@ module LogLines
     self.file_fixture_path = Gem.root('mix_server').join('test/fixtures/files').to_s
 
     test '.parse' do
-      MixServer::Log.with do |config|
+      MixServer::Logs.with do |config|
         log_path = config.log_path(:osquery, 'osqueryd.results')
         config.available_paths = [log_path]
 

@@ -1,6 +1,6 @@
 require './test/test_helper'
 
-module MixServer::Log
+module MixServer::Logs
   class CleanupTest < Rake::TestCase
     self.task_name = 'log:cleanup'
     self.use_transactional_tests = false

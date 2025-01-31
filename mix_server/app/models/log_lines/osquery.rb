@@ -74,7 +74,7 @@ module LogLines
           next if was_deployed && path.start_with?('/var/spool/cron/crontabs/')
           next if was_rebooted && path.start_with?('/etc/nginx/sites-available/')
           next if ssl_upgrade && path.start_with?('/etc/nginx/ssl/')
-          next if MixServer::Log.config.known_files.any? do |file|
+          next if MixServer::Logs.config.known_files.any? do |file|
             file.is_a?(Regexp) ? path.match?(file) : path == file
           end
           memo << [path.delete_suffix('/'), row['action']].join('/')
@@ -87,7 +87,7 @@ module LogLines
           local = row.values_at('local_address', 'local_port')
           remote = row.values_at('remote_address', 'remote_port')
           next if servers.include? remote.first
-          next if MixServer::Log.config.known_sockets.any? do |type, sockets|
+          next if MixServer::Logs.config.known_sockets.any? do |type, sockets|
             sockets.any? do |socket|
               case type
               when :path   then socket.is_a?(Regexp) ? path.match?(socket) : path.start_with?(socket)
@@ -100,7 +100,7 @@ module LogLines
       else
         message, paths = extract_paths(adds, name, tiny: TINY_COMMAND_PATH, level: :fatal) do |row, memo|
           path = row.values_at('cmdline', 'path', 'package_path', 'package_name').find(&:present?) || ''
-          next if MixServer::Log.config.nonthreats.any? do |nonthreat|
+          next if MixServer::Logs.config.nonthreats.any? do |nonthreat|
             nonthreat.is_a?(Regexp) ? path.match?(nonthreat) : path.start_with?(nonthreat)
           end
           memo << path

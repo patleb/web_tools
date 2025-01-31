@@ -1,12 +1,12 @@
 require './test/test_helper'
 
-module MixServer::Log
+module MixServer::Logs
   class ExtractTest < Rake::TestCase
     self.task_name = 'log:extract'
     self.use_transactional_tests = false
 
     test 'log:extract' do
-      MixServer::Log.with do |config|
+      MixServer::Logs.with do |config|
         log_path, log_time = config.log_path(:syslog), Time.utc(2021, 1, 2, 0, 0, 0, 0)
         config.available_paths = [log_path]
         FileUtils.touch log_path, mtime: log_time

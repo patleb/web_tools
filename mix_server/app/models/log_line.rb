@@ -4,7 +4,7 @@ class LogLine < LibMainRecord
   belongs_to :log
   belongs_to :log_message
 
-  enum! :type, MixServer::Log.config.available_types
+  enum! :type, MixServer::Logs.config.available_types
 
   attr_readonly *%i(
     created_at
@@ -14,7 +14,7 @@ class LogLine < LibMainRecord
 
   def self.apt_history(log)
     return unless Log.fs_types.include? 'LogLines::AptHistory'
-    return unless (path = MixServer::Log.config.available_paths.find{ |path| path.end_with? 'apt/history.log'})
+    return unless (path = MixServer::Logs.config.available_paths.find{ |path| path.end_with? 'apt/history.log'})
     apt_history_log = Log.find_or_create_by! server: log.server, path: path
     LogLines::AptHistory.where(log: apt_history_log)
   end

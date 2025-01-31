@@ -209,7 +209,7 @@ module LogLines
         ssl: https == 'https',
         method: method,
         path: path,
-        params: (params&.except(*MixServer::Log.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if parameters),
+        params: (params&.except(*MixServer::Logs.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if parameters),
         status: (status = status.to_i),
         bytes_in: bytes_in&.to_i,
         bytes_out: bytes_out.to_i,
@@ -219,13 +219,13 @@ module LogLines
         gzip: gzip == '-' ? nil : gzip.to_f,
       }
       global_log = log.path&.end_with?('/access.log')
-      if global_log || status == 404 || MixServer::Log.config.filter_subnets.any?(&:include?.with(ip)) || path.end_with?(*MixServer::Log.config.filter_endings)
+      if global_log || status == 404 || MixServer::Logs.config.filter_subnets.any?(&:include?.with(ip)) || path.end_with?(*MixServer::Logs.config.filter_endings)
         method, path, params = nil, '*', nil
       end
       if global_log
         json_data.except! :method, :params, :referer, :browser
       end
-      regex, replacement = MixServer::Log.config.ided_paths.find{ |regex, _replacement| path.match? regex }
+      regex, replacement = MixServer::Logs.config.ided_paths.find{ |regex, _replacement| path.match? regex }
       path_tiny = regex ? squish(path.gsub(regex, replacement)) : squish(path)
       if method
         params = (json_data[:params]&.pretty_hash! rescue '') || ''

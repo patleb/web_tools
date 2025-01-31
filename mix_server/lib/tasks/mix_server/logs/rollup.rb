@@ -1,4 +1,4 @@
-module MixServer::Log
+module MixServer::Logs
   class Rollup < ActiveTask::Base
     prepend ActiveTask::AsParallel
 
@@ -16,7 +16,7 @@ module MixServer::Log
 
     def logs
       @logs ||= begin
-        log_lines = MixServer::Log.config.available_rollups.keys.map{ |name| "LogLines::#{name.demodulize}" }
+        log_lines = MixServer::Logs.config.available_rollups.keys.map{ |name| "LogLines::#{name.demodulize}" }
         Log.where(log_lines_type: log_lines)
       end
     end

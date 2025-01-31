@@ -14,7 +14,7 @@ class LogMessage < LibMainRecord
     fatal:   4,
     unknown: 5,
   }
-  enum! :log_lines_type, MixServer::Log.config.available_types
+  enum! :log_lines_type, MixServer::Logs.config.available_types
 
   attr_accessor :new_line_at
 

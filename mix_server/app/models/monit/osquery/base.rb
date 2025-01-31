@@ -16,7 +16,7 @@ module Monit
               i = $osquery_log_i.to_i? ? ".#{$osquery_log_i.to_i}" : ''
               Rails.root.join("config/sunzistrano/files/var/log/osquery/osqueryd.results.log#{i}")
             else
-              Pathname.new(MixServer::Log.config.osquery_log_path)
+              Pathname.new(MixServer::Logs.config.osquery_log_path)
             end
           File.foreach(path, chomp: true) do |line|
             json = JSON.parse(line)

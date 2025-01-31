@@ -16,7 +16,7 @@ module LogLines
     end
 
     test 'scopes' do
-      MixServer::Log.with do |config|
+      MixServer::Logs.with do |config|
         log_path = config.log_path(:nginx, 'test_web_tools.access')
         config.available_paths = [log_path]
         Rake::Task['log:extract'].invoke!

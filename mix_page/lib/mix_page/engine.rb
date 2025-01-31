@@ -28,7 +28,7 @@ module MixPage
     end
 
     ActiveSupport.on_load(:active_record) do
-      MixServer::Log.config.ided_paths[%r{/(#{MixPage::Routes::FRAGMENT})/([\w-]+)}] = '/\1/*'
+      MixServer::Logs.config.ided_paths[%r{/(#{MixPage::Routes::FRAGMENT})/([\w-]+)}] = '/\1/*'
 
       MixFile.configure do |config|
         config.available_records['PageFieldMarkdown'] = 10

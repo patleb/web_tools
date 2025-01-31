@@ -3,17 +3,17 @@ require_dir __FILE__, 'log'
 namespace :log do
   desc 'cleanup old log partitions'
   task :cleanup => :environment do |t|
-    MixServer::Log::Cleanup.new(self, t).run!
+    MixServer::Logs::Cleanup.new(self, t).run!
   end
 
   desc 'extract server logs'
   task :extract => :environment do |t|
-    MixServer::Log::Extract.new(self, t).run!
+    MixServer::Logs::Extract.new(self, t).run!
   end
 
   desc 'rollup server logs'
   task :rollup => :environment do |t|
-    MixServer::Log::Rollup.new(self, t).run!
+    MixServer::Logs::Rollup.new(self, t).run!
   end
 
   desc 'report server log errors'

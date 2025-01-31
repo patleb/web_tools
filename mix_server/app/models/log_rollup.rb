@@ -1,5 +1,5 @@
 class LogRollup < LibMainRecord
   belongs_to :log
 
-  enum! :type, MixServer::Log.config.available_rollups
+  enum! :type, MixServer::Logs.config.available_rollups
 end

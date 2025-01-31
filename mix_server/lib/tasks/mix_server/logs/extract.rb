@@ -1,4 +1,4 @@
-module MixServer::Log
+module MixServer::Logs
   class Extract < ActiveTask::Base
     prepend ActiveTask::AsParallel
 
@@ -15,7 +15,7 @@ module MixServer::Log
 
       parallel(logs) do |log|
         log.rotated_files.select{ |file| file.mtime.to_i > log.mtime.to_i }.each do |file|
-          puts "Processing: #{file}" if MixServer::Log.config.show_path?
+          puts "Processing: #{file}" if MixServer::Logs.config.show_path?
           process log, file
         end
         log.finalize
@@ -70,8 +70,8 @@ module MixServer::Log
 
     def logs
       @logs ||= begin
-        MixServer::Log.config.available_paths.sort_by{ |path| path.split('/').last(2) }.select_map do |path|
-          if MixServer::Log.config.force_read
+        MixServer::Logs.config.available_paths.sort_by{ |path| path.split('/').last(2) }.select_map do |path|
+          if MixServer::Logs.config.force_read
             raise AccessDenied unless system("sudo chmod +r #{path}.*")
           end
           if %W(#{path} #{path}.0 #{path}.1 #{path}.1.gz).any?{ |file| File.exist? file }

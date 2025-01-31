@@ -57,13 +57,13 @@ module LogLines
       else
         return { filtered: true }
       end
-      regex, replacement = MixServer::Log.config.ided_errors.find{ |regex, _replacement| text.match? regex }
+      regex, replacement = MixServer::Logs.config.ided_errors.find{ |regex, _replacement| text.match? regex }
       if regex
         text_tiny = squish(text.gsub(regex, replacement))
       else
         text_tiny = squish(text)
       end
-      known_level, _ = MixServer::Log.config.known_errors.find do |_level, errors|
+      known_level, _ = MixServer::Logs.config.known_errors.find do |_level, errors|
         errors.find{ |e| e.is_a?(Regexp) ? text.match?(e) : text.include?(e) }
       end
       level = known_level || level
