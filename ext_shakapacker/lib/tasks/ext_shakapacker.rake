@@ -7,4 +7,6 @@ namespace :shakapacker do
   end
 end
 
-Rake::Task["assets:precompile"].enhance ["yarn:install"]
+if Rake::Task.task_defined? 'assets:precompile'
+  Rake::Task['assets:precompile'].enhance ['yarn:install']
+end

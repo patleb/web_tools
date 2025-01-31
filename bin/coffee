@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require_relative '../config/boot'
+require 'fileutils'
 
 WEB_TOOLS = File.expand_path('..', __dir__)
 # TODO extract from jestConfig.roots in jest.config.js instead
