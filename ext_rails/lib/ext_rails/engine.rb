@@ -57,7 +57,6 @@ module ExtRails
     require 'ext_rails/rake/task'
     require 'ext_rails/rails/engine'
     require 'ext_rails/rails/initializable/initializer'
-    require 'ext_rails/sh'
     require 'ext_rails/user_agent_parser/user_agent'
 
     config.before_configuration do |app|
