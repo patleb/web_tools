@@ -16,8 +16,8 @@ module LogLines
 
     test 'version' do
       yml = YAML.safe_load(Gem.root('mix_server').join('config/settings.yml').read)
-      assert_equal 4, Setting[:db_port] % 10
-      assert_equal 14, yml.dig('shared', 'postgres'), <<~MSG
+      assert_equal Setting[:postgres] % 10, Setting[:db_port] % 10
+      assert_equal Setting[:postgres], yml.dig('shared', 'postgres'), <<~MSG
         Postgres version has changed, do not forget to compare error msg
         from the official github repo to those in LogLines::Postgresql regexes.
       MSG

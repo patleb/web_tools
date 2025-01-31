@@ -22,8 +22,8 @@ class HashTest < Minitest::TestCase
   test '#pretty_hash, #pretty_hash!' do
     assert_equal nil, {}.pretty_hash
     assert_equal '{a: 1, b: [1], c: {d: [3], e: {f: [5]}}}', first.pretty_hash
-    assert_equal '{a: 0, b: 1.0, "3rd Key"=>"2000-01-01T00:00:00Z", true=>false, D: nil}', complex.pretty_hash
-    assert_equal '{"3rd Key"=>"2000-01-01T00:00:00Z", D: nil, a: 0, b: 1.0, true=>false}', complex.sort_by{ |k, _| k.to_s }.reverse.to_h.pretty_hash!
+    assert_equal '{a: 0, b: 1.0, "3rd Key" => "2000-01-01T00:00:00Z", true => false, D: nil}', complex.pretty_hash
+    assert_equal '{"3rd Key" => "2000-01-01T00:00:00Z", D: nil, a: 0, b: 1.0, true => false}', complex.sort_by{ |k, _| k.to_s }.reverse.to_h.pretty_hash!
   end
 
   test 'HashWithKeywordAccess#convert_key' do
