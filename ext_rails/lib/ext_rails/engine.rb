@@ -58,13 +58,13 @@ module ExtRails
     require 'ext_rails/rails/engine'
     require 'ext_rails/rails/initializable/initializer'
     require 'ext_rails/user_agent_parser/user_agent'
-    require 'ext_rails/pycall'
 
     config.before_configuration do |app|
       require 'ext_rails/action_dispatch/routing/mapper/resources'
       require 'ext_rails/rails/application'
       require 'ext_rails/rails/engine/with_task'
       require 'ext_rails/rails/initializable/collection'
+      require 'ext_rails/pycall'
 
       Setting.load
       app.config.action_mailer.delivery_method = :smtp
