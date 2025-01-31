@@ -25,7 +25,7 @@ module Sunzistrano
     desc 'status', 'Output status of Multipass instance(s)'
     def status
       as_virtual do
-        system "multipass info #{vm_name}" or raise(MultipassError)
+        system "multipass info #{vm_name}"
       end
     end
 
@@ -151,7 +151,7 @@ module Sunzistrano
       end
 
       def run_snapshot_list_cmd
-        system "multipass list --snapshots | grep -E '^(Instance|#{vm_name})'" or raise(MultipassError)
+        system "multipass list --snapshots | grep -E '^(Instance|#{vm_name})'"
       end
 
       def run_snapshot_delete_cmd
