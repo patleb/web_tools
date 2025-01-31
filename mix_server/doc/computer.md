@@ -147,6 +147,7 @@ sudo apt update && sudo apt install codium -y
 - User > Editor > Line Height [1.7]
 - User > Window > Density > Editor Tab Height [compact]
 - Theme > High contrast
+- Extensions: GitLens, Docker, DBCode, Ruby LSP
 
 ## Rubymine
 
