@@ -63,7 +63,7 @@ PATH
       monogamy
       null-logger
       pg
-      pycall
+      pycall (= 1.5.1)
       rails (~> 8.0.1)
       rails-i18n
       rblineprof
@@ -475,7 +475,7 @@ GEM
       date
       stringio
     public_suffix (6.0.1)
-    pycall (1.5.2)
+    pycall (1.5.1)
     racc (1.8.1)
     rack (3.1.8)
     rack-proxy (0.7.7)
