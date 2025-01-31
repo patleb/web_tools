@@ -4,7 +4,7 @@ assets_age=${assets_age:-0}
 cd ${release_path}
 
 desc 'Install all JavaScript dependencies as specified via Yarn'
-bin/rake shakapacker:yarn_install
+bin/rake yarn:install
 
 desc "Compile JavaScript packs using webpack for ${stage} with digests"
 bin/rake shakapacker:compile
