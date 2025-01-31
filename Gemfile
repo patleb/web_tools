@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 # ruby File.read('.ruby-version').strip if File.exist? '.ruby-version'
 
-gem 'shakapacker', '7.2.3'
+gem 'shakapacker', '~> 8.1.0'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

@@ -50,14 +50,15 @@
 /public/packs
 /public/packs-test
 /node_modules
-/yarn-error.log
-yarn-debug.log*
-.yarn-integrity
-.yarn/
-.yarnrc.yml
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 /vendor/ruby
-/.vagrant/*
 /.multipass/*
 !/.multipass/
 !/.multipass/private_key

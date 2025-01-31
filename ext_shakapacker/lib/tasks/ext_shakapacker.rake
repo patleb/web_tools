@@ -6,3 +6,5 @@ namespace :shakapacker do
     end
   end
 end
+
+Rake::Task["assets:precompile"].enhance ["yarn:install"]
