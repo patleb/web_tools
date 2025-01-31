@@ -15,8 +15,8 @@ ExtWhenever.setup(self)
 #
 # Examples
 # --------
-# every :month, at: "start of the month at 4:30 am" do
 # TODO every first saturday of every month --> can't use whenever syntax --> week_of_the_year % total_year_weeks
+# every :month, at: "start of the month at 4:30 am" do
 #   rake 'every_month'
 # end
 #
