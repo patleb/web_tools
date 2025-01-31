@@ -15,7 +15,7 @@ deploy:
 virtual:
   vm_cpu: 2
   vm_ram: 1GB
-  vm_disk: 10GB
+  vm_disk: 12GB
 
 computer:
   os_name: linuxmint

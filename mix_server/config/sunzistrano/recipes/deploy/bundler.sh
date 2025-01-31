@@ -1,4 +1,4 @@
-bundle_jobs=${bundle_jobs:-4}
+bundle_jobs=${bundle_jobs:-$(getconf _NPROCESSORS_ONLN)}
 
 cd ${release_path}
 
