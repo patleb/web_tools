@@ -1,5 +1,4 @@
-ENV['PYTHON'] = '/usr/bin/python3.8' if File.exist? '/usr/bin/python3.8'
-
+# https://github.com/mrkn/pycall.rb/issues/184
 require 'pycall'
 require 'ext_rails/pycall/pyobject_wrapper'
 

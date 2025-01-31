@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'monogamy'
   s.add_dependency 'null-logger'
   s.add_dependency 'pg'
-  s.add_dependency 'pycall', '1.5.0'
+  s.add_dependency 'pycall'
   s.add_dependency 'rails-i18n'
   s.add_dependency 'rblineprof'
   s.add_dependency 'rounding'
