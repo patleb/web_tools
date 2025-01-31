@@ -128,12 +128,15 @@ http {
     satisfy '<%= satisfy %>';
   <% end %>
 
+  # TODO doesn't seem to work --> maybe use ip tables instead?
+  #--> https://askubuntu.com/questions/1358471/block-1-4-million-ip-addresses-on-vps
+  #--> https://docs.rackspace.com/docs/block-ip-range-from-countries-with-geoip-and-iptables
   <% sun.nginx_denied_ips.each do |ip| %>
-    deny '<%= ip %>';
+    deny <%= ip %>;
   <% end %>
   <% if (allowed_ips = sun.nginx_allowed_ips).any? %>
     <% allowed_ips.each do |ip| %>
-      allow '<%= ip %>';
+      allow <%= ip %>;
     <% end %>
     deny all;
   <% end %>
