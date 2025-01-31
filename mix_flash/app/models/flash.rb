@@ -27,7 +27,7 @@ class Flash < LibMainRecord
   def self.messages(hash = {})
     dequeue_all.each_with_object(hash) do |record, messages|
       record.messages.each do |type, message|
-        text = (messages[type.to_sym] ||= '')
+        text = (messages[type.to_sym] ||= +'')
         text << SEPARATOR unless text.blank?
         text << message
       end

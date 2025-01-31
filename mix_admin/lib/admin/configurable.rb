@@ -69,7 +69,7 @@ module Admin
       end
 
       def register_option(name, context = self, memoize: nil, &default_block)
-        name = name.to_s
+        name = +(name.to_s)
         default_memoize = memoize
 
         ([context] + (context.singleton_class? ? descendants.map(&:singleton_class) : descendants)).each do |klass|
