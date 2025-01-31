@@ -97,7 +97,7 @@ nginx.reload() { # PUBLIC
 }
 
 nginx.check() { # PUBLIC
-  if [[ $(sudo nginx -t | grep -c 'failed') -eq 0 ]]; then
+  if [[ $(sudo nginx -t 2>&1 | grep -c 'failed') -eq 0 ]]; then
     echo 'Config [OK]'
     return 0
   else
