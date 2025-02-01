@@ -1,6 +1,4 @@
 require 'minitest/autorun'
-require 'mocha/minitest'
-require 'webmock/minitest'
 
 require 'ext_ruby'
 require 'active_support/testing/time_helpers'

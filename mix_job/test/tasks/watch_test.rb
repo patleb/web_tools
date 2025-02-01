@@ -1,4 +1,6 @@
 require './test/test_helper'
+require 'mocha/minitest'
+require 'webmock/minitest'
 require_relative './watch_mock'
 
 MixJob::Watch.class_eval do
