@@ -31,7 +31,7 @@ fi
   libgdbm-compat-dev
   libglib2.0-dev
   libncurses-dev
-  libxml2-dev
+  libxml2-dev libxml2-utils
   libxslt-dev
   make
   wget

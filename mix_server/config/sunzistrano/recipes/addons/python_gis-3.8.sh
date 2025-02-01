@@ -34,4 +34,6 @@ sudo apt-get remove -y python3.8-tk python3.8-dev python3.8-distutils python3.8
 sudo apt autoremove -y
 sudo add-apt-repository -r ppa:deadsnakes/ppa
 sudo rm -f /usr/local/bin/pip*
+sudo rm -rf /usr/local/lib/python3.8
+sudo rm -rf /usr/lib/python3.8
 '

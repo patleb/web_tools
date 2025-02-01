@@ -121,6 +121,7 @@ computer:
     - bootstrap/files
     - bootstrap/packages
     - db/postgres_client
+    - addons/python_gis
     - computer/grub
     - computer/backports
     - computer/xtradeb
