@@ -52,10 +52,10 @@ module Sunzistrano
           case vm_state
           when :null
             compile_cloud_init
-            system "multipass launch #{sun.os_version} --name #{vm_name} #{vm_options}", or_exit: 1
+            system! "multipass launch #{sun.os_version} --name #{vm_name} #{vm_options}"
             add_virtual_host
           when :stopped
-            system "multipass start #{vm_name}", or_exit: 1
+            system! "multipass start #{vm_name}"
           end
         end
       end
@@ -64,11 +64,11 @@ module Sunzistrano
         as_virtual do
           case vm_state
           when :running
-            system "multipass stop #{vm_name} #{'--force' if sun.force}", or_exit: 1
+            system! "multipass stop #{vm_name} #{'--force' if sun.force}"
           when :null, :deleted, :stopped
             # do nothing
           else
-            system "multipass stop #{vm_name} --force", or_exit: 1
+            system! "multipass stop #{vm_name} --force"
           end
         end
       end
@@ -88,7 +88,7 @@ module Sunzistrano
             raise "vm state [#{vm_state}]"
           end
           remove_virtual_host do
-            system cmd, or_exit: 1
+            system! cmd
           end
         end
       end
@@ -127,7 +127,7 @@ module Sunzistrano
         else
           raise "vm state [#{vm_state}]"
         end
-        system cmd, or_exit: 1
+        system! cmd
       end
 
       def run_snapshot_restore_cmd
@@ -145,7 +145,7 @@ module Sunzistrano
         else
           raise "vm state [#{vm_state}]"
         end
-        system cmd, or_exit: 1
+        system! cmd
       end
 
       def run_snapshot_list_cmd
@@ -163,7 +163,7 @@ module Sunzistrano
         else
           raise "vm state [#{vm_state}]"
         end
-        system cmd, or_exit: 1
+        system! cmd
       end
 
       def vm_state
@@ -219,7 +219,7 @@ module Sunzistrano
       def add_virtual_host
         vm_metadata.mkdir_p
         ip = vm_private_ip
-        system Sh.append_host("#{Host::VIRTUAL}-#{ip}", ip, sun.server_host), or_exit: 1
+        system! Sh.append_host("#{Host::VIRTUAL}-#{ip}", ip, sun.server_host)
         vm_private_ip_file.write(ip)
       end
 
@@ -230,7 +230,7 @@ module Sunzistrano
           ip = ip_was
         end
         yield
-        system Sh.delete_lines!('/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true), or_exit: 1 if ip
+        system! Sh.delete_lines!('/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true) if ip
         vm_metadata.rmtree(false)
       end
 
