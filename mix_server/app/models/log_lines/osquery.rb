@@ -23,8 +23,12 @@ module LogLines
 
     def self.threats
       @threats ||= begin
-        rootkits = Pathname.new('/opt/osquery/share/osquery/packs/ossec-rootkit.conf')
-        rootkits = JSON.parse(rootkits.read)['queries'].keys
+        path = if Rails.env.local?
+          MixServer::Engine.root.join('test/fixtures/files/osquery/ossec-rootkit.conf')
+        else
+          Pathname.new('/opt/osquery/share/osquery/packs/ossec-rootkit.conf')
+        end
+        rootkits = JSON.parse(path.read)['queries'].keys
         rootkits.concat(%w(
           backdoored_python_packages
           behavioral_reverse_shell
@@ -34,12 +38,26 @@ module LogLines
     end
 
     def self.conf
-      @conf ||= JSON.parse(Pathname.new('/etc/osquery/osquery.conf').read).to_hwka
+      @conf ||= begin
+        path = if Rails.env.local?
+          MixServer::Engine.root.join('test/fixtures/files/osquery/osquery.conf')
+        else
+          Pathname.new('/etc/osquery/osquery.conf')
+        end
+        JSON.parse(path.read).to_hwka
+      end
     end
+
+
 
     def self.flags
       @flags ||= begin
-        Pathname.new('/etc/osquery/osquery.flags').readlines(chomp: true).select_map do |line|
+        path = if Rails.env.local?
+          MixServer::Engine.root.join('test/fixtures/files/osquery/osquery.flags')
+        else
+          Pathname.new('/etc/osquery/osquery.flags')
+        end
+        path.readlines(chomp: true).select_map do |line|
           next unless line.delete_prefix! '--'
           line.split('=', 2)
         end.to_h.to_hwka.transform_values(&:cast_self)
