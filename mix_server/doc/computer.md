@@ -240,6 +240,10 @@ rm -rf ~/.config/Webcamoid
 
 ## Other Softwares
 
+- Gpick
+
+## Software Manager
+
 - Cling
 - Calibre
 - Remmina
