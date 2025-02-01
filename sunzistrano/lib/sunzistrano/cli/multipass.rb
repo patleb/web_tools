@@ -4,6 +4,7 @@ module Sunzistrano
 
   ERB_CLOUD_INIT = './cloud-init.yml'
   TMP_CLOUD_INIT = './tmp/cloud-init.yml'
+  SNAPSHOT_ACTIONS = %w(save restore list delete)
 
   Cli.class_eval do
     desc 'up', 'Start Multipass instance(s)'
@@ -42,7 +43,7 @@ module Sunzistrano
       end
     end
 
-    desc 'snapshot [ACTION] [--name]', 'Save/Restore/List/Delete Multipass snapshot(s)'
+    desc 'snapshot [ACTION] [--name]', "#{SNAPSHOT_ACTIONS.map(&:upcase_first).join('/')} Multipass snapshot(s)"
     method_options name: :string
     def snapshot(action)
       do_snapshot(action)
@@ -111,7 +112,7 @@ module Sunzistrano
       end
 
       def do_snapshot(action)
-        raise "snapshot action [#{action}] unsupported" unless %w(save restore list delete).include? action
+        raise "snapshot action [#{action}] unsupported" unless SNAPSHOT_ACTIONS.include? action
         as_virtual do
           send "run_snapshot_#{action}_cmd"
         end
