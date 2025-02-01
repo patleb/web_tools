@@ -165,6 +165,8 @@ sudo apt update && sudo apt install codium -y
 ## Terminator
 
 - Preferences / Profiles / Scrolling / Infinite Scrollback [true]
+- Preferences / Profiles / General / Show titlebar [false]
+- Preferences / Global / Appearance / Terminal separator size [4]
 - TODO dircolors --> https://ubuntuforums.org/showthread.php?p=4779965
 
 ```bash
