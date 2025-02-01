@@ -313,10 +313,13 @@ module Sunzistrano
         Open3.popen3(command, &block)
       end
 
-      def system(*args)
+      def system(*args, or_exit: nil)
         return puts args if Setting.local?
         puts args if sun.debug
-        Kernel.system(*args)
+        unless (result = Kernel.system(*args))
+          exit(or_exit)
+        end
+        result
       end
 
       def exec(*args)
