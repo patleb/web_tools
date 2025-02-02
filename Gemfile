@@ -12,10 +12,6 @@ group :development, :test do
   # gem 'ext_minitest', path: '~/projects/web_tools'
 end
 
-group :test do
-  gem 'passenger'
-end
-
 # gem 'web_tools', github: 'patleb/web_tools'
 # gem 'web_tools', path: '~/projects/web_tools'
 
