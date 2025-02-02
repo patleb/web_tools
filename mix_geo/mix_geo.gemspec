@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'ext_rails', version
   s.add_dependency 'countries'
+  # s.add_dependency 'ffi-gdal'
   s.add_dependency 'ruby-netcdf', '>= 0.8.0'
   # s.add_dependency 'ip_location_db', '2.2.2020121618'
 end
