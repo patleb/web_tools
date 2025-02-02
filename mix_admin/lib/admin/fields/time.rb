@@ -1,3 +1,4 @@
+# NOTE ActiveRecord Time attribute is always dirty even when the value is the same.
 module Admin
   module Fields
     class Time < DateTime
