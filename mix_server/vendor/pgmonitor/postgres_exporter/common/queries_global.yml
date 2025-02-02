@@ -1,0 +1,64 @@
+ccp_postmaster_uptime:
+  query: "SELECT extract(epoch from (clock_timestamp() - pg_postmaster_start_time() )) AS seconds;"
+  metrics:
+    - seconds:
+        usage: "GAUGE"
+        description: "Time interval in seconds since PostgreSQL database was last restarted"
+
+ccp_stat_database:
+  query: "SELECT s.datname as dbname, xact_commit, xact_rollback, blks_read, blks_hit, tup_returned, tup_fetched, tup_inserted, tup_updated, tup_deleted, conflicts, temp_files, temp_bytes, deadlocks FROM pg_catalog.pg_stat_database s JOIN pg_catalog.pg_database d on d.datname = s.datname WHERE d.datistemplate = false"
+  metrics:
+    - dbname:
+        usage: "LABEL"
+        description: "Name of database"
+    - xact_commit:
+        usage: "GAUGE"
+        description: "Number of transactions in this database that have been committed"
+    - xact_rollback:
+        usage: "GAUGE"
+        description: "Number of transactions in this database that have been rolled back"
+    - blks_read:
+        usage: "GAUGE"
+        description: "Number of disk blocks read in this database"
+    - blks_hit:
+        usage: "GAUGE"
+        description: "Number of times disk blocks were found already in the buffer cache, so that a read was not necessary"
+    - tup_returned:
+        usage: "GAUGE"
+        description: "Number of rows returned by queries in this database"
+    - tup_fetched:
+        usage: "GAUGE"
+        description: "Number of rows fetched by queries in this database"
+    - tup_inserted:
+        usage: "GAUGE"
+        description: "Number of rows inserted by queries in this database"
+    - tup_updated:
+        usage: "GAUGE"
+        description: "Number of rows updated by queries in this database"
+    - tup_deleted:
+        usage: "GAUGE"
+        description: "Number of rows deleted by queries in this database"
+    - conflicts:
+        usage: "GAUGE"
+        description: "Number of queries canceled due to conflicts with recovery in this database"
+    - temp_files:
+        usage: "GAUGE"
+        description: "Number of rows deleted by queries in this database"
+    - temp_bytes:
+        usage: "GAUGE"
+        description: "Total amount of data written to temporary files by queries in this database"
+    - deadlocks:
+        usage: "GAUGE"
+        description: "Number of deadlocks detected in this database"
+
+ccp_wal_activity:
+  query: "SELECT last_5_min_size_bytes,
+      (SELECT COALESCE(sum(size),0) FROM pg_catalog.pg_ls_waldir()) AS total_size_bytes
+      FROM (SELECT COALESCE(sum(size),0) AS last_5_min_size_bytes FROM pg_catalog.pg_ls_waldir() WHERE modification > CURRENT_TIMESTAMP - '5 minutes'::interval) x;"
+  metrics:
+    - last_5_min_size_bytes:
+        usage: "GAUGE"
+        description: "Current size in bytes of the last 5 minutes of WAL generation. Includes recycled WALs."
+    - total_size_bytes:
+        usage: "GAUGE"
+        description: "Current size in bytes of the WAL directory"

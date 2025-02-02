@@ -57,6 +57,4 @@ gem 'mix_task', path: './mix_task'
 gem 'mix_user', path: './mix_user'
 gem 'sunzistrano', path: './sunzistrano'
 
-gem 'ruby-pg-extras', '3.2.5'
-
 eval File.read('Gemfile.private') if File.exist? 'Gemfile.private'

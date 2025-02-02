@@ -1,0 +1,31 @@
+ccp_stat_bgwriter:
+  query: "SELECT buffers_clean, maxwritten_clean, buffers_alloc, stats_reset FROM pg_catalog.pg_stat_bgwriter"
+  metrics:
+    - buffers_clean:
+        usage: "GAUGE"
+        description: "Number of buffers written by the background writer"
+    - maxwritten_clean:
+        usage: "GAUGE"
+        description: "Number of times the background writer stopped a cleaning scan because it had written too many buffers"
+    - buffers_alloc:
+        usage: "GAUGE"
+        description: "Number of buffers allocated"
+    - stats_reset:
+        usage: "GAUGE"
+        description: "Time at which these statistics were last reset (NOTE: added back, it was removed starting in pg17)"
+
+ccp_data_checksum_failure:
+  query: "SELECT datname AS dbname
+            , checksum_failures AS count
+            , coalesce(extract(epoch from (clock_timestamp() - checksum_last_failure)), 0) AS time_since_last_failure_seconds
+          FROM pg_catalog.pg_stat_database;"
+  metrics:
+    - dbname:
+        usage: "LABEL"
+        description: "Database name"
+    - count:
+        usage: "GAUGE"
+        description: "Total number of checksum failures on this database"
+    - time_since_last_failure_seconds:
+        usage: "GAUGE"
+        description: "Time interval in seconds since the last checksum failure was encountered"
