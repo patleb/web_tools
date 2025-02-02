@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.files = Dir["lib/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_ruby', version
-  s.add_dependency 'shakapacker'
+  s.add_dependency 'shakapacker', '~> 8.1.0'
 end

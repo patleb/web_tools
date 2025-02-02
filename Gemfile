@@ -2,8 +2,6 @@ source "https://rubygems.org"
 
 # ruby File.read('.ruby-version').strip if File.exist? '.ruby-version'
 
-gem 'shakapacker', '~> 8.1.0'
-
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   # gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
@@ -35,7 +33,7 @@ gem 'ext_rails', path: './ext_rails'
 gem 'ext_rice', path: './ext_rice'
 gem 'ext_ruby', path: './ext_ruby'
 gem 'ext_css', path: './ext_css'
-gem 'ext_shakapacker', path: './ext_shakapacker'
+gem 'ext_shakapacker', path: './ext_shakapacker', require: false
 gem 'ext_whenever', path: './ext_whenever'
 gem 'mix_admin', path: './mix_admin'
 gem 'mix_certificate', path: './mix_certificate'

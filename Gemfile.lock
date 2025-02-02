@@ -107,7 +107,7 @@ PATH
   specs:
     ext_shakapacker (0.3.0)
       ext_ruby (= 0.3.0)
-      shakapacker
+      shakapacker (~> 8.1.0)
 
 PATH
   remote: ext_whenever
@@ -601,7 +601,6 @@ DEPENDENCIES
   mix_setting!
   mix_task!
   mix_user!
-  shakapacker (~> 8.1.0)
   sunzistrano!
   web_tools!
 

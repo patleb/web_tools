@@ -5,7 +5,7 @@ After=postgresql@${postgres}-main.service
 [Service]
 User=${deployer_name}
 WorkingDirectory=$current_path
-ExecStart=/home/${deployer_name}/.rbenv/bin/rbenv sudo RAKE_OUTPUT=true RAILS_ENV=${env} RAILS_APP=${app} bin/rake job:watch -- --queue=${job_queue}
+ExecStart=/home/${deployer_name}/.rbenv/bin/rbenv sudo PACK=false RAKE_OUTPUT=true RAILS_ENV=${env} RAILS_APP=${app} bin/rake job:watch -- --queue=${job_queue}
 Restart=always
 StandardInput=null
 StandardOutput=append:$current_path/log/job.log

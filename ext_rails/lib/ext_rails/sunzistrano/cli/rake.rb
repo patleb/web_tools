@@ -40,7 +40,7 @@ module Sunzistrano
 
       def rake_remote_cmd(task)
         rake_output = sun.verbose || sun.nohup || sun.wait.present?
-        environment = ["RAKE_OUTPUT=#{rake_output}", "RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
+        environment = ["PACK=false", "RAKE_OUTPUT=#{rake_output}", "RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
         if sun.sudo
           rbenv_sudo = "rbenv sudo #{environment.join(' ')}"
         else
