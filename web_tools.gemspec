@@ -16,11 +16,11 @@ Gem::Specification.new do |s|
   s.files = Dir["lib/**/*", "LICENSE", "README.md"]
 
   s.add_dependency "ext_coffee",      version
+  s.add_dependency "ext_css",         version
   s.add_dependency "ext_minitest",    version
   s.add_dependency "ext_rails",       version
   s.add_dependency "ext_rice",        version
   s.add_dependency "ext_ruby",        version
-  s.add_dependency "ext_css",         version
   s.add_dependency "ext_shakapacker", version
   s.add_dependency "ext_whenever",    version
   s.add_dependency "mix_admin",       version
