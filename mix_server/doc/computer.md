@@ -146,6 +146,8 @@ sudo apt update && sudo apt install codium -y
 - User > Text Editor > Font > Font Size [12]
 - User > Editor > Line Height [1.7]
 - User > Window > Density > Editor Tab Height [compact]
+- User > Window > Open Folders In New Window [on]
+- User > Window > New Window Dimensions [inherit]
 - Theme > High contrast
 - Extensions: GitLens, Docker, DBCode, Ruby LSP
 
