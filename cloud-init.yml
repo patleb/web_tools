@@ -1,4 +1,3 @@
 #cloud-config
 
 ssh_authorized_keys: []
-manage_etc_hosts: false

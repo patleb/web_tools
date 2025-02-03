@@ -211,8 +211,9 @@ module Sunzistrano
         else
           yml = {}
         end
-        keys = yml[:ssh_authorized_keys] || []
+        keys = Array.wrap(yml[:ssh_authorized_keys])
         yml[:ssh_authorized_keys] = keys | Setting.authorized_keys
+        yml[:manage_etc_hosts] = false unless yml.has_key? :manage_etc_hosts
         Pathname.new(TMP_CLOUD_INIT).write(yml.to_hash.pretty_yaml)
       end
 
