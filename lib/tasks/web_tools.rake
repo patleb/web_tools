@@ -27,7 +27,7 @@ namespace :test do
       end
     end
     isolated_tests.compact_blank.each do |gems|
-      puts "run all tests for: #{gems.keys.map(&:camelize).join(', ')}"
+      puts "run all tests for: #{gems.keys.map(&:camelize).sort.join(', ')}"
       Rails::TestUnit::Runner.run_from_rake 'test', gems.values
     end
   end
