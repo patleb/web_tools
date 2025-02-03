@@ -7,11 +7,11 @@ group :development, :test do
   # gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
   gem 'ext_minitest', path: './ext_minitest'
   # gem 'ext_minitest', github: 'patleb/web_tools'
-  # gem 'ext_minitest', path: '~/projects/web_tools'
+  # gem 'ext_minitest', path: '~/code/web_tools'
 end
 
 # gem 'web_tools', github: 'patleb/web_tools'
-# gem 'web_tools', path: '~/projects/web_tools'
+# gem 'web_tools', path: '~/code/web_tools'
 
 ### AFTER Gemfile ###
 
@@ -29,10 +29,10 @@ gemspec
 # gem 'byebug', group: [:development, :test]
 
 gem 'ext_coffee', path: './ext_coffee'
+gem 'ext_css', path: './ext_css'
 gem 'ext_rails', path: './ext_rails'
 gem 'ext_rice', path: './ext_rice'
 gem 'ext_ruby', path: './ext_ruby'
-gem 'ext_css', path: './ext_css'
 gem 'ext_shakapacker', path: './ext_shakapacker', require: false
 gem 'ext_whenever', path: './ext_whenever'
 gem 'mix_admin', path: './mix_admin'
