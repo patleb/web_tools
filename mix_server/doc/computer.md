@@ -62,6 +62,7 @@ Note: run `mkdir -p .git/safe` with every new `git clone` of a trusted project.
 gem install bundler
 bundle install
 sudo chown -R $USER:$USER "$HOME/.npm"
+rm -f ~/package.json
 yarn install
 cp config/secrets.example.yml config/secrets.yml
 sudo chmod 600 .multipass/private_key*
