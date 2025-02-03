@@ -66,7 +66,7 @@ module Monit
 
       # reset_stat_bgwriter once resolved
       def self.reset_stat_bgwriter
-        db.with_connection{ |c| c.exec_query("SELECT pg_stat_reset_shared('bgwriter')::TEXT") }
+        db.send(:with_connection){ |c| c.exec_query("SELECT pg_stat_reset_shared('bgwriter')::TEXT") }
         true
       end
 
