@@ -28,10 +28,6 @@ module Monit
         m_access(__method__){ db.indexes }
       end
 
-      def self.ar_connection
-        db.send(:connection_model).connection
-      end
-
       def self.public?(row, schema_key = :schema)
         row[schema_key] == 'public'
       end
