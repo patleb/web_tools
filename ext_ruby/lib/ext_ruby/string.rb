@@ -56,6 +56,15 @@ class String
     YAML.safe_load args
   end
 
+  def to_rgb
+    return unless match? /\A#[0-9a-f]{6}\z/i
+    rgb = []
+    chars[1..-1].each_slice(2) do |chars|
+      rgb << chars.join.to_i(16)
+    end
+    rgb
+  end
+
   def match_glob?(pattern)
     if pattern.include? '*'
       match? Regexp.new("^#{pattern.gsub('*', '\w*')}$")

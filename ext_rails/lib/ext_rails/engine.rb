@@ -140,11 +140,12 @@ module ExtRails
       app.config.session_store :cookie_store, key: "_#{Rails.application.name}_session", expire_after: 400.days
     end
 
-    initializer 'ext_rails.rack_lineprof' do |app|
+    initializer 'ext_rails.rack_middlewares' do |app|
       if (file = Rails.root.join('tmp/profile.txt')).exist? && (matcher = file.readlines.first&.strip).present?
         require 'ext_rails/rack_lineprof'
         app.middleware.use Rack::Lineprof, profile: matcher
       end
+      app.middleware.use Rack::ContentLength if Rails.env.local?
     end
 
     config.after_initialize do

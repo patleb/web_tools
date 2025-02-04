@@ -22,6 +22,12 @@ module ActiveRecord::Base::WithPartition
   COLUMN_VALUE = /Partition key of the failing row contains \((\w+)\) = \(([\d :.-]+)\)/i
 
   class_methods do
+    def partition_size_for(total_keys:, total_size:, total_ram: 8_000_000_000)
+      block_size = total_ram * 0.25 * 0.5 # shared_buffers should be (total_ram / 4) and allow 2 partitions
+      block_keys = block_size * total_keys / total_size
+      2 ** Math.log2(block_keys.to_i).ceil
+    end
+
     def partition_size(table = table_name)
       ExtRails.config.db_partitions[table]
     end
