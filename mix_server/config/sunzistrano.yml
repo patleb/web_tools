@@ -30,7 +30,8 @@ provision:
         if: 'sun.server_ssl'
     - ssl/dhparam:
         if: 'sun.server_ssl'
-    - addons/python_gis
+    - addons/python_gis:
+        if: 'sun.postgis'
     - db/postgres-{postgres}/addons/postgis-{postgis}:
         if: 'sun.postgis'
     - db/postgres-{postgres}/tune
