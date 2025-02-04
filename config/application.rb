@@ -45,7 +45,6 @@ module WebTools
     config.active_record.belongs_to_required_by_default = false
     config.active_record.cache_versioning = false
     config.cache_store = :global_store
-    config.yjit = false
 
     ExtRails.configure do |config|
       config.sql_debug = false
