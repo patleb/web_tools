@@ -66,7 +66,7 @@ module Sunzistrano
 
     def debug
       return @debug if defined? @debug
-      value = ENV['DEBUG'].presence || self[:debug]
+      value = ENV['DEBUG'].presence
       @debug = value == 'trace' ? value : value.to_b
     end
 

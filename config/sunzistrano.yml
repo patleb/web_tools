@@ -7,9 +7,6 @@ gems:
   - ext_rails
   - ext_whenever
 
-shared:
-  debug: false
-
 provision:
   recipes:
     # - app_packages
