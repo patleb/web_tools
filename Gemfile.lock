@@ -195,7 +195,7 @@ PATH
 PATH
   remote: mix_setting
   specs:
-    mix_setting (0.1.0)
+    mix_setting (0.2.0)
       ext_ruby
 
 PATH
@@ -216,7 +216,7 @@ PATH
 PATH
   remote: sunzistrano
   specs:
-    sunzistrano (0.1.0)
+    sunzistrano (0.2.0)
       mix_setting
 
 GEM

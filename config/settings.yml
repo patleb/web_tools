@@ -1,4 +1,4 @@
-lock: 0.1.0
+lock: 0.2.0
 types:
 gems:
   - mix_server

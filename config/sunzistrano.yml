@@ -1,4 +1,4 @@
-lock: 0.1.0
+lock: 0.2.0
 gems:
   - mix_server
   - mix_job
@@ -17,9 +17,6 @@ deploy:
 #    - deploy/add_gitignored_files:
 #        before: deploy/bundler
   git_config_url: true
-
-virtual:
-  swap_size: 1G
 
 staging:
   swap_size: 2G
