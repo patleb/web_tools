@@ -13,6 +13,7 @@ provision:
     - bootstrap/ssh
     - bootstrap/firewall
     - bootstrap/firewall_deny_mail
+    - bootstrap/firewall_deny_list-{deny_upgrade}
     - bootstrap/private_ip
     - bootstrap/osquery
     - bootstrap/clamav
