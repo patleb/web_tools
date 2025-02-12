@@ -1,15 +1,3 @@
-namespace :tools do
-  desc 'symlink all private gems'
-  task :symlink_all => :environment do
-    root = WebTools.root.join('lib_private')
-    root.mkdir unless root.exist?
-    root.children.select(&:symlink?).each(&:delete.with(false))
-    WebTools.private_gems.each do |gem_name, gem_path|
-      root.join(gem_name).symlink(gem_path, false)
-    end
-  end
-end
-
 namespace :test do
   testable_gems = WebTools.gems.merge(WebTools.private_gems).select{ |_name, path| path.join('test').exist? }
   minitest_gems = testable_gems.select{ |_name, path| path.glob('test/**/*_test.rb').first.read.include? 'test/spec_helper' }

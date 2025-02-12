@@ -10,12 +10,10 @@ gems:
 provision:
   recipes:
     # - app_packages
+    - addons/numo_blis
     - reboot
 
 deploy:
-#  recipes:
-#    - deploy/add_gitignored_files:
-#        before: deploy/bundler
   git_config_url: true
 
 staging:

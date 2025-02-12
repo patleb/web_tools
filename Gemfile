@@ -51,4 +51,4 @@ gem 'mix_task', path: './mix_task'
 gem 'mix_user', path: './mix_user'
 gem 'sunzistrano', path: './sunzistrano'
 
-eval File.read('Gemfile.private') if File.exist? 'Gemfile.private'
+gem 'numo-blis'

@@ -26,14 +26,6 @@ module WebTools
     @isolated_test_gems ||= Set.new(['mix_geo', 'mix_task'])
   end
 
-  def self.private_gems
-    @private_gems ||= (!File.exist?('Gemfile.private') ? [] : File.readlines('Gemfile.private')
-      .select_map{ |line| line.match(/^ *gem +["']([^"']+)["']/)&.captures&.first })
-      .flat_map{ |name| subgems Gem.root(name) }
-      .index_with{ |d| Gem.root(d) }
-      .to_hwia
-  end
-
   def self.gems
     @gems ||= subgems(root)
       .index_with{ |d| Gem.root(d) }
