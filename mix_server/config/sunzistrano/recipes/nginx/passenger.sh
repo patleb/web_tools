@@ -22,7 +22,7 @@ rm -f /etc/nginx/conf.d/mod-http-passenger.conf
 # https://bugs.launchpad.net/ubuntu/+source/perl/+bug/1897561
 rm -f /etc/nginx/modules-enabled/50-mod-http-perl.conf
 
-chown ${deployer_name}:adm /var/log/nginx
+chown ${deployer_name}:${deployer_name} /var/log/nginx
 
 sun.service_renable nginx
 passenger-config validate-install
