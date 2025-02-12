@@ -87,7 +87,7 @@ module MixServer
       end
 
       def filter_subnets
-        @filter_subnets ||= filter_ips.to_a.concat(Setting[:nginx_denied_ips]).map{ |subnet| IPAddr.new(subnet) }
+        @filter_subnets ||= filter_ips.to_a.concat(Setting[:denied_ips]).map{ |subnet| IPAddr.new(subnet) }
       end
 
       def ided_paths

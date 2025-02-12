@@ -1,20 +1,16 @@
 user <%= sun.deployer_name %> <%= sun.deployer_name %>;
 worker_processes auto;
-worker_rlimit_nofile 4096;
+worker_rlimit_nofile 8192;
 pid /run/nginx.pid;
 error_log /var/log/nginx/error.log;
 include /etc/nginx/modules-enabled/*.conf;
 
 events {
-  worker_connections 1024;
-  multi_accept on;
-  use epoll;
+  worker_connections 4096;
+  # multi_accept on;
 }
 
 http {
-  # https://www.scalyr.com/community/guides/an-in-depth-guide-to-nginx-metrics
-  # https://nginx.org/en/docs/http/ngx_http_core_module.html#variables
-  # TODO make 3 log types: filter_log, system_log, assets_log
   log_format mix_server_access_log '$remote_addr - $remote_user [$time_local] '
     '"$request" $status $bytes_sent $request_length '
     '"$http_referer" "$http_user_agent" '
@@ -31,6 +27,12 @@ http {
   types_hash_max_size 2048;
   server_tokens off;
 
+  server_names_hash_bucket_size 64;
+  # server_name_in_redirect off;
+
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+
   client_max_body_size '<%= sun.nginx_max_body_size %>';
 
   open_file_cache max=8192 inactive=10m;
@@ -38,27 +40,11 @@ http {
   open_file_cache_min_uses 1;
   open_file_cache_errors on;
 
-  server_names_hash_bucket_size 64;
-  # server_name_in_redirect off;
-
-  include /etc/nginx/mime.types;
-  default_type application/octet-stream;
-
 <% if sun.server_ssl %>
   ##
   # SSL Settings
   ##
-  ### References
-  # https://gist.github.com/plentz/6737338
-  # https://michael.lustfield.net/nginx/getting-a-perfect-ssl-labs-score
-  # https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-with-http-2-support-on-ubuntu-16-04
-  # https://medium.com/@mvuksano/how-to-properly-configure-your-nginx-for-tls-564651438fe0
-  # https://mozilla.github.io/server-side-tls/ssl-config-generator/
-  # https://www.linode.com/docs/web-servers/nginx/nginx-ssl-and-tls-deployment-best-practices
-  # https://www.acunetix.com/blog/web-security-zone/hardening-nginx/
-  # https://www.acunetix.com/blog/articles/tls-ssl-cipher-hardening/
-  # https://www.phusionpassenger.com/library/deploy/nginx/prod_ssl.html
-  # https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-in-ubuntu-18-04
+
   ssl_protocols TLSv1.2 TLSv1.3;
   ssl_prefer_server_ciphers on;
   ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
@@ -81,7 +67,6 @@ http {
   ##
 
   gzip on;
-  gzip_min_length 1024;
 
   gzip_vary on;
   gzip_proxied any;
@@ -89,13 +74,10 @@ http {
   gzip_buffers 16 8k;
   gzip_http_version 1.1;
   gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+  gzip_min_length 1024;
 
   ##
   # Phusion Passenger config
-  ##
-  # Uncomment it if you installed passenger or passenger-enterprise
-  ##
-  # https://www.phusionpassenger.com/docs/references/config_reference/nginx
   ##
 
   passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
@@ -108,9 +90,6 @@ http {
   passenger_disable_anonymous_telemetry on;
   # passenger_max_instances_per_app 2;
   passenger_max_pool_size <%= sun.max_pool_size %>;
-  # TODO https://www.phusionpassenger.com/library/config/nginx/reference/#passenger_max_request_queue_time
-  # or in after_action keep the last long request (5 sec. or so) for about 30 sec with (*unique) session id in cache
-  # and send this response if client request is the same (this could mitigates sucessive refreshes)
 
   # Do not allow IP specific request not defined within server blocks of /etc/nginx/sites-enabled/*
   server {
@@ -124,47 +103,6 @@ http {
     return 444;
   }
 
-  <% if (satisfy = sun.nginx_satisfy) %>
-    satisfy '<%= satisfy %>';
-  <% end %>
-
-  # TODO doesn't seem to work --> maybe use ip tables instead?
-  #--> https://askubuntu.com/questions/1358471/block-1-4-million-ip-addresses-on-vps
-  #--> https://docs.rackspace.com/docs/block-ip-range-from-countries-with-geoip-and-iptables
-  <% sun.nginx_denied_ips.each do |ip| %>
-    deny <%= ip %>;
-  <% end %>
-  <% if (allowed_ips = sun.nginx_allowed_ips).any? %>
-    <% allowed_ips.each do |ip| %>
-      allow <%= ip %>;
-    <% end %>
-    deny all;
-  <% end %>
-
-  <% if sun.nginx_auth_basic %>
-    auth_basic           "Restricted Content";
-    auth_basic_user_file /etc/nginx/.htpasswd;
-  <% end %>
-
-  # TODO https://www.datadoghq.com/blog/how-to-collect-nginx-metrics/
-  # server {
-  #   location /nginx_status {
-  #     stub_status on;
-  #
-  #     access_log off;
-  #     allow 127.0.0.1;
-  #     deny all;
-  #   }
-  # }
-
-  # TODO Rate limiting
-  # https://www.nginx.com/blog/rate-limiting-nginx/
-  # https://nginx.org/en/docs/http/ngx_http_limit_req_module.html#limit_req_status
-  # https://rohitishere1.github.io/web%20servers/2015/03/29/more-on-request-rate-limiting-on-nginx/
-  # limit_req_zone $binary_remote_addr zone=per_ip:10m rate=2r/s;
-  # limit_req_zone $server_name zone=per_server:10m rate=20r/s;
-  # limit_req_status 429;
-
   ##
   # Virtual Host Configs
   ##
@@ -172,25 +110,3 @@ http {
   include /etc/nginx/conf.d/*.conf;
   include /etc/nginx/sites-enabled/*;
 }
-
-
-#mail {
-#	# See sample authentication script at:
-#	# http://wiki.nginx.org/ImapAuthenticateWithApachePhpScript
-#
-#	# auth_http localhost/auth.php;
-#	# pop3_capabilities "TOP" "USER";
-#	# imap_capabilities "IMAP4rev1" "UIDPLUS";
-#
-#	server {
-#		listen     localhost:110;
-#		protocol   pop3;
-#		proxy      on;
-#	}
-#
-#	server {
-#		listen     localhost:143;
-#		protocol   imap;
-#		proxy      on;
-#	}
-#}

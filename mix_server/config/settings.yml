@@ -6,8 +6,7 @@ types:
   server_master_data: pathname
   server_cluster_data: pathname
   server_cluster: boolean
-  nginx_denied_ips: array
-  nginx_allowed_ips: array
+  denied_ips: array
   monit_interval: interval
 
 shared:
@@ -21,8 +20,6 @@ shared:
   deployer_name: deployer
   deployer_id: 1001
   nginx_max_body_size: 100m
-  nginx_denied_ips: ['74.217.28.0/22']
-  nginx_allowed_ips: []
   osquery_logger_path: /var/log/osquery
   data_partition: /dev/sdb
   data_directory: /opt/storage

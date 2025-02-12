@@ -89,8 +89,6 @@ deploy:
     - config/secrets.yml
     - public/503.html
   git_shallow_clone: true
-  nginx_satisfy: false
-  nginx_auth_basic: false
   nginx_redirects: {}
   public_dirs:
     - css
@@ -122,14 +120,13 @@ computer:
     - bootstrap/files
     - bootstrap/packages
     - db/postgres_client
-    - addons/python_gis
+    - addons/numo_blis
     - computer/grub
     - computer/backports
     - computer/xtradeb
     - computer/packages
     - computer/docker
-    - computer/gis/netcdf
-    - computer/gis/qgis
+    - computer/qgis
     - utils/packages
     - utils/htop
     - utils/mailpit
