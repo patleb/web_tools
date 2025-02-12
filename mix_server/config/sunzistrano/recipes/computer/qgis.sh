@@ -1,4 +1,8 @@
 sun.install "gnupg software-properties-common"
+sun.install "netcdf-bin"
+sun.install "ncview"
+sun.install "gdal-bin"
+sun.install "libgdal-dev"
 
 mkdir -p /etc/apt/keyrings
 wget -qO /etc/apt/keyrings/qgis-archive-keyring.gpg https://download.qgis.org/downloads/qgis-archive-keyring.gpg
