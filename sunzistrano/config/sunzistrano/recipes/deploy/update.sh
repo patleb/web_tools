@@ -1,16 +1,25 @@
 desc 'Clone the repo to the cache'
 if [[ "${git_shallow_clone}" == true ]]; then
-  git_shallow_clone=1
+  git_shallow_clone="--depth 1"
 fi
 if [[ -f "${repo_path}/HEAD" ]]; then
   echo "Mirror exists at ${repo_path}"
 elif [[ "${git_shallow_clone}" != false ]]; then
-  git clone --mirror --depth ${git_shallow_clone} --no-single-branch ${repo_url} ${repo_path}
+  git clone --mirror ${git_shallow_clone} --no-single-branch ${repo_url} ${repo_path}
 else
   git clone --mirror ${repo_url} ${repo_path}
 fi
 
 cd ${repo_path}
+
+if [[ "${git_submodules}" == true ]]; then
+  desc 'Update the repo submodules'
+  if [[ "${git_shallow_clone}" != false ]]; then
+    git submodule update --init --recursive ${git_shallow_clone} --no-single-branch
+  else
+    git submodule update --init --recursive
+  fi
+fi
 
 desc 'Update the repo mirror to reflect the origin state'
 git remote set-url origin ${repo_url}

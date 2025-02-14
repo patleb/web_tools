@@ -7,4 +7,5 @@ export shared_path="${deploy_path}/shared"
 export revision_log="${deploy_path}/revisions.log"
 export git_shallow_clone=${git_shallow_clone:-false}
 export git_verify_commit=${git_verify_commit:-false}
+export git_submodules=${git_submodules:-false}
 export keep_releases=${keep_releases:-5}
