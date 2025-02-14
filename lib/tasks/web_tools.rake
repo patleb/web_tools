@@ -1,5 +1,5 @@
 namespace :test do
-  testable_gems = WebTools.gems.merge(WebTools.private_gems).select{ |_name, path| path.join('test').exist? }
+  testable_gems = WebTools.gems.select{ |_name, path| path.join('test').exist? }
   minitest_gems = testable_gems.select{ |_name, path| path.glob('test/**/*_test.rb').first.read.include? 'test/spec_helper' }
 
   desc 'run all tests for WebTools'
