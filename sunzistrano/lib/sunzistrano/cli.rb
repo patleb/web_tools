@@ -90,26 +90,40 @@ module Sunzistrano
 
       def compile_all
         copy_files
+        copy_local_files
         build_helpers
         build_role
       end
 
       def copy_files
-        basenames = "#{CONFIG_PATH}/{files,helpers,recipes,roles,scripts}/**/*"
-        dirnames = [basenames]
+        paths = "#{CONFIG_PATH}/{files,helpers,recipes,roles,scripts}/**/*"
+        dirs = [paths]
         sun.gems.each_value do |root|
-          dirnames << root.expand_path.join(basenames).to_s
+          dirs << root.expand_path.join(paths).to_s
         end
         files = []
-        dirnames.each do |dirname|
-          files += Dir[dirname].select{ |f| copy? f, files }
+        dirs.each do |path|
+          files += Dir[path].select{ |f| copy? f, files }
         end
         files.each do |file|
           compile_file File.expand_path(file), bash_path(file), basetype(file)
         end
       end
 
-      def compile_file(src, dst, type)
+      def copy_local_files
+        files = []
+        (sun.files || []).each do |path|
+          files += Dir[path].select_map do |f|
+            file = Setting.root.join(f).to_s
+            file if copy? file, files
+          end
+        end
+        files.each do |file|
+          compile_file file, bash_path(file)
+        end
+      end
+
+      def compile_file(src, dst, type = nil)
         dst = dst.delete_suffix('.erb') if src.end_with? '.erb'
         dst = sun.gsub_variables(dst) || dst if type == :file
         template src, dst, force: true, verbose: sun.debug
@@ -158,7 +172,7 @@ module Sunzistrano
       def copy_hooks(type)
         %i(before after).each do |hook|
           file = "#{type}_#{hook}.sh"
-          src = Sunzistrano.root.join(CONFIG_PATH, basename(file)).expand_path
+          src = Sunzistrano.root.join(CONFIG_PATH, basepath(file)).expand_path
           dst = bash_path(file)
           copy_file src, dst, force: true, verbose: sun.debug
         end
@@ -277,11 +291,11 @@ module Sunzistrano
         File.file?(file) &&
           !file.match?(/\.keep$/) &&
           !file.match?(/\/roles\/(?!((#{sun.role}|shared)(\/.+)?)\.sh)/) &&
-          others.none?{ |f| file.end_with? basename(f) }
+          others.none?{ |f| file.end_with? basepath(f) }
       end
 
       def bash_path(file)
-        File.expand_path("#{bash_dir}/#{basename(file)}")
+        File.expand_path("#{bash_dir}/#{basepath(file)}")
       end
 
       def bash_dir
@@ -293,11 +307,11 @@ module Sunzistrano
       end
 
       def basetype(file)
-        basename(file).split('/').first.delete_suffix('s').to_sym
+        basepath(file).split('/').first.delete_suffix('s').to_sym
       end
 
-      def basename(file)
-        file.sub(/.*#{CONFIG_PATH}\//, '')
+      def basepath(file)
+        file.sub(Setting.root.to_s, '').sub(/.*#{CONFIG_PATH}\//, '')
       end
 
       def capture2e(*cmd)

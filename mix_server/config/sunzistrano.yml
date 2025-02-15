@@ -3,6 +3,8 @@ shared:
     <%= File.exist?('.ruby-version') ? File.read('.ruby-version').strip : RUBY_VERSION %>
 
 provision:
+  files:
+    - mix_server/vendor/server-configs-nginx/**/*.*
   recipes:
     - bootstrap/upgrade-{upgrade}
     - bootstrap/timezone_locale
