@@ -8,6 +8,7 @@ sun.update
 sun.install "libnginx-mod-http-passenger"
 sun.install "nginx-extras"
 
+sun.backup_compare "/etc/nginx/mime.types"
 sun.backup_compare "/etc/nginx/nginx.conf"
 sun.backup_compare "/etc/nginx/conf.d/mod-http-passenger.conf"
 sun.backup_compare "/etc/nginx/sites-available/default"
