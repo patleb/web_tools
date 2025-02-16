@@ -16,10 +16,6 @@ http {
     '"$http_referer" "$http_user_agent" '
     '$request_time $pipe - $scheme - $gzip_ratio - $pid';
 
-  ##
-  # Basic Settings
-  ##
-
   sendfile on;
   tcp_nopush on;
   tcp_nodelay on;
@@ -40,31 +36,19 @@ http {
   open_file_cache_min_uses 1;
   open_file_cache_errors on;
 
-<% if sun.server_ssl %>
-  ##
-  # SSL Settings
-  ##
-
-  ssl_protocols TLSv1.2 TLSv1.3;
-  ssl_prefer_server_ciphers on;
-  ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
-  ssl_certificate /etc/nginx/ssl/<%= sun.server_host %>.server.crt;
-  ssl_certificate_key /etc/nginx/ssl/<%= sun.server_host %>.server.key;
-  ssl_dhparam /etc/nginx/ssl/<%= sun.server_host %>.server.dh;
-  ssl_session_cache shared:SSL:50m;
-  ssl_session_timeout 10m;
-<% end %>
-
-  ##
-  # Logging Settings
-  ##
+  <% if sun.server_ssl %>
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
+    ssl_certificate /etc/nginx/ssl/<%= sun.server_host %>.server.crt;
+    ssl_certificate_key /etc/nginx/ssl/<%= sun.server_host %>.server.key;
+    ssl_dhparam /etc/nginx/ssl/<%= sun.server_host %>.server.dh;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_timeout 10m;
+  <% end %>
 
   access_log /var/log/nginx/access.log mix_server_access_log;
   log_not_found off;
-
-  ##
-  # Gzip Settings
-  ##
 
   gzip on;
 
@@ -75,10 +59,6 @@ http {
   gzip_http_version 1.1;
   gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
   gzip_min_length 1024;
-
-  ##
-  # Phusion Passenger config
-  ##
 
   passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
   passenger_ruby /home/<%= sun.deployer_name %>/.rbenv/shims/ruby;
@@ -102,10 +82,6 @@ http {
     server_name _;
     return 444;
   }
-
-  ##
-  # Virtual Host Configs
-  ##
 
   include /etc/nginx/conf.d/*.conf;
   include /etc/nginx/sites-enabled/*;
