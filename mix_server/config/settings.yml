@@ -46,6 +46,7 @@ shared:
   monit_swap_usage: 50.0
   monit_interval: 5 minutes
   monit_from_cron: true
+  denied_ips: $METHOD
 
 computer:
   server_host: <%= Process.host.name %>
