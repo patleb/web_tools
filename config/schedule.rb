@@ -28,7 +28,7 @@ ExtWhenever.setup(self)
 # end
 #
 # every :minute do
-#   bash 'every_minute.sh'
+#   script 'every_minute'
 # end
 
 case @environment
