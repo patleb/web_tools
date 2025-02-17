@@ -13,9 +13,6 @@ provision:
     - addons/numo_blis
     - reboot
 
-deploy:
-  git_config_url: true
-
 staging:
   swap_size: 2G
 

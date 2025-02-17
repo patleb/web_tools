@@ -1,4 +1,4 @@
-git_config_url=${git_config_url:-false}
+git_config_url=${git_config_url:-true}
 
 desc 'Check that the repository is reachable'
 if [[ "${git_config_url}" == true ]]; then
