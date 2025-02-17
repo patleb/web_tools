@@ -154,9 +154,15 @@ module Sunzistrano
         end
       end
       recipes.each do |name|
+        next if name.blank?
         id = gsub_variables(name)
         id = "'#{id}'" if id
-        yield name, id unless name.blank?
+        if deploy
+          next unless name.start_with? 'deploy/'
+        else
+          next if name.start_with? 'deploy/'
+        end
+        yield name, id
       end
     end
 
