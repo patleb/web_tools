@@ -15,13 +15,12 @@ ExtWhenever.setup(self)
 #
 # Examples
 # --------
-# TODO every first saturday of every month --> can't use whenever syntax --> week_of_the_year % total_year_weeks
 # every :month, at: "start of the month at 4:30 am" do
 #   rake 'every_month'
 # end
 #
 # every :week do
-#   runner 'EveryWeekJob.perform_later'
+#   rake 'task:runner[EveryWeekJob.perform_later]'
 # end
 #
 # every :day, at: '8:00 am' do
@@ -35,8 +34,8 @@ ExtWhenever.setup(self)
 case @environment
 when 'virtual'
   every :minute do
-    # bash_script 'version'
-    # bash_helper 'sun.os_name'
+    # script 'version'
+    # helper 'sun.os_name'
     # rake 'zeitwerk:check'
   end
 when 'staging', 'production'
