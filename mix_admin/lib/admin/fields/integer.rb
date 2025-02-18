@@ -13,8 +13,13 @@ module Admin
         false
       end
 
+      register_option :pretty? do
+        true
+      end
+
       def format_value(value)
         value = [value.begin, value.end] if value.is_a? Range
+        return value unless pretty?
         value.pretty_int.html_safe if value
       end
 
