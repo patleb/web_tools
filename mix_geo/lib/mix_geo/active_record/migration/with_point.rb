@@ -1,5 +1,5 @@
-module ActiveRecord::Migration::WithGeometry
-  def add_geometry_column(table_name, column_name, null: true)
+module ActiveRecord::Migration::WithPoint
+  def add_point_column(table_name, column_name, null: true)
     reversible do |change|
       change.up do
         execute <<-SQL.strip_sql
@@ -15,4 +15,4 @@ module ActiveRecord::Migration::WithGeometry
   end
 end
 
-ActiveRecord::Migration.include ActiveRecord::Migration::WithGeometry
+ActiveRecord::Migration.include ActiveRecord::Migration::WithPoint

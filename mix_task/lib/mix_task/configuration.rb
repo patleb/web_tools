@@ -19,6 +19,7 @@ module MixTask
         'try:send_email_later' => 102,
         'try:raise_exception'  => 104,
         'try:sleep'            => 106,
+        'try:sleep_long'       => 108,
       }
     end
 

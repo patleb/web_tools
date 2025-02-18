@@ -20,8 +20,8 @@ module MixGeo
 
     ActiveSupport.on_load(:active_record) do
       if Setting[:postgis]
-        require 'mix_geo/active_record/migration/with_geometry'
-        require 'mix_geo/active_record/migration/with_raster'
+        require 'activerecord-postgis-adapter'
+        require 'mix_geo/active_record/migration/with_postgis'
       end
       MixSearch.config.available_types['GeoState'] = 10
     end

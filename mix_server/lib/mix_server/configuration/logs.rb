@@ -189,6 +189,8 @@ module MixServer
             0000:0000:0000:0000:0000:0000:0000:0000
           ).concat(
             (%w(169.254 172.17 172.18 10 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| /^#{ip}\./ } # private networks + ubuntu ip ranges
+          ).concat(
+            Array.wrap(Setting[:ftp_host])
           ),
         }
       end

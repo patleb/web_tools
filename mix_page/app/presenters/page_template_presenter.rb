@@ -16,7 +16,7 @@ class PageTemplatePresenter < ActivePresenter::Base
         edit_action,
         title.presence || pretty_blank,
       ]),
-      yield,
+      (yield if block_given?),
     ]}
   end
 
