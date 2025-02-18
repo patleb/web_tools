@@ -18,9 +18,14 @@ module Admin
       end
 
       def format_value(value)
-        value = [value.begin, value.end] if value.is_a? Range
-        return value unless pretty?
-        value.pretty_int.html_safe if value
+        if value.is_a? Range
+          value = [value.begin, value.end]
+          value = value.map(&:pretty_int) if pretty?
+          value.join('...').html_safe
+        else
+          return value unless pretty?
+          value.pretty_int.html_safe if value
+        end
       end
 
       def input_type
