@@ -3,33 +3,21 @@
 require_relative '../config/boot'
 require 'fileutils'
 
-WEB_TOOLS = File.expand_path('..', __dir__)
-# TODO extract from jestConfig.roots in jest.config.js instead
-MIX_ADMIN = File.expand_path(Gem.loaded_specs['mix_admin'].gem_dir)
-EXT_COFFEE = File.expand_path(Gem.loaded_specs['ext_coffee'].gem_dir)
-dirs = %W(
-  app/javascript/concepts
-  app/javascript/core_ext
-  #{MIX_ADMIN}/lib/javascript
-  #{EXT_COFFEE}/lib/javascript
-  #{EXT_COFFEE}/vendor/javascript
-  #{EXT_COFFEE}/test/fixtures/files
-  test/fixtures/files
-)
+APP_ROOT = File.expand_path('..', __dir__)
+
 command, *extra_dirs = ARGV
 coffee = 'node_modules/.bin/coffee'
-Dir.chdir(WEB_TOOLS) do
+dirs = ['app/javascript', 'test/fixtures/files', *extra_dirs]
+Dir.chdir(APP_ROOT) do
   dirs.select!{ |dir| Dir.exist? dir }
-  dirs.reject!{ |dir| dir.start_with? MIX_ADMIN, EXT_COFFEE } if command.end_with? '-app'
-  dirs.select!{ |dir| dir.start_with? MIX_ADMIN, EXT_COFFEE } if command.end_with? '-lib'
   if File.executable? coffee
     case command
-    when 'compile', 'compile-app', 'compile-lib'
-      exec(coffee, '--bare', '--compile', '--map', *dirs, *extra_dirs)
-    when 'watch', 'watch-app', 'watch-lib'
-      exec(coffee, '--bare', '--compile', '--map', '--watch', *dirs, *extra_dirs)
-    when 'clobber', 'clobber-app', 'clobber-lib'
-      (dirs + extra_dirs).each do |dir|
+    when 'compile'
+      exec(coffee, '--bare', '--compile', '--map', *dirs)
+    when 'watch'
+      exec(coffee, '--bare', '--compile', '--map', '--watch', *dirs)
+    when 'clobber'
+      dirs.each do |dir|
         Dir["#{dir}/**/*.coffee"].each do |file|
           FileUtils.rm_f file.sub(/\.coffee$/, '.js')
           FileUtils.rm_f file.sub(/\.coffee$/, '.js.map')
