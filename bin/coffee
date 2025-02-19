@@ -18,7 +18,7 @@ Dir.chdir(APP_ROOT) do
       exec(coffee, '--bare', '--compile', '--map', '--watch', *dirs)
     when 'clobber'
       dirs.each do |dir|
-        Dir["#{dir}/**/*.coffee"].each do |file|
+        Dir["#{dir}/**{,/*/**}/*.coffee"].each do |file|
           FileUtils.rm_f file.sub(/\.coffee$/, '.js')
           FileUtils.rm_f file.sub(/\.coffee$/, '.js.map')
         end
