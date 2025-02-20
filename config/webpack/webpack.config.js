@@ -8,11 +8,10 @@ const webpack = require('webpack')
 // const { readFileSync } = require('fs')
 // const settings = Object.keys(load(readFileSync(resolve('config/settings.yml')), 'utf8')[process.env.NODE_ENV])
 
-let environment = { plugins: [new webpack.EnvironmentPlugin(Object.assign(process.env, {
+let environment = { plugins: [new webpack.EnvironmentPlugin({
   // YML_VALUE: settings.name,
   // LOGGER_DEBUG: true,
   // LOGGER_TRACE: true,
-}))] }
-module.exports = merge(webpackConfig, environment)
+})] }
 
-module.exports = webpackConfig
+module.exports = merge(webpackConfig, environment)

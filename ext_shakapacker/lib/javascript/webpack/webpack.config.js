@@ -1,11 +1,12 @@
 const path = require('path')
+const node_modules = path.resolve('node_modules')
 const require_module = (name) => require(path.resolve('node_modules', name))
 
 const { generateWebpackConfig, config, merge } = require_module('shakapacker')
 const webpack = require_module('webpack')
-const source_path = path.resolve(config.source_path)
-const source_lib_path = path.join(source_path, 'lib')
-const source_vendor_path = path.join(source_path, 'vendor')
+const source = path.resolve(config.source_path)
+const source_lib = path.join(source, 'lib')
+const source_vendor = path.join(source, 'vendor')
 const { existsSync } = require('fs')
 
 let devtool = config.devtool != null ? { devtool: config.devtool } : {}
@@ -21,16 +22,16 @@ try {
 } catch(err) {
   // do nothing
 }
-screens = { plugins: [new webpack.EnvironmentPlugin(Object.assign(process.env, {
+let environment = { plugins: [new webpack.EnvironmentPlugin({
   SCREENS: JSON.stringify(screens),
   LOGGER_DEBUG: false,
   LOGGER_TRACE: false,
-}))] }
+})] }
 
-module.exports = merge(generateWebpackConfig(), devtool, screens, {
+module.exports = merge(generateWebpackConfig(), devtool, environment, {
   resolve: {
-    alias: { '@@': source_path, '@@lib': source_lib_path, '@@vendor': source_vendor_path },
-    modules: [path.resolve('node_modules')],
+    alias: { '@': node_modules, '@@': source, '@@lib': source_lib, '@@vendor': source_vendor },
+    modules: [node_modules],
     extensions: ['.css', '.scss'],
   },
   // plugins: [new webpack.ProvidePlugin({
