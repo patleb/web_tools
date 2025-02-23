@@ -1,9 +1,9 @@
 const path = require('path')
-const node_modules = path.resolve('node_modules')
 const require_module = (name) => require(path.resolve('node_modules', name))
 
 const { generateWebpackConfig, config, merge } = require_module('shakapacker')
 const webpack = require_module('webpack')
+const node_modules = path.resolve('node_modules')
 const source = path.resolve(config.source_path)
 const source_lib = path.join(source, 'lib')
 const source_vendor = path.join(source, 'vendor')
@@ -30,9 +30,10 @@ let environment = { plugins: [new webpack.EnvironmentPlugin({
 
 module.exports = merge(generateWebpackConfig(), devtool, environment, {
   resolve: {
-    alias: { '@': node_modules, '@@': source, '@@lib': source_lib, '@@vendor': source_vendor },
+    alias: { '@@': source, '@@lib': source_lib, '@@vendor': source_vendor, '@@node_modules': node_modules },
     modules: [node_modules],
     extensions: ['.css', '.scss'],
+    symlinks: false,
   },
   // plugins: [new webpack.ProvidePlugin({
   //   _: 'underscore',

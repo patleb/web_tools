@@ -1,5 +1,4 @@
 module.exports = {
-  parser: require('postcss-comment'),
   plugins: [
     require('tailwindcss/nesting'),
     require('tailwindcss')('./tmp/tailwind.config.js'),

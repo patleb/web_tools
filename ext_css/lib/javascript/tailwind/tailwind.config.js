@@ -2,19 +2,19 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 const daisyui_themes = require('daisyui/src/colors/themes')
 const theme_options = {
-  "--rounded-box": "0",
-  "--rounded-btn": "0",
-  "--rounded-badge": "0",
-  "--tab-radius": "0",
-  "--btn-focus-scale": "0.8",
+  '--rounded-box': '0',
+  '--rounded-btn': '0',
+  '--rounded-badge': '0',
+  '--tab-radius': '0',
+  '--btn-focus-scale': '0.8',
 }
 const themes = [{
   light: {
-    ...daisyui_themes["[data-theme=light]"],
+    ...daisyui_themes['[data-theme=light]'],
     ...theme_options,
   }},{
   dark: {
-    ...daisyui_themes["[data-theme=dark]"],
+    ...daisyui_themes['[data-theme=dark]'],
     ...theme_options,
 }}]
 const screens = {
@@ -105,8 +105,44 @@ const ext_css = ({ themes = true, darkTheme = 'dark' } = {}) => {
   })
 }
 
-module.exports = {
-  themes,
-  screens,
-  ext_css,
+let plugins = [
+  require('@tailwindcss/aspect-ratio'),
+  require('@tailwindcss/container-queries'),
+  require('@tailwindcss/forms')({ strategy: 'class' }),
+  require('@tailwindcss/typography'),
+  require('daisyui'),
+  ext_css({ themes }),
+]
+if (process.env.NODE_ENV !== 'production') {
+  plugins.push(require('tailwindcss-debug-screens'))
+}
+
+let config = {
+  content: {
+    files: [
+      'Shakapacker::TAILWIND_CONTENT_FILES',
+    ],
+    extract: {
+      DEFAULT: 'Shakapacker::TAILWIND_CONTENT_EXTRACT',
+    }
+  },
+  theme: {
+    screens,
+    debugScreens: {
+      position: ['bottom', 'right']
+    },
+    extend: {
+      fontFamily: {
+        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+      },
+    },
+  },
+  corePlugins: {
+    aspectRatio: false,
+  },
+  plugins,
+  daisyui: {
+    themes,
+    logs: false
+  }
 }
