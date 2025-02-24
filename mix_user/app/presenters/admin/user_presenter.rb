@@ -1,6 +1,6 @@
 module Admin
   class UserPresenter < Admin::Model
-    navigation_key :system
+    navigation_group_key :system
     navigation_weight 50
     record_label_method :email
 

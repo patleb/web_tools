@@ -1,6 +1,6 @@
 module Admin
   class TaskPresenter < Admin::Model
-    navigation_key :system
+    navigation_group_key :system
     navigation_weight 60
 
     field :name do

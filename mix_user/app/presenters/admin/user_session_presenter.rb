@@ -4,7 +4,7 @@ module Admin
       'session_id'
     end
 
-    navigation_key :system
+    navigation_group_key :system
     navigation_weight 52
     record_label_method :session_id
 

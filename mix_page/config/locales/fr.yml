@@ -1,5 +1,5 @@
 fr:
-  link:
+  link: &link
     website: Site web
   page_paginate:
     prev: Précédent
@@ -21,6 +21,8 @@ fr:
     title_fr: Titre (français)
     title_en: Titre (anglais)
   adminrecord:
+    navigation:
+      <<: *link
     navigation_labels:
       page_template: site web
       page_fields: site web

@@ -111,17 +111,17 @@ module AdminHelper
   def _admin_models_menu
     nodes_stack = Admin::Model.index_models.stable_sort_by(&:weight)
     model_names = nodes_stack.map(&:model_name)
-    group_nodes = nodes_stack.group_by(&:navigation_parent)
-    nodes_stack.group_by(&:navigation_label).html_map do |navigation_label, nodes|
+    parent_nodes = nodes_stack.group_by(&:navigation_parent)
+    nodes_stack.group_by(&:navigation_group).html_map do |navigation_group, nodes|
       first_nodes = nodes.select{ |n| n.navigation_parent.nil? || model_names.exclude?(n.navigation_parent) }
-      li_stack = _admin_models_menu_stack group_nodes, first_nodes
-      _admin_menu_stack li_stack, navigation_label
-    end
+      li_stack = _admin_models_menu_stack parent_nodes, first_nodes
+      _admin_menu_stack li_stack, navigation_group
+    end || ''.html_safe
   end
 
-  def _admin_models_menu_stack(group_nodes, nodes, level = 0)
+  def _admin_models_menu_stack(parent_nodes, nodes, level = 0)
     nodes.html_map do |node|
-      next_nodes = group_nodes[node.model_name] || []
+      next_nodes = parent_nodes[node.model_name] || []
       link_icon = node.navigation_icon
       title = node.label_plural.upcase_first
       url = node.url_for(:index)
@@ -130,7 +130,7 @@ module AdminHelper
           steps = [ascii(:space, times: level - 1), ascii_(:arrow_down_right)] if level > 0
           a_ [steps, (icon(link_icon) if link_icon), title], href: url
         end,
-        _admin_models_menu_stack(group_nodes, next_nodes, level + 1)
+        _admin_models_menu_stack(parent_nodes, next_nodes, level + 1)
       )
     end
   end

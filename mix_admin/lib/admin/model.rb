@@ -12,6 +12,10 @@ module Admin
       klass.all
     end
 
+    register_class_option :navigable? do
+      allowed? :index
+    end
+
     register_class_option :navigation_weight do
       0
     end
@@ -27,9 +31,9 @@ module Admin
       end
     end
 
-    register_class_option :navigation_label, memoize: :locale do
-      if navigation_key
-        t(navigation_key, scope: [i18n_scope, :navigation], default: t(:model, scope: [i18n_scope, :navigation]))
+    register_class_option :navigation_group, memoize: :locale do
+      if navigation_group_key
+        t(navigation_group_key, scope: [i18n_scope, :navigation], default: t(:model, scope: [i18n_scope, :navigation]))
       elsif (parent = klass.module_parent.name.underscore) != 'object'
         t(i18n_key, scope: [i18n_scope, :navigation], default: t(parent, scope: [i18n_scope, :navigation], default: parent.humanize))
       else
@@ -37,7 +41,7 @@ module Admin
       end.upcase
     end
 
-    register_class_option :navigation_key do
+    register_class_option :navigation_group_key do
       nil
     end
 
@@ -102,7 +106,7 @@ module Admin
     def self.index_models
       memoize(Admin::Model, __method__) do
         MixAdmin.config.models_pool.select_map do |model_name|
-          next unless (model = model_name.to_const.admin_model).allowed? :index
+          next unless (model = model_name.to_const.admin_model).navigable?
           model
         end
       end

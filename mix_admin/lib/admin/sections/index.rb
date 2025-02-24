@@ -25,11 +25,10 @@ module Admin
       end
 
       register_option :sort_by do
-        if model.columns_hash.has_key? :updated_at
-          :updated_at
-        else
-          model.primary_key.to_sym
-        end
+        next :updated_at if fields_hash.has_key? :updated_at
+        primary_key = model.primary_key.to_sym
+        next primary_key if fields_hash.has_key? primary_key
+        fields.first.name
       end
 
       register_option :sticky? do

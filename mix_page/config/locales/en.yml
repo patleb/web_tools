@@ -1,5 +1,5 @@
 en:
-  link:
+  link: &link
     website: Website
   page_paginate:
     prev: Previous
@@ -21,6 +21,8 @@ en:
     title_fr: Title (french)
     title_en: Title (english)
   adminrecord:
+    navigation:
+      <<: *link
     navigation_labels:
       page_template: website
       page_fields: website

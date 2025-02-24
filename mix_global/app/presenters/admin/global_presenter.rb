@@ -4,7 +4,7 @@ module Admin
       'Globals'
     end
 
-    navigation_key :system
+    navigation_group_key :system
     navigation_weight 80
 
     field :id

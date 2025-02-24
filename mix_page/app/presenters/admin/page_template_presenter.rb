@@ -1,5 +1,6 @@
 module Admin
   class PageTemplatePresenter < Admin::Model
+    navigation_group_key :website
     record_label_method :title
 
     field :title
