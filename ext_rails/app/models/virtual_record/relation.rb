@@ -134,6 +134,16 @@ module VirtualRecord
       self.class.new(result)
     end
 
+    def unscope(scope)
+      case scope.to_sym
+      when :limit
+        @limit_value = total_count
+      when :offset
+        @offset_value = 0
+      end
+      self
+    end
+
     def method_missing(name, ...)
       if klass.respond_to? name
         klass.use(self) do
