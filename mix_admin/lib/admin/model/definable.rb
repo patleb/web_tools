@@ -58,6 +58,13 @@ module Admin::Model::Definable
     ivars.each{ |(name, value)| subclass.ivar(name, value) }
   end
 
+  def with_options(**options)
+    @with_options = options
+    yield
+  ensure
+    remove_ivar(:@with_options)
+  end
+
   def section(name = :base, &block)
     raise "can't have nested section definitions" if @section
     name = name.to_sym
@@ -123,6 +130,7 @@ module Admin::Model::Definable
   def field(name, translated: false, **options, &block)
     raise "can't have nested field definitions" if @field
     name = name.to_sym
+    options = @with_options.merge(options) if @with_options
     if translated
       field(name, **options.except(:editable), &block) if translated == :all
       I18n.available_locales.each{ |locale| field!("#{name}_#{locale}", **options, &block) }
