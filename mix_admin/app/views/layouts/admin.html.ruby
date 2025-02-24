@@ -8,9 +8,6 @@ append :header, [
   @section&.search_menu,
   @section&.scroll_menu,
 ]
-append :footer, div_(
-  p_ ['Copyright', ascii(:copyright), Time.current.year, '- All rights reserved by', strong_(@meta[:app])]
-)
 prepend :sidebar, [
   admin_sidebar,
 ]
