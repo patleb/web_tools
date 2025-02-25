@@ -18,4 +18,6 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'mix_server', version
+  s.add_dependency 'mocha'
+  s.add_dependency 'webmock'
 end

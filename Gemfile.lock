@@ -44,8 +44,6 @@ PATH
     ext_minitest (0.3.0)
       ext_ruby (= 0.3.0)
       minitest
-      mocha
-      webmock
 
 PATH
   remote: ext_rails
@@ -163,6 +161,8 @@ PATH
   specs:
     mix_job (0.3.0)
       mix_server (= 0.3.0)
+      mocha
+      webmock
 
 PATH
   remote: mix_page
@@ -571,7 +571,7 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.4.0)
+    rexml (3.4.1)
     rgeo (3.0.1)
     rgeo-activerecord (8.0.0)
       activerecord (>= 7.0)
