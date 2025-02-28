@@ -24,11 +24,9 @@ module Shakapacker
     '@/app/presenters/**/*.rb',
     '@/app/views/**/*.html.{erb,ruby}',
   ])
-  GEM_ALIAS =
-  KEYS = %i(gems packages tailwind)
+  CONFIGS = %i(packages tailwind)
 
   class CoffeeScriptVersion < StandardError; end
-  class NestedDependency < StandardError; end
   class MissingDependency < StandardError; end
   class MissingGem < StandardError; end
 
@@ -39,7 +37,7 @@ module Shakapacker
       watched_symlinks = { lib: source_lib_path, vendor: source_vendor_path }.each_with_object([]) do |(type, directory), symlinks|
         directory.mkdir unless directory.exist?
         directory.children.select(&:symlink?).each(&:delete.with(false))
-        symlinks.concat(gems_config[:gems].select_map do |name|
+        symlinks.concat(gems.select_map do |name|
           next unless (root = Gem.root(name).join("#{type}/javascript")).exist?
           if type == :vendor
             root.children.map do |root|
@@ -120,7 +118,7 @@ module Shakapacker
     end
 
     def tailwind_content_files
-      TAILWIND_CONTENT_FILES + Array.wrap(default_config['tailwind']) + gems_config[:tailwind]
+      TAILWIND_CONTENT_FILES + Array.wrap(default_config[:tailwind]) + gems_config[:tailwind]
     end
 
     def gsub_paths!(string)
@@ -129,42 +127,31 @@ module Shakapacker
     end
 
     def gems_config
-      @gems_config ||= gems.each_with_object(KEYS.index_with{ Set.new }) do |name, result|
-        gems, *others = gem_config(name)
-        missing_gems = []
-        gems = (gems << name).map do |gem|
-          next (missing_gems << gem) unless Gem.exists? gem
-          gem
+      @gems_config ||= gems.each_with_object(CONFIGS.index_with{ SortedSet.new }) do |name, result|
+        gem_config(name).each_with_index do |config, i|
+          result[CONFIGS[i]].merge(config)
         end
-        raise MissingGem, missing_gems.join(', ') unless missing_gems.empty?
-        result[:gems].merge(gems)
-        others.each.with_index(1) do |other, i|
-          result[KEYS[i]].merge(other)
-        end
-      end.transform_values{ |v| v.to_a.sort }
+      end.transform_values(&:to_a)
     end
 
-    # NOTE can have only one nested level per :gems entry
     def gem_config(name)
       if name && (config = Gem.root(name)&.join('lib/javascript/shakapacker.yml'))&.exist?
-        parent = YAML.safe_load(config.read).values_at(*KEYS.map(&:to_s)).map{ |v| Array.wrap(v).to_set }
-        parent[0].each_with_object(parent) do |gem, parent|
-          children = gem_config(gem)
-          parent.each_with_index{ |v, i| v.merge(children[i]) }
-        end
+        YAML.safe_load(config.read).values_at(*CONFIGS.map(&:to_s)).map{ |v| Array.wrap(v) }
       else
-        KEYS.map{ [] }
-      end
-    rescue RuntimeError => e
-      if e.message == "can't add a new key into hash during iteration"
-        raise NestedDependency, config
-      else
-        raise
+        CONFIGS.map{ [] }
       end
     end
 
     def gems
-      @gems ||= Set.new(['ext_shakapacker'] + Array.wrap(default_config['gems']))
+      @gems ||= begin
+        missing_gems = []
+        gems = (Set.new(['ext_shakapacker'] + Array.wrap(default_config[:gems]))).map do |name|
+          next (missing_gems << name) unless Gem.exists? name
+          name
+        end
+        raise MissingGem, missing_gems.join(', ') unless missing_gems.empty?
+        gems
+      end
     end
 
     def source_lib_path
@@ -176,11 +163,11 @@ module Shakapacker
     end
 
     def source_path
-      @source_path ||= Pathname.new(default_config['source_path'])
+      @source_path ||= Pathname.new(default_config[:source_path])
     end
 
     def default_config
-      @default_config ||= YAML.load(Pathname.new('config/shakapacker.yml').read, aliases: true)['default']
+      @default_config ||= YAML.safe_load(Pathname.new('config/shakapacker.yml').read, aliases: true)['default'].to_hwia
     end
 
     def package_dependencies
