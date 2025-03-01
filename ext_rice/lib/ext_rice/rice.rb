@@ -37,10 +37,10 @@ module Rice
   def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false)
     copy_files
     require_numo unless ENV['NO_NUMO']
-    libraries, makefile = gems_config.values_at(:libraries, :makefile)
-    libraries.each do |name|
-      abort "#{name} not found" unless have_library(name)
-    end
+    include_dir dst_path
+    includes, libraries, makefile = gems_config.values_at(:dirs, :libs, :makefile)
+    includes.each{ |name| include_dir name }
+    libraries.each{ |name| add_library name }
     yield(dst_path) if block_given?
     create_init_file unless executable?
     unless dry_run
@@ -72,8 +72,7 @@ module Rice
   def self.require_numo
     require "numo/narray"
     numo = File.join(Gem.loaded_specs["numo-narray"].require_path, "numo")
-    find_header! "numo/narray.h", numo
-    find_header! "numo/numo.hpp", dst_path
+    include_dir numo
   end
 
   def self.write_checksum
