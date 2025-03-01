@@ -27,9 +27,7 @@ module WebTools
   end
 
   def self.gems
-    @gems ||= subgems(root)
-      .index_with{ |d| Gem.root(d) }
-      .to_hwia
+    @gems ||= subgems(root).index_with{ |d| Gem.root(d) }.to_hwia
   end
 
   def self.root
