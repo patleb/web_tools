@@ -4,6 +4,7 @@ postgis_gdal_enabled_drivers=${postgis_gdal_enabled_drivers:-ENABLE_ALL}
 
 sun.update
 sun.install "netcdf-bin"
+sun.install "libnetcdf-c++4-dev"
 sun.install "gdal-bin"
 sun.install "libgdal-dev"
 sun.install "$PGIS_PACKAGES"
