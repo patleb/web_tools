@@ -34,18 +34,25 @@ module Rice
     delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :executable?, to: 'ExtRice.config'
   end
 
-  def self.create_makefile(optflags: nil, native: false, vpaths: nil, dry_run: false)
+  def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false)
     copy_files
     require_numo unless ENV['NO_NUMO']
+    libraries, makefile = gems_config.values_at(:libraries, :makefile)
+    libraries.each do |name|
+      abort "#{name} not found" unless have_library(name)
+    end
     yield(dst_path) if block_given?
     create_init_file unless executable?
     unless dry_run
       $CXXFLAGS += " -std=c++17 $(optflags)" # -O3 -ffast-math -fno-associative-math
-      $CXXFLAGS += " #{optflags}" if optflags
+      $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
+      $CXXFLAGS += " #{cflags}" if cflags
       $CXXFLAGS += " -O0" if ENV['DEBUG']
-      $CXXFLAGS += "  -march=native" if native
+      $libs += " #{makefile[:libs]}" if makefile[:libs].present?
+      $libs += " #{libs}" if libs
       $srcs = Dir["#{dst_path}/**/*.{c,cc,cpp}"]
       $objs = $srcs.map{ |v| v.sub(/c+p*$/, "o") }
+      $VPATH.concat(Array.wrap(makefile[:vpaths]).map(&:to_s))
       $VPATH.concat(Array.wrap(vpaths).map(&:to_s))
       if executable?
         MakeMakefile.create_makefile(target, dst_path.to_s) do |conf|
@@ -94,21 +101,22 @@ module Rice
   end
 
   def self.create_init_file
-    hooks = dependencies[:hooks]
+    headers, hooks = gems_config.values_at(:headers, :hooks)
     dst_path.join("#{target}.cpp").open('w') do |f|
       f.puts <<~CPP
-        #{hooks['before_all'].strip}
+        #{headers.map{ |header| %{#include "#{header.strip}"} }.join("\n")}
+        #{hooks[:before_all].strip}
         #include "all.hpp"
-        #{hooks['after_all'].strip}
+        #{hooks[:after_all].strip}
         using namespace Rice;
 
         extern "C"
         void Init_#{target}() {
-          #{hooks['before_init'].strip}
+          #{hooks[:before_init].strip}
       CPP
-      define_properties(f, nil, dependencies[:defs])
+      define_properties(f, nil, gems_config[:defs])
       f.puts <<~CPP
-          #{hooks['after_init'].strip}
+          #{hooks[:after_init].strip}
         }
       CPP
     end
@@ -126,7 +134,7 @@ module Rice
     end.join
   end
 
-  # TODO registry, exception, iterator, director, stl define_(vector|map|...) etc.
+  # TODO multi constructors, registry, exception, iterator, director, stl define_(vector|map|...) etc.
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
       case keyword
@@ -206,7 +214,7 @@ module Rice
     enum_var = build_scope_var('enum', name_alias)
     if parent_var
       f.puts <<~CPP.indent(2)
-        Enum<#{name_alias}> #{enum_var} = define_enum<#{name_alias}>("#{name}", #{parent_var});
+        Enum<#{name_alias}> #{enum_var} = define_enum_under<#{name_alias}>("#{name}", #{parent_var});
       CPP
     else
       f.puts <<~CPP.indent(2)
@@ -214,8 +222,10 @@ module Rice
       CPP
     end
     values.each do |value|
+      value, value_alias = value.split(ALIAS, 2)
+      value_alias ||= value
       f.puts <<~CPP.indent(2)
-        #{enum_var}.define_value("#{value}", #{name_alias}::#{value});
+        #{enum_var}.define_value("#{value}", #{name_alias}::#{value_alias});
       CPP
     end
   end

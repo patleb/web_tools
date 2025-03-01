@@ -1,5 +1,7 @@
 module Rice
-  HOOKS = %w(before_all after_all before_init after_init).index_with('')
+  HOOKS = %i(before_all after_all before_init after_init).index_with('')
+  CONFIGS = %i(libraries headers)
+  MAKEFILE = %i(cflags libs vpaths).index_with('')
   METHOD_ALIAS_KEYWORD = /^(?!(module|class|enum) +[A-Z]).+ +\| +.+/
 
   class NestedDependency < StandardError; end
@@ -12,7 +14,7 @@ module Rice
       dst_path.rmtree(false)
       dst_path.mkdir_p
       %i(lib vendor).each do |type|
-        dependencies[:gems].each do |name|
+        gems.each do |name|
           next unless (root = Gem.root(name).join("#{type}/rice")).exist?
           if type == :vendor
             root.children.map do |root|
@@ -60,49 +62,43 @@ module Rice
       end
     end
 
-    def dependencies
-      @dependencies ||= gems.each_with_object(gems: Set.new, hooks: extract_hooks!(config), defs: config) do |name, result|
-        gems, hooks, defs = gems_hooks_defs(name)
-        missing_gems = []
-        gems = (gems << name).map do |gem|
-          next (missing_gems << gem) unless Gem.exists? gem
-          gem
-        end
-        raise MissingGem, missing_gems.join(', ') unless missing_gems.empty?
-        result[:gems] = result[:gems].merge(gems)
-        merge_hooks! result[:hooks], hooks
+    def gems_config
+      @gems_config ||= gems.each_with_object(default_config) do |name, result|
+        defs, hooks, *configs, makefile = gem_config(name)
         merge_defs! result[:defs], defs
-      end.transform_values{ |v| v.is_a?(Set) ? v.to_a.sort : v }
+        merge_strings! result[:hooks], hooks, "\n"
+        merge_configs! result, configs
+        merge_strings! result[:makefile], makefile, ' '
+      end.transform_values{ |v| v.is_a?(Set) ? v.to_a : v }
     end
 
-    def gems
-      @gems ||= Set.new(Array.wrap(config.delete('gems')))
-    end
-
-    def gems_hooks_defs(name)
-      if name && (rice = Gem.root(name)&.join('config/rice.yml'))&.exist?
-        defs = YAML.safe_load(rice.read)
-        gems = Set.new(Array.wrap(defs.delete('gems')))
-        hooks = extract_hooks! defs
-        gems.each_with_object([gems, hooks, defs]) do |gem_name, (gems, hooks, defs)|
-          children_gems, children_hooks, children_defs = gems_hooks_defs(gem_name)
-          gems.merge(children_gems)
-          merge_hooks! hooks, children_hooks
-          merge_defs! defs, children_defs
-        end
-      else
-        [[], HOOKS.dup, {}]
-      end
-    rescue RuntimeError => e
-      if e.message == "can't add a new key into hash during iteration"
-        raise NestedDependency, rice
-      else
-        raise
+    def gem_config(name)
+      if name && (config = Gem.root(name)&.join('config/rice.yml'))&.exist?
+        defs = YAML.safe_load(ERB.template(config, binding)).to_hwia
+        hooks = extract_strings! defs, HOOKS
+        configs = extract_configs! defs
+        makefile = extract_strings! defs.delete(:makefile), MAKEFILE
+        [defs, hooks, *configs.values_at(*CONFIGS), makefile]
+       else
+        [{}, HOOKS.dup, *CONFIGS.map{ [] }, MAKEFILE.dup]
       end
     end
 
-    def merge_hooks!(parent, children)
-      parent.merge!(children){ |_, parent_val, children_val| [children_val, parent_val].compact_blank.join("\n") }
+    def default_config
+      @default_config ||= {
+        defs: yml,
+        hooks: extract_strings!(yml, HOOKS),
+        **extract_configs!(yml),
+        makefile: extract_strings!(yml.delete(:makefile), MAKEFILE),
+      }
+    end
+
+    def extract_strings!(yml, keys)
+      keys.map{ |hook, default| [hook, yml&.delete(hook) || default] }.to_h
+    end
+
+    def extract_configs!(yml)
+      CONFIGS.map{ |name| [name, Set.new(Array.wrap(yml.delete(name)))] }.to_h
     end
 
     def merge_defs!(parent, children)
@@ -122,13 +118,31 @@ module Rice
       end
     end
 
-    def extract_hooks!(yml)
-      HOOKS.map{ |hook, default| [hook, yml.delete(hook) || default] }.to_h
+    def merge_strings!(parent, children, separator)
+      parent.merge!(children) do |_, parent_val, children_val|
+        [children_val.strip, parent_val].compact_blank.join(separator)
+      end
     end
 
-    def config
-      @config ||= if yml_path.exist?
-        YAML.safe_load(yml_path.read) || {}
+    def merge_configs!(parent, children)
+      children.each_with_index{ |config, i| parent[CONFIGS[i]].merge(config) }
+    end
+
+    def gems
+      @gems ||= begin
+        missing_gems = []
+        gems = (Set.new(['ext_rice'] + Array.wrap(yml.delete(:gems)))).map do |name|
+          next (missing_gems << name) unless Gem.exists? name
+          name
+        end
+        raise MissingGem, missing_gems.join(', ') unless missing_gems.empty?
+        gems
+      end
+    end
+
+    def yml
+      @yml ||= if yml_path.exist?
+        YAML.safe_load(ERB.template(yml_path, binding)).to_hwia
       else
         {}
       end
