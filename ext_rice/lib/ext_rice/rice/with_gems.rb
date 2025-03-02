@@ -63,23 +63,13 @@ module Rice
     end
 
     def gems_config
-      @gems_config ||= gems_config_paths.each_with_object(default_config) do |path, result|
+      @gems_config ||= other_yml_paths.each_with_object(default_config) do |path, result|
         defs, hooks, *configs, makefile = gem_config(path)
         merge_defs! result[:defs], defs
         merge_strings! result[:hooks], hooks, "\n"
         merge_configs! result, configs
         merge_strings! result[:makefile], makefile, ' '
       end.transform_values{ |v| v.is_a?(Set) ? v.to_a : v }
-    end
-
-    def gems_config_paths
-      paths = yml_path.exist? ? yml_path.glob('config/rice/**/*.yml') : []
-      gems.each_with_object(paths) do |name, result|
-        next unless (root = name && Gem.root(name))
-        next unless (config = root.join('config/rice.yml')).exist?
-        result << config
-        result.concat(root.glob('config/rice/**/*.yml'))
-      end
     end
 
     def gem_config(path)
@@ -132,6 +122,16 @@ module Rice
 
     def merge_configs!(parent, children)
       children.each_with_index{ |config, i| parent[CONFIGS[i]].merge(config) }
+    end
+
+    def other_yml_paths
+      paths = yml_path.exist? ? yml_path.glob('config/rice/**/*.yml') : []
+      gems.each_with_object(paths) do |name, result|
+        next unless (root = name && Gem.root(name))
+        next unless (config = root.join('config/rice.yml')).exist?
+        result << config
+        result.concat(root.glob('config/rice/**/*.yml'))
+      end
     end
 
     def gems
