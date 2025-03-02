@@ -121,18 +121,6 @@ module Rice
     end
   end
 
-  def self.ext_cpp_body
-    started = false
-    ExtRice.config.root.join('test/fixtures/files/ext.cpp').readlines.each_with_object([]) do |line, lines|
-      if !started && line.start_with?("void Init_ext() {")
-        started = true
-      elsif started
-        break lines if line.start_with? '}'
-        lines << line
-      end
-    end.join
-  end
-
   # TODO registry, exception, iterator, director, stl define_(vector|map|...), stl multimap, etc.
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
