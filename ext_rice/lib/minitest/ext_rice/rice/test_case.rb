@@ -54,6 +54,8 @@ module Rice
     end
 
     def self.test_yml(rel_root = nil, yml_path: nil)
+      require "mkmf-rice"
+
       it "should build ext.cpp correctly based on rice.yml:  #{root_name_for rel_root}" do
         old_numo = ENV['NO_NUMO']
         ENV['NO_NUMO'] = 'true'

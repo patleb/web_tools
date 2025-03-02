@@ -44,7 +44,7 @@ module Rice
     yield(dst_path) if block_given?
     create_init_file unless executable?
     unless dry_run
-      $CXXFLAGS += " -std=c++17 $(optflags)" # -O3 -ffast-math -fno-associative-math
+      $CXXFLAGS += " $(optflags)" # -O3 -ffast-math -fno-associative-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
       $CXXFLAGS += " #{cflags}" if cflags
       $CXXFLAGS += " -O0" if ENV['DEBUG']
@@ -133,7 +133,7 @@ module Rice
     end.join
   end
 
-  # TODO multi constructors, registry, exception, iterator, director, stl define_(vector|map|...) etc.
+  # TODO registry, exception, iterator, director, stl define_(vector|map|...), stl multimap, etc.
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
       case keyword
@@ -266,62 +266,95 @@ module Rice
 
   def self.define_methods(f, scope_var, names)
     scope_alias = extract_scope_alias(scope_var)
+    dot = '.' if scope_var
     names.each do |name, args|
-      is_singleton, name = name.split('.', 2)
+      is_singleton, name = name.split('self.', 2)
       name, is_singleton = is_singleton, false unless name
-      raise "'#{is_singleton}' used instead of 'self'" if is_singleton && is_singleton != 'self'
-
       name, name_alias = name.split(ALIAS, 2)
       if name_alias
-        is_static = case name_alias
-          when 'static' then name_alias = name
-          when STATIC   then name_alias.sub! STATIC, ''
-          end
+        if name_alias.include? '.'
+          name_alias, *constructors = name_alias.split('.')
+        else
+          is_static = case name_alias
+            when 'static' then name_alias = name
+            when STATIC   then name_alias.sub! STATIC, ''
+            end
+        end
       else
         name_alias = name
       end
       name_alias = "#{scope_alias}::#{name_alias}" if scope_var && name_alias.exclude?('::')
       function_type = !scope_var ? 'global_function' : ('singleton_function' if is_singleton)
       function_type ||= is_static ? 'function' : 'method'
-      if scope_var && !is_singleton && !is_static && name == 'initialize' && name_alias == scope_alias
-        args_types, args_defaults = extract_types_and_defaults(args)
-        args_types = ", #{args_types}" if args_types
-        args_defaults = ", #{args_defaults}" if args_defaults
-        f.puts <<~CPP.indent(2)
-          #{scope_var}.define_constructor(Constructor<#{scope_alias}#{args_types}>()#{args_defaults});
-        CPP
-      else
-        case args
-        when Array
-          args_defaults = args.map{ |arg| wrap_arg(arg) }.join(', ') if args.present?
-        when Hash
-          return_type, args = args.first
-          args_types, args_defaults = extract_types_and_defaults(args)
-          is_typedef = true
-        when String
-          is_lambda = true
-        end
-        args_defaults = ", #{args_defaults}" if args_defaults
-        if is_typedef
-          @i ||= 0
-          typedef_alias = "rb_#{name_alias.full_underscore}__#{@i += 1}__"
-          f.puts <<~CPP.indent(2)
-            typedef #{return_type} (#{scope_alias}::*#{typedef_alias})(#{args_types});
-          CPP
-          definition = "#{typedef_alias}(&#{name_alias})#{args_defaults}"
-        else
-          definition = is_lambda ? args.strip : "&#{name_alias}#{args_defaults}"
-        end
-        dot = '.' if scope_var
-        f.puts <<~CPP.indent(2)
-          #{scope_var}#{dot}define_#{function_type}("#{name}", #{definition});
-        CPP
+      if scope_var && !is_singleton && !is_static && name == 'initialize' && name_alias.match?(/^(::)?#{scope_alias}$/)
+        define_constructors(f, scope_var, scope_alias, constructors, args)
+        next
       end
+      case args
+      when Array
+        if args.first.is_a? Hash
+          define_overloads(f, scope_var, dot, function_type, scope_alias, name, name_alias, args)
+          next
+        elsif args.present?
+          defaults = args.map{ |arg| wrap_arg(arg) }.join(', ')
+        end
+      when Hash
+        define_overloads(f, scope_var, dot, function_type, scope_alias, name, name_alias, [args])
+        next
+      when String
+        define_lambda(f, scope_var, dot, function_type, name, args)
+        next
+      end
+      defaults = ", #{defaults}" if defaults
+      f.puts <<~CPP.indent(2)
+        #{scope_var}#{dot}define_#{function_type}("#{name}", &#{name_alias}#{defaults});
+      CPP
     end
+  end
+
+  def self.define_constructors(f, scope_var, scope_alias, constructors, args)
+    Array.wrap(constructors).each do |constructor|
+      constructor_alias = extract_constructor_alias(scope_alias, constructor)
+      f.puts <<~CPP.indent(2)
+        #{scope_var}.define_constructor(Constructor<#{constructor_alias}>());
+      CPP
+    end
+    args = [{ args => nil }] unless args.first.is_a? Hash
+    args.map{ extract_types_and_defaults(it.keys.first) }.each do |types, defaults|
+      types = ", #{types}" if types
+      defaults = ", #{defaults}" if defaults
+      f.puts <<~CPP.indent(2)
+        #{scope_var}.define_constructor(Constructor<#{scope_alias}#{types}>()#{defaults});
+      CPP
+    end
+  end
+
+  def self.define_overloads(f, scope_var, dot, function_type, scope_alias, name, name_alias, args)
+    args.map{ extract_return_types_and_defaults(it) }.each do |return_type, types, defaults|
+      using_alias = build_using_alias(name_alias)
+      f.puts <<~CPP.indent(2)
+        using #{using_alias} = #{return_type} (#{scope_alias}::*)(#{types});
+      CPP
+      defaults = ", #{defaults}" if defaults
+      f.puts <<~CPP.indent(2)
+        #{scope_var}#{dot}define_#{function_type}<#{using_alias}>("#{name}", &#{name_alias}#{defaults});
+      CPP
+    end
+  end
+
+  def self.define_lambda(f, scope_var, dot, function_type, name, args)
+    f.puts <<~CPP.indent(2)
+      #{scope_var}#{dot}define_#{function_type}("#{name}", #{args.strip});
+    CPP
   end
 
   def self.build_scope_var(scope_type, scope_alias)
     "rb_#{scope_type[0]}#{scope_alias.tr(' ', '').gsub('::', '_dc_').gsub('<', '_lt_').gsub(',', '_c_').gsub('>', '_gt_')}"
+  end
+
+  def self.build_using_alias(name_alias)
+    @using_i ||= 0
+    "rb_#{name_alias.full_underscore}_#{@using_i += 1}"
   end
 
   def self.extract_full_scope_alias(parent_var, scope_name)
@@ -331,6 +364,21 @@ module Rice
 
   def self.extract_scope_alias(scope_var)
     scope_var.match(/^rb_[mc](\w+)$/)[1].gsub('_dc_', '::').gsub('_lt_', '<').gsub('_c_', ',').gsub('_gt_', '>') if scope_var
+  end
+
+  def self.extract_constructor_alias(scope_alias, constructor)
+    case constructor
+    when 'DEFAULT' then scope_alias
+    when 'COPY'    then "const #{scope_alias}&"
+    when 'MOVE'    then "#{scope_alias}&&"
+    else
+      raise "invalid constructor alias [#{constructor}]"
+    end
+  end
+
+  def self.extract_return_types_and_defaults(args)
+    return_type, args = args.first
+    return return_type, *extract_types_and_defaults(args)
   end
 
   def self.extract_types_and_defaults(args)

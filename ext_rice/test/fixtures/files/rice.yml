@@ -62,6 +62,16 @@ module Root:
           return test_hello();
         }
 
+class Overload:
+  def:
+    initialize | ::Overload.DEFAULT.COPY.MOVE:
+      - { [int, float] }
+      - { [[int, arg1], [float, 'arg_2 = 1.2']] }
+    name:
+      - { size_t: [] }
+      - { void: [size_t] }
+      - { bool: [[int, arg_1], [std::string, 'arg_2 = (std::string)"value"']] }
+
 def:
   global:
 
