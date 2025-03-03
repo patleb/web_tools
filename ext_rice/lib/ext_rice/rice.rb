@@ -259,25 +259,23 @@ module Rice
       is_singleton, name = name.split('self.', 2)
       name, is_singleton = is_singleton, false unless name
       name, name_alias = name.split(ALIAS, 2)
-      if name_alias
-        if name_alias.include? '.'
-          name_alias, *constructors = name_alias.split('.')
-        else
-          is_static = case name_alias
-            when 'static' then name_alias = name
-            when STATIC   then name_alias.sub! STATIC, ''
-            end
-        end
-      else
+      case name_alias
+      when nil
         name_alias = name
+      when /\./
+        name_alias, *constructors = name_alias.split('.')
+      when 'static'
+        is_static = !!(name_alias = name)
+      when STATIC
+        is_static = !!(name_alias.sub! STATIC, '')
       end
       name_alias = "#{scope_alias}::#{name_alias}" if scope_var && name_alias.exclude?('::')
-      function_type = !scope_var ? 'global_function' : ('singleton_function' if is_singleton)
-      function_type ||= is_static ? 'function' : 'method'
       if scope_var && !is_singleton && !is_static && name == 'initialize' && name_alias.match?(/^(::)?#{scope_alias}$/)
         define_constructors(f, scope_var, scope_alias, constructors, args)
         next
       end
+      function_type = !scope_var ? 'global_function' : ('singleton_function' if is_singleton)
+      function_type ||= is_static ? 'function' : 'method'
       case args
       when Array
         if args.first.is_a? Hash
