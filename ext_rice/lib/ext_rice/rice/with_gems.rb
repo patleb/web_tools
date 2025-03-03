@@ -10,6 +10,12 @@ module Rice
   module WithGems
     delegate :root_vendor, :root_app, :root_test, :test?, :dst_path, :yml_path, :extconf_path, to: 'ExtRice.config'
 
+    def require_overrides
+      rb_paths.each do |file|
+        require file
+      end
+    end
+
     def copy_files
       dst_path.rmtree(false)
       dst_path.mkdir_p
@@ -124,8 +130,17 @@ module Rice
       children.each_with_index{ |config, i| parent[CONFIGS[i]].merge(config) }
     end
 
+    def rb_paths
+      paths = yml? ? yml_path.glob('app/rice/**/*.rb') : []
+      gems.each_with_object([]) do |name, result|
+        next unless (root = name && Gem.root(name))
+        next unless root.join('config/rice.yml').exist?
+        result.concat(root.glob('lib/rice/**/*.rb'))
+      end.concat(paths)
+    end
+
     def other_yml_paths
-      paths = yml_path.exist? ? yml_path.glob('config/rice/**/*.yml') : []
+      paths = yml? ? yml_path.glob('config/rice/**/*.yml') : []
       gems.each_with_object(paths) do |name, result|
         next unless (root = name && Gem.root(name))
         next unless (config = root.join('config/rice.yml')).exist?
@@ -147,11 +162,15 @@ module Rice
     end
 
     def yml
-      @yml ||= if yml_path.exist?
+      @yml ||= if yml?
         YAML.safe_load(ERB.template(yml_path, binding)).to_hwia
       else
         {}
       end
+    end
+
+    def yml?
+      yml_path.exist?
     end
   end
 end

@@ -22,7 +22,9 @@ module Rice
   MEMORY_ACTIONS = { 'NO_COLLECT' => 'keepAlive()', 'AS_VALUE' => 'setValue()', 'NO_DELETE' => 'takeOwnership()' }
 
   def self.require_ext
-    require bin_path if require_ext?
+    return unless require_ext?
+    require bin_path
+    require_overrides
   end
 
   def self.require_ext?
