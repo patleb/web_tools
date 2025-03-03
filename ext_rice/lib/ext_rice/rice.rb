@@ -275,7 +275,7 @@ module Rice
       end
       name_alias = "#{scope_alias}::#{name_alias}" if scope_var && name_alias.exclude?('::')
       if scope_var && !is_singleton && !is_static && name == 'initialize' && name_alias.match?(/^(::)?#{scope_alias}$/)
-        define_constructors(f, scope_var, scope_alias, constructors, args)
+        define_constructors(f, scope_var, scope_alias, constructors, args || [])
         next
       end
       function_type = !scope_var ? 'global_function' : ('singleton_function' if is_singleton)
