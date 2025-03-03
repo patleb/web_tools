@@ -14,7 +14,7 @@ module Rice
   INHERIT = / +< +/
   STATIC = /^static +/
   SCOPE_KEYWORDS = /^(module|class) +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?(#{INHERIT}#{CPP_CONSTANT})?$/
-  ENUM_KEYWORD = /^enum +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?$/
+  ENUM_KEYWORD = /^enum!? +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?$/
   CONSTANT_KEYWORD = /^[A-Z_][A-Z\d_]+$/
   INCLUDES_KEYWORD = 'include'
   ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)$/
@@ -196,6 +196,7 @@ module Rice
   end
 
   def self.define_enum(f, parent_var, name, values)
+    format = name.include? '!'
     name, name_alias = name.split(/ +/, 2).last.split(ALIAS, 2)
     name_alias ||= name
     enum_var = build_scope_var('enum', name_alias)
@@ -211,6 +212,7 @@ module Rice
     values.each do |value|
       value, value_alias = value.split(ALIAS, 2)
       value_alias ||= value
+      value = value.underscore.upcase if format
       f.puts <<~CPP.indent(2)
         #{enum_var}.define_value("#{value}", #{name_alias}::#{value_alias});
       CPP

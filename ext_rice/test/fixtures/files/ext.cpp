@@ -16,9 +16,9 @@ void Init_ext() {
   rb_mRoot.define_singleton_function("root", &Root::root);
   Data_Type<Root::Simple> rb_cRoot_dc_Simple = define_class_under<Root::Simple>(rb_mRoot, "Simple");
   Enum<Root::Simple::PROPS> rb_eRoot_dc_Simple_dc_PROPS = define_enum_under<Root::Simple::PROPS>("Props", rb_cRoot_dc_Simple);
-  rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_1", Root::Simple::PROPS::VALUE_1);
-  rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_2", Root::Simple::PROPS::VALUE_2);
-  rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_3", Root::Simple::PROPS::VALUE_3);
+  rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_A1", Root::Simple::PROPS::ValueA1);
+  rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_B2", Root::Simple::PROPS::ValueB2);
+  rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_C3", Root::Simple::PROPS::ValueC3);
   rb_cRoot_dc_Simple.define_method("simple", &Root::Simple::simple);
   Module rb_mRoot_dc_Name = define_module_under(rb_mRoot, "Name");
   rb_mRoot_dc_Name.define_method("name", &Root::Name::name);

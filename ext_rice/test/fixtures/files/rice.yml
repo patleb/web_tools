@@ -21,7 +21,7 @@ module Root:
     self.root:
 
   class Simple | Root::Simple:
-    enum Props | Root::Simple::PROPS: [VALUE_1, VALUE_2, VALUE_3]
+    enum! Props | Root::Simple::PROPS: [ValueA1, ValueB2, ValueC3]
 
     def:
       simple:
