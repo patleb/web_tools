@@ -336,8 +336,8 @@ module Rice
   end
 
   def self.build_using_alias(name_alias)
-    @using_i ||= 0
-    "rb_#{name_alias.full_underscore}_#{@using_i += 1}"
+    (@using_i ||= {})[name_alias] ||= 0
+    "rb_#{name_alias.full_underscore}_#{@using_i[name_alias] += 1}"
   end
 
   def self.extract_full_scope_alias(parent_var, scope_name)
