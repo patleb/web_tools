@@ -53,12 +53,14 @@ void Init_ext() {
   rb_cOverload.define_constructor(Constructor<Overload&&>());
   rb_cOverload.define_constructor(Constructor<Overload, int, float>());
   rb_cOverload.define_constructor(Constructor<Overload, int, float>(), Arg("arg1"), Arg("arg_2") = 1.2);
-  using rb_overload_name_3 = size_t (Overload::*)();
+  using rb_overload_name_3 = vectot<int>& (Overload::*)() const;
   rb_cOverload.define_method<rb_overload_name_3>("name", &Overload::name);
-  using rb_overload_name_4 = void (Overload::*)(size_t);
+  using rb_overload_name_4 = size_t (Overload::*)();
   rb_cOverload.define_method<rb_overload_name_4>("name", &Overload::name);
-  using rb_overload_name_5 = bool (Overload::*)(int, std::string);
-  rb_cOverload.define_method<rb_overload_name_5>("name", &Overload::name, Arg("arg_1"), Arg("arg_2") = (std::string)"value");
+  using rb_overload_name_5 = void (Overload::*)(size_t);
+  rb_cOverload.define_method<rb_overload_name_5>("name", &Overload::name);
+  using rb_overload_name_6 = bool (Overload::*)(int, std::string);
+  rb_cOverload.define_method<rb_overload_name_6>("name", &Overload::name, Arg("arg_1"), Arg("arg_2") = (std::string)"value");
   define_global_function("global", &global);
   Class rb_cGlobal = define_class("Global");
   rb_cGlobal.define_method("global", &::global);

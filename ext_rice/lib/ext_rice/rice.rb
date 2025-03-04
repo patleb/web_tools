@@ -322,8 +322,10 @@ module Rice
   def self.define_overloads(f, scope_var, dot, function_type, scope_alias, name, name_alias, args)
     args.map{ extract_return_types_and_defaults(it) }.each do |return_type, types, defaults|
       using_alias = build_using_alias(name_alias)
+      return_type, const = return_type.split(/ +const$/, 2)
+      const = ' const' if const
       f.puts <<~CPP.indent(2)
-        using #{using_alias} = #{return_type} (#{scope_alias}::*)(#{types});
+        using #{using_alias} = #{return_type} (#{scope_alias}::*)(#{types})#{const};
       CPP
       defaults = ", #{defaults}" if defaults
       f.puts <<~CPP.indent(2)

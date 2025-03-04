@@ -68,6 +68,7 @@ class Overload:
       - { [int, float] }
       - { [[int, arg1], [float, 'arg_2 = 1.2']] }
     name:
+      - { vectot<int>& const: [] }
       - { size_t: [] }
       - { void: [size_t] }
       - { bool: [[int, arg_1], [std::string, 'arg_2 = (std::string)"value"']] }
