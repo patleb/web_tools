@@ -33,7 +33,7 @@ module Rice
   end
 
   class << self
-    delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :executable?, to: 'ExtRice.config'
+    delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :format?, :executable?, to: 'ExtRice.config'
   end
 
   def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false)
@@ -198,7 +198,7 @@ module Rice
   end
 
   def self.define_enum(f, parent_var, name, values)
-    format = name.include? '!'
+    format = name.include?('!') || format?
     name, name_alias = name.split(/ +/, 2).last.split(ALIAS, 2)
     name_alias ||= name
     enum_var = build_scope_var('enum', name_alias)
@@ -241,7 +241,7 @@ module Rice
   def self.define_attributes(f, scope_var, attr_type, names)
     raise "can't define attributes on the global scope" unless scope_var
     scope_alias = extract_scope_alias(scope_var)
-    format = attr_type.end_with? '!'
+    format = attr_type.end_with?('!') || format?
     singleton = 'singleton_' if attr_type.start_with? 'c'
     access_type = case attr_type
       when /_accessor!?$/ then ''
@@ -260,7 +260,7 @@ module Rice
 
   def self.define_methods(f, scope_var, format, names)
     scope_alias = extract_scope_alias(scope_var)
-    format = format.end_with? '!'
+    format = format.end_with?('!') || format?
     dot = '.' if scope_var
     names.each do |name, args|
       is_singleton, name = name.split('self.', 2)

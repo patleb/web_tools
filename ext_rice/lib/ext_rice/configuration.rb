@@ -17,6 +17,7 @@ module ExtRice
     attr_writer :root_app
     attr_writer :root
     attr_writer :scope
+    attr_writer :format
     attr_accessor :executable
     alias_method :executable?, :executable
 
@@ -99,6 +100,11 @@ module ExtRice
 
     def scope
       @scope ||= test ? "test/#{root.basename.to_s}" : ''
+    end
+
+    def format?
+      return @format if defined? @format
+      @format = true
     end
 
     def test
