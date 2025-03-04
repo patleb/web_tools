@@ -64,7 +64,7 @@ module Root:
 class Overload:
   def:
     initialize | ::Overload.DEFAULT.COPY.MOVE:
-      - { [int, float] }
+      - { [int arg1, float] }
       - { [[int, arg1], [float, 'arg_2 = 1.2']] }
     name:
       - { vectot<int>& const: [] }
