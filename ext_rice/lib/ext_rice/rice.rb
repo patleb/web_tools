@@ -16,7 +16,6 @@ module Rice
   SCOPE_KEYWORDS = /^(module|class) +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?(#{INHERIT}#{CPP_CONSTANT})?$/
   ENUM_KEYWORD = /^enum!? +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?$/
   CONSTANT_KEYWORD = /^[A-Z_][A-Z\d_]+$/
-  INCLUDES_KEYWORD = 'include'
   ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)!?$/
   METHODS_KEYWORD = /^def!?$/
   MEMORY_ACTIONS = { 'NO_COLLECT' => 'keepAlive()', 'AS_VALUE' => 'setValue()', 'NO_DELETE' => 'takeOwnership()' }
@@ -133,8 +132,6 @@ module Rice
         define_enum(f, parent_var, keyword, body)
       when CONSTANT_KEYWORD
         define_constant(f, parent_var, keyword, body)
-      when INCLUDES_KEYWORD
-        define_includes(f, parent_var, body)
       when ATTRIBUTES_KEYWORDS
         define_attributes(f, parent_var, keyword, body)
       when METHODS_KEYWORD
@@ -226,16 +223,6 @@ module Rice
     f.puts <<~CPP.indent(2)
       #{scope_var}.const_set("#{name}", #{value});
     CPP
-  end
-
-  def self.define_includes(f, scope_var, names)
-    raise "can't include a module on the global scope" unless scope_var
-    Array.wrap(names).each do |name|
-      module_var = build_scope_var('module', name)
-      f.puts <<~CPP.indent(2)
-        #{scope_var}.include_module(#{module_var});
-      CPP
-    end
   end
 
   def self.define_attributes(f, scope_var, attr_type, names)

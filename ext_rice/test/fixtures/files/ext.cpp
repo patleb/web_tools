@@ -23,7 +23,6 @@ void Init_ext() {
   Module rb_mRoot_dc_Name = define_module_under(rb_mRoot, "Name");
   rb_mRoot_dc_Name.define_method("name", &Root::Name::name);
   Data_Type<Root::Name::BaseAlias> rb_cRoot_dc_Name_dc_BaseAlias = define_class_under<Root::Name::BaseAlias>(rb_mRoot_dc_Name, "Base");
-  rb_cRoot_dc_Name_dc_BaseAlias.include_module(rb_mRoot_dc_Name);
   rb_cRoot_dc_Name_dc_BaseAlias.define_attr("both", &Root::Name::BaseAlias::readWrite);
   rb_cRoot_dc_Name_dc_BaseAlias.define_attr("mode", &Root::Name::BaseAlias::mode);
   rb_cRoot_dc_Name_dc_BaseAlias.define_attr("read_only", &Root::Name::BaseAlias::readOnly, AttrAccess::Read);
@@ -34,7 +33,6 @@ void Init_ext() {
   rb_cRoot_dc_Name_dc_BaseAlias.define_method("initialize", &Root::Name::BaseAlias::initialize, Arg("int"), Arg("float"));
   rb_cRoot_dc_Name_dc_BaseAlias.define_method("camel_case", &Root::Name::BaseAlias::CamelCase);
   Data_Type<Root::TestAlias> rb_cRoot_dc_TestAlias = define_class_under<Root::TestAlias, Root::Name::BaseAlias>(rb_mRoot, "Test");
-  rb_cRoot_dc_TestAlias.include_module(rb_mRoot_dc_Name);
   rb_cRoot_dc_TestAlias.define_constructor(Constructor<Root::TestAlias, int, float>(), Arg("arg1"), Arg("arg_2") = 1.2);
   rb_cRoot_dc_TestAlias.define_function("test", &Root::TestAlias::test, Arg("arg"));
   rb_cRoot_dc_TestAlias.define_function("outside", &::outside);

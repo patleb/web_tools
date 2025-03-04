@@ -108,7 +108,7 @@ module Rice
         case key
         when METHOD_ALIAS_KEYWORD
           parent_val
-        when INCLUDES_KEYWORD, ATTRIBUTES_KEYWORDS
+        when ATTRIBUTES_KEYWORDS
           SortedSet.new(Array.wrap(parent_val)).merge(Array.wrap(children_val)).to_a
         else
           if parent_val.is_a?(Hash) && children_val.is_a?(Hash)

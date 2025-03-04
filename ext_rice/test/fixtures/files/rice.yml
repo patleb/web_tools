@@ -31,8 +31,6 @@ module Root:
       name:
 
     class Base | Root::Name::BaseAlias:
-      include: 'Root::Name'
-
       attr_accessor:
         - both | readWrite
         - mode
@@ -47,8 +45,6 @@ module Root:
         CamelCase:
 
   class Test | Root::TestAlias < Root::Name::BaseAlias:
-    include: ['Root::Name']
-
     def:
       initialize   | Root::TestAlias: [[int, arg1], [float, 'arg_2 = 1.2']]
       test         | static: [arg]
