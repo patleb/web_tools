@@ -37,6 +37,7 @@ module Root:
         - both | readWrite
         - mode
       attr_reader: [read_only | readOnly]
+      attr_writer!: writeOnly
       cattr_writer: static_write_only | writeOnly
 
       def:

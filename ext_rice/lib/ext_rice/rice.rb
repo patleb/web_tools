@@ -17,7 +17,7 @@ module Rice
   ENUM_KEYWORD = /^enum!? +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?$/
   CONSTANT_KEYWORD = /^[A-Z_][A-Z\d_]+$/
   INCLUDES_KEYWORD = 'include'
-  ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)$/
+  ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)!?$/
   METHODS_KEYWORD = 'def'
   MEMORY_ACTIONS = { 'NO_COLLECT' => 'keepAlive()', 'AS_VALUE' => 'setValue()', 'NO_DELETE' => 'takeOwnership()' }
 
@@ -241,15 +241,17 @@ module Rice
   def self.define_attributes(f, scope_var, attr_type, names)
     raise "can't define attributes on the global scope" unless scope_var
     scope_alias = extract_scope_alias(scope_var)
+    format = attr_type.end_with? '!'
     singleton = 'singleton_' if attr_type.start_with? 'c'
     access_type = case attr_type
-      when /_accessor$/ then ''
-      when /_reader$/   then ', AttrAccess::Read'
-      when /_writer$/   then ', AttrAccess::Write'
+      when /_accessor!?$/ then ''
+      when /_reader!?$/   then ', AttrAccess::Read'
+      when /_writer!?$/   then ', AttrAccess::Write'
       end
     Array.wrap(names).each do |name|
       name, name_alias = name.split(ALIAS, 2)
       name_alias ||= name
+      name = name.underscore if format
       f.puts <<~CPP.indent(2)
         #{scope_var}.define_#{singleton}attr("#{name}", &#{scope_alias}::#{name_alias}#{access_type});
       CPP
