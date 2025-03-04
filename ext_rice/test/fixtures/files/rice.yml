@@ -40,9 +40,11 @@ module Root:
       attr_writer!: writeOnly
       cattr_writer: static_write_only | writeOnly
 
-      def:
+      def!:
         self.base | base_alias: [arg_1, 'arg_2 = (std::string)"value"']
+        self.CamelCase:
         initialize: [int, float]
+        CamelCase:
 
   class Test | Root::TestAlias < Root::Name::BaseAlias:
     include: ['Root::Name']

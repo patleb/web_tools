@@ -18,7 +18,7 @@ module Rice
   CONSTANT_KEYWORD = /^[A-Z_][A-Z\d_]+$/
   INCLUDES_KEYWORD = 'include'
   ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)!?$/
-  METHODS_KEYWORD = 'def'
+  METHODS_KEYWORD = /^def!?$/
   MEMORY_ACTIONS = { 'NO_COLLECT' => 'keepAlive()', 'AS_VALUE' => 'setValue()', 'NO_DELETE' => 'takeOwnership()' }
 
   def self.require_ext
@@ -138,7 +138,7 @@ module Rice
       when ATTRIBUTES_KEYWORDS
         define_attributes(f, parent_var, keyword, body)
       when METHODS_KEYWORD
-        define_methods(f, parent_var, body)
+        define_methods(f, parent_var, keyword, body)
       else
         raise "invalid keyword [#{keyword}]"
       end
@@ -258,8 +258,9 @@ module Rice
     end
   end
 
-  def self.define_methods(f, scope_var, names)
+  def self.define_methods(f, scope_var, format, names)
     scope_alias = extract_scope_alias(scope_var)
+    format = format.end_with? '!'
     dot = '.' if scope_var
     names.each do |name, args|
       is_singleton, name = name.split('self.', 2)
@@ -280,6 +281,7 @@ module Rice
         define_constructors(f, scope_var, scope_alias, constructors, args || [])
         next
       end
+      name = name.underscore if format
       function_type = !scope_var ? 'global_function' : ('singleton_function' if is_singleton)
       function_type ||= is_static ? 'function' : 'method'
       case args

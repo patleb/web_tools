@@ -30,7 +30,9 @@ void Init_ext() {
   rb_cRoot_dc_Name_dc_BaseAlias.define_attr("write_only", &Root::Name::BaseAlias::writeOnly, AttrAccess::Write);
   rb_cRoot_dc_Name_dc_BaseAlias.define_singleton_attr("static_write_only", &Root::Name::BaseAlias::writeOnly, AttrAccess::Write);
   rb_cRoot_dc_Name_dc_BaseAlias.define_singleton_function("base", &Root::Name::BaseAlias::base_alias, Arg("arg_1"), Arg("arg_2") = (std::string)"value");
+  rb_cRoot_dc_Name_dc_BaseAlias.define_singleton_function("camel_case", &Root::Name::BaseAlias::CamelCase);
   rb_cRoot_dc_Name_dc_BaseAlias.define_method("initialize", &Root::Name::BaseAlias::initialize, Arg("int"), Arg("float"));
+  rb_cRoot_dc_Name_dc_BaseAlias.define_method("camel_case", &Root::Name::BaseAlias::CamelCase);
   Data_Type<Root::TestAlias> rb_cRoot_dc_TestAlias = define_class_under<Root::TestAlias, Root::Name::BaseAlias>(rb_mRoot, "Test");
   rb_cRoot_dc_TestAlias.include_module(rb_mRoot_dc_Name);
   rb_cRoot_dc_TestAlias.define_constructor(Constructor<Root::TestAlias, int, float>(), Arg("arg1"), Arg("arg_2") = 1.2);
