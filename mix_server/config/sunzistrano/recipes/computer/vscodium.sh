@@ -5,3 +5,4 @@ echo deb [signed-by=/usr/share/keyrings/vscodium.gpg] https://download.vscodium.
 sun.update
 
 sun.install "codium"
+sun.install "clangd"

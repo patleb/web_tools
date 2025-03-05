@@ -150,7 +150,7 @@ sudo apt update && sudo apt install codium -y
 - User > Window > Open Folders In New Window [on]
 - User > Window > New Window Dimensions [inherit]
 - Theme > High contrast
-- Extensions: GitLens, Docker, DBCode, Ruby LSP
+- Extensions: GitLens, Docker, DBCode, Ruby LSP, Crystal Language, clangd, Octave Execution
 
 ## Rubymine
 
