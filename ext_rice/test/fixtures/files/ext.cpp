@@ -48,7 +48,7 @@ void Init_ext() {
   rb_cRoot_dc_TestAlias.define_method("lambda", [](Object& self) -> std::vector<int32_t>& {
     return test_hello();
   });
-  Class rb_cOverload = define_class("Overload");
+  Data_Type<Overload> rb_cOverload = define_class<Overload>("Overload");
   rb_cOverload.define_constructor(Constructor<Overload>());
   rb_cOverload.define_constructor(Constructor<const Overload&>());
   rb_cOverload.define_constructor(Constructor<Overload&&>());

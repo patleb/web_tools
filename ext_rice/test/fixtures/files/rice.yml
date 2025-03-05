@@ -61,7 +61,7 @@ module Root:
           return test_hello();
         }
 
-class Overload:
+class Overload | Overload:
   def:
     initialize | ::Overload.DEFAULT.COPY.MOVE:
       - { [int arg1, float] }
@@ -75,7 +75,7 @@ class Overload:
 def:
   global:
 
-class Global:
+class Global: # Ruby class
   def:
     global | ::global:
 
