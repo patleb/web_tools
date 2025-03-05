@@ -294,13 +294,15 @@ module Rice
   end
 
   def self.define_constructors(f, scope_var, scope_alias, constructors, args)
+    default = false
     Array.wrap(constructors).each do |constructor|
       constructor_alias = extract_constructor_alias(scope_alias, constructor)
+      default ||= (constructor == 'DEFAULT')
       f.puts <<~CPP.indent(2)
         #{scope_var}.define_constructor(Constructor<#{constructor_alias}>());
       CPP
     end
-    args = [{ args => nil }] unless args.first.is_a? Hash
+    args = [{ args => nil }] unless (args.empty? && default) || args.first.is_a?(Hash)
     args.map{ extract_types_and_defaults(it.keys.first) }.each do |types, defaults|
       types = ", #{types}" if types
       defaults = ", #{defaults}" if defaults
