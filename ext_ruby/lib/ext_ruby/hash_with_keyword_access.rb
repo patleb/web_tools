@@ -279,3 +279,13 @@ class Hash
 
   alias nested_under_keyword_access with_keyword_access
 end
+
+class Array
+  def to_hwia
+    to_h.to_hwia
+  end
+
+  def to_hwka
+    to_h.to_hwka
+  end
+end
