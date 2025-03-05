@@ -13,7 +13,7 @@ after_init: >
   init_some_other_code();
 
 module Root:
-  CONSTANT: 2
+  CONSTANT: (int)Root::MODULE_CONSTANT
 
   enum COLOR | Root::COLOR: [RED, BLUE, GREEN]
 

@@ -221,7 +221,7 @@ module Rice
   def self.define_constant(f, scope_var, name, value)
     raise "can't define a constant on the global scope" unless scope_var
     f.puts <<~CPP.indent(2)
-      #{scope_var}.const_set("#{name}", #{value});
+      #{scope_var}.define_constant("#{name}", #{value});
     CPP
   end
 
