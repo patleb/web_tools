@@ -20,9 +20,9 @@ module Rice
   METHODS_KEYWORD = /^def!?$/
   MEMORY_ACTIONS = {
     'NO_COLLECT' => 'keepAlive()',
-    'AS_VALUE' => 'setValue()',
-    'NO_DELETE' => 'takeOwnership()',
-    'AS_OPAQUE' => 'setOpaque()'
+    'NO_DELETE'  => 'takeOwnership()',
+    'AS_VALUE'   => 'setValue()',
+    'AS_OPAQUE'  => 'setOpaque()'
   }
 
   def self.require_ext
