@@ -35,7 +35,7 @@ void Init_ext() {
   Data_Type<Root::TestAlias> rb_cRoot_dc_TestAlias = define_class_under<Root::TestAlias, Root::Name::BaseAlias>(rb_mRoot, "Test");
   rb_cRoot_dc_TestAlias.define_constructor(Constructor<Root::TestAlias, int, float>(), Arg("arg1"), Arg("arg_2") = 1.2);
   rb_cRoot_dc_TestAlias.define_function("test", &Root::TestAlias::test, Arg("arg"));
-  rb_cRoot_dc_TestAlias.define_function("outside", &::outside);
+  rb_cRoot_dc_TestAlias.define_function("outside", &::outside<int>);
   using rb_root_test_alias_value_1 = size_t (Root::TestAlias::*)();
   rb_cRoot_dc_TestAlias.define_method<rb_root_test_alias_value_1>("value", &Root::TestAlias::value);
   using rb_root_test_alias_value_2 = void (Root::TestAlias::*)(size_t);
@@ -57,7 +57,7 @@ void Init_ext() {
   using rb_overload_name_1 = vectot<int>& (Overload::*)() const;
   rb_cOverload.define_method<rb_overload_name_1>("name", &Overload::name);
   using rb_overload_name_2 = size_t (Overload::*)();
-  rb_cOverload.define_method<rb_overload_name_2>("name", &Overload::name);
+  rb_cOverload.define_method<rb_overload_name_2>("name", &Overload::name< int, bool >);
   using rb_overload_name_3 = void (Overload::*)(size_t);
   rb_cOverload.define_method<rb_overload_name_3>("name", &Overload::name);
   using rb_overload_name_4 = bool (Overload::*)(int, std::string);

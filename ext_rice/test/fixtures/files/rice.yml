@@ -48,7 +48,7 @@ module Root:
     def:
       initialize   | Root::TestAlias: [[int, arg1], [float, 'arg_2 = 1.2']]
       test         | static: [arg]
-      outside      | static ::outside:
+      outside      | static ::outside<int>:
       value        | value: { size_t: [] }
       value=       | value: { void: [size_t] }
       arg_alive:    [arg_name.NO_COLLECT]
@@ -68,7 +68,7 @@ class Overload | Overload:
       - { [[int, arg1], [float, 'arg_2 = 1.2']] }
     name:
       - { vectot<int>& const: [] }
-      - { size_t: [] }
+      - { '< int, bool > size_t': [] }
       - { void: [size_t] }
       - { bool: [[int, arg_1], [std::string, 'arg_2 = (std::string)"value"']] }
 

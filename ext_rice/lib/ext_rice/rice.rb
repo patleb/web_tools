@@ -13,6 +13,7 @@ module Rice
   ALIAS = / +\| +/
   INHERIT = / +< +/
   STATIC = /^static +/
+  TEMPLATE = /^<([\w:<>, ]+)> */
   SCOPE_KEYWORDS = /^(module|class) +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?(#{INHERIT}#{CPP_CONSTANT})?$/
   ENUM_KEYWORD = /^enum!? +#{RB_CONSTANT}(#{ALIAS}#{CPP_CONSTANT})?$/
   CONSTANT_KEYWORD = /^[A-Z_][A-Z\d_]+$/
@@ -321,13 +322,14 @@ module Rice
     args.map{ extract_return_types_and_defaults(it) }.each do |return_type, types, defaults|
       using_alias = build_using_alias(name_alias)
       return_type, const = return_type.split(/ +const$/, 2)
+      template = "<#{$1}>" if (return_type.sub! TEMPLATE, '')
       const = ' const' if const
       f.puts <<~CPP.indent(2)
         using #{using_alias} = #{return_type} (#{scope_alias}::*)(#{types})#{const};
       CPP
       defaults = ", #{defaults}" if defaults
       f.puts <<~CPP.indent(2)
-        #{scope_var}#{dot}define_#{function_type}<#{using_alias}>("#{name}", &#{name_alias}#{defaults});
+        #{scope_var}#{dot}define_#{function_type}<#{using_alias}>("#{name}", &#{name_alias}#{template}#{defaults});
       CPP
     end
   end
