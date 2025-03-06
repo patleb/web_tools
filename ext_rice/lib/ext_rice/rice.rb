@@ -18,7 +18,12 @@ module Rice
   CONSTANT_KEYWORD = /^[A-Z_][A-Z\d_]+$/
   ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)!?$/
   METHODS_KEYWORD = /^def!?$/
-  MEMORY_ACTIONS = { 'NO_COLLECT' => 'keepAlive()', 'AS_VALUE' => 'setValue()', 'NO_DELETE' => 'takeOwnership()' }
+  MEMORY_ACTIONS = {
+    'NO_COLLECT' => 'keepAlive()',
+    'AS_VALUE' => 'setValue()',
+    'NO_DELETE' => 'takeOwnership()',
+    'AS_OPAQUE' => 'setOpaque()'
+  }
 
   def self.require_ext
     return unless require_ext?
@@ -122,7 +127,7 @@ module Rice
     end
   end
 
-  # TODO registry, exception, iterator, director, stl define_(vector|map|...), stl multimap, etc.
+  # TODO registry, exception, iterator, director, stl define_(vector|map|...), etc.
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
       case keyword
