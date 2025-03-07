@@ -151,6 +151,10 @@ sudo apt update && sudo apt install codium -y
 - User > Window > New Window Dimensions [inherit]
 - Theme > High contrast
 - Extensions: GitLens, Docker, DBCode, Ruby LSP, Crystal Language, clangd, Octave Execution
+  - Clangd: Fallback Flags:
+    - -I/usr/include/c++/13
+    - -I/usr/include/ruby-3.2.0
+    - -I/usr/include/x86_64-linux-gnu/ruby-3.2.0
 
 ## Rubymine
 

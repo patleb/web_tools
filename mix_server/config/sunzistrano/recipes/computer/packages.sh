@@ -6,7 +6,6 @@ sun.add_repo "ppa:ubuntuhandbook1/apps"
 sun.add_repo "ppa:phoerious/keepassxc"
 sun.update
 
-#  octave
 #  scilab
 #  wxmaxima
 #  xcas
@@ -21,6 +20,7 @@ sun.update
   graphviz
   keepassxc
   lftp
+  octave octave-dev
   psensor
   shutter
   snapd
