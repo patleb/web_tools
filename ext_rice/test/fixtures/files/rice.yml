@@ -20,7 +20,7 @@ module Root:
   def:
     self.root:
 
-  class Simple | Root::Simple:
+  class Simple < Another:
     enum! Props | Root::Simple::PROPS: [ValueA1, ValueB2, ValueC3]
 
     def:
@@ -39,14 +39,14 @@ module Root:
       cattr_writer: static_write_only | writeOnly
 
       def!:
-        self.base | base_alias: [arg_1, 'arg_2 = (std::string)"value"']
+        self.base | base_alias: [arg_1, arg_2 = (std::string)"value"]
         self.CamelCase:
         initialize: [int, float]
         CamelCase:
 
   class Test | Root::TestAlias < Root::Name::BaseAlias:
     def:
-      initialize   | Root::TestAlias: [[int, arg1], [float, 'arg_2 = 1.2']]
+      initialize   | Root::TestAlias: [[int, arg1], [float, arg_2 = 1.2]]
       test         | static: [arg]
       outside      | static ::outside<int>:
       value        | value: { size_t: [] }
@@ -61,21 +61,21 @@ module Root:
           return test_hello();
         }
 
-class Overload | Overload:
+class Overload:
   def:
     initialize | ::Overload.DEFAULT.COPY.MOVE:
       - { [int arg1, float] }
-      - { [[int, arg1], [float, 'arg_2 = 1.2']] }
+      - { [[int, arg1], [float, arg_2 = 1.2]] }
     name:
       - { vectot<int>& const: [] }
       - { '< int, bool > size_t': [] }
       - { void: [size_t] }
-      - { bool: [[int, arg_1], [std::string, 'arg_2 = (std::string)"value"']] }
+      - { bool: [[int, arg_1], [std::string, arg_2 = (std::string)"value"]] }
 
 def:
   global:
 
-class Global: # Ruby class
+class Global:
   def:
     global | ::global:
 

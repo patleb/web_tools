@@ -14,7 +14,7 @@ void Init_ext() {
   rb_eRoot_dc_COLOR.define_value("BLUE", Root::COLOR::BLUE);
   rb_eRoot_dc_COLOR.define_value("GREEN", Root::COLOR::GREEN);
   rb_mRoot.define_singleton_function("root", &Root::root);
-  Data_Type<Root::Simple> rb_cRoot_dc_Simple = define_class_under<Root::Simple>(rb_mRoot, "Simple");
+  Data_Type<Root::Simple> rb_cRoot_dc_Simple = define_class_under<Root::Simple, Another>(rb_mRoot, "Simple");
   Enum<Root::Simple::PROPS> rb_eRoot_dc_Simple_dc_PROPS = define_enum_under<Root::Simple::PROPS>("Props", rb_cRoot_dc_Simple);
   rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_A1", Root::Simple::PROPS::ValueA1);
   rb_eRoot_dc_Simple_dc_PROPS.define_value("VALUE_B2", Root::Simple::PROPS::ValueB2);
@@ -63,7 +63,7 @@ void Init_ext() {
   using rb_overload_name_4 = bool (Overload::*)(int, std::string);
   rb_cOverload.define_method<rb_overload_name_4>("name", &Overload::name, Arg("arg_1"), Arg("arg_2") = (std::string)"value");
   define_global_function("global", &global);
-  Class rb_cGlobal = define_class("Global");
+  Data_Type<Global> rb_cGlobal = define_class<Global>("Global");
   rb_cGlobal.define_method("global", &::global);
   Module rb_mEmpty = define_module("Empty");
   Enum<SEASON> rb_eSEASON = define_enum<SEASON>("SEASON");

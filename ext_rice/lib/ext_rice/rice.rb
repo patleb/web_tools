@@ -165,28 +165,26 @@ module Rice
     return define_module(f, parent_var, scope_name) if scope_type == 'module'
 
     scope_name, scope_alias = scope_name.split(ALIAS, 2)
-    if scope_alias
-      scope_alias, scope_base = scope_alias.split(INHERIT, 2)
-      cpp_class = scope_base ? "<#{scope_alias}, #{scope_base}>" : "<#{scope_alias}>"
-    else
-      scope_alias = extract_full_scope_alias(parent_var, scope_name)
-    end
-    class_type = cpp_class ? "Data_Type<#{scope_alias}>" : 'Class'
+    scope_alias ||= extract_full_scope_alias(parent_var, scope_name)
+    scope_alias, scope_base = scope_alias.split(INHERIT, 2)
+    scope_name = scope_name.split(INHERIT, 2).first
+    cpp_class = scope_base ? "<#{scope_alias}, #{scope_base}>" : "<#{scope_alias}>"
     scope_var = build_scope_var('class', scope_alias)
     if parent_var
       f.puts <<~CPP.squish.indent(2)
-        #{class_type} #{scope_var} = define_class_under#{cpp_class}(#{parent_var}, "#{scope_name}");
+        Data_Type<#{scope_alias}> #{scope_var} = define_class_under#{cpp_class}(#{parent_var}, "#{scope_name}");
       CPP
     else
       f.puts <<~CPP.squish.indent(2)
-        #{class_type} #{scope_var} = define_class#{cpp_class}("#{scope_name}");
+        Data_Type<#{scope_alias}> #{scope_var} = define_class#{cpp_class}("#{scope_name}");
       CPP
     end
     scope_var
   end
 
   def self.define_module(f, parent_var, scope_name)
-    scope_alias = extract_full_scope_alias(parent_var, scope_name)
+    scope_name, scope_alias = scope_name.split(ALIAS, 2)
+    scope_alias ||= extract_full_scope_alias(parent_var, scope_name)
     scope_var = build_scope_var('module', scope_alias)
     if parent_var
       f.puts <<~CPP.indent(2)
