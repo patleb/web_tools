@@ -12,6 +12,9 @@ before_initialize: >
 after_initialize: >
   init_some_other_code();
 
+rescue_handler:
+  - ExceptionHandler
+
 module Root:
   CONSTANT: (int)Root::MODULE_CONSTANT
 

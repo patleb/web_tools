@@ -5,9 +5,9 @@ libs:
   - stdc++_libbacktrace
 
 include:
-  - string
   - chrono
   - fstream
   - filesystem
+  - source_location
   - stacktrace
   - ext_rice/all.hpp

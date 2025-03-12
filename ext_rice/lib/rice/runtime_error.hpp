@@ -1,27 +1,27 @@
-#define THROW_ERROR(msg) throw RuntimeError((msg), __FILE__, __LINE__, std::to_string(std::stacktrace::current()))
+#define BACKTRACE std::stacktrace::current()
+#define LOCATION std::source_location::current()
 
 class RuntimeError : public std::exception {
   public:
 
-  RuntimeError(const char * what_msg, const char * file, int line, const std::string & stacktrace):
-    RuntimeError(std::string(what_msg), file, line, stacktrace) {
-  }
-
-  RuntimeError(const std::string & what_msg, const char * file, int line, const std::string & stacktrace):
+  RuntimeError(std::string_view what_msg, const std::stacktrace & trace = BACKTRACE, const std::source_location & source = LOCATION):
     what_msg(what_msg),
-    file(file),
-    line(line),
-    stacktrace(stacktrace) {
+    trace(std::to_string(trace)),
+    source(source) {
   }
 
   const char * what() const throw() {
-    return (file + ":" + std::to_string(line) + ": " + what_msg + "\n" + stacktrace).c_str();
+    return (
+      std::string(source.file_name()) + ":"
+        + std::to_string(source.line()) + ": "
+        + what_msg + "\n"
+        + trace
+    ).c_str();
   }
 
   private:
 
   std::string what_msg;
-  std::string stacktrace;
-  std::string file;
-  int line;
+  std::string trace;
+  std::source_location source;
 };

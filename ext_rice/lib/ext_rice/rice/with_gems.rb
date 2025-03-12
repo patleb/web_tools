@@ -1,6 +1,6 @@
 module Rice
   HOOKS = %i(before_include after_include before_initialize after_initialize initialize).index_with('')
-  CONFIGS = %i(libs include_dir include)
+  CONFIGS = %i(libs include_dir include rescue_handler)
   MAKEFILE = %i(cflags libs vpaths).index_with('')
   METHOD_ALIAS_KEYWORD = /^(?!(module|class|enum) +[A-Z]).+ +\| +.+/
 

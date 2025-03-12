@@ -107,29 +107,44 @@ module Rice
   end
 
   def self.create_init_file
-    includes, hooks = gems_config.values_at(:include, :hooks)
+    includes, rescue_handlers = gems_config.values_at(:include, :rescue_handler)
     dst_path.join("#{target}.cpp").open('w') do |f|
       f.puts <<~CPP
-        #{hooks[:before_include].strip.presence || '// before_include'}
+        #{hook :before_include}
+        // include
         #{includes.map{ |header| %{#include "#{header.strip}"} }.join("\n")}
         #include "all.hpp"
-        #{hooks[:after_include].strip.presence  || '// after_include'}
+        #{hook :after_include}
         using namespace Rice;
 
         extern "C"
         void Init_#{target}() {
-          #{hooks[:before_initialize].strip.presence || '// before_initialize'}
-          #{hooks[:initialize].strip.presence        || '// initialize'}
+          #{hook :before_initialize, indent: 2}
+          #{hook :initialize,        indent: 2}
       CPP
+      rescue_handlers.each do |handler|
+        f.puts <<~CPP.indent(2)
+          detail::Registries::instance.handlers.set(#{handler}());
+      CPP
+      end
       define_properties(f, nil, gems_config[:defs])
       f.puts <<~CPP
-          #{hooks[:after_initialize].strip.presence  || '// after_initialize'}
+          #{hook :after_initialize,  indent: 2}
         }
       CPP
     end
   end
 
-  # TODO registry, exception, iterator, director, stl define_(vector|map|...), etc.
+  def self.hook(name, indent: 0)
+    text = hooks[name].strip.presence
+    ["// #{name}", ("\n#{' ' * indent}" if text), text].join('')
+  end
+
+  def self.hooks
+    @hooks ||= gems_config[:hooks]
+  end
+
+  # TODO registry, iterator, director, stl define_(vector|map|...), etc.
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
       case keyword

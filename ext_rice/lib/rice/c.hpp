@@ -7,10 +7,10 @@ namespace C {
     std::string buffer("year-mo-dy hr:mn:sc.xxxxxx UTC");
     sprintf(&buffer.front(), "%04d-%02d-%02d %02d:%02d:%09.6f UTC",
       utc.tm_year + 1900,
-      utc.tm_mon + 1,
-      utc.tm_mday,
-      utc.tm_hour,
-      utc.tm_min,
+      (uint8_t)(utc.tm_mon + 1),
+      (uint8_t)utc.tm_mday,
+      (uint8_t)utc.tm_hour,
+      (uint8_t)utc.tm_min,
       seconds.count()
     );
     return buffer;

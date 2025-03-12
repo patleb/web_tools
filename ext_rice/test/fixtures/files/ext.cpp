@@ -1,17 +1,23 @@
+// before_include
 #include "some_code.hpp"
-#include "string"
+// include
 #include "chrono"
 #include "fstream"
 #include "filesystem"
+#include "source_location"
+#include "stacktrace"
 #include "ext_rice/all.hpp"
 #include "all.hpp"
+// after_include
 #include "some_other_code.hpp"
 using namespace Rice;
 
 extern "C"
 void Init_ext() {
+  // before_initialize
   init_some_code();
   // initialize
+  detail::Registries::instance.handlers.set(ExceptionHandler());
   Module rb_mRoot = define_module("Root");
   rb_mRoot.define_constant("CONSTANT", (int)Root::MODULE_CONSTANT);
   Enum<Root::COLOR> rb_eRoot_dc_COLOR = define_enum_under<Root::COLOR>("COLOR", rb_mRoot);
@@ -76,5 +82,6 @@ void Init_ext() {
   rb_eSEASON.define_value("SUMMER", SEASON::SUMMER);
   rb_eSEASON.define_value("FALL", SEASON::FALL);
   rb_eSEASON.define_value("WINTER", SEASON::WINTER);
+  // after_initialize
   init_some_other_code();
 }
