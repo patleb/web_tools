@@ -45,9 +45,9 @@ module Rice
     copy_files
     require_numo unless ENV['NO_NUMO']
     include_dir dst_path
-    includes, libraries, makefile = gems_config.values_at(:dirs, :libs, :makefile)
-    includes.each{ |name| include_dir name }
-    libraries.each{ |name| add_library name }
+    include_dirs, add_libraries, makefile = gems_config.values_at(:include_dir, :libs, :makefile)
+    include_dirs.each{ |name| include_dir name }
+    add_libraries.each{ |name| add_library name }
     yield(dst_path) if block_given?
     create_init_file unless executable?
     unless dry_run
@@ -107,22 +107,23 @@ module Rice
   end
 
   def self.create_init_file
-    headers, hooks = gems_config.values_at(:headers, :hooks)
+    includes, hooks = gems_config.values_at(:include, :hooks)
     dst_path.join("#{target}.cpp").open('w') do |f|
       f.puts <<~CPP
-        #{headers.map{ |header| %{#include "#{header.strip}"} }.join("\n")}
-        #{hooks[:before_all].strip}
+        #{hooks[:before_include].strip.presence || '// before_include'}
+        #{includes.map{ |header| %{#include "#{header.strip}"} }.join("\n")}
         #include "all.hpp"
-        #{hooks[:after_all].strip}
+        #{hooks[:after_include].strip.presence  || '// after_include'}
         using namespace Rice;
 
         extern "C"
         void Init_#{target}() {
-          #{hooks[:before_init].strip}
+          #{hooks[:before_initialize].strip.presence || '// before_initialize'}
+          #{hooks[:initialize].strip.presence        || '// initialize'}
       CPP
       define_properties(f, nil, gems_config[:defs])
       f.puts <<~CPP
-          #{hooks[:after_init].strip}
+          #{hooks[:after_initialize].strip.presence  || '// after_initialize'}
         }
       CPP
     end

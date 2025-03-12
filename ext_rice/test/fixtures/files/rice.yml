@@ -1,15 +1,15 @@
 gems:
 
-before_all: >
+before_include: >
   #include "some_code.hpp"
 
-after_all: >
+after_include: >
   #include "some_other_code.hpp"
 
-before_init: >
+before_initialize: >
   init_some_code();
 
-after_init: >
+after_initialize: >
   init_some_other_code();
 
 module Root:

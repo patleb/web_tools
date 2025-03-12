@@ -1,0 +1,6 @@
+include:
+  - string
+  - chrono
+  - fstream
+  - filesystem
+  - ext_rice/all.hpp

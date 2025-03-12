@@ -1,5 +1,9 @@
-
 #include "some_code.hpp"
+#include "string"
+#include "chrono"
+#include "fstream"
+#include "filesystem"
+#include "ext_rice/all.hpp"
 #include "all.hpp"
 #include "some_other_code.hpp"
 using namespace Rice;
@@ -7,6 +11,7 @@ using namespace Rice;
 extern "C"
 void Init_ext() {
   init_some_code();
+  // initialize
   Module rb_mRoot = define_module("Root");
   rb_mRoot.define_constant("CONSTANT", (int)Root::MODULE_CONSTANT);
   Enum<Root::COLOR> rb_eRoot_dc_COLOR = define_enum_under<Root::COLOR>("COLOR", rb_mRoot);

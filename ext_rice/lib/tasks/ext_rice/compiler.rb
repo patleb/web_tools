@@ -47,17 +47,17 @@ module ExtRice
       rel_target_path = Pathname(target_path).relative_path_from(mkmf_path).to_s
       chdir mkmf_path, verbose: false do
         load(rel_extconf)
-        if compile && Rice.checksum_changed?
-          Rice.bin_path.delete(false)
-          sh make
-          if Rice.executable?
-            bin_path = Rice.mkmf_path.join(Rice.target)
-            cp bin_path, Rice.bin_path
-          else
-            sh make, 'install', "sitearchdir=#{rel_target_path}", "sitelibdir=#{rel_target_path}"
-          end
-          Rice.write_checksum
+        next unless compile
+        next unless Rice.checksum_changed? || !Rice.bin_path.exist?
+        Rice.bin_path.delete(false)
+        sh make
+        if Rice.executable?
+          bin_path = Rice.mkmf_path.join(Rice.target)
+          cp bin_path, Rice.bin_path
+        else
+          sh make, 'install', "sitearchdir=#{rel_target_path}", "sitelibdir=#{rel_target_path}"
         end
+        Rice.write_checksum
       end
     ensure
       ARGV.replace(argv_was)

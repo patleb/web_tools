@@ -1,6 +1,6 @@
 module Rice
-  HOOKS = %i(before_all after_all before_init after_init).index_with('')
-  CONFIGS = %i(dirs libs headers)
+  HOOKS = %i(before_include after_include before_initialize after_initialize initialize).index_with('')
+  CONFIGS = %i(libs include_dir include)
   MAKEFILE = %i(cflags libs vpaths).index_with('')
   METHOD_ALIAS_KEYWORD = /^(?!(module|class|enum) +[A-Z]).+ +\| +.+/
 
@@ -79,7 +79,7 @@ module Rice
     end
 
     def gem_config(path)
-      defs = YAML.safe_load(ERB.template(path, binding)).to_hwia
+      defs = YAML.safe_load(ERB.template(path, binding), aliases: true).to_hwia
       hooks = extract_strings! defs, HOOKS
       configs = extract_configs! defs
       makefile = extract_strings! defs.delete(:makefile), MAKEFILE
@@ -163,7 +163,7 @@ module Rice
 
     def yml
       @yml ||= if yml?
-        YAML.safe_load(ERB.template(yml_path, binding)).to_hwia
+        YAML.safe_load(ERB.template(yml_path, binding), aliases: true).to_hwia
       else
         {}
       end

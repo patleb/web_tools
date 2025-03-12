@@ -1,6 +1,3 @@
-#include <string>
-#include <chrono>
-
 namespace C {
   inline std::string timestamp() {
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
@@ -17,28 +14,5 @@ namespace C {
       seconds.count()
     );
     return buffer;
-  }
-
-  template<class K, class V>
-  auto multimap_keys(const std::multimap< K, V >& multimap) {
-    std::vector< K > list;
-    for (auto itr = multimap.begin(); itr != multimap.end(); itr++)
-      list.push_back(itr->first);
-    return list;
-  }
-
-  template<class K, class V>
-  auto multimap_values(const std::multimap< K, V >& multimap) {
-    std::vector< V > list;
-    for (auto itr = multimap.begin(); itr != multimap.end(); itr++)
-      list.push_back(itr->second);
-    return list;
-  }
-
-  template<class V>
-  auto set_to_vector(const std::set< V >& set) {
-    std::vector< V > list;
-    list.assign(set.begin(), set.end());
-    return list;
   }
 }
