@@ -1,6 +1,13 @@
+makefile:
+  cflags: -std=c++23
+
+libs:
+  - stdc++_libbacktrace
+
 include:
   - string
   - chrono
   - fstream
   - filesystem
+  - stacktrace
   - ext_rice/all.hpp
