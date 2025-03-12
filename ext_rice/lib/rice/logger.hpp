@@ -1,5 +1,5 @@
 <%- ExtRice.config.log_levels.each_key do |level| -%>
-  #define LOG_<%= level.upcase %>(msg) log_<%= level %>(__FILE__, __LINE__, (msg))
+#define LOG_<%= level.upcase %>(msg) log_<%= level %>(__FILE__, __LINE__, (msg))
 <%- end -%>
 
 class Logger {
@@ -37,12 +37,11 @@ const std::string Logger::LEVELS[] = { <%= ExtRice.config.log_levels.keys.map(&:
 auto logger = Logger();
 
 <%- ExtRice.config.log_levels.each do |level, level_i| -%>
-
-  template<class... Args>
-  void log_<%= level %>(const char * file, int line, const Args& ...messages) {
-    <%- if level_i >= ExtRice.config.log_level_i -%>
-      logger.log<Args...>(messages..., Logger::LEVEL::<%= level.upcase %>, file, line);
-    <%- end -%>
-  }
+template<class... Args>
+void log_<%= level %>(const char * file, int line, const Args& ...messages) {
+  <%- if level_i >= ExtRice.config.log_level_i -%>
+    logger.log<Args...>(messages..., Logger::LEVEL::<%= level.upcase %>, file, line);
+  <%- end -%>
+}
 
 <%- end -%>
