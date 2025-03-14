@@ -15,4 +15,22 @@ namespace C {
     );
     return buffer;
   }
+
+  template < class T, class V >
+  auto cast(const std::vector< V > & values) {
+    std::vector< T > casts(values.size());
+    for (size_t i = 0; i < values.size(); ++i) {
+      casts[i] = static_cast< T >(values[i]);
+    }
+    return casts;
+  }
+
+  template <>
+  auto cast< const char *, std::string >(const std::vector< std::string > & values) {
+    std::vector< const char * > casts(values.size());
+    for (size_t i = 0; i < values.size(); ++i) {
+      casts[i] = values[i].c_str();
+    }
+    return casts;
+  }
 }
