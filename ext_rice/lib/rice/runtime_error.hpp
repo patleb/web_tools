@@ -6,7 +6,7 @@ class RuntimeError : public std::exception {
 
   RuntimeError(std::string_view what_msg, const std::stacktrace & trace = BACKTRACE, const std::source_location & source = LOCATION):
     what_msg(what_msg),
-    trace(std::to_string(trace)),
+    trace(trace),
     source(source) {
   }
 
@@ -15,13 +15,13 @@ class RuntimeError : public std::exception {
       std::string(source.file_name()) + ":"
         + std::to_string(source.line()) + ": "
         + what_msg + "\n"
-        + trace
+        + std::to_string(trace)
     ).c_str();
   }
 
   private:
 
   std::string what_msg;
-  std::string trace;
+  std::stacktrace trace;
   std::source_location source;
 };
