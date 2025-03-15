@@ -129,6 +129,7 @@ computer:
     - computer/xtradeb
     - computer/packages
     - computer/docker
+    - computer/cling
     - computer/qgis
     - utils/packages
     - utils/htop
