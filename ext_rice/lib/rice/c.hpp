@@ -16,20 +16,54 @@ namespace C {
     return buffer;
   }
 
-  template < class T, class V >
-  auto cast(const std::vector< V > & values) {
-    std::vector< T > casts(values.size());
-    for (size_t i = 0; i < values.size(); ++i) {
+  template < class V, class T >
+  auto vector_cast(const std::vector< V > & values) {
+    size_t size = values.size();
+    std::vector< T > casts(size);
+    for (size_t i = 0; i < size; ++i) {
+      casts[i] = static_cast< T >(values[i]);
+    }
+    return casts;
+  }
+
+  template < class V, class T >
+  auto vector_cast(const V * values, size_t size) {
+    std::vector< T > casts(size);
+    for (size_t i = 0; i < size; ++i) {
       casts[i] = static_cast< T >(values[i]);
     }
     return casts;
   }
 
   template <>
-  auto cast< const char *, std::string >(const std::vector< std::string > & values) {
-    std::vector< const char * > casts(values.size());
-    for (size_t i = 0; i < values.size(); ++i) {
-      casts[i] = values[i].c_str();
+  auto vector_cast< std::string, char >(const std::vector< std::string > & values) {
+    size_t size = values.size();
+    size_t c_size = 0;
+    for (size_t i = 0; i < size; ++i) {
+      size_t count = values[i].size();
+      if (count > c_size) c_size = count;
+    }
+    c_size += 1; // '\0'
+    std::vector< char * > casts;
+    for (size_t i = 0; i < size; ++i) {
+      casts[i] = new char[c_size];
+      strcpy(casts[i], values[i].c_str());
+    }
+    return casts;
+  }
+
+  void vector_free(const std::vector< char * > & values) {
+    size_t size = values.size();
+    for (size_t i = 0; i < size; ++i) {
+      delete [] values[i];
+    }
+  }
+
+  template <>
+  auto vector_cast< char, std::string >(const char * values, size_t size) {
+    std::vector< std::string > casts(size);
+    for (size_t i = 0; i < size; ++i) {
+      casts[i] = std::string(&values[i]);
     }
     return casts;
   }

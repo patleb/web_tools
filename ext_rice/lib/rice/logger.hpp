@@ -36,7 +36,7 @@ auto logger = Logger();
 template<class... Args>
 void log_<%= level %>(const Args& ...messages) {
   <%- if level_i >= ExtRice.config.log_level_i -%>
-    logger.log<Args...>(messages..., Logger::LEVEL::<%= level.upcase %>);
+  logger.log<Args...>(messages..., Logger::LEVEL::<%= level.upcase %>);
   <%- end -%>
 }
 

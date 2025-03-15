@@ -4,7 +4,7 @@
 class RuntimeError : public std::exception {
   public:
 
-  RuntimeError(std::string_view what_msg, const std::stacktrace & trace = BACKTRACE, const std::source_location & source = LOCATION):
+  explicit RuntimeError(std::string_view what_msg, const std::stacktrace & trace = BACKTRACE, const std::source_location & source = LOCATION):
     what_msg(what_msg),
     trace(trace),
     source(source) {
@@ -19,7 +19,7 @@ class RuntimeError : public std::exception {
     ).c_str();
   }
 
-  private:
+  protected:
 
   std::string what_msg;
   std::stacktrace trace;

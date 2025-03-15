@@ -4,5 +4,3 @@
 #include "c.hpp"
 #include "logger.hpp"
 #include "runtime_error.hpp"
-
-namespace Numo = numo;

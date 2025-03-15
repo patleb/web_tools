@@ -68,6 +68,10 @@ protected:
     this->_value = rb_narray_new(dtype, shape.size(), const_cast<size_t*>(shape.begin()));
   }
 
+  void construct_shape(VALUE dtype, std::vector<size_t> shape) {
+    this->_value = rb_narray_new(dtype, shape.size(), shape.data());
+  }
+
   VALUE _value;
 
 private:
@@ -75,374 +79,78 @@ private:
     return numo_cNArray;
   }
 };
+<%- [
+  ['SFloat',  'float'],
+  ['DFloat',  'double'],
+  ['Int8',    'int8_t'],
+  ['Int16',   'int16_t'],
+  ['Int32',   'int32_t'],
+  ['Int64',   'int64_t'],
+  ['UInt8',   'uint8_t'],
+  ['UInt16',  'uint16_t'],
+  ['UInt32',  'uint32_t'],
+  ['UInt64',  'uint64_t'],
+  ['RObject', 'VALUE'],
+].each do |na_type, type| -%>
 
-class SFloat: public NArray {
+class <%= na_type %>: public NArray {
 public:
-  SFloat(VALUE v) {
+  <%= na_type %>(VALUE v) {
     construct_value(this->dtype(), v);
   }
 
-  SFloat(Rice::Object o) {
+  <%= na_type %>(Rice::Object o) {
     construct_value(this->dtype(), o.value());
   }
 
-  SFloat(std::initializer_list<size_t> shape) {
+  <%= na_type %>(std::initializer_list<size_t> shape) {
     construct_shape(this->dtype(), shape);
   }
 
-  const float* read_ptr() {
-    return reinterpret_cast<const float*>(NArray::read_ptr());
+  <%= na_type %>(std::vector<size_t> shape) {
+    construct_shape(this->dtype(), shape);
   }
 
-  float* write_ptr() {
-    return reinterpret_cast<float*>(NArray::write_ptr());
+  const <%= type %> * read_ptr() {
+    return reinterpret_cast< const <%= type %> * >(NArray::read_ptr());
+  }
+
+  <%= type %> * write_ptr() {
+    return reinterpret_cast< <%= type %> * >(NArray::write_ptr());
   }
 
 private:
   VALUE dtype() {
-    return numo_cSFloat;
+    return numo_c<%= na_type %>;
   }
 };
+<%- end -%>
+<%- ['SComplex', 'DComplex', 'Bit'].each do |na_type| -%>
 
-class DFloat: public NArray {
+class <%= na_type %>: public NArray {
 public:
-  DFloat(VALUE v) {
+  <%= na_type %>(VALUE v) {
     construct_value(this->dtype(), v);
   }
 
-  DFloat(Rice::Object o) {
+  <%= na_type %>(Rice::Object o) {
     construct_value(this->dtype(), o.value());
   }
 
-  DFloat(std::initializer_list<size_t> shape) {
+  <%= na_type %>(std::initializer_list<size_t> shape) {
     construct_shape(this->dtype(), shape);
   }
 
-  const double* read_ptr() {
-    return reinterpret_cast<const double*>(NArray::read_ptr());
-  }
-
-  double* write_ptr() {
-    return reinterpret_cast<double*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cDFloat;
-  }
-};
-
-class Int8: public NArray {
-public:
-  Int8(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  Int8(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  Int8(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-  const int8_t* read_ptr() {
-    return reinterpret_cast<const int8_t*>(NArray::read_ptr());
-  }
-
-  int8_t* write_ptr() {
-    return reinterpret_cast<int8_t*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cInt8;
-  }
-};
-
-class Int16: public NArray {
-public:
-  Int16(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  Int16(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  Int16(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-  const int16_t* read_ptr() {
-    return reinterpret_cast<const int16_t*>(NArray::read_ptr());
-  }
-
-  int16_t* write_ptr() {
-    return reinterpret_cast<int16_t*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cInt16;
-  }
-};
-
-class Int32: public NArray {
-public:
-  Int32(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  Int32(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  Int32(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-  const int32_t* read_ptr() {
-    return reinterpret_cast<const int32_t*>(NArray::read_ptr());
-  }
-
-  int32_t* write_ptr() {
-    return reinterpret_cast<int32_t*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cInt32;
-  }
-};
-
-class Int64: public NArray {
-public:
-  Int64(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  Int64(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  Int64(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-  const int64_t* read_ptr() {
-    return reinterpret_cast<const int64_t*>(NArray::read_ptr());
-  }
-
-  int64_t* write_ptr() {
-    return reinterpret_cast<int64_t*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cInt64;
-  }
-};
-
-class UInt8: public NArray {
-public:
-  UInt8(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  UInt8(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  UInt8(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-  const uint8_t* read_ptr() {
-    return reinterpret_cast<const uint8_t*>(NArray::read_ptr());
-  }
-
-  uint8_t* write_ptr() {
-    return reinterpret_cast<uint8_t*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cUInt8;
-  }
-};
-
-class UInt16: public NArray {
-public:
-  UInt16(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  UInt16(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  UInt16(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-  const uint16_t* read_ptr() {
-    return reinterpret_cast<const uint16_t*>(NArray::read_ptr());
-  }
-
-  uint16_t* write_ptr() {
-    return reinterpret_cast<uint16_t*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cUInt16;
-  }
-};
-
-class UInt32: public NArray {
-public:
-  UInt32(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  UInt32(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  UInt32(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-  const uint32_t* read_ptr() {
-    return reinterpret_cast<const uint32_t*>(NArray::read_ptr());
-  }
-
-  uint32_t* write_ptr() {
-    return reinterpret_cast<uint32_t*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cUInt32;
-  }
-};
-
-class UInt64: public NArray {
-public:
-  UInt64(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  UInt64(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  UInt64(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-  const uint64_t* read_ptr() {
-    return reinterpret_cast<const uint64_t*>(NArray::read_ptr());
-  }
-
-  uint64_t* write_ptr() {
-    return reinterpret_cast<uint64_t*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cUInt64;
-  }
-};
-
-class SComplex: public NArray {
-public:
-  SComplex(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  SComplex(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  SComplex(std::initializer_list<size_t> shape) {
+  <%= na_type %>(std::vector<size_t> shape) {
     construct_shape(this->dtype(), shape);
   }
 
 private:
   VALUE dtype() {
-    return numo_cSComplex;
+    return numo_c<%= na_type %>;
   }
 };
-
-class DComplex: public NArray {
-public:
-  DComplex(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  DComplex(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  DComplex(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cDComplex;
-  }
-};
-
-class Bit: public NArray {
-public:
-  Bit(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  Bit(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  Bit(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cBit;
-  }
-};
-
-class RObject: public NArray {
-public:
-  RObject(VALUE v) {
-    construct_value(this->dtype(), v);
-  }
-
-  RObject(Rice::Object o) {
-    construct_value(this->dtype(), o.value());
-  }
-
-  RObject(std::initializer_list<size_t> shape) {
-    construct_shape(this->dtype(), shape);
-  }
-
-  const VALUE* read_ptr() {
-    return reinterpret_cast<const VALUE*>(NArray::read_ptr());
-  }
-
-  VALUE* write_ptr() {
-    return reinterpret_cast<VALUE*>(NArray::write_ptr());
-  }
-
-private:
-  VALUE dtype() {
-    return numo_cRObject;
-  }
-};
+<%- end -%>
 
 }
 
@@ -483,22 +191,23 @@ public:
     return x.value();
   }
 };
+<%- %w(SFloat DFloat Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 RObject SComplex DComplex Bit).each do |na_type| -%>
 
 template<>
-struct Type<numo::SFloat>
+struct Type< numo::<%= na_type %> >
 {
   static bool verify() { return true; }
 };
 
 template<>
-class From_Ruby<numo::SFloat>
+class From_Ruby< numo::<%= na_type %> >
 {
 public:
   Convertible is_convertible(VALUE value) {
     switch (rb_type(value))
     {
       case RUBY_T_DATA:
-        return Data_Type<numo::SFloat>::is_descendant(value) ? Convertible::Exact : Convertible::None;
+        return Data_Type< numo::<%= na_type %> >::is_descendant(value) ? Convertible::Exact : Convertible::None;
       case RUBY_T_ARRAY:
         return Convertible::Cast;
       default:
@@ -506,486 +215,19 @@ public:
     }
   }
 
-  numo::SFloat convert(VALUE x) {
-    return numo::SFloat(x);
+  numo::<%= na_type %> convert(VALUE x) {
+    return numo::<%= na_type %>(x);
   }
 };
 
 template<>
-class To_Ruby<numo::SFloat>
+class To_Ruby<numo::<%= na_type %>>
 {
 public:
-  VALUE convert(const numo::SFloat& x) {
+  VALUE convert(const numo::<%= na_type %>& x) {
     return x.value();
   }
 };
-
-template<>
-struct Type<numo::DFloat>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::DFloat>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::DFloat>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::DFloat convert(VALUE x) {
-    return numo::DFloat(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::DFloat>
-{
-public:
-  VALUE convert(const numo::DFloat& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::Int8>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::Int8>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::Int8>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::Int8 convert(VALUE x) {
-    return numo::Int8(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::Int8>
-{
-public:
-  VALUE convert(const numo::Int8& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::Int16>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::Int16>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::Int16>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::Int16 convert(VALUE x) {
-    return numo::Int16(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::Int16>
-{
-public:
-  VALUE convert(const numo::Int16& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::Int32>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::Int32>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::Int32>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::Int32 convert(VALUE x) {
-    return numo::Int32(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::Int32>
-{
-public:
-  VALUE convert(const numo::Int32& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::Int64>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::Int64>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::Int64>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::Int64 convert(VALUE x) {
-    return numo::Int64(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::Int64>
-{
-public:
-  VALUE convert(const numo::Int64& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::UInt8>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::UInt8>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::UInt8>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::UInt8 convert(VALUE x) {
-    return numo::UInt8(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::UInt8>
-{
-public:
-  VALUE convert(const numo::UInt8& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::UInt16>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::UInt16>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::UInt16>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::UInt16 convert(VALUE x) {
-    return numo::UInt16(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::UInt16>
-{
-public:
-  VALUE convert(const numo::UInt16& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::UInt32>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::UInt32>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::UInt32>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::UInt32 convert(VALUE x) {
-    return numo::UInt32(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::UInt32>
-{
-public:
-  VALUE convert(const numo::UInt32& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::UInt64>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::UInt64>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::UInt64>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::UInt64 convert(VALUE x) {
-    return numo::UInt64(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::UInt64>
-{
-public:
-  VALUE convert(const numo::UInt64& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::SComplex>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::SComplex>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::SComplex>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::SComplex convert(VALUE x) {
-    return numo::SComplex(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::SComplex>
-{
-public:
-  VALUE convert(const numo::SComplex& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::DComplex>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::DComplex>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::DComplex>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::DComplex convert(VALUE x) {
-    return numo::DComplex(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::DComplex>
-{
-public:
-  VALUE convert(const numo::DComplex& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::Bit>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::Bit>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::Bit>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::Bit convert(VALUE x) {
-    return numo::Bit(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::Bit>
-{
-public:
-  VALUE convert(const numo::Bit& x) {
-    return x.value();
-  }
-};
-
-template<>
-struct Type<numo::RObject>
-{
-  static bool verify() { return true; }
-};
-
-template<>
-class From_Ruby<numo::RObject>
-{
-public:
-  Convertible is_convertible(VALUE value) {
-    switch (rb_type(value))
-    {
-      case RUBY_T_DATA:
-        return Data_Type<numo::RObject>::is_descendant(value) ? Convertible::Exact : Convertible::None;
-      case RUBY_T_ARRAY:
-        return Convertible::Cast;
-      default:
-        return Convertible::None;
-    }
-  }
-
-  numo::RObject convert(VALUE x) {
-    return numo::RObject(x);
-  }
-};
-
-template<>
-class To_Ruby<numo::RObject>
-{
-public:
-  VALUE convert(const numo::RObject& x) {
-    return x.value();
-  }
-};
+<%- end -%>
 
 }
