@@ -34,6 +34,7 @@ namespace NetCDF {
       return atts;
     }
 
+    // TODO convert ±Infinity from double to min/max Integer or throw if bigger than 52-bit unsigned
     static auto write(int file_id, int var_id, const string & name, const string & type_or_text, const vector< double > & values = {}) {
       if (values.empty()) {
         check_status( nc_put_att_text(file_id, var_id, name.c_str(), type_or_text.size(), type_or_text.c_str()) );

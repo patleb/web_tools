@@ -98,7 +98,7 @@ namespace NetCDF {
       throw TypeError();
     }
 
-    static void check_status(int code) {
+    static void check_status(int code, CONTEXT(trace, source)) {
       if (code == NC_NOERR) {
         return;
       }
@@ -109,7 +109,7 @@ namespace NetCDF {
       } else {
         msg = nc_strerror(code);
       }
-      throw RuntimeError(msg);
+      throw RuntimeError(msg, trace, source);
     }
   };
 

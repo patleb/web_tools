@@ -29,6 +29,7 @@ namespace NetCDF {
       return string(name);
     }
 
+    // BUG: https://github.com/Unidata/netcdf-c/issues/597
     void rename(const string & new_name) const {
       check_status( nc_rename_dim(file_id, id, new_name.c_str()) );
     }

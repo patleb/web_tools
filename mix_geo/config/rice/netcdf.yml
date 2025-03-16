@@ -11,8 +11,9 @@ module NetCDF:
     attr_reader: [path]
 
     def:
-      initialize | NetCDF::File.DEFAULT: [[const string &, path], [string, mode = "r"], [bool, share = false]]
-      open: [path, mode = "r", share = false] # readable by other processes if mode is "w" and share is true
+      initialize | NetCDF::File.DEFAULT: [[const string &, path], [string, mode = (string)"r"], [bool, share = false]]
+      open: [path, mode = (string)"r", share = false] # readable by other processes if mode is "w" and share is true
+      reopen: [mode = (string)"r", share = false]
       close:
       sync:
       null? | is_null:
@@ -27,7 +28,6 @@ module NetCDF:
   class Dim:
     def:
       name:
-      name=      | rename:
       null?      | is_null:
       unlimited? | is_unlimited:
       size:

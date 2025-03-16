@@ -23,10 +23,12 @@ namespace NetCDF {
       }
     }
 
+    void reopen(string mode = "r", bool share = false) {
+      open(path, mode, share);
+    }
+
     void open(const string & path, string mode = "r", bool share = false) {
-      if (!is_null()) {
-        throw RuntimeError("file already opened");
-      }
+      if (!is_null()) throw RuntimeError("file already opened");
       int flags;
       bool create = false;
       if (mode == "r" || mode == "rb") {
@@ -48,17 +50,15 @@ namespace NetCDF {
         flags = flags | NC_SHARE;
       }
       if (create) {
-        check_status( nc_create(path.c_str(), flags | NC_NETCDF4, &id) );
+        check_status( nc_create(path.c_str(), flags | NC_NETCDF4, &this->id) );
       } else {
-        check_status( nc_open(path.c_str(), flags, &id) );
+        check_status( nc_open(path.c_str(), flags, &this->id) );
       }
       this->path = path;
     }
 
     void close() {
-      if (is_null()) {
-        return;
-      }
+      if (is_null()) return;
       nc_close(id);
       this->id = NULL_ID;
     }
