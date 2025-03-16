@@ -38,7 +38,7 @@ namespace NetCDF {
         if (std::filesystem::exists(path)) {
           flags = NC_WRITE;
         } else {
-          flags = NC_CLOBBER;
+          flags = NC_NOCLOBBER;
           create = true;
         }
       } else {
@@ -48,7 +48,7 @@ namespace NetCDF {
         flags = flags | NC_SHARE;
       }
       if (create) {
-        check_status( nc_create(path.c_str(), flags, &id) );
+        check_status( nc_create(path.c_str(), flags | NC_NETCDF4, &id) );
       } else {
         check_status( nc_open(path.c_str(), flags, &id) );
       }

@@ -81,11 +81,16 @@ namespace NetCDF {
     void write(NVectorType values, const vector< size_t > & starts = {}, const vector< size_t > & counts = {}, const vector< ptrdiff_t > & strides = {}) const {
       switch (type_id()) {
       <%- [
-        ['NC_BYTE',   'numo::Int8',   'signed char', 'schar'],
-        ['NC_SHORT',  'numo::Int16',  'short',       'short'],
-        ['NC_INT',    'numo::Int32',  'int',         'int'],
-        ['NC_FLOAT',  'numo::SFloat', 'float',       'float'],
-        ['NC_DOUBLE', 'numo::DFloat', 'double',      'double'],
+        ['NC_BYTE',   'numo::Int8',   'signed char',        'schar'],
+        ['NC_SHORT',  'numo::Int16',  'short',              'short'],
+        ['NC_INT',    'numo::Int32',  'int',                'int'],
+        ['NC_INT64',  'numo::Int64',  'long long',          'longlong'],
+        ['NC_FLOAT',  'numo::SFloat', 'float',              'float'],
+        ['NC_DOUBLE', 'numo::DFloat', 'double',             'double'],
+        ['NC_UBYTE',  'numo::UInt8',  'unsigned char',      'uchar'],
+        ['NC_USHORT', 'numo::UInt16', 'unsigned short',     'ushort'],
+        ['NC_UINT',   'numo::UInt32', 'unsigned int',       'uint'],
+        ['NC_UINT64', 'numo::UInt64', 'unsigned long long', 'ulonglong'],
       ].each do |nc_type, na_type, type, suffix| -%>
       case <%= nc_type %>: {
         const <%= type %> * data = std::get< <%= na_type %> >(values).read_ptr();
@@ -119,11 +124,16 @@ namespace NetCDF {
     auto read(const vector< size_t > & starts = {}, const vector< size_t > & counts = {}, const vector< ptrdiff_t > & strides = {}) const {
       switch (type_id()) {
       <%- [
-        ['NC_BYTE',   'numo::Int8',   'signed char', 'schar'],
-        ['NC_SHORT',  'numo::Int16',  'short',       'short'],
-        ['NC_INT',    'numo::Int32',  'int',         'int'],
-        ['NC_FLOAT',  'numo::SFloat', 'float',       'float'],
-        ['NC_DOUBLE', 'numo::DFloat', 'double',      'double'],
+        ['NC_BYTE',   'numo::Int8',   'signed char',        'schar'],
+        ['NC_SHORT',  'numo::Int16',  'short',              'short'],
+        ['NC_INT',    'numo::Int32',  'int',                'int'],
+        ['NC_INT64',  'numo::Int64',  'long long',          'longlong'],
+        ['NC_FLOAT',  'numo::SFloat', 'float',              'float'],
+        ['NC_DOUBLE', 'numo::DFloat', 'double',             'double'],
+        ['NC_UBYTE',  'numo::UInt8',  'unsigned char',      'uchar'],
+        ['NC_USHORT', 'numo::UInt16', 'unsigned short',     'ushort'],
+        ['NC_UINT',   'numo::UInt32', 'unsigned int',       'uint'],
+        ['NC_UINT64', 'numo::UInt64', 'unsigned long long', 'ulonglong'],
       ].each do |nc_type, na_type, type, suffix| -%>
       case <%= nc_type %>: {
         if (starts.empty()) {

@@ -2,7 +2,7 @@ after_include: >
   using namespace NetCDF;
 
 module NetCDF:
-  enum Type: [Int8, Int16, Int32, SFloat, DFloat, String]
+  enum Type: [Int8, Int16, Int32, Int64, SFloat, DFloat, UInt8, UInt16, UInt32, UInt64, String]
 
   def:
     self.version:
@@ -19,7 +19,7 @@ module NetCDF:
       dims:
       vars:
       atts:
-      create_dim: [name, size = 0L] # unlimited if size is 0
+      create_dim: [name, size = (size_t)NC_UNLIMITED] # unlimited if size is 0
       create_var:
       write_att: &write_att [name, type_or_text, values = vector< double >()] # text if values is empty
       set_fill:

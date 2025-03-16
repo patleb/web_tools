@@ -41,10 +41,15 @@ namespace NetCDF {
       }
       switch (Base::type_id(type_or_text)) {
       <%- [
-        ['NC_BYTE',  'signed char', 'schar'],
-        ['NC_SHORT', 'short',       'short'],
-        ['NC_INT',   'int',         'int'],
-        ['NC_FLOAT', 'float',       'float'],
+        ['NC_BYTE',   'signed char',        'schar'],
+        ['NC_SHORT',  'short',              'short'],
+        ['NC_INT',    'int',                'int'],
+        ['NC_INT64',  'long long',          'longlong'],
+        ['NC_FLOAT',  'float',              'float'],
+        ['NC_UBYTE',  'unsigned char',      'uchar'],
+        ['NC_USHORT', 'unsigned short',     'ushort'],
+        ['NC_UINT',   'unsigned int',       'uint'],
+        ['NC_UINT64', 'unsigned long long', 'ulonglong'],
       ].each do |nc_type, type, suffix| -%>
       case <%= nc_type %>: {
         vector< <%= type %> > numbers(vector_cast< double, <%= type %> >(values));
@@ -80,10 +85,15 @@ namespace NetCDF {
       size_t count = size();
       switch (type_id()) {
       <%- [
-        ['NC_BYTE',  'signed char', 'schar'],
-        ['NC_SHORT', 'short',       'short'],
-        ['NC_INT',   'int',         'int'],
-        ['NC_FLOAT', 'float',       'float'],
+        ['NC_BYTE',   'signed char',        'schar'],
+        ['NC_SHORT',  'short',              'short'],
+        ['NC_INT',    'int',                'int'],
+        ['NC_INT64',  'long long',          'longlong'],
+        ['NC_FLOAT',  'float',              'float'],
+        ['NC_UBYTE',  'unsigned char',      'uchar'],
+        ['NC_USHORT', 'unsigned short',     'ushort'],
+        ['NC_UINT',   'unsigned int',       'uint'],
+        ['NC_UINT64', 'unsigned long long', 'ulonglong'],
       ].each do |nc_type, type, suffix| -%>
       case <%= nc_type %>: {
         <%= type %> numbers[count];
