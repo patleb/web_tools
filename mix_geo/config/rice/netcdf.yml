@@ -1,0 +1,77 @@
+after_include: >
+  using namespace NetCDF;
+
+module NetCDF:
+  enum Type: [Int8, Int16, Int32, SFloat, DFloat, String]
+
+  def:
+    self.version:
+
+  class File:
+    attr_reader: [path]
+
+    def:
+      initialize | NetCDF::File.DEFAULT: [[const string &, path], [string, mode = "r"], [bool, share = false]]
+      open: [path, mode = "r", share = false] # readable by other processes if mode is "w" and share is true
+      close:
+      sync:
+      null? | is_null:
+      dims:
+      vars:
+      atts:
+      create_dim: [name, size = 0L] # unlimited if size is 0
+      create_var:
+      write_att: &write_att [name, type_or_text, values = vector< double >()] # text if values is empty
+      set_fill:
+
+  class Dim:
+    def:
+      name:
+      name=      | rename:
+      null?      | is_null:
+      unlimited? | is_unlimited:
+      size:
+
+  class Att:
+    attr_reader: [name]
+
+    def:
+      name= | rename:
+      type  | type_name:
+      null? | is_null:
+      size:
+      read:
+      destroy:
+      copy:
+        - { void const: [const File & dst] }
+        - { void const: [const Var & dst] }
+
+  class Var:
+    def:
+      name:
+      name= | rename:
+      type  | type_name:
+      null? | is_null:
+      dims_count:
+      dims:
+      atts:
+      shape:
+      write_att: *write_att
+      write: [values, starts = vector< size_t >(), counts = vector< size_t >(), strides = vector< ptrdiff_t >()]
+      read:
+      fill_value:
+      fill_value= | set_fill_value:
+      fill:
+      set_fill:
+      endian:
+      set_endian:
+      checksum:
+      set_checksum:
+      deflate:
+      set_deflate:
+      quantize:
+      set_quantize:
+      chunking:
+      set_chunking:
+      chunk_cache:
+      set_chunk_cache:

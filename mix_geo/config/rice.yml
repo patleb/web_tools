@@ -1,0 +1,6 @@
+include:
+  - netcdf.h
+
+makefile:
+  libs: <%= `nc-config --libs` %>
+  cflags: <%= `nc-config --cflags` %>

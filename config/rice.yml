@@ -1,1 +1,3 @@
-gems: [ext_rice]
+gems:
+  - ext_rice
+  - mix_geo

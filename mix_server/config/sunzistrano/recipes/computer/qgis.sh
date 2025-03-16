@@ -1,6 +1,6 @@
 sun.install "gnupg software-properties-common"
 sun.install "netcdf-bin"
-sun.install "libnetcdf-c++4-dev"
+sun.install "libnetcdf-dev"
 sun.install "ncview"
 sun.install "gdal-bin"
 sun.install "libgdal-dev"
