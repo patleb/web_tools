@@ -11,6 +11,10 @@ ExtRails.configure do |config|
   )
 end
 
+ExtRice.configure do |config|
+  # config.log_level = 'debug'
+end
+
 MixSearch.config.available_types['Test::Record'] = 20
 
 MixTask.configure do |config|
