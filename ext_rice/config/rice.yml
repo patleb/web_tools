@@ -10,4 +10,3 @@ include:
   - filesystem
   - source_location
   - stacktrace
-  - ext_rice/all.hpp

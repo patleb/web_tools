@@ -144,7 +144,7 @@ module Rice
     @hooks ||= gems_config[:hooks]
   end
 
-  # TODO registry, iterator, director, stl define_(vector|map|...), etc.
+  # TODO registry, iterator, director, etc.
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
       case keyword
