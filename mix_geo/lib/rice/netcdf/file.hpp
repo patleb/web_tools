@@ -3,12 +3,13 @@ namespace NetCDF {
     public:
 
     string path;
+    string mode;
 
     using Base::Base;
 
-    explicit File(const string & path, string mode = "r", bool share = false):
+    explicit File(const string & path, string mode = "r"):
       Base() {
-      open(path, mode, share);
+      open(path, mode);
     }
 
     File (const File &) = delete;
@@ -23,20 +24,16 @@ namespace NetCDF {
       }
     }
 
-    void reopen(string mode = "r", bool share = false) {
-      open(path, mode, share);
-    }
-
-    void open(const string & path, string mode = "r", bool share = false) {
+    void open(const string & path, string mode = "r") {
       if (!is_null()) throw RuntimeError("file already opened");
       int flags;
       bool create = false;
-      if (mode == "r" || mode == "rb") {
+      if (mode == "r") {
         flags = NC_NOWRITE;
-      } else if (mode == "w" || mode == "w+" || mode == "wb" || mode == "w+b") {
+      } else if (mode == "w") {
         flags = NC_CLOBBER;
         create = true;
-      } else if (mode == "a" || mode == "a+" || mode == "r+" || mode == "ab" || mode == "a+b" || mode == "r+b") {
+      } else if (mode == "a") {
         if (std::filesystem::exists(path)) {
           flags = NC_WRITE;
         } else {
@@ -46,21 +43,29 @@ namespace NetCDF {
       } else {
         throw RuntimeError("mode not supported");
       }
-      if (share) {
-        flags = flags | NC_SHARE;
-      }
       if (create) {
         check_status( nc_create(path.c_str(), flags | NC_NETCDF4, &this->id) );
       } else {
         check_status( nc_open(path.c_str(), flags, &this->id) );
       }
       this->path = path;
+      this->mode = mode;
+      Dim::renamed = false;
+    }
+
+    void reopen(string mode = "r") {
+      open(path, mode);
     }
 
     void close() {
       if (is_null()) return;
       nc_close(id);
       this->id = NULL_ID;
+    }
+
+    void reload() {
+      close();
+      reopen(mode);
     }
 
     void sync() const {

@@ -6,15 +6,15 @@ module NetCDF
     file&.close
   end
 
-  def self.write(path, share = false)
-    file = File.new(path.to_s, 'w', share)
+  def self.write(path)
+    file = File.new(path.to_s, 'w')
     yield file
   ensure
     file&.close
   end
 
-  def self.append(path, share = false)
-    file = File.new(path.to_s, 'a', share)
+  def self.append(path)
+    file = File.new(path.to_s, 'a')
     yield file
   ensure
     file&.close
