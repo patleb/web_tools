@@ -86,7 +86,7 @@ namespace NetCDF {
       return sizes;
     }
 
-    auto write_att(const string & name, NVectorType values) const {
+    auto write_att(const string & name, const NVectorType & values) const {
       return Att::write(file_id, id, name, values);
     }
 

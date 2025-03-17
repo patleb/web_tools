@@ -99,7 +99,7 @@ namespace NetCDF {
       return Var::create(id, name, type_name, dims);
     }
 
-    auto write_att(const string & name, NVectorType values) const {
+    auto write_att(const string & name, const NVectorType & values) const {
       return Att::write(id, NC_GLOBAL, name, values);
     }
   };
