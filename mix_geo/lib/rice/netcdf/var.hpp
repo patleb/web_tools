@@ -1,15 +1,3 @@
-<%- types = [
-  ['NC_BYTE',   'numo::Int8',   'int8_t',    'schar'],
-  ['NC_SHORT',  'numo::Int16',  'int16_t',   'short'],
-  ['NC_INT',    'numo::Int32',  'int32_t',   'int'],
-  ['NC_INT64',  'numo::Int64',  'int64_t2',  'longlong'],
-  ['NC_FLOAT',  'numo::SFloat', 'float',     'float'],
-  ['NC_DOUBLE', 'numo::DFloat', 'double',    'double'],
-  ['NC_UBYTE',  'numo::UInt8',  'uint8_t',   'uchar'],
-  ['NC_USHORT', 'numo::UInt16', 'uint16_t',  'ushort'],
-  ['NC_UINT',   'numo::UInt32', 'uint32_t',  'uint'],
-  ['NC_UINT64', 'numo::UInt64', 'uint64_t2', 'ulonglong'],
-] -%>
 namespace NetCDF {
   class Var : public BelongsToFile {
     public:
@@ -85,57 +73,59 @@ namespace NetCDF {
       }
       return sizes;
     }
+    <%- compile_vars[:netcdf][:types].each do |numo_type, (nc_type, type, suffix)| -%>
 
-    auto write_att(const string & name, const NVectorType & values) const {
+    auto write_att(const string & name, <%= numo_type %> values) const {
       return Att::write(file_id, id, name, values);
     }
 
-    void write(NVectorType values, const vector< size_t > & starts = {}, const vector< size_t > & counts = {}, const vector< ptrdiff_t > & strides = {}) const {
-      switch (type_id()) {
-      <%- types.each do |nc_type, na_type, type, suffix| -%>
-      case <%= nc_type %>: {
-        const <%= type %> * data = std::get< <%= na_type %> >(values).read_ptr();
-        if (starts.empty()) {
-          check_status( nc_put_var_<%= suffix %>(file_id, id, data) );
-        } else if (strides.empty()) {
-          check_status( nc_put_vara_<%= suffix %>(file_id, id, starts.data(), counts.data(), data) );
-        } else {
-          check_status( nc_put_vars_<%= suffix %>(file_id, id, starts.data(), counts.data(), strides.data(), data) );
-        }
-        break;
+    void write(<%= numo_type %> values) const {
+      const <%= type %> * data = values.read_ptr();
+      check_status( nc_put_var_<%= suffix %>(file_id, id, data) );
+    }
+
+    void write(<%= numo_type %> values, const vector< size_t > & starts, const vector< size_t > & counts) const {
+      const <%= type %> * data = values.read_ptr();
+      check_status( nc_put_vara_<%= suffix %>(file_id, id, starts.data(), counts.data(), data) );
+    }
+
+    void write(<%= numo_type %> values, const vector< size_t > & starts, const vector< size_t > & counts, const vector< ptrdiff_t > & strides) const {
+      const <%= type %> * data = values.read_ptr();
+      check_status( nc_put_vars_<%= suffix %>(file_id, id, starts.data(), counts.data(), strides.data(), data) );
+    }
+    <%- end -%>
+
+    auto write_att(const string & name, const vector< string > & values) const {
+      return Att::write(file_id, id, name, values);
+    }
+
+    void write(const vector< string > & values) const {
+      vector< char * > strings = C::vector_cast< string, char >(values);
+      const char * data = reinterpret_cast< const char * >(strings.data());
+      try {
+        check_status( nc_put_var_text(file_id, id, data) );
+        C::vector_free(strings);
       }
-      <%- end -%>
-      case NC_CHAR: {
-        vector< char * > strings = C::vector_cast< string, char >(std::get< vector< string >>(values));
-        const char * data = reinterpret_cast< const char * >(strings.data());
-        try {
-          check_status( nc_put_var_text(file_id, id, data) );
-          C::vector_free(strings);
-        }
-        catch (...) {
-          C::vector_free(strings);
-          throw;
-        }
-      }
-      default:
-        throw TypeError();
+      catch (...) {
+        C::vector_free(strings);
+        throw;
       }
     }
 
     auto read(const vector< size_t > & starts = {}, const vector< size_t > & counts = {}, const vector< ptrdiff_t > & strides = {}) const {
       switch (type_id()) {
-      <%- types.each do |nc_type, na_type, type, suffix| -%>
+      <%- compile_vars[:netcdf][:types].each do |numo_type, (nc_type, type, suffix)| -%>
       case <%= nc_type %>: {
         if (starts.empty()) {
-          <%= na_type %> values(shape());
+          <%= numo_type %> values(shape());
           check_status( nc_get_var_<%= suffix %>(file_id, id, values.write_ptr()) );
           return NVectorType(values);
         } else if (strides.empty()) {
-          <%= na_type %> values(counts);
+          <%= numo_type %> values(counts);
           check_status( nc_get_vara_<%= suffix %>(file_id, id, starts.data(), counts.data(), values.write_ptr()) );
           return NVectorType(values);
         } else {
-          <%= na_type %> values(counts);
+          <%= numo_type %> values(counts);
           check_status( nc_get_vars_<%= suffix %>(file_id, id, starts.data(), counts.data(), strides.data(), values.write_ptr()) );
           return NVectorType(values);
         }
@@ -176,8 +166,14 @@ namespace NetCDF {
       }
       return value;
     }
+    <%- compile_vars[:netcdf][:types].each_key do |numo_type| -%>
 
-    void set_fill_value(NVectorType value) const {
+    void set_fill_value(<%= numo_type %> value) const {
+      Att::write(file_id, id, "_FillValue", value, 1);
+    }
+    <%- end -%>
+
+    void set_fill_value(const vector< string > & value) const {
       Att::write(file_id, id, "_FillValue", value, 1);
     }
 

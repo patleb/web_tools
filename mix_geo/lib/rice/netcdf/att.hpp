@@ -1,15 +1,3 @@
-<%- types = [
-  ['NC_BYTE',   'numo::Int8',   'int8_t',    'schar'],
-  ['NC_SHORT',  'numo::Int16',  'int16_t',   'short'],
-  ['NC_INT',    'numo::Int32',  'int32_t',   'int'],
-  ['NC_INT64',  'numo::Int64',  'int64_t2',  'longlong'],
-  ['NC_FLOAT',  'numo::SFloat', 'float',     'float'],
-  ['NC_DOUBLE', 'numo::DFloat', 'double',    'double'],
-  ['NC_UBYTE',  'numo::UInt8',  'uint8_t',   'uchar'],
-  ['NC_USHORT', 'numo::UInt16', 'uint16_t',  'ushort'],
-  ['NC_UINT',   'numo::UInt32', 'uint32_t',  'uint'],
-  ['NC_UINT64', 'numo::UInt64', 'uint64_t2', 'ulonglong'],
-] -%>
 namespace NetCDF {
   class File;
   class Var;
@@ -45,30 +33,22 @@ namespace NetCDF {
       }
       return atts;
     }
+    <%- compile_vars[:netcdf][:types].each do |numo_type, (nc_type, type, suffix)| -%>
 
-    static auto write(int file_id, int var_id, const string & name, NVectorType values, size_t max_size = 0) {
-      switch (NetCDF::type_id(values)) {
-      <%- types.each do |nc_type, na_type, type, suffix| -%>
-      case <%= nc_type %>: {
-        auto & numbers = std::get< <%= na_type %> >(values);
-        if (numbers.ndim() != 1) throw TypeError();
-        if (max_size && numbers.size() > max_size) throw TypeError();
-        const <%= type %> * data = numbers.read_ptr();
-        check_status( nc_put_att_<%= suffix %>(file_id, var_id, name.c_str(), <%= nc_type %>, numbers.size(), data) );
-        break;
-      }
-      <%- end -%>
-      case NC_CHAR: {
-        auto & texts = std::get< vector< string > >(values);
-        auto & text = texts.front();
-        if (texts.size() != 1) throw TypeError();
-        if (max_size && text.size() > max_size) throw TypeError();
-        check_status( nc_put_att_text(file_id, var_id, name.c_str(), text.size(), text.c_str()) );
-        break;
-      }
-      default:
-        throw TypeError();
-      }
+    static auto write(int file_id, int var_id, const string & name, <%= numo_type %> & values, size_t max_size = 0) {
+      if (values.ndim() != 1) throw TypeError();
+      if (max_size && values.size() > max_size) throw TypeError();
+      const <%= type %> * data = values.read_ptr();
+      check_status( nc_put_att_<%= suffix %>(file_id, var_id, name.c_str(), <%= nc_type %>, values.size(), data) );
+      return Att(file_id, var_id, name);
+    }
+    <%- end -%>
+
+    static auto write(int file_id, int var_id, const string & name, const vector< string > & values, size_t max_size = 0) {
+      auto & text = values.front();
+      if (values.size() != 1) throw TypeError();
+      if (max_size && text.size() > max_size) throw TypeError();
+      check_status( nc_put_att_text(file_id, var_id, name.c_str(), text.size(), text.c_str()) );
       return Att(file_id, var_id, name);
     }
 
@@ -90,9 +70,9 @@ namespace NetCDF {
     auto read() const {
       size_t count = size();
       switch (type_id()) {
-      <%- types.each do |nc_type, na_type, type, suffix| -%>
+      <%- compile_vars[:netcdf][:types].each do |numo_type, (nc_type, type, suffix)| -%>
       case <%= nc_type %>: {
-        <%= na_type %> numbers({ count });
+        <%= numo_type %> numbers({ count });
         check_status( nc_get_att_<%= suffix %>(file_id, var_id, name.c_str(), numbers.write_ptr()) );
         return NVectorType(numbers);
       }

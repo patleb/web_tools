@@ -23,7 +23,11 @@ module NetCDF:
       atts:
       create_dim: [name, size = (size_t)NC_UNLIMITED] # unlimited if size is 0
       create_var:
-      write_att:
+      write_att: &write_att
+        <% compile_vars[:netcdf][:types].each_key do |numo_type| %>
+        - { Att const: [const string & name, <%= numo_type %> values] }
+        <% end %>
+        - { Att const: [const string & name, const vector < string > & values] }
       set_fill:
 
   class Dim:
@@ -58,11 +62,21 @@ module NetCDF:
       dims:
       atts:
       shape:
-      write_att:
-      write: [values, starts = vector< size_t >(), counts = vector< size_t >(), strides = vector< ptrdiff_t >()]
+      write_att: *write_att
+      write:
+        <% compile_vars[:netcdf][:types].each_key do |numo_type| %>
+        - { void const: [<%= numo_type %> values] }
+        - { void const: [<%= numo_type %> values, const vector< size_t > & starts, const vector< size_t > & counts] }
+        - { void const: [<%= numo_type %> values, const vector< size_t > & starts, const vector< size_t > & counts, const vector< ptrdiff_t > & strides] }
+        <% end %>
+        - { void const: [const vector< string > & values] }
       read:
       fill_value:
       fill_value= | set_fill_value:
+        <% compile_vars[:netcdf][:types].each_key do |numo_type| %>
+        - { void const: [<%= numo_type %> value] }
+        <% end %>
+        - { void const: [const vector< string > & value] }
       fill:
       set_fill:
       endian:

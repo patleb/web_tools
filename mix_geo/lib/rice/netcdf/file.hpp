@@ -98,8 +98,14 @@ namespace NetCDF {
     auto create_var(const string & name, std::string_view type_name, const vector< Dim > & dims) const {
       return Var::create(id, name, type_name, dims);
     }
+    <%- compile_vars[:netcdf][:types].each_key do |numo_type| -%>
 
-    auto write_att(const string & name, const NVectorType & values) const {
+    auto write_att(const string & name, <%= numo_type %> values) const {
+      return Att::write(id, NC_GLOBAL, name, values);
+    }
+    <%- end -%>
+
+    auto write_att(const string & name, const vector< string > & values) const {
       return Att::write(id, NC_GLOBAL, name, values);
     }
   };
