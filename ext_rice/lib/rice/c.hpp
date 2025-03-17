@@ -1,10 +1,13 @@
 namespace C {
-  inline std::string timestamp() {
+  using std::string;
+  using std::vector;
+
+  inline auto timestamp() {
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     std::time_t time = std::chrono::system_clock::to_time_t(now);
     std::tm utc{}; gmtime_r(&time, &utc);
     std::chrono::duration<double> seconds = (now - std::chrono::system_clock::from_time_t(time)) + std::chrono::seconds(utc.tm_sec);
-    std::string buffer("year-mo-dy hr:mn:sc.xxxxxx UTC");
+    string buffer("year-mo-dy hr:mn:sc.xxxxxx UTC");
     sprintf(&buffer.front(), "%04d-%02d-%02d %02d:%02d:%09.6f UTC",
       utc.tm_year + 1900,
       (uint8_t)(utc.tm_mon + 1),
@@ -17,9 +20,9 @@ namespace C {
   }
 
   template < class V, class T >
-  auto vector_cast(const std::vector< V > & values) {
+  auto vector_cast(const vector< V > & values) {
     size_t count = values.size();
-    std::vector< T > casts(count);
+    vector< T > casts(count);
     for (size_t i = 0; i < count; ++i) {
       casts[i] = static_cast< T >(values[i]);
     }
@@ -28,7 +31,7 @@ namespace C {
 
   template < class V, class T >
   auto vector_cast(const V * values, size_t count) {
-    std::vector< T > casts(count);
+    vector< T > casts(count);
     for (size_t i = 0; i < count; ++i) {
       casts[i] = static_cast< T >(values[i]);
     }
@@ -36,7 +39,7 @@ namespace C {
   }
 
   template <>
-  auto vector_cast< std::string, char >(const std::vector< std::string > & values) {
+  auto vector_cast< string, char >(const vector< string > & values) {
     size_t count = values.size();
     size_t max_size = 0;
     for (size_t i = 0; i < count; ++i) {
@@ -44,7 +47,7 @@ namespace C {
       if (size > max_size) max_size = size;
     }
     max_size += 1; // '\0'
-    std::vector< char * > casts;
+    vector< char * > casts;
     for (size_t i = 0; i < count; ++i) {
       casts[i] = new char[max_size];
       strcpy(casts[i], values[i].c_str());
@@ -52,7 +55,7 @@ namespace C {
     return casts;
   }
 
-  void vector_free(const std::vector< char * > & values) {
+  void vector_free(const vector< char * > & values) {
     size_t count = values.size();
     for (size_t i = 0; i < count; ++i) {
       delete [] values[i];
@@ -60,10 +63,10 @@ namespace C {
   }
 
   template <>
-  auto vector_cast< char, std::string >(const char * values, size_t count) {
-    std::vector< std::string > casts(count);
+  auto vector_cast< char, string >(const char * values, size_t count) {
+    vector< string > casts(count);
     for (size_t i = 0; i < count; ++i) {
-      casts[i] = std::string(&values[i]);
+      casts[i] = string(&values[i]);
     }
     return casts;
   }

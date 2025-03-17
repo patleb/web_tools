@@ -1,3 +1,15 @@
+<%- types = [
+  ['NC_BYTE',   'numo::Int8',   'int8_t',    'schar'],
+  ['NC_SHORT',  'numo::Int16',  'int16_t',   'short'],
+  ['NC_INT',    'numo::Int32',  'int32_t',   'int'],
+  ['NC_INT64',  'numo::Int64',  'int64_t2',  'longlong'],
+  ['NC_FLOAT',  'numo::SFloat', 'float',     'float'],
+  ['NC_DOUBLE', 'numo::DFloat', 'double',    'double'],
+  ['NC_UBYTE',  'numo::UInt8',  'uint8_t',   'uchar'],
+  ['NC_USHORT', 'numo::UInt16', 'uint16_t',  'ushort'],
+  ['NC_UINT',   'numo::UInt32', 'uint32_t',  'uint'],
+  ['NC_UINT64', 'numo::UInt64', 'uint64_t2', 'ulonglong'],
+] -%>
 namespace NetCDF {
   class Var : public BelongsToFile {
     public:
@@ -24,7 +36,7 @@ namespace NetCDF {
       for (size_t i = 0; i < count; ++i) {
         ids[i] = dims[i].id;
       }
-      check_status( nc_def_var(file_id, name.c_str(), Base::type_id(type_name), count, ids, &var_id) );
+      check_status( nc_def_var(file_id, name.c_str(), NetCDF::type_id(type_name), count, ids, &var_id) );
       return Var(file_id, var_id);
     }
 
@@ -39,7 +51,7 @@ namespace NetCDF {
     }
 
     auto type_name() const {
-      return Base::type_name(type_id());
+      return NetCDF::type_name(type_id());
     }
 
     auto dims_count() const {
@@ -74,24 +86,13 @@ namespace NetCDF {
       return sizes;
     }
 
-    auto write_att(const string & name, const string & type_or_text, const vector< double > & values = {}) const {
-      return Att::write(file_id, id, name, type_or_text, values);
+    auto write_att(const string & name, NVectorType values) const {
+      return Att::write(file_id, id, name, values);
     }
 
     void write(NVectorType values, const vector< size_t > & starts = {}, const vector< size_t > & counts = {}, const vector< ptrdiff_t > & strides = {}) const {
       switch (type_id()) {
-      <%- [
-        ['NC_BYTE',   'numo::Int8',   'signed char',        'schar'],
-        ['NC_SHORT',  'numo::Int16',  'short',              'short'],
-        ['NC_INT',    'numo::Int32',  'int',                'int'],
-        ['NC_INT64',  'numo::Int64',  'long long',          'longlong'],
-        ['NC_FLOAT',  'numo::SFloat', 'float',              'float'],
-        ['NC_DOUBLE', 'numo::DFloat', 'double',             'double'],
-        ['NC_UBYTE',  'numo::UInt8',  'unsigned char',      'uchar'],
-        ['NC_USHORT', 'numo::UInt16', 'unsigned short',     'ushort'],
-        ['NC_UINT',   'numo::UInt32', 'unsigned int',       'uint'],
-        ['NC_UINT64', 'numo::UInt64', 'unsigned long long', 'ulonglong'],
-      ].each do |nc_type, na_type, type, suffix| -%>
+      <%- types.each do |nc_type, na_type, type, suffix| -%>
       case <%= nc_type %>: {
         const <%= type %> * data = std::get< <%= na_type %> >(values).read_ptr();
         if (starts.empty()) {
@@ -105,14 +106,14 @@ namespace NetCDF {
       }
       <%- end -%>
       case NC_CHAR: {
-        vector< char * > strings = vector_cast< string, char >(std::get< vector< string >>(values));
+        vector< char * > strings = C::vector_cast< string, char >(std::get< vector< string >>(values));
         const char * data = reinterpret_cast< const char * >(strings.data());
         try {
           check_status( nc_put_var_text(file_id, id, data) );
-          vector_free(strings);
+          C::vector_free(strings);
         }
         catch (...) {
-          vector_free(strings);
+          C::vector_free(strings);
           throw;
         }
       }
@@ -123,18 +124,7 @@ namespace NetCDF {
 
     auto read(const vector< size_t > & starts = {}, const vector< size_t > & counts = {}, const vector< ptrdiff_t > & strides = {}) const {
       switch (type_id()) {
-      <%- [
-        ['NC_BYTE',   'numo::Int8',   'signed char',        'schar'],
-        ['NC_SHORT',  'numo::Int16',  'short',              'short'],
-        ['NC_INT',    'numo::Int32',  'int',                'int'],
-        ['NC_INT64',  'numo::Int64',  'long long',          'longlong'],
-        ['NC_FLOAT',  'numo::SFloat', 'float',              'float'],
-        ['NC_DOUBLE', 'numo::DFloat', 'double',             'double'],
-        ['NC_UBYTE',  'numo::UInt8',  'unsigned char',      'uchar'],
-        ['NC_USHORT', 'numo::UInt16', 'unsigned short',     'ushort'],
-        ['NC_UINT',   'numo::UInt32', 'unsigned int',       'uint'],
-        ['NC_UINT64', 'numo::UInt64', 'unsigned long long', 'ulonglong'],
-      ].each do |nc_type, na_type, type, suffix| -%>
+      <%- types.each do |nc_type, na_type, type, suffix| -%>
       case <%= nc_type %>: {
         if (starts.empty()) {
           <%= na_type %> values(shape());
@@ -160,12 +150,12 @@ namespace NetCDF {
         char * data = reinterpret_cast< char * >(strings.data());
         try {
           check_status( nc_get_var_text(file_id, id, data) );
-          vector< string > values = vector_cast< char, string >(data, count);
-          vector_free(strings);
+          vector< string > values = C::vector_cast< char, string >(data, count);
+          C::vector_free(strings);
           return NVectorType(values);
         }
         catch (...) {
-          vector_free(strings);
+          C::vector_free(strings);
           throw;
         }
       }
@@ -176,29 +166,19 @@ namespace NetCDF {
 
     auto fill_value() const {
       vector< Att > atts = this->atts();
-      std::optional< ScalarType > value;
+      std::optional< NVectorType > value;
       int count = atts.size();
       if (count == 0) return value;
       for (size_t i = 0; i < count; ++i) {
         if (atts[i].name != "_FillValue") continue;
-        VectorType values = atts[i].read();
-        if (type_id() == NC_CHAR) {
-          value = std::get< string >(values);
-        } else {
-          value = std::get< vector< double >>(values).front();
-        }
+        value = atts[i].read();
         break;
       }
       return value;
     }
 
-    void set_fill_value(ScalarType value) const {
-      if (type_id() == NC_CHAR) {
-        if (std::get< string >(value).size() != 1) throw TypeError();
-        write_att("_FillValue", std::get< string >(value));
-      } else {
-        write_att("_FillValue", type_name(), { std::get< double >(value) });
-      }
+    void set_fill_value(NVectorType value) const {
+      Att::write(file_id, id, "_FillValue", value, 1);
     }
 
     bool fill() const {
