@@ -94,24 +94,24 @@ namespace numo {
     ['UInt32',  'uint32_t'],
     ['UInt64',  'uint64_t2'],
     ['RObject', 'VALUE'],
-  ].each do |na_type, type| -%>
+  ].each do |numo_type, type| -%>
 
-  class <%= na_type %>: public NArray {
+  class <%= numo_type %>: public NArray {
     public:
 
-    <%= na_type %>(VALUE v) {
+    <%= numo_type %>(VALUE v) {
       construct_value(this->dtype(), v);
     }
 
-    <%= na_type %>(Rice::Object o) {
+    <%= numo_type %>(Rice::Object o) {
       construct_value(this->dtype(), o.value());
     }
 
-    <%= na_type %>(std::initializer_list<size_t> shape) {
+    <%= numo_type %>(std::initializer_list<size_t> shape) {
       construct_shape(this->dtype(), shape);
     }
 
-    <%= na_type %>(std::vector<size_t> shape) {
+    <%= numo_type %>(std::vector<size_t> shape) {
       construct_shape(this->dtype(), shape);
     }
 
@@ -126,57 +126,56 @@ namespace numo {
     private:
 
     VALUE dtype() {
-      return numo_c<%= na_type %>;
+      return numo_c<%= numo_type %>;
     }
   };
   <%- end -%>
-  <%- ['SComplex', 'DComplex', 'Bit'].each do |na_type| -%>
+  <%- ['SComplex', 'DComplex', 'Bit'].each do |numo_type| -%>
 
-  class <%= na_type %>: public NArray {
+  class <%= numo_type %>: public NArray {
     public:
 
-    <%= na_type %>(VALUE v) {
+    <%= numo_type %>(VALUE v) {
       construct_value(this->dtype(), v);
     }
 
-    <%= na_type %>(Rice::Object o) {
+    <%= numo_type %>(Rice::Object o) {
       construct_value(this->dtype(), o.value());
     }
 
-    <%= na_type %>(std::initializer_list<size_t> shape) {
+    <%= numo_type %>(std::initializer_list<size_t> shape) {
       construct_shape(this->dtype(), shape);
     }
 
-    <%= na_type %>(std::vector<size_t> shape) {
+    <%= numo_type %>(std::vector<size_t> shape) {
       construct_shape(this->dtype(), shape);
     }
 
     private:
 
     VALUE dtype() {
-      return numo_c<%= na_type %>;
+      return numo_c<%= numo_type %>;
     }
   };
   <%- end -%>
-
 }
 
 namespace Rice::detail {
-  <%- %w(NArray SFloat DFloat Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 RObject SComplex DComplex Bit).each do |na_type| -%>
+  <%- %w(NArray SFloat DFloat Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 RObject SComplex DComplex Bit).each do |numo_type| -%>
 
   template<>
-  struct Type< numo::<%= na_type %> > {
+  struct Type< numo::<%= numo_type %> > {
     static bool verify() { return true; }
   };
 
   template<>
-  class From_Ruby< numo::<%= na_type %> > {
+  class From_Ruby< numo::<%= numo_type %> > {
     public:
 
     Convertible is_convertible(VALUE value) {
       switch (rb_type(value)) {
       case RUBY_T_DATA:
-        return Data_Type< numo::<%= na_type %> >::is_descendant(value) ? Convertible::Exact : Convertible::None;
+        return Data_Type< numo::<%= numo_type %> >::is_descendant(value) ? Convertible::Exact : Convertible::None;
       case RUBY_T_ARRAY:
         return Convertible::Cast;
       default:
@@ -184,19 +183,52 @@ namespace Rice::detail {
       }
     }
 
-    numo::<%= na_type %> convert(VALUE x) {
-      return numo::<%= na_type %>(x);
+    numo::<%= numo_type %> convert(VALUE x) {
+      return numo::<%= numo_type %>(x);
     }
   };
 
   template<>
-  class To_Ruby<numo::<%= na_type %>> {
+  class From_Ruby< numo::<%= numo_type %> & > {
     public:
 
-    VALUE convert(const numo::<%= na_type %>& x) {
+    Convertible is_convertible(VALUE value) {
+      switch (rb_type(value)) {
+      case RUBY_T_DATA:
+        return Data_Type< numo::<%= numo_type %> >::is_descendant(value) ? Convertible::Exact : Convertible::None;
+      case RUBY_T_ARRAY:
+        return Convertible::Cast;
+      default:
+        return Convertible::None;
+      }
+    }
+
+    numo::<%= numo_type %> & convert(VALUE x) {
+      this->converted_ = numo::<%= numo_type %>(x);
+      return converted_;
+    }
+
+    private:
+
+    numo::<%= numo_type %> converted_;
+  };
+
+  template<>
+  class To_Ruby< numo::<%= numo_type %> > {
+    public:
+
+    VALUE convert(const numo::<%= numo_type %>& x) {
+      return x.value();
+    }
+  };
+
+  template<>
+  class To_Ruby< numo::<%= numo_type %> & > {
+    public:
+
+    VALUE convert(const numo::<%= numo_type %>& x) {
       return x.value();
     }
   };
   <%- end -%>
-
 }

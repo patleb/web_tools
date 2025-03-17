@@ -8,7 +8,7 @@ module Rice
   class MissingGem < StandardError; end
 
   module WithGems
-    delegate :root_vendor, :root_app, :root_test, :test?, :dst_path, :yml_path, :extconf_path, to: 'ExtRice.config'
+    delegate :root_vendor, :root_app, :root_test, :test?, :dst_path, :yml_path, :extconf_path, :compile_vars, to: 'ExtRice.config'
 
     def require_overrides
       rb_paths.each do |file|
@@ -53,7 +53,7 @@ module Rice
       dst_dir = dst_name ? dst_path.join(dst_name) : dst_path
       dst_dir.mkdir_p
       Dir["#{src}/**/*.{h,hpp,ipp,c,cc,cpp}"].each do |file|
-        content = ERB.template(file, trim_mode: '-').strip
+        content = ERB.template(file, binding, trim_mode: '-').strip
         has_once = content.include?('#pragma once') || content.include?('#ifndef ')
         is_header = file.end_with? '.h', '.hpp', '.ipp'
         compiled_path = dst_dir.join(file.delete_prefix("#{src}/"))

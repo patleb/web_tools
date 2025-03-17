@@ -17,6 +17,7 @@ module ExtRice
     attr_writer :root_app
     attr_writer :root
     attr_writer :scope
+    attr_writer :compile_vars
     attr_accessor :executable
     alias_method :executable?, :executable
 
@@ -99,6 +100,10 @@ module ExtRice
 
     def scope
       @scope ||= test ? "test/#{root.basename.to_s}" : ''
+    end
+
+    def compile_vars
+      @compile_vars ||= {}.to_hwia
     end
 
     def test
