@@ -31,7 +31,6 @@ module NetCDF:
     def:
       name:
       name=      | rename:
-      null?      | is_null:
       unlimited? | is_unlimited:
       size:
 
@@ -40,20 +39,15 @@ module NetCDF:
 
     def:
       name= | rename:
-      null? | is_null:
       type:
       size:
       read:
       destroy:
-      copy:
-        - { void const: [const File & dst] }
-        - { void const: [const Var & dst] }
 
   class Var:
     def:
       name:
       name= | rename:
-      null? | is_null:
       type:
       dims_count:
       dims:
