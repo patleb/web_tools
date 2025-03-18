@@ -13,11 +13,11 @@ module NetCDF:
     def:
       initialize | NetCDF::File.DEFAULT: [[const string &, path], [string, mode = (string)"r"]]
       open: [path, mode = (string)"r"]
-      reopen: [mode = (string)"r"]
       close:
+      closed? | is_null:
+      reopen: [mode = (string)"r"]
       reload:
       sync:
-      null? | is_null:
       dims:
       vars:
       atts:
@@ -30,7 +30,7 @@ module NetCDF:
   class Dim:
     def:
       name:
-      name=      | rename:
+      name= | rename:
       unlimited? | is_unlimited:
       size:
 
@@ -55,7 +55,7 @@ module NetCDF:
       shape:
       write_att:
       write_att_s:
-      write: [values, starts = vector< size_t >(), counts = vector< size_t >(), strides = vector< ptrdiff_t >()]
+      write:
       write_s:
       read:
       fill_value:
