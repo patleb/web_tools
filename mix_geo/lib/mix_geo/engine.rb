@@ -21,18 +21,16 @@ module MixGeo
     initializer 'mix_geo.compile_vars' do
       ExtRice.configure do |config|
         config.compile_vars[:netcdf] = {
-          types: {
-            'numo::Int8'   => ['NC_BYTE',   'int8_t',    'schar'],
-            'numo::Int16'  => ['NC_SHORT',  'int16_t',   'short'],
-            'numo::Int32'  => ['NC_INT',    'int32_t',   'int'],
-            'numo::Int64'  => ['NC_INT64',  'int64_t2',  'longlong'],
-            'numo::SFloat' => ['NC_FLOAT',  'float',     'float'],
-            'numo::DFloat' => ['NC_DOUBLE', 'double',    'double'],
-            'numo::UInt8'  => ['NC_UBYTE',  'uint8_t',   'uchar'],
-            'numo::UInt16' => ['NC_USHORT', 'uint16_t',  'ushort'],
-            'numo::UInt32' => ['NC_UINT',   'uint32_t',  'uint'],
-            'numo::UInt64' => ['NC_UINT64', 'uint64_t2', 'ulonglong'],
-          }
+          'numo::Int8'   => ['NC_BYTE',   'int8_t'],
+          'numo::Int16'  => ['NC_SHORT',  'int16_t'],
+          'numo::Int32'  => ['NC_INT',    'int32_t'],
+          'numo::Int64'  => ['NC_INT64',  'int64_t2'],
+          'numo::SFloat' => ['NC_FLOAT',  'float'],
+          'numo::DFloat' => ['NC_DOUBLE', 'double'],
+          'numo::UInt8'  => ['NC_UBYTE',  'uint8_t'],
+          'numo::UInt16' => ['NC_USHORT', 'uint16_t'],
+          'numo::UInt32' => ['NC_UINT',   'uint32_t'],
+          'numo::UInt64' => ['NC_UINT64', 'uint64_t2'],
         }
       end
     end

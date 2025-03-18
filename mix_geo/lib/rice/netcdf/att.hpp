@@ -33,21 +33,19 @@ namespace NetCDF {
       }
       return atts;
     }
-    <%- compile_vars[:netcdf][:types].each do |numo_type, (nc_type, type, suffix)| -%>
 
-    static auto write(int file_id, int var_id, const string & name, <%= numo_type %> & values, size_t max_size = 0) {
+    static auto write(int file_id, int var_id, const string & name, std::string_view type_name, numo::NArray & values, bool scalar = false) {
+      auto type_id = NetCDF::type_id(type_name);
+      if (type_id == NC_CHAR) throw TypeError();
       if (values.ndim() != 1) throw TypeError();
-      if (max_size && values.size() > max_size) throw TypeError();
-      const <%= type %> * data = values.read_ptr();
-      check_status( nc_put_att_<%= suffix %>(file_id, var_id, name.c_str(), <%= nc_type %>, values.size(), data) );
+      if (scalar && values.size() != 1) throw TypeError();
+      const void * data = values.read_ptr();
+      check_status( nc_put_att(file_id, var_id, name.c_str(), type_id, values.size(), data) );
       return Att(file_id, var_id, name);
     }
-    <%- end -%>
 
-    static auto write(int file_id, int var_id, const string & name, const vector< string > & values, size_t max_size = 0) {
-      auto & text = values.front();
-      if (values.size() != 1) throw TypeError();
-      if (max_size && text.size() > max_size) throw TypeError();
+    static auto write_s(int file_id, int var_id, const string & name, const string & text, bool scalar = false) {
+      if (scalar && text.size() != 1) throw TypeError();
       check_status( nc_put_att_text(file_id, var_id, name.c_str(), text.size(), text.c_str()) );
       return Att(file_id, var_id, name);
     }
@@ -70,10 +68,10 @@ namespace NetCDF {
     auto read() const {
       size_t count = size();
       switch (type_id()) {
-      <%- compile_vars[:netcdf][:types].each do |numo_type, (nc_type, type, suffix)| -%>
+      <%- compile_vars[:netcdf].each do |numo_type, (nc_type, type)| -%>
       case <%= nc_type %>: {
         <%= numo_type %> numbers({ count });
-        check_status( nc_get_att_<%= suffix %>(file_id, var_id, name.c_str(), numbers.write_ptr()) );
+        check_status( nc_get_att(file_id, var_id, name.c_str(), numbers.write_ptr()) );
         return NVectorType(numbers);
       }
       <%- end -%>

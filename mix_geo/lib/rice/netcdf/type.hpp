@@ -33,8 +33,8 @@ namespace NetCDF {
   class TypeError : public RuntimeError {
     public:
 
-    TypeError():
-      RuntimeError("unsupported type") {
+    TypeError(CONTEXT(trace, source)):
+      RuntimeError("unsupported type", trace, source) {
     }
   };
 
