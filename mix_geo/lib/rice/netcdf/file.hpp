@@ -53,14 +53,14 @@ namespace NetCDF {
       Dim::renamed = false;
     }
 
-    void reopen(string mode = "r") {
-      open(path, mode);
-    }
-
     void close() {
       if (is_null()) return;
       nc_close(id);
       this->id = NULL_ID;
+    }
+
+    void reopen(string mode = "r") {
+      open(path, mode);
     }
 
     void reload() {
@@ -100,7 +100,7 @@ namespace NetCDF {
     }
 
     auto write_att(const string & name, std::string_view type_name, numo::NArray values) const {
-      return Att::write(id, NC_GLOBAL, name, type_name, values);
+      return Att::write(id, NC_GLOBAL, name, NetCDF::type_id(type_name), values);
     }
 
     auto write_att_s(const string & name, const string & text) const {

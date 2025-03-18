@@ -39,7 +39,7 @@ namespace NetCDF {
     }
 
     auto type() const {
-      return NetCDF::type_name(type_id());
+      return NetCDF::type(type_id());
     }
 
     auto dims_count() const {
@@ -75,7 +75,7 @@ namespace NetCDF {
     }
 
     auto write_att(const string & name, std::string_view type_name, numo::NArray values) const {
-      return Att::write(file_id, id, name, type_name, values);
+      return Att::write(file_id, id, name, NetCDF::type_id(type_name), values);
     }
 
     auto write_att_s(const string & name, const string & text) const {
@@ -163,7 +163,7 @@ namespace NetCDF {
     }
 
     void set_fill_value(numo::NArray value) const {
-      Att::write(file_id, id, "_FillValue", NetCDF::type_name(type_id()), value, 1);
+      Att::write(file_id, id, "_FillValue", type_id(), value, 1);
     }
 
     void set_fill_value_s(const string & text) const {

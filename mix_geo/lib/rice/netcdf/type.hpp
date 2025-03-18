@@ -70,19 +70,19 @@ namespace NetCDF {
     throw TypeError();
   }
 
-  string type_name(int id) {
+  auto type(int id) {
     switch (id) {
-    case NC_CHAR:   return "String";
-    case NC_BYTE:   return "Int8";
-    case NC_SHORT:  return "Int16";
-    case NC_INT:    return "Int32";
-    case NC_INT64:  return "Int64";
-    case NC_FLOAT:  return "SFloat";
-    case NC_DOUBLE: return "DFloat";
-    case NC_UBYTE:  return "UInt8";
-    case NC_USHORT: return "UInt16";
-    case NC_UINT:   return "UInt32";
-    case NC_UINT64: return "UInt64";
+    case NC_CHAR:   return String;
+    case NC_BYTE:   return Int8;
+    case NC_SHORT:  return Int16;
+    case NC_INT:    return Int32;
+    case NC_INT64:  return Int64;
+    case NC_FLOAT:  return SFloat;
+    case NC_DOUBLE: return DFloat;
+    case NC_UBYTE:  return UInt8;
+    case NC_USHORT: return UInt16;
+    case NC_UINT:   return UInt32;
+    case NC_UINT64: return UInt64;
     }
     throw TypeError();
   }

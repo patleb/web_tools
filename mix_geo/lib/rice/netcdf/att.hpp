@@ -34,8 +34,7 @@ namespace NetCDF {
       return atts;
     }
 
-    static auto write(int file_id, int var_id, const string & name, std::string_view type_name, numo::NArray & values, bool scalar = false) {
-      auto type_id = NetCDF::type_id(type_name);
+    static auto write(int file_id, int var_id, const string & name, int type_id, numo::NArray & values, bool scalar = false) {
       if (type_id == NC_CHAR) throw TypeError();
       if (values.ndim() != 1) throw TypeError();
       if (scalar && values.size() != 1) throw TypeError();
@@ -56,7 +55,7 @@ namespace NetCDF {
     }
 
     auto type() const {
-      return NetCDF::type_name(type_id());
+      return NetCDF::type(type_id());
     }
 
     auto size() const {
