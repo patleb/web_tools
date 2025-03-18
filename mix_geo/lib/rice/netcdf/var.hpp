@@ -109,7 +109,7 @@ namespace NetCDF {
 
     auto read(const vector< size_t > & starts = {}, const vector< size_t > & counts = {}, const vector< ptrdiff_t > & strides = {}) const {
       switch (type_id()) {
-      <%- compile_vars[:netcdf].each do |numo_type, (nc_type, type)| -%>
+      <%- compile_vars[:netcdf].each do |numo_type, nc_type| -%>
       case <%= nc_type %>: {
         if (starts.empty()) {
           <%= numo_type %> values(shape());

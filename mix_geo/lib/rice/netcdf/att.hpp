@@ -68,7 +68,7 @@ namespace NetCDF {
     auto read() const {
       size_t count = size();
       switch (type_id()) {
-      <%- compile_vars[:netcdf].each do |numo_type, (nc_type, type)| -%>
+      <%- compile_vars[:netcdf].each do |numo_type, nc_type| -%>
       case <%= nc_type %>: {
         <%= numo_type %> numbers({ count });
         check_status( nc_get_att(file_id, var_id, name.c_str(), numbers.write_ptr()) );

@@ -21,16 +21,16 @@ module MixGeo
     initializer 'mix_geo.compile_vars' do
       ExtRice.configure do |config|
         config.compile_vars[:netcdf] = {
-          'numo::Int8'   => ['NC_BYTE',   'int8_t'],
-          'numo::Int16'  => ['NC_SHORT',  'int16_t'],
-          'numo::Int32'  => ['NC_INT',    'int32_t'],
-          'numo::Int64'  => ['NC_INT64',  'int64_t2'],
-          'numo::SFloat' => ['NC_FLOAT',  'float'],
-          'numo::DFloat' => ['NC_DOUBLE', 'double'],
-          'numo::UInt8'  => ['NC_UBYTE',  'uint8_t'],
-          'numo::UInt16' => ['NC_USHORT', 'uint16_t'],
-          'numo::UInt32' => ['NC_UINT',   'uint32_t'],
-          'numo::UInt64' => ['NC_UINT64', 'uint64_t2'],
+          'numo::Int8'   => 'NC_BYTE',
+          'numo::Int16'  => 'NC_SHORT',
+          'numo::Int32'  => 'NC_INT',
+          'numo::Int64'  => 'NC_INT64',
+          'numo::SFloat' => 'NC_FLOAT',
+          'numo::DFloat' => 'NC_DOUBLE',
+          'numo::UInt8'  => 'NC_UBYTE',
+          'numo::UInt16' => 'NC_USHORT',
+          'numo::UInt32' => 'NC_UINT',
+          'numo::UInt64' => 'NC_UINT64',
         }
       end
     end
