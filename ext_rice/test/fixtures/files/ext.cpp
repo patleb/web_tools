@@ -6,7 +6,6 @@
 #include "filesystem"
 #include "source_location"
 #include "stacktrace"
-#include "ext_rice/all.hpp"
 #include "all.hpp"
 // after_include
 #include "some_other_code.hpp"
@@ -63,7 +62,7 @@ void Init_ext() {
   rb_cOverload.define_constructor(Constructor<Overload>());
   rb_cOverload.define_constructor(Constructor<const Overload&>());
   rb_cOverload.define_constructor(Constructor<Overload&&>());
-  rb_cOverload.define_constructor(Constructor<Overload, int arg1, float>());
+  rb_cOverload.define_constructor(Constructor<Overload, int, float>());
   rb_cOverload.define_constructor(Constructor<Overload, int, float>(), Arg("arg1"), Arg("arg_2") = 1.2);
   using rb_overload_name_1 = vectot<int>& (Overload::*)() const;
   rb_cOverload.define_method<rb_overload_name_1>("name", &Overload::name);
