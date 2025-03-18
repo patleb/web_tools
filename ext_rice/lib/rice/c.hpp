@@ -1,3 +1,5 @@
+#define DOUBLE_SAFE_INT64 9007199254740991
+
 namespace C {
   using std::string;
   using std::vector;
