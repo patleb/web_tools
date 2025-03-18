@@ -1,6 +1,10 @@
 module NetCDF
   Var.class_eval do
     module self::WithOverrides
+      def name=(new_name)
+        super(new_name.to_s)
+      end
+
       def dims
         @dims ||= super.map{ [it.name, it] }.to_hwia
       end
