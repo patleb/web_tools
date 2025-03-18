@@ -38,7 +38,7 @@ namespace NetCDF {
       check_status( nc_rename_var(file_id, id, new_name.c_str()) );
     }
 
-    auto type_name() const {
+    auto type() const {
       return NetCDF::type_name(type_id());
     }
 

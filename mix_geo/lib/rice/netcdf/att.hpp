@@ -55,7 +55,7 @@ namespace NetCDF {
       this->name = new_name;
     }
 
-    auto type_name() const {
+    auto type() const {
       return NetCDF::type_name(type_id());
     }
 

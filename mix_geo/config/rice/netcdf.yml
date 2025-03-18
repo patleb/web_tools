@@ -40,8 +40,8 @@ module NetCDF:
 
     def:
       name= | rename:
-      type  | type_name:
       null? | is_null:
+      type:
       size:
       read:
       destroy:
@@ -53,8 +53,8 @@ module NetCDF:
     def:
       name:
       name= | rename:
-      type  | type_name:
       null? | is_null:
+      type:
       dims_count:
       dims:
       atts:
