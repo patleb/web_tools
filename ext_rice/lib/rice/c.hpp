@@ -40,6 +40,16 @@ namespace C {
     return casts;
   }
 
+  template < class V, V >
+  auto vector_cast(const vector< V > & values) {
+    return values;
+  }
+
+  template < class V, V >
+  auto vector_cast(const V * values, size_t count) {
+    return vector< V >(values, values + count);
+  }
+
   template <>
   auto vector_cast< string, char >(const vector< string > & values) {
     size_t count = values.size();
