@@ -1,33 +1,33 @@
 module NetCDF
   File.class_eval do
-    def self.read(path)
-      file = new(path)
+    def self.read(path, **)
+      file = new(path, **)
       yield file
     ensure
       file&.close
     end
 
-    def self.write(path)
-      file = new(path, 'w')
+    def self.write(path, **)
+      file = new(path, 'w', **)
       yield file
     ensure
       file&.close
     end
 
-    def self.append(path)
-      file = new(path, 'a')
+    def self.append(path, **)
+      file = new(path, 'a', **)
       yield file
     ensure
       file&.close
     end
 
     module self::WithOverrides
-      def initialize(path, mode = 'r')
-        super(path.to_s, mode)
+      def initialize(path, mode = 'r', classic: false, share: false)
+        super(path.to_s, mode, classic, share)
       end
 
-      def open(path, mode = 'r')
-        super(path.to_s, mode)
+      def open(path, mode = 'r', classic: false, share: false)
+        super(path.to_s, mode, classic, share)
       end
 
       def close

@@ -36,6 +36,8 @@ namespace NetCDF {
   class BelongsToFile : public Base {
     public:
 
+    static std::set< int > classic_files;
+
     int file_id = NULL_ID;
 
     using Base::Base;
@@ -43,6 +45,15 @@ namespace NetCDF {
     BelongsToFile(int file_id, int id):
       Base(id),
       file_id(file_id) {
+    }
+
+    protected:
+
+    // BUG: https://github.com/Unidata/netcdf-c/issues/597
+    static void check_classic(int file_id, CONTEXT(trace, source)) {
+      if (!classic_files.contains(file_id)) {
+        throw RuntimeError("not a classic file", trace, source);
+      }
     }
   };
 }

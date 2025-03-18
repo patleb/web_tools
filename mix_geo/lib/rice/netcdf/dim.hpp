@@ -2,8 +2,6 @@ namespace NetCDF {
   class Dim : public BelongsToFile {
     public:
 
-    static bool renamed;
-
     using BelongsToFile::BelongsToFile;
 
     static auto all(int file_id) {
@@ -31,11 +29,9 @@ namespace NetCDF {
       return string(name);
     }
 
-    // BUG: https://github.com/Unidata/netcdf-c/issues/597
     void rename(const string & new_name) const {
-      if (renamed) throw RuntimeError("can only rename one dimension per opened file");
+      check_classic(file_id);
       check_status( nc_rename_dim(file_id, id, new_name.c_str()) );
-      renamed = true;
     }
 
     auto size() const {
@@ -54,6 +50,4 @@ namespace NetCDF {
       return false;
     }
   };
-
-  bool Dim::renamed = false;
 }

@@ -8,15 +8,13 @@ module NetCDF:
     self.version:
 
   class File:
-    attr_reader: [path, mode]
+    attr_reader: [path, mode, classic, share]
 
     def:
-      initialize | NetCDF::File.DEFAULT: [[const string &, path], [string, mode = (string)"r"]]
-      open: [path, mode = (string)"r"]
+      initialize | NetCDF::File.DEFAULT: [[const string &, path], [string, mode = (string)"r"], [bool, classic = false], [bool, share = false]]
+      open: [path, mode = (string)"r", classic = false, share = false]
       close:
       closed? | is_null:
-      reopen: [mode = (string)"r"]
-      reload:
       sync:
       dims:
       vars:

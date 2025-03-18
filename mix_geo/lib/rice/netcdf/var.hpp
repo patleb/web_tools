@@ -35,6 +35,7 @@ namespace NetCDF {
     }
 
     void rename(string new_name) const {
+      check_classic(file_id);
       check_status( nc_rename_var(file_id, id, new_name.c_str()) );
     }
 

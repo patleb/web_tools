@@ -4,10 +4,12 @@ namespace NetCDF {
 
     string path;
     string mode;
+    bool classic;
+    bool share;
 
     using Base::Base;
 
-    explicit File(const string & path, string mode = "r"):
+    explicit File(const string & path, string mode = "r", bool classic = false, bool share = false):
       Base() {
       open(path, mode);
     }
@@ -24,7 +26,7 @@ namespace NetCDF {
       }
     }
 
-    void open(const string & path, string mode = "r") {
+    void open(const string & path, string mode = "r", bool classic = false, bool share = false) {
       if (!is_null()) throw RuntimeError("file already opened");
       int flags;
       bool create = false;
@@ -43,29 +45,25 @@ namespace NetCDF {
       } else {
         throw RuntimeError("mode not supported");
       }
+      if (classic && share) flags = flags | NC_SHARE;
       if (create) {
-        check_status( nc_create(path.c_str(), flags | NC_NETCDF4, &this->id) );
+        if (!classic) flags = flags | NC_NETCDF4;
+        check_status( nc_create(path.c_str(), flags, &this->id) );
       } else {
         check_status( nc_open(path.c_str(), flags, &this->id) );
       }
+      if (classic) BelongsToFile::classic_files.insert(id);
       this->path = path;
       this->mode = mode;
-      Dim::renamed = false;
+      this->classic = classic;
+      this->share = share;
     }
 
     void close() {
       if (is_null()) return;
       nc_close(id);
+      BelongsToFile::classic_files.erase(id);
       this->id = NULL_ID;
-    }
-
-    void reopen(string mode = "r") {
-      open(path, mode);
-    }
-
-    void reload() {
-      close();
-      reopen(mode);
     }
 
     void sync() const {
