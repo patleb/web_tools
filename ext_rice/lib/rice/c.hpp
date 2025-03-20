@@ -49,32 +49,4 @@ namespace C {
   auto vector_cast(const V * values, size_t count) {
     return vector< V >(values, values + count);
   }
-
-  template <>
-  auto vector_cast< string, char >(const vector< string > & values) {
-    size_t count = values.size();
-    vector< char * > casts(count);
-    for (size_t i = 0; i < count; ++i) {
-      size_t max_size = values[i].size() + 1; // '\0'
-      casts[i] = new char[max_size];
-      std::memcpy(casts[i], values[i].c_str(), max_size);
-    }
-    return casts;
-  }
-
-  void vector_free(const vector< char * > & values) {
-    size_t count = values.size();
-    for (size_t i = 0; i < count; ++i) {
-      delete [] values[i];
-    }
-  }
-
-  template <>
-  auto vector_cast< char, string >(const char * values, size_t count) {
-    vector< string > casts(count);
-    for (size_t i = 0; i < count; ++i) {
-      casts[i] = string(&values[i]);
-    }
-    return casts;
-  }
 }

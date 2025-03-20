@@ -56,4 +56,6 @@ namespace NetCDF {
       }
     }
   };
+
+  std::set< int > BelongsToFile::classic_files;
 }

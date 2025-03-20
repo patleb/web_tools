@@ -11,7 +11,11 @@ module NetCDF:
     attr_reader: [path, mode, classic, share]
 
     def:
-      initialize | NetCDF::File.DEFAULT: [[const string &, path], [string, mode = (string)"r"], [bool, classic = false], [bool, share = false]]
+      initialize | NetCDF::File.DEFAULT:
+        - [const string &, path]
+        - [string, mode = (string)"r"]
+        - [bool, classic = false]
+        - [bool, share = false]
       open: [path, mode = (string)"r", classic = false, share = false]
       close:
       closed? | is_null:
@@ -58,7 +62,6 @@ module NetCDF:
       read:
       fill_value:
       set_fill_value:
-      set_fill_value_s:
       fill:
       set_fill:
       endian:

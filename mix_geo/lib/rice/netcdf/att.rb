@@ -1,5 +1,5 @@
 module NetCDF
-  Var.class_eval do
+  Att.class_eval do
     module self::WithOverrides
       def name=(new_name)
         super(new_name.to_s)

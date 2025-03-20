@@ -22,7 +22,7 @@ namespace NetCDF {
         close();
       }
       catch (std::exception & e) {
-        log_warning(e.what());
+        log_error(e.what());
       }
     }
 

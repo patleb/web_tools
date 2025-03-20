@@ -83,28 +83,34 @@ namespace NetCDF {
       return Att::write_s(file_id, id, name, text);
     }
 
-    void write(numo::NArray values, const vector< size_t > & starts = {}, const vector< size_t > & counts = {}, const vector< ptrdiff_t > & strides = {}) const {
+    void write(numo::NArray values, const vector< size_t > & starts = {}, const vector< ptrdiff_t > & strides = {}) const {
       if (type_id() == NC_CHAR) throw TypeError();
+      vector< size_t > counts = values.shape();
+      size_t dims_count = this->dims_count();
+      if (counts.size() != dims_count) throw TypeError();
       const void * data = values.read_ptr();
       if (starts.empty()) {
-        check_status( nc_put_var(file_id, id, data) );
+        size_t starts[dims_count] = {};
+        check_status( nc_put_vara(file_id, id, starts, counts.data(), data) );
       } else if (strides.empty()) {
+        if (starts.size() != dims_count) throw TypeError();
         check_status( nc_put_vara(file_id, id, starts.data(), counts.data(), data) );
       } else {
+        if (starts.size() != dims_count) throw TypeError();
+        if (strides.size() != dims_count) throw TypeError();
         check_status( nc_put_vars(file_id, id, starts.data(), counts.data(), strides.data(), data) );
       }
     }
 
-    void write_s(const vector< string > & values) const {
-      vector< char * > strings = C::vector_cast< string, char >(values);
-      const char * data = reinterpret_cast< const char * >(strings.data());
-      try {
-        check_status( nc_put_var_text(file_id, id, data) );
-        C::vector_free(strings);
-      }
-      catch (...) {
-        C::vector_free(strings);
-        throw;
+    void write_s(const vector< string > & values, size_t start = 0, ptrdiff_t stride = 1) const {
+      size_t count = values.size();
+      size_t starts[2] = { 0, 0 };
+      size_t counts[2] = { 1, 0 };
+      ptrdiff_t strides[2] = { stride, 1 };
+      for (size_t i = 0; i < count; ++i) {
+        starts[0] = start + i;
+        counts[1] = values[i].size(); // without '\0'
+        check_status( nc_put_vars_text(file_id, id, starts, counts, strides, values[i].c_str()) );
       }
     }
 
@@ -112,15 +118,21 @@ namespace NetCDF {
       switch (type_id()) {
       <%- compile_vars[:netcdf].each do |numo_type, nc_type| -%>
       case <%= nc_type %>: {
+        size_t dims_count = this->dims_count();
         if (starts.empty()) {
           <%= numo_type %> values(shape());
           check_status( nc_get_var(file_id, id, values.write_ptr()) );
           return NVectorType(values);
         } else if (strides.empty()) {
+          if (starts.size() != dims_count) throw TypeError();
+          if (counts.size() != dims_count) throw TypeError();
           <%= numo_type %> values(counts);
           check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.write_ptr()) );
           return NVectorType(values);
         } else {
+          if (starts.size() != dims_count) throw TypeError();
+          if (counts.size() != dims_count) throw TypeError();
+          if (strides.size() != dims_count) throw TypeError();
           <%= numo_type %> values(counts);
           check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), strides.data(), values.write_ptr()) );
           return NVectorType(values);
@@ -131,19 +143,20 @@ namespace NetCDF {
         vector< size_t > sizes = shape();
         size_t count = sizes[0];
         size_t max_size = sizes[1];
-        vector< char * > strings;
-        for (size_t i = 0; i < count; ++i) strings[i] = new char[max_size];
-        char * data = reinterpret_cast< char * >(strings.data());
-        try {
-          check_status( nc_get_var_text(file_id, id, data) );
-          vector< string > values = C::vector_cast< char, string >(data, count);
-          C::vector_free(strings);
-          return NVectorType(values);
+        size_t start_0 = starts.empty() ? 0 : starts[0];
+        size_t count_0 = counts.empty() ? count : counts[0];
+        ptrdiff_t stride_0 = strides.empty() ? 1 : strides[0];
+        size_t starts[2] = { 0, 0 };
+        size_t counts[2] = { 1, max_size };
+        ptrdiff_t strides[2] = { stride_0, 1 };
+        vector< string > values(count);
+        for (size_t i = 0; i < count; ++i) {
+          char data[max_size];
+          starts[0] = start_0 + i;
+          check_status( nc_get_vars_text(file_id, id, starts, counts, strides, data) );
+          values[i] = string(data);
         }
-        catch (...) {
-          C::vector_free(strings);
-          throw;
-        }
+        return NVectorType(values);
       }
       default:
         throw TypeError();
@@ -164,11 +177,7 @@ namespace NetCDF {
     }
 
     void set_fill_value(numo::NArray value) const {
-      Att::write(file_id, id, "_FillValue", type_id(), value, 1);
-    }
-
-    void set_fill_value_s(const string & text) const {
-      Att::write_s(file_id, id, "_FillValue", text, 1);
+      Att::write(file_id, id, "_FillValue", type_id(), value, true);
     }
 
     bool fill() const {

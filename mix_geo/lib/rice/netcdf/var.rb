@@ -14,6 +14,7 @@ module NetCDF
       end
 
       def write_att(name, values)
+        @atts = nil
         if values.is_a? Numo::NArray
           super(name.to_s, values.class.name.demodulize, values)
         else
@@ -21,16 +22,17 @@ module NetCDF
         end
       end
 
-      def write(values, _starts = [], _counts = [], _strides = [], starts: _starts, counts: _counts, strides: _strides)
+      def write(values, _starts = [], _strides = [], starts: _starts, strides: _strides)
         if values.is_a? Numo::NArray
           raise "not Numo::#{type}" if values.class.name.demodulize != type.to_s
-          { starts: starts.size, counts: counts.size, strides: strides.size }.each do |name, size|
-            raise "dims.size != #{name}.size [#{size}]" unless size.zero? || size == dims.size
-          end
-          super(values, starts, counts, strides)
+          super(values, starts, strides)
         else
-          write_s(Array(values).map(&:to_s))
+          write_s(Array(values).map(&:to_s), starts.presence || 0, strides.presence || 1)
         end
+      end
+
+      def read(_starts = [], _counts = [], _strides = [], starts: _starts, counts: _counts, strides: _strides)
+        super(starts, counts, strides)
       end
 
       def fill_value
@@ -38,21 +40,29 @@ module NetCDF
         value[0]
       end
 
-      def set_fill_value(value)
+      def set_fill_value(value, _type: nil)
+        @atts = nil
         if value.is_a? Numo::NArray
           raise "not Numo::#{type}" if value.class.name.demodulize != type.to_s
-        else
-          set_fill_value_s(value)
+        elsif _type
+          value = Numo.const_get(_type)[value]
         end
+        super(value)
       end
     end
     prepend self::WithOverrides
 
+    def read_att(name)
+      att = atts[name] || raise("missing attribute [#{name}]")
+      att.read
+    end
+
     def delete_att(name)
       att = atts[name] || raise("missing attribute [#{name}]")
+      @atts = nil
       att.destroy
     end
 
-    private :write_att_s, :write_s, :set_fill_value_s
+    private :write_att_s, :write_s
   end
 end
