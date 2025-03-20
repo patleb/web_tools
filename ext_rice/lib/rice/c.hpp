@@ -42,7 +42,7 @@ namespace C {
 
   template < class V, V >
   auto vector_cast(const vector< V > & values) {
-    return values;
+    return vector< V >(values);
   }
 
   template < class V, V >
@@ -53,16 +53,11 @@ namespace C {
   template <>
   auto vector_cast< string, char >(const vector< string > & values) {
     size_t count = values.size();
-    size_t max_size = 0;
+    vector< char * > casts(count);
     for (size_t i = 0; i < count; ++i) {
-      size_t size = values[i].size();
-      if (size > max_size) max_size = size;
-    }
-    max_size += 1; // '\0'
-    vector< char * > casts;
-    for (size_t i = 0; i < count; ++i) {
+      size_t max_size = values[i].size() + 1; // '\0'
       casts[i] = new char[max_size];
-      strcpy(casts[i], values[i].c_str());
+      std::memcpy(casts[i], values[i].c_str(), max_size);
     }
     return casts;
   }
