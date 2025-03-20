@@ -83,22 +83,19 @@ namespace NetCDF {
       return Att::write_s(file_id, id, name, text);
     }
 
-    void write(numo::NArray values, const vector< size_t > & starts = {}, const vector< ptrdiff_t > & strides = {}) const {
+    void write(numo::NArray values, const vector< size_t > & start = {}, const vector< ptrdiff_t > & stride = {}) const {
       if (type_id() == NC_CHAR) throw TypeError();
-      vector< size_t > counts = values.shape();
       size_t dims_count = this->dims_count();
+      vector< size_t > starts = start.empty() ? vector< size_t >(dims_count, 0) : start;
+      vector< size_t > counts = values.shape();
+      if (starts.size() != dims_count) throw TypeError();
       if (counts.size() != dims_count) throw TypeError();
       const void * data = values.read_ptr();
-      if (starts.empty()) {
-        size_t starts[dims_count] = {};
-        check_status( nc_put_vara(file_id, id, starts, counts.data(), data) );
-      } else if (strides.empty()) {
-        if (starts.size() != dims_count) throw TypeError();
+      if (stride.empty()) {
         check_status( nc_put_vara(file_id, id, starts.data(), counts.data(), data) );
       } else {
-        if (starts.size() != dims_count) throw TypeError();
-        if (strides.size() != dims_count) throw TypeError();
-        check_status( nc_put_vars(file_id, id, starts.data(), counts.data(), strides.data(), data) );
+        if (stride.size() != dims_count) throw TypeError();
+        check_status( nc_put_vars(file_id, id, starts.data(), counts.data(), stride.data(), data) );
       }
     }
 
@@ -114,47 +111,54 @@ namespace NetCDF {
       }
     }
 
-    auto read(const vector< size_t > & starts = {}, const vector< size_t > & counts = {}, const vector< ptrdiff_t > & strides = {}) const {
+    auto read(const vector< size_t > & start = {}, const vector< size_t > & count = {}, const vector< ptrdiff_t > & stride = {}) const {
       switch (type_id()) {
       <%- compile_vars[:netcdf].each do |numo_type, nc_type| -%>
       case <%= nc_type %>: {
         size_t dims_count = this->dims_count();
-        if (starts.empty()) {
-          <%= numo_type %> values(shape());
-          check_status( nc_get_var(file_id, id, values.write_ptr()) );
-          return NVectorType(values);
-        } else if (strides.empty()) {
-          if (starts.size() != dims_count) throw TypeError();
-          if (counts.size() != dims_count) throw TypeError();
+        vector< size_t > starts = start.empty() ? vector< size_t >(dims_count, 0) : start;
+        vector< size_t > counts = count.empty() ? vector< size_t >(dims_count, 1) : count;
+        if (starts.size() != dims_count) throw TypeError();
+        if (counts.size() != dims_count) throw TypeError();
+        if (stride.empty()) {
           <%= numo_type %> values(counts);
           check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.write_ptr()) );
           return NVectorType(values);
         } else {
-          if (starts.size() != dims_count) throw TypeError();
-          if (counts.size() != dims_count) throw TypeError();
-          if (strides.size() != dims_count) throw TypeError();
+          if (stride.size() != dims_count) throw TypeError();
           <%= numo_type %> values(counts);
-          check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), strides.data(), values.write_ptr()) );
+          check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.write_ptr()) );
           return NVectorType(values);
         }
       }
       <%- end -%>
       case NC_CHAR: {
+        if (start.size() > 1) throw TypeError();
+        if (count.size() > 1) throw TypeError();
+        if (stride.size() > 1) throw TypeError();
         vector< size_t > sizes = shape();
-        size_t count = sizes[0];
+        size_t max_count = sizes[0];
         size_t max_size = sizes[1];
-        size_t start_0 = starts.empty() ? 0 : starts[0];
-        size_t count_0 = counts.empty() ? count : counts[0];
-        ptrdiff_t stride_0 = strides.empty() ? 1 : strides[0];
+        size_t start_0 = start.empty() ? 0 : start[0];
+        size_t count_0 = count.empty() ? max_count : count[0];
         size_t starts[2] = { 0, 0 };
         size_t counts[2] = { 1, max_size };
-        ptrdiff_t strides[2] = { stride_0, 1 };
         vector< string > values(count_0);
-        for (size_t i = 0; i < count_0; ++i) {
-          char data[max_size];
-          starts[0] = start_0 + i;
-          check_status( nc_get_vars_text(file_id, id, starts, counts, strides, data) );
-          values[i] = string(data);
+        if (stride.empty()) {
+          for (size_t i = 0; i < count_0; ++i) {
+            char data[max_size];
+            starts[0] = start_0 + i;
+            check_status( nc_get_vara_text(file_id, id, starts, counts, data) );
+            values[i] = string(data);
+          }
+        } else {
+          ptrdiff_t strides[2] = { stride[0], 1 };
+          for (size_t i = 0; i < count_0; ++i) {
+            char data[max_size];
+            starts[0] = start_0 + i;
+            check_status( nc_get_vars_text(file_id, id, starts, counts, strides, data) );
+            values[i] = string(data);
+          }
         }
         return NVectorType(values);
       }

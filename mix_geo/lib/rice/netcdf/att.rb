@@ -6,10 +6,10 @@ module NetCDF
       end
 
       def read
-        if type == Type::String
-          super.first
-        else
+        if type != Type::String
           super.to_a
+        else
+          super.first
         end
       end
     end

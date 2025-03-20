@@ -22,17 +22,21 @@ module NetCDF
         end
       end
 
-      def write(values, _starts = [], _strides = [], starts: _starts, strides: _strides)
+      def write(values, start: nil, stride: nil)
         if values.is_a? Numo::NArray
           raise "not Numo::#{type}" if values.class.name.demodulize != type.to_s
-          super(values, starts, strides)
+          super(values, Array.wrap(start), Array.wrap(stride))
         else
-          write_s(Array(values).map(&:to_s), starts.presence || 0, strides.presence || 1)
+          write_s(Array(values).map(&:to_s), start || 0, stride || 1)
         end
       end
 
-      def read(_starts = [], _counts = [], _strides = [], starts: _starts, counts: _counts, strides: _strides)
-        super(starts, counts, strides)
+      def read(start: nil, count: nil, stride: nil, all: false)
+        if all
+          super(Array.new(dims_count, 0), shape, [])
+        else
+          super(Array.wrap(start), Array.wrap(count), Array.wrap(stride))
+        end
       end
 
       def fill_value
