@@ -30,8 +30,9 @@ namespace numo {
       return RNARRAY_NDIM(this->_value);
     }
 
-    size_t* shape() const {
-      return RNARRAY_SHAPE(this->_value);
+    auto shape() const {
+      size_t * shape = RNARRAY_SHAPE(this->_value);
+      return std::vector< size_t >(shape, shape + ndim());
     }
 
     size_t size() const {
