@@ -149,8 +149,8 @@ namespace NetCDF {
         size_t starts[2] = { 0, 0 };
         size_t counts[2] = { 1, max_size };
         ptrdiff_t strides[2] = { stride_0, 1 };
-        vector< string > values(count);
-        for (size_t i = 0; i < count; ++i) {
+        vector< string > values(count_0);
+        for (size_t i = 0; i < count_0; ++i) {
           char data[max_size];
           starts[0] = start_0 + i;
           check_status( nc_get_vars_text(file_id, id, starts, counts, strides, data) );
