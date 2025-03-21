@@ -13,6 +13,7 @@ class NetCDFTest < ActiveSupport::TestCase
 
     assert(NetCDF::File.open(path, 'w') do |f|
       refute f.closed?
+      assert_equal 'nc4', f.format
 
       f.create_dim :n
       f.create_dim :x, 2

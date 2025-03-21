@@ -88,6 +88,19 @@ namespace NetCDF {
       return mode != mode_was;
     }
 
+    auto format() const {
+      int format;
+      check_status( nc_inq_format(id, &format) );
+      switch (format) {
+      case NC_FORMAT_CLASSIC:         return "classic";
+      case NC_FORMAT_64BIT_OFFSET:    return "classic_64";
+      case NC_FORMAT_CDF5:            return "cdf5";
+      case NC_FORMAT_NETCDF4:         return "nc4";
+      case NC_FORMAT_NETCDF4_CLASSIC: return "nc4_classic";
+      default: throw RuntimeError("unknown file format");
+      }
+    }
+
     auto dims() const {
       return Dim::all(id);
     }

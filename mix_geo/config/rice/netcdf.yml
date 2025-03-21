@@ -23,6 +23,7 @@ module NetCDF:
       close:
       closed? | is_null:
       sync:
+      format:
       dims:
       vars:
       atts:
