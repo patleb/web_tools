@@ -14,5 +14,9 @@ module NetCDF
       end
     end
     prepend self::WithOverrides
+
+    def dig(index)
+      read[index]
+    end
   end
 end

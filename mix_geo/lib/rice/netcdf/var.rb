@@ -22,6 +22,12 @@ module NetCDF
         end
       end
 
+      def dig(name, index = nil)
+        att = atts[name]
+        return att.dig(index) if index
+        att
+      end
+
       def write(values, start: nil, stride: nil)
         if values.is_a? Numo::NArray
           raise "not Numo::#{type}" if values.class.name.demodulize != type.to_s
