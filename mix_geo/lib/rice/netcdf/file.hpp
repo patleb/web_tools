@@ -4,12 +4,13 @@ namespace NetCDF {
 
     string path;
     string mode;
+    bool nc4_classic;
     bool classic;
     bool share;
 
     using Base::Base;
 
-    explicit File(const string & path, string mode = "r", bool classic = false, bool share = false):
+    explicit File(const string & path, string mode = "r", bool nc4_classic = false, bool classic = false, bool share = false):
       Base() {
       open(path, mode);
     }
@@ -26,7 +27,7 @@ namespace NetCDF {
       }
     }
 
-    void open(const string & path, string mode = "r", bool classic = false, bool share = false) {
+    void open(const string & path, string mode = "r", bool nc4_classic = false, bool classic = false, bool share = false) {
       if (!is_null()) throw RuntimeError("file already opened");
       int flags;
       bool create = false;
@@ -48,6 +49,7 @@ namespace NetCDF {
       if (classic && share) flags = flags | NC_SHARE;
       if (create) {
         if (!classic) flags = flags | NC_NETCDF4;
+        if (nc4_classic) flags = flags | NC_CLASSIC_MODEL;
         check_status( nc_create(path.c_str(), flags, &this->id) );
       } else {
         check_status( nc_open(path.c_str(), flags, &this->id) );
@@ -55,6 +57,7 @@ namespace NetCDF {
       if (classic) BelongsToFile::classic_files.insert(id);
       this->path = path;
       this->mode = mode;
+      this->nc4_classic = nc4_classic;
       this->classic = classic;
       this->share = share;
     }

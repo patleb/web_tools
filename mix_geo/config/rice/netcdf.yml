@@ -16,9 +16,10 @@ module NetCDF:
       initialize | NetCDF::File.DEFAULT:
         - [const string &, path]
         - [string, mode = (string)"r"]
+        - [bool, nc4_classic = false]
         - [bool, classic = false]
         - [bool, share = false]
-      open: [path, mode = (string)"r", classic = false, share = false]
+      open: [path, mode = (string)"r", nc4_classic = false, classic = false, share = false]
       close:
       closed? | is_null:
       sync:
