@@ -16,7 +16,9 @@ module NetCDF
     prepend self::WithOverrides
 
     def dig(index)
-      read[index]
+      value = read
+      value = value[index] if type != Type::String
+      value
     end
   end
 end
