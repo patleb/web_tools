@@ -4,9 +4,7 @@ namespace NetCDF {
 
     string path;
     string mode;
-    bool nc4_classic;
-    bool classic;
-    bool share;
+    int flags;
 
     using Base::Base;
 
@@ -54,18 +52,14 @@ namespace NetCDF {
       } else {
         check_status( nc_open(path.c_str(), flags, &this->id) );
       }
-      if (classic) BelongsToFile::classic_files.insert(id);
       this->path = path;
       this->mode = mode;
-      this->nc4_classic = nc4_classic;
-      this->classic = classic;
-      this->share = share;
+      this->flags = flags;
     }
 
     void close() {
       if (is_null()) return;
       check_status( nc_close(id) );
-      BelongsToFile::classic_files.erase(id);
       this->id = NULL_ID;
     }
 
@@ -89,16 +83,7 @@ namespace NetCDF {
     }
 
     auto format() const {
-      int format;
-      check_status( nc_inq_format(id, &format) );
-      switch (format) {
-      case NC_FORMAT_CLASSIC:         return "classic";
-      case NC_FORMAT_64BIT_OFFSET:    return "classic_64";
-      case NC_FORMAT_CDF5:            return "cdf5";
-      case NC_FORMAT_NETCDF4:         return "nc4";
-      case NC_FORMAT_NETCDF4_CLASSIC: return "nc4_classic";
-      default: throw RuntimeError("unknown file format");
-      }
+      return Base::file_format(id);
     }
 
     auto dims() const {

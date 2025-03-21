@@ -10,7 +10,7 @@ module NetCDF:
     self.version:
 
   class File:
-    attr_reader: [path, mode, classic, share]
+    attr_reader: [path, mode, flags]
 
     def:
       initialize | NetCDF::File.DEFAULT:

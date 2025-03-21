@@ -18,6 +18,19 @@ namespace NetCDF {
 
     protected:
 
+    static auto file_format(int file_id) {
+      int format;
+      check_status( nc_inq_format(file_id, &format) );
+      switch (format) {
+      case NC_FORMAT_CLASSIC:         return "classic";
+      case NC_FORMAT_64BIT_OFFSET:    return "classic_64";
+      case NC_FORMAT_CDF5:            return "cdf5";
+      case NC_FORMAT_NETCDF4:         return "nc4";
+      case NC_FORMAT_NETCDF4_CLASSIC: return "nc4_classic";
+      default: throw RuntimeError("unknown file format");
+      }
+    }
+
     static void check_status(int code, CONTEXT(trace, source)) {
       if (code == NC_NOERR) {
         return;
@@ -31,12 +44,17 @@ namespace NetCDF {
       }
       throw RuntimeError(msg, trace, source);
     }
+
+    // BUG: https://github.com/Unidata/netcdf-c/issues/597
+    static void check_classic(int file_id, CONTEXT(trace, source)) {
+      if (file_format(file_id) != "classic") {
+        throw RuntimeError("not a classic file", trace, source);
+      }
+    }
   };
 
   class BelongsToFile : public Base {
     public:
-
-    static std::set< int > classic_files;
 
     int file_id = NULL_ID;
 
@@ -46,16 +64,5 @@ namespace NetCDF {
       Base(id),
       file_id(file_id) {
     }
-
-    protected:
-
-    // BUG: https://github.com/Unidata/netcdf-c/issues/597
-    static void check_classic(int file_id, CONTEXT(trace, source)) {
-      if (!classic_files.contains(file_id)) {
-        throw RuntimeError("not a classic file", trace, source);
-      }
-    }
   };
-
-  std::set< int > BelongsToFile::classic_files;
 }
