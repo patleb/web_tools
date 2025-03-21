@@ -31,14 +31,14 @@ module NetCDF
         end
       end
 
-      def read(at: nil, start: at, count: nil, stride: nil)
-        if start.blank? && count.blank? && stride.blank?
+      def read(at: nil, start: nil, count: nil, stride: nil)
+        if at
+          values = super(Array(at), [], [])
+          values.to_a.dig(*Array.new(dims_count, 0))
+        elsif start.blank? && count.blank? && stride.blank?
           super(Array.new(dims_count, 0), shape, [])
         else
-          start = Array.wrap(start)
-          values = super(start, Array.wrap(count), Array.wrap(stride))
-          values = values.to_a.dig(*Array.new(start.size, 0)) if at
-          values
+          super(Array.wrap(start), Array.wrap(count), Array.wrap(stride))
         end
       end
 
