@@ -11,6 +11,8 @@ class NetCDFTest < ActiveSupport::TestCase
   end
 
   test '#open, #write, #read' do
+    assert_equal 0, NetCDF::UNLIMITED
+
     assert(NetCDF::File.open(path, 'w') do |f|
       refute f.closed?
 

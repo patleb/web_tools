@@ -2,6 +2,8 @@ after_include: >
   using namespace NetCDF;
 
 module NetCDF:
+  UNLIMITED: NC_UNLIMITED
+
   enum Type: [String, Int8, Int16, Int32, Int64, SFloat, DFloat, UInt8, UInt16, UInt32, UInt64]
 
   def:
@@ -27,6 +29,7 @@ module NetCDF:
       create_var:
       write_att:
       write_att_s:
+      set_define_mode:
       set_fill:
 
   class Dim:

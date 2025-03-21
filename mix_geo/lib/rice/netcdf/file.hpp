@@ -61,13 +61,21 @@ namespace NetCDF {
 
     void close() {
       if (is_null()) return;
-      nc_close(id);
+      check_status( nc_close(id) );
       BelongsToFile::classic_files.erase(id);
       this->id = NULL_ID;
     }
 
     void sync() const {
       check_status( nc_sync(id) );
+    }
+
+    void set_define_mode(bool define_mode) {
+      if (define_mode) {
+        check_status( nc_redef(id) );
+      } else {
+        check_status( nc_enddef(id) );
+      }
     }
 
     auto set_fill(bool fill) {
