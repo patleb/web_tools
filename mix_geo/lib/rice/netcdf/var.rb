@@ -1,4 +1,6 @@
 module NetCDF
+  class InvalidRanges < ::StandardError; end
+
   Var.class_eval do
     module self::WithOverrides
       def name=(new_name)
@@ -13,6 +15,12 @@ module NetCDF
         @atts ||= super.map{ [it.name, it] }.to_hwia
       end
 
+      def dig(name, index = nil)
+        att = atts[name]
+        return att.dig(index) if index
+        att
+      end
+
       def write_att(name, values)
         @atts = nil
         if values.is_a? Numo::NArray
@@ -20,12 +28,6 @@ module NetCDF
         else
           write_att_s(name.to_s, values.to_s)
         end
-      end
-
-      def dig(name, index = nil)
-        att = atts[name]
-        return att.dig(index) if index
-        att
       end
 
       def write(values, start: nil, stride: nil)
@@ -37,15 +39,8 @@ module NetCDF
         end
       end
 
-      def read(at: nil, start: nil, count: nil, stride: nil)
-        if at
-          values = super(Array(at), [], []).to_a
-          if type != Type::String
-            values.dig(*Array.new(dims_count, 0))
-          else
-            values.first
-          end
-        elsif start.blank? && count.blank? && stride.blank?
+      def read(start: nil, count: nil, stride: nil)
+        if start.blank? && count.blank? && stride.blank?
           if type != Type::String
             super(Array.new(dims_count, 0), shape, [])
           else
@@ -72,6 +67,38 @@ module NetCDF
       end
     end
     prepend self::WithOverrides
+
+    def at(*indexes)
+      indexes.map do |index|
+        values = read(start: Array(index)).to_a
+        if type != Type::String
+          values.dig(*Array.new(dims_count, 0))
+        else
+          values.first
+        end
+      end
+    end
+
+    def [](*ranges)
+      raise InvalidRanges if ranges.size > (dims_count = (sizes = shape).size)
+      start, count = ranges.each_with_object([[], []]).with_index do |(range, (start, count)), i|
+        if range.is_a? Range
+          start << (at = range.begin)
+          if (size = range.size).infinite?
+            size = sizes[i] - at
+          end
+          count << size
+        else
+          start << range
+          count << 1
+        end
+      end
+      if (rest_count = (dims_count - (partial_count = start.size))) > 0
+        start.concat(Array.new(rest_count, 0))
+        count.concat(sizes.to_a[partial_count..])
+      end
+      read(start: start, count: count)
+    end
 
     def read_att(name)
       att = atts[name] or raise MissingAttribute, name
