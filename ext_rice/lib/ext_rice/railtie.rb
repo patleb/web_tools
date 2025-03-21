@@ -9,6 +9,7 @@ module ExtRice
     end
 
     initializer 'ext_rice.require_ext' do
+      require "numo/narray" if Rice.require_numo?
       Rice.require_ext
     end
   end

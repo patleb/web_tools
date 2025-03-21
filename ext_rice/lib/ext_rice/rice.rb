@@ -49,7 +49,7 @@ module Rice
 
   def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false)
     copy_files
-    require_numo unless ENV['NO_NUMO']
+    require_numo
     include_dir dst_path
     include_dirs, add_libraries, makefile = gems_config.values_at(:include_dir, :libs, :makefile)
     include_dirs.each{ |name| include_dir name }
@@ -83,9 +83,14 @@ module Rice
   end
 
   def self.require_numo
+    return unless require_numo?
     require "numo/narray"
     numo = File.join(Gem.loaded_specs["numo-narray"].require_path, "numo")
     include_dir numo
+  end
+
+  def self.require_numo?
+    !ENV['NO_NUMO']
   end
 
   def self.write_checksum
