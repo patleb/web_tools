@@ -46,7 +46,7 @@ module ExtRice
     end
 
     def target_path
-      @target_path ||= root.join('app/libraries', scope)
+      @target_path ||= root.join('app/rice', scope)
     end
 
     def bin_path

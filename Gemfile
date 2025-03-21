@@ -30,11 +30,12 @@ gemspec
 
 gem 'ext_coffee', path: './ext_coffee'
 gem 'ext_css', path: './ext_css'
+# gem 'ext_minitest', path: './ext_minitest'
 gem 'ext_rails', path: './ext_rails'
 gem 'ext_rice', path: './ext_rice'
 gem 'ext_ruby', path: './ext_ruby'
 gem 'ext_shakapacker', path: './ext_shakapacker', require: false
-gem 'ext_whenever', path: './ext_whenever'
+gem 'ext_whenever', path: './ext_whenever', require: false
 gem 'mix_admin', path: './mix_admin'
 gem 'mix_certificate', path: './mix_certificate'
 gem 'mix_file', path: './mix_file'
