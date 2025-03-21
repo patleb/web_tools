@@ -1,4 +1,14 @@
 module NetCDF
+  class MissingError < ::StandardError
+    def initialize(name)
+      super "#{self.class.name.demodulize.titleize} [#{name}]"
+    end
+  end
+
+  class MissingDimension < MissingError; end
+  class MissingAttribute < MissingError; end
+  class MissingVariable < MissingError; end
+
   File.class_eval do
     def self.open(...)
       file = new(...)
@@ -51,7 +61,7 @@ module NetCDF
         end
         dims = Array(dims)
         unless dims.first.is_a? NetCDF::Dim
-          dims = dims.map{ |key| self.dims[key] || raise("missing dimension [#{key}]") }
+          dims = dims.map{ |key| self.dims[key] or raise MissingDimension, key }
         end
         var = super(name.to_s, type, dims)
         var.set_fill_value(fill_value, _type: type) if fill_value
@@ -60,7 +70,7 @@ module NetCDF
 
       def write_att(name, values, var: nil)
         if var
-          var = vars[var] || raise("missing variable [#{var}]")
+          var = vars[var] or raise MissingVariable, var
           @vars = nil
           return var.write_att(name, values)
         end
@@ -76,43 +86,43 @@ module NetCDF
 
     def read_att(name, var: nil)
       if var
-        var = vars[var] || raise("missing variable [#{var}]")
+        var = vars[var] or raise MissingVariable, var
         var.read_att(name)
       else
-        att = atts[name] || raise("missing attribute [#{name}]")
+        att = atts[name] or raise MissingAttribute, name
         att.read
       end
     end
 
     def delete_att(name, var: nil)
       if var
-        var = vars[var] || raise("missing variable [#{var}]")
+        var = vars[var] or raise MissingVariable, var
         @vars = nil
         var.delete_att(name)
       else
-        att = atts[name] || raise("missing attribute [#{name}]")
+        att = atts[name] or raise MissingAttribute, name
         @atts = nil
         att.destroy
       end
     end
 
     def write(var, values, ...)
-      var = vars[var] || raise("missing variable [#{var}]")
+      var = vars[var] or raise MissingVariable, var
       var.write(values, ...)
     end
 
     def read(var, ...)
-      var = vars[var] || raise("missing variable [#{var}]")
+      var = vars[var] or raise MissingVariable, var
       var.read(...)
     end
 
     def fill_value(var)
-      var = vars[var] || raise("missing variable [#{var}]")
+      var = vars[var] or raise MissingVariable, var
       var.fill_value
     end
 
     def set_fill_value(var, *)
-      var = vars[var] || raise("missing variable [#{var}]")
+      var = vars[var] or raise MissingVariable, var
       var.set_fill_value(*)
     end
 

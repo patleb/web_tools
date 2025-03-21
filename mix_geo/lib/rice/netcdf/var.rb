@@ -31,11 +31,14 @@ module NetCDF
         end
       end
 
-      def read(start: nil, count: nil, stride: nil, all: false)
-        if all
+      def read(at: nil, start: at, count: nil, stride: nil)
+        if start.blank? && count.blank? && stride.blank?
           super(Array.new(dims_count, 0), shape, [])
         else
-          super(Array.wrap(start), Array.wrap(count), Array.wrap(stride))
+          start = Array.wrap(start)
+          values = super(start, Array.wrap(count), Array.wrap(stride))
+          values = values.to_a.dig(*Array.new(start.size, 0)) if at
+          values
         end
       end
 
@@ -57,12 +60,12 @@ module NetCDF
     prepend self::WithOverrides
 
     def read_att(name)
-      att = atts[name] || raise("missing attribute [#{name}]")
+      att = atts[name] or raise MissingAttribute, name
       att.read
     end
 
     def delete_att(name)
-      att = atts[name] || raise("missing attribute [#{name}]")
+      att = atts[name] or raise MissingAttribute, name
       @atts = nil
       att.destroy
     end

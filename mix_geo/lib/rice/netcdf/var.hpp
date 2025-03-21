@@ -103,11 +103,10 @@ namespace NetCDF {
       size_t count = values.size();
       size_t starts[2] = { 0, 0 };
       size_t counts[2] = { 1, 0 };
-      ptrdiff_t strides[2] = { stride, 1 };
       for (size_t i = 0; i < count; ++i) {
-        starts[0] = start + i;
+        starts[0] = start + i * stride;
         counts[1] = values[i].size(); // without '\0'
-        check_status( nc_put_vars_text(file_id, id, starts, counts, strides, values[i].c_str()) );
+        check_status( nc_put_vara_text(file_id, id, starts, counts, values[i].c_str()) );
       }
     }
 
@@ -136,29 +135,20 @@ namespace NetCDF {
         if (start.size() > 1) throw TypeError();
         if (count.size() > 1) throw TypeError();
         if (stride.size() > 1) throw TypeError();
-        vector< size_t > sizes = shape();
-        size_t max_count = sizes[0];
-        size_t max_size = sizes[1];
+        vector< size_t > shape = this->shape();
+        size_t & max_count = shape[0];
+        size_t & max_size = shape[1];
         size_t start_0 = start.empty() ? 0 : start[0];
         size_t count_0 = count.empty() ? max_count : count[0];
+        size_t stride_0 = stride.empty() ? 1 : stride[0];
         size_t starts[2] = { 0, 0 };
         size_t counts[2] = { 1, max_size };
         vector< string > values(count_0);
-        if (stride.empty()) {
-          for (size_t i = 0; i < count_0; ++i) {
-            char data[max_size];
-            starts[0] = start_0 + i;
-            check_status( nc_get_vara_text(file_id, id, starts, counts, data) );
-            values[i] = string(data);
-          }
-        } else {
-          ptrdiff_t strides[2] = { stride[0], 1 };
-          for (size_t i = 0; i < count_0; ++i) {
-            char data[max_size];
-            starts[0] = start_0 + i;
-            check_status( nc_get_vars_text(file_id, id, starts, counts, strides, data) );
-            values[i] = string(data);
-          }
+        for (size_t i = 0; i < count_0; ++i) {
+          char data[max_size];
+          starts[0] = start_0 + i * stride_0;
+          check_status( nc_get_vara_text(file_id, id, starts, counts, data) );
+          values[i] = string(data);
         }
         return NVectorType(values);
       }
