@@ -101,7 +101,7 @@ class NetCDFTest < ActiveSupport::TestCase
       assert_equal ['first', '2nd'], f.read(:team, count: 2, stride: 2).to_a
       assert_equal 10,               f.dims[:t].size
       assert_equal [2, 4, 6, 8],     f.read(:time, start: 2, count: 4, stride: 2).to_a
-      assert_equal 10.0,             f.read(:lon, at: 0)
+      assert_equal [10.0],           f.vars[:lon].at(0)
       assert_equal [-100.0] + [-Float::INFINITY] * 3, f.read(:lat).to_a
     end.closed?)
   end
