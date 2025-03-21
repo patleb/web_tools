@@ -64,7 +64,6 @@ module ExtRails
       require 'ext_rails/rails/application'
       require 'ext_rails/rails/engine/with_task'
       require 'ext_rails/rails/initializable/collection'
-      require 'ext_rails/pycall'
 
       Setting.load
       app.config.action_mailer.delivery_method = :smtp
