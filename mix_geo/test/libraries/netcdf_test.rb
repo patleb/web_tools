@@ -90,14 +90,15 @@ class NetCDFTest < ActiveSupport::TestCase
       refute f.closed?
 
       assert_equal 0, f.vars[:none].shape.reduce(&:*)
+      assert_equal e1, f.read(:event, start: [0, 7], count: e1.shape)
+      assert_equal e2, f.read(:event, start: [1, 2], count: e2.shape, stride: [1, 2])
       h = Numo::SFloat.ones(f.vars[:heat].shape.to_a)
       h[0, 1] = Float::NAN
       h[2, 1] = Float::NAN
       h[3, 0] = Float::NAN
       assert_equal h.to_a.to_s, f.read(:heat).to_a.to_s
-      assert_equal e1, f.read(:event, start: [0, 7], count: e1.shape)
-      assert_equal e2, f.read(:event, start: [1, 2], count: e2.shape, stride: [1, 2])
       assert_equal ['first', '2nd'], f.read(:team, count: 2, stride: 2).to_a
+      assert 10, f.dims[:t].size
       assert_equal [2, 4, 6, 8],     f.read(:time, start: 2, count: 4, stride: 2).to_a
       assert_equal 10.0,             f.read(:lon, at: 0)
       assert_equal [-100.0] + [-Float::INFINITY] * 3, f.read(:lat).to_a
