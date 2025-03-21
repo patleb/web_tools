@@ -39,10 +39,18 @@ module NetCDF
 
       def read(at: nil, start: nil, count: nil, stride: nil)
         if at
-          values = super(Array(at), [], [])
-          values.to_a.dig(*Array.new(dims_count, 0))
+          values = super(Array(at), [], []).to_a
+          if type != Type::String
+            values.dig(*Array.new(dims_count, 0))
+          else
+            values.first
+          end
         elsif start.blank? && count.blank? && stride.blank?
-          super(Array.new(dims_count, 0), shape, [])
+          if type != Type::String
+            super(Array.new(dims_count, 0), shape, [])
+          else
+            super([0], [shape.first], [])
+          end
         else
           super(Array.wrap(start), Array.wrap(count), Array.wrap(stride))
         end
