@@ -22,15 +22,15 @@ module ExtRice
     alias_method :executable?, :executable
 
     def log_path
-      @log_path ||= Bundler.root.join("log/rice#{log_suffix}.log")
+      @log_path || Bundler.root.join("log/rice#{log_suffix}.log")
     end
 
     def log_levels
-      @log_levels ||= %w(trace debug info warning error).map.with_index.to_h
+      @log_levels || %w(trace debug info warning error).map.with_index.to_h
     end
 
     def log_level
-      @log_level ||= ENV['DEBUG'] ? 'debug' : (test ? 'info' : 'warning')
+      @log_level || ENV['DEBUG'] ? 'debug' : (test ? 'info' : 'warning')
     end
 
     def log_level_i
@@ -38,68 +38,63 @@ module ExtRice
     end
 
     def log_suffix
-      scoped ? "-#{scope.full_underscore}" : ''
+      scope.presence ? "-#{scope.full_underscore}" : ''
     end
 
     def target
-      @target ||= 'ext'
+      @target || 'ext'
     end
 
     def target_path
-      @target_path ||= root.join('app/rice', scope)
+      @target_path || root.join('app/rice', scope)
     end
 
     def bin_path
-      @bin_path ||= target_path.join(executable ? target : "#{target}.#{RbConfig::CONFIG['DLEXT']}")
+      @bin_path || target_path.join(executable ? target : "#{target}.#{RbConfig::CONFIG['DLEXT']}")
     end
 
     def tmp_path
-      @tmp_path ||= Bundler.root.join('tmp/rice', scope)
+      @tmp_path || Bundler.root.join('tmp/rice', scope)
     end
 
     def checksum_path
-      @checksum_path ||= target_path.join("#{target}.sha256")
+      @checksum_path || target_path.join("#{target}.sha256")
     end
 
     def yml_path
-      @yml_path ||= root.join('config/rice.yml')
+      @yml_path || root.join('config/rice.yml')
     end
 
     def extconf_path
-      @extconf_path ||= root.join('config/rice/extconf.rb')
+      @extconf_path || root.join('config/rice/extconf.rb')
     end
 
     def mkmf_path
-      @mkmf_path ||= tmp_path.join('make')
+      @mkmf_path || tmp_path.join('make')
     end
 
     def dst_path
-      @dst_path ||= tmp_path.join('src')
+      @dst_path || tmp_path.join('src')
     end
 
     def root_vendor
-      @root_vendor ||= root.join('vendor/rice')
+      @root_vendor || root.join('vendor/rice')
     end
 
     def root_test
-      @root_test ||= root.join('test/rice')
+      @root_test || root.join('test/rice')
     end
 
     def root_app
-      @root_app ||= root.join('app/rice')
+      @root_app || root.join('app/rice')
     end
 
     def root
-      @root ||= Bundler.root
+      @root || Bundler.root
     end
-
-    def scoped
-      scope.present?
-    end
-    alias_method :scoped?, :scoped
 
     def scope
-      @scope ||= test ? "test/#{root.basename.to_s}" : ''
+      @scope || (test ? "test/#{root.basename.to_s}" : '')
     end
 
     def compile_vars

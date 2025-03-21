@@ -1,6 +1,4 @@
 require './test/test_helper'
-require './app/rice/ext'
-Rice.require_overrides
 
 class NetCDFTest < ActiveSupport::TestCase
   let(:path){ dir.join('data.nc') }

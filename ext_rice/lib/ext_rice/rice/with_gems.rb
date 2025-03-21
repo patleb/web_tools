@@ -8,7 +8,7 @@ module Rice
   class MissingGem < StandardError; end
 
   module WithGems
-    delegate :root_vendor, :root_app, :root_test, :test?, :dst_path, :yml_path, :extconf_path, :compile_vars, to: 'ExtRice.config'
+    delegate :root_vendor, :root_app, :root_test, :dst_path, :yml_path, :extconf_path, :compile_vars, to: 'ExtRice.config'
 
     def require_overrides
       rb_paths.each do |file|

@@ -27,18 +27,24 @@ module Rice
   }
 
   def self.require_ext
+    old_env = ENV['RAILS_ENV']
+    if test?
+      ENV['RAILS_ENV'] = 'development'
+      system('rake rice:compile') unless require_ext?
+    end
     return unless require_ext?
     require bin_path
     require_overrides
+  ensure
+    ENV['RAILS_ENV'] = old_env
   end
 
   def self.require_ext?
-    return @require_ext if defined? @require_ext
-    @require_ext = !ENV['NO_EXT'] && bin_path.exist?
+    !ENV['NO_EXT'] && bin_path.exist?
   end
 
   class << self
-    delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :executable?, to: 'ExtRice.config'
+    delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :test?, :executable?, to: 'ExtRice.config'
   end
 
   def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false)
