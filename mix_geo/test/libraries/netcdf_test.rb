@@ -1,5 +1,5 @@
 require './test/test_helper'
-require './app/libraries/ext'
+require './app/rice/ext'
 Rice.require_overrides
 
 class NetCDFTest < ActiveSupport::TestCase
