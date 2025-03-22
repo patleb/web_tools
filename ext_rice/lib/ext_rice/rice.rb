@@ -32,7 +32,7 @@ module Rice
       ENV['RAILS_ENV'] = 'development'
       system('rake rice:compile') unless require_ext?
     end
-    return unless require_ext?
+    return unless require_ext? && bin_path.exist?
     require bin_path
     require_overrides
   ensure
@@ -40,7 +40,18 @@ module Rice
   end
 
   def self.require_ext?
-    !ENV['NO_EXT'] && bin_path.exist?
+    !ENV['NO_EXT']
+  end
+
+  def self.require_numo
+    return unless require_numo?
+    require "numo/narray"
+    numo = File.join(Gem.loaded_specs["numo-narray"].require_path, "numo")
+    include_dir numo
+  end
+
+  def self.require_numo?
+    !ENV['NO_NUMO']
   end
 
   class << self
@@ -80,17 +91,6 @@ module Rice
         MakeMakefile.create_makefile(target, dst_path.to_s)
       end
     end
-  end
-
-  def self.require_numo
-    return unless require_numo?
-    require "numo/narray"
-    numo = File.join(Gem.loaded_specs["numo-narray"].require_path, "numo")
-    include_dir numo
-  end
-
-  def self.require_numo?
-    !ENV['NO_NUMO']
   end
 
   def self.write_checksum
