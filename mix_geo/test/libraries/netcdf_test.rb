@@ -30,8 +30,8 @@ class NetCDFTest < ActiveSupport::TestCase
       f.write_att 'center', Numo::DFloat[50.7, -120.8]
 
       n = f.create_var :none, :UInt8, [:n, :y, :x]
-      f.create_var :event, NetCDF::Type::SFloat, [:team_i, :t]
-      f.create_var :heat,  NetCDF::Type::SFloat, [:y, :x], fill_value: Float::NAN
+      f.create_var :event, NetCDF::Type::SFloat, [:team_i, :t], fill_value: Float::NAN
+      f.create_var :heat,  NetCDF::Type::SFloat, [:y, :x]
       f.create_var :team, 'String', ['team_i', 'team_name']
       f.create_var :time, 'UInt64', [:t]
       f.create_var 'lon', :DFloat, :x, fill_value: Numo::DFloat[Float::INFINITY]
@@ -49,9 +49,9 @@ class NetCDFTest < ActiveSupport::TestCase
       f.delete_att 'NA'
       assert_equal 4, f.atts.size
       f.write_att 'NA', 'nothing', var: :event
-      assert_equal 2, f.vars[:event].atts.size
+      assert_equal 3, f.vars[:event].atts.size
       f.delete_att 'NA', var: :event
-      assert_equal 1, f.vars[:event].atts.size
+      assert_equal 2, f.vars[:event].atts.size
 
       assert_equal '4326',         f.read_att(:srid)
       assert_equal [2000],         f.read_att(:year)
@@ -60,7 +60,7 @@ class NetCDFTest < ActiveSupport::TestCase
       assert_equal 'results',      f.read_att(:type, var: :event)
       assert_equal [10, 23],       f.read_att(:groups, var: :team)
 
-      assert f.fill_value(:heat).nan?
+      assert f.fill_value(:event).nan?
       assert f.fill_value(:time).nil?
       assert f.fill_value(:lon).infinite?
       assert f.fill_value(:lon).positive?
@@ -94,9 +94,9 @@ class NetCDFTest < ActiveSupport::TestCase
       assert_equal e1, f.read(:event, start: [0, 7], count: e1.shape)
       assert_equal e2, f.read(:event, start: [1, 2], count: e2.shape, stride: [1, 2])
       h = Numo::SFloat.ones(f.vars[:heat].shape.to_a)
-      h[0, 1] = Float::NAN
-      h[2, 1] = Float::NAN
-      h[3, 0] = Float::NAN
+      h[0, 1] = NetCDF::FILL_FLOAT
+      h[2, 1] = NetCDF::FILL_FLOAT
+      h[3, 0] = NetCDF::FILL_FLOAT
       assert_equal h.to_a.to_s,      f.read(:heat).to_a.to_s
       assert_equal ['first', '2nd'], f.read(:team, count: 2, stride: 2).to_a
       assert_equal 10,               f.dims[:t].size
