@@ -15,12 +15,6 @@ module NetCDF
         @atts ||= super.map{ [it.name, it] }.to_hwia
       end
 
-      def dig(name, index = nil)
-        att = atts[name]
-        return att.dig(index) if index
-        att
-      end
-
       def write_att(name, values)
         @atts = nil
         if values.is_a? Numo::NArray
@@ -109,6 +103,12 @@ module NetCDF
       att = atts[name] or raise MissingAttribute, name
       @atts = nil
       att.destroy
+    end
+
+    def dig(name, index = nil)
+      att = atts[name]
+      return att.dig(index) if index
+      att
     end
 
     private :write_att_s, :write_s
