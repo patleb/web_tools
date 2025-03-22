@@ -15,10 +15,9 @@ module NetCDF
     end
     prepend self::WithOverrides
 
-    def dig(index)
-      value = read
-      value = value[index] if type != Type::String
-      value
+    def dig(*indexes)
+      return if indexes.size != 1
+      read[indexes.first] rescue nil
     end
   end
 end

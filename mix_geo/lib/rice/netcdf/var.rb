@@ -105,10 +105,10 @@ module NetCDF
       att.destroy
     end
 
-    def dig(name, index = nil)
-      att = atts[name]
-      return att.dig(index) if index
-      att
+    def dig(name, *indexes)
+      return (self[name, *indexes] rescue nil) unless (att = atts[name])
+      return att.dig(*indexes) unless indexes.empty?
+      att.read
     end
 
     private :write_att_s, :write_s

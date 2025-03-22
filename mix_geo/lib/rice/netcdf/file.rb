@@ -126,6 +126,12 @@ module NetCDF
       var.set_fill_value(*)
     end
 
+    def dig(name, *indexes)
+      return unless (object = vars[name] || atts[name])
+      return object.dig(*indexes) unless indexes.empty?
+      object
+    end
+
     private :write_att_s
   end
 end
