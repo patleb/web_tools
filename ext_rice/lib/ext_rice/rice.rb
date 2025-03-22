@@ -30,7 +30,7 @@ module Rice
     old_env = ENV['RAILS_ENV']
     if test?
       ENV['RAILS_ENV'] = 'development'
-      system('rake rice:compile') unless require_ext?
+      raise 'rice:compile error' unless system('rake rice:compile') if require_ext?
     end
     return unless require_ext? && bin_path.exist?
     require bin_path
