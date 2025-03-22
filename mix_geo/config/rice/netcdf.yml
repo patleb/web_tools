@@ -2,7 +2,7 @@ after_include: >
   using namespace NetCDF;
 
 module NetCDF:
-  UNLIMITED:   NC_UNLIMITED
+  UNLIMITED:   NC_UNLIMITED   # 0L
   FILL_STRING: NC_FILL_CHAR   # (char)0
   FILL_INT8:   NC_FILL_BYTE   # (signed char)-127
   FILL_INT16:  NC_FILL_SHORT  # (short)-32767
@@ -38,7 +38,7 @@ module NetCDF:
       dims:
       vars:
       atts:
-      create_dim: [name, size = (size_t)NC_UNLIMITED] # unlimited if size is 0
+      create_dim: [name, size = (size_t)NC_UNLIMITED]
       create_var:
       write_att:
       write_att_s:
