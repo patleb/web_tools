@@ -19,14 +19,14 @@ namespace NetCDF {
     static auto all(int file_id, int var_id) {
       int count = 0;
       if (var_id == NC_GLOBAL) {
-        check_status( nc_inq_natts(file_id, &count) );
+        Base::check_status( nc_inq_natts(file_id, &count), file_id, var_id );
       } else {
-        check_status( nc_inq_varnatts(file_id, var_id, &count) );
+        Base::check_status( nc_inq_varnatts(file_id, var_id, &count), file_id, var_id );
       }
       vector< Att > atts(count);
       for (size_t i = 0; i < count; ++i) {
         char name[NC_MAX_NAME + 1];
-        check_status( nc_inq_attname(file_id, var_id, i, name) );
+        Base::check_status( nc_inq_attname(file_id, var_id, i, name), file_id, var_id );
         atts[i].file_id = file_id;
         atts[i].var_id = var_id;
         atts[i].name = string(name);
@@ -39,13 +39,13 @@ namespace NetCDF {
       if (values.ndim() != 1) throw TypeError();
       if (scalar && values.size() != 1) throw TypeError();
       const void * data = values.read_ptr();
-      check_status( nc_put_att(file_id, var_id, name.c_str(), type_id, values.size(), data) );
+      Base::check_status( nc_put_att(file_id, var_id, name.c_str(), type_id, values.size(), data), file_id, var_id, name );
       return Att(file_id, var_id, name);
     }
 
     static auto write_s(int file_id, int var_id, const string & name, const string & text, bool scalar = false) {
       if (scalar && text.size() != 1) throw TypeError();
-      check_status( nc_put_att_text(file_id, var_id, name.c_str(), text.size(), text.c_str()) );
+      Base::check_status( nc_put_att_text(file_id, var_id, name.c_str(), text.size(), text.c_str()), file_id, var_id, name );
       return Att(file_id, var_id, name);
     }
 
@@ -93,6 +93,12 @@ namespace NetCDF {
     void copy(const File & dst) const;
 
     void copy(const Var & dst) const;
+
+    protected:
+
+    void check_status(int code, CONTEXT(trace, source)) const {
+      Base::check_status(code, file_id, var_id, name, trace, source);
+    }
 
     private:
 

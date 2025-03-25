@@ -2,6 +2,8 @@ after_include: >
   using namespace NetCDF;
 
 module NetCDF:
+  NULL_ID:                        # -1
+  GLOBAL:        NC_GLOBAL        # -1
   NOWRITE:       NC_NOWRITE       # 0x0000
   WRITE:         NC_WRITE         # 0x0001
   CLOBBER:       NC_CLOBBER       # 0x0000
@@ -27,7 +29,10 @@ module NetCDF:
   def:
     self.version:
 
-  class File:
+  class Base:
+    attr_reader: [id]
+
+  class File < Base:
     attr_reader: [path, mode, flags]
 
     def:
@@ -52,15 +57,20 @@ module NetCDF:
       set_define_mode:
       set_fill:
 
-  class Dim:
+  class BelongsToFile < Base:
+    attr_reader: [file_id]
+
+  class Dim < BelongsToFile:
+    attr_reader: [file_id, id]
+
     def:
       name:
       name= | rename:
       unlimited? | is_unlimited:
       size:
 
-  class Att:
-    attr_reader: [name]
+  class Att < BelongsToFile:
+    attr_reader: [var_id, name]
 
     def:
       name= | rename:
@@ -69,7 +79,7 @@ module NetCDF:
       read:
       destroy:
 
-  class Var:
+  class Var < BelongsToFile:
     def:
       name:
       name= | rename:

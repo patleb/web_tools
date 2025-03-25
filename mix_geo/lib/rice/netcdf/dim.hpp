@@ -6,9 +6,9 @@ namespace NetCDF {
 
     static auto all(int file_id) {
       int count;
-      check_status( nc_inq_ndims(file_id, &count) );
+      Base::check_status( nc_inq_ndims(file_id, &count), file_id );
       int ids[count];
-      check_status( nc_inq_dimids(file_id, NULL, ids, 0) );
+      Base::check_status( nc_inq_dimids(file_id, NULL, ids, 0), file_id );
       vector< Dim > dims(count);
       for (size_t i = 0; i < count; ++i) {
         dims[i].file_id = file_id;
@@ -19,7 +19,7 @@ namespace NetCDF {
 
     static auto create(int file_id, const string & name, size_t size = NC_UNLIMITED) {
       int dim_id;
-      check_status( nc_def_dim(file_id, name.c_str(), size, &dim_id) );
+      Base::check_status( nc_def_dim(file_id, name.c_str(), size, &dim_id), file_id );
       return Dim(file_id, dim_id);
     }
 

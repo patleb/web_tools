@@ -6,9 +6,9 @@ namespace NetCDF {
 
     static auto all(int file_id) {
       int count;
-      check_status( nc_inq_nvars(file_id, &count) );
+      Base::check_status( nc_inq_nvars(file_id, &count), file_id );
       int ids[count];
-      check_status( nc_inq_varids(file_id, NULL, ids) );
+      Base::check_status( nc_inq_varids(file_id, NULL, ids), file_id );
       vector< Var > vars(count);
       for (size_t i = 0; i < count; ++i) {
         vars[i].file_id = file_id;
@@ -24,7 +24,7 @@ namespace NetCDF {
       for (size_t i = 0; i < count; ++i) {
         ids[i] = dims[i].id;
       }
-      check_status( nc_def_var(file_id, name.c_str(), NetCDF::type_id(type_name), count, ids, &var_id) );
+      Base::check_status( nc_def_var(file_id, name.c_str(), NetCDF::type_id(type_name), count, ids, &var_id), file_id );
       return Var(file_id, var_id);
     }
 

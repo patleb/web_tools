@@ -113,6 +113,12 @@ namespace NetCDF {
     auto write_att_s(const string & name, const string & text) const {
       return Att::write_s(id, NC_GLOBAL, name, text);
     }
+
+    protected:
+
+    void check_status(int code, CONTEXT(trace, source)) const {
+      Base::check_status(code, id, NULL_ID, "", trace, source);
+    }
   };
 
   void Att::copy(const File & dst) const {
