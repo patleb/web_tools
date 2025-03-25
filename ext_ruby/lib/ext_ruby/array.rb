@@ -3,6 +3,7 @@
 class Array
   class SizeMismatch < ::StandardError; end
 
+  # Numo::NArray#to_a.to_s.tr(' ', '').tr('[', '{').tr(']', '}')
   def to_sql(*shape)
     raise SizeMismatch if self[0].is_a? Array
     raise SizeMismatch unless (size = shape.reduce(&:*) || 0) == self.size
