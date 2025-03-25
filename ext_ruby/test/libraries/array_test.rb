@@ -10,6 +10,7 @@ class ArrayTest < Minitest::TestCase
     assert_equal (d3 = "{#{d2},{{4,5},{6,7}}}"), (0..7).to_a.to_sql(*[2] * 3)
     assert_equal (d4 = "{#{d3},{{{8,9},{10,11}},{{12,13},{14,15}}}}"), (0..15).to_a.to_sql(*[2] * 4)
     assert_equal "{#{d4},{{{{16,17},{18,19}},{{20,21},{22,23}}},{{{24,25},{26,27}},{{28,29},{30,31}}}}}", (0..31).to_a.to_sql(*[2] * 5)
+    assert_equal '{{NaN,Infinity},{-Infinity,3}}', [Float::NAN, Float::INFINITY, -Float::INFINITY, 3].to_sql(2, 2)
   end
 
   test '#mode' do
