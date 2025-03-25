@@ -27,30 +27,23 @@ module NetCDF
         super(path.to_s, mode, nc4_classic, classic, share)
       end
 
-      def close
-        super
-        @dims = @vars = @atts = nil
-      end
-
       def dims
-        @dims ||= super.map{ [it.name, it] }.to_hwia
+        super.map{ [it.name, it] }.to_hwia
       end
 
       def vars
-        @vars ||= super.map{ [it.name, it] }.to_hwia
+        super.map{ [it.name, it] }.to_hwia
       end
 
       def atts
-        @atts ||= super.map{ [it.name, it] }.to_hwia
+        super.map{ [it.name, it] }.to_hwia
       end
 
       def create_dim(name, *)
-        @dims = nil
         super(name.to_s, *)
       end
 
       def create_var(name, type, dims, fill_value: nil)
-        @vars = nil
         case type
         when Class
           type = type.name.demodulize if type <= Numo::NArray
@@ -71,10 +64,8 @@ module NetCDF
       def write_att(name, values, var: nil)
         if var
           var = vars[var] or raise MissingVariable, var
-          @vars = nil
           return var.write_att(name, values)
         end
-        @atts = nil
         if values.is_a? Numo::NArray
           super(name.to_s, values.class.name.demodulize, values)
         else
@@ -97,11 +88,9 @@ module NetCDF
     def delete_att(name, var: nil)
       if var
         var = vars[var] or raise MissingVariable, var
-        @vars = nil
         var.delete_att(name)
       else
         att = atts[name] or raise MissingAttribute, name
-        @atts = nil
         att.destroy
       end
     end

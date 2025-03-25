@@ -103,6 +103,10 @@ class NetCDFTest < Rice::TestCase
       assert_equal [2, 4, 6, 8],     f.read(:time, start: 2, count: 4, stride: 2).to_a
       assert_equal [10.0],           f.vars[:lon].at(0)
       assert_equal [-100.0] + [-Float::INFINITY] * 3, f.read(:lat).to_a
+
+      assert_equal [f.id], f.vars.values.map(&:file_id).to_set.to_a
+      assert_equal [f.id], f.dims.values.map(&:file_id).to_set.to_a
+      assert_equal [f.id], f.atts.values.map(&:file_id).to_set.to_a
     end.closed?)
   end
 end

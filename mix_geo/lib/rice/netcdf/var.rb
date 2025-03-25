@@ -8,15 +8,14 @@ module NetCDF
       end
 
       def dims
-        @dims ||= super.map{ [it.name, it] }.to_hwia
+        super.map{ [it.name, it] }.to_hwia
       end
 
       def atts
-        @atts ||= super.map{ [it.name, it] }.to_hwia
+        super.map{ [it.name, it] }.to_hwia
       end
 
       def write_att(name, values)
-        @atts = nil
         if values.is_a? Numo::NArray
           super(name.to_s, values.class.name.demodulize, values)
         else
@@ -51,7 +50,6 @@ module NetCDF
       end
 
       def set_fill_value(value, _type: nil)
-        @atts = nil
         if value.is_a? Numo::NArray
           raise "not Numo::#{type}" if value.class.name.demodulize != type.to_s
         elsif _type
@@ -101,7 +99,6 @@ module NetCDF
 
     def delete_att(name)
       att = atts[name] or raise MissingAttribute, name
-      @atts = nil
       att.destroy
     end
 
