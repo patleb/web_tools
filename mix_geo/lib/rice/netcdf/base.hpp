@@ -36,12 +36,12 @@ namespace NetCDF {
       case NC_NOERR:
         return;
       case NC_EBADID:
-        if (name == "")
-             if (id == NULL_ID) log_error("NetCDF: Not a valid ID [file_id][", file_id, "]");
-                           else log_error("NetCDF: Not a valid ID [file_id][", file_id, "][id][", id, "]");
-        else if (id == NULL_ID) log_error("NetCDF: Not a valid ID [file_id][", file_id, "][name][", name, "]");
-                           else log_error("NetCDF: Not a valid ID [file_id][", file_id, "][id][", id, "][name][", name, "]");
-        break;
+        if (name == "") {
+          if (id == NULL_ID) {      log_error("NetCDF: Not a valid ID [file_id][", file_id, "]"); }
+          else {                    log_error("NetCDF: Not a valid ID [file_id][", file_id, "][id][", id, "]"); }
+        } else if (id == NULL_ID) { log_error("NetCDF: Not a valid ID [file_id][", file_id, "][name][", name, "]");
+        } else {                    log_error("NetCDF: Not a valid ID [file_id][", file_id, "][id][", id, "][name][", name, "]");
+        } break;
       }
       const char * msg = 0;
       if (NC_ISSYSERR(code)) {
