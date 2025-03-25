@@ -9,7 +9,7 @@ module ActiveJob
 end
 
 module MixJob
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     config.before_configuration do |app|
       app.config.active_job.queue_adapter = :job
       app.config.active_record.queues.destroy = :default

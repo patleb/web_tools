@@ -7,7 +7,7 @@ module ActionPolicy
 end
 
 module MixUser
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     initializer 'mix_user.migrations' do |app|
       append_migrations(app)
     end

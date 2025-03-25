@@ -7,3 +7,4 @@ typedef unsigned long long uint64_t2;
 #include "ext_rice/c.hpp"
 #include "ext_rice/logger.hpp"
 #include "ext_rice/runtime_error.hpp"
+#include "numo/conversion.hpp"

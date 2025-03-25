@@ -3,7 +3,7 @@ require 'mix_rpc/configuration'
 require 'mix_rpc/routes'
 
 module MixRpc
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     initializer 'mix_rpc.migrations' do |app|
       append_migrations(app)
     end

@@ -1,5 +1,8 @@
+before_initialize: >
+  numo::init_conversion();
+
 makefile:
-  cflags: -std=c++23
+  cflags: -std=c++23 -Wno-format-overflow
 
 libs:
   - stdc++_libbacktrace

@@ -27,16 +27,10 @@ module Rice
   }
 
   def self.require_ext
-    old_env = ENV['RAILS_ENV']
-    if test?
-      ENV['RAILS_ENV'] = 'development'
-      raise 'rice:compile error' unless system('rake rice:compile') if require_ext?
-    end
+    require "numo/narray" if require_numo?
     return unless require_ext? && bin_path.exist?
     require bin_path
     require_overrides
-  ensure
-    ENV['RAILS_ENV'] = old_env
   end
 
   def self.require_ext?
@@ -58,7 +52,8 @@ module Rice
     delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :test?, :executable?, to: 'ExtRice.config'
   end
 
-  def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false)
+  def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false, no_gems: false)
+    no_gems! if no_gems
     copy_files
     require_numo
     include_dir dst_path
@@ -149,10 +144,6 @@ module Rice
   def self.hook(name, indent: 0)
     text = hooks[name].strip.presence
     ["// #{name}", ("\n#{' ' * indent}" if text), text].join('')
-  end
-
-  def self.hooks
-    @hooks ||= gems_config[:hooks]
   end
 
   # TODO registry, iterator, director, etc.

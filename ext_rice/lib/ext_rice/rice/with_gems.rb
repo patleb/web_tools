@@ -68,6 +68,10 @@ module Rice
       end
     end
 
+    def hooks
+      @hooks ||= gems_config[:hooks]
+    end
+
     def gems_config
       @gems_config ||= other_yml_paths.each_with_object(default_config) do |path, result|
         defs, hooks, *configs, makefile = gem_config(path)
@@ -79,7 +83,7 @@ module Rice
     end
 
     def gem_config(path)
-      defs = YAML.safe_load(ERB.template(path, binding), aliases: true).to_hwia
+      defs = (YAML.safe_load(ERB.template(path, binding), aliases: true) || {}).to_hwia
       hooks = extract_strings! defs, HOOKS
       configs = extract_configs! defs
       makefile = extract_strings! defs.delete(:makefile), MAKEFILE
@@ -149,8 +153,13 @@ module Rice
       end
     end
 
+    def no_gems!
+      @no_gems = true
+      @yml = @default_config = @gems = @gems_config = @hooks = nil
+    end
+
     def gems
-      @gems ||= begin
+      @gems ||= @no_gems ? (yml.delete(:gems); []) : begin
         missing_gems = []
         gems = (Set.new(['ext_rice'] + Array.wrap(yml.delete(:gems)))).map do |name|
           next (missing_gems << name) unless Gem.exists? name

@@ -1,11 +1,8 @@
 #include "unittest.hpp"
 #include "embed_ruby.hpp"
 #include <rice/rice.hpp>
-#include <fstream>
-#include <source_location>
-#include <stacktrace>
 
-#include "all.hpp"
+#include "ext_rice/c.hpp"
 #include <regex>
 
 using namespace Rice;

@@ -18,7 +18,7 @@ module GearedPagination
   end
 end
 
-class GearedPagination::Engine < ::Rails::Engine
+class GearedPagination::Engine < Rails::Engine
   self.called_from = Gem.root('geared_pagination').join('lib/geared_pagination').to_s
 
   require 'geared_pagination/recordset'

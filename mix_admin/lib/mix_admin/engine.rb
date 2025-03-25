@@ -74,7 +74,7 @@ module Admin
 end
 
 module MixAdmin
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     config.before_configuration do
       require 'mix_admin/active_model/name/with_admin'
     end

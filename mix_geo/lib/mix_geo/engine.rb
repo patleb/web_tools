@@ -3,7 +3,7 @@ require 'countries'
 require 'mix_geo/configuration'
 
 module MixGeo
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     config.before_initialize do
       Rails.autoloaders.main.ignore("#{root}/app/models/postgis") unless Setting[:postgis]
     end

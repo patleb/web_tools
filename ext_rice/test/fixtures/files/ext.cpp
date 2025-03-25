@@ -1,11 +1,7 @@
 // before_include
 #include "some_code.hpp"
 // include
-#include "chrono"
-#include "fstream"
-#include "filesystem"
-#include "source_location"
-#include "stacktrace"
+
 #include "all.hpp"
 // after_include
 #include "some_other_code.hpp"

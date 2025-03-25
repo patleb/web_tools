@@ -1,6 +1,17 @@
 require './test/spec_helper'
 
 class ArrayTest < Minitest::TestCase
+  test '#to_sql' do
+    assert_equal '{}', [].to_sql
+    assert_equal '{}', [].to_sql(0)
+    assert_equal '{{}}', [].to_sql(0, 0)
+    assert_equal (d1 = '{0,1}'), (0..1).to_a.to_sql(2)
+    assert_equal (d2 = "{#{d1},{2,3}}"), (0..3).to_a.to_sql(2, 2)
+    assert_equal (d3 = "{#{d2},{{4,5},{6,7}}}"), (0..7).to_a.to_sql(*[2] * 3)
+    assert_equal (d4 = "{#{d3},{{{8,9},{10,11}},{{12,13},{14,15}}}}"), (0..15).to_a.to_sql(*[2] * 4)
+    assert_equal "{#{d4},{{{{16,17},{18,19}},{{20,21},{22,23}}},{{{24,25},{26,27}},{{28,29},{30,31}}}}}", (0..31).to_a.to_sql(*[2] * 5)
+  end
+
   test '#mode' do
     assert_equal 2.0, [1.0, 2.0, 2.0, 3.0, 4.0].mode
   end

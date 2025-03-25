@@ -2,7 +2,7 @@ require 'ext_ruby'
 require 'ext_coffee/configuration'
 
 module ExtCoffee
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     config.before_initialize do |app|
       app.config.content_security_policy_nonce_generator = -> (request) do
         if request.headers['X-Referrer'].present?

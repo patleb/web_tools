@@ -1,4 +1,5 @@
 require 'minitest/ext_rails'
+require 'minitest/ext_rice'
 require 'minitest/mix_file'
 require 'minitest/mix_flash'
 require 'minitest/mix_geo'

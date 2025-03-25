@@ -1,6 +1,6 @@
 require './test/test_helper'
 
-class NetCDFTest < ActiveSupport::TestCase
+class NetCDFTest < Rice::TestCase
   let(:path){ dir.join('data.nc') }
   let(:dir){ dir = Pathname.new('./tmp/test/netcdf'); dir.mkdir_p; dir }
 

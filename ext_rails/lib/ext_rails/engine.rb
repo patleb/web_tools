@@ -23,7 +23,7 @@ end
 module ExtRails
   ERROR_SEPARATOR = '<br>- '
 
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     # require 'active_record_extended'
     require 'active_type'
     require 'date_validator'

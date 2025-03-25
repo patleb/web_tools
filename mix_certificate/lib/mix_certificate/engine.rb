@@ -6,7 +6,7 @@ ACME_CHALLENGE = '.well-known/acme-challenge'.freeze
 module MixCertificate
   require 'acme-client'
 
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     initializer 'mix_certificate.migrations' do |app|
       append_migrations(app)
     end

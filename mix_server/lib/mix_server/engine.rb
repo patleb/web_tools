@@ -6,7 +6,7 @@ autoload :Notice,    'mix_server/notice'
 autoload :Throttler, 'mix_server/throttler'
 
 module MixServer
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     require 'pg_query'
     require 'mix_global'
     require 'mix_server/rack/utils'

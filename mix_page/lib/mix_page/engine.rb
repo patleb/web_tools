@@ -4,7 +4,7 @@ require 'mix_file'
 require 'mix_admin'
 
 module MixPage
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     initializer 'mix_page.migrations' do |app|
       append_migrations(app)
     end

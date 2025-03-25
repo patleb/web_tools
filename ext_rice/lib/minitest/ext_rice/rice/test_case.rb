@@ -1,5 +1,5 @@
 module Rice
-  class TestCase < Minitest::TestCase
+  class TestCase < ActiveSupport::TestCase
     let(:run_timeout){ false }
 
     cattr_accessor :root_name, :rel_root
@@ -12,15 +12,6 @@ module Rice
 
     def self.file_fixture_path(rel_root)
       (rel_root ? Pathname.new(rel_root) : Bundler.root).join('test/fixtures/files').expand_path
-    end
-
-    def file_fixture_path
-      self.class.file_fixture_path(rel_root)
-    end
-
-    def tmp_path
-      scope = rel_root ? root_name : ''
-      Pathname.new('tmp/rice/test').join(scope).expand_path
     end
 
     def self.xtest_ext(...)
@@ -63,13 +54,34 @@ module Rice
           config.root = Pathname.new(rel_root).expand_path if rel_root
           config.yml_path = yml_path if yml_path
           config.dst_path = config.dst_path.dirname.join('yml')
-          Rice.create_makefile(dry_run: true)
+          Rice.create_makefile(dry_run: true, no_gems: true)
 
           assert_equal file_fixture_path.join('ext.cpp').read, config.dst_path.join('ext.cpp').read
         end
       ensure
         ENV['NO_NUMO'] = old_numo
       end
+    end
+
+    def file_fixture_path
+      self.class.file_fixture_path(rel_root)
+    end
+
+    def tmp_path
+      scope = rel_root ? root_name : ''
+      Pathname.new('tmp/rice/test').join(scope).expand_path
+    end
+
+    def run(...)
+      begin
+        old_env = ENV['RAILS_ENV']
+        ENV['RAILS_ENV'] = 'development'
+        raise 'rice:compile error' unless ($rice_compiled ||= system('rake rice:compile'))
+        Rice.require_ext
+      ensure
+        ENV['RAILS_ENV'] = old_env
+      end
+      super
     end
   end
 end

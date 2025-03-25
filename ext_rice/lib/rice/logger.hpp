@@ -16,10 +16,11 @@ class Logger {
     // no file.close, since global/static variables' destructors aren't called in DLL unload/exit
   }
 
+  // Parameter Pack: https://www.scs.stanford.edu/~dm/blog/param-pack.html
   template<class... Args>
   void log(const Args& ...messages, const LEVEL level) {
     file << "[" << C::timestamp() << "][" << LEVELS[level] << "]: ";
-    (file << ... << messages);
+    (file << ... << std::format("{}", messages));
     file << std::endl;
   }
 

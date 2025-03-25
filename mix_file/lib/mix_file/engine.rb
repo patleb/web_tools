@@ -5,7 +5,7 @@ require 'mix_file/configuration'
 require 'mix_file/routes'
 
 module MixFile
-  class Engine < ::Rails::Engine
+  class Engine < Rails::Engine
     require 'image_optim'
     require 'image_optim_pack'
 
