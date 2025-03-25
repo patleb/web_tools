@@ -87,7 +87,7 @@ class PrependableTest < Minitest::TestCase
     Object.send :remove_const, :BaseClass
   end
 
-  describe '.extend, .include, .prepend' do
+  context '.extend, .include, .prepend' do
     before do
       Object::BaseClass.class_eval do
         extend ExtendModule
@@ -102,7 +102,7 @@ class PrependableTest < Minitest::TestCase
     end
   end
 
-  describe '.prepend, .include, .extend' do
+  context '.prepend, .include, .extend' do
     before do
       Object::BaseClass.class_eval do
         include IncludeModule
@@ -117,7 +117,7 @@ class PrependableTest < Minitest::TestCase
     end
   end
 
-  describe '.included, .prepended' do
+  context '.included, .prepended' do
     before do
       Object::BaseClass.class_eval do
         include IncludeModule
@@ -130,7 +130,7 @@ class PrependableTest < Minitest::TestCase
     end
   end
 
-  describe '.prepended, .included' do
+  context '.prepended, .included' do
     before do
       Object::BaseClass.class_eval do
         prepend PrependModule
