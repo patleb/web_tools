@@ -61,8 +61,6 @@ module NetCDF:
     attr_reader: [file_id]
 
   class Dim < BelongsToFile:
-    attr_reader: [file_id, id]
-
     def:
       name:
       name= | rename:
