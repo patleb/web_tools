@@ -2,8 +2,8 @@ require './test/test_helper'
 
 module ExtRice
   class RiceTest < Rice::TestCase
-    xtest_yml 'ext_rice', yml_path: file_fixture_path('ext_rice').join('rice.yml')
-    xtest_cpp 'ext_rice'
+    test_yml 'ext_rice', yml_path: file_fixture_path('ext_rice').join('rice.yml')
+    test_cpp 'ext_rice'
 
     test 'NArray#to_sql' do
       assert_equal '{}', Numo::Int8.new(0).seq.to_sql
