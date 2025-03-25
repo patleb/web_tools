@@ -106,14 +106,24 @@ module NetCDF
       end
     end
 
-    def write(var, values, ...)
+    def write(var, values, **)
       var = vars[var] or raise MissingVariable, var
-      var.write(values, ...)
+      var.write(values, **)
     end
 
-    def read(var, ...)
+    def read(var, **)
       var = vars[var] or raise MissingVariable, var
-      var.read(...)
+      var.read(**)
+    end
+
+    def at(var, *)
+      var = vars[var] or raise MissingVariable, var
+      var.at(*)
+    end
+
+    def [](var, *ranges)
+      var = vars[var] or raise MissingVariable, var
+      var[*ranges]
     end
 
     def fill_value(var)
