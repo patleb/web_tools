@@ -117,7 +117,7 @@ module NetCDF
     end
 
     def dig(name, *indexes)
-      return (at(name, indexes) rescue nil) unless (att = atts[name])
+      return unless (att = atts[name])
       return att.dig(*indexes) unless indexes.empty?
       att.read
     end
