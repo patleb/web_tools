@@ -72,7 +72,7 @@ namespace NetCDF {
     }
 
     auto dim(const string & name) const {
-      for (auto & dim : dims()) if (dim.name() == name) return dim;
+      for (auto && dim : dims()) if (dim.name() == name) return dim;
       throw RuntimeError("no Dim associated with Var");
     }
 
