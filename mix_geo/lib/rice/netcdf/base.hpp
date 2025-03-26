@@ -6,7 +6,7 @@ namespace NetCDF {
 
     int id = NULL_ID;
 
-    Base(){}
+    Base() = default;
 
     explicit Base(int id):
       id(id) {
@@ -33,12 +33,11 @@ namespace NetCDF {
 
     static void check_status(int code, int file_id = NULL_ID, int id = NULL_ID, std::string_view name = "", CONTEXT(trace, source)) {
       switch (code) {
-      case NC_NOERR:
-        return;
+      case NC_NOERR: return;
       case NC_EBADID:
         if (name == "") {
-          if (id == NULL_ID) {      log_error("NetCDF: Not a valid ID [file_id][", file_id, "]"); }
-          else {                    log_error("NetCDF: Not a valid ID [file_id][", file_id, "][id][", id, "]"); }
+          if (id == NULL_ID)        log_error("NetCDF: Not a valid ID [file_id][", file_id, "]");
+          else                      log_error("NetCDF: Not a valid ID [file_id][", file_id, "][id][", id, "]");
         } else if (id == NULL_ID) { log_error("NetCDF: Not a valid ID [file_id][", file_id, "][name][", name, "]");
         } else {                    log_error("NetCDF: Not a valid ID [file_id][", file_id, "][id][", id, "][name][", name, "]");
         } break;
