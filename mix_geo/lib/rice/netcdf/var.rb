@@ -73,23 +73,31 @@ module NetCDF
 
     def [](*ranges)
       raise InvalidRanges if ranges.size > (dims_count = (sizes = shape).size)
-      start, count = ranges.each_with_object([[], []]).with_index do |(range, (start, count)), i|
-        if range.is_a? Range
+      start, count, slice = ranges.each_with_object([[], [], []]).with_index do |(range, (start, count, slice)), i|
+        case range
+        when Range
           start << (at = range.begin)
           if (size = range.size).infinite?
             size = sizes[i] - at
           end
           count << size
+          slice << true
+        when true
+          start << 0
+          count << sizes[i]
+          slice << true
         else
           start << range
           count << 1
+          slice << 0
         end
       end
       if (rest_count = (dims_count - (partial_count = start.size))) > 0
         start.concat(Array.new(rest_count, 0))
         count.concat(sizes.to_a[partial_count..])
+        slice.concat(Array.new(rest_count, true))
       end
-      read(start: start, count: count)
+      read(start: start, count: count)[*slice]
     end
 
     def read_att(name)
@@ -103,7 +111,7 @@ module NetCDF
     end
 
     def dig(name, *indexes)
-      return (self[name, *indexes] rescue nil) unless (att = atts[name])
+      return (at(name, indexes) rescue nil) unless (att = atts[name])
       return att.dig(*indexes) unless indexes.empty?
       att.read
     end
