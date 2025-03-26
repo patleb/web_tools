@@ -98,6 +98,18 @@ namespace NetCDF {
       return Att::all(id, NC_GLOBAL);
     }
 
+    auto dim(const string & name) const {
+      return Dim::find(id, name);
+    }
+
+    auto var(const string & name) const {
+      return Var::find(id, name);
+    }
+
+    auto att(const string & name) const {
+      return Att::find(id, NC_GLOBAL, name);
+    }
+
     auto create_dim(const string & name, size_t size = NC_UNLIMITED) const {
       return Dim::create(id, name, size);
     }

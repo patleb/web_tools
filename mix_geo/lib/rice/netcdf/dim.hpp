@@ -17,6 +17,12 @@ namespace NetCDF {
       return dims;
     }
 
+    static auto find(int file_id, const string & name) {
+      int id;
+      Base::check_status( nc_inq_dimid(file_id, name.c_str(), &id), file_id, NULL_ID, name );
+      return Dim(file_id, id);
+    }
+
     static auto create(int file_id, const string & name, size_t size = NC_UNLIMITED) {
       int dim_id;
       Base::check_status( nc_def_dim(file_id, name.c_str(), size, &dim_id), file_id );

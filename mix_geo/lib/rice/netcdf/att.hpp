@@ -34,6 +34,12 @@ namespace NetCDF {
       return atts;
     }
 
+    static auto find(int file_id, int var_id, const string & name) {
+      int id;
+      Base::check_status( nc_inq_attid(file_id, var_id, name.c_str(), &id), file_id, var_id, name );
+      return Att(file_id, var_id, name);
+    }
+
     static auto write(int file_id, int var_id, const string & name, int type_id, numo::NArray & values, bool scalar = false) {
       if (type_id == NC_CHAR) throw TypeError();
       if (values.ndim() != 1) throw TypeError();

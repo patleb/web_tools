@@ -17,6 +17,12 @@ namespace NetCDF {
       return vars;
     }
 
+    static auto find(int file_id, const string & name) {
+      int id;
+      Base::check_status( nc_inq_varid(file_id, name.c_str(), &id), file_id, NULL_ID, name );
+      return Var(file_id, id);
+    }
+
     static auto create(int file_id, const string & name, std::string_view type_name, const vector< Dim > & dims) {
       int var_id;
       int count = dims.size();
@@ -63,6 +69,15 @@ namespace NetCDF {
 
     auto atts() const {
       return Att::all(file_id, id);
+    }
+
+    auto dim(const string & name) const {
+      for (auto & dim : dims()) if (dim.name() == name) return dim;
+      throw RuntimeError("no Dim associated with Var");
+    }
+
+    auto att(const string & name) const {
+      return Att::find(file_id, id, name);
     }
 
     auto shape() const {

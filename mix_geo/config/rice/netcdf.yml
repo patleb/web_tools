@@ -50,6 +50,9 @@ module NetCDF:
       dims:
       vars:
       atts:
+      dim:
+      var:
+      att:
       create_dim: [name, size = (size_t)NC_UNLIMITED]
       create_var:
       write_att:
@@ -85,6 +88,8 @@ module NetCDF:
       dims_count:
       dims:
       atts:
+      dim:
+      att:
       shape:
       write_att:
       write_att_s:

@@ -15,6 +15,14 @@ module NetCDF
         super.map{ [it.name, it] }.to_hwia
       end
 
+      def dim(name)
+        super(name.to_s)
+      end
+
+      def att(name)
+        super(name.to_s)
+      end
+
       def write_att(name, values)
         if values.is_a? Numo::NArray
           super(name.to_s, values.class.name.demodulize, values)
@@ -101,13 +109,11 @@ module NetCDF
     end
 
     def read_att(name)
-      att = atts[name] or raise MissingAttribute, name
-      att.read
+      att(name).read
     end
 
     def delete_att(name)
-      att = atts[name] or raise MissingAttribute, name
-      att.destroy
+      att(name).destroy
     end
 
     def dig(name, *indexes)

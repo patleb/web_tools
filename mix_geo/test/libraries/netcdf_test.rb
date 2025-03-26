@@ -38,8 +38,8 @@ class NetCDFTest < Rice::TestCase
       f.create_var 'lat', :DFloat, :y, fill_value: -Float::INFINITY
       assert_equal 0, n.shape.reduce(&:*)
 
-      f.write_att :type, 'results', var: :event
-      f.write_att :groups, Numo::UInt8[10, 23], var: :team
+      f.write_att :event, :type, 'results'
+      f.write_att :team,  :groups, Numo::UInt8[10, 23]
 
       assert_equal [0, 2, 4, 0, 3, 6], f.dims.values.map(&:size)
       assert_equal [4, 1, 2, 2], f.atts.values.map(&:size)
@@ -48,17 +48,17 @@ class NetCDFTest < Rice::TestCase
       assert_equal 5, f.atts.size
       f.delete_att 'NA'
       assert_equal 4, f.atts.size
-      f.write_att 'NA', 'nothing', var: :event
+      f.write_att  :event, 'NA', 'nothing'
       assert_equal 3, f.vars[:event].atts.size
-      f.delete_att 'NA', var: :event
+      f.delete_att :event, 'NA'
       assert_equal 2, f.vars[:event].atts.size
 
       assert_equal '4326',         f.read_att(:srid)
       assert_equal [2000],         f.read_att(:year)
       assert_equal [20, 30.0],     f.read_att(:sizes)
       assert_equal [50.7, -120.8], f.read_att(:center)
-      assert_equal 'results',      f.read_att(:type, var: :event)
-      assert_equal [10, 23],       f.read_att(:groups, var: :team)
+      assert_equal 'results',      f.read_att(:event, :type)
+      assert_equal [10, 23],       f.read_att(:team, :groups)
 
       assert f.fill_value(:event).nan?
       assert f.fill_value(:time).nil?

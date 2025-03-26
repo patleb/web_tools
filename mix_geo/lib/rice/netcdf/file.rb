@@ -1,14 +1,4 @@
 module NetCDF
-  class MissingError < ::StandardError
-    def initialize(name)
-      super "#{self.class.name.demodulize.titleize} [#{name}]"
-    end
-  end
-
-  class MissingDimension < MissingError; end
-  class MissingAttribute < MissingError; end
-  class MissingVariable < MissingError; end
-
   File.class_eval do
     def self.open(...)
       file = new(...)
@@ -39,6 +29,18 @@ module NetCDF
         super.map{ [it.name, it] }.to_hwia
       end
 
+      def dim(name, dim_name = nil)
+        dim_name ? var(name).dim(dim_name) : super(name.to_s)
+      end
+
+      def var(name)
+        super(name.to_s)
+      end
+
+      def att(name, att_name = nil)
+        att_name ? var(name).att(att_name) : super(name.to_s)
+      end
+
       def create_dim(name, *)
         super(name.to_s, *)
       end
@@ -53,20 +55,16 @@ module NetCDF
           type = type.to_s
         end
         dims = Array(dims)
-        unless dims.first.is_a? NetCDF::Dim
-          dims = dims.map{ |key| self.dims[key] or raise MissingDimension, key }
-        end
+        dims.map!{ dim(it) } unless dims.first.is_a? NetCDF::Dim
         var = super(name.to_s, type, dims)
         var.set_fill_value(fill_value, _type: type) if fill_value
         var
       end
 
-      def write_att(name, values, var: nil)
-        if var
-          var = vars[var] or raise MissingVariable, var
-          return var.write_att(name, values)
-        end
-        if values.is_a? Numo::NArray
+      def write_att(name, att_or_values, values = nil)
+        if values
+          var(name).write_att(att_or_values, values)
+        elsif (values = att_or_values).is_a? Numo::NArray
           super(name.to_s, values.class.name.demodulize, values)
         else
           write_att_s(name.to_s, values.to_s)
@@ -75,54 +73,36 @@ module NetCDF
     end
     prepend self::WithOverrides
 
-    def read_att(name, var: nil)
-      if var
-        var = vars[var] or raise MissingVariable, var
-        var.read_att(name)
-      else
-        att = atts[name] or raise MissingAttribute, name
-        att.read
-      end
+    def read_att(name, att_name = nil)
+      att_name ? var(name).read_att(att_name) : att(name).read
     end
 
-    def delete_att(name, var: nil)
-      if var
-        var = vars[var] or raise MissingVariable, var
-        var.delete_att(name)
-      else
-        att = atts[name] or raise MissingAttribute, name
-        att.destroy
-      end
+    def delete_att(name, att_name = nil)
+      att_name ? var(name).delete_att(att_name) : att(name).destroy
     end
 
-    def write(var, values, **)
-      var = vars[var] or raise MissingVariable, var
-      var.write(values, **)
+    def write(name, values, **)
+      var(name).write(values, **)
     end
 
-    def read(var, **)
-      var = vars[var] or raise MissingVariable, var
-      var.read(**)
+    def read(name, **)
+      var(name).read(**)
     end
 
-    def at(var, *)
-      var = vars[var] or raise MissingVariable, var
-      var.at(*)
+    def at(name, *)
+      var(name).at(*)
     end
 
-    def [](var, *ranges)
-      var = vars[var] or raise MissingVariable, var
-      var[*ranges]
+    def [](name, *ranges)
+      var(name)[*ranges]
     end
 
-    def fill_value(var)
-      var = vars[var] or raise MissingVariable, var
-      var.fill_value
+    def fill_value(name)
+      var(name).fill_value
     end
 
-    def set_fill_value(var, *)
-      var = vars[var] or raise MissingVariable, var
-      var.set_fill_value(*)
+    def set_fill_value(name, *)
+      var(name).set_fill_value(*)
     end
 
     def dig(name, *indexes)
