@@ -13,7 +13,7 @@ namespace NetCDF {
       open(path, mode);
     }
 
-    File (const File &) = delete;
+    File(const File &) = delete;
     File & operator=(const File &) = delete;
 
     ~File() {
