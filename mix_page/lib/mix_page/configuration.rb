@@ -22,7 +22,6 @@ module MixPage
 
     def available_layouts
       @available_layouts ||= {
-        'application' => 0,
         'pages' => 10,
       }
     end
