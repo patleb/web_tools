@@ -7,6 +7,7 @@ module Admin
       end
 
       def format_input(value)
+        value = value&.utc if utc?
         super&.sub(/^[\d-]+T/, '')
       end
 

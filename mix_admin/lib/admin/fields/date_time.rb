@@ -5,6 +5,10 @@ module Admin
         true
       end
 
+      register_option :utc? do
+        false
+      end
+
       register_option :strftime_format, memoize: :locale do
         t(pretty_format, scope: i18n_scope)
       end
@@ -22,14 +26,23 @@ module Admin
       end
 
       def parse_input(value)
-        ::Time.zone.parse(value) if value.present?
+        return unless value.present?
+        utc ? ::Time.use_zone('UTC'){ ::Time.zone.parse(value) } : ::Time.zone.parse(value)
       end
 
       def format_value(value)
-        if value
+        case value
+        when Range
+          value = [value.begin, value.end]
+          format = strftime_format
+          value = value.map{ I18n.l(it, format: format) }
+          format_array(value)
+        when ::Time, ::Date, ::DateTime
           I18n.l(value, format: strftime_format)
-        else
+        when nil
           ''.html_safe
+        else
+          value
         end
       end
 
@@ -38,16 +51,17 @@ module Admin
       end
 
       def format_input(value)
+        value = value&.utc if utc?
         value&.iso8601&.sub(/(Z|[-+]\d{2}:\d{2})$/, '')
       end
 
       def value
-        value_in_timezone(super)
+        utc ? ::Time.use_zone('UTC'){ value_in_timezone(super) } : value_in_timezone(super)
       end
 
       def value_in_timezone(value)
         case value
-        when Time, Date, DateTime
+        when ::Time, ::Date, ::DateTime
           value.in_time_zone
         else
           value
