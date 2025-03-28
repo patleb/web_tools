@@ -1,6 +1,7 @@
 class Page < LibMainRecord
   IMAGE_PATH = /\(([^)]+)\)/
   IMAGE_MD = /!\[[^\]]+\]#{IMAGE_PATH}/
+  ORDERING = /^d+-/
 
   has_userstamps
 
@@ -46,6 +47,7 @@ class Page < LibMainRecord
       if (multi_view = File.dirname(template)).match? PageTemplate::MULTI_VIEW
         template, multi_view = multi_view, File.basename(template)
       end
+      template.sub! ORDERING, ''
       raise "unavailable template: #{template}" unless MixPage.config.available_templates.has_key? template
       layout = PageLayout.find_or_create_by! view: layout
       template = PageTemplate.find_or_create_by! page_layout: layout, view: template
