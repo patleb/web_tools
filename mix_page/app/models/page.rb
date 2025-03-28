@@ -1,5 +1,5 @@
 class Page < LibMainRecord
-  IMAGE_PATH = /\(([\/\w.-]+)\)/
+  IMAGE_PATH = /\(([^)]+)\)/
   IMAGE_MD = /!\[[^\]]+\]#{IMAGE_PATH}/
 
   has_userstamps
