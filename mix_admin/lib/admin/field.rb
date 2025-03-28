@@ -52,15 +52,16 @@ module Admin
     end
 
     register_option :pretty_value do
-      value
+      array? ? format_array(value) : format_value(value)
     end
 
     register_option :pretty_show do
-      array? ? format_array(pretty_value) : format_value(pretty_value)
+      pretty_value
     end
 
     register_option :pretty_index do
-      array? ? format_array_index(pretty_value) : format_index(pretty_value)
+      next pretty_value if value? 'pretty_value'
+      array? ? format_array_index(value) : format_index(value)
     end
 
     register_option :pretty_blank do
