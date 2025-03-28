@@ -55,6 +55,7 @@ class PageTemplate < Page
     UUID.shorten(self[:uuid])
   end
 
+  # NOTE no support for multiple layouts --> MixPage.config.layout
   def layout
     @layout ||= PageLayout.with_fields.readonly.find(page_layout_id)
   end
