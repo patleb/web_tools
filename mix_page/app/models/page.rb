@@ -39,6 +39,7 @@ class Page < LibMainRecord
     return if Rails.env.production?
     Dir['app/assets/markdown/**/*.md'].each_with_object([]) do |path, templates|
       layout, template = path.delete_prefix('app/assets/markdown/').split('/', 2)
+      layout.sub! ORDERING, ''
       raise "unavailable layout: #{layout}" unless MixPage.config.available_layouts.has_key? layout
       template.delete_suffix! '.md'
       template, locale = template.split('.', 2)
