@@ -36,8 +36,8 @@ class Page < LibMainRecord
   # TODO gems support and granular production check
   def self.create_pages!
     return if Rails.env.production?
-    Dir['app/assets/markdowns/**/*.md'].each_with_object([]) do |path, templates|
-      layout, template = path.delete_prefix('app/assets/markdowns/').split('/', 2)
+    Dir['app/assets/markdown/**/*.md'].each_with_object([]) do |path, templates|
+      layout, template = path.delete_prefix('app/assets/markdown/').split('/', 2)
       raise "unavailable layout: #{layout}" unless MixPage.config.available_layouts.has_key? layout
       template.delete_suffix! '.md'
       template, locale = template.split('.', 2)
