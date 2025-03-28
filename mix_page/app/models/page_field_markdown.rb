@@ -1,5 +1,6 @@
 class PageFieldMarkdown < LibMainRecord
-  BLOB_ID = /!\[[^\]]+\]\(blob:(\d+)\)/
+  BLOB_ID = /\(blob:(\d+)\)/
+  BLOB_MD = /!\[[^\]]+\]#{BLOB_ID}/
 
   has_many_attached :images, dependent: :detach
   belongs_to :page_field, autosave: true
@@ -30,7 +31,7 @@ class PageFieldMarkdown < LibMainRecord
     I18n.available_locales.each do |locale|
       attribute = "text_#{locale}"
       text = self[attribute] || ''
-      text = text.gsub(BLOB_ID) do |match|
+      text = text.gsub(BLOB_MD) do |match|
         blob = ActiveStorage::Blob.find($1)
         unless blob.image?
           errors.add(attribute, :content_type_invalid)
@@ -42,7 +43,7 @@ class PageFieldMarkdown < LibMainRecord
         end
         next if error
         blobs << blob
-        match.sub(/blob:(\d+)/, blob.url)
+        match.sub(BLOB_ID, "(#{blob.url})")
       end
       texts[attribute] = text
     end

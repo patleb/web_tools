@@ -1,4 +1,9 @@
 namespace! :page do
+  desc 'Create all pages'
+  task :create_all => :environment do
+    Page.create_pages!
+  end
+
   desc 'Create home page'
   task :create_home => :environment do
     Page.create_home!
