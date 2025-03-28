@@ -45,7 +45,7 @@ class Page < LibMainRecord
       locale ||= I18n.default_locale
       i18n_key = "activerecord.attributes.page/view.#{template}"
       if (multi_view = File.dirname(template)).match? PageTemplate::MULTI_VIEW
-        template, multi_view = multi_view, File.basename(template)
+        template = multi_view
       end
       template.sub! ORDERING, ''
       raise "unavailable template: #{template}" unless MixPage.config.available_templates.has_key? template
