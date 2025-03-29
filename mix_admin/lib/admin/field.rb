@@ -4,11 +4,11 @@ module Admin
     include Configurable
 
     attr_accessor :weight, :group, :through, :as
-    attr_writer :editable, :index_link
+    attr_writer :array, :editable, :index_link
 
     delegate :klass, to: :model
     delegate :type, to: :class
-    delegate :array?, :association?, to: :property, allow_nil: true
+    delegate :association?, to: :property, allow_nil: true
 
     def self.find_class(section, property)
       @@find_class ||= Admin::Fields.constants.except(:Association).sort.reverse.select_map do |name|
@@ -157,6 +157,11 @@ module Admin
 
     def readonly?
       action.show? || readonly
+    end
+
+    def array?
+      return @array if defined? @array
+      property&.array?
     end
 
     def editable?

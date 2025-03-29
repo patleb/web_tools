@@ -52,6 +52,7 @@ module Admin::Model::Definable
         config.group    = section_groups[field.group.name]
         config.through  = field.through   if field.ivar_defined? :@through
         config.as       = field.as        if field.ivar_defined? :@as
+        config.array    = field.array?    if field.ivar_defined? :@array
         config.editable = field.editable? if field.ivar_defined? :@editable
       end
     end
@@ -138,6 +139,7 @@ module Admin::Model::Definable
       if @section
         if @group
           type = options[:type]
+          array = options[:array]
           weight = options[:weight] || @weight
           editable = options[:editable]
           if (through = (options[:through] || @through)&.to_sym)
@@ -161,6 +163,7 @@ module Admin::Model::Definable
           @field.group    = @group     if @grouped || @field.group.nil? || @group.name != :default
           @field.through  = through    if through
           @field.as       = as         if as
+          @field.array    = array      if array.is_a? Boolean
           @field.editable = editable   if editable.is_a? Boolean
           @field.instance_eval(&block) if block
           @field
