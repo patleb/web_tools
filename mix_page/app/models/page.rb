@@ -35,10 +35,11 @@ class Page < LibMainRecord
   end
 
   # TODO granular production check
+  # TODO diff from database
   def self.create_pages!
     return if Rails.env.production?
-    Dir['app/assets/markdown/**/*.md'].sort.each_with_object({}) do |path, templates|
-      template = path.delete_prefix('app/assets/markdown/')
+    Dir['app/assets/pages/**/*.md'].sort.each_with_object({}) do |path, templates|
+      template = path.delete_prefix('app/assets/pages/')
       template.sub! ORDERING, ''
       template.delete_suffix! '.md'
       template, locale = template.split('.', 2)
