@@ -71,7 +71,7 @@ module AdminHelper
     [
       ul_(admin_models_menu),
       ul_(admin_root_menu),
-      ul_(admin_static_menu),
+      ul_(admin_static_menu, if: Current.user.admin?),
     ]
   end
 
