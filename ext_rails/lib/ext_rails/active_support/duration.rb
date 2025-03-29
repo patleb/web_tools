@@ -8,7 +8,9 @@ module ActiveSupport
       parts = @parts.slice(*self.class::PARTS[UNITS[unit] + 1..-1]).map{ |unit, val| i18n(unit, val, compact) }
       value = public_send("in_#{unit}").floor
       parts = [i18n(unit, value, compact)].concat(parts) unless value == 0
-      parts.join(', ')
+      parts = parts.join(', ')
+      parts = parts.upcase if compact
+      parts
     end
 
     private
