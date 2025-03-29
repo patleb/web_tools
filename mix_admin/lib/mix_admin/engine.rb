@@ -36,6 +36,7 @@ module Admin
     autoload :BelongsToListParent
     autoload :BelongsToPolymorphic
     autoload :Boolean
+    autoload :Bytes
     autoload :Code
     autoload :Date
     autoload :DateTime
