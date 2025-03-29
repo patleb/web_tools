@@ -137,7 +137,7 @@ module Admin
     end
 
     def self.viewable_action(context = self)
-      MixAdmin.config.viewable_actions.find{ |action| context.allowed? action }
+      navigable? && MixAdmin.config.viewable_actions.find{ |action| context.allowed? action }
     end
 
     def self.allowed_url(action = action_name, context = self, **params)
