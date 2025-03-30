@@ -49,8 +49,8 @@ module ActionController::WithPolicy
   def set_current_user
     return Current.user = default_user unless respond_to? :session
     user_id = session[:user_id]
-    user   = User.with_discarded.joins(:session).where(id: user_id).take if user_id.to_i?
-    user ||= default_user
+    user    = User.get(user_id) if user_id.to_i?
+    user  ||= default_user
     Current.user = user
   end
 

@@ -18,6 +18,4 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
   s.add_dependency 'ext_rails', version
-  s.add_dependency 'devise', '~> 4.7'
-  s.add_dependency 'devise-i18n'
 end
