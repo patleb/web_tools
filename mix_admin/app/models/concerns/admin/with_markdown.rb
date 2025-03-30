@@ -33,10 +33,15 @@ module Admin::WithMarkdown
     self
   end
 
+  def convert_to_html_attribute
+    :html
+  end
+
   def convert_to_html
     return unless I18n.available_locales.any?{ |locale| send("text_#{locale}_changed?") }
     error = false
     blobs, texts = Set.new, {}
+    html_attribute = convert_to_html_attribute
     I18n.available_locales.each do |locale|
       attribute = "text_#{locale}"
       text = self[attribute] || ''
@@ -54,15 +59,15 @@ module Admin::WithMarkdown
         blobs << blob
         match.sub(BLOB_ID, "(#{blob.url})")
       end
-      texts[attribute] = text
+      texts["#{html_attribute}_#{locale}"] = text
     end
     return if error
 
-    text_record = convert_to_html_record
+    html_record = convert_to_html_record
     texts.each do |attribute, text|
       text = self.class.renderer.render(text)
       text = '' if text.html_blank?
-      text_record[attribute] = text
+      html_record[attribute] = text
     end
 
     attachments = blobs.map do |blob|

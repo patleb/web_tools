@@ -8,4 +8,8 @@ class PageFieldMarkdown < LibMainRecord
   def convert_to_html_record
     page_field
   end
+
+  def convert_to_html_attribute
+    :text
+  end
 end
