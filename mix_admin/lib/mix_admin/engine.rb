@@ -1,6 +1,7 @@
 require 'mix_admin/configuration'
 require 'mix_admin/routes'
 require 'mix_user'
+require 'mix_file'
 require 'redcarpet'
 
 module Admin
@@ -88,6 +89,8 @@ module MixAdmin
 
     ActiveSupport.on_load(:active_record) do
       require 'mix_admin/active_record/base/with_admin'
+
+      MixFile.config.available_associations[:images] = 100
     end
   end
 end

@@ -32,7 +32,6 @@ module MixPage
 
       MixFile.configure do |config|
         config.available_records['PageFieldMarkdown'] = 10
-        config.available_associations[:images] = 100
       end
     end
   end

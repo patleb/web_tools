@@ -117,6 +117,7 @@ PATH
   remote: mix_admin
   specs:
     mix_admin (0.3.0)
+      mix_file (= 0.3.0)
       mix_user (= 0.3.0)
       redcarpet
 
