@@ -16,8 +16,16 @@ module ActiveRecord::Base::WithUser
 
   class_methods do
     def has_userstamps
+      has_creator
+      has_updater
+    end
+
+    def has_creator
       belongs_to :creator, class_name: 'User', optional: true
-      belongs_to :updater, class_name: 'User', optional: true
+    end
+
+    def has_updater
+      belongs_to :creator, class_name: 'User', optional: true
     end
 
     def userstamps_attributes_for_create_in_model
