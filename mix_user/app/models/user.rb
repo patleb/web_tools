@@ -42,10 +42,8 @@ class User < LibMainRecord
 
   enum :role, MixUser.config.available_roles
 
-  def self.get(id, *scopes)
-    scope = with_discarded.joins(:session).where(id: id)
-    scope = scopes.reduce(scope){ |all, named_scope| all.send(named_scope) }
-    scope.take
+  def self.get(id)
+    with_discarded.joins(:session).where(id: id).take
   end
 
   def self.admin_created?
