@@ -9,7 +9,7 @@ module Admin::WithMarkdown
 
     json_translate text: :string
 
-    before_validation :convert_to_html, on: :update
+    before_validation :convert_to_html, on: [:create, :update]
   end
 
   class_methods do
@@ -66,9 +66,10 @@ module Admin::WithMarkdown
     html_record = convert_to_html_record
     texts.each do |attribute, text|
       text = self.class.renderer.render(text)
-      text = '' if text.html_blank?
+      text = nil if text.html_blank?
       html_record[attribute] = text
     end
+    html_record.nullify_blanks_json_data
 
     attachments = blobs.map do |blob|
       images_attachments.find_or_create_by!(blob: blob)
