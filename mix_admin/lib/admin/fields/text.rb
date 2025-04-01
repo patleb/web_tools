@@ -5,6 +5,14 @@ module Admin
         true
       end
 
+      def format_value(value)
+        if (truncate_length = truncated).to_i?
+          super(truncate(value, length: truncate_length))
+        else
+          super
+        end
+      end
+
       def input_control(**attributes)
         textarea_ **input_attributes, **attributes
       end
