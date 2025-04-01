@@ -1,0 +1,6 @@
+sun.install "gdal-bin"
+sun.install "libgdal-dev"
+sun.install "proj-bin"
+sun.install "libproj-dev"
+sun.install "netcdf-bin"
+sun.install "libnetcdf-dev"

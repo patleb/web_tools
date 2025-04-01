@@ -3,10 +3,6 @@ PGIS_PACKAGES="postgresql-${postgres}-postgis-${postgis} postgresql-${postgres}-
 postgis_gdal_enabled_drivers=${postgis_gdal_enabled_drivers:-ENABLE_ALL}
 
 sun.update
-sun.install "netcdf-bin"
-sun.install "libnetcdf-dev"
-sun.install "gdal-bin"
-sun.install "libgdal-dev"
 sun.install "$PGIS_PACKAGES"
 sun.lock "$PGIS_PACKAGES"
 

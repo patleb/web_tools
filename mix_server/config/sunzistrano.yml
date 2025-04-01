@@ -20,6 +20,7 @@ provision:
     - bootstrap/osquery
     - bootstrap/clamav
     - user/deployer
+    - addons/gis
     - db/postgres-{postgres}
     - db/postgres-{postgres}/addons/aggs_for_vecs:
         if: 'sun.aggs_for_vecs'
@@ -124,6 +125,7 @@ computer:
     - bootstrap/packages
     - db/postgres_client
     - addons/numo_blis
+    - addons/gis
     - computer/grub
     - computer/backports
     - computer/xtradeb
