@@ -23,6 +23,15 @@ class Page < LibMainRecord
     page_fields_count
   )
 
+  def self.gsub_images(text)
+    text.gsub(IMAGE_MD) do |match|
+      filename = $1
+      data = File.open("app/assets/images/#{filename}")
+      blob = ActiveStorage::Blob.find_or_create_by_uid! filename, data
+      match.sub(IMAGE_PATH, "(blob:#{blob.id})")
+    end
+  end
+
   def self.create_home!
     return if Rails.env.production?
     layout = PageLayout.find_or_create_by! view: MixPage.config.layout
@@ -56,12 +65,7 @@ class Page < LibMainRecord
       page ||= PageTemplate.create! page_layout: layout, view: template
       page.update! "title_#{locale}": I18n.t(i18n_key, locale: locale)
       text = File.read(path)
-      text = text.gsub(IMAGE_MD) do |match|
-        filename = $1
-        data = File.open("app/assets/images/#{filename}")
-        blob = ActiveStorage::Blob.find_or_create_by_uid! filename, data
-        match.sub(IMAGE_PATH, "(blob:#{blob.id})")
-      end
+      text = gsub_images(text)
       page.content.markdown.update! "text_#{locale}": text
       page.update! published_at: Time.current
       (templates[layout.view] ||= {})[[template, multi_name]] = page
