@@ -23,7 +23,7 @@ class Page < LibMainRecord
     page_fields_count
   )
 
-  def self.gsub_images(text)
+  def self.gsub_assets(text)
     text.gsub(IMAGE_MD) do |match|
       filename = $1
       data = File.open("app/assets/images/#{filename}")
@@ -65,7 +65,7 @@ class Page < LibMainRecord
       page ||= PageTemplate.create! page_layout: layout, view: template
       page.update! "title_#{locale}": I18n.t(i18n_key, locale: locale)
       text = File.read(path)
-      text = gsub_images(text)
+      text = gsub_assets(text)
       page.content.markdown.update! "text_#{locale}": text
       page.update! published_at: Time.current
       (templates[layout.view] ||= {})[[template, multi_name]] = page
