@@ -39,7 +39,7 @@ class UserSessionsController < Users::BaseController
 
   def destroy
     destroy_session! Current.user
-    redirect_to root_path, notice: t('flash.signed_out')
+    redirect_to root_path, status: :see_other, notice: t('flash.signed_out')
   end
 
   private
