@@ -37,6 +37,8 @@ module MixGeo
 
     ActiveSupport.on_load(:active_record) do
       if Setting[:postgis]
+        ENV['PROJ_IGNORE_CELESTIAL_BODY'] = 'YES'
+        require 'rgeo/proj4'
         require 'activerecord-postgis-adapter'
         require 'mix_geo/active_record/migration/with_postgis'
       end

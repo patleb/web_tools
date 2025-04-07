@@ -20,5 +20,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'ext_rails', version
   s.add_dependency 'countries'
   # s.add_dependency 'ip_location_db', '2.2.2020121618'
+  s.add_dependency 'rgeo-proj4'
   s.add_dependency 'activerecord-postgis-adapter'
 end

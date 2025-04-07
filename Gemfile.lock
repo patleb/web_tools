@@ -150,6 +150,7 @@ PATH
       activerecord-postgis-adapter
       countries
       ext_rails (= 0.3.0)
+      rgeo-proj4
 
 PATH
   remote: mix_global
@@ -561,6 +562,8 @@ GEM
     rgeo-activerecord (8.0.0)
       activerecord (>= 7.0)
       rgeo (>= 3.0)
+    rgeo-proj4 (4.0.0)
+      rgeo (~> 3.0.0)
     rice (4.5.0)
     rounding (1.0.1)
     ruby-vips (2.2.3)
