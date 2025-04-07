@@ -33,6 +33,10 @@ pg.data_dir() { # PUBLIC
   sun.psql 'SHOW data_directory'
 }
 
+pg.env_file() { # PUBLIC
+  echo "/etc/postgresql/${postgres}/main/environment"
+}
+
 pg.default_url() {
   echo "postgresql://${db_username}:${db_password}@${db_host:-127.0.0.1}:${db_port:-5432}/${db_database}"
 }

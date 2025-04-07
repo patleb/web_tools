@@ -1,5 +1,6 @@
 PG_CONFIG_FILE=$(pg.default_config_file)
 PG_HBA_FILE=$(pg.default_hba_file)
+PG_ENV_FILE=$(pg.env_file)
 
 sun.install "postgresql-common"
 yes | sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
@@ -18,6 +19,7 @@ sudo su - postgres << EOF
 EOF
 sun.backup_compare "$PG_CONFIG_FILE"
 sun.backup_compare "$PG_HBA_FILE"
+sun.backup_compare "$PG_ENV_FILE"
 sun.backup_copy "/etc/logrotate.d/postgresql-common" 0440 root:root
 
 echo "$PG_VERSION" >> $(sun.manifest_path 'postgresql')
