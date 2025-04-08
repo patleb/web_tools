@@ -1,57 +1,67 @@
 require './test/test_helper'
 
-CUSTOM_SRIDS = {
-  '200_000': {
+CF_SRIDS = {
+  200_000 => {
     grid_mapping_name: 'lambert_conformal_conic',
-    standard_parallel: [50.0, 45.0],
+    latitude_of_projection_origin: 48.0,
     longitude_of_central_meridian: -59.9,
-    latitude_of_projection_origin: 48.0,
+    standard_parallel: [50.0, 45.0],
     false_easting: 0.0,
     false_northing: 0.0,
     semi_major_axis: 6378.137,
     inverse_flattening: 298.2572235629991,
+    units: 'm',
   },
-  '200_001': {
+  200_001 => {
     grid_mapping_name: 'lambert_conformal_conic',
-    standard_parallel: [50.0, 45.0],
+    latitude_of_projection_origin: 48.0,
     longitude_of_central_meridian: -81.75,
-    latitude_of_projection_origin: 48.0,
-    false_easting: 0.0,
-    false_northing: 0.0,
-    semi_major_axis: 6378.137,
-    inverse_flattening: 298.2572235629991,
-  },
-  '200_002': {
-    grid_mapping_name: 'lambert_conformal_conic',
     standard_parallel: [50.0, 45.0],
-    longitude_of_central_meridian: -130.0,
-    latitude_of_projection_origin: 48.0,
     false_easting: 0.0,
     false_northing: 0.0,
     semi_major_axis: 6378.137,
     inverse_flattening: 298.2572235629991,
+    units: 'm',
   },
+  200_002 => {
+    grid_mapping_name: 'lambert_conformal_conic',
+    latitude_of_projection_origin: 48.0,
+    longitude_of_central_meridian: -130.0,
+    standard_parallel: [50.0, 45.0],
+    false_easting: 0.0,
+    false_northing: 0.0,
+    semi_major_axis: 6378.137,
+    inverse_flattening: 298.2572235629991,
+    units: 'm',
+  },
+}
+PROJ4_SRIDS = {
+  200_000 => '+proj=lcc +lat_0=48 +lon_0=-59.9 +lat_1=50 +lat_2=45 +x_0=0 +y_0=0 +a=6378.137 +rf=298.2572235629991 +units=m +type=crs +no_defs',
+  200_001 => '+proj=lcc +lat_0=48 +lon_0=-81.75 +lat_1=50 +lat_2=45 +x_0=0 +y_0=0 +a=6378.137 +rf=298.2572235629991 +units=m +type=crs +no_defs',
+  200_002 => '+proj=lcc +lat_0=48 +lon_0=-130 +lat_1=50 +lat_2=45 +x_0=0 +y_0=0 +a=6378.137 +rf=298.2572235629991 +units=m +type=crs +no_defs',
 }
 
 class SpatialRefSysTest < ActiveSupport::TestCase
   before do
-    CUSTOM_SRIDS.each do |srid, proj4|
-      srid = srid.to_s.to_i
-      if (sr = Postgis::SpatialRefSys.find_by(srid: srid))
-        sr.update_proj4!(ocean_canada: true, **proj4)
-      else
-        Postgis::SpatialRefSys.create_proj4!(srid, ocean_canada: true, **proj4)
-      end
+    PROJ4_SRIDS.each do |srid, proj|
+      Postgis::SpatialRefSys.create_proj! srid, proj
     end
   end
 
-  test '#proj4' do
-    assert_equal({ init: 'epsg:3857' }, Postgis::SpatialRefSys.proj4(3857))
-    assert_equal(
-      { proj: 'llc', lat_1: 50.0, lat_2: 45.0, lon_0: -59.9, lat_0: 48.0, x_0: 0.0, y_0: 0.0, a: 6378.137,
-        rf: 298.2572235629991, units: 'm', type: 'crs', no_defs: nil
-      },
-      Postgis::SpatialRefSys.proj4(200_000)
-    )
+  test '.proj4text' do
+    CF_SRIDS.each do |srid, proj|
+      assert_equal PROJ4_SRIDS[srid], Postgis::SpatialRefSys.proj4text(**proj)
+    end
+  end
+
+  test '.transform' do
+    geo_proj = [-62.5, 48.0]
+    web_proj = [-6957468.174579599, 6106854.834885074]
+    any_proj = [-193.81238399946488, 3.243495673962869]
+    assert_equal web_proj, Postgis::SpatialRefSys.transform(*geo_proj, srid: 3857)
+    assert_equal any_proj, Postgis::SpatialRefSys.transform(*geo_proj, srid: 200_000)
+    assert_equal any_proj, Postgis::SpatialRefSys.transform(*geo_proj, srid: 200_000, proj: true)
+    assert_equal any_proj, Postgis::SpatialRefSys.transform(*geo_proj, proj: PROJ4_SRIDS[200_000])
+    assert_equal any_proj, Postgis::SpatialRefSys.transform(*geo_proj, **CF_SRIDS[200_000])
   end
 end
