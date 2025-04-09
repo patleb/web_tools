@@ -23,15 +23,15 @@ module NetCDF
       end
 
       def dims
-        @dims ||= super.map{ [it.name, it] }.to_hwia
+        @dims ||= super.map{ |dim| [dim.name, dim] }.to_hwia
       end
 
       def vars
-        @vars ||= super.map{ [it.name, it] }.to_hwia
+        @vars ||= super.map{ |var| [var.name, var] }.to_hwia
       end
 
       def atts
-        @atts ||= super.map{ [it.name, it] }.to_hwia
+        @atts ||= super.map{ |att| [att.name, att] }.to_hwia
       end
 
       def dim(name, dim_name = nil)

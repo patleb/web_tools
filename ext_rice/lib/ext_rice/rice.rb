@@ -333,7 +333,7 @@ module Rice
     end
     return if args.empty? && default == false
     args = [{ args => nil }] unless (args.empty? && default) || args.first.is_a?(Hash)
-    args.map{ extract_types_and_defaults(it.keys.first) }.each do |types, defaults|
+    args.map{ |overload| extract_types_and_defaults(overload.keys.first) }.each do |types, defaults|
       types = ", #{types}" if types
       defaults = ", #{defaults}" if defaults
       f.puts <<~CPP.indent(2)
