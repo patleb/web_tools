@@ -319,7 +319,11 @@ module Rice
     default = false
     Array.wrap(constructors).each do |constructor|
       constructor_alias = extract_constructor_alias(scope_alias, constructor)
-      default ||= (constructor == 'DEFAULT')
+      if constructor == 'DEFAULT'
+        default = true
+      else
+        constructor_alias = "#{scope_alias}, #{constructor_alias}"
+      end
       f.puts <<~CPP.indent(2)
         #{scope_var}.define_constructor(Constructor<#{constructor_alias}>());
       CPP
