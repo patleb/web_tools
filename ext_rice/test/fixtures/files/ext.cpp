@@ -56,8 +56,8 @@ void Init_ext() {
   });
   Data_Type<Overload> rb_cOverload = define_class<Overload>("Overload");
   rb_cOverload.define_constructor(Constructor<Overload>());
-  rb_cOverload.define_constructor(Constructor<const Overload&>());
-  rb_cOverload.define_constructor(Constructor<Overload&&>());
+  rb_cOverload.define_constructor(Constructor<Overload, const Overload&>());
+  rb_cOverload.define_constructor(Constructor<Overload, Overload&&>());
   rb_cOverload.define_constructor(Constructor<Overload, int, float>());
   rb_cOverload.define_constructor(Constructor<Overload, int, float>(), Arg("arg1"), Arg("arg_2") = 1.2);
   using rb_overload_name_1 = vectot<int>& (Overload::*)() const;
