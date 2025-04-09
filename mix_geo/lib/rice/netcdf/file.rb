@@ -17,16 +17,21 @@ module NetCDF
         super(path.to_s, mode, nc4_classic, classic, share)
       end
 
+      def close
+        super
+        @dims = @vars = @atts = nil
+      end
+
       def dims
-        super.map{ [it.name, it] }.to_hwia
+        @dims ||= super.map{ [it.name, it] }.to_hwia
       end
 
       def vars
-        super.map{ [it.name, it] }.to_hwia
+        @vars ||= super.map{ [it.name, it] }.to_hwia
       end
 
       def atts
-        super.map{ [it.name, it] }.to_hwia
+        @atts ||= super.map{ [it.name, it] }.to_hwia
       end
 
       def dim(name, dim_name = nil)
@@ -42,10 +47,12 @@ module NetCDF
       end
 
       def create_dim(name, *)
+        @dims = nil
         super(name.to_s, *)
       end
 
       def create_var(name, type, dims, fill_value: nil)
+        @vars = nil
         case type
         when Class
           type = type.name.demodulize if type <= Numo::NArray
@@ -63,8 +70,11 @@ module NetCDF
 
       def write_att(name, att_or_values, values = nil)
         if values
-          var(name).write_att(att_or_values, values)
-        elsif (values = att_or_values).is_a? Numo::NArray
+          @vars = nil
+          return var(name).write_att(att_or_values, values)
+        end
+        @atts = nil
+        if (values = att_or_values).is_a? Numo::NArray
           super(name.to_s, values.class.name.demodulize, values)
         else
           write_att_s(name.to_s, values.to_s)
@@ -78,7 +88,13 @@ module NetCDF
     end
 
     def delete_att(name, att_name = nil)
-      att_name ? var(name).delete_att(att_name) : att(name).destroy
+      if att_name
+        @vars = nil
+        var(name).delete_att(att_name)
+      else
+        @atts = nil
+        att(name).destroy
+      end
     end
 
     def write(name, values, **)
