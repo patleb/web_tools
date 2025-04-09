@@ -316,10 +316,13 @@ module Rice
   end
 
   def self.define_constructors(f, scope_var, scope_alias, constructors, args)
-    default = false
+    default = nil
     Array.wrap(constructors).each do |constructor|
       constructor_alias = extract_constructor_alias(scope_alias, constructor)
-      if constructor == 'DEFAULT'
+      case constructor
+      when 'NO_DEFAULT'
+        next (default = false)
+      when 'DEFAULT'
         default = true
       else
         constructor_alias = "#{scope_alias}, #{constructor_alias}"
@@ -328,6 +331,7 @@ module Rice
         #{scope_var}.define_constructor(Constructor<#{constructor_alias}>());
       CPP
     end
+    return if args.empty? && default == false
     args = [{ args => nil }] unless (args.empty? && default) || args.first.is_a?(Hash)
     args.map{ extract_types_and_defaults(it.keys.first) }.each do |types, defaults|
       types = ", #{types}" if types
@@ -380,9 +384,10 @@ module Rice
 
   def self.extract_constructor_alias(scope_alias, constructor)
     case constructor
-    when 'DEFAULT' then scope_alias
-    when 'COPY'    then "const #{scope_alias}&"
-    when 'MOVE'    then "#{scope_alias}&&"
+    when 'NO_DEFAULT' then nil
+    when 'DEFAULT'    then scope_alias
+    when 'COPY'       then "const #{scope_alias}&"
+    when 'MOVE'       then "#{scope_alias}&&"
     else
       raise "invalid constructor alias [#{constructor}]"
     end
