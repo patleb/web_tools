@@ -118,7 +118,7 @@ module Rice
       f.puts <<~CPP
         #{hook :before_include}
         // include
-        #{includes.map{ |header| %{#include "#{header.strip}"} }.join("\n")}
+        #{includes.map{ |header| header.start_with?('#') ? header : %{#include "#{header.strip}"} }.join("\n")}
         #include "all.hpp"
         #{hook :after_include}
         using namespace Rice;
