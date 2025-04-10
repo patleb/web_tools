@@ -135,21 +135,21 @@ module Rice
     end
 
     def rb_paths
-      paths = yml? ? yml_path.glob('app/rice/**/*.rb') : []
+      paths = yml? ? filter(yml_path.glob('app/rice/**/*.rb')) : []
       gems.each_with_object([]) do |name, result|
         next unless (root = name && Gem.root(name))
         next unless root.join('config/rice.yml').exist?
-        result.concat(root.glob('lib/rice/**/*.rb'))
+        result.concat(filter(root.glob('lib/rice/**/*.rb')))
       end.concat(paths)
     end
 
     def other_yml_paths
-      paths = yml? ? yml_path.glob('config/rice/**/*.yml') : []
+      paths = yml? ? filter(yml_path.glob('config/rice/**/*.yml')) : []
       gems.each_with_object(paths) do |name, result|
         next unless (root = name && Gem.root(name))
         next unless (config = root.join('config/rice.yml')).exist?
         result << config
-        result.concat(root.glob('config/rice/**/*.yml'))
+        result.concat(filter(root.glob('config/rice/**/*.yml')))
       end
     end
 
@@ -180,6 +180,18 @@ module Rice
 
     def yml?
       yml_path.exist?
+    end
+
+    def filter(files)
+      files.reject do |file|
+        excluded_files.any? do |exluded|
+          file.to_s.include? exluded
+        end
+      end
+    end
+
+    def excluded_files
+      @excluded_files ||= Array.wrap(yml.delete(:excluded_files))
     end
   end
 end
