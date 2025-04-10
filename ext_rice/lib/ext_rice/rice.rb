@@ -143,7 +143,7 @@ module Rice
 
   def self.hook(name, indent: 0)
     text = hooks[name].strip.presence
-    ["// #{name}", ("\n#{' ' * indent}" if text), text].join('')
+    ["// #{name}", ("\n" if text), text&.indent(indent)].join('')
   end
 
   # TODO registry, iterator, director, etc.
