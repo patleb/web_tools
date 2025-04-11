@@ -3,11 +3,20 @@
  * https://github.com/ankane/numo.hpp
  * BSD-2-Clause License
  */
+<%- numo_types = %w(NArray SFloat DFloat Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 RObject SComplex DComplex Bit) -%>
 
 #pragma once
 
 #include <rice/rice.hpp>
 #include <numo/narray.h>
+
+namespace Numo {
+  enum Type {
+  <%- numo_types.each_with_index do |numo_type| -%>
+    <%= numo_type %>,
+  <%- end -%>
+  };
+}
 
 namespace numo {
 
@@ -56,6 +65,14 @@ namespace numo {
 
     void* write_ptr() {
       return nary_get_pointer_for_write(this->_value);
+    }
+
+    auto type_id() const {
+      return Numo::Type::NArray;
+    }
+
+    auto type_name() const {
+      return "NArray";
     }
 
     protected:
@@ -124,6 +141,14 @@ namespace numo {
       return reinterpret_cast< <%= type %> * >(NArray::write_ptr());
     }
 
+    auto type_id() const {
+      return Numo::Type::<%= numo_type %>;
+    }
+
+    auto type_name() const {
+      return "<%= numo_type %>";
+    }
+
     private:
 
     VALUE dtype() {
@@ -152,6 +177,14 @@ namespace numo {
       construct_shape(this->dtype(), shape);
     }
 
+    auto type_id() const {
+      return Numo::Type::<%= numo_type %>;
+    }
+
+    auto type_name() const {
+      return "<%= numo_type %>";
+    }
+
     private:
 
     VALUE dtype() {
@@ -162,7 +195,7 @@ namespace numo {
 }
 
 namespace Rice::detail {
-  <%- %w(NArray SFloat DFloat Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 RObject SComplex DComplex Bit).each do |numo_type| -%>
+  <%- numo_types.each do |numo_type| -%>
 
   template<>
   struct Type< numo::<%= numo_type %> > {
