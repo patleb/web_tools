@@ -3,7 +3,6 @@
  * https://github.com/ankane/numo.hpp
  * BSD-2-Clause License
  */
-<%- numo_types = %w(NArray SFloat DFloat Int8 Int16 Int32 Int64 UInt8 UInt16 UInt32 UInt64 RObject SComplex DComplex Bit) -%>
 
 #pragma once
 
@@ -12,7 +11,7 @@
 
 namespace Numo {
   enum Type {
-  <%- numo_types.each_with_index do |numo_type| -%>
+  <%- compile_vars[:numo].each_with_index do |numo_type| -%>
     <%= numo_type %>,
   <%- end -%>
   };
@@ -195,7 +194,7 @@ namespace numo {
 }
 
 namespace Rice::detail {
-  <%- numo_types.each do |numo_type| -%>
+  <%- compile_vars[:numo].each do |numo_type| -%>
 
   template<>
   struct Type< numo::<%= numo_type %> > {

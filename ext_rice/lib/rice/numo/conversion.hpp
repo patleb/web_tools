@@ -62,6 +62,12 @@ namespace numo {
     }
   }
 
+  <%- compile_vars[:numo].each_with_index do |numo_type| -%>
+  VALUE type_<%= numo_type %>(VALUE self) {
+    return INT2FIX(Numo::Type::<%= numo_type %>);
+  }
+  <%- end -%>
+
   void init_conversion() {
     <%- [
       ['SFloat', 'float'],
@@ -76,6 +82,7 @@ namespace numo {
       ['UInt64', 'uint64_t2'],
     ].each do |numo_type, type| -%>
     rb_define_method(numo_c<%= numo_type %>, "to_sql", numo::to_sql< <%= type %> >, 0);
+    rb_define_method(numo_c<%= numo_type %>, "type_id", numo::type_<%= numo_type %>, 0);
     <%- end -%>
   }
 }

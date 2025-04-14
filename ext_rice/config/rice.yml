@@ -13,3 +13,6 @@ include:
   - filesystem
   - source_location
   - stacktrace
+
+module Numo:
+  enum Type | Numo::Type: [<%= compile_vars[:numo].join(', ') %>]
