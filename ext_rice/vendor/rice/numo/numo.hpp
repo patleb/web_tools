@@ -11,7 +11,7 @@
 
 namespace Numo {
   enum class Type : uint8_t {
-  <%- compile_vars[:numo].each_with_index do |numo_type| -%>
+  <%- compile_vars[:numo].each do |numo_type| -%>
     <%= numo_type %>,
   <%- end -%>
   };
