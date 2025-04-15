@@ -1,4 +1,17 @@
 namespace Numo {
+  using NType = std::variant<
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    SFloat,
+    DFloat,
+    UInt8,
+    UInt16,
+    UInt32,
+    UInt64
+  >;
+
   template < class N >
   VALUE to_sql(VALUE self) {
     size_t ndim = RNARRAY_NDIM(self);
@@ -70,12 +83,12 @@ namespace Numo {
 
   void init_conversion() {
     <%- [
-      ['SFloat', 'float'],
-      ['DFloat', 'double'],
       ['Int8',   'int8_t'],
       ['Int16',  'int16_t'],
       ['Int32',  'int32_t'],
       ['Int64',  'int64_t2'],
+      ['SFloat', 'float'],
+      ['DFloat', 'double'],
       ['UInt8',  'uint8_t'],
       ['UInt16', 'uint16_t'],
       ['UInt32', 'uint32_t'],
