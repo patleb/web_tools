@@ -118,7 +118,7 @@ namespace NetCDF {
       return Var::create(id, name, type_name, dims);
     }
 
-    auto write_att(const string & name, std::string_view type_name, numo::NArray values) const {
+    auto write_att(const string & name, std::string_view type_name, Numo::NArray values) const {
       return Att::write(id, NC_GLOBAL, name, NetCDF::type_id(type_name), values);
     }
 

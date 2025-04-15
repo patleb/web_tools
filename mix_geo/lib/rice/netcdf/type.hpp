@@ -4,16 +4,16 @@ namespace NetCDF {
 
   using NVectorType = std::variant<
     vector< string >,
-    numo::Int8,
-    numo::Int16,
-    numo::Int32,
-    numo::Int64,
-    numo::SFloat,
-    numo::DFloat,
-    numo::UInt8,
-    numo::UInt16,
-    numo::UInt32,
-    numo::UInt64
+    Numo::Int8,
+    Numo::Int16,
+    Numo::Int32,
+    Numo::Int64,
+    Numo::SFloat,
+    Numo::DFloat,
+    Numo::UInt8,
+    Numo::UInt16,
+    Numo::UInt32,
+    Numo::UInt64
   >;
 
   enum Type {

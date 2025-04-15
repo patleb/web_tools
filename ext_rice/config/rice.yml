@@ -1,5 +1,5 @@
 before_initialize: >
-  numo::init_conversion();
+  Numo::init_conversion();
 
 makefile:
   cflags: -std=c++23 -Wno-format-overflow

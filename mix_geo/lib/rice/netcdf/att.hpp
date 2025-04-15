@@ -40,7 +40,7 @@ namespace NetCDF {
       return Att(file_id, var_id, name);
     }
 
-    static auto write(int file_id, int var_id, const string & name, int type_id, numo::NArray & values, bool scalar = false) {
+    static auto write(int file_id, int var_id, const string & name, int type_id, Numo::NArray & values, bool scalar = false) {
       if (type_id == NC_CHAR) throw TypeError();
       if (values.ndim() != 1) throw TypeError();
       if (scalar && values.size() != 1) throw TypeError();

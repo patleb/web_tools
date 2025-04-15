@@ -90,7 +90,7 @@ namespace NetCDF {
       return sizes;
     }
 
-    auto write_att(const string & name, std::string_view type_name, numo::NArray values) const {
+    auto write_att(const string & name, std::string_view type_name, Numo::NArray values) const {
       return Att::write(file_id, id, name, NetCDF::type_id(type_name), values);
     }
 
@@ -98,7 +98,7 @@ namespace NetCDF {
       return Att::write_s(file_id, id, name, text);
     }
 
-    void write(numo::NArray values, const vector< size_t > & start = {}, const vector< ptrdiff_t > & stride = {}) const {
+    void write(Numo::NArray values, const vector< size_t > & start = {}, const vector< ptrdiff_t > & stride = {}) const {
       if (type_id() == NC_CHAR) throw TypeError();
       size_t dims_count = this->dims_count();
       vector< size_t > starts = start.empty() ? vector< size_t >(dims_count, 0) : start;
@@ -184,7 +184,7 @@ namespace NetCDF {
       return value;
     }
 
-    void set_fill_value(numo::NArray value) const {
+    void set_fill_value(Numo::NArray value) const {
       Att::write(file_id, id, "_FillValue", type_id(), value, true);
     }
 

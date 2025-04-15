@@ -10,14 +10,11 @@
 #include <numo/narray.h>
 
 namespace Numo {
-  enum Type {
+  enum class Type : uint8_t {
   <%- compile_vars[:numo].each_with_index do |numo_type| -%>
     <%= numo_type %>,
   <%- end -%>
   };
-}
-
-namespace numo {
 
   class NArray {
     public:
@@ -197,18 +194,18 @@ namespace Rice::detail {
   <%- compile_vars[:numo].each do |numo_type| -%>
 
   template<>
-  struct Type< numo::<%= numo_type %> > {
+  struct Type< Numo::<%= numo_type %> > {
     static bool verify() { return true; }
   };
 
   template<>
-  class From_Ruby< numo::<%= numo_type %> > {
+  class From_Ruby< Numo::<%= numo_type %> > {
     public:
 
     Convertible is_convertible(VALUE value) {
       switch (rb_type(value)) {
       case RUBY_T_DATA:
-        return Data_Type< numo::<%= numo_type %> >::is_descendant(value) ? Convertible::Exact : Convertible::None;
+        return Data_Type< Numo::<%= numo_type %> >::is_descendant(value) ? Convertible::Exact : Convertible::None;
       case RUBY_T_ARRAY:
         return Convertible::Cast;
       default:
@@ -216,19 +213,19 @@ namespace Rice::detail {
       }
     }
 
-    numo::<%= numo_type %> convert(VALUE x) {
-      return numo::<%= numo_type %>(x);
+    Numo::<%= numo_type %> convert(VALUE x) {
+      return Numo::<%= numo_type %>(x);
     }
   };
 
   template<>
-  class From_Ruby< numo::<%= numo_type %> & > {
+  class From_Ruby< Numo::<%= numo_type %> & > {
     public:
 
     Convertible is_convertible(VALUE value) {
       switch (rb_type(value)) {
       case RUBY_T_DATA:
-        return Data_Type< numo::<%= numo_type %> >::is_descendant(value) ? Convertible::Exact : Convertible::None;
+        return Data_Type< Numo::<%= numo_type %> >::is_descendant(value) ? Convertible::Exact : Convertible::None;
       case RUBY_T_ARRAY:
         return Convertible::Cast;
       default:
@@ -236,30 +233,30 @@ namespace Rice::detail {
       }
     }
 
-    numo::<%= numo_type %> & convert(VALUE x) {
-      this->converted_ = numo::<%= numo_type %>(x);
+    Numo::<%= numo_type %> & convert(VALUE x) {
+      this->converted_ = Numo::<%= numo_type %>(x);
       return converted_;
     }
 
     private:
 
-    numo::<%= numo_type %> converted_;
+    Numo::<%= numo_type %> converted_;
   };
 
   template<>
-  class To_Ruby< numo::<%= numo_type %> > {
+  class To_Ruby< Numo::<%= numo_type %> > {
     public:
 
-    VALUE convert(const numo::<%= numo_type %>& x) {
+    VALUE convert(const Numo::<%= numo_type %>& x) {
       return x.value();
     }
   };
 
   template<>
-  class To_Ruby< numo::<%= numo_type %> & > {
+  class To_Ruby< Numo::<%= numo_type %> & > {
     public:
 
-    VALUE convert(const numo::<%= numo_type %>& x) {
+    VALUE convert(const Numo::<%= numo_type %>& x) {
       return x.value();
     }
   };

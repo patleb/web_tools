@@ -1,4 +1,4 @@
-namespace numo {
+namespace Numo {
   template < class N >
   VALUE to_sql(VALUE self) {
     size_t ndim = RNARRAY_NDIM(self);
@@ -64,7 +64,7 @@ namespace numo {
 
   <%- compile_vars[:numo].each_with_index do |numo_type| -%>
   VALUE type_<%= numo_type %>(VALUE self) {
-    return INT2FIX(Numo::Type::<%= numo_type %>);
+    return INT2FIX(static_cast< uint8_t >(Numo::Type::<%= numo_type %>));
   }
   <%- end -%>
 
@@ -81,8 +81,8 @@ namespace numo {
       ['UInt32', 'uint32_t'],
       ['UInt64', 'uint64_t2'],
     ].each do |numo_type, type| -%>
-    rb_define_method(numo_c<%= numo_type %>, "to_sql", numo::to_sql< <%= type %> >, 0);
-    rb_define_method(numo_c<%= numo_type %>, "type_id", numo::type_<%= numo_type %>, 0);
+    rb_define_method(numo_c<%= numo_type %>, "to_sql", Numo::to_sql< <%= type %> >, 0);
+    rb_define_method(numo_c<%= numo_type %>, "type_id", Numo::type_<%= numo_type %>, 0);
     <%- end -%>
   }
 }
