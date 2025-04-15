@@ -10,7 +10,7 @@
 #include <numo/narray.h>
 
 namespace Numo {
-  enum class Type : uint8_t {
+  enum class Type {
   <%- compile_vars[:numo].each do |numo_type| -%>
     <%= numo_type %>,
   <%- end -%>

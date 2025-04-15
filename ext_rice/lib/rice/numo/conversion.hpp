@@ -77,7 +77,7 @@ namespace Numo {
 
   <%- compile_vars[:numo].each_with_index do |numo_type| -%>
   VALUE type_<%= numo_type %>(VALUE self) {
-    return INT2FIX(static_cast< uint8_t >(Numo::Type::<%= numo_type %>));
+    return INT2FIX(static_cast< int >(Numo::Type::<%= numo_type %>));
   }
   <%- end -%>
 
