@@ -16,7 +16,7 @@ namespace NetCDF {
     Numo::UInt64
   >;
 
-  enum Type {
+  enum class Type {
     String = NC_CHAR,   // 2
     Int8   = NC_BYTE,   // 1
     Int16  = NC_SHORT,  // 3
@@ -72,17 +72,17 @@ namespace NetCDF {
 
   auto type(int id) {
     switch (id) {
-    case NC_CHAR:   return String;
-    case NC_BYTE:   return Int8;
-    case NC_SHORT:  return Int16;
-    case NC_INT:    return Int32;
-    case NC_INT64:  return Int64;
-    case NC_FLOAT:  return SFloat;
-    case NC_DOUBLE: return DFloat;
-    case NC_UBYTE:  return UInt8;
-    case NC_USHORT: return UInt16;
-    case NC_UINT:   return UInt32;
-    case NC_UINT64: return UInt64;
+    case NC_CHAR:   return Type::String;
+    case NC_BYTE:   return Type::Int8;
+    case NC_SHORT:  return Type::Int16;
+    case NC_INT:    return Type::Int32;
+    case NC_INT64:  return Type::Int64;
+    case NC_FLOAT:  return Type::SFloat;
+    case NC_DOUBLE: return Type::DFloat;
+    case NC_UBYTE:  return Type::UInt8;
+    case NC_USHORT: return Type::UInt16;
+    case NC_UINT:   return Type::UInt32;
+    case NC_UINT64: return Type::UInt64;
     }
     throw TypeError();
   }
