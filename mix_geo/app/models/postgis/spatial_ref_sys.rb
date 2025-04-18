@@ -16,7 +16,7 @@ module Postgis
       semi_minor_axis:                       :b,
       inverse_flattening:                    :rf,
       longitude_of_prime_meridian:           :pm,
-    }
+    }.to_hwka
     CF_MAPPINGS = {
       'albers_conical_equal_area'      => 'aea',
       'azimuthal_equidistant'          => 'aeqd',

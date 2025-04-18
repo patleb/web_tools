@@ -1,0 +1,29 @@
+after_include: >
+  using namespace GDAL;
+
+before_initialize: >
+  GDALAllRegister();
+
+module GDAL:
+  enum DataType: [Unknown, Int8, Int16, Int32, Int64, SFloat, DFloat, UInt8, UInt16, UInt32, UInt64]
+  enum AlgoType: [Nearest, Bilinear, Cubic, CubicSpline, Lanczos, Average, Mode, Max, Min, Median, Q1, Q3, Sum, RMS]
+
+  class Raster:
+    def:
+      initialize | GDAL::Raster.COPY:
+        - [Numo::NArray, grid]
+        - [Numo::Type, type_id]
+        - [double *, x01_y01]
+        - [string, proj = (string)"4326"]
+        - [double *, nodata = nullptr]
+      wkt:
+      type:
+      width:
+      height:
+      shape:
+      x01_y01:
+      x:
+      y:
+      nodata:
+      to_narray:
+      transform: [proj, nodata = nullptr, algo = AlgoType::Nearest]

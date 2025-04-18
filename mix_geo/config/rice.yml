@@ -1,6 +1,12 @@
 include:
   - netcdf.h
 
+include_dir:
+  - /usr/include/gdal
+
+libs:
+  - gdal
+
 makefile:
   libs: <%= `nc-config --libs` %>
   cflags: <%= `nc-config --cflags` %>
