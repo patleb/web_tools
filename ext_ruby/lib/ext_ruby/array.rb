@@ -65,6 +65,19 @@ class Array
   end
   alias_method :var, :variance
 
+  def median_filter(window = 3)
+    return dup unless size > window
+    radius = (window - 1) / 2
+    window = Array.new(radius + 1, first).concat(self[0...radius] || [])
+    upper  = nil
+    size.times.map do |i|
+      window.shift
+      upper = self[i + radius] || upper
+      window << upper
+      window.sort[radius]
+    end
+  end
+
   def median
     percentile(0.5)
   end
