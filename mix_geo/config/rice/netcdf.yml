@@ -29,10 +29,10 @@ module NetCDF:
   def:
     self.version:
 
-  class Base:
+  class Base | NetCDF::Base:
     attr_reader: [id]
 
-  class File < Base:
+  class File < NetCDF::Base:
     attr_reader: [path, mode, flags]
 
     def:
@@ -60,10 +60,10 @@ module NetCDF:
       set_define_mode:
       set_fill:
 
-  class BelongsToFile < Base:
+  class BelongsToFile < NetCDF::Base:
     attr_reader: [file_id]
 
-  class Dim < BelongsToFile:
+  class Dim < NetCDF::BelongsToFile:
     def:
       initialize | NetCDF::Dim.NO_DEFAULT.COPY:
       name:
@@ -71,7 +71,7 @@ module NetCDF:
       unlimited? | is_unlimited:
       size:
 
-  class Att < BelongsToFile:
+  class Att < NetCDF::BelongsToFile:
     attr_reader: [var_id, name]
 
     def:
@@ -82,7 +82,7 @@ module NetCDF:
       read:
       destroy:
 
-  class Var < BelongsToFile:
+  class Var < NetCDF::BelongsToFile:
     def:
       initialize | NetCDF::Var.NO_DEFAULT.COPY:
       name:
