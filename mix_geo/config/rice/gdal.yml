@@ -5,10 +5,28 @@ before_initialize: >
   GDALAllRegister();
 
 module GDAL:
-  enum DataType: [Unknown, Int8, Int16, Int32, Int64, SFloat, DFloat, UInt8, UInt16, UInt32, UInt64]
-  enum AlgoType: [Nearest, Bilinear, Cubic, CubicSpline, Lanczos, Average, Mode, Max, Min, Median, Q1, Q3, Sum, RMS]
+  enum DataType | GDAL::DataType: [Unknown, Int8, Int16, Int32, Int64, SFloat, DFloat, UInt8, UInt16, UInt32, UInt64]
+  enum AlgoType | GDAL::AlgoType: [Nearest, Bilinear, Cubic, Spline, Lanczos, Average, Mode, Max, Min, Median, Q1, Q3, Sum, RMS]
 
-  class Raster:
+  def:
+    self.version:
+
+  class Base | GDAL::Base:
+
+  class Vector < GDAL::Base:
+    attr_reader: [size]
+
+    def:
+      initialize | GDAL::Vector.COPY:
+        - [vector< double >, x]
+        - [vector< double >, y]
+        - [string, proj = (string)"4326"]
+      wkt:
+      x:
+      y:
+      transform:
+
+  class Raster < GDAL::Base:
     def:
       initialize | GDAL::Raster.COPY:
         - [Numo::NArray, grid]
