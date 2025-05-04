@@ -12,9 +12,7 @@ namespace NetCDF {
       Base() {
       open(path, mode);
     }
-
-    File(const File &) = delete;
-    File & operator=(const File &) = delete;
+    <%= no_copy :File %>
 
     ~File() {
       try {

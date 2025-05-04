@@ -4,6 +4,7 @@
 # gdb -q tmp/rice/test/.../unittest
 module Rice
   extend WithGems
+  extend WithHelpers
 
   class InvalidChecksum < ::StandardError; end
 
