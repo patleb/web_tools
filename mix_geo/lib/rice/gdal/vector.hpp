@@ -4,7 +4,10 @@ namespace GDAL {
 
     size_t size;
 
+    using Base::Base;
+
     Vector(vector< double > x, vector< double > y, string proj = "4326"):
+      Base(proj),
       lon(x),
       lat(y),
       size(x.size()),
@@ -22,6 +25,10 @@ namespace GDAL {
 
     auto wkt() const {
       return wkt_for(srs);
+    }
+
+    auto proj4() const {
+      return proj4_for(srs);
     }
 
     auto transform(string dst_proj) const {
@@ -43,6 +50,7 @@ namespace GDAL {
     private:
 
     Vector(const Vector & vector, const OGRSpatialReference & srs):
+      Base(vector.srid),
       lon(vector.lat), // OGRCoordinateTransformation#Transform uses (lat, lon)
       lat(vector.lon),
       size(vector.size),

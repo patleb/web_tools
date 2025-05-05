@@ -2,7 +2,10 @@ namespace GDAL {
   class Raster : public Base {
     public:
 
-    Raster(Numo::NArray grid, Numo::Type type_id, double x01_y01[4], string proj = "4326", double * nodata = nullptr) {
+    using Base::Base;
+
+    Raster(Numo::NArray grid, Numo::Type type_id, double x01_y01[4], string proj = "4326", double * nodata = nullptr):
+      Base(proj) {
       auto shape = grid.shape();
       if (shape.size() != 2) {
         throw RuntimeError("invalid raster dimensions");
@@ -28,6 +31,7 @@ namespace GDAL {
     }
 
     Raster(const Raster & raster):
+      Base(raster.srid),
       dataset(copy_dataset(raster.dataset)) {
     }
 
@@ -37,6 +41,10 @@ namespace GDAL {
 
     auto wkt() const {
       return string(dataset->GetProjectionRef());
+    }
+
+    auto proj4() const {
+      return proj4_for(srs_for(wkt()));
     }
 
     auto type() const {
@@ -155,7 +163,7 @@ namespace GDAL {
       warp.ChunkAndWarpImage(0, 0, width, height);
       GDALDestroyGenImgProjTransformer(transformer);
       GDALDestroyWarpOptions(warp_options);
-      return Raster(dst_dataset);
+      return Raster(dst_dataset, proj);
     }
 
     protected:
@@ -226,7 +234,7 @@ namespace GDAL {
       return geo;
     }
 
-    vector< double > gcps_geo_transform(int width, int height, vector< double > & x01_y01) const {
+    vector< double > gcps_geo_transform(int width, int height, const vector< double > & x01_y01) const {
       vector< double > geo(6);
       auto x0 = x01_y01[0];
       auto xn = x0 + (width - 1) * (x01_y01[1] - x0);
@@ -251,7 +259,8 @@ namespace GDAL {
 
     private:
 
-    explicit Raster(GDALDataset * dataset):
+    Raster(GDALDataset * dataset, const string & proj):
+      Base(proj),
       dataset(dataset) {
     }
 

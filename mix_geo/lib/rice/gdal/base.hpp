@@ -1,5 +1,17 @@
 namespace GDAL {
   class Base {
+    public:
+
+    int srid = 0;
+
+    explicit Base(int srid):
+      srid(srid) {
+    }
+
+    explicit Base(const string & proj):
+      srid(atoi(proj.c_str())) {
+    }
+
     protected:
 
     auto srs_for(const string & proj) const {
@@ -19,15 +31,27 @@ namespace GDAL {
     }
 
     auto wkt_for(const OGRSpatialReference & srs) const {
-      char * c_wkt = nullptr;
-      srs.exportToWkt(&c_wkt);
-      string wkt(c_wkt);
-      CPLFree(c_wkt);
+      char * c_str = nullptr;
+      srs.exportToWkt(&c_str);
+      string wkt(c_str);
+      CPLFree(c_str);
       return wkt;
     }
 
     auto wkt_for(const string & proj) const {
       return wkt_for(srs_for(proj));
+    }
+
+    auto proj4_for(const OGRSpatialReference & srs) const {
+      char * c_str = nullptr;
+      srs.exportToProj4(&c_str);
+      string proj4(c_str);
+      CPLFree(c_str);
+      return proj4;
+    }
+
+    auto proj4_for(const string & proj) const {
+      return proj4_for(srs_for(proj));
     }
   };
 }

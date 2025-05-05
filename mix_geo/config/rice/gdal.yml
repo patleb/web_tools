@@ -12,6 +12,7 @@ module GDAL:
     self.version:
 
   class Base | GDAL::Base:
+    attr_reader: [srid]
 
   class Vector < GDAL::Base:
     attr_reader: [size]
@@ -22,6 +23,7 @@ module GDAL:
         - [vector< double >, y]
         - [string, proj = (string)"4326"]
       wkt:
+      proj4:
       x:
       y:
       transform:
@@ -35,6 +37,7 @@ module GDAL:
         - [string, proj = (string)"4326"]
         - [double *, nodata = nullptr]
       wkt:
+      proj4:
       type:
       width:
       height:
