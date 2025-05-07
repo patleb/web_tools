@@ -267,7 +267,7 @@ namespace NetCDF {
       size_t size, slots;
       float preemption;
       check_status( nc_get_var_chunk_cache(file_id, id, &size, &slots, &preemption) );
-      return vector< std::variant< size_t, float > >({ size, slots, preemption });
+      return vector< std::variant< size_t, float > >{ size, slots, preemption };
     }
 
     // preemption: 0.0 to 1.0
