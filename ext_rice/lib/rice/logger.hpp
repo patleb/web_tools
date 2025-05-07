@@ -16,8 +16,8 @@ class Logger {
   }
 
   // Parameter Pack: https://www.scs.stanford.edu/~dm/blog/param-pack.html
-  template<class... Args>
-  void log(const Args& ...messages, const LEVEL level) {
+  template < class... Args >
+  void log(const Args & ...messages, const LEVEL level) {
     file << "[" << C::timestamp() << "][" << LEVELS[level] << "]: ";
     (file << ... << std::format("{}", messages));
     file << std::endl;
@@ -34,10 +34,10 @@ size_t Logger::marker_i = 0;
 auto logger = Logger();
 
 <%- ExtRice.config.log_levels.each do |level, level_i| -%>
-template<class... Args>
-void log_<%= level %>(const Args& ...messages) {
+template < class... Args >
+void log_<%= level %>(const Args & ...messages) {
   <%- if level_i >= ExtRice.config.log_level_i -%>
-  logger.log<Args...>(messages..., Logger::LEVEL::<%= level.upcase %>);
+  logger.log< Args... >(messages..., Logger::LEVEL::<%= level.upcase %>);
   <%- end -%>
 }
 
