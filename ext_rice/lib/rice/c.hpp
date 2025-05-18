@@ -21,6 +21,24 @@ namespace C {
     return buffer;
   }
 
+  template < class T >
+  auto vector_concat(std::initializer_list< vector< T >> vectors) {
+    size_t count = 0;
+    for (auto && v : vectors) count += v.size();
+    vector< T > result(count); // gcc 15 --> result.append_range(v)
+    for (auto && v : vectors) result.insert(result.end(), v.cbegin(), v.cend());
+    return result;
+  }
+
+  template < class T >
+  auto & vector_concat(vector< T > & values, std::initializer_list< vector< T >> vectors) {
+    size_t count = 0;
+    for (auto && v : vectors) count += v.size();
+    values.reserve(values.size() + count);
+    for (auto && v : vectors) values.insert(values.end(), v.cbegin(), v.cend());
+    return values;
+  }
+
   template < class V, class T >
   auto vector_cast(const vector< V > & values) {
     size_t count = values.size();
