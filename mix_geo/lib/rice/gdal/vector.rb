@@ -1,6 +1,14 @@
 module GDAL
   Vector.class_eval do
     module self::WithOverrides
+      extend ActiveSupport::Concern
+
+      class_methods do
+        def transform_bounds(x0n_y0n, src_proj, dst_proj, density: nil)
+          super(x0n_y0n, src_proj.to_s, dst_proj.to_s, density).to_a
+        end
+      end
+
       def initialize(x, y, proj: nil, **proj4)
         x = Array.wrap(x)
         y = Array.wrap(y)

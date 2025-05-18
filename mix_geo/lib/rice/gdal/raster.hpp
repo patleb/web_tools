@@ -4,47 +4,35 @@ namespace GDAL {
 
     using Base::Base;
 
-    Raster(Numo::NArray grid, Numo::Type type_id, double x01_y01[4], string proj = "4326", double * nodata = nullptr):
+    Raster(Numo::NArray grid, Numo::Type type_id, vector < double > x01_y01, string proj = "4326", std::optional< double > nodata = std::nullopt):
       Base(proj) {
       auto shape = grid.shape();
-      if (shape.size() != 2) {
-        throw RuntimeError("invalid raster dimensions");
-      }
+      auto orientation = this->orientation();
+      if (shape.size() != 2)   throw RuntimeError("invalid grid dimensions");
       int width = shape[0];
-      if (width < 2) {
-        throw RuntimeError("invalid x axis size");
-      }
       int height = shape[1];
-      if (height < 2) {
-        throw RuntimeError("invalid y axis size");
-      }
-      auto x0 = x01_y01[0], x1 = x01_y01[1], y0 = x01_y01[2], y1 = x01_y01[3];
-      double geo[6] = { x0, (x1 - x0), 0, y0, 0, -(y1 - y0) };
-      string wkt = wkt_for(proj);
+      if (width < 2)           throw RuntimeError("invalid x axis size");
+      if (height < 2)          throw RuntimeError("invalid y axis size");
+      if (x01_y01.size() != 4) throw RuntimeError("invalid x01_y01 size");
+      if (orientation[0] > 0 && x01_y01[0] > x01_y01[1]) throw RuntimeError("invalid x axis orientation");
+      if (orientation[1] > 0 && x01_y01[2] > x01_y01[3]) throw RuntimeError("invalid y axis orientation");
+      auto geo = geo_transform_from_bounds(width, height, x0n_y0n(width, height, x01_y01));
       dataset = create_dataset(width, height, gdal_type(type_id));
-      dataset->SetGeoTransform(geo);
-      dataset->SetProjection(wkt.c_str());
+      dataset->SetGeoTransform(geo.data());
+      dataset->SetProjection(wkt().c_str());
       write_dataset(dataset, const_cast< void * >(grid.read_ptr()));
-      if (nodata != nullptr) {
-        dataset->GetRasterBand(1)->SetNoDataValue(*nodata);
+      if (nodata != std::nullopt) {
+        dataset->GetRasterBand(1)->SetNoDataValue(nodata.value());
       }
     }
 
     Raster(const Raster & raster):
-      Base(raster.srid),
+      Base(raster.srs),
       dataset(copy_dataset(raster.dataset)) {
     }
 
     ~Raster() {
       GDALClose(dataset);
-    }
-
-    auto wkt() const {
-      return string(dataset->GetProjectionRef());
-    }
-
-    auto proj4() const {
-      return proj4_for(srs_for(wkt()));
     }
 
     auto type() const {
@@ -63,18 +51,28 @@ namespace GDAL {
       return vector< size_t >{ width(), height() };
     }
 
-    auto x01_y01() const {
-      auto geo = geo_transform(dataset);
-      return vector< double >{ geo[0], geo[0] + geo[1], geo[3], geo[3] - geo[5] };
+    auto x0() const {
+      return geo_transform()[0];
+    }
+
+    auto y0() const {
+      return geo_transform()[3];
+    }
+
+    auto dx() const {
+      return geo_transform()[1];
+    }
+
+    auto dy() const {
+      return geo_transform()[5];
     }
 
     auto x() const {
       auto width = this->width();
-      auto x01_y01 = this->x01_y01();
-      auto x0 = x01_y01[0], x1 = x01_y01[1];
+      auto x0 = this->x0();
+      auto dx = this->dx();
       vector< double > x(width);
-      auto step = x1 - x0;
-      for (size_t i = 0; i < width; ++i, x0 += step) {
+      for (size_t i = 0; i < width; ++i, x0 += dx) {
         x[i] = x0;
       }
       return x;
@@ -82,14 +80,23 @@ namespace GDAL {
 
     auto y() const {
       auto height = this->height();
-      auto x01_y01 = this->x01_y01();
-      auto y0 = x01_y01[2], y1 = x01_y01[3];
+      auto y0 = this->y0();
+      auto dy = this->dy();
       vector<double> y(height);
-      auto step = y1 - y0;
-      for (size_t j = 0; j < height; ++j, y0 += step) {
+      for (size_t j = 0; j < height; ++j, y0 += dy) {
         y[j] = y0;
       }
       return y;
+    }
+
+    auto x01_y01() const {
+      auto geo = geo_transform();
+      auto x0 = geo[0], dx = geo[1], y0 = geo[3], dy = geo[5];
+      return vector< double >{ x0, x0 + dx, y0, y0 + dy };
+    }
+
+    vector< double > bounds() const {
+      return x0n_y0n(width(), height(), x01_y01());
     }
 
     auto nodata() const {
@@ -112,35 +119,37 @@ namespace GDAL {
       }
     }
 
-    auto transform(string proj, double * nodata = nullptr, AlgoType algo = AlgoType::Nearest) const {
+    auto reproject(string proj, std::optional< double > nodata = std::nullopt, double fill_ratio = 1.0, AlgoType algo = AlgoType::Nearest) const {
       void * transformer;
-      CPLErr e;
-      GDALRasterBand * band = dataset->GetRasterBand(1);
-      GDALDataType type = band->GetRasterDataType();
-      string wkt = wkt_for(proj);
-      string src_wkt = dataset->GetProjectionRef();
-      if (src_wkt == wkt) {
+      auto band = dataset->GetRasterBand(1);
+      auto type = band->GetRasterDataType();
+      string dst_wkt = wkt_for(proj);
+      string src_wkt = this->wkt();
+      if (src_wkt == dst_wkt) {
         return Raster(*this);
       }
-      transformer = GDALCreateGenImgProjTransformer(dataset, src_wkt.c_str(), NULL, wkt.c_str(), FALSE, 0, 1);
-      double geo[6];
-      int width = 0;
-      int height = 0;
-      e = GDALSuggestedWarpOutput(dataset, GDALGenImgProjTransform, transformer, geo, &width, &height);
-      GDALDestroyGenImgProjTransformer(transformer);
-      if (e != CE_None) {
-        throw RuntimeError("Failed to get suggested warp output.");
+      int width = this->width(), height = this->height();
+      if (fill_ratio != 1.0) {
+        width = ceil(width * fill_ratio), height = ceil(height * fill_ratio);
       }
+      auto src_bounds = bounds();
+      auto dst_bounds = Vector::transform_bounds(src_bounds, src_wkt, dst_wkt);
+      auto src_geo = geo_transform();
+      auto dst_geo = geo_transform_from_bounds(width, height, dst_bounds);
       int has_nodata;
       auto src_nodata = band->GetNoDataValue(&has_nodata);
       GDALDataset * dst_dataset = create_dataset(width, height, type);
-      dst_dataset->SetGeoTransform(geo);
-      dst_dataset->SetProjection(wkt.c_str());
+      dst_dataset->SetGeoTransform(dst_geo.data());
+      dst_dataset->SetProjection(dst_wkt.c_str());
       if (has_nodata) {
-        dst_dataset->GetRasterBand(1)->SetNoDataValue(nodata != nullptr ? *nodata : src_nodata);
+        dst_dataset->GetRasterBand(1)->SetNoDataValue(nodata != std::nullopt ? nodata.value() : src_nodata);
       }
-      transformer = GDALCreateGenImgProjTransformer(dataset, src_wkt.c_str(), dst_dataset, wkt.c_str(), FALSE, 0, 1);
-      GDALWarpOptions * warp_options = GDALCreateWarpOptions();
+      transformer = GDALCreateGenImgProjTransformer3(src_wkt.c_str(), src_geo.data(), dst_wkt.c_str(), dst_geo.data());
+      auto warp_options = GDALCreateWarpOptions();
+      finally ensure([&]{
+        GDALDestroyTransformer(transformer);
+        GDALDestroyWarpOptions(warp_options);
+      });
       warp_options->hSrcDS = dataset;
       warp_options->hDstDS = dst_dataset;
       warp_options->nBandCount = 1;
@@ -155,14 +164,14 @@ namespace GDAL {
         warp_options->padfSrcNoDataReal = (double *)CPLMalloc(sizeof(double));
         warp_options->padfDstNoDataReal = (double *)CPLMalloc(sizeof(double));
         warp_options->padfSrcNoDataReal[0] = src_nodata;
-        warp_options->padfDstNoDataReal[0] = nodata != nullptr ? *nodata : src_nodata;
+        warp_options->padfDstNoDataReal[0] = nodata != std::nullopt ? nodata.value() : src_nodata;
         warp_options->papszWarpOptions = CSLSetNameValue(warp_options->papszWarpOptions, "INIT_DEST", "NO_DATA");
       }
       GDALWarpOperation warp;
       warp.Initialize(warp_options);
-      warp.ChunkAndWarpImage(0, 0, width, height);
-      GDALDestroyGenImgProjTransformer(transformer);
-      GDALDestroyWarpOptions(warp_options);
+      if (warp.ChunkAndWarpImage(0, 0, width, height) != CE_None) {
+        throw RuntimeError("can't reproject");
+      }
       return Raster(dst_dataset, proj);
     }
 
@@ -184,8 +193,7 @@ namespace GDAL {
       GDALRasterBand * band = dataset->GetRasterBand(1);
       int width = dataset->GetRasterXSize();
       int height = dataset->GetRasterYSize();
-      CPLErr e = band->RasterIO(GF_Read, 0, 0, width, height, data, width, height, band->GetRasterDataType(), 0, 0);
-      if (e != CE_None) {
+      if (band->RasterIO(GF_Read, 0, 0, width, height, data, width, height, band->GetRasterDataType(), 0, 0) != CE_None) {
         if (free_dataset) GDALClose(dataset);
         if (free_data) CPLFree(data);
         throw RuntimeError("Failed to read data.");
@@ -196,8 +204,7 @@ namespace GDAL {
       GDALRasterBand * band = dataset->GetRasterBand(1);
       int width = dataset->GetRasterXSize();
       int height = dataset->GetRasterYSize();
-      CPLErr e = band->RasterIO(GF_Write, 0, 0, width, height, data, width, height, band->GetRasterDataType(), 0, 0);
-      if (e != CE_None) {
+      if (band->RasterIO(GF_Write, 0, 0, width, height, data, width, height, band->GetRasterDataType(), 0, 0) != CE_None) {
         if (free_dataset) GDALClose(dataset);
         if (free_data) CPLFree(data);
         throw RuntimeError("Failed to write data.");
@@ -205,7 +212,6 @@ namespace GDAL {
     }
 
     GDALDataset * copy_dataset(GDALDataset * dataset) const {
-      CPLErr e;
       GDALRasterBand * band = dataset->GetRasterBand(1);
       GDALDataType type = band->GetRasterDataType();
       int width = dataset->GetRasterXSize();
@@ -226,6 +232,10 @@ namespace GDAL {
       return dst_dataset;
     }
 
+    vector< double > geo_transform() const {
+      return geo_transform(dataset);
+    }
+
     vector< double > geo_transform(GDALDataset * dataset) const {
       vector< double > geo(6);
       if (dataset->GetGeoTransform(geo.data()) != CE_None) {
@@ -234,27 +244,36 @@ namespace GDAL {
       return geo;
     }
 
-    vector< double > gcps_geo_transform(int width, int height, const vector< double > & x01_y01) const {
+    vector< double > geo_transform_from_bounds(int width, int height, const vector< double > & x0n_y0n) const {
       vector< double > geo(6);
-      auto x0 = x01_y01[0];
-      auto xn = x0 + (width - 1) * (x01_y01[1] - x0);
-      auto y0 = x01_y01[2];
-      auto yn = y0 + (height - 1) * (x01_y01[3] - y0);
+      auto x0 = x0n_y0n[0], xn = x0n_y0n[1], y0 = x0n_y0n[2], yn = x0n_y0n[3];
       GDAL_GCP * gcps = (GDAL_GCP *)CPLMalloc(2 * sizeof(GDAL_GCP));
       finally ensure([&]{
         CPLFree(gcps);
       });
-      gcps[0].pszId = CPLStrdup("UL"); gcps[1].pszId = CPLStrdup("UR");  gcps[2].pszId = CPLStrdup("LR");  gcps[3].pszId = CPLStrdup("LL");
-      gcps[0].pszInfo = CPLStrdup(""); gcps[1].pszInfo = CPLStrdup("");  gcps[2].pszInfo = CPLStrdup("");  gcps[3].pszInfo = CPLStrdup("");
-      gcps[0].dfGCPPixel = 0.5;        gcps[1].dfGCPPixel = width - 0.5; gcps[2].dfGCPPixel = width - 0.5; gcps[3].dfGCPPixel = 0.5;
-      gcps[0].dfGCPLine = 0.5;         gcps[1].dfGCPLine = 0.5;          gcps[2].dfGCPLine = height - 0.5; gcps[3].dfGCPLine = height - 0.5;
-      gcps[0].dfGCPX = x0;             gcps[1].dfGCPX = xn;              gcps[2].dfGCPX = xn;              gcps[3].dfGCPX = x0;
-      gcps[0].dfGCPY = y0;             gcps[1].dfGCPY = y0;              gcps[2].dfGCPY = yn;              gcps[3].dfGCPY = yn;
-      gcps[0].dfGCPZ = 0.0;            gcps[1].dfGCPZ = 0.0;             gcps[2].dfGCPZ = 0.0;             gcps[3].dfGCPZ = 0.0;
+      gcps[0].pszId = CPLStrdup("UL"); gcps[1].pszId = CPLStrdup("UR"); gcps[2].pszId = CPLStrdup("LR"); gcps[3].pszId = CPLStrdup("LL");
+      gcps[0].pszInfo = CPLStrdup(""); gcps[1].pszInfo = CPLStrdup(""); gcps[2].pszInfo = CPLStrdup(""); gcps[3].pszInfo = CPLStrdup("");
+      gcps[0].dfGCPPixel = 0;
+      gcps[1].dfGCPPixel = width - 1;
+      gcps[2].dfGCPPixel = width - 1;
+      gcps[3].dfGCPPixel = 0;
+      gcps[0].dfGCPLine = 0;
+      gcps[1].dfGCPLine = 0;
+      gcps[2].dfGCPLine = height - 1;
+      gcps[3].dfGCPLine = height - 1;
+      gcps[0].dfGCPX = x0;  gcps[1].dfGCPX = xn;  gcps[2].dfGCPX = xn;  gcps[3].dfGCPX = x0;
+      gcps[0].dfGCPY = y0;  gcps[1].dfGCPY = y0;  gcps[2].dfGCPY = yn;  gcps[3].dfGCPY = yn;
+      gcps[0].dfGCPZ = 0.0; gcps[1].dfGCPZ = 0.0; gcps[2].dfGCPZ = 0.0; gcps[3].dfGCPZ = 0.0;
       if (!CPL_TO_BOOL(GDALGCPsToGeoTransform(4, gcps, geo.data(), 0))) {
-        throw RuntimeError("Could not get geotransform set from gcps. The identity matrix may be returned.");
+        throw RuntimeError("Could not get geotransform set from gcps.");
       }
       return geo;
+    }
+
+    vector< double > x0n_y0n(int width, int height, const vector< double > & x01_y01) const {
+      auto x0 = x01_y01[0]; auto dx = (x01_y01[1] - x0);
+      auto y0 = x01_y01[2]; auto dy = (x01_y01[3] - y0);
+      return vector< double >{ x0, x0 + (width - 1) * dx, y0, y0 + (height - 1) * dy };
     }
 
     private:

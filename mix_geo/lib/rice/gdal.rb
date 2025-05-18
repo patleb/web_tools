@@ -1,3 +1,7 @@
+### NOTE
+# (x, y) --> (lon, lat)
+# East or South: x0, x1, ..., xn --> x{i} > x{i-1}
+# West or North: x0, x1, ..., xn --> x{i} < x{i-1}
 module GDAL
   CF_ALIASES = {
     grid_mapping_name:                     :proj,
