@@ -23,7 +23,7 @@ namespace GDAL {
       auto dst_srs = srs_for(dst_proj);
       auto transform = create_transform(src_srs, dst_srs);
       finally ensure([&]{
-        delete transform;
+        OGRCoordinateTransformation::DestroyCT(transform);
       });
       double x_min, x_max, y_min, y_max;
       transform->TransformBounds(x0, y0, xn, yn, &x_min, &y_min, &x_max, &y_max, density);
@@ -48,7 +48,7 @@ namespace GDAL {
       auto dst_srs = srs_for(dst_proj);
       auto transform = create_transform(srs, dst_srs);
       finally ensure([&]{
-        delete transform;
+        OGRCoordinateTransformation::DestroyCT(transform);
       });
       Vector dst(*this, dst_srs);
       if (!transform->Transform(size(), dst.lon.data(), dst.lat.data())) {
