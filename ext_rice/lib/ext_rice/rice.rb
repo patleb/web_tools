@@ -67,7 +67,12 @@ module Rice
       $CXXFLAGS += " $(optflags)" # -O3 -ffast-math -fno-associative-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
       $CXXFLAGS += " #{cflags}" if cflags
-      $CXXFLAGS += " -O0" if ENV['DEBUG']
+      if ENV['DEBUG']
+        $CXXFLAGS += " -g -O0"
+        MakeMakefile::CONFIG['optflags'].gsub!('-O3', '-O0')
+        MakeMakefile::CONFIG['cflags'].gsub!('-O3', '-O0')
+        MakeMakefile::CONFIG['CFLAGS'].gsub!('-O3', '-O0')
+      end
       $libs += " #{makefile[:libs]}" if makefile[:libs].present?
       $libs += " #{libs}" if libs
       $srcs = Dir["#{dst_path}/**/*.{c,cc,cpp}"]
