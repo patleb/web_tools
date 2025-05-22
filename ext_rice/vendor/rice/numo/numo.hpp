@@ -52,22 +52,22 @@ namespace Numo {
       return Rice::Object(this->_value);
     }
 
-    const void* read_ptr() {
+    const void * read_ptr() {
       if (!is_contiguous()) {
         this->_value = nary_dup(this->_value);
       }
       return nary_get_pointer_for_read(this->_value) + nary_get_offset(this->_value);
     }
 
-    void* write_ptr() {
+    void * write_ptr() {
       return nary_get_pointer_for_write(this->_value);
     }
 
-    auto type_id() const {
+    virtual Numo::Type type_id() const {
       return Numo::Type::NArray;
     }
 
-    auto type_name() const {
+    virtual const char * type_name() const {
       return "NArray";
     }
 
@@ -92,7 +92,7 @@ namespace Numo {
 
     private:
 
-    VALUE dtype() {
+    virtual VALUE dtype() const {
       return numo_cNArray;
     }
   };
@@ -137,17 +137,17 @@ namespace Numo {
       return reinterpret_cast< <%= type %> * >(NArray::write_ptr());
     }
 
-    auto type_id() const {
+    Numo::Type type_id() const override {
       return Numo::Type::<%= numo_type %>;
     }
 
-    auto type_name() const {
+    const char * type_name() const override {
       return "<%= numo_type %>";
     }
 
     private:
 
-    VALUE dtype() {
+    VALUE dtype() const override {
       return numo_c<%= numo_type %>;
     }
   };
@@ -173,17 +173,17 @@ namespace Numo {
       construct_shape(this->dtype(), shape);
     }
 
-    auto type_id() const {
+    Numo::Type type_id() const override {
       return Numo::Type::<%= numo_type %>;
     }
 
-    auto type_name() const {
+    const char * type_name() const override {
       return "<%= numo_type %>";
     }
 
     private:
 
-    VALUE dtype() {
+    VALUE dtype() const override {
       return numo_c<%= numo_type %>;
     }
   };
