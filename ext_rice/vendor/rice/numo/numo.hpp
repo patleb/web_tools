@@ -11,7 +11,7 @@
 
 namespace Numo {
   enum class Type {
-  <%- compile_vars[:numo].each do |numo_type| -%>
+  <%- compile_vars[:numo_types].each do |numo_type| -%>
     <%= numo_type %>,
   <%- end -%>
   };
@@ -20,47 +20,47 @@ namespace Numo {
     public:
 
     NArray(VALUE v) {
-      construct_value(this->dtype(), v);
+      construct_value(dtype(), v);
     }
 
-    NArray(Rice::Object o) {
-      construct_value(this->dtype(), o.value());
+    explicit NArray(Rice::Object o) {
+      construct_value(dtype(), o.value());
     }
 
     VALUE value() const {
-      return this->_value;
+      return _value;
     }
 
     size_t ndim() const {
-      return RNARRAY_NDIM(this->_value);
+      return RNARRAY_NDIM(_value);
     }
 
     auto shape() const {
-      size_t * shape = RNARRAY_SHAPE(this->_value);
+      size_t * shape = RNARRAY_SHAPE(_value);
       return std::vector< size_t >(shape, shape + ndim());
     }
 
     size_t size() const {
-      return RNARRAY_SIZE(this->_value);
+      return RNARRAY_SIZE(_value);
     }
 
     bool is_contiguous() const {
-      return nary_check_contiguous(this->_value) == Qtrue;
+      return nary_check_contiguous(_value) == Qtrue;
     }
 
     operator Rice::Object() const {
-      return Rice::Object(this->_value);
+      return Rice::Object(_value);
     }
 
     const void * read_ptr() {
       if (!is_contiguous()) {
-        this->_value = nary_dup(this->_value);
+        this->_value = nary_dup(_value);
       }
-      return nary_get_pointer_for_read(this->_value) + nary_get_offset(this->_value);
+      return nary_get_pointer_for_read(_value) + nary_get_offset(_value);
     }
 
     void * write_ptr() {
-      return nary_get_pointer_for_write(this->_value);
+      return nary_get_pointer_for_write(_value);
     }
 
     virtual Numo::Type type_id() const {
@@ -96,38 +96,37 @@ namespace Numo {
       return numo_cNArray;
     }
   };
-  <%- [
-    ['SFloat',  'float'],
-    ['DFloat',  'double'],
-    ['Int8',    'int8_t'],
-    ['Int16',   'int16_t'],
-    ['Int32',   'int32_t'],
-    ['Int64',   'int64_t2'],
-    ['UInt8',   'uint8_t'],
-    ['UInt16',  'uint16_t'],
-    ['UInt32',  'uint32_t'],
-    ['UInt64',  'uint64_t2'],
-    ['RObject', 'VALUE'],
-  ].each do |numo_type, type| -%>
+  <%- compile_vars[:numeric_types].merge('RObject' => 'VALUE').each do |numo_type, type| -%>
 
-  class <%= numo_type %>: public NArray {
+  class <%= numo_type %> : public NArray {
     public:
 
     <%= numo_type %>(VALUE v) {
-      construct_value(this->dtype(), v);
+      construct_value(dtype(), v);
     }
 
-    <%= numo_type %>(Rice::Object o) {
-      construct_value(this->dtype(), o.value());
+    explicit <%= numo_type %>(Rice::Object o) {
+      construct_value(dtype(), o.value());
     }
 
-    <%= numo_type %>(std::initializer_list<size_t> shape) {
-      construct_shape(this->dtype(), shape);
+    explicit <%= numo_type %>(std::initializer_list<size_t> shape) {
+      construct_shape(dtype(), shape);
     }
 
-    <%= numo_type %>(std::vector<size_t> shape) {
-      construct_shape(this->dtype(), shape);
+    explicit <%= numo_type %>(std::vector<size_t> shape) {
+      construct_shape(dtype(), shape);
     }
+    <%- if type != 'VALUE' -%>
+
+    explicit <%= numo_type %>(Numo::NArray & na):
+      <%= numo_type %>(na.shape()) {
+      std::memcpy(NArray::write_ptr(), na.read_ptr(), na.size() * sizeof(<%= type %>));
+    }
+
+    size_t type_size() const {
+      return sizeof(<%= type %>);
+    }
+    <%- end -%>
 
     const <%= type %> * read_ptr() {
       return reinterpret_cast< const <%= type %> * >(NArray::read_ptr());
@@ -152,25 +151,41 @@ namespace Numo {
     }
   };
   <%- end -%>
+
+  using NType = std::variant< <%= compile_vars[:numeric_types].keys.join(', ') %> >;
+
+  NType cast(const Numo::NArray & src, Numo::Type type_id) {
+    switch (type_id) {
+    <%- compile_vars[:numeric_types].each_key do |numo_type| -%>
+    case Type::<%= numo_type %>: {
+      auto dst = Numo::<%= numo_type %>(src);
+      return Numo::NType(dst);
+    }
+    <%- end -%>
+    default:
+      throw std::runtime_error("not a numeric type");
+    }
+  }
+
   <%- ['SComplex', 'DComplex', 'Bit'].each do |numo_type| -%>
 
-  class <%= numo_type %>: public NArray {
+  class <%= numo_type %> : public NArray {
     public:
 
     <%= numo_type %>(VALUE v) {
-      construct_value(this->dtype(), v);
+      construct_value(dtype(), v);
     }
 
-    <%= numo_type %>(Rice::Object o) {
-      construct_value(this->dtype(), o.value());
+    explicit <%= numo_type %>(Rice::Object o) {
+      construct_value(dtype(), o.value());
     }
 
-    <%= numo_type %>(std::initializer_list<size_t> shape) {
-      construct_shape(this->dtype(), shape);
+    explicit <%= numo_type %>(std::initializer_list<size_t> shape) {
+      construct_shape(dtype(), shape);
     }
 
-    <%= numo_type %>(std::vector<size_t> shape) {
-      construct_shape(this->dtype(), shape);
+    explicit <%= numo_type %>(std::vector<size_t> shape) {
+      construct_shape(dtype(), shape);
     }
 
     Numo::Type type_id() const override {
@@ -191,7 +206,7 @@ namespace Numo {
 }
 
 namespace Rice::detail {
-  <%- compile_vars[:numo].each do |numo_type| -%>
+  <%- compile_vars[:numo_types].each do |numo_type| -%>
 
   template<>
   struct Type< Numo::<%= numo_type %> > {

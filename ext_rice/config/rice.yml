@@ -15,4 +15,4 @@ include:
   - stacktrace
 
 module Numo:
-  enum Type | Numo::Type: [<%= compile_vars[:numo].join(', ') %>]
+  enum Type | Numo::Type: [<%= compile_vars[:numo_types].join(', ') %>]

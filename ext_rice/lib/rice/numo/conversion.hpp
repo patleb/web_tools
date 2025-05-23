@@ -1,17 +1,4 @@
 namespace Numo {
-  using NType = std::variant<
-    Int8,
-    Int16,
-    Int32,
-    Int64,
-    SFloat,
-    DFloat,
-    UInt8,
-    UInt16,
-    UInt32,
-    UInt64
-  >;
-
   template < class N >
   VALUE to_sql(VALUE self) {
     size_t ndim = RNARRAY_NDIM(self);
@@ -22,9 +9,9 @@ namespace Numo {
     size_t size = RNARRAY_SIZE(self);
     if (size == 0) {
       char sql[2 * ndim + 1];
-      size_t i = 0;
+      size_t i = 0, ndim2 = ndim * 2;
       for (; i < ndim; ++i) sql[i] = '{';
-      for (; i < 2 * ndim; ++i) sql[i] = '}';
+      for (; i < ndim2; ++i) sql[i] = '}';
       sql[i] = '\0';
       RB_GC_GUARD(self);
       return rb_str_new_cstr(sql);
@@ -75,25 +62,14 @@ namespace Numo {
     }
   }
 
-  <%- compile_vars[:numo].each_with_index do |numo_type| -%>
+  <%- compile_vars[:numeric_types].each_key do |numo_type| -%>
   VALUE type_<%= numo_type %>(VALUE self) {
     return INT2FIX(static_cast< int >(Numo::Type::<%= numo_type %>));
   }
   <%- end -%>
 
   void init_conversion() {
-    <%- [
-      ['Int8',   'int8_t'],
-      ['Int16',  'int16_t'],
-      ['Int32',  'int32_t'],
-      ['Int64',  'int64_t2'],
-      ['SFloat', 'float'],
-      ['DFloat', 'double'],
-      ['UInt8',  'uint8_t'],
-      ['UInt16', 'uint16_t'],
-      ['UInt32', 'uint32_t'],
-      ['UInt64', 'uint64_t2'],
-    ].each do |numo_type, type| -%>
+    <%- compile_vars[:numeric_types].each do |numo_type, type| -%>
     rb_define_method(numo_c<%= numo_type %>, "to_sql", Numo::to_sql< <%= type %> >, 0);
     rb_define_method(numo_c<%= numo_type %>, "type_id", Numo::type_<%= numo_type %>, 0);
     <%- end -%>
