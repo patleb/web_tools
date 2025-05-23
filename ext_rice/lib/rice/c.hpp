@@ -4,6 +4,10 @@ namespace C {
   using std::string;
   using std::vector;
 
+  const double NaN  =  std::numeric_limits< double >::quiet_NaN(); // std::isnan(double)
+  const double Inf  =  std::numeric_limits< double >::infinity();  // std::isinf(double) --> true also for NInf
+  const double NInf = -std::numeric_limits< double >::infinity();  // double == C::NInf
+
   inline auto timestamp() {
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     std::time_t time = std::chrono::system_clock::to_time_t(now);
