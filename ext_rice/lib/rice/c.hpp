@@ -4,9 +4,9 @@ namespace C {
   using std::string;
   using std::vector;
 
-  const double NaN  =  std::numeric_limits< double >::quiet_NaN(); // std::isnan(double)
-  const double Inf  =  std::numeric_limits< double >::infinity();  // std::isinf(double) --> true also for NInf
-  const double NInf = -std::numeric_limits< double >::infinity();  // double == C::NInf
+  const double Nil = 0.0;
+  const double NaN = std::numeric_limits< double >::quiet_NaN(); // std::isnan(double)
+  const double Inf = std::numeric_limits< double >::infinity();  // std::isinf(double) --> true also for -Inf, use (double == -C::INF)
 
   inline auto timestamp() {
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();

@@ -23,7 +23,7 @@ namespace Numo {
       construct_value(dtype(), v);
     }
 
-    explicit NArray(Rice::Object o) {
+    NArray(Rice::Object o) {
       construct_value(dtype(), o.value());
     }
 
@@ -50,6 +50,10 @@ namespace Numo {
 
     operator Rice::Object() const {
       return Rice::Object(_value);
+    }
+
+    virtual size_t type_size() const {
+      throw RuntimeError("not implemented error");
     }
 
     const void * read_ptr() {
@@ -79,12 +83,12 @@ namespace Numo {
       this->_value = rb_funcall(dtype, rb_intern("cast"), 1, v);
     }
 
-    void construct_shape(VALUE dtype, std::initializer_list<size_t> shape) {
+    void construct_shape(VALUE dtype, std::initializer_list< size_t > shape) {
       // rb_narray_new doesn't modify shape, but not marked as const
       this->_value = rb_narray_new(dtype, shape.size(), const_cast<size_t*>(shape.begin()));
     }
 
-    void construct_shape(VALUE dtype, std::vector<size_t> shape) {
+    void construct_shape(VALUE dtype, std::vector< size_t > shape) {
       this->_value = rb_narray_new(dtype, shape.size(), shape.data());
     }
 
@@ -105,28 +109,28 @@ namespace Numo {
       construct_value(dtype(), v);
     }
 
-    explicit <%= numo_type %>(Rice::Object o) {
+    <%= numo_type %>(Rice::Object o) {
       construct_value(dtype(), o.value());
     }
 
-    explicit <%= numo_type %>(std::initializer_list<size_t> shape) {
+    explicit <%= numo_type %>(std::initializer_list< size_t > shape) {
       construct_shape(dtype(), shape);
     }
 
-    explicit <%= numo_type %>(std::vector<size_t> shape) {
+    explicit <%= numo_type %>(std::vector< size_t > shape) {
       construct_shape(dtype(), shape);
     }
-    <%- if type != 'VALUE' -%>
+  <%- if type != 'VALUE' -%>
 
-    explicit <%= numo_type %>(Numo::NArray & na):
+    <%= numo_type %>(Numo::NArray & na):
       <%= numo_type %>(na.shape()) {
       std::memcpy(NArray::write_ptr(), na.read_ptr(), na.size() * sizeof(<%= type %>));
     }
 
-    size_t type_size() const {
+    size_t type_size() const override {
       return sizeof(<%= type %>);
     }
-    <%- end -%>
+  <%- end -%>
 
     const <%= type %> * read_ptr() {
       return reinterpret_cast< const <%= type %> * >(NArray::read_ptr());
@@ -154,19 +158,45 @@ namespace Numo {
 
   using NType = std::variant< <%= compile_vars[:numeric_types].keys.join(', ') %> >;
 
-  NType cast(const Numo::NArray & src, Numo::Type type_id) {
+  Numo::NType build(Numo::Type type_id, std::initializer_list< size_t > shape) {
     switch (type_id) {
     <%- compile_vars[:numeric_types].each_key do |numo_type| -%>
-    case Type::<%= numo_type %>: {
-      auto dst = Numo::<%= numo_type %>(src);
-      return Numo::NType(dst);
-    }
+    case Type::<%= numo_type %>: return Numo::<%= numo_type %>(shape);
     <%- end -%>
     default:
-      throw std::runtime_error("not a numeric type");
+      throw RuntimeError("invalid Numo::Type");
     }
   }
 
+  Numo::NType build(Numo::Type type_id, std::vector< size_t > shape) {
+    switch (type_id) {
+    <%- compile_vars[:numeric_types].each_key do |numo_type| -%>
+    case Type::<%= numo_type %>: return Numo::<%= numo_type %>(shape);
+    <%- end -%>
+    default:
+      throw RuntimeError("invalid Numo::Type");
+    }
+  }
+
+  Numo::NType cast(const Numo::NArray & v, Numo::Type type_id) {
+    switch (type_id) {
+    <%- compile_vars[:numeric_types].each_key do |numo_type| -%>
+    case Type::<%= numo_type %>: return Numo::<%= numo_type %>(v);
+    <%- end -%>
+    default:
+      throw RuntimeError("invalid Numo::Type");
+    }
+  }
+
+  Numo::NArray & cast(Numo::NType & v) {
+    switch (v.index()) {
+    <%- compile_vars[:numeric_types].size.times do |i| -%>
+    case <%= i %>: return std::get< <%= i %> >(v);
+    <%- end -%>
+    default:
+      throw RuntimeError("invalid Numo::NType");
+    }
+  }
   <%- ['SComplex', 'DComplex', 'Bit'].each do |numo_type| -%>
 
   class <%= numo_type %> : public NArray {
@@ -176,15 +206,15 @@ namespace Numo {
       construct_value(dtype(), v);
     }
 
-    explicit <%= numo_type %>(Rice::Object o) {
+    <%= numo_type %>(Rice::Object o) {
       construct_value(dtype(), o.value());
     }
 
-    explicit <%= numo_type %>(std::initializer_list<size_t> shape) {
+    explicit <%= numo_type %>(std::initializer_list< size_t > shape) {
       construct_shape(dtype(), shape);
     }
 
-    explicit <%= numo_type %>(std::vector<size_t> shape) {
+    explicit <%= numo_type %>(std::vector< size_t > shape) {
       construct_shape(dtype(), shape);
     }
 

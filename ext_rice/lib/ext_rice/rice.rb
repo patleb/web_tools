@@ -64,7 +64,7 @@ module Rice
     yield(dst_path) if block_given?
     create_init_file unless executable?
     unless dry_run
-      $CXXFLAGS += " $(optflags)" # -O3 -ffast-math -fno-associative-math
+      $CXXFLAGS += " $(optflags) -fjump-tables" # -O3 -ffast-math -fno-associative-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
       $CXXFLAGS += " #{cflags}" if cflags
       if ENV['DEBUG']
