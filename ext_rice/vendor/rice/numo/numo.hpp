@@ -56,6 +56,14 @@ namespace Numo {
       throw RuntimeError("not implemented error");
     }
 
+    virtual Numo::Type type_id() const {
+      return Numo::Type::NArray;
+    }
+
+    virtual const char * type_name() const {
+      return "NArray";
+    }
+
     const void * read_ptr() {
       if (!is_contiguous()) {
         this->_value = nary_dup(_value);
@@ -65,14 +73,6 @@ namespace Numo {
 
     void * write_ptr() {
       return nary_get_pointer_for_write(_value);
-    }
-
-    virtual Numo::Type type_id() const {
-      return Numo::Type::NArray;
-    }
-
-    virtual const char * type_name() const {
-      return "NArray";
     }
 
     protected:
@@ -132,20 +132,20 @@ namespace Numo {
     }
   <%- end -%>
 
-    const <%= type %> * read_ptr() {
-      return reinterpret_cast< const <%= type %> * >(NArray::read_ptr());
-    }
-
-    <%= type %> * write_ptr() {
-      return reinterpret_cast< <%= type %> * >(NArray::write_ptr());
-    }
-
     Numo::Type type_id() const override {
       return Numo::Type::<%= numo_type %>;
     }
 
     const char * type_name() const override {
       return "<%= numo_type %>";
+    }
+
+    const <%= type %> * read_ptr() {
+      return reinterpret_cast< const <%= type %> * >(NArray::read_ptr());
+    }
+
+    <%= type %> * write_ptr() {
+      return reinterpret_cast< <%= type %> * >(NArray::write_ptr());
     }
 
     private:
