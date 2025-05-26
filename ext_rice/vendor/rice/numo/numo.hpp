@@ -16,6 +16,10 @@ namespace Numo {
   <%- end -%>
   };
 
+  <%- compile_vars[:numeric_types].each_key do |numo_type| -%>
+  class <%= numo_type %>;
+  <%- end -%>
+
   class NArray {
     public:
 
@@ -26,6 +30,11 @@ namespace Numo {
     NArray(Rice::Object o) {
       construct_value(dtype(), o.value());
     }
+
+    <%- compile_vars[:numeric_types].each_key do |numo_type| -%>
+    explicit operator <%= numo_type %> * () const;
+    explicit operator <%= numo_type %> & () const;
+    <%- end -%>
 
     VALUE value() const {
       return _value;
@@ -154,6 +163,16 @@ namespace Numo {
       return numo_c<%= numo_type %>;
     }
   };
+  <%- end -%>
+  <%- compile_vars[:numeric_types].each_key do |numo_type| -%>
+
+  inline NArray::operator <%= numo_type %> * () const {
+    return dynamic_cast< <%= numo_type %> * >(const_cast< NArray * >(this));
+  }
+
+  inline NArray::operator <%= numo_type %> & () const {
+    return dynamic_cast< <%= numo_type %> & >(*const_cast< NArray * >(this));
+  }
   <%- end -%>
 
   using NType = std::variant< <%= compile_vars[:numeric_types].keys.join(', ') %> >;
