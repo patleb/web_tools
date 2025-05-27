@@ -1,4 +1,8 @@
 module Numo
+  def self.build(type, ...)
+    const_get(type.to_s).new(...)
+  end
+
   NArray.class_eval do
     def self.types
       @@types ||= ExtRice.config.compile_vars[:numo_types].map{ |name| Numo::Type.const_get(name) }
