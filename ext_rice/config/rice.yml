@@ -2,7 +2,7 @@ before_initialize: >
   Numo::init_conversion();
 
 makefile:
-  cflags: -std=c++23 -Wno-format-overflow
+  cflags: -std=c++23 -fjump-tables -Wno-format-overflow
 
 libs:
   - stdc++_libbacktrace
