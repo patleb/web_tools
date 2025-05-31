@@ -13,6 +13,42 @@ namespace GDAL {
       Base(srs_for(proj)) {
     }
 
+    static auto srid_for(const string & proj) {
+      return atoi(proj.c_str());
+    }
+
+    static auto wkt_for(const string & proj) {
+      return wkt_for(srs_for(proj));
+    }
+
+    static auto proj4_for(const string & proj) {
+      return proj4_for(srs_for(proj));
+    }
+
+    static auto axis_mapping_for(const string & proj) {
+      return axis_mapping_for(srs_for(proj));
+    }
+
+    static auto orientation_for(const string & proj) {
+      return orientation_for(srs_for(proj));
+    }
+
+    static auto orientation_names_for(const string & proj) {
+      return orientation_names_for(srs_for(proj));
+    }
+
+    static auto mapping_strategy_for(const string & proj) {
+      return mapping_strategy_for(srs_for(proj));
+    }
+
+    static auto mapping_strategy_name_for(const string & proj) {
+      return mapping_strategy_for(srs_for(proj));
+    }
+
+    static auto directions(string proj = "4326") {
+      return orientation_for(proj);
+    }
+
     auto srid() const {
       return srid_for(srs);
     }
@@ -84,10 +120,6 @@ namespace GDAL {
       return number > 0 ? number : 0;
     }
 
-    static auto srid_for(const string & proj) {
-      return atoi(proj.c_str());
-    }
-
     static string wkt_for(OGRSpatialReference * srs) {
       char * c_str = nullptr;
       finally ensure([&]{
@@ -96,10 +128,6 @@ namespace GDAL {
       if (srs->exportToWkt(&c_str) != OGRERR_NONE) throw RuntimeError("export wkt error");
       string wkt(c_str);
       return wkt;
-    }
-
-    static auto wkt_for(const string & proj) {
-      return wkt_for(srs_for(proj));
     }
 
     static string proj4_for(OGRSpatialReference * srs) {
@@ -112,37 +140,8 @@ namespace GDAL {
       return proj4;
     }
 
-    static auto proj4_for(const string & proj) {
-      return proj4_for(srs_for(proj));
-    }
-
     static vector< int > axis_mapping_for(OGRSpatialReference * srs) {
       return srs->GetDataAxisToSRSAxisMapping();
-    }
-
-    static auto axis_mapping_for(const string & proj) {
-      return axis_mapping_for(srs_for(proj));
-    }
-
-    static vector< string > orientation_names_for(OGRSpatialReference * srs) {
-      OGRAxisOrientation orientation;
-      auto mapping = axis_mapping_for(srs);
-      vector< string > xy(2);
-      for (size_t i = 0; i < 2; ++i) {
-        auto axis = mapping[i] - 1;
-        srs->GetAxis(nullptr, axis, &orientation);
-        switch (orientation) {
-        case OAO_North: xy[i] = "North"; break;
-        case OAO_South: xy[i] = "South"; break;
-        case OAO_East:  xy[i] = "East";  break;
-        case OAO_West:  xy[i] = "West";  break;
-        }
-      }
-      return xy;
-    }
-
-    static auto orientation_names_for(const string & proj) {
-      return orientation_names_for(srs_for(proj));
     }
 
     static vector< double > orientation_for(OGRSpatialReference * srs) {
@@ -168,16 +167,25 @@ namespace GDAL {
       return xy;
     }
 
-    static auto orientation_for(const string & proj) {
-      return orientation_for(srs_for(proj));
+    static vector< string > orientation_names_for(OGRSpatialReference * srs) {
+      OGRAxisOrientation orientation;
+      auto mapping = axis_mapping_for(srs);
+      vector< string > xy(2);
+      for (size_t i = 0; i < 2; ++i) {
+        auto axis = mapping[i] - 1;
+        srs->GetAxis(nullptr, axis, &orientation);
+        switch (orientation) {
+        case OAO_North: xy[i] = "North"; break;
+        case OAO_South: xy[i] = "South"; break;
+        case OAO_East:  xy[i] = "East";  break;
+        case OAO_West:  xy[i] = "West";  break;
+        }
+      }
+      return xy;
     }
 
     static int mapping_strategy_for(OGRSpatialReference * srs) {
       return srs->GetAxisMappingStrategy();
-    }
-
-    static auto mapping_strategy_for(const string & proj) {
-      return mapping_strategy_for(srs_for(proj));
     }
 
     static string mapping_strategy_name_for(OGRSpatialReference * srs) {
@@ -188,10 +196,6 @@ namespace GDAL {
       default:
         throw RuntimeError("unsupported mapping strategy");
       }
-    }
-
-    static auto mapping_strategy_name_for(const string & proj) {
-      return mapping_strategy_for(srs_for(proj));
     }
 
     static void puts_mark() {

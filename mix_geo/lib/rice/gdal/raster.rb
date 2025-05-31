@@ -10,9 +10,23 @@ module GDAL
     end
 
     module self::WithOverrides
-      def initialize(narray, x0, x1, y0, y1, proj: nil, nodata: nil, **proj4)
+      def initialize(narray, *x01_y01, x: nil, y: nil, proj: nil, nodata: nil, **proj4)
         proj = GDAL.proj4text(**proj4) unless proj || proj4.empty?
-        super(narray, narray.type, [x0, x1, y0, y1], proj&.to_s, nodata)
+        if x01_y01.empty?
+          axis = [x, y]
+          Base.directions(proj).each_with_index do |sign, i|
+            axis_i = axis[i]
+            v0, v1 = axis_i[0], axis_i[1]
+            if sign.negative?
+              v0, v1 = axis_i[-1], axis_i[-2] if v0 < v1
+            else
+              v0, v1 = axis_i[-1], axis_i[-2] if v0 > v1
+            end
+            x01_y01[0 + 2*i] = v0
+            x01_y01[1 + 2*i] = v1
+          end
+        end
+        super(narray, narray.type, x01_y01, proj&.to_s, nodata)
       end
 
       def shape
