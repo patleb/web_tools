@@ -77,7 +77,7 @@ namespace NetCDF {
       case <%= nc_type %>: {
         <%= numo_type %> numbers({ count });
         check_status( nc_get_att(file_id, var_id, name.c_str(), numbers.write_ptr()) );
-        return NVectorType(numbers);
+        return NetCDF::NType(numbers);
       }
       <%- end -%>
       case NC_CHAR: {
@@ -85,7 +85,7 @@ namespace NetCDF {
         char text[count + 1];
         text[count]= '\0';
         check_status( nc_get_att_text(file_id, var_id, name.c_str(), text) );
-        return NVectorType(vector< string >{ string(text) });
+        return NetCDF::NType(vector< string >{ string(text) });
       }
       default:
         throw TypeError();

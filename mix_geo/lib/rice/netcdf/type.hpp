@@ -2,7 +2,7 @@ namespace NetCDF {
   using std::string;
   using std::vector;
 
-  using NVectorType = std::variant<
+  using NType = std::variant<
     vector< string >,
     Numo::Int8,
     Numo::Int16,
@@ -38,7 +38,7 @@ namespace NetCDF {
     }
   };
 
-  int type_id(const NVectorType & values) {
+  int type_id(const NetCDF::NType & values) {
     switch (values.index()) {
     case 0:  return NC_CHAR;
     case 1:  return NC_BYTE;

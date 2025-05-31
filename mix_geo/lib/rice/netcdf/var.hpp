@@ -137,12 +137,12 @@ namespace NetCDF {
         if (stride.empty()) {
           <%= numo_type %> values(counts);
           check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.write_ptr()) );
-          return NVectorType(values);
+          return NetCDF::NType(values);
         } else {
           if (stride.size() != dims_count) throw TypeError();
           <%= numo_type %> values(counts);
           check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.write_ptr()) );
-          return NVectorType(values);
+          return NetCDF::NType(values);
         }
       }
       <%- end -%>
@@ -164,7 +164,7 @@ namespace NetCDF {
           data[max_size] = '\0';
           values[i] = string(data);
         }
-        return NVectorType(values);
+        return NetCDF::NType(values);
       }
       default:
         throw TypeError();
@@ -173,7 +173,7 @@ namespace NetCDF {
 
     auto fill_value() const {
       vector< Att > atts = this->atts();
-      std::optional< NVectorType > value;
+      std::optional< NetCDF::NType > value;
       int count = atts.size();
       if (count == 0) return value;
       for (size_t i = 0; i < count; ++i) {
