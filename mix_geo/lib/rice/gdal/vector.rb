@@ -1,8 +1,6 @@
 module GDAL
   Vector.class_eval do
     module self::WithOverrides
-      extend ActiveSupport::Concern
-
       def initialize(x, y, proj: nil, **proj4)
         x = Array.wrap(x)
         y = Array.wrap(y)

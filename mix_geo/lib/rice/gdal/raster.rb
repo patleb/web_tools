@@ -14,7 +14,7 @@ module GDAL
         proj = GDAL.proj4text(**proj4) unless proj || proj4.empty?
         if x01_y01.empty?
           axis = [x, y]
-          Base.directions(proj).each_with_index do |sign, i|
+          self.class.directions(proj).each_with_index do |sign, i|
             axis_i = axis[i]
             v0, v1 = axis_i[0], axis_i[1]
             if sign.negative?
