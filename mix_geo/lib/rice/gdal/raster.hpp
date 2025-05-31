@@ -1,288 +1,255 @@
+#define NO_POINT -1
+
 namespace GDAL {
   class Raster : public Base {
     public:
 
+    struct Transform {
+      Vector mesh;
+      size_t width, height; // always >= to the original grid
+      double x0, y0;
+      double dx, dy;
+      size_t rx, ry; // always >= 1
+
+      auto shape() const {
+        return vector< size_t >{ height, width };
+      }
+
+      auto cache_key(const Raster & raster) const {
+        return raster.cache_key()
+          + std::format(":{}:{}:{}:{}:{}:{}:{}:{}:{}", width, height, x0, y0, dx, dy, rx, ry, reinterpret_cast< std::uintptr_t >(mesh.srs));
+      }
+    };
+
+    Numo::NType values;
+    Numo::NArray & data; // stored as [y, x]
+    double nodata = C::Nil;
+    size_t width;
+    size_t height;
+    double x0 = C::NaN;
+    double y0 = C::NaN;
+    double dx = C::NaN;
+    double dy = C::NaN;
+
     using Base::Base;
 
-    Raster(Numo::NArray grid, Numo::Type type_id, vector < double > x01_y01, string proj = "4326", std::optional< double > nodata = std::nullopt):
-      Base(proj) {
-      auto shape = grid.shape();
-      auto orientation = this->orientation();
-      if (shape.size() != 2)   throw RuntimeError("invalid grid dimensions");
-      int width = shape[0];
-      int height = shape[1];
+    Raster(Numo::NArray z, Numo::Type type_id, vector < double > x01_y01, string proj = "4326", double nodata = C::Nil):
+      Base(proj),
+      values(Numo::cast(z, type_id)),
+      data(Numo::cast(this->values)),
+      nodata(nodata) {
+      auto shape = z.shape();
+      if (shape.size() != 2)   throw RuntimeError("invalid z dimensions");
+      this->width = shape[1];
+      this->height = shape[0];
       if (width < 2)           throw RuntimeError("invalid x axis size");
       if (height < 2)          throw RuntimeError("invalid y axis size");
       if (x01_y01.size() != 4) throw RuntimeError("invalid x01_y01 size");
-      if (orientation[0] > 0 && x01_y01[0] > x01_y01[1]) throw RuntimeError("invalid x axis orientation");
-      if (orientation[1] > 0 && x01_y01[2] > x01_y01[3]) throw RuntimeError("invalid y axis orientation");
-      auto geo = geo_transform_from_bounds(width, height, x0n_y0n(width, height, x01_y01));
-      dataset = create_dataset(width, height, gdal_type(type_id));
-      dataset->SetGeoTransform(geo.data());
-      dataset->SetProjection(wkt().c_str());
-      write_dataset(dataset, const_cast< void * >(grid.read_ptr()));
-      if (nodata != std::nullopt) {
-        dataset->GetRasterBand(1)->SetNoDataValue(nodata.value());
-      }
+      this->x0 = x01_y01[0];      this->y0 = x01_y01[2];
+      this->dx = x01_y01[1] - x0; this->dy = x01_y01[3] - y0;
+      if (dx == 0 || dy == 0)  throw RuntimeError("invalid x01_y01 delta");
+      auto orientation = this->orientation();
+      if (orientation[0] * std::abs(dx) != dx) throw RuntimeError("invalid x axis orientation");
+      if (orientation[1] * std::abs(dy) != dy) throw RuntimeError("invalid y axis orientation");
     }
 
-    Raster(const Raster & raster):
-      Base(raster.srs),
-      dataset(copy_dataset(raster.dataset)) {
+    auto shape() {
+      return data.shape();
     }
 
-    ~Raster() {
-      GDALClose(dataset);
-    }
-
-    auto type() const {
-      return static_cast< DataType >(dataset->GetRasterBand(1)->GetRasterDataType());
-    }
-
-    auto width() const {
-      return static_cast< size_t >(dataset->GetRasterXSize());
-    }
-
-    auto height() const {
-      return static_cast< size_t >(dataset->GetRasterYSize());
-    }
-
-    auto shape() const {
-      return vector< size_t >{ width(), height() };
-    }
-
-    auto x0() const {
-      return geo_transform()[0];
-    }
-
-    auto y0() const {
-      return geo_transform()[3];
-    }
-
-    auto dx() const {
-      return geo_transform()[1];
-    }
-
-    auto dy() const {
-      return geo_transform()[5];
+    auto type() {
+      return data.type_id();
     }
 
     auto x() const {
-      auto width = this->width();
-      auto x0 = this->x0();
-      auto dx = this->dx();
       vector< double > x(width);
-      for (size_t i = 0; i < width; ++i, x0 += dx) {
-        x[i] = x0;
-      }
+      double xi = x0;
+      for (size_t i = 0; i < width; ++i, xi += dx) x[i] = xi;
       return x;
     }
 
     auto y() const {
-      auto height = this->height();
-      auto y0 = this->y0();
-      auto dy = this->dy();
       vector<double> y(height);
-      for (size_t j = 0; j < height; ++j, y0 += dy) {
-        y[j] = y0;
-      }
+      double yi = y0;
+      for (size_t i = 0; i < height; ++i, yi += dy) y[i] = yi;
       return y;
     }
 
-    auto x01_y01() const {
-      auto geo = geo_transform();
-      auto x0 = geo[0], dx = geo[1], y0 = geo[3], dy = geo[5];
-      return vector< double >{ x0, x0 + dx, y0, y0 + dy };
+    auto z() const {
+      return values;
     }
 
-    vector< double > bounds() const {
-      return x0n_y0n(width(), height(), x01_y01());
-    }
-
-    auto nodata() const {
-      int has_nodata;
-      std::optional< double > nodata = dataset->GetRasterBand(1)->GetNoDataValue(&has_nodata);
-      return has_nodata ? nodata : std::nullopt;
-    }
-
-    auto to_narray() const {
+    auto reproject(string proj, double nodata = C::Nil, bool compact = false, bool memoize = false) {
+      nodata = (nodata == C::Nil) ? this->nodata : nodata;
+      auto tf = transform_for(proj, compact, memoize);
+      auto nearest = nearest_for(tf, memoize);
+      auto & width = tf.width, & height = tf.height;
+      auto & x0 = tf.x0,       & y0 = tf.y0;
+      auto & dx = tf.dx,       & dy = tf.dy;
+      auto dst_values = Numo::build(type(), { height, width });
+      auto & dst_data = Numo::cast(dst_values);
       switch (type()) {
-      <%- %i(Int8 Int16 Int32 Int64 SFloat DFloat UInt8 UInt16 UInt32 UInt64).each do |type| -%>
-      case DataType::<%= type %>: {
-        auto grid = Numo::<%= type %>({ width(), height() });
-        read_dataset(dataset, grid.write_ptr());
-        return Numo::NType(grid);
+      <%- compile_vars[:numeric_types].each do |numo_type, type| -%>
+      case Numo::Type::<%= numo_type %>: {
+        auto src_z = reinterpret_cast< const <%= type %> * >(data.read_ptr());
+        auto dst_z = reinterpret_cast< <%= type %> * >(dst_data.write_ptr());
+        double yj = y0;
+        for (size_t j = 0; j < height; ++j) {
+          double xi = x0;
+          for (size_t i = 0; i < width; ++i, ++dst_z) {
+            auto point = nearest[j][i];
+            if (point == NO_POINT) {
+              *dst_z = nodata;
+            } else {
+              <%= type %> value = src_z[point];
+              *dst_z = (value == this->nodata) ? nodata : value;
+            }
+          }
+        }
+        break;
       }
       <%- end -%>
       default:
-        throw RuntimeError("unknown type");
+        throw RuntimeError("invalid Numo::Type");
       }
+      return Raster(dst_data, type(), { x0, x0 + dx, y0, y0 + dy }, proj, nodata);
     }
 
-    auto reproject(string proj, std::optional< double > nodata = std::nullopt, double fill_ratio = 1.0, AlgoType algo = AlgoType::Nearest) const {
-      void * transformer;
-      auto band = dataset->GetRasterBand(1);
-      auto type = band->GetRasterDataType();
-      string dst_wkt = wkt_for(proj);
-      string src_wkt = this->wkt();
-      if (src_wkt == dst_wkt) {
-        return Raster(*this);
+    Transform transform_for(const string & proj, bool compact = false, bool memoize = false) const {
+      if (memoize) return cached_transform_for(proj, compact);
+      size_t total = width * height;
+      Transform tf;
+      auto grid = Vector(vector< double >(total), vector< double >(total), srs);
+      auto & x = grid.lon, & y = grid.lat;
+      size_t point = 0;
+      double xi, yj = y0;
+      for (size_t j = 0; j < height; ++j, yj += dy) {
+        xi = x0;
+        for (size_t i = 0; i < width; ++i, ++point, xi += dx) {
+          x[point] = xi;
+          y[point] = yj;
+        }
       }
-      int width = this->width(), height = this->height();
-      if (fill_ratio != 1.0) {
-        width = ceil(width * fill_ratio), height = ceil(height * fill_ratio);
+      tf.mesh = grid.reproject(proj);
+      auto & dst_x = tf.mesh.lon, & dst_y = tf.mesh.lat;
+      double  x_min = C::Inf,  x_max = -C::Inf,  y_min = C::Inf,  y_max = -C::Inf;
+      double dx_min = C::Inf, dx_max = -C::Inf, dy_min = C::Inf, dy_max = -C::Inf;
+      double x_prev; vector< double > y_prev(width);
+      double dxi, dyj;
+      point = 0;
+      for (size_t j = 0; j < height; ++j) {
+        for (size_t i = 0; i < width; ++i, ++point) {
+          xi = dst_x[point]; yj = dst_y[point];
+          if (xi < x_min) x_min = xi; if (xi > x_max) x_max = xi;
+          if (yj < y_min) y_min = yj; if (yj > y_max) y_max = yj;
+          if (i > 0) {
+            dxi = std::abs(xi - x_prev);
+            if (dxi < dx_min) dx_min = dxi; if (dxi > dx_max) dx_max = dxi;
+          }
+          if (j > 0) {
+            dyj = std::abs(yj - y_prev[i]);
+            if (dyj < dy_min) dy_min = dyj; if (dyj > dy_max) dy_max = dyj;
+          }
+          x_prev = xi; y_prev[i] = yj;
+        }
       }
-      auto src_bounds = bounds();
-      auto dst_bounds = Vector::transform_bounds(src_bounds, src_wkt, dst_wkt);
-      auto src_geo = geo_transform();
-      auto dst_geo = geo_transform_from_bounds(width, height, dst_bounds);
-      int has_nodata;
-      auto src_nodata = band->GetNoDataValue(&has_nodata);
-      GDALDataset * dst_dataset = create_dataset(width, height, type);
-      dst_dataset->SetGeoTransform(dst_geo.data());
-      dst_dataset->SetProjection(dst_wkt.c_str());
-      if (has_nodata) {
-        dst_dataset->GetRasterBand(1)->SetNoDataValue(nodata != std::nullopt ? nodata.value() : src_nodata);
+      if (compact) {
+        tf.width  = width;
+        tf.height = height;
+        dx_min = (x_max - x_min) / (width - 1);
+        dy_min = (y_max - y_min) / (height - 1);
+      } else {
+        // NOTE std::floor --> a bigger width would mean a smaller dx_min and rx could become too small
+        tf.width  = std::floor((x_max - x_min) / dx_min) + 1;
+        tf.height = std::floor((y_max - y_min) / dy_min) + 1;
+        if (tf.width < width || tf.height < height) throw RuntimeError("resolution error");
       }
-      transformer = GDALCreateGenImgProjTransformer3(src_wkt.c_str(), src_geo.data(), dst_wkt.c_str(), dst_geo.data());
-      auto warp_options = GDALCreateWarpOptions();
-      finally ensure([&]{
-        GDALDestroyTransformer(transformer);
-        GDALDestroyWarpOptions(warp_options);
-      });
-      warp_options->hSrcDS = dataset;
-      warp_options->hDstDS = dst_dataset;
-      warp_options->nBandCount = 1;
-      warp_options->panSrcBands = (int *)CPLMalloc(sizeof(int));
-      warp_options->panDstBands = (int *)CPLMalloc(sizeof(int));
-      warp_options->panSrcBands[0] = 1;
-      warp_options->panDstBands[0] = 1;
-      warp_options->eResampleAlg = static_cast< GDALResampleAlg >(algo);
-      warp_options->pfnTransformer = GDALGenImgProjTransform;
-      warp_options->pTransformerArg = transformer;
-      if (has_nodata) {
-        warp_options->padfSrcNoDataReal = (double *)CPLMalloc(sizeof(double));
-        warp_options->padfDstNoDataReal = (double *)CPLMalloc(sizeof(double));
-        warp_options->padfSrcNoDataReal[0] = src_nodata;
-        warp_options->padfDstNoDataReal[0] = nodata != std::nullopt ? nodata.value() : src_nodata;
-        warp_options->papszWarpOptions = CSLSetNameValue(warp_options->papszWarpOptions, "INIT_DEST", "NO_DATA");
-      }
-      GDALWarpOperation warp;
-      warp.Initialize(warp_options);
-      if (warp.ChunkAndWarpImage(0, 0, width, height) != CE_None) {
-        throw RuntimeError("can't reproject");
-      }
-      return Raster(dst_dataset, proj);
+      tf.rx = std::ceil(dx_max / dx_min);
+      tf.ry = std::ceil(dy_max / dy_min);
+      auto orientation = orientation_for(proj);
+      if (orientation[0] < 0) { auto tmp = x_min; x_min = x_max; x_max = tmp; }
+      if (orientation[1] < 0) { auto tmp = y_min; y_min = y_max; y_max = tmp; }
+      tf.x0 = x_min; tf.y0 = y_min;
+      tf.dx = (x_max - x_min) / (tf.width - 1);
+      tf.dy = (y_max - y_min) / (tf.height - 1);
+      return tf;
     }
 
-    protected:
-
-    GDALDataset * create_dataset(int width, int height, GDALDataType type) const {
-      GDALDriver * driver = GetGDALDriverManager()->GetDriverByName("MEM");
-      if (!driver) {
-        throw RuntimeError("MEM driver not available.");
-      }
-      GDALDataset * dataset = driver->Create("", width, height, 1, type, nullptr);
-      if (!dataset) {
-        throw RuntimeError("Failed to create memory dataset.");
-      }
-      return dataset;
-    }
-
-    void read_dataset(GDALDataset * dataset, void * data, bool free_dataset = false, bool free_data = false) const {
-      GDALRasterBand * band = dataset->GetRasterBand(1);
-      int width = dataset->GetRasterXSize();
-      int height = dataset->GetRasterYSize();
-      if (band->RasterIO(GF_Read, 0, 0, width, height, data, width, height, band->GetRasterDataType(), 0, 0) != CE_None) {
-        if (free_dataset) GDALClose(dataset);
-        if (free_data) CPLFree(data);
-        throw RuntimeError("Failed to read data.");
-      }
-    }
-
-    void write_dataset(GDALDataset * dataset, void * data, bool free_dataset = false, bool free_data = false) const {
-      GDALRasterBand * band = dataset->GetRasterBand(1);
-      int width = dataset->GetRasterXSize();
-      int height = dataset->GetRasterYSize();
-      if (band->RasterIO(GF_Write, 0, 0, width, height, data, width, height, band->GetRasterDataType(), 0, 0) != CE_None) {
-        if (free_dataset) GDALClose(dataset);
-        if (free_data) CPLFree(data);
-        throw RuntimeError("Failed to write data.");
-      }
-    }
-
-    GDALDataset * copy_dataset(GDALDataset * dataset) const {
-      GDALRasterBand * band = dataset->GetRasterBand(1);
-      GDALDataType type = band->GetRasterDataType();
-      int width = dataset->GetRasterXSize();
-      int height = dataset->GetRasterYSize();
-      auto geo = geo_transform(dataset);
-      void * buffer = CPLMalloc(GDALGetDataTypeSizeBytes(type) * width * height);
-      GDALDataset * dst_dataset = create_dataset(width, height, type);
-      dst_dataset->SetGeoTransform(geo.data());
-      dst_dataset->SetProjection(dataset->GetProjectionRef());
-      int has_nodata;
-      auto nodata = band->GetNoDataValue(&has_nodata);
-      if (has_nodata) {
-        dst_dataset->GetRasterBand(1)->SetNoDataValue(nodata);
-      }
-      read_dataset(dataset, buffer, false, true);
-      write_dataset(dst_dataset, buffer, true, true);
-      CPLFree(buffer);
-      return dst_dataset;
-    }
-
-    vector< double > geo_transform() const {
-      return geo_transform(dataset);
-    }
-
-    vector< double > geo_transform(GDALDataset * dataset) const {
-      vector< double > geo(6);
-      if (dataset->GetGeoTransform(geo.data()) != CE_None) {
-        throw RuntimeError("Failed to get geo transform.");
-      }
-      return geo;
-    }
-
-    vector< double > geo_transform_from_bounds(int width, int height, const vector< double > & x0n_y0n) const {
-      vector< double > geo(6);
-      auto x0 = x0n_y0n[0], xn = x0n_y0n[1], y0 = x0n_y0n[2], yn = x0n_y0n[3];
-      GDAL_GCP * gcps = (GDAL_GCP *)CPLMalloc(2 * sizeof(GDAL_GCP));
-      finally ensure([&]{
-        CPLFree(gcps);
-      });
-      gcps[0].pszId = CPLStrdup("UL"); gcps[1].pszId = CPLStrdup("UR"); gcps[2].pszId = CPLStrdup("LR"); gcps[3].pszId = CPLStrdup("LL");
-      gcps[0].pszInfo = CPLStrdup(""); gcps[1].pszInfo = CPLStrdup(""); gcps[2].pszInfo = CPLStrdup(""); gcps[3].pszInfo = CPLStrdup("");
-      gcps[0].dfGCPPixel = 0;
-      gcps[1].dfGCPPixel = width - 1;
-      gcps[2].dfGCPPixel = width - 1;
-      gcps[3].dfGCPPixel = 0;
-      gcps[0].dfGCPLine = 0;
-      gcps[1].dfGCPLine = 0;
-      gcps[2].dfGCPLine = height - 1;
-      gcps[3].dfGCPLine = height - 1;
-      gcps[0].dfGCPX = x0;  gcps[1].dfGCPX = xn;  gcps[2].dfGCPX = xn;  gcps[3].dfGCPX = x0;
-      gcps[0].dfGCPY = y0;  gcps[1].dfGCPY = y0;  gcps[2].dfGCPY = yn;  gcps[3].dfGCPY = yn;
-      gcps[0].dfGCPZ = 0.0; gcps[1].dfGCPZ = 0.0; gcps[2].dfGCPZ = 0.0; gcps[3].dfGCPZ = 0.0;
-      if (!CPL_TO_BOOL(GDALGCPsToGeoTransform(4, gcps, geo.data(), 0))) {
-        throw RuntimeError("Could not get geotransform set from gcps.");
-      }
-      return geo;
-    }
-
-    vector< double > x0n_y0n(int width, int height, const vector< double > & x01_y01) const {
-      auto x0 = x01_y01[0]; auto dx = (x01_y01[1] - x0);
-      auto y0 = x01_y01[2]; auto dy = (x01_y01[3] - y0);
-      return vector< double >{ x0, x0 + (width - 1) * dx, y0, y0 + (height - 1) * dy };
+    string cache_key() const {
+      return std::format("{}:{}:{}:{}:{}:{}:{}", width, height, x0, y0, dx, dy, reinterpret_cast< std::uintptr_t >(srs));
     }
 
     private:
 
-    Raster(GDALDataset * dataset, const string & proj):
-      Base(proj),
-      dataset(dataset) {
+    auto cache_key_for(const string & proj, bool compact) const {
+      return cache_key() + std::format(":{}:{}", reinterpret_cast< std::uintptr_t >(srs_for(proj)), compact);
     }
 
-    GDALDataset * dataset = nullptr;
+    Transform cached_transform_for(const string & proj, bool compact = false) const {
+      static std::unordered_map< string, Transform > cache;
+      string key = cache_key_for(proj, compact);
+      if (!cache.contains(key)) cache[key] = transform_for(proj, compact);
+      return cache[key];
+    }
+
+    vector< vector< ssize_t >> nearest_for(const Transform & tf, bool memoize = false) const {
+      if (memoize) return cached_nearest_for(tf);
+      auto & width = tf.width, & height = tf.height;
+      auto & x  = tf.mesh.lon, & y  = tf.mesh.lat;
+      auto & x0 = tf.x0,       & y0 = tf.y0;
+      auto & dx = tf.dx,       & dy = tf.dy;
+      auto & rx = tf.rx,       & ry = tf.ry;
+      auto max_rx = std::abs(rx * dx);
+      auto max_ry = std::abs(ry * dy);
+      auto & total = tf.mesh.size;
+      vector< vector< std::unordered_set< size_t >>> mesh_points(height);
+      size_t i, j;
+      for (i = 0; i < height; ++i) mesh_points[i] = vector< std::unordered_set< size_t >>(width);
+      for (size_t point = 0; point < total; ++point) {
+        j = std::round((y[point] - y0) / dy);
+        i = std::round((x[point] - x0) / dx);
+        mesh_points[j][i].insert(point);
+      }
+      size_t box_i, box_j;
+      vector< vector< ssize_t >> nearest(height);
+      for (i = 0; i < height; ++i) nearest[i] = vector< ssize_t >(width);
+      double yj = y0;
+      for (j = 0; j < height; ++j) {
+        double xi = x0;
+        for (i = 0; i < width; ++i) {
+          std::unordered_set< size_t > points;
+          for (box_j = j - ry; box_j <= j + ry; ++box_j) {
+            if (box_j < 0 || box_j >= height) continue;
+            for (box_i = i - rx; box_i <= i + rx; ++box_i) {
+              if (box_i < 0 || box_i >= width) continue;
+              points.merge(mesh_points[box_j][box_i]);
+            }
+          }
+          std::map< double, std::set< size_t >> distances;
+          double dist_x, dist_y, dist;
+          for (auto & point : points) {
+            if ((dist_x = std::abs(x[point] - xi)) > max_rx) continue;
+            if ((dist_y = std::abs(y[point] - yj)) > max_ry) continue;
+            dist = dist_x * dist_x + dist_y * dist_y;
+            distances[dist].insert(point);
+          }
+          if (distances.empty()) {
+            nearest[j][i] = NO_POINT;
+          } else {
+            nearest[j][i] = *(distances.begin()->second.begin());
+          }
+          xi += dx;
+        }
+        yj += dy;
+      }
+      return nearest;
+    }
+
+    vector< vector< ssize_t >> & cached_nearest_for(const Transform & tf) const {
+      static std::unordered_map< string, vector< vector< ssize_t >>> cache;
+      string key = tf.cache_key(*this);
+      if (!cache.contains(key)) cache[key] = nearest_for(tf);
+      return cache[key];
+    }
   };
 }

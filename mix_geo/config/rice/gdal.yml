@@ -1,13 +1,18 @@
+makefile:
+  libs: <%= `gdal-config --libs` %>
+  cflags: <%= `gdal-config --cflags` %>
+
 after_include: >
   using namespace GDAL;
 
 before_initialize: >
   GDALAllRegister();
 
-module GDAL:
-  enum DataType | GDAL::DataType: [Unknown, Int8, Int16, Int32, Int64, SFloat, DFloat, UInt8, UInt16, UInt32, UInt64]
-  enum AlgoType | GDAL::AlgoType: [Nearest, Bilinear, Cubic, Spline, Lanczos, Average, Mode, Max, Min, Median, Q1, Q3, Sum, RMS]
+module PROJ:
+  def:
+    self.version:
 
+module GDAL:
   def:
     self.version:
 
@@ -16,40 +21,42 @@ module GDAL:
       srid:
       wkt:
       proj4:
+      orientation | orientation_names:
 
   class Vector < GDAL::Base:
-    def:
-      self.transform_bounds: [x0n_y0n, src_proj, dst_proj, density = (size_t)21]
+    attr_reader: [size]
 
+    def:
       initialize | GDAL::Vector.COPY:
         - [vector< double >, x]
         - [vector< double >, y]
         - [string, proj = (string)"4326"]
-      size:
       x:
       y:
-      transform:
+      points:
+      reproject:
 
   class Raster < GDAL::Base:
+    class Transform | GDAL::Raster::Transform:
+      attr_reader: [mesh, width, height, x0, y0, dx, dy, rx, ry]
+
+      def:
+        shape:
+        cache_key:
+
+    attr_reader: [nodata, width, height, x0, y0, dx, dy]
+
     def:
       initialize | GDAL::Raster.COPY:
-        - [Numo::NArray, grid]
+        - [Numo::NArray, z]
         - [Numo::Type, type_id]
         - [vector< double >, x01_y01]
         - [string, proj = (string)"4326"]
-        - [std::optional< double >, nodata = std::nullopt]
-      type:
-      width:
-      height:
+        - [double, nodata = C::Nil]
       shape:
-      x0:
-      y0:
-      dx:
-      dy:
+      type:
       x:
       y:
-      x01_y01:
-      bounds:
-      nodata:
-      to_narray:
-      reproject: [proj, nodata = std::nullopt, fill_ratio = (double)1.0, algo = AlgoType::Nearest]
+      z:
+      reproject: [proj, nodata = C::Nil, compact = false, memoize = false]
+      transform_for:

@@ -1,3 +1,10 @@
+makefile:
+  libs: <%= `nc-config --libs` %>
+  cflags: <%= `nc-config --cflags` %>
+
+include:
+  - netcdf.h
+
 after_include: >
   using namespace NetCDF;
 

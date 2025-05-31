@@ -1,8 +1,17 @@
-# TODO redirect stderr to string and catch PROJ errors
 module GDAL
   Raster.class_eval do
+    self::Transform.class_eval do
+      module self::WithOverrides
+        def shape
+          super.to_a
+        end
+      end
+      prepend self::WithOverrides
+    end
+
     module self::WithOverrides
-      def initialize(narray, x0, x1, y0, y1, proj: nil, nodata: nil)
+      def initialize(narray, x0, x1, y0, y1, proj: nil, nodata: nil, **proj4)
+        proj = GDAL.proj4text(**proj4) unless proj || proj4.empty?
         super(narray, narray.type, [x0, x1, y0, y1], proj&.to_s, nodata)
       end
 
@@ -10,18 +19,92 @@ module GDAL
         super.to_a
       end
 
-      def x01_y01
+      def x
         super.to_a
       end
 
-      def bounds
+      def y
         super.to_a
       end
 
-      def reproject(proj, nodata: nil, fill_ratio: nil, algo: nil)
-        super(proj.to_s, nodata, fill_ratio, algo)
+      def reproject(proj = nil, nodata: nil, compact: false, memoize: false, **proj4)
+        proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
+        super(proj, nodata, compact, memoize)
       end
     end
     prepend self::WithOverrides
+
+    def _reproject_(proj = nil, nodata: C::NIL, compact: false, memoize: false, **proj4)
+      proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
+      nodata = (nodata == C::NIL) ? self.nodata : nodata
+      tf = transform_for(proj, compact, memoize)
+      nearest = _nearest_for_(tf, memoize)
+      width, height, x0, y0, dx, dy = tf.width, tf.height, tf.x0, tf.y0, tf.dx, tf.dy
+      src_data = z
+      dst_data = Numo.build(type, height, width, fill_value: nodata)
+      height.times do |j|
+        width.times do |i|
+          if (point = nearest[j][i])
+            value = src_data[point]
+            dst_data[j, i] = (value == self.nodata) ? nodata : value
+          else
+            dst_data[j, i] = nodata
+          end
+        end
+      end
+      self.class.new(dst_data, x0, x0 + dx, y0, y0 + dy, proj: proj, nodata: nodata)
+    end
+
+    private :transform_for
+
+    private
+
+    def _nearest_for_(tf, memoize = false)
+      return _cached_nearest_for_(tf) if memoize
+      mesh, width, height, x0, y0, dx, dy, rx, ry = tf.mesh.to_a, tf.width, tf.height, tf.x0, tf.y0, tf.dx, tf.dy, tf.rx, tf.ry
+      mesh_points = Array.new(height){ Array.new(width){ Set.new } }
+      mesh.each_with_index do |(x, y), point|
+        j = ((y - y0) / dy).round
+        i = ((x - x0) / dx).round
+        mesh_points[j][i] << point
+      end
+      nearest = Array.new(height){ Array.new(width) }
+      max_rx, max_ry = (rx * dx).abs, (ry * dy).abs
+      yj = y0
+      height.times do |j|
+        xi = x0
+        width.times do |i|
+          points = Set.new
+          (j - ry).upto(j + ry) do |box_j|
+            next if box_j  < 0 || box_j >= height
+            (i - rx).upto(i + rx) do |box_i|
+              next if box_i < 0 || box_i >= width
+              points.merge(mesh_points[box_j][box_i])
+            end
+          end
+          distances = points.select_map do |point|
+            x, y = mesh[point]
+            next if (dist_x = (x - xi).abs) > max_rx
+            next if (dist_y = (y - yj).abs) > max_ry
+            dist = dist_x * dist_x + dist_y * dist_y
+            [dist, point]
+          end
+          distances.sort!
+          _distance, point = distances.first
+          nearest[j][i] = point
+          xi += dx
+        end
+        yj += dy
+      end
+      nearest
+    end
+
+    def _cached_nearest_for_(tf)
+      key = tf.cache_key(self)
+      unless (nearest = (@@nearest_cache ||= {})[key])
+        nearest = (@@nearest_cache[key] = _nearest_for_(tf))
+      end
+      nearest
+    end
   end
 end

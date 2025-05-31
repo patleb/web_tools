@@ -1,6 +1,13 @@
 namespace GDAL {
+  using std::string;
+  using std::vector;
+
   class Base {
     public:
+
+    OGRSpatialReference * srs = nullptr;
+
+    Base() = default;
 
     explicit Base(const string & proj):
       Base(srs_for(proj)) {
@@ -18,41 +25,35 @@ namespace GDAL {
       return proj4_for(srs);
     }
 
-    protected:
-
-    OGRSpatialReference * srs = nullptr;
-
-    explicit Base(OGRSpatialReference * srs):
-      srs(srs) {
+    auto axis_mapping() const {
+      return axis_mapping_for(srs);
     }
 
     auto orientation() const {
       return orientation_for(srs);
     }
 
-    static vector< double > orientation_for(OGRSpatialReference * srs) {
-      OGRAxisOrientation orientation;
-      vector< double > x_y(2);
-      for (size_t i = 0; i < 2; ++i) {
-        srs->GetAxis(nullptr, i, &orientation);
-        switch (orientation) {
-        case OAO_North: x_y[i] = -1.0; break; // 1
-        case OAO_South: x_y[i] =  1.0; break; // 2
-        case OAO_East:  x_y[i] =  1.0; break; // 3
-        case OAO_West:  x_y[i] = -1.0; break; // 4
-        default:
-          // OAO_Other = 0
-          // OAO_Up    = 5 --> Up (to space)
-          // OAO_Down  = 6 --> Down (to Earth center)
-          throw RuntimeError("unsupported axis");
-        }
-      }
-      return x_y;
+    auto orientation_names() const {
+      return orientation_names_for(srs);
+    }
+
+    auto mapping_strategy() const {
+      return mapping_strategy_for(srs);
+    }
+
+    auto mapping_strategy_name() const {
+      return mapping_strategy_name_for(srs);
+    }
+
+    protected:
+
+    explicit Base(OGRSpatialReference * srs):
+      srs(srs) {
     }
 
     static OGRSpatialReference * srs_for(string proj) {
-      static std::unordered_map< string, OGRSpatialReference * > srs_cache;
-      if (srs_cache.contains(proj)) return srs_cache[proj];
+      static std::unordered_map< string, OGRSpatialReference * > cache;
+      if (cache.contains(proj)) return cache[proj];
       OGRErr e;
       const char * c_str = proj.c_str();
       auto srs = new OGRSpatialReference;
@@ -69,7 +70,7 @@ namespace GDAL {
         throw RuntimeError("invalid proj");
       }
       srs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-      srs_cache[proj] = srs;
+      cache[proj] = srs;
       return srs;
     }
 
@@ -113,6 +114,84 @@ namespace GDAL {
 
     static auto proj4_for(const string & proj) {
       return proj4_for(srs_for(proj));
+    }
+
+    static vector< int > axis_mapping_for(OGRSpatialReference * srs) {
+      return srs->GetDataAxisToSRSAxisMapping();
+    }
+
+    static auto axis_mapping_for(const string & proj) {
+      return axis_mapping_for(srs_for(proj));
+    }
+
+    static vector< string > orientation_names_for(OGRSpatialReference * srs) {
+      OGRAxisOrientation orientation;
+      auto mapping = axis_mapping_for(srs);
+      vector< string > xy(2);
+      for (size_t i = 0; i < 2; ++i) {
+        auto axis = mapping[i] - 1;
+        srs->GetAxis(nullptr, axis, &orientation);
+        switch (orientation) {
+        case OAO_North: xy[i] = "North"; break;
+        case OAO_South: xy[i] = "South"; break;
+        case OAO_East:  xy[i] = "East";  break;
+        case OAO_West:  xy[i] = "West";  break;
+        }
+      }
+      return xy;
+    }
+
+    static auto orientation_names_for(const string & proj) {
+      return orientation_names_for(srs_for(proj));
+    }
+
+    static vector< double > orientation_for(OGRSpatialReference * srs) {
+      OGRAxisOrientation orientation;
+      auto mapping = axis_mapping_for(srs);
+      if (mapping.size() != 2) throw RuntimeError("srs mapping.size() != 2");
+      vector< double > xy(2);
+      for (size_t i = 0; i < 2; ++i) {
+        auto axis = mapping[i] - 1;
+        srs->GetAxis(nullptr, axis, &orientation);
+        switch (orientation) {
+        case OAO_North: xy[i] = -1.0; break; // 1
+        case OAO_South: xy[i] =  1.0; break; // 2
+        case OAO_East:  xy[i] =  1.0; break; // 3
+        case OAO_West:  xy[i] = -1.0; break; // 4
+        default:
+          // OAO_Other = 0
+          // OAO_Up    = 5 --> Up (to space)
+          // OAO_Down  = 6 --> Down (to Earth center)
+          throw RuntimeError("unsupported axis");
+        }
+      }
+      return xy;
+    }
+
+    static auto orientation_for(const string & proj) {
+      return orientation_for(srs_for(proj));
+    }
+
+    static int mapping_strategy_for(OGRSpatialReference * srs) {
+      return srs->GetAxisMappingStrategy();
+    }
+
+    static auto mapping_strategy_for(const string & proj) {
+      return mapping_strategy_for(srs_for(proj));
+    }
+
+    static string mapping_strategy_name_for(OGRSpatialReference * srs) {
+      switch (mapping_strategy_for(srs)) {
+      case OAMS_TRADITIONAL_GIS_ORDER: return "TRADITIONAL_GIS_ORDER";
+      case OAMS_AUTHORITY_COMPLIANT:   return "AUTHORITY_COMPLIANT";
+      case OAMS_CUSTOM:                return "CUSTOM";
+      default:
+        throw RuntimeError("unsupported mapping strategy");
+      }
+    }
+
+    static auto mapping_strategy_name_for(const string & proj) {
+      return mapping_strategy_for(srs_for(proj));
     }
 
     static void puts_mark() {

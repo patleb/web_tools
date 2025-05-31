@@ -5,6 +5,10 @@ module GDAL
         return if (srid = super) == 0
         srid
       end
+
+      def orientation
+        super.to_a
+      end
     end
     prepend self::WithNillableSRID
   end
