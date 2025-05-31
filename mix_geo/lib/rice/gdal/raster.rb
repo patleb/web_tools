@@ -69,7 +69,7 @@ module GDAL
         mesh_points[j][i] << point
       end
       nearest = Array.new(height){ Array.new(width) }
-      max_rx, max_ry = (rx * dx).abs, (ry * dy).abs
+      max_rx, max_ry = (dx * rx).abs, (dy * ry).abs
       yj = y0
       height.times do |j|
         xi = x0

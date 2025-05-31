@@ -5,11 +5,11 @@ namespace GDAL {
     public:
 
     struct Transform {
-      Vector mesh;
-      size_t width, height; // always >= to the original grid
-      double x0, y0;
-      double dx, dy;
-      size_t rx, ry; // always >= 1
+      Vector  mesh;
+      size_t  width, height; // always >= to the original grid
+      double  x0, y0;
+      double  dx, dy;
+      ssize_t rx, ry; // always >= 1
 
       auto shape() const {
         return vector< size_t >{ height, width };
@@ -199,18 +199,18 @@ namespace GDAL {
       auto & x0 = tf.x0,       & y0 = tf.y0;
       auto & dx = tf.dx,       & dy = tf.dy;
       auto & rx = tf.rx,       & ry = tf.ry;
-      auto max_rx = std::abs(rx * dx);
-      auto max_ry = std::abs(ry * dy);
+      auto max_rx = std::abs(dx * rx);
+      auto max_ry = std::abs(dy * ry);
       auto & total = tf.mesh.size;
       vector< vector< std::unordered_set< size_t >>> mesh_points(height);
-      size_t i, j;
+      ssize_t i, j;
       for (i = 0; i < height; ++i) mesh_points[i] = vector< std::unordered_set< size_t >>(width);
       for (size_t point = 0; point < total; ++point) {
         j = std::round((y[point] - y0) / dy);
         i = std::round((x[point] - x0) / dx);
         mesh_points[j][i].insert(point);
       }
-      size_t box_i, box_j;
+      ssize_t box_i, box_j;
       vector< vector< ssize_t >> nearest(height);
       for (i = 0; i < height; ++i) nearest[i] = vector< ssize_t >(width);
       double yj = y0;
@@ -222,7 +222,8 @@ namespace GDAL {
             if (box_j < 0 || box_j >= height) continue;
             for (box_i = i - rx; box_i <= i + rx; ++box_i) {
               if (box_i < 0 || box_i >= width) continue;
-              points.merge(mesh_points[box_j][box_i]);
+              auto & box_points = mesh_points[box_j][box_i];
+              points.insert(box_points.begin(), box_points.end());
             }
           }
           std::map< double, std::set< size_t >> distances;
