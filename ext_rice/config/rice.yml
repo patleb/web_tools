@@ -13,6 +13,13 @@ include:
   - filesystem
   - source_location
   - stacktrace
+  - unordered_set
+  - unordered_map
+
+module C:
+  NIL: C::Nil
+  NAN: C::NaN
+  INF: C::Inf
 
 module Numo:
   enum Type | Numo::Type: [<%= compile_vars[:numo_types].join(', ') %>]

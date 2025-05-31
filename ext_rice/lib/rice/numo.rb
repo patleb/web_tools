@@ -1,6 +1,7 @@
 module Numo
-  def self.build(type, ...)
-    const_get(type.to_s).new(...)
+  def self.build(type, *shape, fill_value: nil)
+    narray = const_get(type.to_s).new(*shape)
+    fill_value ? narray.fill(fill_value) : narray
   end
 
   NArray.class_eval do
