@@ -93,9 +93,7 @@ namespace GDAL {
       case Numo::Type::<%= numo_type %>: {
         auto src_z = reinterpret_cast< const <%= type %> * >(data.read_ptr());
         auto dst_z = reinterpret_cast< <%= type %> * >(dst_data.write_ptr());
-        double yj = y0;
         for (size_t j = 0; j < height; ++j) {
-          double xi = x0;
           for (size_t i = 0; i < width; ++i, ++dst_z) {
             auto point = nearest[j][i];
             if (point == NO_POINT) {
@@ -214,9 +212,9 @@ namespace GDAL {
       vector< vector< ssize_t >> nearest(height);
       for (i = 0; i < height; ++i) nearest[i] = vector< ssize_t >(width);
       double yj = y0;
-      for (j = 0; j < height; ++j) {
+      for (j = 0; j < height; ++j, yj += dy) {
         double xi = x0;
-        for (i = 0; i < width; ++i) {
+        for (i = 0; i < width; ++i, xi += dx) {
           std::unordered_set< size_t > points;
           for (box_j = j - ry; box_j <= j + ry; ++box_j) {
             if (box_j < 0 || box_j >= height) continue;
@@ -239,9 +237,7 @@ namespace GDAL {
           } else {
             nearest[j][i] = *(distances.begin()->second.begin());
           }
-          xi += dx;
         }
-        yj += dy;
       }
       return nearest;
     }

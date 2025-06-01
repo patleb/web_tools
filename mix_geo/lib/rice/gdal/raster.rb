@@ -12,20 +12,7 @@ module GDAL
     module self::WithOverrides
       def initialize(narray, *x01_y01, x: nil, y: nil, proj: nil, nodata: nil, **proj4)
         proj = GDAL.proj4text(**proj4) unless proj || proj4.empty?
-        if x01_y01.empty?
-          axis = [x, y]
-          self.class.directions(proj).each_with_index do |sign, i|
-            axis_i = axis[i]
-            v0, v1 = axis_i[0], axis_i[1]
-            if sign.negative?
-              v0, v1 = axis_i[-1], axis_i[-2] if v0 < v1
-            else
-              v0, v1 = axis_i[-1], axis_i[-2] if v0 > v1
-            end
-            x01_y01[0 + 2*i] = v0
-            x01_y01[1 + 2*i] = v1
-          end
-        end
+        x01_y01 = self.class.x01_y01(x, y, proj) if x01_y01.empty?
         super(narray, narray.type, x01_y01, proj&.to_s, nodata)
       end
 
@@ -47,6 +34,26 @@ module GDAL
       end
     end
     prepend self::WithOverrides
+
+    def self.x01_y01(x, y, proj)
+      x01_y01, axis = [], [x, y]
+      directions(proj).each_with_index do |sign, i|
+        axis_i = axis[i]
+        v0, v1 = axis_i[0], axis_i[1]
+        if sign.negative?
+          v0, v1 = axis_i[-1], axis_i[-2] if v0 < v1
+        else
+          v0, v1 = axis_i[-1], axis_i[-2] if v0 > v1
+        end
+        x01_y01[0 + 2*i] = v0
+        x01_y01[1 + 2*i] = v1
+      end
+      x01_y01
+    end
+
+    def x01_y01
+      [x0, x0 + dx, y0, y0 + dy]
+    end
 
     def _reproject_(proj = nil, nodata: C::NIL, compact: false, memoize: false, **proj4)
       proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
