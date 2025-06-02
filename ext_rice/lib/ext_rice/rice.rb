@@ -426,7 +426,7 @@ module Rice
   def self.wrap_arg(arg)
     name, action = arg.split('.')
     if (action = MEMORY_ACTIONS[action])
-      name == 'return' ? "Return.#{action}" : name.sub(/^([a-zA-Z]\w*)( = )?/, %{Arg("\\1").#{action}\\2})
+      name == 'return' ? "Return().#{action}" : name.sub(/^([a-zA-Z]\w*)( = )?/, %{Arg("\\1").#{action}\\2})
     else
       arg.sub(/^([a-zA-Z]\w*)( = )?/, 'Arg("\1")\2')
     end
