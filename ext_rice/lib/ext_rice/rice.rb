@@ -375,8 +375,9 @@ module Rice
   end
 
   def self.build_using_alias(name_alias)
+    name_alias = name_alias.full_underscore.gsub(/\W/, '_')
     (@using_i ||= {})[name_alias] ||= 0
-    "rb_#{name_alias.full_underscore}_#{@using_i[name_alias] += 1}"
+    "rb_#{name_alias}_#{@using_i[name_alias] += 1}"
   end
 
   def self.extract_full_scope_alias(parent_var, scope_name)
