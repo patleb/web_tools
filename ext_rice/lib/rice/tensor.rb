@@ -23,6 +23,18 @@ module Tensor
           super(indexes, value)
         end
 
+        def reshape(*shape)
+          shape = shape.first if shape.first.is_a? Array
+          shape = self.shape.select_map.with_index do |all, i|
+            case (count = shape[i])
+            when false then next
+            when true  then all
+            else count
+            end
+          end
+          super
+        end
+
         def seq(start = 0)
           super
         end

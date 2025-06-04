@@ -83,7 +83,7 @@ module NetCDF
 
     def [](*ranges)
       raise InvalidRanges if ranges.size > (dims_count = (sizes = shape).size)
-      start, count, slice = ranges.each_with_object([[], [], []]).with_index do |(range, (start, count, slice)), i|
+      start, count, shape = ranges.each_with_object([[], [], []]).with_index do |(range, (start, count, shape)), i|
         case range
         when Range
           start << (at = range.begin)
@@ -91,23 +91,23 @@ module NetCDF
             size = sizes[i] - at
           end
           count << size
-          slice << true
+          shape << true
         when true
           start << 0
           count << sizes[i]
-          slice << true
+          shape << true
         else
           start << range
           count << 1
-          slice << 0
+          shape << false
         end
       end
       if (rest_count = (dims_count - (partial_count = start.size))) > 0
         start.concat(Array.new(rest_count, 0))
         count.concat(sizes.to_a[partial_count..])
-        slice.concat(Array.new(rest_count, true))
+        shape.concat(Array.new(rest_count, true))
       end
-      read(start: start, count: count)[*slice]
+      read(start: start, count: count).reshape(shape)
     end
 
     def read_att(name)
