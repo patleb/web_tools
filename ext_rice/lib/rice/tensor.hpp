@@ -21,6 +21,7 @@ namespace Tensor {
     size_t rank;
     void * nodata = nullptr;
     void * data = nullptr;
+    Tensor::Type type = Tensor::Type::Base;
 
     explicit Base(const Vsize_t & shape):
       shape(shape),
@@ -34,7 +35,7 @@ namespace Tensor {
     explicit operator <%= tensor_type %> & () const;
     <%- end -%>
 
-    auto dims() {
+    auto _shape_() {
       return shape;
     }
 
@@ -50,10 +51,6 @@ namespace Tensor {
 
     virtual size_t type_size() const {
       throw RuntimeError("not implemented error");
-    }
-
-    virtual Tensor::Type type_id() const {
-      return Tensor::Type::Base;
     }
 
     virtual const char * type_name() const {
@@ -111,7 +108,7 @@ namespace Tensor {
       Base::Base(shape),
       fill_value(fill_value.value_or(static_cast< <%= type %> >(C::Nil))),
       array(this->fill_value, this->size) {
-      update_base_pointers();
+      update_base();
     }
 
     explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape, std::optional< <%= type %> > fill_value = std::nullopt):
@@ -119,7 +116,13 @@ namespace Tensor {
       fill_value(fill_value.value_or(static_cast< <%= type %> >(C::Nil))),
       array(values.data(), values.size()) {
       if (values.size() != size) throw RuntimeError("values.size[" S(values.size()) "] != shape.total[" S(size) "]");
-      update_base_pointers();
+      update_base();
+    }
+
+    bool operator==(const Tensor::Base & tensor) const {
+      if (type != tensor.type) return false;
+      if (shape != tensor.shape) return false;
+      return std::equal(&array[0], &array[size - 1], reinterpret_cast< const <%= type %> * >(tensor.data));
     }
 
     auto & operator[](size_t i) {
@@ -193,12 +196,12 @@ namespace Tensor {
       }
     }
 
-    size_t type_size() const override {
-      return sizeof(<%= type %>);
+    static auto from_sql(const std::string & values) {
+      // TODO
     }
 
-    Tensor::Type type_id() const override {
-      return Tensor::Type::<%= tensor_type %>;
+    size_t type_size() const override {
+      return sizeof(<%= type %>);
     }
 
     const char * type_name() const override {
@@ -211,12 +214,13 @@ namespace Tensor {
       Base::Base(shape),
       fill_value(fill_value),
       array(array) {
-      update_base_pointers();
+      update_base();
     }
 
-    void update_base_pointers() {
-      this->nodata = reinterpret_cast< void * >(&this->fill_value);
-      this->data = reinterpret_cast< void * >(&this->array[0]);
+    void update_base() {
+      this->nodata = reinterpret_cast< void * >(&fill_value);
+      this->data = reinterpret_cast< void * >(&array[0]);
+      this->type = Tensor::Type::<%= tensor_type %>;
     }
   };
   <%- end -%>

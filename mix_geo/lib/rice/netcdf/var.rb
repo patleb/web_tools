@@ -25,7 +25,7 @@ module NetCDF
 
       def write_att(name, values)
         @atts = nil
-        if values.is_a? Numo::NArray
+        if values.is_a? Tensor::Base
           super(name.to_s, values.class.name.demodulize, values)
         else
           write_att_s(name.to_s, values.to_s)
@@ -33,8 +33,8 @@ module NetCDF
       end
 
       def write(values, start: nil, stride: nil)
-        if values.is_a? Numo::NArray
-          raise "not Numo::#{type}" if values.class.name.demodulize != type.to_s
+        if values.is_a? Tensor::Base
+          raise "not Tensor::#{type}" if values.class.name.demodulize != type.to_s
           super(values, Array.wrap(start), Array.wrap(stride))
         else
           write_s(Array(values).map(&:to_s), start || 0, stride || 1)
@@ -60,10 +60,10 @@ module NetCDF
 
       def set_fill_value(value, _type: nil)
         @atts = nil
-        if value.is_a? Numo::NArray
-          raise "not Numo::#{type}" if value.class.name.demodulize != type.to_s
+        if value.is_a? Tensor::Base
+          raise "not Tensor::#{type}" if value.class.name.demodulize != type.to_s
         elsif _type
-          value = Numo.const_get(_type)[value]
+          value = Tensor.const_get(_type)[value]
         end
         super(value)
       end

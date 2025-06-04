@@ -25,21 +25,21 @@ class NetCDFTest < Rice::TestCase
       assert t.size == 0
 
       f.write_att :srid,    4326
-      f.write_att :year,    Numo::Int16[2000]
-      f.write_att :sizes,   Numo::UInt64[20, 30.9]
-      f.write_att 'center', Numo::DFloat[50.7, -120.8]
+      f.write_att :year,    Tensor::Int16[2000]
+      f.write_att :sizes,   Tensor::UInt64[20, 30.9]
+      f.write_att 'center', Tensor::DFloat[50.7, -120.8]
 
       n = f.create_var :none, :UInt8, [:n, :y, :x]
       f.create_var :event, NetCDF::Type::SFloat, [:team_i, :t], fill_value: Float::NAN
       f.create_var :heat,  NetCDF::Type::SFloat, [:y, :x]
       f.create_var :team, 'String', ['team_i', 'team_name']
       f.create_var :time, 'UInt64', [:t]
-      f.create_var 'lon', :DFloat, :x, fill_value: Numo::DFloat[Float::INFINITY]
+      f.create_var 'lon', :DFloat, :x, fill_value: Tensor::DFloat[Float::INFINITY]
       f.create_var 'lat', :DFloat, :y, fill_value: -Float::INFINITY
       assert_equal 0, n.shape.reduce(&:*)
 
       f.write_att :event, :type, 'results'
-      f.write_att :team,  :groups, Numo::UInt8[10, 23]
+      f.write_att :team,  :groups, Tensor::UInt8[10, 23]
 
       assert_equal [0, 2, 4, 0, 3, 6], f.dims.values.map(&:size)
       assert_equal [4, 1, 2, 2], f.atts.values.map(&:size)
@@ -68,10 +68,10 @@ class NetCDFTest < Rice::TestCase
       assert f.fill_value(:lat).negative?
     end.closed?)
 
-    e1 = Numo::SFloat.new(1, 3).seq
-    e2 = Numo::SFloat.new(2, 3).seq
-    h1 = Numo::SFloat.ones(3, 1)
-    h2 = Numo::SFloat.ones(2, 1)
+    e1 = Tensor::SFloat.new(1, 3).seq
+    e2 = Tensor::SFloat.new(2, 3).seq
+    h1 = Tensor::SFloat.new(3, 1, fill_value: 1.0)
+    h2 = Tensor::SFloat.new(2, 1, fill_value: 1.0)
 
     assert(NetCDF::File.open(path, 'a') do |f|
       refute f.closed?
@@ -82,9 +82,9 @@ class NetCDFTest < Rice::TestCase
       f.write :heat,  h2, start: [1, 1], stride: [2, 1]
       f.write :team,  'first'
       f.write :team,  ['2nd'], start: 2
-      f.write :time,  Numo::UInt64[0...10]
-      f.write :lon,   Numo::DFloat[10.0]
-      f.write :lat,   Numo::DFloat[-100]
+      f.write :time,  Tensor::UInt64[0...10]
+      f.write :lon,   Tensor::DFloat[10.0]
+      f.write :lat,   Tensor::DFloat[-100]
     end.closed?)
 
     assert(NetCDF::File.open(path) do |f|
@@ -93,7 +93,7 @@ class NetCDFTest < Rice::TestCase
       assert_equal 0,  f.vars[:none].shape.reduce(&:*)
       assert_equal e1, f.read(:event, start: [0, 7], count: e1.shape)
       assert_equal e2, f.read(:event, start: [1, 2], count: e2.shape, stride: [1, 2])
-      h = Numo::SFloat.ones(f.vars[:heat].shape.to_a)
+      h = Tensor::SFloat.new(f.vars[:heat].shape.to_a, fill_value: 1.0)
       h[0, 1] = NetCDF::FILL_FLOAT
       h[2, 1] = NetCDF::FILL_FLOAT
       h[3, 0] = NetCDF::FILL_FLOAT

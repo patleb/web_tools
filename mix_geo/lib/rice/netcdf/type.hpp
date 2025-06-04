@@ -38,7 +38,6 @@ namespace NetCDF {
   auto type(int id) {
     switch (id) {
     <%- compile_vars[:netcdf].each do |tensor_type, nc_type| -%>
-    if (name == "<%= tensor_type %>") return ;
     case <%= nc_type %>: return Type::<%= tensor_type %>;
     <%- end -%>
     case NC_CHAR: return Type::String;

@@ -55,8 +55,8 @@ module NetCDF
         @vars = nil
         case type
         when Class
-          type = type.name.demodulize if type <= Numo::NArray
-        when Numo::NArray
+          type = type.name.demodulize if type <= Tensor::Base
+        when Tensor::Base
           type = type.class.name.demodulize
         else
           type = type.to_s
@@ -74,7 +74,7 @@ module NetCDF
           return var(name).write_att(att_or_values, values)
         end
         @atts = nil
-        if (values = att_or_values).is_a? Numo::NArray
+        if (values = att_or_values).is_a? Tensor::Base
           super(name.to_s, values.class.name.demodulize, values)
         else
           write_att_s(name.to_s, values.to_s)

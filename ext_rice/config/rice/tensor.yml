@@ -8,11 +8,10 @@ module Tensor:
   enum Type | Tensor::Type: [<%= compile_vars[:numeric_types].keys.join(', ') %>]
 
   class Base | Tensor::Base:
-    attr_reader: [size, rank]
+    attr_reader: [size, rank, type]
 
     def:
-      dims:
-      type_id:
+      shape | _shape_:
 
   <% compile_vars[:numeric_types].each do |tensor_type, type| %>
   class <%= tensor_type %> < Tensor::Base:
@@ -22,6 +21,7 @@ module Tensor:
       initialize | Tensor::<%= tensor_type %>.COPY:
         - { [ *shape, *fill_value_<%= type %> ] }
         - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }
+      "== | operator==":
       "[] | operator[]":
         - { const <%= type %> & const: [const Vsize_t & indexes] }
       "[]=": >
