@@ -5,6 +5,25 @@ module Tensor
 
   ExtRice.config.compile_vars[:numeric_types].each_key do |name|
     const_get(name).class_eval do
+      module self::WithOverrides
+        def initialize(*values, **)
+          super(values, **)
+        end
+
+        def [](*indexes)
+          super(indexes)
+        end
+
+        def []=(*indexes, value)
+          super(indexes, value)
+        end
+
+        def sequence(start = 0)
+          super
+        end
+      end
+      prepend self::WithOverrides
+
       def type
         Tensor.types[type_id]
       end

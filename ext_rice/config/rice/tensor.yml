@@ -37,7 +37,7 @@ module Tensor:
           return self;
         }
       sequence: >
-        [](Tensor::<%= tensor_type %> & self) -> Tensor::<%= tensor_type %> & {
+        [](Tensor::<%= tensor_type %> & self, <%= type %> start) -> Tensor::<%= tensor_type %> & {
           self.sequence();
           return self;
         }
