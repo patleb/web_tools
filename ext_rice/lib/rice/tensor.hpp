@@ -101,22 +101,59 @@ namespace Tensor {
   class <%= tensor_type %> : public Base {
     public:
 
-    <%= type %> fill_value;
+    <%= type %> fill_value = C::Nil;
     std::valarray< <%= type %> > array;
 
     explicit <%= tensor_type %>(const Vsize_t & shape, std::optional< <%= type %> > fill_value = std::nullopt):
       Base::Base(shape),
-      fill_value(fill_value.value_or(static_cast< <%= type %> >(C::Nil))),
+      fill_value(fill_value.value_or(C::Nil)),
       array(this->fill_value, this->size) {
       update_base();
     }
 
     explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape, std::optional< <%= type %> > fill_value = std::nullopt):
       Base::Base(shape),
-      fill_value(fill_value.value_or(static_cast< <%= type %> >(C::Nil))),
+      fill_value(fill_value.value_or(C::Nil)),
       array(values.data(), values.size()) {
       if (values.size() != size) throw RuntimeError("values.size[" S(values.size()) "] != shape.total[" S(size) "]");
       update_base();
+    }
+
+    static auto from_sql(const std::string & values) {
+      // TODO
+    }
+
+    auto to_sql() {
+      auto data = reinterpret_cast< <%= type %> * >(this->data);
+      size_t dim_i = 0, dim_j;
+      size_t dim_n = rank - 1;
+      size_t counts[rank];
+      std::memcpy(counts, shape.data(), rank * sizeof(size_t));
+      std::stringstream sql;
+      while (true) {
+        while (true) {
+          sql << '{';
+          if (dim_i == dim_n) break;
+          ++dim_i;
+        }
+        while (true) {
+          sql << std::format("{}", *data++);
+          if (--counts[dim_i] == 0) break;
+          sql << ',';
+        }
+        while (true) {
+          sql << '}';
+          if (dim_i == 0) {
+            return std::string(sql.str().c_str());
+          }
+          if (--counts[dim_i - 1] != 0) {
+            for (dim_j = dim_i; dim_j <= dim_n; ++dim_j) counts[dim_j] = shape[dim_j];
+            sql << ',';
+            break;
+          }
+          --dim_i;
+        }
+      }
     }
 
     bool operator==(const Tensor::Base & tensor) const {
@@ -161,43 +198,6 @@ namespace Tensor {
     auto & seq(<%= type %> start = 0) {
       std::iota(std::begin(array), std::end(array), start);
       return *this;
-    }
-
-    auto to_sql() {
-      auto data = reinterpret_cast< <%= type %> * >(this->data);
-      size_t dim_i = 0, dim_j;
-      size_t dim_n = rank - 1;
-      size_t counts[rank];
-      std::memcpy(counts, shape.data(), rank * sizeof(size_t));
-      std::stringstream sql;
-      while (true) {
-        while (true) {
-          sql << '{';
-          if (dim_i == dim_n) break;
-          ++dim_i;
-        }
-        while (true) {
-          sql << std::format("{}", *data++);
-          if (--counts[dim_i] == 0) break;
-          sql << ',';
-        }
-        while (true) {
-          sql << '}';
-          if (dim_i == 0) {
-            return std::string(sql.str().c_str());
-          }
-          if (--counts[dim_i - 1] != 0) {
-            for (dim_j = dim_i; dim_j <= dim_n; ++dim_j) counts[dim_j] = shape[dim_j];
-            sql << ',';
-            break;
-          }
-          --dim_i;
-        }
-      }
-    }
-
-    static auto from_sql(const std::string & values) {
-      // TODO
     }
 
     size_t type_size() const override {

@@ -21,6 +21,7 @@ module Tensor:
       initialize | Tensor::<%= tensor_type %>.COPY:
         - { [ *shape, *fill_value_<%= type %> ] }
         - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }
+      to_sql:
       "== | operator==":
       "[] | operator[]":
         - { const <%= type %> & const: [const Vsize_t & indexes] }
@@ -41,5 +42,4 @@ module Tensor:
           self.seq();
           return self;
         }
-      to_sql:
   <% end %>
