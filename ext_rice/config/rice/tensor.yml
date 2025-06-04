@@ -1,3 +1,9 @@
+aliases:
+  - &shape [const Vsize_t &, shape]
+  <%- compile_vars[:numeric_types].each_value do |type| -%>
+  - &fill_value_<%= type %> [std::optional< <%= type %> >, fill_value = std::nullopt]
+  <%- end -%>
+
 module Tensor:
   enum Type | Tensor::Type: [<%= compile_vars[:numeric_types].keys.join(', ') %>]
 
@@ -15,11 +21,15 @@ module Tensor:
 
     def:
       initialize | Tensor::<%= tensor_type %>.COPY:
-        - { [ [const Vsize_t &, shape], &fill_value [std::optional< <%= type %> >, fill_value = std::nullopt] ] }
-        - { [ [const V<%= type %> &, values], [const Vsize_t &, 'shape = Vsize_t{}'], *fill_value ] }
+        - { [ *shape, *fill_value_<%= type %> ] }
+        - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }
       "[] | operator[]":
-        - { const <%= type %> & const: [size_t] }
-        - { const <%= type %> & const: [const Vsize_t &] }
+        - { const <%= type %> & const: [const Vsize_t & indexes] }
+      "[]=": >
+        [](Tensor::<%= tensor_type %> & self, const Vsize_t & indexes, const <%= type %> & value) -> const <%= type %> & {
+          self[indexes] = value;
+          return value;
+        }
       values:
       slice:
       sequence: >

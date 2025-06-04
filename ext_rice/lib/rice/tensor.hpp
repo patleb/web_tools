@@ -113,8 +113,8 @@ namespace Tensor {
       update_base_pointers();
     }
 
-    explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape = {}, std::optional< <%= type %> > fill_value = std::nullopt):
-      Base::Base(shape.empty() ? Vsize_t{ values.size() } : shape),
+    explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape, std::optional< <%= type %> > fill_value = std::nullopt):
+      Base::Base(shape),
       fill_value(fill_value.value_or(static_cast< <%= type %> >(C::Nil))),
       array(values.data(), values.size()) {
       if (values.size() != size) throw RuntimeError("values.size[" S(values.size()) "] != shape.total[" S(size) "]");
@@ -146,7 +146,7 @@ namespace Tensor {
       auto counts = counts_or_ones(count);
       auto strides = counts_or_ones(stride);
       std::valarray< <%= type %> > view = array[std::gslice(offset, counts, strides)];
-      return <%= tensor_type %>(Vsize_t(std::begin(counts), std::end(counts)), fill_value, view);
+      return <%= tensor_type %>(view, Vsize_t(std::begin(counts), std::end(counts)), fill_value);
     }
 
     auto & sequence(<%= type %> start = 0) {
@@ -201,7 +201,7 @@ namespace Tensor {
 
     private:
 
-    <%= tensor_type %>(const Vsize_t & shape, <%= type %> fill_value, const std::valarray< <%= type %> > & array):
+    <%= tensor_type %>(const std::valarray< <%= type %> > & array, const Vsize_t & shape, <%= type %> fill_value):
       Base::Base(shape),
       fill_value(fill_value),
       array(array) {

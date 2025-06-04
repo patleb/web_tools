@@ -83,7 +83,7 @@ module Rice
     end
 
     def gem_config(path)
-      defs = (YAML.safe_load(ERB.template(path, binding), aliases: true) || {}).to_hwia
+      defs = (YAML.safe_load(ERB.template(path, binding, trim_mode: '-'), aliases: true)&.except('aliases') || {}).to_hwia
       hooks = extract_strings! defs, HOOKS
       configs = extract_configs! defs
       makefile = extract_strings! defs.delete(:makefile), MAKEFILE
@@ -172,7 +172,7 @@ module Rice
 
     def yml
       @yml ||= if yml?
-        YAML.safe_load(ERB.template(yml_path, binding), aliases: true).to_hwia
+        YAML.safe_load(ERB.template(yml_path, binding, trim_mode: '-'), aliases: true)&.except('aliases').to_hwia
       else
         {}
       end
