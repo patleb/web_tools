@@ -86,12 +86,12 @@ namespace Tensor {
       auto rank = shape.size();
       if (rank == 0) throw RuntimeError("at least one dimension must be defined");
       Vsize_t offsets(rank, 1);
-      for (size_t i = 1; i < rank; ++i) {
-        auto & size = shape[i - 1];
+      for (ssize_t i = rank - 2; i >= 0; --i) {
+        auto & size = shape[i + 1];
         if (size == 0) throw RuntimeError("dimension [" S(i) "] is empty");
-        offsets[i] = offsets[i - 1] * size;
+        offsets[i] = offsets[i + 1] * size;
       }
-      if (shape.back() == 0) throw RuntimeError("last dimension is empty");
+      if (shape.front() == 0) throw RuntimeError("first dimension is empty");
       return offsets;
     }
 
