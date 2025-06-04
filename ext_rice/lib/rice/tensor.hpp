@@ -155,7 +155,7 @@ namespace Tensor {
       return *this;
     }
 
-    auto & sequence(<%= type %> start = 0) {
+    auto & seq(<%= type %> start = 0) {
       std::iota(std::begin(array), std::end(array), start);
       return *this;
     }

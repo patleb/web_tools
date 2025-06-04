@@ -36,9 +36,9 @@ module Tensor:
           self.reshape(shape);
           return self;
         }
-      sequence: >
+      seq: >
         [](Tensor::<%= tensor_type %> & self, <%= type %> start) -> Tensor::<%= tensor_type %> & {
-          self.sequence();
+          self.seq();
           return self;
         }
       to_sql:

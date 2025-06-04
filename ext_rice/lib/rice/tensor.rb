@@ -18,11 +18,15 @@ module Tensor
           super(indexes, value)
         end
 
-        def sequence(start = 0)
+        def seq(start = 0)
           super
         end
       end
       prepend self::WithOverrides
+
+      def self.[](*values)
+
+      end
 
       def type
         Tensor.types[type_id]
