@@ -48,9 +48,9 @@ void Init_ext() {
   rb_cRoot_dc_TestAlias.define_method<rb_root_test_alias_value_2>("value=", &Root::TestAlias::value);
   rb_cRoot_dc_TestAlias.define_method("arg_alive", &Root::TestAlias::arg_alive, Arg("arg_name").keepAlive());
   rb_cRoot_dc_TestAlias.define_method("arg_value", &Root::TestAlias::arg_value, Arg("arg_name").setValue());
-  rb_cRoot_dc_TestAlias.define_method("return_alive", &Root::TestAlias::return_alive, Return.keepAlive());
-  rb_cRoot_dc_TestAlias.define_method("return_value", &Root::TestAlias::return_value, Return.setValue());
-  rb_cRoot_dc_TestAlias.define_method("return_owner", &Root::TestAlias::return_owner, Return.takeOwnership());
+  rb_cRoot_dc_TestAlias.define_method("return_alive", &Root::TestAlias::return_alive, Return().keepAlive());
+  rb_cRoot_dc_TestAlias.define_method("return_value", &Root::TestAlias::return_value, Return().setValue());
+  rb_cRoot_dc_TestAlias.define_method("return_owner", &Root::TestAlias::return_owner, Return().takeOwnership());
   rb_cRoot_dc_TestAlias.define_method("lambda", [](Object& self) -> std::vector<int32_t>& {
     return test_hello();
   });
