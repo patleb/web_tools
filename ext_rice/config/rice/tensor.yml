@@ -12,7 +12,6 @@ module Tensor:
 
     def:
       dims:
-      reshape:
       type_id:
 
   <% compile_vars[:numeric_types].each do |tensor_type, type| %>
@@ -32,6 +31,11 @@ module Tensor:
         }
       values:
       slice:
+      reshape: >
+        [](Tensor::<%= tensor_type %> & self, const Vsize_t & shape) -> Tensor::<%= tensor_type %> & {
+          self.reshape(shape);
+          return self;
+        }
       sequence: >
         [](Tensor::<%= tensor_type %> & self) -> Tensor::<%= tensor_type %> & {
           self.sequence();

@@ -38,13 +38,14 @@ namespace Tensor {
       return shape;
     }
 
-    void reshape(const Vsize_t & shape) {
+    auto & reshape(const Vsize_t & shape) {
       auto total = size_for(shape);
       if (total != size) throw RuntimeError("shape.total[" S(total) "] != size[" S(size) "]");
       this->shape = shape;
       this->offsets = offsets_for(shape);
       this->size = total;
       this->rank = shape.size();
+      return *this;
     }
 
     virtual size_t type_size() const {
@@ -147,6 +148,11 @@ namespace Tensor {
       auto strides = counts_or_ones(stride);
       std::valarray< <%= type %> > view = array[std::gslice(offset, counts, strides)];
       return <%= tensor_type %>(view, Vsize_t(std::begin(counts), std::end(counts)), fill_value);
+    }
+
+    auto & reshape(const Vsize_t & shape) {
+      Base::reshape(shape);
+      return *this;
     }
 
     auto & sequence(<%= type %> start = 0) {
