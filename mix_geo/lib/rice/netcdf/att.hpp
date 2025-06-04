@@ -40,12 +40,12 @@ namespace NetCDF {
       return Att(file_id, var_id, name);
     }
 
-    static auto write(int file_id, int var_id, const string & name, int type_id, Numo::NArray & values, bool scalar = false) {
+    static auto write(int file_id, int var_id, const string & name, int type_id, const Tensor::Base & values, bool scalar = false) {
       if (type_id == NC_CHAR) throw TypeError();
-      if (values.ndim() != 1) throw TypeError();
-      if (scalar && values.size() != 1) throw TypeError();
-      const void * data = values.read_ptr();
-      Base::check_status( nc_put_att(file_id, var_id, name.c_str(), type_id, values.size(), data), file_id, var_id, name );
+      if (values.shape.size() != 1) throw TypeError();
+      if (scalar && values.size != 1) throw TypeError();
+      const void * data = values.data;
+      Base::check_status( nc_put_att(file_id, var_id, name.c_str(), type_id, values.size, data), file_id, var_id, name );
       return Att(file_id, var_id, name);
     }
 
@@ -73,11 +73,11 @@ namespace NetCDF {
     auto read() const {
       size_t count = size();
       switch (type_id()) {
-      <%- compile_vars[:netcdf].each do |numo_type, nc_type| -%>
+      <%- compile_vars[:netcdf].each do |tensor_type, nc_type| -%>
       case <%= nc_type %>: {
-        <%= numo_type %> numbers({ count });
-        check_status( nc_get_att(file_id, var_id, name.c_str(), numbers.write_ptr()) );
-        return NetCDF::NType(numbers);
+        Tensor::<%= tensor_type %> numbers(Vsize_t{ count });
+        check_status( nc_get_att(file_id, var_id, name.c_str(), numbers.data) );
+        return Tensor::NType(numbers);
       }
       <%- end -%>
       case NC_CHAR: {
@@ -85,7 +85,7 @@ namespace NetCDF {
         char text[count + 1];
         text[count]= '\0';
         check_status( nc_get_att_text(file_id, var_id, name.c_str(), text) );
-        return NetCDF::NType(vector< string >{ string(text) });
+        return Tensor::NType(Vstring{ string(text) });
       }
       default:
         throw TypeError();

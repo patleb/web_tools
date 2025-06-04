@@ -28,7 +28,6 @@ module Rice
   }
 
   def self.require_ext
-    require "numo/narray" if require_numo?
     return unless require_ext? && bin_path.exist?
     require bin_path
     require_overrides
@@ -38,17 +37,6 @@ module Rice
     !ENV['NO_EXT']
   end
 
-  def self.require_numo
-    return unless require_numo?
-    require "numo/narray"
-    numo = File.join(Gem.loaded_specs["numo-narray"].require_path, "numo")
-    include_dir numo
-  end
-
-  def self.require_numo?
-    !ENV['NO_NUMO']
-  end
-
   class << self
     delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :test?, :executable?, to: 'ExtRice.config'
   end
@@ -56,7 +44,6 @@ module Rice
   def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false, no_gems: false)
     no_gems! if no_gems
     copy_files
-    require_numo
     include_dir dst_path
     include_dirs, add_libraries, makefile = gems_config.values_at(:include_dir, :libs, :makefile)
     include_dirs.each{ |name| include_dir name }

@@ -2,19 +2,19 @@ namespace GDAL {
   class Vector : public Base {
     public:
 
-    vector< double > lon;
-    vector< double > lat;
+    Vdouble lon;
+    Vdouble lat;
     size_t size;
 
     using Base::Base;
 
     Vector() = default;
 
-    Vector(vector< double > x, vector< double > y, string proj = "4326"):
+    Vector(Vdouble x, Vdouble y, string proj = "4326"):
       Vector(x, y, srs_for(proj)) {
     }
 
-    Vector(const vector< double > & x, const vector< double > & y, OGRSpatialReference * srs):
+    Vector(const Vdouble & x, const Vdouble & y, OGRSpatialReference * srs):
       Base(srs),
       lon(x),
       lat(y),

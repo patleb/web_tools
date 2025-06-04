@@ -30,8 +30,8 @@ module GDAL:
 
     def:
       initialize | GDAL::Vector.COPY:
-        - [vector< double >, x]
-        - [vector< double >, y]
+        - [Vdouble, x]
+        - [Vdouble, y]
         - [string, proj = (string)"4326"]
       x:
       y:
@@ -52,7 +52,7 @@ module GDAL:
       initialize | GDAL::Raster.COPY:
         - [Numo::NArray, z]
         - [Numo::Type, type_id]
-        - [vector< double >, x01_y01]
+        - [Vdouble, x01_y01]
         - [string, proj = (string)"4326"]
         - [double, nodata = C::Nil]
       shape:

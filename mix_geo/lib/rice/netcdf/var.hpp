@@ -83,14 +83,14 @@ namespace NetCDF {
     auto shape() const {
       vector< Dim > dims = this->dims();
       int count = dims.size();
-      vector< size_t > sizes(count);
+      Vsize_t sizes(count);
       for (size_t i = 0; i < count; ++i) {
         sizes[i] = dims[i].size();
       }
       return sizes;
     }
 
-    auto write_att(const string & name, std::string_view type_name, Numo::NArray values) const {
+    auto write_att(const string & name, std::string_view type_name, const Tensor::Base & values) const {
       return Att::write(file_id, id, name, NetCDF::type_id(type_name), values);
     }
 
@@ -98,23 +98,22 @@ namespace NetCDF {
       return Att::write_s(file_id, id, name, text);
     }
 
-    void write(Numo::NArray values, const vector< size_t > & start = {}, const vector< ptrdiff_t > & stride = {}) const {
+    void write(const Tensor::Base & values, const Vsize_t & start = {}, const Vptrdiff_t & stride = {}) const {
       if (type_id() == NC_CHAR) throw TypeError();
       size_t dims_count = this->dims_count();
-      vector< size_t > starts = start.empty() ? vector< size_t >(dims_count, 0) : start;
-      vector< size_t > counts = values.shape();
+      Vsize_t starts = start.empty() ? Vsize_t(dims_count, 0) : start;
+      Vsize_t counts = values.shape;
       if (starts.size() != dims_count) throw TypeError();
       if (counts.size() != dims_count) throw TypeError();
-      const void * data = values.read_ptr();
       if (stride.empty()) {
-        check_status( nc_put_vara(file_id, id, starts.data(), counts.data(), data) );
+        check_status( nc_put_vara(file_id, id, starts.data(), counts.data(), values.data) );
       } else {
         if (stride.size() != dims_count) throw TypeError();
-        check_status( nc_put_vars(file_id, id, starts.data(), counts.data(), stride.data(), data) );
+        check_status( nc_put_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.data) );
       }
     }
 
-    void write_s(const vector< string > & values, size_t start = 0, ptrdiff_t stride = 1) const {
+    void write_s(const Vstring & values, size_t start = 0, ptrdiff_t stride = 1) const {
       size_t count = values.size();
       size_t starts[2] = { 0, 0 };
       size_t counts[2] = { 1, 0 };
@@ -125,24 +124,24 @@ namespace NetCDF {
       }
     }
 
-    auto read(const vector< size_t > & start = {}, const vector< size_t > & count = {}, const vector< ptrdiff_t > & stride = {}) const {
+    auto read(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vptrdiff_t & stride = {}) const {
       switch (type_id()) {
-      <%- compile_vars[:netcdf].each do |numo_type, nc_type| -%>
+      <%- compile_vars[:netcdf].each do |tensor_type, nc_type| -%>
       case <%= nc_type %>: {
         size_t dims_count = this->dims_count();
-        vector< size_t > starts = start.empty() ? vector< size_t >(dims_count, 0) : start;
-        vector< size_t > counts = count.empty() ? vector< size_t >(dims_count, 1) : count;
+        Vsize_t starts = start.empty() ? Vsize_t(dims_count, 0) : start;
+        Vsize_t counts = count.empty() ? Vsize_t(dims_count, 1) : count;
         if (starts.size() != dims_count) throw TypeError();
         if (counts.size() != dims_count) throw TypeError();
         if (stride.empty()) {
-          <%= numo_type %> values(counts);
-          check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.write_ptr()) );
-          return NetCDF::NType(values);
+          Tensor::<%= tensor_type %> values(counts);
+          check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.data) );
+          return Tensor::NType(values);
         } else {
           if (stride.size() != dims_count) throw TypeError();
-          <%= numo_type %> values(counts);
-          check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.write_ptr()) );
-          return NetCDF::NType(values);
+          Tensor::<%= tensor_type %> values(counts);
+          check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.data) );
+          return Tensor::NType(values);
         }
       }
       <%- end -%>
@@ -156,7 +155,7 @@ namespace NetCDF {
         size_t stride_0 = stride.empty() ? 1 : stride[0];
         size_t starts[2] = { 0, 0 };
         size_t counts[2] = { 1, max_size };
-        vector< string > values(count_0);
+        Vstring values(count_0);
         for (size_t i = 0; i < count_0; ++i) {
           char data[max_size + 1];
           starts[0] = start_0 + i * stride_0;
@@ -164,7 +163,7 @@ namespace NetCDF {
           data[max_size] = '\0';
           values[i] = string(data);
         }
-        return NetCDF::NType(values);
+        return Tensor::NType(values);
       }
       default:
         throw TypeError();
@@ -173,7 +172,7 @@ namespace NetCDF {
 
     auto fill_value() const {
       vector< Att > atts = this->atts();
-      std::optional< NetCDF::NType > value;
+      std::optional< Tensor::NType > value;
       int count = atts.size();
       if (count == 0) return value;
       for (size_t i = 0; i < count; ++i) {
@@ -184,7 +183,7 @@ namespace NetCDF {
       return value;
     }
 
-    void set_fill_value(Numo::NArray value) const {
+    void set_fill_value(const Tensor::Base & value) const {
       Att::write(file_id, id, "_FillValue", type_id(), value, true);
     }
 
@@ -224,7 +223,7 @@ namespace NetCDF {
       int settings[3];
       auto & [shuffle, deflate, level] = settings;
       check_status( nc_inq_var_deflate(file_id, id, &shuffle, &deflate, &level) );
-      return vector< int >(settings, settings + 3);
+      return Vint(settings, settings + 3);
     }
 
     // level: 0 to 9
@@ -238,7 +237,7 @@ namespace NetCDF {
       int settings[2];
       auto & [quantize, nsd] = settings;
       check_status( nc_inq_var_quantize(file_id, id, &quantize, &nsd) );
-      return vector< int >(settings, settings + 2);
+      return Vint(settings, settings + 2);
     }
 
     // quantize: 0 to 3 (NC_NOQUANTIZE, NC_QUANTIZE_BITGROOM, NC_QUANTIZE_GRANULARBR, NC_QUANTIZE_BITROUND)
@@ -252,14 +251,14 @@ namespace NetCDF {
       int storage;
       size_t chunk_sizes[count];
       check_status( nc_inq_var_chunking(file_id, id, &storage, chunk_sizes) );
-      vector< size_t > settings(count + 1);
+      Vsize_t settings(count + 1);
       settings[0] = storage;
       for (size_t i = 0; i < count; ++i) settings[i + 1] = chunk_sizes[i];
       return settings;
     }
 
     // storage: 0 to 4 (NC_CHUNKED, NC_CONTIGUOUS, NC_COMPACT, NC_UNKNOWN_STORAGE, NC_VIRTUAL)
-    void set_chunking(int storage, const vector< size_t > & chunk_sizes) const {
+    void set_chunking(int storage, const Vsize_t & chunk_sizes) const {
       check_status( nc_def_var_chunking(file_id, id, storage, chunk_sizes.data()) );
     }
 

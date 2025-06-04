@@ -5,7 +5,7 @@
 class RuntimeError : public std::exception {
   public:
 
-  explicit RuntimeError(std::string_view what_msg, CONTEXT(trace, source)):
+  explicit RuntimeError(std::string_view what_msg = "RuntimeError", CONTEXT(trace, source)):
     what_msg(what_msg),
     trace(trace),
     source(source) {

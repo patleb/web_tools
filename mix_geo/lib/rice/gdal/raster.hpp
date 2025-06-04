@@ -12,7 +12,7 @@ namespace GDAL {
       ssize_t rx, ry; // always >= 1
 
       auto shape() const {
-        return vector< size_t >{ height, width };
+        return Vsize_t{ height, width };
       }
 
       auto cache_key(const Raster & raster) const {
@@ -62,14 +62,14 @@ namespace GDAL {
     }
 
     auto x() const {
-      vector< double > x(width);
+      Vdouble x(width);
       double xi = x0;
       for (size_t i = 0; i < width; ++i, xi += dx) x[i] = xi;
       return x;
     }
 
     auto y() const {
-      vector<double> y(height);
+      Vdouble y(height);
       double yi = y0;
       for (size_t i = 0; i < height; ++i, yi += dy) y[i] = yi;
       return y;
@@ -117,7 +117,7 @@ namespace GDAL {
       if (memoize) return cached_transform_for(proj, compact);
       size_t total = width * height;
       Transform tf;
-      auto grid = Vector(vector< double >(total), vector< double >(total), srs);
+      auto grid = Vector(Vdouble(total), Vdouble(total), srs);
       auto & x = grid.lon, & y = grid.lat;
       size_t point = 0;
       double xi, yj = y0;
@@ -132,7 +132,7 @@ namespace GDAL {
       auto & dst_x = tf.mesh.lon, & dst_y = tf.mesh.lat;
       double  x_min = C::Inf,  x_max = -C::Inf,  y_min = C::Inf,  y_max = -C::Inf;
       double dx_min = C::Inf, dx_max = -C::Inf, dy_min = C::Inf, dy_max = -C::Inf;
-      double x_prev; vector< double > y_prev(width);
+      double x_prev; Vdouble y_prev(width);
       double dxi, dyj;
       point = 0;
       for (size_t j = 0; j < height; ++j) {
@@ -190,7 +190,7 @@ namespace GDAL {
       return cache[key];
     }
 
-    vector< vector< ssize_t >> nearest_for(const Transform & tf, bool memoize = false) const {
+    vector< Vssize_t > nearest_for(const Transform & tf, bool memoize = false) const {
       if (memoize) return cached_nearest_for(tf);
       auto & width = tf.width, & height = tf.height;
       auto & x  = tf.mesh.lon, & y  = tf.mesh.lat;
@@ -209,8 +209,8 @@ namespace GDAL {
         mesh_points[j][i].insert(point);
       }
       ssize_t box_i, box_j;
-      vector< vector< ssize_t >> nearest(height);
-      for (i = 0; i < height; ++i) nearest[i] = vector< ssize_t >(width);
+      vector< Vssize_t > nearest(height);
+      for (i = 0; i < height; ++i) nearest[i] = Vssize_t(width);
       double yj = y0;
       for (j = 0; j < height; ++j, yj += dy) {
         double xi = x0;
@@ -226,7 +226,7 @@ namespace GDAL {
           }
           std::map< double, std::set< size_t >> distances;
           double dist_x, dist_y, dist;
-          for (auto & point : points) {
+          for (auto && point : points) {
             if ((dist_x = std::abs(x[point] - xi)) > max_rx) continue;
             if ((dist_y = std::abs(y[point] - yj)) > max_ry) continue;
             dist = dist_x * dist_x + dist_y * dist_y;
@@ -242,8 +242,8 @@ namespace GDAL {
       return nearest;
     }
 
-    vector< vector< ssize_t >> & cached_nearest_for(const Transform & tf) const {
-      static std::unordered_map< string, vector< vector< ssize_t >>> cache;
+    vector< Vssize_t > & cached_nearest_for(const Transform & tf) const {
+      static std::unordered_map< string, vector< Vssize_t >> cache;
       string key = tf.cache_key(*this);
       if (!cache.contains(key)) cache[key] = nearest_for(tf);
       return cache[key];

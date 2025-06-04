@@ -1,0 +1,31 @@
+module Tensor:
+  enum Type | Tensor::Type: [<%= compile_vars[:numeric_types].keys.join(', ') %>]
+
+  class Base | Tensor::Base:
+    attr_reader: [size, rank]
+
+    def:
+      dims:
+      reshape:
+      type_id:
+
+  <% compile_vars[:numeric_types].each do |tensor_type, type| %>
+  class <%= tensor_type %> < Tensor::Base:
+    attr_reader: [fill_value]
+
+    def:
+      initialize | Tensor::<%= tensor_type %>.COPY:
+        - { [ [const Vsize_t &, shape], &fill_value [std::optional< <%= type %> >, fill_value = std::nullopt] ] }
+        - { [ [const V<%= type %> &, values], [const Vsize_t &, 'shape = Vsize_t{}'], *fill_value ] }
+      "[] | operator[]":
+        - { const <%= type %> & const: [size_t] }
+        - { const <%= type %> & const: [const Vsize_t &] }
+      values:
+      slice:
+      sequence: >
+        [](Tensor::<%= tensor_type %> & self) -> Tensor::<%= tensor_type %> & {
+          self.sequence();
+          return self;
+        }
+      to_sql:
+  <% end %>

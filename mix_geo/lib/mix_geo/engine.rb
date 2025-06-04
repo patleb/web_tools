@@ -18,20 +18,22 @@ module MixGeo
       ExtRails.config.excluded_tables.merge(%w(spatial_ref_sys topology layer)) if Setting[:postgis]
     end
 
-    initializer 'mix_geo.compile_vars' do
+    initializer 'mix_geo.compile_vars', before: 'ext_rice.require_ext' do
       ExtRice.configure do |config|
         config.compile_vars[:netcdf] = {
-          'Numo::Int8'   => 'NC_BYTE',
-          'Numo::Int16'  => 'NC_SHORT',
-          'Numo::Int32'  => 'NC_INT',
-          'Numo::Int64'  => 'NC_INT64',
-          'Numo::SFloat' => 'NC_FLOAT',
-          'Numo::DFloat' => 'NC_DOUBLE',
-          'Numo::UInt8'  => 'NC_UBYTE',
-          'Numo::UInt16' => 'NC_USHORT',
-          'Numo::UInt32' => 'NC_UINT',
-          'Numo::UInt64' => 'NC_UINT64',
+          'Int8'   => 'NC_BYTE',   # 1
+          'Int16'  => 'NC_SHORT',  # 3
+          'Int32'  => 'NC_INT',    # 4
+          'Int64'  => 'NC_INT64',  # 10
+          'SFloat' => 'NC_FLOAT',  # 5
+          'DFloat' => 'NC_DOUBLE', # 6
+          'UInt8'  => 'NC_UBYTE',  # 7
+          'UInt16' => 'NC_USHORT', # 8
+          'UInt32' => 'NC_UINT',   # 9
+          'UInt64' => 'NC_UINT64', # 11
+          # 'String' => NC_CHAR,   # 2
         }
+        raise "types mismatch" if config.compile_vars[:netcdf].keys != config.compile_vars[:numeric_types].keys
       end
     end
 

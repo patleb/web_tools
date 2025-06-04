@@ -1,4 +1,17 @@
 #define DOUBLE_SAFE_INT64 9007199254740991
+#define S(value) + std::to_string((value)) +
+
+typedef long long int64_t2;
+typedef unsigned long long uint64_t2;
+
+using Vstring = std::vector< std::string >;
+using Vint = std::vector< int >;
+using Vsize_t = std::vector< size_t >;
+using Vssize_t = std::vector< ssize_t >;
+using Vptrdiff_t = std::vector< ptrdiff_t >;
+<%- compile_vars[:numeric_types].each_value do |type| -%>
+using V<%= type %> = std::vector< <%= type %> >;
+<%- end -%>
 
 namespace C {
   using std::string;

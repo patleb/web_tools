@@ -1,6 +1,3 @@
-before_initialize: >
-  Numo::init_conversion();
-
 makefile:
   cflags: -std=c++23 -fjump-tables -Wno-format-overflow
 
@@ -15,11 +12,10 @@ include:
   - stacktrace
   - unordered_set
   - unordered_map
+  - numeric
+  - valarray
 
 module C:
   NIL: C::Nil
   NAN: C::NaN
   INF: C::Inf
-
-module Numo:
-  enum Type | Numo::Type: [<%= compile_vars[:numo_types].join(', ') %>]

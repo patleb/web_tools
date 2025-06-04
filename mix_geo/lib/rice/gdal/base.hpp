@@ -140,15 +140,15 @@ namespace GDAL {
       return proj4;
     }
 
-    static vector< int > axis_mapping_for(OGRSpatialReference * srs) {
+    static Vint axis_mapping_for(OGRSpatialReference * srs) {
       return srs->GetDataAxisToSRSAxisMapping();
     }
 
-    static vector< double > orientation_for(OGRSpatialReference * srs) {
+    static Vdouble orientation_for(OGRSpatialReference * srs) {
       OGRAxisOrientation orientation;
       auto mapping = axis_mapping_for(srs);
       if (mapping.size() != 2) throw RuntimeError("srs mapping.size() != 2");
-      vector< double > xy(2);
+      Vdouble xy(2);
       for (size_t i = 0; i < 2; ++i) {
         auto axis = mapping[i] - 1;
         srs->GetAxis(nullptr, axis, &orientation);
@@ -167,10 +167,10 @@ namespace GDAL {
       return xy;
     }
 
-    static vector< string > orientation_names_for(OGRSpatialReference * srs) {
+    static Vstring orientation_names_for(OGRSpatialReference * srs) {
       OGRAxisOrientation orientation;
       auto mapping = axis_mapping_for(srs);
-      vector< string > xy(2);
+      Vstring xy(2);
       for (size_t i = 0; i < 2; ++i) {
         auto axis = mapping[i] - 1;
         srs->GetAxis(nullptr, axis, &orientation);

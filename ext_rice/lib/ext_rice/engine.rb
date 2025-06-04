@@ -8,7 +8,7 @@ module ExtRice
       Rice.require_ext unless Rails.env.test?
     end
 
-    initializer 'ext_rice.compile_vars' do
+    initializer 'ext_rice.compile_vars', before: 'ext_rice.require_ext' do
       ExtRice.configure do |config|
         config.compile_vars[:numeric_types] = {
           'Int8'   => 'int8_t',
@@ -22,23 +22,6 @@ module ExtRice
           'UInt32' => 'uint32_t',
           'UInt64' => 'uint64_t2',
         }
-        config.compile_vars[:numo_types] = %w(
-          NArray
-          SFloat
-          DFloat
-          Int8
-          Int16
-          Int32
-          Int64
-          UInt8
-          UInt16
-          UInt32
-          UInt64
-          RObject
-          SComplex
-          DComplex
-          Bit
-        )
       end
     end
   end
