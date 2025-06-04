@@ -19,6 +19,7 @@ namespace Tensor {
     Vsize_t offsets;
     size_t size;
     size_t rank;
+    void * nodata = nullptr;
     void * data = nullptr;
 
     explicit Base(const Vsize_t & shape):
@@ -109,7 +110,7 @@ namespace Tensor {
       Base::Base(shape),
       fill_value(fill_value.value_or(static_cast< <%= type %> >(C::Nil))),
       array(this->fill_value, this->size) {
-      this->data = reinterpret_cast< void * >(&this->array[0]);
+      update_base_pointers();
     }
 
     explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape = {}, std::optional< <%= type %> > fill_value = std::nullopt):
@@ -117,7 +118,7 @@ namespace Tensor {
       fill_value(fill_value.value_or(static_cast< <%= type %> >(C::Nil))),
       array(values.data(), values.size()) {
       if (values.size() != size) throw RuntimeError("values.size[" S(values.size()) "] != shape.total[" S(size) "]");
-      this->data = reinterpret_cast< void * >(&this->array[0]);
+      update_base_pointers();
     }
 
     auto & operator[](size_t i) {
@@ -204,6 +205,11 @@ namespace Tensor {
       Base::Base(shape),
       fill_value(fill_value),
       array(array) {
+      update_base_pointers();
+    }
+
+    void update_base_pointers() {
+      this->nodata = reinterpret_cast< void * >(&this->fill_value);
       this->data = reinterpret_cast< void * >(&this->array[0]);
     }
   };
