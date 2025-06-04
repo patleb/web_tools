@@ -1,6 +1,4 @@
 module NetCDF
-  class InvalidRanges < ::StandardError; end
-
   Var.class_eval do
     module self::WithOverrides
       def name=(new_name)
@@ -82,31 +80,7 @@ module NetCDF
     end
 
     def [](*ranges)
-      raise InvalidRanges if ranges.size > (dims_count = (sizes = shape).size)
-      start, count, shape = ranges.each_with_object([[], [], []]).with_index do |(range, (start, count, shape)), i|
-        case range
-        when Range
-          start << (at = range.begin)
-          if (size = range.size).infinite?
-            size = sizes[i] - at
-          end
-          count << size
-          shape << true
-        when true
-          start << 0
-          count << sizes[i]
-          shape << true
-        else
-          start << range
-          count << 1
-          shape << false
-        end
-      end
-      if (rest_count = (dims_count - (partial_count = start.size))) > 0
-        start.concat(Array.new(rest_count, 0))
-        count.concat(sizes.to_a[partial_count..])
-        shape.concat(Array.new(rest_count, true))
-      end
+      start, count, shape = Tensor.to_slice_args(self.shape, *ranges)
       read(start: start, count: count).reshape(shape)
     end
 
