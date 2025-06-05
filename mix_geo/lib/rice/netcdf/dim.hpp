@@ -23,9 +23,9 @@ namespace NetCDF {
       return Dim(file_id, id);
     }
 
-    static auto create(int file_id, const string & name, size_t size = NC_UNLIMITED) {
+    static auto create(int file_id, const string & name, const Osize_t & size = nil) {
       int dim_id;
-      Base::check_status( nc_def_dim(file_id, name.c_str(), size, &dim_id), file_id );
+      Base::check_status( nc_def_dim(file_id, name.c_str(), size.value_or(NC_UNLIMITED), &dim_id), file_id );
       return Dim(file_id, dim_id);
     }
 

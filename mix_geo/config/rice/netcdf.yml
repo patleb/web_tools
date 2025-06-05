@@ -45,11 +45,11 @@ module NetCDF:
     def:
       initialize | NetCDF::File.DEFAULT:
         - [const string &, path]
-        - [string, mode = (string)"r"]
-        - [bool, nc4_classic = false]
-        - [bool, classic = false]
-        - [bool, share = false]
-      open: [path, mode = (string)"r", nc4_classic = false, classic = false, share = false]
+        - [Ostring, mode = nil]
+        - [Obool, nc4_classic = nil]
+        - [Obool, classic = nil]
+        - [Obool, share = nil]
+      open: [path, mode = nil, nc4_classic = nil, classic = nil, share = nil]
       close:
       closed? | is_null:
       sync:
@@ -60,7 +60,7 @@ module NetCDF:
       dim:
       var:
       att:
-      create_dim: [name, size = (size_t)NC_UNLIMITED]
+      create_dim: [name, size = nil]
       create_var:
       write_att:
       write_att_s:

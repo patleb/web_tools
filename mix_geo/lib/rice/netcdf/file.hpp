@@ -8,9 +8,9 @@ namespace NetCDF {
 
     using Base::Base;
 
-    explicit File(const string & path, string mode = "r", bool nc4_classic = false, bool classic = false, bool share = false):
+    explicit File(const string & path, Ostring mode = nil, Obool nc4_classic = nil, Obool classic = nil, Obool share = nil):
       Base() {
-      open(path, mode);
+      open(path, mode, nc4_classic, classic, share);
     }
     <%= no_copy :File %>
 
@@ -23,16 +23,20 @@ namespace NetCDF {
       }
     }
 
-    void open(const string & path, string mode = "r", bool nc4_classic = false, bool classic = false, bool share = false) {
+    void open(const string & path, Ostring mode = nil, Obool nc4_classic = nil, Obool classic = nil, Obool share = nil) {
       if (!is_null()) throw RuntimeError("file already opened");
+      string _mode_ = mode.value_or("r");
+      bool _nc4_classic_ = nc4_classic.value_or(false);
+      bool _classic_ = classic.value_or(false);
+      bool _share_ = share.value_or(false);
       int flags;
       bool create = false;
-      if (mode == "r") {
+      if (_mode_ == "r") {
         flags = NC_NOWRITE;
-      } else if (mode == "w") {
+      } else if (_mode_ == "w") {
         flags = NC_CLOBBER;
         create = true;
-      } else if (mode == "a") {
+      } else if (_mode_ == "a") {
         if (std::filesystem::exists(path)) {
           flags = NC_WRITE;
         } else {
@@ -42,16 +46,16 @@ namespace NetCDF {
       } else {
         throw RuntimeError("mode not supported");
       }
-      if (classic && share) flags = flags | NC_SHARE;
+      if (_classic_ && _share_) flags = flags | NC_SHARE;
       if (create) {
-        if (!classic) flags = flags | NC_NETCDF4;
-        if (nc4_classic) flags = flags | NC_CLASSIC_MODEL;
+        if (!_classic_) flags = flags | NC_NETCDF4;
+        if (_nc4_classic_) flags = flags | NC_CLASSIC_MODEL;
         check_status( nc_create(path.c_str(), flags, &this->id) );
       } else {
         check_status( nc_open(path.c_str(), flags, &this->id) );
       }
       this->path = path;
-      this->mode = mode;
+      this->mode = _mode_;
       this->flags = flags;
     }
 
@@ -108,7 +112,7 @@ namespace NetCDF {
       return Att::find(id, NC_GLOBAL, name);
     }
 
-    auto create_dim(const string & name, size_t size = NC_UNLIMITED) const {
+    auto create_dim(const string & name, const Osize_t & size = nil) const {
       return Dim::create(id, name, size);
     }
 

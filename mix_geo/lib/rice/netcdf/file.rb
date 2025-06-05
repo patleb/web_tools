@@ -9,12 +9,12 @@ module NetCDF
     end
 
     module self::WithOverrides
-      def initialize(path, mode = 'r', nc4_classic: false, classic: false, share: false)
-        super(path.to_s, mode, nc4_classic, classic, share)
+      def initialize(path, ...)
+        super(path.to_s, ...)
       end
 
-      def open(path, mode = 'r', nc4_classic: false, classic: false, share: false)
-        super(path.to_s, mode, nc4_classic, classic, share)
+      def open(path, ...)
+        super(path.to_s, ...)
       end
 
       def close
