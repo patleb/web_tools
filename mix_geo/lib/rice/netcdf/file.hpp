@@ -25,10 +25,10 @@ namespace NetCDF {
 
     void open(const string & path, Ostring mode = nil, Obool nc4_classic = nil, Obool classic = nil, Obool share = nil) {
       if (!is_null()) throw RuntimeError("file already opened");
-      string _mode_ = mode.value_or("r");
-      bool _nc4_classic_ = nc4_classic.value_or(false);
-      bool _classic_ = classic.value_or(false);
-      bool _share_ = share.value_or(false);
+      auto _mode_ = mode.value_or("r");
+      auto _nc4_classic_ = nc4_classic.value_or(false);
+      auto _classic_ = classic.value_or(false);
+      auto _share_ = share.value_or(false);
       int flags;
       bool create = false;
       if (_mode_ == "r") {
