@@ -236,4 +236,34 @@ namespace Tensor {
   <%- end -%>
 
   using NType = std::variant< <%= compile_vars[:numeric_types].keys.join(', ') %>, Vstring >;
+
+  auto build(Tensor::Type type, const Vsize_t & shape) {
+    switch (type) {
+    <%- compile_vars[:numeric_types].each_key do |tensor_type| -%>
+    case Tensor::Type::<%= tensor_type %>: return Tensor::NType(Tensor::<%= tensor_type %>(shape));
+    <%- end -%>
+    default:
+      throw RuntimeError("invalid Tensor::Type");
+    }
+  }
+
+  auto cast(Tensor::Base & tensor, Tensor::Type type) {
+    switch (type) {
+    <%- compile_vars[:numeric_types].each_key do |tensor_type| -%>
+    case Tensor::Type::<%= tensor_type %>: return Tensor::NType(dynamic_cast< Tensor::<%= tensor_type %> & >(tensor));
+    <%- end -%>
+    default:
+      throw RuntimeError("invalid Tensor::Type");
+    }
+  }
+
+  Tensor::Base & cast(Tensor::NType & tensor) {
+    switch (tensor.index()) {
+    <%- compile_vars[:numeric_types].size.times do |i| -%>
+    case <%= i %>: return std::get< <%= i %> >(tensor);
+    <%- end -%>
+    default:
+      throw RuntimeError("invalid Tensor::NType");
+    }
+  }
 }
