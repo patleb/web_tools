@@ -16,6 +16,5 @@ include:
   - valarray
 
 module C:
-  NIL: C::Nil
   NAN: C::NaN
   INF: C::Inf

@@ -5,6 +5,10 @@ module Tensor
     @@types ||= ExtRice.config.compile_vars[:numeric_types].keys.map{ |name| Tensor::Type.const_get(name) }
   end
 
+  def self.build(type, ...)
+    const_get(type.to_s).new(...)
+  end
+
   def self.to_slice_args(src_shape, *dst_ranges)
     raise InvalidRanges if dst_ranges.size > (dims_count = src_shape.size)
     start, count, shape = dst_ranges.each_with_object([[], [], []]).with_index do |(range, (start, count, shape)), i|

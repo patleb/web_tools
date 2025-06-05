@@ -5,13 +5,20 @@ typedef long long int64_t2;
 typedef unsigned long long uint64_t2;
 
 using Vstring = std::vector< std::string >;
+using Ostring = std::optional< std::string >;
 using Vint = std::vector< int >;
 using Vsize_t = std::vector< size_t >;
+using Osize_t = std::optional< size_t >;
 using Vssize_t = std::vector< ssize_t >;
+using Ossize_t = std::optional< ssize_t >;
 using Vptrdiff_t = std::vector< ptrdiff_t >;
+using Optrdiff_t = std::optional< ptrdiff_t >;
 <%- compile_vars[:numeric_types].each_value do |type| -%>
 using V<%= type %> = std::vector< <%= type %> >;
+using O<%= type %> = std::optional< <%= type %> >;
 <%- end -%>
+
+constexpr auto nil = std::nullopt;
 
 namespace C {
   using std::string;

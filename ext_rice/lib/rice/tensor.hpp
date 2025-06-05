@@ -101,19 +101,19 @@ namespace Tensor {
   class <%= tensor_type %> : public Base {
     public:
 
-    <%= type %> fill_value = C::Nil;
+    <%= type %> fill_value = 0;
     std::valarray< <%= type %> > array;
 
-    explicit <%= tensor_type %>(const Vsize_t & shape, std::optional< <%= type %> > fill_value = std::nullopt):
+    explicit <%= tensor_type %>(const Vsize_t & shape, const O<%= type %> & fill_value = nil):
       Base::Base(shape),
-      fill_value(fill_value.value_or(C::Nil)),
+      fill_value(fill_value.value_or(0)),
       array(this->fill_value, this->size) {
       update_base();
     }
 
-    explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape, std::optional< <%= type %> > fill_value = std::nullopt):
+    explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape, const O<%= type %> & fill_value = nil):
       Base::Base(shape),
-      fill_value(fill_value.value_or(C::Nil)),
+      fill_value(fill_value.value_or(0)),
       array(values.data(), values.size()) {
       if (values.size() != size) throw RuntimeError("values.size[" S(values.size()) "] != shape.total[" S(size) "]");
       update_base();
