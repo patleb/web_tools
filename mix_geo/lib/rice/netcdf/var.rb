@@ -40,15 +40,17 @@ module NetCDF
       end
 
       def read(start: nil, count: nil, stride: nil)
-        if start.blank? && count.blank? && stride.blank?
-          if type != Type::String
-            super(Array.new(dims_count, 0), shape, [])
-          else
-            super([0], [shape.first], [])
-          end
+        tensor = if start.blank? && count.blank? && stride.blank?
+          numeric? ? super(Array.new(dims_count, 0), shape, []) : super([0], [shape.first], [])
         else
           super(Array.wrap(start), Array.wrap(count), Array.wrap(stride))
         end
+        tensor.fill_value = fill_value || default_fill_value if numeric?
+        tensor
+      end
+
+      def default_fill_value
+        NetCDF.const_get("FILL_#{type.to_s.upcase}")
       end
 
       def fill_value
@@ -71,11 +73,7 @@ module NetCDF
     def at(*indexes)
       indexes.map do |index|
         values = read(start: Array(index)).to_a
-        if type != Type::String
-          values.dig(*Array.new(dims_count, 0))
-        else
-          values.first
-        end
+        numeric? ? values.dig(*Array.new(dims_count, 0)) : values.first
       end
     end
 
@@ -97,6 +95,10 @@ module NetCDF
       return unless (att = atts[name])
       return att.dig(*indexes) unless indexes.empty?
       att.read
+    end
+
+    def numeric?
+      type != Type::String
     end
 
     private :write_att_s, :write_s

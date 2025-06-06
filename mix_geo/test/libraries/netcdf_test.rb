@@ -94,9 +94,9 @@ class NetCDFTest < Rice::TestCase
       assert_equal e1, f.read(:event, start: [0, 7], count: e1.shape)
       assert_equal e2, f.read(:event, start: [1, 2], count: e2.shape, stride: [1, 2])
       h = Tensor::SFloat.new(f.vars[:heat].shape.to_a, fill_value: 1.0)
-      h[0, 1] = NetCDF::FILL_FLOAT
-      h[2, 1] = NetCDF::FILL_FLOAT
-      h[3, 0] = NetCDF::FILL_FLOAT
+      h[0, 1] = NetCDF::FILL_SFLOAT
+      h[2, 1] = NetCDF::FILL_SFLOAT
+      h[3, 0] = NetCDF::FILL_SFLOAT
       assert_equal h.to_a.to_s,      f.read(:heat).to_a.to_s
       assert_equal ['first', '2nd'], f.read(:team, count: 2, stride: 2).to_a
       assert_equal 10,               f.dims[:t].size

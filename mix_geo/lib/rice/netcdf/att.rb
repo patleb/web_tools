@@ -6,11 +6,7 @@ module NetCDF
       end
 
       def read
-        if type != Type::String
-          super.to_a
-        else
-          super.first
-        end
+        numeric? ? super.to_a : super.first
       end
     end
     prepend self::WithOverrides
@@ -18,6 +14,10 @@ module NetCDF
     def dig(*indexes)
       return if indexes.size != 1
       read[indexes.first] rescue nil
+    end
+
+    def numeric?
+      type != Type::String
     end
   end
 end
