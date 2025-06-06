@@ -166,8 +166,8 @@ namespace Tensor {
     auto & operator[](const Vsize_t & indexes) const { return array[offset_for(indexes)]; }
     auto & first()       { return array[0]; }
     auto & first() const { return array[0]; }
-    auto & last()       { return array[size - 1]; }
-    auto & last() const { return array[size - 1]; }
+    auto & last()        { return array[size - 1]; }
+    auto & last()  const { return array[size - 1]; }
 
     auto values() const {
       return V<%= type %>(std::begin(array), std::end(array));
