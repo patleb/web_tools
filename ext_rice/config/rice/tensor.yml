@@ -15,7 +15,7 @@ module Tensor:
 
   <% compile_vars[:numeric_types].each do |tensor_type, type| %>
   class <%= tensor_type %> < Tensor::Base:
-    attr_reader: [fill_value]
+    attr_accessor: [fill_value]
 
     def:
       initialize | Tensor::<%= tensor_type %>.COPY:
@@ -23,17 +23,21 @@ module Tensor:
         - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }
       to_sql:
       "== | operator==":
-      "[] | operator[]":
-        - { const <%= type %> & const: [const Vsize_t & indexes] }
+      "[] | operator[]": { const <%= type %> & const: [const Vsize_t & indexes] }
       "[]=": >
         [](Tensor::<%= tensor_type %> & self, const Vsize_t & indexes, const <%= type %> & value) -> const <%= type %> & {
           self[indexes] = value;
           return value;
         }
-      first:
-      last:
+      first: { const <%= type %> & const: [] }
+      last:  { const <%= type %> & const: [] }
       values:
       slice:
+      refill_value: >
+        [](Tensor::<%= tensor_type %> & self, <%= type %> fill_value) -> Tensor::<%= tensor_type %> & {
+          self.refill_value(fill_value);
+          return self;
+        }
       reshape: >
         [](Tensor::<%= tensor_type %> & self, const Vsize_t & shape) -> Tensor::<%= tensor_type %> & {
           self.reshape(shape);

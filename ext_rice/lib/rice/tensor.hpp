@@ -181,6 +181,18 @@ namespace Tensor {
       return <%= tensor_type %>(view, Vsize_t(std::begin(counts), std::end(counts)), fill_value);
     }
 
+    auto & refill_value(<%= type %> fill_value) {
+      if (std::isnan(this->fill_value)) {
+        if (std::isnan(fill_value)) return *this;
+        for (size_t i = 0; auto && value : array) if (std::isnan(value)) array[i] = fill_value;
+      } else {
+        if (fill_value == this->fill_value) return *this;
+        for (size_t i = 0; auto && value : array) if (value == this->fill_value) array[i] = fill_value;
+      }
+      this->fill_value = fill_value;
+      return *this;
+    }
+
     auto & reshape(const Vsize_t & shape) {
       Base::reshape(shape);
       return *this;
