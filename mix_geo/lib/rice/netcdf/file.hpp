@@ -24,7 +24,7 @@ namespace NetCDF {
     }
 
     void open(const string & path, Ostring mode = nil, Obool nc4_classic = nil, Obool classic = nil, Obool share = nil) {
-      if (!is_null()) throw RuntimeError("file already opened");
+      if (!is_closed()) throw RuntimeError("file already opened");
       auto _mode_ = mode.value_or("r");
       auto _nc4_classic_ = nc4_classic.value_or(false);
       auto _classic_ = classic.value_or(false);
@@ -60,7 +60,7 @@ namespace NetCDF {
     }
 
     void close() {
-      if (is_null()) return;
+      if (is_closed()) return;
       check_status( nc_close(id) );
       this->id = NULL_ID;
     }
@@ -132,6 +132,12 @@ namespace NetCDF {
 
     void check_status(int code, CONTEXT(trace, source)) const {
       Base::check_status(code, id, NULL_ID, "", trace, source);
+    }
+
+    private:
+
+    bool is_closed() const {
+      return id == NULL_ID;
     }
   };
 

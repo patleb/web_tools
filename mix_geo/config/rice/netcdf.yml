@@ -51,7 +51,7 @@ module NetCDF:
         - [Obool, share = nil]
       open: [path, mode = nil, nc4_classic = nil, classic = nil, share = nil]
       close:
-      closed? | is_null:
+      closed? | is_closed:
       sync:
       format:
       dims:

@@ -12,10 +12,6 @@ namespace NetCDF {
       id(id) {
     }
 
-    bool is_null() const {
-      return id == NULL_ID;
-    }
-
     protected:
 
     static auto file_format(int file_id) {
