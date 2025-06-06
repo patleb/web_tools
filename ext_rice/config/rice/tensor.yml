@@ -30,6 +30,8 @@ module Tensor:
           self[indexes] = value;
           return value;
         }
+      first:
+      last:
       values:
       slice:
       reshape: >

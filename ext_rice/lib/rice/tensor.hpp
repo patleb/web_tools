@@ -160,21 +160,14 @@ namespace Tensor {
       return std::equal(&array[0], &array[size - 1], reinterpret_cast< const <%= type %> * >(tensor.data));
     }
 
-    auto & operator[](size_t i) {
-      return array[i];
-    }
-
-    auto & operator[](size_t i) const {
-      return array[i];
-    }
-
-    auto & operator[](const Vsize_t & indexes) {
-      return array[offset_for(indexes)];
-    }
-
-    auto & operator[](const Vsize_t & indexes) const {
-      return array[offset_for(indexes)];
-    }
+    auto & operator[](size_t i)       { return array[i]; }
+    auto & operator[](size_t i) const { return array[i]; }
+    auto & operator[](const Vsize_t & indexes)       { return array[offset_for(indexes)]; }
+    auto & operator[](const Vsize_t & indexes) const { return array[offset_for(indexes)]; }
+    auto & first()       { return array[0]; }
+    auto & first() const { return array[0]; }
+    auto & last()       { return array[size - 1]; }
+    auto & last() const { return array[size - 1]; }
 
     auto values() const {
       return V<%= type %>(std::begin(array), std::end(array));
