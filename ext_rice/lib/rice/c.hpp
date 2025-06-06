@@ -1,5 +1,10 @@
 #define DOUBLE_SAFE_INT64 9007199254740991
 #define S(value) + std::to_string((value)) +
+#define G_NULL   0
+#define G_DOUBLE 1
+#define G_INT64  2
+#define G_UINT64 3
+#define G_STRING 4
 
 typedef long long int64_t2;
 typedef unsigned long long uint64_t2;
@@ -20,14 +25,36 @@ using Optrdiff_t = std::optional< ptrdiff_t >;
 using V<%= type %> = std::vector< <%= type %> >;
 using O<%= type %> = std::optional< <%= type %> >;
 <%- end -%>
+using GType = std::variant< std::monostate, <%= compile_vars[:generic_types].keys.join(', ') %>, std::string >;
 
 constexpr auto nil = std::nullopt;
+constexpr auto null = std::monostate{};
+
+bool is_null(const GType & value) {
+  return value.index() == 0;
+}
+
+template < class T >
+auto g_cast(const GType & value = null) {
+  switch (value.index()) {
+  case G_NULL:   return static_cast< T >(0);
+  case G_DOUBLE: return static_cast< T >(std::get< G_DOUBLE >(value));
+  case G_INT64:  return static_cast< T >(std::get< G_INT64 >(value));
+  case G_UINT64: return static_cast< T >(std::get< G_UINT64 >(value));
+  default: throw RuntimeError("invalid GType");
+  }
+}
+<%- compile_vars[:generic_types].each do |type, generic_type| -%>
+
+auto g_cast(<%= type %> value) {
+  return static_cast< <%= generic_type %> >(value);
+}
+<%- end -%>
 
 namespace C {
   using std::string;
   using std::vector;
 
-  const double Nil = 0.0;
   const double NaN = std::numeric_limits< double >::quiet_NaN(); // std::isnan(double)
   const double Inf = std::numeric_limits< double >::infinity();  // std::isinf(double) --> true also for -Inf, use (double == -C::INF)
 

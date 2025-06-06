@@ -237,10 +237,13 @@ namespace Tensor {
 
   using NType = std::variant< <%= compile_vars[:numeric_types].keys.join(', ') %>, Vstring >;
 
-  auto build(Tensor::Type type, const Vsize_t & shape) {
+  auto build(Tensor::Type type, const Vsize_t & shape, const GType & fill_value = null) {
     switch (type) {
-    <%- compile_vars[:numeric_types].each_key do |tensor_type| -%>
-    case Tensor::Type::<%= tensor_type %>: return Tensor::NType(Tensor::<%= tensor_type %>(shape));
+    <%- compile_vars[:numeric_types].each do |tensor_type, type| -%>
+    case Tensor::Type::<%= tensor_type %>: {
+      auto nodata = g_cast< <%= type %> >(fill_value);
+      return Tensor::NType(Tensor::<%= tensor_type %>(shape, nodata));
+    }
     <%- end -%>
     default:
       throw RuntimeError("invalid Tensor::Type");

@@ -22,6 +22,18 @@ module ExtRice
           'UInt32' => 'uint32_t',
           'UInt64' => 'uint64_t2',
         }
+        config.compile_vars[:generic_types] = {
+          'int8_t'    => 'int64_t2',
+          'int16_t'   => 'int64_t2',
+          'int32_t'   => 'int64_t2',
+          'int64_t2'  => 'int64_t2',
+          'float'     => 'double',
+          'double'    => 'double',
+          'uint8_t'   => 'uint64_t2',
+          'uint16_t'  => 'uint64_t2',
+          'uint32_t'  => 'uint64_t2',
+          'uint64_t2' => 'uint64_t2',
+        }
       end
     end
   end
