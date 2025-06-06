@@ -65,6 +65,10 @@ namespace NetCDF {
       this->id = NULL_ID;
     }
 
+    bool is_closed() const {
+      return id == NULL_ID;
+    }
+
     void sync() const {
       check_status( nc_sync(id) );
     }
@@ -132,12 +136,6 @@ namespace NetCDF {
 
     void check_status(int code, CONTEXT(trace, source)) const {
       Base::check_status(code, id, NULL_ID, "", trace, source);
-    }
-
-    private:
-
-    bool is_closed() const {
-      return id == NULL_ID;
     }
   };
 
