@@ -1,6 +1,4 @@
 namespace Tensor {
-  using std::vector;
-
   enum class Type {
     <%- compile_vars[:numeric_types].each_key do |tensor_type| -%>
     <%= tensor_type %>,
