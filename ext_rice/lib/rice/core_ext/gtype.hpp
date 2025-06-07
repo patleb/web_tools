@@ -26,7 +26,7 @@ auto g_cast(const GType & value = null) {
 template < float >
 auto g_cast(const GType & value = null) {
   switch (value.index()) {
-  case G_NULL:   return static_cast< float >(Float::NAN);
+  case G_NULL:   return static_cast< float >(Float::nan);
   case G_DOUBLE: return static_cast< float >(std::get< G_DOUBLE >(value));
   case G_INT64:  return static_cast< float >(std::get< G_INT64 >(value));
   case G_UINT64: return static_cast< float >(std::get< G_UINT64 >(value));
@@ -37,7 +37,7 @@ auto g_cast(const GType & value = null) {
 template < double >
 auto g_cast(const GType & value = null) {
   switch (value.index()) {
-  case G_NULL:   return Float::NAN;
+  case G_NULL:   return Float::nan;
   case G_DOUBLE: return std::get< G_DOUBLE >(value);
   case G_INT64:  return static_cast< double >(std::get< G_INT64 >(value));
   case G_UINT64: return static_cast< double >(std::get< G_UINT64 >(value));
@@ -49,9 +49,9 @@ auto g_cast(const GType & value = null) {
 auto g_cast(const O<%= type %> & value) {
   <%- case type -%>
   <%- when 'double' -%>
-  return value ? *value : Float::NAN;
+  return value ? *value : Float::nan;
   <%- when 'float' -%>
-  return value ? static_cast< double >(*value) : Float::NAN;
+  return value ? static_cast< double >(*value) : Float::nan;
   <%- else -%>
   return static_cast< <%= generic_type %> >(value ? *value : 0);
   <%- end -%>

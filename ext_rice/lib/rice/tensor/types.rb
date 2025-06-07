@@ -1,6 +1,6 @@
 module Tensor
-  ExtRice.config.compile_vars[:numeric_types].each_key do |name|
-    const_get(name).class_eval do
+  ExtRice.config.compile_vars[:numeric_types].each_key do |tensor_type|
+    const_get(tensor_type).class_eval do
       module self::WithOverrides
         def initialize(*values, **options)
           values = values.first if values.first.is_a? Array
@@ -40,7 +40,7 @@ module Tensor
           super
         end
 
-        def seq(start = 0)
+        def seq(start = nil)
           super
         end
       end

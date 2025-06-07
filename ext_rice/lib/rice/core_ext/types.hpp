@@ -24,6 +24,6 @@ using Ostring = std::optional< std::string >;
 constexpr auto nil = std::nullopt;
 
 namespace Float {
-  constexpr auto NAN = std::numeric_limits< double >::quiet_NaN(); // std::isnan(double)
-  constexpr auto INF = std::numeric_limits< double >::infinity();  // std::isinf(double) --> true also for -INF
+  constexpr auto nan = std::numeric_limits< double >::quiet_NaN(); // std::isnan(double)
+  constexpr auto inf = std::numeric_limits< double >::infinity();  // std::isinf(double) --> true also for -inf
 }

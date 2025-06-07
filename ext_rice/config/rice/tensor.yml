@@ -52,8 +52,8 @@ module Tensor:
           return self;
         }
       seq: >
-        [](Tensor::<%= tensor_type %> & self, <%= type %> start) -> Tensor::<%= tensor_type %> & {
-          self.seq();
+        [](Tensor::<%= tensor_type %> & self, const O<%= type %> & start) -> Tensor::<%= tensor_type %> & {
+          self.seq(start);
           return self;
         }
   <% end %>

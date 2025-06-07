@@ -4,7 +4,7 @@ namespace Tensor {
   class <%= tensor_type %> : public Base {
     public:
 
-    <%= type %> fill_value = <%= %w(float double).include?(type) ? 'Float::NAN' : 0 %>;
+    <%= type %> fill_value = <%= %w(float double).include?(type) ? 'Float::nan' : 0 %>;
     std::valarray< <%= type %> > array;
 
     <%= tensor_type %>(const <%= tensor_type %> & tensor):
@@ -16,14 +16,14 @@ namespace Tensor {
 
     explicit <%= tensor_type %>(const Vsize_t & shape, const O<%= type %> & fill_value = nil):
       Base::Base(shape),
-      fill_value(fill_value.value_or(<%= %w(float double).include?(type) ? 'Float::NAN' : 0 %>)),
+      fill_value(fill_value.value_or(<%= %w(float double).include?(type) ? 'Float::nan' : 0 %>)),
       array(this->fill_value, this->size) {
       update_base();
     }
 
     explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape, const O<%= type %> & fill_value = nil):
       Base::Base(shape),
-      fill_value(fill_value.value_or(<%= %w(float double).include?(type) ? 'Float::NAN' : 0 %>)),
+      fill_value(fill_value.value_or(<%= %w(float double).include?(type) ? 'Float::nan' : 0 %>)),
       array(values.data(), values.size()) {
       if (values.size() != size) throw RuntimeError("values.size[" S(values.size()) "] != shape.total[" S(size) "]");
       update_base();
@@ -73,11 +73,11 @@ namespace Tensor {
     }
     <%- if %w(float double).include? type -%>
     auto operator*(const Tensor::<%= tensor_type %> & tensor) const {
-      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::NAN");
+      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
       return <%= tensor_type %>(array * tensor.array, shape, fill_value);
     }
     auto operator*(<%= type %> value) const {
-      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::NAN");
+      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
       if (value ==  0.0) return <%= tensor_type %>(std::valarray< <%= type %> >(0.0, size), shape, fill_value);
       if (value ==  1.0) return <%= tensor_type %>(+array, shape, fill_value);
       if (value == -1.0) return <%= tensor_type %>(-array, shape, fill_value);
@@ -85,11 +85,11 @@ namespace Tensor {
     }
     <%- %w(/ + -).each do |op| -%>
     auto operator<%= op %>(const Tensor::<%= tensor_type %> & tensor) const {
-      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::NAN");
+      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
       return <%= tensor_type %>(array <%= op %> tensor.array, shape, fill_value);
     }
     auto operator<%= op %>(<%= type %> value) const {
-      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::NAN");
+      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
       return <%= tensor_type %>(array <%= op %> value, shape, fill_value);
     }
     <%- end -%>
@@ -133,8 +133,8 @@ namespace Tensor {
       return *this;
     }
 
-    auto & seq(<%= type %> start = 0) {
-      std::iota(std::begin(array), std::end(array), start);
+    auto & seq(const O<%= type %> & start = nil) {
+      std::iota(std::begin(array), std::end(array), start.value_or(0));
       return *this;
     }
 
