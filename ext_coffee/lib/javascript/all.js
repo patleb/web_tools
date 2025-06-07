@@ -8,7 +8,6 @@ import { enableDragDropTouch } from 'drag-drop-touch'
 import sortable from 'html5sortable/dist/html5sortable.es'
 
 import '@@lib/ext_coffee/core_ext/all'
-import '@@lib/ext_coffee/rescue'
 import '@@lib/ext_coffee/index'
 import '@@lib/ext_coffee/concepts'
 import '@@lib/ext_coffee/state_machine'
