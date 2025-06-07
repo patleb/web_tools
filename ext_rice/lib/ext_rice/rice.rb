@@ -362,7 +362,7 @@ module Rice
   end
 
   def self.build_using_alias(name_alias)
-    name_alias = name_alias.full_underscore.gsub(/\W/, '_')
+    name_alias = name_alias.full_underscore.gsub(/\W/, '0')
     (@using_i ||= {})[name_alias] ||= 0
     "rb_#{name_alias}_#{@using_i[name_alias] += 1}"
   end
