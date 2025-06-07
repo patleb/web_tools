@@ -21,8 +21,8 @@ module Rice
   ATTRIBUTES_KEYWORDS = /^c?attr_(accessor|reader|writer)!?$/
   METHODS_KEYWORD = /^def!?$/
   MEMORY_ACTIONS = {
-    'NO_COLLECT' => 'keepAlive()',
-    'NO_DELETE'  => 'takeOwnership()',
+    'NO_COLLECT' => 'keepAlive()',     # C++ keeps ownership
+    'NO_DELETE'  => 'takeOwnership()', # Ruby takes ownership
     'AS_VALUE'   => 'setValue()',
     'AS_OPAQUE'  => 'setOpaque()'
   }
