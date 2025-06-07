@@ -1,0 +1,65 @@
+namespace C {
+  inline auto timestamp() {
+    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    std::time_t time = std::chrono::system_clock::to_time_t(now);
+    std::tm utc{}; gmtime_r(&time, &utc);
+    std::chrono::duration<double> seconds = (now - std::chrono::system_clock::from_time_t(time)) + std::chrono::seconds(utc.tm_sec);
+    std::string buffer("year-mo-dy hr:mn:sc.xxxxxx UTC");
+    sprintf(&buffer.front(), "%04d-%02d-%02d %02d:%02d:%09.6f UTC",
+      utc.tm_year + 1900,
+      (uint8_t)(utc.tm_mon + 1),
+      (uint8_t)utc.tm_mday,
+      (uint8_t)utc.tm_hour,
+      (uint8_t)utc.tm_min,
+      seconds.count()
+    );
+    return buffer;
+  }
+
+  template < class T >
+  auto vector_concat(std::initializer_list< std::vector< T >> vectors) {
+    size_t count = 0;
+    for (auto && v : vectors) count += v.size();
+    std::vector< T > result(count); // gcc 15 --> result.append_range(v)
+    for (auto && v : vectors) result.insert(result.end(), v.cbegin(), v.cend());
+    return result;
+  }
+
+  template < class T >
+  auto & vector_concat(std::vector< T > & values, std::initializer_list< std::vector< T >> vectors) {
+    size_t count = 0;
+    for (auto && v : vectors) count += v.size();
+    values.reserve(values.size() + count);
+    for (auto && v : vectors) values.insert(values.end(), v.cbegin(), v.cend());
+    return values;
+  }
+
+  template < class V, class T >
+  auto vector_cast(const std::vector< V > & values) {
+    size_t count = values.size();
+    std::vector< T > casts(count);
+    for (size_t i = 0; i < count; ++i) {
+      casts[i] = static_cast< T >(values[i]);
+    }
+    return casts;
+  }
+
+  template < class V, class T >
+  auto vector_cast(const V * values, size_t count) {
+    std::vector< T > casts(count);
+    for (size_t i = 0; i < count; ++i) {
+      casts[i] = static_cast< T >(values[i]);
+    }
+    return casts;
+  }
+
+  template < class V, V >
+  auto vector_cast(const std::vector< V > & values) {
+    return std::vector< V >(values);
+  }
+
+  template < class V, V >
+  auto vector_cast(const V * values, size_t count) {
+    return std::vector< V >(values, values + count);
+  }
+}

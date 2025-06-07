@@ -27,3 +27,81 @@ namespace Rice::detail {
     signed char converted_ = 0;
   };
 }
+
+struct nullstate {};
+
+namespace Rice::detail {
+  template<>
+  struct Type<nullstate> {
+    constexpr static bool verify()
+    {
+      return true;
+    }
+  };
+
+  template<>
+  class To_Ruby<nullstate>
+  {
+  public:
+    VALUE convert(const nullstate& _)
+    {
+      return Qnil;
+    }
+  };
+
+  template<>
+  class To_Ruby<nullstate&>
+  {
+  public:
+    static VALUE convert(const nullstate& data, bool takeOwnership = false)
+    {
+      return Qnil;
+    }
+  };
+
+  template<>
+  class From_Ruby<nullstate>
+  {
+  public:
+    Convertible is_convertible(VALUE value)
+    {
+      switch (rb_type(value))
+      {
+        case RUBY_T_NIL:
+          return Convertible::Exact;
+        default:
+          return Convertible::None;
+      }
+    }
+
+    nullstate convert(VALUE value)
+    {
+      return nullstate();
+    }
+  };
+
+  template<>
+  class From_Ruby<nullstate&>
+  {
+  public:
+    Convertible is_convertible(VALUE value)
+    {
+      switch (rb_type(value))
+      {
+        case RUBY_T_NIL:
+          return Convertible::Exact;
+        default:
+          return Convertible::None;
+      }
+    }
+
+    nullstate& convert(VALUE value)
+    {
+      this->converted_ = nullstate();
+      return this->converted_;
+    }
+    
+  private:
+    nullstate converted_ = nullstate();
+  };
+}

@@ -1,8 +1,10 @@
 #include <rice/rice.hpp>
 #include <rice/stl.hpp>
 #include "rice/conversions.hpp"
-#include "ext_rice/runtime_error.hpp"
-#include "ext_rice/finally.hpp"
-#include "ext_rice/c.hpp"
-#include "ext_rice/logger.hpp"
+#include "ext_rice/core_ext/runtime_error.hpp"
+#include "ext_rice/core_ext/finally.hpp"
+#include "ext_rice/core_ext/c.hpp"
+#include "ext_rice/core_ext/logger.hpp"
+#include "ext_rice/core_ext/types.hpp"
+#include "ext_rice/core_ext/gtype.hpp"
 #include "ext_rice/tensor.hpp"

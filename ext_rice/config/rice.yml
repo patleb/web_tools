@@ -14,7 +14,3 @@ include:
   - unordered_map
   - numeric
   - valarray
-
-module C:
-  NAN: C::NaN
-  INF: C::Inf

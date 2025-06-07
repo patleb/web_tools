@@ -23,6 +23,14 @@ module Tensor:
         - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }
       to_sql:
       "== | operator==":
+      <% if %w(float double).include? type %>
+      "*  | operator*": &binary_op
+        - { Tensor::<%= tensor_type %> const: [const Tensor::<%= tensor_type %> & tensor] }
+        - { Tensor::<%= tensor_type %> const: [<%= type %> value] }
+      "/  | operator/": *binary_op
+      "+  | operator+": *binary_op
+      "-  | operator-": *binary_op
+      <% end %>
       "[] | operator[]": { const <%= type %> & const: [const Vsize_t & indexes] }
       "[]=": >
         [](Tensor::<%= tensor_type %> & self, const Vsize_t & indexes, const <%= type %> & value) -> const <%= type %> & {
