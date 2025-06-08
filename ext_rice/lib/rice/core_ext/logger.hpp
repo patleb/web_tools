@@ -52,7 +52,7 @@ void log_mark() {
 }
 
 template < class T >
-void log_vector(const T vector[], size_t count, std::string_view prefix = "") {
+void log_vector(std::string_view prefix, const T vector[], size_t count) {
   std::stringstream message;
   message << (prefix.size() ? prefix : "vector");
   for (size_t i = 0; i < count; ++i) {
@@ -62,6 +62,6 @@ void log_vector(const T vector[], size_t count, std::string_view prefix = "") {
 }
 
 template < class T >
-void log_vector(const std::vector< T > & vector, std::string_view prefix = "") {
+void log_vector(std::string_view prefix, const std::vector< T > & vector) {
   log_vector< T >(vector.data(), vector.size(), prefix);
 }
