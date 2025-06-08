@@ -21,7 +21,6 @@ module Tensor:
       initialize | Tensor::<%= tensor_type %>.COPY:
         - { [ *shape, *fill_value_<%= type %> ] }
         - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }
-      to_sql:
       "== | operator==":
       <% if %w(float double).include? type %>
       "*  | operator*": &binary_op
@@ -56,4 +55,5 @@ module Tensor:
           self.seq(start);
           return self;
         }
+      to_sql:
   <% end %>

@@ -7,18 +7,11 @@ namespace Tensor {
     <%= type %> fill_value = <%= %w(float double).include?(type) ? 'Float::nan' : 0 %>;
     std::valarray< <%= type %> > array;
 
-    <%= tensor_type %>(const <%= tensor_type %> & tensor):
-      Base::Base(tensor),
-      fill_value(tensor.fill_value),
-      array(tensor.array) {
-      update_base();
-    }
-
     explicit <%= tensor_type %>(const Vsize_t & shape, const O<%= type %> & fill_value = nil):
       Base::Base(shape),
       fill_value(fill_value.value_or(<%= %w(float double).include?(type) ? 'Float::nan' : 0 %>)),
       array(this->fill_value, this->size) {
-      update_base();
+      sync_base();
     }
 
     explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape, const O<%= type %> & fill_value = nil):
@@ -26,44 +19,23 @@ namespace Tensor {
       fill_value(fill_value.value_or(<%= %w(float double).include?(type) ? 'Float::nan' : 0 %>)),
       array(values.data(), values.size()) {
       if (values.size() != size) throw RuntimeError("values.size[" S(values.size()) "] != shape.total[" S(size) "]");
-      update_base();
+      sync_base();
     }
 
-    static auto from_sql(const std::string & values) {
-      // TODO
+    <%= tensor_type %>() = delete;
+
+    <%= tensor_type %>(const <%= tensor_type %> & tensor):
+      Base::Base(tensor),
+      fill_value(tensor.fill_value),
+      array(tensor.array) {
+      sync_base();
     }
 
-    auto to_sql() const {
-      auto data = reinterpret_cast< <%= type %> * >(this->data);
-      size_t dim_i = 0, dim_j;
-      size_t dim_n = rank - 1;
-      size_t counts[rank];
-      std::memcpy(counts, shape.data(), rank * sizeof(size_t));
-      std::stringstream sql;
-      while (true) {
-        while (true) {
-          sql << '{';
-          if (dim_i == dim_n) break;
-          ++dim_i;
-        }
-        while (true) {
-          sql << std::format("{}", *data++);
-          if (--counts[dim_i] == 0) break;
-          sql << ',';
-        }
-        while (true) {
-          sql << '}';
-          if (dim_i == 0) {
-            return std::string(sql.str().c_str());
-          }
-          if (--counts[dim_i - 1] != 0) {
-            for (dim_j = dim_i; dim_j <= dim_n; ++dim_j) counts[dim_j] = shape[dim_j];
-            sql << ',';
-            break;
-          }
-          --dim_i;
-        }
-      }
+    <%= tensor_type %> & operator=(const <%= tensor_type %> & tensor) {
+      if (this == &tensor) return *this;
+      copy_to_base(tensor);
+      sync_base();
+      return *this;
     }
 
     bool operator==(const Tensor::Base & tensor) const {
@@ -142,8 +114,41 @@ namespace Tensor {
       return sizeof(<%= type %>);
     }
 
-    const char * type_name() const override {
-      return "<%= tensor_type %>";
+    static auto from_sql(const std::string & values) {
+      // TODO
+    }
+
+    auto to_sql() const {
+      auto data = reinterpret_cast< <%= type %> * >(this->data);
+      size_t dim_i = 0, dim_j;
+      size_t dim_n = rank - 1;
+      size_t counts[rank];
+      std::memcpy(counts, shape.data(), rank * sizeof(size_t));
+      std::stringstream sql;
+      while (true) {
+        while (true) {
+          sql << '{';
+          if (dim_i == dim_n) break;
+          ++dim_i;
+        }
+        while (true) {
+          sql << std::format("{}", *data++);
+          if (--counts[dim_i] == 0) break;
+          sql << ',';
+        }
+        while (true) {
+          sql << '}';
+          if (dim_i == 0) {
+            return std::string(sql.str().c_str());
+          }
+          if (--counts[dim_i - 1] != 0) {
+            for (dim_j = dim_i; dim_j <= dim_n; ++dim_j) counts[dim_j] = shape[dim_j];
+            sql << ',';
+            break;
+          }
+          --dim_i;
+        }
+      }
     }
 
     private:
@@ -152,10 +157,10 @@ namespace Tensor {
       Base::Base(shape),
       fill_value(fill_value),
       array(array) {
-      update_base();
+      sync_base();
     }
 
-    void update_base() {
+    void sync_base() {
       this->nodata = reinterpret_cast< void * >(&fill_value);
       this->data = reinterpret_cast< void * >(&array[0]);
       this->type = Tensor::Type::<%= tensor_type %>;

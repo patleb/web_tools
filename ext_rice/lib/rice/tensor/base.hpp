@@ -21,8 +21,6 @@ namespace Tensor {
     void * data = nullptr;
     Tensor::Type type = Tensor::Type::Base;
 
-    Base() = default;
-
     explicit Base(const Vsize_t & shape):
       shape(shape),
       offsets(offsets_for(shape)),
@@ -30,14 +28,13 @@ namespace Tensor {
       rank(shape.size()) {
     }
 
+    Base() = delete;
+
     Base(const Base & tensor):
-      shape(tensor.shape),
-      offsets(tensor.offsets),
-      size(tensor.size),
-      rank(tensor.rank),
       nodata(nullptr),
       data(nullptr),
       type(Tensor::Type::Base) {
+      copy_to_base(tensor);
     }
 
     <%- compile_vars[:numeric_types].each_key do |tensor_type| -%>
@@ -73,11 +70,14 @@ namespace Tensor {
       throw RuntimeError("not implemented error");
     }
 
-    virtual const char * type_name() const {
-      return "Base";
-    }
-
     protected:
+
+    void copy_to_base(const Base & tensor) {
+      this->shape = tensor.shape;
+      this->offsets = tensor.offsets;
+      this->size = tensor.size;
+      this->rank = tensor.rank;
+    }
 
     auto offset_for(const Vsize_t & indexes) const {
       size_t offset = 0;
