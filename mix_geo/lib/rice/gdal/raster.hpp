@@ -61,7 +61,7 @@ namespace GDAL {
     }
 
     auto type() const {
-      tensor.type;
+      return tensor.type;
     }
 
     auto x() const {
