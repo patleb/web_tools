@@ -45,8 +45,8 @@ namespace GDAL {
       return mapping_strategy_for(srs_for(proj));
     }
 
-    static auto directions(string proj = "4326") {
-      return orientation_for(proj);
+    static auto directions(const Ostring & proj = nil) {
+      return orientation_for(proj.value_or("4326"));
     }
 
     auto srid() const {

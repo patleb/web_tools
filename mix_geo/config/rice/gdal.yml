@@ -18,7 +18,7 @@ module GDAL:
 
   class Base | GDAL::Base:
     def:
-      self.directions: [proj = (string)"4326"]
+      self.directions: [proj = nil]
 
       srid:
       wkt:
@@ -30,35 +30,36 @@ module GDAL:
 
     def:
       initialize | GDAL::Vector.COPY:
-        - [Vdouble, x]
-        - [Vdouble, y]
-        - [string, proj = (string)"4326"]
-      x:
-      y:
+        - [const Vdouble &, x]
+        - [const Vdouble &, y]
+        - [const Ostring &, proj = nil]
+      x | _x_:
+      y | _y_:
       points:
       reproject:
 
   class Raster < GDAL::Base:
     class Transform | GDAL::Raster::Transform:
-      attr_reader: [mesh, width, height, x0, y0, dx, dy, rx, ry]
+      attr_reader: [width, height, x0, y0, dx, dy, rx, ry]
 
       def:
+        mesh | _mesh_:
         shape:
         cache_key:
 
-    attr_reader: [nodata, width, height, x0, y0, dx, dy]
+    attr_reader: [width, height, x0, y0, dx, dy]
 
     def:
       initialize | GDAL::Raster.COPY:
-        - [Numo::NArray, z]
-        - [Numo::Type, type_id]
-        - [Vdouble, x01_y01]
-        - [string, proj = (string)"4326"]
-        - [double, nodata = C::Nil]
+        - [Tensor::Base &, z]
+        - [Tensor::Type, type]
+        - [const Vdouble &, x01_y01]
+        - [const Ostring &, proj = nil]
+      fill_value:
       shape:
       type:
       x:
       y:
-      z:
-      reproject: [proj, nodata = C::Nil, compact = false, memoize = false]
+      z | _z_:
+      reproject: [proj, fill_value = nil, compact = nil, memoize = nil]
       transform_for:

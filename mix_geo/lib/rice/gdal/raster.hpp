@@ -11,6 +11,10 @@ namespace GDAL {
       double  dx, dy;
       ssize_t rx, ry; // always >= 1
 
+      auto _mesh_() const {
+        return mesh;
+      }
+
       auto shape() const {
         return Vsize_t{ height, width };
       }
@@ -21,27 +25,22 @@ namespace GDAL {
       }
     };
 
-    Numo::NType values;
-    Numo::NArray & data; // stored as [y, x]
-    double nodata = C::Nil;
+    Tensor::NType z;
+    Tensor::Base & tensor; // stored as [y, x]
     size_t width;
     size_t height;
-    double x0 = C::NaN;
-    double y0 = C::NaN;
-    double dx = C::NaN;
-    double dy = C::NaN;
+    double x0 = Float::nan;
+    double y0 = Float::nan;
+    double dx = Float::nan;
+    double dy = Float::nan;
 
-    using Base::Base;
-
-    Raster(Numo::NArray z, Numo::Type type_id, vector < double > x01_y01, string proj = "4326", double nodata = C::Nil):
-      Base(proj),
-      values(Numo::cast(z, type_id)),
-      data(Numo::cast(this->values)),
-      nodata(nodata) {
-      auto shape = z.shape();
-      if (shape.size() != 2)   throw RuntimeError("invalid z dimensions");
-      this->width = shape[1];
-      this->height = shape[0];
+    Raster(Tensor::Base & z, Tensor::Type type, const vector < double > & x01_y01, const Ostring & proj = nil):
+      Base::Base(proj.value_or("4326")),
+      z(Tensor::cast(z, type)),
+      tensor(Tensor::cast(this->z)) {
+      if (z.rank != 2)         throw RuntimeError("invalid z dimensions");
+      this->width = z.shape[1];
+      this->height = z.shape[0];
       if (width < 2)           throw RuntimeError("invalid x axis size");
       if (height < 2)          throw RuntimeError("invalid y axis size");
       if (x01_y01.size() != 4) throw RuntimeError("invalid x01_y01 size");
@@ -53,12 +52,16 @@ namespace GDAL {
       if (orientation[1] * std::abs(dy) != dy) throw RuntimeError("invalid y axis orientation");
     }
 
-    auto shape() {
-      return data.shape();
+    auto fill_value() const {
+      return tensor.nodata_value();
     }
 
-    auto type() {
-      return data.type_id();
+    auto shape() const {
+      return tensor.shape;
+    }
+
+    auto type() const {
+      tensor.type;
     }
 
     auto x() const {
@@ -75,50 +78,56 @@ namespace GDAL {
       return y;
     }
 
-    auto z() const {
-      return values;
+    auto _z_() const {
+      return z;
     }
 
-    auto reproject(string proj, double nodata = C::Nil, bool compact = false, bool memoize = false) {
-      nodata = (nodata == C::Nil) ? this->nodata : nodata;
+    auto reproject(const string & proj, const GType & fill_value = null, Obool compact = nil, Obool memoize = nil) const {
       auto tf = transform_for(proj, compact, memoize);
       auto nearest = nearest_for(tf, memoize);
       auto & width = tf.width, & height = tf.height;
       auto & x0 = tf.x0,       & y0 = tf.y0;
       auto & dx = tf.dx,       & dy = tf.dy;
-      auto dst_values = Numo::build(type(), { height, width });
-      auto & dst_data = Numo::cast(dst_values);
       switch (type()) {
-      <%- compile_vars[:numeric_types].each do |numo_type, type| -%>
-      case Numo::Type::<%= numo_type %>: {
-        auto src_z = reinterpret_cast< const <%= type %> * >(data.read_ptr());
-        auto dst_z = reinterpret_cast< <%= type %> * >(dst_data.write_ptr());
+      <%- compile_vars[:numeric_types].each do |tensor_type, type| -%>
+      case Tensor::Type::<%= tensor_type %>: {
+        auto src_nodata = *reinterpret_cast< const <%= type %> * >(tensor.nodata);
+        auto dst_nodata = is_null(fill_value) ? src_nodata : g_cast< <%= type %> >(fill_value);
+        auto src_data = reinterpret_cast< const <%= type %> * >(tensor.data);
+        auto dst_z = Tensor::build(type(), { height, width }, g_cast(dst_nodata));
+        auto & dst_tensor = Tensor::cast(dst_z);
+        auto dst_data = reinterpret_cast< <%= type %> * >(dst_tensor.data);
+        bool src_isnan_nodata = std::isnan(src_nodata);
         for (size_t j = 0; j < height; ++j) {
-          for (size_t i = 0; i < width; ++i, ++dst_z) {
+          for (size_t i = 0; i < width; ++i, ++dst_data) {
             auto point = nearest[j][i];
             if (point == NO_POINT) {
-              *dst_z = nodata;
+              *dst_data = dst_nodata;
             } else {
-              <%= type %> value = src_z[point];
-              *dst_z = (value == this->nodata) ? nodata : value;
+              auto value = src_data[point];
+              if (src_isnan_nodata) {
+                *dst_data = std::isnan(value) ? dst_nodata : value;
+              } else {
+                *dst_data = (value == src_nodata) ? dst_nodata : value;
+              }
             }
           }
         }
-        break;
+        return Raster(dst_tensor, type(), { x0, x0 + dx, y0, y0 + dy }, proj);
       }
       <%- end -%>
       default:
-        throw RuntimeError("invalid Numo::Type");
+        throw RuntimeError("invalid Tensor::Type");
       }
-      return Raster(dst_data, type(), { x0, x0 + dx, y0, y0 + dy }, proj, nodata);
     }
 
-    Transform transform_for(const string & proj, bool compact = false, bool memoize = false) const {
-      if (memoize) return cached_transform_for(proj, compact);
+    Transform transform_for(const string & proj, Obool compact = nil, Obool memoize = nil) const {
+      auto _compact_ = compact.value_or(false);
+      if (memoize.value_or(false)) return cached_transform_for(proj, _compact_);
       size_t total = width * height;
       Transform tf;
       auto grid = Vector(Vdouble(total), Vdouble(total), srs);
-      auto & x = grid.lon, & y = grid.lat;
+      auto & x = grid.x, & y = grid.y;
       size_t point = 0;
       double xi, yj = y0;
       for (size_t j = 0; j < height; ++j, yj += dy) {
@@ -129,9 +138,9 @@ namespace GDAL {
         }
       }
       tf.mesh = grid.reproject(proj);
-      auto & dst_x = tf.mesh.lon, & dst_y = tf.mesh.lat;
-      double  x_min = C::Inf,  x_max = -C::Inf,  y_min = C::Inf,  y_max = -C::Inf;
-      double dx_min = C::Inf, dx_max = -C::Inf, dy_min = C::Inf, dy_max = -C::Inf;
+      auto & dst_x = tf.mesh.x, & dst_y = tf.mesh.y;
+      double  x_min = Float::inf,  x_max = -Float::inf,  y_min = Float::inf,  y_max = -Float::inf;
+      double dx_min = Float::inf, dx_max = -Float::inf, dy_min = Float::inf, dy_max = -Float::inf;
       double x_prev; Vdouble y_prev(width);
       double dxi, dyj;
       point = 0;
@@ -151,7 +160,7 @@ namespace GDAL {
           x_prev = xi; y_prev[i] = yj;
         }
       }
-      if (compact) {
+      if (_compact_) {
         tf.width  = width;
         tf.height = height;
         dx_min = (x_max - x_min) / (width - 1);
@@ -183,17 +192,17 @@ namespace GDAL {
       return cache_key() + std::format(":{}:{}", reinterpret_cast< std::uintptr_t >(srs_for(proj)), compact);
     }
 
-    Transform cached_transform_for(const string & proj, bool compact = false) const {
+    Transform cached_transform_for(const string & proj, bool compact) const {
       static std::unordered_map< string, Transform > cache;
       string key = cache_key_for(proj, compact);
       if (!cache.contains(key)) cache[key] = transform_for(proj, compact);
       return cache[key];
     }
 
-    vector< Vssize_t > nearest_for(const Transform & tf, bool memoize = false) const {
-      if (memoize) return cached_nearest_for(tf);
+    vector< Vssize_t > nearest_for(const Transform & tf, Obool memoize = nil) const {
+      if (memoize.value_or(false)) return cached_nearest_for(tf);
       auto & width = tf.width, & height = tf.height;
-      auto & x  = tf.mesh.lon, & y  = tf.mesh.lat;
+      auto & x  = tf.mesh.x, & y  = tf.mesh.y;
       auto & x0 = tf.x0,       & y0 = tf.y0;
       auto & dx = tf.dx,       & dy = tf.dy;
       auto & rx = tf.rx,       & ry = tf.ry;

@@ -2,41 +2,39 @@ namespace GDAL {
   class Vector : public Base {
     public:
 
-    Vdouble lon;
-    Vdouble lat;
+    Vdouble x;
+    Vdouble y;
     size_t size;
-
-    using Base::Base;
 
     Vector() = default;
 
-    Vector(Vdouble x, Vdouble y, string proj = "4326"):
-      Vector(x, y, srs_for(proj)) {
+    Vector(const Vdouble & x, const Vdouble & y, const Ostring & proj = nil):
+      Vector(x, y, srs_for(proj.value_or("4326"))) {
     }
 
     Vector(const Vdouble & x, const Vdouble & y, OGRSpatialReference * srs):
-      Base(srs),
-      lon(x),
-      lat(y),
+      Base::Base(srs),
+      x(x),
+      y(y),
       size(x.size()) {
       if (size != y.size()) throw RuntimeError("size mismatch");
     }
 
-    auto x() const {
-      return lon;
+    auto _x_() const {
+      return x;
     }
 
-    auto y() const {
-      return lat;
+    auto _y_() const {
+      return y;
     }
 
     auto points() const {
       vector< std::pair< double, double >> xy(size);
-      for (size_t i = 0; i < size; ++i) xy[i] = std::make_pair(lon[i], lat[i]);
+      for (size_t i = 0; i < size; ++i) xy[i] = std::make_pair(x[i], y[i]);
       return xy;
     }
 
-    Vector reproject(string dst_proj) const {
+    Vector reproject(const string & dst_proj) const {
       auto dst_srs = srs_for(dst_proj);
       if (dst_srs == srs) return Vector(*this);
       auto transform = OGRCreateCoordinateTransformation(srs, dst_srs);
@@ -46,8 +44,8 @@ namespace GDAL {
       finally ensure([&]{
         OGRCoordinateTransformation::DestroyCT(transform);
       });
-      Vector dst(this->lon, this->lat, dst_srs);
-      if (!transform->Transform(size, dst.lon.data(), dst.lat.data())) {
+      Vector dst(x, y, dst_srs);
+      if (!transform->Transform(size, dst.x.data(), dst.y.data())) {
         throw RuntimeError("unable to transform coordinates");
       }
       return dst;

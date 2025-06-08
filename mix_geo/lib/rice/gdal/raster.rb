@@ -10,10 +10,10 @@ module GDAL
     end
 
     module self::WithOverrides
-      def initialize(narray, *x01_y01, x: nil, y: nil, proj: nil, nodata: nil, **proj4)
+      def initialize(z, *x01_y01, x: nil, y: nil, proj: nil, **proj4)
         proj = GDAL.proj4text(**proj4) unless proj || proj4.empty?
         x01_y01 = self.class.x01_y01(x, y, proj) if x01_y01.empty?
-        super(narray, narray.type, x01_y01, proj&.to_s, nodata)
+        super(z, z.type, x01_y01, proj&.to_s)
       end
 
       def shape
@@ -28,9 +28,9 @@ module GDAL
         super.to_a
       end
 
-      def reproject(proj = nil, nodata: nil, compact: false, memoize: false, **proj4)
+      def reproject(proj = nil, fill_value: nil, compact: nil, memoize: nil, **proj4)
         proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
-        super(proj, nodata, compact, memoize)
+        super(proj, fill_value, compact, memoize)
       end
     end
     prepend self::WithOverrides
@@ -55,32 +55,40 @@ module GDAL
       [x0, x0 + dx, y0, y0 + dy]
     end
 
-    def _reproject_(proj = nil, nodata: C::NIL, compact: false, memoize: false, **proj4)
+    def _reproject_(proj = nil, fill_value: nil, compact: nil, memoize: nil, **proj4)
       proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
-      nodata = (nodata == C::NIL) ? self.nodata : nodata
       tf = transform_for(proj, compact, memoize)
       nearest = _nearest_for_(tf, memoize)
       width, height, x0, y0, dx, dy = tf.width, tf.height, tf.x0, tf.y0, tf.dx, tf.dy
       src_data = z
-      dst_data = Numo.build(type, height, width, fill_value: nodata)
+      src_fill_value = src_data.fill_value
+      fill_value = src_fill_value if fill_value.nil?
+      dst_data = Tensor.build(type, height, width, fill_value: fill_value)
+      src_fill_value_nan = src_fill_value.nan?
+      index = 0
       height.times do |j|
         width.times do |i|
-          if (point = nearest[j][i])
-            value = src_data[point]
-            dst_data[j, i] = (value == self.nodata) ? nodata : value
+          if (point = nearest[j][i]).nil?
+            dst_data[index] = fill_value
           else
-            dst_data[j, i] = nodata
+            value = src_data[point]
+            if src_fill_value_nan
+              dst_data[index] = value.nan? ? fill_value : value
+            else
+              dst_data[index] = (value == src_fill_value) ? fill_value : value
+            end
           end
+          index += 1
         end
       end
-      self.class.new(dst_data, x0, x0 + dx, y0, y0 + dy, proj: proj, nodata: nodata)
+      self.class.new(dst_data, x0, x0 + dx, y0, y0 + dy, proj: proj)
     end
 
     private :transform_for
 
     private
 
-    def _nearest_for_(tf, memoize = false)
+    def _nearest_for_(tf, memoize = nil)
       return _cached_nearest_for_(tf) if memoize
       mesh, width, height, x0, y0, dx, dy, rx, ry = tf.mesh.to_a, tf.width, tf.height, tf.x0, tf.y0, tf.dx, tf.dy, tf.rx, tf.ry
       mesh_points = Array.new(height){ Array.new(width){ Set.new } }
