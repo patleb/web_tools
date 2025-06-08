@@ -18,8 +18,11 @@ class ERB
         when / end /
           variables.pop
         else
+          variables.push [] if line.match? /<%-? +(if|unless|case)/
           variables.each do |tokens|
             tokens.each do |token|
+              line.gsub! /([^-])-#{token}-([^-])/, "\\1<%= #{token.downcase} %>\\2"
+              line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}\\2"
               line.gsub! /(\W)#{token}(\W)/, "\\1<%= #{token.downcase} %>\\2"
             end
           end
