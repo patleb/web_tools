@@ -1,37 +1,37 @@
 namespace Tensor {
-  <%- compile_vars[:numeric_types].each do |tensor_type, type| -%>
+  <%- template[:numeric_types].each do |TENSOR, T| -%>
 
-  class <%= tensor_type %> : public Base {
+  class TENSOR : public Base {
     public:
 
-    <%= type %> fill_value = <%= %w(float double).include?(type) ? 'Float::nan' : 0 %>;
-    std::valarray< <%= type %> > array;
+    T fill_value = <%= %w(float double).include?(@T) ? 'Float::nan' : 0 %>;
+    std::valarray< T > array;
 
-    explicit <%= tensor_type %>(const Vsize_t & shape, const O<%= type %> & fill_value = nil):
+    explicit TENSOR(const Vsize_t & shape, const O-T- & fill_value = nil):
       Base::Base(shape),
-      fill_value(fill_value.value_or(<%= %w(float double).include?(type) ? 'Float::nan' : 0 %>)),
+      fill_value(fill_value.value_or(<%= %w(float double).include?(@T) ? 'Float::nan' : 0 %>)),
       array(this->fill_value, this->size) {
       sync_base();
     }
 
-    explicit <%= tensor_type %>(const V<%= type %> & values, const Vsize_t & shape, const O<%= type %> & fill_value = nil):
+    explicit TENSOR(const V-T- & values, const Vsize_t & shape, const O-T- & fill_value = nil):
       Base::Base(shape),
-      fill_value(fill_value.value_or(<%= %w(float double).include?(type) ? 'Float::nan' : 0 %>)),
+      fill_value(fill_value.value_or(<%= %w(float double).include?(@T) ? 'Float::nan' : 0 %>)),
       array(values.data(), values.size()) {
       if (values.size() != size) throw RuntimeError("values.size[" S(values.size()) "] != shape.total[" S(size) "]");
       sync_base();
     }
 
-    <%= tensor_type %>() = delete;
+    TENSOR() = delete;
 
-    <%= tensor_type %>(const <%= tensor_type %> & tensor):
+    TENSOR(const TENSOR & tensor):
       Base::Base(tensor),
       fill_value(tensor.fill_value),
       array(tensor.array) {
       sync_base();
     }
 
-    <%= tensor_type %> & operator=(const <%= tensor_type %> & tensor) {
+    TENSOR & operator=(const TENSOR & tensor) {
       if (this == &tensor) return *this;
       copy_to_base(tensor);
       sync_base();
@@ -41,28 +41,28 @@ namespace Tensor {
     bool operator==(const Tensor::Base & tensor) const {
       if (type != tensor.type) return false;
       if (shape != tensor.shape) return false;
-      return std::equal(&array[0], &array[size - 1], reinterpret_cast< const <%= type %> * >(tensor.data));
+      return std::equal(&array[0], &array[size - 1], reinterpret_cast< const T * >(tensor.data));
     }
-    <%- if %w(float double).include? type -%>
-    auto operator*(const Tensor::<%= tensor_type %> & tensor) const {
+    <%- if %w(float double).include? @T -%>
+    auto operator*(const Tensor::TENSOR & tensor) const {
       if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
-      return <%= tensor_type %>(array * tensor.array, shape, fill_value);
+      return TENSOR(array * tensor.array, shape, fill_value);
     }
-    auto operator*(<%= type %> value) const {
+    auto operator*(T value) const {
       if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
-      if (value ==  0.0) return <%= tensor_type %>(std::valarray< <%= type %> >(0.0, size), shape, fill_value);
-      if (value ==  1.0) return <%= tensor_type %>(+array, shape, fill_value);
-      if (value == -1.0) return <%= tensor_type %>(-array, shape, fill_value);
-      return <%= tensor_type %>(array * value, shape, fill_value);
+      if (value ==  0.0) return TENSOR(std::valarray< T >(0.0, size), shape, fill_value);
+      if (value ==  1.0) return TENSOR(+array, shape, fill_value);
+      if (value == -1.0) return TENSOR(-array, shape, fill_value);
+      return TENSOR(array * value, shape, fill_value);
     }
-    <%- %w(/ + -).each do |op| -%>
-    auto operator<%= op %>(const Tensor::<%= tensor_type %> & tensor) const {
+    <%- %w(/ + -).each do |OP| -%>
+    auto operator-OP-(const Tensor::TENSOR & tensor) const {
       if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
-      return <%= tensor_type %>(array <%= op %> tensor.array, shape, fill_value);
+      return TENSOR(array -OP- tensor.array, shape, fill_value);
     }
-    auto operator<%= op %>(<%= type %> value) const {
+    auto operator-OP-(T value) const {
       if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
-      return <%= tensor_type %>(array <%= op %> value, shape, fill_value);
+      return TENSOR(array -OP- value, shape, fill_value);
     }
     <%- end -%>
     <%- end -%>
@@ -76,7 +76,7 @@ namespace Tensor {
     auto & last()  const { return array[size - 1]; }
 
     auto values() const {
-      return V<%= type %>(std::begin(array), std::end(array));
+      return V-T-(std::begin(array), std::end(array));
     }
 
     auto slice(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vsize_t & stride = {}) const {
@@ -85,10 +85,10 @@ namespace Tensor {
       auto strides = counts_or_ones(stride);
       auto slice = std::gslice(offset, counts, strides);
       auto shape = Vsize_t(std::begin(counts), std::end(counts));
-      return <%= tensor_type %>(array[slice], shape, fill_value);
+      return TENSOR(array[slice], shape, fill_value);
     }
 
-    auto & refill_value(<%= type %> fill_value) {
+    auto & refill_value(T fill_value) {
       if (std::isnan(this->fill_value)) {
         if (std::isnan(fill_value)) return *this;
         for (size_t i = 0; auto && value : array) if (std::isnan(value)) array[i] = fill_value;
@@ -105,13 +105,13 @@ namespace Tensor {
       return *this;
     }
 
-    auto & seq(const O<%= type %> & start = nil) {
+    auto & seq(const O-T- & start = nil) {
       std::iota(std::begin(array), std::end(array), start.value_or(0));
       return *this;
     }
 
     size_t type_size() const override {
-      return sizeof(<%= type %>);
+      return sizeof(T);
     }
 
     static auto from_sql(const std::string & values) {
@@ -119,7 +119,7 @@ namespace Tensor {
     }
 
     auto to_sql() const {
-      auto data = reinterpret_cast< <%= type %> * >(this->data);
+      auto data = reinterpret_cast< T * >(this->data);
       size_t dim_i = 0, dim_j;
       size_t dim_n = rank - 1;
       size_t counts[rank];
@@ -153,7 +153,7 @@ namespace Tensor {
 
     private:
 
-    <%= tensor_type %>(std::valarray< <%= type %> > && array, const Vsize_t & shape, <%= type %> fill_value):
+    TENSOR(std::valarray< T > && array, const Vsize_t & shape, T fill_value):
       Base::Base(shape),
       fill_value(fill_value),
       array(array) {
@@ -163,16 +163,16 @@ namespace Tensor {
     void sync_base() {
       this->nodata = reinterpret_cast< void * >(&fill_value);
       this->data = reinterpret_cast< void * >(&array[0]);
-      this->type = Tensor::Type::<%= tensor_type %>;
+      this->type = Tensor::Type::TENSOR;
     }
   };
 
-  inline Base::operator <%= tensor_type %> * () const {
-    return dynamic_cast< <%= tensor_type %> * >(const_cast< Base * >(this));
+  inline Base::operator TENSOR * () const {
+    return dynamic_cast< TENSOR * >(const_cast< Base * >(this));
   }
 
-  inline Base::operator <%= tensor_type %> & () const {
-    return dynamic_cast< <%= tensor_type %> & >(*const_cast< Base * >(this));
+  inline Base::operator TENSOR & () const {
+    return dynamic_cast< TENSOR & >(*const_cast< Base * >(this));
   }
   <%- end -%>
 }

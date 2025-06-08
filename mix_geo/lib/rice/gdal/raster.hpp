@@ -27,20 +27,16 @@ namespace GDAL {
 
     Tensor::NType z;
     Tensor::Base & tensor; // stored as [y, x]
-    size_t width;
-    size_t height;
-    double x0 = Float::nan;
-    double y0 = Float::nan;
-    double dx = Float::nan;
-    double dy = Float::nan;
+    size_t width, height;
+    double x0 = Float::nan, y0 = Float::nan;
+    double dx = Float::nan, dy = Float::nan;
 
     Raster(Tensor::Base & z, Tensor::Type type, const vector < double > & x01_y01, const Ostring & proj = nil):
       Base::Base(proj.value_or("4326")),
       z(Tensor::cast(z, type)),
       tensor(Tensor::cast(this->z)) {
       if (z.rank != 2)         throw RuntimeError("invalid z dimensions");
-      this->width = z.shape[1];
-      this->height = z.shape[0];
+      this->width = z.shape[1];   this->height = z.shape[0];
       if (width < 2)           throw RuntimeError("invalid x axis size");
       if (height < 2)          throw RuntimeError("invalid y axis size");
       if (x01_y01.size() != 4) throw RuntimeError("invalid x01_y01 size");
@@ -50,6 +46,15 @@ namespace GDAL {
       auto orientation = this->orientation();
       if (orientation[0] * std::abs(dx) != dx) throw RuntimeError("invalid x axis orientation");
       if (orientation[1] * std::abs(dy) != dy) throw RuntimeError("invalid y axis orientation");
+    }
+
+    Raster(const Raster & raster):
+      Base::Base(raster.srs),
+      z(raster.z),
+      tensor(Tensor::cast(this->z)),
+      width(raster.width), height(raster.height),
+      x0(raster.x0), y0(raster.y0),
+      dx(raster.dx), dy(raster.dy) {
     }
 
     auto fill_value() const {
@@ -89,14 +94,14 @@ namespace GDAL {
       auto & x0 = tf.x0,       & y0 = tf.y0;
       auto & dx = tf.dx,       & dy = tf.dy;
       switch (type()) {
-      <%- compile_vars[:numeric_types].each do |tensor_type, type| -%>
-      case Tensor::Type::<%= tensor_type %>: {
-        auto src_nodata = *reinterpret_cast< const <%= type %> * >(tensor.nodata);
-        auto dst_nodata = is_null(fill_value) ? src_nodata : g_cast< <%= type %> >(fill_value);
-        auto src_data = reinterpret_cast< const <%= type %> * >(tensor.data);
+      <%- template[:numeric_types].each do |TENSOR, T| -%>
+      case Tensor::Type::TENSOR: {
+        auto src_nodata = *reinterpret_cast< const T * >(tensor.nodata);
+        auto dst_nodata = is_null(fill_value) ? src_nodata : g_cast< T >(fill_value);
+        auto src_data = reinterpret_cast< const T * >(tensor.data);
         auto dst_z = Tensor::build(type(), { height, width }, g_cast(dst_nodata));
         auto & dst_tensor = Tensor::cast(dst_z);
-        auto dst_data = reinterpret_cast< <%= type %> * >(dst_tensor.data);
+        auto dst_data = reinterpret_cast< T * >(dst_tensor.data);
         bool src_isnan_nodata = std::isnan(src_nodata);
         for (size_t j = 0; j < height; ++j) {
           for (size_t i = 0; i < width; ++i, ++dst_data) {

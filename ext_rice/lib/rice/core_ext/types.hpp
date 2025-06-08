@@ -14,9 +14,9 @@ using Vssize_t = std::vector< ssize_t >;
 using Ossize_t = std::optional< ssize_t >;
 using Vptrdiff_t = std::vector< ptrdiff_t >;
 using Optrdiff_t = std::optional< ptrdiff_t >;
-<%- compile_vars[:numeric_types].each_value do |type| -%>
-using V<%= type %> = std::vector< <%= type %> >;
-using O<%= type %> = std::optional< <%= type %> >;
+<%- template[:numeric_types].each_value do |T| -%>
+using V-T- = std::vector< T >;
+using O-T- = std::optional< T >;
 <%- end -%>
 using Vstring = std::vector< std::string >;
 using Ostring = std::optional< std::string >;

@@ -1,5 +1,5 @@
 module Tensor
-  ExtRice.config.compile_vars[:numeric_types].each_key do |tensor_type|
+  ExtRice.config.template[:numeric_types].each_key do |tensor_type|
     const_get(tensor_type).class_eval do
       module self::WithOverrides
         def initialize(*values, **options)

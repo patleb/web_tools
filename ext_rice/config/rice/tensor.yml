@@ -1,11 +1,11 @@
 aliases:
   - &shape [const Vsize_t &, shape]
-  <%- compile_vars[:numeric_types].each_value do |type| -%>
+  <%- template[:numeric_types].each_value do |type| -%>
   - &fill_value_<%= type %> [const O<%= type %> &, fill_value = nil]
   <%- end -%>
 
 module Tensor:
-  enum Type | Tensor::Type: [<%= compile_vars[:numeric_types].keys.join(', ') %>]
+  enum Type | Tensor::Type: [<%= template[:numeric_types].keys.join(', ') %>]
 
   class Base | Tensor::Base:
     attr_reader: [size, rank, type]
@@ -13,7 +13,7 @@ module Tensor:
     def:
       shape | _shape_:
 
-  <% compile_vars[:numeric_types].each do |tensor_type, type| %>
+  <% template[:numeric_types].each do |tensor_type, type| %>
   class <%= tensor_type %> < Tensor::Base:
     attr_accessor: [fill_value]
 

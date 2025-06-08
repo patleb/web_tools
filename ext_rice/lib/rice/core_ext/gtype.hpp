@@ -6,7 +6,7 @@
 
 constexpr auto null = nullstate{};
 
-using GType = std::variant< nullstate, <%= compile_vars[:generic_types].values.uniq.join(', ') %>, std::string >;
+using GType = std::variant< nullstate, <%= template[:generic_types].values.uniq.join(', ') %>, std::string >;
 
 bool is_null(const GType & value) {
   return value.index() == 0;
@@ -44,24 +44,24 @@ auto g_cast(const GType & value = null) {
   default: throw RuntimeError("invalid GType");
   }
 }
-<%- compile_vars[:generic_types].each do |type, generic_type| -%>
+<%- template[:generic_types].each do |T, GENERIC| -%>
 
-auto g_cast(const O<%= type %> & value) {
-  <%- case type -%>
+auto g_cast(const O-T- & value) {
+  <%- case @T -%>
   <%- when 'double' -%>
   return value ? *value : Float::nan;
   <%- when 'float' -%>
   return value ? static_cast< double >(*value) : Float::nan;
   <%- else -%>
-  return static_cast< <%= generic_type %> >(value ? *value : 0);
+  return static_cast< GENERIC >(value ? *value : 0);
   <%- end -%>
 }
 
-auto g_cast(<%= type %> value) {
-  <%- if type == 'double' -%>
+auto g_cast(T value) {
+  <%- if @T == 'double' -%>
   return value;
   <%- else -%>
-  return static_cast< <%= generic_type %> >(value);
+  return static_cast< GENERIC >(value);
   <%- end -%>
 }
 <%- end -%>

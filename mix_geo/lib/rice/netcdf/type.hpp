@@ -3,8 +3,8 @@ namespace NetCDF {
   using std::vector;
 
   enum class Type {
-    <%- compile_vars[:netcdf].each do |tensor_type, nc_type| -%>
-    <%= tensor_type %> = <%= nc_type %>,
+    <%- template[:netcdf].each do |TENSOR, NC_TYPE| -%>
+    TENSOR = NC_TYPE,
     <%- end -%>
     String = NC_CHAR
   };
@@ -19,17 +19,17 @@ namespace NetCDF {
 
   int type_id(const Tensor::NType & values) {
     switch (values.index()) {
-    <%- compile_vars[:netcdf].each_value.with_index do |nc_type, i| -%>
-    case <%= i %>: return <%= nc_type %>;
+    <%- template[:netcdf].each_value.with_index do |NC_TYPE, I| -%>
+    case I: return NC_TYPE;
     <%- end -%>
-    case <%= compile_vars[:netcdf].size %>: return NC_CHAR;
+    case <%= template[:netcdf].size %>: return NC_CHAR;
     default: throw TypeError();
     }
   }
 
   int type_id(std::string_view name) {
-    <%- compile_vars[:netcdf].each do |tensor_type, nc_type| -%>
-    if (name == "<%= tensor_type %>") return <%= nc_type %>;
+    <%- template[:netcdf].each do |TENSOR, NC_TYPE| -%>
+    if (name == "<%= @TENSOR %>") return NC_TYPE;
     <%- end -%>
     if (name == "String") return NC_CHAR;
     throw TypeError();
@@ -37,8 +37,8 @@ namespace NetCDF {
 
   auto type(int id) {
     switch (id) {
-    <%- compile_vars[:netcdf].each do |tensor_type, nc_type| -%>
-    case <%= nc_type %>: return NetCDF::Type::<%= tensor_type %>;
+    <%- template[:netcdf].each do |TENSOR, NC_TYPE| -%>
+    case NC_TYPE: return NetCDF::Type::TENSOR;
     <%- end -%>
     case NC_CHAR: return NetCDF::Type::String;
     }

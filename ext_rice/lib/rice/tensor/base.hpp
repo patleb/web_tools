@@ -1,13 +1,13 @@
 namespace Tensor {
   enum class Type {
-    <%- compile_vars[:numeric_types].each_key do |tensor_type| -%>
-    <%= tensor_type %>,
+    <%- template[:numeric_types].each_key do |TENSOR| -%>
+    TENSOR,
     <%- end -%>
     Base
   };
 
-  <%- compile_vars[:numeric_types].each_key do |tensor_type| -%>
-  class <%= tensor_type %>;
+  <%- template[:numeric_types].each_key do |TENSOR| -%>
+  class TENSOR;
   <%- end -%>
 
   class Base {
@@ -37,15 +37,15 @@ namespace Tensor {
       copy_to_base(tensor);
     }
 
-    <%- compile_vars[:numeric_types].each_key do |tensor_type| -%>
-    explicit operator <%= tensor_type %> * () const;
-    explicit operator <%= tensor_type %> & () const;
+    <%- template[:numeric_types].each_key do |TENSOR| -%>
+    explicit operator TENSOR * () const;
+    explicit operator TENSOR & () const;
     <%- end -%>
 
     GType nodata_value() const {
       switch (type) {
-      <%- compile_vars[:numeric_types].each do |tensor_type, type| -%>
-      case Tensor::Type::<%= tensor_type %>: return g_cast(*reinterpret_cast< const <%= type %> * >(nodata));
+      <%- template[:numeric_types].each do |TENSOR, T| -%>
+      case Tensor::Type::TENSOR: return g_cast(*reinterpret_cast< const T * >(nodata));
       <%- end -%>
       default:
         throw RuntimeError("invalid Tensor::Type");

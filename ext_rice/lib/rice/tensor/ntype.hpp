@@ -1,10 +1,10 @@
 namespace Tensor {
-  using NType = std::variant< <%= compile_vars[:numeric_types].keys.join(', ') %>, Vstring >;
+  using NType = std::variant< <%= template[:numeric_types].keys.join(', ') %>, Vstring >;
 
   Tensor::NType build(Tensor::Type type, const Vsize_t & shape, const GType & fill_value = null) {
     switch (type) {
-    <%- compile_vars[:numeric_types].each do |tensor_type, type| -%>
-    case Tensor::Type::<%= tensor_type %>: return Tensor::<%= tensor_type %>(shape, g_cast< <%= type %> >(fill_value));
+    <%- template[:numeric_types].each do |TENSOR, T| -%>
+    case Tensor::Type::TENSOR: return Tensor::TENSOR(shape, g_cast< T >(fill_value));
     <%- end -%>
     default:
       throw RuntimeError("invalid Tensor::Type");
@@ -13,8 +13,8 @@ namespace Tensor {
 
   Tensor::NType cast(Tensor::Base & tensor, Tensor::Type type) {
     switch (type) {
-    <%- compile_vars[:numeric_types].each_key do |tensor_type| -%>
-    case Tensor::Type::<%= tensor_type %>: return dynamic_cast< Tensor::<%= tensor_type %> & >(tensor);
+    <%- template[:numeric_types].each_key do |TENSOR| -%>
+    case Tensor::Type::TENSOR: return dynamic_cast< Tensor::TENSOR & >(tensor);
     <%- end -%>
     default:
       throw RuntimeError("invalid Tensor::Type");
@@ -23,8 +23,8 @@ namespace Tensor {
 
   Tensor::Base & cast(Tensor::NType & tensor) {
     switch (tensor.index()) {
-    <%- compile_vars[:numeric_types].size.times do |i| -%>
-    case <%= i %>: return std::get< <%= i %> >(tensor);
+    <%- template[:numeric_types].size.times do |I| -%>
+    case I: return std::get< I >(tensor);
     <%- end -%>
     default:
       throw RuntimeError("invalid Tensor::NType");
@@ -33,8 +33,8 @@ namespace Tensor {
 
   Tensor::Type type(const Tensor::NType & tensor) {
     switch (tensor.index()) {
-    <%- compile_vars[:numeric_types].each_key.with_index do |tensor_type, i| -%>
-    case <%= i %>: return Tensor::Type::<%= tensor_type %>;
+    <%- template[:numeric_types].each_key.with_index do |TENSOR, I| -%>
+    case I: return Tensor::Type::TENSOR;
     <%- end -%>
     default:
       throw RuntimeError("invalid Tensor::NType");

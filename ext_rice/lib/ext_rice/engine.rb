@@ -8,9 +8,9 @@ module ExtRice
       Rice.require_ext unless Rails.env.test?
     end
 
-    initializer 'ext_rice.compile_vars', before: 'ext_rice.require_ext' do
+    initializer 'ext_rice.template', before: 'ext_rice.require_ext' do
       ExtRice.configure do |config|
-        config.compile_vars[:numeric_types] = {
+        config.template[:numeric_types] = {
           'Int8'   => 'int8_t',
           'Int16'  => 'int16_t',
           'Int32'  => 'int32_t',
@@ -22,7 +22,7 @@ module ExtRice
           'UInt32' => 'uint32_t',
           'UInt64' => 'uint64_t2',
         }
-        config.compile_vars[:generic_types] = {
+        config.template[:generic_types] = {
           'int8_t'    => 'int64_t2',
           'int16_t'   => 'int64_t2',
           'int32_t'   => 'int64_t2',

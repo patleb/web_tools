@@ -73,9 +73,9 @@ namespace NetCDF {
     auto read() const {
       size_t count = size();
       switch (type_id()) {
-      <%- compile_vars[:netcdf].each do |tensor_type, nc_type| -%>
-      case <%= nc_type %>: {
-        Tensor::<%= tensor_type %> numbers(Vsize_t{ count });
+      <%- template[:netcdf].each do |TENSOR, NC_TYPE| -%>
+      case NC_TYPE: {
+        Tensor::TENSOR numbers(Vsize_t{ count });
         check_status( nc_get_att(file_id, var_id, name.c_str(), numbers.data) );
         return Tensor::NType(numbers);
       }

@@ -18,9 +18,9 @@ module MixGeo
       ExtRails.config.excluded_tables.merge(%w(spatial_ref_sys topology layer)) if Setting[:postgis]
     end
 
-    initializer 'mix_geo.compile_vars', before: 'ext_rice.require_ext' do
+    initializer 'mix_geo.template', before: 'ext_rice.require_ext' do
       ExtRice.configure do |config|
-        config.compile_vars[:netcdf] = {
+        config.template[:netcdf] = {
           'Int8'   => 'NC_BYTE',   # 1
           'Int16'  => 'NC_SHORT',  # 3
           'Int32'  => 'NC_INT',    # 4
@@ -33,7 +33,7 @@ module MixGeo
           'UInt64' => 'NC_UINT64', # 11
           # 'String' => NC_CHAR,   # 2
         }
-        raise "types mismatch" if config.compile_vars[:netcdf].keys != config.compile_vars[:numeric_types].keys
+        raise "types mismatch" if config.template[:netcdf].keys != config.template[:numeric_types].keys
       end
     end
 

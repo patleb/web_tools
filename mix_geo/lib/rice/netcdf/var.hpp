@@ -126,20 +126,20 @@ namespace NetCDF {
 
     auto read(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vptrdiff_t & stride = {}) const {
       switch (type_id()) {
-      <%- compile_vars[:netcdf].each do |tensor_type, nc_type| -%>
-      case <%= nc_type %>: {
+      <%- template[:netcdf].each do |TENSOR, NC_TYPE| -%>
+      case NC_TYPE: {
         size_t dims_count = this->dims_count();
         Vsize_t starts = start.empty() ? Vsize_t(dims_count, 0) : start;
         Vsize_t counts = count.empty() ? Vsize_t(dims_count, 1) : count;
         if (starts.size() != dims_count) throw TypeError();
         if (counts.size() != dims_count) throw TypeError();
         if (stride.empty()) {
-          Tensor::<%= tensor_type %> values(counts);
+          Tensor::TENSOR values(counts);
           check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.data) );
           return Tensor::NType(values);
         } else {
           if (stride.size() != dims_count) throw TypeError();
-          Tensor::<%= tensor_type %> values(counts);
+          Tensor::TENSOR values(counts);
           check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.data) );
           return Tensor::NType(values);
         }
