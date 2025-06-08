@@ -38,16 +38,19 @@ namespace Tensor {
       return *this;
     }
 
+    // NOTE won't consider NaN --> use #to_sql
     bool operator==(const Tensor::Base & tensor) const {
       if (type != tensor.type) return false;
       if (shape != tensor.shape) return false;
       return std::equal(&array[0], &array[size - 1], reinterpret_cast< const T * >(tensor.data));
     }
     <%- if %w(float double).include? @T -%>
+
     auto operator*(const Tensor::TENSOR & tensor) const {
       if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
       return TENSOR(array * tensor.array, shape, fill_value);
     }
+
     auto operator*(T value) const {
       if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
       if (value ==  0.0) return TENSOR(std::valarray< T >(0.0, size), shape, fill_value);
@@ -56,16 +59,19 @@ namespace Tensor {
       return TENSOR(array * value, shape, fill_value);
     }
     <%- %w(/ + -).each do |OP| -%>
+
     auto operator-OP-(const Tensor::TENSOR & tensor) const {
       if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
       return TENSOR(array -OP- tensor.array, shape, fill_value);
     }
+
     auto operator-OP-(T value) const {
       if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
       return TENSOR(array -OP- value, shape, fill_value);
     }
     <%- end -%>
     <%- end -%>
+
     auto & operator[](size_t i)       { return array[i]; }
     auto & operator[](size_t i) const { return array[i]; }
     auto & operator[](const Vsize_t & indexes)       { return array[offset_for(indexes)]; }
