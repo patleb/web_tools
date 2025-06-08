@@ -10,6 +10,8 @@ module Rice
   module WithGems
     delegate :root_vendor, :root_app, :root_test, :dst_path, :yml_path, :extconf_path, :compile_vars, to: 'ExtRice.config'
 
+    alias_method :template, :compile_vars
+
     def require_overrides
       rb_paths.each do |file|
         require file
@@ -53,7 +55,7 @@ module Rice
       dst_dir = dst_name ? dst_path.join(dst_name) : dst_path
       dst_dir.mkdir_p
       Dir["#{src}/**/*.{h,hpp,ipp,c,cc,cpp}"].each do |file|
-        content = ERB.template(file, binding, trim_mode: '-').strip
+        content = ERB.template(file, binding, lean: true, trim_mode: '-').strip
         has_once = content.include?('#pragma once') || content.include?('#ifndef ')
         is_header = file.end_with? '.h', '.hpp', '.ipp'
         compiled_path = dst_dir.join(file.delete_prefix("#{src}/"))
@@ -83,7 +85,7 @@ module Rice
     end
 
     def gem_config(path)
-      defs = (YAML.safe_load(ERB.template(path, binding, trim_mode: '-'), aliases: true)&.except('aliases') || {}).to_hwia
+      defs = yml_read(path)
       hooks = extract_strings! defs, HOOKS
       configs = extract_configs! defs
       makefile = extract_strings! defs.delete(:makefile), MAKEFILE
@@ -171,11 +173,7 @@ module Rice
     end
 
     def yml
-      @yml ||= if yml?
-        YAML.safe_load(ERB.template(yml_path, binding, trim_mode: '-'), aliases: true)&.except('aliases').to_hwia
-      else
-        {}
-      end
+      @yml ||= yml? ? yml_read(yml_path) : {}
     end
 
     def yml?
@@ -192,6 +190,10 @@ module Rice
 
     def excluded_files
       @excluded_files ||= Array.wrap(yml.delete(:excluded_files))
+    end
+
+    def yml_read(path)
+      (YAML.safe_load(ERB.template(path, binding, trim_mode: '-'), aliases: true)&.except('aliases') || {}).to_hwia
     end
   end
 end
