@@ -48,7 +48,6 @@ class GDALTest < Rice::TestCase
   let(:y_4326) { corner_4326[2..3] }
   let(:x_3857) { corner_3857[0..1] }
   let(:y_3857) { corner_3857[2..3] }
-  let(:run_debug){ true }
 
   test '.proj4text' do
     CF_SRIDS.each do |srid, proj|
