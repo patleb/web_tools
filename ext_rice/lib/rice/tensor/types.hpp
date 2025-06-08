@@ -11,7 +11,7 @@ namespace Tensor {
       Base::Base(shape),
       fill_value(fill_value.value_or(<%= %w(float double).include?(@T) ? 'Float::nan' : 0 %>)),
       array(this->fill_value, this->size) {
-      sync_base();
+      sync_refs();
     }
 
     explicit TENSOR(const V-T- & values, const Vsize_t & shape, const O-T- & fill_value = nil):
@@ -19,7 +19,7 @@ namespace Tensor {
       fill_value(fill_value.value_or(<%= %w(float double).include?(@T) ? 'Float::nan' : 0 %>)),
       array(values.data(), values.size()) {
       if (values.size() != size) throw RuntimeError("values.size[" S(values.size()) "] != shape.total[" S(size) "]");
-      sync_base();
+      sync_refs();
     }
 
     TENSOR() = delete;
@@ -28,13 +28,13 @@ namespace Tensor {
       Base::Base(tensor),
       fill_value(tensor.fill_value),
       array(tensor.array) {
-      sync_base();
+      sync_refs();
     }
 
     TENSOR & operator=(const TENSOR & tensor) {
       if (this == &tensor) return *this;
       copy_to_base(tensor);
-      sync_base();
+      sync_refs();
       return *this;
     }
 
@@ -157,10 +157,10 @@ namespace Tensor {
       Base::Base(shape),
       fill_value(fill_value),
       array(array) {
-      sync_base();
+      sync_refs();
     }
 
-    void sync_base() {
+    void sync_refs() {
       this->nodata = reinterpret_cast< void * >(&fill_value);
       this->data = reinterpret_cast< void * >(&array[0]);
       this->type = Tensor::Type::TENSOR;

@@ -57,6 +57,8 @@ namespace GDAL {
       dx(raster.dx), dy(raster.dy) {
     }
 
+    Raster & operator=(const Raster & raster) = delete;
+
     auto fill_value() const {
       return tensor.nodata_value();
     }
