@@ -42,6 +42,14 @@ PROJ4_SRIDS = {
 }
 
 class GDALTest < Rice::TestCase
+  let(:corner_4326){ [-70, -68, 51, 45] }
+  let(:corner_3857){ [-7792364.355529149, -7569725.373942603, 6621293.722740169, 5621521.486192066] }
+  let(:x_4326) { corner_4326[0..1] }
+  let(:y_4326) { corner_4326[2..3] }
+  let(:x_3857) { corner_3857[0..1] }
+  let(:y_3857) { corner_3857[2..3] }
+  let(:run_debug){ true }
+
   test '.proj4text' do
     CF_SRIDS.each do |srid, proj|
       assert_equal PROJ4_SRIDS[srid], GDAL.proj4text(**proj)
@@ -49,97 +57,98 @@ class GDALTest < Rice::TestCase
   end
 
   context 'Vector' do
-    test '.transform' do
+    test '.reproject' do
       geo_proj = [-62.5, 48.0]
       web_proj = [-6957468.174579599, 6106854.834885074]
       any_proj = [-193.81238399946488, 3.243495673962869]
-      assert_equal web_proj, GDAL::Vector.transform(*geo_proj, dst_proj: 3857)
-      assert_equal any_proj, GDAL::Vector.transform(*geo_proj, dst_proj: PROJ4_SRIDS[200_000])
-      assert_equal any_proj, GDAL::Vector.transform(*geo_proj, dst_proj: CF_SRIDS[200_000])
+      assert_equal web_proj, GDAL::Vector.reproject(*geo_proj, dst_proj: 3857)
+      assert_equal any_proj, GDAL::Vector.reproject(*geo_proj, dst_proj: PROJ4_SRIDS[200_000])
+      assert_equal any_proj, GDAL::Vector.reproject(*geo_proj, dst_proj: CF_SRIDS[200_000])
     end
 
-    test '#transform' do
-      x_4326 = [45, 51]
-      y_4326 = [-70, -68]
-      x_3857 = [5009377.085697311, 5677294.030456952]
-      y_3857 = [-11068715.659379493, -10446997.314774934]
+    test '#reproject' do
       vector = GDAL::Vector.new(x_4326, y_4326)
       assert_equal 2, vector.size
       assert_equal x_4326, vector.x.to_a
       assert_equal y_4326, vector.y.to_a
-      raster_3857 = vector.transform(3857)
-      assert_equal 2, raster_3857.size
-      assert_equal x_3857, raster_3857.x.to_a
-      assert_equal y_3857, raster_3857.y.to_a
-      assert_equal x_3857.zip(y_3857), GDAL::Vector.transform(x_4326, y_4326, dst_proj: 3857)
+      vector_3857 = vector.reproject(3857)
+      assert_equal 2, vector_3857.size
+      assert_equal x_3857, vector_3857.x.to_a
+      assert_equal y_3857, vector_3857.y.to_a
+      assert_equal x_3857.zip(y_3857), GDAL::Vector.reproject(x_4326, y_4326, dst_proj: 3857)
+    end
+
+    test '#srid,ans state-level AI laws for 10 yrs #proj4, #wkt' do
+      vector = GDAL::Vector.new(x_3857, y_3857, proj: 3857)
+      srid, proj4, wkt = vector.srid, vector.proj4, vector.wkt
+      assert_equal 3857, srid
+      vector = GDAL::Vector.new(x_3857, y_3857, proj: proj4)
+      assert_equal proj4, vector.proj4
+      vector = GDAL::Vector.new(x_3857, y_3857, proj: wkt)
+      assert_equal wkt, vector.wkt
     end
   end
 
   context 'Raster' do
-    let(:data){ Numo::SFloat.new(2, 2).seq * 1.1 }
-    let(:corner_4326){ [45, 51, -70, -68] }
-    let(:corner_3857){ [5009377.085697311, 5705596.154676083, -11068715.659379493, -10372496.590400722] }
-
     test '#initialize' do
-      nodata = Float::NAN
-      data = Numo::SFloat[[nodata, 11], [22, nodata]]
-      raster_3857 = GDAL::Raster.new(data, *corner_3857, proj: 3857, nodata: nodata)
-      assert_equal GDAL::DataType::SFloat, raster_3857.type
+      fill_value = Float::NAN
+      data = Tensor::SFloat[[fill_value, 11], [22, fill_value]]
+      data.fill_value = fill_value
+      raster_3857 = GDAL::Raster.new(data, *corner_3857, proj: 3857)
+      assert_equal Tensor::Type::SFloat, raster_3857.type
       assert_equal data.shape, [raster_3857.width, raster_3857.height]
-      assert_equal corner_3857, raster_3857.x01_y01.to_a
-      assert_equal data.to_a.to_s, raster_3857.to_narray.to_a.to_s
-      assert raster_3857.nodata.nan?
+      assert_equal data.to_a.to_s, raster_3857.z.to_a.to_s
+      assert raster_3857.fill_value.nan?
 
-      nodata = -Float::INFINITY
-      raster_4326 = raster_3857.transform(4326, nodata: nodata)
-      assert_equal GDAL::DataType::SFloat, raster_4326.type
-      assert_equal [3, 1], [raster_4326.width, raster_4326.height]
-      assert_equal [45.0, 49.628696123011025, -70.0, -65.37130387698897], raster_4326.x01_y01.to_a
-      assert_equal Numo::SFloat[[22], [nodata], [nodata]], raster_4326.to_narray
-      assert_equal nodata, raster_4326.nodata
+      raster_4326 = raster_3857.reproject(4326)
+      assert_equal Tensor::Type::SFloat, raster_4326.type
+      assert_equal raster_3857.shape, [raster_4326.width, raster_4326.height]
+      assert_equal data.to_a.to_s, raster_4326.z.to_a.to_s
+      assert_equal fill_value.to_s, raster_4326.fill_value.to_s
     end
 
-    test '#transform' do
+    test '#reproject' do
+      data = Tensor::SFloat.new(2, 2).seq * 1.1
       raster_4326 = GDAL::Raster.new(data, *corner_4326)
-      assert_equal GDAL::DataType::SFloat, raster_4326.type
+      assert_equal Tensor::Type::SFloat, raster_4326.type
       assert_equal data.shape, [raster_4326.width, raster_4326.height]
       assert_equal corner_4326, raster_4326.x01_y01.to_a
-      assert_equal data, raster_4326.to_narray
-      assert_nil raster_4326.nodata
+      assert_equal data, raster_4326.z
+      assert raster_4326.fill_value.nan?
       assert_equal corner_4326.first(2), raster_4326.x.to_a
       assert_equal corner_4326.last(2), raster_4326.y.to_a
 
-      raster_same = raster_4326.transform(4326)
-      assert_equal GDAL::DataType::SFloat, raster_same.type
+      raster_same = raster_4326.reproject(4326)
+      assert_equal Tensor::Type::SFloat, raster_same.type
       assert_equal data.shape, [raster_same.width, raster_same.height]
       assert_equal corner_4326, raster_same.x01_y01.to_a
-      assert_equal data, raster_same.to_narray
-      assert_nil raster_same.nodata
+      assert_equal data, raster_same.z
+      assert raster_same.fill_value.nan?
 
-      assert_equal [corner_3857[0], corner_3857[2]], GDAL::Vector.transform(45, -70, dst_proj: 3857)
-      assert_equal [5677294.030456952, -10446997.314774934], GDAL::Vector.transform(51, -68, dst_proj: 3857)
+      assert_equal [corner_3857[0], corner_3857[3]], GDAL::Vector.reproject(-70, 45, dst_proj: 3857)
+      assert_equal [corner_3857[1], corner_3857[2]], GDAL::Vector.reproject(-68, 51, dst_proj: 3857)
 
-      raster_3857 = raster_4326.transform(3857)
-      assert_equal GDAL::DataType::SFloat, raster_3857.type
+      raster_3857 = raster_4326.reproject(3857)
+      assert_equal Tensor::Type::SFloat, raster_3857.type
       assert_equal data.shape, [raster_3857.width, raster_3857.height]
       assert_equal corner_3857, raster_3857.x01_y01.to_a
-      assert_equal data, raster_3857.to_narray
-      assert_nil raster_3857.nodata
+      assert_equal data, raster_3857.z
+      assert raster_3857.fill_value.nan?
 
-      assert_equal [40841.9872702298, -3363.094394859862], GDAL::Vector.transform(45, -70, dst_proj: PROJ4_SRIDS[200_000])
-      assert_equal [38555.37308123251, 229.63035717285263], GDAL::Vector.transform(51, -68, dst_proj: PROJ4_SRIDS[200_000])
+      assert_equal [-794.1116006197351, -281.5630954213741], GDAL::Vector.reproject(-70, 45, dst_proj: PROJ4_SRIDS[200_000])
+      assert_equal [-568.1017458002922, 363.2252599054433], GDAL::Vector.reproject(-68, 51, dst_proj: PROJ4_SRIDS[200_000])
 
-      raster_200_000 = raster_4326.transform(PROJ4_SRIDS[200_000])
-      assert_equal GDAL::DataType::SFloat, raster_200_000.type
+      raster_200_000 = raster_4326.reproject(PROJ4_SRIDS[200_000])
+      assert_equal Tensor::Type::SFloat, raster_200_000.type
       assert_equal data.shape, [raster_200_000.width, raster_200_000.height]
-      assert_equal [40841.9872702298, 44504.720447929845, 3029.495102646343, 6692.228280346388], raster_200_000.x01_y01.to_a
-      assert_equal data.transpose.flipud, raster_200_000.to_narray
+      assert_equal [-794.1116006197351, -568.1017458002922, 379.6478615484937, -299.9919342125634], raster_200_000.x01_y01.to_a
+      assert_equal data, raster_200_000.z
 
-      raster_back = raster_200_000.transform(4326)
-      assert_equal GDAL::DataType::SFloat, raster_back.type
-      assert_equal [3, 1], [raster_back.width, raster_back.height]
-      assert_equal [43.31888536591117, 47.450983055140384, -69.40037544312334, -65.26827775389413], raster_back.x01_y01.to_a
-      assert_equal Numo::SFloat[[0], [0], [1.1]], raster_back.to_narray
+      raster_back = raster_200_000.reproject(4326)
+      assert_equal Tensor::Type::SFloat, raster_back.type
+      assert_equal [2, 2], [raster_back.width, raster_back.height]
+      assert_equal [-71.21739255950133, -67.12358202854078, 51.14666626779211, 44.83557451139183], raster_back.x01_y01.to_a
+      assert_equal data, raster_back.z
     end
   end
 end
