@@ -54,7 +54,7 @@ void log_mark() {
 template < class T >
 void log_vector(std::string_view prefix, const T vector[], size_t count) {
   std::stringstream message;
-  message << (prefix.size() ? prefix : "vector");
+  message << prefix;
   for (size_t i = 0; i < count; ++i) {
     message << " (" << std::to_string(i) << ") " << std::to_string(vector[i]);
   }
