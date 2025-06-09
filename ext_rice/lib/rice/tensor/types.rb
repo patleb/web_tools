@@ -7,12 +7,8 @@ module Tensor
           super(values, **options)
         end
 
-        def shape
-          super.to_a
-        end
-
         def [](*indexes)
-          super(indexes)
+          indexes.size == 1 ? super(indexes.first) : super(indexes)
         end
 
         def []=(*indexes, value)
@@ -37,7 +33,7 @@ module Tensor
             else count
             end
           end
-          super
+          super(shape)
         end
 
         def seq(start = nil)

@@ -65,20 +65,18 @@ module GDAL
       fill_value = src_fill_value if fill_value.nil?
       dst_data = Tensor.build(type, height, width, fill_value: fill_value)
       src_fill_value_nan = src_fill_value.nan?
-      index = 0
       height.times do |j|
         width.times do |i|
           if (point = nearest[j][i]).nil?
-            dst_data[index] = fill_value
+            dst_data[j, i] = fill_value
           else
             value = src_data[point]
             if src_fill_value_nan
-              dst_data[index] = value.nan? ? fill_value : value
+              dst_data[j, i] = value.nan? ? fill_value : value
             else
-              dst_data[index] = (value == src_fill_value) ? fill_value : value
+              dst_data[j, i] = (value == src_fill_value) ? fill_value : value
             end
           end
-          index += 1
         end
       end
       self.class.new(dst_data, x0, x0 + dx, y0, y0 + dy, proj: proj)

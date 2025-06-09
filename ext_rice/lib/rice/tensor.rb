@@ -10,7 +10,7 @@ module Tensor
   end
 
   def self.to_slice_args(src_shape, *dst_ranges)
-    raise InvalidRanges if dst_ranges.size != (dims_count = src_shape.size)
+    raise InvalidRanges if dst_ranges.size > (dims_count = src_shape.size)
     start, count, shape = dst_ranges.each_with_object([[], [], []]).with_index do |(range, (start, count, shape)), i|
       case range
       when Range
