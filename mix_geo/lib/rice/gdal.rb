@@ -50,4 +50,20 @@ module GDAL
     text << '+no_defs'
     text.join(' ')
   end
+
+  def self.srid(proj)
+    Base.srid(proj)
+  end
+
+  def self.wkt(proj)
+    Base.wkt(proj)
+  end
+
+  def self.proj4(proj)
+    Base.proj4(proj)
+  end
+
+  def self.orientation(proj)
+    Base.orientation(proj)
+  end
 end
