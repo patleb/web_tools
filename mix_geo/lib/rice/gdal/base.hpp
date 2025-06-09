@@ -13,40 +13,36 @@ namespace GDAL {
       Base(srs_for(proj)) {
     }
 
-    static auto srid_for(const string & proj) {
+    static auto _srid_(const string & proj) {
       return atoi(proj.c_str());
     }
 
-    static auto wkt_for(const string & proj) {
+    static auto _wkt_(const string & proj) {
       return wkt_for(srs_for(proj));
     }
 
-    static auto proj4_for(const string & proj) {
+    static auto _proj4_(const string & proj) {
       return proj4_for(srs_for(proj));
     }
 
-    static auto axis_mapping_for(const string & proj) {
+    static auto _axis_mapping_(const string & proj) {
       return axis_mapping_for(srs_for(proj));
     }
 
-    static auto orientation_for(const string & proj) {
+    static auto _orientation_(const string & proj) {
       return orientation_for(srs_for(proj));
     }
 
-    static auto orientation_names_for(const string & proj) {
+    static auto _orientation_names_(const string & proj) {
       return orientation_names_for(srs_for(proj));
     }
 
-    static auto mapping_strategy_for(const string & proj) {
+    static auto _mapping_strategy_(const string & proj) {
       return mapping_strategy_for(srs_for(proj));
     }
 
-    static auto mapping_strategy_name_for(const string & proj) {
+    static auto _mapping_strategy_name_(const string & proj) {
       return mapping_strategy_for(srs_for(proj));
-    }
-
-    static auto directions(const Ostring & proj = nil) {
-      return orientation_for(proj.value_or("4326"));
     }
 
     auto srid() const {

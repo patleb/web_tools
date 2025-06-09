@@ -37,7 +37,7 @@ module GDAL
 
     def self.x01_y01(x, y, proj)
       x01_y01, axis = [], [x, y]
-      directions(proj).each_with_index do |sign, i|
+      orientation(proj).each_with_index do |sign, i|
         axis_i = axis[i]
         v0, v1 = axis_i[0], axis_i[1]
         if sign.negative?

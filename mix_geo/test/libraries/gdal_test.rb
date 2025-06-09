@@ -96,13 +96,13 @@ class GDALTest < Rice::TestCase
       raster_3857 = GDAL::Raster.new(data, *corner_3857, proj: 3857)
       assert_equal Tensor::Type::SFloat, raster_3857.type
       assert_equal data.shape, [raster_3857.width, raster_3857.height]
-      assert_equal data.to_a.to_s, raster_3857.z.to_a.to_s
+      assert_equal data.to_sql, raster_3857.z.to_sql
       assert raster_3857.fill_value.nan?
 
       raster_4326 = raster_3857.reproject(4326)
       assert_equal Tensor::Type::SFloat, raster_4326.type
       assert_equal raster_3857.shape, [raster_4326.width, raster_4326.height]
-      assert_equal data.to_a.to_s, raster_4326.z.to_a.to_s
+      assert_equal data.to_sql, raster_4326.z.to_sql
       assert_equal fill_value.to_s, raster_4326.fill_value.to_s
     end
 

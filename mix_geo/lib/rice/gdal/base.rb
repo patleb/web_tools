@@ -4,8 +4,21 @@ module GDAL
       extend ActiveSupport::Concern
 
       class_methods do
-        def directions(proj = nil)
-          super(proj&.to_s).to_a
+        def srid(proj)
+          return if (srid = super(proj.to_s)) == 0
+          srid
+        end
+
+        def wkt(proj)
+          super(proj.to_s)
+        end
+
+        def proj4(proj)
+          super(proj.to_s)
+        end
+
+        def orientation(proj)
+          super(proj.to_s).to_a
         end
       end
 
@@ -14,7 +27,7 @@ module GDAL
         srid
       end
 
-      def directions
+      def orientation
         super.to_a
       end
     end

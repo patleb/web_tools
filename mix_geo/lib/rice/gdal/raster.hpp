@@ -180,7 +180,7 @@ namespace GDAL {
       }
       tf.rx = std::ceil(dx_max / dx_min);
       tf.ry = std::ceil(dy_max / dy_min);
-      auto orientation = orientation_for(proj);
+      auto orientation = _orientation_(proj);
       if (orientation[0] < 0) { auto tmp = x_min; x_min = x_max; x_max = tmp; }
       if (orientation[1] < 0) { auto tmp = y_min; y_min = y_max; y_max = tmp; }
       tf.x0 = x_min; tf.y0 = y_min;

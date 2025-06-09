@@ -18,12 +18,15 @@ module GDAL:
 
   class Base | GDAL::Base:
     def:
-      self.directions: [proj = nil]
+      self.srid        | _srid_:
+      self.wkt         | _wkt_:
+      self.proj4       | _proj4_:
+      self.orientation | _orientation_:
 
       srid:
       wkt:
       proj4:
-      directions | orientation:
+      orientation:
 
   class Vector < GDAL::Base:
     attr_reader: [size]
