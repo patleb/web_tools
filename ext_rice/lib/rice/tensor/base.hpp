@@ -37,6 +37,8 @@ namespace Tensor {
       copy_to_base(tensor);
     }
 
+    Base & operator=(const Base & tensor) = delete;
+
     <%- template[:numeric_types].each_key do |TENSOR| -%>
     explicit operator TENSOR * () const;
     explicit operator TENSOR & () const;

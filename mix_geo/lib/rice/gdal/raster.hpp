@@ -210,9 +210,9 @@ namespace GDAL {
       if (memoize.value_or(false)) return cached_nearest_for(tf);
       auto & width = tf.width, & height = tf.height;
       auto & x  = tf.mesh.x, & y  = tf.mesh.y;
-      auto & x0 = tf.x0,       & y0 = tf.y0;
-      auto & dx = tf.dx,       & dy = tf.dy;
-      auto & rx = tf.rx,       & ry = tf.ry;
+      auto & x0 = tf.x0,     & y0 = tf.y0;
+      auto & dx = tf.dx,     & dy = tf.dy;
+      auto & rx = tf.rx,     & ry = tf.ry;
       auto max_rx = std::abs(dx * rx);
       auto max_ry = std::abs(dy * ry);
       auto & total = tf.mesh.size;

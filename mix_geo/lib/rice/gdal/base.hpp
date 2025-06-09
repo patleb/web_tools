@@ -83,7 +83,7 @@ namespace GDAL {
       srs(srs) {
     }
 
-    static OGRSpatialReference * srs_for(string proj) {
+    static OGRSpatialReference * srs_for(const string & proj) {
       static std::unordered_map< string, OGRSpatialReference * > cache;
       if (cache.contains(proj)) return cache[proj];
       OGRErr e;
