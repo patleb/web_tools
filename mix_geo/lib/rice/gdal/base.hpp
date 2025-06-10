@@ -83,9 +83,11 @@ namespace GDAL {
       srs(srs) {
     }
 
+    // NOTE gdal/port/cpl_mem_cache.h --> maxSize = 64
     static OGRSpatialReference * srs_for(const string & proj) {
       static std::unordered_map< string, OGRSpatialReference * > cache;
       if (cache.contains(proj)) return cache[proj];
+      if (cache.size() >= 64) throw RuntimeError("too many SRS in use");
       OGRErr e;
       const char * c_str = proj.c_str();
       auto srs = new OGRSpatialReference;
