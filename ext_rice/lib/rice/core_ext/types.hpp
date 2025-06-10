@@ -1,4 +1,5 @@
 #define DOUBLE_SAFE_INT64 9007199254740991
+#define FLOAT_SAFE_INT32          16777215
 #define S(value) + std::to_string((value)) +
 
 typedef long long int64_t2;

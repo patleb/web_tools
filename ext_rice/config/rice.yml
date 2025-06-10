@@ -14,3 +14,7 @@ include:
   - unordered_map
   - numeric
   - valarray
+
+module C:
+  DOUBLE_SAFE_INT64:
+  FLOAT_SAFE_INT32:
