@@ -85,7 +85,7 @@ module Shakapacker
         Pathname.new(path).read
       end
       config.sub!(/["']Shakapacker::TAILWIND_CONTENT_EXTRACT["']/, TAILWIND_CONTENT_EXTRACT)
-      config.sub!(/["']Shakapacker::TAILWIND_CONTENT_FILES["'],?/, tailwind_content_files.map{ "'#{it}'"}.join(",\n      "))
+      config.sub!(/["']Shakapacker::TAILWIND_CONTENT_FILES["'],?/, tailwind_content_files.map{ |path| "'#{path}'"}.join(",\n      "))
       gsub_paths! config
       Pathname.new('./tmp/tailwind.config.js').write(config)
     end

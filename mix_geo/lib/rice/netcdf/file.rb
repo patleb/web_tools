@@ -62,7 +62,7 @@ module NetCDF
           type = type.to_s
         end
         dims = Array(dims)
-        dims.map!{ dim(it) } unless dims.first.is_a? NetCDF::Dim
+        dims.map!{ |x| dim(x) } unless dims.first.is_a? NetCDF::Dim
         var = super(name.to_s, type, dims)
         var.set_fill_value(fill_value, _type: type) if fill_value
         var

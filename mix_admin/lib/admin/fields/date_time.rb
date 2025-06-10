@@ -35,7 +35,7 @@ module Admin
         when Range
           value = [value.begin, value.end]
           format = strftime_format
-          value = value.map{ I18n.l(it, format: format) }
+          value = value.map{ |v| I18n.l(v, format: format) }
           format_array(value)
         when ::Time, ::Date, ::DateTime
           I18n.l(value, format: strftime_format)

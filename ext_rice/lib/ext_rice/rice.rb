@@ -288,11 +288,14 @@ module Rice
       function_type ||= is_static ? 'function' : 'method'
       case args
       when Array
-        if args.first.is_a? Hash
+        case args.first
+        when Hash
           define_overloads(f, scope_var, dot, function_type, scope_alias, name, name_alias, args)
           next
-        elsif args.present?
-          defaults = args.map{ |arg| wrap_arg(arg) }.join(', ')
+        when String
+          # TODO lambda overloads
+        else
+          defaults = args.map{ |arg| wrap_arg(arg) }.join(', ') if args.present?
         end
       when Hash
         define_overloads(f, scope_var, dot, function_type, scope_alias, name, name_alias, [args])
@@ -336,7 +339,7 @@ module Rice
   end
 
   def self.define_overloads(f, scope_var, dot, function_type, scope_alias, name, name_alias, args)
-    args.map{ extract_return_types_and_defaults(it) }.each do |return_type, types, defaults|
+    args.map{ |hash| extract_return_types_and_defaults(hash) }.each do |return_type, types, defaults|
       using_alias = build_using_alias(name_alias)
       return_type, const = return_type.split(/ +const$/, 2)
       template = "<#{$1}>" if (return_type.sub! TEMPLATE, '')
