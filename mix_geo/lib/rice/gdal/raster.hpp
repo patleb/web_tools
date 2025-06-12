@@ -31,7 +31,7 @@ namespace GDAL {
     double x0 = Float::nan, y0 = Float::nan;
     double dx = Float::nan, dy = Float::nan;
 
-    Raster(Tensor::Base & z, Tensor::Type type, const vector < double > & x01_y01, const Ostring & proj = nil):
+    Raster(Tensor::Base & z, Tensor::Type type, const Vdouble & x01_y01, const Ostring & proj = nil):
       Base::Base(proj.value_or("4326")),
       z(Tensor::cast(z, type)),
       tensor(Tensor::cast(this->z)) {
