@@ -24,7 +24,7 @@ require 'sunzistrano'
 
 module WebTools
   def self.isolated_test_gems
-    Set.new(['mix_geo', 'mix_task'])
+    ['mix_geo', 'mix_task']
   end
 
   def self.root
@@ -50,7 +50,7 @@ module WebTools
 
         rake.send :desc, "run all tests for #{name}"
         rake.send :task, :"#{name.full_underscore}" do
-          isolated_test_gems = try(:isolated_test_gems) || Set.new
+          isolated_test_gems = try(:isolated_test_gems) || []
           isolated_tests = testable_gems.each_with_object([{}, {}]) do |(name, path), memo|
             path = path.join('test').to_s
             if isolated_test_gems.include? name.to_s
