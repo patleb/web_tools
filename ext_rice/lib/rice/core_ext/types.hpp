@@ -5,7 +5,7 @@
 typedef long long int64_t2;
 typedef unsigned long long uint64_t2;
 
-using Vbool = std::vector< bool >;
+using Bitset = std::vector< bool >;
 using Obool = std::optional< bool >;
 using Vint = std::vector< int >;
 using Oint = std::optional< int >;
