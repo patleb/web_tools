@@ -76,7 +76,6 @@ PATH
   specs:
     ext_rice (0.3.0)
       ext_ruby (= 0.3.0)
-      numo-narray
       rice (~> 4.5.0)
 
 PATH
@@ -150,7 +149,6 @@ PATH
       activerecord-postgis-adapter
       countries
       ext_rails (= 0.3.0)
-      rgeo-proj4
 
 PATH
   remote: mix_global
@@ -484,11 +482,6 @@ GEM
       racc (~> 1.4)
     null-logger (0.1.7)
     numerizer (0.1.1)
-    numo-blis (0.5.1)
-      numo-linalg (>= 0.1.4)
-    numo-linalg (0.1.7)
-      numo-narray (>= 0.9.1.4)
-    numo-narray (0.9.2.1)
     ostruct (0.6.1)
     package_json (0.1.0)
     parallel (1.26.3)
@@ -562,8 +555,6 @@ GEM
     rgeo-activerecord (8.0.0)
       activerecord (>= 7.0)
       rgeo (>= 3.0)
-    rgeo-proj4 (4.0.0)
-      rgeo (~> 3.0.0)
     rice (4.5.0)
     rounding (1.0.1)
     ruby-vips (2.2.3)
@@ -642,7 +633,6 @@ DEPENDENCIES
   mix_setting!
   mix_task!
   mix_user!
-  numo-blis
   sunzistrano!
   web_tools!
 
