@@ -24,22 +24,57 @@ require 'sunzistrano'
 
 module WebTools
   def self.isolated_test_gems
-    @isolated_test_gems ||= Set.new(['mix_geo', 'mix_task'])
-  end
-
-  def self.gems
-    @gems ||= subgems(root).index_with{ |d| Gem.root(d) }.to_hwia
+    Set.new(['mix_geo', 'mix_task'])
   end
 
   def self.root
     @root ||= Pathname.new(File.dirname(__dir__))
   end
 
-  def self.subgems(root)
-    list = root.children.select do |d|
-      d.directory? && d.children.any?{ |f| f.to_s.end_with? '.gemspec' }
+  module self::WithTestTasks
+    def gems
+      @gems ||= subgems(root).index_with{ |d| Gem.root(d) }.to_hwia
     end
-    list.any? ? list.map{ |d| d.basename.to_s } : [root.basename.to_s]
+
+    def subgems(root)
+      list = root.children.select do |d|
+        d.directory? && d.children.any?{ |f| f.to_s.end_with? '.gemspec' }
+      end
+      list.any? ? list.map{ |d| d.basename.to_s } : [root.basename.to_s]
+    end
+
+    def define_test_tasks(rake)
+      rake.send :namespace, :test do
+        testable_gems = gems.select{ |_name, path| path.join('test').exist? }
+        minitest_gems = testable_gems.select{ |_name, path| path.glob('test/**/*_test.rb').first.read.include? 'test/spec_helper' }
+
+        rake.send :desc, "run all tests for #{name}"
+        rake.send :task, :"#{name.full_underscore}" do
+          isolated_test_gems = try(:isolated_test_gems) || Set.new
+          isolated_tests = testable_gems.each_with_object([{}, {}]) do |(name, path), memo|
+            path = path.join('test').to_s
+            if isolated_test_gems.include? name.to_s
+              memo.insert 1, { name => path }
+            elsif minitest_gems.has_key? name.to_s
+              memo.first[name] = path
+            else
+              memo.last[name] = path
+            end
+          end
+          isolated_tests.compact_blank.each do |gems|
+            puts "run all tests for: #{gems.keys.map(&:camelize).sort.join(', ')}"
+            Rails::TestUnit::Runner.run_from_rake 'test', gems.values
+          end
+        end
+
+        testable_gems.each_key do |name|
+          rake.send :desc, "run all tests for #{name.camelize}"
+          rake.send :task, name do
+            Rails::TestUnit::Runner.run_from_rake 'test', testable_gems[name].join('test').to_s
+          end
+        end
+      end
+    end
   end
-  private_class_method :subgems
+  extend self::WithTestTasks
 end
