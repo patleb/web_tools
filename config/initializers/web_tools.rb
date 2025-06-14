@@ -1,5 +1,4 @@
 ExtRails.configure do |config|
-  # config.sql_debug = true
   config.params_debug = false
   config.excluded_models.merge(%w(
     Test::ApplicationRecord
