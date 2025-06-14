@@ -68,13 +68,13 @@ module Rake::Task::WithOutput
   end
 
   def with_db_loggers
-    if ExtRails.config.sql_debug?
+    if ExtRails.config.sql_debug
       @_ar_logger = ActiveRecord::Base.logger
       ActiveRecord::Base.logger = ::Logger.new(STDOUT)
     end
     yield
   ensure
-    if ExtRails.config.sql_debug?
+    if ExtRails.config.sql_debug
       ActiveRecord::Base.logger = @_ar_logger
     end
   end

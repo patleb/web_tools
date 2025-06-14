@@ -4,7 +4,7 @@ require 'action_controller/metal/strong_parameters'
 
 module ActionController::Parameters::WithLocation
   def unpermitted_parameters!(params, **)
-    if super && ExtRails.config.params_debug?
+    if super && ExtRails.config.params_debug
       puts_caller_location
     end
   end

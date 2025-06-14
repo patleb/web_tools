@@ -3,8 +3,8 @@ module ExtRails
     attr_accessor :default_logger
     attr_accessor :i18n_debug
     attr_accessor :email_debug
-    attr_writer   :sql_debug
-    attr_writer   :params_debug
+    attr_accessor :sql_debug
+    attr_accessor :params_debug
     attr_writer   :discardable
     attr_writer   :excluded_models
     attr_writer   :excluded_tables
@@ -15,16 +15,6 @@ module ExtRails
     attr_writer   :spinner
     attr_accessor :css_only_support
     attr_accessor :favicon_ico
-
-    def sql_debug?
-      return @sql_debug if defined? @sql_debug
-      @sql_debug = Rails.env.local?
-    end
-
-    def params_debug?
-      return @params_debug if defined? @params_debug
-      @params_debug = Rails.env.local?
-    end
 
     def discardable?
       return @discardable if defined? @discardable

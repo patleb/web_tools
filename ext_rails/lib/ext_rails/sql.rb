@@ -30,7 +30,7 @@ module Sql
   end
 
   def self.debug(*rb_vars, pg_vars: [], record: 'NEW', **)
-    return unless ExtRails.config.sql_debug?
+    return unless ExtRails.config.sql_debug
     if pg_vars.any?
       pg_vars_values = "{#{' %' * pg_vars.size} }"
       pg_vars_names = ", #{pg_vars.join(', ')}"
@@ -41,13 +41,13 @@ module Sql
   end
 
   def self.debug_var
-    <<-SQL.strip_sql if ExtRails.config.sql_debug?
+    <<-SQL.strip_sql if ExtRails.config.sql_debug
       _debug RECORD;
     SQL
   end
 
   def self.debug_init
-    <<-SQL.strip_sql if ExtRails.config.sql_debug?
+    <<-SQL.strip_sql if ExtRails.config.sql_debug
       _debug = ROW(NULL);
     SQL
   end
