@@ -47,7 +47,7 @@ module WebTools
     config.cache_store = :global_store
 
     ExtRails.configure do |config|
-      config.sql_debug = false
+      # config.sql_debug = false
     end
 
     initializer 'app.libraries' do
