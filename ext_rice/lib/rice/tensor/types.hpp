@@ -124,13 +124,14 @@ namespace Tensor {
       // TODO
     }
 
-    auto to_sql() const {
+    auto to_sql(const OString & before = nil, const OString & after = nil) const {
       auto data = reinterpret_cast< T * >(this->data);
       size_t dim_i = 0, dim_j;
       size_t dim_n = rank - 1;
       size_t counts[rank];
       std::memcpy(counts, shape.data(), rank * sizeof(size_t));
       std::stringstream sql;
+      if (before) sql << before.value();
       while (true) {
         while (true) {
           sql << '{';
@@ -145,6 +146,7 @@ namespace Tensor {
         while (true) {
           sql << '}';
           if (dim_i == 0) {
+            if (after) sql << after.value();
             return std::string(sql.str().c_str());
           }
           if (--counts[dim_i - 1] != 0) {

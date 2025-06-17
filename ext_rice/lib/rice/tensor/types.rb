@@ -39,6 +39,10 @@ module Tensor
         def seq(start = nil)
           super
         end
+
+        def to_sql(before: nil, after: nil)
+          super(before, after)
+        end
       end
       prepend self::WithOverrides
 
