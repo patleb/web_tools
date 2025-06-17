@@ -11,17 +11,28 @@ class ERB
             tokens.each do |token|
               line.gsub! /(\W)#{token}(\W)/, "\\1#{token.downcase}\\2"
             end
+            variables.each do |tokens|
+              tokens.each do |token|
+                line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}\\2"
+              end
+            end
             variables.push tokens
           else
             variables.push []
           end
+        when /<%-? +(if|unless|case)/
+          variables.each do |tokens|
+            tokens.each do |token|
+              line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}\\2"
+            end
+          end
+          variables.push []
         when / end /
           variables.pop
         else
-          variables.push [] if line.match? /<%-? +(if|unless|case)/
           variables.each do |tokens|
             tokens.each do |token|
-              line.gsub! /([^-])-#{token}-([^-])/, "\\1<%= #{token.downcase} %>\\2"
+              line.gsub! /([^-]-?)-#{token}-([^-]-?)/, "\\1<%= #{token.downcase} %>\\2"
               line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}\\2"
               line.gsub! /(\W)#{token}(\W)/, "\\1<%= #{token.downcase} %>\\2"
             end
