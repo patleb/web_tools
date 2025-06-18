@@ -2,39 +2,50 @@ class ERB
   def self.template(src, binding = nil, lean: false, **)
     path = Pathname.new(src)
     if lean
-      variables = []
+      vars, block_vars = [], []
       content = path.each_line.with_object(+'') do |line, content|
         case line
+        when /<%-? +([A-Z_0-9, ]+) *= *[^%]+%>/
+          tokens = $1.split(',').map(&:strip)
+          tokens.each do |token|
+            line.gsub! /(\W)#{token}(\W)/, "\\1#{token.downcase}_\\2"
+          end
+          vars.push tokens
+          block_vars.each do |tokens|
+            tokens.each do |token|
+              line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}_\\2"
+            end
+          end
         when / do \|([^|]+)\|/
           if $1.match? /^[\WA-Z_0-9]+$/
             tokens = $1.split(',').map{ |token| token.gsub(/\W/, '') }
             tokens.each do |token|
-              line.gsub! /(\W)#{token}(\W)/, "\\1#{token.downcase}\\2"
+              line.gsub! /(\W)#{token}(\W)/, "\\1#{token.downcase}_\\2"
             end
-            variables.each do |tokens|
+            (vars + block_vars).each do |tokens|
               tokens.each do |token|
-                line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}\\2"
+                line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}_\\2"
               end
             end
-            variables.push tokens
+            block_vars.push tokens
           else
-            variables.push []
+            block_vars.push []
           end
         when /<%-? +(if|unless|case)/
-          variables.each do |tokens|
+          (vars + block_vars).each do |tokens|
             tokens.each do |token|
-              line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}\\2"
+              line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}_\\2"
             end
           end
-          variables.push []
+          block_vars.push []
         when / end /
-          variables.pop
+          block_vars.pop
         else
-          variables.each do |tokens|
+          (vars + block_vars).each do |tokens|
             tokens.each do |token|
-              line.gsub! /([^-]-?)-#{token}-([^-]-?)/, "\\1<%= #{token.downcase} %>\\2"
-              line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}\\2"
-              line.gsub! /(\W)#{token}(\W)/, "\\1<%= #{token.downcase} %>\\2"
+              line.gsub! /([^-]-?)-#{token}-([^-]-?)/, "\\1<%= #{token.downcase}_ %>\\2"
+              line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}_\\2"
+              line.gsub! /(\W)#{token}(\W)/, "\\1<%= #{token.downcase}_ %>\\2"
             end
           end
         end
