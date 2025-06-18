@@ -31,12 +31,7 @@ namespace Tensor {
       sync_refs();
     }
 
-    TENSOR & operator=(const TENSOR & tensor) {
-      if (this == &tensor) return *this;
-      copy_to_base(tensor);
-      sync_refs();
-      return *this;
-    }
+    TENSOR & operator=(const TENSOR & tensor) = delete;
 
     // NOTE won't consider NaN --> use #to_sql
     bool operator==(const Tensor::Base & tensor) const {
