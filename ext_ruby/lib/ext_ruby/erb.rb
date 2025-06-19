@@ -43,7 +43,7 @@ class ERB
         else
           (vars + block_vars).each do |tokens|
             tokens.each do |token|
-              line.gsub! /([^-]-?)-#{token}-([^-]-?)/, "\\1<%= #{token.downcase}_ %>\\2"
+              line.gsub! /([^-]-?)-#{token}-(-?[^-])/, "\\1<%= #{token.downcase}_ %>\\2"
               line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}_\\2"
               line.gsub! /(\W)#{token}(\W)/, "\\1<%= #{token.downcase}_ %>\\2"
             end
