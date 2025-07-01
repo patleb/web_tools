@@ -16,7 +16,7 @@ class ERB
               line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}_\\2"
             end
           end
-        when / do \|([^|]+)\|/
+        when /<%-? +.+ do \|([^|]+)\|/
           if $1.match? /^[\WA-Z_0-9]+$/
             tokens = $1.split(',').map{ |token| token.gsub(/\W/, '') }
             tokens.each do |token|
@@ -38,7 +38,7 @@ class ERB
             end
           end
           block_vars.push []
-        when / end /
+        when /<%-? +end /
           block_vars.pop
         else
           (vars + block_vars).each do |tokens|
