@@ -99,7 +99,7 @@ namespace GDAL {
       <%- template[:numeric_types].each do |TENSOR, T| -%>
       case Tensor::Type::TENSOR: {
         auto src_nodata = *reinterpret_cast< const T * >(tensor.nodata);
-        auto dst_nodata = is_null(fill_value) ? src_nodata : g_cast< T >(fill_value);
+        auto dst_nodata = is_none(fill_value) ? src_nodata : g_cast< T >(fill_value);
         auto src_data = reinterpret_cast< const T * >(tensor.data);
         auto dst_z = Tensor::build(type(), { height, width }, g_cast(dst_nodata));
         auto & dst_tensor = Tensor::cast(dst_z);

@@ -1,4 +1,4 @@
-#define G_NULL   0
+#define G_NONE   0
 #define G_DOUBLE 1
 #define G_INT64  2
 #define G_UINT64 3
@@ -8,14 +8,14 @@ constexpr auto none = nullstate{};
 
 using GType = std::variant< nullstate, <%= template[:generic_types].values.uniq.join(', ') %>, std::string >;
 
-bool is_null(const GType & value) {
+bool is_none(const GType & value) {
   return value.index() == 0;
 }
 
 template < class T >
 auto g_cast(const GType & value = none) {
   switch (value.index()) {
-  case G_NULL:   return static_cast< T >(0);
+  case G_NONE:   return static_cast< T >(0);
   case G_DOUBLE: return static_cast< T >(std::get< G_DOUBLE >(value));
   case G_INT64:  return static_cast< T >(std::get< G_INT64 >(value));
   case G_UINT64: return static_cast< T >(std::get< G_UINT64 >(value));
@@ -26,7 +26,7 @@ auto g_cast(const GType & value = none) {
 template < float >
 auto g_cast(const GType & value = none) {
   switch (value.index()) {
-  case G_NULL:   return static_cast< float >(Float::nan);
+  case G_NONE:   return static_cast< float >(Float::nan);
   case G_DOUBLE: return static_cast< float >(std::get< G_DOUBLE >(value));
   case G_INT64:  return static_cast< float >(std::get< G_INT64 >(value));
   case G_UINT64: return static_cast< float >(std::get< G_UINT64 >(value));
@@ -37,7 +37,7 @@ auto g_cast(const GType & value = none) {
 template < double >
 auto g_cast(const GType & value = none) {
   switch (value.index()) {
-  case G_NULL:   return Float::nan;
+  case G_NONE:   return Float::nan;
   case G_DOUBLE: return std::get< G_DOUBLE >(value);
   case G_INT64:  return static_cast< double >(std::get< G_INT64 >(value));
   case G_UINT64: return static_cast< double >(std::get< G_UINT64 >(value));
