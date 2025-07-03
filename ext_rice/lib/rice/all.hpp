@@ -6,4 +6,5 @@
 #include "ext_rice/core_ext/c.hpp"
 #include "ext_rice/core_ext/logger.hpp"
 #include "ext_rice/core_ext/types.hpp"
+#include "ext_rice/core_ext/bitset.hpp"
 #include "ext_rice/core_ext/gtype.hpp"

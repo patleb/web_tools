@@ -10,11 +10,31 @@ include:
   - filesystem
   - source_location
   - stacktrace
+  - execution
+  - atomic
+  - numeric
+  - ranges
+  - queue
   - unordered_set
   - unordered_map
-  - numeric
   - valarray
 
 module C:
   DOUBLE_SAFE_INT64:
   FLOAT_SAFE_INT32:
+
+class Bitset:
+  def:
+    initialize | ::Bitset.COPY:
+      - { [[size_t, count]] }
+      - { [[const Vbool &, bools]] }
+    "[] | operator[]": { bool const: [size_t i] }
+    "[]=": >
+      [](Bitset & self, size_t i, bool value) -> bool {
+        self[i] = value;
+        return value;
+      }
+    first: { bool const: [] }
+    last:  { bool const: [] }
+    size:
+    to_s:

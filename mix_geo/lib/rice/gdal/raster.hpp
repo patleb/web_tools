@@ -89,7 +89,7 @@ namespace GDAL {
       return z;
     }
 
-    auto reproject(const string & proj, const GType & fill_value = null, Obool compact = nil, Obool memoize = nil) const {
+    auto reproject(const string & proj, const GType & fill_value = none, Obool compact = nil, Obool memoize = nil) const {
       auto tf = transform_for(proj, compact, memoize);
       auto nearest = nearest_for(tf, memoize);
       auto & width = tf.width, & height = tf.height;

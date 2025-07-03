@@ -1,0 +1,7 @@
+sun.install "gfortran cmake"
+sun.install "libtbb-dev"
+sun.install "xtensor-dev"
+sun.install "libeigen3-dev"
+sun.install "libomp-dev"
+sun.install "ocl-icd-opencl-dev"
+sun.install "intel-opencl-icd"

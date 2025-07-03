@@ -10,7 +10,7 @@ gems:
 provision:
   recipes:
     # - app_packages
-    - addons/numo_blis
+    - addons/rice
     - reboot
 
 staging:

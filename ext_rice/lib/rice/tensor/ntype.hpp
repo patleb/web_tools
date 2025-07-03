@@ -1,7 +1,7 @@
 namespace Tensor {
   using NType = std::variant< <%= template[:numeric_types].keys.join(', ') %>, Vstring >;
 
-  Tensor::NType build(Tensor::Type type, const Vsize_t & shape, const GType & fill_value = null) {
+  Tensor::NType build(Tensor::Type type, const Vsize_t & shape, const GType & fill_value = none) {
     switch (type) {
     <%- template[:numeric_types].each do |TENSOR, T| -%>
     case Tensor::Type::TENSOR: return Tensor::TENSOR(shape, g_cast< T >(fill_value));

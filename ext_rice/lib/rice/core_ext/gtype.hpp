@@ -4,7 +4,7 @@
 #define G_UINT64 3
 #define G_STRING 4
 
-constexpr auto null = nullstate{};
+constexpr auto none = nullstate{};
 
 using GType = std::variant< nullstate, <%= template[:generic_types].values.uniq.join(', ') %>, std::string >;
 
@@ -13,7 +13,7 @@ bool is_null(const GType & value) {
 }
 
 template < class T >
-auto g_cast(const GType & value = null) {
+auto g_cast(const GType & value = none) {
   switch (value.index()) {
   case G_NULL:   return static_cast< T >(0);
   case G_DOUBLE: return static_cast< T >(std::get< G_DOUBLE >(value));
@@ -24,7 +24,7 @@ auto g_cast(const GType & value = null) {
 }
 
 template < float >
-auto g_cast(const GType & value = null) {
+auto g_cast(const GType & value = none) {
   switch (value.index()) {
   case G_NULL:   return static_cast< float >(Float::nan);
   case G_DOUBLE: return static_cast< float >(std::get< G_DOUBLE >(value));
@@ -35,7 +35,7 @@ auto g_cast(const GType & value = null) {
 }
 
 template < double >
-auto g_cast(const GType & value = null) {
+auto g_cast(const GType & value = none) {
   switch (value.index()) {
   case G_NULL:   return Float::nan;
   case G_DOUBLE: return std::get< G_DOUBLE >(value);
