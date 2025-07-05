@@ -106,7 +106,7 @@ namespace Tensor {
       // TODO
     }
 
-    auto to_sql(const OString & before = nil, const OString & after = nil) const {
+    auto to_sql(const Ostring & before = nil, const Ostring & after = nil) const {
       auto data = reinterpret_cast< T * >(this->data);
       size_t dim_i = 0, dim_j;
       size_t dim_n = rank - 1;

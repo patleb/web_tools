@@ -46,9 +46,9 @@ module NetCDF
         att_name ? var(name).att(att_name) : super(name.to_s)
       end
 
-      def create_dim(name, *)
+      def create_dim(name, size = nil)
         @dims = nil
-        super(name.to_s, *)
+        super(name.to_s, size)
       end
 
       def create_var(name, type, dims, fill_value: nil)
@@ -117,8 +117,8 @@ module NetCDF
       var(name).fill_value
     end
 
-    def set_fill_value(name, *)
-      var(name).set_fill_value(*)
+    def set_fill_value(name, **)
+      var(name).set_fill_value(**)
     end
 
     def dig(name, *indexes)

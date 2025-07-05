@@ -170,17 +170,16 @@ namespace NetCDF {
       }
     }
 
-    auto fill_value() const {
+    std::optional< Tensor::NType > fill_value() const {
       vector< Att > atts = this->atts();
-      std::optional< Tensor::NType > value;
       int count = atts.size();
-      if (count == 0) return value;
+      if (count == 0) return nil;
       for (size_t i = 0; i < count; ++i) {
         if (atts[i].name != "_FillValue") continue;
-        value = atts[i].read();
+        return atts[i].read();
         break;
       }
-      return value;
+      return nil;
     }
 
     void set_fill_value(const Tensor::Base & value) const {
