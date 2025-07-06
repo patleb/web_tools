@@ -18,6 +18,8 @@ module Tensor:
     attr_accessor: [fill_value]
 
     def:
+      self.from_sql: [values, shape, fill_value = none]
+
       initialize | Tensor::<%= tensor_type %>.COPY:
         - { [ *shape, *fill_value_<%= type %> ] }
         - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }

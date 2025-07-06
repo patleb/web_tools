@@ -292,7 +292,7 @@ module Rice
         when Hash
           define_overloads(f, scope_var, dot, function_type, scope_alias, name, name_alias, args)
           next
-        when String
+        # when String
           # TODO lambda overloads
         else
           defaults = args.map{ |arg| wrap_arg(arg) }.join(', ') if args.present?

@@ -33,11 +33,53 @@ namespace Tensor {
 
     TENSOR & operator=(const TENSOR & tensor) = delete;
 
+    static auto from_sql(const std::string & values, const Vsize_t & shape, const GType & fill_value = none) {
+      bool new_value = true;
+      char buffer[24 + 1]; // double + '\0'
+      TENSOR tensor(shape, g_cast< T >(fill_value));
+      auto data = reinterpret_cast< T * >(tensor.data);
+      for (size_t i = 0; auto && c : values) {
+        switch (c) {
+        case '{': case ' ':
+          break;
+        case ',': case '}':
+          if (new_value) {
+            new_value = false;
+            buffer[i] = '\0';
+            *(data++) = parse_number(buffer);
+            i = 0;
+          }
+          break;
+        default:
+          new_value = true;
+          buffer[i++] = c;
+        }
+      }
+      return tensor;
+    }
+
+    static T parse_number(char * buffer) {
+    <%- case @T -%>
+    <%- when 'float' -%>
+      return static_cast< T >(std::atof(buffer));
+    <%- when 'double' -%>
+      return std::atof(buffer);
+    <%- when 'uint32_t' -%>
+      return static_cast< T >(std::strtoul(buffer, nullptr, 10));
+    <%- when 'int64_t2' -%>
+      return std::atoll(buffer);
+    <%- when 'uint64_t2' -%>
+      return std::strtoull(buffer, nullptr, 10);
+    <%- else -%>
+      return static_cast< T >(std::atoi(buffer));
+    <%- end -%>
+    }
+
     // NOTE won't consider NaN --> use #to_sql
     bool operator==(const Tensor::Base & tensor) const {
       if (type != tensor.type) return false;
       if (shape != tensor.shape) return false;
-      return std::equal(&array[0], &array[size - 1], reinterpret_cast< const T * >(tensor.data));
+      return std::equal(std::begin(array), std::end(array), std::begin(dynamic_cast< const TENSOR & >(tensor).array));
     }
     <%- if %w(float double).include? @T -%>
     <%- %w(* / + -).each do |OP| -%>
@@ -100,10 +142,6 @@ namespace Tensor {
 
     size_t type_size() const override {
       return sizeof(T);
-    }
-
-    static auto from_sql(const std::string & values) {
-      // TODO
     }
 
     auto to_sql(const Ostring & before = nil, const Ostring & after = nil) const {

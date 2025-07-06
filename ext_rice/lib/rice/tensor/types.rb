@@ -2,6 +2,15 @@ module Tensor
   ExtRice.config.template[:numeric_types].each_key do |tensor_type|
     const_get(tensor_type).class_eval do
       module self::WithOverrides
+        extend ActiveSupport::Concern
+
+        class_methods do
+          def from_sql(values, *shape, fill_value: nil)
+            shape = shape.first if shape.first.is_a? Array
+            super(values, shape, fill_value)
+          end
+        end
+
         def initialize(*values, **options)
           values = values.first if values.first.is_a? Array
           super(values, **options)
