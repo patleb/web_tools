@@ -74,13 +74,6 @@ namespace Tensor {
       return static_cast< T >(std::atoi(buffer));
     <%- end -%>
     }
-
-    // NOTE won't consider NaN --> use #to_sql
-    bool operator==(const Tensor::Base & tensor) const {
-      if (type != tensor.type) return false;
-      if (shape != tensor.shape) return false;
-      return std::equal(std::begin(array), std::end(array), std::begin(dynamic_cast< const TENSOR & >(tensor).array));
-    }
     <%- if %w(float double).include? @T -%>
     <%- %w(* / + -).each do |OP| -%>
 
@@ -104,9 +97,20 @@ namespace Tensor {
     auto & first() const { return array[0]; }
     auto & last()        { return array[size - 1]; }
     auto & last()  const { return array[size - 1]; }
+    auto begin()         { return std::begin(array); }
+    auto begin()   const { return std::begin(array); }
+    auto end()           { return std::end(array); }
+    auto end()     const { return std::end(array); }
+
+    // NOTE won't consider NaN --> use #to_sql
+    bool operator==(const Tensor::Base & tensor) const {
+      if (type != tensor.type) return false;
+      if (shape != tensor.shape) return false;
+      return std::equal(begin(), end(), dynamic_cast< const TENSOR & >(tensor).begin());
+    }
 
     auto values() const {
-      return V-T-(std::begin(array), std::end(array));
+      return V-T-(begin(), end());
     }
 
     auto slice(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vsize_t & stride = {}) const {
@@ -136,7 +140,7 @@ namespace Tensor {
     }
 
     auto & seq(const O-T- & start = nil) {
-      std::iota(std::begin(array), std::end(array), start.value_or(0));
+      std::iota(begin(), end(), start.value_or(0));
       return *this;
     }
 
