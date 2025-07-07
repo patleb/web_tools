@@ -38,3 +38,4 @@ module Tensor
     [start, count, shape]
   end
 end
+T = Tensor

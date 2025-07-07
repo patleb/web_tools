@@ -2,7 +2,7 @@ require './test/test_helper'
 
 class TensorTest < Rice::TestCase
   test '#operator==' do
-    assert Tensor::Int8.new(2).seq == Tensor::Int8.new(2).seq
+    assert Tensor::Int8.new(2).seq == Tensor::Int8[0, 0].seq
     refute Tensor::Int8.new(2).seq == Tensor::Int8.new(2)
   end
 
