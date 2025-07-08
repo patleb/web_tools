@@ -46,7 +46,7 @@ namespace Tensor {
           if (new_value) {
             new_value = false;
             buffer[i] = '\0';
-            *(data++) = parse_number(buffer);
+            *(data++) = (std::strncmp(buffer, "NULL", 4) == 0) ? tensor.fill_value : parse_number(buffer);
             i = 0;
           }
           break;
@@ -148,8 +148,10 @@ namespace Tensor {
       return sizeof(T);
     }
 
-    auto to_sql(const Ostring & before = nil, const Ostring & after = nil) const {
+    auto to_sql(const Ostring & before = nil, const Ostring & after = nil, Obool nulls = nil) const {
       auto data = reinterpret_cast< T * >(this->data);
+      auto as_null = nulls.value_or(false);
+      auto isnan_nodata = std::isnan(fill_value);
       size_t dim_i = 0, dim_j;
       size_t dim_n = rank - 1;
       size_t counts[rank];
@@ -163,7 +165,11 @@ namespace Tensor {
           ++dim_i;
         }
         while (true) {
-          sql << std::format("{}", *data++);
+          auto value = *data++;
+          if (as_null)
+            if (isnan_nodata) sql << (std::isnan(value)   ? "NULL" : std::format("{}", value));
+            else              sql << (value == fill_value ? "NULL" : std::format("{}", value));
+          else                sql << std::format("{}", value);
           if (--counts[dim_i] == 0) break;
           sql << ',';
         }

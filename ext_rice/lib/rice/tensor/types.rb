@@ -49,8 +49,8 @@ module Tensor
           super
         end
 
-        def to_sql(before: nil, after: nil)
-          super(before, after)
+        def to_sql(before: nil, after: nil, nulls: nil)
+          super(before, after, nulls)
         end
       end
       prepend self::WithOverrides
@@ -75,10 +75,6 @@ module Tensor
 
       def to_a
         values.to_a
-      end
-
-      def _from_sql_(string)
-        # TODO
       end
     end
   end

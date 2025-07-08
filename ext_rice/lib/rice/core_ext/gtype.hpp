@@ -13,7 +13,7 @@ bool is_none(const GType & value) {
 }
 
 template < class T >
-auto g_cast(const GType & value = none) {
+T g_cast(const GType & value) {
   switch (value.index()) {
   case G_NONE:   return static_cast< T >(0);
   case G_DOUBLE: return static_cast< T >(std::get< G_DOUBLE >(value));
@@ -23,8 +23,8 @@ auto g_cast(const GType & value = none) {
   }
 }
 
-template < float >
-auto g_cast(const GType & value = none) {
+template <>
+float g_cast< float >(const GType & value) {
   switch (value.index()) {
   case G_NONE:   return static_cast< float >(Float::nan);
   case G_DOUBLE: return static_cast< float >(std::get< G_DOUBLE >(value));
@@ -34,8 +34,8 @@ auto g_cast(const GType & value = none) {
   }
 }
 
-template < double >
-auto g_cast(const GType & value = none) {
+template <>
+double g_cast< double >(const GType & value) {
   switch (value.index()) {
   case G_NONE:   return Float::nan;
   case G_DOUBLE: return std::get< G_DOUBLE >(value);

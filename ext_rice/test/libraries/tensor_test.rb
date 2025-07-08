@@ -30,5 +30,7 @@ class TensorTest < Rice::TestCase
     array[0, 1] = Float::INFINITY
     array[1, 0] = -Float::INFINITY
     assert_equal Tensor::DFloat.from_sql('{{nan,inf},{-inf,3}}', 2, 2).to_sql, array.to_sql
+    array[0, 0] = array[0, 1] = array[1, 0] = array[1, 1] = Float::NAN
+    assert_equal Tensor::DFloat.from_sql('{{NULL,NULL},{NULL,NULL}}', 2, 2).to_sql, array.to_sql
   end
 end
