@@ -77,7 +77,20 @@ module NetCDF
       end
     end
 
+    def []=(*ranges, values)
+      return write(values) if ranges.empty?
+      start, count, _shape = Tensor.to_slice_args(self.shape, *ranges)
+      begin
+        shape_was = values.shape
+        values.reshape(count)
+        write(values, start: start)
+      ensure
+        values.reshape(shape_was)
+      end
+    end
+
     def [](*ranges)
+      return read if ranges.empty?
       start, count, shape = Tensor.to_slice_args(self.shape, *ranges)
       read(start: start, count: count).reshape(shape)
     end

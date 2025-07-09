@@ -35,6 +35,7 @@ module Tensor
 
         def reshape(*shape)
           shape = shape.first if shape.first.is_a? Array
+          return super(shape) unless shape.size == rank
           shape = self.shape.select_map.with_index do |all, i|
             case (count = shape[i])
             when false then next

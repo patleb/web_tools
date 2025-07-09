@@ -17,6 +17,8 @@ class TensorTest < Rice::TestCase
     array[0, 1] = Float::INFINITY
     array[1, 0] = -Float::INFINITY
     assert_equal '{{nan,inf},{-inf,3}}', array.to_sql
+    array[0, 0] = array[0, 1] = array[1, 0] = array[1, 1] = Float::NAN
+    assert_equal '{{NULL,NULL},{NULL,NULL}}', array.to_sql(nulls: true)
   end
 
   test '#from_sql' do
@@ -32,5 +34,10 @@ class TensorTest < Rice::TestCase
     assert_equal Tensor::DFloat.from_sql('{{nan,inf},{-inf,3}}', 2, 2).to_sql, array.to_sql
     array[0, 0] = array[0, 1] = array[1, 0] = array[1, 1] = Float::NAN
     assert_equal Tensor::DFloat.from_sql('{{NULL,NULL},{NULL,NULL}}', 2, 2).to_sql, array.to_sql
+  end
+
+  test '#reshape' do
+    assert_equal [2, 3], Tensor::Int32.new(6).reshape(2, 3).shape
+    assert_equal [3, 4], Tensor::Int32.new(1, 3, 4).reshape(false, true, true).shape
   end
 end

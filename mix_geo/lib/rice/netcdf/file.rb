@@ -109,6 +109,10 @@ module NetCDF
       var(name).at(*)
     end
 
+    def []=(name, *ranges, values)
+      var(name)[*ranges] = values
+    end
+
     def [](name, *ranges)
       var(name)[*ranges]
     end
