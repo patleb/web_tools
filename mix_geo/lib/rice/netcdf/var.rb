@@ -67,6 +67,11 @@ module NetCDF
         end
         super(value)
       end
+
+      def set_deflate(shuffle: false, deflate: nil, level: 0)
+        deflate = true if deflate.nil? && level > 0
+        super(shuffle, deflate, level)
+      end
     end
     prepend self::WithOverrides
 
