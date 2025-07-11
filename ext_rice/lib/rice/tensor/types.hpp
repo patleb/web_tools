@@ -74,7 +74,7 @@ namespace Tensor {
       return static_cast< T >(std::atoi(buffer));
     <%- end -%>
     }
-    <%- if %w(float double).include? @T -%>
+  <%- if %w(float double).include? @T -%>
     <%- %w(* / + -).each do |OP| -%>
 
     auto operator-OP-(const Tensor::TENSOR & tensor) const {
@@ -87,7 +87,7 @@ namespace Tensor {
       return TENSOR(array -OP- value, shape, fill_value);
     }
     <%- end -%>
-    <%- end -%>
+  <%- end -%>
 
     auto & operator[](size_t i)       { return array[i]; }
     auto & operator[](size_t i) const { return array[i]; }
