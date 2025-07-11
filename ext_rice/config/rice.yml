@@ -12,6 +12,7 @@ include:
   - stacktrace
   - execution
   - atomic
+  - stdfloat
   - numeric
   - ranges
   - queue
