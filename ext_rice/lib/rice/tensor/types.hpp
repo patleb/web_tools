@@ -1,5 +1,5 @@
 namespace Tensor {
-  <%- template[:numeric_types].each do |TENSOR, T| -%>
+  <%- template[:numeric].each do |TENSOR, T| -%>
 
   class TENSOR : public Base {
     public:

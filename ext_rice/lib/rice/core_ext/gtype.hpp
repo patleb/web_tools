@@ -6,7 +6,7 @@
 
 constexpr auto none = nullstate{};
 
-using GType = std::variant< nullstate, <%= template[:generic_types].values.uniq.join(', ') %>, std::string >;
+using GType = std::variant< nullstate, <%= template[:generic].values.uniq.join(', ') %>, std::string >;
 
 bool is_none(const GType & value) {
   return value.index() == 0;
@@ -44,7 +44,7 @@ double g_cast< double >(const GType & value) {
   default: throw RuntimeError("invalid GType");
   }
 }
-<%- template[:generic_types].each do |T, GENERIC| -%>
+<%- template[:generic].each do |T, GENERIC| -%>
 
 auto g_cast(const O-T- & value) {
   <%- case @T -%>

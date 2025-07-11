@@ -10,7 +10,7 @@ module ExtRice
 
     initializer 'ext_rice.template', before: 'ext_rice.require_ext' do
       ExtRice.configure do |config|
-        config.template[:numeric_types] = {
+        config.template[:numeric] = {
           'Int8'   => 'int8_t',
           'Int16'  => 'int16_t',
           'Int32'  => 'int32_t',
@@ -22,7 +22,7 @@ module ExtRice
           'UInt32' => 'uint32_t',
           'UInt64' => 'uint64_t2',
         }
-        config.template[:generic_types] = {
+        config.template[:generic] = {
           'int8_t'    => 'int64_t2',
           'int16_t'   => 'int64_t2',
           'int32_t'   => 'int64_t2',

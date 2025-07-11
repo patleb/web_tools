@@ -1,11 +1,11 @@
 aliases:
   - &shape [const Vsize_t &, shape]
-  <%- template[:numeric_types].each_value do |type| -%>
+  <%- template[:numeric].each_value do |type| -%>
   - &fill_value_<%= type %> [const O<%= type %> &, fill_value = nil]
   <%- end -%>
 
 module Tensor:
-  enum Type | Tensor::Type: [<%= template[:numeric_types].keys.join(', ') %>]
+  enum Type | Tensor::Type: [<%= template[:numeric].keys.join(', ') %>]
 
   class Base | Tensor::Base:
     attr_reader: [size, rank, type]
@@ -13,21 +13,21 @@ module Tensor:
     def:
       shape | _shape_:
 
-  <% template[:numeric_types].each do |tensor_type, type| %>
-  class <%= tensor_type %> < Tensor::Base:
+  <% template[:numeric].each do |tensor, type| %>
+  class <%= tensor %> < Tensor::Base:
     attr_accessor: [fill_value]
 
     def:
       self.from_sql: [values, shape, fill_value = none]
 
-      initialize | Tensor::<%= tensor_type %>.COPY:
+      initialize | Tensor::<%= tensor %>.COPY:
         - { [ *shape, *fill_value_<%= type %> ] }
         - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }
       "== | operator==":
       <% if %w(float double).include? type %>
       "*  | operator*": &binary_op
-        - { Tensor::<%= tensor_type %> const: [const Tensor::<%= tensor_type %> & tensor] }
-        - { Tensor::<%= tensor_type %> const: [<%= type %> value] }
+        - { Tensor::<%= tensor %> const: [const Tensor::<%= tensor %> & tensor] }
+        - { Tensor::<%= tensor %> const: [<%= type %> value] }
       "/  | operator/": *binary_op
       "+  | operator+": *binary_op
       "-  | operator-": *binary_op
@@ -36,7 +36,7 @@ module Tensor:
         - { const <%= type %> & const: [size_t i] }
         - { const <%= type %> & const: [const Vsize_t & indexes] }
       "[]=": >
-        [](Tensor::<%= tensor_type %> & self, const Vsize_t & indexes, const <%= type %> & value) -> const <%= type %> & {
+        [](Tensor::<%= tensor %> & self, const Vsize_t & indexes, const <%= type %> & value) -> const <%= type %> & {
           self[indexes] = value;
           return value;
         }
@@ -45,17 +45,17 @@ module Tensor:
       values:
       slice:
       refill_value: >
-        [](Tensor::<%= tensor_type %> & self, <%= type %> fill_value) -> Tensor::<%= tensor_type %> & {
+        [](Tensor::<%= tensor %> & self, <%= type %> fill_value) -> Tensor::<%= tensor %> & {
           self.refill_value(fill_value);
           return self;
         }
       reshape: >
-        [](Tensor::<%= tensor_type %> & self, const Vsize_t & shape) -> Tensor::<%= tensor_type %> & {
+        [](Tensor::<%= tensor %> & self, const Vsize_t & shape) -> Tensor::<%= tensor %> & {
           self.reshape(shape);
           return self;
         }
       seq: >
-        [](Tensor::<%= tensor_type %> & self, const O<%= type %> & start) -> Tensor::<%= tensor_type %> & {
+        [](Tensor::<%= tensor %> & self, const O<%= type %> & start) -> Tensor::<%= tensor %> & {
           self.seq(start);
           return self;
         }

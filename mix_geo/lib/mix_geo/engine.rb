@@ -33,7 +33,7 @@ module MixGeo
           'UInt64' => 'NC_UINT64', # 11
           # 'String' => NC_CHAR,   # 2
         }
-        raise "types mismatch" if config.template[:netcdf].keys != config.template[:numeric_types].keys
+        raise "types mismatch" if config.template[:netcdf].keys != config.template[:numeric].keys
       end
     end
 

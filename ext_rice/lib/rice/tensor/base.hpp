@@ -1,12 +1,12 @@
 namespace Tensor {
   enum class Type {
-    <%- template[:numeric_types].each_key do |TENSOR| -%>
+    <%- template[:numeric].each_key do |TENSOR| -%>
     TENSOR,
     <%- end -%>
     Base
   };
 
-  <%- template[:numeric_types].each_key do |TENSOR| -%>
+  <%- template[:numeric].each_key do |TENSOR| -%>
   class TENSOR;
   <%- end -%>
 
@@ -39,14 +39,14 @@ namespace Tensor {
 
     Base & operator=(const Base & tensor) = delete;
 
-    <%- template[:numeric_types].each_key do |TENSOR| -%>
+    <%- template[:numeric].each_key do |TENSOR| -%>
     explicit operator TENSOR * () const;
     explicit operator TENSOR & () const;
     <%- end -%>
 
     GType nodata_value() const {
       switch (type) {
-      <%- template[:numeric_types].each do |TENSOR, T| -%>
+      <%- template[:numeric].each do |TENSOR, T| -%>
       case Tensor::Type::TENSOR: return g_cast(*reinterpret_cast< const T * >(nodata));
       <%- end -%>
       default:

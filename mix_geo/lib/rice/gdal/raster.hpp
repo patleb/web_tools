@@ -96,7 +96,7 @@ namespace GDAL {
       auto & x0 = tf.x0,       & y0 = tf.y0;
       auto & dx = tf.dx,       & dy = tf.dy;
       switch (type()) {
-      <%- template[:numeric_types].each do |TENSOR, T| -%>
+      <%- template[:numeric].each do |TENSOR, T| -%>
       case Tensor::Type::TENSOR: {
         auto src_nodata = *reinterpret_cast< const T * >(tensor.nodata);
         auto dst_nodata = is_none(fill_value) ? src_nodata : g_cast< T >(fill_value);

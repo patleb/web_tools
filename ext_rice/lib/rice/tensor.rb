@@ -2,7 +2,7 @@ module Tensor
   class InvalidRanges < ::StandardError; end
 
   def self.types
-    @@types ||= ExtRice.config.template[:numeric_types].keys.map{ |name| Tensor::Type.const_get(name) }
+    @@types ||= ExtRice.config.template[:numeric].keys.map{ |name| Tensor::Type.const_get(name) }
   end
 
   def self.build(type, ...)
