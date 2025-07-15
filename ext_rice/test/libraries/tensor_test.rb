@@ -6,6 +6,14 @@ class TensorTest < Rice::TestCase
     refute Tensor::Int8.new(2).seq == Tensor::Int8.new(2)
   end
 
+  test '#operator[]' do
+    tensor = Tensor::SFloat.new(2, 2).seq
+    assert_equal 0.0, tensor[0]
+    assert_equal 1.0, tensor[1]
+    assert_equal 2.0, tensor[2]
+    assert_equal 3.0, tensor[3]
+  end
+
   test '#to_sql' do
     assert_equal (d1 = '{0,1}'), Tensor::Int8.new(2).seq.to_sql
     assert_equal (d2 = "{#{d1},{2,3}}"), Tensor::Int8.new(2, 2).seq.to_sql

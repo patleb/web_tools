@@ -11,7 +11,8 @@ module Tensor:
     attr_reader: [size, rank, type]
 
     def:
-      shape | _shape_:
+      shape   | _shape_:
+      offsets | _offsets_:
 
   <% template[:numeric].each do |tensor, type| %>
   class <%= tensor %> < Tensor::Base:

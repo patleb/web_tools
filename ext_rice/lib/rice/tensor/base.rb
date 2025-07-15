@@ -4,6 +4,10 @@ module Tensor
       def shape
         super.to_a
       end
+
+      def offsets
+        super.to_a
+      end
     end
     prepend self::WithOverrides
   end

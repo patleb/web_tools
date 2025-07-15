@@ -58,6 +58,10 @@ namespace Tensor {
       return shape;
     }
 
+    auto _offsets_() const {
+      return offsets;
+    }
+
     auto & reshape(const Vsize_t & shape) {
       auto total = size_for(shape);
       if (total != size) throw RuntimeError("shape.total[" S(total) "] != size[" S(size) "]");
