@@ -45,8 +45,8 @@ namespace Tensor {
         case ',': case '}':
           if (new_value) {
             new_value = false;
-            buffer[i] = '\0';
-            *(data++) = (std::strncmp(buffer, "NULL", 4) == 0) ? tensor.fill_value : parse_number(buffer);
+            buffer[i] = '\0'; //      "NULL"[0]          "NULL"[1]
+            *(data++) = (buffer[0] == 'N' && buffer[1] == 'U') ? tensor.fill_value : parse_number(buffer);
             i = 0;
           }
           break;
