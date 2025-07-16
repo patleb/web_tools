@@ -34,7 +34,8 @@ namespace Tensor {
     TENSOR & operator=(const TENSOR & tensor) = delete;
 
     static auto from_sql(const std::string & values, const Vsize_t & shape, const GType & fill_value = none) {
-      bool new_value = true;
+      if (values.front() != '{' || values.back() != '}' ) throw RuntimeError("malformed values string");
+      bool new_value = false;
       char buffer[24 + 1]; // double + '\0'
       TENSOR tensor(shape, g_cast< T >(fill_value));
       auto data = reinterpret_cast< T * >(tensor.data);
