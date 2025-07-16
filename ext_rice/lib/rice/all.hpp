@@ -8,3 +8,4 @@
 #include "ext_rice/core_ext/types.hpp"
 #include "ext_rice/core_ext/bitset.hpp"
 #include "ext_rice/core_ext/gtype.hpp"
+#include "ext_rice/tensor.hpp"
