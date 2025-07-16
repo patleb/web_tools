@@ -17,8 +17,8 @@ using Vptrdiff_t = std::vector< ptrdiff_t >;
 using Optrdiff_t = std::optional< ptrdiff_t >;
 <%- template[:numeric].each_value do |T| -%>
 using V-T- = std::vector< T >;
-using VN-T- = std::vector< V-T- >;
 using O-T- = std::optional< T >;
+using VV-T- = std::vector< V-T- >;
 <%- end -%>
 using Vstring = std::vector< std::string >;
 using Ostring = std::optional< std::string >;
