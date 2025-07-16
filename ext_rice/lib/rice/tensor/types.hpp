@@ -4,6 +4,42 @@ namespace Tensor {
   class TENSOR : public Base {
     public:
 
+    class View {
+      public:
+
+      size_t size;
+      std::gslice_array< T > slice;
+
+      View() = delete;
+
+      View(const std::gslice_array< T > & slice, const Vsize_t & shape):
+        size(std::ranges::fold_left(shape, 1, std::multiplies())),
+        slice(slice) {
+      }
+
+      void operator=(const T & value) const {
+        this->slice = value;
+      }
+
+      void operator=(const TENSOR & tensor) const {
+        if (size != tensor.size) throw RuntimeError("size[" S(size) "] != tensor.size[" S(tensor.size) "]");
+        this->slice = tensor.array;
+      }
+
+      auto & operator=(const View & view) const {
+        if (size != view.size) throw RuntimeError("size[" S(size) "] != view.size[" S(view.size) "]");
+        this->slice = view.slice;
+        return *this;
+      }
+      <%- %w(+ - * /).each do |OP| -%>
+
+      void operator-OP-=(const TENSOR & tensor) const {
+        if (size != tensor.size) throw RuntimeError("size[" S(size) "] != tensor.size[" S(tensor.size) "]");
+        this->slice OP= tensor.array;
+      }
+      <%- end -%>
+    };
+
     T fill_value = <%= %w(float double).include?(@T) ? 'Float::nan' : 0 %>;
     std::valarray< T > array;
 
@@ -75,20 +111,22 @@ namespace Tensor {
       return static_cast< T >(std::atoi(buffer));
     <%- end -%>
     }
-  <%- if %w(float double).include? @T -%>
-    <%- %w(* / + -).each do |OP| -%>
 
-    auto operator-OP-(const Tensor::TENSOR & tensor) const {
-      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
-      return TENSOR(array -OP- tensor.array, shape, fill_value);
+    static auto atan2(const TENSOR & y, const TENSOR & x) {
+      if (y.size != x.size) throw RuntimeError("y.size[" S(y.size) "] != x.size[" S(x.size) "]");
+      return TENSOR(std::atan2(y.array, x.array), y.shape, y.fill_value);
+    }
+    <%- %w(+ - * /).each do |OP| -%>
+
+    auto operator-OP-(const TENSOR & tensor) const {
+      if (size != tensor.size) throw RuntimeError("size[" S(size) "] != tensor.size[" S(tensor.size) "]");
+      return TENSOR(array OP tensor.array, shape, fill_value);
     }
 
     auto operator-OP-(T value) const {
-      if (!std::isnan(fill_value)) throw RuntimeError("fill_value must be Float::nan");
-      return TENSOR(array -OP- value, shape, fill_value);
+      return TENSOR(array OP value, shape, fill_value);
     }
     <%- end -%>
-  <%- end -%>
 
     auto & operator()(size_t y, size_t x)       { return array[y * offsets[0] + x]; }
     auto & operator()(size_t y, size_t x) const { return array[y * offsets[0] + x]; }
@@ -114,8 +152,13 @@ namespace Tensor {
       return std::equal(begin(), end(), dynamic_cast< const TENSOR & >(tensor).begin());
     }
 
-    auto values() const {
-      return V-T-(begin(), end());
+    auto slice(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vsize_t & stride = {}) {
+      size_t offset = offset_for(start);
+      auto counts = counts_or_ones(count);
+      auto strides = counts_or_ones(stride);
+      auto slice = std::gslice(offset, counts, strides);
+      auto shape = Vsize_t(std::begin(counts), std::end(counts));
+      return View(std::gslice_array< T >(array[slice]), shape);
     }
 
     auto slice(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vsize_t & stride = {}) const {
@@ -125,6 +168,10 @@ namespace Tensor {
       auto slice = std::gslice(offset, counts, strides);
       auto shape = Vsize_t(std::begin(counts), std::end(counts));
       return TENSOR(array[slice], shape, fill_value);
+    }
+
+    auto values() const {
+      return V-T-(begin(), end());
     }
 
     auto & refill_value(T fill_value) {
@@ -193,6 +240,24 @@ namespace Tensor {
         }
       }
     }
+
+    auto abs() const {
+    <%- if @T.start_with? 'u' -%>
+      return TENSOR(*this);
+    <%- else -%>
+      return TENSOR(std::abs(array), shape, fill_value);
+    <%- end -%>
+    }
+
+    auto pow(T exp) const {
+      return TENSOR(std::pow(array, std::valarray< T >(exp, size)), shape, fill_value);
+    }
+    <%- %w(exp log log10 sqrt sin cos tan asin acos atan sinh cosh tanh).each do |F| -%>
+
+    auto F() const {
+      return TENSOR(std::F(array), shape, fill_value);
+    }
+    <%- end -%>
 
     private:
 

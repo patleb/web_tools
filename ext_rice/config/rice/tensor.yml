@@ -3,6 +3,9 @@ aliases:
   <%- template[:numeric].each_value do |type| -%>
   - &fill_value_<%= type %> [const O<%= type %> &, fill_value = nil]
   <%- end -%>
+  - &start [const Vsize_t &, start = Vsize_t()]
+  - &count [const Vsize_t &, count = Vsize_t()]
+  - &stride [const Vsize_t &, stride = Vsize_t()]
 
 module Tensor:
   enum Type | Tensor::Type: [<%= template[:numeric].keys.join(', ') %>]
@@ -20,19 +23,18 @@ module Tensor:
 
     def:
       self.from_sql: [values, shape, fill_value = none]
+      self.atan2:
 
       initialize | Tensor::<%= tensor %>.COPY:
         - { [ *shape, *fill_value_<%= type %> ] }
         - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }
       "== | operator==":
-      <% if %w(float double).include? type %>
-      "*  | operator*": &binary_op
+      "+  | operator+": &binary_op
         - { Tensor::<%= tensor %> const: [const Tensor::<%= tensor %> & tensor] }
         - { Tensor::<%= tensor %> const: [<%= type %> value] }
-      "/  | operator/": *binary_op
-      "+  | operator+": *binary_op
       "-  | operator-": *binary_op
-      <% end %>
+      "*  | operator*": *binary_op
+      "/  | operator/": *binary_op
       "[] | operator[]":
         - { const <%= type %> & const: [size_t i] }
         - { const <%= type %> & const: [const Vsize_t & indexes] }
@@ -43,8 +45,8 @@ module Tensor:
         }
       first: { const <%= type %> & const: [] }
       last:  { const <%= type %> & const: [] }
+      slice: { Tensor::<%= tensor %> const: [*start, *count, *stride] }
       values:
-      slice:
       refill_value: >
         [](Tensor::<%= tensor %> & self, <%= type %> fill_value) -> Tensor::<%= tensor %> & {
           self.refill_value(fill_value);
@@ -61,4 +63,18 @@ module Tensor:
           return self;
         }
       to_sql:
+      abs:
+      exp:
+      log:
+      log10:
+      sqrt:
+      sin:
+      cos:
+      tan:
+      asin:
+      acos:
+      atan:
+      sinh:
+      cosh:
+      tanh:
   <% end %>
