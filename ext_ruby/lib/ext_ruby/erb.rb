@@ -31,13 +31,13 @@ class ERB
           else
             block_vars.push []
           end
-        when /<%-? +(if|unless|case)/
+        when /<%-? +(?:if|unless|case|(elsif|when))/
           (vars + block_vars).each do |tokens|
             tokens.each do |token|
               line.gsub! /([^@])@#{token}(\W)/, "\\1#{token.downcase}_\\2"
             end
           end
-          block_vars.push []
+          block_vars.push [] unless $1
         when /<%-? +end /
           block_vars.pop
         else
