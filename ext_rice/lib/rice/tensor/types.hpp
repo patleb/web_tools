@@ -130,8 +130,6 @@ namespace Tensor {
 
     auto & operator()(size_t y, size_t x)       { return array[y * offsets[0] + x]; }
     auto & operator()(size_t y, size_t x) const { return array[y * offsets[0] + x]; }
-    auto & operator()(size_t z, size_t y, size_t x)       { return array[z * offsets[0] + y * offsets[1] + x]; }
-    auto & operator()(size_t z, size_t y, size_t x) const { return array[z * offsets[0] + y * offsets[1] + x]; }
     auto & operator[](size_t i)       { return array[i]; }
     auto & operator[](size_t i) const { return array[i]; }
     auto & operator[](const Vsize_t & indexes)       { return array[offset_for(indexes)]; }
