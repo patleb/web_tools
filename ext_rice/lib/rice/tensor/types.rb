@@ -11,6 +11,10 @@ module Tensor
           end
         end
 
+        prepended do
+          alias_method :to_s, :to_sql
+        end
+
         def initialize(*values, **options)
           values = values.first if values.first.is_a? Array
           super(values, **options)
