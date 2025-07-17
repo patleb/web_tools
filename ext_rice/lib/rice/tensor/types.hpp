@@ -20,19 +20,16 @@ namespace Tensor {
       void operator=(const T & value) const {
         this->slice = value;
       }
-
       void operator=(const TENSOR & tensor) const {
         if (size != tensor.size) throw RuntimeError("size[" S(size) "] != tensor.size[" S(tensor.size) "]");
         this->slice = tensor.array;
       }
-
       auto & operator=(const View & view) const {
         if (size != view.size) throw RuntimeError("size[" S(size) "] != view.size[" S(view.size) "]");
         this->slice = view.slice;
         return *this;
       }
       <%- %w(+ - * /).each do |OP| -%>
-
       void operator-OP-=(const TENSOR & tensor) const {
         if (size != tensor.size) throw RuntimeError("size[" S(size) "] != tensor.size[" S(tensor.size) "]");
         this->slice OP= tensor.array;
@@ -69,62 +66,13 @@ namespace Tensor {
 
     TENSOR & operator=(const TENSOR & tensor) = delete;
 
-    static auto from_sql(const std::string & values, const Vsize_t & shape, const GType & fill_value = none) {
-      if (values.front() != '{' || values.back() != '}' ) throw RuntimeError("malformed values string");
-      bool new_value = false;
-      char buffer[24 + 1]; // double + '\0'
-      TENSOR tensor(shape, g_cast< T >(fill_value));
-      auto data = reinterpret_cast< T * >(tensor.data);
-      for (size_t i = 0; auto && c : values) {
-        switch (c) {
-        case '{': case ' ':
-          break;
-        case ',': case '}':
-          if (new_value) {
-            new_value = false;
-            buffer[i] = '\0'; //      "NULL"[0]          "NULL"[1]
-            *(data++) = (buffer[0] == 'N' && buffer[1] == 'U') ? tensor.fill_value : parse_number(buffer);
-            i = 0;
-          }
-          break;
-        default:
-          new_value = true;
-          buffer[i++] = c;
-        }
-      }
-      return tensor;
-    }
-
-    static T parse_number(char * buffer) {
-    <%- case @T -%>
-    <%- when 'float' -%>
-      return static_cast< T >(std::atof(buffer));
-    <%- when 'double' -%>
-      return std::atof(buffer);
-    <%- when 'uint32_t' -%>
-      return static_cast< T >(std::strtoul(buffer, nullptr, 10));
-    <%- when 'int64_t2' -%>
-      return std::atoll(buffer);
-    <%- when 'uint64_t2' -%>
-      return std::strtoull(buffer, nullptr, 10);
-    <%- else -%>
-      return static_cast< T >(std::atoi(buffer));
-    <%- end -%>
-    }
-
-    static auto atan2(const TENSOR & y, const TENSOR & x) {
-      if (y.size != x.size) throw RuntimeError("y.size[" S(y.size) "] != x.size[" S(x.size) "]");
-      return TENSOR(std::atan2(y.array, x.array), y.shape, y.fill_value);
-    }
     <%- %w(+ - * /).each do |OP| -%>
-
+    auto operator-OP-(T value) const {
+      return TENSOR(array OP value, shape, fill_value);
+    }
     auto operator-OP-(const TENSOR & tensor) const {
       if (size != tensor.size) throw RuntimeError("size[" S(size) "] != tensor.size[" S(tensor.size) "]");
       return TENSOR(array OP tensor.array, shape, fill_value);
-    }
-
-    auto operator-OP-(T value) const {
-      return TENSOR(array OP value, shape, fill_value);
     }
     <%- end -%>
 
@@ -134,14 +82,17 @@ namespace Tensor {
     auto & operator[](size_t i) const { return array[i]; }
     auto & operator[](const Vsize_t & indexes)       { return array[offset_for(indexes)]; }
     auto & operator[](const Vsize_t & indexes) const { return array[offset_for(indexes)]; }
-    auto & first()       { return array[0]; }
-    auto & first() const { return array[0]; }
-    auto & last()        { return array[size - 1]; }
-    auto & last()  const { return array[size - 1]; }
+    auto & front()       { return array[0]; }
+    auto & front() const { return array[0]; }
+    auto & back()        { return array[size - 1]; }
+    auto & back()  const { return array[size - 1]; }
     auto begin()         { return std::begin(array); }
     auto begin()   const { return std::begin(array); }
     auto end()           { return std::end(array); }
     auto end()     const { return std::end(array); }
+    auto data()       { return reinterpret_cast< T * >(_data_); }
+    auto data() const { return reinterpret_cast< const T * >(_data_); }
+    auto values() const { return V-T-(begin(), end()); }
 
     // NOTE won't consider NaN --> use #to_sql
     bool operator==(const Tensor::Base & tensor) const {
@@ -166,10 +117,6 @@ namespace Tensor {
       auto slice = std::gslice(offset, counts, strides);
       auto shape = Vsize_t(std::begin(counts), std::end(counts));
       return TENSOR(array[slice], shape, fill_value);
-    }
-
-    auto values() const {
-      return V-T-(begin(), end());
     }
 
     auto & refill_value(T fill_value) {
@@ -198,8 +145,49 @@ namespace Tensor {
       return sizeof(T);
     }
 
+    static auto from_sql(const std::string & values, const Vsize_t & shape, const GType & fill_value = none) {
+      if (values.front() != '{' || values.back() != '}' ) throw RuntimeError("malformed values string");
+      bool new_value = false;
+      char buffer[24 + 1]; // double + '\0'
+      TENSOR tensor(shape, g_cast< T >(fill_value));
+      auto data = tensor.data();
+      for (size_t i = 0; auto && c : values) {
+        switch (c) {
+        case '{': case ' ':
+          break;
+        case ',': case '}':
+          if (new_value) {
+            new_value = false;
+            buffer[i] = '\0';
+            bool null = (buffer[0] == 'N' && buffer[1] == 'U');
+            if (null) *(data++) = tensor.fill_value;
+            <%- case @T -%>
+            <%- when 'float' -%>
+            else *(data++) = static_cast< T >(std::atof(buffer));
+            <%- when 'double' -%>
+            else *(data++) = std::atof(buffer);
+            <%- when 'uint32_t' -%>
+            else *(data++) = static_cast< T >(std::strtoul(buffer, nullptr, 10));
+            <%- when 'int64_t2' -%>
+            else *(data++) = std::atoll(buffer);
+            <%- when 'uint64_t2' -%>
+            else *(data++) = std::strtoull(buffer, nullptr, 10);
+            <%- else -%>
+            else *(data++) = static_cast< T >(std::atoi(buffer));
+            <%- end -%>
+            i = 0;
+          }
+          break;
+        default:
+          new_value = true;
+          buffer[i++] = c;
+        }
+      }
+      return tensor;
+    }
+
     auto to_sql(const Ostring & before = nil, const Ostring & after = nil, Obool nulls = nil) const {
-      auto data = reinterpret_cast< T * >(this->data);
+      auto data = this->data();
       auto as_null = nulls.value_or(false);
       auto isnan_nodata = std::isnan(fill_value);
       size_t dim_i = 0, dim_j;
@@ -239,6 +227,11 @@ namespace Tensor {
       }
     }
 
+    static auto atan2(const TENSOR & y, const TENSOR & x) {
+      if (y.size != x.size) throw RuntimeError("y.size[" S(y.size) "] != x.size[" S(x.size) "]");
+      return TENSOR(std::atan2(y.array, x.array), y.shape, y.fill_value);
+    }
+
     auto abs() const {
     <%- if @T.start_with? 'u' -%>
       return TENSOR(*this);
@@ -268,7 +261,7 @@ namespace Tensor {
 
     void sync_refs() {
       this->nodata = reinterpret_cast< void * >(&fill_value);
-      this->data = reinterpret_cast< void * >(&array[0]);
+      this->_data_ = reinterpret_cast< void * >(&array[0]);
       this->type = Tensor::Type::TENSOR;
     }
   };

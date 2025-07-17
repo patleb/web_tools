@@ -43,8 +43,8 @@ module Tensor:
           self[indexes] = value;
           return value;
         }
-      first: { const <%= type %> & const: [] }
-      last:  { const <%= type %> & const: [] }
+      first | front: { const <%= type %> & const: [] }
+      last  | back:  { const <%= type %> & const: [] }
       slice: { Tensor::<%= tensor %> const: [*start, *count, *stride] }
       values:
       refill_value: >

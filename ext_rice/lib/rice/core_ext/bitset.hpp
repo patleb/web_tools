@@ -15,10 +15,10 @@ class Bitset {
 
   auto operator[](size_t i)       { return array.at(i); }
   bool operator[](size_t i) const { return array.at(i); }
-  auto first()       { return array.front(); }
-  bool first() const { return array.front(); }
-  auto last()        { return array.back(); }
-  bool last()  const { return array.back(); }
+  auto front()       { return array.front(); }
+  bool front() const { return array.front(); }
+  auto back()        { return array.back(); }
+  bool back()  const { return array.back(); }
   auto size()  const { return array.size(); }
 
   auto to_s() const {

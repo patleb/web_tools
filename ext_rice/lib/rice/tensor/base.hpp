@@ -18,7 +18,7 @@ namespace Tensor {
     size_t size;
     size_t rank;
     void * nodata = nullptr;
-    void * data = nullptr;
+    void * _data_ = nullptr;
     Tensor::Type type = Tensor::Type::Base;
 
     explicit Base(const Vsize_t & shape):
@@ -32,7 +32,7 @@ namespace Tensor {
 
     Base(const Base & tensor):
       nodata(nullptr),
-      data(nullptr),
+      _data_(nullptr),
       type(Tensor::Type::Base) {
       copy_to_base(tensor);
     }

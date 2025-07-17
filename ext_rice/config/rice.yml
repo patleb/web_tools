@@ -35,7 +35,7 @@ class Bitset:
         self[i] = value;
         return value;
       }
-    first: { bool const: [] }
-    last:  { bool const: [] }
+    first | front: { bool const: [] }
+    last  | back:  { bool const: [] }
     size:
     to_s:
