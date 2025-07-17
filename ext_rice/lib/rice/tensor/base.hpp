@@ -44,6 +44,10 @@ namespace Tensor {
     explicit operator TENSOR & () const;
     <%- end -%>
 
+    static size_t size_for(const Vsize_t & shape) {
+      return std::ranges::fold_left(shape, 1, std::multiplies());
+    }
+
     GType nodata_value() const {
       switch (type) {
       <%- template[:numeric].each do |TENSOR, T| -%>
@@ -116,10 +120,6 @@ namespace Tensor {
       }
       if (shape.front() == 0) throw RuntimeError("first dimension is empty");
       return offsets;
-    }
-
-    size_t size_for(const Vsize_t & shape) const {
-      return std::ranges::fold_left(shape, 1, std::multiplies());
     }
   };
 }

@@ -13,7 +13,7 @@ namespace Tensor {
       View() = delete;
 
       View(const std::gslice_array< T > & slice, const Vsize_t & shape):
-        size(std::ranges::fold_left(shape, 1, std::multiplies())),
+        size(Base::size_for(shape)),
         slice(slice) {
       }
 
@@ -90,9 +90,9 @@ namespace Tensor {
     auto begin()   const { return std::begin(array); }
     auto end()           { return std::end(array); }
     auto end()     const { return std::end(array); }
-    auto data()       { return reinterpret_cast< T * >(_data_); }
-    auto data() const { return reinterpret_cast< const T * >(_data_); }
-    auto values() const { return V-T-(begin(), end()); }
+    auto data()          { return reinterpret_cast< T * >(_data_); }
+    auto data()    const { return reinterpret_cast< const T * >(_data_); }
+    auto values()  const { return V-T-(begin(), end()); }
 
     // NOTE won't consider NaN --> use #to_sql
     bool operator==(const Tensor::Base & tensor) const {
