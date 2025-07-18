@@ -49,7 +49,7 @@ module NetCDF:
         - [Obool, nc4_classic = nil]
         - [Obool, classic = nil]
         - [Obool, share = nil]
-      open: [path, mode = nil, nc4_classic = nil, classic = nil, share = nil]
+      open:
       close:
       closed? | is_closed:
       sync:
@@ -60,7 +60,7 @@ module NetCDF:
       dim:
       var:
       att:
-      create_dim: [name, size = nil]
+      create_dim:
       create_var:
       write_att:
       write_att_s:

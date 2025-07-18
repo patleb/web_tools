@@ -64,5 +64,5 @@ module GDAL:
       x:
       y:
       z | _z_:
-      reproject: [proj, fill_value = nil, compact = nil, memoize = nil]
+      reproject:
       transform_for:
