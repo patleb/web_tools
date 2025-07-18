@@ -11,6 +11,15 @@
 
 Include /etc/ssh/sshd_config.d/*.conf
 
+# When systemd socket activation is used (the default), the socket
+# configuration must be re-generated after changing Port, AddressFamily, or
+# ListenAddress.
+#
+# For changes to take effect, run:
+#
+#   systemctl daemon-reload
+#   systemctl restart ssh.socket
+#
 #Port 22
 #AddressFamily any
 #ListenAddress 0.0.0.0
