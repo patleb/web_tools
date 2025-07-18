@@ -22,7 +22,7 @@ module Tensor:
     attr_accessor: [fill_value]
 
     def:
-      self.from_sql: [values, shape, fill_value = none]
+      self.from_sql:
       self.atan2:
 
       initialize | Tensor::<%= tensor %>.COPY:
@@ -63,6 +63,7 @@ module Tensor:
           return self;
         }
       to_sql:
+      to_string:
       abs:
       exp:
       log:

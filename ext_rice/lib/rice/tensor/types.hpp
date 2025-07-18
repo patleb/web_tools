@@ -227,6 +227,23 @@ namespace Tensor {
       }
     }
 
+    auto to_string(Osize_t limit = nil) const {
+      std::stringstream stream;
+      stream << "[";
+      std::ranges::for_each(shape, [&stream, first = true](auto size) mutable {
+        if (!first) stream << ",";
+        else first = false;
+        stream << size;
+      });
+      stream << "]";
+      stream << to_sql();
+      auto string = std::string(stream.str().c_str());
+      if (!limit) return string;
+      auto _limit_ = limit.value();
+      if (string.size() <= _limit_) return string;
+      return string.substr(0, _limit_) + "...";
+    }
+
     static auto atan2(const TENSOR & y, const TENSOR & x) {
       if (y.size != x.size) throw RuntimeError("y.size[" S(y.size) "] != x.size[" S(x.size) "]");
       return TENSOR(std::atan2(y.array, x.array), y.shape, y.fill_value);
