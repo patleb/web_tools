@@ -1,3 +1,5 @@
 sun.install "cmake"
 sun.install "gfortran"
 sun.install "libtbb-dev"
+sun.install "libopenblas-dev"
+sun.install "liblapacke-dev"
