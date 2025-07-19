@@ -44,9 +44,10 @@ class Gilbert
 
   def self.cache_write(*x, list)
     CSV.open("#{CACHE_DIR}/#{x.join('-')}.csv", "w") do |csv|
-      list.each do |row|
-        csv << row
-      end
+      Thread.pass while (locked ||= csv.flock(File::LOCK_EX | File::LOCK_NB) == false)
+      list.each{ |row| csv << row } unless locked
+      csv << Array.new(x.size, -1) # completion marker
+      csv.flock(File::LOCK_UN)
     end
   end
   private_class_method :cache_write
@@ -55,9 +56,9 @@ class Gilbert
     FileUtils.mkdir_p CACHE_DIR
     file = "#{CACHE_DIR}/#{x.join('-')}.csv"
     return unless File.exist? file
-
     list = []
     CSV.foreach(file, converters: [:integer]){ |row| list << row }
+    return unless list.pop == Array.new(x.size, -1)
     list
   end
   private_class_method :cache_read
