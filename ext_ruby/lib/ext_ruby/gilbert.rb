@@ -45,8 +45,10 @@ class Gilbert
   def self.cache_write(*x, list)
     CSV.open("#{CACHE_DIR}/#{x.join('-')}.csv", "w") do |csv|
       Thread.pass while (locked ||= csv.flock(File::LOCK_EX | File::LOCK_NB) == false)
-      list.each{ |row| csv << row } unless locked
-      csv << Array.new(x.size, -1) # completion marker
+      unless locked
+        list.each{ |row| csv << row }
+        csv << Array.new(x.size, -1) # completion marker
+      end
       csv.flock(File::LOCK_UN)
     end
   end
