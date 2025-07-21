@@ -18,7 +18,7 @@ module Host
   end
 
   def self.host_file_lines
-    @host_file_lines ||= Pathname.new('/etc/hosts').readlines
+    Pathname.new('/etc/hosts').readlines
   end
   private_class_method :host_file_lines
 end

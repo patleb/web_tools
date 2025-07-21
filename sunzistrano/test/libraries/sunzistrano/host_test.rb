@@ -2,7 +2,7 @@ require './sunzistrano/test/spec_helper'
 
 module Host
   def self.host_file_lines
-    @host_file_lines ||= Sunzistrano.root.join('test/fixtures/files/etc/hosts').readlines
+    Sunzistrano.root.join('test/fixtures/files/etc/hosts').readlines
   end
 end
 
