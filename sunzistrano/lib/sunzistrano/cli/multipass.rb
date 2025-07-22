@@ -1,6 +1,6 @@
 module Sunzistrano
   MULTIPASS_DIR = '.multipass'
-  MULTIPASS_INFO = "#{MULTIPASS_DIR}/metadata.yml"
+  MULTIPASS_INFO = "#{MULTIPASS_DIR}/info.yml"
   ERB_CLOUD_INIT = './cloud-init.yml'
   TMP_CLOUD_INIT = './tmp/cloud-init.yml'
   SNAPSHOT_ACTIONS = %w(save restore list delete)
@@ -349,15 +349,15 @@ module Sunzistrano
 
       def vm_info!
         @vm_info = nil
-        metadata = (file = Pathname.new(MULTIPASS_INFO)).exist? && YAML.safe_load(file.read) || {}
+        info_was = (file = Pathname.new(MULTIPASS_INFO)).exist? && YAML.safe_load(file.read) || {}
         info = ([vm_name] + sun.vm_clusters.times.map{ |i| vm_name(i + 1) }).each_with_object({}) do |vm, hash|
-          next metadata.delete(vm) unless (json = `multipass info #{vm} --format=json 2>/dev/null`).present?
+          next info_was.delete(vm) unless (json = `multipass info #{vm} --format=json 2>/dev/null`).present?
           next unless (info = JSON.parse(json).dig('info', vm)).present?
-          ip_was = metadata.dig(vm, 'ip')
-          metadata[vm] = hash[vm] = info
-          metadata[vm]['ip'] = info.dig('ipv4', -1) || ip_was
+          ip_was = info_was.dig(vm, 'ip')
+          info_was[vm] = hash[vm] = info
+          info_was[vm]['ip'] = info.dig('ipv4', -1) || ip_was
         end
-        Pathname.new(MULTIPASS_INFO).write(metadata.to_yaml)
+        Pathname.new(MULTIPASS_INFO).write(info_was.to_yaml)
         info.to_hwia
       end
 
