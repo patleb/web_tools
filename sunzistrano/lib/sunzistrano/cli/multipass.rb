@@ -1,34 +1,37 @@
 module Sunzistrano
+  MULTIPASS_DIR = '.multipass'
+  MULTIPASS_INFO = "#{MULTIPASS_DIR}/metadata.yml"
   ERB_CLOUD_INIT = './cloud-init.yml'
   TMP_CLOUD_INIT = './tmp/cloud-init.yml'
   SNAPSHOT_ACTIONS = %w(save restore list delete)
 
   Cli.class_eval do
-    desc 'up', 'Start Multipass instance(s)'
+    desc 'up [--id] [--master] [--cluster]', 'Start Multipass instance(s)'
+    method_options id: :numeric, master: false, cluster: false
     def up
       do_up
     end
 
-    desc 'halt [--force]', 'Stop Multipass instance(s)'
-    method_options force: false
+    desc 'halt [--id] [--master] [--cluster] [--force]', 'Stop Multipass instance(s)'
+    method_options id: :numeric, master: false, cluster: false, force: false
     def halt
       do_halt
     end
 
-    desc 'destroy', 'Delete Multipass instance(s)'
+    desc 'destroy [--id] [--master] [--cluster]', 'Delete Multipass instance(s)'
+    method_options id: :numeric, master: false, cluster: false
     def destroy
       do_destroy
     end
 
-    desc 'status', 'Output status of Multipass instance(s)'
+    desc 'status [--id] [--master] [--cluster]', 'Output status of Multipass instance(s)'
+    method_options id: :numeric, master: false, cluster: false
     def status
-      as_virtual do
-        system "multipass info #{vm_name}"
-      end
+      do_status
     end
 
-    desc 'ssh [-c]', 'Shell into Multipass master instance (or execute -c command)'
-    method_options c: :string
+    desc 'ssh [--id] [-c]', 'Shell into Multipass instance (or execute -c command)'
+    method_options id: :numeric, c: :string
     def ssh
       do_ssh
     end
@@ -36,11 +39,11 @@ module Sunzistrano
     desc 'ssh-add', 'Add Multipass ssh private key'
     def ssh_add
       as_virtual do
-        exec 'ssh-add .multipass/private_key 2> /dev/null'
+        exec "ssh-add #{MULTIPASS_DIR}/private_key 2> /dev/null"
       end
     end
 
-    desc 'snapshot [ACTION] [--name]', "#{SNAPSHOT_ACTIONS.map(&:upcase_first).join('/')} Multipass snapshot(s)"
+    desc 'snapshot [ACTION] [--name]', "#{SNAPSHOT_ACTIONS.map(&:upcase_first).join('/')} Multipass master's snapshot(s)"
     method_options name: :string
     def snapshot(action)
       do_snapshot(action)
@@ -49,46 +52,66 @@ module Sunzistrano
     no_tasks do
       def do_up
         as_virtual do
-          case vm_state
-          when :null
-            compile_cloud_init
-            system! "multipass launch #{sun.os_version} --name #{vm_name} #{vm_options}"
-            add_virtual_host
-          when :stopped
-            system! "multipass start #{vm_name}"
+          Parallel.each(vm_ids!) do |name, id|
+            case vm_state id
+            when :null
+              add_virtual_host id do
+                if id == 0
+                  compile_cloud_init
+                  system! "multipass launch #{sun.os_version} --name #{name} #{vm_options}"
+                else
+                  system! "multipass clone #{vm_name} && multipass start #{name}"
+                end
+              end
+            when :stopped
+              system! "multipass start #{name}"
+            end
           end
         end
       end
 
       def do_halt
         as_virtual do
-          case vm_state
-          when :running
-            system! "multipass stop #{vm_name} #{'--force' if sun.force}"
-          when :null, :deleted, :stopped
-            # do nothing
-          else
-            system! "multipass stop #{vm_name} --force"
+          Parallel.each(vm_ids) do |name, id|
+            case vm_state id
+            when :running
+              system! "multipass stop #{name} #{'--force' if sun.force}"
+            when :null, :deleted, :stopped
+              # do nothing
+            else
+              system! "multipass stop #{name} --force"
+            end
           end
         end
       end
 
       def do_destroy
         as_virtual do
-          cmd = case vm_state
-          when :null
-            return
-          when :deleted
-            "multipass purge"
-          when :stopped
-            "multipass delete #{vm_name} && multipass purge"
-          when :running
-            "multipass stop #{vm_name} && multipass delete #{vm_name} && multipass purge"
-          else
-            raise "vm state [#{vm_state}]"
+          Parallel.each(vm_ids) do |name, id|
+            cmd = case vm_state id
+            when :null
+              return
+            when :deleted
+              "multipass purge"
+            when :stopped
+              "multipass delete #{name} && multipass purge"
+            when :running
+              "multipass stop #{name} && multipass delete #{name} && multipass purge"
+            else
+              raise "vm state [#{vm_state id}]"
+            end
+            remove_virtual_host id do
+              system! cmd
+            end
           end
-          remove_virtual_host do
-            system! cmd
+        end
+      end
+
+      def do_status
+        as_virtual do
+          vm_ids.each do |vm, id|
+            puts "---------------- #{id}"
+            system "multipass info #{vm}"
           end
         end
       end
@@ -116,6 +139,11 @@ module Sunzistrano
       end
 
       private
+
+      def as_virtual(&block)
+        with_context 'virtual', :provision, &block
+        vm_info!
+      end
 
       def run_snapshot_save_cmd
         name = "--name #{vm_snapshot sun.name}" if sun.name.present?
@@ -166,27 +194,6 @@ module Sunzistrano
         system! cmd
       end
 
-      def vm_state
-        return :null unless vm_info
-        vm_info[:state].downcase.to_sym
-      end
-
-      def vm_name
-        "vm-#{sun.app.dasherize}"
-      end
-
-      def vm_options
-        "--cpus #{sun.vm_cpu} --memory #{sun.vm_ram} --disk #{sun.vm_disk} --cloud-init=#{TMP_CLOUD_INIT}"
-      end
-
-      def vm_info
-        @vm_info ||= begin
-          return unless (json = `multipass info #{vm_name} --format=json`).present?
-          return unless (hash = JSON.parse(json).dig('info', vm_name))
-          hash.to_hwka
-        end
-      end
-
       def vm_snapshots
         @vm_snapshots ||= begin
           return unless (json = `multipass list --snapshots --format=json`).present?
@@ -201,8 +208,13 @@ module Sunzistrano
         end
       end
 
-      def as_virtual(&block)
-        with_context 'virtual', :provision, &block
+      def vm_snapshot(name)
+        return unless name.present?
+        name.parameterize.dasherize.downcase
+      end
+
+      def vm_options
+        "--cpus #{sun.vm_cpu} --memory #{sun.vm_ram} --disk #{sun.vm_disk} --cloud-init=#{TMP_CLOUD_INIT}"
       end
 
       def compile_cloud_init
@@ -217,39 +229,87 @@ module Sunzistrano
         Pathname.new(TMP_CLOUD_INIT).write(yml.to_hash.pretty_yaml)
       end
 
-      def add_virtual_host
-        vm_metadata.mkdir_p
-        ip = vm_private_ip
-        system! Sh.append_host("#{Host::VIRTUAL}-#{ip}", ip, sun.server_host)
-        vm_private_ip_file.write(ip)
-      end
-
-      def remove_virtual_host
-        ip = vm_private_ip
-        if (ip_was = vm_private_ip_file.read) && ip_was != ip
-          puts "ip has changed [#{ip_was}] --> [#{ip}]".red
-          ip = ip_was
-        end
+      def add_virtual_host(*)
+        ip_was = vm_ip(*)
         yield
-        system! Sh.delete_lines!('/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true) if ip
-        vm_metadata.rmtree(false)
+        ip = vm_ip!(*)
+        if ip_was != ip
+          puts "ip has changed [#{ip_was}] --> [#{ip}]".red
+        end
+        system! Sh.delete_lines!('/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true) if ip_was
+        system! Sh.append_host("#{Host::VIRTUAL}-#{ip}", ip, vm_server_host(*))
       end
 
-      def vm_private_ip
-        vm_info[:ipv4].first
+      def remove_virtual_host(*)
+        ip_was = vm_ip(*)
+        yield
+        if (ip = vm_ip!(*)) && ip_was != ip
+          puts "ip has changed [#{ip_was}] --> [#{ip}]".red
+        end
+        [ip_was, ip].each do |ip|
+          system! Sh.delete_lines!('/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true) if ip
+        end
       end
 
-      def vm_private_ip_file
-        vm_metadata.join('private_ip')
+      def vm_server_host(id = nil)
+        name = sun.server_host
+        return name if (id = id || sun.id).nil? || id == 0
+        "cluster-#{id}.#{name}"
       end
 
-      def vm_metadata
-        Pathname.new(".multipass/#{vm_name}")
+      def vm_name(id = nil)
+        name = "vm-#{sun.app.dasherize}"
+        return name if (id = id || sun.id).nil? || id == 0
+        "#{name}-clone#{id}"
       end
 
-      def vm_snapshot(name)
-        return unless name.present?
-        name.parameterize.dasherize.downcase
+      def vm_state(*)
+        return :null unless (vm = vm_info[vm_name(*)])
+        vm[:state].downcase.to_sym
+      end
+
+      def vm_ip(*)
+        vm_info.dig(vm_name(*), :ip)
+      end
+
+      def vm_ip!(*)
+        vm_info!.dig(vm_name(*), :ip)
+      end
+
+      def vm_ids
+        @vm_ids ||= begin
+          ids = vm_info.map{ |vm, _| [vm, vm.split('-clone').last.to_i] }.to_h
+          ids = ids.slice(ids.key(sun.id)) if sun.id
+          ids = ids.slice(ids.key(0)) if sun.master
+          ids = ids.except(ids.key(0)) if sun.cluster
+          ids
+        end
+      end
+
+      def vm_ids!
+        ids = ([vm_name] + sun.vm_clusters.times.map{ |i| vm_name(i + 1) }).map.with_index{ |name, i| [name, i] }.to_h
+        ids = ids.slice(ids.key(sun.id)) if sun.id
+        ids = ids.slice(ids.key(0)) if sun.master
+        ids = ids.except(ids.key(0)) if sun.cluster
+        ids
+      end
+
+      def vm_info
+        @vm_info ||= vm_info!
+      end
+
+      def vm_info!
+        @vm_info = nil
+        metadata = (file = Pathname.new(MULTIPASS_INFO)).exist? && YAML.safe_load(file.read) || {}
+        info = ([vm_name] + sun.vm_clusters.times.map{ |i| vm_name(i + 1) }).each_with_object({}) do |vm, hash|
+          next metadata.delete(vm) unless (json = `multipass info #{vm} --format=json 2>/dev/null`).present?
+          next unless (info = JSON.parse(json).dig('info', vm)).present?
+          ip_was = metadata.dig(vm, 'ip')
+          metadata[vm] = hash[vm] = info
+          metadata[vm]['ip'] = info.dig('ipv4', 0) || ip_was
+        end
+        Pathname.new(MULTIPASS_INFO).write(metadata.to_yaml)
+        info.to_hwia
       end
     end
   end

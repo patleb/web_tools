@@ -16,6 +16,7 @@ virtual:
   vm_cpu: 2
   vm_ram: 1GB
   vm_disk: 12GB
+  vm_clusters: 0
 
 computer:
   os_name: linuxmint
