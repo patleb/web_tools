@@ -58,10 +58,14 @@ module Sunzistrano
               add_virtual_host id do
                 if id == 0
                   compile_cloud_init
-                  system! "multipass launch #{sun.os_version} --name #{name} #{vm_options}"
+                  add_master_ip do |bridge|
+                    system! "multipass launch #{sun.os_version} --name #{name} #{vm_options} --network name=#{bridge},mode=manual"
+                  end
                 else
                   system! "multipass clone #{vm_name} && multipass start #{name}"
+                  add_cluster_ip id
                 end
+                system! "multipass stop #{name} && multipass start #{name}"
               end
             when :stopped
               system! "multipass start #{name}"
@@ -102,6 +106,7 @@ module Sunzistrano
             end
             remove_virtual_host id do
               system! cmd
+              remove_bridge if id == 0
             end
           end
         end
@@ -229,6 +234,50 @@ module Sunzistrano
         Pathname.new(TMP_CLOUD_INIT).write(yml.to_hash.pretty_yaml)
       end
 
+      def add_master_ip
+        network = free_network
+        bridge = "br-#{network.parameterize}"
+        system! "nmcli connection add type bridge con-name #{bridge} ifname #{bridge} ipv4.method manual ipv4.addresses #{network}.1/24"
+        yield bridge
+        add_static_ip 0, network
+      end
+
+      def add_cluster_ip(id)
+        network = vm_ip(0).sub(/\.\d+$/, '')
+        add_static_ip id, network
+      end
+
+      def add_static_ip(id, network)
+        macs = `multipass exec #{vm_name id} -- ip link`.lines.each_with_object([]) do |line, result|
+          case line
+          when /^\d+: ([^:]+)/
+            result.pop if result.last&.size == 1
+            result << [$1]
+          when %r{link/\w+ ([^ ]+)}
+            result.last << $1
+          end
+        end.to_h
+        raise "no interface ens4: [#{macs.keys.join(', ')}]" unless (mac = macs['ens4'])
+        ip = free_ip(network)
+        system! "multipass exec -n #{vm_name id} -- sudo bash -c 'cat << EOF > /etc/netplan/10-custom.yaml\n#{<<~YAML}"
+          network:
+            version: 2
+            ethernets:
+              ens4:
+                dhcp4: no
+                match:
+                  macaddress: "#{mac}"
+                addresses: [#{ip}/24]
+          EOF'
+        YAML
+        system! "multipass exec -n #{vm_name id} -- sudo chmod 600 /etc/netplan/10-custom.yaml && sudo netplan apply"
+      end
+
+      def remove_bridge
+        network = vm_ip(0).sub(/\.\d+$/, '')
+        system! "nmcli connection delete br-#{network.parameterize}"
+      end
+
       def add_virtual_host(*)
         ip_was = vm_ip(*)
         yield
@@ -306,10 +355,45 @@ module Sunzistrano
           next unless (info = JSON.parse(json).dig('info', vm)).present?
           ip_was = metadata.dig(vm, 'ip')
           metadata[vm] = hash[vm] = info
-          metadata[vm]['ip'] = info.dig('ipv4', 0) || ip_was
+          metadata[vm]['ip'] = info.dig('ipv4', -1) || ip_was
         end
         Pathname.new(MULTIPASS_INFO).write(metadata.to_yaml)
         info.to_hwia
+      end
+
+      def free_ip(network)
+        ip = nil
+        dns = Pathname.new('/etc/hosts').read
+        loop do
+          ip = "#{network}.#{rand(200..250)}" # cogeco routers use 192.168.100.xxx
+          break unless dns.match?(/^#{ip} /) || Kernel.system("ping -c1 -w3 #{ip} > /dev/null 2>&1")
+        end
+        ip
+      end
+
+      def free_network
+        require 'socket'
+        network = ''
+        networks = [''].concat Socket.getifaddrs.map{ |i| i.addr.ip_address.sub(/\.\d+$/, '') if i.addr.ipv4? }.compact
+        loop do
+          break unless networks.include? network
+          network = "192.168.#{rand(4..254)}"
+        end
+        network
+      end
+
+      def free_mac_address
+        macs = `ip link`.each_line.with_object([]) do |line, addresses|
+          next unless line =~ %r{link/ether ([^ ]+)}
+          addresses << $1
+        end
+        mac = nil
+        loop do
+          mac = [rand(0..255) & 0b11111100 | 0b00000010] + Array.new(5){ rand(0..255) }
+          mac.map!{ |b| "%02x" % b }.join(":")
+          break unless macs.include? mac
+        end
+        mac
       end
     end
   end
