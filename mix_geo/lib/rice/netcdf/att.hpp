@@ -44,7 +44,7 @@ namespace NetCDF {
       if (type_id == NC_CHAR) throw TypeError();
       if (values.shape.size() != 1) throw TypeError();
       if (scalar && values.size != 1) throw TypeError();
-      const void * data = values.data;
+      const void * data = values.data();
       Base::check_status( nc_put_att(file_id, var_id, name.c_str(), type_id, values.size, data), file_id, var_id, name );
       return Att(file_id, var_id, name);
     }
@@ -76,7 +76,7 @@ namespace NetCDF {
       <%- template[:netcdf].each do |TENSOR, NC_TYPE| -%>
       case NC_TYPE: {
         Tensor::TENSOR numbers(Vsize_t{ count });
-        check_status( nc_get_att(file_id, var_id, name.c_str(), numbers.data) );
+        check_status( nc_get_att(file_id, var_id, name.c_str(), numbers.Base::data()) );
         return Tensor::NType(numbers);
       }
       <%- end -%>

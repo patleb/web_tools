@@ -106,10 +106,10 @@ namespace NetCDF {
       if (starts.size() != dims_count) throw TypeError();
       if (counts.size() != dims_count) throw TypeError();
       if (stride.empty()) {
-        check_status( nc_put_vara(file_id, id, starts.data(), counts.data(), values.data) );
+        check_status( nc_put_vara(file_id, id, starts.data(), counts.data(), values.data()) );
       } else {
         if (stride.size() != dims_count) throw TypeError();
-        check_status( nc_put_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.data) );
+        check_status( nc_put_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.data()) );
       }
     }
 
@@ -135,12 +135,12 @@ namespace NetCDF {
         if (counts.size() != dims_count) throw TypeError();
         if (stride.empty()) {
           Tensor::TENSOR values(counts);
-          check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.data) );
+          check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.Base::data()) );
           return Tensor::NType(values);
         } else {
           if (stride.size() != dims_count) throw TypeError();
           Tensor::TENSOR values(counts);
-          check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.data) );
+          check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.Base::data()) );
           return Tensor::NType(values);
         }
       }

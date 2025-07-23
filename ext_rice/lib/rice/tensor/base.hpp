@@ -76,6 +76,9 @@ namespace Tensor {
       return *this;
     }
 
+    auto data()       { return _data_; }
+    auto data() const { return _data_; }
+
     virtual size_t type_size() const {
       throw RuntimeError("not implemented error");
     }

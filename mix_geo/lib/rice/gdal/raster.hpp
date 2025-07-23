@@ -100,10 +100,10 @@ namespace GDAL {
       case Tensor::Type::TENSOR: {
         auto src_nodata = *reinterpret_cast< const T * >(tensor.nodata);
         auto dst_nodata = is_none(fill_value) ? src_nodata : g_cast< T >(fill_value);
-        auto src_data = reinterpret_cast< const T * >(tensor.data);
+        auto src_data = reinterpret_cast< const T * >(tensor.data());
         auto dst_z = Tensor::build(type(), { height, width }, g_cast(dst_nodata));
         auto & dst_tensor = Tensor::cast(dst_z);
-        auto dst_data = reinterpret_cast< T * >(dst_tensor.data);
+        auto dst_data = reinterpret_cast< T * >(dst_tensor.data());
         bool src_isnan_nodata = std::isnan(src_nodata);
         for (size_t j = 0; j < height; ++j) {
           for (size_t i = 0; i < width; ++i, ++dst_data) {
