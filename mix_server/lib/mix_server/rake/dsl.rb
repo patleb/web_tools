@@ -46,17 +46,6 @@ module Rake
       `#{Sh.ftp_cat(match, **options)}`.strip
     end
 
-    def free_local_ip
-      require 'socket'
-      network = ''
-      networks = [''].concat Socket.getifaddrs.map{ |i| i.addr.ip_address.sub(/\.\d+$/, '') if i.addr.ipv4? }.compact
-      loop do
-        break unless networks.include?(network)
-        network = "192.168.#{rand(4..254)}"
-      end
-      "#{network}.#{rand(2..254)}"
-    end
-
     def git_repo
       `git remote -v | head -n1 | awk '{ print $2; }'`.strip
     end
