@@ -1,4 +1,6 @@
 module VirtualRecord
+  ActiveSupport.run_load_hooks(:virtual_record, self)
+
   class Base < ActiveType::Object
     self.primary_key = :id
 

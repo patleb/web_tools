@@ -25,7 +25,6 @@ module ExtRails
 
   class Engine < Rails::Engine
     # require 'active_record_extended'
-    require 'active_type'
     require 'date_validator'
     require 'dotiw'
     require 'http_accept_language'
@@ -183,6 +182,10 @@ module ExtRails
 
     ActiveSupport.on_load(:active_job) do
       require 'ext_rails/active_job/base'
+    end
+
+    ActiveSupport.on_load(:virtual_record) do
+      require 'ext_rails/active_type'
     end
 
     ActiveSupport.on_load(:active_record) do

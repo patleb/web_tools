@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{app,config,db,lib}/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency "rails", "~> #{WebTools::RAILS_VERSION::STRING}"
+  s.add_dependency "rails", WebTools::RAILS_VERSION::STRING
   # s.add_dependency 'active_record_extended'
   s.add_dependency 'active_type'
   s.add_dependency 'arel_extensions'
