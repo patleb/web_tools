@@ -25,7 +25,7 @@ module ActiveRecord::Base::WithUser
     end
 
     def has_updater
-      belongs_to :creator, class_name: 'User', optional: true
+      belongs_to :updater, class_name: 'User', optional: true
     end
 
     def userstamps_attributes_for_create_in_model
