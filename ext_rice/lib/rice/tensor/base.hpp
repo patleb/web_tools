@@ -13,28 +13,31 @@ namespace Tensor {
   class Base {
     public:
 
+    const size_t size;
     Vsize_t shape;
     Vsize_t offsets;
-    size_t size;
     size_t rank;
     void * nodata = nullptr;
     void * _data_ = nullptr;
     Tensor::Type type = Tensor::Type::Base;
 
     explicit Base(const Vsize_t & shape):
+      size(size_for(shape)),
       shape(shape),
       offsets(offsets_for(shape)),
-      size(size_for(shape)),
       rank(shape.size()) {
     }
 
     Base() = delete;
 
     Base(const Base & tensor):
+      size(tensor.size),
+      shape(tensor.shape),
+      offsets(tensor.offsets),
+      rank(tensor.rank),
       nodata(nullptr),
       _data_(nullptr),
       type(Tensor::Type::Base) {
-      copy_to_base(tensor);
     }
 
     Base & operator=(const Base & tensor) = delete;
@@ -71,7 +74,6 @@ namespace Tensor {
       if (total != size) throw RuntimeError("shape.total[" S(total) "] != size[" S(size) "]");
       this->shape = shape;
       this->offsets = offsets_for(shape);
-      this->size = total;
       this->rank = shape.size();
       return *this;
     }
@@ -84,13 +86,6 @@ namespace Tensor {
     }
 
     protected:
-
-    void copy_to_base(const Base & tensor) {
-      this->shape = tensor.shape;
-      this->offsets = tensor.offsets;
-      this->size = tensor.size;
-      this->rank = tensor.rank;
-    }
 
     auto offset_for(const Vsize_t & indexes) const {
       size_t offset = 0;

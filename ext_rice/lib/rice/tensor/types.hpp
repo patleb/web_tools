@@ -7,7 +7,7 @@ namespace Tensor {
     class View {
       public:
 
-      size_t size;
+      const size_t size;
       std::gslice_array< T > slice;
 
       View() = delete;
