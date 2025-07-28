@@ -34,10 +34,7 @@ namespace Tensor {
       size(tensor.size),
       shape(tensor.shape),
       offsets(tensor.offsets),
-      rank(tensor.rank),
-      nodata(nullptr),
-      _data_(nullptr),
-      type(Tensor::Type::Base) {
+      rank(tensor.rank) {
     }
 
     Base & operator=(const Base & tensor) = delete;
