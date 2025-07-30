@@ -3,10 +3,7 @@ module ExtRice
     RICE_TEST_FILES = %w(embed_ruby.cpp embed_ruby.hpp unittest.cpp unittest.hpp)
 
     def self.make
-      @make ||= begin
-        paths = ENV["PATH"].split(File::PATH_SEPARATOR).map{ |path| Pathname(path).cleanpath }
-        paths.find{ |path| path.join('make').executable? }.join('make').to_s
-      end
+      @make ||= Pathname.executable('make').to_s
     end
 
     delegate :make, to: :class

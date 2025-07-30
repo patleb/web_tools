@@ -40,6 +40,11 @@ end
 class Pathname
   prepend self::WithoutRaise
 
+  def self.executable(name)
+    paths = ENV["PATH"].split(File::PATH_SEPARATOR).map{ |path| new(path).cleanpath }
+    paths.find{ |path| path.join(name).executable? }&.join(name)
+  end
+
   def mkdir_p
     FileUtils.mkdir_p(self) unless exist?
     self
