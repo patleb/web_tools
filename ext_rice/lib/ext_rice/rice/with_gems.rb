@@ -63,6 +63,9 @@ module Rice
           #pragma once
 
           HEADER
+          excluded_files.each do |excluded|
+            content.gsub! %r{^#include *"[^"]+/#{excluded}[/.][^"]+" *$}, ''
+          end
           f.puts content
         end
       end
@@ -180,8 +183,8 @@ module Rice
 
     def filter(files)
       files.reject do |file|
-        excluded_files.any? do |exluded|
-          file.to_s.include? exluded
+        excluded_files.any? do |excluded|
+          file.to_s.include? excluded
         end
       end
     end

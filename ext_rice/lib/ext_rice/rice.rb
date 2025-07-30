@@ -43,15 +43,15 @@ module Rice
 
   def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false, no_gems: false)
     no_gems! if no_gems
-    copy_files
     include_dir dst_path
     include_dirs, add_libraries, makefile = gems_config.values_at(:include_dir, :libs, :makefile)
     include_dirs.each{ |name| include_dir name }
     add_libraries.each{ |name| add_library name }
-    yield(dst_path) if block_given?
+    yield(self) if block_given?
+    copy_files
     create_init_file unless executable?
     unless dry_run
-      $CXXFLAGS += " $(optflags)" # -O3 -ffast-math -fno-associative-math
+      $CXXFLAGS += " $(optflags)" # O3 -fno-fast-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
       $CXXFLAGS += " #{cflags}" if cflags
       if ENV['DEBUG']
@@ -106,12 +106,11 @@ module Rice
   end
 
   def self.create_init_file
-    includes, rescue_handlers = gems_config.values_at(:include, :rescue_handler)
     dst_path.join("#{target}.cpp").open('w') do |f|
       f.puts <<~CPP
         #{hook :before_include}
         // include
-        #{includes.map{ |header| header.start_with?('#') ? header : %{#include "#{header.strip}"} }.join("\n")}
+        #{gems_config[:include].map{ |header| header.start_with?('#') ? header : %{#include "#{header.strip}"} }.join("\n")}
         #include "all.hpp"
         #{hook :after_include}
         using namespace Rice;
@@ -121,7 +120,7 @@ module Rice
           #{hook :before_initialize, indent: 2}
           #{hook :initialize,        indent: 2}
       CPP
-      rescue_handlers.each do |handler|
+      gems_config[:rescue_handler].each do |handler|
         f.puts <<~CPP.indent(2)
           detail::Registries::instance.handlers.set(#{handler}());
       CPP
@@ -139,7 +138,7 @@ module Rice
     ["// #{name}", ("\n" if text), text&.indent(indent)].join('')
   end
 
-  # TODO registry, iterator, director, etc.
+  # TODO iterator, proc, director, etc.
   def self.define_properties(f, parent_var, hash)
     hash.each do |keyword, body|
       case keyword
