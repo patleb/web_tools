@@ -45,8 +45,7 @@ module Rice
     add_libraries.each{ |name| add_library name }
     yield(self) if block_given?
     copy_files
-    pch = dst_path.join('precompiled.hpp')
-    create_init_file(pch) unless executable?
+    create_init_file unless executable?
     unless dry_run
       $CXXFLAGS += " $(optflags)" # O3 -fno-fast-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
@@ -64,7 +63,6 @@ module Rice
       $VPATH.concat(Array.wrap(makefile[:vpaths]).map(&:to_s))
       $VPATH.concat(Array.wrap(vpaths).map(&:to_s))
       add_precompiled = -> (conf) do
-        pch_out = pch.sub_ext('.hpp.gch')
         conf << "\n"
         conf << "# Precompiled Header Rule (C++)"
         conf << "#{pch_out}: #{pch}"
@@ -116,7 +114,7 @@ module Rice
     end
   end
 
-  def self.create_init_file(pch)
+  def self.create_init_file
     dst_path.join("#{target}.cpp").open('w') do |f|
       f.puts <<~CPP
         #{hook :before_include}

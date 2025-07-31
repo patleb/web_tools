@@ -76,6 +76,14 @@ module Rice
       end
     end
 
+    def pch
+      @pch ||= dst_path.join('precompiled.hpp')
+    end
+
+    def pch_out
+      @pch_out ||= pch.sub_ext('.hpp.gch')
+    end
+
     def include_headers
       gems_config[:include].map{ |header| header.start_with?('#') ? header : %{#include "#{header.strip}"} }.join("\n")
     end
