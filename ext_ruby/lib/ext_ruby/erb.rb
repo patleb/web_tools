@@ -1,7 +1,7 @@
 class ERB
-  def self.template(src, binding = nil, lean: false, **)
+  def self.template(src, binding = nil, cpp: false, **)
     path = Pathname.new(src)
-    if lean
+    if cpp
       vars, block_vars = [], []
       content = path.each_line.with_object(+'') do |line, content|
         case line

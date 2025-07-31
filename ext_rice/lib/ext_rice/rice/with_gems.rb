@@ -53,7 +53,7 @@ module Rice
       dst_dir = dst_name ? dst_path.join(dst_name) : dst_path
       dst_dir.mkdir_p
       Dir["#{src}/**/*.{h,hpp,ipp,c,cc,cpp}"].each do |file|
-        content = ERB.template(file, binding, lean: true, trim_mode: '-').strip
+        content = ERB.template(file, binding, cpp: true, trim_mode: '-').strip
         has_once = content.include?('#pragma once') || content.include?('#ifndef ')
         is_header = file.end_with? '.h', '.hpp', '.ipp'
         precompiled = file.end_with? '/precompiled.hpp'
