@@ -28,4 +28,12 @@ namespace :rice do
     compiler = ExtRice::Compiler.new
     compiler.test_extension(**args)
   end
+
+  desc 'start cling console'
+  task :cling => :environment do
+    require "mkmf-rice"
+    exec <<-CMD.squish
+      cling -I#{Rice.dst_path} -l#{(Rice.gems_config[:include] + Rice.gems_config[:cling]).join(' -l')} --nologo
+    CMD
+  end
 end

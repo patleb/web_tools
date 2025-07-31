@@ -1,3 +1,8 @@
+cling:
+  - ext_rice/core_ext/c.hpp
+  - ext_rice/core_ext/types.hpp
+  - ext_rice/core_ext/bitset.hpp
+
 makefile:
   cflags: -std=c++23 -fjump-tables -Wno-format-overflow
 
@@ -16,6 +21,8 @@ include:
   - stdfloat
   - numeric
   - ranges
+  - optional
+  - variant
   - queue
   - unordered_set
   - unordered_map
