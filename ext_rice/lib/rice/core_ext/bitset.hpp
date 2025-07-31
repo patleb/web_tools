@@ -25,7 +25,7 @@ class Bitset {
     size_t count = size();
     std::string bits(count, '0');
     bool bit;
-    for (size_t i = 0; i < count; ++i) if (bit = array[i]) bits[i] = '1';
+    for (size_t i = 0; i < count; ++i) if ((bit = array[i])) bits[i] = '1';
     return bits;
   }
 };
