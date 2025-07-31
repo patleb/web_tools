@@ -4,7 +4,7 @@ cling:
   - ext_rice/core_ext/bitset.hpp
 
 makefile:
-  cflags: -std=c++23 -fjump-tables -Wno-format-overflow
+  cflags: -std=c++23 -fjump-tables -Wno-format-overflow -Wno-format-security
 
 libs:
   - stdc++_libbacktrace
