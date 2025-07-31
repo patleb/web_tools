@@ -1,7 +1,3 @@
-### NOTE
-# echo 'set history save on' >> ~/.gdbinit
-# DEBUG=1 rake:test_compile
-# gdb -q tmp/rice/test/.../unittest
 module Rice
   extend WithGems
   extend WithHelpers
@@ -49,7 +45,8 @@ module Rice
     add_libraries.each{ |name| add_library name }
     yield(self) if block_given?
     copy_files
-    create_init_file unless executable?
+    pch = dst_path.join('precompiled.hpp')
+    create_init_file(pch) unless executable?
     unless dry_run
       $CXXFLAGS += " $(optflags)" # O3 -fno-fast-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
@@ -66,6 +63,17 @@ module Rice
       $objs = $srcs.map{ |v| v.sub(/c+p*$/, "o") }
       $VPATH.concat(Array.wrap(makefile[:vpaths]).map(&:to_s))
       $VPATH.concat(Array.wrap(vpaths).map(&:to_s))
+      add_precompiled = -> (conf) do
+        pch_out = pch.sub_ext('.hpp.gch')
+        conf << "\n"
+        conf << "# Precompiled Header Rule (C++)"
+        conf << "#{pch_out}: #{pch}"
+        conf << "\t$(CXX) $(CXXFLAGS) $(INCFLAGS) -x c++-header -o #{pch_out} #{pch}"
+        conf << "\n"
+        conf << "# Ensure all object files depend on the PCH"
+        conf << "$(OBJS): #{pch_out}"
+        conf << "\n"
+      end
       if executable?
         MakeMakefile.create_makefile(target, dst_path.to_s) do |conf|
           conf << "\n"
@@ -74,9 +82,12 @@ module Rice
           conf << "\t-$(Q)$(RM) $(@)"
           conf << "\t$(Q) $(CXX) -o $@ $(OBJS) $(LIBPATH) $(LOCAL_LIBS) $(LIBS)"
           conf << "\n"
+          pch.exist? ? add_precompiled.(conf) : conf
         end
       else
-        MakeMakefile.create_makefile(target, dst_path.to_s)
+        MakeMakefile.create_makefile(target, dst_path.to_s) do |conf|
+          pch.exist? ? add_precompiled.(conf) : conf
+        end
       end
     end
   end
@@ -105,12 +116,12 @@ module Rice
     end
   end
 
-  def self.create_init_file
+  def self.create_init_file(pch)
     dst_path.join("#{target}.cpp").open('w') do |f|
       f.puts <<~CPP
         #{hook :before_include}
         // include
-        #{gems_config[:include].map{ |header| header.start_with?('#') ? header : %{#include "#{header.strip}"} }.join("\n")}
+        #{pch.exist? ? '#include "precompiled.hpp"' : include_headers}
         #include "all.hpp"
         #{hook :after_include}
         using namespace Rice;

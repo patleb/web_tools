@@ -56,19 +56,28 @@ module Rice
         content = ERB.template(file, binding, lean: true, trim_mode: '-').strip
         has_once = content.include?('#pragma once') || content.include?('#ifndef ')
         is_header = file.end_with? '.h', '.hpp', '.ipp'
+        precompiled = file.end_with? '/precompiled.hpp'
         compiled_path = dst_dir.join(file.delete_prefix("#{src}/"))
         compiled_path.dirname.mkdir_p
         compiled_path.open('w') do |f|
-          f.puts <<~HEADER if is_header && !has_once
-          #pragma once
+          if precompiled
+            f.puts include_headers
+          else
+            f.puts <<~HEADER if is_header && !has_once
+            #pragma once
 
-          HEADER
+            HEADER
+          end
           excluded_files.each do |excluded|
             content.gsub! %r{^#include *"[^"]+/#{excluded}[/.][^"]+" *$}, ''
           end
           f.puts content
         end
       end
+    end
+
+    def include_headers
+      gems_config[:include].map{ |header| header.start_with?('#') ? header : %{#include "#{header.strip}"} }.join("\n")
     end
 
     def hooks
