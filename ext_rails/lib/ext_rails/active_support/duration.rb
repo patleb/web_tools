@@ -9,7 +9,7 @@ module ActiveSupport
       value = public_send("in_#{unit}").floor
       parts = [i18n(unit, value, compact)].concat(parts) unless value == 0
       parts = parts.join(', ')
-      parts = parts.upcase if compact
+      parts = parts.downcase if compact
       parts
     end
 
