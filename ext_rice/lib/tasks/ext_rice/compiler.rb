@@ -52,7 +52,7 @@ module ExtRice
           bin_path = Rice.mkmf_path.join(Rice.target)
           cp bin_path, Rice.bin_path
         else
-          sh make, 'install', '-j', jobs.to_s, "sitearchdir=#{rel_target_path}", "sitelibdir=#{rel_target_path}"
+          sh make, '-j', jobs.to_s, 'install', "sitearchdir=#{rel_target_path}", "sitelibdir=#{rel_target_path}"
         end
         Rice.write_checksum
       end
