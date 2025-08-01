@@ -29,7 +29,7 @@ module ExtRice
       end
     end
 
-    def run(compile: true)
+    def run(compile: true, jobs: cpu_count)
       argv_was = ARGV.dup
       ARGV << "--srcdir=#{Rice.dst_path}"
 
@@ -52,7 +52,7 @@ module ExtRice
           bin_path = Rice.mkmf_path.join(Rice.target)
           cp bin_path, Rice.bin_path
         else
-          sh make, 'install', "sitearchdir=#{rel_target_path}", "sitelibdir=#{rel_target_path}"
+          sh make, 'install', '-j', jobs.to_s, "sitearchdir=#{rel_target_path}", "sitelibdir=#{rel_target_path}"
         end
         Rice.write_checksum
       end
@@ -70,6 +70,12 @@ module ExtRice
       end
       config.target = target if target
       config.target_path = config.tmp_path
+    end
+
+    def cpu_count
+      count = Process.host.cpu_count - 2
+      count = 1 if count == 0
+      count
     end
   end
 end

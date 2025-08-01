@@ -1,5 +1,5 @@
 module Rice
-  extend WithGems
+  extend WithFiles
   extend WithHelpers
 
   class InvalidChecksum < ::StandardError; end
@@ -34,7 +34,7 @@ module Rice
   end
 
   class << self
-    delegate :target, :target_path, :bin_path, :tmp_path, :checksum_path, :mkmf_path, :test?, :executable?, to: 'ExtRice.config'
+    delegate_missing_to 'ExtRice.config'
   end
 
   def self.create_makefile(cflags: nil, libs: nil, vpaths: nil, dry_run: false, no_gems: false)
@@ -50,7 +50,7 @@ module Rice
       $CXXFLAGS += " $(optflags)" # O3 -fno-fast-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
       $CXXFLAGS += " #{cflags}" if cflags
-      if ENV['DEBUG']
+      if ENV['DEBUG'].to_b
         $CXXFLAGS += " -g -O0"
         MakeMakefile::CONFIG['optflags'].gsub!('-O3', '-O0')
         MakeMakefile::CONFIG['cflags'].gsub!('-O3', '-O0')
@@ -112,39 +112,6 @@ module Rice
       raise InvalidChecksum unless sum.match? CHECKSUM
       sum
     end
-  end
-
-  def self.create_init_file
-    dst_path.join("#{target}.cpp").open('w') do |f|
-      f.puts <<~CPP
-        #{hook :before_include}
-        // include
-        #{pch.exist? ? '#include "precompiled.hpp"' : include_headers}
-        #include "all.hpp"
-        #{hook :after_include}
-        using namespace Rice;
-
-        extern "C"
-        void Init_#{target}() {
-          #{hook :before_initialize, indent: 2}
-          #{hook :initialize,        indent: 2}
-      CPP
-      gems_config[:rescue_handler].each do |handler|
-        f.puts <<~CPP.indent(2)
-          detail::Registries::instance.handlers.set(#{handler}());
-      CPP
-      end
-      define_properties(f, nil, gems_config[:defs])
-      f.puts <<~CPP
-          #{hook :after_initialize,  indent: 2}
-        }
-      CPP
-    end
-  end
-
-  def self.hook(name, indent: 0)
-    text = hooks[name].strip.presence
-    ["// #{name}", ("\n" if text), text&.indent(indent)].join('')
   end
 
   # TODO iterator, proc, director, etc.

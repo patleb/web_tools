@@ -4,15 +4,68 @@ module Rice
   MAKEFILE = %i(cflags libs vpaths).index_with('')
   METHOD_ALIAS_KEYWORD = /^(?!(module|class|enum) +[A-Z]).+ +\| +.+/
 
-  class NestedDependency < StandardError; end
   class MissingGem < StandardError; end
 
-  module WithGems
-    delegate :root_vendor, :root_app, :root_test, :dst_path, :yml_path, :extconf_path, :template, to: 'ExtRice.config'
-
+  module WithFiles
     def require_overrides
       rb_paths.each do |file|
         require file
+      end
+    end
+
+    def create_init_file
+      includes = <<~CPP
+        #{hook :before_include}
+        // include
+        #{pch.exist? ? '#include "precompiled.hpp"' : include_headers}
+        #include "all.hpp"
+        #{hook :after_include}
+        using namespace Rice;
+      CPP
+      targets = gems_config[:defs].select_map do |mod, cls|
+        next unless mod.start_with?('module ') && cls&.any?{ |cls, _| cls.start_with?('class' ) }
+        name = "#{target}_#{mod.sub(/^module +/, '').underscore}"
+        dst_path.join("#{name}.cpp").open('w') do |f|
+          f.puts <<~CPP
+            #include "#{name}.hpp"
+  
+            extern "C" void init_#{name}() {
+          CPP
+          define_properties(f, nil, { mod => cls })
+          f.puts <<~CPP
+            }
+          CPP
+        end
+        dst_path.join("#{name}.hpp").open('w') do |f|
+          f.puts <<~HPP
+            #pragma once
+  
+            #{includes}
+            extern "C" void init_#{name}();
+          HPP
+        end
+        [name, mod]
+      end.to_h
+      dst_path.join("#{target}.cpp").open('w') do |f|
+        f.puts <<~CPP
+          #{includes}
+          #{targets.keys.map{ |name| %{#include "#{name}.hpp"} }.join("\n")}
+  
+          extern "C" void Init_#{target}() {
+            #{hook :before_initialize, indent: 2}
+            #{hook :initialize,        indent: 2}
+        CPP
+        gems_config[:rescue_handler].each do |handler|
+          f.puts <<~CPP.indent(2)
+            detail::Registries::instance.handlers.set(#{handler}());
+          CPP
+        end
+        define_properties(f, nil, gems_config[:defs].except(*targets.values))
+        f.puts targets.keys.map{ |name| "init_#{name}();" }.join("\n").indent(2)
+        f.puts <<~CPP
+            #{hook :after_initialize,  indent: 2}
+          }
+        CPP
       end
     end
 
@@ -86,6 +139,11 @@ module Rice
 
     def include_headers
       gems_config[:include].map{ |header| header.start_with?('#') ? header : %{#include "#{header.strip}"} }.join("\n")
+    end
+
+    def hook(name, indent: 0)
+      text = hooks[name].strip.presence
+      ["// #{name}", ("\n" if text), text&.indent(indent)].join('')
     end
 
     def hooks
