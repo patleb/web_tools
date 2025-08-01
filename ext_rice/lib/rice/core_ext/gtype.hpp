@@ -8,12 +8,12 @@ constexpr auto none = nullstate{};
 
 using GType = std::variant< nullstate, <%= template[:generic].values.uniq.join(', ') %>, std::string >;
 
-bool is_none(const GType & value) {
+inline bool is_none(const GType & value) {
   return value.index() == 0;
 }
 
 template < class T >
-T g_cast(const GType & value) {
+inline T g_cast(const GType & value) {
   switch (value.index()) {
   case G_NONE:   return static_cast< T >(0);
   case G_DOUBLE: return static_cast< T >(std::get< G_DOUBLE >(value));
@@ -24,7 +24,7 @@ T g_cast(const GType & value) {
 }
 
 template <>
-float g_cast< float >(const GType & value) {
+inline float g_cast< float >(const GType & value) {
   switch (value.index()) {
   case G_NONE:   return static_cast< float >(Float::nan);
   case G_DOUBLE: return static_cast< float >(std::get< G_DOUBLE >(value));
@@ -35,7 +35,7 @@ float g_cast< float >(const GType & value) {
 }
 
 template <>
-double g_cast< double >(const GType & value) {
+inline double g_cast< double >(const GType & value) {
   switch (value.index()) {
   case G_NONE:   return Float::nan;
   case G_DOUBLE: return std::get< G_DOUBLE >(value);
@@ -46,7 +46,7 @@ double g_cast< double >(const GType & value) {
 }
 <%- template[:generic].each do |T, GENERIC| -%>
 
-auto g_cast(const O-T- & value) {
+inline auto g_cast(const O-T- & value) {
   <%- case @T -%>
   <%- when 'double' -%>
   return value ? *value : Float::nan;
@@ -57,7 +57,7 @@ auto g_cast(const O-T- & value) {
   <%- end -%>
 }
 
-auto g_cast(T value) {
+inline auto g_cast(T value) {
   <%- if @T == 'double' -%>
   return value;
   <%- else -%>

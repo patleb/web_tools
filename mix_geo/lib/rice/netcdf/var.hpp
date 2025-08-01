@@ -281,8 +281,4 @@ namespace NetCDF {
       return type_id;
     }
   };
-
-  void Att::copy(const Var & dst) const {
-    check_status( nc_copy_att(file_id, var_id, name.c_str(), dst.file_id, dst.id) );
-  }
 }

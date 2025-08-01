@@ -1,7 +1,7 @@
 namespace Tensor {
   using NType = std::variant< <%= template[:numeric].keys.join(', ') %>, Vstring >;
 
-  Tensor::NType build(Tensor::Type type, const Vsize_t & shape, const GType & fill_value = none) {
+  inline Tensor::NType build(Tensor::Type type, const Vsize_t & shape, const GType & fill_value = none) {
     switch (type) {
     <%- template[:numeric].each do |TENSOR, T| -%>
     case Tensor::Type::TENSOR: return Tensor::TENSOR(shape, g_cast< T >(fill_value));
@@ -11,7 +11,7 @@ namespace Tensor {
     }
   }
 
-  Tensor::NType cast(Tensor::Base & tensor, Tensor::Type type) {
+  inline Tensor::NType cast(Tensor::Base & tensor, Tensor::Type type) {
     switch (type) {
     <%- template[:numeric].each_key do |TENSOR| -%>
     case Tensor::Type::TENSOR: return dynamic_cast< Tensor::TENSOR & >(tensor);
@@ -21,7 +21,7 @@ namespace Tensor {
     }
   }
 
-  Tensor::Base & cast(Tensor::NType & tensor) {
+  inline Tensor::Base & cast(Tensor::NType & tensor) {
     switch (tensor.index()) {
     <%- template[:numeric].size.times do |I| -%>
     case I: return std::get< I >(tensor);
@@ -31,7 +31,7 @@ namespace Tensor {
     }
   }
 
-  Tensor::Type type(const Tensor::NType & tensor) {
+  inline Tensor::Type type(const Tensor::NType & tensor) {
     switch (tensor.index()) {
     <%- template[:numeric].each_key.with_index do |TENSOR, I| -%>
     case I: return Tensor::Type::TENSOR;

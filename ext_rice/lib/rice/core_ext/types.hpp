@@ -31,7 +31,7 @@ namespace Float {
 }
 
 template < class T >
-auto vector_concat(std::initializer_list< std::vector< T >> vectors) {
+inline auto vector_concat(std::initializer_list< std::vector< T >> vectors) {
   size_t count = 0;
   for (auto && v : vectors) count += v.size();
   std::vector< T > result(count); // gcc 15 --> result.append_range(v)
@@ -40,7 +40,7 @@ auto vector_concat(std::initializer_list< std::vector< T >> vectors) {
 }
 
 template < class T >
-auto & vector_concat(std::vector< T > & values, std::initializer_list< std::vector< T >> vectors) {
+inline auto & vector_concat(std::vector< T > & values, std::initializer_list< std::vector< T >> vectors) {
   size_t count = 0;
   for (auto && v : vectors) count += v.size();
   values.reserve(values.size() + count);
@@ -49,7 +49,7 @@ auto & vector_concat(std::vector< T > & values, std::initializer_list< std::vect
 }
 
 template < class V, class T >
-auto vector_cast(const std::vector< V > & values) {
+inline auto vector_cast(const std::vector< V > & values) {
   size_t count = values.size();
   std::vector< T > casts(count);
   for (size_t i = 0; i < count; ++i) {
@@ -59,7 +59,7 @@ auto vector_cast(const std::vector< V > & values) {
 }
 
 template < class V, class T >
-auto vector_cast(const V * values, size_t count) {
+inline auto vector_cast(const V * values, size_t count) {
   std::vector< T > casts(count);
   for (size_t i = 0; i < count; ++i) {
     casts[i] = static_cast< T >(values[i]);
@@ -68,11 +68,11 @@ auto vector_cast(const V * values, size_t count) {
 }
 
 template < class V, V >
-auto vector_cast(const std::vector< V > & values) {
+inline auto vector_cast(const std::vector< V > & values) {
   return std::vector< V >(values);
 }
 
 template < class V, V >
-auto vector_cast(const V * values, size_t count) {
+inline auto vector_cast(const V * values, size_t count) {
   return std::vector< V >(values, values + count);
 }

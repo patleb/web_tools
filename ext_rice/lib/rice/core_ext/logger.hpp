@@ -1,11 +1,12 @@
+<%- levels = ExtRice.config.log_levels -%>
 class Logger {
   public:
 
   enum LEVEL { <%= ExtRice.config.log_levels.keys.map(&:upcase).join(', ') %> };
 
-  static const std::string LEVELS[<%= ExtRice.config.log_levels.size %>];
-  static size_t marker_i;
-  static bool new_run;
+  constexpr static std::string LEVELS[<%= levels.size %>] = { <%= levels.keys.map(&:upcase).map(&:quoted).join(', ') %> };
+  inline static size_t marker_i = 0;
+  inline static bool new_run = true;
 
   explicit Logger() {
     file.open("<%= ExtRice.config.log_path %>", std::ofstream::out | std::ofstream::app);
@@ -32,27 +33,23 @@ class Logger {
   std::ofstream file;
 };
 
-const std::string Logger::LEVELS[] = { <%= ExtRice.config.log_levels.keys.map(&:upcase).map(&:quoted).join(', ') %> };
-size_t Logger::marker_i = 0;
-bool Logger::new_run = true;
-
-auto logger = Logger();
+inline auto logger = Logger();
 
 <%- ExtRice.config.log_levels.each do |level, level_i| -%>
 template < class... Args >
-void log_<%= level %>(const Args & ...messages) {
+inline void log_<%= level %>(const Args & ...messages) {
   <%- if level_i >= ExtRice.config.log_level_i -%>
   logger.log< Args... >(messages..., Logger::LEVEL::<%= level.upcase %>);
   <%- end -%>
 }
 
 <%- end -%>
-void log_mark() {
+inline void log_mark() {
   log_error("mark: ", Logger::marker_i++);
 }
 
 template < class T >
-void log_vector(std::string_view prefix, const T vector[], size_t count) {
+inline void log_vector(std::string_view prefix, const T vector[], size_t count) {
   std::stringstream message;
   message << prefix;
   for (size_t i = 0; i < count; ++i) {
@@ -62,6 +59,6 @@ void log_vector(std::string_view prefix, const T vector[], size_t count) {
 }
 
 template < class T >
-void log_vector(std::string_view prefix, const std::vector< T > & vector) {
+inline void log_vector(std::string_view prefix, const std::vector< T > & vector) {
   log_vector< T >(vector.data(), vector.size(), prefix);
 }

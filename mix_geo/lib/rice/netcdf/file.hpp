@@ -138,8 +138,4 @@ namespace NetCDF {
       Base::check_status(code, id, NULL_ID, "", trace, source);
     }
   };
-
-  void Att::copy(const File & dst) const {
-    check_status( nc_copy_att(file_id, var_id, name.c_str(), dst.id, NC_GLOBAL) );
-  }
 }

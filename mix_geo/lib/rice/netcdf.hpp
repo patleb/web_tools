@@ -6,7 +6,7 @@
 #include "mix_geo/netcdf/file.hpp"
 
 namespace NetCDF {
-  auto version() {
+  inline auto version() {
     return string(nc_inq_libvers());
   }
 }

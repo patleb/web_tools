@@ -1,7 +1,4 @@
 namespace NetCDF {
-  class File;
-  class Var;
-
   class Att : public BelongsToFile {
     public:
 
@@ -14,6 +11,10 @@ namespace NetCDF {
       BelongsToFile(file_id, NULL_ID),
       var_id(var_id),
       name(name) {
+    }
+
+    static void copy(int file_id, int var_id, const string & name, int dst_file_id, int dst_var_id = NC_GLOBAL) {
+      Base::check_status( nc_copy_att(file_id, var_id, name.c_str(), dst_file_id, dst_var_id) );
     }
 
     static auto all(int file_id, int var_id) {
@@ -95,10 +96,6 @@ namespace NetCDF {
     void destroy() const {
       check_status( nc_del_att(file_id, var_id, name.c_str()) );
     }
-
-    void copy(const File & dst) const;
-
-    void copy(const Var & dst) const;
 
     protected:
 
