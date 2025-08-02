@@ -74,7 +74,7 @@ module ExtRice
 
     def cpu_count
       count = Process.host.cpu_count - 2
-      count = 1 if count == 0
+      count = 1 if count <= 0
       count
     end
   end
