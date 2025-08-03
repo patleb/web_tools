@@ -58,33 +58,25 @@ namespace Tensor {
       }
     }
 
-    auto _shape_() const {
-      return shape;
-    }
+    auto _shape_()   const { return shape; }
+    auto _offsets_() const { return offsets; }
 
-    auto _offsets_() const {
-      return offsets;
-    }
-
-    auto & reshape(const Vsize_t & shape) {
+    void reshape(const Vsize_t & shape) {
       auto total = size_for(shape);
       if (total != size) throw RuntimeError("shape.total[" S(total) "] != size[" S(size) "]");
       this->shape = shape;
       this->offsets = offsets_for(shape);
       this->rank = shape.size();
-      return *this;
     }
 
     auto data()       { return _data_; }
     auto data() const { return _data_; }
 
-    virtual size_t type_size() const {
-      throw RuntimeError("not implemented error");
-    }
+    virtual size_t type_size() const { throw RuntimeError("not implemented error"); }
 
     protected:
 
-    auto offset_for(const Vsize_t & indexes) const {
+    size_t offset_for(const Vsize_t & indexes) const {
       size_t offset = 0;
       if (!indexes.empty()) {
         if (indexes.size() != rank) throw RuntimeError("indexes.size[" S(indexes.size()) "] != rank[" S(rank) "]");
@@ -96,7 +88,7 @@ namespace Tensor {
       return offset;
     }
 
-    auto counts_or_ones(const Vsize_t & count) const {
+    std::valarray< size_t > counts_or_ones(const Vsize_t & count) const {
       auto counts = count.empty() ? std::valarray< size_t >(1, rank) : std::valarray< size_t >(count.data(), count.size());
       if (counts.size() != rank) throw RuntimeError("count.size[" S(counts.size()) "] != rank[" S(rank) "]");
       return counts;

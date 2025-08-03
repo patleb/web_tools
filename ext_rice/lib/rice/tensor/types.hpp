@@ -67,10 +67,10 @@ namespace Tensor {
     TENSOR & operator=(const TENSOR & tensor) = delete;
 
     <%- %w(+ - * /).each do |OP| -%>
-    auto operator-OP-(T value) const {
+    TENSOR operator-OP-(T value) const {
       return TENSOR(array OP value, shape, fill_value);
     }
-    auto operator-OP-(const TENSOR & tensor) const {
+    TENSOR operator-OP-(const TENSOR & tensor) const {
       if (size != tensor.size) throw RuntimeError("size[" S(size) "] != tensor.size[" S(tensor.size) "]");
       return TENSOR(array OP tensor.array, shape, fill_value);
     }
@@ -101,7 +101,7 @@ namespace Tensor {
       return std::equal(begin(), end(), dynamic_cast< const TENSOR & >(tensor).begin());
     }
 
-    auto slice(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vsize_t & stride = {}) {
+    TENSOR::View slice(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vsize_t & stride = {}) {
       size_t offset = offset_for(start);
       auto counts = counts_or_ones(count);
       auto strides = counts_or_ones(stride);
@@ -110,7 +110,7 @@ namespace Tensor {
       return View(std::gslice_array< T >(array[slice]), shape);
     }
 
-    auto slice(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vsize_t & stride = {}) const {
+    TENSOR slice(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vsize_t & stride = {}) const {
       size_t offset = offset_for(start);
       auto counts = counts_or_ones(count);
       auto strides = counts_or_ones(stride);
@@ -119,7 +119,7 @@ namespace Tensor {
       return TENSOR(array[slice], shape, fill_value);
     }
 
-    auto & refill_value(T fill_value) {
+    TENSOR & refill_value(T fill_value) {
       if (std::isnan(this->fill_value)) {
         if (std::isnan(fill_value)) return *this;
         for (size_t i = 0; auto && value : array) if (std::isnan(value)) array[i] = fill_value;
@@ -131,12 +131,12 @@ namespace Tensor {
       return *this;
     }
 
-    auto & reshape(const Vsize_t & shape) {
+    TENSOR & reshape(const Vsize_t & shape) {
       Base::reshape(shape);
       return *this;
     }
 
-    auto & seq(const O-T- & start = nil) {
+    TENSOR & seq(const O-T- & start = nil) {
       std::iota(begin(), end(), start.value_or(0));
       return *this;
     }
@@ -145,7 +145,7 @@ namespace Tensor {
       return sizeof(T);
     }
 
-    static auto from_sql(const std::string & values, const Vsize_t & shape, const GType & fill_value = none) {
+    static TENSOR from_sql(const std::string & values, const Vsize_t & shape, const GType & fill_value = none) {
       if (values.front() != '{' || values.back() != '}' ) throw RuntimeError("malformed values string");
       bool new_value = false;
       char buffer[24 + 1]; // double + '\0'
@@ -186,7 +186,7 @@ namespace Tensor {
       return tensor;
     }
 
-    auto to_sql(const Ostring & before = nil, const Ostring & after = nil, Obool nulls = nil) const {
+    std::string to_sql(const Ostring & before = nil, const Ostring & after = nil, Obool nulls = nil) const {
       auto data = this->data();
       auto as_null = nulls.value_or(false);
       auto isnan_nodata = std::isnan(fill_value);
@@ -227,7 +227,7 @@ namespace Tensor {
       }
     }
 
-    auto to_string(Osize_t limit = nil) const {
+    std::string to_string(Osize_t limit = nil) const {
       std::stringstream stream;
       stream << "[";
       std::ranges::for_each(shape, [&stream, first = true](auto size) mutable {
@@ -244,12 +244,12 @@ namespace Tensor {
       return string.substr(0, _limit_) + "...";
     }
 
-    static auto atan2(const TENSOR & y, const TENSOR & x) {
+    static TENSOR atan2(const TENSOR & y, const TENSOR & x) {
       if (y.size != x.size) throw RuntimeError("y.size[" S(y.size) "] != x.size[" S(x.size) "]");
       return TENSOR(std::atan2(y.array, x.array), y.shape, y.fill_value);
     }
 
-    auto abs() const {
+    TENSOR abs() const {
     <%- if @T.start_with? 'u' -%>
       return TENSOR(*this);
     <%- else -%>
@@ -257,12 +257,12 @@ namespace Tensor {
     <%- end -%>
     }
 
-    auto pow(T exp) const {
+    TENSOR pow(T exp) const {
       return TENSOR(std::pow(array, std::valarray< T >(exp, size)), shape, fill_value);
     }
     <%- %w(exp log log10 sqrt sin cos tan asin acos atan sinh cosh tanh).each do |F| -%>
 
-    auto F() const {
+    TENSOR F() const {
       return TENSOR(std::F(array), shape, fill_value);
     }
     <%- end -%>
