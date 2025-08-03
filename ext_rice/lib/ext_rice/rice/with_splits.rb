@@ -38,14 +38,12 @@ module Rice
             hpp << line
           when /#{INDENT}namespace(?: *{?| +(\w+) *{?)#{COMMENT}/
             indent, name = $1.size, $2.presence
-            step ||= split_indent(indent)
             scopes << [:namespace, indent]
             mod ||= (cls_names[name] ||= [] ;name) if indent == 0
             hpp << line
             cpp.each(&:<<.with(line))
           when /#{INDENT}#{CLASS} *:?#{ACCESS}? *#{BASE} *{?#{COMMENT}/
             indent, name, base = $1.size, $2, $3.presence
-            step ||= split_indent(indent)
             template = scopes.pop && :template if scopes.dig(-1, 0) == :template
             scopes << [:class, indent, name, base, template]
             cls ||= (cls_names[mod] << name ;name) if indent == step
@@ -53,7 +51,6 @@ module Rice
           when /#{INDENT}#{END_SCOPE}#{COMMENT}/
             indent = $1.size
             indent_was = scopes.dig(-1, 1) || 0
-            step ||= split_indent(indent, indent_was)
             case scopes.dig(-1, 0)
             when :namespace
               hpp << line
@@ -73,7 +70,6 @@ module Rice
             next hpp << line if scopes.dig(-1, -1) == :template
             indent, code = $1.size, $2
             indent_was = scopes.dig(-1, 1) || 0
-            step ||= split_indent(indent, indent_was)
             case scopes.dig(-1, 0)
             when :namespace, :class
               next hpp << line unless indent == indent_was + step
@@ -123,10 +119,6 @@ module Rice
           end
         end
       end
-    end
-
-    def split_indent(value, value_was = 0)
-      value if value > value_was
     end
   end
 end
