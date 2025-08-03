@@ -31,7 +31,7 @@ module Rice
       end
     end
 
-    def create_init_file(split_modules: ENV['SPLIT_MOD'].to_b, split_classes: ENV['SPLIT_CLS'].to_b)
+    def create_init_file(split_modules: (ENV['SPLIT_MOD'] || true).to_b, split_classes: ENV['SPLIT_CLS'].to_b)
       module_targets = split_modules || split_classes ? self.module_targets : {}
       class_targets = split_classes ? self.class_targets : {}
       includes = <<~CPP
