@@ -4,7 +4,7 @@ namespace NetCDF {
 
     using BelongsToFile::BelongsToFile;
 
-    static auto all(int file_id) {
+    static vector< Dim > all(int file_id) {
       int count;
       Base::check_status( nc_inq_ndims(file_id, &count), file_id );
       int ids[count];
@@ -17,22 +17,22 @@ namespace NetCDF {
       return dims;
     }
 
-    static auto find(int file_id, const string & name) {
+    static Dim find(int file_id, const string & name) {
       int id;
       Base::check_status( nc_inq_dimid(file_id, name.c_str(), &id), file_id, NULL_ID, name );
       return Dim(file_id, id);
     }
 
-    static auto create(int file_id, const string & name, const Osize_t & size = nil) {
+    static Dim create(int file_id, const string & name, const Osize_t & size = nil) {
       int dim_id;
       Base::check_status( nc_def_dim(file_id, name.c_str(), size.value_or(NC_UNLIMITED), &dim_id), file_id );
       return Dim(file_id, dim_id);
     }
 
-    auto name() const {
+    string name() const {
       char name[NC_MAX_NAME + 1];
       check_status( nc_inq_dimname(file_id, id, name) );
-      return string(name);
+      return name;
     }
 
     void rename(const string & new_name) const {
@@ -40,7 +40,7 @@ namespace NetCDF {
       check_status( nc_rename_dim(file_id, id, new_name.c_str()) );
     }
 
-    auto size() const {
+    size_t size() const {
       size_t size;
       check_status( nc_inq_dimlen(file_id, id, &size) );
       return size;

@@ -14,7 +14,7 @@ namespace NetCDF {
 
     protected:
 
-    static auto file_format(int file_id) {
+    static const char * file_format(int file_id) {
       int format;
       check_status( nc_inq_format(file_id, &format), file_id );
       switch (format) {
@@ -73,5 +73,5 @@ namespace NetCDF {
     void check_status(int code, CONTEXT(trace, source)) const {
       Base::check_status(code, file_id, id, "", trace, source);
     }
- };
+  };
 }

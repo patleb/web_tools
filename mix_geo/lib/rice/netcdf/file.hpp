@@ -12,7 +12,7 @@ namespace NetCDF {
       Base() {
       open(path, mode, nc4_classic, classic, share);
     }
-    <%= no_copy :File %>
+    <%= no_copy :File, indent: 4 %>
 
     ~File() {
       try {
@@ -81,54 +81,34 @@ namespace NetCDF {
       }
     }
 
-    auto set_fill(bool fill) {
+    bool set_fill(bool fill) {
       int mode, mode_was;
       mode = fill ? NC_FILL : NC_NOFILL;
       check_status( nc_set_fill(id, mode, &mode_was) );
       return mode != mode_was;
     }
 
-    auto format() const {
-      return Base::file_format(id);
-    }
+    auto format() const { return Base::file_format(id); }
+    auto dims()   const { return Dim::all(id); }
+    auto vars()   const { return Var::all(id); }
+    auto atts()   const { return Att::all(id, NC_GLOBAL); }
+    auto dim(const string & name) const { return Dim::find(id, name); }
+    auto var(const string & name) const { return Var::find(id, name); }
+    auto att(const string & name) const { return Att::find(id, NC_GLOBAL, name); }
 
-    auto dims() const {
-      return Dim::all(id);
-    }
-
-    auto vars() const {
-      return Var::all(id);
-    }
-
-    auto atts() const {
-      return Att::all(id, NC_GLOBAL);
-    }
-
-    auto dim(const string & name) const {
-      return Dim::find(id, name);
-    }
-
-    auto var(const string & name) const {
-      return Var::find(id, name);
-    }
-
-    auto att(const string & name) const {
-      return Att::find(id, NC_GLOBAL, name);
-    }
-
-    auto create_dim(const string & name, const Osize_t & size = nil) const {
+    inline auto create_dim(const string & name, const Osize_t & size = nil) const {
       return Dim::create(id, name, size);
     }
 
-    auto create_var(const string & name, std::string_view type_name, const vector< Dim > & dims) const {
+    inline auto create_var(const string & name, std::string_view type_name, const vector< Dim > & dims) const {
       return Var::create(id, name, type_name, dims);
     }
 
-    auto write_att(const string & name, std::string_view type_name, const Tensor::Base & values) const {
+    inline auto write_att(const string & name, std::string_view type_name, const Tensor::Base & values) const {
       return Att::write(id, NC_GLOBAL, name, NetCDF::type_id(type_name), values);
     }
 
-    auto write_att_s(const string & name, const string & text) const {
+    inline auto write_att_s(const string & name, const string & text) const {
       return Att::write_s(id, NC_GLOBAL, name, text);
     }
 

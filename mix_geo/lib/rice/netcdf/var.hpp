@@ -4,7 +4,7 @@ namespace NetCDF {
 
     using BelongsToFile::BelongsToFile;
 
-    static auto all(int file_id) {
+    static vector< Var > all(int file_id) {
       int count;
       Base::check_status( nc_inq_nvars(file_id, &count), file_id );
       int ids[count];
@@ -17,13 +17,13 @@ namespace NetCDF {
       return vars;
     }
 
-    static auto find(int file_id, const string & name) {
+    static Var find(int file_id, const string & name) {
       int id;
       Base::check_status( nc_inq_varid(file_id, name.c_str(), &id), file_id, NULL_ID, name );
       return Var(file_id, id);
     }
 
-    static auto create(int file_id, const string & name, std::string_view type_name, const vector< Dim > & dims) {
+    static Var create(int file_id, const string & name, std::string_view type_name, const vector< Dim > & dims) {
       int var_id;
       int count = dims.size();
       int ids[count];
@@ -34,10 +34,10 @@ namespace NetCDF {
       return Var(file_id, var_id);
     }
 
-    auto name() const {
+    string name() const {
       char name[NC_MAX_NAME + 1];
       check_status( nc_inq_varname(file_id, id, name) );
-      return string(name);
+      return name;
     }
 
     void rename(string new_name) const {
@@ -45,17 +45,17 @@ namespace NetCDF {
       check_status( nc_rename_var(file_id, id, new_name.c_str()) );
     }
 
-    auto type() const {
+    Type type() const {
       return NetCDF::type(type_id());
     }
 
-    auto dims_count() const {
+    int dims_count() const {
       int count;
       check_status( nc_inq_varndims(file_id, id, &count) );
       return count;
     }
 
-    auto dims() const {
+    vector< Dim > dims() const {
       int count = dims_count();
       int ids[count];
       check_status( nc_inq_vardimid(file_id, id, ids) );
@@ -67,20 +67,20 @@ namespace NetCDF {
       return dims;
     }
 
-    auto atts() const {
+    inline auto atts() const {
       return Att::all(file_id, id);
     }
 
-    auto dim(const string & name) const {
+    Dim dim(const string & name) const {
       for (auto && dim : dims()) if (dim.name() == name) return dim;
       throw RuntimeError("no Dim associated with Var");
     }
 
-    auto att(const string & name) const {
+    inline auto att(const string & name) const {
       return Att::find(file_id, id, name);
     }
 
-    auto shape() const {
+    Vsize_t shape() const {
       vector< Dim > dims = this->dims();
       int count = dims.size();
       Vsize_t sizes(count);
@@ -90,11 +90,11 @@ namespace NetCDF {
       return sizes;
     }
 
-    auto write_att(const string & name, std::string_view type_name, const Tensor::Base & values) const {
+    inline auto write_att(const string & name, std::string_view type_name, const Tensor::Base & values) const {
       return Att::write(file_id, id, name, NetCDF::type_id(type_name), values);
     }
 
-    auto write_att_s(const string & name, const string & text) const {
+    inline auto write_att_s(const string & name, const string & text) const {
       return Att::write_s(file_id, id, name, text);
     }
 
@@ -124,7 +124,7 @@ namespace NetCDF {
       }
     }
 
-    auto read(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vptrdiff_t & stride = {}) const {
+    Tensor::NType read(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vptrdiff_t & stride = {}) const {
       switch (type_id()) {
       <%- template[:netcdf].each do |TENSOR, NC_TYPE| -%>
       case NC_TYPE: {
@@ -136,12 +136,12 @@ namespace NetCDF {
         if (stride.empty()) {
           Tensor::TENSOR values(counts);
           check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.Base::data()) );
-          return Tensor::NType(values);
+          return values;
         } else {
           if (stride.size() != dims_count) throw TypeError();
           Tensor::TENSOR values(counts);
           check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.Base::data()) );
-          return Tensor::NType(values);
+          return values;
         }
       }
       <%- end -%>
@@ -163,7 +163,7 @@ namespace NetCDF {
           data[max_size] = '\0';
           values[i] = string(data);
         }
-        return Tensor::NType(values);
+        return values;
       }
       default:
         throw TypeError();
@@ -197,7 +197,7 @@ namespace NetCDF {
       check_status( nc_def_var_fill(file_id, id, mode, NULL) );
     }
 
-    auto endian() const {
+    int endian() const {
       int endian;
       check_status( nc_inq_var_endian(file_id, id, &endian) );
       return endian;
@@ -218,7 +218,7 @@ namespace NetCDF {
       check_status( nc_def_var_fletcher32(file_id, id, checksum) );
     }
 
-    auto deflate() const {
+    Vint deflate() const {
       int settings[3];
       auto & [shuffle, deflate, level] = settings;
       check_status( nc_inq_var_deflate(file_id, id, &shuffle, &deflate, &level) );
@@ -232,7 +232,7 @@ namespace NetCDF {
       check_status( nc_def_var_deflate(file_id, id, shuffle, deflate, level) );
     }
 
-    auto quantize() const {
+    Vint quantize() const {
       int settings[2];
       auto & [quantize, nsd] = settings;
       check_status( nc_inq_var_quantize(file_id, id, &quantize, &nsd) );
@@ -245,7 +245,7 @@ namespace NetCDF {
       check_status( nc_def_var_quantize(file_id, id, quantize, nsd) );
     }
 
-    auto chunking() const {
+    Vsize_t chunking() const {
       int count = dims_count();
       int storage;
       size_t chunk_sizes[count];
@@ -261,11 +261,11 @@ namespace NetCDF {
       check_status( nc_def_var_chunking(file_id, id, storage, chunk_sizes.data()) );
     }
 
-    auto chunk_cache() const {
+    vector< std::variant< size_t, float >> chunk_cache() const {
       size_t size, slots;
       float preemption;
       check_status( nc_get_var_chunk_cache(file_id, id, &size, &slots, &preemption) );
-      return vector< std::variant< size_t, float > >{ size, slots, preemption };
+      return vector< std::variant< size_t, float >>{ size, slots, preemption };
     }
 
     // preemption: 0.0 to 1.0

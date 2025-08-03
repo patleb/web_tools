@@ -35,7 +35,7 @@ namespace NetCDF {
     throw TypeError();
   }
 
-  inline auto type(int id) {
+  inline Type type(int id) {
     switch (id) {
     <%- template[:netcdf].each do |TENSOR, NC_TYPE| -%>
     case NC_TYPE: return NetCDF::Type::TENSOR;
