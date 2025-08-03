@@ -13,69 +13,23 @@ namespace GDAL {
       Base(srs_for(proj)) {
     }
 
-    static auto _srid_(const string & proj) {
-      return atoi(proj.c_str());
-    }
+    static auto _srid_(const string & proj)                  { return atoi(proj.c_str()); }
+    static auto _wkt_(const string & proj)                   { return wkt_for(srs_for(proj)); }
+    static auto _proj4_(const string & proj)                 { return proj4_for(srs_for(proj)); }
+    static auto _axis_mapping_(const string & proj)          { return axis_mapping_for(srs_for(proj)); }
+    static auto _orientation_(const string & proj)           { return orientation_for(srs_for(proj)); }
+    static auto _orientation_names_(const string & proj)     { return orientation_names_for(srs_for(proj)); }
+    static auto _mapping_strategy_(const string & proj)      { return mapping_strategy_for(srs_for(proj)); }
+    static auto _mapping_strategy_name_(const string & proj) { return mapping_strategy_for(srs_for(proj)); }
 
-    static auto _wkt_(const string & proj) {
-      return wkt_for(srs_for(proj));
-    }
-
-    static auto _proj4_(const string & proj) {
-      return proj4_for(srs_for(proj));
-    }
-
-    static auto _axis_mapping_(const string & proj) {
-      return axis_mapping_for(srs_for(proj));
-    }
-
-    static auto _orientation_(const string & proj) {
-      return orientation_for(srs_for(proj));
-    }
-
-    static auto _orientation_names_(const string & proj) {
-      return orientation_names_for(srs_for(proj));
-    }
-
-    static auto _mapping_strategy_(const string & proj) {
-      return mapping_strategy_for(srs_for(proj));
-    }
-
-    static auto _mapping_strategy_name_(const string & proj) {
-      return mapping_strategy_for(srs_for(proj));
-    }
-
-    auto srid() const {
-      return srid_for(srs);
-    }
-
-    auto wkt() const {
-      return wkt_for(srs);
-    }
-
-    auto proj4() const {
-      return proj4_for(srs);
-    }
-
-    auto axis_mapping() const {
-      return axis_mapping_for(srs);
-    }
-
-    auto orientation() const {
-      return orientation_for(srs);
-    }
-
-    auto orientation_names() const {
-      return orientation_names_for(srs);
-    }
-
-    auto mapping_strategy() const {
-      return mapping_strategy_for(srs);
-    }
-
-    auto mapping_strategy_name() const {
-      return mapping_strategy_name_for(srs);
-    }
+    auto srid()                  const { return srid_for(srs); }
+    auto wkt()                   const { return wkt_for(srs); }
+    auto proj4()                 const { return proj4_for(srs); }
+    auto axis_mapping()          const { return axis_mapping_for(srs); }
+    auto orientation()           const { return orientation_for(srs); }
+    auto orientation_names()     const { return orientation_names_for(srs); }
+    auto mapping_strategy()      const { return mapping_strategy_for(srs); }
+    auto mapping_strategy_name() const { return mapping_strategy_name_for(srs); }
 
     protected:
 

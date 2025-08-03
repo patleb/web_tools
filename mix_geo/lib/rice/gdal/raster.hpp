@@ -11,15 +11,10 @@ namespace GDAL {
       double  dx, dy;
       ssize_t rx, ry; // always >= 1
 
-      auto _mesh_() const {
-        return mesh;
-      }
+      auto _mesh_() const { return mesh; }
+      auto shape()  const { return Vsize_t{ height, width }; }
 
-      auto shape() const {
-        return Vsize_t{ height, width };
-      }
-
-      auto cache_key(const Raster & raster) const {
+      string cache_key(const Raster & raster) const {
         return raster.cache_key()
           + std::format(":{}:{}:{}:{}:{}:{}:{}:{}:{}", width, height, x0, y0, dx, dy, rx, ry, reinterpret_cast< std::uintptr_t >(mesh.srs));
       }
@@ -59,37 +54,27 @@ namespace GDAL {
 
     Raster & operator=(const Raster & raster) = delete;
 
-    auto fill_value() const {
-      return tensor.nodata_value();
-    }
+    auto fill_value() const { return tensor.nodata_value(); }
+    auto shape()      const { return tensor.shape; }
+    auto type()       const { return tensor.type; }
 
-    auto shape() const {
-      return tensor.shape;
-    }
-
-    auto type() const {
-      return tensor.type;
-    }
-
-    auto x() const {
+    Vdouble x() const {
       Vdouble x(width);
       double xi = x0;
       for (size_t i = 0; i < width; ++i, xi += dx) x[i] = xi;
       return x;
     }
 
-    auto y() const {
+    Vdouble y() const {
       Vdouble y(height);
       double yi = y0;
       for (size_t i = 0; i < height; ++i, yi += dy) y[i] = yi;
       return y;
     }
 
-    auto _z_() const {
-      return z;
-    }
+    auto _z_() const { return z; }
 
-    auto reproject(const string & proj, const GType & fill_value = none, Obool compact = nil, Obool memoize = nil) const {
+    Raster reproject(const string & proj, const GType & fill_value = none, Obool compact = nil, Obool memoize = nil) const {
       auto tf = transform_for(proj, compact, memoize);
       auto nearest = nearest_for(tf, memoize);
       auto & width = tf.width, & height = tf.height;
@@ -128,7 +113,7 @@ namespace GDAL {
       }
     }
 
-    Transform transform_for(const string & proj, Obool compact = nil, Obool memoize = nil) const {
+    Raster::Transform transform_for(const string & proj, Obool compact = nil, Obool memoize = nil) const {
       auto _compact_ = compact.value_or(false);
       if (memoize.value_or(false)) return cached_transform_for(proj, _compact_);
       size_t total = width * height;
@@ -199,7 +184,7 @@ namespace GDAL {
       return cache_key() + std::format(":{}:{}", reinterpret_cast< std::uintptr_t >(srs_for(proj)), compact);
     }
 
-    Transform cached_transform_for(const string & proj, bool compact) const {
+    Raster::Transform cached_transform_for(const string & proj, bool compact) const {
       static std::unordered_map< string, Transform > cache;
       string key = cache_key_for(proj, compact);
       if (!cache.contains(key)) cache[key] = transform_for(proj, compact);

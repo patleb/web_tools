@@ -20,15 +20,10 @@ namespace GDAL {
       if (size != y.size()) throw RuntimeError("size mismatch");
     }
 
-    auto _x_() const {
-      return x;
-    }
+    auto _x_() const { return x; }
+    auto _y_() const { return y; }
 
-    auto _y_() const {
-      return y;
-    }
-
-    auto points() const {
+    vector< std::pair< double, double >> points() const {
       vector< std::pair< double, double >> xy(size);
       for (size_t i = 0; i < size; ++i) xy[i] = std::make_pair(x[i], y[i]);
       return xy;
