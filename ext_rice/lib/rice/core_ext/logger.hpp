@@ -8,14 +8,9 @@ class Logger {
   inline static size_t marker_i = 0;
   inline static bool new_run = true;
 
-  explicit Logger() {
-    file.open("<%= ExtRice.config.log_path %>", std::ofstream::out | std::ofstream::app);
-  }
+  explicit Logger() { file.open("<%= ExtRice.config.log_path %>", std::ofstream::out | std::ofstream::app); }
   <%= no_copy :Logger %>
-
-  ~Logger() {
-    // no file.close, since global/static variables' destructors aren't called in DLL unload/exit
-  }
+  ~Logger() {} // no file.close, since global/static variables' destructors aren't called in DLL unload/exit
 
   // Parameter Pack: https://www.scs.stanford.edu/~dm/blog/param-pack.html
   template < class... Args >
