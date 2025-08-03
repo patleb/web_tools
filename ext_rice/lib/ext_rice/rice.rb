@@ -1,6 +1,7 @@
 module Rice
   extend WithFiles
   extend WithHelpers
+  extend WithSplits
 
   class InvalidChecksum < ::StandardError; end
 
@@ -45,6 +46,7 @@ module Rice
     add_libraries.each{ |name| add_library name }
     yield(self) if block_given?
     copy_files
+    split_files
     create_init_file unless executable?
     unless dry_run
       $CXXFLAGS += " $(optflags)" # O3 -fno-fast-math
