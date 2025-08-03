@@ -31,7 +31,7 @@ module NetCDF:
   FILL_UINT32:   NC_FILL_UINT     # 4294967295U
   FILL_UINT64:   NC_FILL_UINT64   # (unsigned long long)18446744073709551614ULL
 
-  enum Type | NetCDF::Type: [String, Int8, Int16, Int32, Int64, SFloat, DFloat, UInt8, UInt16, UInt32, UInt64]
+  enum Type | NetCDF::Type: [<%= template[:netcdf].keys.join(', ') %>, String]
 
   def:
     self.version:
