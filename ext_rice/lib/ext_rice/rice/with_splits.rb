@@ -23,11 +23,12 @@ module Rice
         next if file.sub_ext('.cpp').exist?
         lines = file.readlines
         next if lines.empty?
-        next if lines[0].match? %r{^/\** NO_SPLIT *\*/$}
-        next unless ENV['SPLIT_SRC'].to_b || lines[0].match?(%r{^/\** SPLIT *\*/$})
+        next if     (first = lines[0]).match? %r{^/\** NO_SPLIT *\*/$}
+        next unless (split_all = first.match?(%r{^/\** SPLIT_ALL *\*/$}) || ENV['SPLIT_SRC']&.downcase == 'all') ||
+                                 first.match?(%r{^/\** SPLIT *\*/$})     || ENV['SPLIT_SRC'].to_b
         next unless (cls_step = lines.find{ |line| line[/^ +class /] })
         step = cls_step[/^ +/].size
-        cls_count = lines.count{ |line| line[/^ {#{step}}class [^;]+$/] }
+        cls_count = split_all ? lines.count{ |line| line[/^ {#{step}}class [^;]+$/] } : 1
         hpp, cpp, scopes, mod, cls, split = [], Array.new(cls_count){ [] }, [], nil, nil, false
         cls_names, cls_i = {}, 0
         lines.each do |line|
@@ -47,7 +48,7 @@ module Rice
             indent, name, base = $1.size, $2, $3.presence
             template = scopes.pop && :template if scopes.dig(-1, 0) == :template
             scopes << [:class, indent, name, base, template]
-            cls ||= (cls_names[mod] << name ;name) if indent == step
+            cls ||= (split_all ? (cls_names[mod] << name; name) : (cls_names[mod] = [nil]; '')) if indent == step
             hpp << line
           when /#{INDENT}#{END_SCOPE}#{COMMENT}/
             indent = $1.size
@@ -59,7 +60,7 @@ module Rice
               mod = nil if indent == 0
             when :class
               hpp << line
-              cls, cls_i = nil, cls_i + 1 if indent == step
+              cls, cls_i = nil, cls_i + 1 if split_all && indent == step
             when :method
               cpp[cls_i] << (indent == indent_was ? line.lstrip.indent(indent_was) : line)
             else
@@ -106,9 +107,10 @@ module Rice
         file.write(hpp.join)
         cls_i = 0
         cls_names.each do |mod, names|
+          count = names.size
           names.each do |name|
             code = cpp[cls_i]
-            file.sub_ext("_#{mod.underscore}_#{name.underscore}.cpp").open('w') do |f|
+            file.sub_ext(count > 1 && name ? "_#{name.underscore}.cpp" : '.cpp').open('w') do |f|
               f.puts <<~CPP
                 #{hook :before_include}
                 // include
