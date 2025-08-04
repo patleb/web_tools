@@ -21,16 +21,16 @@ module MixGeo
     initializer 'mix_geo.template', before: 'ext_rice.require_ext' do
       ExtRice.configure do |config|
         config.template[:netcdf] = {
-          'Int8'   => 'NC_BYTE',   # 1
-          'Int16'  => 'NC_SHORT',  # 3
+          # 'Int8'   => 'NC_BYTE',   # 1
+          # 'Int16'  => 'NC_SHORT',  # 3
           'Int32'  => 'NC_INT',    # 4
           'Int64'  => 'NC_INT64',  # 10
           'SFloat' => 'NC_FLOAT',  # 5
           'DFloat' => 'NC_DOUBLE', # 6
           'UInt8'  => 'NC_UBYTE',  # 7
-          'UInt16' => 'NC_USHORT', # 8
+          # 'UInt16' => 'NC_USHORT', # 8
           'UInt32' => 'NC_UINT',   # 9
-          'UInt64' => 'NC_UINT64', # 11
+          # 'UInt64' => 'NC_UINT64', # 11
           # 'String' => NC_CHAR,   # 2
         }
         raise "types mismatch" if config.template[:netcdf].keys != config.template[:numeric].keys
