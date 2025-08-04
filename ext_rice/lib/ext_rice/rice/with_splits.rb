@@ -23,7 +23,8 @@ module Rice
         next if file.sub_ext('.cpp').exist?
         lines = file.readlines
         next if lines.empty?
-        next unless ENV['SPLIT_SRC'].to_b || lines[0].match?(%r{^/* SPLIT */$})
+        next if lines[0].match? %r{^/\** NO_SPLIT *\*/$}
+        next unless ENV['SPLIT_SRC'].to_b || lines[0].match?(%r{^/\** SPLIT *\*/$})
         next unless (cls_step = lines.find{ |line| line[/^ +class /] })
         step = cls_step[/^ +/].size
         cls_count = lines.count{ |line| line[/^ {#{step}}class [^;]+$/] }
