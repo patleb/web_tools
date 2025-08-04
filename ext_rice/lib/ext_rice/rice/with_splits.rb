@@ -110,6 +110,8 @@ module Rice
             code = cpp[cls_i]
             file.sub_ext("_#{mod.underscore}_#{name.underscore}.cpp").open('w') do |f|
               f.puts <<~CPP
+                #{hook :before_include}
+                // include
                 #{pch.exist? ? '#include "precompiled.hpp"' : include_headers}
                 #include "all.hpp"
 
