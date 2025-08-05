@@ -18,6 +18,8 @@ module Rice
     PARAMS    = 'const std::stacktrace & trace, const std::source_location & source'
     DEFAULTS  = / += *[^,)]+([,)])/
 
+    # NOTE extracting the .cpp files is faster if the files are faster to compile than the mods and M mods < J jobs
+    #  --> otherwise, just split by modules
     def split_files
       filter(dst_path.glob('**/*.hpp')).each do |file|
         next if file.sub_ext('.cpp').exist?

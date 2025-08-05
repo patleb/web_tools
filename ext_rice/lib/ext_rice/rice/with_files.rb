@@ -31,6 +31,8 @@ module Rice
       end
     end
 
+    # NOTE separating by classes is faster if the mods are faster to compile than the classes and N classes < J jobs
+    #  --> otherwise, just split by modules
     def create_init_file(split_modules: (ENV['SPLIT_MOD'] || true).to_b, split_classes: ENV['SPLIT_CLS'].to_b)
       module_targets = split_modules || split_classes ? self.module_targets : {}
       class_targets = split_classes ? self.class_targets : {}
@@ -42,8 +44,8 @@ module Rice
         #{hook :after_include}
         using namespace Rice;
       CPP
-      write_source = -> (mod_key, name, defs) do
-        dst_path.join("#{name}.cpp").open('w') do |f|
+      write_source = -> (mod_key, name, defs, prefix = nil) do
+        dst_path.join("#{prefix}#{name}.cpp").open('w') do |f|
           f.puts <<~CPP
             #include "#{name}.hpp"
   
@@ -69,15 +71,15 @@ module Rice
       gems_config[:defs].slice(*module_targets.keys).each do |mod_key, cls|
         mod_name = module_targets[mod_key]
         module_target_names << mod_name
-        write_source.(mod_key, mod_name, cls.except(*class_targets[mod_key]&.keys))
+        write_source.(mod_key, mod_name, cls.except(*class_targets[mod_key]&.keys), '0_')
         write_header.(mod_name)
         class_targets[mod_key]&.each do |cls_key, cls_name|
           class_target_names << cls_name
-          write_source.(mod_key, cls_name, cls.slice(cls_key))
+          write_source.(mod_key, cls_name, cls.slice(cls_key), '00_')
           write_header.(cls_name)
         end
       end
-      dst_path.join("#{target}.cpp").open('w') do |f|
+      dst_path.join("0_#{target}.cpp").open('w') do |f|
         f.puts <<~CPP
           #{includes}
           #{module_target_names.map{ |name| %{#include "#{name}.hpp"} }.join("\n")}
