@@ -73,7 +73,8 @@ module ExtRice
     end
 
     def cpu_count
-      count = Process.host.cpu_count - 2
+      count = Process.host.cpu_count
+      count -= 2 if ENV['JOBS']&.downcase != 'all'
       count = 1 if count <= 0
       count
     end
