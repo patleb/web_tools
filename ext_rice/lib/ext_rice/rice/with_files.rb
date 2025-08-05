@@ -34,19 +34,18 @@ module Rice
     # NOTE separating by classes is faster if the mods are faster to compile than the classes and N classes < J jobs
     #  --> otherwise, just split by modules
     def create_init_file(split_modules: (ENV['SPLIT_MOD'] || true).to_b, split_classes: ENV['SPLIT_CLS'].to_b)
-      module_targets = split_modules || split_classes ? self.module_targets : {}
-      class_targets = split_classes ? self.class_targets : {}
+      mod_targets = split_modules || split_classes ? self.module_targets : {}
+      cls_targets = split_classes ? self.class_targets : {}
       includes = <<~CPP
-        #{hook :before_include}
-        // include
         #{pch.exist? ? '#include "precompiled.hpp"' : include_headers}
         #include "all.hpp"
         #{hook :after_include}
         using namespace Rice;
       CPP
-      write_source = -> (mod_key, name, defs, prefix = nil) do
-        dst_path.join("#{prefix}#{name}.cpp").open('w') do |f|
+      write_source = -> (mod_key, name, defs, weight) do
+        dst_path.join("#{weight}_#{name}.cpp").open('w') do |f|
           f.puts <<~CPP
+            #{includes}
             #include "#{name}.hpp"
   
             extern "C" void init_#{name}() {
@@ -62,28 +61,29 @@ module Rice
           f.puts <<~HPP
             #pragma once
   
-            #{includes}
             extern "C" void init_#{name}();
           HPP
         end
       end
-      module_target_names, class_target_names = [], []
-      gems_config[:defs].slice(*module_targets.keys).each do |mod_key, cls|
-        mod_name = module_targets[mod_key]
-        module_target_names << mod_name
-        write_source.(mod_key, mod_name, cls.except(*class_targets[mod_key]&.keys), '0_')
+      mod_names, cls_names = [], []
+      gems_config[:defs].slice(*mod_targets.keys).each do |mod_key, cls|
+        mod_name = mod_targets[mod_key]
+        mod_names << mod_name
+        write_source.(mod_key, mod_name, cls.except(*cls_targets[mod_key]&.keys), '01')
         write_header.(mod_name)
-        class_targets[mod_key]&.each do |cls_key, cls_name|
-          class_target_names << cls_name
-          write_source.(mod_key, cls_name, cls.slice(cls_key), '00_')
+        cls_targets[mod_key]&.each do |cls_key, cls_name|
+          cls_names << cls_name
+          write_source.(mod_key, cls_name, cls.slice(cls_key), '02')
           write_header.(cls_name)
         end
       end
-      dst_path.join("0_#{target}.cpp").open('w') do |f|
+      dst_path.join("00_#{target}.cpp").open('w') do |f|
+        f.puts includes
+        f.puts '// modules' unless mod_names.empty?
+        f.puts mod_names.map{ |name| %{#include "#{name}.hpp"} }
+        f.puts '// classes' unless cls_names.empty?
+        f.puts cls_names.map{ |name| %{#include "#{name}.hpp"} }
         f.puts <<~CPP
-          #{includes}
-          #{module_target_names.map{ |name| %{#include "#{name}.hpp"} }.join("\n")}
-          #{class_target_names.map{ |name| %{#include "#{name}.hpp"} }.join("\n")}
 
           extern "C" void Init_#{target}() {
             #{hook :before_initialize, indent: 2}
@@ -94,9 +94,9 @@ module Rice
             detail::Registries::instance.handlers.set(#{handler}());
           CPP
         end
-        define_properties(f, nil, gems_config[:defs].except(*module_targets.keys))
-        f.puts module_target_names.map{ |name| "init_#{name}();" }.join("\n").indent(2)
-        f.puts class_target_names.map{ |name| "init_#{name}();" }.join("\n").indent(2)
+        define_properties(f, nil, gems_config[:defs].except(*mod_targets.keys))
+        f.puts mod_names.map{ |name| "  init_#{name}();" }
+        f.puts cls_names.map{ |name| "  init_#{name}();" }
         f.puts <<~CPP
             #{hook :after_initialize,  indent: 2}
           }
@@ -150,6 +150,7 @@ module Rice
         compiled_path.open('w') do |f|
           if precompiled
             f.puts include_headers
+            f.puts '// precompiled'
           else
             f.puts <<~HEADER if is_header && !has_once
             #pragma once
@@ -173,7 +174,11 @@ module Rice
     end
 
     def include_headers
-      gems_config[:include].map{ |header| header.start_with?('#') ? header : %{#include "#{header.strip}"} }.join("\n")
+      [ hook(:before_include),
+        '//include'
+      ].concat(gems_config[:include].map do |header|
+        header.start_with?('#') ? header : %{#include "#{header.strip}"}
+      end).join("\n")
     end
 
     def hook(name, indent: 0)

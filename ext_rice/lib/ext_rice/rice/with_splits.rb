@@ -1,22 +1,22 @@
 module Rice
   module WithSplits
-    COMMENT = %r{ *(?:/\*|\*/|//|$)} # or end line
-    ACCESS  = / *(?:public|protected|private)/
-    MACRO   = /#/
-    INDENT  = /^( *)/
-    CLASS   = /(?:class|struct) +(\w+)/
-    BASE    = /(\w*)/
-    CODE    = /([^ ].*)/
+    DIRECTIVE = /#/
+    ACCESS    = / *(?:public|protected|private)/
+    COMMENT   = %r{ *(?:/\*|\*/|//|$)} # or end line
+    INDENT    = /^( *)/
+    CLASS     = /(?:class|struct) +(\w+)/
+    BASE      = /(\w*)/
+    CODE      = /([^ ].*)/
     END_SCOPE = /[^{]*} *;?/
     INLINE    = /(?:\) *\{ *}|; *})/
     STATEMENT = /;/
     METHOD    = /^[^;]+$/
     LAST_CHAR = / *(?:\{(?!.*\{)|:? *$)/
-    KEYWORDS  = /(?:(\W)(?:explicit|static|virtual) | (?:override|final)(\W))/
+    KEYWORD   = /(?:(\W)(?:explicit|static|virtual) | (?:override|final)(\W))/
     NAME      = / (~?\w+|operator\W+)\(/
     CONTEXT   = 'CONTEXT(trace, source)'
-    PARAMS    = 'const std::stacktrace & trace, const std::source_location & source'
-    DEFAULTS  = / += *[^,)]+([,)])/
+    MACRO     = 'const std::stacktrace & trace, const std::source_location & source'
+    DEFAULTS  = / += *[^,)]+([,)])/ # doesn't support constructors or filled initializer lists
 
     # NOTE extracting the .cpp files is faster if the files are faster to compile than the mods and M mods < J jobs
     #  --> otherwise, just split by modules
@@ -28,14 +28,14 @@ module Rice
         next if     (first = lines[0]).match? %r{^/\** NO_SPLIT *\*/$}
         next unless (split_all = first.match?(%r{^/\** SPLIT_ALL *\*/$}) || ENV['SPLIT_SRC']&.downcase == 'all') ||
                                  first.match?(%r{^/\** SPLIT *\*/$})     || ENV['SPLIT_SRC'].to_b
-        next unless (cls_step = lines.find{ |line| line[/^ +class /] })
+        next unless (cls_step = lines.find{ |line| line[/^ +(class|struct) /] })
         step = cls_step[/^ +/].size
         cls_count = split_all ? lines.count{ |line| line[/^ {#{step}}class [^;]+$/] } : 1
         hpp, cpp, scopes, mod, cls, split = [], Array.new(cls_count){ [] }, [], nil, nil, false
         cls_names, cls_i = {}, 0
         lines.each do |line|
           case line
-          when /^(?:#{COMMENT}|#{ACCESS}:|#{MACRO})/
+          when /^(?:#{DIRECTIVE}|#{ACCESS}:|#{COMMENT})/
             hpp << line
           when /^ *template *</
             scopes << [:template]
@@ -87,7 +87,7 @@ module Rice
                 hpp << line.sub(LAST_CHAR, ';')
                 cpp[cls_i] << if scopes.dig(i = -1, 0) == :class
                   name = "#{scopes.dig(i, 2)}::#{name}" while scopes.dig(i -= 1, 0) == :class
-                  line.sub(KEYWORDS, '\1').sub(NAME, " #{name}::\\1(").sub(CONTEXT, PARAMS).gsub(DEFAULTS, '\1')
+                  line.sub(KEYWORD, '\1').sub(NAME, " #{name}::\\1(").sub(CONTEXT, MACRO).gsub(DEFAULTS, '\1')
                 else
                   line
                 end.lstrip.indent(indent)
@@ -114,8 +114,6 @@ module Rice
             code = cpp[cls_i]
             file.sub_ext(count > 1 && name ? "_#{name.underscore}.cpp" : '.cpp').open('w') do |f|
               f.puts <<~CPP
-                #{hook :before_include}
-                // include
                 #{pch.exist? ? '#include "precompiled.hpp"' : include_headers}
                 #include "all.hpp"
 
