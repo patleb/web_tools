@@ -21,9 +21,12 @@ include:
   - stdfloat
   - numeric
   - ranges
+  - cstring
   - optional
   - variant
   - queue
+  - set
+  - map
   - unordered_set
   - unordered_map
   - valarray

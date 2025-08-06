@@ -2,6 +2,10 @@ makefile:
   libs: <%= `gdal-config --libs` %>
   cflags: <%= `gdal-config --cflags` %>
 
+include:
+  - proj.h
+  - gdal_priv.h
+
 after_include: >
   using namespace GDAL;
 

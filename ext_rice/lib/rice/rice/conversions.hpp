@@ -28,8 +28,6 @@ namespace Rice::detail {
   };
 }
 
-struct nullstate {};
-
 namespace Rice::detail {
   template<>
   struct Type<nullstate> {

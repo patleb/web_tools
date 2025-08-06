@@ -1,6 +1,3 @@
-#include <rice/rice.hpp>
-#include <rice/stl.hpp>
-#include "rice/conversions.hpp"
 #include "ext_rice/core_ext/runtime_error.hpp"
 #include "ext_rice/core_ext/finally.hpp"
 #include "ext_rice/core_ext/c.hpp"

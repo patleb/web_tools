@@ -4,6 +4,8 @@
 #define G_UINT64 3
 #define G_STRING 4
 
+struct nullstate {};
+
 constexpr auto none = nullstate{};
 
 using GType = std::variant< nullstate, <%= template[:generic].values.uniq.join(', ') %>, std::string >;

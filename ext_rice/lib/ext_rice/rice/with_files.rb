@@ -39,6 +39,7 @@ module Rice
       includes = <<~CPP
         #{pch.exist? ? '#include "precompiled.hpp"' : include_headers}
         #include "all.hpp"
+        #include "ext_rice/rice.hpp"
         #{hook :after_include}
         using namespace Rice;
       CPP
