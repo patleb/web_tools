@@ -47,7 +47,7 @@ module ExtRice
         next unless compile
         next unless Rice.checksum_changed? || !Rice.bin_path.exist?
         Rice.bin_path.delete(false)
-        sh make
+        sh make, '-j', jobs.to_s
         if Rice.executable?
           bin_path = Rice.mkmf_path.join(Rice.target)
           cp bin_path, Rice.bin_path

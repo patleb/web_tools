@@ -52,6 +52,10 @@ module Rice
       $CXXFLAGS += " $(optflags)" # O3 -fno-fast-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
       $CXXFLAGS += " #{cflags}" if cflags
+      if system('which ccache')
+        MakeMakefile::CONFIG['CC'].prepend 'ccache '
+        MakeMakefile::CONFIG['CXX'].prepend 'ccache '
+      end
       if ENV['DEBUG'].to_b
         $CXXFLAGS += " -g -O0"
         MakeMakefile::CONFIG['optflags'].gsub!('-O3', '-O0')
@@ -68,7 +72,7 @@ module Rice
         conf << "\n"
         conf << "# Precompiled Header Rule (C++)"
         conf << "#{pch_out}: #{pch}"
-        conf << "\t$(CXX) $(CXXFLAGS) $(INCFLAGS) -x c++-header -o #{pch_out} #{pch}"
+        conf << "\t$(CXX:ccache%=%) $(CXXFLAGS) $(INCFLAGS) -x c++-header -o #{pch_out} #{pch}"
         conf << "\n"
         conf << "# Ensure all object files depend on the PCH"
         conf << "$(OBJS): #{pch_out}"
