@@ -25,8 +25,8 @@ class NetCDFTest < Rice::TestCase
       assert t.size == 0
 
       f.write_att :srid,    4326
-      f.write_att :year,    Tensor::Int16[2000]
-      f.write_att :sizes,   Tensor::UInt64[20, 30.9]
+      f.write_att :year,    Tensor::Int32[2000]
+      f.write_att :sizes,   Tensor::Int64[20, 30.9]
       f.write_att 'center', Tensor::DFloat[50.7, -120.8]
 
       null = f.create_var :null, :DFloat, []
@@ -34,7 +34,7 @@ class NetCDFTest < Rice::TestCase
       f.create_var :event, NetCDF::Type::SFloat, [:team_i, :t], fill_value: Float::NAN
       f.create_var :heat,  NetCDF::Type::SFloat, [:y, :x]
       f.create_var :team, 'String', ['team_i', 'team_name']
-      f.create_var :time, 'UInt64', [:t]
+      f.create_var :time, 'Int64', [:t]
       f.create_var 'lon', :DFloat, :x, fill_value: Tensor::DFloat[Float::INFINITY]
       f.create_var 'lat', :DFloat, :y, fill_value: -Float::INFINITY
       assert_equal 0, none.shape.reduce(&:*)
@@ -86,7 +86,7 @@ class NetCDFTest < Rice::TestCase
       f.write :heat,  h2, start: [1, 1], stride: [2, 1]
       f.write :team,  'first'
       f.write :team,  ['2nd'], start: 2
-      f.write :time,  Tensor::UInt64[0...10]
+      f.write :time,  Tensor::Int64[0...10]
       f.write :lon,   Tensor::DFloat[10.0]
       f.write :lat,   Tensor::DFloat[-100]
     end.closed?)

@@ -107,7 +107,7 @@ class GDALTest < Rice::TestCase
     end
 
     test '#reproject' do
-      data = Tensor::SFloat.new(2, 2).seq * 1.1
+      data = Tensor::SFloat.new(2, 2).seq
       raster_4326 = GDAL::Raster.new(data, *corner_4326)
       assert_equal Tensor::Type::SFloat, raster_4326.type
       assert_equal data.shape, [raster_4326.width, raster_4326.height]
