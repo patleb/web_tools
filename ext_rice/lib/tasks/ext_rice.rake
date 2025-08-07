@@ -52,7 +52,7 @@ namespace! :rice do
         raise "invalid file [#{file}]"
       end
     end
-    unless (breakpoint = args[:breakpoint]&.strip).presence
+    unless (breakpoint = args[:breakpoint]&.strip).present?
       raise "'breakpoint' is required"
     end
     exec <<-CMD.squish
