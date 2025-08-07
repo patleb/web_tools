@@ -29,9 +29,9 @@ module MixGeo
           'DFloat' => 'NC_DOUBLE', # 6
           'UInt8'  => 'NC_UBYTE',  # 7
           # 'UInt16' => 'NC_USHORT', # 8
-          'UInt32' => 'NC_UINT',   # 9
+          # 'UInt32' => 'NC_UINT',   # 9
           # 'UInt64' => 'NC_UINT64', # 11
-          # 'String' => NC_CHAR,   # 2
+          # 'String' => 'NC_CHAR',   # 2
         }
         raise "types mismatch" if config.template[:netcdf].keys != config.template[:numeric].keys
       end

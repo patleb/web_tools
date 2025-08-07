@@ -19,7 +19,7 @@ module ExtRice
           'DFloat' => 'double',
           'UInt8'  => 'uint8_t',
           # 'UInt16' => 'uint16_t',
-          'UInt32' => 'uint32_t',
+          # 'UInt32' => 'uint32_t',
           # 'UInt64' => 'uint64_t2',
         }
         config.template[:generic] = {
@@ -31,7 +31,7 @@ module ExtRice
           'double'    => 'double',
           'uint8_t'   => 'uint64_t2',
           # 'uint16_t'  => 'uint64_t2',
-          'uint32_t'  => 'uint64_t2',
+          # 'uint32_t'  => 'uint64_t2',
           # 'uint64_t2' => 'uint64_t2',
         }
       end
