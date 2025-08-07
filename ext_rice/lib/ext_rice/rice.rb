@@ -47,7 +47,7 @@ module Rice
     yield(self) if block_given?
     copy_files
     split_files
-    create_init_file unless executable?
+    create_and_split_init_file unless executable?
     unless dry_run
       $CXXFLAGS += " $(optflags)" # O3 -fno-fast-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
