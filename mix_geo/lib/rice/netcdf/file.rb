@@ -17,21 +17,16 @@ module NetCDF
         super(path.to_s, mode, nc4_classic, classic, share)
       end
 
-      def close
-        super
-        @dims = @vars = @atts = nil
-      end
-
       def dims
-        @dims ||= super.map{ |dim| [dim.name, dim] }.to_hwia
+        super.map{ |dim| [dim.name, dim] }.to_hwia
       end
 
       def vars
-        @vars ||= super.map{ |var| [var.name, var] }.to_hwia
+        super.map{ |var| [var.name, var] }.to_hwia
       end
 
       def atts
-        @atts ||= super.map{ |att| [att.name, att] }.to_hwia
+        super.map{ |att| [att.name, att] }.to_hwia
       end
 
       def dim(name, dim_name = nil)
@@ -47,12 +42,10 @@ module NetCDF
       end
 
       def create_dim(name, size = nil)
-        @dims = nil
         super(name.to_s, size)
       end
 
       def create_var(name, type, dims, fill_value: nil)
-        @vars = nil
         case type
         when Class
           type = type.name.demodulize if type <= Tensor::Base
@@ -70,10 +63,8 @@ module NetCDF
 
       def write_att(name, att_or_values, values = nil)
         if values
-          @vars = nil
           return var(name).write_att(att_or_values, values)
         end
-        @atts = nil
         if (values = att_or_values).is_a? Tensor::Base
           super(name.to_s, values.class.name.demodulize, values)
         else
@@ -89,10 +80,8 @@ module NetCDF
 
     def delete_att(name, att_name = nil)
       if att_name
-        @vars = nil
         var(name).delete_att(att_name)
       else
-        @atts = nil
         att(name).destroy
       end
     end
