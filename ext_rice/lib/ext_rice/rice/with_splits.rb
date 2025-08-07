@@ -1,10 +1,10 @@
 module Rice
   module WithSplits
     DIRECTIVE = /#/
-    ACCESS    = / *(?:public|protected|private)/
     COMMENT   = %r{ *(?:/\*|\*/|//|$)} # or end line
     INDENT    = /^( *)/
     CLASS     = /(?:class|struct) +(\w+)/
+    ACCESS    = / *(?:public|protected|private)/
     BASE      = /(\w*)/
     CODE      = /([^ ].*)/
     END_SCOPE = /[^{]*} *;?/
@@ -35,8 +35,13 @@ module Rice
         cls_names, cls_i = {}, 0
         lines.each do |line|
           case line
-          when /^(?:#{DIRECTIVE}|#{ACCESS}:|#{COMMENT})/
-            hpp << line
+          when /^(?:#{DIRECTIVE}|#{COMMENT})/
+            case scopes.dig(-1, 0)
+            when :method
+              cpp.each(&:<<.with(line))
+            else
+              hpp << line
+            end
           when /^ *template *</
             scopes << [:template]
             hpp << line
