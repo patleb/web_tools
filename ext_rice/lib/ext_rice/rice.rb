@@ -52,7 +52,7 @@ module Rice
       $CXXFLAGS += " $(optflags)" # O3 -fno-fast-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?
       $CXXFLAGS += " #{cflags}" if cflags
-      if ENV['CCACHE'] == 'false' && system('which ccache')
+      if ENV['CCACHE'] != 'false' && system('which ccache')
         MakeMakefile::CONFIG['CC'].prepend 'ccache '
         MakeMakefile::CONFIG['CXX'].prepend 'ccache '
       end
