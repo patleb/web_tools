@@ -33,9 +33,11 @@ module Rice
 
     # NOTE separating by classes is faster if the mods are faster to compile than the classes and N classes < J jobs
     #  --> otherwise, just split by modules
-    def create_init_file(split_modules: (ENV['SPLIT_MOD'] || true).to_b, split_classes: ENV['SPLIT_CLS'].to_b)
-      mod_targets = split_modules || split_classes ? self.module_targets : {}
-      cls_targets = split_classes ? self.class_targets : {}
+    def create_init_file
+      split_all = ENV['SPLIT_MOD']&.downcase == 'all'
+      split_mod = split_all || (ENV['SPLIT_MOD'] || true).to_b
+      mod_targets = split_mod ? self.module_targets : {}
+      cls_targets = split_all ? self.class_targets : {}
       includes = <<~CPP
         #{pch.exist? ? '#include "precompiled.hpp"' : include_headers}
         #include "all.hpp"
