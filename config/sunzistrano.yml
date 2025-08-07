@@ -5,6 +5,7 @@ gems:
   - mix_file
   - mix_geo
   - ext_rails
+  - ext_rice
   - ext_whenever
 
 provision:
