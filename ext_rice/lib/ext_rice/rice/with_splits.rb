@@ -26,8 +26,8 @@ module Rice
         lines = file.readlines
         next if lines.empty?
         next if     (first = lines[0]).match? %r{^/\** NO_SPLIT *\*/$}
-        next unless (split_all = first.match?(%r{^/\** SPLIT_ALL *\*/$}) || ENV['SPLIT_SRC']&.downcase == 'all') ||
-                                 first.match?(%r{^/\** SPLIT *\*/$})     || ENV['SPLIT_SRC'].to_b
+        next unless (split_all = first.match?(%r{^/\** SPLIT_ALL *\*/$}) ||  ENV['SPLIT_SRC']&.downcase == 'all') ||
+                                 first.match?(%r{^/\** SPLIT *\*/$})     || (ENV['SPLIT_SRC'] || true).to_b
         next unless (cls_step = lines.find{ |line| line[/^ +(class|struct) /] })
         step = cls_step[/^ +/].size
         cls_count = split_all ? lines.count{ |line| line[/^ {#{step}}class [^;]+$/] } : 1
