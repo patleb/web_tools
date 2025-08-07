@@ -48,7 +48,6 @@ module Rice
       write_source = -> (mod_key, name, defs, weight) do
         dst_path.join("#{weight}_#{name}.cpp").open('w') do |f|
           f.puts <<~CPP
-            #{includes}
             #include "#{name}.hpp"
   
             extern "C" void init_#{name}() {
@@ -64,6 +63,7 @@ module Rice
           f.puts <<~HPP
             #pragma once
   
+            #{includes}
             extern "C" void init_#{name}();
           HPP
         end
