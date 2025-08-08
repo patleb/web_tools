@@ -38,7 +38,7 @@ module Rice
           when /^(?:#{DIRECTIVE}|#{COMMENT})/
             case scopes.dig(-1, 0)
             when :method
-              cpp.each(&:<<.with(line))
+              cpp[cls_i] << line
             else
               hpp << line
             end
@@ -134,9 +134,8 @@ module Rice
     # NOTE separating by classes is faster if the mods are faster to compile than the classes and N classes < J jobs
     #  --> otherwise, just split by modules
     def create_and_split_init_file
-      split_all = ENV['SPLIT_MOD']&.downcase == 'all'
-      split_mod = split_all || (ENV['SPLIT_MOD'] || true).to_b
-      mod_targets = split_mod ? self.module_targets : {}
+      split_all   = ENV['SPLIT_MOD']&.downcase == 'all'
+      mod_targets = split_all || (ENV['SPLIT_MOD'] || true).to_b ? self.module_targets : {}
       cls_targets = split_all ? self.class_targets : {}
       includes = <<~CPP
         #{pch.exist? ? '#include "precompiled.hpp"' : include_headers}
