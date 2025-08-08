@@ -55,12 +55,20 @@ namespace! :rice do
     unless (breakpoint = args[:breakpoint]&.strip).present?
       raise "'breakpoint' is required"
     end
-    exec <<-CMD.squish
-      gdb -q #{ENV['GDB']} -ex 'set breakpoint pending on' -ex 'b #{breakpoint}' -ex r --args $(rbenv which ruby) #{file}
-    CMD
+    if ENV['GUI'] == 'true'
+      exec "seergdb --run --bf #{breakpoint} $(rbenv which ruby) #{file}"
+    else
+      exec "gdb --tui -q -ex 'set breakpoint pending on' -ex 'b #{breakpoint}' -ex r --args $(rbenv which ruby) #{file}"
+    end
   end
 
   namespace :gdb do
+    desc 'run GUI for gdb test file'
+    task :gui, [:file_or_id, :breakpoint] => :environment do |t, args|
+      ENV['GUI'] = 'true'
+      run_task 'rice:gdb', *args
+    end
+
     desc 'list gdb test files (with ids)'
     task :list => :environment do
       rice_test_files.each_with_index do |file, i|
