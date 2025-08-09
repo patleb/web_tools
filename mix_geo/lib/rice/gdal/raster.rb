@@ -28,9 +28,9 @@ module GDAL
         super.to_a
       end
 
-      def reproject(proj = nil, fill_value: nil, compact: nil, memoize: nil, **proj4)
+      def reproject(proj = nil, fill_value: nil, memoize: nil, **proj4)
         proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
-        super(proj, fill_value, compact, memoize)
+        super(proj, fill_value, memoize)
       end
     end
     prepend self::WithOverrides
@@ -55,9 +55,9 @@ module GDAL
       [x0, x0 + dx, y0, y0 + dy]
     end
 
-    def _reproject_(proj = nil, fill_value: nil, compact: nil, memoize: nil, **proj4)
+    def _reproject_(proj = nil, fill_value: nil, memoize: nil, **proj4)
       proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
-      tf = transform_for(proj, compact, memoize)
+      tf = transform_for(proj, memoize)
       nearest = _nearest_for_(tf, memoize)
       width, height, x0, y0, dx, dy = tf.width, tf.height, tf.x0, tf.y0, tf.dx, tf.dy
       src_data = z

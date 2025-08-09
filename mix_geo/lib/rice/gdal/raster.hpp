@@ -74,8 +74,8 @@ namespace GDAL {
 
     auto _z_() const { return z; }
 
-    Raster reproject(const string & proj, const GType & fill_value = none, Obool compact = nil, Obool memoize = nil) const {
-      auto tf = transform_for(proj, compact, memoize);
+    Raster reproject(const string & proj, const GType & fill_value = none, Obool memoize = nil) const {
+      auto tf = transform_for(proj, memoize);
       auto nearest = nearest_for(tf, memoize);
       auto & width = tf.width, & height = tf.height;
       auto & x0 = tf.x0,       & y0 = tf.y0;
@@ -113,9 +113,8 @@ namespace GDAL {
       }
     }
 
-    Raster::Transform transform_for(const string & proj, Obool compact = nil, Obool memoize = nil) const {
-      auto _compact_ = compact.value_or(false);
-      if (memoize.value_or(false)) return cached_transform_for(proj, _compact_);
+    Raster::Transform transform_for(const string & proj, Obool memoize = nil) const {
+      if (memoize.value_or(false)) return cached_transform_for(proj);
       size_t total = width * height;
       Transform tf;
       auto grid = Vector(Vdouble(total), Vdouble(total), srs);
@@ -141,28 +140,21 @@ namespace GDAL {
           xi = dst_x[point]; yj = dst_y[point];
           if (xi < x_min) x_min = xi; if (xi > x_max) x_max = xi;
           if (yj < y_min) y_min = yj; if (yj > y_max) y_max = yj;
-          if (i > 0) {
+          if (i && std::signbit(xi) == std::signbit(x_prev)) {
             dxi = std::abs(xi - x_prev);
             if (dxi < dx_min) dx_min = dxi; if (dxi > dx_max) dx_max = dxi;
           }
-          if (j > 0) {
+          if (j && std::signbit(yj) == std::signbit(y_prev[i])) {
             dyj = std::abs(yj - y_prev[i]);
             if (dyj < dy_min) dy_min = dyj; if (dyj > dy_max) dy_max = dyj;
           }
           x_prev = xi; y_prev[i] = yj;
         }
       }
-      if (_compact_) {
-        tf.width  = width;
-        tf.height = height;
-        dx_min = (x_max - x_min) / (width - 1);
-        dy_min = (y_max - y_min) / (height - 1);
-      } else {
-        // NOTE std::floor --> a bigger width would mean a smaller dx_min and rx could become too small
-        tf.width  = std::floor((x_max - x_min) / dx_min) + 1;
-        tf.height = std::floor((y_max - y_min) / dy_min) + 1;
-        if (tf.width < width || tf.height < height) throw RuntimeError("resolution error");
-      }
+      tf.width  = width;
+      tf.height = height;
+      dx_min = (x_max - x_min) / (width - 1);
+      dy_min = (y_max - y_min) / (height - 1);
       tf.rx = std::ceil(dx_max / dx_min);
       tf.ry = std::ceil(dy_max / dy_min);
       auto orientation = _orientation_(proj);
@@ -180,14 +172,14 @@ namespace GDAL {
 
     private:
 
-    auto cache_key_for(const string & proj, bool compact) const {
-      return cache_key() + std::format(":{}:{}", reinterpret_cast< std::uintptr_t >(srs_for(proj)), compact);
+    auto cache_key_for(const string & proj) const {
+      return cache_key() + std::format(":{}", reinterpret_cast< std::uintptr_t >(srs_for(proj)));
     }
 
-    Raster::Transform cached_transform_for(const string & proj, bool compact) const {
+    Raster::Transform cached_transform_for(const string & proj) const {
       static std::unordered_map< string, Transform > cache;
-      string key = cache_key_for(proj, compact);
-      if (!cache.contains(key)) cache[key] = transform_for(proj, compact);
+      string key = cache_key_for(proj);
+      if (!cache.contains(key)) cache[key] = transform_for(proj);
       return cache[key];
     }
 
