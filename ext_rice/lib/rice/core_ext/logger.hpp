@@ -55,5 +55,5 @@ inline void log_vector(std::string_view prefix, const T vector[], size_t count) 
 
 template < class T >
 inline void log_vector(std::string_view prefix, const std::vector< T > & vector) {
-  log_vector< T >(vector.data(), vector.size(), prefix);
+  log_vector< T >(prefix, vector.data(), vector.size());
 }
