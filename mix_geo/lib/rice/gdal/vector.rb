@@ -9,6 +9,30 @@ module GDAL
         super(x, y, proj)
       end
 
+      def x
+        super.to_a
+      end
+
+      def y
+        super.to_a
+      end
+
+      def first
+        super.to_a
+      end
+
+      def last
+        super.to_a
+      end
+
+      def minmax
+        super.to_a
+      end
+
+      def points
+        super.to_a
+      end
+
       def reproject(proj = nil, **proj4)
         proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
         super(proj)
@@ -27,7 +51,7 @@ module GDAL
     end
 
     def to_a
-      points.map{ |point| [point.first, point.second] }
+      x.zip(y)
     end
   end
 end

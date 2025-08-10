@@ -20,12 +20,20 @@ namespace GDAL {
       if (size != y.size()) throw RuntimeError("size mismatch");
     }
 
-    auto _x_() const { return x; }
-    auto _y_() const { return y; }
+    auto _x_()   const { return x; }
+    auto _y_()   const { return y; }
+    auto first() const { return Vdouble{ x.front(), y.front() }; }
+    auto last()  const { return Vdouble{ x.back(),  y.back() }; }
 
-    vector< std::pair< double, double >> points() const {
-      vector< std::pair< double, double >> xy(size);
-      for (size_t i = 0; i < size; ++i) xy[i] = std::make_pair(x[i], y[i]);
+    Vdouble minmax() const {
+      const auto [x_min, x_max] = std::minmax_element(x.begin(), x.end());
+      const auto [y_min, y_max] = std::minmax_element(y.begin(), y.end());
+      return Vdouble{ *x_min, *x_max, *y_min, *y_max };
+    }
+
+    vector< Point > points() const {
+      vector< Point > xy; xy.reserve(size);
+      for (size_t i = 0; i < size; ++i) xy.emplace_back(x[i], y[i], srs);
       return xy;
     }
 

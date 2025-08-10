@@ -1,14 +1,5 @@
 module GDAL
   Raster.class_eval do
-    self::Transform.class_eval do
-      module self::WithOverrides
-        def shape
-          super.to_a
-        end
-      end
-      prepend self::WithOverrides
-    end
-
     module self::WithOverrides
       def initialize(z, *x01_y01, x: nil, y: nil, proj: nil, **proj4)
         proj = GDAL.proj4text(**proj4) unless proj || proj4.empty?
@@ -59,7 +50,7 @@ module GDAL
       proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
       tf = transform_for(proj, memoize)
       nearest = _nearest_for_(tf, memoize)
-      width, height, x0, y0, dx, dy = tf.width, tf.height, tf.x0, tf.y0, tf.dx, tf.dy
+      x0, y0, dx, dy = tf.x0, tf.y0, tf.dx, tf.dy
       src_data = z
       src_fill_value = src_data.fill_value
       fill_value = src_fill_value if fill_value.nil?
@@ -82,13 +73,13 @@ module GDAL
       self.class.new(dst_data, x0, x0 + dx, y0, y0 + dy, proj: proj)
     end
 
+    private :nearest_for
     private :transform_for
-
     private
 
     def _nearest_for_(tf, memoize = nil)
       return _cached_nearest_for_(tf) if memoize
-      mesh, width, height, x0, y0, dx, dy, rx, ry = tf.mesh.to_a, tf.width, tf.height, tf.x0, tf.y0, tf.dx, tf.dy, tf.rx, tf.ry
+      mesh, x0, y0, dx, dy, rx, ry = tf.mesh.to_a, tf.x0, tf.y0, tf.dx, tf.dy, tf.rx, tf.ry
       mesh_points = Array.new(height){ Array.new(width){ Set.new } }
       mesh.each_with_index do |(x, y), point|
         j = ((y - y0) / dy).round
@@ -114,7 +105,7 @@ module GDAL
             next if (dist_x = (x - xi).abs) > max_rx
             next if (dist_y = (y - yj).abs) > max_ry
             dist = dist_x * dist_x + dist_y * dist_y
-            [dist, point]
+            [Math.sqrt(dist), point]
           end
           distances.sort!
           _distance, point = distances.first

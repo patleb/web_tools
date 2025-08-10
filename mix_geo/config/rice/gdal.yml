@@ -1,3 +1,6 @@
+aliases:
+  - &proj [const Ostring &, proj = nil]
+
 makefile:
   libs: <%= `gdal-config --libs` %>
   cflags: <%= `gdal-config --cflags` %>
@@ -32,41 +35,46 @@ module GDAL:
       proj4:
       orientation:
 
+  class Point < GDAL::Base:
+    def:
+      initialize | GDAL::Point.COPY: [[double, x], [double, y], *proj]
+      x:
+      y:
+      distance:
+      reproject:
+
   class Vector < GDAL::Base:
     attr_reader: [size]
 
     def:
-      initialize | GDAL::Vector.COPY:
-        - [const Vdouble &, x]
-        - [const Vdouble &, y]
-        - [const Ostring &, proj = nil]
+      initialize | GDAL::Vector.COPY: [[const Vdouble &, x], [const Vdouble &, y], *proj]
       x | _x_:
       y | _y_:
+      first:
+      last:
+      minmax:
       points:
       reproject:
 
   class Raster < GDAL::Base:
     class Transform | GDAL::Raster::Transform:
-      attr_reader: [width, height, x0, y0, dx, dy, rx, ry]
+      attr_reader: [x0, y0, dx, dy, rx, ry]
 
       def:
         mesh | _mesh_:
-        shape:
         cache_key:
 
     attr_reader: [width, height, x0, y0, dx, dy]
 
     def:
-      initialize | GDAL::Raster.COPY:
-        - [Tensor::Base &, z]
-        - [Tensor::Type, type]
-        - [const Vdouble &, x01_y01]
-        - [const Ostring &, proj = nil]
+      initialize | GDAL::Raster.COPY: [[Tensor::Base &, z], [Tensor::Type, type], [const Vdouble &, x01_y01], *proj]
       fill_value:
       shape:
       type:
       x:
       y:
       z | _z_:
+      grid:
       reproject:
+      nearest_for:
       transform_for:

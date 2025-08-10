@@ -6,17 +6,15 @@ namespace GDAL {
 
     struct Transform {
       Vector  mesh;
-      size_t  width, height; // always >= to the original grid
       double  x0, y0;
       double  dx, dy;
       ssize_t rx, ry; // always >= 1
 
       auto _mesh_() const { return mesh; }
-      auto shape()  const { return Vsize_t{ height, width }; }
 
       string cache_key(const Raster & raster) const {
         return raster.cache_key()
-          + std::format(":{}:{}:{}:{}:{}:{}:{}:{}:{}", width, height, x0, y0, dx, dy, rx, ry, reinterpret_cast< std::uintptr_t >(mesh.srs));
+          + std::format(":{}:{}:{}:{}:{}:{}:{}", x0, y0, dx, dy, rx, ry, reinterpret_cast< std::uintptr_t >(mesh.srs));
       }
     };
 
@@ -74,12 +72,27 @@ namespace GDAL {
 
     auto _z_() const { return z; }
 
+    Vector grid() const {
+      size_t total = width * height;
+      auto grid = Vector(Vdouble(total), Vdouble(total), srs);
+      auto & x = grid.x, & y = grid.y;
+      size_t point = 0;
+      double xi, yj = y0;
+      for (size_t j = 0; j < height; ++j, yj += dy) {
+        xi = x0;
+        for (size_t i = 0; i < width; ++i, ++point, xi += dx) {
+          x[point] = xi;
+          y[point] = yj;
+        }
+      }
+      return grid;
+    }
+
     Raster reproject(const string & proj, const GType & fill_value = none, Obool memoize = nil) const {
       auto tf = transform_for(proj, memoize);
       auto nearest = nearest_for(tf, memoize);
-      auto & width = tf.width, & height = tf.height;
-      auto & x0 = tf.x0,       & y0 = tf.y0;
-      auto & dx = tf.dx,       & dy = tf.dy;
+      auto & x0 = tf.x0, & y0 = tf.y0;
+      auto & dx = tf.dx, & dy = tf.dy;
       switch (type()) {
       <%- template[:numeric].each do |TENSOR, T| -%>
       case Tensor::Type::TENSOR: {
@@ -115,26 +128,14 @@ namespace GDAL {
 
     Raster::Transform transform_for(const string & proj, Obool memoize = nil) const {
       if (memoize.value_or(false)) return cached_transform_for(proj);
-      size_t total = width * height;
       Transform tf;
-      auto grid = Vector(Vdouble(total), Vdouble(total), srs);
-      auto & x = grid.x, & y = grid.y;
-      size_t point = 0;
-      double xi, yj = y0;
-      for (size_t j = 0; j < height; ++j, yj += dy) {
-        xi = x0;
-        for (size_t i = 0; i < width; ++i, ++point, xi += dx) {
-          x[point] = xi;
-          y[point] = yj;
-        }
-      }
-      tf.mesh = grid.reproject(proj);
+      tf.mesh = grid().reproject(proj);
       auto & dst_x = tf.mesh.x, & dst_y = tf.mesh.y;
       double  x_min = Float::inf,  x_max = -Float::inf,  y_min = Float::inf,  y_max = -Float::inf;
       double dx_min = Float::inf, dx_max = -Float::inf, dy_min = Float::inf, dy_max = -Float::inf;
       double x_prev; Vdouble y_prev(width);
-      double dxi, dyj;
-      point = 0;
+      double xi, yj, dxi, dyj;
+      size_t point = 0;
       for (size_t j = 0; j < height; ++j) {
         for (size_t i = 0; i < width; ++i, ++point) {
           xi = dst_x[point]; yj = dst_y[point];
@@ -151,8 +152,6 @@ namespace GDAL {
           x_prev = xi; y_prev[i] = yj;
         }
       }
-      tf.width  = width;
-      tf.height = height;
       dx_min = (x_max - x_min) / (width - 1);
       dy_min = (y_max - y_min) / (height - 1);
       tf.rx = std::ceil(dx_max / dx_min);
@@ -161,31 +160,13 @@ namespace GDAL {
       if (orientation[0] < 0) { auto tmp = x_min; x_min = x_max; x_max = tmp; }
       if (orientation[1] < 0) { auto tmp = y_min; y_min = y_max; y_max = tmp; }
       tf.x0 = x_min; tf.y0 = y_min;
-      tf.dx = (x_max - x_min) / (tf.width - 1);
-      tf.dy = (y_max - y_min) / (tf.height - 1);
+      tf.dx = (x_max - x_min) / (width - 1);
+      tf.dy = (y_max - y_min) / (height - 1);
       return tf;
-    }
-
-    string cache_key() const {
-      return std::format("{}:{}:{}:{}:{}:{}:{}", width, height, x0, y0, dx, dy, reinterpret_cast< std::uintptr_t >(srs));
-    }
-
-    private:
-
-    auto cache_key_for(const string & proj) const {
-      return cache_key() + std::format(":{}", reinterpret_cast< std::uintptr_t >(srs_for(proj)));
-    }
-
-    Raster::Transform cached_transform_for(const string & proj) const {
-      static std::unordered_map< string, Transform > cache;
-      string key = cache_key_for(proj);
-      if (!cache.contains(key)) cache[key] = transform_for(proj);
-      return cache[key];
     }
 
     vector< Vssize_t > nearest_for(const Transform & tf, Obool memoize = nil) const {
       if (memoize.value_or(false)) return cached_nearest_for(tf);
-      auto & width = tf.width, & height = tf.height;
       auto & x  = tf.mesh.x, & y  = tf.mesh.y;
       auto & x0 = tf.x0,     & y0 = tf.y0;
       auto & dx = tf.dx,     & dy = tf.dy;
@@ -233,6 +214,23 @@ namespace GDAL {
         }
       }
       return nearest;
+    }
+
+    string cache_key() const {
+      return std::format("{}:{}:{}:{}:{}:{}:{}", width, height, x0, y0, dx, dy, reinterpret_cast< std::uintptr_t >(srs));
+    }
+
+    private:
+
+    auto cache_key_for(const string & proj) const {
+      return cache_key() + std::format(":{}", reinterpret_cast< std::uintptr_t >(srs_for(proj)));
+    }
+
+    Raster::Transform cached_transform_for(const string & proj) const {
+      static std::unordered_map< string, Transform > cache;
+      string key = cache_key_for(proj);
+      if (!cache.contains(key)) cache[key] = transform_for(proj);
+      return cache[key];
     }
 
     vector< Vssize_t > & cached_nearest_for(const Transform & tf) const {

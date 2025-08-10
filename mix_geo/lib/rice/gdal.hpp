@@ -1,4 +1,5 @@
 #include "mix_geo/gdal/base.hpp"
+#include "mix_geo/gdal/point.hpp"
 #include "mix_geo/gdal/vector.hpp"
 #include "mix_geo/gdal/raster.hpp"
 
