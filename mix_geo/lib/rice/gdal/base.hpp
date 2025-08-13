@@ -5,11 +5,11 @@ namespace GDAL {
   class Base {
     public:
 
-    OGRSpatialReference * srs = nullptr;
+    const OGRSpatialReference * srs = nullptr;
 
     Base() = default;
 
-    explicit Base(const string & proj):
+    explicit Base(const Ostring & proj):
       Base(srs_for(proj)) {
     }
 
@@ -33,13 +33,17 @@ namespace GDAL {
 
     protected:
 
-    explicit Base(OGRSpatialReference * srs):
+    explicit Base(const OGRSpatialReference * srs):
       srs(srs) {
     }
 
+    static const OGRSpatialReference * srs_for(const Ostring & proj) {
+      return srs_for(proj.value_or("4326"));
+    }
+
     // NOTE gdal/port/cpl_mem_cache.h --> maxSize = 64
-    static OGRSpatialReference * srs_for(const string & proj) {
-      static std::unordered_map< string, OGRSpatialReference * > cache;
+    static const OGRSpatialReference * srs_for(const string & proj) {
+      static std::unordered_map< string, const OGRSpatialReference * > cache;
       if (cache.contains(proj)) return cache[proj];
       if (cache.size() >= 64) throw RuntimeError("too many SRS in use");
       OGRErr e;
@@ -62,7 +66,7 @@ namespace GDAL {
       return srs;
     }
 
-    static int srid_for(OGRSpatialReference * srs) {
+    static int srid_for(const OGRSpatialReference * srs) {
       const char * auth = srs->GetAuthorityName(nullptr);
       const char * code = srs->GetAuthorityCode(nullptr);
       if (auth != nullptr && code != nullptr && string(auth) == "EPSG") {
@@ -72,7 +76,7 @@ namespace GDAL {
       return number > 0 ? number : 0;
     }
 
-    static string wkt_for(OGRSpatialReference * srs) {
+    static string wkt_for(const OGRSpatialReference * srs) {
       char * c_str = nullptr;
       finally ensure([&]{
         CPLFree(c_str);
@@ -82,7 +86,7 @@ namespace GDAL {
       return wkt;
     }
 
-    static string proj4_for(OGRSpatialReference * srs) {
+    static string proj4_for(const OGRSpatialReference * srs) {
       char * c_str = nullptr;
       finally ensure([&]{
         CPLFree(c_str);
@@ -92,11 +96,11 @@ namespace GDAL {
       return proj4;
     }
 
-    static Vint axis_mapping_for(OGRSpatialReference * srs) {
+    static Vint axis_mapping_for(const OGRSpatialReference * srs) {
       return srs->GetDataAxisToSRSAxisMapping();
     }
 
-    static Vdouble orientation_for(OGRSpatialReference * srs) {
+    static Vdouble orientation_for(const OGRSpatialReference * srs) {
       OGRAxisOrientation orientation;
       auto mapping = axis_mapping_for(srs);
       if (mapping.size() != 2) throw RuntimeError("srs mapping.size() != 2");
@@ -119,7 +123,7 @@ namespace GDAL {
       return xy;
     }
 
-    static Vstring orientation_names_for(OGRSpatialReference * srs) {
+    static Vstring orientation_names_for(const OGRSpatialReference * srs) {
       OGRAxisOrientation orientation;
       auto mapping = axis_mapping_for(srs);
       Vstring xy(2);
@@ -136,11 +140,11 @@ namespace GDAL {
       return xy;
     }
 
-    static int mapping_strategy_for(OGRSpatialReference * srs) {
+    static int mapping_strategy_for(const OGRSpatialReference * srs) {
       return srs->GetAxisMappingStrategy();
     }
 
-    static string mapping_strategy_name_for(OGRSpatialReference * srs) {
+    static string mapping_strategy_name_for(const OGRSpatialReference * srs) {
       switch (mapping_strategy_for(srs)) {
       case OAMS_TRADITIONAL_GIS_ORDER: return "TRADITIONAL_GIS_ORDER";
       case OAMS_AUTHORITY_COMPLIANT:   return "AUTHORITY_COMPLIANT";

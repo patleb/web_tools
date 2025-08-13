@@ -1,5 +1,14 @@
 module GDAL
   Raster.class_eval do
+    self::Transform.class_eval do
+      module self::WithOverrides
+        def mesh
+          super.to_a
+        end
+      end
+      prepend self::WithOverrides
+    end
+
     module self::WithOverrides
       def initialize(z, *x01_y01, x: nil, y: nil, proj: nil, **proj4)
         proj = GDAL.proj4text(**proj4) unless proj || proj4.empty?
@@ -49,7 +58,7 @@ module GDAL
     def _reproject_(proj = nil, fill_value: nil, memoize: nil, **proj4)
       proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
       tf = transform_for(proj, memoize)
-      nearest = _nearest_for_(tf, memoize)
+      nearest = _nearest_for_(tf, proj, memoize)
       x0, y0, dx, dy = tf.x0, tf.y0, tf.dx, tf.dy
       src_data = z
       src_fill_value = src_data.fill_value
@@ -77,9 +86,9 @@ module GDAL
     private :transform_for
     private
 
-    def _nearest_for_(tf, memoize = nil)
-      return _cached_nearest_for_(tf) if memoize
-      mesh, x0, y0, dx, dy, rx, ry = tf.mesh.to_a, tf.x0, tf.y0, tf.dx, tf.dy, tf.rx, tf.ry
+    def _nearest_for_(tf, proj, memoize = nil)
+      return _cached_nearest_for_(tf, proj) if memoize
+      mesh, x0, y0, dx, dy, rx, ry = tf.mesh, tf.x0, tf.y0, tf.dx, tf.dy, tf.rx, tf.ry
       mesh_points = Array.new(height){ Array.new(width){ Set.new } }
       mesh.each_with_index do |(x, y), point|
         j = ((y - y0) / dy).round
@@ -87,7 +96,6 @@ module GDAL
         mesh_points[j][i] << point
       end
       nearest = Array.new(height){ Array.new(width) }
-      max_rx, max_ry = (dx * rx).abs, (dy * ry).abs
       yj = y0
       height.times do |j|
         xi = x0
@@ -100,16 +108,17 @@ module GDAL
               points.merge(mesh_points[box_j][box_i])
             end
           end
-          distances = points.select_map do |point|
-            x, y = mesh[point]
-            next if (dist_x = (x - xi).abs) > max_rx
-            next if (dist_y = (y - yj).abs) > max_ry
-            dist = dist_x * dist_x + dist_y * dist_y
-            [Math.sqrt(dist), point]
+          pixel = Point.new(xi, yj, proj: proj)
+          d_min = Float::INFINITY
+          nearest_point = -1
+          points.each do |point|
+            d = pixel.distance(*mesh[point])
+            next unless d < d_min
+            d_min = d
+            nearest_point = point
           end
-          distances.sort!
-          _distance, point = distances.first
-          nearest[j][i] = point
+          raise "no point at [#{j}][#{i}]" if nearest_point == -1
+          nearest[j][i] = nearest_point
           xi += dx
         end
         yj += dy
@@ -117,10 +126,10 @@ module GDAL
       nearest
     end
 
-    def _cached_nearest_for_(tf)
+    def _cached_nearest_for_(tf, proj)
       key = tf.cache_key(self)
       unless (nearest = (@@nearest_cache ||= {})[key])
-        nearest = (@@nearest_cache[key] = _nearest_for_(tf))
+        nearest = (@@nearest_cache[key] = _nearest_for_(tf, proj))
       end
       nearest
     end

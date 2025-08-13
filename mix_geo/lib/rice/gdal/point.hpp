@@ -5,10 +5,10 @@ namespace GDAL {
     Point() = default;
 
     Point(double x, double y, const Ostring & proj = nil):
-      Point(x, y, srs) {
+      Point(x, y, srs_for(proj)) {
     }
 
-    Point(double x, double y, OGRSpatialReference * srs):
+    Point(double x, double y, const OGRSpatialReference * srs):
       Base::Base(srs),
       point(x, y) {
       point.assignSpatialReference(srs);

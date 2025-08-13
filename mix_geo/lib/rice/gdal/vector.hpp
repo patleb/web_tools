@@ -9,10 +9,10 @@ namespace GDAL {
     Vector() = default;
 
     Vector(const Vdouble & x, const Vdouble & y, const Ostring & proj = nil):
-      Vector(x, y, srs_for(proj.value_or("4326"))) {
+      Vector(x, y, srs_for(proj)) {
     }
 
-    Vector(const Vdouble & x, const Vdouble & y, OGRSpatialReference * srs):
+    Vector(const Vdouble & x, const Vdouble & y, const OGRSpatialReference * srs):
       Base::Base(srs),
       x(x),
       y(y),
