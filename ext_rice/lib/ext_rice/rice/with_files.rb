@@ -118,7 +118,7 @@ module Rice
     end
 
     def extract_configs!(yml)
-      CONFIGS.map{ |name| [name, Set.new(Array.wrap(yml.delete(name)))] }.to_h
+      CONFIGS.map{ |name| [name, Set.new(Array.wrap(yml.delete(name)).flatten)] }.to_h
     end
 
     def merge_defs!(parent, children)
