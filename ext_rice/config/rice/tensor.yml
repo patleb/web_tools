@@ -57,6 +57,11 @@ module Tensor:
           self.reshape(shape);
           return self;
         }
+      reverse: >
+        [](Tensor::<%= tensor %> & self, const Osize_t & axis) -> Tensor::<%= tensor %> & {
+          self.reverse(axis);
+          return self;
+        }
       seq: >
         [](Tensor::<%= tensor %> & self, const O<%= type %> & start) -> Tensor::<%= tensor %> & {
           self.seq(start);

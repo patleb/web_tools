@@ -48,4 +48,13 @@ class TensorTest < Rice::TestCase
     assert_equal [2, 3], Tensor::Int32.new(6).reshape(2, 3).shape
     assert_equal [3, 4], Tensor::Int32.new(1, 3, 4).reshape(false, true, true).shape
   end
+
+  test '#reverse' do
+    tensor = Tensor::Int32.new(4, 3).seq
+    assert_equal [9, 10, 11, 6, 7, 8, 3, 4, 5, 0, 1, 2], tensor.reverse(0).to_a
+    assert_equal [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], tensor.reverse(1).to_a
+    tensor = Tensor::Int32.new(3, 4).seq
+    assert_equal [3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8], tensor.reverse(1).to_a
+    assert_equal [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], tensor.reverse(0).to_a
+  end
 end

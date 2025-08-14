@@ -136,6 +136,49 @@ namespace Tensor {
       return *this;
     }
 
+    TENSOR & reverse(const Osize_t & axis = nil) {
+      auto begin = this->begin();
+      auto end   = this->end();
+      if (!axis) {
+        std::reverse(begin, end);
+        return *this;
+      }
+      if (rank > 2) throw RuntimeError("rank > 2");
+      size_t _axis_ = axis.value();
+      if (_axis_ >= 2) throw RuntimeError("axis >= 2");
+      if (_axis_ == 0) {
+        if (rank == 1) std::reverse(begin, end);
+        else {
+          size_t cols = shape[1];
+          size_t bytes = cols * sizeof(T);
+          T * tmp = new T[cols];
+          finally ensure([&]{
+            delete[] tmp;
+          });
+          auto begin_end  = begin + cols;
+          auto swap_begin = end - cols;
+          while (begin != swap_begin) {
+            std::memcpy(tmp, &*begin, bytes);
+            std::memcpy(&*begin, &*swap_begin, bytes);
+            std::memcpy(&*swap_begin, tmp, bytes);
+            if ((begin = begin_end) == swap_begin) break;
+            begin_end  = begin + cols;
+            swap_begin = swap_begin - cols;
+          }
+        }
+      } else { // _axis_ == 1
+        if (rank == 1) throw RuntimeError("rank == 1");
+        size_t cols = shape[1];
+        auto reverse_end = begin + cols;
+        while (begin != end) {
+          std::reverse(begin, reverse_end);
+          begin = reverse_end;
+          reverse_end = begin + cols;
+        }
+      }
+      return *this;
+    }
+
     TENSOR & seq(const O-T- & start = nil) {
       std::iota(begin(), end(), start.value_or(0));
       return *this;
@@ -227,7 +270,7 @@ namespace Tensor {
       }
     }
 
-    std::string to_string(Osize_t limit = nil) const {
+    std::string to_string(const Osize_t & limit = nil) const {
       std::stringstream stream;
       stream << "[";
       std::ranges::for_each(shape, [&stream, first = true](auto size) mutable {
@@ -236,12 +279,20 @@ namespace Tensor {
         stream << size;
       });
       stream << "]";
+      if (!limit) {
+        stream << to_sql();
+        return std::string(stream.str().c_str());
+      }
+      auto _limit_ = limit.value();
+      if (size > _limit_) {
+        return std::string(stream.str().c_str());
+      }
       stream << to_sql();
       auto string = std::string(stream.str().c_str());
-      if (!limit) return string;
-      auto _limit_ = limit.value();
-      if (string.size() <= _limit_) return string;
-      return string.substr(0, _limit_) + "...";
+      if (string.size() > _limit_) {
+        return string.substr(0, _limit_) + "...";
+      }
+      return string;
     }
 
     static TENSOR atan2(const TENSOR & y, const TENSOR & x) {

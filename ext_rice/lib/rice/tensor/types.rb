@@ -46,6 +46,10 @@ module Tensor
           super(shape)
         end
 
+        def reverse(axis = nil)
+          super
+        end
+
         def seq(start = nil)
           super
         end
