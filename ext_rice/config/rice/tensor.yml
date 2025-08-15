@@ -23,18 +23,18 @@ module Tensor:
 
     def:
       self.from_sql:
-#      self.atan2:
+      self.atan2:
 
       initialize | Tensor::<%= tensor %>.COPY:
         - { [ *shape, *fill_value_<%= type %> ] }
         - { [ [const V<%= type %> &, values], *shape, *fill_value_<%= type %> ] }
       "== | operator==":
-#      "+  | operator+": &binary_op
-#        - { Tensor::<%= tensor %> const: [const Tensor::<%= tensor %> & tensor] }
-#        - { Tensor::<%= tensor %> const: [<%= type %> value] }
-#      "-  | operator-": *binary_op
-#      "*  | operator*": *binary_op
-#      "/  | operator/": *binary_op
+      "+  | operator+": &binary_op
+        - { Tensor::<%= tensor %> const: [const Tensor::<%= tensor %> & tensor] }
+        - { Tensor::<%= tensor %> const: [<%= type %> value] }
+      "-  | operator-": *binary_op
+      "*  | operator*": *binary_op
+      "/  | operator/": *binary_op
       "[] | operator[]":
         - { const <%= type %> & const: [size_t i] }
         - { const <%= type %> & const: [const Vsize_t & indexes] }
@@ -69,18 +69,18 @@ module Tensor:
         }
       to_sql:
       to_string:
-#      abs:
-#      exp:
-#      log:
-#      log10:
-#      sqrt:
-#      sin:
-#      cos:
-#      tan:
-#      asin:
-#      acos:
-#      atan:
-#      sinh:
-#      cosh:
-#      tanh:
+      abs:
+      exp:
+      log:
+      log10:
+      sqrt:
+      sin:
+      cos:
+      tan:
+      asin:
+      acos:
+      atan:
+      sinh:
+      cosh:
+      tanh:
   <% end %>
