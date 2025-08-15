@@ -224,7 +224,7 @@ namespace GDAL {
       return cache_key() + std::format(":{}", reinterpret_cast< std::uintptr_t >(srs_for(proj)));
     }
 
-    const Raster::Transform cached_transform_for(const string & proj) const {
+    const Raster::Transform & cached_transform_for(const string & proj) const {
       static std::unordered_map< string, Transform > cache;
       string key = cache_key_for(proj);
       if (!cache.contains(key)) cache[key] = transform_for(proj);
