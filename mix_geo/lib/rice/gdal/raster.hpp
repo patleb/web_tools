@@ -1,3 +1,5 @@
+#define NO_POINT -1
+
 namespace GDAL {
   class Raster : public Base {
     public:
@@ -88,7 +90,7 @@ namespace GDAL {
 
     Raster reproject(const string & proj, const GType & fill_value = none, Obool memoize = nil) const {
       auto tf = transform_for(proj, memoize);
-      auto nearest = nearest_for(tf, proj, memoize);
+      auto nearest = nearest_for(tf, memoize);
       auto & x0 = tf.x0, & y0 = tf.y0;
       auto & dx = tf.dx, & dy = tf.dy;
       switch (type()) {
@@ -137,12 +139,10 @@ namespace GDAL {
           if (xi < x_min) x_min = xi; if (xi > x_max) x_max = xi;
           if (yj < y_min) y_min = yj; if (yj > y_max) y_max = yj;
           if (i) {
-            if (std::signbit(xi) == std::signbit(x_prev)) throw RuntimeError("x sign changed");
             dxi = std::abs(xi - x_prev);
             if (dxi > dx_max) dx_max = dxi;
           }
           if (j) {
-            if (std::signbit(yj) == std::signbit(y_prev[i])) throw RuntimeError("y sign changed");
             dyj = std::abs(yj - y_prev[i]);
             if (dyj > dy_max) dy_max = dyj;
           }
@@ -152,8 +152,8 @@ namespace GDAL {
       if (std::isinf(x_max) || std::isinf(y_max)) throw RuntimeError("infinite coordinates");
       auto dx_min = (x_max - x_min) / (width - 1);
       auto dy_min = (y_max - y_min) / (height - 1);
-      tf.rx = static_cast< ssize_t >(std::ceil(dx_max / dx_min));
-      tf.ry = static_cast< ssize_t >(std::ceil(dy_max / dy_min));
+      tf.rx = std::ceil(dx_max / dx_min);
+      tf.ry = std::ceil(dy_max / dy_min);
       auto orientation = _orientation_(proj);
       if (orientation[0] < 0) { auto tmp = x_min; x_min = x_max; x_max = tmp; }
       if (orientation[1] < 0) { auto tmp = y_min; y_min = y_max; y_max = tmp; }
@@ -163,19 +163,19 @@ namespace GDAL {
       return tf;
     }
 
-    vector< Vssize_t > nearest_for(const Transform & tf, const string & proj, Obool memoize = nil) const {
-      if (memoize.value_or(false)) return cached_nearest_for(tf, proj);
-      auto & x = tf.mesh.x, & y = tf.mesh.y;
-      auto & x0 = tf.x0, & y0 = tf.y0;
-      auto & dx = tf.dx, & dy = tf.dy;
-      auto & rx = tf.rx, & ry = tf.ry;
+    vector< Vssize_t > nearest_for(const Transform & tf, Obool memoize = nil) const {
+      if (memoize.value_or(false)) return cached_nearest_for(tf);
+      auto & x  = tf.mesh.x, & y  = tf.mesh.y;
+      auto & x0 = tf.x0,     & y0 = tf.y0;
+      auto & dx = tf.dx,     & dy = tf.dy;
+      auto & rx = tf.rx,     & ry = tf.ry;
       auto & total = tf.mesh.size;
       vector< vector< std::unordered_set< size_t >>> mesh_points(height);
       ssize_t i, j;
       for (j = 0; j < height; ++j) mesh_points[j] = vector< std::unordered_set< size_t >>(width);
       for (size_t point = 0; point < total; ++point) {
-        j = static_cast< ssize_t >(std::round((y[point] - y0) / dy));
-        i = static_cast< ssize_t >(std::round((x[point] - x0) / dx));
+        j = std::round((y[point] - y0) / dy);
+        i = std::round((x[point] - x0) / dx);
         mesh_points[j][i].insert(point);
       }
       ssize_t box_i, box_j;
@@ -194,16 +194,17 @@ namespace GDAL {
               points.insert(box_points.begin(), box_points.end());
             }
           }
-          double d_min = Float::inf;
-          ssize_t nearest_point = -1;
-          auto pixel = Point(xi, yj, proj);
+          double dxi, dyj, d, d_min = Float::inf;
+          ssize_t nearest_point = NO_POINT;
           for (auto && point : points) {
-            auto d = pixel.distance(x[point], y[point]);
+            dxi = std::abs(x[point] - xi);
+            dyj = std::abs(y[point] - yj);
+            d = dxi * dxi + dyj * dyj;
             if (d >= d_min) continue;
             d_min = d;
             nearest_point = point;
           }
-          if (nearest_point == -1) throw RuntimeError("no point at [" S(j) "][" S(i) "]");
+          if (nearest_point == NO_POINT) throw RuntimeError("no point at [" S(j) "][" S(i) "]");
           nearest[j][i] = nearest_point;
         }
       }
@@ -227,10 +228,10 @@ namespace GDAL {
       return cache[key];
     }
 
-    const vector< Vssize_t > & cached_nearest_for(const Transform & tf, const string & proj) const {
+    const vector< Vssize_t > & cached_nearest_for(const Transform & tf) const {
       static std::unordered_map< string, vector< Vssize_t >> cache;
       string key = tf.cache_key(*this);
-      if (!cache.contains(key)) cache[key] = nearest_for(tf, proj);
+      if (!cache.contains(key)) cache[key] = nearest_for(tf);
       return cache[key];
     }
   };

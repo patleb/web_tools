@@ -58,7 +58,7 @@ module GDAL
     def _reproject_(proj = nil, fill_value: nil, memoize: nil, **proj4)
       proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
       tf = transform_for(proj, memoize)
-      nearest = _nearest_for_(tf, proj, memoize)
+      nearest = _nearest_for_(tf, memoize)
       x0, y0, dx, dy = tf.x0, tf.y0, tf.dx, tf.dy
       src_data = z
       src_fill_value = src_data.fill_value
@@ -82,12 +82,11 @@ module GDAL
       self.class.new(dst_data, x0, x0 + dx, y0, y0 + dy, proj: proj)
     end
 
-    private :nearest_for
     private :transform_for
     private
 
-    def _nearest_for_(tf, proj, memoize = nil)
-      return _cached_nearest_for_(tf, proj) if memoize
+    def _nearest_for_(tf, memoize = nil)
+      return _cached_nearest_for_(tf) if memoize
       mesh, x0, y0, dx, dy, rx, ry = tf.mesh, tf.x0, tf.y0, tf.dx, tf.dy, tf.rx, tf.ry
       mesh_points = Array.new(height){ Array.new(width){ Set.new } }
       mesh.each_with_index do |(x, y), point|
@@ -108,16 +107,17 @@ module GDAL
               points.merge(mesh_points[box_j][box_i])
             end
           end
-          pixel = Point.new(xi, yj, proj: proj)
           d_min = Float::INFINITY
-          nearest_point = -1
+          nearest_point = nil
           points.each do |point|
-            d = pixel.distance(*mesh[point])
+            x, y = mesh[point]
+            dxi, dyj = (x - xi).abs, (y - yj).abs
+            d = dxi * dxi + dyj * dyj
             next unless d < d_min
             d_min = d
             nearest_point = point
           end
-          raise "no point at [#{j}][#{i}]" if nearest_point == -1
+          raise "no point at [#{j}][#{i}]" unless nearest_point
           nearest[j][i] = nearest_point
           xi += dx
         end
@@ -126,10 +126,10 @@ module GDAL
       nearest
     end
 
-    def _cached_nearest_for_(tf, proj)
+    def _cached_nearest_for_(tf)
       key = tf.cache_key(self)
       unless (nearest = (@@nearest_cache ||= {})[key])
-        nearest = (@@nearest_cache[key] = _nearest_for_(tf, proj))
+        nearest = (@@nearest_cache[key] = _nearest_for_(tf))
       end
       nearest
     end

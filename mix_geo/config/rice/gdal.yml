@@ -76,5 +76,4 @@ module GDAL:
       z | _z_:
       grid:
       reproject:
-      nearest_for:
       transform_for:
