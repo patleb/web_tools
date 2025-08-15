@@ -36,6 +36,14 @@ namespace! :rice do
     CMD
   end
 
+  namespace :cache do
+    desc 'clear c++ cache'
+    task :clear => :environment do
+      Rice.checksum_path.delete(false)
+      exec 'ccache -C -z'
+    end
+  end
+
   desc 'run gdb test file'
   task :gdb, [:file_or_id, :breakpoint] => :environment do |t, args|
     ENV['DEBUG'] = 'true'
