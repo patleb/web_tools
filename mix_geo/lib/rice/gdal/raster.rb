@@ -117,7 +117,6 @@ module GDAL
             d_min = d
             nearest_point = point
           end
-          raise "no point at [#{j}][#{i}]" unless nearest_point
           nearest[j][i] = nearest_point
           xi += dx
         end

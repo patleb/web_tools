@@ -106,11 +106,15 @@ namespace GDAL {
         for (size_t j = 0; j < height; ++j) {
           for (size_t i = 0; i < width; ++i, ++dst_data) {
             auto point = nearest[j][i];
-            auto value = src_data[point];
-            if (src_isnan_nodata) {
-              *dst_data = std::isnan(value) ? dst_nodata : value;
+            if (point == NO_POINT) {
+              *dst_data = dst_nodata;
             } else {
-              *dst_data = (value == src_nodata) ? dst_nodata : value;
+              auto value = src_data[point];
+              if (src_isnan_nodata) {
+                *dst_data = std::isnan(value) ? dst_nodata : value;
+              } else {
+                *dst_data = (value == src_nodata) ? dst_nodata : value;
+              }
             }
           }
         }
@@ -204,7 +208,6 @@ namespace GDAL {
             d_min = d;
             nearest_point = point;
           }
-          if (nearest_point == NO_POINT) throw RuntimeError("no point at [" S(j) "][" S(i) "]");
           nearest[j][i] = nearest_point;
         }
       }
