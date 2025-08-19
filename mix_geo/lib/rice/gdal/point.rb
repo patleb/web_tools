@@ -6,11 +6,6 @@ module GDAL
         proj = GDAL.proj4text(**proj4) unless proj || proj4.empty?
         super(x, y, proj)
       end
-
-      def reproject(proj = nil, **proj4)
-        proj = proj ? proj.to_s : GDAL.proj4text(**proj4)
-        super(proj)
-      end
     end
     prepend self::WithOverrides
 

@@ -41,7 +41,6 @@ module GDAL:
       x:
       y:
       distance:
-      reproject:
 
   class Vector < GDAL::Base:
     attr_reader: [size]

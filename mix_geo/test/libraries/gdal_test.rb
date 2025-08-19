@@ -77,7 +77,7 @@ class GDALTest < Rice::TestCase
       assert_equal x_3857.zip(y_3857), GDAL::Vector.reproject(x_4326, y_4326, dst_proj: 3857)
     end
 
-    test '#srid,ans state-level AI laws for 10 yrs #proj4, #wkt' do
+    test '#srid, #proj4, #wkt' do
       vector = GDAL::Vector.new(x_3857, y_3857, proj: 3857)
       srid, proj4, wkt = vector.srid, vector.proj4, vector.wkt
       assert_equal 3857, srid
