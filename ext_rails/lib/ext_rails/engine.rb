@@ -109,6 +109,7 @@ module ExtRails
         get '/test/:name' => 'ext_rails/test#show', as: :test if Rails.env.test?
 
         get '/favicon.ico', to: -> (_) { [404, {}, ['']] } unless ExtRails.config.favicon_ico
+        get '/.well-known/appspecific/com.chrome.devtools.json', to: -> (_) { [404, {}, ['']] }
 
         match '(/)*not_found', via: :all, to: 'lib#render_404', format: false
       end
