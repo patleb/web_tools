@@ -42,7 +42,7 @@ module ExtRice
     end
 
     def target
-      @target || 'ext'
+      Setting[:rice_target]
     end
 
     def target_path

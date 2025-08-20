@@ -1,4 +1,4 @@
-require 'ext_ruby'
+require 'mix_setting'
 require 'ext_rice/configuration'
 require 'ext_rice/mkmf'
 require 'ext_rice/rice/with_files'

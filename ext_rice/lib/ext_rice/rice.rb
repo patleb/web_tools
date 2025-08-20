@@ -46,8 +46,8 @@ module Rice
     add_libraries.each{ |name| add_library name }
     yield(self) if block_given?
     copy_files
-    split_files
-    create_and_split_init_file unless executable?
+    split_headers
+    create_and_split_inits unless executable?
     unless dry_run
       $CXXFLAGS += " $(optflags)" # O3 -fno-fast-math
       $CXXFLAGS += " #{makefile[:cflags]}" if makefile[:cflags].present?

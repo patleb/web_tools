@@ -20,7 +20,7 @@ module Rice
 
     # NOTE extracting the .cpp files is faster if the files are faster to compile than the mods and M mods < J jobs
     #  --> otherwise, just split by modules
-    def split_files
+    def split_headers
       filter(dst_path.glob('**/*.hpp')).each do |file|
         next if file.sub_ext('.cpp').exist?
         lines = file.readlines
@@ -133,7 +133,7 @@ module Rice
 
     # NOTE separating by classes is faster if the mods are faster to compile than the classes and N classes < J jobs
     #  --> otherwise, just split by modules
-    def create_and_split_init_file
+    def create_and_split_inits
       split_all   = ENV['SPLIT_MOD']&.downcase == 'all'
       mod_targets = split_all || (ENV['SPLIT_MOD'] || true).to_b ? self.module_targets : {}
       cls_targets = split_all ? self.class_targets : {}

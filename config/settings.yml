@@ -1,6 +1,7 @@
 lock: 0.2.0
 types:
 gems:
+  - ext_rice
   - mix_server
 
 shared:

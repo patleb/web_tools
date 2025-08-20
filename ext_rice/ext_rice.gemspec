@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{config,lib,vendor}/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency 'ext_ruby', version
+  s.add_dependency 'mix_setting'
   s.add_dependency 'rice', '~> 4.5.0'
 end

@@ -1,14 +1,14 @@
-<%- levels = ExtRice.config.log_levels -%>
+<%- levels = log_levels -%>
 class Logger {
   public:
 
-  enum LEVEL { <%= ExtRice.config.log_levels.keys.map(&:upcase).join(', ') %> };
+  enum LEVEL { <%= log_levels.keys.map(&:upcase).join(', ') %> };
 
   constexpr static std::string LEVELS[<%= levels.size %>] = { <%= levels.keys.map(&:upcase).map(&:quoted).join(', ') %> };
   inline static size_t marker_i = 0;
   inline static bool new_run = true;
 
-  explicit Logger() { file.open("<%= ExtRice.config.log_path %>", std::ofstream::out | std::ofstream::app); }
+  explicit Logger() { file.open("<%= log_path %>", std::ofstream::out | std::ofstream::app); }
   <%= no_copy :Logger %>
   ~Logger() {} // no file.close, since global/static variables' destructors aren't called in DLL unload/exit
 
@@ -30,10 +30,10 @@ class Logger {
 
 inline auto logger = Logger();
 
-<%- ExtRice.config.log_levels.each do |level, level_i| -%>
+<%- log_levels.each do |level, level_i| -%>
 template < class... Args >
 inline void log_<%= level %>(const Args & ...messages) {
-  <%- if level_i >= ExtRice.config.log_level_i -%>
+  <%- if level_i >= log_level_i -%>
   logger.log< Args... >(messages..., Logger::LEVEL::<%= level.upcase %>);
   <%- end -%>
 }
