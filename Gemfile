@@ -51,5 +51,3 @@ gem 'mix_setting', path: './mix_setting'
 gem 'mix_task', path: './mix_task'
 gem 'mix_user', path: './mix_user'
 gem 'sunzistrano', path: './sunzistrano'
-
-gem 'numo-blis'
