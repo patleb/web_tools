@@ -17,18 +17,6 @@ namespace! :rice do
     compiler.run
   end
 
-  desc 'compile c++ test suite'
-  task :test_suite, [:root] => [:no_ext, :environment] do |t, args|
-    compiler = ExtRice::Compiler.new
-    compiler.test_suite(**args)
-  end
-
-  desc 'compile c++ test extension'
-  task :test_extension, [:root] => [:no_ext, :environment] do |t, args|
-    compiler = ExtRice::Compiler.new
-    compiler.test_extension(**args)
-  end
-
   desc 'start cling console'
   task :cling => :environment do
     exec <<-CMD.squish

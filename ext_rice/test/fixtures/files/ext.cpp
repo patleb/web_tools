@@ -1,14 +1,13 @@
 // before_include
 #include "some_code.hpp"
-// include
-
+//include
 #include "all.hpp"
+#include "ext_rice/rice.hpp"
 // after_include
 #include "some_other_code.hpp"
 using namespace Rice;
 
-extern "C"
-void Init_ext() {
+extern "C" void Init_ext() {
   // before_initialize
   init_some_code();
   // initialize

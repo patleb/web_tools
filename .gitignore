@@ -96,8 +96,6 @@ ext_coffee/vendor/javascript/rails-ujs/**/*.js
 sunzistrano/test/fixtures/files/local_app/
 app/rice/ext.so
 app/rice/ext.sha256
-embed_ruby.*
-unittest.*
 .gdb_history
 ### AFTER .gitignore ###
 

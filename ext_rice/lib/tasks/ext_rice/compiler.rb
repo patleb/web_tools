@@ -1,33 +1,10 @@
 module ExtRice
   class Compiler < Rake::TaskLib
-    RICE_TEST_FILES = %w(embed_ruby.cpp embed_ruby.hpp unittest.cpp unittest.hpp)
-
     def self.make
       @make ||= Pathname.executable('make').to_s
     end
 
     delegate :make, to: :class
-
-    def test_suite(root: nil)
-      ExtRice.with do |config|
-        config.executable = true
-        configure_test(config, root, target: 'unittest')
-        RICE_TEST_FILES.each do |file|
-          cp Gem.root('rice').join('test', file), config.root_test, verbose: false
-        end
-        run
-        RICE_TEST_FILES.each do |file|
-          config.root_test.join(file).delete(false)
-        end
-      end
-    end
-
-    def test_extension(root: nil)
-      ExtRice.with do |config|
-        configure_test(config, root)
-        run
-      end
-    end
 
     def run(compile: true, jobs: cpu_count)
       argv_was = ARGV.dup
@@ -61,16 +38,6 @@ module ExtRice
     end
 
     private
-
-    def configure_test(config, root, target: nil)
-      if root.present?
-        config.root = Pathname.new(root).expand_path
-        config.root_app = config.root.join('lib/rice')
-        config.extconf_path = config.root_test.join('extconf.rb')
-      end
-      config.target = target if target
-      config.target_path = config.tmp_path
-    end
 
     def cpu_count
       count  = Process.host.cpu_count
