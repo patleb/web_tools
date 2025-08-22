@@ -52,7 +52,7 @@ module Sunzistrano
     no_tasks do
       def do_up
         as_virtual do
-          Parallel.each(vm_names!) do |name, i|
+          Parallel.each(vm_names!, in_threads: Float::INFINITY) do |name, i|
             case vm_state i
             when :null
               add_virtual_host i do
@@ -76,7 +76,7 @@ module Sunzistrano
 
       def do_halt
         as_virtual do
-          Parallel.each(vm_names) do |name, i|
+          Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
             case vm_state i
             when :running
               system! "multipass stop #{name} #{'--force' if sun.force}"
@@ -91,7 +91,7 @@ module Sunzistrano
 
       def do_destroy
         as_virtual do
-          Parallel.each(vm_names) do |name, i|
+          Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
             cmd = case vm_state i
             when :null
               return
