@@ -1,6 +1,7 @@
 module Sunzistrano
-  MULTIPASS_DIR = '.multipass'
-  MULTIPASS_INFO = "#{MULTIPASS_DIR}/info.yml"
+  MULTIPASS_DIR  = Pathname.new('.multipass')
+  MULTIPASS_INFO = MULTIPASS_DIR.join('info.yml')
+  MULTIPASS_KEY  = MULTIPASS_DIR.join('private_key')
   ERB_CLOUD_INIT = './cloud-init.yml'
   TMP_CLOUD_INIT = './tmp/cloud-init.yml'
   SNAPSHOT_ACTIONS = %w(save restore list delete)
@@ -137,14 +138,14 @@ module Sunzistrano
       def do_add_ssh
         as_virtual do
           if (web_tools = Gem.root('web_tools'))
-            unless (public_key = Pathname.new(MULTIPASS_DIR).join('private_key.pub')).exist?
-              copy_file web_tools.join(MULTIPASS_DIR).join('private_key.pub'), public_key, mode: :preserve
+            unless (public_key = MULTIPASS_KEY.sub_ext('.pub')).exist?
+              copy_file web_tools.join(MULTIPASS_DIR, public_key.basename), public_key, mode: :preserve
             end
-            unless (private_key = public_key.sub_ext('')).exist?
-              copy_file web_tools.join(MULTIPASS_DIR).join('private_key'), private_key, mode: :preserve
+            unless MULTIPASS_KEY.exist?
+              copy_file web_tools.join(MULTIPASS_DIR, MULTIPASS_KEY.basename), MULTIPASS_KEY, mode: :preserve
             end
           end
-          exec "ssh-add #{MULTIPASS_DIR}/private_key 2> /dev/null"
+          exec "ssh-add #{MULTIPASS_KEY} 2> /dev/null"
         end
       end
 
@@ -241,7 +242,7 @@ module Sunzistrano
           yml = {}
         end
         keys = Array.wrap(yml[:ssh_authorized_keys])
-        yml[:ssh_authorized_keys] = keys | Setting.authorized_keys
+        yml[:ssh_authorized_keys] = keys | Setting.authorized_keys | [MULTIPASS_KEY.sub_ext('.pub').read.strip]
         yml[:manage_etc_hosts] = false unless yml.has_key? :manage_etc_hosts
         Pathname.new(TMP_CLOUD_INIT).write(yml.to_hash.pretty_yaml)
       end
@@ -361,8 +362,8 @@ module Sunzistrano
 
       def vm_info!
         @vm_info = nil
-        Pathname.new(MULTIPASS_DIR).mkdir_p
-        info_was = (file = Pathname.new(MULTIPASS_INFO)).exist? && YAML.safe_load(file.read) || {}
+        MULTIPASS_DIR.mkdir_p
+        info_was = MULTIPASS_INFO.exist? && YAML.safe_load(MULTIPASS_INFO.read) || {}
         info = ([vm_name] + sun.vm_clusters.times.map{ |i| vm_name(i + 1) }).each_with_object({}) do |name, hash|
           next info_was.delete(name) unless (json = `multipass info #{name} --format=json 2>/dev/null`).present?
           next unless (info = JSON.parse(json).dig('info', name)).present?
@@ -370,7 +371,7 @@ module Sunzistrano
           info_was[name] = hash[name] = info
           info_was[name]['ip'] = info.dig('ipv4', -1) || ip_was
         end
-        Pathname.new(MULTIPASS_INFO).write(info_was.to_yaml)
+        MULTIPASS_INFO.write(info_was.to_yaml)
         info.to_hwia
       end
 
