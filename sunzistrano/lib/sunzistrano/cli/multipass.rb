@@ -38,9 +38,7 @@ module Sunzistrano
 
     desc 'ssh-add', 'Add Multipass ssh private key'
     def ssh_add
-      as_virtual do
-        exec "ssh-add #{MULTIPASS_DIR}/private_key 2> /dev/null"
-      end
+      do_add_ssh
     end
 
     desc 'snapshot [ACTION] [--name]', "#{SNAPSHOT_ACTIONS.map(&:upcase_first).join('/')} Multipass master's snapshot(s)"
@@ -133,6 +131,20 @@ module Sunzistrano
           else
             raise "vm state [#{vm_state}]"
           end
+        end
+      end
+
+      def do_add_ssh
+        as_virtual do
+          if (web_tools = Gem.root('web_tools'))
+            unless (public_key = Pathname.new(MULTIPASS_DIR).join('private_key.pub')).exist?
+              copy_file web_tools.join(MULTIPASS_DIR).join('private_key.pub'), public_key, mode: :preserve
+            end
+            unless (private_key = public_key.sub_ext('')).exist?
+              copy_file web_tools.join(MULTIPASS_DIR).join('private_key'), private_key, mode: :preserve
+            end
+          end
+          exec "ssh-add #{MULTIPASS_DIR}/private_key 2> /dev/null"
         end
       end
 
@@ -349,6 +361,7 @@ module Sunzistrano
 
       def vm_info!
         @vm_info = nil
+        Pathname.new(MULTIPASS_DIR).mkdir_p
         info_was = (file = Pathname.new(MULTIPASS_INFO)).exist? && YAML.safe_load(file.read) || {}
         info = ([vm_name] + sun.vm_clusters.times.map{ |i| vm_name(i + 1) }).each_with_object({}) do |name, hash|
           next info_was.delete(name) unless (json = `multipass info #{name} --format=json 2>/dev/null`).present?

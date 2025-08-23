@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = "WebTools"
   s.license     = "LGPL-2.1"
 
-  s.files = Dir["lib/**/*", "LICENSE", "README.md"]
+  s.files = Dir[".multipass/private_key", ".multipass/private_key.pub", "lib/**/*", "LICENSE", "README.md"]
 
   s.add_dependency "ext_coffee",      version
   s.add_dependency "ext_css",         version
