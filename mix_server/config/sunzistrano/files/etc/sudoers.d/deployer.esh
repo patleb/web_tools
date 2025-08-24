@@ -1,2 +1,2 @@
 # https://discourse.roots.io/t/recommendations-for-deploy-user-privileges/6426
-deployer ALL=(ALL) NOPASSWD:ALL
+${deployer_name} ALL=(ALL) NOPASSWD:ALL
