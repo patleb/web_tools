@@ -24,7 +24,7 @@ fi
 desc 'Update the repo mirror to reflect the origin state'
 git remote set-url origin ${repo_url}
 if [[ "${git_shallow_clone}" != false ]]; then
-  git fetch --depth ${git_shallow_clone} origin ${branch}
+  git fetch ${git_shallow_clone} origin ${branch}
 else
   git remote update --prune
 fi
@@ -33,7 +33,7 @@ if [[ "${git_verify_commit}" != false ]]; then
 fi
 
 desc 'Check the current revision against the clone'
-if [[ "${revision}" != "$(git rev-parse HEAD)" ]]; then
+if [[ "${revision}" != "$(git rev-parse ${branch})" ]]; then
   echo.failure 'current and cloned revisions differ'
   exit 1
 fi
