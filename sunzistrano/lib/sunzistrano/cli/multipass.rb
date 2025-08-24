@@ -51,6 +51,7 @@ module Sunzistrano
     no_tasks do
       def do_up
         as_virtual do
+          raise 'the master must be created before the cluster' if sun.vm_clusters > 0 && vm_ip!.nil?
           Parallel.each(vm_names!, in_threads: Float::INFINITY) do |name, i|
             case vm_state i
             when :null
