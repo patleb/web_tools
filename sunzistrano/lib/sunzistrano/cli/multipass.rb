@@ -164,7 +164,8 @@ module Sunzistrano
       end
 
       def run_snapshot_save_cmd
-        name = "--name #{vm_snapshot sun.name}" if sun.name.present?
+        raise 'Snapshot name required' unless sun.name.present?
+        name = "--name #{vm_snapshot sun.name} --comment #{Time.now.iso8601}"
         cmd = case vm_state
         when :stopped
           "multipass snapshot #{name} #{vm_name}"
