@@ -91,6 +91,7 @@ module Sunzistrano
 
       def do_destroy
         as_virtual do
+          network = vm_ip(0)&.sub(/\.\d+$/, '')
           Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
             cmd = case vm_state i
             when :null
@@ -106,7 +107,7 @@ module Sunzistrano
             end
             remove_virtual_host i do
               system! cmd
-              remove_bridge if i == 0
+              remove_bridge network if i == 0
             end
           end
         end
@@ -288,8 +289,7 @@ module Sunzistrano
         system! "multipass exec -n #{vm_name i} -- sudo chmod 600 /etc/netplan/10-custom.yaml && sudo netplan apply"
       end
 
-      def remove_bridge
-        network = vm_ip(0).sub(/\.\d+$/, '')
+      def remove_bridge(network)
         system! "nmcli connection delete br-#{network.parameterize}"
       end
 
