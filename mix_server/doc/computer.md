@@ -210,10 +210,10 @@ Add the following to your `~/.ssh/config` file ([references](https://carlosbecke
 # -------------
 Host *
   ServerAliveInterval   300s
-Host vagrant-*.test
+Host virtual.test
   UserKnownHostsFile    /dev/null
   StrictHostKeyChecking no
-Host vagrant-*.test
+Host virtual.test
   User                  deployer
   ForwardAgent          yes
   ControlMaster         auto
