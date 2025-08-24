@@ -61,8 +61,8 @@
 /vendor/ruby
 /.multipass/*
 !/.multipass/
-!/.multipass/private_key
-!/.multipass/private_key.pub
+!/.multipass/key
+!/.multipass/key.pub
 *.box
 /.sunzistrano/*
 /.local_repo/*

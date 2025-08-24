@@ -1,7 +1,7 @@
 module Sunzistrano
   MULTIPASS_DIR  = Pathname.new('.multipass')
   MULTIPASS_INFO = MULTIPASS_DIR.join('info.yml')
-  MULTIPASS_KEY  = MULTIPASS_DIR.join('private_key')
+  MULTIPASS_KEY  = MULTIPASS_DIR.join('key')
   ERB_CLOUD_INIT = './cloud-init.yml'
   TMP_CLOUD_INIT = './tmp/cloud-init.yml'
   SNAPSHOT_ACTIONS = %w(save restore list delete)
