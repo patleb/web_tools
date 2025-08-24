@@ -17,10 +17,9 @@ module ExtRice
       mkmf_path.mkdir_p
       target_path.mkdir_p
 
-      rel_extconf = Rice.extconf_path.relative_path_from(mkmf_path).to_s
-      rel_target_path = Pathname(target_path).relative_path_from(mkmf_path).to_s
+      rel_target_path = Pathname(target_path).relative_path_from(mkmf_path)
       chdir mkmf_path, verbose: false do
-        load(rel_extconf)
+        load Rice.extconf_path.expand_path.to_s
         next unless compile
         next unless Rice.checksum_changed? || !Rice.bin_path.exist?
         Rice.bin_path.delete(false)
