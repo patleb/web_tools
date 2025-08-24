@@ -22,7 +22,7 @@ module Sunzistrano
       def run_role_cmd
         (sun.local_tasks || []).reject(&:blank?).each do |task|
           started_at = Concurrent.monotonic_time
-          context = "RAILS_ENV=#{sun.env} RAILS_APP=#{sun.app} BASH_DIR=#{bash_dir}"
+          context = "PACK=#{pack? task} RAILS_ENV=#{sun.env} RAILS_APP=#{sun.app} BASH_DIR=#{bash_dir}"
           command = "#{context} bin/rake #{task}"
           puts "[#{Time.current.utc}]#{TASK} #{task}".cyan
           output, status = capture2e(command)
@@ -40,7 +40,7 @@ module Sunzistrano
 
       def rake_remote_cmd(task)
         rake_output = sun.verbose || sun.nohup || sun.wait.present?
-        environment = ["PACK=false", "RAKE_OUTPUT=#{rake_output}", "RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
+        environment = ["PACK=#{pack? task}", "RAKE_OUTPUT=#{rake_output}", "RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
         if sun.sudo
           rbenv_sudo = "rbenv sudo #{environment.join(' ')}"
         else
@@ -94,6 +94,10 @@ module Sunzistrano
         wait = (wait_at - Time.current).to_i
         wait = 60 if wait < 60
         [wait / 60, wait % 60]
+      end
+
+      def pack?(task)
+        task.start_with? 'assets:', 'shakapacker:'
       end
     end
   end
