@@ -9,6 +9,14 @@ module MixServer
     end
   end
 
+  def self.current_version_time
+    @current_version_time ||= begin
+      time = Rails.root.join('REVISION_TIME')
+      time = time.exist? ? time.read : `git log -1 --pretty=format:'%ct' HEAD`
+      time.strip
+    end
+  end
+
   def self.no_reboot_file
     shared_dir.join('tmp/files/no_reboot')
   end

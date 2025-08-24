@@ -32,6 +32,7 @@ teardown() {
   assert_file_exists "${repo_path}/HEAD"
   assert_file_exists "$release_path/README.md"
   assert_file_exists "$release_path/REVISION"
+  assert_file_exists "$release_path/REVISION_TIME"
   assert_symlink_to $dir_logs "$release_path/tmp/logs"
   assert_symlink_to $dir_pids "$release_path/tmp/pids"
   assert_symlink_to $file_503 "$release_path/public/503.html"

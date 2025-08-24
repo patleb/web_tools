@@ -25,13 +25,13 @@ sun.test_setup() {
   HOME_STUB="$TEST/fixtures/files/home"
   HOME_WAS=$HOME
   HOME=$HOME_STUB
-  stage=test-local_app
+  stage=test_local_app
   role=${1:-provision}
   env=test
   app=local_app
   repo_url="$TEST/fixtures/files/local_app.git"
   branch=develop
-  revision=c686b37dcf12835aa406450b6aa9c64a2ac0fbc9
+  revision=0106f660cae1eb29fcb8ecde954bfaa432d98a50
   bash_dir=$HOME/.sunzistrano
   bash_log=$HOME/sun_bash.log
   defaults_dir=$HOME/sun_defaults
@@ -59,7 +59,7 @@ sun.test_teardown() {
     rm -rf "${metadata_dir}"
     rm -f "${manifest_log}"
   fi
-  if [[ $deploy_path == "$HOME/test-local_app" ]]; then
+  if [[ $deploy_path == "$HOME/test_local_app" ]]; then
     rm -rf $deploy_path
     rm -f "$HOME/.gitconfig"
   fi
