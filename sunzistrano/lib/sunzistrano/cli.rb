@@ -283,7 +283,7 @@ module Sunzistrano
           if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then
             eval $(ssh-agent);
           fi
-          && ssh-add .multipass/private_key 2> /dev/null &&
+          && ssh-add #{MULTIPASS_KEY} 2> /dev/null &&
         SH
       end
 
