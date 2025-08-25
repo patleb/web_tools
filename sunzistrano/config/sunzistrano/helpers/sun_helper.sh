@@ -11,10 +11,14 @@ cd.back() {
 }
 
 sun.start_provision() {
+  local provisioning='provisioning'
+  if [[ "${deploy}" == true ]]; then
+    provisioning='deployment'
+  fi
   if [[ -e "${manifest_log}" ]]; then
-    echo.info 'Existing provisioning'
+    echo.info "Existing ${provisioning}"
   else
-    echo.info 'New provisioning'
+    echo.info "New ${provisioning}"
     touch "${manifest_log}"
     mkdir "${manifest_dir}"
     mkdir "${metadata_dir}"
