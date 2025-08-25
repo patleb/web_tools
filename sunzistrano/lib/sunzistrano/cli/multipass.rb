@@ -1,7 +1,8 @@
 module Sunzistrano
   MULTIPASS_DIR  = Pathname.new('.multipass')
-  MULTIPASS_INFO = MULTIPASS_DIR.join('info.yml')
   MULTIPASS_KEY  = MULTIPASS_DIR.join('key')
+  MULTIPASS_INFO = MULTIPASS_DIR.join('info.yml')
+  MULTIPASS_INFO_KEYS = %w(ip cpu_count ram_gb ram_used disk_gb disk_used snapshot)
   ERB_CLOUD_INIT = './cloud-init.yml'
   TMP_CLOUD_INIT = './tmp/cloud-init.yml'
   SNAPSHOT_ACTIONS = %w(save restore list delete)
@@ -196,7 +197,7 @@ module Sunzistrano
 
       def run_snapshot_save_cmd
         raise 'Snapshot name required' unless sun.name.present?
-        name = "--name #{vm_snapshot sun.name} --comment #{Time.now.iso8601}"
+        name = "--name #{@vm_base = vm_snapshot sun.name} --comment #{Time.now.iso8601}"
         cmd = case vm_state
         when :stopped
           "multipass snapshot #{name} #{vm_name}"
@@ -210,11 +211,12 @@ module Sunzistrano
 
       def run_snapshot_restore_cmd
         raise 'No snapshots' unless vm_snapshots
-        if (name = vm_snapshot sun.name).present?
-          raise "No snapshot [#{name}]" unless vm_snapshots.has_key? name
+        if (@vm_base = vm_snapshot sun.name).present?
+          raise "No snapshot [#{@vm_base}]" unless vm_snapshots.has_key? @vm_base
         else
-          name = vm_snapshots.sort_by{ |_name, info| info[:created] }.last.first
+          @vm_base = vm_snapshots.sort_by{ |_name, info| info[:created] }.last.first
         end
+        name = @vm_base
         cmd = case vm_state
         when :stopped
           "multipass restore #{vm_name}.#{name} --destructive"
@@ -395,15 +397,19 @@ module Sunzistrano
         @vm_info = nil
         MULTIPASS_DIR.mkdir_p
         info_was = MULTIPASS_INFO.exist? && YAML.safe_load(MULTIPASS_INFO.read) || {}
-        info = ([vm_name] + sun.vm_clusters.times.map{ |i| vm_name(i + 1) }).each_with_object({}) do |name, hash|
+        info = ([vm_name] + sun.vm_clusters.times.map{ |i| vm_name(i + 1) }).each_with_object({}).with_index do |(name, hash), i|
           next info_was.delete(name) unless (json = `multipass info #{name} --format=json 2>/dev/null`).present?
           next unless (info = JSON.parse(json).dig('info', name)).present?
-          ip_was, cpu_was, ram_was, disk_was = (info_was[name] || {}).values_at('ip', 'cpu_count', 'ram_gb', 'disk_gb')
+          ip_was, cpu_was, ram_was, ram_used, disk_was, disk_used, snapshot_was = (info_was[name] || {}).values_at(*MULTIPASS_INFO_KEYS)
           info_was[name] = hash[name] = info
           info_was[name]['ip']        = info.dig('ipv4', -1) || ip_was
-          info_was[name]['cpu_count'] = info['cpu_count'].presence&.to_i || cpu_was
-          info_was[name]['ram_gb']    = info.dig('memory', 'total')&.to_i&.bytes_to_gb || ram_was
-          info_was[name]['disk_gb']   = info.dig('disks', 'sda1', 'total')&.to_i&.bytes_to_gb || disk_was
+          info_was[name]['cpu_count'] = info.delete('cpu_count').presence&.to_i || cpu_was
+          info_was[name]['ram_gb']    = ram = info.dig('memory', 'total')&.to_i&.bytes_to_gb || ram_was
+          info_was[name]['ram_used']  = ram && (used = info.dig('memory', 'used')&.to_i&.bytes_to_gb) ? (used / ram).round(5) : ram_used
+          info_was[name]['disk_gb']   = disk = info.dig('disks', 'sda1', 'total')&.to_i&.bytes_to_gb || disk_was
+          info_was[name]['disk_used'] = disk && (used = info.dig('disks', 'sda1', 'used')&.to_i&.bytes_to_gb) ? (used / disk).round(5) : disk_used
+          info_was[name]['snapshot']  = @vm_base || snapshot_was || false if i == 0
+          info_was[name]['snapshot_count'] = info.delete('snapshot_count').to_i
         end
         MULTIPASS_INFO.write(info_was.to_yaml)
         info.to_hwia
