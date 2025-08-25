@@ -196,6 +196,7 @@ module Sunzistrano
       end
 
       def run_role_cmd
+        run_reset_known_hosts if sun.reset_ssh
         before_role
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_command :role_cmd, server
