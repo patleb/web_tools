@@ -7,7 +7,7 @@ module Rails::Engine::WithTask
     tasks = Rake.application.ivar('@tasks')
     unless ExtRails.config.keep_install_migrations
       tasks.each do |t|
-        if (task_name = t.first).end_with? ':install:migrations'
+        if (task_name = t.first).end_with? ':install:migrations', 'active_storage:install'
           tasks.delete(task_name)
         end
       end
