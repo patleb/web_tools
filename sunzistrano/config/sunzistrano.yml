@@ -13,8 +13,8 @@ deploy:
     - version
 
 virtual:
-  vm_cpu: 2
-  vm_ram: 1GB
+  vm_cpu: 4
+  vm_ram: 6GB
   vm_disk: 12GB
   vm_clusters: 0
 

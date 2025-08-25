@@ -31,6 +31,12 @@ module Sunzistrano
       do_status
     end
 
+    desc 'resize [--cpu] [--ram] [--disk]', 'Resize Multipass instance(s)'
+    method_options cpu: false, ram: false, disk: false
+    def resize
+      do_resize
+    end
+
     desc 'ssh [-i] [-c]', 'Shell into Multipass instance (or execute -c command)'
     method_options i: :numeric, c: :string
     def ssh
@@ -102,7 +108,7 @@ module Sunzistrano
             when :stopped
               "multipass delete #{name} && multipass purge"
             when :running
-              "multipass stop #{name} && multipass delete #{name} && multipass purge"
+              "multipass stop #{name} --force && multipass delete #{name} && multipass purge"
             else
               raise "vm state [#{vm_state i}]"
             end
@@ -121,6 +127,28 @@ module Sunzistrano
             system "multipass info #{name}"
           end
         end
+      end
+
+      def do_resize
+        as_virtual do
+          Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
+            stopped = false
+            case vm_state i
+            when :running
+              stopped = true
+              system! "multipass stop #{name}"
+            when :stopped
+              # do nothing
+            else
+              raise "vm state [#{vm_state i}]"
+            end
+            system! "multipass set local.#{name}.cpus=#{sun.vm_cpu}"   if sun.cpu
+            system! "multipass set local.#{name}.memory=#{sun.vm_ram}" if sun.ram
+            system! "multipass set local.#{name}.disk=#{sun.vm_disk}"  if sun.disk # NOTE can only be increased
+            system! "multipass start #{name}" if stopped
+          end
+        end
+        puts "if the disk is not automatically expanded, then run: 'sudo parted /dev/sda resizepart 1 100%'" if sun.disk
       end
 
       def do_ssh
@@ -370,9 +398,12 @@ module Sunzistrano
         info = ([vm_name] + sun.vm_clusters.times.map{ |i| vm_name(i + 1) }).each_with_object({}) do |name, hash|
           next info_was.delete(name) unless (json = `multipass info #{name} --format=json 2>/dev/null`).present?
           next unless (info = JSON.parse(json).dig('info', name)).present?
-          ip_was = info_was.dig(name, 'ip')
+          ip_was, cpu_was, ram_was, disk_was = (info_was[name] || {}).values_at('ip', 'cpu_count', 'ram_gb', 'disk_gb')
           info_was[name] = hash[name] = info
-          info_was[name]['ip'] = info.dig('ipv4', -1) || ip_was
+          info_was[name]['ip']        = info.dig('ipv4', -1) || ip_was
+          info_was[name]['cpu_count'] = info['cpu_count'].presence&.to_i || cpu_was
+          info_was[name]['ram_gb']    = info.dig('memory', 'total')&.to_i&.bytes_to_gb || ram_was
+          info_was[name]['disk_gb']   = info.dig('disks', 'sda1', 'total')&.to_i&.bytes_to_gb || disk_was
         end
         MULTIPASS_INFO.write(info_was.to_yaml)
         info.to_hwia
