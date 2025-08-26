@@ -10,14 +10,13 @@ module ExtRice
       argv_was = ARGV.dup
       ARGV << "--srcdir=#{Rice.dst_path}"
 
-      target_path = Rice.target_path
       mkmf_path = Rice.mkmf_path
+      app_path = Rice.app_path
 
       mkmf_path.rmtree(false)
       mkmf_path.mkdir_p
-      target_path.mkdir_p
+      app_path.mkdir_p
 
-      rel_target_path = Pathname(target_path).relative_path_from(mkmf_path)
       chdir mkmf_path, verbose: false do
         load Rice.extconf_path.expand_path.to_s
         next unless compile
@@ -28,7 +27,7 @@ module ExtRice
           bin_path = Rice.mkmf_path.join(Rice.target)
           cp bin_path, Rice.bin_path
         else
-          sh make, '-j', jobs.to_s, 'install', "sitearchdir=#{rel_target_path}", "sitelibdir=#{rel_target_path}"
+          sh make, '-j', jobs.to_s, 'install', "sitearchdir=#{app_path}", "sitelibdir=#{app_path}"
         end
         Rice.write_checksum
       end

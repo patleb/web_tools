@@ -1,6 +1,7 @@
 module Rice
   extend WithFiles
   extend WithHelpers
+  extend WithPaths
   extend WithSplits
 
   class InvalidChecksum < ::StandardError; end
@@ -105,7 +106,7 @@ module Rice
   end
 
   def self.checksum
-    @checksum_sum ||= begin
+    @checksum ||= begin
       sum = `cd #{tmp_path} && tar --mtime='1970-01-01' --exclude='*.o' -cf - src #{mkmf_path.basename}/Makefile | sha256sum | awk '{ print $1 }'`.strip
       raise InvalidChecksum unless sum.match? CHECKSUM
       sum

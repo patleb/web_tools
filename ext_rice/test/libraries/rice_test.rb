@@ -2,7 +2,7 @@ require './test/test_helper'
 require "mkmf-rice"
 
 module ExtRice
-  class RiceTest < Rice::TestCase
+  class RiceTest < ActiveSupport::TestCase
     around do |test|
       split_src = ENV['SPLIT_SRC']
       split_mod = ENV['SPLIT_MOD']
@@ -16,12 +16,14 @@ module ExtRice
 
     it 'should build ext.cpp correctly based on rice.yml' do
       ExtRice.with do |config|
-        config.root = Pathname.new('ext_rice').expand_path
+        config.scope = 'test'
         config.yml_path = file_fixture_path.join('rice.yml')
-        config.dst_path = config.dst_path.dirname.join('yml')
+        config.app_path = file_fixture_path.join('none')
+        config.config_path = file_fixture_path.join('none')
+        config.vendor_path = file_fixture_path.join('none')
         Rice.create_makefile(dry_run: true, no_gems: true)
 
-        assert_equal file_fixture_path.join('ext.cpp').read, config.dst_path.join('00_ext.cpp').read
+        assert_equal file_fixture_path.join('ext.cpp').read, Rice.dst_path.join('00_ext.cpp').read
       end
     end
 

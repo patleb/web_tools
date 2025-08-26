@@ -28,21 +28,13 @@ module Rice
           end
         end
       end
-      if (root = root_vendor).exist?
+      if (root = vendor_path).exist?
         root.children.map do |root|
           compile_files(root, root.basename)
         end
       end
-      if (root = root_app).exist?
+      if (root = app_path).exist?
         compile_files(root)
-      end
-      if test? && (root = root_test).exist?
-        compile_files(root)
-        if executable?
-          dst_path.join('ext.cpp').delete(false)
-        else
-          dst_path.glob('**/*_test.cpp').each(&:delete.with(false))
-        end
       end
     end
 
@@ -72,14 +64,6 @@ module Rice
           f.puts content
         end
       end
-    end
-
-    def pch
-      @pch ||= dst_path.join('precompiled.hpp')
-    end
-
-    def pch_out
-      @pch_out ||= pch.sub_ext('.hpp.gch')
     end
 
     def hooks
@@ -149,7 +133,7 @@ module Rice
     end
 
     def rb_paths
-      paths = yml? ? filter(yml_path.glob('app/rice/**/*.rb')) : []
+      paths = yml? ? filter(app_path.glob('**/*.rb')) : []
       gems.each_with_object([]) do |name, result|
         next unless (root = name && Gem.root(name))
         next unless root.join('config/rice.yml').exist?
@@ -158,7 +142,7 @@ module Rice
     end
 
     def other_yml_paths
-      paths = yml? ? filter(yml_path.glob('config/rice/**/*.yml')) : []
+      paths = yml? ? filter(config_path.glob('**/*.yml')) : []
       gems.each_with_object(paths) do |name, result|
         next unless (root = name && Gem.root(name))
         next unless (config = root.join('config/rice.yml')).exist?
@@ -169,7 +153,7 @@ module Rice
 
     def no_gems!
       @no_gems = true
-      @yml = @default_config = @gems = @gems_config = @hooks = nil
+      @yml = @default_config = @gems = @gems_config = @hooks = @excluded_files = nil
     end
 
     def gems
