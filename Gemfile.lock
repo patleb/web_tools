@@ -75,7 +75,7 @@ PATH
   remote: ext_rice
   specs:
     ext_rice (0.3.0)
-      mix_setting
+      ext_rails (= 0.3.0)
       rice (~> 4.5.0)
 
 PATH

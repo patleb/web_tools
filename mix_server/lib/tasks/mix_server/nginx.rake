@@ -17,7 +17,7 @@ namespace! :nginx do
 
   def nginx_maintenance_push
     html = compile 'config/deploy/templates/503.html'
-    mv html, MixServer.shared_dir.join('public/503.html')
+    mv html, Pathname.shared_path('public/503.html')
   end
 
   def nginx_app_push

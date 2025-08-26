@@ -1,3 +1,5 @@
+require 'ext_rails'
+
 module ExtRice
   class Engine < Rails::Engine
     config.before_initialize do |app|

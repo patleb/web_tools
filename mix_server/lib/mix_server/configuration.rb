@@ -13,20 +13,12 @@ module MixServer
     @current_version_time ||= begin
       time = Rails.root.join('REVISION_TIME')
       time = time.exist? ? time.read : `git log -1 --pretty=format:'%ct' HEAD`
-      time.strip
+      Time.at(time.strip.to_i)
     end
   end
 
   def self.no_reboot_file
-    shared_dir.join('tmp/files/no_reboot')
-  end
-
-  def self.shared_dir
-    if Rails.env.local?
-      Rails.root
-    else
-      Rails.root.join('..', '..', 'shared').expand_path
-    end
+    Pathname.shared_path('tmp/files', 'no_reboot')
   end
 
   def self.idle?(timeout: nil)
