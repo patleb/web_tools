@@ -2,9 +2,7 @@ module Sunzistrano
   Cli.class_eval do
     desc 'console [STAGE] [--host] [--sudo] [--sandbox]', 'Start a rails console'
     method_options host: :string, sudo: false, sandbox: false
-    def console(stage)
-      do_console(stage)
-    end
+    def console(stage) = do_console(stage)
 
     no_tasks do
       def do_console(stage)

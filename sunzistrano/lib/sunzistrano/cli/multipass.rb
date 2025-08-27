@@ -3,63 +3,56 @@ module Sunzistrano
   MULTIPASS_KEY  = MULTIPASS_DIR.join('key')
   MULTIPASS_INFO = MULTIPASS_DIR.join('info.yml')
   MULTIPASS_INFO_KEYS = %w(ip cpu_count ram_gb ram_used disk_gb disk_used snapshot)
-  ERB_CLOUD_INIT = './cloud-init.yml'
-  TMP_CLOUD_INIT = './tmp/cloud-init.yml'
+  MULTIPASS_MOUNT  = '/opt/multipass'
+  ERB_CLOUD_INIT   = Pathname.new('./cloud-init.yml')
+  TMP_CLOUD_INIT   = Pathname.new('./tmp/cloud-init.yml')
   SNAPSHOT_ACTIONS = %w(save restore list delete)
 
   Cli.class_eval do
     desc 'up [-i] [--master] [--cluster]', 'Start Multipass instance(s)'
     method_options i: :numeric, master: false, cluster: false
-    def up
-      do_up
-    end
+    def up = do_up
 
     desc 'halt [-i] [--master] [--cluster] [--force]', 'Stop Multipass instance(s)'
     method_options i: :numeric, master: false, cluster: false, force: false
-    def halt
-      do_halt
-    end
+    def halt = do_halt
 
     desc 'destroy [-i] [--master] [--cluster]', 'Delete Multipass instance(s)'
     method_options i: :numeric, master: false, cluster: false
-    def destroy
-      do_destroy
-    end
+    def destroy = do_destroy
 
     desc 'status [-i] [--master] [--cluster]', 'Output status of Multipass instance(s)'
     method_options i: :numeric, master: false, cluster: false
-    def status
-      do_status
-    end
+    def status = do_status
 
     desc 'resize [--cpu] [--ram] [--disk]', 'Resize Multipass instance(s)'
     method_options cpu: false, ram: false, disk: false
-    def resize
-      do_resize
-    end
+    def resize = do_resize
+
+    desc 'mount', "Mount Multipass instance directory (#{MULTIPASS_MOUNT} or :dst)"
+    method_options src: :string, dst: :string
+    def mount = do_mount
+
+    desc 'unmount', "Unmount Multipass instance directory (#{MULTIPASS_MOUNT} or :dst)"
+    method_options dst: :string
+    def unmount = do_unmount
 
     desc 'ssh [-i] [-c]', 'Shell into Multipass instance (or execute -c command)'
     method_options i: :numeric, c: :string
-    def ssh
-      do_ssh
-    end
+    def ssh = do_ssh
 
     desc 'ssh-add', 'Add Multipass ssh private key'
-    def ssh_add
-      do_add_ssh
-    end
+    def ssh_add = do_add_ssh
 
     desc 'snapshot [ACTION] [--name]', "#{SNAPSHOT_ACTIONS.map(&:upcase_first).join('/')} Multipass master's snapshot(s)"
     method_options name: :string
-    def snapshot(action)
-      do_snapshot(action)
-    end
+    def snapshot(action) = do_snapshot(action)
 
     no_tasks do
       def do_up
         as_virtual do
           vm_names = vm_names!
-          raise 'the master must be created before the cluster' if vm_names.size > 1 && vm_names[0] == vm_name && vm_ip!.nil?
+          raise 'the master must be created before the cluster' if vm_names.size > 1 && vm_names[0] == vm_name && vm_ip.nil?
           Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
             case vm_state i
             when :null
@@ -101,20 +94,19 @@ module Sunzistrano
         as_virtual do
           network = vm_ip(0)&.sub(/\.\d+$/, '')
           Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
-            cmd = case vm_state i
-            when :null
-              return
-            when :deleted
-              "multipass purge"
-            when :stopped
-              "multipass delete #{name} && multipass purge"
-            when :running
-              "multipass stop #{name} --force && multipass delete #{name} && multipass purge"
-            else
-              raise "vm state [#{vm_state i}]"
-            end
             remove_virtual_host i do
-              system! cmd
+              case vm_state i
+              when :null
+                return
+              when :deleted
+                system! "multipass purge"
+              when :stopped
+                system! "multipass delete #{name} && multipass purge"
+              when :running
+                system! "multipass stop #{name} --force && multipass delete #{name} && multipass purge"
+              else
+                raise "vm state [#{vm_state i}]"
+              end
               remove_bridge network if i == 0
             end
           end
@@ -124,7 +116,7 @@ module Sunzistrano
       def do_status
         as_virtual do
           vm_names.each do |name, i|
-            puts "---------------- #{i}"
+            puts "--------------- #{i}"
             system "multipass info #{name}"
           end
         end
@@ -133,10 +125,10 @@ module Sunzistrano
       def do_resize
         as_virtual do
           Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
-            stopped = false
+            running = false
             case vm_state i
             when :running
-              stopped = true
+              running = true
               system! "multipass stop #{name}"
             when :stopped
               # do nothing
@@ -146,10 +138,37 @@ module Sunzistrano
             system! "multipass set local.#{name}.cpus=#{sun.vm_cpu}"   if sun.cpu
             system! "multipass set local.#{name}.memory=#{sun.vm_ram}" if sun.ram
             system! "multipass set local.#{name}.disk=#{sun.vm_disk}"  if sun.disk # NOTE can only be increased
-            system! "multipass start #{name}" if stopped
+            system! "multipass start #{name}" if running
           end
         end
         puts "if the disk is not automatically expanded, then run: 'sudo parted /dev/sda resizepart 1 100%'" if sun.disk
+      end
+
+      def do_mount
+        as_virtual do
+          dst = sun.dst || MULTIPASS_MOUNT
+          return unless vm_info.dig(vm_name, :mounts, dst).nil?
+          src = sun.src || MULTIPASS_DIR.join(vm_name)
+          mount_dir = Pathname.new(src)
+          mount_dir.mkdir_p
+          mount_cmd = "multipass mount --type=native #{mount_dir} #{vm_name}:#{dst}"
+          case vm_state
+          when :stopped
+            system! mount_cmd
+          when :running
+            system! "multipass stop #{vm_name} && #{mount_cmd} && multipass start #{vm_name}"
+          else
+            raise "vm state [#{vm_state}]"
+          end
+        end
+      end
+
+      def do_unmount
+        as_virtual do
+          dst = sun.dst || MULTIPASS_MOUNT
+          return if vm_info.dig(vm_name, :mounts, dst).nil?
+          system! "multipass umount #{vm_name}:#{dst}"
+        end
       end
 
       def do_ssh
@@ -198,15 +217,14 @@ module Sunzistrano
       def run_snapshot_save_cmd
         raise 'Snapshot name required' unless sun.name.present?
         name = "--name #{@vm_base = vm_snapshot sun.name} --comment #{Time.now.iso8601}"
-        cmd = case vm_state
+        case vm_state
         when :stopped
-          "multipass snapshot #{name} #{vm_name}"
+          system! "multipass snapshot #{name} #{vm_name}"
         when :running
-          "multipass stop #{vm_name} && multipass snapshot #{name} #{vm_name} && multipass start #{vm_name}"
+          system! "multipass stop #{vm_name} && multipass snapshot #{name} #{vm_name} && multipass start #{vm_name}"
         else
           raise "vm state [#{vm_state}]"
         end
-        system! cmd
       end
 
       def run_snapshot_restore_cmd
@@ -217,15 +235,15 @@ module Sunzistrano
           @vm_base = vm_snapshots.sort_by{ |_name, info| info[:created] }.last.first
         end
         name = @vm_base
-        cmd = case vm_state
+        case vm_state
         when :stopped
-          "multipass restore #{vm_name}.#{name} --destructive"
+          system! "multipass restore #{vm_name}.#{name} --destructive"
         when :running
-          "multipass stop #{vm_name} && multipass restore #{vm_name}.#{name} --destructive && multipass start #{vm_name}"
+          system! "multipass stop #{vm_name} && multipass restore #{vm_name}.#{name} --destructive && multipass start #{vm_name}"
         else
           raise "vm state [#{vm_state}]"
         end
-        system! cmd
+        run_reset_known_hosts
       end
 
       def run_snapshot_list_cmd
@@ -235,15 +253,14 @@ module Sunzistrano
       def run_snapshot_delete_cmd
         raise 'Snapshot name required' unless (name = vm_snapshot sun.name)
         raise "No snapshot [#{name}]" unless vm_snapshots&.has_key? name
-        cmd = case vm_state
+        case vm_state
         when :stopped
-          "multipass delete #{vm_name}.#{name} --purge"
+          system! "multipass delete #{vm_name}.#{name} --purge"
         when :running
-          "multipass stop #{vm_name} && multipass delete #{vm_name}.#{name} --purge"
+          system! "multipass stop #{vm_name} && multipass delete #{vm_name}.#{name} --purge"
         else
           raise "vm state [#{vm_state}]"
         end
-        system! cmd
       end
 
       def vm_snapshots
@@ -270,15 +287,15 @@ module Sunzistrano
       end
 
       def compile_cloud_init
-        if (yml = Pathname.new(ERB_CLOUD_INIT)).exist?
-          yml = YAML.safe_load(ERB.template(yml, binding)).to_hwia
+        if ERB_CLOUD_INIT.exist?
+          yml = YAML.safe_load(ERB.template(ERB_CLOUD_INIT, binding)).to_hwia
         else
           yml = {}
         end
         keys = Array.wrap(yml[:ssh_authorized_keys])
         yml[:ssh_authorized_keys] = keys | Setting.authorized_keys | [MULTIPASS_KEY.sub_ext('.pub').read.strip]
         yml[:manage_etc_hosts] = false unless yml.has_key? :manage_etc_hosts
-        Pathname.new(TMP_CLOUD_INIT).write(yml.to_hash.pretty_yaml)
+        TMP_CLOUD_INIT.write(yml.to_hash.pretty_yaml)
       end
 
       def add_master_ip
@@ -401,15 +418,15 @@ module Sunzistrano
           next info_was.delete(name) unless (json = `multipass info #{name} --format=json 2>/dev/null`).present?
           next unless (info = JSON.parse(json).dig('info', name)).present?
           ip_was, cpu_was, ram_was, ram_used, disk_was, disk_used, snapshot_was = (info_was[name] || {}).values_at(*MULTIPASS_INFO_KEYS)
+          info['ip']        = info.dig('ipv4', -1) || ip_was
+          info['cpu_count'] = info.delete('cpu_count').presence&.to_i || cpu_was
+          info['ram_gb']    = ram = info.dig('memory', 'total')&.to_i&.bytes_to_gb || ram_was
+          info['ram_used']  = ram && (used = info.dig('memory', 'used')&.to_i&.bytes_to_gb) ? (used / ram).round(5) : ram_used
+          info['disk_gb']   = disk = info.dig('disks', 'sda1', 'total')&.to_i&.bytes_to_gb || disk_was
+          info['disk_used'] = disk && (used = info.dig('disks', 'sda1', 'used')&.to_i&.bytes_to_gb) ? (used / disk).round(5) : disk_used
+          info['snapshot']  = @vm_base || snapshot_was || false if i == 0
+          info['snapshot_count'] = info.delete('snapshot_count').to_i
           info_was[name] = hash[name] = info
-          info_was[name]['ip']        = info.dig('ipv4', -1) || ip_was
-          info_was[name]['cpu_count'] = info.delete('cpu_count').presence&.to_i || cpu_was
-          info_was[name]['ram_gb']    = ram = info.dig('memory', 'total')&.to_i&.bytes_to_gb || ram_was
-          info_was[name]['ram_used']  = ram && (used = info.dig('memory', 'used')&.to_i&.bytes_to_gb) ? (used / ram).round(5) : ram_used
-          info_was[name]['disk_gb']   = disk = info.dig('disks', 'sda1', 'total')&.to_i&.bytes_to_gb || disk_was
-          info_was[name]['disk_used'] = disk && (used = info.dig('disks', 'sda1', 'used')&.to_i&.bytes_to_gb) ? (used / disk).round(5) : disk_used
-          info_was[name]['snapshot']  = @vm_base || snapshot_was || false if i == 0
-          info_was[name]['snapshot_count'] = info.delete('snapshot_count').to_i
         end
         MULTIPASS_INFO.write(info_was.to_yaml)
         info.to_hwia

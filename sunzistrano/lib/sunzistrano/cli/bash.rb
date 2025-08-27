@@ -8,19 +8,15 @@ module Sunzistrano
   Cli.class_eval do
     desc 'bash-list [--stage]', 'List bash scripts and helpers'
     method_options stage: :string
-    def bash_list
-      do_bash_list(options.stage.presence || 'production')
-    end
+    def bash_list = do_bash_list
 
     desc 'bash [STAGE] [TASK] [--host] [--sudo] [--no-verbose]', 'Execute bash script(s) and/or helper function(s)'
     method_options host: :string, sudo: false, verbose: true
-    def bash(stage, task)
-      do_bash(stage, task)
-    end
+    def bash(stage, task) = do_bash(stage, task)
 
     no_tasks do
-      def do_bash_list(stage)
-        with_context(stage, :deploy) do
+      def do_bash_list
+        with_context(options.stage.presence || 'production', :deploy) do
           if sun.bash_scripts.any?
             puts 'scripts >'
             sun.bash_scripts.each{ |script| puts script.indent(2) }

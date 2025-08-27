@@ -6,21 +6,15 @@ module Sunzistrano
   Cli.class_eval do
     desc 'exist [STAGE] [PATH] [--deploy] [--from-defaults]', 'Check if path exists'
     method_options deploy: false, from_defaults: false
-    def exist(stage, path)
-      do_exist(stage, path)
-    end
+    def exist(stage, path) = do_exist(stage, path)
 
     desc 'download [STAGE] [PATH] [--dir] [--ref] [--deploy] [--from-defaults] [-no-resume] [-no-verbose] [-no-decompress]', 'Download file(s)'
     method_options dir: :string, ref: false, deploy: false, from_defaults: false, resume: true, decompress: true, verbose: true
-    def download(stage, path)
-      do_download(stage, path)
-    end
+    def download(stage, path) = do_download(stage, path)
 
     desc 'upload [STAGE] [PATH] [DIR] [--deploy] [--chown] [--chmod] [-no-resume] [-no-verbose]', 'Upload file(s)'
     method_options deploy: false, chown: :string, chmod: :string, resume: true, verbose: true
-    def upload(stage, path, dir)
-      do_upload(stage, path, dir)
-    end
+    def upload(stage, path, dir) = do_upload(stage, path, dir)
 
     no_tasks do
       def do_exist(stage, path)

@@ -6,13 +6,11 @@ module Sunzistrano
   Cli.class_eval do
     desc 'computer [ACTION] [--recipe] [--force] [--task] [--sudo] [--no-verbose]', "#{COMPUTER_ACTIONS.map(&:upcase_first).join('/')} for Computer"
     method_options recipe: :string, force: false, task: :string, sudo: false, verbose: true
-    def computer(action)
-      raise "--task is required for bash action" if action == 'bash' && options.task.blank?
-      do_computer(action)
-    end
+    def computer(action) = do_computer(action)
 
     no_tasks do
       def do_computer(action)
+        raise "--task is required for bash action" if action == 'bash' && options.task.blank?
         raise "computer action [#{action}] unsupported" unless COMPUTER_ACTIONS.include? action
         as_computer do
           send "run_computer_#{action}_cmd"

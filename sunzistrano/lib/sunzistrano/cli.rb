@@ -31,33 +31,24 @@ module Sunzistrano
       true
     end
 
-    desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force] [--no-sync]', 'Deploy application'
-    method_options system: false, rollback: false, recipe: :string, force: false, sync: true
-    def deploy(stage)
-      raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
-      do_provision(stage, :deploy)
-    end
+    desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force] [--no-sync] [--reset-ssh]', 'Deploy application'
+    method_options system: false, rollback: false, recipe: :string, force: false, sync: true, reset_ssh: false
+    def deploy(stage) = do_provision(stage, :deploy)
 
     desc 'provision [STAGE] [--specialize] [--rollback] [--recipe] [--force] [--reboot] [--reset-ssh]', 'Provision system'
     method_options specialize: false, rollback: false, recipe: :string, force: false, reboot: false, reset_ssh: false
-    def provision(stage)
-      raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
-      do_provision(stage, :provision)
-    end
+    def provision(stage) = do_provision(stage, :provision)
 
     desc 'compile [STAGE] [--deploy] [--system] [--specialize] [--rollback] [--recipe] [--reboot]', 'Compile provisioning'
     method_options deploy: false, system: false, specialize: false, rollback: false, recipe: :string, reboot: false
-    def compile(stage)
-      do_compile(stage)
-    end
+    def compile(stage) = do_compile(stage)
 
     desc 'reset_ssh [STAGE]', 'Reset ssh known hosts'
-    def reset_ssh(stage)
-      do_reset_ssh(stage)
-    end
+    def reset_ssh(stage) = do_reset_ssh(stage)
 
     no_tasks do
       def do_provision(stage, role)
+        raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
         do_compile(stage, role)
         run_role_cmd
       end
