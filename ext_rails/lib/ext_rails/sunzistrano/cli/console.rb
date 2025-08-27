@@ -16,7 +16,7 @@ module Sunzistrano
       end
 
       def console_remote_cmd
-        environment = ["RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
+        environment = ['PACK=false', "RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
         if sun.sudo
           rbenv_sudo = "rbenv sudo #{environment.join(' ')}"
         else
