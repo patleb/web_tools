@@ -6,11 +6,11 @@ module Rake
         ARGV.replace([task_name, '--'])
         argv.each do |key, value|
           ARGV << case value
-          when nil, true  then "--#{key.to_s.dasherize}"
-          when false      then "--no-#{key.to_s.dasherize}"
-          when Array, Set then "--#{key.to_s.dasherize}=#{value.to_a.join(',')}"
-          else                 "--#{key.to_s.dasherize}=#{value}"
-          end
+            when nil, true  then "--#{key.to_s.dasherize}"
+            when false      then "--no-#{key.to_s.dasherize}"
+            when Array, Set then "--#{key.to_s.dasherize}=#{value.to_a.join(',')}"
+            else                 "--#{key.to_s.dasherize}=#{value}"
+            end
         end
       end
       yield
@@ -32,7 +32,7 @@ module Rake
     end
 
     def namespace!(name = nil, &block)
-      module_name = "#{name.to_s.camelize}_Tasks"
+      module_name  = "#{name.to_s.camelize}_Tasks"
       with_scope   = self.class.const_get(module_name) if self.class.const_defined? module_name
       with_scope ||= self.class.const_set(module_name, Module.new)
       with_scope.module_eval do

@@ -15,6 +15,18 @@ namespace :try do
       email.deliver_now
     end
   end
+
+  desc "try private ip"
+  task :private_ip => :environment do
+    puts Process.host.private_ip
+  end
+
+  namespace :cluster do
+    desc "try private ip"
+    task :private_ip => :environment do
+      sun_rake 'try:private_ip', app: 'cluster'
+    end
+  end
 end
 
 namespace :gem do

@@ -5,7 +5,6 @@ require 'sunzistrano/cloud'
 require 'sunzistrano/host'
 require 'sunzistrano/pathname'
 require 'sunzistrano/version'
-require 'sunzistrano/rake/dsl' if defined? Rails.env
 
 module Sunzistrano
   def self.root

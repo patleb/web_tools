@@ -60,5 +60,30 @@ module Rake
         yield
       end
     end
+
+    def sun_rake(task_name, *args, env: Setting.env, app: Setting.app, **argv)
+      no_color  = ' DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
+      stage     = [env, app].compact.join('_')
+      rake_args = args.empty? ? '' : "[#{args.join(',')}]"
+      rake_options, sun_options = argv.each_with_object([+'', +'']) do |(key, value), (rake_options, sun_options)|
+        case key
+        when :host, :wait
+          sun_options << " --#{key} #{value}" if value.present?
+          next
+        when :sudo, :nohup, :verbose, :kill, :force
+          sun_options << " --#{key}" if value
+          next
+        end
+        rake_options << case value
+          when nil, true  then " --#{key.to_s.dasherize}"
+          when false      then " --no-#{key.to_s.dasherize}"
+          when Array, Set then " --#{key.to_s.dasherize}=#{value.to_a.join(',')}"
+          else                 " --#{key.to_s.dasherize}=#{value}"
+          end
+      end
+      rake_options = " -- #{rake_options}" if rake_options.present?
+      rake_task = [task_name, rake_args, no_color, rake_options].join('')
+      sh "bin/sun rake #{stage} '#{rake_task.escape_single_quotes}' #{sun_options}"
+    end
   end
 end
