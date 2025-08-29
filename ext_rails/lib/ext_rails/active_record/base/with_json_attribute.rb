@@ -154,7 +154,7 @@ module ActiveRecord::Base::WithJsonAttribute
           [type, options || {}]
         end
       else
-        Array.wrap(fields).index_with [:string, {}]
+        Array.wrap(fields).index_with{ [:string, {}] }
       end
     end
 
