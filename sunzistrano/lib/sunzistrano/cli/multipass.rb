@@ -2,15 +2,15 @@ module Sunzistrano
   MULTIPASS_DIR  = Pathname.new('.multipass')
   MULTIPASS_KEY  = MULTIPASS_DIR.join('key')
   MULTIPASS_INFO = MULTIPASS_DIR.join('info.yml')
-  MULTIPASS_INFO_KEYS = %w(ip cpu_count ram_gb ram_used disk_gb disk_used snapshot)
+  MULTIPASS_INFO_KEYS = %w(ip ip_was cpu_count ram_gb ram_used disk_gb disk_used snapshot)
   MULTIPASS_MOUNT  = '/opt/multipass'
   ERB_CLOUD_INIT   = Pathname.new('./cloud-init.yml')
   TMP_CLOUD_INIT   = Pathname.new('./tmp/cloud-init.yml')
   SNAPSHOT_ACTIONS = %w(save restore list delete)
 
   Cli.class_eval do
-    desc 'up [-i] [--master] [--cluster]', 'Start Multipass instance(s)'
-    method_options i: :numeric, master: false, cluster: false
+    desc 'up [-i] [--master] [--cluster] [--static-ip]', 'Start Multipass instance(s)'
+    method_options i: :numeric, master: false, cluster: false, static_ip: false
     def up = do_up
 
     desc 'halt [-i] [--master] [--cluster] [--force]', 'Stop Multipass instance(s)'
@@ -60,10 +60,11 @@ module Sunzistrano
                 if i == 0
                   compile_cloud_init
                   add_master_ip do |bridge|
-                    system! "multipass launch #{sun.os_version} --name #{name} #{vm_options} --network name=#{bridge},mode=manual"
+                    network = "--network name=#{bridge},mode=manual" if bridge
+                    system! "multipass launch #{sun.os_version} --name #{name} #{vm_options} #{network}"
                   end
                 else
-                  system! "multipass clone #{vm_name} && multipass start #{name}"
+                  system! "multipass clone #{vm_name} --name #{vm_name i} && multipass start #{name}"
                   add_cluster_ip i
                 end
                 system! "multipass stop #{name} && multipass start #{name}"
@@ -299,6 +300,7 @@ module Sunzistrano
       end
 
       def add_master_ip
+        return yield(false) unless sun.static_ip
         network = free_network
         bridge = "br-#{network.parameterize}"
         system! "nmcli connection add type bridge con-name #{bridge} ifname #{bridge} ipv4.method manual ipv4.addresses #{network}.1/24"
@@ -307,6 +309,7 @@ module Sunzistrano
       end
 
       def add_cluster_ip(i)
+        return unless sun.static_ip
         network = vm_ip(0).sub(/\.\d+$/, '')
         add_static_ip i, network
       end
@@ -338,6 +341,7 @@ module Sunzistrano
       end
 
       def remove_bridge(network)
+        return unless network.start_with? '192.168.'
         system! "nmcli connection delete br-#{network.parameterize}"
       end
 
@@ -346,7 +350,11 @@ module Sunzistrano
         yield
         ip = vm_ip!(*)
         if ip_was != ip
-          puts "ip has changed [#{ip_was}] --> [#{ip}]".red
+          if ip_was.nil?
+            puts "IP '#{ip}' successfully added#{' [STATIC]' if sun.static_ip}.".green
+          else
+            puts "IP has changed '#{ip_was}' --> '#{ip}'.".red
+          end
         end
         system! Sh.delete_lines!('/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true) if ip_was
         system! Sh.append_host("#{Host::VIRTUAL}-#{ip}", ip, vm_server_host(*))
@@ -356,7 +364,7 @@ module Sunzistrano
         ip_was = vm_ip(*)
         yield
         if (ip = vm_ip!(*)) && ip_was != ip
-          puts "ip has changed [#{ip_was}] --> [#{ip}]".red
+          puts "IP has changed '#{ip_was}' --> '#{ip}'.".red
         end
         [ip_was, ip].each do |ip|
           system! Sh.delete_lines!('/etc/hosts', /[^\d]#{ip}[^\d]/, sudo: true) if ip
@@ -366,13 +374,13 @@ module Sunzistrano
       def vm_server_host(i = nil)
         name = sun.server_host
         return name if (i ||= sun.i).nil? || i == 0
-        "cluster-#{i}.#{name}"
+        "#{Setting[:server_cluster_name]}-#{i}.#{name}"
       end
 
       def vm_name(i = nil)
         name = "vm-#{sun.app.dasherize}"
         return name if (i ||= sun.i).nil? || i == 0
-        "#{name}-clone#{i}"
+        "#{name}-#{Setting[:server_cluster_name]}-#{i}"
       end
 
       def vm_state(*)
@@ -390,7 +398,7 @@ module Sunzistrano
 
       def vm_names
         @vm_names ||= begin
-          names = vm_info.map{ |name, _| [name, name.split('-clone').last.to_i] }.to_h
+          names = vm_info.map{ |name, _| [name, name.split("-#{Setting[:server_cluster_name]}-").last.to_i] }.to_h
           names = names.slice(names.key(sun.i)) if sun.i
           names = names.slice(names.key(0)) if sun.master
           names = names.except(names.key(0)) if sun.cluster
@@ -417,14 +425,15 @@ module Sunzistrano
         info = ([vm_name] + sun.vm_clusters.times.map{ |i| vm_name(i + 1) }).each_with_object({}).with_index do |(name, hash), i|
           next info_was.delete(name) unless (json = `multipass info #{name} --format=json 2>/dev/null`).present?
           next unless (info = JSON.parse(json).dig('info', name)).present?
-          ip_was, cpu_was, ram_was, ram_used, disk_was, disk_used, snapshot_was = (info_was[name] || {}).values_at(*MULTIPASS_INFO_KEYS)
-          info['ip']        = info.dig('ipv4', -1) || ip_was
-          info['cpu_count'] = info.delete('cpu_count').presence&.to_i || cpu_was
+          ip, ip_was, cpu, ram_was, ram_used, disk_was, disk_used, snapshot = (info_was[name] || {}).values_at(*MULTIPASS_INFO_KEYS)
+          info['ip']        = info.dig('ipv4', -1) || ip
+          info['ip_was']    = info.dig('ipv4',  0) || ip_was
+          info['cpu_count'] = info.delete('cpu_count').presence&.to_i || cpu
           info['ram_gb']    = ram = info.dig('memory', 'total')&.to_i&.bytes_to_gb || ram_was
           info['ram_used']  = ram && (used = info.dig('memory', 'used')&.to_i&.bytes_to_gb) ? (used / ram).round(5) : ram_used
           info['disk_gb']   = disk = info.dig('disks', 'sda1', 'total')&.to_i&.bytes_to_gb || disk_was
           info['disk_used'] = disk && (used = info.dig('disks', 'sda1', 'used')&.to_i&.bytes_to_gb) ? (used / disk).round(5) : disk_used
-          info['snapshot']  = @vm_base || snapshot_was || false if i == 0
+          info['snapshot']  = @vm_base || snapshot || false if i == 0
           info['snapshot_count'] = info.delete('snapshot_count').to_i
           info_was[name] = hash[name] = info
         end

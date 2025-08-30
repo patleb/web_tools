@@ -26,7 +26,7 @@ module Sunzistrano
       end
 
       def limit_firewall_cmd(server, delete: false)
-        remote_cmd server, "command -v ufw >/dev/null && sudo ufw#{' delete' if delete} limit ssh"
+        remote_cmd server, "command -v ufw >/dev/null && sudo ufw#{' delete' if delete} limit ssh", proxy: false
       end
     end
   end

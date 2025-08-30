@@ -1,8 +1,5 @@
 module Host
   VIRTUAL  = 'sun:add_virtual_host'
-  SERVER   = 'sh:dns-append_host-server'
-  HOSTNAME = 'sh:dns-append_host-hostname'
-  MASTER   = 'sh:dns-append_host-master'
 
   def self.domains
     @domains ||= constants.each_with_object({}.to_hwia) do |constant, domains|

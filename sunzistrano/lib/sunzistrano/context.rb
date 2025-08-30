@@ -52,16 +52,13 @@ module Sunzistrano
       @table.has_key? name
     end
 
-    def deploy_path(*segments)
-      "/home/#{ssh_user}/#{stage}/#{segments.join('/')}"
-    end
-
     def provision_path(*segments)
-      "/home/#{ssh_user}/#{provision_dir}/#{segments.join('/')}"
+      "/home/#{ssh_user}/#{deploy ? stage : env}/#{segments.join('/')}"
     end
+    alias_method :deploy_path, :provision_path
 
     def provision_dir
-      deploy ? "#{stage}/releases/#{revision}" : stage
+      deploy ? "#{stage}/releases/#{revision}" : env
     end
 
     def debug

@@ -15,7 +15,7 @@ module Sunzistrano
       const_name = dir.to_s.upcase
       name = const_name.end_with?('_DIR') && const_defined?(const_name) ? "#{const_get(const_name)}/#{name}" : dir
     end
-    "/home/#{Setting[:owner_name]}/#{Setting.stage}/#{name}"
+    "/home/#{Setting[:owner_name]}/#{Setting.env}/#{name}"
   end
 
   class Cli < Thor
@@ -43,7 +43,8 @@ module Sunzistrano
     method_options deploy: false, system: false, specialize: false, rollback: false, recipe: :string, reboot: false
     def compile(stage) = do_compile(stage)
 
-    desc 'reset_ssh [STAGE]', 'Reset ssh known hosts'
+    desc 'reset_ssh [STAGE] [--agent]', 'Reset ssh known hosts or agent'
+    method_options agent: false
     def reset_ssh(stage) = do_reset_ssh(stage)
 
     no_tasks do
@@ -61,8 +62,12 @@ module Sunzistrano
       end
 
       def do_reset_ssh(stage)
-        with_context(stage) do
-          run_reset_known_hosts
+        if options.agent
+          system! 'killall ssh-agent; eval "$(ssh-agent)"'
+        else
+          with_context(stage) do
+            run_reset_known_hosts
+          end
         end
       end
 
@@ -248,17 +253,17 @@ module Sunzistrano
       def role_remote_cmd
         <<-SH.squish
           mkdir -p #{bash_dir_remote} && cd #{bash_dir_remote} && start=$(mktemp) &&
-          flock --verbose -n #{sun.deploy_path 'role.lock'} tar xz &&
-          flock --verbose -n #{sun.deploy_path 'role.lock'} #{'sudo' if sun.sudo} bash -e -u +H role.sh 2>&1 |
+          flock --verbose -n #{sun.provision_path 'role.lock'} tar xz &&
+          flock --verbose -n #{sun.provision_path 'role.lock'} #{'sudo' if sun.sudo} bash -e -u +H role.sh 2>&1 |
           tee -a #{sun.provision_path BASH_LOG} && cd #{bash_dir_remote} &&
           find . -depth ! -cnewer $start -print0 | sponge /dev/stdout | xargs -r0 rm -d > /dev/null 2>&1 && rm -f $start
         SH
       end
 
-      def remote_cmd(server, command)
+      def remote_cmd(server, command, proxy: sun.server_cluster)
         <<-SH.squish
           #{ssh_virtual_key}
-          #{ssh_cmd} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{command}'
+          #{ssh_cmd} #{ssh_proxy if proxy} #{sun.ssh_user}@#{server} '#{command}'
         SH
       end
 
@@ -347,13 +352,4 @@ require 'sunzistrano/cli/bash'
 require 'sunzistrano/cli/computer'
 require 'sunzistrano/cli/multipass'
 require 'sunzistrano/cli/rsync'
-if Gem.exists? 'ext_rails'
-  require 'ext_rails/sunzistrano/cli/console'
-  require 'ext_rails/sunzistrano/cli/rake'
-end
-if Gem.exists? 'mix_server'
-  require 'mix_server/sunzistrano/cli/firewall'
-end
-if File.exist? 'Sunfile'
-  load 'Sunfile'
-end
+load 'Sunfile' if File.exist? 'Sunfile'

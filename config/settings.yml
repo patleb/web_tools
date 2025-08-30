@@ -15,7 +15,6 @@ test:
 development:
 
 virtual:
-  server_master_name: master
   server_cluster_name: cluster
 
 staging:
