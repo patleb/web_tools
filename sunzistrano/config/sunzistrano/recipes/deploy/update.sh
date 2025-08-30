@@ -42,13 +42,13 @@ desc 'Copy repo to releases'
 mkdir -p "$release_path"
 git archive ${branch} | tar -x -f - -C $release_path
 
+desc 'Place a REVISION_TIME file with the current revision commit time in the current release path'
+echo "$(git log -1 --pretty=format:'%ct' ${branch})" > "$release_path/REVISION_TIME"
+
 cd.back
 
 desc 'Place a REVISION file with the current revision SHA in the current release path'
 echo "${revision}" > "$release_path/REVISION"
-
-desc 'Place a REVISION_TIME file with the current revision commit time in the current release path'
-echo "$(git log -1 --pretty=format:'%ct' ${branch})" > "$release_path/REVISION_TIME"
 
 desc 'Symlink linked directories'
 for linked_dir in ${linked_dirs}; do
