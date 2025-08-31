@@ -20,27 +20,29 @@ module ActionController
         format.html { render html: template_status_html(status), status: status }
         format.any  { head status }
       end
+      status
     end
 
-    def render_408(exception = RequestTimeoutError.new)
+    def render_408(exception = RequestTimeoutError.new, status: 408)
       log exception
       respond_to do |format|
         format.text do
-          render plain: template_status_plain(408), status: 408
+          render plain: template_status_plain(status), status: status
         end
         format.html do
           self.response_body = nil # make sure that there is no DoubleRenderError
-          render html: template_status_html(408), status: 408
+          render html: template_status_html(status), status: status
         end
         format.any do
           if params[:file]
-            output = "#{t('rescue.408.title')}: #{t('rescue.408.problem')} #{t('rescue.408.solution')}"
+            output = [t("rescue.#{status}.title"), t("rescue.#{status}.problem"), t("rescue.#{status}.solution")].join(': ')
             send_data output, type: 'text/plain', filename: 'request_timeout.txt'
           else
-            head 408
+            head status
           end
         end
       end
+      status
     end
 
     def render_500(exception = InternalServerError.new)
@@ -62,6 +64,7 @@ module ActionController
           head status
         end
       end
+      status
     end
 
     def healthcheck
