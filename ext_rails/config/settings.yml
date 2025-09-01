@@ -10,9 +10,9 @@ shared:
   mail_from: noreply@email.example.com
   mail_address: localhost
   mail_port: 1025
-  mail_username: none
-  mail_password: none
-  mail_authentication: plain
+  # mail_username: none
+  # mail_password: none
+  # mail_authentication: plain
   mail_enable_starttls_auto: true
   pg_stat_statements: true
   backup_split_size: 4GB

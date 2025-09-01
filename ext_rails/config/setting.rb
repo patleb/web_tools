@@ -23,7 +23,7 @@ Setting.class_eval do
       mail_password
       mail_authentication
       mail_enable_starttls_auto
-    )).to_h.transform_keys!{ |key|
+    )).to_h.compact.transform_keys!{ |key|
       key.to_s.sub(/^mail_/, '').sub('user', 'user_').to_sym
     }
   end
