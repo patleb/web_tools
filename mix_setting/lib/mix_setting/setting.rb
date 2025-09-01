@@ -131,6 +131,10 @@ class Setting
     end
   end
 
+  def self.default_app?
+    app == default_app
+  end
+
   def self.default_app
     @default_app ||= File.read('config/application.rb')[/^module \w+$/].split.last.underscore
   end

@@ -4,7 +4,7 @@ class Rails::ApplicationTest < ActiveSupport::TestCase
   test '.app, .stage' do
     assert_equal 'web_tools', Rails.app
     assert Rails.app.is_a?(ActiveSupport::StringInquirer)
-    assert Rails.app.base?
+    assert Rails.app.default?
     assert_equal 'test_web_tools', Rails.stage
   end
 

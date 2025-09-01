@@ -1,9 +1,9 @@
 MonkeyPatch.add{['railties', 'lib/rails/application.rb', '1b26eb866fda996aa17fc777f386036f12ba3660dd4aefb3a60e25b3a822fb0e']}
 
 class AppStringInquirer < ActiveSupport::StringInquirer
-  def base?
-    return @base if defined? @base
-    @base = Rails.app == Rails.application.name
+  def default?
+    return @default if defined? @default
+    @default = Rails.app == Rails.application.name
   end
 end
 
