@@ -38,7 +38,8 @@ pg.env_file() { # PUBLIC
 }
 
 pg.default_url() {
-  echo "postgresql://${db_username}:${db_password}@${db_host:-127.0.0.1}:${db_port:-5432}/${db_database}"
+  local default_port=543${postgres: -1}
+  echo "postgresql://${db_username}:${db_password}@${db_host:-127.0.0.1}:${db_port:-$default_port}/${db_database}"
 }
 
 sun.psql() {

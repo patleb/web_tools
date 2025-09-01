@@ -11,7 +11,7 @@ echo "listen_addresses = 'localhost, $PRIVATE_IP'" >> $PG_CONFIG_FILE
 echo "host    all             all             $PRIVATE_IP/32        md5" >> $PG_HBA_FILE
 echo "host    all             all             $PRIVATE_NETWORK         md5" >> $PG_HBA_FILE
 
-ufw allow in from $PRIVATE_NETWORK to $PRIVATE_IP port 5432
+ufw allow in from $PRIVATE_NETWORK to $PRIVATE_IP port 543${postgres: -1}
 ufw reload
 
 pg.restart_force

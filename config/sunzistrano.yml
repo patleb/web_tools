@@ -12,6 +12,7 @@ provision:
   recipes:
     # - app_packages
     - addons/rice
+    - db/postgres-{postgres}/private_network
     - reboot
 
 virtual:
