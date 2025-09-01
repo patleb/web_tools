@@ -15,8 +15,7 @@ test:
 development:
 
 virtual:
-  server_master_name: master
-  server_cluster_name: cluster
+  cloud_cluster_name: cluster
 
 staging:
   db_host: 127.0.0.1
@@ -53,4 +52,4 @@ production:
   # owner_private_key: $SECRET encrypted_secret
 
 cluster:
-  server_cluster: true
+  cloud_cluster: true

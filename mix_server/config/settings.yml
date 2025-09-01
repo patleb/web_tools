@@ -3,9 +3,9 @@ gems:
 
 types:
   authorized_keys: array
-  server_master_data: pathname
-  server_cluster_data: pathname
-  server_cluster: boolean
+  cloud_master_data: pathname
+  cloud_cluster_data: pathname
+  cloud_cluster: boolean
   denied_ips: array
   monit_interval: interval
 
@@ -24,8 +24,8 @@ shared:
   data_partition: /dev/sdb
   data_directory: /opt/storage
   ftp_mount_path: /opt/ftp_data
-  server_master_data: /opt/shared_data
-  server_cluster_data: /opt/storage/shared_data
+  cloud_master_data: /opt/shared_data
+  cloud_cluster_data: /opt/storage/shared_data
   pg_log_min_duration: 2000
   # monit_long_running_query_sec: 60
   monit_slow_query_ms: $ALIAS pg_log_min_duration
@@ -56,19 +56,18 @@ computer:
 
 test:
   max_pool_size: 2
-  server_provider: localhost
   deployer_password: test
-  server_master_data: ./tmp/shared_data
-  server_cluster_data: ./tmp/shared_data
+  cloud_provider: localhost
+  cloud_master_data: ./tmp/shared_data
+  cloud_cluster_data: ./tmp/shared_data
 
 development:
-  server_provider: localhost
   osquery_logger_path: ./tmp/osquery
-  server_master_data: ./tmp/shared_data
-  server_cluster_data: ./tmp/shared_data
+  cloud_provider: localhost
+  cloud_master_data: ./tmp/shared_data
+  cloud_cluster_data: ./tmp/shared_data
 
 virtual:
-  server_provider: multipass
   min_instances: 2
   owner_public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLigqEXHfI0eRaBbWWm9OpiKMPYzNPydaaotNtVso1o/w6w3BS/eVYenn25FxKap6XPXU0l9R//RqwuTxNpW8VDQUVDHM50ipnzkD4O8jheRdrtTbUEQ920iMuXLiy6nZgeiUF5FEu/2WKIHFvFKwQrUIx9SGKgsFNVIADV5BNgT+8XYenkQjZK3BAnb4/TKiLY3vx4/N4I0kobxbLySkRu3Mb1SYgRdtXMAjJ7nqQ6seetB0TH75FbG/qxCqfwuTsqG57dYuJvIbDx41hbpF8uGKnwQeyDdg0OWpcnxSinctddE8fxfEGvfmp/wcb0LuoBC186f4MXCg+U5w2hgsF
   owner_private_key: -----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAy4oKhFx3yNHkWgW1lpvTqYijD2MzT8nWmqLTbVbKNaP8OsNw\nUv3lWHp59uRcSmqelz11NJfUf/0asLk8TaVvFQ0FFQxzOdIqZ85A+DvI4XkXa7U2\n1BEPdtIjLly4sup2YHolBeRRLv9liiBxbxSsEK1CMfUhioLBTVSAA1eQTYE/vF2H\np5EI2StwQJ2+P0yoi2N78ePzeCNJKG8Wy8kpEbtzG9UmIEXbVzAIye56kOrHnrQd\nEx++RWxv6sQqn8Lk7Khue3WLibyGw8eNYW6RfLhip8EHsg3YNDlqXJ8Uop3LXXRP\nH8XxBr35qf8HG9C7qAQtfOn+DFwoPlOcNoYLBQIDAQABAoIBACZH8i5uzcChaVdd\nF4gaCrcqEbEFMVNiXNB8q1M3LZTlIL1UoL2bLxVzA5lh3dHJN8auMmsP21GvIuP2\nEtdvs/K7nicVTl6jnoIjkqidZeyyP6tsS8Ga69OnNiK0IbDU1CrVDj2LcZFrS4et\nDmib9Li2PWrz9bj9WqnWqLT4NRW+US0CsLlydJuuxFbl27fx/A3LNSfHthyBNYCP\n9VmZ4o+qbLYNL6RyKAKkE6iAXu59dh6J4volDLNXGKbbL/PeHrbCbPryoj4Kt+HC\nS7+F18I/XQpZPDX58c42wmlMAnfO9GNsQKl21Ottfcjrazi/iNXYt50Sno21h2RB\n4xJeC0kCgYEA+eFge8ZLv48j4v2mjlek4+xwv7zNkXCBfkZ0DGBoIrRTsW+r/j+C\n8KYlJWDZ7uU4OZi4BcEVi4DgAzo+/RuBKzJ33eOORI3xlMcshYwHGySGxIcIAZtF\nYqxAbBclzTOxzV1p9zGIqtczfbohfA2jxSpb/sPziWq7EGJWjFGIf2sCgYEA0IYg\n8OCU31KEKn2dCVHqj79SYMLhgc1Tk28Y3fDws8Ezfl7m3f04IMyfQbCxCCSQxYS3\nurCJ6Sdp6A8bJ83RxJeQkKXeR8I+DJpSjoEXDylmAxz6hJbXlWM9udtVuiplUjtX\n+gTDeeU4dmdjKy6EqJ6bJpXbq9Qt98vYWzKva08CgYAj1ye3mSGUQDuteyRAlmGY\nL3mchsAVdEWejwxmGg3VrHe0o4fP19w4GByL1/BqS4Zc/IKokKE+eSWoUNpoA2Hr\niDmZIeJuAs37wPWp0gPS6NJLrfKACH1TQdGbr1ZEsH14L0XbpscreeJwzhmvaWVs\nCj9Xs1NjCmP6XaB8T9V8MQKBgDmg1/m6F2qgo2Ya0QuCWBDiDyIuuaPl2vMkAPtV\nWzBSdKi4EZXIJXrrEhhVfJeDg38S7rPpljOZcOtxQU/+0bpDKPDQ5l1ukTdqbuZz\nRqwqBMdXeuSpy2q9wpFazJZmoRnYzLeMGXnWn4QZjo6gjIkNTFOdltgmC44wB9ss\nZs6BAoGBALefntugW3xWgQHwlP5uZyBhsuv7sJcSP4afoAuhUJ5Eb7q/GfsU96lq\nZOSInA0owLD/qiuKzwaDbVsRqdMKGY+MlLl+6BmzPxeL8rnD722nE9uiuFEm5Fae\nJmePcWl6YYyEkWhxAwQr8lMhz3JaLvGUvvjhkfzomVQI/Calv7fa\n-----END RSA PRIVATE KEY-----
@@ -85,7 +84,7 @@ virtual:
   ftp_password: $ALIAS deployer_password
   ftp_host_path: $METHOD
   ftp_drive_path: /
-  server_cluster_provider: multipass
+  cloud_provider: multipass
 
 staging:
 

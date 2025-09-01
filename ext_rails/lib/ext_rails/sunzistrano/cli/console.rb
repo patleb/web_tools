@@ -7,7 +7,7 @@ module Sunzistrano
     no_tasks do
       def do_console(stage)
         with_context(stage, :deploy) do
-          raise '--host is required for cluster usage' if sun.server_cluster && options.host.blank?
+          raise '--host is required for cluster usage' if sun.cloud_cluster && options.host.blank?
           exec <<-SH.squish
             #{ssh_virtual_key}
             #{ssh_cmd} -t #{sun.ssh_user}@#{options.host.presence || sun.server_host} #{ssh_proxy} '#{console_remote_cmd}'

@@ -19,7 +19,7 @@ module Sunzistrano
     no_tasks do
       def do_exist(stage, path)
         with_context(stage) do
-          path = Sunzistrano.owner_path :defaults_dir, path.tr('/', '~') if sun.from_defaults
+          path = owner_path :defaults_dir, path.tr('/', '~') if sun.from_defaults
           run_exist_cmd(path)
         end
       end
@@ -34,7 +34,7 @@ module Sunzistrano
             dst = sun.dir.present? ? Pathname.new(sun.dir).expand_path : Setting.root.join(BASH_DIR, 'downloads')
             dst.mkpath
           end
-          src = Sunzistrano.owner_path :defaults_dir, src.tr('/', '~') if sun.from_defaults
+          src = owner_path :defaults_dir, src.tr('/', '~') if sun.from_defaults
           unless run_download_cmd(src, dst)
             raise "Cannot transfer [#{src}] to [#{dst}]"
           end

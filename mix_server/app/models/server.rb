@@ -6,6 +6,6 @@ class Server < LibMainRecord
   end
 
   def self.current
-    @current ||= find_or_create_by! private_ip: Process.host.private_ip, provider: Setting[:server_provider]
+    @current ||= find_or_create_by! private_ip: Process.host.private_ip, provider: Setting[:cloud_provider]
   end
 end

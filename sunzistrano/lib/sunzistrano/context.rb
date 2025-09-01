@@ -53,15 +53,19 @@ module Sunzistrano
     end
 
     def deploy_path(*segments)
-      "/home/#{ssh_user}/#{stage}/#{segments.join('/')}"
+      "/home/#{ssh_user}/#{deploy_dir}/#{segments.join('/')}"
     end
 
     def provision_path(*segments)
       "/home/#{ssh_user}/#{provision_dir}/#{segments.join('/')}"
     end
 
+    def deploy_dir
+      deploy ? stage : env
+    end
+
     def provision_dir
-      deploy ? "#{stage}/releases/#{revision}" : stage
+      deploy ? "#{stage}/releases/#{revision}" : env
     end
 
     def debug
@@ -93,7 +97,7 @@ module Sunzistrano
     end
 
     def servers
-      @servers ||= server_cluster ? Cloud.server_cluster_ips : [server_host]
+      @servers ||= cloud_cluster ? Cloud.cluster_ips : [server_host]
     end
 
     def owner_public_key

@@ -10,18 +10,12 @@ module Sunzistrano
   MANIFEST_LOG = 'sun_manifest.log'
   METADATA_DIR = 'sun_metadata'
 
-  def self.owner_path(dir, name = nil)
-    if name
-      const_name = dir.to_s.upcase
-      name = const_name.end_with?('_DIR') && const_defined?(const_name) ? "#{const_get(const_name)}/#{name}" : dir
-    end
-    "/home/#{Setting[:owner_name]}/#{Setting.stage}/#{name}"
+  def self.owner_path(dir, name)
+    "/home/#{Setting[:owner_name]}/#{Setting.env}/#{const_get(dir.to_s.upcase)}/#{name}"
   end
 
   class Cli < Thor
     include Thor::Actions
-
-    attr_reader :sun
 
     def self.source_root
       Sunzistrano.root.join('lib').to_s
@@ -30,6 +24,8 @@ module Sunzistrano
     def self.exit_on_failure?
       true
     end
+
+    attr_reader :sun
 
     desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force] [--no-sync] [--reset-ssh]', 'Deploy application'
     method_options system: false, rollback: false, recipe: :string, force: false, sync: true, reset_ssh: false
@@ -43,10 +39,13 @@ module Sunzistrano
     method_options deploy: false, system: false, specialize: false, rollback: false, recipe: :string, reboot: false
     def compile(stage) = do_compile(stage)
 
-    desc 'reset_ssh [STAGE]', 'Reset ssh known hosts'
+    desc 'reset_ssh [STAGE] [--agent]', 'Reset ssh known hosts or agent'
+    method_options agent: false
     def reset_ssh(stage) = do_reset_ssh(stage)
 
     no_tasks do
+      delegate :owner_path, to: :Sunzistrano
+
       def do_provision(stage, role)
         raise '--recipe is required for rollback' if options.rollback && options.recipe.blank?
         do_compile(stage, role)
@@ -62,7 +61,11 @@ module Sunzistrano
 
       def do_reset_ssh(stage)
         with_context(stage) do
-          run_reset_known_hosts
+          if sun.agent
+            system! 'killall ssh-agent; eval "$(ssh-agent)"'
+          else
+            run_reset_known_hosts
+          end
         end
       end
 
@@ -188,6 +191,7 @@ module Sunzistrano
 
       def run_role_cmd
         run_reset_known_hosts if sun.reset_ssh
+        run_update_cluster_ips_cmd
         before_role
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_command :role_cmd, server
@@ -198,6 +202,33 @@ module Sunzistrano
           FileUtils.rm_rf(bash_dir)
           FileUtils.rmdir(File.dirname(bash_dir)) rescue nil if sun.deploy
         end
+      end
+
+      def run_job_cmd(type, *args)
+        raise 'run_job_cmd type cannot be "role"' if type.to_sym == :role
+        status = Parallel.map(Array.wrap(options.host.presence || sun.servers), in_threads: Float::INFINITY) do |server|
+          run_command :job_cmd, server, type, *args
+        end
+        unless status.all?
+          exit false
+        end
+      end
+
+      def job_cmd(server, type, *args)
+        command = send "#{type}_remote_cmd", *args
+        remote_cmd server, command.escape_single_quotes(:shell)
+      end
+
+      def run_update_cluster_ips_cmd
+        return true unless sun.cloud_cluster
+        unless run_command :update_cluster_ips_cmd, sun.server_host
+          exit false
+        end
+      end
+
+      def update_cluster_ips_cmd(server)
+        path = "/home/#{sun.ssh_user}/#{sun.env}_#{Setting[:cloud_cluster_name]}"
+        remote_cmd server, "echo '#{Cloud.cluster_ips.join(',')}' > #{path}", proxy: false
       end
 
       def run_reset_known_hosts
@@ -213,6 +244,7 @@ module Sunzistrano
       end
 
       def run_command(cmd_name, server, *args)
+        status = true
         popen3(cmd_name, server, *args) do |stdin, stdout, stderr|
           stdin.close
           error = Thread.new do
@@ -222,6 +254,7 @@ module Sunzistrano
               else
                 print "[#{server}] #{line.red}"
               end
+              status = false
             end
           end
           while (line = stdout.gets)
@@ -234,6 +267,7 @@ module Sunzistrano
           puts "[#{server}] #{Time.current.to_s.yellow}" unless options.verbose == false
           error.join
         end
+        status
       end
 
       def role_cmd(server)
@@ -255,10 +289,10 @@ module Sunzistrano
         SH
       end
 
-      def remote_cmd(server, command)
+      def remote_cmd(server, command, proxy: sun.cloud_cluster)
         <<-SH.squish
           #{ssh_virtual_key}
-          #{ssh_cmd} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{command}'
+          #{ssh_cmd} #{ssh_proxy if proxy} #{sun.ssh_user}@#{server} '#{command}'
         SH
       end
 
@@ -267,7 +301,7 @@ module Sunzistrano
       end
 
       def ssh_proxy
-        "-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.server_cluster
+        "-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.cloud_cluster
       end
 
       def ssh_virtual_key
@@ -326,18 +360,27 @@ module Sunzistrano
       def system(*args, exception: nil)
         return puts args if Setting.local?
         puts args if sun.debug
-        unless (result = Kernel.system(*args)) || !exception
+        unless (status = Kernel.system(*args)) || !exception
           puts args.map(&:to_s).map(&:red) unless sun.debug
-          puts 'Command failed'.red
-          exit 1
+          exit false
         end
-        result
+        status
       end
 
       def exec(*args)
         return puts args if Setting.local?
         puts args if sun.debug
         Kernel.exec(*args)
+      end
+
+      def exit(*)
+        puts 'Command failed'.red
+        Kernel.exit(*)
+      end
+
+      def puts(*)
+        Kernel.puts(*)
+        true
       end
     end
   end
@@ -347,13 +390,4 @@ require 'sunzistrano/cli/bash'
 require 'sunzistrano/cli/computer'
 require 'sunzistrano/cli/multipass'
 require 'sunzistrano/cli/rsync'
-if Gem.exists? 'ext_rails'
-  require 'ext_rails/sunzistrano/cli/console'
-  require 'ext_rails/sunzistrano/cli/rake'
-end
-if Gem.exists? 'mix_server'
-  require 'mix_server/sunzistrano/cli/firewall'
-end
-if File.exist? 'Sunfile'
-  load 'Sunfile'
-end
+load 'Sunfile' if File.exist? 'Sunfile'

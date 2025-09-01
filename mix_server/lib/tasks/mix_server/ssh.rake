@@ -2,15 +2,15 @@ namespace :ssh do
   namespace :cluster do
     desc "Mount cluster with /opt/storage/shared_data on master as /opt/shared_data-{ip}"
     task :mount => :environment do
-      host_path = Setting[:server_cluster_data]
-      Cloud.server_cluster_paths.each do |ip, mount_path|
+      host_path = Setting[:cloud_cluster_data]
+      Cloud.cluster_paths.each do |ip, mount_path|
         run_task! 'ssh:mount', ip, host_path, mount_path
       end
     end
 
     desc "Unmount /opt/shared_data-{ip}"
     task :unmount => :environment do
-      Cloud.server_cluster_paths.each do |_ip, mount_path|
+      Cloud.cluster_paths.each do |_ip, mount_path|
         run_task! 'ssh:unmount', mount_path
         sh "sudo rmdir #{mount_path}"
       end
@@ -18,7 +18,7 @@ namespace :ssh do
 
     desc 'Write cluster_ssh file for parallel-ssh'
     task :parallelize => :environment do
-      ips = Setting[:server_cluster_ips].map{ |ip| "#{Setting[:deployer_name]}@#{ip}" }
+      ips = Cloud.cluster_ips.map{ |ip| "#{Setting[:deployer_name]}@#{ip}" }
       File.write("/home/#{Setting[:deployer_name]}/ssh_cluster", ips.join("\n") + "\n")
     end
   end

@@ -98,7 +98,7 @@ module LogLines
           memo << [path.delete_suffix('/'), row['action']].join('/')
         end
       when 'socket_events'
-        servers = Set.new(Cloud.servers)
+        servers = Set.new(Cloud.server_ips)
         message, paths = extract_paths(adds, name, tiny: TINY_COMMAND_PATH) do |row, memo|
           next unless %w(connect bind).include? row['action']
           path = row.values_at('cmdline', 'path').find(&:present?) || ''

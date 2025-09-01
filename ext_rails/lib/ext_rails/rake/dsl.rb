@@ -61,9 +61,9 @@ module Rake
       end
     end
 
-    def sun_rake(task_name, *args, env: Setting.env, app: Setting.app, **argv)
+    def sun_rake(task_name, *args, env: Setting.env, app:, **argv)
       no_color  = ' DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
-      stage     = [env, app].compact.join('_')
+      stage     = [env, app].join('_')
       rake_args = args.empty? ? '' : "[#{args.join(',')}]"
       rake_options, sun_options = argv.each_with_object([+'', +'']) do |(key, value), (rake_options, sun_options)|
         case key

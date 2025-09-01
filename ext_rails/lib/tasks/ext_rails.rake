@@ -22,9 +22,9 @@ namespace :try do
   end
 
   namespace :cluster do
-    desc "try private ip"
+    desc "try cluster private ip"
     task :private_ip => :environment do
-      sun_rake 'try:private_ip', app: 'cluster'
+      sun_rake 'try:private_ip', app: Setting[:cloud_cluster_name]
     end
   end
 end
