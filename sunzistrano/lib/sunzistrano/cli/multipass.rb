@@ -55,7 +55,7 @@ module Sunzistrano
           if (sun.clone || sun.static_ip) && vm_names.size > 1 && vm_names[vm_name] == 0 && vm_ip(0).nil?
             raise 'the master must be created before the cluster'
           end
-          Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
+          vm_names.each do |name, i|
             case vm_state i
             when :null
               add_virtual_host i do
@@ -83,7 +83,7 @@ module Sunzistrano
 
       def do_halt
         as_virtual do
-          Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
+          vm_names.each do |name, i|
             case vm_state i
             when :running
               system! "multipass stop #{name} #{'--force' if sun.force}"
@@ -99,7 +99,7 @@ module Sunzistrano
       def do_destroy
         as_virtual do
           network = vm_ip(0)&.sub(/\.\d+$/, '')
-          Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
+          vm_names.each do |name, i|
             remove_virtual_host i do
               case vm_state i
               when :null
@@ -130,7 +130,7 @@ module Sunzistrano
 
       def do_resize
         as_virtual do
-          Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
+          vm_names.each do |name, i|
             running = false
             case vm_state i
             when :running
@@ -210,7 +210,7 @@ module Sunzistrano
         raise "snapshot action [#{action}] unsupported" unless SNAPSHOT_ACTIONS.include? action
         as_virtual do
           @vm_base = {}
-          Parallel.each(vm_names, in_threads: Float::INFINITY) do |name, i|
+          vm_names.each do |name, i|
             send "run_snapshot_#{action}_cmd", name, i
           end
         end
