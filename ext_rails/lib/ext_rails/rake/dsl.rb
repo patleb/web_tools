@@ -62,10 +62,11 @@ module Rake
     end
 
     def sun_rake(task_name, *args, env: Setting.env, app:, **argv)
+      raise 'not the master server' if Setting.local? || !Setting.default_app?
       no_color  = ' DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
       stage     = [env, app].join('_')
       rake_args = args.empty? ? '' : "[#{args.join(',')}]"
-      rake_options, sun_options = argv.each_with_object([+'', +'']) do |(key, value), (rake_options, sun_options)|
+      rake_options, sun_options = argv.each_with_object([+'', +'--no-proxy']) do |(key, value), (rake_options, sun_options)|
         case key
         when :host, :wait
           sun_options << " --#{key} #{value}" if value.present?
@@ -83,7 +84,7 @@ module Rake
       end
       rake_options = " -- #{rake_options}" if rake_options.present?
       rake_task = [task_name, rake_args, no_color, rake_options].join('')
-      sh "bin/sun rake #{stage} '#{rake_task.escape_single_quotes}' #{sun_options}"
+      sh "bin/sun rake #{stage} '#{rake_task.escape_single_quotes}' #{sun_options}", verbose: false
     end
   end
 end

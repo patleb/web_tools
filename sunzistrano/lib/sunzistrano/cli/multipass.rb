@@ -251,7 +251,6 @@ module Sunzistrano
         else
           raise "vm state [#{vm_state i}]"
         end
-        run_reset_known_hosts
       end
 
       def run_snapshot_list_cmd(name, i)

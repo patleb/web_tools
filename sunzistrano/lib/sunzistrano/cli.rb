@@ -27,12 +27,12 @@ module Sunzistrano
 
     attr_reader :sun
 
-    desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force] [--no-sync] [--reset-ssh]', 'Deploy application'
-    method_options system: false, rollback: false, recipe: :string, force: false, sync: true, reset_ssh: false
+    desc 'deploy [STAGE] [--system] [--rollback] [--recipe] [--force] [--no-sync]', 'Deploy application'
+    method_options system: false, rollback: false, recipe: :string, force: false, sync: true
     def deploy(stage) = do_provision(stage, :deploy)
 
-    desc 'provision [STAGE] [--specialize] [--rollback] [--recipe] [--force] [--reboot] [--reset-ssh]', 'Provision system'
-    method_options specialize: false, rollback: false, recipe: :string, force: false, reboot: false, reset_ssh: false
+    desc 'provision [STAGE] [--specialize] [--rollback] [--recipe] [--force] [--reboot]', 'Provision system'
+    method_options specialize: false, rollback: false, recipe: :string, force: false, reboot: false
     def provision(stage) = do_provision(stage, :provision)
 
     desc 'compile [STAGE] [--deploy] [--system] [--specialize] [--rollback] [--recipe] [--reboot]', 'Compile provisioning'
@@ -190,14 +190,12 @@ module Sunzistrano
       end
 
       def run_role_cmd
-        run_reset_known_hosts if sun.reset_ssh
         run_update_cluster_ips_cmd
         before_role
         Parallel.each(sun.servers, in_threads: Float::INFINITY) do |server|
           run_command :role_cmd, server
         end
         after_role
-        run_reset_known_hosts if sun.reset_ssh
         unless sun.debug
           FileUtils.rm_rf(bash_dir)
           FileUtils.rmdir(File.dirname(bash_dir)) rescue nil if sun.deploy
@@ -271,11 +269,10 @@ module Sunzistrano
       end
 
       def role_cmd(server)
-        no_strict_host_key_checking = "-o 'StrictHostKeyChecking no'" if sun.reset_ssh
         <<-SH.squish
           #{ssh_virtual_key}
           cd #{bash_dir} && tar cz . |
-          #{ssh_cmd} #{no_strict_host_key_checking} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{role_remote_cmd}'
+          #{ssh_cmd} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{role_remote_cmd}'
         SH
       end
 
@@ -289,7 +286,7 @@ module Sunzistrano
         SH
       end
 
-      def remote_cmd(server, command, proxy: sun.cloud_cluster)
+      def remote_cmd(server, command, proxy: sun.cloud_cluster && sun.proxy != false)
         <<-SH.squish
           #{ssh_virtual_key}
           #{ssh_cmd} #{ssh_proxy if proxy} #{sun.ssh_user}@#{server} '#{command}'
@@ -297,15 +294,15 @@ module Sunzistrano
       end
 
       def ssh_cmd
-        "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o LogLevel=ERROR"
+        "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o StrictHostKeyChecking=no -o LogLevel=ERROR"
       end
 
       def ssh_proxy
-        "-o ProxyCommand='ssh -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.cloud_cluster
+        "-o ProxyCommand='ssh -o StrictHostKeyChecking=no -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.cloud_cluster
       end
 
       def ssh_virtual_key
-        <<-SH.squish if sun.env.virtual?
+        <<-SH.squish if sun.env.virtual? && sun.proxy != false
           if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then
             eval $(ssh-agent);
           fi
@@ -342,7 +339,7 @@ module Sunzistrano
 
       def capture2e(*cmd)
         return puts cmd if Setting.local?
-        puts cmd
+        puts cmd if sun.debug
         Open3.capture2e(*cmd)
       end
 

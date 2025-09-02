@@ -5,8 +5,8 @@ module Sunzistrano
   WAIT_DURATION = /^(\d+\.(second|minute|hour|day|week)s?)(\s*\+\s*\d+\.(second|minute|hour|day|week)s?)*$/
 
   Cli.class_eval do
-    desc 'rake [STAGE] [TASK] [--host] [--sudo] [--nohup] [--wait] [--verbose] [--term] [--kill]', 'Execute a rake task'
-    method_options host: :string, sudo: false, nohup: false, wait: :string, verbose: false, term: false, kill: false
+    desc 'rake [STAGE] [TASK] [--host] [--no-proxy] [--sudo] [--nohup] [--wait] [--verbose] [--term] [--kill]', 'Execute a rake task'
+    method_options host: :string, proxy: true, sudo: false, nohup: false, wait: :string, verbose: false, term: false, kill: false
     def rake(stage, task) = do_rake(stage, task)
 
     no_tasks do
@@ -17,7 +17,7 @@ module Sunzistrano
       end
 
       def rake_remote_cmd(task)
-        rake_output = sun.verbose || sun.nohup || sun.wait.present?
+        rake_output = sun.verbose || sun.nohup || sun.wait.present? || ENV['RAKE_OUTPUT'].to_b
         environment = ["PACK=#{pack? task}", "RAKE_OUTPUT=#{rake_output}", "RAILS_ENV=#{sun.env}", "RAILS_APP=#{sun.app}"]
         if sun.sudo
           rbenv_sudo = "rbenv sudo #{environment.join(' ')}"
