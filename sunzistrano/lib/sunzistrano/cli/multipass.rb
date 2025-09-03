@@ -254,7 +254,7 @@ module Sunzistrano
       end
 
       def run_snapshot_list_cmd(name, i)
-        system "multipass list --snapshots | grep -E '^(Instance|#{name})'"
+        system "multipass list --snapshots | grep -E '^(Instance|#{name}) '"
       end
 
       def run_snapshot_delete_cmd(name, i)
@@ -272,9 +272,9 @@ module Sunzistrano
 
       def vm_snapshots
         @vm_snapshots ||= if (json = `multipass list --snapshots --format=json`).present?
+          hash = JSON.parse(json)['info']
           vm_list.each_with_object({}) do |name, snapshots|
-            next unless (hash = JSON.parse(json).dig('info', name))
-            hash.each_with_object({}) do |(snapshot, _info), memo|
+            snapshots[name] = (hash[name] || {}).each_with_object({}) do |(snapshot, _info), memo|
               snapshot = vm_snapshot(snapshot)
               json = `multipass info #{name}.#{snapshot} --format=json`
               info = JSON.parse(json).dig('info', name, 'snapshots', snapshot)
