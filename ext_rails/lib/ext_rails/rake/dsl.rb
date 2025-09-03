@@ -61,7 +61,7 @@ module Rake
       end
     end
 
-    def sun_rake(task_name, *args, env: Setting.env, app:, **argv)
+    def sun_rake(task_name, *args, env: Setting.env, app: Setting[:cloud_cluster_name], **argv)
       raise 'not the master server' if Setting.local? || !Setting.default_app?
       no_color  = ' DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
       stage     = [env, app].join('_')
