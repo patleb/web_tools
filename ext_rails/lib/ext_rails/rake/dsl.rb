@@ -84,7 +84,7 @@ module Rake
       end
       rake_options = " -- #{rake_options}" if rake_options.present?
       rake_task = [task_name, rake_args, no_color, rake_options].join('')
-      sh "bin/sun rake #{stage} '#{rake_task.escape_single_quotes}' #{sun_options}", verbose: false
+      sh "STRICT=false bin/sun rake #{stage} '#{rake_task.escape_single_quotes}' #{sun_options}", verbose: false
     end
   end
 end

@@ -213,7 +213,7 @@ Host *
 Host virtual.test
   UserKnownHostsFile    /dev/null
   StrictHostKeyChecking no
-Host virtual.test
+  User                  ubuntu
   User                  deployer
   ForwardAgent          yes
   ControlMaster         auto

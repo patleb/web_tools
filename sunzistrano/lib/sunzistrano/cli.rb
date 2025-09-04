@@ -39,9 +39,11 @@ module Sunzistrano
     method_options deploy: false, system: false, specialize: false, rollback: false, recipe: :string, reboot: false
     def compile(stage) = do_compile(stage)
 
-    desc 'reset_ssh [STAGE] [--agent]', 'Reset ssh known hosts or agent'
-    method_options agent: false
+    desc 'reset_ssh [STAGE]', 'Reset ssh known hosts'
     def reset_ssh(stage) = do_reset_ssh(stage)
+
+    desc 'reset_ssh_agent', 'Reset ssh-agent'
+    def reset_ssh_agent = system! 'killall ssh-agent; eval "$(ssh-agent)"'
 
     no_tasks do
       delegate :owner_path, to: :Sunzistrano
@@ -61,11 +63,7 @@ module Sunzistrano
 
       def do_reset_ssh(stage)
         with_context(stage) do
-          if sun.agent
-            system! 'killall ssh-agent; eval "$(ssh-agent)"'
-          else
-            run_reset_known_hosts
-          end
+          run_reset_known_hosts
         end
       end
 
@@ -294,11 +292,13 @@ module Sunzistrano
       end
 
       def ssh_cmd
-        "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o StrictHostKeyChecking=no -o LogLevel=ERROR"
+        cmd = "ssh #{"-p #{sun.ssh_port}" if sun.ssh_port} -o ForwardAgent=yes -o LogLevel=ERROR"
+        cmd << ' -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' if ENV['STRICT'] == 'false'
+        cmd
       end
 
       def ssh_proxy
-        "-o ProxyCommand='ssh -o StrictHostKeyChecking=no -W %h:%p #{sun.ssh_user}@#{sun.server_host}'" if sun.cloud_cluster
+        "-J #{sun.ssh_user}@#{sun.server_host}" if sun.cloud_cluster
       end
 
       def ssh_virtual_key
