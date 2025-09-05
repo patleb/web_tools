@@ -122,7 +122,7 @@ namespace! :ftp do
   end
 
   def drive_options(args)
-    user_id = args[:user_id] || Setting[:deployer_id] || 1001
+    user_id = args[:user_id] || Setting[:deployer_id]
     group_id = args[:group_id] || user_id
     %W(
       allow_other

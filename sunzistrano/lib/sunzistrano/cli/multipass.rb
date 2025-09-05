@@ -29,11 +29,11 @@ module Sunzistrano
     method_options cpu: false, ram: false, disk: false
     def resize = do_resize
 
-    desc 'mount', "Mount Multipass instance directory (#{MULTIPASS_MOUNT} or :dst)"
-    method_options src: :string, dst: :string
+    desc 'mount [--src] [--dst] [--deploy]', "Mount Multipass instance directory (#{MULTIPASS_MOUNT} or :dst)"
+    method_options src: :string, dst: :string, deploy: false
     def mount = do_mount
 
-    desc 'unmount', "Unmount Multipass instance directory (#{MULTIPASS_MOUNT} or :dst)"
+    desc 'unmount [--dst]', "Unmount Multipass instance directory (#{MULTIPASS_MOUNT} or :dst)"
     method_options dst: :string
     def unmount = do_unmount
 
@@ -155,9 +155,10 @@ module Sunzistrano
           dst = sun.dst || MULTIPASS_MOUNT
           return unless vm_info.dig(vm_name, :mounts, dst).nil?
           src = sun.src || MULTIPASS_DIR.join(vm_name)
+          owner = "-g #{File.stat(Dir.pwd).gid}:#{sun.deployer_id} -u #{File.stat(Dir.pwd).uid}:#{sun.deployer_id}" if sun.deploy
           mount_dir = Pathname.new(src)
           mount_dir.mkdir_p
-          mount_cmd = "multipass mount --type=native #{mount_dir} #{vm_name}:#{dst}"
+          mount_cmd = "multipass mount --type=native #{mount_dir} #{vm_name}:#{dst} #{owner}"
           case vm_state
           when :stopped
             system! mount_cmd
