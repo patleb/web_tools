@@ -48,7 +48,7 @@ when 'staging', 'production'
     every :day, at: '8:11 am' do
       rake 'cron:every_day'
     end
-  when 'web_cluster'
+  when 'cluster'
     every :sunday, at: '10:01 am' do
       rake 'system:reboot'
     end

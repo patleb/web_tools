@@ -1,6 +1,6 @@
 module Rake
   module DSL
-    def with_argv(task_name, **argv)
+    def with_argv(task_name, ignore: false, retries: 0, **argv)
       if argv.any?
         old_argv = ARGV.dup
         ARGV.replace([task_name, '--'])
@@ -13,7 +13,17 @@ module Rake
             end
         end
       end
-      yield
+      begin
+        attempts ||= 0
+        yield
+      rescue
+        if (attempts += 1) <= retries
+          sleep 20 # sshfs cache time
+          retry
+        else
+          raise unless ignore
+        end
+      end
     ensure
       ARGV.replace(old_argv) if old_argv
     end

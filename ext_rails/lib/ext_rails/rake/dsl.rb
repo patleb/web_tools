@@ -61,7 +61,7 @@ module Rake
       end
     end
 
-    def sun_rake(task_name, *args, env: Setting.env, app: Setting[:cloud_cluster_name], **argv)
+    def sun_rake(task_name, *args, env: Setting.env, app: Setting[:cloud_cluster_name], master: false, **argv)
       raise 'not the master server' if Setting.local? || !Setting.default_app?
       no_color  = ' DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
       stage     = [env, app].join('_')
@@ -71,7 +71,7 @@ module Rake
         when :host, :wait
           sun_options << " --#{key} #{value}" if value.present?
           next
-        when :sudo, :nohup, :verbose, :kill, :force
+        when :sudo, :nohup, :verbose, :term, :kill
           sun_options << " --#{key}" if value
           next
         end
@@ -84,7 +84,10 @@ module Rake
       end
       rake_options = " -- #{rake_options}" if rake_options.present?
       rake_task = [task_name, rake_args, no_color, rake_options].join('')
+      argv.except! :host, :wait, :sudo, :nohup, :verbose, :term, :kill
+      run_task task_name, *args, **argv if master == true
       sh "STRICT=false bin/sun rake #{stage} '#{rake_task.escape_single_quotes}' #{sun_options}", verbose: false
+      run_task task_name, *args, **argv if master == :last
     end
   end
 end
