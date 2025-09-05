@@ -33,8 +33,8 @@ module Sunzistrano
     method_options src: :string, dst: :string, deploy: false
     def mount = do_mount
 
-    desc 'unmount [--dst]', "Unmount Multipass instance directory (#{MULTIPASS_MOUNT} or :dst)"
-    method_options dst: :string
+    desc 'unmount [--dst] [--all]', "Unmount Multipass instance directory (#{MULTIPASS_MOUNT} or :dst)"
+    method_options dst: :string, all: false
     def unmount = do_unmount
 
     desc 'ssh [-i] [-c]', 'Shell into Multipass instance (or execute -c command)'
@@ -172,9 +172,13 @@ module Sunzistrano
 
       def do_unmount
         as_virtual do
-          dst = sun.dst || MULTIPASS_MOUNT
-          return if vm_info.dig(vm_name, :mounts, dst).nil?
-          system! "multipass umount #{vm_name}:#{dst}"
+          if sun.all
+            system! "multipass umount #{vm_name}"
+          else
+            dst = sun.dst || MULTIPASS_MOUNT
+            return if vm_info.dig(vm_name, :mounts, dst).nil?
+            system! "multipass umount #{vm_name}:#{dst}"
+          end
         end
       end
 
