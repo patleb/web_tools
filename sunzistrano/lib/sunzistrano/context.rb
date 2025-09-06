@@ -13,7 +13,9 @@ module Sunzistrano
       context = Setting.all.to_hwia.merge!(extract_yml(Setting.root)).merge!(options).merge!(role => true)
       require_overrides
       @gems = @gems.to_a.reverse.to_h
+      @secrets&.each{ |key| context[key] = Setting.decrypt(context[key]) }
       @replaced&.each{ |key| context[key.delete_suffix(Setting::REPLACE)] = context.delete(key) }
+      remove_ivar(:@secrets)
       remove_ivar(:@replaced)
       super(context)
     end
@@ -246,10 +248,9 @@ module Sunzistrano
         role_yml.union!(app_yml)
       end
       yml = (gems_yml || {}).union!(role_yml)
-      yml.each_key do |key|
-        if key.end_with? Setting::REPLACE
-          (@replaced ||= Set.new) << key
-        end
+      yml.each do |key, value|
+        (@secrets ||= Set.new) << key if value.is_a?(String) && value.start_with?(Setting::SECRET)
+        (@replaced ||= Set.new) << key if key.end_with? Setting::REPLACE
       end
       yml
     end
