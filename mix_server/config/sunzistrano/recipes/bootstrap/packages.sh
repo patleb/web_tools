@@ -61,8 +61,6 @@ fi
   libnss-wrapper
   zstd
 
-  libnetcdf-dev
-
   at
   lz4
   golang-go

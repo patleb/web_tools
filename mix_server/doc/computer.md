@@ -43,7 +43,7 @@ sudo chmod 440 "/etc/sudoers.d/$USER"
 ## Sunzistrano
 
 ```shell
-sudo apt install -y ruby ruby-dev ruby-bundler libyaml-dev libpq-dev libnetcdf-dev git moreutils
+sudo apt install -y ruby ruby-dev ruby-bundler libyaml-dev libpq-dev git moreutils
 echo 'gem: --no-document' > ~/.gemrc
 mkdir .gems
 mkdir ~/code && cd ~/code
