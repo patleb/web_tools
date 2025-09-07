@@ -31,11 +31,15 @@ namespace :ssh do
       allow_other
       IdentityFile=/home/#{Setting[:deployer_name]}/.ssh/id_rsa
       StrictHostKeyChecking=no
+      UserKnownHostsFile=/dev/null
       compression=no
       Ciphers=aes128-ctr
       reconnect
       ServerAliveInterval=15
       ServerAliveCountMax=3
+      cache=yes
+      kernel_cache
+      large_read
     )
     sh <<~CMD.squish
       sudo sshfs -o #{options.join(',')},uid=$(id -u #{Setting[:deployer_name]}),gid=$(id -g #{Setting[:deployer_name]})
