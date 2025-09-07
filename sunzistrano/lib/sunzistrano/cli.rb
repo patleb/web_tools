@@ -370,9 +370,9 @@ module Sunzistrano
         Kernel.exec(*args)
       end
 
-      def exit(*)
-        puts 'Command failed'.red
-        Kernel.exit(*)
+      def exit(status = true)
+        puts 'Command failed'.red if status == false || (!status.is_a?(Boolean) && status != 0)
+        Kernel.exit(status)
       end
 
       def puts(*)

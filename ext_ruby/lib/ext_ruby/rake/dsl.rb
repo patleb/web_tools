@@ -16,7 +16,7 @@ module Rake
       begin
         attempts ||= 0
         yield
-      rescue
+      rescue Exception
         if (attempts += 1) <= retries
           sleep 20 # sshfs cache time
           retry

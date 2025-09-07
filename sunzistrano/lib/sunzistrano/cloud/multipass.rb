@@ -12,8 +12,14 @@ module Cloud
       if Host.domains[:virtual].nil?
         Pathname.new(Dir.home).join("#{Setting.env}_#{Setting[:cloud_cluster_name]}").read.strip.split(',')
       else
-        Host.domains[:virtual].select_map{ |name, ip| name.include?(Setting[:cloud_cluster_name]) && ip }
+        Host.domains[:virtual].select_map{ |name, ip| cluster_name?(name) && ip }
       end
+    end
+
+    private
+
+    def cluster_name?(name)
+      name.match? /^#{Setting[:cloud_cluster_name]}-\d+\.#{Setting[:server_host]}$/
     end
   end
 end
