@@ -17,6 +17,7 @@ sun.update
   chromium
   filezilla
   gimp
+  gparted
   graphviz
   keepassxc
   lftp
