@@ -18,10 +18,10 @@ module MixGeo
 
     def extra_ips
       @extra_ips ||= [
-        { id: '127.0.0.0',   country_code: 'XA', coordinates: [0.0, 0.0] },
-        { id: '10.0.0.0',    country_code: 'XB', coordinates: [0.0, 0.0] },
+        { id: '127.0.0.0',   country_code: 'XV', coordinates: [0.0, 0.0] },
+        { id: '10.0.0.0',    country_code: 'XA', coordinates: [0.0, 0.0] },
         { id: '172.16.0.0',  country_code: 'XB', coordinates: [0.0, 0.0] },
-        { id: '192.168.0.0', country_code: 'XB', coordinates: [0.0, 0.0] },
+        { id: '192.168.0.0', country_code: 'XC', coordinates: [0.0, 0.0] },
       ]
     end
   end
