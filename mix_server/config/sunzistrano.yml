@@ -76,9 +76,6 @@ deploy:
         if: 'sun.passenger'
     - deploy/osquery-system:
         after: deploy/finished
-  scripts:
-    - nginx/maintenance_enable
-    - nginx/maintenance_disable
   linked_dirs:
     - log
     - node_modules
