@@ -12,7 +12,7 @@ module MixServer::Logs
         FileUtils.touch log_path, mtime: log_time
         FileUtils.touch "#{log_path}.1", mtime: log_time - 1.day
 
-        run_task
+        run_rake
         timestamps = LogLine.all.map(&:created_at)
         assert_equal 2, LogMessage.count
         assert_equal [2021, 2021], timestamps.map(&:year)
@@ -22,7 +22,7 @@ module MixServer::Logs
         log = Log.first
         log.update! line_i: 1
 
-        run_task
+        run_rake
         timestamps = LogLine.order(:created_at).map(&:created_at)
         assert_equal 3, LogMessage.count
         assert_equal [2020, 2021, 2021, 2021], timestamps.map(&:year)

@@ -4,7 +4,7 @@ module Sunzistrano
   CONFIG_PATH = 'config/sunzistrano'
   CONFIG_YML = 'config/sunzistrano.yml'
   BASH_DIR = '.sunzistrano'
-  BASH_LOG = 'sun_bash.log'
+  ROLE_LOG = 'sun_role.log'
   DEFAULTS_DIR = 'sun_defaults'
   MANIFEST_DIR = 'sun_manifest'
   MANIFEST_LOG = 'sun_manifest.log'
@@ -279,7 +279,7 @@ module Sunzistrano
           mkdir -p #{bash_dir_remote} && cd #{bash_dir_remote} && start=$(mktemp) &&
           flock --verbose -n #{sun.deploy_path 'role.lock'} tar xz &&
           flock --verbose -n #{sun.deploy_path 'role.lock'} #{'sudo' if sun.sudo} bash -e -u +H role.sh 2>&1 |
-          tee -a #{sun.provision_path BASH_LOG} && cd #{bash_dir_remote} &&
+          tee -a #{sun.provision_path ROLE_LOG} && cd #{bash_dir_remote} &&
           find . -depth ! -cnewer $start -print0 | sponge /dev/stdout | xargs -r0 rm -d > /dev/null 2>&1 && rm -f $start
         SH
       end

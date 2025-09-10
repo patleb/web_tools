@@ -37,5 +37,5 @@ end
 
 if defined? MixJob
   Rake::Task['nginx:maintenance:enable'].enhance ['job:stop']
-  Rake::Task['nginx:maintenance:disable'].enhance{ run_task 'job:start' }
+  Rake::Task['nginx:maintenance:disable'].enhance{ run_rake 'job:start' }
 end

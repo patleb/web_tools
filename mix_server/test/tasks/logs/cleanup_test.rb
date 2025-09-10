@@ -9,7 +9,7 @@ module MixServer::Logs
       LogLine._drop_all_partitions!
       LogLine.create_all_partitions(weeks)
       assert_equal past_partitions, LogLine.partitions
-      run_task
+      run_rake
       assert_equal current_partitions, LogLine.partitions
     end
 

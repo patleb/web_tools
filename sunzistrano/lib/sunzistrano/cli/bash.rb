@@ -4,14 +4,15 @@ module Sunzistrano
   BASH_SCRIPT = /^\w+[\w\/]+(\[|$)/
   BASH_HELPER = /^\w+\.[\w.]+(\[|$)/
   BASH_EXPORT = /^\w+=/
+  BASH_LOG    = 'log/bash.log'
 
   Cli.class_eval do
     desc 'bash-list [--stage]', 'List bash scripts and helpers'
     method_options stage: :string
     def bash_list = do_bash_list
 
-    desc 'bash [STAGE] [TASK] [--host] [--sudo] [--no-verbose]', 'Execute bash script(s) and/or helper function(s)'
-    method_options host: :string, sudo: false, verbose: true
+    desc 'bash [STAGE] [TASK] [--host] [--no-proxy] [--sudo] [--verbose]', 'Execute bash script(s) and/or helper function(s)'
+    method_options host: :string, proxy: true, sudo: false, verbose: false
     def bash(stage, task) = do_bash(stage, task)
 
     no_tasks do

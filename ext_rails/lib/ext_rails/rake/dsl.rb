@@ -61,9 +61,98 @@ module Rake
       end
     end
 
+    def with_argv(task_name, ignore: false, retries: 0, **argv)
+      verbose = argv[:verbose]
+      if argv.any?
+        old_argv = ARGV.dup
+        ARGV.replace([task_name, '--'])
+        argv.each do |key, value|
+          ARGV << case value
+          when nil, true  then "--#{key.to_s.dasherize}"
+          when false      then "--no-#{key.to_s.dasherize}"
+          when Array, Set then "--#{key.to_s.dasherize}=#{value.to_a.join(',')}"
+          else                 "--#{key.to_s.dasherize}=#{value}"
+          end
+        end
+      end
+      begin
+        attempts ||= 0
+        if verbose
+          old_env = ENV['RAKE_OUTPUT']
+          ENV['RAKE_OUTPUT'] = 'true'
+        end
+        yield
+      rescue Exception
+        if (attempts += 1) <= retries
+          sleep 20 # sshfs cache time
+          retry
+        else
+          raise unless ignore
+        end
+      ensure
+        ENV['RAKE_OUTPUT'] = old_env if verbose
+      end
+    ensure
+      ARGV.replace(old_argv) if old_argv
+    end
+    module_function :with_argv
+
+    def run_rake(task_name, *args, **argv)
+      with_argv(task_name, **argv) do
+        Rake::Task[task_name].invoke(*args)
+      end
+    end
+
+    def run_rake!(task_name, *args, **argv)
+      with_argv(task_name, **argv) do
+        Rake::Task[task_name].invoke!(*args)
+      end
+    end
+
+    def run_bash(task_name, ...)
+      case task_name
+      when Sunzistrano::BASH_SCRIPT
+        sh bash_cmd(task_name, ...), verbose: false
+      when Sunzistrano::BASH_HELPER
+        sh "export helper=#{task_name} && #{bash_cmd('helper', ...)} && unset helper", verbose: false
+      else
+        raise "invalid bash task: #{task_name}"
+      end
+    end
+
+    def bash_cmd(task_name, *args, sudo: false, verbose: true)
+      context = <<-SH.squish
+        export BASH_OUTPUT=#{verbose ? 'rake' : 'false'};
+        export RAILS_ENV=#{Setting.env};
+        export RAILS_APP=#{Setting.app};
+      SH
+      bash = "#{'sudo -E' if sudo} bash -e -u +H #{Sunzistrano::BASH_DIR}/scripts"
+      "#{context} #{bash}/#{task_name}.sh #{args.join(' ')} 2>&1 | tee -a #{Sunzistrano::BASH_LOG}"
+    end
+
+    def sun_bash(task_name, *args, env: Setting.env, app: Setting[:cloud_cluster_name], master: false, **argv)
+      raise 'not the master server' if Setting.local? || !Setting.default_app?
+      no_color    = 'NO_COLOR=true ' if ENV['NO_COLOR'].to_b
+      stage       = [env, app].join('_')
+      bash_args   = args.empty? ? '' : "[#{args.join(',')}]"
+      sun_options = argv.each_with_object(+'--no-proxy') do |(key, value), sun_options|
+        case key
+        when :host
+          sun_options << " --#{key} #{value}" if value.present?
+        when :sudo, :verbose
+          sun_options << " --#{key}" if value
+        end
+      end
+      bash_task = [no_color, task_name, bash_args].join('')
+      argv.except! :host
+      run_bash task_name, *args, **argv if master == true
+      sh "STRICT=false bin/sun bash #{stage} '#{bash_task.escape_single_quotes}' #{sun_options}", verbose: false
+      run_bash task_name, *args, **argv if master == :last
+    end
+
     def sun_rake(task_name, *args, env: Setting.env, app: Setting[:cloud_cluster_name], master: false, **argv)
       raise 'not the master server' if Setting.local? || !Setting.default_app?
-      no_color  = ' DISABLE_COLORIZATION=true' if ENV['DISABLE_COLORIZATION'].to_b
+      no_color  = ' NO_COLOR=true' if ENV['NO_COLOR'].to_b
       stage     = [env, app].join('_')
       rake_args = args.empty? ? '' : "[#{args.join(',')}]"
       rake_options, sun_options = argv.each_with_object([+'', +'--no-proxy']) do |(key, value), (rake_options, sun_options)|
@@ -84,10 +173,10 @@ module Rake
       end
       rake_options = " -- #{rake_options}" if rake_options.present?
       rake_task = [task_name, rake_args, no_color, rake_options].join('')
-      argv.except! :host, :wait, :sudo, :nohup, :verbose, :term, :kill
-      run_task task_name, *args, **argv if master == true
+      argv.except! :host, :wait, :sudo, :nohup, :term, :kill
+      run_rake task_name, *args, **argv if master == true
       sh "STRICT=false bin/sun rake #{stage} '#{rake_task.escape_single_quotes}' #{sun_options}", verbose: false
-      run_task task_name, *args, **argv if master == :last
+      run_rake task_name, *args, **argv if master == :last
     end
   end
 end

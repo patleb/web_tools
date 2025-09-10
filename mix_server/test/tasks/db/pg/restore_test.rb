@@ -25,10 +25,10 @@ class Db::Pg::RestoreTest < Db::Pg::TestCase
     test task_name do
       if md5
         assert_output /checked/, /md5sum/ do
-          run_task(path: backup, **options)
+          run_rake(path: backup, **options)
         end
       else
-        run_task(path: backup, md5: false, **options)
+        run_rake(path: backup, md5: false, **options)
       end
       instance_eval(&block) if block_given?
     end
@@ -38,7 +38,7 @@ class Db::Pg::RestoreTest < Db::Pg::TestCase
   before(:all) do
     Test::MuchRecord.insert_all! (1..22).map{ |i| { name: "Name #{i}" } }
     let(:dry_run, false) do
-      run_task as: 'db:pg:dump', base_dir: base_dir, split: true, md5: true
+      run_rake as: 'db:pg:dump', base_dir: base_dir, split: true, md5: true
     end
     Test::MuchRecord._drop_all_partitions!
   end

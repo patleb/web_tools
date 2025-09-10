@@ -84,20 +84,20 @@ module MixJob
       actions.each do |action|
         Pathname.new("#{MixJob::Watch::ACTIONS}/#{Time.current.to_nanoseconds}.rb").write(action)
       end
-      run_task(goto: 'restore_signals')
+      run_rake(goto: 'restore_signals')
     end
 
     test '#restore_requests' do
       Pathname.new(MixJob::Watch::REQUESTS).write(request_dumped)
-      run_task(goto: 'restore_requests')
+      run_rake(goto: 'restore_requests')
     end
 
     test '#setup_trapping' do
-      run_task(goto: 'setup_trapping')
+      run_rake(goto: 'setup_trapping')
     end
 
     test '#setup_signaling' do
-      run_task(goto: 'setup_signaling', **options)
+      run_rake(goto: 'setup_signaling', **options)
     end
 
     test '#setup_requesting' do
@@ -106,19 +106,19 @@ module MixJob
         [request_present, status_ok],
         [request_missing, status_ok]
       )
-      run_task(goto: 'setup_requesting', **options)
+      run_rake(goto: 'setup_requesting', **options)
     end
 
     test '#setup_listening' do
-      run_task(goto: 'setup_listening', **options)
+      run_rake(goto: 'setup_listening', **options)
     end
 
     test '#setup_polling' do
-      run_task(goto: 'setup_polling', skip: 'setup_listening', **options.merge(max_pool_size: 1))
+      run_rake(goto: 'setup_polling', skip: 'setup_listening', **options.merge(max_pool_size: 1))
     end
 
     test '#wait_for_termination' do
-      run_task(goto: 'wait_for_termination', **options.merge(max_pool_size: 1))
+      run_rake(goto: 'wait_for_termination', **options.merge(max_pool_size: 1))
     end
 
     context 'with server error' do
@@ -127,7 +127,7 @@ module MixJob
           ["ERROR: Phusion Passenger doesn't seem to be running.", status_failed],
           [server_available, status_ok]
         )
-        run_task(test: 'not_dequeue_on_error', skip: 'setup_polling,wait_for_termination', **options)
+        run_rake(test: 'not_dequeue_on_error', skip: 'setup_polling,wait_for_termination', **options)
       end
     end
 

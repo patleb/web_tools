@@ -3,7 +3,7 @@ require_dir __FILE__, 'ext_rails'
 namespace :try do
   desc "try send email later"
   task :send_email_later => :environment do
-    run_task 'try:send_email', :later
+    run_rake 'try:send_email', :later
   end
 
   desc "try send email"

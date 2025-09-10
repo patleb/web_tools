@@ -6,7 +6,7 @@ namespace :db do
   desc 'rollback all engine tables'
   task :rollback_engines => :environment do
     WebTools.gems.keys.select{ |name| Gem.root(name)&.join('db')&.exist? }.sort.each do |name|
-      run_task! 'db:rollback_engine', name
+      run_rake! 'db:rollback_engine', name
     end
   end
 
@@ -19,7 +19,7 @@ namespace :db do
     (versions & ActiveRecord::SchemaMigration.all_versions).sort.reverse_each do |version|
       old_version = ENV['VERSION']
       ENV['VERSION'] = version
-      run_task! 'db:migrate:down'
+      run_rake! 'db:migrate:down'
     ensure
       ENV['VERSION'] = old_version if old_version
     end

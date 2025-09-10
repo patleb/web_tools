@@ -27,7 +27,7 @@ module Rake::Task::WithOutput
 
   def execute(args = nil)
     old_disable_colorization = String.try(:disable_colorization)
-    String.try(:disable_colorization=, true) if ENV['DISABLE_COLORIZATION'].to_b
+    String.try(:disable_colorization=, true) if ENV['NO_COLOR'].to_b
     unless rake_ouput?
       if ENV['RAKE_PROFILE']
         require 'ext_rails/lineprof'

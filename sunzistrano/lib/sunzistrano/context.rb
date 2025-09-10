@@ -34,7 +34,7 @@ module Sunzistrano
         linked_dirs: linked_dirs,
         linked_files: linked_files,
         bash_dir: provision_path(BASH_DIR),
-        bash_log: provision_path(BASH_LOG),
+        role_log: provision_path(ROLE_LOG),
         defaults_dir: provision_path(DEFAULTS_DIR),
         manifest_dir: provision_path(MANIFEST_DIR),
         manifest_log: provision_path(MANIFEST_LOG),

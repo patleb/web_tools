@@ -9,7 +9,7 @@ module MixGeo
     let(:run_timeout){ 10 }
 
     test 'geo:import_ips' do
-      run_task remote: false, path: file_fixture_path, version: '2.3.2024121818'
+      run_rake remote: false, path: file_fixture_path, version: '2.3.2024121818'
       assert_equal 252, GeoCountry.count
       assert_equal 70, GeoState.count
       assert_equal 'CA-NB', GeoState.find_by_similarity('CA', 'new bruns', 'nouveau').code

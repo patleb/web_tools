@@ -62,7 +62,7 @@ namespace! :rice do
     desc 'run GUI for gdb test file'
     task :gui, [:file_or_id, :breakpoint] => :environment do |t, args|
       ENV['GUI'] = 'true'
-      run_task 'rice:gdb', *args
+      run_rake 'rice:gdb', *args
     end
 
     desc 'list gdb test files (with ids)'

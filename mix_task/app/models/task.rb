@@ -120,7 +120,7 @@ class Task < LibMainRecord
 
   def perform_now
     started_at = Concurrent.monotonic_time
-    env = "PACK=false RAKE_OUTPUT=true DISABLE_COLORIZATION=true RAILS_ENV=#{Rails.env} RAILS_APP=#{Rails.app}"
+    env = "PACK=false RAKE_OUTPUT=true NO_COLOR=true RAILS_ENV=#{Rails.env} RAILS_APP=#{Rails.app}"
     cmd = "#{env} bin/rake #{name}"
     self.output, status = Open3.capture2e(cmd)
 

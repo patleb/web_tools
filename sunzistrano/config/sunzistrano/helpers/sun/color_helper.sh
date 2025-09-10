@@ -82,5 +82,9 @@ sun.color() {
     text=$options
     options=''
   fi
-  echo -e $options "\e[${color}m${text}\e[0m"
+  if [[ -v NO_COLOR && $NO_COLOR == true ]]; then
+    echo -e $options "${text}"
+  else
+    echo -e $options "\e[${color}m${text}\e[0m"
+  fi
 }

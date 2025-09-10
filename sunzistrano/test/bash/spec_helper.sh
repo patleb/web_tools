@@ -33,7 +33,7 @@ sun.test_setup() {
   branch=develop
   revision=0106f660cae1eb29fcb8ecde954bfaa432d98a50
   bash_dir=$HOME/.sunzistrano
-  bash_log=$HOME/sun_bash.log
+  role_log=$HOME/sun_role.log
   defaults_dir=$HOME/sun_defaults
   manifest_dir=$HOME/sun_manifest
   manifest_log=$HOME/sun_manifest.log

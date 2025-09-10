@@ -11,7 +11,7 @@ module Rake
 
     protected
 
-    def run_task(*args, as: task_name, **argv)
+    def run_rake(*args, as: task_name, **argv)
       Rake::DSL.with_argv(as, **argv) do
         Rake::Task[as].invoke!(*args)
       end

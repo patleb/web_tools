@@ -51,7 +51,7 @@ namespace! :ftp do
   namespace :db do
     desc 'Backup database and upload dump under backup directory'
     task :backup, [:skip_ftp] => :environment do |t, args|
-      run_task 'system:reboot:disable' # TODO should use a semaphore
+      run_rake 'system:reboot:disable' # TODO should use a semaphore
       Db::Pg::Dump.new(self, t, args, version: true, split: true, md5: true, physical: true).run!
       puts_info '[DUMP]', 'done'
       unless flag_on? args, :skip_ftp
@@ -61,7 +61,7 @@ namespace! :ftp do
         sh Sh.ftp_upload(dump.join('*'), backup_root, sudo: true, parallel: 10), verbose: false
       end
     ensure
-      run_task 'system:reboot:enable'
+      run_rake 'system:reboot:enable'
     end
 
     desc 'Download dump under backup directory and restore database'

@@ -25,7 +25,7 @@ class Db::Pg::DumpTest < Db::Pg::TestCase
   def self.test_dump(**options, &block)
     test task_name do
       raise 'must be tested in environment without stubs' if options[:physical]
-      run_task(base_dir: base_dir, **options)
+      run_rake(base_dir: base_dir, **options)
       case
       when options[:csv]
         tables.each_with_index do |table, i|
@@ -79,7 +79,7 @@ class Db::Pg::DumpTest < Db::Pg::TestCase
             md5: true,
             excludes: 'schema_migrations,ar_internal_metadata',
           }
-          run_task(base_dir: base_dir, **options)
+          run_rake(base_dir: base_dir, **options)
           assert_equal [today] + dates, Time.current.rotations
           assert_equal false, backup.empty?
           assert_equal false, base_dir.join("#{filename}.md5").empty?
@@ -126,7 +126,7 @@ class Db::Pg::DumpTest < Db::Pg::TestCase
       end
 
       test task_name do
-        run_task(base_dir: base_dir, csv: true, includes: 'test_records', where: 'id > 1', compress: false, pg_options: 'HEADER')
+        run_rake(base_dir: base_dir, csv: true, includes: 'test_records', where: 'id > 1', compress: false, pg_options: 'HEADER')
         assert_equal false, backup.empty?
       end
     end

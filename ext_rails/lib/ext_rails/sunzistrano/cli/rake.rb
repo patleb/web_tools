@@ -2,6 +2,7 @@ module Sunzistrano
   TASK = '[TASK]'
   DONE = '[DONE]'
   FAIL = '[FAIL]'
+  RAKE_LOG = 'log/rake.log'
   WAIT_DURATION = /^(\d+\.(second|minute|hour|day|week)s?)(\s*\+\s*\d+\.(second|minute|hour|day|week)s?)*$/
 
   Cli.class_eval do
@@ -39,7 +40,7 @@ module Sunzistrano
             #{Sh.rbenv_ruby} #{path} #{context} nohup #{rbenv_sudo} #{rake_with_log command}
           SH
         elsif sun.term || sun.kill
-          pid = "#{sun.deploy_path :current}/tmp/pids/#{rake_log_basename(command)}.pid"
+          pid = "#{sun.deploy_path :current, 'tmp/pids', rake_log_basename(command)}.pid"
           <<-SH.squish
             ppid=$(cat #{pid});
             sudo pkill #{'-9' if sun.kill} --parent $ppid &&
@@ -49,7 +50,7 @@ module Sunzistrano
         else
           <<-SH.squish
             #{Sh.rbenv_ruby} #{path} #{rbenv_sudo} #{context} #{command} 2>&1 |
-            tee -a #{sun.deploy_path :current, BASH_LOG}
+            tee -a #{sun.deploy_path :current, RAKE_LOG}
           SH
         end
       end

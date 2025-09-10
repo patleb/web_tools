@@ -1,46 +1,5 @@
 module Rake
   module DSL
-    def with_argv(task_name, ignore: false, retries: 0, **argv)
-      if argv.any?
-        old_argv = ARGV.dup
-        ARGV.replace([task_name, '--'])
-        argv.each do |key, value|
-          ARGV << case value
-            when nil, true  then "--#{key.to_s.dasherize}"
-            when false      then "--no-#{key.to_s.dasherize}"
-            when Array, Set then "--#{key.to_s.dasherize}=#{value.to_a.join(',')}"
-            else                 "--#{key.to_s.dasherize}=#{value}"
-            end
-        end
-      end
-      begin
-        attempts ||= 0
-        yield
-      rescue Exception
-        if (attempts += 1) <= retries
-          sleep 20 # sshfs cache time
-          retry
-        else
-          raise unless ignore
-        end
-      end
-    ensure
-      ARGV.replace(old_argv) if old_argv
-    end
-    module_function :with_argv
-
-    def run_task(task_name, *args, **argv)
-      with_argv(task_name, **argv) do
-        Rake::Task[task_name].invoke(*args)
-      end
-    end
-
-    def run_task!(task_name, *args, **argv)
-      with_argv(task_name, **argv) do
-        Rake::Task[task_name].invoke!(*args)
-      end
-    end
-
     def namespace!(name = nil, &block)
       module_name  = "#{name.to_s.camelize}_Tasks"
       with_scope   = self.class.const_get(module_name) if self.class.const_defined? module_name

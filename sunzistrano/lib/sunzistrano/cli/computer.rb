@@ -45,7 +45,7 @@ module Sunzistrano
           ln -nsf #{sun.provision_path} #{sun.provision_path :current} &&
           cp -rTf --no-preserve=timestamps #{bash_dir} #{sun.computer_path} && cd #{sun.computer_path} &&
           #{'sudo' if sun.sudo} bash -e -u +H role.sh 2>&1 |
-          tee -a #{sun.provision_path BASH_LOG} && cd #{sun.computer_path} &&
+          tee -a #{sun.provision_path ROLE_LOG} && cd #{sun.computer_path} &&
           find . -depth ! -cnewer $start -print0 | sponge /dev/stdout | xargs -r0 rm -d > /dev/null 2>&1 && rm -f $start
         SH
       end
