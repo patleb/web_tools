@@ -57,7 +57,7 @@ class UsersController < Users::BaseController
   def on_record_invalid(template)
     @user.password = @user.password_confirmation = nil
     flash.now[:alert] = user_alert @user
-    render template, status: :unprocessable_entity
+    render template, status: :unprocessable_content
   end
 
   def on_invalid_link

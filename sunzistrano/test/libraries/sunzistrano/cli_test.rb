@@ -8,7 +8,7 @@ class Sunzistrano::CliTest < Minitest::TestCase
   test '.owner_path' do
     Setting.reload(env: 'test')
     path = Sunzistrano.owner_path :manifest_dir, 'version'
-    assert_equal '/home/ubuntu/test_web_tools/sun_manifest/version', path
+    assert_equal '/home/ubuntu/test/sun_manifest/version', path
   end
 
   test '.compile' do

@@ -22,7 +22,7 @@ class UserSessionsControllerTest < Users::TestCase
     context 'with invalid password' do
       test '#create' do
         post '/user_sessions/new', params: { user: invalid_params }
-        assert_response :unprocessable_entity
+        assert_response :unprocessable_content
         assert_alert
         assert_select 'input[name="user[password]"][value]', false
       end

@@ -25,7 +25,7 @@ class UsersControllerTest < Users::TestCase
       assert_no_enqueued_emails do
         post '/users/new', params: { user: invalid_params }
       end
-      assert_response :unprocessable_entity
+      assert_response :unprocessable_content
       assert_alert
       assert_select 'input[name="user[password]"][value]', false
       assert_select 'input[name="user[password_confirmation]"][value]', false

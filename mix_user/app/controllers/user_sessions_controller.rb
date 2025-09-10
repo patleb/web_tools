@@ -47,7 +47,7 @@ class UserSessionsController < Users::BaseController
   def on_record_invalid(template)
     @user = User.new(email: create_params[:email])
     flash.now[:alert] = t('flash.failed_authentication')
-    render template, status: :unprocessable_entity
+    render template, status: :unprocessable_content
   end
 
   def create_params

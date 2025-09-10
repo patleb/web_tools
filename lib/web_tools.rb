@@ -24,7 +24,7 @@ require 'sunzistrano'
 
 module WebTools
   def self.isolated_test_gems
-    ['mix_geo', 'mix_task']
+    ['ext_rice', 'mix_geo', 'mix_task']
   end
 
   def self.root
@@ -54,11 +54,11 @@ module WebTools
           isolated_tests = testable_gems.each_with_object([{}, {}]) do |(name, path), memo|
             path = path.join('test').to_s
             if isolated_test_gems.include? name.to_s
-              memo.insert 1, { name => path }
+              memo.unshift(name => path)
             elsif minitest_gems.has_key? name.to_s
-              memo.first[name] = path
+              memo[-2][name] = path
             else
-              memo.last[name] = path
+              memo[-1][name] = path
             end
           end
           isolated_tests.compact_blank.each do |gems|
