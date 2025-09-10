@@ -10,8 +10,8 @@ sun.script_ensure() {
       sun.elapsed_time $SCRIPT_START
     fi
     if [[ "$SCRIPT_DONE" == true ]]; then
-      if [[ ! -z "${helper}" ]]; then
-        echo.success "Done   [${script}-${helper}]"
+      if [[ "${script}" == 'helper' ]]; then
+        echo.success "Done   [${helper}]"
       else
         echo.success "Done   [${script}]"
       fi

@@ -16,8 +16,8 @@ if [[ "${debug}" == 'trace' ]]; then
 fi
 
 if [[ "$BASH_OUTPUT" != false || "${debug}" != false ]]; then
-  if [[ ! -z "${helper}" ]]; then
-    echo.started "Script [${script}-${helper}]"
+  if [[ "${script}" == 'helper' ]]; then
+    echo.started "Helper [${helper}]"
   else
     echo.started "Script [${script}]"
   fi

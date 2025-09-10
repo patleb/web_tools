@@ -28,14 +28,14 @@ ExtWhenever.setup(self)
 # end
 #
 # every :minute do
-#   script 'every_minute'
+#   bash 'every_minute'
 # end
 
 case @environment
 when 'virtual'
   every :minute do
-    # script 'version'
-    # helper 'sun.os_name'
+    # bash 'version'
+    # bash 'echo.info', with: 'value_1 value_2'
     # rake 'zeitwerk:check'
   end
 when 'staging', 'production'
