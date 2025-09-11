@@ -1,11 +1,9 @@
 require_dir __FILE__, 'mix_server'
 
-module MixServer
-  module Try
-    class Message < ::StandardError
-      def backtrace
-        caller
-      end
+module Try
+  class Message < ::StandardError
+    def backtrace
+      caller
     end
   end
 end
@@ -15,7 +13,7 @@ namespace :try do
   task :send_notice => :environment do
     MixServer.with do |config|
       config.skip_notice = false
-      Notice.deliver! MixServer::Try::Message.new, data: { text: 'Text' }
+      Notice.deliver! Try::Message.new, data: { text: 'Text' }
     end
   end
 end

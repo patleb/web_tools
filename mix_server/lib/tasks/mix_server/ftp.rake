@@ -24,34 +24,14 @@ namespace! :ftp do
     sh Sh.ftp_rename(args[:old_name], args[:new_name]), verbose: false
   end
 
-  desc 'Mount FTP drive'
-  task :mount, [:user_id, :group_id] => :environment do |t, args|
-    create_mount_path
-    sh drive_mount_cmd(args)
-  end
-
-  desc 'Unmount FTP drive'
-  task :unmount => :environment do
-    sh "sudo fusermount -u #{Setting[:ftp_mount_path]}"
-  end
-
-  namespace :nohup do
-    desc 'Mount FTP drive'
-    task :mount, [:user_id, :group_id] => :environment do |t, args|
-      create_mount_path
-      sh drive_mount_cmd(args, nohup: true)
-    end
-
-    desc 'Unmount FTP drive'
-    task :unmount => :environment do
-      sh "sudo pkill -P $(cat /home/#{Setting[:deployer_name]}/curlftpfs.pid)"
-    end
-  end
-
+  # TODO kill
+  # sun rake STAGE ftp:db:backup --kill
+  # sh :sudo, :pkill, 'pg_basebackup' rescue nil
+  # sh :sudo, :pkill, 'lftp' rescue nil
   namespace :db do
     desc 'Backup database and upload dump under backup directory'
     task :backup, [:skip_ftp] => :environment do |t, args|
-      run_rake 'system:reboot:disable' # TODO should use a semaphore
+      run_rake 'system:reboot:disable' # TODO should use a lock file
       Db::Pg::Dump.new(self, t, args, version: true, split: true, md5: true, physical: true).run!
       puts_info '[DUMP]', 'done'
       unless flag_on? args, :skip_ftp
@@ -105,36 +85,6 @@ namespace! :ftp do
         sh Sh.ftp_mirror("#{MixServer::Logs.config.osquery_log_path}*", osquery_folder, sudo: true, parallel: 10), verbose: false
       end
     end
-  end
-
-  def create_mount_path
-    sh "sudo mkdir -p #{Setting[:ftp_mount_path]}"
-    sh "sudo chown -R #{Setting[:deployer_name]}:#{Setting[:deployer_name]} #{Setting[:ftp_mount_path]}"
-  end
-
-  def drive_mount_cmd(args, nohup: false)
-    <<~CMD.squish.gsub('\\', '\\\\\\')
-      sudo nohup curlftpfs #{'-f' if nohup} -o '#{drive_options(args).join(',')}'
-        '#{Setting[:ftp_host]}:#{Setting[:ftp_drive_path]}' #{Setting[:ftp_mount_path]}
-        >> /home/#{Setting[:deployer_name]}/curlftpfs.log 2>&1
-        #{"& sleep 1 && echo $! > /home/#{Setting[:deployer_name]}/curlftpfs.pid" if nohup}
-    CMD
-  end
-
-  def drive_options(args)
-    user_id = args[:user_id] || Setting[:deployer_id]
-    group_id = args[:group_id] || user_id
-    %W(
-      allow_other
-      ssl
-      no_verify_peer
-      no_verify_hostname
-      nonempty
-      user=#{Setting[:ftp_username]}:#{Setting[:ftp_password]}
-    ).reject(&:blank?).concat(%W(
-      uid=#{user_id}
-      gid=#{group_id}
-    ))
   end
 
   def osquery_folder

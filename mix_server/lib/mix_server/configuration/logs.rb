@@ -171,7 +171,7 @@ module MixServer
             %r{^/home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/ruby /home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/bundle .+ --deployment .+/\.local_repo/},
             "Passenger RubyApp: /home/#{Setting[:deployer_name]}/",
             'ruby bin/rake cron:every_day', # geolite fetch or email on errors
-            'ruby bin/rails runner Monit.capture', # email on errors
+            'ruby bin/rake runner[Monit.capture]', # email on errors
             'ruby bin/rake job:watch -- --queue=', # email on errors
             %r{^/usr/sbin/ntpd -p /var/run/ntpd.pid -g -u \d+:\d+},
             '/usr/bin/freshclam -d --foreground=true',
@@ -197,7 +197,7 @@ module MixServer
 
       def nonthreats
         @nonthreats ||= [
-          'ruby bin/rails runner Monit.capture',
+          'ruby bin/rake runner[Monit.capture]',
         ]
       end
 

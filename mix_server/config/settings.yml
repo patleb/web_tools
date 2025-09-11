@@ -23,7 +23,6 @@ shared:
   osquery_logger_path: /var/log/osquery
   data_partition: /dev/sdb
   data_directory: /opt/storage
-  ftp_mount_path: /opt/ftp_data
   cloud_master_data: /opt/shared_data
   cloud_cluster_data: /opt/storage/shared_data
   pg_log_min_duration: 2000

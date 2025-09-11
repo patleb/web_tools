@@ -1,6 +1,32 @@
 require_dir __FILE__, 'ext_rails'
 
+desc 'run "Some.ruby(code)" or filename.rb'
+task :runner, [:code_or_file] => :environment do |t, args|
+  if (file = args[:code_or_file])&.end_with? '.rb'
+    load file
+  elsif (code = args[:code_or_file])&.include? '.'
+    eval code, TOPLEVEL_BINDING, __FILE__, __LINE__
+  else
+    raise "Invalid ruby code or filename"
+  end
+end
+
+namespace :list do
+  desc 'reorganize lists'
+  task :reorganize => :environment do |t|
+    Rails.application.eager_load!
+    ActiveRecord::Base.listables.each(&:list_reorganize)
+  end
+end
+
 namespace :try do
+  %w(raise_exception sleep sleep_long).each do |name|
+    desc "try #{name.tr('_', ' ')}"
+    task name.to_sym => :environment do |t|
+      "Try::#{name.camelize}".constantize.new(self, t).run!
+    end
+  end
+
   desc "try send email later"
   task :send_email_later => :environment do
     run_rake 'try:send_email', :later

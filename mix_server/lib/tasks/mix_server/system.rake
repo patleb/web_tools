@@ -4,16 +4,16 @@ namespace :system do
     next unless File.exist?('/var/run/reboot-required')
     next if MixServer.no_reboot_file.exist?
 
-    run_rake 'nginx:maintenance:enable'
+    run_bash 'nginx.maintenance_enable'
     unless MixServer.idle? timeout: 2.hours
-      next run_rake('nginx:maintenance:disable')
+      next run_bash 'nginx.maintenance_disable'
     end
 
     # won't interfere with 5 minutes cron
     until (Time.current.min % 5) == 2
       sleep 10
     end
-    run_rake 'nginx:maintenance:disable'
+    run_bash 'nginx.maintenance_disable'
 
     exec 'sudo reboot'
   end

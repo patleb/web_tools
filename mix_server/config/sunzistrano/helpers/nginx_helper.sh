@@ -10,7 +10,7 @@ passenger.restart() { # PUBLIC
   cd.back
 }
 
-nginx.maintenance_enable() {
+nginx.maintenance_enable() { # PUBLIC
   for before in "${nginx_maintenance_enable_before[@]}"; do
     $before
   done
@@ -22,7 +22,7 @@ nginx.maintenance_enable() {
   done
 }
 
-nginx.maintenance_disable() {
+nginx.maintenance_disable() { # PUBLIC
   for before in "${nginx_maintenance_disable_before[@]}"; do
     $before
   done

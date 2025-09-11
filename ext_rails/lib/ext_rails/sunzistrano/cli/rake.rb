@@ -40,7 +40,7 @@ module Sunzistrano
             #{Sh.rbenv_ruby} #{path} #{context} nohup #{rbenv_sudo} #{rake_with_log command}
           SH
         elsif sun.term || sun.kill
-          pid = "#{sun.deploy_path :current, 'tmp/pids', rake_log_basename(command)}.pid"
+          pid = "#{sun.deploy_path :current, 'tmp/pids', rake_log_name(command)}.pid"
           <<-SH.squish
             ppid=$(cat #{pid});
             sudo pkill #{'-9' if sun.kill} --parent $ppid &&
@@ -56,12 +56,12 @@ module Sunzistrano
       end
 
       def rake_with_log(command)
-        name = rake_log_basename(command)
+        name = rake_log_name(command)
         "#{command} >> log/#{name}.log 2>&1 & sleep 1 && echo $! > tmp/pids/#{name}.pid"
       end
 
-      def rake_log_basename(command)
-        command.squish.gsub(/[^_\w]/, '-').gsub(/-{2,}/, '-').delete_prefix('-').delete_suffix('-')
+      def rake_log_name(command)
+        command.delete_prefix('bin/').squish.gsub(/[^_\w]/, '-').gsub(/-{2,}/, '-').delete_suffix('-')
       end
 
       def parse_wait

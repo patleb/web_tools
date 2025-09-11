@@ -20,7 +20,7 @@ ExtWhenever.setup(self)
 # end
 #
 # every :week do
-#   rake 'task:runner[EveryWeekJob.perform_later]'
+#   rake 'runner[EveryWeekJob.perform_later]'
 # end
 #
 # every :day, at: '8:00 am' do
@@ -63,5 +63,5 @@ raise "Setting[:monit_interval] < 1.minute" unless Setting[:monit_interval] >= 1
 raise "Setting[:monit_interval] > 20.minutes" unless Setting[:monit_interval] <= 20.minutes
 
 every Setting[:monit_interval] do
-  rake 'task:runner[Monit.capture]'
+  rake 'runner[Monit.capture]'
 end
