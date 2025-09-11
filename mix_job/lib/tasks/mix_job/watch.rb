@@ -229,9 +229,9 @@ module MixJob
     def shutdown
       puts_info SHUTDOWN
       @executor.shutdown!
-      @signals.close
-      @requests.close
       @responses.close
+      @requests.close
+      @signals.close
       @dispatcher.kill_all(options.kill_timeout)
       Thread.pass until @dispatcher.shutdown?
       if @poller
