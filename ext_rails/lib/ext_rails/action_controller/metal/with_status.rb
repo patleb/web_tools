@@ -92,6 +92,7 @@ module ActionController
             meta_(charset: 'UTF-8'),
             meta_(name: 'viewport', content: 'width=device-width, initial-scale=1'),
             meta_(name: 'robots', content: 'noindex, nofollow'),
+            meta_(name: 'turbolinks-visit-control', content: 'reload'),
             template_status_css,
           ]},
           body_('.rails-default-error-page') {[

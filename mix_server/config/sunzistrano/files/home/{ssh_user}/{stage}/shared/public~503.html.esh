@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="turbolinks-visit-control" content="reload" />
   <title>Maintenance</title>
   <style type="text/css">
     body {
