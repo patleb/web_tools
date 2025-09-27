@@ -3,6 +3,7 @@
 <head>
   <meta name="turbolinks-visit-control" content="reload" />
   <title>Maintenance</title>
+  <script src="js/no_turbolinks.js" defer="defer"></script>
   <style type="text/css">
     body {
       width: 400px;
