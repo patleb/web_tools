@@ -77,7 +77,7 @@ module Rake
       end
       begin
         attempts ||= 0
-        if verbose
+        if verbose && attempts == 0
           old_env = ENV['RAKE_OUTPUT']
           ENV['RAKE_OUTPUT'] = 'true'
         end
