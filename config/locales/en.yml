@@ -42,3 +42,5 @@ en:
         list/tree/leaf/multi: Leaf page
       page_field/name:
         list_texts: List of pages texts
+  link:
+    error: Error

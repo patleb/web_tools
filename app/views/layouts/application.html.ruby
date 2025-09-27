@@ -7,6 +7,7 @@ append(:sidebar) {[
     li_('.menu_divider'),
     app_link,
     website_link,
+    error_link,
     admin_link,
     admin_user_link,
     user_link,

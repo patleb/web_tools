@@ -11,7 +11,7 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "test/application#home"
-
+  get  '/error' => 'test/application#error'
   simple_resources path: '/test/records'
 
   scope path: '/pico', controller: 'pico' do

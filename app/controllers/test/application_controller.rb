@@ -4,5 +4,9 @@ module Test
 
     def home
     end
+
+    def error
+      raise 'error'
+    end
   end
 end

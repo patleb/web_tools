@@ -21,10 +21,10 @@ module AdminHelper
     Current.logged_in? && !Current.controller.is_a?(AdminController)
   end
 
-  def app_link
+  def app_link(**options)
     return unless app_link?
     li_ do
-      a_ '.admin_link.app_root', [icon('eye'), t('link.app')], href: application_path
+      a_ '.admin_link.app_root', [icon('eye'), t('link.app')], href: application_path, **options
     end
   end
 

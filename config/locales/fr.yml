@@ -13,3 +13,5 @@ fr:
         list/tree/leaf/multi: Page de la feuille
       page_field/name:
         list_texts: Textes de la liste de pages
+  link:
+    error: Erreur

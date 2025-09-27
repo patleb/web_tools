@@ -240,6 +240,7 @@ module ActionView::Helpers::TagHelper
 
   def a_options_content(options, content)
     options[:rel] = 'noopener' if options[:rel].blank?
+    options['data-turbolinks'] = options.delete(:turbolinks)
     set_data_remote(options)
     content
   end

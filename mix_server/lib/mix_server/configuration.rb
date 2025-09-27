@@ -53,7 +53,6 @@ module MixServer
       return @render_500 if defined? @render_500
       @render_500 = !Rails.env.development?
     end
-    alias_method :render_500?, :render_500
 
     def notice_interval
       @notice_interval ||= 24.hours
