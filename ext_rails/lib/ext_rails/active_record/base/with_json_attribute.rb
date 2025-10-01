@@ -50,7 +50,7 @@ module ActiveRecord::Base::WithJsonAttribute
         default = defaults[name]
 
         define_method name do |locale = nil, fallback = nil|
-          locale ||= Current.locale
+          locale ||= Current.locale || I18n.default_locale
           value = public_send("#{name}_#{locale}")
           return value unless value.nil?
           fallback ||= I18n.available_locales.except(locale.to_sym).first

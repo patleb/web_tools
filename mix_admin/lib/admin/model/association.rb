@@ -16,7 +16,7 @@ module Admin
 
     def readonly?
       return true if @column && super
-      return true if !polymorphic? && scope.is_a?(Proc) && klass.all.instance_eval(&scope).readonly_value
+      return true if !polymorphic? && scope.is_a?(Proc) && klass.all.instance_eval(&scope).readonly?
       @reflection.nested?
     end
 

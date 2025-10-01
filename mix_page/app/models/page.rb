@@ -1,4 +1,6 @@
 class Page < LibMainRecord
+  class AlreadyExists < ::StandardError; end
+
   IMAGE_PATH = /\(([^)]+)\)/
   IMAGE_MD = /!\[[^\]]+\]#{IMAGE_PATH}/
   ORDERING = /^\d+-/
@@ -33,7 +35,7 @@ class Page < LibMainRecord
   end
 
   def self.create_home!
-    return if Rails.env.production?
+    raise AlreadyExists if any?
     layout = PageLayout.find_or_create_by! view: MixPage.config.layout
     template = PageTemplate.find_or_create_by! page_layout: layout, view: MixPage.config.root_template
     titles = I18n.available_locales.map do |l|
@@ -43,10 +45,8 @@ class Page < LibMainRecord
     template
   end
 
-  # TODO granular production check
-  # TODO diff from database
   def self.create_pages!
-    return if Rails.env.production?
+    raise AlreadyExists if any?
     Dir['app/assets/pages/**/*.md'].sort.each_with_object({}) do |path, templates|
       template = path.delete_prefix('app/assets/pages/')
       template.sub! ORDERING, ''

@@ -62,9 +62,15 @@
   }
   .group_fields {
     .code_type,
-    .json_type {
+    .json_type,
+    .html_type {
       @apply overflow-auto whitespace-pre break-words;
       @apply xs-1:max-w-[18rem] xs:max-w-[28rem] sm:max-w-full max-h-[50vh];
+    }
+  }
+  .group_fields .field:fullscreen {
+    .html_type {
+      @apply max-h-full !important;
     }
   }
   .group_fields .field_value {
