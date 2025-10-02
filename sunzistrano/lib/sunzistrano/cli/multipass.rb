@@ -44,7 +44,7 @@ module Sunzistrano
     desc 'ssh-add', 'Add Multipass ssh private key'
     def ssh_add = do_add_ssh
 
-    desc 'snapshot [ACTION] [-i] [--master] [--cluster] [--name]', "#{SNAPSHOT_ACTIONS.map(&:upcase_first).join('/')} Multipass master's snapshot(s)"
+    desc 'snapshot [ACTION] [-i] [--master] [--cluster] [--name]', "#{SNAPSHOT_ACTIONS.map(&:upcase_first).join('/')} Multipass snapshot(s)"
     method_options i: :numeric, master: false, cluster: false, name: :string
     def snapshot(action) = do_snapshot(action)
 
