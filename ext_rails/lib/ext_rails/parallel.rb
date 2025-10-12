@@ -5,6 +5,16 @@ module Parallel::WithActiveRecord
     def map(source, options = {}, &block)
       return super if Rails.env.test?
       options = options.dup
+      if (n = options[:in_processes]).try(:negative?)
+        method = :in_processes
+      elsif (n = options[:in_threads]).try(:negative?)
+        method = :in_threads
+      end
+      if method
+        n += processor_count
+        n = 1 if n < 1
+        options[method] = n
+      end
       before = options.delete(:before)
       return super if (ar_bases = Array.wrap(options.delete(:reconnect))).empty?
       begin
