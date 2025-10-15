@@ -27,7 +27,7 @@ end
 
 namespace :sandbox do
   desc 'Build sandbox for development'
-  task :build => :environment do
+  task :build, [:no_pages] => :environment do |t, args|
     raise 'only in dev, test or virtual env' unless Rails.env.local? || Rails.env.virtual?
     `bin/rails db:environment:set RAILS_ENV=#{Rails.env}`
     run_rake 'db:drop'
@@ -35,6 +35,6 @@ namespace :sandbox do
     run_rake 'db:migrate'
     run_rake 'user:create', Setting[:authorized_keys].first.split(' ').last, 'passpasspass', 'deployer', true
     run_rake 'task:delete_or_create_all'
-    run_rake 'page:create_all'
+    run_rake 'page:create_all' unless flag_on? args, :no_pages
   end
 end
