@@ -1,3 +1,4 @@
+<%- unless sun.env.computer? -%>
 /var/log/apt/term.log {
   rotate 12
   monthly
@@ -13,3 +14,4 @@
   missingok
   notifempty
 }
+<%- end -%>

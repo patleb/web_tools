@@ -67,6 +67,7 @@ yarn install
 cp config/secrets.example.yml config/secrets.yml
 sudo chmod 600 .multipass/key
 sudo chmod 644 .multipass/key.pub
+rm -rf ~/.gems
 ```
 
 ## VirtualBox

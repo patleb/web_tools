@@ -61,7 +61,7 @@ sun.copy() {
 sun.compile() {
   local dst="$1"
   local src="$(sun.template_path $dst).esh"
-  if [[ ! -s $src ]]; then
+  if [[ ! -f $src ]]; then
     echo "template: $src: No such file"
     exit 1
   fi
@@ -83,7 +83,7 @@ sun.compile() {
 sun.compare_defaults() {
   local bkp="$(sun.defaults_path $1)"
   local ref="$(sun.template_path $1).ref"
-  if [[ ! -s $ref ]]; then
+  if [[ ! -f $ref ]]; then
     echo "defaults: $ref: No such file"
     exit 1
   fi

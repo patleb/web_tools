@@ -5,7 +5,7 @@
 
 GRUB_DEFAULT=0
 GRUB_TIMEOUT_STYLE=hidden
-GRUB_TIMEOUT=0
+GRUB_TIMEOUT=<%= sun.env.computer? ? 1 : 0 %>
 GRUB_DISTRIBUTOR=`( . /etc/os-release; echo ${NAME:-Ubuntu} ) 2>/dev/null || echo Ubuntu`
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
 GRUB_CMDLINE_LINUX=""
@@ -38,3 +38,7 @@ GRUB_CMDLINE_LINUX=""
 
 # Uncomment to get a beep at grub start
 #GRUB_INIT_TUNE="480 440 1"
+<%- if sun.env.computer? -%>
+GRUB_TIMEOUT=1
+GRUB_RECORDFAIL_TIMEOUT="$GRUB_TIMEOUT"
+<%- end -%>

@@ -5,7 +5,8 @@ fi
 sun.add_repo "ppa:ubuntuhandbook1/apps"
 sun.add_repo "ppa:phoerious/keepassxc"
 sun.update
-
+#  epiphany-browser
+#
 #  scilab
 #  wxmaxima
 #  xcas
@@ -21,7 +22,9 @@ sun.update
   graphviz
   keepassxc
   lftp
+  lynx
   octave octave-dev
+  peek
   psensor
   shutter
   snapd

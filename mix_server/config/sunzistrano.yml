@@ -114,7 +114,7 @@ deploy_development:
   #  osquery_10_sec: 10
 
 computer:
-  ruby_version: 3.4.1
+  ruby_version: 3.4.7
   recipes:
     - bootstrap/files
     - bootstrap/packages

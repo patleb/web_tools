@@ -75,7 +75,7 @@ fi
   sun.install "<%= package %>"
 <% end %>
 
-if ! cat "$HOME/.bashrc" | grep -Fq /go/bin/; then
+if ! cat "$HOME/.bashrc" | grep -Fq /go/bin:; then
   echo 'export PATH="$HOME/go/bin:$PATH"' >> "$HOME/.bashrc"
 fi
 
