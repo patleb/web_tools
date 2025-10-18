@@ -36,6 +36,7 @@ echo "hot_standby = ${pg_hot_standby}" >> "$PG_CONFIG_FILE"
     effective_io_concurrency
     default_toast_compression
     jit
+  io_method
   synchronous_commit
   full_page_writes
   fsync

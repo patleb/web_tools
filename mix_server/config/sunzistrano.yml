@@ -1,6 +1,7 @@
 shared:
   ruby_version:
     <%= File.exist?('.ruby-version') ? File.read('.ruby-version').strip : RUBY_VERSION %>
+  pg_io_method: io_uring
 
 provision:
   files:

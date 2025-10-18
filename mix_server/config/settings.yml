@@ -10,7 +10,7 @@ types:
   monit_interval: interval
 
 shared:
-  postgres: 17
+  postgres: 18
   postgis: 3
   passenger: true
   min_instances: 1

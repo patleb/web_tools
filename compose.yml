@@ -1,33 +1,23 @@
-# docker compose down && docker volume rm $(docker volume ls -q) && docker compose up -d --force-recreate --build postgres-17
+# docker compose down && docker volume rm $(docker volume ls -q) && docker compose up -d --force-recreate --build postgres-18
 services:
-  postgres-17:
-    build: docker/postgres/17
+  postgres-18:
+    build: docker/postgres/18
+    security_opt:
+      - seccomp:unconfined
     ports:
-      - "127.0.0.1:5437:5437"
+      - "127.0.0.1:5438:5438"
     volumes:
-      - postgres-17:/var/lib/postgresql/data
-      - ./docker/postgres/17/files:/docker-entrypoint-initdb.d/files
-      - ./docker/postgres/setup.sh:/docker-entrypoint-initdb.d/setup.sh
+      - postgres-18:/var/lib/postgresql
+      - ./docker/postgres/18/files:/docker-entrypoint-initdb.d/files
+      - ./docker/postgres/18/setup.sh:/docker-entrypoint-initdb.d/setup.sh
     restart: always
     logging: &log
+#      <<: *log
       options:
         max-size: "10m"
         max-file: "5"
     environment: &env
+#    environment: *env
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_INITDB_ARGS=--data-checksums
-  postgres-13:
-    build: docker/postgres/13
-    ports:
-      - "127.0.0.1:5433:5433"
-    volumes:
-      - postgres-13:/var/lib/postgresql/data
-      - ./docker/postgres/13/files:/docker-entrypoint-initdb.d/files
-      - ./docker/postgres/setup.sh:/docker-entrypoint-initdb.d/setup.sh
-    restart: always
-    logging:
-      <<: *log
-    environment: *env
 volumes:
-  postgres-17: {}
-  postgres-13: {}
+  postgres-18: {}
