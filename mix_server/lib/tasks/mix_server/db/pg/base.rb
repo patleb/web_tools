@@ -5,6 +5,7 @@ module Db
 
       def self.ignored_errors
         [
+          "pg_dump: executing SELECT pg_catalog.set_config('search_path', '', false);",
           /pg_dump: (last built-in|reading|identifying|finding|flagging|saving|dumping)/,
           /pg_restore: (connecting|creating|executing|processing|implied|disabling|enabling)/,
           /pg_restore: while PROCESSING TOC/,
