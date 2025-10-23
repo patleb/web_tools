@@ -4,7 +4,6 @@ namespace :task do
   desc 'dump tasks schema'
   task :dump => :environment do
     next unless Rails.env.development?
-    run_rake 'task:delete_or_create_all'
     File.write(MixTask.config.yml_path, Task.to_yaml)
   end
 
