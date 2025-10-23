@@ -198,11 +198,13 @@ namespace GDAL {
               points.insert(box_points.begin(), box_points.end());
             }
           }
+          // auto pixel = Point(xi, yj, proj);
           double dxi, dyj, d, d_min = Float::inf;
           ssize_t nearest_point = NO_POINT;
           for (auto && point : points) {
-            dxi = std::abs(x[point] - xi);
-            dyj = std::abs(y[point] - yj);
+            // d = pixel.distance(x[point], y[point]);
+            dxi = x[point] - xi;
+            dyj = y[point] - yj;
             d = dxi * dxi + dyj * dyj;
             if (d >= d_min) continue;
             d_min = d;

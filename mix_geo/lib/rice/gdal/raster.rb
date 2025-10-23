@@ -111,7 +111,7 @@ module GDAL
           nearest_point = nil
           points.each do |point|
             x, y = mesh[point]
-            dxi, dyj = (x - xi).abs, (y - yj).abs
+            dxi, dyj = (x - xi), (y - yj)
             d = dxi * dxi + dyj * dyj
             next unless d < d_min
             d_min = d
