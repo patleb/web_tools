@@ -30,6 +30,7 @@ class window.I18n
       if translations = element.getAttribute('data-translations')
         if translations = JSON.safe_parse(translations)
           I18n.translations.deep_merge(translations)
+          element.remove()
 
   @on_ready: (event) ->
     return if event.data.info.once
