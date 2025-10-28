@@ -45,6 +45,7 @@ module ExtRails
     require 'ext_rails/active_support/autoload'
     require 'ext_rails/active_support/core_ext'
     require 'ext_rails/active_support/duration'
+    require 'ext_rails/active_support/i18n_railtie'
     require 'ext_rails/active_support/lazy_load_hooks/autorun'
     require 'ext_rails/active_support/current_attributes'
     require 'ext_rails/active_support/dependencies/with_cache'
@@ -74,6 +75,7 @@ module ExtRails
       app.config.i18n.fallbacks = [:en]
       # app.config.i18n.fallbacks = true
       app.config.time_zone = 'UTC'
+      app.config.railties_order = [:all, :main_app]
       app.paths.add "app/tasks", glob: "**/*.rake"
 
       $stdout.sync = true
