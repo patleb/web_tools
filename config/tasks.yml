@@ -11,3 +11,6 @@ try:raise_exception:
 try:sleep:
   :desc: try sleep
   :args: []
+try:sleep_long:
+  :desc: try sleep long
+  :args: []
