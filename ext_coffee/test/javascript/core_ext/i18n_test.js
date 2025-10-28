@@ -17,7 +17,7 @@ describe('I18n', () => {
     dom.fire('DOMContentLoaded')
   })
 
-  it('should set the locale and add js_i18n data-translations elements', () => {
+  it('should set the locale and add js_i18n data-value elements', () => {
     assert.equal('fr', I18n.locale)
     assert.equal('Chien', I18n.t('dog'))
   })

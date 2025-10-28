@@ -1,13 +1,9 @@
 class Js.RoutesConcept
   global: true
 
-  constants: ->
-    ROUTES: '.js_routes'
-    PATHS: 'data-paths'
-
   ready: ->
-    @paths = Rails.$(@ROUTES).each_with_object {}, (element, memo) =>
-      memo.merge(JSON.parse(element.getAttribute(@PATHS)))
+    @paths = Rails.$('.js_routes').each_with_object {}, (element, memo) =>
+      memo.merge(JSON.parse(element.getAttribute('data-value')))
       element.remove()
 
   url_for: (action, params = {}, blanks = true) ->

@@ -1,6 +1,6 @@
 append :data, [
-  div_('.js_routes', data: { paths: MixPage.routes }),
-  div_('.js_page_uuid', data: { uuid: @page.uuid })
+  div_('.js_routes',    data: { value: MixPage.routes }),
+  div_('.js_page_uuid', data: { value: @page.uuid })
 ]
 prepend :sidebar, [
   page_sidebar,

@@ -6,7 +6,7 @@ class Js.PageConcept
     SORT: '.js_page_field_sort'
 
   ready: ->
-    @uuid = Rails.find(@UUID)?.data('uuid')
+    @uuid = Rails.find(@UUID)?.data('value')
     lists = sortable @LIST,
       items: @ITEM
       handle: @SORT

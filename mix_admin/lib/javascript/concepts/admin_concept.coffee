@@ -1,7 +1,7 @@
 class Js.AdminConcept
   readers: ->
-    action: -> Rails.find('.js_action').data('name')
-    model: -> Rails.find('.js_model')?.data('name')
+    action: -> Rails.find('.js_action').data('value')
+    model: -> Rails.find('.js_model')?.data('value')
     scroll_menu: -> Rails.find('.js_scroll_menu')
     scroll_x: -> @model() and @bulk_form() and @store('scroll_x')?["#{@model()}_#{@action()}"]
     bulk_form_scroll_x: -> Rails.$('.js_bulk_form th')

@@ -1,6 +1,6 @@
 class Js.LibConcept
   readers: ->
-    layout: -> Rails.find('.js_layout').data('name')
+    layout: -> Rails.find('.js_layout').data('value')
     scroll_y: -> @layout() and @sidebar() and @store('scroll_y')?["#{@role()}_#{@layout()}"]
     sidebar: -> Rails.find('.drawer-side')
     notice: -> Rails.find('#notice')

@@ -22,7 +22,7 @@ html_('.no-js.no-transition', lang: Current.locale, data: { theme: Current.theme
     ]),
   ]),
   body_('.drawer', tabindex: -1, class: [body_layout, body_template, @meta[:class], ('debug-screens' if Rails.env.development?)]) {[
-    area(:data, div_('.js_layout', data: { name: current_layout })),
+    area(:data, div_('.js_layout', data: { value: current_layout })),
     input_('#sidebar.drawer-toggle', type: 'checkbox'),
     div_('.drawer-content') {[
       header_('#header', [

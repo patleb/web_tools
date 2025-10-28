@@ -64,8 +64,8 @@ module AdminControllerContext
     assert_equal 'Web Tools', self[:@meta][:app]
     assert_selects(
       '.js_scroll_menu',
-      ".js_model[data-name=#{self[:@model].to_param}]",
-      ".js_action[data-name=#{action_name}]"
+      ".js_model[data-value=#{self[:@model].to_param}]",
+      ".js_action[data-value=#{action_name}]"
     )
     assert_select 'body.admin_layout.lib_layout'
     assert_select "body.admin_#{action_name}_template"

@@ -27,7 +27,7 @@ class window.I18n
   @on_load: ->
     I18n.locale = document.documentElement.getAttribute('lang') or I18n.locale
     Rails.$('.js_i18n').each (element) ->
-      if translations = element.getAttribute('data-translations')
+      if translations = element.getAttribute('data-value')
         if translations = JSON.safe_parse(translations)
           I18n.translations.deep_merge(translations)
           element.remove()
