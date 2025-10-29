@@ -4,7 +4,6 @@ class Js.RoutesConcept
   ready: ->
     @paths = Rails.$('.js_routes').each_with_object {}, (element, memo) =>
       memo.merge(JSON.parse(element.getAttribute('data-value')))
-      element.remove()
 
   url_for: (action, params = {}, blanks = true) ->
     return unless path = @paths[action]
