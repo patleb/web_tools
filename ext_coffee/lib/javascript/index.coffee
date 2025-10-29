@@ -34,4 +34,9 @@ window.Js =
   is_form_valid: (inputs) ->
     Array.wrap(inputs).all (input) -> input.valid()
 
+  extract_global: (name, { keep = false } = {}) ->
+    if (data = document.getElementById("js_#{name}"))
+      window["$#{name}"] = JSON.parse(data.getAttribute('data-value'))
+      data.remove() unless keep
+
 window.Sm = {}

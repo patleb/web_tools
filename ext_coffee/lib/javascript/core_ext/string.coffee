@@ -121,6 +121,20 @@ String.define_methods
         new RegExp(source, flags)
     @replace(pattern, string_or_f_match)
 
+  gsub_keys: (string, values, { anchor = ':' } = {}) ->
+    is_function = values.is_a Function
+    if is_function or values.any()
+      [part, parts...] = string.split(anchor)
+      parts = parts.map (segment) ->
+        if (name = segment.match /^\w+/)
+          name = name[0]
+          value = if is_function then values(name) else values[name]
+          segment.sub /^\w+/, value
+        else
+          segment
+      string = [part].add(parts).join('')
+    string
+
   strip: ->
     @trim()
 
