@@ -9,20 +9,20 @@ module Rpc
     STATEMENT    = /LINE \d+:/
     HINT_MARKER  = / \^/
 
-    attribute :schema, default: 'rpc'
     attribute :args, :array
     attribute :params, :hash
     attribute :result, :hash
 
     alias_method :call!, :update!
 
-    validate :call
+    validate :call_function
 
-    def self.call!(schema: 'rpc', id:, args:, params: {})
-      function = new(schema: schema, id: id, args: args)
-      function.ivar(:@new_record, false)
-      function.call! params: params
-      function.result
+    delegate :select_value, :quote, to: 'self.class.ar_connection'
+
+    def self.call!(id, params = {})
+      function = find(id).clone
+      function.call! params: params.to_hwia
+      block_given? ? yield(function) : function
     end
 
     def self.list
@@ -65,7 +65,23 @@ module Rpc
       errors.full_messages.first
     end
 
-    def call
+    protected
+
+    def _call!(id, params)
+      function = self.class.find(id).clone
+      function.call! params: params.to_hwia
+      block_given? ? yield(function) : function
+    rescue ActiveRecord::RecordInvalid
+      errors.add :base, function.error_message
+      raise
+    rescue ActiveRecord::RecordNotFound
+      errors.add :base, :not_found
+      raise
+    end
+
+    private
+
+    def call_function
       permit = true
       values = args.select_map do |arg|
         name = arg[:name]
@@ -76,19 +92,13 @@ module Rpc
         else quote(params[name])
         end
       end
-      self.result = select_function("SELECT #{schema}.#{id}(#{values.join(',')})")
+      self.result = select_function("SELECT rpc.#{id}(#{values.join(',')})")
     rescue ActiveRecord::StatementInvalid => e
       errors.add :base, e.message.squish.sub(PG_EXCEPTION, '').sub(STATEMENT, 'STATEMENT:').sub(HINT_MARKER, '')
     end
 
-    private
-
     def select_function(sql)
-      self.class.ar_connection.select_value(self.class.sanitize_sql(sql), "#{self.class.name} Call")
-    end
-
-    def quote(value)
-      self.class.ar_connection.quote(value)
+      select_value(self.class.sanitize_sql(sql), "#{self.class.name} Call")
     end
   end
 end

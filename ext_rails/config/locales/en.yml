@@ -43,6 +43,9 @@ en:
     :500:
       <<: *template_default
       title: We're sorry, but something went wrong
+  errors:
+    messages:
+      not_found: not found
   activerecord:
     errors:
       messages:

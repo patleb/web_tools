@@ -38,6 +38,9 @@ fr:
     :500:
       <<: *template_default
       title: Nous sommes désolés, une erreur s'est produite
+  errors:
+    messages:
+      not_found: n’a pas été trouvé(e)
   activerecord:
     errors:
       messages:
