@@ -1,4 +1,4 @@
-class Js.ComponentConcept::CardElement extends Js.ComponentConcept::Element
+class Js.Component::CardElement extends Js.Component::Element
   document_on: -> [
     'click', @constructor.$('input'), (event) ->
       element = @constructor.element(event.target)

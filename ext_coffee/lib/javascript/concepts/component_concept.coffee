@@ -33,3 +33,5 @@ class Js.ComponentConcept
       element.render_element(changes); true
     elements.each (uid, element) -> Rails.refresh_csrf_tokens(element)
     Rails.fire(document, @CHANGE, { elements }) unless elements.empty()
+
+Js.Component = Js.ComponentConcept

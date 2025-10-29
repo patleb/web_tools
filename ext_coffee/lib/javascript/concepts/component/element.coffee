@@ -1,4 +1,4 @@
-class Js.ComponentConcept::Element
+class Js.Component::Element
   @$: (selector) ->
     scope = "#{@::concept.ELEMENTS}[data-element=#{@::element_name}]"
     if selector? then "#{scope} #{selector}" else scope

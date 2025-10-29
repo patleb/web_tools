@@ -1,7 +1,7 @@
 import '@@test/ext_coffee/all'
-import '@@test/ext_coffee/fixtures/files/concepts/component/banner_element'
-import '@@test/ext_coffee/fixtures/files/concepts/component/card_element'
-import '@@test/ext_coffee/fixtures/files/concepts/component/time_element'
+import '@@test/ext_coffee/fixtures/files/elements/banner_element'
+import '@@test/ext_coffee/fixtures/files/elements/card_element'
+import '@@test/ext_coffee/fixtures/files/elements/time_element'
 
 Js.Concepts.initialize({ modules: 'Js' })
 
