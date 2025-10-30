@@ -8,7 +8,7 @@ class PagesController < LibController
   def show
     if redirect?
       redirect_to_page status: redirect_status
-    elsif stale_page?
+    elsif render?
       set_page
       render template: @page.template
     end
@@ -113,12 +113,6 @@ class PagesController < LibController
     @page_state.slugs.include?(params[:slug]) ? :found : :moved_permanently
   end
 
-  def stale_page?
-    return true if Rails.env.local?
-    return true if Current.user.admin?
-    stale? @page_state, etag: MixServer.current_version, template: @page_state.template
-  end
-
   def set_page
     @page = PageTemplate.with_fields.find(remove_ivar(:@page_state).id)
   end
@@ -129,5 +123,9 @@ class PagesController < LibController
 
   def set_format
     request.format = :json
+  end
+
+  def etag_entries
+    super << @page_state.updated_at
   end
 end

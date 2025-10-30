@@ -40,4 +40,8 @@ class User::Null < ActiveType::NullObject
   def session
     nil
   end
+
+  def updated_at
+    nil
+  end
 end
