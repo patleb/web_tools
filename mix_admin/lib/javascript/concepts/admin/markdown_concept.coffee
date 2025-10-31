@@ -106,14 +106,14 @@ class Js.Admin.MarkdownConcept
     button = file_input.closest('.js_multimedia')
     file = file_input.files[0]
     file_input.remove()
-    self = this
+    return unless @valid file
     @read(file)
       .then (result) ->
         result = new Uint8Array(result)
         window.crypto.subtle.digest('SHA-256', result)
-      .then (result) ->
+      .then (result) =>
         uid = [btoa(file.name), btoa(String.fromCharCode(new Uint8Array(result)...))].join(',')
-        self.fetch_blob_id(button, file, uid)
+        @fetch_blob_id(button, file, uid)
 
   fetch_blob_id: (button, file, uid) ->
     Rails.ajax({
@@ -205,13 +205,13 @@ class Js.Admin.MarkdownConcept
     (@history ?= {})[name] ?= { push: [[textarea.value, textarea.cursor_end()]], undo: [], redo: [] }
 
   read: (file) ->
-    return unless file and @valid(file)
     new Promise (resolve) ->
       reader = new FileReader()
       reader.onload = -> resolve(reader.result)
       reader.readAsArrayBuffer(file)
 
   valid: (file) ->
+    return false unless file
     unless file.size < @max_file_size
       Flash.alert "File too large: must be < #{@max_file_size} bytes"
       return false
