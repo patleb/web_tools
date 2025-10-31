@@ -10,8 +10,8 @@ describe('Js.TagConcept', () => {
   })
 
   it('should define tags', () => {
-    Tag.define('a')
-    assert.equal('<a href="#" rel="noopener">HOME</a>', a_({ href: '#' }, () => 'HOME').to_s())
+    Tag.define('blockquote')
+    assert.equal('<blockquote data-href="#">HOME</blockquote>', blockquote_({ 'data-href': '#' }, () => 'HOME').to_s())
   })
 
   describe('#h_', () => {

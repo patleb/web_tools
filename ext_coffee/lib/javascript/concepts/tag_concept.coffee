@@ -6,12 +6,14 @@ class Js.TagConcept
   HTML_TAGS: [
     'a'
     'button'
-    'div'
-    'form'
-    'input'
-    'label'
+    'datalist', 'dd', 'div', 'dl', 'dt'
+    'fieldset', 'form'
+    'i', 'input'
+    'label', 'li'
+    'ol', 'optgroup', 'option'
     'select', 'span'
     'textarea', 'time'
+    'ul'
   ].to_set()
 
   ready_once: ->
