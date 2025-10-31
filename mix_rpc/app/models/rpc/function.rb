@@ -19,10 +19,8 @@ module Rpc
 
     delegate :select_value, :quote, to: 'self.class.ar_connection'
 
-    def self.call!(id, params = {})
-      function = find(id).clone
-      function.call! params: params.to_hwia
-      block_given? ? yield(function) : function
+    def self.call!(id, ...)
+      find(id)._call!(nil, ...)
     end
 
     def self.list
@@ -65,12 +63,16 @@ module Rpc
       errors.full_messages.first
     end
 
-    protected
-
-    def _call!(id, params)
-      function = self.class.find(id).clone
+    def _call!(id = nil, params = {}, json: false)
+      function = id ? self.class.find(id).clone : clone
       function.call! params: params.to_hwia
-      block_given? ? yield(function) : function
+      if block_given?
+        yield(function)
+      elsif json
+        ActiveSupport::JSON.decode(function.result)
+      else
+        function.result
+      end
     rescue ActiveRecord::RecordInvalid
       errors.add :base, function.error_message
       raise
