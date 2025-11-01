@@ -1,6 +1,35 @@
 import './spec_helper'
 
 describe('Number', () => {
+  let number
+
+  test('#blank, #eql, #to_b, #to_i, #to_date, #is_integer, #is_finite, #even, #odd', () => {
+    assert.true(NaN.blank())
+    number = 0
+    assert.false(number.blank())
+    assert.true(number.eql(0))
+    assert.false(number.eql(1))
+    assert.false(number.to_b())
+    assert.equal(new Date(0), number.to_date())
+    assert.true(number.is_integer())
+    number = 1
+    assert.true(number.to_b())
+    assert.equal(new Date(1), number.to_date())
+    assert.true(number.is_integer())
+    assert.false(number.even())
+    assert.true(number.odd())
+    number = 1.23
+    assert.equal(1, number.to_i())
+    assert.true(number.is_finite())
+    assert.false(number.is_integer())
+    assert.false(Infinity.is_finite())
+    number = 2
+    assert.true(number.even())
+    assert.false(number.odd())
+    assert.false((3).even())
+    assert.true((3).odd())
+  })
+
   test('#round', () => {
     assert.equal(1, 0.5.round())
     assert.equal(-1, (-0.5).round())

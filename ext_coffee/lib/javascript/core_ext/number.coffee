@@ -11,12 +11,12 @@ Number.override_methods
     isNaN(this)
 
   eql: (other) ->
-    this is other
+    @valueOf() is other
 
 Number.define_methods
   to_b: ->
-    return true if this is 1
-    return false if this is 0
+    return true if @valueOf() is 1
+    return false if @valueOf() is 0
     throw 'invalid value for Boolean'
 
   to_i: ->
@@ -35,10 +35,10 @@ Number.define_methods
     new Date(this)
 
   is_integer: ->
-    @constructor.isInteger?(this) ? @is_finite() and @floor() is this
+    @constructor.isInteger?(@valueOf()) ? @is_finite() and @floor() is @valueOf()
 
   is_finite: ->
-    @constructor.isFinite?(this) ? this isnt Infinity and this isnt -Infinity
+    @constructor.isFinite?(@valueOf()) ? @valueOf() isnt Infinity and @valueOf() isnt -Infinity
 
   safe_text: ->
     @toString()
