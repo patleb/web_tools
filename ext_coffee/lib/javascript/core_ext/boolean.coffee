@@ -1,9 +1,9 @@
 Boolean.override_methods
   blank: ->
-    not this
+    not @valueOf()
 
   eql: (other) ->
-    this is other
+    @valueOf() is other
 
 Boolean.define_methods
   to_b: ->

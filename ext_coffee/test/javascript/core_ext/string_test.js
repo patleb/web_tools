@@ -1,6 +1,11 @@
 import './spec_helper'
 
 describe('String', () => {
+  test('#eql', () => {
+    assert.true("abc".eql("abc"))
+    assert.false("abc".eql("cba"))
+  })
+
   test('#is_a', () => {
     assert.true(''.is_a(String))
     assert.false(''.is_a(Object))

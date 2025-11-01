@@ -31,7 +31,7 @@ String.override_methods
     @length
 
   eql: (other) ->
-    this is other
+    @valueOf() is other
 
   first: ->
     this[0]
@@ -61,7 +61,7 @@ String.define_methods
     @toString()
 
   to_date: ->
-    return Date.current() if this is 'now'
+    return Date.current() if @valueOf() is 'now'
     if not ISO8601_SUPPORT and (matches = @match(ISO8601_PATTERN))
       [_, year, month, day, hour, minute, second, zone] = matches
       offset = zone.replace(':', '') if zone isnt 'Z'
