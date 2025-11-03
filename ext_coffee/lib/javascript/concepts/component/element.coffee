@@ -11,7 +11,7 @@ class Js.Component::Element
     @static_data = JSON.safe_parse(@node.getAttribute('data-static')) or {}
     @watch_data = JSON.safe_parse(@node.getAttribute('data-watch')) or []
     @permanent = @node.hasAttribute('data-turbolinks-permanent')
-    @scoped = @node.hasAttribute('data-scoped')
+    @scope = @node.getAttribute('data-scope') or ''
     @static = @watch_data.empty()
     @watch = @watch_data.map (name) -> name
 
@@ -38,6 +38,15 @@ class Js.Component::Element
     unless (html = @render() ? '').html_safe()
       html = html.safe_text()
     @node.innerHTML = html
+    @rendered = true
+    @stale = false
+
+  refresh_storage: ->
+    changed = false
+    @storage_get().each (name, value) =>
+      changed ||= this[name] isnt value
+      this[name] = value
+    @stale = changed
 
   storage_value: (name) ->
     @storage_get(name)[name]
@@ -52,13 +61,13 @@ class Js.Component::Element
     Js.Storage.set(inputs, @storage_options())
 
   storage_names: (names) ->
-    if not @scoped and names.empty()
+    if @scope is '' and names.empty()
       @watch
     else
       names
 
   storage_options: ->
-    if @scoped
-      { submitter: this, @permanent, scope: @uid }
+    if @scope
+      { submitter: this, @permanent, @scope }
     else
       { submitter: this, @permanent }
