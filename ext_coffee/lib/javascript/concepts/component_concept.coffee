@@ -25,11 +25,13 @@ class Js.ComponentConcept
   leave: ->
     @leave_elements()
 
-  render_elements: ({ detail: { permanent, scope, changes } } = {}) ->
+  render_elements: ({ detail: { submitter, permanent, scope, changes } } = {}) ->
     elements = (@elements ? {}).select (uid, element) ->
+      return if element is submitter
       return if element.static
       return if permanent isnt element.permanent
-      return if scope and scope isnt uid or not scope and element.scoped
+      return if scope and scope isnt uid
+      return if not scope and element.scoped
       element.render_element(changes); true
     elements.each (uid, element) -> Rails.refresh_csrf_tokens(element)
     Rails.fire(document, @CHANGE, { elements }) unless elements.empty()

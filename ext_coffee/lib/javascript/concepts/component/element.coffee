@@ -59,6 +59,6 @@ class Js.Component::Element
 
   storage_options: ->
     if @scoped
-      { scope: @uid, @permanent }
+      { submitter: this, @permanent, scope: @uid }
     else
-      { @permanent }
+      { submitter: this, @permanent }

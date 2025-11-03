@@ -25,7 +25,7 @@ class Js.StorageConcept
         [element.name.sub(///^#{scope.safe_regex()}:///, ''), cast_value(element)]
     result.reject(([name, value]) -> value is undefined).to_h()
 
-  set: (inputs, { permanent = false, scope = '', event = true } = {}) ->
+  set: (inputs, { submitter = null, permanent = false, scope = '', event = true } = {}) ->
     changed = false
     changes = inputs.each_with_object {}, (name, value, memo) =>
       if element = @storage(permanent).find("[name='#{scope}:#{name}']")
@@ -57,7 +57,7 @@ class Js.StorageConcept
         element.setAttribute('data-cast', cast) if cast
         Rails.set(element, { value_was })
         @log permanent, scope, name, value, value_was
-    Rails.fire(@storage(permanent), @CHANGE, { permanent, scope, changes }) if event and changed
+    Rails.fire(@storage(permanent), @CHANGE, { submitter, permanent, scope, changes }) if event and changed
 
   storage: (permanent) ->
     if permanent then @root_permanent() else @root()
