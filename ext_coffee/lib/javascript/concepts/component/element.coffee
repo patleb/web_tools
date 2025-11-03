@@ -17,9 +17,9 @@ class Js.Component::Element
 
   ready: ->
     @static_data.each (name, value) => this[name] = value
-    if @static
+    if @static or @storage_get().present() or @watch_data.is_a Array
       @render_element()
-    else if @storage_get().empty() and @watch_data.is_a Object
+    else
       @storage_set(@watch_data)
 
   $: (selector) ->

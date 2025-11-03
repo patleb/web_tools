@@ -86,7 +86,8 @@ class Js.Concepts
         scope = scope.join('.').constantize()
       else
         scope = window
-      warn_define_singleton_method(scope, alias)
+      if scope isnt Js or alias isnt 'Component'
+        warn_define_singleton_method(scope, alias)
       scope[alias] = concept
 
     @define_constants(concept_class)

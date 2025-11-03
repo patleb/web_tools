@@ -24,8 +24,6 @@ try {
 }
 let environment = { plugins: [new webpack.EnvironmentPlugin({
   SCREENS: JSON.stringify(screens),
-  LOGGER_DEBUG: false,
-  LOGGER_TRACE: false,
 })] }
 
 module.exports = merge(generateWebpackConfig(), devtool, environment, {

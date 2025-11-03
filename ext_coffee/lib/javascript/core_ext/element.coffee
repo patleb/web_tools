@@ -22,7 +22,7 @@ m = Element::matches or
 #   CSS selector string or
 #   a JavaScript object with `selector` and `exclude` properties
 #   Examples: "form", { selector: "form", exclude: "form[data-remote='true']"}
-Element.define_methods
+Element.override_methods
   matches: (selector) ->
     if typeof selector is 'object' and selector.exclude?
       m.call(this, selector.selector) and not m.call(this, selector.exclude)
@@ -120,6 +120,8 @@ HTMLElement.define_methods
         value
       when 'radio', 'checkbox'
         @checked
+      when 'range'
+        @value?.to_f()
       else
         @value
 

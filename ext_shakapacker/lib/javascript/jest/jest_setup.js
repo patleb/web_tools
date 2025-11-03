@@ -21,6 +21,4 @@ global.console = require('console')
 
 Object.assign(process.env, {
   SCREENS: null,
-  LOGGER_DEBUG: false,
-  LOGGER_TRACE: false,
 })

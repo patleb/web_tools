@@ -1,6 +1,6 @@
 class window.Cookie
   @set: (key, value = '') ->
-    Cookies.set(key, value, secure: (window.location.protocol == 'https:'))
+    Cookies.set(key, value, secure: (window.location.protocol is 'https:'))
 
   @set_json: (root, key, value) =>
     json = @get_json(root)

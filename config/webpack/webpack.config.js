@@ -10,8 +10,6 @@ const webpack = require('webpack')
 
 let environment = { plugins: [new webpack.EnvironmentPlugin({
   // YML_VALUE: settings.name,
-  // LOGGER_DEBUG: true,
-  // LOGGER_TRACE: true,
 })] }
 
 module.exports = merge(webpackConfig, environment)
