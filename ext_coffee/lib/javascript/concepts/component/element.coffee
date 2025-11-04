@@ -17,7 +17,9 @@ class Js.Component::Element
 
   ready: ->
     @static_data.each (name, value) => this[name] = value
-    if @static or @storage_get().present() or @watch_data.is_a Array
+    storage_data = @storage_get()
+    if @static or storage_data.present() or @watch_data.is_a Array
+      storage_data.each (name, value) => this[name] = value
       @render_element()
     else
       @storage_set(@watch_data)
@@ -57,8 +59,8 @@ class Js.Component::Element
     else
       Js.Storage.get(@storage_names(names)..., @storage_options())
 
-  storage_set: (inputs) ->
-    Js.Storage.set(inputs, @storage_options())
+  storage_set: (inputs, event = true) ->
+    Js.Storage.set(inputs, { event }.merge @storage_options() )
 
   storage_names: (names) ->
     if @scope is '' and names.empty()

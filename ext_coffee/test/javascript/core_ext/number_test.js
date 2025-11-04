@@ -14,7 +14,7 @@ describe('Number', () => {
     assert.true(number.is_integer())
     number = 1
     assert.true(number.to_b())
-    assert.equal(new Date(1), number.to_date())
+    assert.equal(new Date(1000), number.to_date())
     assert.true(number.is_integer())
     assert.false(number.even())
     assert.true(number.odd())

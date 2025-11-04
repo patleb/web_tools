@@ -1,5 +1,5 @@
 ### References
-# https://github.com/basecamp/local_time/blob/main/lib/assets/javascripts/src/local-time/helpers/strftime.coffee
+# https://github.com/basecamp/local_time/blob/v2.1.0/lib/assets/javascripts/src/local-time
 ###
 I18n.translations.deep_merge
   en:
@@ -47,12 +47,24 @@ Date.override_methods
     false
 
   eql: (other) ->
-    return unless other.is_a Date
+    return false unless other.is_a Date
     @getTime() is other.getTime()
 
 Date.define_methods
+  to_i: ->
+    Math.floor(@to_f())
+
+  to_f: ->
+    @getTime() / 1000
+
+  to_d: ->
+    @to_f()
+
   to_s: ->
     @toString()
+
+  to_date: ->
+    this
 
   safe_text: ->
     @toString()

@@ -84,7 +84,8 @@ Object.define_methods
 
   dig: (keys) ->
     digged = this
-    keys.split('.').each_while (key) ->
+    keys = keys.split('.') if keys.is_a String
+    keys.each_while (key) ->
       if digged.has_key?(key) or digged.has_index?(key)
         digged = digged[key]
         true

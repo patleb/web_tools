@@ -16,7 +16,7 @@ Boolean.define_methods
     if @valueOf() then 1.0 else 0.0
 
   to_d: ->
-    if @valueOf() then 1.0 else 0.0
+    @to_f()
 
   to_s: ->
     @toString()

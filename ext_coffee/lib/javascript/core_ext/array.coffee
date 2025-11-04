@@ -182,6 +182,9 @@ Array.define_methods
   add: (others...) ->
     @concat others...
 
+  intersection: (other) ->
+    value for value in this when value in other
+
   union: (others...) ->
     result = {}
     for array in [this, others...]

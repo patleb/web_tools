@@ -25,12 +25,12 @@ class Js.StateMachine
     'IDLED'
   ].map((v) -> [v, v]).to_h()
 
-  @debug: false
+  @debug: (@_debug) ->
 
   constructor: (config) ->
-    @new(config)
+    @build(config)
 
-  new: (config) ->
+  build: (config) ->
     @STATUS = Js.StateMachine.STATUS
     @id = Math.uid()
     if config instanceof @constructor
@@ -77,14 +77,14 @@ class Js.StateMachine
   resume: ->
     return unless @stopped
     if @finished()
-      throw new Error("#resume can't be called once the @terminal state is reached")
+      throw "#resume can't be called once the @terminal state is reached"
     @stopped = false
     @reset_trigger()
     @log @STATUS.RESUMED
 
   defer: (args...) ->
     unless @deferrable
-      throw new Error('#defer must be called only once in before hooks')
+      throw '#defer must be called only once in before hooks'
     @deferred = [@event, args...]
     @deferrable = false
     @log @STATUS.DEFERRED
@@ -118,7 +118,7 @@ class Js.StateMachine
 
   trigger: (event, args...) ->
     if @event_next
-      throw new Error('events can be chained, but not queued')
+      throw 'events can be chained, but not queued'
     else if @event
       @event_next = [event, args...]
       return
@@ -301,4 +301,4 @@ class Js.StateMachine
     @log_debug "#{tag} #{@current}"
 
   log_debug: (msg) ->
-    Logger.debug(msg) if @constructor.debug
+    Logger.debug(msg) if @constructor._debug

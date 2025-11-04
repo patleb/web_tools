@@ -84,8 +84,3 @@ JSON.define_singleton_methods = (methods) ->
 JSON.define_singleton_method = (name, callback) ->
   warn_define_singleton_method(JSON, name)
   JSON[name] = callback
-
-for type in [Array, Boolean, Date, Number, Object, RegExp, String]
-  do (type) ->
-    type::to_json = -> JSON.parse(JSON.stringify(this))
-    Object.defineProperty(type::, 'to_json', enumerable: false)

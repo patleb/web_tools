@@ -31,7 +31,7 @@ class Js.StorageConcept
       if element = @storage(permanent).find("[name='#{scope}:#{name}']")
         value_was = cast_value(element)
       else
-        element = input$ type: 'hidden', name: "#{scope}:#{name}"
+        element = input$ type: 'hidden', name: "#{scope}:#{name}", autocomplete: 'off'
         @storage(permanent).appendChild(element)
       unless value?
         value = null
@@ -65,8 +65,7 @@ class Js.StorageConcept
   # Private
 
   log: (permanent, scope, name, value, value_was) =>
-    pad = if permanent then ' ' else ''
-    tag = "[STORAGE][#{permanent}]#{pad}"
+    tag = "[STORAGE][#{if permanent then 'P' else '-'}]"
     @log_debug "#{tag}[#{scope}:#{name}] #{JSON.stringify(value_was)} => #{JSON.stringify(value)}"
 
   log_debug: (msg) ->

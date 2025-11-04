@@ -32,7 +32,7 @@ Number.define_methods
     @toString()
 
   to_date: ->
-    new Date(this)
+    new Date(this * 1000)
 
   is_integer: ->
     @constructor.isInteger?(@valueOf()) ? @is_finite() and @floor() is @valueOf()
@@ -60,6 +60,9 @@ Number.define_methods
 
   trunc: (precision = 0) ->
     Number.with_decimals 'trunc', this, precision
+
+  times: (f_index) ->
+    [0...this].map(f_index)
 
   html_safe: ->
     true
