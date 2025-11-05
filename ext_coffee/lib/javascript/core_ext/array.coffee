@@ -182,6 +182,12 @@ Array.define_methods
   add: (others...) ->
     @concat others...
 
+  sum: (f_item_index_self = (v) -> v) ->
+    value = 0
+    for i in [0...@length]
+      value += f_item_index_self(this[i], i, this)
+    value
+
   intersection: (other) ->
     value for value in this when value in other
 
