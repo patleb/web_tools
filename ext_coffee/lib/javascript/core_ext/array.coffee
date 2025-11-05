@@ -44,12 +44,11 @@ Array.override_methods
   eql: (other) ->
     return false unless other?.is_a Array
     return false unless @length is other.length
-    i = 0
-    for item in this
+    for item, i in this
       if item?
-        return false unless item.eql(other[i++])
+        return false unless item.eql(other[i])
       else
-        return false if other[i++]?
+        return false if other[i]?
     true
 
   any: (f_item_index_self) ->
@@ -70,8 +69,7 @@ Array.override_methods
     return
 
   each_while: (f_item_index_self) ->
-    i = 0
-    for item in this
+    for item, i in this
       return unless f_item_index_self(item, i, this)
     return
 
@@ -216,7 +214,6 @@ Array.define_methods
 
 Array.polyfill_methods
   find: (f_item_index_self) ->
-    i = 0
-    for item in this
-      return item if f_item_index_self(item, i++, this)
+    for item, i in this
+      return item if f_item_index_self(item, i, this)
     return
