@@ -21,6 +21,13 @@ describe('Date', () => {
     assert.false(Date.current().eql(create_date(2001, 1, 1, 1, 1, 1)))
   })
 
+  test('#advance', () => {
+    let date = Date.current()
+    assert.equal(date.to_i() + 123, date.advance(123).to_i())
+    assert.equal(date.to_i() + 123, date.advance(Duration.new('PT123S')).to_i())
+    assert.equal(date.to_i() + 123, date.advance({ seconds: 123 }).to_i())
+  })
+
   test('#strftime', () => {
     const date_object = create_date(2001, 1, 1, 1, 1, 1)
     const dates = {

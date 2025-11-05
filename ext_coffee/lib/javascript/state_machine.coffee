@@ -1,10 +1,12 @@
 class Js.StateMachine
+  @extend WithGetters
+
   CONFIG_IVARS = ['initial', 'terminal']
   CONFIG_HOOKS = ['state', 'initialize', 'before', 'after', 'delegate', 'on_deny', 'on_stop']
   EVENT_HOOKS = ['before', 'after']
   STATE_HOOKS = ['enter', 'exit']
   STATE_CONFIG = STATE_HOOKS.add ['data']
-  CLONABLE_IVARS = CONFIG_IVARS.add ['states', 'methods', 'transitions', 'paths']
+  CLONABLE_IVARS = CONFIG_IVARS.add ['states', 'methods', 'transitions']
   WILDCARD = '*'
   EXCEPT = ' - '
   LIST = ','
@@ -24,6 +26,17 @@ class Js.StateMachine
     'CHANGED'
     'IDLED'
   ].map((v) -> [v, v]).to_h()
+
+  @getters
+    data: ->
+      @states[@current].data
+
+    paths: ->
+      @_paths ||= @transitions.each_with_object {}, (event, transitions, memo) ->
+        transitions.each (current, transition) ->
+          next = transition.next
+          next = transition.next_states if next.is_a Function
+          (memo[current] ||= {})[event] = next
 
   @debug: (@_debug) ->
 
@@ -53,9 +66,6 @@ class Js.StateMachine
     new @constructor this
 
   config: -> {}
-
-  data: ->
-    @states[@current].data
 
   is: (state) ->
     if state.is_a RegExp
@@ -127,13 +137,6 @@ class Js.StateMachine
     @reset_trigger()
     @canceled = false
     @status
-
-  inspect: ->
-    @paths ||= @transitions.each_with_object {}, (event, transitions, memo) ->
-      transitions.each (current, transition) ->
-        next = transition.next
-        next = transition.next_states if next.is_a Function
-        (memo[current] ||= {})[event] = next
 
   # Private
 

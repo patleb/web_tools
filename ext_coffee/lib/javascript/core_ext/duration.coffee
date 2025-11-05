@@ -1,0 +1,77 @@
+class window.Duration
+  @SECONDS: {
+    second: 1,
+    minute: 60,
+    hour:   3600,
+    day:    86400,
+    week:   604800,
+    month:  2629746, # 1/12 of a gregorian year
+    year:   31556952, # length of a gregorian year (365.2425 days)
+  }
+
+  # NOTE: float and negative not supported
+  constructor: (d) ->
+    @SECONDS = Duration.SECONDS
+    if d.is_a String
+      time = false
+      number = ''
+      for char in d
+        switch char
+          when 'P' then @years = @months = @weeks = @days = @hours = @minutes = @seconds = 0
+          when 'Y' then [@years,   number] = [+number, '']
+          when 'W' then [@weeks,   number] = [+number, '']
+          when 'D' then [@days,    number] = [+number, '']
+          when 'H' then [@hours,   number] = [+number, '']
+          when 'S' then [@seconds, number] = [+number, '']
+          when 'T' then time = true
+          when 'M'
+            if time
+              [@minutes, number] = [+number, '']
+            else
+              [@months, number] = [+number, '']
+          else number += char
+    else if d.is_a Number
+      @years = @months = @weeks = @days = @hours = @minutes = @seconds = 0
+      return if d is 0
+      variable = false
+      ['years', 'months', 'weeks', 'days', 'hours', 'minutes'].each (part) =>
+        seconds = @SECONDS[part.singularize()]
+        this[part] = Math.floor(d / seconds)
+        d = d % seconds
+        return if this[part] is 0
+        variable ||= ['hours', 'minutes'].exclude part
+      @seconds = d
+    else
+      [@years, @months, @weeks, @days, @hours, @minutes, @seconds] =
+        [d.years || 0, d.months || 0, d.weeks || 0, d.days || 0, d.hours || 0, d.minutes || 0, d.seconds || 0]
+
+  to_s: ->
+    string = 'P'
+    string += "#{@years}Y"  if @years
+    string += "#{@months}M" if @months
+    string += "#{@weeks}W"  if @weeks
+    string += "#{@days}D"   if @days
+    if @hours or @minutes or @seconds
+      string += 'T'
+      string += "#{@hours}H"   if @hours
+      string += "#{@minutes}M" if @minutes
+      string += "#{@seconds}S" if @seconds
+    string
+
+  to_i: ->
+    @years   * @SECONDS.year   +
+    @months  * @SECONDS.month  +
+    @weeks   * @SECONDS.week   +
+    @days    * @SECONDS.day    +
+    @hours   * @SECONDS.hour   +
+    @minutes * @SECONDS.minute +
+    @seconds
+
+  to_h: ->
+    { @years, @months, @weeks, @days, @hours, @minutes, @seconds }
+
+  value: ->
+    @to_i()
+
+  parts: ->
+    @to_h()

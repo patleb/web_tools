@@ -95,7 +95,7 @@ describe('Js.StateMachine', () => {
         assert.not.same(sm, copy)
         assert.not.equal(sm.id, copy.id)
         assert.not.equal(sm.current, copy.current)
-        const ivars = ['initial', 'terminal', 'states', 'methods', 'transitions', 'paths']
+        const ivars = ['initial', 'terminal', 'states', 'methods', 'transitions']
         ivars.each((ivar) => {
           assert.same(sm[ivar], copy[ivar])
         })
@@ -326,7 +326,7 @@ describe('Js.StateMachine', () => {
       }}
     })
 
-    describe('#inspect', () => {
+    describe('#paths', () => {
       beforeAll(() => {
         config = arrow_base
       })
@@ -338,7 +338,7 @@ describe('Js.StateMachine', () => {
           'down-right': { left:  'down-left',  up:   'up-right' },
           'down-left':  { right: 'down-right', up:   'up-left' },
         }
-        assert.equal(expected, sm.inspect())
+        assert.equal(expected, sm.paths)
       })
     })
 
@@ -348,7 +348,7 @@ describe('Js.StateMachine', () => {
       })
 
       it('should assign data to @states', () => {
-        assert.equal(arrow_flags['up-right'].data, sm.data())
+        assert.equal(arrow_flags['up-right'].data, sm.data)
         assert.equal(arrow_flags, sm.states.each_with_object({}, (k, v, h) => { h[k] = v.slice('data') }))
       })
     })
@@ -426,7 +426,7 @@ describe('Js.StateMachine', () => {
       assert.equal(expected_transitions, actual_transitions)
     })
 
-    it('should transpose @transitions correctly with #inspect', () => {
+    it('should transpose @transitions correctly with #paths', () => {
       const expected = {
         parked:       { move: 'slow_speed' },
         stopped:      { move: 'slow_speed' },
@@ -434,7 +434,7 @@ describe('Js.StateMachine', () => {
         slower_speed: { move: 'slow_speed', break: 'stopped', park: 'parked', accelerate: 'slow_speed' },
         normal_speed: { move: 'slow_speed', break: 'stopped', slow_down: 'slow_speed' },
       }
-      assert.equal(expected, sm.inspect())
+      assert.equal(expected, sm.paths)
     })
   })
 

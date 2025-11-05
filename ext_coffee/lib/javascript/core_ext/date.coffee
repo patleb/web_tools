@@ -69,6 +69,10 @@ Date.define_methods
   safe_text: ->
     @toString()
 
+  advance: (seconds) ->
+    seconds = Duration.new(seconds).to_i() unless seconds.is_a Number
+    new Date((@to_f() + seconds) * 1000)
+
   strftime: (format) ->
     day    = @getDay()
     date   = @getDate()

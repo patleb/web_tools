@@ -63,7 +63,7 @@ describe('Js.Concepts', () => {
   it('should define lazy #accessors', () => {
     assert.nil(Test.SimpleConcept.__rows)
     dom.find(Test.SimpleConcept.BODY).click()
-    assert.equal(Test.SimpleConcept.__rows, Test.SimpleConcept.rows())
+    assert.equal(Test.SimpleConcept.__rows, Test.SimpleConcept.rows)
   })
 
   it('should nullify non-system ivars and not from #ready_once on #leave', () => {
@@ -145,19 +145,19 @@ describe('Js.Concepts', () => {
       let body = dom.find(Test.SimpleConcept.Element.prototype.BODY)
       dom.fire('hover', { target: body })
       assert.true(body.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.equal(Test.SimpleConcept.Element.prototype.__body, Test.SimpleConcept.Element.prototype.body())
+      assert.equal(Test.SimpleConcept.Element.prototype.__body, Test.SimpleConcept.Element.prototype.body)
       assert.equal(['body', 'value'], Test.SimpleConcept.Element.prototype.READERS)
       let element = new Test.SimpleConcept.Element()
       assert.not.nil(element.__body)
       assert.equal(Test.SimpleConcept.Element.prototype.__body, element.__body)
-      assert.equal('value', element.value())
+      assert.equal('value', element.value)
       assert.nil(Test.SimpleConcept.Element.prototype.__value)
     })
 
     it('should not access parent ivars in inherited element', () => {
       let element = new Test.SimpleConcept.Element()
       let extended = new Test.SimpleConcept.ExtendElement()
-      assert.equal('value', element.value())
+      assert.equal('value', element.value)
       assert.nil(extended.__value)
     })
   })

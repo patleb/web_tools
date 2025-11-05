@@ -69,11 +69,11 @@ class Js.Admin.SearchConcept
     return if @query_submitted
     return if target.get_value()?.present()
     return unless Routes.decode_params().q
-    Rails.fire @query_bar(), 'submit'
+    Rails.fire @query_bar, 'submit'
 
   with_search_token: (target, callback, { reset = false, before_size = 2, token = target.get_value() } = {}) ->
-    search = @search().get_value() ? ''
-    cursor_end = @search().cursor_end()
+    search = @search.get_value() ? ''
+    cursor_end = @search.cursor_end()
     cursor_start = cursor_end - before_size
     cursor_start = 0 if cursor_start < 0
     before = search[cursor_start...cursor_end] or search[cursor_end - 1] ? ''
@@ -87,9 +87,9 @@ class Js.Admin.SearchConcept
     else
       move = cursor_end
     target.set_value('') if reset # otherwise can't reuse the same value, the 'change' event won't fire
-    @search().set_value(search)
-    @search().focus()
-    @search().cursor_end(move)
+    @search.set_value(search)
+    @search.focus()
+    @search.cursor_end(move)
 
   is_after_operator: (before, { equality_only = false } = {}) ->
     if equality_only

@@ -43,26 +43,34 @@ Number.define_methods
   safe_text: ->
     @toString()
 
+  html_safe: ->
+    true
+
   even: ->
     this % 2 is 0
 
   odd: ->
     Math.abs(this % 2) is 1
 
-  ceil: (precision = 0) ->
-    Number.with_decimals 'ceil', this, precision
+  ceil:  (precision = 0) -> Number.with_decimals 'ceil',  this, precision
+  floor: (precision = 0) -> Number.with_decimals 'floor', this, precision
+  round: (precision = 0) -> Number.with_decimals 'round', this, precision
+  trunc: (precision = 0) -> Number.with_decimals 'trunc', this, precision
 
-  floor: (precision = 0) ->
-    Number.with_decimals 'floor', this, precision
-
-  round: (precision = 0) ->
-    Number.with_decimals 'round', this, precision
-
-  trunc: (precision = 0) ->
-    Number.with_decimals 'trunc', this, precision
+  second:  -> @seconds()
+  seconds: -> @valueOf()
+  minute:  -> @minutes()
+  minutes: -> this * Duration.SECONDS.minute
+  hour:    -> @hours()
+  hours:   -> this * Duration.SECONDS.hour
+  day:     -> @days()
+  days:    -> this * Duration.SECONDS.day
+  week:    -> @weeks()
+  weeks:   -> this * Duration.SECONDS.week
+  month:   -> @months()
+  months:  -> this * Duration.SECONDS.month
+  year:    -> @years()
+  years:   -> this * Duration.SECONDS.year
 
   times: (f_index) ->
     [0...this].map(f_index)
-
-  html_safe: ->
-    true

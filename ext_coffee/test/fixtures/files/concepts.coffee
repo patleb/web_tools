@@ -22,7 +22,7 @@ class Test.SimpleConcept
       @public = 'public'
       @_private = 'private'
       @__system = 'system'
-      @rows()
+      @rows
 
     'click', @ROWS, (event, this_was) ->
       event.target.add_class(@TRIGGERED)
@@ -62,7 +62,7 @@ class Test.SimpleConcept::Element
 
   document_on: -> [
     'hover', @BODY, (event, this_was) ->
-      @body().add_class(@TRIGGERED)
+      @body.add_class(@TRIGGERED)
   ]
 
 class Test.SimpleConcept::ExtendElement extends Test.SimpleConcept::Element

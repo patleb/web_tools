@@ -1,11 +1,9 @@
 import './spec_helper'
 
 describe('Number', () => {
-  let number
-
   test('#blank, #eql, #to_b, #to_i, #to_date, #is_integer, #is_finite, #even, #odd', () => {
     assert.true(NaN.blank())
-    number = 0
+    let number = 0
     assert.false(number.blank())
     assert.true(number.eql(0))
     assert.false(number.eql(1))
@@ -77,5 +75,16 @@ describe('Number', () => {
     assert.equal(18.15, 18.15.trunc(2))
     assert.equal(-2.26, (-2.26).trunc(2))
     assert.equal(-18.15, (-18.15).trunc(2))
+  })
+
+  test('#seconds, #minutes, #hours, #days, #weeks, #days, #hours, #minutes, #seconds', () => {
+    for (const [scale, seconds] of Object.entries(Duration.SECONDS)) {
+      assert.equal(seconds, 1[scale]())
+      assert.equal(3.45 * seconds, 3.45[`${scale}s`]())
+    }
+  })
+
+  test('#times', () => {
+    assert.equal([0, 1, 2], 3.0.times(i => i))
   })
 })

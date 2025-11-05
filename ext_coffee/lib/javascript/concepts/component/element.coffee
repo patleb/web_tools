@@ -1,4 +1,13 @@
 class Js.Component::Element
+  @extend WithGetters
+
+  @getters
+    storage_options: ->
+      if @scope
+        { submitter: this, @permanent, @scope }
+      else
+        { submitter: this, @permanent }
+
   @$: (selector) ->
     scope = "#{@::concept.ELEMENTS}[data-element=#{@::element_name}]"
     if selector? then "#{scope} #{selector}" else scope
@@ -57,19 +66,13 @@ class Js.Component::Element
     if @static
       {}
     else
-      Js.Storage.get(@storage_names(names)..., @storage_options())
+      Js.Storage.get(@storage_names(names)..., @storage_options)
 
   storage_set: (inputs, event = true) ->
-    Js.Storage.set(inputs, { event }.merge @storage_options() )
+    Js.Storage.set(inputs, { event }.merge @storage_options )
 
   storage_names: (names) ->
     if @scope is '' and names.empty()
       @watch
     else
       names
-
-  storage_options: ->
-    if @scope
-      { submitter: this, @permanent, @scope }
-    else
-      { submitter: this, @permanent }

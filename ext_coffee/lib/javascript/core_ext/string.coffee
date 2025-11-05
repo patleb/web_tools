@@ -184,6 +184,18 @@ String.define_methods
   humanize: ->
     @charAt(0).toUpperCase() + @gsub('_', ' ')[1..]
 
+  pluralize: ->
+    if @end_with 'y'
+      @sub(/y$/, 'ies')
+    else
+      "#{this}s"
+
+  singularize: ->
+    if @end_with 'ies'
+      @sub(/ies$/, 'y')
+    else
+      @sub(/s$/, '')
+
   acronym: ->
     @camelize().match(/[A-Z]/g)?.join('')
 

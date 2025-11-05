@@ -175,7 +175,7 @@ class Js.Concepts
   @define_readers: (klass) ->
     readers = @unless_defined klass::readers, ->
       klass::readers().each_with_object [], (name, callback, memo) ->
-        klass::[name] = ->
+        Object.defineProperty klass::, name, enumerable: false, get: ->
           this["__#{name}"] ?= callback.apply(this, arguments)
         memo.push(name)
     klass::READERS = readers or []

@@ -1,5 +1,10 @@
 class Js.FlashConcept
+  @extend WithGetters
+
   global: true
+
+  @getters
+    js_notice: -> Rails.find('#js_notice')
 
   readers: ->
     header: -> Rails.find('#header')
@@ -19,15 +24,15 @@ class Js.FlashConcept
     timeout
 
   alert: (message) ->
-    @header().append @flash_message('alert', message)...
+    @header.append @flash_message('alert', message)...
     message
 
   notice: (message) ->
     @clear_notice()
-    @header().append @flash_message('notice', message)...
+    @header.append @flash_message('notice', message)...
     timeout = @timeout_for(message)
     @clear_notice_timeout = setTimeout(=>
-      @clear_flash(@js_notice())
+      @clear_flash(@js_notice)
     , timeout)
     message
 
@@ -46,12 +51,9 @@ class Js.FlashConcept
       ]
     ]
 
-  js_notice: ->
-    Rails.find('#js_notice')
-
   clear_notice: ->
     clearTimeout(@clear_notice_timeout)
-    @clear_flash(@js_notice())
+    @clear_flash(@js_notice)
 
   clear_flash: (target) ->
     target?.nextSibling?.remove()

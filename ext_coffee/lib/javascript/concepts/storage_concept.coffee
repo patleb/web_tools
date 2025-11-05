@@ -60,7 +60,7 @@ class Js.StorageConcept
     Rails.fire(@storage(permanent), @CHANGE, { submitter, permanent, scope, changes }) if event and changed
 
   storage: (permanent) ->
-    if permanent then @root_permanent() else @root()
+    if permanent then @root_permanent else @root
 
   # Private
 

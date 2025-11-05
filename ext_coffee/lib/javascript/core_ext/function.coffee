@@ -92,6 +92,9 @@ Function.override_methods
     this is other
 
 Function.define_methods
+  nullary: ->
+    @length is 0 and !!@toString().match /^function \w+\(\)/
+
   throttle: (wait = 0, options = {}) ->
     @constructor.throttle(this, wait, options)
 
