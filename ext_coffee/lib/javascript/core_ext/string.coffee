@@ -233,11 +233,11 @@ String.define_methods
 
   start_with: (prefixes...) ->
     prefixes.any (prefix) =>
-      @match ///^#{prefix.safe_regex()}///
+      @startsWith(prefix)
 
   end_with: (suffixes...) ->
     suffixes.any (suffix) =>
-      @match ///#{suffix.safe_regex()}$///
+      @endsWith(suffix)
 
   simple_format: ->
     @gsub /\r?\n/g, '<br>'
