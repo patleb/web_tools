@@ -9,7 +9,7 @@ class window.Duration
     year:   31556952, # length of a gregorian year (365.2425 days)
   }
 
-  # NOTE: float not supported
+  # NOTE: float not supported for string definition
   constructor: (d) ->
     @SECONDS = Duration.SECONDS
     if d.is_a(Array)
@@ -47,9 +47,8 @@ class window.Duration
         variable ||= ['hours', 'minutes'].exclude part
       @seconds = Math.floor(d)
     else
-      @sign = if d.sign? then d.sign else 1
-      [@years, @months, @weeks, @days, @hours, @minutes, @seconds] =
-        [d.years or 0, d.months or 0, d.weeks or 0, d.days or 0, d.hours or 0, d.minutes or 0, d.seconds or 0]
+      [@sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds] =
+        [d.sign ? 1, d.years ? 0, d.months ? 0, d.weeks ? 0, d.days ? 0, d.hours ? 0, d.minutes ? 0, d.seconds ? 0]
 
   eql: (other) ->
     return false unless other.is_a Duration
