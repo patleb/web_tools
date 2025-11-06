@@ -51,6 +51,18 @@ class window.Duration
       [@years, @months, @weeks, @days, @hours, @minutes, @seconds] =
         [d.years or 0, d.months or 0, d.weeks or 0, d.days or 0, d.hours or 0, d.minutes or 0, d.seconds or 0]
 
+  eql: (other) ->
+    return false unless other.is_a Duration
+    @to_h().eql other.to_h()
+
+  in_years:   -> @to_i() / @SECONDS.year
+  in_months:  -> @to_i() / @SECONDS.month
+  in_weeks:   -> @to_i() / @SECONDS.week
+  in_days:    -> @to_i() / @SECONDS.day
+  in_hours:   -> @to_i() / @SECONDS.hour
+  in_minutes: -> @to_i() / @SECONDS.minute
+  in_seconds: -> @to_i()
+
   to_s: ->
     string = if @sign is -1 then '-P' else 'P'
     string += "#{@years}Y"  if @years
@@ -77,9 +89,3 @@ class window.Duration
 
   to_h: ->
     { @sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds }
-
-  value: ->
-    @to_i()
-
-  parts: ->
-    @to_h()
