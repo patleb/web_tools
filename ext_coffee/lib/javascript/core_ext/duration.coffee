@@ -9,15 +9,19 @@ class window.Duration
     year:   31556952, # length of a gregorian year (365.2425 days)
   }
 
-  # NOTE: float and negative not supported
+  # NOTE: float not supported
   constructor: (d) ->
     @SECONDS = Duration.SECONDS
+    if d.is_a(Array)
+      d = Math.floor((d.last() - d.first()) / 1000)
     if d.is_a String
       time = false
       number = ''
       for char in d
         switch char
-          when 'P' then @years = @months = @weeks = @days = @hours = @minutes = @seconds = 0
+          when '+' then @sign = 1
+          when '-' then @sign = -1
+          when 'P' then @sign ||= 1; @years = @months = @weeks = @days = @hours = @minutes = @seconds = 0
           when 'Y' then [@years,   number] = [+number, '']
           when 'W' then [@weeks,   number] = [+number, '']
           when 'D' then [@days,    number] = [+number, '']
@@ -32,6 +36,7 @@ class window.Duration
           else number += char
     else if d.is_a Number
       @years = @months = @weeks = @days = @hours = @minutes = @seconds = 0
+      [@sign, d] = [Math.sign(d), Math.abs(d)]
       return if d is 0
       variable = false
       ['years', 'months', 'weeks', 'days', 'hours', 'minutes'].each (part) =>
@@ -40,13 +45,14 @@ class window.Duration
         d = d % seconds
         return if this[part] is 0
         variable ||= ['hours', 'minutes'].exclude part
-      @seconds = d
+      @seconds = Math.floor(d)
     else
+      @sign = if d.sign? then d.sign else 1
       [@years, @months, @weeks, @days, @hours, @minutes, @seconds] =
-        [d.years || 0, d.months || 0, d.weeks || 0, d.days || 0, d.hours || 0, d.minutes || 0, d.seconds || 0]
+        [d.years or 0, d.months or 0, d.weeks or 0, d.days or 0, d.hours or 0, d.minutes or 0, d.seconds or 0]
 
   to_s: ->
-    string = 'P'
+    string = if @sign is -1 then '-P' else 'P'
     string += "#{@years}Y"  if @years
     string += "#{@months}M" if @months
     string += "#{@weeks}W"  if @weeks
@@ -59,16 +65,18 @@ class window.Duration
     string
 
   to_i: ->
-    @years   * @SECONDS.year   +
-    @months  * @SECONDS.month  +
-    @weeks   * @SECONDS.week   +
-    @days    * @SECONDS.day    +
-    @hours   * @SECONDS.hour   +
-    @minutes * @SECONDS.minute +
-    @seconds
+    @sign * (
+      @years   * @SECONDS.year   +
+      @months  * @SECONDS.month  +
+      @weeks   * @SECONDS.week   +
+      @days    * @SECONDS.day    +
+      @hours   * @SECONDS.hour   +
+      @minutes * @SECONDS.minute +
+      @seconds
+    )
 
   to_h: ->
-    { @years, @months, @weeks, @days, @hours, @minutes, @seconds }
+    { @sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds }
 
   value: ->
     @to_i()
