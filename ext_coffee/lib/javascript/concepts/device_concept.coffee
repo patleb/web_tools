@@ -3,7 +3,7 @@
 # https://gomakethings.com/the-easy-way-to-manage-css-breakpoints-in-javascript/
 # https://code-boxx.com/detect-browser-with-javascript/
 ###
-class Js.DeviceConcept extends Js.Base
+class Js.DeviceConcept
   global: true
 
   constants: ->

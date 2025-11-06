@@ -1,4 +1,4 @@
-class Js.Admin.MarkdownConcept extends Js.Base
+class Js.Admin.MarkdownConcept
   MAX_HISTORY_SIZE = 25
 
   constants: ->

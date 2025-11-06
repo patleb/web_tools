@@ -1,4 +1,4 @@
-class Js.PageConcept extends Js.Base
+class Js.PageConcept
   constants: ->
     UUID: '.js_page_uuid'
     LIST: '.js_page_field_list'

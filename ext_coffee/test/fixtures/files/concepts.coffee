@@ -76,13 +76,13 @@ class Test.ExtendConcept extends Test.SimpleConcept
   handler: (event, this_was) ->
     @inherited = 'inherited'
 
-class Test.GlobalConcept extends Js.Base
+class Test.GlobalConcept
   global: true
 
-class Test.CustomGlobalConcept extends Js.Base
+class Test.CustomGlobalConcept
   alias: 'SomeGlobal'
 
-class Test.ScopedGlobalConcept extends Js.Base
+class Test.ScopedGlobalConcept
   alias: 'Scoped.Global'
 
-class Test.NotAConceptName extends Js.Base
+class Test.NotAConceptName

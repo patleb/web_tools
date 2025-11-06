@@ -1,4 +1,4 @@
-class Js.TimeConcept extends Js.Base
+class Js.TimeConcept
   global: true
 
   constants: ->

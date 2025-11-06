@@ -1,4 +1,4 @@
-class Js.RoutesConcept extends Js.Base
+class Js.RoutesConcept
   global: true
 
   ready: ->
