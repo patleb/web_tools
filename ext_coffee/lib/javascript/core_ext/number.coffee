@@ -52,25 +52,31 @@ Number.define_methods
   odd: ->
     Math.abs(this % 2) is 1
 
+  sign: ->
+    Math.sign(this)
+
+  divmod: (value) ->
+    [Math.floor(this / value), this % value]
+
   ceil:  (precision = 0) -> Number.with_decimals 'ceil',  this, precision
   floor: (precision = 0) -> Number.with_decimals 'floor', this, precision
   round: (precision = 0) -> Number.with_decimals 'round', this, precision
   trunc: (precision = 0) -> Number.with_decimals 'trunc', this, precision
 
   second:  -> @seconds()
-  seconds: -> @valueOf()
+  seconds: -> new Duration(sign: @sign(), seconds: this)
   minute:  -> @minutes()
-  minutes: -> this * Duration.SECONDS.minute
+  minutes: -> new Duration(sign: @sign(), minutes: this)
   hour:    -> @hours()
-  hours:   -> this * Duration.SECONDS.hour
+  hours:   -> new Duration(sign: @sign(), hours: this)
   day:     -> @days()
-  days:    -> this * Duration.SECONDS.day
+  days:    -> new Duration(sign: @sign(), days: this)
   week:    -> @weeks()
-  weeks:   -> this * Duration.SECONDS.week
+  weeks:   -> new Duration(sign: @sign(), weeks: this)
   month:   -> @months()
-  months:  -> this * Duration.SECONDS.month
+  months:  -> new Duration(sign: @sign(), months: this)
   year:    -> @years()
-  years:   -> this * Duration.SECONDS.year
+  years:   -> new Duration(sign: @sign(), years: this)
 
   times: (f_index) ->
     [0...this].map(f_index)
