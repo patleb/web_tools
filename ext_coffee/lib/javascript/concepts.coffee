@@ -19,8 +19,8 @@ class Js.Concepts
     if initialized
       return Logger.debug('Js.Concepts already initialized')
     initialized = true
-    Array.wrap(modules).each (name) => @add_module(name)
     Array.wrap(concepts).each (name) => @add_concept(name)
+    Array.wrap(modules).each (name) => @add_module(name)
     Rails.document_on 'DOMContentLoaded', @on_load
     Rails.document_on 'turbolinks:before-render', @on_leave
     Rails.document_on 'turbolinks:load', @on_ready
@@ -60,13 +60,11 @@ class Js.Concepts
     return unless name.match(CONCEPT)
 
     name = "#{module}.#{name}" if module?
+    return if uniq_classes[name]
+    uniq_classes[name] = true
     names = name.split('.')
     module ||= (names.length and names[0..-2].join('.')) or 'window'
     class_name = names.last()
-
-    if uniq_classes[name]
-      return Logger.debug("Concept #{name} already defined")
-    uniq_classes[name] = true
 
     concept_class = name.constantize()
     concept_class::module_name = module
