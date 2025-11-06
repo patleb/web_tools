@@ -113,7 +113,7 @@ class Js.Concepts
         element_class = "#{type.camelize()}Element" if type = node.getAttribute('data-element')
         element_class ||= 'Element'
         if Env.local and (node.find(selector) or node.find('[data-element]'))
-          throw "#{element_class} enclosing another #{element_class} or Js.Component::Element"
+          throw "#{element_class} enclosing another Js.Component::Element"
         uid = Math.uid()
         node.setAttribute('data-uid', uid)
         memo[uid] = new this[element_class](node)
