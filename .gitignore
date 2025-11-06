@@ -76,6 +76,9 @@
 /db/dump*
 /db/*.pg.gz
 /config/secrets.yml
+/app/javascript/concepts/**/*.js
+/app/javascript/elements/**/*.js
+/app/javascript/index.js
 /app/javascript/lib
 /app/javascript/vendor
 !package.json
@@ -93,6 +96,15 @@ ext_coffee/vendor/javascript/rails-ujs/**/*.js
 !ext_coffee/vendor/javascript/rails-ujs/**/all.js
 !ext_coffee/vendor/javascript/rails-ujs/**/BANNER.js
 !ext_coffee/vendor/javascript/rails-ujs/**/rails-ujs.min.js
+/ext_rails/lib/javascript/concepts/**/*.js
+/ext_rails/lib/javascript/elements/**/*.js
+/ext_rails/lib/javascript/index.js
+/mix_admin/lib/javascript/concepts/**/*.js
+/mix_admin/lib/javascript/elements/**/*.js
+/mix_admin/lib/javascript/index.js
+/mix_page/lib/javascript/concepts/**/*.js
+/mix_page/lib/javascript/elements/**/*.js
+/mix_page/lib/javascript/index.js
 sunzistrano/test/fixtures/files/local_app/
 app/rice/ext.so
 app/rice/ext.sha256
