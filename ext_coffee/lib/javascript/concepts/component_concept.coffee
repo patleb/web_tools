@@ -1,4 +1,4 @@
-class Js.ComponentConcept
+class Js.ComponentConcept extends Js.Base
   alias: 'Js.Component'
 
   constants: ->

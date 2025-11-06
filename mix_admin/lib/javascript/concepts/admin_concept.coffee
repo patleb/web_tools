@@ -1,4 +1,4 @@
-class Js.AdminConcept
+class Js.AdminConcept extends Js.Base
   readers: ->
     action: -> Rails.find('.js_action').data('value')
     model: -> Rails.find('.js_model')?.data('value')

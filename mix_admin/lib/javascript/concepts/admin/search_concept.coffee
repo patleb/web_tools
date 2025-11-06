@@ -1,4 +1,4 @@
-class Js.Admin.SearchConcept
+class Js.Admin.SearchConcept extends Js.Base
   DATE = /[0-9]{4}-[0-9]{2}-[0-9]{2}/
 
   readers: ->

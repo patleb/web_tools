@@ -1,4 +1,4 @@
-class Js.TagConcept
+class Js.TagConcept extends Js.Base
   global: true
 
   ID_CLASSES = /^([#.][A-Za-z_-][:\w-]*)+$/

@@ -1,7 +1,5 @@
-class Js.LibConcept
-  @extend WithGetters
-
-  @getters
+class Js.LibConcept extends Js.Base
+  @readers
     role: -> Cookie.get('_role') ? 'null'
 
   readers: ->

@@ -1,4 +1,4 @@
-class Js.StorageConcept
+class Js.StorageConcept extends Js.Base
   alias: 'Js.Storage'
 
   readers: ->

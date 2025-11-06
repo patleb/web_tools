@@ -1,9 +1,7 @@
-class Js.FlashConcept
-  @extend WithGetters
-
+class Js.FlashConcept extends Js.Base
   global: true
 
-  @getters
+  @readers
     js_notice: -> Rails.find('#js_notice')
 
   readers: ->

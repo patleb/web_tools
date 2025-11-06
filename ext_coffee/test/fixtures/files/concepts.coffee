@@ -1,7 +1,7 @@
 window.Test = {}
 window.Scoped = {}
 
-class Test.SimpleConcept
+class Test.SimpleConcept extends Js.Base
   constants: ->
     BODY: '#js_simple_body'
     ROWS: '.js_simple_rows'
@@ -76,13 +76,13 @@ class Test.ExtendConcept extends Test.SimpleConcept
   handler: (event, this_was) ->
     @inherited = 'inherited'
 
-class Test.GlobalConcept
+class Test.GlobalConcept extends Js.Base
   global: true
 
-class Test.CustomGlobalConcept
+class Test.CustomGlobalConcept extends Js.Base
   alias: 'SomeGlobal'
 
-class Test.ScopedGlobalConcept
+class Test.ScopedGlobalConcept extends Js.Base
   alias: 'Scoped.Global'
 
-class Test.NotAConceptName
+class Test.NotAConceptName extends Js.Base

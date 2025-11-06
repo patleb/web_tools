@@ -1,7 +1,7 @@
 class Js.Component::Element
-  @extend WithGetters
+  @extend WithReaders
 
-  @getters
+  @readers
     storage_options: ->
       if @scope
         { submitter: this, @permanent, @scope }

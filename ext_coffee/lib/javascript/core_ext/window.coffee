@@ -85,10 +85,10 @@ JSON.define_singleton_method = (name, callback) ->
   warn_define_singleton_method(JSON, name)
   JSON[name] = callback
 
-class window.WithGetters
-  @getters: (methods) ->
+class window.WithReaders
+  @readers: (methods) ->
     for name, callback of methods
-      @getter(name, callback)
+      @reader(name, callback)
 
-  @getter: (name, callback) ->
+  @reader: (name, callback) ->
     Object.defineProperty(@::, name, enumerable: false, get: callback)

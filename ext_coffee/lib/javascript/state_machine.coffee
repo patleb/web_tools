@@ -1,5 +1,5 @@
 class Js.StateMachine
-  @extend WithGetters
+  @extend WithReaders
 
   CONFIG_IVARS = ['initial', 'terminal']
   CONFIG_HOOKS = ['state', 'initialize', 'before', 'after', 'delegate', 'on_deny', 'on_stop']
@@ -27,7 +27,7 @@ class Js.StateMachine
     'IDLED'
   ].map((v) -> [v, v]).to_h()
 
-  @getters
+  @readers
     data: ->
       @states[@current].data
 
