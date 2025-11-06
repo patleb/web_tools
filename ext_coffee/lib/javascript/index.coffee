@@ -38,5 +38,3 @@ window.Js =
     if (data = document.getElementById("js_#{name}"))
       window["$#{name}"] = JSON.parse(data.getAttribute('data-value'))
       data.remove() unless keep
-
-window.Sm = {}

@@ -3,9 +3,9 @@ import './spec_helper'
 let sm
 let visible
 
-describe('Sm.Hideable', () => {
+describe('Js.Hideable', () => {
   beforeEach(() => {
-    sm = new Sm.Hideable({ methods: { visible: () => visible } })
+    sm = new Js.Hideable({ methods: { visible: () => visible } })
   })
 
   it('should stay idle when the state does not change', () => {

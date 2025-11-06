@@ -118,7 +118,7 @@ class Js.Admin.MarkdownConcept extends Js.Base
   fetch_blob_id: (button, file, uid) ->
     Rails.ajax({
       type: 'GET'
-      url: Routes.path_for('upload', { model_name: Js.AdminConcept.model(), blob: { uid } })
+      url: Routes.path_for('upload', { model_name: Js.AdminConcept.model, blob: { uid } })
       data_type: 'json'
       success: (response) =>
         if (id = response.blob.id)
@@ -136,7 +136,7 @@ class Js.Admin.MarkdownConcept extends Js.Base
     data.append('blob[data]', file)
     Rails.ajax({
       type: 'POST'
-      url: Routes.path_for('upload', { model_name: Js.AdminConcept.model() })
+      url: Routes.path_for('upload', { model_name: Js.AdminConcept.model })
       data
       data_type: 'json'
       beforeSend: ->
