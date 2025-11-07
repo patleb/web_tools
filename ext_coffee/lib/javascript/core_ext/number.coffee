@@ -52,6 +52,9 @@ Number.define_methods
   odd: ->
     Math.abs(this % 2) is 1
 
+  abs: ->
+    Math.abs(this)
+
   sign: ->
     Math.sign(this)
 
