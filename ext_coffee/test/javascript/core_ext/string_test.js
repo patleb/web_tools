@@ -128,6 +128,19 @@ describe('String', () => {
     assert.equal('Root path to class-name.ext', 'root_path_to_class-name.ext'.humanize())
   })
 
+  test('#pluralize, #singularize', () => {
+    assert.equal('days', 'day'.pluralize())
+    assert.equal('day', 'days'.singularize())
+    assert.equal('categories', 'category'.pluralize())
+    assert.equal('category', 'categories'.singularize())
+    assert.equal('ashes', 'ash'.pluralize())
+    assert.equal('ash', 'ashes'.singularize())
+    assert.equal('axes', 'axis'.pluralize())
+    assert.equal('axis', 'axes'.singularize())
+    assert.equal('analyses', 'analysis'.pluralize())
+    assert.equal('analysis', 'analyses'.singularize())
+  })
+
   test('#acronym', () => {
     assert.equal('RPTCN', '::RootPath::To::ClassName.ext::'.acronym())
   })

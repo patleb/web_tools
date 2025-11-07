@@ -7,6 +7,20 @@ HTML_ESCAPES =
   '"': '&quot;'
   "'": '&#x27;'
   '`': '&#x60;'
+PLURAL = [
+  [/(x|ch|ss|sh)$/i, '$1es'],
+  [/([^aeiouy]|qu)y$/i, '$1ies'],
+  [/sis$/i, 'ses'],
+  [/(alias|status)$/i, '$1es'],
+  [/^(ax|test)is$/i, '$1es'],
+]
+SINGULAR = [
+  [/(alias|status)(es)?$/i, '$1'],
+  [/^(a)x[ie]s$/i, '$1xis'],
+  [/(x|ch|ss|sh)es$/i, '$1'],
+  [/([^aeiouy]|qu)ies$/i, '$1y'],
+  [/(^analy)(sis|ses)$/i, '$1sis'],
+]
 
 String.override_methods
   sub: (pattern, string_or_f_match) ->
@@ -185,14 +199,14 @@ String.define_methods
     @charAt(0).toUpperCase() + @gsub('_', ' ')[1..]
 
   pluralize: ->
-    if @end_with 'y'
-      @sub(/y$/, 'ies')
+    if (rule = PLURAL.find (rule) => @match rule[0])
+      @sub(rule...)
     else
       "#{this}s"
 
   singularize: ->
-    if @end_with 'ies'
-      @sub(/ies$/, 'y')
+    if (rule = SINGULAR.find (rule) => @match rule[0])
+      @sub(rule...)
     else
       @sub(/s$/, '')
 
