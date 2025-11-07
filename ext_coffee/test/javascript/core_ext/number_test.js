@@ -1,9 +1,10 @@
 import './spec_helper'
 
 describe('Number', () => {
-  test('#blank, #eql, #to_b, #to_i, #to_date, #is_integer, #is_finite, #even, #odd', () => {
+  test('#blank, #eql, #to_b, #to_i, #to_date, #is_integer, #is_finite, #even, #odd, #zero', () => {
     assert.true(NaN.blank())
     let number = 0
+    assert.true(number.zero())
     assert.false(number.blank())
     assert.true(number.eql(0))
     assert.false(number.eql(1))
@@ -11,6 +12,7 @@ describe('Number', () => {
     assert.equal(new Date(0), number.to_date())
     assert.true(number.is_integer())
     number = 1
+    assert.false(number.zero())
     assert.true(number.to_b())
     assert.equal(new Date(1000), number.to_date())
     assert.true(number.is_integer())
@@ -79,8 +81,10 @@ describe('Number', () => {
 
   test('#seconds, #minutes, #hours, #days, #weeks, #days, #hours, #minutes, #seconds', () => {
     for (const [scale, seconds] of Object.entries(Duration.SECONDS)) {
-      assert.equal(seconds, 1[scale]())
-      assert.equal(3.45 * seconds, 3.45[`${scale}s`]())
+      let result = 1[scale]().to_h().reject((k, v) => v.zero())
+      let expect = { sign: 1, [scale.pluralize()]: 1 }
+      assert.equal(expect, result)
+      assert.equal(3.45 * seconds, 3.45[scale.pluralize()]().to_i())
     }
   })
 

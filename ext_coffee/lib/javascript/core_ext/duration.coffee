@@ -9,7 +9,7 @@ class window.Duration
     year:   31556952, # length of a gregorian year (365.2425 days)
   }
 
-  # NOTE: float not supported for string definition
+  # NOTE: sub-seconds not supported
   constructor: (d) ->
     @SECONDS = Duration.SECONDS
     if d.is_a(Array)
@@ -38,13 +38,11 @@ class window.Duration
       @years = @months = @weeks = @days = @hours = @minutes = @seconds = 0
       [@sign, d] = [Math.sign(d), Math.abs(d)]
       return if d is 0
-      variable = false
       ['years', 'months', 'weeks', 'days', 'hours', 'minutes'].each (part) =>
         seconds = @SECONDS[part.singularize()]
         this[part] = Math.floor(d / seconds)
         d = d % seconds
         return if this[part] is 0
-        variable ||= ['hours', 'minutes'].exclude part
       @seconds = Math.floor(d)
     else
       [@sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds] =
@@ -52,7 +50,7 @@ class window.Duration
 
   eql: (other) ->
     return false unless other.is_a Duration
-    @to_h().eql other.to_h()
+    @to_i().eql other.to_i()
 
   in_years:   -> @to_i() / @SECONDS.year
   in_months:  -> @to_i() / @SECONDS.month

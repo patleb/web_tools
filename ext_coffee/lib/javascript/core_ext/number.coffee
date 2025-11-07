@@ -58,6 +58,9 @@ Number.define_methods
   sign: ->
     Math.sign(this)
 
+  zero: ->
+    this is 0
+
   divmod: (value) ->
     [Math.floor(this / value), this % value]
 
