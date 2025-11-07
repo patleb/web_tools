@@ -61,6 +61,14 @@ for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegE
       type::[name] = callback
       Object.defineProperty(type::, name, enumerable: false)
 
+    type.define_readers = (methods) ->
+      for name, callback of methods
+        type.define_reader(name, callback)
+
+    type.define_reader = (name, callback, warn = true) ->
+      warn_define_method(type, name) if warn
+      Object.defineProperty(type::, name, enumerable: false, get: callback)
+
     for pattern in ['prepend_to', 'append_to', 'decorate', 'polyfill']
       do (pattern) ->
         type["#{pattern}_singleton_methods"] = (methods) ->
