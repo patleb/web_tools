@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+const { readFileSync } = require('fs')
 
 let cache = {}
 let root = 'test/fixtures/files'

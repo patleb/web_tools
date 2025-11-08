@@ -9,10 +9,11 @@ module.exports = {
     'node_modules',
   ],
   moduleNameMapper: {
-    '^@@/(.+)': '<rootDir>/app/javascript/$1',
-    '^@@lib/(.+)': '<rootDir>/app/javascript/lib/$1',
-    '^@@vendor/(.+)': '<rootDir>/app/javascript/vendor/$1',
+    '^@@/(.+)':              '<rootDir>/app/javascript/$1',
+    '^@@lib/(.+)':           '<rootDir>/app/javascript/lib/$1',
+    '^@@vendor/(.+)':        '<rootDir>/app/javascript/vendor/$1',
     '^@@test/fixtures/(.+)': '<rootDir>/test/fixtures/$1',
+    '^@@test/(.+)':          '<rootDir>/test/javascript/$1',
   },
   moduleFileExtensions: [
     'js',
