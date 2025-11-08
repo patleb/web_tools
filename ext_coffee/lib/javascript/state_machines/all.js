@@ -1,2 +1,2 @@
-import '@@lib/ext_coffee/state_machines/hideable'
-import '@@lib/ext_coffee/state_machines/null'
+require('@@lib/ext_coffee/state_machines/hideable')
+require('@@lib/ext_coffee/state_machines/null')

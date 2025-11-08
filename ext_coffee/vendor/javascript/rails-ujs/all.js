@@ -1,10 +1,10 @@
-import '@@vendor/rails-ujs/BANNER'
-import '@@vendor/rails-ujs/index'
-import '@@vendor/rails-ujs/utils/ajax'
-import '@@vendor/rails-ujs/utils/dom'
-import '@@vendor/rails-ujs/utils/event'
-import '@@vendor/rails-ujs/features/confirm'
-import '@@vendor/rails-ujs/features/disable'
-import '@@vendor/rails-ujs/features/method'
-import '@@vendor/rails-ujs/features/remote'
-import '@@vendor/rails-ujs/start'
+require('@@vendor/rails-ujs/BANNER')
+require('@@vendor/rails-ujs/index')
+require('@@vendor/rails-ujs/utils/ajax')
+require('@@vendor/rails-ujs/utils/dom')
+require('@@vendor/rails-ujs/utils/event')
+require('@@vendor/rails-ujs/features/confirm')
+require('@@vendor/rails-ujs/features/disable')
+require('@@vendor/rails-ujs/features/method')
+require('@@vendor/rails-ujs/features/remote')
+require('@@vendor/rails-ujs/start')

@@ -1,24 +1,24 @@
-import '@@lib/ext_coffee/core_ext/polyfills/custom_event'
-import '@@lib/ext_coffee/core_ext/polyfills/performance_now'
-import '@@lib/ext_coffee/core_ext/polyfills/replace_with'
-import '@@lib/ext_coffee/core_ext/polyfills/request_animation_frame'
-import '@@lib/ext_coffee/core_ext/polyfills/request_submit'
-import '@@lib/ext_coffee/core_ext/env'
-import '@@lib/ext_coffee/core_ext/logger'
-import '@@lib/ext_coffee/core_ext/window'
-import '@@lib/ext_coffee/core_ext/cookie'
-import '@@lib/ext_coffee/core_ext/element'
-import '@@lib/ext_coffee/core_ext/object'
-import '@@lib/ext_coffee/core_ext/array'
-import '@@lib/ext_coffee/core_ext/boolean'
-import '@@lib/ext_coffee/core_ext/function'
-import '@@lib/ext_coffee/core_ext/json'
-import '@@lib/ext_coffee/core_ext/math'
-import '@@lib/ext_coffee/core_ext/number'
-import '@@lib/ext_coffee/core_ext/regexp'
-import '@@lib/ext_coffee/core_ext/string'
-import '@@vendor/rails-ujs/all'
-import '@@lib/ext_coffee/core_ext/i18n'
-import '@@lib/ext_coffee/core_ext/date'
-import '@@lib/ext_coffee/core_ext/duration'
-import '@@lib/ext_coffee/core_ext/rescue'
+require('@@lib/ext_coffee/core_ext/polyfills/custom_event')
+require('@@lib/ext_coffee/core_ext/polyfills/performance_now')
+require('@@lib/ext_coffee/core_ext/polyfills/replace_with')
+require('@@lib/ext_coffee/core_ext/polyfills/request_animation_frame')
+require('@@lib/ext_coffee/core_ext/polyfills/request_submit')
+require('@@lib/ext_coffee/core_ext/env')
+require('@@lib/ext_coffee/core_ext/logger')
+require('@@lib/ext_coffee/core_ext/window')
+require('@@lib/ext_coffee/core_ext/cookie')
+require('@@lib/ext_coffee/core_ext/element')
+require('@@lib/ext_coffee/core_ext/object')
+require('@@lib/ext_coffee/core_ext/array')
+require('@@lib/ext_coffee/core_ext/boolean')
+require('@@lib/ext_coffee/core_ext/function')
+require('@@lib/ext_coffee/core_ext/json')
+require('@@lib/ext_coffee/core_ext/math')
+require('@@lib/ext_coffee/core_ext/number')
+require('@@lib/ext_coffee/core_ext/regexp')
+require('@@lib/ext_coffee/core_ext/string')
+require('@@vendor/rails-ujs/all')
+require('@@lib/ext_coffee/core_ext/i18n')
+require('@@lib/ext_coffee/core_ext/date')
+require('@@lib/ext_coffee/core_ext/duration')
+require('@@lib/ext_coffee/core_ext/rescue')

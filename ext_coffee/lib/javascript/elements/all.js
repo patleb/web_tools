@@ -1,1 +1,1 @@
-import '@@lib/ext_coffee/elements/global_element'
+require('@@lib/ext_coffee/elements/global_element')

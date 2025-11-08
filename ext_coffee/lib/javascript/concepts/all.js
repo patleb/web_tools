@@ -1,8 +1,8 @@
-import '@@lib/ext_coffee/concepts/base'
-import '@@lib/ext_coffee/concepts/storage_concept'
-import '@@lib/ext_coffee/concepts/tag_concept'
-import '@@lib/ext_coffee/concepts/component_concept'
-import '@@lib/ext_coffee/concepts/component/element'
-import '@@lib/ext_coffee/concepts/device_concept'
-import '@@lib/ext_coffee/concepts/time_concept'
-import '@@lib/ext_coffee/concepts/routes_concept'
+require('@@lib/ext_coffee/concepts/base')
+require('@@lib/ext_coffee/concepts/storage_concept')
+require('@@lib/ext_coffee/concepts/tag_concept')
+require('@@lib/ext_coffee/concepts/component_concept')
+require('@@lib/ext_coffee/concepts/component/element')
+require('@@lib/ext_coffee/concepts/device_concept')
+require('@@lib/ext_coffee/concepts/time_concept')
+require('@@lib/ext_coffee/concepts/routes_concept')

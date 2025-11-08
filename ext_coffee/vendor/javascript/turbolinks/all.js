@@ -1,14 +1,14 @@
-import '@@vendor/turbolinks/BANNER'
-import '@@vendor/turbolinks/index'
-import '@@vendor/turbolinks/location'
-import '@@vendor/turbolinks/http_request'
-import '@@vendor/turbolinks/progress_bar'
-import '@@vendor/turbolinks/head_details'
-import '@@vendor/turbolinks/snapshot'
-import '@@vendor/turbolinks/renderer'
-import '@@vendor/turbolinks/snapshot_cache'
-import '@@vendor/turbolinks/http_request'
-import '@@vendor/turbolinks/visit'
-import '@@vendor/turbolinks/controller'
-import '@@vendor/turbolinks/script_warning'
-import '@@vendor/turbolinks/start'
+require('@@vendor/turbolinks/BANNER')
+require('@@vendor/turbolinks/index')
+require('@@vendor/turbolinks/location')
+require('@@vendor/turbolinks/http_request')
+require('@@vendor/turbolinks/progress_bar')
+require('@@vendor/turbolinks/head_details')
+require('@@vendor/turbolinks/snapshot')
+require('@@vendor/turbolinks/renderer')
+require('@@vendor/turbolinks/snapshot_cache')
+require('@@vendor/turbolinks/http_request')
+require('@@vendor/turbolinks/visit')
+require('@@vendor/turbolinks/controller')
+require('@@vendor/turbolinks/script_warning')
+require('@@vendor/turbolinks/start')
