@@ -37,12 +37,19 @@ window.warn_define_singleton_method = (klass, name) =>
 
 for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String]
   do (type) ->
+    type.override_singleton_methods = (methods) ->
+      for name, callback of methods
+        type.override_singleton_method(name, callback)
+
+    type.override_singleton_method = (name, callback) ->
+      type.define_singleton_method(name, callback, false)
+
     type.define_singleton_methods = (methods) ->
       for name, callback of methods
         type.define_singleton_method(name, callback)
 
-    type.define_singleton_method = (name, callback) ->
-      warn_define_singleton_method(type, name)
+    type.define_singleton_method = (name, callback, warn = true) ->
+      warn_define_singleton_method(type, name) if warn
       type[name] = callback
 
     type.override_methods = (methods) ->

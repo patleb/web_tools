@@ -86,3 +86,14 @@ class window.Duration
 
   to_h: ->
     { @sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds }
+
+  add: (other) ->
+    new @constructor(
+      years:   @sign * @years   + other.sign * other.years,
+      months:  @sign * @months  + other.sign * other.months,
+      weeks:   @sign * @weeks   + other.sign * other.weeks,
+      days:    @sign * @days    + other.sign * other.days,
+      hours:   @sign * @hours   + other.sign * other.hours,
+      minutes: @sign * @minutes + other.sign * other.minutes,
+      seconds: @sign * @seconds + other.sign * other.seconds,
+    )

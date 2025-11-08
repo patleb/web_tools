@@ -23,4 +23,8 @@ describe('Duration', () => {
       assert.equal(parts, duration.to_h())
     }
   })
+
+  test('#add', () => {
+    assert.equal(2 * Duration.SECONDS.month + 3 * Duration.SECONDS.hour, 2.0.months().add(3.0.hours()).to_i())
+  })
 })

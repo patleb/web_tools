@@ -26,6 +26,12 @@ Array.define_singleton_methods
     else
       object.length is 0 or !!(object[0]?.nodeType)
 
+Array.polyfill_methods
+  find: (f_item_index_self) ->
+    for item, i in this
+      return item if f_item_index_self(item, i, this)
+    return
+
 Array.override_methods
   dup: ->
     @slice()
@@ -211,9 +217,3 @@ Array.define_methods
       @pop()
     else
       {}
-
-Array.polyfill_methods
-  find: (f_item_index_self) ->
-    for item, i in this
-      return item if f_item_index_self(item, i, this)
-    return
