@@ -30,5 +30,5 @@ packages:
   - 'postcss-flexbugs-fixes'
   - 'postcss-preset-env'
   # SCSS
-  - 'sass'
-  - 'sass-loader'
+  # - 'sass'
+  # - 'sass-loader'
