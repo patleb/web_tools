@@ -7,7 +7,7 @@ class Js.Admin.MarkdownConcept
     FILE_INPUT: '.js_markdown_file'
     MAX_FILE_SIZE: '.js_markdown_max_file_size'
 
-  document_on: -> [
+  events: -> [
     'click', "#{@TOOLBAR} .js_fullscreen", @toggle_fullscreen
     'change', @TEXTAREA,                   @push_history
     'click', "#{@TOOLBAR} .js_undo",       @undo_history

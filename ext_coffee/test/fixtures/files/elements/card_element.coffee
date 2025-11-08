@@ -1,5 +1,5 @@
 class Js.Component::CardElement extends Js.Component::Element
-  document_on: -> [
+  events: -> [
     'click', @constructor.$('input'), (event) ->
       element = @constructor.element(event.target)
       event.element = element

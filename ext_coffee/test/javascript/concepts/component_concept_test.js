@@ -52,7 +52,7 @@ describe('Js.ComponentConcept', () => {
     assert.html_equal('<div><h1>Header</h1></div>', banner_static.innerHTML)
   })
 
-  xit('should fire change event', () => {
+  it('should fire change event', () => {
     assert.total(1)
     dom.on_event({ [Js.Component.CHANGE]: ({ detail: { elements }}) => {
       assert.equal(2, elements.size()) // GlobalElement and BannerElement
@@ -60,7 +60,7 @@ describe('Js.ComponentConcept', () => {
     Js.Storage.set({ banner: 'changed' })
   })
 
-  xit('should allow in-context #document_on', () => {
+  it('should allow in-context #events', () => {
     assert.total(1)
     const card = dom.find(`${Js.Component.ELEMENTS}[data-element=card]`)
     dom.on_event({ 'click': (event) => {

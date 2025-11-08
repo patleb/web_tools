@@ -90,8 +90,8 @@ class Js.Concepts
 
     @define_constants(concept_class)
     @define_readers(concept_class)
-    @unless_defined concept_class::document_on, =>
-      @define_document_on(concept)
+    @unless_defined concept_class::events, =>
+      @define_events(concept)
 
     @instances.except('leave_clean').each (phase, all) =>
       @unless_defined concept_class::[phase], ->
@@ -150,8 +150,8 @@ class Js.Concepts
       element_class::[name] = value
     @define_constants(element_class)
     @define_readers(element_class)
-    @unless_defined element_class::document_on, =>
-      @define_document_on(element_class::)
+    @unless_defined element_class::events, =>
+      @define_events(element_class::)
 
   @define_constants: (klass) ->
     constants = @unless_defined klass::constants, =>
@@ -185,25 +185,25 @@ class Js.Concepts
       else
         (@__store ||= {})[name] = value
 
-  @define_document_on: (context) ->
-    context.document_on().each_slice(3).each ([events, selector, handler]) ->
+  @define_events: (context) ->
+    context.events().each_slice(3).each ([events, selector, handler]) ->
       with_target = handler
       handler = ->
         with_target.apply(context, [arguments..., this])
-      if context.document_on_before
+      if context.events_before
         with_before = handler
         handler = (event) ->
           unless event.defaultPrevented
-            context.document_on_before.apply(context, arguments)
+            context.events_before.apply(context, arguments)
           unless event.defaultPrevented
             with_before.apply(context, arguments)
-      if context.document_on_after
+      if context.events_after
         with_after = handler
         handler = (event) ->
           unless event.defaultPrevented
             with_after.apply(context, arguments)
           unless event.defaultPrevented
-            context.document_on_after.apply(context, arguments)
+            context.events_after.apply(context, arguments)
 
       events.split(/ *, */).each (event) ->
         Rails.document_on event, selector, handler

@@ -6,7 +6,7 @@ class Js.TimeConcept
     FORMATS: 'time[datetime][data-format]'
     FORMATTED: 'js_time:formatted'
 
-  document_on: -> [
+  events: -> [
     'turbolinks:request-start', document, ({ data: { xhr }}) ->
       xhr.setRequestHeader('X-Timezone', @zone)
 
@@ -20,7 +20,7 @@ class Js.TimeConcept
   ]
 
   ready_once: ->
-    @offset = -Math.round(new Date().getTimezoneOffset() / 15) * 15 * 60
+    @offset = new Date().offset
     @zone = try Intl.DateTimeFormat().resolvedOptions().timeZone
     @zone = @offset if not @zone or @zone.start_with('+', '-')
     prepend_to Rails, 'ajax', (options) =>

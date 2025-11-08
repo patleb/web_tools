@@ -6,7 +6,7 @@ class Js.ComponentConcept
     INPUTS: -> "#{@ELEMENTS} [data-bind]"
     CHANGE: 'js_component:change'
 
-  document_on: -> [
+  events: -> [
     Js.Storage.CHANGE, Js.Storage.ROOT, @render_elements
     Js.Storage.CHANGE, Js.Storage.ROOT_PERMANENT, @render_elements
 

@@ -7,7 +7,7 @@ class Js.FlashConcept extends Js.Base
   readers: ->
     header: -> Rails.find('#header')
 
-  document_on: -> [
+  events: -> [
     'change', '#js_alert, #js_notice', (event, target) ->
       @clear_flash(target)
   ]

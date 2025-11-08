@@ -13,7 +13,7 @@ class Test.SimpleConcept extends Js.Base
     rows: ->
       dom.$(@ROWS)
 
-  document_on: -> [
+  events: -> [
     'click', @BODY, (event, this_was) =>
       event.preventDefault() if event.skip
       event.target.add_class(@TRIGGERED)
@@ -32,12 +32,12 @@ class Test.SimpleConcept extends Js.Base
       event.target.add_class(@TRIGGERED)
   ]
 
-  document_on_before: (event) ->
+  events_before: (event) ->
     event.preventDefault() if event.skip_before
-    event.document_on_before = true
+    event.events_before = true
 
-  document_on_after: (event) ->
-    event.document_on_after = true
+  events_after: (event) ->
+    event.events_after = true
     @public = 'after'
 
   ready_once: ->
@@ -60,16 +60,16 @@ class Test.SimpleConcept::Element
     body: -> dom.find(@BODY)
     value: -> 'value'
 
-  document_on: -> [
+  events: -> [
     'hover', @BODY, (event, this_was) ->
       @body.add_class(@TRIGGERED)
   ]
 
 class Test.SimpleConcept::ExtendElement extends Test.SimpleConcept::Element
 
-# it should not redefine #constants, #readers, #ready(_once), #leave and #document_on on extends
+# it should not redefine #constants, #readers, #ready(_once), #leave and #events on extends
 class Test.ExtendConcept extends Test.SimpleConcept
-  document_on: -> [
+  events: -> [
     'click', @BODY, @handler
   ]
 

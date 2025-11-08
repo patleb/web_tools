@@ -84,7 +84,7 @@ describe('Js.Concepts', () => {
     assert.nil(Test.ExtendConcept.inherited)
   })
 
-  describe('#document_on', () => {
+  describe('#events', () => {
     afterEach(() => {
       dom.find(Test.SimpleConcept.BODY).remove_class(Test.SimpleConcept.TRIGGERED)
       dom.$(Test.SimpleConcept.ROWS).each(e => e.remove_class(Test.SimpleConcept.TRIGGERED))
@@ -94,8 +94,8 @@ describe('Js.Concepts', () => {
       let row = dom.find(Test.SimpleConcept.ROWS)
       let event = dom.fire('click', { target: row })
       assert.true(row.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.true(event.document_on_before)
-      assert.true(event.document_on_after)
+      assert.true(event.events_before)
+      assert.true(event.events_after)
     })
 
     it('should handle click events and prevent default', () => {
@@ -103,16 +103,16 @@ describe('Js.Concepts', () => {
       let event = dom.fire('click', { target: body, options: { skip: true } })
       assert.true(body.classes().include(Test.SimpleConcept.TRIGGERED))
       assert.true(event.defaultPrevented)
-      assert.true(event.document_on_before)
-      assert.nil(event.document_on_after)
+      assert.true(event.events_before)
+      assert.nil(event.events_after)
     })
 
     it('should handle hover events', () => {
       let row = dom.find(Test.SimpleConcept.ROWS)
       let event = dom.fire('hover', { target: row })
       assert.true(row.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.true(event.document_on_before)
-      assert.true(event.document_on_after)
+      assert.true(event.events_before)
+      assert.true(event.events_after)
     })
 
     it('should skip handler and after hook if prevent default is in before hook', () => {
@@ -120,8 +120,8 @@ describe('Js.Concepts', () => {
       let event = dom.fire('hover', { target: row, options: { skip_before: true } })
       assert.true(event.defaultPrevented)
       assert.false(row.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.true(event.document_on_before)
-      assert.nil(event.document_on_after)
+      assert.true(event.events_before)
+      assert.nil(event.events_after)
     })
 
     it('should skip after hook if prevent default is in handler', () => {
@@ -129,8 +129,8 @@ describe('Js.Concepts', () => {
       let event = dom.fire('hover', { target: row, options: { skip: true } })
       assert.true(event.defaultPrevented)
       assert.true(row.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.true(event.document_on_before)
-      assert.nil(event.document_on_after)
+      assert.true(event.events_before)
+      assert.nil(event.events_after)
     })
   })
 
@@ -141,7 +141,7 @@ describe('Js.Concepts', () => {
       assert.equal('js_simple_name', Test.SimpleConcept.Element.prototype.NAME)
     })
 
-    it('should define lazy #accessors on prototype and scope to it if used in #document_on', () => {
+    it('should define lazy #accessors on prototype and scope to it if used in #events', () => {
       let body = dom.find(Test.SimpleConcept.Element.prototype.BODY)
       dom.fire('hover', { target: body })
       assert.true(body.classes().include(Test.SimpleConcept.TRIGGERED))
