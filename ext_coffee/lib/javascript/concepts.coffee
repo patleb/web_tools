@@ -60,7 +60,8 @@ class Js.Concepts
     return unless name.match(CONCEPT)
 
     name = "#{module}.#{name}" if module?
-    return if uniq_classes[name]
+    if uniq_classes[name]
+      return Logger.debug("#{name} already initialized")
     uniq_classes[name] = true
     names = name.split('.')
     module ||= (names.length and names[0..-2].join('.')) or 'window'
