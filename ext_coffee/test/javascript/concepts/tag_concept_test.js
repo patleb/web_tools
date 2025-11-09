@@ -1,4 +1,4 @@
-import concepts from './spec_helper'
+import concepts from '@@lib/ext_coffee/jest/concepts/spec_helper'
 
 describe('Js.TagConcept', () => {
   const values = ['Prev', 'Next'].map(text => `<div>${text}</div>`)

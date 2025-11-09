@@ -54,8 +54,8 @@
   },
   "version": "0.1.0",
   "scripts": {
-    "test": "./bin/coffee compile ext_coffee/test/fixtures && jest --config jest.config.js",
-    "test-clear": "./bin/coffee clobber ext_coffee/test/fixtures && jest --config jest.config.js --clearCache"
+    "test": "./bin/coffee compile && jest --config jest.config.js",
+    "test-clear": "./bin/coffee clobber && jest --config jest.config.js --clearCache"
   },
   "babel": {
     "presets": [

@@ -1,4 +1,4 @@
-import './spec_helper'
+import '@@lib/ext_coffee/jest/state_machines/spec_helper'
 
 let sm
 let visible

@@ -1,4 +1,4 @@
-import turbolinks from './spec_helper'
+import turbolinks from '@@vendor/turbolinks/jest/spec_helper'
 
 describe('Turbolinks Visit', () => {
   beforeEach(() => {
@@ -43,7 +43,7 @@ describe('Turbolinks Visit', () => {
     })
 
     it('should visit a location served with a non-HTML content type', async () => {
-      await turbolinks.visit_reload_and_assert('http://localhost/svg.svg')
+      await turbolinks.visit_reload_and_assert('http://localhost/image.svg')
     })
 
     it('should visit a same-page reload link', async () => {

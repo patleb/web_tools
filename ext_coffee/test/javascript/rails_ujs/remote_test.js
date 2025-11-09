@@ -1,4 +1,4 @@
-import rails from './spec_helper'
+import rails from '@@vendor/rails-ujs/jest/spec_helper'
 import '@@vendor/turbolinks/all'
 
 describe('Rails UJS Remote', () => {

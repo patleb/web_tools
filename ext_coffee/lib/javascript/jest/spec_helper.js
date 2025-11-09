@@ -1,5 +1,5 @@
-import '@@test/ext_coffee/all'
-import '@@test/ext_coffee/fixtures/files/concepts'
+require('@@lib/ext_coffee/jest/all')
+require('@@lib/ext_coffee/jest/concepts')
 
 const is_type = (object, type) => {
   return object && object.is_a && object.is_a(type)

@@ -1,4 +1,4 @@
-import './spec_helper'
+import '@@lib/ext_coffee/jest/core_ext/spec_helper'
 
 describe('Number', () => {
   test('#blank, #eql, #to_b, #to_i, #to_date, #is_integer, #is_finite, #even, #odd, #zero', () => {

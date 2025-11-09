@@ -1,4 +1,4 @@
-import './spec_helper'
+import '@@lib/ext_coffee/jest/core_ext/spec_helper'
 
 const create_date = (year, month, day, hour, minute, second) => {
   let date = new Date(Date.UTC(year, month - 1, day, hour, minute, second))

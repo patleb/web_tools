@@ -1,4 +1,4 @@
-import './spec_helper'
+import '@@lib/ext_coffee/jest/core_ext/spec_helper'
 
 describe('I18n', () => {
   beforeAll(() => {

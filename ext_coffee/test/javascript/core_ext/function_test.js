@@ -1,5 +1,5 @@
-import './spec_helper'
-import '@@test/ext_coffee/fixtures/files/core_ext/classes'
+import '@@lib/ext_coffee/jest/core_ext/spec_helper'
+import '@@lib/ext_coffee/jest/core_ext/classes'
 
 describe('Function', () => {
   let f = () => true

@@ -1,4 +1,4 @@
-import turbolinks from './spec_helper'
+import turbolinks from '@@vendor/turbolinks/jest/spec_helper'
 
 describe('Turbolinks Rendering', () => {
   beforeEach(() => {

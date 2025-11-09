@@ -1,0 +1,7 @@
+require('@@lib/ext_coffee/core_ext/all')
+require('@@lib/ext_coffee/index')
+require('@@lib/ext_coffee/concepts')
+require('@@lib/ext_coffee/state_machine')
+require('@@lib/ext_coffee/concepts/all')
+require('@@lib/ext_coffee/elements/all')
+require('@@lib/ext_coffee/state_machines/all')

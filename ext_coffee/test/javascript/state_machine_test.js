@@ -1,4 +1,4 @@
-import js from './spec_helper'
+import js from '@@lib/ext_coffee/jest/spec_helper'
 
 let sm
 let config

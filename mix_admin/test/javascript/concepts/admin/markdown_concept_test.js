@@ -1,4 +1,4 @@
-import concepts from './../spec_helper'
+import concepts from '@@lib/mix_admin/jest/spec_helper'
 
 let concept = null
 let textarea = null

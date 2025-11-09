@@ -1,5 +1,4 @@
-import './override'
-import '@@lib/ext_coffee/core_ext/all'
+require('@@lib/ext_coffee/core_ext/all')
 
 const events = [
   'DOMContentLoaded',

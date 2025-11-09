@@ -1,5 +1,5 @@
-import '@@lib/ext_coffee/core_ext/all'
-import '@@vendor/turbolinks/all'
+require('@@lib/ext_coffee/core_ext/all')
+require('@@vendor/turbolinks/all')
 
 const events = [
   'DOMContentLoaded',

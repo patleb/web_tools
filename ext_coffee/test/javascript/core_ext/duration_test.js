@@ -1,4 +1,4 @@
-import './spec_helper'
+import '@@lib/ext_coffee/jest/core_ext/spec_helper'
 
 describe('Duration', () => {
   test('#to_i, #to_s, #to_h', () => {

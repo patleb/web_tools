@@ -1,4 +1,4 @@
-import concepts from './spec_helper'
+import concepts from '@@lib/ext_coffee/jest/concepts/spec_helper'
 
 const storage = () => Rails.find(Js.Storage.ROOT)
 

@@ -1,5 +1,5 @@
-import concepts from './spec_helper'
-import rails from '../rails_ujs/spec_helper'
+import concepts from '@@lib/ext_coffee/jest/concepts/spec_helper'
+import rails from '@@vendor/rails-ujs/jest/spec_helper'
 
 describe('Js.TimeConcept', () => {
   concepts.with_page('time')

@@ -1,4 +1,4 @@
-import './spec_helper'
+import '@@lib/ext_coffee/jest/spec_helper'
 
 describe('Js.Concepts', () => {
   beforeAll(() => {
