@@ -71,7 +71,7 @@ class Js.Concepts
     concept_class::class_name = class_name
 
     module_class = module.constantize()
-    module_class[class_name] = concept = new concept_class # singleton
+    module_class[class_name] = concept = new concept_class # singleton --> inheritance must be done on the prototype
 
     if concept_class::global is true
       global_name = class_name.sub(CONCEPT, '')
