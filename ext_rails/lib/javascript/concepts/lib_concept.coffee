@@ -3,7 +3,7 @@ class Js.LibConcept extends Js.Base
     role: -> Cookie.get('_role') ? 'null'
 
   readers: ->
-    layout: -> Rails.find('.js_layout').data('value')
+    layout: -> Rails.find('.js_layout')?.data('value')
     scroll_y: -> @layout and @sidebar and @store('scroll_y')?["#{@role}_#{@layout}"]
     sidebar: -> Rails.find('.drawer-side')
     notice: -> Rails.find('#notice')
