@@ -1,4 +1,4 @@
-class Js.Component::Element
+class Js.Component.Element
   @extend WithReaders
 
   @readers

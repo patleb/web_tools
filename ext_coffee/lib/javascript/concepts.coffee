@@ -71,7 +71,10 @@ class Js.Concepts
     concept_class::class_name = class_name
 
     module_class = module.constantize()
-    module_class[class_name] = concept = new concept_class # singleton --> inheritance must be done on the prototype
+    # NOTE: the concept becomes a singleton
+    #   --> inheritance must be done with a concept prototype or a Js.Base type
+    #   --> the exception is Js.Component since, after definition, it's assigned to Js.ComponentConcept prototype
+    module_class[class_name] = concept = new concept_class
 
     if concept_class::global is true
       global_name = class_name.sub(CONCEPT, '')
@@ -112,8 +115,8 @@ class Js.Concepts
       @elements = nodes.each_with_object {}, (node, memo) =>
         element_class = "#{type.camelize()}Element" if type = node.getAttribute('data-element')
         element_class ||= 'Element'
-        if Env.local and (node.find(selector) or node.find('[data-element]'))
-          throw "#{element_class} enclosing another Js.Component::Element"
+        if node.find(selector) or node.find('[data-element]')
+          throw "#{element_class} enclosing another #{element_class} or Js.Component.Element type"
         uid = Math.uid()
         node.setAttribute('data-uid', uid)
         memo[uid] = new this[element_class](node)
