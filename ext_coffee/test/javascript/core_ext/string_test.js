@@ -100,6 +100,17 @@ describe('String', () => {
     assert.equal('fbf', 'aba'.gsub('a', 'f'))
   })
 
+  test('#gsub_keys', () => {
+    assert.equal('hello people!... and you 2?', 'hello :world!... and you :two?'.gsub_keys({ world: 'people', two: 2 }))
+  })
+
+  test('#gsub_template', () => {
+    assert.equal(
+      '<div class="array" data-value="3.4,3.4,3.4"></div>',
+      '<div class="{{class}}" data-value="{{ v }},{{v }},{{ v}}"></div>'.gsub_template({ class: 'array', v: 3.4 })
+    )
+  })
+
   test('#ljust', () => {
     assert.equal('a--', 'a'.ljust(3, '-'))
   })

@@ -135,7 +135,8 @@ String.define_methods
         new RegExp(source, flags)
     @replace(pattern, string_or_f_match)
 
-  gsub_keys: (string, values, { anchor = ':' } = {}) ->
+  gsub_keys: (values, { anchor = ':' } = {}) ->
+    string = @valueOf()
     is_function = values.is_a Function
     if is_function or values.any()
       [part, parts...] = string.split(anchor)
@@ -147,6 +148,12 @@ String.define_methods
         else
           segment
       string = [part].add(parts).join('')
+    string
+
+  gsub_template: (values) ->
+    string = @valueOf()
+    for name, value of values
+      string = string.replace(///\{\{\s*#{name}\s*}}///g, value.toString())
     string
 
   strip: ->
