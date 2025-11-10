@@ -153,7 +153,7 @@ String.define_methods
   gsub_template: (values) ->
     string = @valueOf()
     for name, value of values
-      string = string.replace(///\{\{\s*#{name}\s*}}///g, value.toString())
+      string = string.replace(///\{\{\s*#{name.safe_regex()}\s*}}///g, value.toString())
     string
 
   strip: ->
