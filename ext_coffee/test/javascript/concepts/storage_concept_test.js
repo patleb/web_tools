@@ -3,7 +3,7 @@ import concepts from '@@lib/ext_coffee/jest/concepts/spec_helper'
 const storage = () => Rails.find(Js.Storage.ROOT)
 
 describe('Js.StorageConcept', () => {
-  concepts.with_page('storage')
+  concepts.with_page('storage', { root: 'ext_coffee' })
 
   it('should serialize values correctly', () => {
     assert.empty(Js.Storage.get('test[0]'))

@@ -1,7 +1,7 @@
 import concepts from '@@lib/mix_admin/jest/spec_helper'
 
 describe('Js.Admin.SearchConcept', () => {
-  concepts.with_page('admin/search', false)
+  concepts.with_page('admin/search')
 
   test('.js_query_datetime[type=date]', () => {
     const search = dom.find('.js_search')

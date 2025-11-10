@@ -8,8 +8,13 @@ const fixture = {
   json: (name, { root } = {}) => {
     return JSON.parse(fixture.read(`${name}.json`, root))
   },
-  html: (name, { root } = {}) => {
-    return fixture.read(`${name}.html`, root)
+  html: (name, { root, ...variables } = {}) => {
+    let text = fixture.read(`${name}.html`, root)
+    for (let [name, value] of Object.entries(variables)) {
+      value = value.toString().replace(/'/g, "\\'" )
+      text = text.replace(RegExp.new(`\\{\\{\\s*${name}\\s*\\}\\}`, 'g'), value)
+    }
+    return text
   },
   read: (fixture_name, fixture_path = null) => {
     const path = `${fixture_path || root}/${fixture_name}`

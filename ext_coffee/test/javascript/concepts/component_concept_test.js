@@ -1,9 +1,9 @@
 import concepts from '@@lib/ext_coffee/jest/concepts/spec_helper'
 
 describe('Js.ComponentConcept', () => {
-  concepts.with_page('component', () => {
+  concepts.with_page('component', { root: 'ext_coffee', before: () => {
     Tag.define('h1', 'h2')
-  })
+  }})
 
   it('should render elements', () => {
     const banner = dom.find(`${Js.Component.ELEMENTS}[data-element=banner]:not([data-turbolinks-permanent],[data-static])`)

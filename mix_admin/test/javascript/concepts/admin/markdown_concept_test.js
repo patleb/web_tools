@@ -6,7 +6,7 @@ let undo = null
 let redo = null
 
 describe('Js.Admin.MarkdownConcept', () => {
-  concepts.with_page('admin/markdown', false)
+  concepts.with_page('admin/markdown')
 
   beforeEach(() => {
     concept = Js.Admin.MarkdownConcept

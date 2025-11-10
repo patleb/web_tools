@@ -1,7 +1,7 @@
 import concepts from '@@lib/ext_coffee/jest/concepts/spec_helper'
 
 describe('Js.RoutesConcept', () => {
-  concepts.with_page('routes')
+  concepts.with_page('routes', { root: 'ext_coffee' })
 
   it('should set @routes', () => {
     const routes = {

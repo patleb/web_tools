@@ -1,7 +1,7 @@
 import concepts from '@@lib/mix_admin/jest/spec_helper'
 
 describe('Js.AdminConcept', () => {
-  concepts.with_page('admin', false)
+  concepts.with_page('admin')
 
   test('#toggle_bulk_form', () => {
     const toggle = Js.AdminConcept.bulk_toggles.first()

@@ -2,7 +2,7 @@ import concepts from '@@lib/ext_coffee/jest/concepts/spec_helper'
 import rails from '@@vendor/rails-ujs/jest/spec_helper'
 
 describe('Js.TimeConcept', () => {
-  concepts.with_page('time')
+  concepts.with_page('time', { root: 'ext_coffee' })
 
   it('should refresh _timezone input and format time elements', () => {
     const input = dom.find('#refresh > input')
