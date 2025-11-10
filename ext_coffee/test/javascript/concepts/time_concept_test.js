@@ -1,5 +1,6 @@
 import concepts from '@@lib/ext_coffee/jest/concepts/spec_helper'
 import rails from '@@vendor/rails-ujs/jest/spec_helper'
+require('@@lib/ext_coffee/jest/elements/time_element')
 
 describe('Js.TimeConcept', () => {
   concepts.with_page('time', { root: 'ext_coffee' })

@@ -1,7 +1,4 @@
 require('@@lib/ext_coffee/jest/all')
-require('@@lib/ext_coffee/jest/elements/banner_element')
-require('@@lib/ext_coffee/jest/elements/card_element')
-require('@@lib/ext_coffee/jest/elements/time_element')
 
 const concepts = {
   root: null,

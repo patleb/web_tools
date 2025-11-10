@@ -1,4 +1,6 @@
 import concepts from '@@lib/ext_coffee/jest/concepts/spec_helper'
+require('@@lib/ext_coffee/jest/elements/banner_element')
+require('@@lib/ext_coffee/jest/elements/card_element')
 
 describe('Js.ComponentConcept', () => {
   concepts.with_page('component', { root: 'ext_coffee', before: () => {
