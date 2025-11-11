@@ -105,3 +105,5 @@ class Js.AdminConcept
     toggles.each((toggle, i) -> toggle.set_value(false) if none_checked and toggle_checked[i])
     toggles.each((toggle, i) -> toggle.set_value(true) if all_checked and not toggle_checked[i])
     [all_checked, none_checked]
+
+window.Js.Admin = {}

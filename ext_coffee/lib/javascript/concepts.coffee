@@ -70,8 +70,9 @@ class Js.Concepts
     concept_class::module_name = module
     concept_class::class_name = class_name
 
+    # NOTE: concept becomes a singleton where concept_class is concept.constructor
     module_class = module.constantize()
-    module_class[class_name] = concept = new concept_class # concept becomes a singleton
+    module_class[class_name] = concept = new concept_class
 
     if concept_class::global is true
       global_name = class_name.sub(CONCEPT, '')
@@ -106,9 +107,7 @@ class Js.Concepts
       @ready?()
       true
 
-    if concept is Js.Component # concept_class is Js.Component.constructor
-      concept_class::each (name, element_class) =>
-        @add_element(name, element_class)
+    concept_class::each(@add_element) if concept is Js.Component
 
   # Private
 
@@ -118,7 +117,7 @@ class Js.Concepts
       unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
 
-  @add_element: (name, element_class) ->
+  @add_element: (name, element_class) =>
     return unless name.match(ELEMENT)
     return if element_class.class_name
     element_class.class_name = element_class::class_name = name
