@@ -37,7 +37,7 @@ class Js.LibConcept extends Js.Base
 
   clear_drawer_toggle: ->
     if Device.breakpoints_was.lg isnt Device.breakpoints.lg and Device.breakpoints.lg
-      Rails.find('.drawer-toggle').set_value(false)
+      Rails.find('.drawer-toggle')?.set_value(false)
 
   clear_notice: ->
     if @notice
