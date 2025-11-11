@@ -1,4 +1,4 @@
-class Js.Hideable extends Js.StateMachine
+class Sm.Hideable extends StateMachine
   config: ->
     state: =>
       if @visible(this) then 'visible' else 'hidden'

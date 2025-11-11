@@ -1,4 +1,4 @@
-class Js.StateMachine
+class window.StateMachine
   @extend WithReaders
 
   CONFIG_IVARS = ['initial', 'terminal']
@@ -44,7 +44,7 @@ class Js.StateMachine
     @build(config)
 
   build: (config) ->
-    @STATUS = Js.StateMachine.STATUS
+    @STATUS = StateMachine.STATUS
     @id = Math.uid()
     if config instanceof @constructor
       config.methods?.each (name) => this[name] = config[name]
@@ -305,3 +305,5 @@ class Js.StateMachine
 
   log_debug: (msg) ->
     Logger.debug(msg) if @constructor._debug
+
+window.Sm = {}

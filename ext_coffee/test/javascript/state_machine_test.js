@@ -6,9 +6,9 @@ let toggle_base
 let toggle_with_hooks
 let arrow_base
 
-describe('Js.StateMachine', () => {
+describe('StateMachine', () => {
   beforeEach(() => {
-    sm = new Js.StateMachine(config)
+    sm = new StateMachine(config)
   })
 
   describe('@initial, @terminal, @current', () => {
@@ -540,7 +540,7 @@ describe('Js.StateMachine', () => {
     beforeAll(() => {
       config = {
         initialize: (sm) => {
-          sm.child = new Js.StateMachine({
+          sm.child = new StateMachine({
             initial: 'init',
             events: {
               execute: { init: 'other' },

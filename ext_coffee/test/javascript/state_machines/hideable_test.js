@@ -3,9 +3,9 @@ import '@@lib/ext_coffee/jest/state_machines/spec_helper'
 let sm
 let visible
 
-describe('Js.Hideable', () => {
+describe('Sm.Hideable', () => {
   beforeEach(() => {
-    sm = new Js.Hideable({ methods: { visible: () => visible } })
+    sm = new Sm.Hideable({ methods: { visible: () => visible } })
   })
 
   it('should stay idle when the state does not change', () => {
