@@ -58,7 +58,6 @@ class Js.Concepts
 
   @add_concept: (name, { module = null } = {}) ->
     return unless name.match(CONCEPT)
-
     name = "#{module}.#{name}" if module?
     if uniq_classes[name]
       return Logger.debug("#{name} already initialized")
@@ -72,10 +71,7 @@ class Js.Concepts
     concept_class::class_name = class_name
 
     module_class = module.constantize()
-    # NOTE: the concept becomes a singleton
-    #   --> inheritance must be done with a concept prototype or a Js.Base type
-    #   --> the exception is Js.Component since, after definition, it's assigned to Js.ComponentConcept prototype
-    module_class[class_name] = concept = new concept_class
+    module_class[class_name] = concept = new concept_class # concept becomes a singleton
 
     if concept_class::global is true
       global_name = class_name.sub(CONCEPT, '')
@@ -110,32 +106,9 @@ class Js.Concepts
       @ready?()
       true
 
-    concept_class::ready_elements ?= (selector) ->
-      return unless (nodes = Rails.$(selector)).present()
-
-      @elements = nodes.each_with_object {}, (node, memo) =>
-        element_class = "#{type.camelize()}Element" if type = node.getAttribute('data-element')
-        element_class ||= 'Element'
-        if node.find(selector) or node.find('[data-element]')
-          throw "#{element_class} enclosing another #{element_class} or Js.Component.Element type"
-        uid = Math.uid()
-        node.setAttribute('data-uid', uid)
-        memo[uid] = new this[element_class](node)
-        memo[uid].uid = uid
-
-      @elements.each_with_object [], (uid, element, memo) ->
-        unless memo.include(element.__proto__)
-          memo.push(element.__proto__)
-          element.ready_once?()
-        element.ready?()
-
-    concept_class::leave_elements ?= ->
-      @elements?.each (uid, element) ->
-        element.leave?()
-      @elements = null
-
-    concept_class::select((name) -> name.match(ELEMENT)).each (name, element_class) =>
-      @add_element(name, element_class, concept) unless element_class.class_name
+    if concept is Js.Component # concept_class is Js.Component.constructor
+      concept_class::each (name, element_class) =>
+        @add_element(name, element_class)
 
   # Private
 
@@ -145,13 +118,11 @@ class Js.Concepts
       unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
 
-  @add_element: (name, element_class, concept) ->
-    element_class::concept = concept
-    element_class::element_name = name.sub(ELEMENT, '').underscore()
+  @add_element: (name, element_class) ->
+    return unless name.match(ELEMENT)
+    return if element_class.class_name
     element_class.class_name = element_class::class_name = name
-
-    concept.constructor::CONSTANTS.each (name, value) ->
-      element_class::[name] = value
+    element_class::element_name = name.sub(ELEMENT, '').underscore()
     @define_constants(element_class)
     @define_readers(element_class)
     @unless_defined element_class::events, =>

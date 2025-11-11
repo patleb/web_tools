@@ -120,15 +120,15 @@ describe('String', () => {
   })
 
   test('#camelize', () => {
-    assert.equal('::RootPath::To::ClassName.ext::', '/root_path/to/class-name.ext /'.camelize())
+    assert.equal('::RootPath::To::ClassName.ext::', '/root_path/to/class-name.ext /'.camelize('::'))
   })
 
   test('#underscore', () => {
-    assert.equal('/root_path/to/class_name.ext/', '::RootPath::To::ClassName.ext::'.underscore())
+    assert.equal('/root_path/to/class_name.ext/', '::RootPath::To::ClassName.ext::'.underscore('::'))
   })
 
   test('#full_underscore', () => {
-    assert.equal('root_path_to_class_name_ext', '::RootPath::To::ClassName.ext::'.full_underscore())
+    assert.equal('root_path_to_class_name_ext', '::RootPath::To::ClassName.ext::'.full_underscore('::'))
   })
 
   test('#parameterize', () => {
@@ -157,8 +157,8 @@ describe('String', () => {
   })
 
   test('#constantize', () => {
-    assert.equal(Test.SimpleConcept, 'Test.SimpleConcept'.constantize())
-    assert.equal(Test.SimpleConcept.prototype.Element, 'Test.SimpleConcept::Element'.constantize())
+    assert.equal(Test.ScopedClass, 'Test.ScopedClass'.constantize())
+    assert.equal(Test.ScopedClass.prototype.Element, 'Test.ScopedClass::Element'.constantize())
     assert.nil('Unknown'.constantize())
     assert.raise(Error, '<invalid>'.constantize)
   })

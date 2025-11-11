@@ -182,19 +182,19 @@ String.define_methods
   upcase_first: ->
     @charAt(0).toUpperCase() + @slice(1)
 
-  camelize: ->
+  camelize: (namespace = '.') ->
     @split(/[-_\s]+/).map((word) -> word.upcase_first()).join('')
-      .split(/\/+/).map((word) -> word.upcase_first()).join('::')
+      .split(/\/+/).map((word) -> word.upcase_first()).join(namespace)
 
-  underscore: ->
-    @gsub(/::/, '/')
+  underscore: (namespace = '.') ->
+    @gsub(namespace, '/')
       .gsub(/([A-Z\d]+)([A-Z][a-z])/, '$1_$2')
       .gsub(/([a-z\d])([A-Z])/, '$1_$2')
       .gsub('-', '_')
       .downcase()
 
-  full_underscore: ->
-    @underscore().gsub(/[\.\/]/, '_').replace(/^_/, '').replace(/_$/, '')
+  full_underscore: (namespace = '.') ->
+    @underscore(namespace).gsub(/[\.\/]/, '_').replace(/^_/, '').replace(/_$/, '')
 
   parameterize: ->
     @gsub(/[^a-z0-9\-_]+/i, '-')
@@ -227,7 +227,7 @@ String.define_methods
       if (@constructor.constantize ?= {}).has_key this
         return @constructor.constantize[this]
       object = window
-      @replace(/^::/, '').split('.').each (class_scope) ->
+      @replace(/^(\.|::)/, '').split('.').each (class_scope) ->
         class_scope.split('::').each (prototype_scope, i) ->
           if i is 0
             object = object[prototype_scope]

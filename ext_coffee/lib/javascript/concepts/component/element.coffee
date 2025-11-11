@@ -9,12 +9,12 @@ class Js.Component.Element
         { submitter: this, @permanent }
 
   @$: (selector) ->
-    scope = "#{@::concept.ELEMENTS}[data-element=#{@::element_name}]"
+    scope = "#{Js.Component.ELEMENTS}[data-element=#{@::element_name}]"
     if selector? then "#{scope} #{selector}" else scope
 
   @element: (target) ->
     element = target.closest(@$())
-    @::concept.elements[element.getAttribute('data-uid')]
+    Js.Component.elements[element.getAttribute('data-uid')]
 
   constructor: (@node) ->
     @static_data = JSON.safe_parse(@node.getAttribute('data-static')) or {}

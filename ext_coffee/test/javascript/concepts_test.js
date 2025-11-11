@@ -1,9 +1,14 @@
-import '@@lib/ext_coffee/jest/spec_helper'
+import '@@lib/ext_coffee/jest/concepts/spec_helper'
 
 describe('Js.Concepts', () => {
   beforeAll(() => {
-    dom.setup_document(fixture.html('concepts', { root: 'ext_coffee/test/fixtures/files' }))
-    Js.Concepts.initialize({ modules: ['Test'], concepts: ['Test.SimpleConcept'] })
+    dom.setup_document(fixture.html('classes', { root: 'ext_coffee/test/fixtures/files/concepts' }))
+    Js.Concepts.initialize({ modules: ['Test'], concepts: [
+        'Js.StorageConcept',
+        'Js.ComponentConcept',
+        'Test.SimpleConcept',
+      ]
+    })
   })
 
   afterAll(() => {
@@ -12,9 +17,9 @@ describe('Js.Concepts', () => {
 
   it('should create all concept instances', () => {
     assert.equal(1, Js.Concepts.instances.ready_once.length)
-    assert.equal(1, Js.Concepts.instances.ready.length)
-    assert.equal(1, Js.Concepts.instances.leave.length)
-    assert.equal(5, Js.Concepts.instances.leave_clean.length)
+    assert.equal(2, Js.Concepts.instances.ready.length)
+    assert.equal(2, Js.Concepts.instances.leave.length)
+    assert.equal(7, Js.Concepts.instances.leave_clean.length)
     assert.equal('Test', Test.SimpleConcept.module_name)
     assert.equal('SimpleConcept', Test.SimpleConcept.class_name)
     assert.equal('Test', Test.ExtendConcept.module_name)
@@ -134,29 +139,29 @@ describe('Js.Concepts', () => {
     })
   })
 
-  describe('::Element', () => {
+  describe('Js.Component.Element', () => {
     it('should create all element classes', () => {
-      assert.equal(Test.SimpleConcept, Test.SimpleConcept.Element.prototype.concept)
-      assert.equal('Element', Test.SimpleConcept.Element.class_name)
-      assert.equal('js_simple_name', Test.SimpleConcept.Element.prototype.NAME)
+      assert.equal('SimpleElement', Js.Component.SimpleElement.class_name)
+      assert.equal('.js_simple_name', Js.Component.SimpleElement.prototype.NAME)
     })
 
     it('should define lazy #accessors on prototype and scope to it if used in #events', () => {
-      let body = dom.find(Test.SimpleConcept.Element.prototype.BODY)
-      dom.fire('hover', { target: body })
-      assert.true(body.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.equal(Test.SimpleConcept.Element.prototype.__body, Test.SimpleConcept.Element.prototype.body)
-      assert.equal(['body', 'value'], Test.SimpleConcept.Element.prototype.READERS)
-      let element = new Test.SimpleConcept.Element()
-      assert.not.nil(element.__body)
-      assert.equal(Test.SimpleConcept.Element.prototype.__body, element.__body)
+      let name = dom.find(Js.Component.SimpleElement.prototype.NAME)
+      dom.fire('hover', { target: name })
+      assert.true(name.classes().include(Test.SimpleConcept.TRIGGERED))
+      assert.equal(Js.Component.SimpleElement.prototype.__body, Js.Component.SimpleElement.prototype.body)
+      assert.equal(['name', 'value'], Js.Component.SimpleElement.prototype.READERS)
+      let element = new Js.Component.SimpleElement(name)
+      assert.not.nil(element.__name)
+      assert.equal(Js.Component.SimpleElement.prototype.__name, element.__name)
       assert.equal('value', element.value)
-      assert.nil(Test.SimpleConcept.Element.prototype.__value)
+      assert.nil(Js.Component.SimpleElement.prototype.__value)
     })
 
     it('should not access parent ivars in inherited element', () => {
-      let element = new Test.SimpleConcept.Element()
-      let extended = new Test.SimpleConcept.ExtendElement()
+      let name = dom.find(Js.Component.SimpleElement.prototype.NAME)
+      let element = new Js.Component.SimpleElement(name)
+      let extended = new Js.Component.ExtendElement(name)
       assert.equal('value', element.value)
       assert.nil(extended.__value)
     })

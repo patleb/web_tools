@@ -1,4 +1,7 @@
 require('@@lib/ext_coffee/jest/all')
+require('@@lib/ext_coffee/index')
+require('@@lib/ext_coffee/concepts/base')
+require('@@lib/ext_coffee/jest/concepts/classes')
 
 const concepts = {
   root: null,

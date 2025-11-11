@@ -52,20 +52,20 @@ class Test.SimpleConcept extends Js.Base
     @__did_leave ?= 0
     @__did_leave++
 
-class Test.SimpleConcept::Element
+class Js.Component.SimpleElement extends Js.Component.Element
   constants: ->
-    NAME: 'js_simple_name'
+    NAME: '.js_simple_name'
 
   readers: ->
-    body: -> dom.find(@BODY)
+    name: -> dom.find(@NAME)
     value: -> 'value'
 
   events: -> [
-    'hover', @BODY, (event, this_was) ->
-      @body.add_class(@TRIGGERED)
+    'hover', @NAME, (event, this_was) ->
+      @name.add_class(Test.SimpleConcept.TRIGGERED)
   ]
 
-class Test.SimpleConcept::ExtendElement extends Test.SimpleConcept::Element
+class Js.Component.ExtendElement extends Js.Component.SimpleElement
 
 # it should not redefine #constants, #readers, #ready(_once), #leave and #events on extends
 class Test.ExtendConcept extends Test.SimpleConcept

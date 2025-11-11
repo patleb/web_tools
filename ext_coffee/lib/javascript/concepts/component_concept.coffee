@@ -20,10 +20,28 @@ class Js.ComponentConcept
   ]
 
   ready: ->
-    @ready_elements @ELEMENTS
+    return unless (nodes = Rails.$(@ELEMENTS)).present()
+
+    @elements = nodes.each_with_object {}, (node, memo) =>
+      element_type = node.getAttribute('data-element') ? ''
+      element_class = "Js.Component.#{element_type.camelize()}Element".constantize()
+      if node.find(@ELEMENTS) or node.find('[data-element]')
+        throw "#{element_class} enclosing another Js.Component.Element type"
+      uid = Math.uid()
+      node.setAttribute('data-uid', uid)
+      memo[uid] = new element_class(node)
+      memo[uid].uid = uid
+
+    @elements.each_with_object [], (uid, element, memo) ->
+      unless memo.include(element.__proto__)
+        memo.push(element.__proto__)
+        element.ready_once?()
+      element.ready?()
 
   leave: ->
-    @leave_elements()
+    @elements?.each (uid, element) ->
+      element.leave?()
+    @elements = null
 
   render_elements: ({ detail: { submitter, permanent, scope, changes } } = {}) ->
     elements = (@elements ? {}).select (uid, element) ->

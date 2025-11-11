@@ -1,3 +1,7 @@
+window.Test ||= {}
+
+class Test.ScopedClass
+
 class window.Module
   @extended: ->
     @extended = true
