@@ -44,6 +44,9 @@ class Js.StorageConcept
         when Date
           serialized_value = JSON.stringify(value).gsub('"', '')
           'to_date'
+        when Duration
+          serialized_value = value.to_s()
+          'to_duration'
         when Array
           serialized_value = JSON.stringify(value)
           'to_a'
