@@ -122,7 +122,7 @@ class Js.Concepts
     return unless name.match(ELEMENT)
     return if element_class.class_name
     element_class.class_name = element_class::class_name = name
-    element_class::element_name = name.sub(ELEMENT, '').underscore()
+    element_class::element_name = name.sub(ELEMENT, '').underscore('_')
     @define_constants(element_class)
     @define_readers(element_class)
     @unless_defined element_class::events, =>

@@ -24,7 +24,7 @@ class Js.ComponentConcept
 
     @elements = nodes.each_with_object {}, (node, memo) =>
       element_type = node.getAttribute('data-element') ? ''
-      element_class = "Js.Component.#{element_type.camelize()}Element".constantize()
+      element_class = "Js.Component.#{element_type.camelize('_')}Element".constantize()
       if node.find(@ELEMENTS) or node.find('[data-element]')
         throw "#{element_class} enclosing another Js.Component.Element type"
       uid = Math.uid()
