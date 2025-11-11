@@ -16,7 +16,6 @@ const concepts = {
     if (classes) concepts.classes = classes
     if (modules) concepts.modules = modules
     beforeAll(async () => {
-      Js.Concepts.initialize({concepts: concepts.classes, modules: concepts.modules})
       if (concepts.root) {
         if (concepts.root === 'ext_coffee') concepts.root = 'ext_coffee/test/fixtures/files/concepts'
         fixture.set_root(concepts.root)
@@ -26,7 +25,11 @@ const concepts = {
       await tick()
     })
     beforeEach(() => {
-      concepts.enter_page(name)
+      if (concepts.dom_content_loaded) {
+        concepts.dom_content_loaded = false
+      } else {
+        concepts.enter_page(name)
+      }
     })
     afterAll(() => {
       fixture.reset_root()
@@ -40,6 +43,7 @@ const concepts = {
     }
     dom.fire('DOMContentLoaded')
     dom.fire('turbolinks:load', { data: { info: { once: true } } })
+    concepts.dom_content_loaded = true
   },
   enter_page: (name) => {
     const document = new DOMParser().parseFromString(fixture.html(name, concepts.values), 'text/html')

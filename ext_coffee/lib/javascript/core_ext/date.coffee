@@ -86,6 +86,9 @@ Date.define_singleton_methods
     days = days[month - 1] if month
     days
 
+  second_week_first_date: (year) ->
+    new Date(year, 0, @first_week_last_day(year) + 1)
+
   first_week_last_day: (year) ->
     7 - new Date(year, 0, 1).weekday + 1
 
@@ -135,27 +138,26 @@ Date.define_methods
   safe_text: ->
     @toString()
 
+  duration: (date) ->
+    new Duration(Math.floor((this - date) / 1000))
+
   advance: (value) ->
-    if value.is_a Duration
-      value = value.to_h()
-    if value.is_a Number
-      value = Duration.new(value).to_i()
-      new Date((@to_f() + value) * 1000)
-    else if value.is_a Object
-      { sign = 1, years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0 } = value
-      months += years * 12
-      [weeks, remainder] = weeks.divmod(1)
-      days += 7 * remainder
-      [days, remainder] = days.divmod(1)
-      days += weeks * 7
-      hours += 24 * remainder
-      minutes += hours * 60
-      seconds += minutes * 60
-      date = @dup()
-      date.setMonth(date.month + sign * months) if months
-      date.setDate(date.day + sign * days) if days
-      date.setSeconds(date.second + sign * seconds) if seconds
-      date
+    unless value.is_a Duration
+      value = new Duration(value)
+    { sign = 1, years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0 } = value
+    months += years * 12
+    [weeks, remainder] = weeks.divmod(1)
+    days += 7 * remainder
+    [days, remainder] = days.divmod(1)
+    days += weeks * 7
+    hours += 24 * remainder
+    minutes += hours * 60
+    seconds += minutes * 60
+    date = @dup()
+    date.setMonth(date.month + sign * months) if months
+    date.setDate(date.day + sign * days) if days
+    date.setSeconds(date.second + sign * seconds) if seconds
+    date
 
   strftime: (format) ->
     format.replace /%(-?)([%aAbBcdeHIlmMpPSwyYZ])/g, (match, flag, modifier) =>

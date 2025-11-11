@@ -12,8 +12,8 @@ class window.Duration
   # NOTE: sub-seconds not supported
   constructor: (d) ->
     @SECONDS = Duration.SECONDS
-    if d.is_a(Array)
-      d = Math.floor((d.last() - d.first()) / 1000)
+    if d.is_a Array # dates sorted in ascending order
+      d = d.last().duration(d.first())
     if d.is_a String
       time = false
       number = ''
@@ -88,6 +88,8 @@ class window.Duration
     { @sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds }
 
   add: (other) ->
+    unless other.is_a Duration
+      other = new @constructor(other)
     new @constructor(
       years:   @sign * @years   + other.sign * other.years,
       months:  @sign * @months  + other.sign * other.months,
@@ -97,3 +99,9 @@ class window.Duration
       minutes: @sign * @minutes + other.sign * other.minutes,
       seconds: @sign * @seconds + other.sign * other.seconds,
     )
+
+  sub: (other) ->
+    unless other.is_a Duration
+      other = new @constructor(other)
+    other.sign *= -1
+    @add(other)

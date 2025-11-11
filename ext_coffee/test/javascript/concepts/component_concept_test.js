@@ -4,6 +4,7 @@ require('@@lib/ext_coffee/jest/elements/card_element')
 
 describe('Js.ComponentConcept', () => {
   concepts.with_page('component', { root: 'ext_coffee', before: () => {
+    Js.Concepts.add_concept('Js.TagConcept')
     Tag.define('h1', 'h2')
   }})
 
