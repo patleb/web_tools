@@ -33,30 +33,19 @@ class Js.StorageConcept
       else
         input = input$ type: 'hidden', name: "#{scope}:#{name}", autocomplete: 'off'
         @storage(permanent).appendChild(input)
-      unless value?
-        value = null
-        cast = 'to_null'
+      cast = 'to_null' unless value?
       cast ?= switch value.constructor
         when Number
           if value.is_integer() then 'to_i' else 'to_f'
-        when Boolean
-          'to_b'
-        when Date
-          serialized_value = JSON.stringify(value).gsub('"', '')
-          'to_date'
-        when Duration
-          serialized_value = value.to_s()
-          'to_duration'
-        when Array
-          serialized_value = JSON.stringify(value)
-          'to_a'
-        when Object
-          serialized_value = JSON.stringify(value)
-          'to_h'
+        when Boolean            then 'to_b'
+        when Date               then 'to_date'
+        when Duration           then 'to_duration'
+        when Array              then 'to_a'
+        when Object             then 'to_h'
       if value_was is undefined or value isnt value_was
         changed = true
         changes = memo[name] = [value, value_was]
-        input.setAttribute('value', serialized_value ? value)
+        input.setAttribute('value', value?.safe_text())
         input.setAttribute('data-cast', cast) if cast
         @log permanent, scope, name, value, value_was
     Rails.fire(@storage(permanent), @CHANGE, { submitter, permanent, scope, changes }) if event and changed

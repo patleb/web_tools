@@ -45,6 +45,12 @@ Object.define_methods
   to_h: ->
     this
 
+  html_safe: ->
+    false
+
+  safe_text: ->
+    JSON.stringify(this)
+
   blank: ->
     @size() is 0
 

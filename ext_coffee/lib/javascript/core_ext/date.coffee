@@ -136,7 +136,7 @@ Date.define_methods
     this
 
   safe_text: ->
-    @toString()
+    JSON.stringify(this).gsub('"', '')
 
   duration: (date) ->
     new Duration(Math.floor((this - date) / 1000))

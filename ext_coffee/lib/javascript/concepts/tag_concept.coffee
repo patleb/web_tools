@@ -98,19 +98,15 @@ class Js.TagConcept
     switch tag
       when 'a'
         options.rel = 'noopener' unless options.rel
+        options['data-turbolinks'] = options.delete('turbolinks')
+      when 'button'
+        options.type ?= 'submit'
+      when 'input'
+        options.autocomplete ?= 'off' if options.type is 'hidden'
     content = @h_(content) if content?.is_a Array
-
-    result = @content_tag(tag, content ? '', options, escape)
+    result = if tag? then @content_tag(tag, content ? '', options, escape) else @h_(content)
     result = result.to_s().html_safe(true) unless element
     result
-
-  parse_id_classes: (string) ->
-    [classes, _separator, id_classes] = string.partition('#')
-    classes = classes.split('.')
-    if id_classes
-      [id, other_classes...] = id_classes.split('.')
-      classes.merge(other_classes)
-    [id, classes]
 
   merge_classes: (options, classes) ->
     if options.has_key 'class'
@@ -119,6 +115,16 @@ class Js.TagConcept
       new_array.union(old_array)
     else
       @classes_to_array(classes)
+
+  # Private
+
+  parse_id_classes: (string) ->
+    [classes, _separator, id_classes] = string.partition('#')
+    classes = classes.split('.')
+    if id_classes
+      [id, other_classes...] = id_classes.split('.')
+      classes.merge(other_classes)
+    [id, classes]
 
   classes_to_array: (classes) ->
     if classes?.is_a Object
@@ -139,8 +145,12 @@ class Js.TagConcept
   content_tag: (tag, text, options, escape) ->
     tag = document.createElement(tag)
     options.class = options.delete('class') # necessary to keep #id.classes order
+    cast = options['data-cast']?.present()
     for name, value of options
-      tag.setAttribute(name, value) if value?
+      if value?
+        if cast and name is 'value' and not value.html_safe()
+          value = value.safe_text()
+        tag.setAttribute(name, value)
     if escape and not text.html_safe()
       tag.textContent = text.safe_text()
     else
