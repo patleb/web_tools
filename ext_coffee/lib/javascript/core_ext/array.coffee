@@ -32,6 +32,13 @@ Array.polyfill_methods
       return item if f_item_index_self(item, i, this)
     return
 
+Array.decorate_methods
+  map: (f_item_index_self, arg) ->
+    if f_item_index_self.is_a String
+      @super (item) -> item[f_item_index_self](arg)
+    else
+      @super(f_item_index_self, arg)
+
 Array.override_methods
   dup: ->
     @slice()

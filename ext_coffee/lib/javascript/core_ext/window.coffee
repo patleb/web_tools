@@ -19,7 +19,10 @@ window.decorate = (object, name, callback) ->
   object[name] = ->
     this.self = object
     this.super = previous
-    callback.apply(this, arguments)
+    result = callback.apply(this, arguments)
+    delete this.self
+    delete this.super
+    result
 
 window.polyfill = (object, name, callback) ->
   object[name] ?= ->
