@@ -21,18 +21,18 @@ class Js.StorageConcept
       result = names.map (name) =>
         [name, cast_value(@storage(permanent).find("[name='#{scope}:#{name}']"))]
     else
-      result = @storage(permanent).$("[name^='#{scope}:']").map (element) =>
-        [element.name.sub(///^#{scope.safe_regex()}:///, ''), cast_value(element)]
+      result = @storage(permanent).$("[name^='#{scope}:']").map (input) =>
+        [input.name.sub(///^#{scope.safe_regex()}:///, ''), cast_value(input)]
     result.reject(([name, value]) -> value is undefined).to_h()
 
   set: (inputs, { submitter = null, permanent = false, scope = '', event = true } = {}) ->
     changed = false
     changes = inputs.each_with_object {}, (name, value, memo) =>
-      if element = @storage(permanent).find("[name='#{scope}:#{name}']")
-        value_was = cast_value(element)
+      if input = @storage(permanent).find("[name='#{scope}:#{name}']")
+        value_was = cast_value(input)
       else
-        element = input$ type: 'hidden', name: "#{scope}:#{name}", autocomplete: 'off'
-        @storage(permanent).appendChild(element)
+        input = input$ type: 'hidden', name: "#{scope}:#{name}", autocomplete: 'off'
+        @storage(permanent).appendChild(input)
       unless value?
         value = null
         cast = 'to_null'
@@ -56,9 +56,8 @@ class Js.StorageConcept
       if value_was is undefined or value isnt value_was
         changed = true
         changes = memo[name] = [value, value_was]
-        element.setAttribute('value', serialized_value ? value)
-        element.setAttribute('data-cast', cast) if cast
-        Rails.set(element, { value_was })
+        input.setAttribute('value', serialized_value ? value)
+        input.setAttribute('data-cast', cast) if cast
         @log permanent, scope, name, value, value_was
     Rails.fire(@storage(permanent), @CHANGE, { submitter, permanent, scope, changes }) if event and changed
 
@@ -75,19 +74,19 @@ class Js.StorageConcept
     Logger.debug(msg) if @__debug
 
   storage_node = (id_selector, permanent) ->
-    unless (element = Rails.find(id_selector))
+    unless (node = Rails.find(id_selector))
       body = document.body.find('[data-turbolinks-body]') ? document.body
       if permanent
-        element = div$ id_selector, 'data-turbolinks-permanent': true
+        node = div$ id_selector, 'data-turbolinks-permanent': true
       else
-        element = div$ id_selector
-      body.appendChild(element)
-    element
+        node = div$ id_selector
+      body.appendChild(node)
+    node
 
-  cast_value = (element) ->
-    if element?
-      value = element.value
-      value = value[cast]() if cast = element.getAttribute('data-cast')
+  cast_value = (input) ->
+    if input?
+      value = input.value
+      value = value[cast]() if cast = input.getAttribute('data-cast')
       value
     else
       undefined
