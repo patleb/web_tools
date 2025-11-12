@@ -9,7 +9,7 @@ describe('Array', () => {
   test('#to_h', () => {
     assert.equal({}, [].to_h())
     assert.equal({ a: 1, b: 2 }, [['a', 1], ['b', 2]].to_h())
-    assert.raise(Error, [['a', 1, 2], ['b', 2, 3]].to_h)
+    assert.raise([['a', 1, 2], ['b', 2, 3]].to_h)
   })
 
   test('#blank', () => {

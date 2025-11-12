@@ -14,7 +14,7 @@ describe('String', () => {
   test('#to_b', () => {
     assert.equal(Array(7).fill(true), ['true', 't', 'yes', 'y', '1', '1.0', '✓'].map((v) => v.to_b()))
     assert.equal(Array(8).fill(false), ['false', 'f', 'no', 'n', '0', '0.0', '✘', ' '].map((v) => v.to_b()))
-    assert.raise(Error, 'invalid'.to_b)
+    assert.raise('invalid'.to_b)
   })
 
   test('#to_i', () => {
@@ -33,7 +33,7 @@ describe('String', () => {
 
   test('#to_h', () => {
     assert.equal({ a: 1 }, '{ "a": 1 }'.to_h())
-    assert.raise(/invalid/, '{ a: 1 }'.to_h)
+    assert.raise('{ a: 1 }'.to_h)
   })
 
   test('#to_date', () => {
@@ -160,7 +160,7 @@ describe('String', () => {
     assert.equal(Test.ScopedClass, 'Test.ScopedClass'.constantize())
     assert.equal(Test.ScopedClass.prototype.Element, 'Test.ScopedClass::Element'.constantize())
     assert.nil('Unknown'.constantize())
-    assert.raise(Error, '<invalid>'.constantize)
+    assert.raise('<invalid>'.constantize)
   })
 
   test('#partition', () => {

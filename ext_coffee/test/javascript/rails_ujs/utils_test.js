@@ -33,7 +33,7 @@ describe('Rails UJS Utils', () => {
   })
 
   it('should throw error when including rails-ujs multiple times', () => {
-    assert.raise(Error, Rails.start)
+    assert.raise(Rails.start)
   })
 
   it('should find the csrf token', () => {

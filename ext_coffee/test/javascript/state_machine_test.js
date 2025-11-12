@@ -136,7 +136,7 @@ describe('StateMachine', () => {
         assert.equal('up', sm.current)
         assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
         assert.equal('up', sm.current)
-        assert.raise(Error, sm.resume)
+        assert.raise(sm.resume)
       })
 
       describe('with #cancel called in #before hook', () => {
@@ -269,7 +269,7 @@ describe('StateMachine', () => {
         })
 
         it('should event #before hook, but not any other hooks after', () => {
-          assert.raise(Error, sm.defer)
+          assert.raise(sm.defer)
           assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)

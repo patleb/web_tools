@@ -47,18 +47,25 @@ class window.Duration
     else
       [@sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds] =
         [d.sign ? 1, d.years ? 0, d.months ? 0, d.weeks ? 0, d.days ? 0, d.hours ? 0, d.minutes ? 0, d.seconds ? 0]
+          .map('to_f')
 
   eql: (other) ->
     return false unless other.is_a Duration
     @to_i().eql other.to_i()
 
-  in_years:   -> @to_i() / @SECONDS.year
-  in_months:  -> @to_i() / @SECONDS.month
-  in_weeks:   -> @to_i() / @SECONDS.week
-  in_days:    -> @to_i() / @SECONDS.day
-  in_hours:   -> @to_i() / @SECONDS.hour
-  in_minutes: -> @to_i() / @SECONDS.minute
-  in_seconds: -> @to_i()
+  to_h: ->
+    { @sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds }
+
+  to_i: ->
+    @sign * (
+      @years   * @SECONDS.year   +
+        @months  * @SECONDS.month  +
+        @weeks   * @SECONDS.week   +
+        @days    * @SECONDS.day    +
+        @hours   * @SECONDS.hour   +
+        @minutes * @SECONDS.minute +
+        @seconds
+    )
 
   to_s: ->
     string = if @sign is -1 then '-P' else 'P'
@@ -73,19 +80,19 @@ class window.Duration
       string += "#{@seconds}S" if @seconds
     string
 
-  to_i: ->
-    @sign * (
-      @years   * @SECONDS.year   +
-      @months  * @SECONDS.month  +
-      @weeks   * @SECONDS.week   +
-      @days    * @SECONDS.day    +
-      @hours   * @SECONDS.hour   +
-      @minutes * @SECONDS.minute +
-      @seconds
-    )
+  safe_text: ->
+    @to_s()
 
-  to_h: ->
-    { @sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds }
+  html_safe: ->
+    true
+
+  in_years:   -> @to_i() / @SECONDS.year
+  in_months:  -> @to_i() / @SECONDS.month
+  in_weeks:   -> @to_i() / @SECONDS.week
+  in_days:    -> @to_i() / @SECONDS.day
+  in_hours:   -> @to_i() / @SECONDS.hour
+  in_minutes: -> @to_i() / @SECONDS.minute
+  in_seconds: -> @to_i()
 
   add: (other) ->
     unless other.is_a Duration

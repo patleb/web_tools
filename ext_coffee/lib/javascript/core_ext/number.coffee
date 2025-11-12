@@ -59,15 +59,15 @@ Number.define_methods
     Math.sign(this)
 
   zero: ->
-    this is 0
+    @valueOf() is 0
 
   divmod: (value) ->
     [Math.floor(this / value), this % value]
 
-  ceil:  (precision = 0) -> Number.with_decimals 'ceil',  this, precision
-  floor: (precision = 0) -> Number.with_decimals 'floor', this, precision
+  ceil:  (precision = 0) -> if precision then Number.with_decimals 'ceil',  this, precision else Math.ceil(this)
+  floor: (precision = 0) -> if precision then Number.with_decimals 'floor', this, precision else Math.floor(this)
+  trunc: (precision = 0) -> if precision then Number.with_decimals 'trunc', this, precision else Math.trunc(this)
   round: (precision = 0) -> Number.with_decimals 'round', this, precision
-  trunc: (precision = 0) -> Number.with_decimals 'trunc', this, precision
 
   second:  -> @seconds()
   seconds: -> new Duration(sign: @sign(), seconds: this)

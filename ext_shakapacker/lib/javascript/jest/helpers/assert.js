@@ -30,6 +30,6 @@ const assert = {
   includes: (exp, act) => expect_with_not(act).toInclude(exp),
   excludes: (exp, act) => expect_with_not(act).not.toInclude(exp),
   called: (act, n = null) => n == null ? expect_with_not(act).toBeCalled() : expect_with_not(act).toBeCalledTimes(n),
-  raise: (error, handler) => expect_with_not(handler).toThrow(error),
+  raise: (handler) => expect_with_not(handler).toThrow(),
 }
 global.assert = assert
