@@ -158,10 +158,10 @@ class Js.TagConcept
           tag.setAttribute('data-cast', cast)
         else
           tag.setAttribute(name, value)
-    if escape and not text.html_safe()
-      tag.textContent = text.safe_text()
+    tag.innerHTML = if escape and not text.html_safe()
+      text.safe_text()
     else
-      tag.innerHTML = text.to_s()
+      text.to_s()
     tag
 
   continue: (options = {}) ->
