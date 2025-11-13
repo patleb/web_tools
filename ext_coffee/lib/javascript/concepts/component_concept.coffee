@@ -36,8 +36,10 @@ class Js.ComponentConcept
     @elements.each_with_object [], (uid, element, memo) ->
       unless memo.include(element.__proto__)
         memo.push(element.__proto__)
-        element.ready_once?()
-      element.ready?()
+        element.ready_one?()
+      element.ready_before?()
+      element.ready()
+      element.ready_after?()
 
   leave: ->
     @elements?.each (uid, element) ->

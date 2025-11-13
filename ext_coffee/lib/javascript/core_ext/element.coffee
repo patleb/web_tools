@@ -52,6 +52,7 @@ HTMLElement.define_methods
   html_safe: ->
     true
 
+  # NOTE: not meant to be used in attributes
   safe_text: not_implemented
 
   classes: ->
