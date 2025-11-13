@@ -103,6 +103,8 @@ class Js.TagConcept
         options.type ?= 'submit'
       when 'input'
         options.autocomplete ?= 'off' if options.type is 'hidden'
+      when 'select'
+        options.autocomplete ?= 'off' if options.name or options.id
     content = @h_(content) if content?.is_a Array
     content ?= ''.html_safe(true)
     result = if tag? then @content_tag(tag, content, options, escape) else @h_(content)

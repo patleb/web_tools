@@ -325,6 +325,7 @@ module ActionView::Helpers::TagHelper
 
   def select_options_content(options, content)
     set_object_name_and_id(options)
+    options[:autocomplete] ||= 'off' if options[:name].present? || options[:id].present?
     content
   end
 
