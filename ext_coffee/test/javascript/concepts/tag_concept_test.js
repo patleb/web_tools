@@ -92,7 +92,7 @@ describe('Js.TagConcept', () => {
 
     it('should escape unsafe text', () => {
       assert.equal(
-        '<div>&amp;lt;script&amp;gt;&amp;lt;/script&amp;gt;</div>'.html_safe(true),
+        '<div>&lt;script&gt;&lt;/script&gt;</div>'.html_safe(true),
         div_('<script></script>')
       )
     })
