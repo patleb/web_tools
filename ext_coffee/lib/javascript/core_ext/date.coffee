@@ -109,6 +109,9 @@ Date.override_methods
   blank: ->
     false
 
+  presence: ->
+    this
+
   eql: (other) ->
     return false unless other?.is_a Date
     @getTime() is other.getTime()

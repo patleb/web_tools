@@ -41,6 +41,17 @@ window.warn_defined_singleton_key = (klass, name) =>
 window.primitive = (object) ->
   not object? or (typeof object isnt 'object' and typeof object isnt 'function')
 
+window.type_caster = (object) ->
+  cast = 'to_null' unless object?
+  cast ? switch object.constructor
+    when Number
+      if object.is_integer() then 'to_i' else 'to_f'
+    when Boolean             then 'to_b'
+    when Date                then 'to_date'
+    when Duration            then 'to_duration'
+    when Array               then 'to_a'
+    when Object              then 'to_h'
+
 for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String]
   do (type) ->
     type.override_singleton_methods = (methods) ->

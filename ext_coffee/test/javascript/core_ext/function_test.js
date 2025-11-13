@@ -41,7 +41,7 @@ describe('Function', () => {
   test('.delegate_to', () => {
     let klass = Class.new()
     assert.equal('Constructor Delegate', klass.constructor_delegate())
-    assert.equal('IVar Delegate', klass.to_s())
+    assert.equal('IVar Delegate', klass.to_s().toString())
     assert.equal('Module Delegate', klass.module_delegate())
   })
 })

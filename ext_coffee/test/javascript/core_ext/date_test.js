@@ -62,6 +62,12 @@ describe('Date', () => {
     assert.false(Date.current().eql(create_date(2001, 1, 1, 1, 1, 1)))
   })
 
+  test('#presence', () => {
+    let date = Date.current()
+    assert.equal(date, date.presence())
+    assert.equal(date, new Date(date.valueOf()))
+  })
+
   test('#advance', () => {
     let date = Date.current()
     assert.equal(date.to_i() + 123, date.advance(123).to_i())

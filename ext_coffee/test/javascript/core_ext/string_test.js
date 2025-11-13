@@ -69,6 +69,7 @@ describe('String', () => {
   })
 
   test('#presence', () => {
+    assert.nil(''.presence())
     assert.nil(' \n'.presence())
     assert.equal('text', 'text'.presence())
   })

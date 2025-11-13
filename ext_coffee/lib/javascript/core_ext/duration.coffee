@@ -48,6 +48,9 @@ class window.Duration
         [d.sign ? 1, d.years ? 0, d.months ? 0, d.weeks ? 0, d.days ? 0, d.hours ? 0, d.minutes ? 0, d.seconds ? 0]
           .map('to_f')
 
+  blank: ->
+    false
+
   eql: (other) ->
     return false unless other?.is_a Duration
     @to_i() is other.to_i()

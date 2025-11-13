@@ -146,10 +146,11 @@ class Js.TagConcept
   content_tag: (tag, text, options, escape) ->
     tag = document.createElement(tag)
     options.class = options.delete('class') # necessary to keep #id.classes order
-    cast = options['data-cast']?.present()
+    cast = options['data-cast']?.presence()
     for name, value of options
       if value?
         if cast and name is 'value' and not value.html_safe()
+          options['data-cast'] = type_caster(value) if cast is true
           value = value.safe_text()
         tag.setAttribute(name, value)
     if escape and not text.html_safe()

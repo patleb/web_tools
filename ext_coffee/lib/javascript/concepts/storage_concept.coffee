@@ -33,16 +33,8 @@ class Js.StorageConcept
       else
         input = input$ type: 'hidden', name: "#{scope}:#{name}", autocomplete: 'off'
         @storage(permanent).appendChild(input)
-      cast = 'to_null' unless value?
-      cast ?= switch value.constructor
-        when Number
-          if value.is_integer() then 'to_i' else 'to_f'
-        when Boolean            then 'to_b'
-        when Date               then 'to_date'
-        when Duration           then 'to_duration'
-        when Array              then 'to_a'
-        when Object             then 'to_h'
       if value_was is undefined or value isnt value_was
+        cast = type_caster(value)
         changed = true
         changes = memo[name] = [value, value_was]
         input.setAttribute('value', if value? then value.safe_text() else null)

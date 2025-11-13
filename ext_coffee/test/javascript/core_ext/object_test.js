@@ -41,9 +41,9 @@ describe('Object', () => {
 
   test('#tap', () => {
     let value
-    assert.equal({ a: 1 }, { a: 1 }.tap((object) => value = object.a ))
+    assert.equal({ a: 1 }, { a: 1 }.tap(object => value = object.a ))
     assert.equal(1, value)
-    assert.equal('value', 'value'.tap((string) => value = string.to_s() ).to_s())
+    assert.equal('value', 'value'.tap(string => value = string.toString() ).toString())
     assert.equal('value', value)
   })
 

@@ -1,9 +1,11 @@
 import '@@lib/ext_coffee/jest/core_ext/spec_helper'
 
 describe('Number', () => {
-  test('#blank, #eql, #to_b, #to_i, #to_date, #is_integer, #is_finite, #even, #odd, #zero', () => {
+  test('#presence, #blank, #eql, #to_b, #to_i, #to_date, #is_integer, #is_finite, #even, #odd, #zero', () => {
+    assert.nil(NaN.presence())
     assert.true(NaN.blank())
     let number = 0
+    assert.equal(number, number.presence())
     assert.true(number.zero())
     assert.false(number.blank())
     assert.true(number.eql(0))
@@ -12,6 +14,7 @@ describe('Number', () => {
     assert.equal(new Date(0), number.to_date())
     assert.true(number.is_integer())
     number = 1
+    assert.equal(number, number.presence())
     assert.false(number.zero())
     assert.true(number.to_b())
     assert.equal(new Date(1000), number.to_date())
