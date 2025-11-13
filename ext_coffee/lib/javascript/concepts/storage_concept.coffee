@@ -45,7 +45,7 @@ class Js.StorageConcept
       if value_was is undefined or value isnt value_was
         changed = true
         changes = memo[name] = [value, value_was]
-        input.setAttribute('value', value?.safe_text())
+        input.setAttribute('value', if value? then value.safe_text() else null)
         input.setAttribute('data-cast', cast) if cast
         @log permanent, scope, name, value, value_was
     Rails.fire(@storage(permanent), @CHANGE, { submitter, permanent, scope, changes }) if event and changed

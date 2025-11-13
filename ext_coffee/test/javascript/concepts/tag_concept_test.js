@@ -11,7 +11,10 @@ describe('Js.TagConcept', () => {
 
   it('should define tags', () => {
     Tag.define('blockquote')
-    assert.equal('<blockquote data-href="#">HOME</blockquote>', blockquote_({ 'data-href': '#' }, () => 'HOME').to_s())
+    assert.equal(
+      '<blockquote data-href="#">HOME</blockquote>'.html_safe(true),
+      blockquote_({ 'data-href': '#' }, () => 'HOME')
+    )
   })
 
   describe('#h_', () => {
@@ -19,78 +22,84 @@ describe('Js.TagConcept', () => {
       let expected = [[safe_values.first()], safe_values]
       expected.each((expect) => {
         let actual = h_(...expect)
-        assert.equal(expect.join(' '), actual.to_s())
+        assert.equal(expect.join(' ').html_safe(true), actual)
         assert.true(actual.html_safe())
       })
       expected = [[values.first()], values]
       expected.each((expect) => {
         let actual = h_(...expect)
-        assert.equal(expect.join(' ').safe_text(), actual.to_s())
+        assert.equal(expect.join(' ').safe_text(), actual)
         assert.true(actual.html_safe())
       })
-      assert.html_equal('<div>Hello</div><div>World!</div>', h_(div$('Hello'), div_('World!'), null))
+      assert.html_equal(
+        '<div>Hello</div><div>World!</div>'.html_safe(true),
+        h_(div$('Hello'), div_('World!'), null)
+      )
     })
 
     it('should allow to pass function as argument', () => {
-      assert.equal('HOME', h_(() => 'HOME').to_s())
-      assert.equal('HOME', h_(() => ['HOME']).to_s())
+      assert.equal('HOME'.html_safe(true), h_(() => 'HOME'))
+      assert.equal('HOME'.html_safe(true), h_(() => ['HOME']))
     })
   })
 
   describe('#if_', () => {
     it('should print if condition is true', () => {
       assert.equal(safe_values.first(), if_(true, safe_values.first()))
-      assert.equal('', if_(false, values.first()))
+      assert.equal(''.html_safe(true),  if_(false, values.first()))
     })
   })
 
   describe('#unless_', () => {
     it('should print unless condition is true', () => {
       assert.equal(safe_values.first(), unless_(false, safe_values.first()))
-      assert.equal('', unless_(true, safe_values.first()))
+      assert.equal(''.html_safe(true),  unless_(true, safe_values.first()))
     })
   })
 
   describe('#with_tag', () => {
     it('should prefer text option, then first arg, then last arg', () => {
-      assert.equal('<div>option</div>', div_('text', { text: 'option' }, 'ignored').to_s())
-      assert.equal('<div>text</div>', div_('text', 'ignored').to_s())
-      assert.equal('<div id="id">text</div>', div_('#id', 'text').to_s())
-      assert.equal('<div id="id">option</div>', div_('#id', 'ignored', { text: 'option' }).to_s())
+      assert.equal('<div>option</div>'.html_safe(true),         div_('text', { text: 'option' }, 'ignored'))
+      assert.equal('<div>text</div>'.html_safe(true),           div_('text', 'ignored'))
+      assert.equal('<div id="id">text</div>'.html_safe(true),   div_('#id', 'text'))
+      assert.equal('<div id="id">option</div>'.html_safe(true), div_('#id', 'ignored', { text: 'option' }))
     })
 
     it('should parse id/classes correctly', () => {
-      assert.equal('<div id="id" class="class"></div>', div_('#id.class').to_s())
-      assert.equal('<div id="id" class="class"></div>', div_('.class#id').to_s())
-      assert.equal('<div id="id" class="class_0 class_1"></div>', div_('#id.class_0.class_1').to_s())
-      assert.equal('<div id="id" class="class_0 class_1"></div>', div_('#id.class_0', { class: 'class_1' }).to_s())
-      assert.equal('<div id="id" class="class_0 class_2"></div>', div_('#id.class_0', { class: { class_1: false, class_2: true } }).to_s())
-      assert.equal('<div id="option" class="class"></div>', div_('#id.class', { id: 'option' }).to_s())
-      assert.equal('<div class="class_0 class_1 class_2"></div>', div_('.class_0', { class: ['class_1', 'class_2'] }).to_s())
-      assert.equal('<div class="class_0 class_1 class_2"></div>', div_({ class: ['class_0 class_1', 'class_2'] }).to_s())
+      assert.equal('<div id="id" class="class"></div>'.html_safe(true),           div_('#id.class'))
+      assert.equal('<div id="id" class="class"></div>'.html_safe(true),           div_('.class#id'))
+      assert.equal('<div id="id" class="class_0 class_1"></div>'.html_safe(true), div_('#id.class_0.class_1'))
+      assert.equal('<div id="id" class="class_0 class_1"></div>'.html_safe(true), div_('#id.class_0', { class: 'class_1' }))
+      assert.equal('<div id="id" class="class_0 class_2"></div>'.html_safe(true), div_('#id.class_0', { class: { class_1: false, class_2: true } }))
+      assert.equal('<div id="option" class="class"></div>'.html_safe(true),       div_('#id.class', { id: 'option' }))
+      assert.equal('<div class="class_0 class_1 class_2"></div>'.html_safe(true), div_('.class_0', { class: ['class_1', 'class_2'] }))
+      assert.equal('<div class="class_0 class_1 class_2"></div>'.html_safe(true), div_({ class: ['class_0 class_1', 'class_2'] }))
     })
 
     it('should use :if and :unless options accordingly', () => {
-      assert.equal('<div>text</div>', div_('text', { if: true }).to_s())
-      assert.equal('<div>text</div>', div_('text', { unless: false }).to_s())
-      assert.equal('', div_('text', { if: false }).to_s())
-      assert.equal('', div_('text', { unless: true }).to_s())
+      assert.equal('<div>text</div>'.html_safe(true), div_('text', { if: true }))
+      assert.equal('<div>text</div>'.html_safe(true), div_('text', { unless: false }))
+      assert.equal(''.html_safe(true),                div_('text', { if: false }))
+      assert.equal(''.html_safe(true),                div_('text', { unless: true }))
     })
 
     it('should flatten :data option', () => {
       assert.equal(
-        '<div data-nested-key_0="val_0" data-nested-key_1="val_1"></div>',
-        div_({ data: { nested: { key_0: 'val_0', key_1: 'val_1' } } }).to_s()
+        '<div data-nested-key_0="val_0" data-nested-key_1="val_1"></div>'.html_safe(true),
+        div_({ data: { nested: { key_0: 'val_0', key_1: 'val_1' } } })
       )
     })
 
     it('should escape unsafe text', () => {
-      assert.equal('<div>&amp;lt;script&amp;gt;&amp;lt;/script&amp;gt;</div>', div_('<script></script>').to_s())
+      assert.equal(
+        '<div>&amp;lt;script&amp;gt;&amp;lt;/script&amp;gt;</div>'.html_safe(true),
+        div_('<script></script>')
+      )
     })
 
     it('should allow to turn off text escaping', () => {
-      assert.equal('<div><script></script></div>', div_('<script></script>', { escape: false }).to_s())
-      assert.equal('<div><script></script></div>', div_('<script></script>'.html_safe(true)).to_s())
+      assert.equal('<div><script></script></div>'.html_safe(true), div_('<script></script>', { escape: false }))
+      assert.equal('<div><script></script></div>'.html_safe(true), div_('<script></script>'.html_safe(true)))
     })
 
     it('should allow to return the Element object created', () => {
@@ -99,23 +108,23 @@ describe('Js.TagConcept', () => {
     })
 
     it('should allow text as Array like #html does', () => {
-      assert.equal(`<div>${values.join(' ')}</div>`, div_(safe_values).to_s())
-      assert.equal(`<div>${values.join(' ')}</div>`, div_(() => safe_values).to_s())
-      assert.equal(`<div>${values.join(' ')}</div>`, div_({ text: safe_values }).to_s())
-      assert.equal(`<div id="id">${values.join(' ')}</div>`, div_('#id', safe_values).to_s())
+      assert.equal(`<div>${values.join(' ')}</div>`.html_safe(true),         div_(safe_values))
+      assert.equal(`<div>${values.join(' ')}</div>`.html_safe(true),         div_(() => safe_values))
+      assert.equal(`<div>${values.join(' ')}</div>`.html_safe(true),         div_({ text: safe_values }))
+      assert.equal(`<div id="id">${values.join(' ')}</div>`.html_safe(true), div_('#id', safe_values))
     })
 
     it('should be able to print defined falsy values', () => {
       const values = [false, 0, NaN, '']
       values.each((value) =>
-        assert.equal(`<div>${value}</div>`, div_(value).to_s())
+        assert.equal(`<div>${value}</div>`.html_safe(true), div_(value))
       )
     })
 
     it('should ignore undefined falsy values', () => {
       const values = [null, undefined]
       values.each((value) =>
-        assert.equal('<div></div>', div_(value).to_s())
+        assert.equal('<div></div>'.html_safe(true), div_(value))
       )
     })
 

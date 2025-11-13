@@ -11,7 +11,14 @@ Number.override_methods
     isNaN(this)
 
   eql: (other) ->
-    @valueOf() is other
+    return false unless other?.is_a Number
+    @valueOf() is other.valueOf()
+
+  html_safe: ->
+    true
+
+  safe_text: ->
+    @toString().html_safe(true)
 
 Number.define_methods
   to_b: ->
@@ -39,12 +46,6 @@ Number.define_methods
 
   is_finite: ->
     @constructor.isFinite?(@valueOf()) ? @valueOf() isnt Infinity and @valueOf() isnt -Infinity
-
-  safe_text: ->
-    @toString()
-
-  html_safe: ->
-    true
 
   even: ->
     this % 2 is 0

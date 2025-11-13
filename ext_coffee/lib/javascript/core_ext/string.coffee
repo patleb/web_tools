@@ -45,12 +45,32 @@ String.override_methods
     @length
 
   eql: (other) ->
-    @valueOf() is other
+    return false unless other?.is_a String
+    @valueOf() is other.valueOf()
 
   first: ->
     this[0]
 
+  html_safe: (safe = null) ->
+    if safe?
+      value = if primitive(this) then new @constructor(this) else this
+      value._html_safe = !!safe
+      value
+    else
+      !!@_html_safe
+
+  safe_text: ->
+    return @html_safe(true) unless this and /[&<>"'`]/.test(this)
+    @replace(/[&<>"'`]/g, (char) -> HTML_ESCAPES[char]).html_safe(true)
+
 String.define_methods
+  safe_regex: ->
+    return this unless this and /[\\^$.*+?()[\]{}|]/.test(this)
+    @replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+
+  html_blank: ->
+    @gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
+
   to_null: ->
     return null if @blank() or @match(/^(null|undefined)$/)
     throw 'invalid value for null'
@@ -72,7 +92,7 @@ String.define_methods
     parseFloat(this)
 
   to_s: ->
-    @toString()
+    this
 
   to_date: ->
     return Date.current() if @valueOf() is 'now'
@@ -113,14 +133,6 @@ String.define_methods
 
   exclude: (string, start_index = 0) ->
     not @include(string, start_index)
-
-  safe_text: ->
-    return this unless this and /[&<>"'`]/.test(this)
-    @replace(/[&<>"'`]/g, (char) -> HTML_ESCAPES[char])
-
-  safe_regex: ->
-    return this unless this and /[\\^$.*+?()[\]{}|]/.test(this)
-    @replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
 
   downcase: ->
     @toLowerCase()
@@ -265,14 +277,3 @@ String.define_methods
 
   simple_format: ->
     @gsub /\r?\n/g, '<br>'
-
-  html_blank: ->
-    @gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
-
-  html_safe: (safe = null) ->
-    if safe?
-      value = new @constructor this
-      value._html_safe = !!safe
-      value
-    else
-      !!@_html_safe

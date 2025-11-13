@@ -50,8 +50,8 @@ class window.Duration
           .map('to_f')
 
   eql: (other) ->
-    return false unless other.is_a Duration
-    @to_i().eql other.to_i()
+    return false unless other?.is_a Duration
+    @to_i() is other.to_i()
 
   to_h: ->
     { @sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds }
@@ -81,10 +81,7 @@ class window.Duration
     string
 
   safe_text: ->
-    @to_s()
-
-  html_safe: ->
-    true
+    @to_s().html_safe(true)
 
   in_years:   -> @to_i() / @SECONDS.year
   in_months:  -> @to_i() / @SECONDS.month

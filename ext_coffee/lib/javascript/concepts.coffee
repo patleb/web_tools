@@ -76,7 +76,7 @@ class Js.Concepts
 
     if concept_class::global is true
       global_name = class_name.sub(CONCEPT, '')
-      warn_define_singleton_method(window, global_name)
+      warn_defined_singleton_key(window, global_name)
       window[global_name] = concept
 
     if (alias = concept_class::alias)
@@ -86,7 +86,7 @@ class Js.Concepts
       else
         scope = window
       if scope isnt Js or alias isnt 'Component'
-        warn_define_singleton_method(scope, alias)
+        warn_defined_singleton_key(scope, alias)
       scope[alias] = concept
 
     @define_constants(concept_class)

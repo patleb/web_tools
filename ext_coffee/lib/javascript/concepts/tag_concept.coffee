@@ -33,18 +33,18 @@ class Js.TagConcept
     if values.length is 1 and (text = values[0])?.is_a Function
       values = [text()]
     values = values.flatten().compact().map (item) ->
-      item = '' unless item?
-      item = item.safe_text() unless item.html_safe()
+      item = ''.html_safe(true) unless item?
+      item = item.safe_text()   unless item.html_safe()
       item.to_s()
     values = values.join(' ')
     values.html_safe(true)
 
   if_: (is_true, values...) =>
-    return '' unless @continue(if: is_true)
+    return ''.html_safe(true) unless @continue(if: is_true)
     @h_(values...)
 
   unless_: (is_true, values...) =>
-    return '' unless @continue(unless: is_true)
+    return ''.html_safe(true) unless @continue(unless: is_true)
     @h_(values...)
 
   # Private
@@ -74,7 +74,7 @@ class Js.TagConcept
         options = content_or_options if content_or_options?.is_a Object
     options = if options? then options.dup() else {}
 
-    return '' unless @continue(options)
+    return ''.html_safe(true) unless @continue(options)
 
     if id_classes
       [id, classes] = @parse_id_classes(id_classes)
@@ -104,7 +104,8 @@ class Js.TagConcept
       when 'input'
         options.autocomplete ?= 'off' if options.type is 'hidden'
     content = @h_(content) if content?.is_a Array
-    result = if tag? then @content_tag(tag, content ? '', options, escape) else @h_(content)
+    content ?= ''.html_safe(true)
+    result = if tag? then @content_tag(tag, content, options, escape) else @h_(content)
     result = result.to_s().html_safe(true) unless element
     result
 

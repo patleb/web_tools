@@ -36,6 +36,15 @@ describe('String', () => {
     assert.raise('{ a: 1 }'.to_h)
   })
 
+  test('#to_s, #html_safe', () => {
+    let string = 'string'.html_safe(true)
+    assert.equal('string'.html_safe(true), string)
+    assert.not.equal('string', string)
+    assert.true('string'.eql(string))
+    assert.false('string' === string)
+    assert.equal('string', ''.html_safe(true) && 'string')
+  })
+
   test('#to_date', () => {
     assert.nan(''.to_date())
     assert.equal(Date.current(), 'now'.to_date())
@@ -87,7 +96,10 @@ describe('String', () => {
 
   test('#safe_text', () => {
     const string = '<script>`${alert("&nbsp;")}`</script>'
-    assert.equal('&lt;script&gt;&#x60;${alert(&quot;&amp;nbsp;&quot;)}&#x60;&lt;/script&gt;', string.safe_text())
+    assert.equal(
+      '&lt;script&gt;&#x60;${alert(&quot;&amp;nbsp;&quot;)}&#x60;&lt;/script&gt;'.html_safe(true),
+      string.safe_text()
+    )
   })
 
   test('#safe_regex', () => {

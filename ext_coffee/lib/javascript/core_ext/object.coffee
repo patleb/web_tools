@@ -49,7 +49,7 @@ Object.define_methods
     false
 
   safe_text: ->
-    JSON.stringify(this)
+    JSON.stringify(this).html_safe(true)
 
   blank: ->
     @size() is 0

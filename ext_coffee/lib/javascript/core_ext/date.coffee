@@ -110,7 +110,7 @@ Date.override_methods
     false
 
   eql: (other) ->
-    return false unless other.is_a Date
+    return false unless other?.is_a Date
     @getTime() is other.getTime()
 
   dup: ->
@@ -118,6 +118,9 @@ Date.override_methods
 
   to_h: ->
     { @year, @month, @day, @hour, @minute, @second }
+
+  safe_text: ->
+    JSON.stringify(this).gsub('"', '').html_safe(true)
 
 Date.define_methods
   to_i: ->
@@ -134,9 +137,6 @@ Date.define_methods
 
   to_date: ->
     this
-
-  safe_text: ->
-    JSON.stringify(this).gsub('"', '')
 
   duration: (date) ->
     new Duration(Math.floor((this - date) / 1000))

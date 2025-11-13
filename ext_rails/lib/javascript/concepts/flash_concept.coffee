@@ -44,7 +44,7 @@ class Js.FlashConcept extends Js.Base
     [
       input$ id: "js_#{key}", type: 'checkbox'
       div$ '.alert.shadow-xl', class: css_class, -> [
-        span_ message.simple_format().safe_text().html_safe(true)
+        span_ message.simple_format().safe_text()
         label_ '.btn.btn-circle.btn-xs', '&times;'.html_safe(true), for: "js_#{key}"
       ]
     ]

@@ -52,6 +52,9 @@ HTMLElement.define_methods
   html_safe: ->
     true
 
+  safe_text: ->
+    @outerHTML.html_safe(true)
+
   classes: ->
     Array.wrap(@classList)
 

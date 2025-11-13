@@ -3,7 +3,14 @@ Boolean.override_methods
     not @valueOf()
 
   eql: (other) ->
-    @valueOf() is other
+    return false unless other?.is_a Boolean
+    @valueOf() is other.valueOf()
+
+  html_safe: ->
+    true
+
+  safe_text: ->
+    @toString().html_safe(true)
 
 Boolean.define_methods
   to_b: ->
@@ -20,9 +27,3 @@ Boolean.define_methods
 
   to_s: ->
     @toString()
-
-  safe_text: ->
-    @toString()
-
-  html_safe: ->
-    true

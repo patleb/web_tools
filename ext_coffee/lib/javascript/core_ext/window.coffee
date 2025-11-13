@@ -28,15 +28,18 @@ window.polyfill = (object, name, callback) ->
   object[name] ?= ->
     callback.apply(this, arguments)
 
-window.warn_define_method = (klass, name) =>
+window.warn_defined_key = (klass, name) =>
   if klass::[name]
     klass_name = klass.class_name or klass.name
     Logger.debug "ExtCoffee Overriding #{klass_name}.prototype.#{name}"
 
-window.warn_define_singleton_method = (klass, name) =>
+window.warn_defined_singleton_key = (klass, name) =>
   if klass[name]
     klass_name = klass.class_name or klass.name or klass.constructor.name
     Logger.debug "ExtCoffee Overriding #{klass_name}.#{name}"
+
+window.primitive = (object) ->
+  not object? or (typeof object isnt 'object' and typeof object isnt 'function')
 
 for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String]
   do (type) ->
@@ -52,7 +55,7 @@ for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegE
         type.define_singleton_method(name, callback)
 
     type.define_singleton_method = (name, callback, warn = true) ->
-      warn_define_singleton_method(type, name) if warn
+      warn_defined_singleton_key(type, name) if warn
       type[name] = callback
 
     type.override_methods = (methods) ->
@@ -67,7 +70,7 @@ for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegE
         type.define_method(name, callback)
 
     type.define_method = (name, callback, warn = true) ->
-      warn_define_method(type, name) if warn
+      warn_defined_key(type, name) if warn
       type::[name] = callback
       Object.defineProperty(type::, name, enumerable: false)
 
@@ -75,8 +78,8 @@ for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegE
       for name, callback of methods
         type.define_reader(name, callback)
 
-    type.define_reader = (name, callback, warn = true) ->
-      warn_define_method(type, name) if warn
+    type.define_reader = (name, callback) ->
+      warn_defined_key(type, name)
       Object.defineProperty(type::, name, enumerable: false, get: callback)
 
     for pattern in ['prepend_to', 'append_to', 'decorate', 'polyfill']
@@ -100,7 +103,7 @@ JSON.define_singleton_methods = (methods) ->
     JSON.define_singleton_method(name, callback)
 
 JSON.define_singleton_method = (name, callback) ->
-  warn_define_singleton_method(JSON, name)
+  warn_defined_singleton_key(JSON, name)
   JSON[name] = callback
 
 class window.WithReaders
