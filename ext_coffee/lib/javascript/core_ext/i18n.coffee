@@ -4,9 +4,11 @@ class window.I18n
   @translations: {}
 
   @t: (key, options = {}) =>
+    scope = options.delete('scope')
     escape = options.delete('escape') ? true
     locale = options.delete('locale') ? @locale
     fallback = options.delete('fallback') ? @fallback
+    key = "#{scope}.#{key}" if scope
     result = @translations[locale]?.dig(key)
     result ?= @translations[fallback]?.dig(key) unless locale is fallback
     if result?.is_a String
