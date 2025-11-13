@@ -11,7 +11,6 @@ class window.Duration
 
   # NOTE: sub-seconds not supported
   constructor: (d) ->
-    @SECONDS = Duration.SECONDS
     if d.is_a Array # dates sorted in ascending order
       d = d.last().duration(d.first())
     if d.is_a String
@@ -39,7 +38,7 @@ class window.Duration
       [@sign, d] = [Math.sign(d), Math.abs(d)]
       return if d is 0
       ['years', 'months', 'weeks', 'days', 'hours', 'minutes'].each (part) =>
-        seconds = @SECONDS[part.singularize()]
+        seconds = Duration.SECONDS[part.singularize()]
         this[part] = Math.floor(d / seconds)
         d = d % seconds
         return if this[part] is 0
@@ -58,13 +57,13 @@ class window.Duration
 
   to_i: ->
     @sign * (
-      @years   * @SECONDS.year   +
-        @months  * @SECONDS.month  +
-        @weeks   * @SECONDS.week   +
-        @days    * @SECONDS.day    +
-        @hours   * @SECONDS.hour   +
-        @minutes * @SECONDS.minute +
-        @seconds
+      @years   * Duration.SECONDS.year   +
+      @months  * Duration.SECONDS.month  +
+      @weeks   * Duration.SECONDS.week   +
+      @days    * Duration.SECONDS.day    +
+      @hours   * Duration.SECONDS.hour   +
+      @minutes * Duration.SECONDS.minute +
+      @seconds
     )
 
   to_s: ->
@@ -83,12 +82,12 @@ class window.Duration
   safe_text: ->
     @to_s().html_safe(true)
 
-  in_years:   -> @to_i() / @SECONDS.year
-  in_months:  -> @to_i() / @SECONDS.month
-  in_weeks:   -> @to_i() / @SECONDS.week
-  in_days:    -> @to_i() / @SECONDS.day
-  in_hours:   -> @to_i() / @SECONDS.hour
-  in_minutes: -> @to_i() / @SECONDS.minute
+  in_years:   -> @to_i() / Duration.SECONDS.year
+  in_months:  -> @to_i() / Duration.SECONDS.month
+  in_weeks:   -> @to_i() / Duration.SECONDS.week
+  in_days:    -> @to_i() / Duration.SECONDS.day
+  in_hours:   -> @to_i() / Duration.SECONDS.hour
+  in_minutes: -> @to_i() / Duration.SECONDS.minute
   in_seconds: -> @to_i()
 
   add: (other) ->

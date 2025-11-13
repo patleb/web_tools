@@ -57,7 +57,7 @@ class Js.StorageConcept
 
   log: (permanent, scope, name, value, value_was) =>
     tag = "[STORAGE][#{if permanent then 'P' else '-'}]"
-    @log_debug "#{tag}[#{scope}:#{name}] #{JSON.stringify(value_was)} => #{JSON.stringify(value)}"
+    @log_debug "#{tag}[#{scope}:#{name}] #{value_was?.safe_text()} => #{value?.safe_text()}"
 
   log_debug: (msg) ->
     Logger.debug(msg) if @__debug
