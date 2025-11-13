@@ -67,7 +67,7 @@ class Js.StorageConcept
   cast_value = (input) ->
     if input?
       value = input.value
-      value = value[cast]() if cast = input.getAttribute('data-cast')
+      value = value[cast]() if value? and cast = input.getAttribute('data-cast')
       value
     else
       undefined

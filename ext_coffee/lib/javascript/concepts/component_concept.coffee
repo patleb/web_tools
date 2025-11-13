@@ -14,7 +14,6 @@ class Js.ComponentConcept
       element = @elements[target.closest(@ELEMENTS).getAttribute('data-uid')]
       name = target.getAttribute('data-bind')
       value = target.get_value()
-      value = value[cast]() if cast = target.getAttribute('data-cast')
       value_was = element.storage_value(name)
       if value_was is undefined or value isnt value_was
         element.storage_set("#{name}": value)
