@@ -156,7 +156,8 @@ class Js.TagConcept
           value = value.safe_text()
           tag.setAttribute(name, value)
           tag.setAttribute('data-cast', cast)
-        else
+        else if value isnt false
+          value = name if value is true
           tag.setAttribute(name, value)
     tag.innerHTML = if escape and not text.html_safe()
       text.safe_text()
