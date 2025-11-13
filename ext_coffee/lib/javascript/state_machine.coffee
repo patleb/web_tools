@@ -44,7 +44,6 @@ class window.StateMachine
     @build(config)
 
   build: (config) ->
-    @STATUS = StateMachine.STATUS
     @id = Math.uid()
     if config instanceof @constructor
       config.methods?.each (name) => this[name] = config[name]
@@ -76,33 +75,33 @@ class window.StateMachine
   cancel: ->
     return if @canceled
     @canceled = true
-    @log @STATUS.CANCELED
+    @log StateMachine.STATUS.CANCELED
 
   stop: (args...) ->
     return if @stopped
     @stopped = true
     @on_stop(this, @finished(), args...)
-    @log @STATUS.STOPPED
+    @log StateMachine.STATUS.STOPPED
 
-  resume: ->
+  resume: =>
     return unless @stopped
     if @finished()
       throw "#resume can't be called once the @terminal state is reached"
     @stopped = false
     @reset_trigger()
-    @log @STATUS.RESUMED
+    @log StateMachine.STATUS.RESUMED
 
   defer: (args...) ->
     unless @deferrable
       throw '#defer must be called only once in before hooks'
     @deferred = [@event, args...]
     @deferrable = false
-    @log @STATUS.DEFERRED
+    @log StateMachine.STATUS.DEFERRED
 
   reject: ->
     return unless @deferred
     @deferred = null
-    @log @STATUS.REJECTED
+    @log StateMachine.STATUS.REJECTED
     @reset_trigger()
     @canceled = false
     @status
@@ -111,7 +110,7 @@ class window.StateMachine
     return unless @deferred
     [@event, args...] = @deferred
     @deferred = null
-    @log @STATUS.RESOLVED
+    @log StateMachine.STATUS.RESOLVED
     @set_next_state(args...)
     @reset_trigger()
     @canceled = false
@@ -124,7 +123,7 @@ class window.StateMachine
     @initialize(this)
     @previous = null
     @current = @initial
-    @log @STATUS.INITIALIZED
+    @log StateMachine.STATUS.INITIALIZED
 
   trigger: (event, args...) ->
     if @event_next
@@ -141,20 +140,20 @@ class window.StateMachine
   # Private
 
   run_event: (args...) ->
-    return @log @STATUS.HALTED if @halted()
+    return @log StateMachine.STATUS.HALTED if @halted()
     unless @has_transition()
       if @delegate isnt noop
         @delegate(this, @event, args...)
-        return @log @STATUS.DELEGATED
+        return @log StateMachine.STATUS.DELEGATED
       else
         @on_deny(this, args...)
-        return @log @STATUS.DENIED
-    return @log @STATUS.IDLED if @state(this) is @current
+        return @log StateMachine.STATUS.DENIED
+    return @log StateMachine.STATUS.IDLED if @state(this) is @current
     @set_transition()
     @deferrable = true
     @run_before_hooks(args...)
     @deferrable = false
-    return @log @STATUS.HALTED if @halted()
+    return @log StateMachine.STATUS.HALTED if @halted()
     @set_next_state(args...)
 
   set_next_state: (args...) ->
@@ -162,11 +161,11 @@ class window.StateMachine
       next = next(this, args...)
       unless next of @transition.next_states
         @on_deny(this, args...)
-        return @log @STATUS.DENIED
+        return @log StateMachine.STATUS.DENIED
     @previous = @current
     @current = next
     @run_after_hooks(args...)
-    @log @STATUS.CHANGED
+    @log StateMachine.STATUS.CHANGED
     if (event_next = @event_next)
       @reset_trigger()
       @trigger(event_next...)
@@ -294,12 +293,12 @@ class window.StateMachine
         @states[state_name].data[flag] = state_flags.any (state_flag) -> flag is state_flag
 
   log: (@status) ->
-    pad = Array(@STATUS.INITIALIZED.length - @status.length + 1).join(' ')
+    pad = Array(StateMachine.STATUS.INITIALIZED.length - @status.length + 1).join(' ')
     tag = "[#{@id}][SM_#{@status}]#{pad}"
     switch @status
-      when @STATUS.HALTED
+      when StateMachine.STATUS.HALTED
         return @log_debug "#{tag} #{@current} => [#{@event}] => #{@transition?.next}"
-      when @STATUS.CHANGED
+      when StateMachine.STATUS.CHANGED
         return @log_debug "#{tag} #{@previous} => [#{@event}] => #{@current}"
     @log_debug "#{tag} #{@current}"
 

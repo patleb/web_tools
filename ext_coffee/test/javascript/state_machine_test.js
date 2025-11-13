@@ -41,13 +41,13 @@ describe('StateMachine', () => {
 
       it('should return current state and follow the sequence: up, down, up, down, throws', () => {
         assert.equal('up', sm.current)
-        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('toggle'))
         assert.equal('down', sm.current)
-        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('toggle'))
         assert.equal('up', sm.current)
-        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('toggle'))
         assert.equal('down', sm.current)
-        assert.equal(sm.STATUS.DENIED, sm.trigger('unknown_event'))
+        assert.equal(StateMachine.STATUS.DENIED, sm.trigger('unknown_event'))
       })
 
       it('should check the state and the transition', () => {
@@ -60,10 +60,10 @@ describe('StateMachine', () => {
 
       it('should halt the transition and resume', () => {
         sm.stop()
-        assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+        assert.equal(StateMachine.STATUS.HALTED, sm.trigger('toggle'))
         assert.equal('up', sm.current)
         sm.resume()
-        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('toggle'))
         assert.equal('down', sm.current)
       })
     })
@@ -108,12 +108,12 @@ describe('StateMachine', () => {
 
       it('should call the hooks', () => {
         assert.equal('down', sm.current)
-        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle', 'trigger_arg'))
+        assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('toggle', 'trigger_arg'))
         assert.equal('up', sm.current)
         sm.reset()
-        assert.equal(sm.STATUS.INITIALIZED, sm.status)
+        assert.equal(StateMachine.STATUS.INITIALIZED, sm.status)
         assert.equal('down', sm.current)
-        assert.equal(sm.STATUS.DENIED, sm.trigger('void', 'trigger_arg'))
+        assert.equal(StateMachine.STATUS.DENIED, sm.trigger('void', 'trigger_arg'))
         const hooks = [
           'initialize',
           'before',
@@ -132,9 +132,9 @@ describe('StateMachine', () => {
 
       it('should stop the state machine when @terminal state is reached', () => {
         assert.equal('down', sm.current)
-        assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+        assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('toggle'))
         assert.equal('up', sm.current)
-        assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+        assert.equal(StateMachine.STATUS.HALTED, sm.trigger('toggle'))
         assert.equal('up', sm.current)
         assert.raise(sm.resume)
       })
@@ -148,7 +148,7 @@ describe('StateMachine', () => {
         })
 
         it('should call #before hook, but not any other hooks after', () => {
-          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.equal(StateMachine.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
           assert.not.called(config.events.toggle.before)
@@ -168,7 +168,7 @@ describe('StateMachine', () => {
         })
 
         it('should call event #before hook, but not any other hooks after', () => {
-          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.equal(StateMachine.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
           assert.called(config.events.toggle.before)
@@ -188,7 +188,7 @@ describe('StateMachine', () => {
         })
 
         it('should call state #exit hook, but not any other hooks after', () => {
-          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.equal(StateMachine.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
           assert.called(config.events.toggle.before)
@@ -208,7 +208,7 @@ describe('StateMachine', () => {
         })
 
         it('should call state #enter hook, but not any other hooks after', () => {
-          assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+          assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('toggle'))
           assert.true(sm.is('up'))
           assert.called(config.before)
           assert.called(config.events.toggle.before)
@@ -228,7 +228,7 @@ describe('StateMachine', () => {
         })
 
         it('should event #after hook, but not any other hooks after', () => {
-          assert.equal(sm.STATUS.CHANGED, sm.trigger('toggle'))
+          assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('toggle'))
           assert.true(sm.is('up'))
           assert.called(config.before)
           assert.called(config.events.toggle.before)
@@ -248,7 +248,7 @@ describe('StateMachine', () => {
         })
 
         it('should event #before hook, but not any other hooks after', () => {
-          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.equal(StateMachine.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
           assert.called(config.on_stop)
@@ -270,7 +270,7 @@ describe('StateMachine', () => {
 
         it('should event #before hook, but not any other hooks after', () => {
           assert.raise(sm.defer)
-          assert.equal(sm.STATUS.HALTED, sm.trigger('toggle'))
+          assert.equal(StateMachine.STATUS.HALTED, sm.trigger('toggle'))
           assert.true(sm.is('down'))
           assert.called(config.before)
           assert.not.called(config.events.toggle.before)
@@ -282,7 +282,7 @@ describe('StateMachine', () => {
 
         it('should event #before hook on #reject, but not any other hooks after', () => {
           sm.trigger('toggle')
-          assert.equal(sm.STATUS.REJECTED, sm.reject())
+          assert.equal(StateMachine.STATUS.REJECTED, sm.reject())
           assert.true(sm.is('down'))
           assert.called(config.before)
           assert.not.called(config.events.toggle.before)
@@ -294,7 +294,7 @@ describe('StateMachine', () => {
 
         it('should event #before hook on #resolve, but not any other before hooks', () => {
           sm.trigger('toggle')
-          assert.equal(sm.STATUS.CHANGED, sm.resolve())
+          assert.equal(StateMachine.STATUS.CHANGED, sm.resolve())
           assert.true(sm.is('up'))
           assert.called(config.before)
           assert.not.called(config.events.toggle.before)
@@ -480,7 +480,7 @@ describe('StateMachine', () => {
     })
 
     it('should chain and execute triggers', () => {
-      assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
+      assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('run'))
       assert.equal('next_3', sm.current)
     })
   })
@@ -502,7 +502,7 @@ describe('StateMachine', () => {
     })
 
     it('should call both hooks', () => {
-      assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
+      assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('run'))
       assert.called(config.events.run.before, 1)
       assert.called(config.events.run.init.next.before, 1)
     })
@@ -527,11 +527,11 @@ describe('StateMachine', () => {
     })
 
     it('should use the #next method to set the state', () => {
-      assert.equal(sm.STATUS.CHANGED, sm.trigger('run'))
+      assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('run'))
       assert.equal('other', sm.current)
-      assert.equal(sm.STATUS.CHANGED, sm.trigger('execute'))
+      assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('execute'))
       assert.equal('neutral', sm.current)
-      assert.equal(sm.STATUS.CHANGED, sm.trigger('stop'))
+      assert.equal(StateMachine.STATUS.CHANGED, sm.trigger('stop'))
       assert.equal('stopped', sm.current)
     })
   })
@@ -559,11 +559,11 @@ describe('StateMachine', () => {
     })
 
     it('should delegate the event triggered to the child if no trigger or no transition', () => {
-      assert.equal(sm.STATUS.DELEGATED, sm.trigger('execute'))
-      assert.equal(sm.STATUS.CHANGED, sm.child.status)
+      assert.equal(StateMachine.STATUS.DELEGATED, sm.trigger('execute'))
+      assert.equal(StateMachine.STATUS.CHANGED, sm.child.status)
       assert.equal('other', sm.child.current)
       assert.equal('init', sm.current)
-      assert.equal(sm.STATUS.DELEGATED, sm.trigger('run'))
+      assert.equal(StateMachine.STATUS.DELEGATED, sm.trigger('run'))
       assert.equal('next', sm.child.current)
       assert.equal('init', sm.current)
     })
