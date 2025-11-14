@@ -9,7 +9,7 @@ class Js.Component.Element
         { submitter: this, @permanent }
 
   @$: (selector) ->
-    scope = "#{Js.Component.ELEMENTS}[data-element=#{@::element_name}]"
+    scope = "#{Js.Component.ELEMENTS}[data-element='#{@::element_name}']"
     if selector? then "#{scope} #{selector}" else scope
 
   @element: (target) ->
