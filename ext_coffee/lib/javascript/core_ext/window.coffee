@@ -42,7 +42,7 @@ window.primitive = (object) ->
   not object? or (typeof object isnt 'object' and typeof object isnt 'function')
 
 window.type_caster = (object) ->
-  cast  = 'to_null' unless object?
+  cast = 'to_null' unless object?
   cast ?= object.constructor.cast?() # returned method name must be defined on String
   cast ? switch object.constructor
     when Number
