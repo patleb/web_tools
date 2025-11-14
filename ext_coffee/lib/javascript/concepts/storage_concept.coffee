@@ -33,7 +33,7 @@ class Js.StorageConcept
       else
         input = input$ type: 'hidden', name: "#{scope}:#{name}", autocomplete: 'off'
         @storage(permanent).appendChild(input)
-      if value_was is undefined or value isnt value_was
+      if value_was is undefined or not value_was? and value? or value_was? and not value?.eql(value_was)
         cast = type_caster(value)
         changed = true
         changes = memo[name] = [value, value_was]

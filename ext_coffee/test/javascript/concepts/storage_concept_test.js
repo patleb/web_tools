@@ -20,6 +20,20 @@ describe('Js.StorageConcept', () => {
     assert.equal(inputs, Js.Storage.get(...inputs.keys()))
     Js.Storage.set({ undefined: undefined })
     assert.equal({ undefined: null }, Js.Storage.get('undefined'))
+    const new_inputs = {
+      integer: 1,
+      float: 2.3,
+      boolean: true,
+      date: new Date(),
+      array: [2, 3.4, false],
+      object: { b: [null] },
+      null: 0,
+      undefined: null,
+    }
+    Js.Storage.set(new_inputs)
+    assert.equal(new_inputs, Js.Storage.get(...new_inputs.keys()))
+    Js.Storage.set({ undefined: undefined })
+    assert.equal({ undefined: null }, Js.Storage.get('undefined'))
   })
 
   it('should create a storage tag if absent', () => {
