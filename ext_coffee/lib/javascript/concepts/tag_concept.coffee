@@ -156,6 +156,8 @@ class Js.TagConcept
           value = value.safe_text()
           tag.setAttribute(name, value)
           tag.setAttribute('data-cast', cast)
+        else if name.start_with 'data'
+          tag.setAttribute(name, value)
         else if value isnt false
           value = name if value is true
           tag.setAttribute(name, value)
