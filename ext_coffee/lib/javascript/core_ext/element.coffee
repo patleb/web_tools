@@ -119,17 +119,19 @@ HTMLElement.define_methods
         value = []
         for option in Array.wrap(@options)
           if option.selected
-            choice = option.value
-            choice = choice[cast](this) if choice? and cast = option.getAttribute('data-cast')
+            choice = cast_value(option, option.value)
             value.push(choice)
         value = value[0] unless @multiple
         value
       when 'radio', 'checkbox'
         @checked
+      when 'range'
+        value = @value
+        value = cast_value(@list.options[value], value) if @list?.present()
+        value
       else
         @value
-    value = value[cast](this) if value? and cast = @getAttribute('data-cast')
-    value
+    cast_value(this, value)
 
   set_value: (value, { event = false } = {}) ->
     return value if @disabled or @hasAttribute('disabled')
@@ -182,3 +184,11 @@ HTMLElement.define_methods
 
   invalid: ->
     not @valid()
+
+  cast_value = (input, value) ->
+    if value? and (cast = input.getAttribute('data-cast'))?
+      if value[cast]
+        value = value[cast](input)
+      else
+        value = cast
+    value

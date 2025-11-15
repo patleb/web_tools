@@ -151,11 +151,11 @@ class Js.TagConcept
     cast = options.delete('data-cast')
     for name, value of options
       if value?
-        if cast and name is 'value'
+        if cast? and name is 'value'
           cast = type_caster(value) if cast is true
           value = value.safe_text()
           tag.setAttribute(name, value)
-          tag.setAttribute('data-cast', cast) if cast
+          tag.setAttribute('data-cast', cast.safe_text()) if cast?
         else if name.start_with 'data'
           tag.setAttribute(name, value)
         else if value isnt false

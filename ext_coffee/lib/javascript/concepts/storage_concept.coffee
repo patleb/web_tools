@@ -19,17 +19,17 @@ class Js.StorageConcept
     { permanent = false, scope = '' } = names.extract_options()
     if names.length
       result = names.map (name) =>
-        [name, cast_value(@storage(permanent).find("[name='#{scope}:#{name}']"))]
+        [name, @storage(permanent).find("[name='#{scope}:#{name}']")?.get_value()]
     else
       result = @storage(permanent).$("[name^='#{scope}:']").map (input) =>
-        [input.name.sub(///^#{scope.safe_regex()}:///, ''), cast_value(input)]
+        [input.name.sub(///^#{scope.safe_regex()}:///, ''), input.get_value()]
     result.reject(([name, value]) -> value is undefined).to_h()
 
   set: (inputs, { submitter = null, permanent = false, scope = '', event = true } = {}) ->
     changed = false
     changes = inputs.each_with_object {}, (name, value, memo) =>
       if input = @storage(permanent).find("[name='#{scope}:#{name}']")
-        value_was = cast_value(input)
+        value_was = input.get_value()
       else
         input = input$ type: 'hidden', name: "#{scope}:#{name}", autocomplete: 'off'
         @storage(permanent).appendChild(input)
@@ -63,11 +63,3 @@ class Js.StorageConcept
         node = div$ id_selector
       body.appendChild(node)
     node
-
-  cast_value = (input) ->
-    if input?
-      value = input.value
-      value = value[cast]() if value? and cast = input.getAttribute('data-cast')
-      value
-    else
-      undefined
