@@ -10,7 +10,7 @@ class Js.TagConcept
     'fieldset', 'form'
     'i', 'input'
     'label', 'li'
-    'ol', 'optgroup', 'option'
+    'ol', 'optgroup', 'option', 'output'
     'select', 'span'
     'textarea', 'time'
     'ul'
