@@ -26,6 +26,12 @@ describe('String', () => {
     assert.equal(0xf, 'f'.to_i(16))
   })
 
+  test('#to_f', () => {
+    Number.METRIC_PREFIX.each((prefix, i) => {
+      assert.equal(16.0 * 10 ** Number.METRIC_EXPONENT[i], `16.0 ${prefix}`.to_f('metric'))
+    })
+  })
+
   test('#to_a', () => {
     assert.equal([1, 2], '[1, 2]'.to_a())
     assert.equal([{ a: 1 }], '[{ "a": 1 }]'.to_a())

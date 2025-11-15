@@ -33,6 +33,15 @@ describe('Number', () => {
     assert.true((3).odd())
   })
 
+  test('#to_s', () => {
+    Number.METRIC_PREFIX.each((prefix, i) => {
+      assert.equal(
+        prefix === 'null' ? '16.123':`16.123 ${prefix}`,
+        (16.123 * 10 ** Number.METRIC_EXPONENT[i]).to_s('metric', 3)
+      )
+    })
+  })
+
   test('#round', () => {
     assert.equal(1, 0.5.round())
     assert.equal(-1, (-0.5).round())

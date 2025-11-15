@@ -136,7 +136,7 @@ describe('Js.TagConcept', () => {
 
     it('should convert to safe text value and add type caster through data-cast', () => {
       assert.equal(
-        '<select name="options" value="123" data-cast="to_i" autocomplete="off"></select>',
+        '<select name="options" value="123" data-cast="to_f" autocomplete="off"></select>',
         select_({ name: 'options', value: 123, 'data-cast': true }).toString()
       )
     })

@@ -120,17 +120,15 @@ HTMLElement.define_methods
         for option in Array.wrap(@options)
           if option.selected
             choice = option.value
-            choice = choice[cast]() if choice? and cast = option.getAttribute('data-cast')
+            choice = choice[cast](this) if choice? and cast = option.getAttribute('data-cast')
             value.push(choice)
         value = value[0] unless @multiple
         value
       when 'radio', 'checkbox'
         @checked
-      when 'range'
-        @value?.to_f()
       else
         @value
-    value = value[cast]() if value? and cast = @getAttribute('data-cast')
+    value = value[cast](this) if value? and cast = @getAttribute('data-cast')
     value
 
   set_value: (value, { event = false } = {}) ->

@@ -22,8 +22,5 @@ Boolean.define_methods
   to_f: ->
     if @valueOf() then 1.0 else 0.0
 
-  to_d: ->
-    @to_f()
-
   to_s: ->
     @toString()

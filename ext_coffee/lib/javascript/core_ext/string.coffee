@@ -85,11 +85,13 @@ String.define_methods
     return 0 if @length > 0 and value is ''
     parseInt(value, base)
 
-  to_f: ->
-    parseFloat(this)
-
-  to_d: ->
-    parseFloat(this)
+  to_f: (prefix = null) ->
+    value = this
+    if prefix is 'metric'
+      if (i = Number.METRIC_PREFIX.index value.last())?
+        value = value.chop().rstrip()
+        value = "#{value}e#{Number.METRIC_EXPONENT[i]}"
+    parseFloat(value)
 
   to_s: ->
     this

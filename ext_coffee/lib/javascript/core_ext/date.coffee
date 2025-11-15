@@ -132,9 +132,6 @@ Date.define_methods
   to_f: ->
     @getTime() / 1000
 
-  to_d: ->
-    @to_f()
-
   to_s: ->
     @toString()
 

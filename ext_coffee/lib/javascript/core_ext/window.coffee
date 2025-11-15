@@ -45,13 +45,12 @@ window.type_caster = (object) ->
   cast = 'to_null' unless object?
   cast ?= object.constructor.cast?() # returned method name must be defined on String
   cast ? switch object.constructor
-    when Number
-      if object.is_integer() then 'to_i' else 'to_f'
-    when Boolean             then 'to_b'
-    when Date                then 'to_date'
-    when Duration            then 'to_duration'
-    when Array               then 'to_a'
-    when Object              then 'to_h'
+    when Number   then 'to_f'
+    when Boolean  then 'to_b'
+    when Date     then 'to_date'
+    when Duration then 'to_duration'
+    when Array    then 'to_a'
+    when Object   then 'to_h'
 
 for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String]
   do (type) ->
