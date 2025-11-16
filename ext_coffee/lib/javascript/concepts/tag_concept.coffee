@@ -16,6 +16,13 @@ class Js.TagConcept
     'ul'
   ].to_set()
 
+  constants: ->
+    INPUTS: '.js_tag_input'
+
+  events: -> [
+    'change', @INPUTS, @on_input_change
+  ]
+
   ready_once: ->
     window.h_ = @h_
     window.if_ = @if_
@@ -157,6 +164,8 @@ class Js.TagConcept
           tag.setAttribute(name, value)
           tag.setAttribute('data-cast', cast.safe_text()) if cast?
         else if name.start_with 'data'
+          if name is 'data-args'
+            value = JSON.stringify(value)
           tag.setAttribute(name, value)
         else if value isnt false
           value = name if value is true
@@ -177,3 +186,23 @@ class Js.TagConcept
       is_true = is_true() if is_true?.is_a Function
       return false if is_true
     true
+
+  on_input_change: (event, target) ->
+    return unless (output_ids = target.data('for'))
+    return unless (outputs = output_ids.strip().split(/ +/).map (id) -> Rails.find({ id })).present()
+    outputs.each (output) ->
+      if (value = target.get_value())?
+        if format = output.getAttribute 'data-format'
+          if args = output.getAttribute 'data-args'
+            args = JSON.parse(args)
+          html = if format.include '.'
+            format.constantize()(value, args)
+          else if value[format]
+            value[format](args)
+      unless (html ?= value ? '').html_safe()
+        html = html.safe_text()
+      switch output.type
+        when 'output'
+          output.value = html
+        else
+          output.innerHTML = html

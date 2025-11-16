@@ -82,7 +82,7 @@ describe('Date', () => {
       'January 1, 2001 at 1:01am GMT': '%B %e, %Y at %l:%M%P %Z',
     }
     for (const [date, format] of Object.entries(dates)) {
-      assert.equal(date, date_object.strftime(format))
+      assert.equal(date, date_object.strftime(format).toString())
     }
   })
 })

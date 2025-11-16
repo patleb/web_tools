@@ -29,7 +29,12 @@ Rails.merge
     elements
 
   find: (selector) ->
-    document.querySelector(selector)
+    if (id = selector.id)
+      document.getElementById(id)
+    else if selector.start_with '#'
+      document.getElementById(selector.lchop())
+    else
+      document.querySelector(selector)
 
   load_csp_nonce: ->
     csp_nonce = document.querySelector('meta[name=csp-nonce]')?.content

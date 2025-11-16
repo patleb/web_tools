@@ -187,8 +187,12 @@ HTMLElement.define_methods
 
   cast_value = (input, value) ->
     if value? and (cast = input.getAttribute('data-cast'))?
-      if value[cast]
-        value = value[cast](input)
-      else
-        value = cast
+      if args = input.getAttribute 'data-args'
+        args = JSON.parse(args)
+      value = if cast.include '.'
+        cast.constantize()(value, args)
+      else if value[cast]
+        value[cast](args)
+      else # option
+        cast
     value
