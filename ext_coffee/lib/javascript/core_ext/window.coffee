@@ -11,8 +11,8 @@ window.prepend_to = (object, name, callback) ->
 window.append_to = (object, name, callback) ->
   previous = object[name]
   object[name] = ->
-    previous.apply(this, arguments)
-    callback.apply(this, arguments)
+    result = previous.apply(this, arguments)
+    callback.apply(this, [arguments..., result])
 
 window.decorate = (object, name, callback) ->
   previous = object[name]
