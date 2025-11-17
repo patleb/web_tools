@@ -33,8 +33,9 @@ class Js.ComponentConcept
       memo[uid].uid = uid
 
     @elements.each_with_object [], (uid, element, memo) ->
-      unless memo.include(element.__proto__)
-        memo.push(element.__proto__)
+      proto = Object.getPrototypeOf(element)
+      unless memo.include(proto)
+        memo.push(proto)
         element.ready_one?()
       element.ready_before?()
       element.ready()
