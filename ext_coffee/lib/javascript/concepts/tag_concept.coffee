@@ -20,7 +20,7 @@ class Js.TagConcept
     INPUTS: '.js_tag_input'
 
   events: -> [
-    'change', @INPUTS, @on_input_change
+    'input', @INPUTS, @on_input_change
   ]
 
   ready_once: ->
@@ -195,7 +195,7 @@ class Js.TagConcept
         if format = output.getAttribute 'data-format'
           if args = output.getAttribute 'data-args'
             args = JSON.parse(args)
-          html = if format.include '.'
+          html = if format.match String.SCOPED_CONSTANTIZABLE
             format.constantize()(value, args)
           else if value[format]
             value[format](args)

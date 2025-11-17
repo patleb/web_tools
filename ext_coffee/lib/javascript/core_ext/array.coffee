@@ -35,7 +35,9 @@ Array.polyfill_methods
 Array.decorate_methods
   map: (f_item_index_self, arg) ->
     if f_item_index_self.is_a String
-      @super (item) -> item[f_item_index_self](arg)
+      @super (item) ->
+        return value unless (value = item[f_item_index_self])?.is_a Function
+        item[f_item_index_self](arg)
     else
       @super(f_item_index_self, arg)
 

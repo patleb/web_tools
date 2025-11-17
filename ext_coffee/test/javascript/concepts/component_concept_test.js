@@ -78,11 +78,11 @@ describe('Js.ComponentConcept', () => {
     const label = dom.find('#label')
     const input = dom.find(Js.TagConcept.INPUTS)
     const output = dom.find('#output')
-    dom.on_event({ 'change': () => {
+    dom.on_event({ 'input': () => {
       assert.equal(label.innerHTML, value.safe_text().toString())
       assert.equal(output.innerHTML, value.strftime('%Y-%m-%d %H:%M:%S %Z'))
     }})
     input.value = value.safe_text()
-    dom.fire('change', { target: input })
+    dom.fire('input', { target: input })
   })
 })
