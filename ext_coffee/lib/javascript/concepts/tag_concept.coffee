@@ -166,7 +166,7 @@ class Js.TagConcept
         else if name is 'data-format'
           if text?
             if value.is_a String
-              text = if value.match String.SCOPED_CONSTANTIZABLE
+              text = if value.constantizable()
                 value.constantize()(text, args)
               else if text[value]
                 text[value](args)
@@ -206,7 +206,7 @@ class Js.TagConcept
         if format = output.getAttribute 'data-format'
           if args = output.getAttribute 'data-args'
             args = JSON.parse(args)
-          html = if format.match String.SCOPED_CONSTANTIZABLE
+          html = if format.constantizable()
             format.constantize()(value, args)
           else if value[format]
             value[format](args)

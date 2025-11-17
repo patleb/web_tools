@@ -240,6 +240,9 @@ String.define_methods
   acronym: ->
     @camelize().match(/[A-Z]/g)?.join('')
 
+  constantizable: ->
+    @match String.SCOPED_CONSTANTIZABLE
+
   constantize: ->
     if @match /[^:\w.]+/
       throw 'not a valid module or class name'
