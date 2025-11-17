@@ -3,7 +3,7 @@ class Js.TimeConcept
 
   constants: ->
     ZONES: 'form input[name=_timezone]'
-    FORMATS: 'time[datetime][data-format]'
+    FORMATS: 'time[datetime][data-strftime]'
     FORMATTED: 'js_time:formatted'
 
   events: -> [
@@ -50,5 +50,5 @@ class Js.TimeConcept
   format_datetime = (element) ->
     datetime = element.getAttribute('datetime')?.to_date()
     return unless datetime?.present()
-    format = element.getAttribute('data-format')
+    format = element.getAttribute('data-strftime')
     datetime.strftime(format)
