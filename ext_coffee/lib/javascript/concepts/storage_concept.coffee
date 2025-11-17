@@ -47,13 +47,6 @@ class Js.StorageConcept
 
   # Private
 
-  log: (permanent, scope, name, value, value_was) =>
-    tag = "[STORAGE][#{if permanent then 'P' else '-'}]"
-    @log_debug "#{tag}[#{scope}:#{name}] #{value_was?.safe_text()} => #{value?.safe_text()}"
-
-  log_debug: (msg) ->
-    Logger.debug(msg) if @__debug
-
   storage_node = (id_selector, permanent) ->
     unless (node = Rails.find(id_selector))
       body = document.body.find('[data-turbolinks-body]') ? document.body
@@ -63,3 +56,10 @@ class Js.StorageConcept
         node = div$ id_selector
       body.appendChild(node)
     node
+
+  log: (permanent, scope, name, value, value_was) =>
+    tag = "[STORAGE][#{if permanent then 'P' else '-'}]"
+    @log_debug "#{tag}[#{scope}:#{name}] #{value_was?.safe_text()} => #{value?.safe_text()}"
+
+  log_debug: (msg) ->
+    Logger.debug(msg) if @__debug
