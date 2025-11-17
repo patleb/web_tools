@@ -96,7 +96,7 @@ class Js.TagConcept
       { data: options.delete('data') }.flatten_keys('-').each (key, value) ->
         options[key] = value
 
-    element = true if tag.last() is '$'
+    dom = true if tag.last() is '$'
     tag = tag.chop()
 
     escape = options.delete('escape') ? true
@@ -113,9 +113,8 @@ class Js.TagConcept
       when 'select'
         options.autocomplete ?= 'off' if options.name or options.id
     content = @h_(content) if content?.is_a Array
-    content ?= ''.html_safe(true)
     result = if tag? then @content_tag(tag, content, options, escape) else @h_(content)
-    result = result.to_s().html_safe(true) unless element
+    result = result.to_s().html_safe(true) unless dom
     result
 
   merge_classes: (options, classes) ->
@@ -156,20 +155,32 @@ class Js.TagConcept
     tag = document.createElement(tag)
     options.class = options.delete('class') # necessary to keep #id.classes order
     cast = options.delete('data-cast')
+    args = options.delete('data-args')
     for name, value of options
       if value?
         if cast? and name is 'value'
           cast = type_caster(value) if cast is true
-          value = value.safe_text()
-          tag.setAttribute(name, value)
+          tag.setAttribute(name, value.safe_text())
           tag.setAttribute('data-cast', cast.safe_text()) if cast?
+          tag.setAttribute('data-args', JSON.stringify(args)) if args?
+        else if name is 'data-format'
+          if text?
+            if value.is_a String
+              text = if value.match String.SCOPED_CONSTANTIZABLE
+                value.constantize()(text, args)
+              else if text[value]
+                text[value](args)
+            else
+              text = value(text, args)
+          value = value.deconstantize() unless value.is_a String
+          tag.setAttribute(name, value)
+          tag.setAttribute('data-args', JSON.stringify(args)) if args?
         else if name.start_with 'data'
-          if name is 'data-args'
-            value = JSON.stringify(value)
           tag.setAttribute(name, value)
         else if value isnt false
           value = name if value is true
           tag.setAttribute(name, value)
+    text ?= ''.html_safe(true)
     tag.innerHTML = if escape and not text.html_safe()
       text.safe_text()
     else
