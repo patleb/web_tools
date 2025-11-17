@@ -21,8 +21,9 @@ SINGULAR = [
   [/([^aeiouy]|qu)ies$/i, '$1y'],
   [/(^analy)(sis|ses)$/i, '$1sis'],
 ]
-String.CONSTANTIZABLE = /^[A-Z]/i
-String.SCOPED_CONSTANTIZABLE = /^[A-Z]\w*(\.[A-Z]\w*)+/i
+# NOTE: private scopes/methods are excluded
+String.CONSTANTIZABLE = /^[A-Z][\w.:]*$/i
+String.SCOPED_CONSTANTIZABLE = /^[A-Z]\w*((\.|::)[A-Z]\w*)+$/i
 
 String.override_methods
   sub: (pattern, string_or_f_match) ->
@@ -246,13 +247,22 @@ String.define_methods
       if (@constructor.constantize ?= {}).has_key @valueOf()
         return @constructor.constantize[@valueOf()]
       object = window
+      scope = 'window'
+      scope_was = null
       @replace(/^(\.|::)/, '').split('.').each (class_scope) ->
         return unless class_scope.match String.CONSTANTIZABLE
         class_scope.split('::').each (prototype_scope, i) ->
+          scope_was = scope
+          scope = prototype_scope
+          parent = object
           if i is 0
             object = object[prototype_scope]
           else
             object = object::[prototype_scope]
+          unless primitive(object) or object.__name__
+            object.__name__ = scope
+            object.__scope__ = if i is 0 then "#{scope_was}." else "#{scope_was}::"
+            object.__parent__ = parent
       @constructor.constantize[@valueOf()] = object
 
   partition: (separator) ->

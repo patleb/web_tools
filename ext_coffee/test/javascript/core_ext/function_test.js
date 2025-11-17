@@ -44,4 +44,21 @@ describe('Function', () => {
     assert.equal('IVar Delegate', klass.to_s().toString())
     assert.equal('Module Delegate', klass.module_delegate())
   })
+
+  test('.deconstantize', () => {
+    let string = 'Test.ScopedClass.function'
+    let object = string.constantize()
+    assert.equal('Test.ScopedClass', Test.ScopedClass.deconstantize())
+    assert.equal('Test.ScopedClass::', Test.ScopedClass.prototype.deconstantize())
+    assert.equal(object, Test.ScopedClass.function)
+    assert.equal(string, object.deconstantize())
+    string = 'Test.ScopedClass::method'
+    object = string.constantize()
+    assert.equal(object, Test.ScopedClass.prototype.method)
+    assert.equal(string, object.deconstantize())
+    assert.undefined(Base.deconstantize())
+    assert.undefined(Base.constructor_delegate.deconstantize())
+    assert.undefined(Base.prototype.method.deconstantize())
+    assert.undefined(Base.prototype.deconstantize())
+  })
 })

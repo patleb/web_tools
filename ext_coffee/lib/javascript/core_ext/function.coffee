@@ -13,6 +13,15 @@ Function.PROTECTED_METHODS = [
 ]
 
 Function.define_singleton_methods
+  deconstantize: (object) ->
+    name = object.__name__
+    result = name
+    while name
+      name = object.__scope__
+      object = object.__parent__
+      result = "#{name}#{result}" if name and object isnt window
+    result
+
   throttle: (fn, wait = 0, options = {}) ->
     if wait is 0
       request = null
@@ -92,8 +101,8 @@ Function.override_methods
     this is other
 
 Function.define_methods
-  nullary: ->
-    @length is 0 and !!@toString().match /^function \w+\(\)/
+  deconstantize: ->
+    @constructor.deconstantize(this)
 
   throttle: (wait = 0, options = {}) ->
     @constructor.throttle(this, wait, options)
@@ -138,3 +147,6 @@ Function.define_methods
 
   debounce: (wait = 100, immediate = false) ->
     @constructor.debounce(this, wait, immediate)
+
+  nullary: ->
+    @length is 0 and !!@toString().match /^function \w+\(\)/

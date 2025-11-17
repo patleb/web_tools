@@ -1,6 +1,11 @@
 window.Test ||= {}
 
 class Test.ScopedClass
+  @function: ->
+    'Scoped Function'
+
+  method: ->
+    'Scoped Method'
 
 class window.Module
   @extended: ->

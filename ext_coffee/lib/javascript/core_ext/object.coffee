@@ -27,6 +27,11 @@ Object.define_methods
     else
       @method_missing(method, args...)
 
+  deconstantize: ->
+    result = Function.deconstantize(@constructor)
+    result = "#{result}::" if result
+    result
+
   instance_exec: (block, args...) ->
     block.apply(this, args)
 

@@ -67,7 +67,6 @@ class Js.Concepts
     class_name = names.last()
 
     concept_class = name.constantize()
-    concept_class::module_name = module
     concept_class::class_name = class_name
 
     # NOTE: concept becomes a singleton where concept_class is concept.constructor
