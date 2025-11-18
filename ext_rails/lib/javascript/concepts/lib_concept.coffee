@@ -50,4 +50,4 @@ class Js.LibConcept extends Js.Base
     target?.setAttribute('checked', '')
 
   adjust_autofocus: ->
-    Rails.find('[autofocus]:not([type="email"],[type="number"])')?.cursor_end(true)
+    Rails.find('[autofocus]:not([type="email"],[type="number"],[type="range"])')?.cursor_end(true)

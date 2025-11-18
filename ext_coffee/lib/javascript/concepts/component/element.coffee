@@ -42,6 +42,13 @@ class Js.Component.Element
   find: (selector) ->
     @node.find(selector)
 
+  focus_was: ->
+    return unless @focus?.present()
+    if @scope
+      @find "[data-bind='#{@focus}'][data-scope='#{@scope}']"
+    else
+      @find "[data-bind='#{@focus}']"
+
   render: not_implemented
 
   render_self: (changes = {}) ->
@@ -51,6 +58,9 @@ class Js.Component.Element
     @node.innerHTML = html
     @rendered = true
     @stale = false
+    return unless (input = @focus_was())
+    input.focus()
+    @focus = null
 
   refresh_storage: ->
     changed = false
