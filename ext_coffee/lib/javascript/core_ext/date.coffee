@@ -92,17 +92,33 @@ Date.define_singleton_methods
   first_week_last_day: (year) ->
     7 - Date.new(year, 0, 1).weekday + 1
 
+Date.define_accessors
+  month: (month) ->
+    if month?
+      @setMonth(month - 1)
+    else
+      @getMonth() + 1 # [1 to 12]
+
+  day: (day) ->
+    if day?
+      @setDate(day)
+    else
+      @getDate()
+
+  second: (second) ->
+    if second?
+      @setSeconds(second)
+    else
+      @getSeconds()
+
 Date.define_readers
   leap:       -> @constructor.leap @year
   week:       -> @constructor.week @year, @month, @day
   weekday:    -> if (day = @getDay()) then day else 7 # the week starts on Monday [1 to 7]
   year:       -> @getFullYear()
-  month:      -> @getMonth() + 1 # [1 to 12]
   month_days: -> @constructor.days(@year, @month)
-  day:        -> @getDate()
   hour:       -> @getHours()
   minute:     -> @getMinutes()
-  second:     -> @getSeconds()
   offset:     -> -Math.round(@getTimezoneOffset() / 15) * 15 * 60
 
 Date.override_methods
@@ -145,18 +161,18 @@ Date.define_methods
     unless value.is_a Duration
       value = new Duration(value)
     { sign = 1, years = 0, months = 0, weeks = 0, days = 0, hours = 0, minutes = 0, seconds = 0 } = value
-    months += years * 12
+    months  += years * 12
     [weeks, remainder] = weeks.divmod(1)
-    days += 7 * remainder
-    [days, remainder] = days.divmod(1)
-    days += weeks * 7
-    hours += 24 * remainder
+    days    += 7 * remainder
+    [days,  remainder] = days.divmod(1)
+    days    += weeks * 7
+    hours   += 24 * remainder
     minutes += hours * 60
     seconds += minutes * 60
     date = @dup()
-    date.setMonth(date.month + sign * months) if months
-    date.setDate(date.day + sign * days) if days
-    date.setSeconds(date.second + sign * seconds) if seconds
+    date.month   = date.month  + sign * months  if months
+    date.day     = date.day    + sign * days    if days
+    date.seconds = date.second + sign * seconds if seconds
     date
 
   strftime: (format) ->

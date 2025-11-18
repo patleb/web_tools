@@ -12,7 +12,7 @@ Function.PROTECTED_METHODS = [
   'extended'
 ]
 
-Function.define_singleton_methods
+Function.override_singleton_methods
   deconstantize: (object) ->
     name = object.__name__
     result = name
@@ -22,6 +22,7 @@ Function.define_singleton_methods
       result = "#{name}#{result}" if name and object isnt window
     result
 
+Function.define_singleton_methods
   throttle: (fn, wait = 0, options = {}) ->
     if wait is 0
       request = null
@@ -94,6 +95,9 @@ Function.define_singleton_methods
       timeout = setTimeout delayed, wait
 
 Function.override_methods
+  deconstantize: ->
+    @constructor.deconstantize(this)
+
   blank: ->
     false
 
@@ -101,9 +105,6 @@ Function.override_methods
     this is other
 
 Function.define_methods
-  deconstantize: ->
-    @constructor.deconstantize(this)
-
   throttle: (wait = 0, options = {}) ->
     @constructor.throttle(this, wait, options)
 

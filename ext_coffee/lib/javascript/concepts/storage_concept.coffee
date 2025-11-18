@@ -41,6 +41,7 @@ class Js.StorageConcept
         input.setAttribute('data-cast', cast) if cast
         @log permanent, scope, name, value, value_was
     Rails.fire(@storage(permanent), @CHANGE, { submitter, permanent, scope, changes }) if event and changed
+    changes
 
   storage: (permanent) ->
     if permanent then @root_permanent else @root

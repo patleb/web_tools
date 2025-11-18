@@ -93,6 +93,22 @@ for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegE
       warn_defined_key(type, name)
       Object.defineProperty(type::, name, enumerable: false, get: callback)
 
+    type.define_writers = (methods) ->
+      for name, callback of methods
+        type.define_writer(name, callback)
+
+    type.define_writer = (name, callback) ->
+      warn_defined_key(type, name)
+      Object.defineProperty(type::, name, enumerable: false, set: callback)
+
+    type.define_accessors = (methods) ->
+      for name, callback of methods
+        type.define_accessor(name, callback)
+
+    type.define_accessor = (name, callback) ->
+      warn_defined_key(type, name)
+      Object.defineProperty(type::, name, enumerable: false, get: callback, set: callback)
+
     for pattern in ['prepend_to', 'append_to', 'decorate', 'polyfill']
       do (pattern) ->
         type["#{pattern}_singleton_methods"] = (methods) ->
