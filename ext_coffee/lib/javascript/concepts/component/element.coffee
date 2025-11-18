@@ -29,7 +29,7 @@ class Js.Component.Element
     storage_data = @storage_get()
     if @static or storage_data.present() or @watch_data.is_a Array
       storage_data.each (name, value) => this[name] = value
-      @render_element()
+      @render_self()
     else
       @storage_set(@watch_data)
 
@@ -44,7 +44,7 @@ class Js.Component.Element
 
   render: not_implemented
 
-  render_element: (changes = {}) ->
+  render_self: (changes = {}) ->
     changes.each (name, [value]) => this[name] = value
     unless (html = @render() ? '').html_safe()
       html = html.safe_text()

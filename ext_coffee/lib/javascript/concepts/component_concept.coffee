@@ -54,7 +54,7 @@ class Js.ComponentConcept
         element.refresh_storage()
         false
       else
-        element.render_element(changes)
+        element.render_self(changes)
         true
     elements.each (uid, element) -> Rails.refresh_csrf_tokens(element)
     Rails.fire(document, @CHANGE, { elements }) unless elements.empty()
