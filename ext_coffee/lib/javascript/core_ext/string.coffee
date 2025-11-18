@@ -88,12 +88,15 @@ String.define_methods
     return 0 if @length > 0 and value is ''
     parseInt(value, base)
 
-  to_f: (prefix = null) ->
+  to_f: (type = null) ->
     value = this
-    if prefix is 'metric'
-      if (i = Number.METRIC_PREFIX.index value.last())?
-        value = value.chop().rstrip()
-        value = "#{value}e#{Number.METRIC_EXPONENT[i]}"
+    switch type
+      when 'percent'
+        return parseFloat(value) / 100
+      when 'metric'
+        if (i = Number.METRIC_PREFIX.index value.last())?
+          value = value.chop().rstrip()
+          value = "#{value}e#{Number.METRIC_EXPONENT[i]}"
     parseFloat(value)
 
   to_s: ->
@@ -240,8 +243,11 @@ String.define_methods
   acronym: ->
     @camelize().match(/[A-Z]/g)?.join('')
 
-  constantizable: ->
+  scoped_constantizable: ->
     @match String.SCOPED_CONSTANTIZABLE
+
+  constantizable: ->
+    @match String.CONSTANTIZABLE
 
   constantize: ->
     if @match /[^:\w.]+/

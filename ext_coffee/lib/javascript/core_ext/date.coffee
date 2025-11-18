@@ -68,7 +68,7 @@ Date.define_singleton_methods
 
   # NOTE: first week starts on January 1st, second week stars on next Monday
   week: (year, month, day) ->
-    date = new Date(year, month - 1, day)
+    date = Date.new(year, month - 1, day)
     if month is 1 and day <= 7
       if day <= date.weekday then 1 else 2
     else
@@ -80,30 +80,30 @@ Date.define_singleton_methods
         days += day
         Math.ceil(days / 7) + 1
 
-  days_for: (year, month = null) ->
+  days: (year, month = null) ->
     days = DAYS
     days = DAYS_LEAP if @leap year
     days = days[month - 1] if month
     days
 
   second_week_first_date: (year) ->
-    new Date(year, 0, @first_week_last_day(year) + 1)
+    Date.new(year, 0, @first_week_last_day(year) + 1)
 
   first_week_last_day: (year) ->
-    7 - new Date(year, 0, 1).weekday + 1
+    7 - Date.new(year, 0, 1).weekday + 1
 
 Date.define_readers
-  leap:    -> @constructor.leap @year
-  week:    -> @constructor.week @year, @month, @day
-  weekday: -> if (day = @getDay()) then day else 7 # the week starts on Monday [1 to 7]
-  year:    -> @getFullYear()
-  month:   -> @getMonth() + 1 # [1 to 12]
-  month_days: -> @constructor.days_for(@year, @month)
-  day:     -> @getDate()
-  hour:    -> @getHours()
-  minute:  -> @getMinutes()
-  second:  -> @getSeconds()
-  offset:  -> -Math.round(@getTimezoneOffset() / 15) * 15 * 60
+  leap:       -> @constructor.leap @year
+  week:       -> @constructor.week @year, @month, @day
+  weekday:    -> if (day = @getDay()) then day else 7 # the week starts on Monday [1 to 7]
+  year:       -> @getFullYear()
+  month:      -> @getMonth() + 1 # [1 to 12]
+  month_days: -> @constructor.days(@year, @month)
+  day:        -> @getDate()
+  hour:       -> @getHours()
+  minute:     -> @getMinutes()
+  second:     -> @getSeconds()
+  offset:     -> -Math.round(@getTimezoneOffset() / 15) * 15 * 60
 
 Date.override_methods
   blank: ->

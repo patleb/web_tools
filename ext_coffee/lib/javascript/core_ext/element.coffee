@@ -189,9 +189,9 @@ HTMLElement.define_methods
     if value? and (cast = input.getAttribute('data-cast'))?
       if args = input.getAttribute 'data-args'
         args = JSON.parse(args)
-      value = if cast.constantizable()
+      value = if cast.scoped_constantizable()
         cast.constantize()(value, args)
-      else if value[cast]
+      else if cast.constantizable() and value[cast]
         value[cast](args)
       else # option
         cast

@@ -166,9 +166,9 @@ class Js.TagConcept
         else if name is 'data-format'
           if text?
             if value.is_a String
-              text = if value.constantizable()
+              text = if value.scoped_constantizable()
                 value.constantize()(text, args)
-              else if text[value]
+              else if value.constantizable() and text[value]
                 text[value](args)
             else
               text = value(text, args)
@@ -206,9 +206,9 @@ class Js.TagConcept
         if format = output.getAttribute 'data-format'
           if args = output.getAttribute 'data-args'
             args = JSON.parse(args)
-          html = if format.constantizable()
+          html = if format.scoped_constantizable()
             format.constantize()(value, args)
-          else if value[format]
+          else if format.constantizable() and value[format]
             value[format](args)
       unless (html ?= value ? '').html_safe()
         html = html.safe_text()
