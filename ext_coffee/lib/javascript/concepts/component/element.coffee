@@ -42,12 +42,12 @@ class Js.Component.Element
   find: (selector) ->
     @node.find(selector)
 
-  focus_was: ->
-    return unless @focus?.present()
+  find_input: (name) ->
+    return unless name?.present()
     if @scope
-      @find "[data-bind='#{@focus}'][data-scope='#{@scope}']"
+      @find "[data-bind='#{name}'][data-scope='#{@scope}']"
     else
-      @find "[data-bind='#{@focus}']"
+      @find "[data-bind='#{name}']"
 
   render: not_implemented
 
@@ -58,7 +58,7 @@ class Js.Component.Element
     @node.innerHTML = html
     @rendered = true
     @stale = false
-    return unless (input = @focus_was())
+    return unless (input = @find_input @focus)
     input.focus()
     @focus = null
 
