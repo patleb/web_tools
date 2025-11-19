@@ -66,7 +66,7 @@ Date.define_singleton_methods
   leap: (year) ->
     (year % 4 is 0) and not (year % 100 is 0) or (year % 400 is 0)
 
-  # NOTE: first week starts on January 1st, second week stars on next Monday
+  # NOTE: first week starts on January 1st, second week starts on next Monday
   week: (year, month, day) ->
     date = Date.new(year, month - 1, day)
     if month is 1 and day <= 7
@@ -93,9 +93,15 @@ Date.define_singleton_methods
     7 - Date.new(year, 0, 1).weekday + 1
 
 Date.define_accessors
-  month:  (month)  -> if month?  then @setMonth(month - 1) else @getMonth() + 1 # [1 to 12]
-  day:    (day)    -> if day?    then @setDate(day)        else @getDate()
-  second: (second) -> if second? then @setSeconds(second)  else @getSeconds()
+  month:
+    get:         -> @getMonth() + 1 # [1 to 12]
+    set: (month) -> @setMonth(month - 1)
+  day:
+    get:       -> @getDate()
+    set: (day) -> @setDate(day)
+  second:
+    get:          -> @getSeconds()
+    set: (second) -> @setSeconds(second)
 
 Date.define_readers
   leap:       -> @constructor.leap @year

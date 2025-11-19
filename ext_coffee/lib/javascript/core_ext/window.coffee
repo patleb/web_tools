@@ -52,7 +52,7 @@ window.type_caster = (object) ->
     when Array    then 'to_a'
     when Object   then 'to_h'
 
-for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String]
+for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String, XMLHttpRequest]
   do (type) ->
     type.override_singleton_methods = (methods) ->
       for name, callback of methods
@@ -102,12 +102,13 @@ for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegE
       Object.defineProperty(type::, name, enumerable: false, set: callback)
 
     type.define_accessors = (methods) ->
-      for name, callback of methods
-        type.define_accessor(name, callback)
+      for name, callbacks of methods
+        type.define_accessor(name, callbacks)
 
-    type.define_accessor = (name, callback) ->
+    type.define_accessor = (name, callbacks) ->
       warn_defined_key(type, name)
-      Object.defineProperty(type::, name, enumerable: false, get: callback, set: callback)
+      { get, set } = callbacks
+      Object.defineProperty(type::, name, { enumerable: false, get, set })
 
     for pattern in ['prepend_to', 'append_to', 'decorate', 'polyfill']
       do (pattern) ->

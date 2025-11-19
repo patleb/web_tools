@@ -16,12 +16,11 @@ Rails.merge
       else
         options.error?(response, xhr.status, xhr)
       options.complete?(xhr, xhr.status)
-
-    if options.before_send? and not options.before_send(xhr, options)
+    if options.before_send? and options.before_send(xhr, options) is false
       return false
-
     if xhr.readyState is XMLHttpRequest.OPENED
       xhr.send(options.data)
+    xhr
 
   # Default way to get an element's href. May be overridden at Rails.href.
   href: (element) -> element.href

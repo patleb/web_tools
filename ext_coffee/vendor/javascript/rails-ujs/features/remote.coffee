@@ -7,7 +7,7 @@ Rails.merge
     element = this
 
     return true unless Rails.is_remote(element)
-    unless Rails.fire(element, 'ajax:before')
+    if Rails.fire(element, 'ajax:before') is false
       Rails.fire(element, 'ajax:stopped')
       return false
 
