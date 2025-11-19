@@ -17,7 +17,7 @@ Rails.merge
         options.error?(response, xhr.status, xhr)
       options.complete?(xhr, xhr.status)
 
-    if options.beforeSend? and not options.beforeSend(xhr, options)
+    if options.before_send? and not options.before_send(xhr, options)
       return false
 
     if xhr.readyState is XMLHttpRequest.OPENED

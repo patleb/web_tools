@@ -139,7 +139,7 @@ class Js.Admin.MarkdownConcept
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model })
       data
       data_type: 'json'
-      beforeSend: ->
+      before_send: ->
         Rails.disable_elements button, textarea
         Js.load_spinner()
         true

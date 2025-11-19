@@ -118,7 +118,7 @@ describe('Rails UJS Remote', () => {
 
     it('should allow blank "action"', async () => {
       const url = 'http://localhost/'
-      await rails.submit('#blank-action', { url, 'ajax:beforeSend': (event) => {
+      await rails.submit('#blank-action', { url, 'ajax:before_send': (event) => {
         assert.equal(url, event.detail[1].url)
         event.preventDefault()
       }})
@@ -126,7 +126,7 @@ describe('Rails UJS Remote', () => {
 
     it('should allow blank "formaction"', async () => {
       const url = 'http://localhost/'
-      await rails.click('#blank-formaction button[type="submit"]', { 'ajax:beforeSend': (event) => {
+      await rails.click('#blank-formaction button[type="submit"]', { 'ajax:before_send': (event) => {
         assert.equal(url, event.detail[1].url)
         event.preventDefault()
       }})
@@ -170,7 +170,7 @@ describe('Rails UJS Remote', () => {
   })
 
   it('should detect cross-domain request', async () => {
-    await rails.click('#cross-domain', { 'ajax:beforeSend': (event) => {
+    await rails.click('#cross-domain', { 'ajax:before_send': (event) => {
       assert.true(event.detail[1].crossDomain)
       event.preventDefault()
     }})

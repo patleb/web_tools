@@ -16,7 +16,7 @@ describe('Rails UJS Disable', () => {
 
   it('should disable form input fields with "data-disable" attribute', async () => {
     assert.total(16)
-    dom.on_event({ 'ajax:beforeSend': (event) => {
+    dom.on_event({ 'ajax:before_send': (event) => {
       rails.assert_enabled(event, 'input[type=text]')
     }})
     dom.on_event({ 'ajax:send': (event) => {
@@ -88,14 +88,14 @@ describe('Rails UJS Disable', () => {
       rails.assert_disabled(event)
       event.preventDefault()
     }})
-    await rails.click('button[data-remote]', { skip: 'ajax:beforeSend', 'ajax:stopped': (event) => {
+    await rails.click('button[data-remote]', { skip: 'ajax:before_send', 'ajax:stopped': (event) => {
       rails.assert_enabled(event)
     }})
   })
 
-  it('should re-enable when "ajax:beforeSend" event is cancelled', async () => {
+  it('should re-enable when "ajax:before_send" event is cancelled', async () => {
     assert.total(6)
-    dom.on_event({ 'ajax:beforeSend': (event) => {
+    dom.on_event({ 'ajax:before_send': (event) => {
       rails.assert_disabled(event)
       event.preventDefault()
     }})

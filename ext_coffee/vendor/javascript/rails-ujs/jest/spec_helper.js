@@ -3,7 +3,7 @@ require('@@lib/ext_coffee/core_ext/all')
 const events = [
   'DOMContentLoaded',
   'ajax:before',
-  'ajax:beforeSend',
+  'ajax:before_send',
   'ajax:send',
   'ajax:stopped',
   'ajax:success',

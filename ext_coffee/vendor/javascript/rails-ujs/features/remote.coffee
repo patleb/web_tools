@@ -47,8 +47,8 @@ Rails.merge
       url
       data
       data_type
-      beforeSend: (xhr, options) ->
-        if Rails.fire(element, 'ajax:beforeSend', [xhr, options, action])
+      before_send: (xhr, options) ->
+        if Rails.fire(element, 'ajax:before_send', [xhr, options, action])
           Rails.fire(element, 'ajax:send', [xhr, action])
           turbolinks_started() if action
           true

@@ -26,13 +26,13 @@ describe('Js.TimeConcept', () => {
 
   it('should add timezone to Rails.ajax request headers', async () => {
     assert.total(2)
-    dom.on_event({ 'ajax:beforeSend': (event) => {
+    dom.on_event({ 'ajax:before_send': (event) => {
       event.preventDefault()
     }})
     await rails.ajax('get', '/', { 'complete': (xhr) => {
       assert.equal(-0, Time.zone)
       assert.equal(-0, xhr.req._headers['x-timezone'])
     }})
-    dom.off_event('ajax:beforeSend')
+    dom.off_event('ajax:before_send')
   })
 })
