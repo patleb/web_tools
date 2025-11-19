@@ -93,23 +93,9 @@ Date.define_singleton_methods
     7 - Date.new(year, 0, 1).weekday + 1
 
 Date.define_accessors
-  month: (month) ->
-    if month?
-      @setMonth(month - 1)
-    else
-      @getMonth() + 1 # [1 to 12]
-
-  day: (day) ->
-    if day?
-      @setDate(day)
-    else
-      @getDate()
-
-  second: (second) ->
-    if second?
-      @setSeconds(second)
-    else
-      @getSeconds()
+  month:  (month)  -> if month?  then @setMonth(month - 1) else @getMonth() + 1 # [1 to 12]
+  day:    (day)    -> if day?    then @setDate(day)        else @getDate()
+  second: (second) -> if second? then @setSeconds(second)  else @getSeconds()
 
 Date.define_readers
   leap:       -> @constructor.leap @year
@@ -170,9 +156,9 @@ Date.define_methods
     minutes += hours * 60
     seconds += minutes * 60
     date = @dup()
-    date.month   = date.month  + sign * months  if months
-    date.day     = date.day    + sign * days    if days
-    date.seconds = date.second + sign * seconds if seconds
+    date.month  = date.month  + sign * months  if months
+    date.day    = date.day    + sign * days    if days
+    date.second = date.second + sign * seconds if seconds
     date
 
   strftime: (format) ->

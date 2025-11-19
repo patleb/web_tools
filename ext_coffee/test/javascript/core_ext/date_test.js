@@ -70,6 +70,9 @@ describe('Date', () => {
 
   test('#advance', () => {
     let date = Date.current()
+    assert.equal(Math.floor(date.dup().setMonth(date.getMonth()     + 1) / 1000), date.advance({ months:  1 }).to_i())
+    assert.equal(Math.floor(date.dup().setDate(date.getDate()       + 2) / 1000), date.advance({ days:    2 }).to_i())
+    assert.equal(Math.floor(date.dup().setSeconds(date.getSeconds() + 3) / 1000), date.advance({ seconds: 3 }).to_i())
     assert.equal(date.to_i() + 123, date.advance(123).to_i())
     assert.equal(date.to_i() + 123, date.advance(Duration.new('PT123S')).to_i())
     assert.equal(date.to_i() + 123, date.advance({ seconds: 123 }).to_i())
