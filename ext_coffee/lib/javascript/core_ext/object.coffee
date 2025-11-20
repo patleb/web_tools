@@ -71,6 +71,9 @@ Object.define_methods
   size: ->
     @keys().length
 
+  not_eql: (other) ->
+    not @eql(other)
+
   eql: (other) ->
     return false unless other?.is_a Object
     return false unless @size() is other.size()

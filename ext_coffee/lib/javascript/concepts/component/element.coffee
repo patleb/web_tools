@@ -62,12 +62,16 @@ class Js.Component.Element
     input.focus()
     @focus = null
 
-  refresh_storage: ->
+  update_self: (changes, { rendered } = {})->
     changed = false
-    @storage_get().each (name, value) =>
-      changed ||= this[name] isnt value
+    changes.each (name, [value]) =>
+      changed ||= not eql this[name], value
       this[name] = value
-    @stale = changed
+    if rendered?
+      @rendered = rendered
+      @stale = if rendered then false else changed
+    else
+      @stale = changed
 
   storage_value: (name) ->
     @storage_get(name)[name]

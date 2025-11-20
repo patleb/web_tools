@@ -52,10 +52,10 @@ class Js.ComponentConcept
       if element.static or permanent isnt element.permanent or scope isnt element.scope
         false
       else if element.rendered and element is submitter
-        element.refresh_storage()
+        element.update_self changes
         false
       else
-        element.render_self(changes)
+        element.render_self changes
         true
     elements.each (uid, element) -> Rails.refresh_csrf_tokens(element)
     Rails.fire(document, @CHANGE, { elements }) unless elements.empty()

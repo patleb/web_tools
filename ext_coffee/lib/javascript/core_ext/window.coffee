@@ -2,6 +2,9 @@ window.noop = ->
 
 window.not_implemented = -> throw new Error('NotImplementedError')
 
+window.eql = (value, other) ->
+  value is other or !!value?.eql(other)
+
 window.prepend_to = (object, name, callback) ->
   previous = object[name]
   object[name] = ->
