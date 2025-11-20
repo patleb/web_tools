@@ -10,5 +10,6 @@ sun.install "docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-c
 
 sudo usermod -aG docker ${owner_name}
 
+sun.copy '/etc/docker/daemon.json' 0644 root:root
 sudo chmod 666 /var/run/docker.sock
 sudo systemctl restart docker
