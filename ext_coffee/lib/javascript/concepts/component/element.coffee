@@ -58,9 +58,9 @@ class Js.Component.Element
     @node.innerHTML = html
     @rendered = true
     @stale = false
-    return unless (input = @find_input @focus)
+    return unless (input = @find_input @autofocus)
     input.focus()
-    @focus = null
+    @autofocus = null
 
   update_self: (changes, { rendered } = {})->
     changed = false

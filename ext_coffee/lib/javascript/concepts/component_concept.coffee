@@ -16,7 +16,7 @@ class Js.ComponentConcept
       value = target.get_value()
       value_was = element.storage_value(name)
       if value_was is undefined or value isnt value_was
-        element.focus = name
+        element.autofocus = name if document.activeElement is target
         element.storage_set("#{name}": value)
   ]
 
