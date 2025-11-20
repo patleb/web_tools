@@ -35,13 +35,13 @@ afterEach(() => {
 })
 
 const rails = {
-  ajax: (type, url, { status = 200, ...rest } = {}) => {
+  request: (type, url, { status = 200, ...rest } = {}) => {
     const [event_name, handler] = Object.entries(rest)[0]
     xhr[type](url, (req, res) => {
       return res.status(status)
     })
     return new Promise((resolve) => {
-      return Rails.ajax({ type, url, [event_name]: (...args) => {
+      return new XHR({ type, url, [event_name]: (...args) => {
         resolve(...args)
         handler(...args)
       }})

@@ -55,7 +55,7 @@ describe('Rails UJS Utils', () => {
     dom.on_event({ 'ajax:before_send': (event) => {
       before = true
     }})
-    await rails.ajax('get', '/', { 'complete': (xhr) => {
+    await rails.request('get', '/', { 'complete': (xhr) => {
       assert.false(before)
       assert.equal(200, xhr.status)
     }})

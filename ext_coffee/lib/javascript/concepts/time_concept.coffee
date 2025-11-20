@@ -23,7 +23,7 @@ class Js.TimeConcept
     @offset = new Date().offset
     @zone = try Intl.DateTimeFormat().resolvedOptions().timeZone
     @zone = @offset if not @zone or @zone.start_with('+', '-')
-    prepend_to Rails, 'ajax', (options) =>
+    prepend_to XHR::, 'build', (options) =>
       options.headers ?= {}
       options.headers['X-Timezone'] = @zone
     @refresh()

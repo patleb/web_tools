@@ -116,7 +116,7 @@ class Js.Admin.MarkdownConcept
         @fetch_blob_id(button, file, uid)
 
   fetch_blob_id: (button, file, uid) ->
-    Rails.ajax({
+    new XHR({
       type: 'GET'
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model, blob: { uid } })
       data_type: 'json'
@@ -134,22 +134,20 @@ class Js.Admin.MarkdownConcept
     data = new FormData()
     data.append('blob[filename]', file.name)
     data.append('blob[data]', file)
-    Rails.ajax({
+    new XHR({
       type: 'POST'
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model })
       data
       data_type: 'json'
+      spinner: true
       before_send: ->
         Rails.disable_elements button, textarea
-        Js.load_spinner()
-        true
       success: (response) =>
         @link_blob(button, response.blob.id, file.name)
       error: =>
         @on_file_error()
       complete: ->
         Rails.enable_elements button, textarea
-        Js.clear_spinner()
     })
 
   link_blob: (button, id, filename) ->

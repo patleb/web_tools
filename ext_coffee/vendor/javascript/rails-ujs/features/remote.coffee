@@ -42,7 +42,7 @@ Rails.merge
     data_type = 'html' if action
     data_type ||= 'script'
 
-    Rails.ajax({
+    new XHR({
       type: method
       url
       data

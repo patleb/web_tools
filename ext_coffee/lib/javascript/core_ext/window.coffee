@@ -55,7 +55,7 @@ window.type_caster = (object) ->
     when Array    then 'to_a'
     when Object   then 'to_h'
 
-for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String, XMLHttpRequest]
+for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String]
   do (type) ->
     type.override_singleton_methods = (methods) ->
       for name, callback of methods

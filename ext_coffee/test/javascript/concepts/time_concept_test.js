@@ -24,12 +24,12 @@ describe('Js.TimeConcept', () => {
     Js.Storage.set({ time: '2020-01-01 01:01:01 GMT' })
   })
 
-  it('should add timezone to Rails.ajax request headers', async () => {
+  it('should add timezone to new XHR request headers', async () => {
     assert.total(2)
     dom.on_event({ 'ajax:before_send': (event) => {
       event.preventDefault()
     }})
-    await rails.ajax('get', '/', { 'complete': (xhr) => {
+    await rails.request('get', '/', { 'complete': (xhr) => {
       assert.equal(-0, Time.zone)
       assert.equal(-0, xhr.req._headers['x-timezone'])
     }})
