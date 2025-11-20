@@ -3,3 +3,5 @@ XMLHttpRequest.define_methods
     return unless @readyState < XMLHttpRequest.DONE
     @onreadystatechange = noop
     @abort()
+
+window.XHR = XMLHttpRequest
