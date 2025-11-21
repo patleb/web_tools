@@ -23,8 +23,7 @@ class Js.PageConcept
           url: Routes.path_for('edit_page_field', uuid: @uuid, id: current_id)
           data: { page: { field: { list_prev_id, list_next_id } } }
           data_type: 'json'
-          error: (response, status, xhr) ->
-            Flash.alert(response.flash.alert)
+          alert: (response) -> response.flash.alert
         })
 
   leave: ->

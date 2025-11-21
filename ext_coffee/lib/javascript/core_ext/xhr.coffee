@@ -15,6 +15,14 @@ class window.XHR
         options.success?(response, @xhr.status, @xhr)
       else
         options.error?(response, @xhr.status, @xhr)
+        if (alert = options.alert)?.present()
+          message = if alert is true
+            'Server Error'
+          else if alert.is_a Function
+            alert(response, @xhr.status, @xhr)
+          else
+            alert
+          Flash.alert message
       options.complete?(@xhr, @xhr.status)
       Js.clear_spinner() if options.spinner
     if options.before_send? and options.before_send(@xhr, options) is false

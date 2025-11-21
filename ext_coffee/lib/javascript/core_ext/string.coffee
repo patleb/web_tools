@@ -23,7 +23,7 @@ SINGULAR = [
 ]
 # NOTE: private scopes/methods are excluded
 String.CONSTANTIZABLE = /^[A-Z][\w.:]*$/i
-String.SCOPED_CONSTANTIZABLE = /^[A-Z]\w*((\.|::)[A-Z]\w*)+$/i
+String.SCOPE_CONSTANTIZABLE = /^[A-Z]\w*((\.|::)[A-Z]\w*)+$/i
 
 String.override_methods
   sub: (pattern, string_or_f_match) ->
@@ -63,6 +63,7 @@ String.override_methods
       !!@_html_safe
 
   safe_text: ->
+    return this if @html_safe()
     return @html_safe(true) unless this and /[&<>"'`]/.test(this)
     @replace(/[&<>"'`]/g, (char) -> HTML_ESCAPES[char]).html_safe(true)
 
@@ -243,8 +244,8 @@ String.define_methods
   acronym: ->
     @camelize().match(/[A-Z]/g)?.join('')
 
-  scoped_constantizable: ->
-    @match String.SCOPED_CONSTANTIZABLE
+  scope_constantizable: ->
+    @match String.SCOPE_CONSTANTIZABLE
 
   constantizable: ->
     @match String.CONSTANTIZABLE
@@ -300,4 +301,6 @@ String.define_methods
       @endsWith(suffix)
 
   simple_format: ->
-    @gsub /\r?\n/g, '<br>'
+    formatted = @gsub /\r?\n/g, '<br>'
+    formatted = formatted.html_safe(true) if @html_safe()
+    formatted

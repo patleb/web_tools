@@ -120,13 +120,12 @@ class Js.Admin.MarkdownConcept
       type: 'GET'
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model, blob: { uid } })
       data_type: 'json'
+      alert: true
       success: (response) =>
         if (id = response.blob.id)
           @link_blob(button, id, file.name)
         else
           @upload_file(button, file)
-      error: =>
-        @on_file_error()
     })
 
   upload_file: (button, file) ->
@@ -140,12 +139,11 @@ class Js.Admin.MarkdownConcept
       data
       data_type: 'json'
       spinner: true
+      alert: true
       before_send: ->
         Rails.disable_elements button, textarea
       success: (response) =>
         @link_blob(button, response.blob.id, file.name)
-      error: =>
-        @on_file_error()
       complete: ->
         Rails.enable_elements button, textarea
     })
@@ -217,6 +215,3 @@ class Js.Admin.MarkdownConcept
       Flash.alert "File must be an image"
       return false
     true
-
-  on_file_error: ->
-    Flash.alert 'Server Error'
