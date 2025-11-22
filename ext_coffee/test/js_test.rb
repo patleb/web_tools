@@ -8,6 +8,6 @@ class JsTest < Minitest::TestCase
   end
 
   it 'should execute js tests successfully' do
-    assert_equal false, system("yarn test 2>&1 | grep 'FAIL'")
+    assert_equal false, system("yarn test 2>&1 | grep -E 'FAIL|Error'")
   end
 end
