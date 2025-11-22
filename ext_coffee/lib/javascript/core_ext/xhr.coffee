@@ -9,6 +9,24 @@ ACCEPT_HEADERS =
 class window.XHR
   @cache_size: (@_cache_size) ->
 
+  @cache_add: (type, url, data, response) ->
+    @cache ?= lru(@_cache_size or 500)
+    type = type.upcase()
+    if type is 'GET' and data
+      if data.is_a Object
+        data = Object.deep_sort(data)
+        data = data.to_query()
+      url = Rails.push_query(url, data)
+      data = undefined
+    else if data?.is_a Object
+      data = Object.deep_sort(data)
+      data = data.to_json()
+    cache_key = [type, url, data].join(',')
+    if (cache = @cache.get cache_key) is undefined
+      if @cache.size is @cache.max
+        @cache.evict()
+      @cache.set cache_key, response
+
   @send: (options) ->
     new this(options)
 
@@ -32,21 +50,26 @@ class window.XHR
 
   send: (options) ->
     options.url ||= location.href
-    options.type = options.type.toUpperCase()
+    options.type = options.type.upcase()
     # append data to url if it's a GET request
     if options.type is 'GET' and options.data
+      if options.data.is_a Object
+        options.data = Object.deep_sort(options.data) if options.cache
+        options.data = options.data.to_query()
       options.url = Rails.push_query(options.url, options.data)
+      delete options.data
     options.data_type = '*' unless ACCEPT_HEADERS[options.data_type]?
     options.accept = ACCEPT_HEADERS[options.data_type]
     options.accept += ', */*; q=0.01' if options.data_type isnt '*'
     @xhr.open(options.type, options.url, true)
     @xhr.setRequestHeader('Accept', options.accept)
     # Sending FormData will automatically set Content-Type to multipart/form-data
-    if typeof options.data is 'string'
+    if options.data?.is_a String
       @xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
     else if options.data?.is_a Object
       @xhr.setRequestHeader('Content-Type', 'application/json')
-      options.data = JSON.stringify(options.data)
+      options.data = Object.deep_sort(options.data) if options.cache
+      options.data = options.data.to_json()
     unless options.crossDomain
       @xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
       # Add X-CSRF-Token

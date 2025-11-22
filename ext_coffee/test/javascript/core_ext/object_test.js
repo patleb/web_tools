@@ -13,6 +13,14 @@ describe('Object', () => {
     assert.equal([['a', 1], ['b', 2]], { a: 1, b: 2 }.to_a())
   })
 
+  test('#to_query', () => {
+    assert.equal('a=1&b=2', { a: 1, b: 2 }.to_query())
+    assert.equal('a=1', { a: 1, b: ' ' }.to_query(false))
+    assert.equal('a=1', { a: 1, ' ': 2 }.to_query(false))
+    assert.equal('a%5B%5D=1&a%5B%5D=2', { a: [1, 2] }.to_query())
+    assert.equal('a%5Bb%5D=1&a%5Bc%5D=2&d%5B%5D=3&e=4', { a: { b: 1, c: 2 }, d: [3], e: 4 }.to_query())
+  })
+
   test('#blank', () => {
     assert.true({}.blank())
     assert.false({ null: null }.blank())
@@ -140,5 +148,11 @@ describe('Object', () => {
     const object = { a: { b: 1 }, d: {} }
     assert.equal({ a: { b: 1, c: 2 }, d: null }, object.deep_merge({ a: { c: 2 }, d: null }))
     assert.equal({ a: { b: 1, c: 2 }, d: null }, object)
+  })
+
+  test('.deep_sort', () => {
+    const object = { b: 1, a: [3, 2] }
+    assert.equal({ a: [2, 3], b: 1 }, Object.deep_sort(object))
+    assert.equal([2, 3], Object.deep_sort(object.a))
   })
 })

@@ -20,6 +20,30 @@ Object.define_singleton_methods
           target[key] = value
     target
 
+  deep_sort: (object) ->
+    if not object?.is_a?
+      result = object
+    else if object.is_a Array
+      result = object.map((value) -> Object.deep_sort(value)).sort()
+    else if object.is_a Object
+      result = {}
+      keys = object.keys().sort (left, right) ->
+        left = left.downcase()
+        right = right.downcase()
+        if left < right      then -1
+        else if left > right then  1
+        else                       0
+      for key in keys
+        result[key] = if not (value = object[key])?.is_a?
+          value
+        else if value.is_a(Array) or value.is_a Object
+          Object.deep_sort(value)
+        else
+          value
+    else
+      result = object
+    result
+
 Object.define_methods
   __send__: (method, args...) ->
     if this[method]?.is_a Function
@@ -49,6 +73,27 @@ Object.define_methods
 
   to_h: ->
     this
+
+  to_json: ->
+    JSON.stringify(this)
+
+  # Note: Object of Arrays and Array of Objects not supported
+  to_query: (blanks = true) ->
+    params = @map (param_name, param_value) ->
+      switch param_value?.constructor
+        when Object
+          param_value.flatten_keys('][').map (names, value) ->
+            [[param_name, '[', names, ']'].join(''), value]
+        when Array
+          param_value.map (value) ->
+            [[param_name, '[]'].join(''), value]
+        else
+          [[param_name, param_value]]
+    params = params.map (values) ->
+      values.map ([name, value]) ->
+        if name?.present() and (blanks or value?.present())
+          "#{encodeURIComponent(name)}=#{encodeURIComponent(value)}"
+    params.flatten().compact().join('&')
 
   html_safe: ->
     false

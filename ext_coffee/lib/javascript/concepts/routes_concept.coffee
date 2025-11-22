@@ -38,31 +38,13 @@ class Js.RoutesConcept
       else
         segment
     location.pathname = pathname.join('/').sub(/\/$/, '')
-    location.search = @encode_params(params, blanks) unless params.empty()
+    location.search = params.to_query(blanks) unless params.empty()
     location
 
   decode_url: (string) ->
     link = document.createElement('a')
     link.href = string
     link
-
-  # Object of Arrays and Array of Objects not supported
-  encode_params: (params, blanks = true) ->
-    params = params.map (param_name, param_value) ->
-      switch param_value?.constructor
-        when Object
-          param_value.flatten_keys('][').map (names, value) ->
-            [[param_name, '[', names, ']'].join(''), value]
-        when Array
-          param_value.map (value) ->
-            [[param_name, '[]'].join(''), value]
-        else
-          [[param_name, param_value]]
-    params = params.map (values) ->
-      values.map ([name, value]) ->
-        if name?.present() and (blanks or value?.present())
-          "#{encodeURIComponent(name)}=#{encodeURIComponent(value)}"
-    params.flatten().compact().join('&')
 
   add_param = (params, [name, value]) ->
     names = name.split('][').map((name) -> name.sub(/\]$/, '').split('[')).flatten()

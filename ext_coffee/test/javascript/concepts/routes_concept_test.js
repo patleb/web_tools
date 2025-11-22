@@ -22,14 +22,6 @@ describe('Js.RoutesConcept', () => {
     assert.equal('/?a=1', Routes.path_for('root', { a: 1 }))
   })
 
-  test('#encode_params', () => {
-    assert.equal('a=1&b=2', Routes.encode_params({ a: 1, b: 2 }))
-    assert.equal('a=1', Routes.encode_params({ a: 1, b: ' ' }, false))
-    assert.equal('a=1', Routes.encode_params({ a: 1, ' ': 2 }, false))
-    assert.equal('a%5B%5D=1&a%5B%5D=2', Routes.encode_params({ a: [1, 2] }))
-    assert.equal('a%5Bb%5D=1&a%5Bc%5D=2&d%5B%5D=3&e=4', Routes.encode_params({ a: { b: 1, c: 2 }, d: [3], e: 4 }))
-  })
-
   test('#decode_params', () => {
     assert.equal({ a: '1', b: '2' }, Routes.decode_params('a=1&b=2'))
     assert.equal({ a: ['1', '2'] }, Routes.decode_params('a%5B%5D=1&a%5B%5D=2'))

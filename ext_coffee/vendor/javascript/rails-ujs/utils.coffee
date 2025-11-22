@@ -66,7 +66,7 @@ Rails.merge
       root = Rails unless root.$?
       root.$("form input[name='#{param}']").forEach (input) -> input.value = token
 
-  serialize_element: (element, additional_param, include_blanks = true) ->
+  serialize_element: (element, additional_param, blanks = true) ->
     inputs = [element]
     inputs = Array.wrap(element.elements) if element.matches('form')
     params = []
@@ -81,7 +81,7 @@ Rails.merge
         params.push(name: input.name, value: input.value)
     params.push(additional_param) if additional_param
     params.map (param) ->
-      if Rails.is_present(param.name) and (include_blanks or Rails.is_present(param.value))
+      if Rails.is_present(param.name) and (blanks or Rails.is_present(param.value))
         "#{encodeURIComponent(param.name)}=#{encodeURIComponent(param.value)}"
       else if typeof param is 'string' and Rails.is_present(param)
         param
