@@ -1,3 +1,5 @@
+window.lru = require('tiny-lru').lru
+window.Cookies = require('js-cookie')
 require('@@lib/ext_coffee/core_ext/polyfills/custom_event')
 require('@@lib/ext_coffee/core_ext/polyfills/performance_now')
 require('@@lib/ext_coffee/core_ext/polyfills/replace_with')

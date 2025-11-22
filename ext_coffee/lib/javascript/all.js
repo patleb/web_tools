@@ -2,8 +2,6 @@ var images = require.context('@@/images', true)
 var image_path = function(name) { return images(name, true) }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
-import { lru } from 'tiny-lru'
-import Cookies from 'js-cookie'
 import { enableDragDropTouch } from 'drag-drop-touch'
 import sortable from 'html5sortable/dist/html5sortable.es'
 
@@ -19,8 +17,6 @@ import Hamster from '@@vendor/hamsterjs/hamster'
 
 document.addEventListener('DOMContentLoaded', function() {
   window.$image = image_path
-  window.lru = lru
-  window.Cookies = Cookies
   window.sortable = sortable
   window.Hamster = Hamster
   enableDragDropTouch()
