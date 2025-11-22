@@ -31,7 +31,7 @@ Rails.merge
   find: (selector) ->
     if (id = selector.id)
       document.getElementById(id)
-    else if selector.start_with '#'
+    else if selector.startsWith '#'
       document.getElementById(selector.lchop())
     else
       document.querySelector(selector)
@@ -117,7 +117,7 @@ Rails.merge
 
   # Helper function, needed to provide consistent behavior in IE
   stop_everything: (e) ->
-    Rails.fire(e.target, 'ujs:everythingStopped')
+    e.target.fire 'ujs:everythingStopped'
     e.preventDefault()
     e.stopPropagation()
     e.stopImmediatePropagation()

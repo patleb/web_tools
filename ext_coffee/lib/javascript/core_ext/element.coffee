@@ -89,7 +89,12 @@ HTMLElement.define_methods
     elements
 
   find: (selector) ->
-    @querySelector(selector)
+    if (id = selector.id)
+      @getElementById(id)
+    else if selector.startsWith '#'
+      @getElementById(selector.lchop())
+    else
+      @querySelector(selector)
 
   data: (key) ->
     this.getAttribute("data-#{key}")
@@ -157,8 +162,8 @@ HTMLElement.define_methods
         return value unless @value isnt value
         this.value = value
     switch event
-      when 'change', true then Rails.fire(this, 'change')
-      when 'input'        then Rails.fire(this, 'input')
+      when 'change', true then @fire 'change'
+      when 'input'        then @fire 'input'
     value
 
   cursor_start: (move = false) ->
@@ -184,6 +189,9 @@ HTMLElement.define_methods
 
   invalid: ->
     not @valid()
+
+  fire: (name, data) ->
+    Rails.fire(this, name, data)
 
   cast_value = (input, value) ->
     if value? and (cast = input.getAttribute('data-cast'))?

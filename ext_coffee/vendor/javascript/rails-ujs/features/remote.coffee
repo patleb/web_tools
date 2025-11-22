@@ -7,8 +7,8 @@ Rails.merge
     element = this
 
     return true unless Rails.is_remote(element)
-    if Rails.fire(element, 'ajax:before') is false
-      Rails.fire(element, 'ajax:stopped')
+    if element.fire('ajax:before') is false
+      element.fire 'ajax:stopped'
       return false
 
     with_credentials = element.getAttribute('data-with-credentials')
@@ -48,21 +48,21 @@ Rails.merge
       data
       data_type
       before_send: (request, options) ->
-        if Rails.fire(element, 'ajax:before_send', [request, options, action])
-          Rails.fire(element, 'ajax:send', [request, action])
+        if element.fire 'ajax:before_send', [request, options, action]
+          element.fire 'ajax:send', [request, action]
           turbolinks_started() if action
           true
         else
-          Rails.fire(element, 'ajax:stopped')
+          element.fire 'ajax:stopped'
           false
       success: (response, request) ->
-        Rails.fire(element, 'ajax:success', [response, request, action])
+        element.fire 'ajax:success', [response, request, action]
         turbolinks_visit(response, request, url, action) if action
       error: (response, request) ->
-        Rails.fire(element, 'ajax:error', [response, request, action])
+        element.fire 'ajax:error', [response, request, action]
         turbolinks_visit(response, request, url, action, true) if action
       complete: (request) ->
-        Rails.fire(element, 'ajax:complete', [request, action])
+        element.fire 'ajax:complete', [request, action]
       crossDomain: Rails.is_cross_domain(url)
       withCredentials: with_credentials? and with_credentials isnt 'false'
     })
@@ -83,7 +83,7 @@ Rails.merge
     link = this
     method = link.getAttribute('data-method')
     data = link.getAttribute('data-params')
-    if Rails.is_meta_click(e, method, data) and Rails.fire(e.target, 'ujs:meta-click')
+    if Rails.is_meta_click(e, method, data) and e.target.fire 'ujs:meta-click'
       e.stopImmediatePropagation()
 
 turbolinks_action = (element, data_type, submitable_form = false) ->

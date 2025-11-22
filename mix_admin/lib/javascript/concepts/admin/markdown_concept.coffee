@@ -52,7 +52,7 @@ class Js.Admin.MarkdownConcept
       textarea.setRangeText([token, token].join(''), start, end)
       textarea.focus()
       textarea.cursor_start(start + size)
-    Rails.fire textarea, 'change'
+    textarea.fire 'change'
 
   prepend_lines: (button, token) ->
     [textarea, lines, start_i, end_i] = @selection_lines(button)
@@ -72,7 +72,7 @@ class Js.Admin.MarkdownConcept
     textarea.setRangeText(text, start, end)
     textarea.focus()
     textarea.cursor_start(start + text_size + 3)
-    Rails.fire textarea, 'change'
+    textarea.fire 'change'
 
   push_history: (event, textarea) ->
     { push, undo, redo } = @get_history(textarea)
@@ -155,7 +155,7 @@ class Js.Admin.MarkdownConcept
     textarea.setRangeText(text, start, end)
     textarea.focus()
     textarea.cursor_start(start + text.length)
-    Rails.fire textarea, 'change'
+    textarea.fire 'change'
 
   # Private
 

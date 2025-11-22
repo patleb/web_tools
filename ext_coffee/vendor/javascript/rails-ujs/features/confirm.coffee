@@ -19,8 +19,8 @@ allow_action = (element) ->
   return true unless message
 
   answer = false
-  if Rails.fire(element, 'confirm')
+  if element.fire 'confirm'
     try answer = Rails.confirm(message, element)
-    callback = Rails.fire(element, 'confirm:complete', [answer])
+    callback = element.fire 'confirm:complete', [answer]
 
   answer and callback

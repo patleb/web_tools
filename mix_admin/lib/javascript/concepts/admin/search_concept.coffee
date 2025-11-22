@@ -69,7 +69,7 @@ class Js.Admin.SearchConcept
     return if @query_submitted
     return if target.get_value()?.present()
     return unless Routes.decode_params().q
-    Rails.fire @query_bar, 'submit'
+    @query_bar.fire 'submit'
 
   with_search_token: (target, callback, { reset = false, before_size = 2, token = target.get_value() } = {}) ->
     search = @search.get_value() ? ''
