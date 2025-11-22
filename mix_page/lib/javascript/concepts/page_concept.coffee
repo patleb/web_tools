@@ -18,7 +18,7 @@ class Js.PageConcept
         unless (sibling = item.next()) and (list_next_id = sibling.data('id'))
           unless (sibling = item.prev()) and (list_prev_id = sibling.data('id'))
             return
-        new XHR({
+        XHR.send({
           type: 'POST'
           url: Routes.path_for('edit_page_field', uuid: @uuid, id: current_id)
           data: { page: { field: { list_prev_id, list_next_id } } }

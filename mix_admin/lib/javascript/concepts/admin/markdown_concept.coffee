@@ -116,7 +116,7 @@ class Js.Admin.MarkdownConcept
         @fetch_blob_id(button, file, uid)
 
   fetch_blob_id: (button, file, uid) ->
-    new XHR({
+    XHR.send({
       type: 'GET'
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model, blob: { uid } })
       data_type: 'json'
@@ -133,7 +133,7 @@ class Js.Admin.MarkdownConcept
     data = new FormData()
     data.append('blob[filename]', file.name)
     data.append('blob[data]', file)
-    new XHR({
+    XHR.send({
       type: 'POST'
       url: Routes.path_for('upload', { model_name: Js.AdminConcept.model })
       data

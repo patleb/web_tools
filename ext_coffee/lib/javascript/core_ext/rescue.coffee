@@ -9,5 +9,5 @@ if process.env.NODE_ENV is 'production'
       rescue_string = JSON.stringify(rescue)
       if rescues_caught.exclude(rescue_string)
         rescues_caught.push(rescue_string)
-        new XHR(url: '/_rescue_js', type: 'POST', data_type: 'json', data: { rescue_js: rescue })
+        XHR.send(url: '/_rescue_js', type: 'POST', data_type: 'json', data: { rescue_js: rescue })
     Rails.stop_everything(event)

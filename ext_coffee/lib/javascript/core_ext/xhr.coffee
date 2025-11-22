@@ -7,30 +7,12 @@ ACCEPT_HEADERS =
   script: 'text/javascript, application/javascript, application/ecmascript, application/x-ecmascript'
 
 class window.XHR
+  @send: (options) ->
+    new this(options)
+
   constructor: (options) ->
     @xhr = new XMLHttpRequest()
-    @build options, =>
-      response = @process_response()
-      if 200 <= @xhr.status < 300
-        options.success?(response, this)
-      else
-        options.error?(response, this)
-        if (alert = options.alert)?.present()
-          message = if alert is true
-            'Server Error'
-          else if alert.is_a Function
-            alert(response, this)
-          else
-            alert
-          Flash.alert message
-      options.complete?(this)
-      Js.clear_spinner() if options.spinner
-    if options.before_send? and options.before_send(this, options) is false
-      return false
-    else if options.spinner
-      Js.load_spinner()
-    if @xhr.readyState is XMLHttpRequest.OPENED
-      @xhr.send(options.data)
+    @send(options)
 
   abort_if_pending: ->
     return unless @xhr.readyState < XMLHttpRequest.DONE
@@ -39,7 +21,7 @@ class window.XHR
 
   # Private
 
-  build: (options, done) ->
+  send: (options) ->
     options.url ||= location.href
     options.type = options.type.toUpperCase()
     # append data to url if it's a GET request
@@ -66,7 +48,30 @@ class window.XHR
       @xhr.setRequestHeader(name, value)
     @xhr.withCredentials = !!options.withCredentials
     @xhr.onreadystatechange = =>
-      done(@xhr) if @xhr.readyState is XMLHttpRequest.DONE
+      @done(options) if @xhr.readyState is XMLHttpRequest.DONE
+    if options.before_send? and options.before_send(this, options) is false
+      return
+    else if options.spinner
+      Js.load_spinner()
+    if @xhr.readyState is XMLHttpRequest.OPENED
+      @xhr.send(options.data)
+
+  done: (options) ->
+    response = @process_response()
+    if 200 <= @xhr.status < 300
+      options.success?(response, this)
+    else
+      options.error?(response, this)
+      if (alert = options.alert)?.present()
+        message = if alert is true
+          'Server Error'
+        else if alert.is_a Function
+          alert(response, this)
+        else
+          alert
+        Flash.alert message
+    options.complete?(this)
+    Js.clear_spinner() if options.spinner
 
   process_response: (response, type) ->
     response = @xhr.response ? @xhr.responseText

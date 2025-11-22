@@ -42,7 +42,7 @@ Rails.merge
     data_type = 'html' if action
     data_type ||= 'script'
 
-    new XHR({
+    XHR.send({
       type: method
       url
       data

@@ -41,7 +41,7 @@ const rails = {
       return res.status(status)
     })
     return new Promise((resolve) => {
-      return new XHR({ type, url, [event_name]: (...args) => {
+      return XHR.send({ type, url, [event_name]: (...args) => {
         resolve(...args)
         handler(...args)
       }})
