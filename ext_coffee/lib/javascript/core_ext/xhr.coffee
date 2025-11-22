@@ -7,10 +7,13 @@ ACCEPT_HEADERS =
   script: 'text/javascript, application/javascript, application/ecmascript, application/x-ecmascript'
 
 class window.XHR
+  @cache_size: (@_cache_size) ->
+
   @send: (options) ->
     new this(options)
 
   constructor: (options) ->
+    @constructor.cache ?= lru(@constructor._cache_size or 500)
     @xhr = new XMLHttpRequest()
     @send(options)
 
@@ -18,6 +21,12 @@ class window.XHR
     return unless @xhr.readyState < XMLHttpRequest.DONE
     @xhr.onreadystatechange = noop
     @xhr.abort()
+
+  status: ->
+    if @cache
+      200
+    else
+      @xhr.status
 
   # Private
 
@@ -53,12 +62,18 @@ class window.XHR
       return
     else if options.spinner
       Js.load_spinner()
-    if @xhr.readyState is XMLHttpRequest.OPENED
+    if options.cache and (@cache = @constructor.cache.get(@cache_key(options))) isnt undefined # value can be null
+      @done(options)
+    else if @xhr.readyState is XMLHttpRequest.OPENED
       @xhr.send(options.data)
 
   done: (options) ->
-    response = @process_response()
-    if 200 <= @xhr.status < 300
+    response = if @cache isnt undefined then @cache else @process_response()
+    if @cache isnt undefined or 200 <= @xhr.status < 300
+      if options.cache and @cache is undefined
+        if @constructor.cache.size is @constructor.cache.max
+          @constructor.cache.evict()
+        @constructor.cache.set(@cache_key(options), response)
       options.success?(response, this)
     else
       options.error?(response, this)
@@ -73,7 +88,7 @@ class window.XHR
     options.complete?(this)
     Js.clear_spinner() if options.spinner
 
-  process_response: (response, type) ->
+  process_response: ->
     response = @xhr.response ? @xhr.responseText
     type = @xhr.getResponseHeader('Content-Type')
     if typeof response is 'string' and typeof type is 'string'
@@ -92,3 +107,6 @@ class window.XHR
         unless not (try response = parser.parseFromString(response, type)) or head
           response = response.body
     response
+
+  cache_key: (options) ->
+    @_cache_key ||= [options.type, options.url, options.data].join(',')
