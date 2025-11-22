@@ -51,6 +51,15 @@ class Js.Component.Element
 
   render: not_implemented
 
+  render_or_update: (changes, render) ->
+    changes = @storage_set changes, false
+    if render
+      @render_self changes
+    else
+      @update_self changes
+    @stale = false
+    changes
+
   render_self: (changes = {}) ->
     changes.each (name, [value]) => this[name] = value
     unless (html = @render() ? '').html_safe()

@@ -68,6 +68,11 @@ String.override_methods
     @replace(/[&<>"'`]/g, (char) -> HTML_ESCAPES[char]).html_safe(true)
 
 String.define_methods
+  add: (other) ->
+    value = this + other
+    value = value.html_safe(true) if @html_safe() and other.html_safe()
+    value
+
   safe_regex: ->
     return this unless this and /[\\^$.*+?()[\]{}|]/.test(this)
     @replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
