@@ -47,22 +47,22 @@ Rails.merge
       url
       data
       data_type
-      before_send: (xhr, options) ->
-        if Rails.fire(element, 'ajax:before_send', [xhr, options, action])
-          Rails.fire(element, 'ajax:send', [xhr, action])
+      before_send: (request, options) ->
+        if Rails.fire(element, 'ajax:before_send', [request, options, action])
+          Rails.fire(element, 'ajax:send', [request, action])
           turbolinks_started() if action
           true
         else
           Rails.fire(element, 'ajax:stopped')
           false
-      success: (response, status, xhr) ->
-        Rails.fire(element, 'ajax:success', [response, status, xhr, action])
-        turbolinks_visit(response, xhr, url, action) if action
-      error: (response, status, xhr) ->
-        Rails.fire(element, 'ajax:error', [response, status, xhr, action])
-        turbolinks_visit(response, xhr, url, action, true) if action
-      complete: (xhr, status) ->
-        Rails.fire(element, 'ajax:complete', [xhr, status, action])
+      success: (response, request) ->
+        Rails.fire(element, 'ajax:success', [response, request, action])
+        turbolinks_visit(response, request, url, action) if action
+      error: (response, request) ->
+        Rails.fire(element, 'ajax:error', [response, request, action])
+        turbolinks_visit(response, request, url, action, true) if action
+      complete: (request) ->
+        Rails.fire(element, 'ajax:complete', [request, action])
       crossDomain: Rails.is_cross_domain(url)
       withCredentials: with_credentials? and with_credentials isnt 'false'
     })
@@ -100,7 +100,7 @@ turbolinks_action = (element, data_type, submitable_form = false) ->
 turbolinks_started = ->
   Turbolinks.request_started()
 
-turbolinks_visit = (response, xhr, url, action, error = false) ->
+turbolinks_visit = (response, request, url, action, error = false) ->
   Turbolinks.request_finished()
   Turbolinks.clear_cache(true)
-  Turbolinks.visit(xhr.getResponseHeader('X-Xhr-Redirect') or url, action: action, html: response, error: error)
+  Turbolinks.visit(request.xhr.getResponseHeader('X-Xhr-Redirect') or url, action: action, html: response, error: error)

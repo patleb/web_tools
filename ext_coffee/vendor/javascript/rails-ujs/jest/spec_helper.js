@@ -141,7 +141,7 @@ const rails = {
     }
   },
   assert_request: (event, method, url, body) => {
-    const request = event.detail[0].req
+    const request = event.detail[0].xhr.req
     assert.equal(method.toUpperCase(), request._method)
     assert.equal(url, request._url.toString())
     if (body != null) {

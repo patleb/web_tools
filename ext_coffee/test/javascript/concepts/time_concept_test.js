@@ -29,9 +29,9 @@ describe('Js.TimeConcept', () => {
     dom.on_event({ 'ajax:before_send': (event) => {
       event.preventDefault()
     }})
-    await rails.request('get', '/', { 'complete': (xhr) => {
+    await rails.request('get', '/', { 'complete': (request) => {
       assert.equal(-0, Time.zone)
-      assert.equal(-0, xhr.req._headers['x-timezone'])
+      assert.equal(-0, request.xhr.req._headers['x-timezone'])
     }})
     dom.off_event('ajax:before_send')
   })

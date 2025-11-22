@@ -12,20 +12,20 @@ class window.XHR
     @build options, =>
       response = @process_response()
       if 200 <= @xhr.status < 300
-        options.success?(response, @xhr.status, @xhr)
+        options.success?(response, this)
       else
-        options.error?(response, @xhr.status, @xhr)
+        options.error?(response, this)
         if (alert = options.alert)?.present()
           message = if alert is true
             'Server Error'
           else if alert.is_a Function
-            alert(response, @xhr.status, @xhr)
+            alert(response, this)
           else
             alert
           Flash.alert message
-      options.complete?(@xhr, @xhr.status)
+      options.complete?(this)
       Js.clear_spinner() if options.spinner
-    if options.before_send? and options.before_send(@xhr, options) is false
+    if options.before_send? and options.before_send(this, options) is false
       return false
     else if options.spinner
       Js.load_spinner()

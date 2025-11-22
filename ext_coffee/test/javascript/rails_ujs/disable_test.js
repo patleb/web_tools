@@ -23,7 +23,7 @@ describe('Rails UJS Disable', () => {
       rails.assert_disabled(event, 'input[type=text]')
     }})
     dom.on_event({ 'ajax:success': (event) => {
-      const data = nav.get_params(event.detail[2].req._body)
+      const data = nav.get_params(event.detail[1].xhr.req._body)
       assert.equal({ user_name: 'john', user_bio: 'born, lived, died.' }, data)
       rails.assert_disabled(event, 'input[type=text]')
       rails.assert_disabled({ target: dom.find('textarea[data-disable]') })
