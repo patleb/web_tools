@@ -144,7 +144,7 @@ describe('Rails UJS Confirm', () => {
     }})
     await rails.click('a[data-confirm]', { url: 'http://localhost/echo', 'ajax:success': (event) => {
       assert.equal('Are you absolutely sure?', confirm_message)
-      assert.equal(element, document.querySelector('a[data-confirm'))
+      assert.equal(element, document.querySelector('a[data-confirm]'))
     }})
 
     Rails.confirm = old_rails_confirm
