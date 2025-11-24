@@ -8,9 +8,8 @@ class Js.Component.Element
       else
         { submitter: this, @permanent }
 
-  @id: (selector) ->
-    scope = "#{Js.Component.ELEMENTS}[data-element='#{@::element_name}']"
-    if selector? then "#{scope} #{selector}" else scope
+  @element: (event_or_target) ->
+    Js.Component.elements[@uid(event_or_target)]
 
   @uid: (event_or_target) ->
     @node(event_or_target).getAttribute('data-uid')
@@ -18,12 +17,13 @@ class Js.Component.Element
   @node: (event_or_target) ->
     if event_or_target
       target = event_or_target.target ? event_or_target
-      element = target.closest(@id())
+      element = target.closest(@scope())
     else
-      element = Rails.find(@id())
+      element = Rails.find(@scope())
 
-  @element: (event_or_target) ->
-    Js.Component.elements[@uid(event_or_target)]
+  @scope: (selector) ->
+    scope = "#{Js.Component.ELEMENTS}[data-element='#{@::element_name}']"
+    if selector? then "#{scope} #{selector}" else scope
 
   constructor: (@node) ->
     @static_data = JSON.safe_parse(@node.getAttribute('data-static')) or {}
