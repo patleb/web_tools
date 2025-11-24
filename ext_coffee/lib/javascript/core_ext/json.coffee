@@ -5,9 +5,9 @@ JSON.define_singleton_methods
       if result and typeof result is 'object'
         result
       else
-        false
+        undefined
     catch e
-      false
+      undefined
 
   valid: (str) ->
     try

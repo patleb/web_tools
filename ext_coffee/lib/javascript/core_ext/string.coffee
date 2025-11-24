@@ -33,12 +33,12 @@ String.override_methods
 
   to_a: ->
     result = JSON.safe_parse(this)
-    throw 'invalid value for Array' unless result.is_a Array
+    throw 'invalid value for Array' unless result?.is_a Array
     result
 
   to_h: ->
     result = JSON.safe_parse(this)
-    throw 'invalid value for Object' unless result.is_a Object
+    throw 'invalid value for Object' unless result?.is_a Object
     result
 
   blank: ->
