@@ -61,6 +61,16 @@ describe('Object', () => {
     assert.false({ a: 1 }.has_key('b'))
   })
 
+  test('#any_keys', () => {
+    assert.false({ a: 1, b: 2, c: 3 }.any_keys('d', 'e'))
+    assert.true({ a: 1, b: 2, c: 3 }.any_keys('a', 'c', 'd'))
+  })
+
+  test('#all_keys', () => {
+    assert.true({ a: 1, b: 2, c: 3 }.all_keys('a', 'c'))
+    assert.false({ a: 1, b: 2, c: 3 }.all_keys('a', 'c', 'd'))
+  })
+
   test('#delete', () => {
     let hash = { a: 1, b: 2 }
     assert.equal(2, hash.delete('b'))

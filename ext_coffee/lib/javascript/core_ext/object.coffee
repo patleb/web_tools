@@ -136,6 +136,16 @@ Object.define_methods
   has_key: (key) ->
     key of this
 
+  any_keys: (keys...) ->
+    for key in keys
+      return true if key of this
+    false
+
+  all_keys: (keys...) ->
+    for key in keys
+      return false if not (key of this)
+    true
+
   delete: (key) ->
     item = this[key]
     delete this[key]
