@@ -16,6 +16,9 @@ describe('Js.Concepts', () => {
   })
 
   it('should create all concept instances', () => {
+    assert.equal('Js.StorageConcept::', Js.StorageConcept.deconstantize())
+    assert.equal('Js.ComponentConcept::', Js.ComponentConcept.deconstantize())
+    assert.equal('Test.SimpleConcept::', Test.SimpleConcept.deconstantize())
     assert.equal(1, Js.Concepts.instances.ready_once.length)
     assert.equal(2, Js.Concepts.instances.ready.length)
     assert.equal(2, Js.Concepts.instances.leave.length)
