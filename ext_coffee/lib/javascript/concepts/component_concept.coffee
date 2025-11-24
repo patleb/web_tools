@@ -24,7 +24,7 @@ class Js.ComponentConcept
     return unless (nodes = Rails.$(@ELEMENTS)).present()
 
     @elements = nodes.each_with_object {}, (node, memo) =>
-      element_type = node.getAttribute('data-element') ? ''
+      element_type = node.getAttribute('data-element')
       element_class = "Js.Component.#{element_type.camelize('_')}Element".constantize()
       if node.find(@ELEMENTS) or node.find('[data-element]')
         throw "#{element_class} enclosing another Js.Component.Element type"
@@ -33,11 +33,7 @@ class Js.ComponentConcept
       memo[uid] = new element_class(node)
       memo[uid].uid = uid
 
-    @elements.each_with_object [], (uid, element, memo) ->
-      proto = Object.getPrototypeOf(element)
-      unless memo.include(proto)
-        memo.push(proto)
-        element.ready_one?()
+    @elements.each (uid, element) ->
       element.ready_before?()
       element.ready()
       element.ready_after?()
