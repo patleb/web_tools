@@ -23,7 +23,7 @@ SINGULAR = [
 ]
 # NOTE: private scopes/methods are excluded
 String.CONSTANTIZABLE = /^[A-Z][\w.:]*$/i
-String.SCOPE_CONSTANTIZABLE = /^[A-Z]\w*((\.|::)[A-Z]\w*)+$/i
+String.SCOPED_CONSTANTIZABLE = /^[A-Z]\w*((\.|::)[A-Z]\w*)+$/i
 
 String.override_methods
   sub: (pattern, string_or_f_match) ->
@@ -249,8 +249,8 @@ String.define_methods
   acronym: ->
     @camelize().match(/[A-Z]/g)?.join('')
 
-  scope_constantizable: ->
-    @match String.SCOPE_CONSTANTIZABLE
+  scoped_constantizable: ->
+    @match String.SCOPED_CONSTANTIZABLE
 
   constantizable: ->
     @match String.CONSTANTIZABLE
