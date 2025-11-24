@@ -19,7 +19,8 @@ class Js.StorageConcept
     { permanent = false, scope = '' } = names.extract_options()
     if names.length
       result = names.map (name) =>
-        [name, @storage(permanent).find("[name='#{scope}:#{name}']")?.get_value()]
+        scoped_name = if name.include(':') then name else "#{scope}:#{name}"
+        [name.split(':').last(), @storage(permanent).find("[name='#{scoped_name}']")?.get_value()]
     else
       result = @storage(permanent).$("[name^='#{scope}:']").map (input) =>
         [input.name.sub(///^#{scope.safe_regex()}:///, ''), input.get_value()]
