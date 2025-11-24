@@ -66,7 +66,6 @@ class Js.Component.Element
       @render_self changes
     else
       @update_self changes
-    @stale = false
     changes
 
   render_self: (changes = {}) ->
