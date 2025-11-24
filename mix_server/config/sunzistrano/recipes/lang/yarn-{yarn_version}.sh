@@ -3,6 +3,9 @@ sun.install "npm"
 
 echo "nodejs $(nodejs --version)"
 
+# https://github.com/bodadotsh/npm-security-best-practices?tab=readme-ov-file#3-disable-lifecycle-scripts
+npm config set ignore-scripts true --global
+
 npm install -g n
 n lts
 
