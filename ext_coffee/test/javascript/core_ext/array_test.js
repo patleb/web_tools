@@ -105,6 +105,10 @@ describe('Array', () => {
     assert.equal([[1, 2], [3, 4], [5]], [1, 2, 3, 4, 5].each_slice(2))
   })
 
+  test('#partition', () => {
+    assert.equal([[1,2],[3,4,5]], [1,2,3,4,5].partition((v) => v < 3))
+  })
+
   test('#pluck', () => {
     assert.equal([1, 2], [{ a: 1 }, { a: 2 }].pluck('a'))
     assert.equal([[1, undefined], [2, 3]], [{ a: 1 }, { a: 2, b: 3 }].pluck('a', 'b'))

@@ -160,6 +160,13 @@ Array.define_methods
     result.push(@slice(i, i += size)) while i < @length
     result
 
+  partition: (f_item_index_self) ->
+    @each_with_object [[], []], (item, memo, index, self) ->
+      if f_item_index_self(item, index, self)
+        memo[0].push item
+      else
+        memo[1].push item
+
   pluck: (keys...) ->
     if keys.length is 1
       key = keys[0]
