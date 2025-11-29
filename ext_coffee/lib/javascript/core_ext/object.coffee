@@ -77,7 +77,6 @@ Object.define_methods
   to_json: ->
     JSON.stringify(this)
 
-  # Note: Object of Arrays and Array of Objects not supported
   to_query: (blanks = true) ->
     params = @map (param_name, param_value) ->
       switch param_value?.constructor

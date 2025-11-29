@@ -14,7 +14,7 @@ class Js.TimeConcept
       return if defaultPrevented or preview
       @refresh(new_body)
 
-    Js.Component.CHANGE, document, ({ detail: { elements }}) ->
+    Js.Component.RENDER, document, ({ detail: { elements }}) ->
       elements.each (uid, element) =>
         @refresh(element)
   ]

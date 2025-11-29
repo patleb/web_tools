@@ -30,7 +30,7 @@ describe('Js.ComponentConcept', () => {
     dom.fire('input', { target: input })
     assert.html_equal('<div><h1>Today</h1></div>', banner_card.innerHTML)
     assert.equal('New name', input.get_value())
-    assert.true(card_element.stale)
+    assert.false(card_element.stale)
     assert.html_equal(
       `<div>
         <h2>Today</h2>
@@ -44,7 +44,7 @@ describe('Js.ComponentConcept', () => {
       `<div>
         <h2>Tomorrow</h2>
         <ul><li>Player 1</li><li>Player 2</li></ul>
-        <input type="text" value="New name" data-bind="name">
+        <input type="text" value="Input name" data-bind="name">
       </div>`,
       card.innerHTML
     )
@@ -57,8 +57,8 @@ describe('Js.ComponentConcept', () => {
 
   it('should fire change event', () => {
     assert.total(1)
-    dom.on_event({ [Js.Component.CHANGE]: ({ detail: { elements }}) => {
-      assert.equal(2, elements.size()) // GlobalElement and BannerElement
+    dom.on_event({ [Js.Component.RENDER]: ({ detail: { elements }}) => {
+      assert.equal(1, elements.size()) // BannerElement
     }})
     Js.Storage.set({ banner: 'changed' })
   })

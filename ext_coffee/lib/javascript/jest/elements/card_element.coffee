@@ -1,6 +1,6 @@
 class Js.Component.CardElement extends Js.Component.Element
   events: -> [
-    'click', @constructor.scope('input'), (event) ->
+    'click', @constructor.selector('input'), (event) ->
       element = @constructor.element(event)
       event.element = element
   ]
