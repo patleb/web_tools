@@ -27,11 +27,12 @@ class Js.Component.Element
     root = "#{Js.Component.ELEMENTS}[data-element='#{@::element_name}']"
     if selector? then "#{root} #{selector}" else root
 
-  constructor: (@node) ->
-    static_data = JSON.safe_parse(@node.getAttribute('data-static')) or {}
-    watch_data = JSON.safe_parse(@node.getAttribute('data-watch')) or []
-    @permanent = @node.hasAttribute('data-turbolinks-permanent')
-    @scope = @node.getAttribute('data-scope') or ''
+  constructor: (@node, @uid, index) ->
+    static_data = @json_or_function_or_value 'static', {}
+    watch_data = @json_or_function_or_value 'watch', []
+    @permanent = @node.hasAttribute('data-turbolinks-permanent') or !!@constructor.permanent
+    @index = @node.getAttribute('data-index')?.to_i() ? @constructor.index ? index
+    @scope = @node.getAttribute('data-scope') or @constructor.scope or ''
     @watch_scopes = {}
     @watch_ivars = []
     @watch = if watch_data.empty()
@@ -113,3 +114,10 @@ class Js.Component.Element
   storage_names: (names) ->
     return @watch if @watch and names.empty()
     names
+
+  # Private
+
+  json_or_function_or_value: (name, fallback) ->
+    return value if value = JSON.safe_parse(@node.getAttribute("data-#{name}"))
+    value = value(this) if (value = @constructor[name])?.is_a Function
+    value or fallback

@@ -23,15 +23,17 @@ class Js.ComponentConcept
   ready: ->
     return unless (nodes = Rails.$(@ELEMENTS)).present()
 
-    @elements = nodes.each_with_object {}, (node, memo) =>
+    @elements = nodes.each_with_object [], (node, memo, index) =>
       element_type = node.getAttribute('data-element')
       element_class = "Js.Component.#{element_type.camelize('_')}Element".constantize()
       if node.find(@ELEMENTS) or node.find('[data-element]')
         throw "#{element_class} enclosing another Js.Component.Element type"
       uid = Math.uid()
       node.setAttribute('data-uid', uid)
-      memo[uid] = new element_class(node)
-      memo[uid].uid = uid
+      memo.push new element_class(node, uid, index)
+    .sort_by((e) -> e.index)
+    .map((e) -> [e.uid, e])
+    .to_h()
 
     @elements.each (uid, element) ->
       element.ready_before?()
