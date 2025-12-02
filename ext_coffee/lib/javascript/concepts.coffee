@@ -84,7 +84,7 @@ class Js.Concepts
         scope = scope.join('.').constantize()
       else
         scope = window
-      if scope isnt Js or alias isnt 'Component'
+      unless scope is Js and alias is 'Component'
         warn_defined_singleton_key(scope, alias)
       scope[alias] = concept
 
@@ -121,6 +121,16 @@ class Js.Concepts
     return if element_class.class_name
     element_class.class_name = element_class::class_name = name
     element_class::element_name = name.sub(ELEMENT, '').underscore('_')
+
+    if (alias = element_class::alias)
+      if alias.include '.'
+        [scope..., alias] = alias.split('.')
+        scope = scope.join('.').constantize()
+      else
+        scope = window
+      warn_defined_singleton_key(scope, alias)
+      scope[alias] = element_class::constructor
+
     @define_constants(element_class)
     @define_readers(element_class)
     @unless_defined element_class::events, =>
