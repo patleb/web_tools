@@ -30,7 +30,7 @@ class Js.Component.Element
   constructor: (@node, @uid, index) ->
     static_data = @json_or_function_or_value 'static', {}
     watch_data = @json_or_function_or_value 'watch', []
-    @permanent = @node.hasAttribute('data-turbolinks-permanent') or !!@constructor.permanent
+    @permanent = @node.hasAttribute('data-turbolinks-permanent')
     @index = @node.getAttribute('data-index')?.to_i() ? @constructor.index ? index
     @scope = @node.getAttribute('data-scope') or @constructor.scope or ''
     @watch_scopes = {}
