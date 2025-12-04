@@ -11,7 +11,7 @@ class Js.TagConcept
     'i', 'input'
     'label', 'li'
     'ol', 'optgroup', 'option', 'output'
-    'select', 'span'
+    'select', 'span', 'sub', 'sup'
     'textarea', 'time'
     'ul'
   ].to_set()
