@@ -49,6 +49,10 @@ window.ASCII_SYMBOL = {
   equal:            'equals', // =
   approx:           'asymp',  // ≈
   not_equal:        'ne',     // ≠
+  greater:          'gt',     // >
+  less:             'lt',     // <
+  greater_or_equal: '#8805',  // ≥
+  less_or_equal:    '#8804',  // ≤
   squared:          'sup2',   // ²
   cubed:            'sup3',   // ³
   quarter:          'frac14', // ¼
