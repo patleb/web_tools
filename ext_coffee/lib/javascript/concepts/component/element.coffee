@@ -96,6 +96,7 @@ class Js.Component.Element
       if not eql this[name], value
         this[name] = value
         changed = true
+    @changes = changes.keys()
     if @stale = changed
       changes
     else
