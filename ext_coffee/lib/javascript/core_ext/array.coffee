@@ -122,6 +122,13 @@ Array.override_methods
     this
 
 Array.define_methods
+  safe_join: (separator = ''.html_safe(true)) ->
+    safe = separator.html_safe()
+    safe &&= @all (item) -> !item? or item.html_safe()
+    text = @join(separator)
+    text = text.html_safe(true) if safe
+    text
+
   to_s: ->
     @toString()
 
@@ -145,7 +152,7 @@ Array.define_methods
     item in this
 
   exclude: (item) ->
-    not @include(item)
+    item not in this
 
   max: ->
     Math.max this

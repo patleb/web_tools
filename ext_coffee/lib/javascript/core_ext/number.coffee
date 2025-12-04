@@ -35,7 +35,7 @@ Number.define_methods
   to_f: ->
     @valueOf()
 
-  to_s: (type = null, round = null) ->
+  to_s: (type = null, precision = null) ->
     switch type
       when 'percent'
         return "#{this * 100} %"
@@ -44,8 +44,13 @@ Number.define_methods
         i = Math.floor(Math.floor(exponent) / 3) + 5
         if (exponent = Number.METRIC_EXPONENT[i])?
           value = this / (10 ** exponent)
-          value = value.round(round) if round?
+          value = value.round(precision) if precision?
           return "#{value} #{Number.METRIC_PREFIX[i]}"
+      when 'decimal'
+        value = if precision? then @round(precision) else @valueOf()
+        [left, right] = value.toString().split('.')
+        return left if not precision? or precision <= 0
+        return "#{left}.#{(right or '').ljust precision, '0'}"
     @toString()
 
   to_date: ->
