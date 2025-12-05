@@ -14,6 +14,7 @@ class Js.DeviceConcept
     BREAKPOINT: 'js_device:breakpoint'
 
   ready_once: ->
+    @size = null # already defined on Object
     @touch = false
     window.addEventListener('touchstart', @on_touchstart, false)
     window.addEventListener('scroll', @on_scroll.throttle(), false)
@@ -23,10 +24,10 @@ class Js.DeviceConcept
     @breakpoints = {}
     styles = window.getComputedStyle(document.documentElement, '')
     prefix = try styles.values().join('').match(/-(webkit|moz|ms)-/)?[1]
-    @webkit = prefix is 'webkit'
+    @chrome = window.chrome?
+    @webkit = not @chrome and prefix is 'webkit'
     @firefox = prefix is 'moz' or typeof InstallTrigger isnt 'undefined'
     @microsoft = prefix is 'ms'
-    @chrome = window.chrome?
     @opera = prefix is 'o' or (window.opr?.addons?) or window.opera? or navigator.userAgent.include(' OPR/')
     @safari = /constructor/i.test(window.HTMLElement) or ((p) -> p.toString() is '[object SafariRemoteNotification]')(
       not window.safari or (typeof safari isnt 'undefined' and safari.pushNotification)
