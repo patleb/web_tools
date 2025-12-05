@@ -3,13 +3,13 @@ class Js.LibConcept extends Js.Base
     role: -> Cookie.get('_role') ? 'null'
 
   readers: ->
-    layout: -> Rails.find('.js_layout')?.data('value')
+    layout:   -> Rails.find('.js_layout')?.data('value')
     scroll_y: -> @layout and @sidebar and @store('scroll_y')?["#{@role}_#{@layout}"]
-    sidebar: -> Rails.find('.drawer-side')
-    notice: -> Rails.find('#notice')
+    sidebar:  -> Rails.find('.drawer-side')
+    notice:   -> Rails.find('#notice')
 
   events: -> [
-    Device.RESIZE_X, document, @clear_drawer_toggle
+    Device.BREAKPOINT, document, @clear_drawer_toggle
 
     'change', '#alert, #notice', (event, target) ->
       @clear_flash(target)
@@ -36,8 +36,7 @@ class Js.LibConcept extends Js.Base
       @store('scroll_y', stored_scroll_y.merge("#{@role}_#{@layout}": scroll_y))
 
   clear_drawer_toggle: ->
-    if Device.breakpoints_was.lg isnt Device.breakpoints.lg and Device.breakpoints.lg
-      Rails.find('.drawer-toggle')?.set_value(false)
+    Rails.find('.drawer-toggle')?.set_value(false) if Device.screen is 'lg'
 
   clear_notice: ->
     if @notice

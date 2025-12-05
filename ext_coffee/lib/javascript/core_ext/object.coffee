@@ -213,6 +213,10 @@ Object.define_methods
     for key, item of this
       return [key, item]
 
+  last: ->
+    key = @keys().last()
+    return [key, this[key]]
+
   keys: ->
     Object.keys(this)
 

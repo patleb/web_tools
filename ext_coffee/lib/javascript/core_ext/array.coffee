@@ -116,6 +116,10 @@ Array.override_methods
   first: ->
     this[0]
 
+  last: (n = 1) ->
+    return this[@length - 1] if n is 1
+    this[-n..-1]
+
   merge: (others...) ->
     for other in others
       @push(other...)
@@ -124,7 +128,7 @@ Array.override_methods
 Array.define_methods
   safe_join: (separator = ''.html_safe(true)) ->
     safe = separator.html_safe()
-    safe &&= @all (item) -> !item? or item.html_safe()
+    safe &&= @all (item) -> not item? or item.html_safe()
     text = @join(separator)
     text = text.html_safe(true) if safe
     text
@@ -191,10 +195,6 @@ Array.define_methods
         return -1 if not rw? or lw < rw
       left.index - right.index
     .pluck('item')
-
-  last: (n = 1) ->
-    return this[@length - 1] if n is 1
-    this[-n..-1]
 
   find_index: (f_item_index_self) ->
     for i in [0...@length]
