@@ -70,15 +70,21 @@ Function.define_singleton_methods
     setTimeout(fn, 1)
 
   delegate_to: (receiver, base, keys...) ->
-    { force, prefix = '' } = keys.extract_options()
+    { force, bind, prefix = '' } = keys.extract_options()
     keys = base.keys() if keys.empty()
     keys.except(Function.PROTECTED_METHODS...).each (key) ->
       if force or not key.start_with('_') # skip private
-        if base[key]?.is_a Function
+        if (is_property = Object.getOwnPropertyDescriptor(base, key).get?) or base[key]?.is_a Function
           delegated_key = if prefix.present() then "#{prefix}_#{key}" else key
-          previous = receiver[key]
-          receiver[delegated_key] = base[key]
-          receiver[delegated_key].super = previous if previous?
+          if is_property
+            Object.defineProperty receiver, delegated_key, enumerable: false, get: -> base[key]
+          else
+            previous = receiver[key]
+            receiver[delegated_key] = if bind
+              -> base[key].apply(base, arguments)
+            else
+              base[key]
+            receiver[delegated_key].super = previous if previous?
     receiver
 
   debounce: (fn, wait = 100, immediate = false) ->
