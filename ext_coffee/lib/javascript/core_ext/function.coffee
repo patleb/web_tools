@@ -71,11 +71,25 @@ Function.define_singleton_methods
 
   delegate_to: (receiver, base, keys...) ->
     { force, bind, prefix = '' } = keys.extract_options()
-    keys = base.keys() if keys.empty()
+    if is_dynamic = base.is_a String
+      if is_prototype = base.endsWith '::'
+        base = base.sub(/::$/, '')
+    else
+      keys = base.keys() if keys.empty()
     keys.except(Function.PROTECTED_METHODS...).each (key) ->
       if force or not key.start_with('_') # skip private
-        if (is_property = Object.getOwnPropertyDescriptor(base, key).get?) or base[key]?.is_a Function
-          delegated_key = if prefix.present() then "#{prefix}_#{key}" else key
+        delegated_key = if prefix.present() then "#{prefix}_#{key}" else key
+        if is_dynamic
+          receiver[delegated_key] = ->
+            klass = base.constantize()
+            klass = (base::) if is_prototype
+            if Object.getOwnPropertyDescriptor(Object.getPrototypeOf(klass), key).get?
+              klass[key]
+            else if bind
+              klass[key].apply(klass, arguments)
+            else
+              klass[key](arguments...)
+        else if (is_property = Object.getOwnPropertyDescriptor(base, key).get?) or base[key]?.is_a Function
           if is_property
             Object.defineProperty receiver, delegated_key, enumerable: false, get: -> base[key]
           else
@@ -120,15 +134,15 @@ Function.define_methods
   delegate_to: (base, keys...) ->
     switch base.constructor
       when String
+        throw 'must specify #delegate_to keys' if keys.empty()
         if base.start_with '@', 'this.'
-          throw 'must specify #delegate_to keys' if keys.empty()
           ivar_name = base.sub(/^(@|this\.)/, '')
           keys.each (method) =>
             this::[method] = ->
               ivar = this[ivar_name]
               ivar[method].apply(ivar, arguments)
         else
-          throw 'invalid #delegate_to base'
+          @constructor.delegate_to(this::, base, keys...)
       when Function
         @constructor.delegate_to(this::, base::, keys...)
       else
