@@ -27,6 +27,11 @@ class Js.Component.Element
     root = "#{Js.Component.ELEMENTS}[data-element='#{@::element_name}']"
     if selector? then "#{root} #{selector}" else root
 
+  @event: (method_name) ->
+    (event) =>
+      element = @element(event)
+      element[method_name](arguments...)
+
   constructor: (@node, @uid, index) ->
     static_data = @json_or_function_or_value 'static', {}
     watch_data = @json_or_function_or_value 'watch', []
