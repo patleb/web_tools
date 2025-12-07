@@ -8,7 +8,7 @@ html:not(.no-js) {
   .css_only {
     display: none;
   }
-  &.no-transition * {
+  .no-transition * {
     transition: none !important;
     animation-duration: 0s !important;
   }
