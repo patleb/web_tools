@@ -78,10 +78,10 @@ Object.define_methods
     JSON.stringify(this)
 
   to_query: (blanks = true) ->
-    params = @map (param_name, param_value) ->
+    params = @each_map (param_name, param_value) ->
       switch param_value?.constructor
         when Object
-          param_value.flatten_keys('][').map (names, value) ->
+          param_value.flatten_keys('][').each_map (names, value) ->
             [[param_name, '[', names, ']'].join(''), value]
         when Array
           param_value.map (value) ->
@@ -192,7 +192,7 @@ Object.define_methods
       accumulator
     , accumulator
 
-  map: (f_key_item_self) ->
+  each_map: (f_key_item_self) ->
     f_key_item_self(key, item, this) for key, item of this
 
   flatten_keys: (separator = '.', _prefix = null) ->

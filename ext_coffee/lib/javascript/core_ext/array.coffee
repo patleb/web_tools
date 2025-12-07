@@ -94,6 +94,9 @@ Array.override_methods
       accumulator
     , accumulator
 
+  each_map: (f_item_index_self) ->
+    @map(f_item_index_self)
+
   select: (f_item_index_self) ->
     @filter(f_item_index_self)
 

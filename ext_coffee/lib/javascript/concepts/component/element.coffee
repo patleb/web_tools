@@ -46,7 +46,7 @@ class Js.Component.Element
     else
       if (initialize = watch_data.is_a Object)
         @storage_set watch_data, false
-      watch_data.map (name, value) =>
+      watch_data.each_map (name, value) =>
         [scope, ivar] = [Js.Storage.unnamed(@scope, name), Js.Storage.unscoped(name)]
         @watch_scopes[scope] = true
         @watch_ivars.push ivar
@@ -109,7 +109,7 @@ class Js.Component.Element
     @changes = changes.keys()
     if @stale = changed
       if not skip_callbacks
-        updates = changes.map (name, [change...]) =>
+        updates = changes.each_map (name, [change...]) =>
           [name, [change..., this["on_#{name}_update"]?(change...)]]
         @on_update?(updates.to_h())
       changes
