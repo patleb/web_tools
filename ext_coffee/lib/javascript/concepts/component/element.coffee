@@ -36,7 +36,7 @@ class Js.Component.Element
     static_data = @json_or_function_or_value 'static', {}
     watch_data = @json_or_function_or_value 'watch', []
     @permanent = @node.hasAttribute('data-turbolinks-permanent')
-    @submitter = @node.getAttribute('data-submitter') isnt 'false' and @constructor.submitter isnt false and this
+    @refresh = @node.getAttribute('data-refresh')?.to_b() ? @constructor.refresh
     @index = @node.getAttribute('data-index')?.to_i() ? @constructor.index ? index
     @scope = @node.getAttribute('data-scope') or @constructor.scope or ''
     @watch_scopes = {}
@@ -85,6 +85,8 @@ class Js.Component.Element
       @storage_get().each (name, value) => this[name] = value
     else if not (changes = @update_self changes, skip_callbacks)
       return false
+    else if @rendered and @refresh is false
+      return changes
     unless (html = @render() ? '').html_safe()
       html = html.safe_text()
     @node.innerHTML = html

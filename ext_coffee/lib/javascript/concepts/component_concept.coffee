@@ -52,7 +52,7 @@ class Js.ComponentConcept
       or scope is 'uid' and uid isnt element.uid \
       or not element.watch_scopes[scope]
         false
-      else if element.rendered and element.submitter is submitter
+      else if element.rendered and (not element.refresh and element is submitter)
         element.update_self changes
       else
         element.render_self changes
