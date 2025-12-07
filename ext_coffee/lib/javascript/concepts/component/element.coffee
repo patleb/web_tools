@@ -72,18 +72,18 @@ class Js.Component.Element
 
   render: not_implemented
 
-  # NOTE: for usage in #on_storage_change
+  # NOTE: for usage in #on_update
   render_or_update: (changes, render) ->
     changes = @storage_set changes, false
     if render
-      @render_self changes
+      @render_self changes, true
     else
-      @update_self changes
+      @update_self changes, true
 
-  render_self: (changes) ->
+  render_self: (changes, skip_callbacks = false) ->
     if changes is true
       @storage_get().each (name, value) => this[name] = value
-    else if not (changes = @update_self changes)
+    else if not (changes = @update_self changes, skip_callbacks)
       return false
     unless (html = @render() ? '').html_safe()
       html = html.safe_text()
@@ -95,7 +95,7 @@ class Js.Component.Element
       @autofocus = null
     changes
 
-  update_self: (changes) ->
+  update_self: (changes, skip_callbacks = false) ->
     changes = changes.slice(@watch_ivars...)
     changed = false
     changes = changes.select (name, [value]) =>
@@ -104,6 +104,10 @@ class Js.Component.Element
         changed = true
     @changes = changes.keys()
     if @stale = changed
+      if not skip_callbacks
+        updates = changes.map (name, [change...]) =>
+          [name, [change..., this["on_#{name}_update"]?(change...)]]
+        @on_update?(updates.to_h())
       changes
     else
       false

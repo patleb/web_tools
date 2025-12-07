@@ -51,17 +51,11 @@ class Js.ComponentConcept
       or permanent isnt element.permanent \
       or scope is 'uid' and uid isnt element.uid \
       or not element.watch_scopes[scope]
-        return false
-      element_changes = if element.rendered and element.submitter is submitter
+        false
+      else if element.rendered and element.submitter is submitter
         element.update_self changes
       else
         element.render_self changes
-      if not element_changes
-        return false
-      element_changes = element_changes.map (name, [change...]) ->
-        [name, [change..., element["on_#{name}_change"]?(change...)]]
-      element.on_storage_change?(element_changes.to_h())
-      true
     elements.each (uid, element) -> Rails.refresh_csrf_tokens(element)
     Rails.fire(document, @RENDER, { elements }) unless elements.empty()
 
