@@ -87,6 +87,7 @@ class Js.Component.Element
       return false
     else if @rendered and @refresh is false
       return changes
+    @before_render?(changes)
     unless (html = @render() ? '').html_safe()
       html = html.safe_text()
     @node.innerHTML = html
@@ -95,6 +96,7 @@ class Js.Component.Element
     if (input = @find_input @autofocus)
       input.focus()
       @autofocus = null
+    @after_render?(changes)
     changes
 
   update_self: (changes, skip_callbacks = false) ->
