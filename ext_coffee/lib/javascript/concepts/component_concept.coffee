@@ -36,9 +36,9 @@ class Js.ComponentConcept
     .to_h()
 
     @elements.each (uid, element) ->
-      element.ready_before?()
+      element.before_ready?()
       element.ready()
-      element.ready_after?()
+      element.after_ready?()
 
   leave: ->
     @elements?.each (uid, element) ->
