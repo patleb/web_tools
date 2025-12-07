@@ -27,7 +27,7 @@ class Js.Component.Element
     root = "#{Js.Component.ELEMENTS}[data-element='#{@::element_name}']"
     if selector? then "#{root} #{selector}" else root
 
-  @event: (method_name) ->
+  @handler: (method_name) ->
     (event) =>
       element = @element(event)
       element[method_name](arguments...)
