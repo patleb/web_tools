@@ -90,9 +90,9 @@ HTMLElement.define_methods
 
   find: (selector) ->
     if (id = selector.id)
-      @getElementById(id)
+      document.getElementById(id)
     else if selector.startsWith '#'
-      @getElementById(selector.lchop())
+      document.getElementById(selector.lchop())
     else
       @querySelector(selector)
 
