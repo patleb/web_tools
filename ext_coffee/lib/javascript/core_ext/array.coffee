@@ -116,8 +116,9 @@ Array.override_methods
   compact_blank: ->
     @filter (item) -> item?.present()
 
-  first: ->
-    this[0]
+  first: (n = 1) ->
+    return this[0] if n is 1
+    this[0...n]
 
   last: (n = 1) ->
     return this[@length - 1] if n is 1

@@ -51,8 +51,9 @@ String.override_methods
     return false unless other?.is_a String
     @valueOf() is other.valueOf()
 
-  first: ->
-    this[0]
+  first: (n = 1) ->
+    return this[0] if n is 1
+    this[0...n]
 
   last: (n = 1) ->
     return this[@length - 1] if n is 1

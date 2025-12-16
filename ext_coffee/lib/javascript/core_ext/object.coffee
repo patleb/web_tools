@@ -210,13 +210,15 @@ Object.define_methods
       return item if f_key_item_self(key, item, this)
     return
 
-  first: ->
-    for key, item of this
-      return [key, item]
+  first: (n = 1) ->
+    key = @keys().first(n)
+    return [key, this[key]] if n is 1
+    @slice(key...)
 
-  last: ->
-    key = @keys().last()
-    return [key, this[key]]
+  last: (n = 1) ->
+    key = @keys().last(n)
+    return [key, this[key]] if n is 1
+    @slice(key...)
 
   keys: ->
     Object.keys(this)

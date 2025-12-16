@@ -143,6 +143,14 @@ describe('Array', () => {
     assert.equal([0, false, ''], [0, false, '', null, undefined].compact())
   })
 
+  test('#first, #last', () => {
+    const array = [1, 2, 3]
+    assert.equal(1, array.first())
+    assert.equal([1, 2], array.first(2))
+    assert.equal(3, array.last())
+    assert.equal([2, 3], array.last(2))
+  })
+
   test('#dup', () => {
     const array = [1, 2]
     const other = array.dup()

@@ -154,6 +154,14 @@ describe('Object', () => {
     assert.equal({ a: 0, b: false, c: '' }, { a: 0, b: false, c: '', d: null, e: undefined }.compact())
   })
 
+  test('#first, #last', () => {
+    const object = { a: 1, b: 2, c: 3 }
+    assert.equal(['a', 1], object.first())
+    assert.equal({ a: 1, b: 2 }, object.first(2))
+    assert.equal(['c', 3], object.last())
+    assert.equal({ b: 2, c: 3 }, object.last(2))
+  })
+
   test('#deep_merge', () => {
     const object = { a: { b: 1 }, d: {} }
     assert.equal({ a: { b: 1, c: 2 }, d: null }, object.deep_merge({ a: { c: 2 }, d: null }))
