@@ -44,8 +44,8 @@ String.override_methods
   blank: ->
     @trim().length is 0
 
-  size: ->
-    @length
+  empty: ->
+    @length is 0
 
   eql: (other) ->
     return false unless other?.is_a String

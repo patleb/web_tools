@@ -53,8 +53,8 @@ Array.override_methods
       throw 'Array#to_h: invalid conversion structure' if value.length isnt 1
       memo[key] = value[0]
 
-  size: ->
-    @length
+  empty: ->
+    @length is 0
 
   eql: (other) ->
     return false unless other?.is_a Array

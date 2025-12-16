@@ -80,10 +80,10 @@ class Js.Admin.SearchConcept
     token = callback(before, token)
     if token?.reopen
       search = search.insert(cursor_end - 1, token.result, replace: 1)
-      move = cursor_end - 1 + token.result.size()
+      move = cursor_end - 1 + token.result.length
     else if token
       search = search.insert(cursor_end, token)
-      move = cursor_end + token.size()
+      move = cursor_end + token.length
     else
       move = cursor_end
     target.set_value('') if reset # otherwise can't reuse the same value, the 'change' event won't fire

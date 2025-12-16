@@ -44,6 +44,10 @@ Object.define_singleton_methods
       result = object
     result
 
+Object.define_readers
+  keys_length: ->
+    Object.keys(this).length
+
 Object.define_methods
   __send__: (method, args...) ->
     if this[method]?.is_a Function
@@ -101,7 +105,7 @@ Object.define_methods
     JSON.stringify(this).html_safe(true)
 
   blank: ->
-    @size() is 0
+    @empty()
 
   present: ->
     not @blank()
@@ -110,17 +114,14 @@ Object.define_methods
     @valueOf() unless @blank()
 
   empty: ->
-    @size() is 0
-
-  size: ->
-    @keys().length
+    @keys_length is 0
 
   not_eql: (other) ->
     not @eql(other)
 
   eql: (other) ->
     return false unless other?.is_a Object
-    return false unless @size() is other.size()
+    return false unless @keys_length is other.keys_length
     for key, item of this
       if item?
         return false unless item.eql(other[key])
@@ -168,7 +169,7 @@ Object.define_methods
         return true if f_key_item_self(key, item, this)
       false
     else
-      @size() > 0
+      @keys_length > 0
 
   all: (f_key_item_self) ->
     for key, item of this

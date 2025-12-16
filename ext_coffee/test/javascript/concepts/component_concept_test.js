@@ -58,7 +58,7 @@ describe('Js.ComponentConcept', () => {
   it('should fire change event', () => {
     assert.total(1)
     dom.on_event({ [Js.Component.RENDER]: ({ detail: { elements }}) => {
-      assert.equal(1, elements.size()) // BannerElement
+      assert.equal(1, elements.keys_length) // BannerElement
     }})
     Js.Storage.set({ banner: 'changed' })
   })
