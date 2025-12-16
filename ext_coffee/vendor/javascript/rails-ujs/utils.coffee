@@ -80,25 +80,19 @@ Rails.merge
       else if input.checked or input.type not in ['radio', 'checkbox', 'submit']
         params.push(name: input.name, value: input.value)
     params.push(additional_param) if additional_param
-    params.map (param) ->
-      if Rails.is_present(param.name) and (blanks or Rails.is_present(param.value))
+    params.select_map (param) ->
+      if param.name?.present() and (blanks or param.value?.present())
         "#{encodeURIComponent(param.name)}=#{encodeURIComponent(param.value)}"
-      else if typeof param is 'string' and Rails.is_present(param)
+      else if typeof param is 'string' and param.present()
         param
-    .filter((item) -> item?).join('&')
-
-  is_present: (object) ->
-    return false unless object?
-    return false if typeof object is 'string' and object.trim().length is 0
-    return false if typeof object is 'object' and Object.keys(object).length is 0
-    true
+    .join('&')
 
   # Helper function that returns form elements that match the specified CSS selector
   # If form is actually a "form" element this will return associated elements outside the from that have
   # the html form attribute set
   form_elements: (form, selector) ->
     if form.matches('form')
-      Array.wrap(form.elements).filter (el) -> el.matches(selector)
+      Array.wrap(form.elements).select (el) -> el.matches(selector)
     else
       Array.wrap(form.querySelectorAll(selector))
 
