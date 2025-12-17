@@ -16,7 +16,12 @@ class Js.ComponentConcept
       value = target.get_value()
       value_was = element.storage_value(name)
       if value_was is undefined or not eql value, value_was
-        element.autofocus = name if document.activeElement is target
+        if document.activeElement is target
+          element.autofocus = switch target.type
+            when 'radio', 'checkbox'
+              [name, value]
+            else
+              [name]
         element.storage_set("#{name}": value)
   ]
 

@@ -66,9 +66,11 @@ class Js.Component.Element
   find: (selector) ->
     @node.find(selector)
 
-  find_input: (name) ->
+  find_input: (name, value = null) ->
     return unless name?.present()
-    @find "[data-bind='#{name}']"
+    selector = "[data-bind='#{name}']"
+    selector += "[value='#{value}']" if value?
+    @find selector
 
   render: not_implemented
 
@@ -93,7 +95,7 @@ class Js.Component.Element
     @node.innerHTML = html
     @rendered = true
     @stale = false
-    if (input = @find_input @autofocus)
+    if (input = @find_input @autofocus...)
       input.focus()
       @autofocus = null
     @after_render?(changes)
