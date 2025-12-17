@@ -13,6 +13,7 @@ class Js.ComponentConcept
     'input', @INPUTS, ({ target }) ->
       element = @elements[target.closest(@ELEMENTS).getAttribute('data-uid')]
       name = target.getAttribute('data-bind')
+      name = target.name if name is 'true'
       value = target.get_value()
       value_was = element.storage_value(name)
       if value_was is undefined or not eql value, value_was
