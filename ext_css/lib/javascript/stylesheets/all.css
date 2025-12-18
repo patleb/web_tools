@@ -2,5 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "bootstrap-icons/font/bootstrap-icons";
 @import "@@vendor/tailwindcss-rails/stylesheets/inter-font";
 @import "@@lib/ext_css/stylesheets/theming";

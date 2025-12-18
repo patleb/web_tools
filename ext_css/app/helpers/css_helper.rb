@@ -1,7 +1,24 @@
-module IconHelper
+module CssHelper
   SVG_BEGIN = /^\s*<svg [^>]+>\s*/
   SVG_END = /\s*<\/svg>\s*$/
   SVG_OPTIONS = { xmlns: 'http://www.w3.org/2000/svg', fill: 'currentColor', height: 16, width: 16, viewBox: '0 0 16 16', 'aria-hidden': true }
+
+  def preload_icons
+    @@_preload_icons ||= begin
+      lines = Pathname.new("node_modules/bootstrap-icons/font/bootstrap-icons.css").readlines
+      line = lines.find{ |line| line.include? 'fonts/bootstrap-icons.woff2' }
+      id = line.match(%r{fonts/bootstrap-icons\.woff2\?([^"]+)}).captures.first
+      url = "static/node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2?#{id}"
+      preload_pack_asset(url, as: :font, type: "font/woff2", crossorigin: true)
+    end
+  end
+
+  def preload_fonts
+    @@_preload_fonts ||= %w(roman italic).map do |style|
+      url = "static/vendor/tailwindcss-rails/fonts/Inter-#{style}.latin.var.woff2"
+      preload_pack_asset(url, as: :font, type: "font/woff2", crossorigin: true)
+    end
+  end
 
   def icon_(...)
     html = icon(...)
