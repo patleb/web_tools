@@ -130,9 +130,10 @@ Array.override_methods
     this
 
 Array.define_methods
-  safe_join: (separator = ''.html_safe(true)) ->
-    safe = separator.html_safe()
-    safe &&= @all (item) -> not item? or item.html_safe()
+  safe_join: (separator = ''.html_safe(true), safe = null) ->
+    unless safe
+      safe = separator.html_safe()
+      safe &&= @all (item) -> not item? or item.html_safe()
     text = @join(separator)
     text = text.html_safe(true) if safe
     text
