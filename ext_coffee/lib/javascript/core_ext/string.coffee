@@ -67,8 +67,8 @@ String.override_methods
     else
       !!@_html_safe
 
-  safe_text: ->
-    return this if @html_safe()
+  safe_text: (force = false) ->
+    return this if not force and @html_safe()
     return @html_safe(true) unless this and /[&<>"'`]/.test(this)
     @replace(/[&<>"'`]/g, (char) -> HTML_ESCAPES[char]).html_safe(true)
 
