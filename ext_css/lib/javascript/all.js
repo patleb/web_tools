@@ -1,6 +1,9 @@
+import icons from "bootstrap-icons/font/bootstrap-icons.json";
 import '@@lib/ext_css/index'
 
 document.addEventListener('DOMContentLoaded', function() {
+  Object.keys(icons).forEach(name => { icons[name] = String.fromCodePoint(icons[name]) })
+  window.ICONS = icons
   document.documentElement.classList.remove('no-js')
   document.cookie = '_js=yes; path=/' + ((window.location.protocol === 'https:') ? '; secure' : '')
 })
