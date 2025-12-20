@@ -53,6 +53,7 @@ class Js.Component.Element
         this[ivar] = value if initialize
         name
     static_data.each (name, value) => this[name] = value
+    @node.add_class 'no-transition' unless @refresh is false
 
   ready: ->
     @render_self true
