@@ -49,6 +49,10 @@ Object.define_readers
     Object.keys(this).length
 
 Object.define_methods
+  empty: ->
+    @keys_length is 0
+
+Object.define_methods
   __send__: (method, args...) ->
     if this[method]?.is_a Function
       this[method](args...)
@@ -104,17 +108,13 @@ Object.define_methods
   safe_text: ->
     JSON.stringify(this).html_safe(true)
 
-  blank: ->
-    @empty()
+  blank: Object::empty
 
   present: ->
     not @blank()
 
   presence: ->
     @valueOf() unless @blank()
-
-  empty: ->
-    @keys_length is 0
 
   not_eql: (other) ->
     not @eql(other)

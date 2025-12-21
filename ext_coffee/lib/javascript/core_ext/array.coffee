@@ -42,8 +42,7 @@ Array.decorate_methods
       @super(f_item_index_self, arg)
 
 Array.override_methods
-  dup: ->
-    @slice()
+  dup: Array::slice
 
   to_a: ->
     this
@@ -94,11 +93,9 @@ Array.override_methods
       accumulator
     , accumulator
 
-  each_map: (f_item_index_self) ->
-    @map(f_item_index_self)
+  each_map: Array::map
 
-  select: (f_item_index_self) ->
-    @filter(f_item_index_self)
+  select: Array::filter
 
   select_map: (f_item_index_self) ->
     value for item, i in this when (value = f_item_index_self(item, i, this))
@@ -138,8 +135,7 @@ Array.define_methods
     text = text.html_safe(true) if safe
     text
 
-  to_s: ->
-    @toString()
+  to_s: Array::toString
 
   to_set: ->
     @map((v) -> [v, true]).to_h()

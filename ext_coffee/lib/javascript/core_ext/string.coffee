@@ -26,8 +26,7 @@ String.CONSTANTIZABLE = /^[A-Z][\w.:]*$/i
 String.SCOPED_CONSTANTIZABLE = /^[A-Z]\w*((\.|::)[A-Z]\w*)+$/i
 
 String.override_methods
-  sub: (pattern, string_or_f_match) ->
-    @replace(pattern, string_or_f_match)
+  sub: String::replace
 
   dup: not_implemented
 
@@ -149,11 +148,9 @@ String.define_methods
   exclude: (string, start_index = 0) ->
     not @include(string, start_index)
 
-  downcase: ->
-    @toLowerCase()
+  downcase: String::toLowerCase
 
-  upcase: ->
-    @toUpperCase()
+  upcase: String::toUpperCase
 
   gsub: (pattern, string_or_f_match) ->
     pattern =
@@ -186,14 +183,11 @@ String.define_methods
       string = string.replace(///\{\{\s*#{name.safe_regex()}\s*}}///g, value.toString())
     string
 
-  strip: ->
-    @trim()
+  strip: String::trim
 
-  lstrip: ->
-    @trimStart()
+  lstrip: String::trimStart
 
-  rstrip: ->
-    @trimEnd()
+  rstrip: String::trimEnd
 
   chop: ->
     this[0..-2]

@@ -140,8 +140,7 @@ Date.define_methods
   to_f: ->
     @getTime() / 1000
 
-  to_s: ->
-    @toString()
+  to_s: Date::toString
 
   to_date: ->
     this

@@ -13,8 +13,7 @@ Boolean.override_methods
     @toString().html_safe(true)
 
 Boolean.define_methods
-  to_b: ->
-    @valueOf()
+  to_b: Boolean::valueOf
 
   to_i: ->
     if @valueOf() then 1 else 0
@@ -22,5 +21,4 @@ Boolean.define_methods
   to_f: ->
     if @valueOf() then 1.0 else 0.0
 
-  to_s: ->
-    @toString()
+  to_s: Boolean::toString

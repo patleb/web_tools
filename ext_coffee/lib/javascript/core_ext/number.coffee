@@ -32,8 +32,7 @@ Number.define_methods
   to_i: ->
     parseInt(this)
 
-  to_f: ->
-    @valueOf()
+  to_f: Number::valueOf
 
   to_s: (type = null, precision = null) ->
     switch type
