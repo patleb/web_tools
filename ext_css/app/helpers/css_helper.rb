@@ -9,14 +9,14 @@ module CssHelper
       line = lines.find{ |line| line.include? 'fonts/bootstrap-icons.woff2' }
       id = line.match(%r{fonts/bootstrap-icons\.woff2\?([^"]+)}).captures.first
       url = "static/node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2?#{id}"
-      preload_pack_asset(url, as: :font, type: "font/woff2", crossorigin: true)
+      preload_pack_asset(url, as: :font, type: 'font/woff2', crossorigin: true)
     end
   end
 
   def preload_fonts
     @@_preload_fonts ||= %w(roman italic).map do |style|
       url = "static/vendor/tailwindcss-rails/fonts/Inter-#{style}.latin.var.woff2"
-      preload_pack_asset(url, as: :font, type: "font/woff2", crossorigin: true)
+      preload_pack_asset(url, as: :font, type: 'font/woff2', crossorigin: true)
     end
   end
 

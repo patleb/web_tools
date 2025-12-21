@@ -1,4 +1,7 @@
-# append :fonts, preload_pack_asset('app')
+append :fonts, [
+  preload_icons,
+  preload_fonts,
+]
 append :javascripts, javascript_pack_tag!('app', defer: true, 'data-turbolinks-track': 'reload')
 append :stylesheets, stylesheet_pack_tag!('app', media: :all, 'data-turbolinks-track': 'reload')
 append :metas, meta_(name: 'turbolinks-cache-control', content: 'no-preview')
