@@ -113,7 +113,7 @@ class Js.Component.Element
     if @stale = changed
       if not skip_callbacks
         updates = changes.each_map (name, [change...]) =>
-          [name, [change..., this["on_#{name}_update"]?(change...)]]
+          [name, [change..., this["on_update_#{name}"]?(change...)]]
         @on_update?(updates.to_h())
       changes
     else

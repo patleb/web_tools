@@ -20,7 +20,7 @@ class Js.TagConcept
     INPUTS: '.js_tag_input'
 
   events: -> [
-    'input', @INPUTS, @on_input_change
+    'input', @INPUTS, @on_input
   ]
 
   ready_once: ->
@@ -198,7 +198,7 @@ class Js.TagConcept
       return false if is_true
     true
 
-  on_input_change: (event, target) ->
+  on_input: (event, target) ->
     return unless (output_ids = target.data('for'))
     return unless (outputs = output_ids.strip().split(/ +/).map (id) -> Rails.find({ id })).present()
     outputs.each (output) ->
