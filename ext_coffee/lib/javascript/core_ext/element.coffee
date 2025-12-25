@@ -117,7 +117,7 @@ HTMLElement.define_methods
     siblings.push(sibling) while sibling = sibling.previousElementSibling
     siblings
 
-  get_value: ->
+  get_value: ({ was = false } = {}) ->
     return if @disabled or @hasAttribute('disabled')
     value = switch @type
       when 'select-one', 'select-multiple'
@@ -131,11 +131,11 @@ HTMLElement.define_methods
       when 'radio', 'checkbox'
         @checked
       when 'range'
-        value = @value
+        value = get_value(this, was)
         value = cast_value(@list.options[value], value) if @list?.present()
         value
       else
-        @value
+        get_value(this, was)
     cast_value(this, value)
 
   set_value: (value, { event = false } = {}) ->
@@ -194,7 +194,7 @@ HTMLElement.define_methods
     Rails.fire(this, name, data)
 
   cast_value = (input, value) ->
-    if value? and (cast = input.getAttribute('data-cast'))?
+    if value? and (cast = input.getAttribute 'data-cast')?
       if args = input.getAttribute 'data-args'
         args = JSON.parse(args)
       value = if cast.scoped_constantizable()
@@ -204,3 +204,9 @@ HTMLElement.define_methods
       else # option
         cast
     value
+
+  get_value = (input, was) ->
+    if was and input.hasAttribute 'data-was'
+      input.getAttribute 'data-was'
+    else
+      input.value

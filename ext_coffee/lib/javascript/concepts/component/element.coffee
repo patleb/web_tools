@@ -45,7 +45,7 @@ class Js.Component.Element
       false
     else
       if (initialize = watch_data.is_a Object)
-        @storage_set watch_data, false
+        @storage_set watch_data, event: false
       watch_data.each_map (name, value) =>
         [scope, ivar] = [Js.Storage.unnamed(@scope, name), Js.Storage.unscoped(name)]
         @watch_scopes[scope] = true
@@ -77,7 +77,7 @@ class Js.Component.Element
 
   # NOTE: for usage in #on_update
   render_or_update: (changes, render) ->
-    changes = @storage_set changes, false
+    changes = @storage_set changes, event: false
     if render
       @render_self changes, true
     else
@@ -124,10 +124,11 @@ class Js.Component.Element
 
   storage_get: (names...) ->
     return {} unless @watch
-    Js.Storage.get(@storage_names(names)..., @storage_options)
+    options = names.extract_options()
+    Js.Storage.get(@storage_names(names)..., options.merge @storage_options)
 
-  storage_set: (inputs, event = true) ->
-    Js.Storage.set(inputs, { event }.merge @storage_options )
+  storage_set: (inputs, options = {}) ->
+    Js.Storage.set(inputs, options.merge @storage_options )
 
   storage_names: (names) ->
     return @watch if @watch and names.empty()

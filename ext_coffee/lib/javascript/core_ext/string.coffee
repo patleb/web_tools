@@ -122,9 +122,6 @@ String.define_methods
       date = this
     new Date(Date.parse(date))
 
-  to_duration: ->
-    new Duration(this)
-
   to_html: ->
     Array.wrap(new DOMParser().parseFromString(this, 'text/html').body.children)
 

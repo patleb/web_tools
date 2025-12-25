@@ -58,6 +58,11 @@ class window.Duration
   to_h: ->
     { @sign, @years, @months, @weeks, @days, @hours, @minutes, @seconds }
 
+  toJSON: ->
+    hash = @to_h()
+    delete hash.sign if hash.sign is 1
+    hash.select (k, v) -> v
+
   to_i: ->
     @sign * (
       @years   * Duration.SECONDS.year   +

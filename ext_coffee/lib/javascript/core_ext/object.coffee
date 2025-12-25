@@ -85,6 +85,9 @@ Object.define_methods
   to_json: ->
     JSON.stringify(this)
 
+  to_duration: ->
+    new Duration(this)
+
   to_query: (blanks = true) ->
     params = @each_map (param_name, param_value) ->
       switch param_value?.constructor

@@ -27,17 +27,18 @@ class Js.StorageConcept
     @get(name, options)[@unscoped name]
 
   get: (names...) ->
-    { permanent = false, scope = '' } = names.extract_options()
+    { permanent = false, scope = '', was = false } = names.extract_options()
+    was = { was }
     if names.length
       result = names.map (name) =>
         scoped_name = @scoped name, scope
-        [@unscoped(name), @storage(permanent).find("[name='#{scoped_name}']")?.get_value()]
+        [@unscoped(name), @storage(permanent).find("[name='#{scoped_name}']")?.get_value(was)]
     else
       result = @storage(permanent).$("[name^='#{scope}:']").map (input) =>
-        [input.name.sub(///^#{scope.safe_regex()}:///, ''), input.get_value()]
+        [input.name.sub(///^#{scope.safe_regex()}:///, ''), input.get_value(was)]
     result.reject(([name, value]) -> value is undefined).to_h()
 
-  set: (inputs, { submitter = null, permanent = false, scope = '', event = true } = {}) ->
+  set: (inputs, { submitter = null, permanent = false, scope = '', event = true, was = false } = {}) ->
     changed = false
     changes = inputs.each_with_object {}, (name, value, memo) =>
       scoped_name = @scoped name, scope
@@ -51,6 +52,7 @@ class Js.StorageConcept
         changed = true
         changes = memo[@unscoped name] = [value, value_was]
         input.setAttribute('value', if value? then value.safe_text() else null)
+        input.setAttribute('data-was', value_was.safe_text()) if was and value_was?
         input.setAttribute('data-cast', cast) if cast
         @log permanent, scoped_name, value, value_was
     @storage(permanent).fire(@CHANGE, { submitter, permanent, scope, changes }) if event and changed
