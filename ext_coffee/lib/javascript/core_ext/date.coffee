@@ -131,7 +131,7 @@ Date.override_methods
     { @year, @month, @day, @hour, @minute, @second }
 
   safe_text: ->
-    JSON.stringify(this)[1..-2].html_safe(true)
+    @toJSON().html_safe(true)
 
 Date.define_methods
   to_i: ->

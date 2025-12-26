@@ -109,7 +109,7 @@ Object.define_methods
     false
 
   safe_text: ->
-    JSON.stringify(this).html_safe(true)
+    @to_json().html_safe(true)
 
   blank: Object::empty
 
