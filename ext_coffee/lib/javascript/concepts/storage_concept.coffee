@@ -23,6 +23,29 @@ class Js.StorageConcept
     return name if name.include(':')
     "#{scope}:#{name}"
 
+  get_changes: (name, options = {}) ->
+    value = @get_value(name, options)
+    value_was = @get_value(name, { was: true }.merge options)
+    unless value?.is_a(Object) and value_was?.is_a(Object)
+      if not eql value, value_was
+        return { "#{@unscoped name}": [value, value_was] }
+      else
+        return {}
+    changes = {}
+    keys = []
+    for key, item of value
+      keys.push key
+      item_was = value_was[key]
+      changes[key] = [item, item_was] if not eql item, item_was
+    for key, item_was of value_was.except(keys...)
+      changes[key] = [undefined, item_was]
+    changes.presence()
+
+  get_change: (name, options = {}) ->
+    value = @get_value(name, options)
+    value_was = @get_value(name, { was: true }.merge options)
+    [value, value_was] if not eql value, value_was
+
   get_value: (name, options = {}) ->
     @get(name, options)[@unscoped name]
 

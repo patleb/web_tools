@@ -119,8 +119,14 @@ class Js.Component.Element
     else
       false
 
-  storage_value: (name) ->
-    @storage_get(name)[Js.Storage.unscoped name]
+  storage_changes: (name, options = {}) ->
+    Js.Storage.get_changes(name, options.merge @storage_options)
+
+  storage_change: (name, options = {}) ->
+    Js.Storage.get_change(name, options.merge @storage_options)
+
+  storage_value: (name, options = {}) ->
+    Js.Storage.get_value(name, options.merge @storage_options)
 
   storage_get: (names...) ->
     return {} unless @watch
@@ -128,7 +134,7 @@ class Js.Component.Element
     Js.Storage.get(@storage_names(names)..., options.merge @storage_options)
 
   storage_set: (inputs, options = {}) ->
-    Js.Storage.set(inputs, options.merge @storage_options )
+    Js.Storage.set(inputs, options.merge @storage_options)
 
   storage_names: (names) ->
     return @watch if @watch and names.empty()
