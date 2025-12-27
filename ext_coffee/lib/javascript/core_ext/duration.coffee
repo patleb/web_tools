@@ -87,6 +87,8 @@ class window.Duration
       string += "#{@seconds}S" if @seconds
     string
 
+  toString: Duration::to_s
+
   safe_text: ->
     @to_s().html_safe(true)
 
