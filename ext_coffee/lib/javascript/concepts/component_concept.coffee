@@ -26,6 +26,9 @@ class Js.ComponentConcept
         element.storage_set("#{name}": value)
   ]
 
+  ready_once: ->
+    @elements_ready_once = []
+
   ready: ->
     return unless (nodes = Rails.$(@ELEMENTS)).present()
 
@@ -41,7 +44,11 @@ class Js.ComponentConcept
     .map((e) -> [e.uid, e])
     .to_h()
 
-    @elements.each (uid, element) ->
+    @elements.each (uid, element) =>
+      proto = Object.getPrototypeOf(element)
+      unless @elements_ready_once.include proto
+        @elements_ready_once.push proto
+        element.ready_once?()
       element.before_ready?()
       element.ready()
       element.after_ready?()

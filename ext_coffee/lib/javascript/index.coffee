@@ -34,12 +34,12 @@ window.Js =
   is_form_valid: (inputs) ->
     Array.wrap(inputs).all (input) -> input.valid()
 
-  extract_global: (name, { keep = false, constant = false } = {}) ->
+  extract_global: (name, { keep = false, constant = false, warn = false } = {}) ->
     if (data = document.getElementById("js_#{name}"))
       global = if constant or data.getAttribute('data-constant') is 'true'
         name.upcase()
       else
         "$#{name}"
-      warn_defined_singleton_key(window, global)
+      warn_defined_singleton_key(window, global) if warn
       window[global] = JSON.parse(data.getAttribute('data-value'))
       data.remove() unless keep

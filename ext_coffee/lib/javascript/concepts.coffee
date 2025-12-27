@@ -35,7 +35,10 @@ class Js.Concepts
         concept.each (key, value) ->
           unless not_nullifyable(key, value)
             concept.READY_ONCE_IVARS.push(key)
-      @instances.ready.each (concept) -> concept.ready()
+      @instances.ready.each (concept) ->
+        concept.before_ready?()
+        concept.ready()
+        concept.after_ready?()
     , 13
 
   @on_leave: (event) =>
