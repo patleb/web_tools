@@ -2,7 +2,7 @@ class Turbolinks.HeadDetails
   constructor: (@head) ->
     nodes = @head?.childNodes ? []
     @elements = {}
-    for node in nodes when node.nodeType is Node.ELEMENT_NODE and node.tagName.toLowerCase() isnt 'noscript'
+    for node in nodes when node.nodeType is Node.ELEMENT_NODE and node.tagName.downcase() isnt 'noscript'
       if node.hasAttribute('nonce')
         node.setAttribute('nonce', '')
       key = node.outerHTML
@@ -53,13 +53,13 @@ class Turbolinks.HeadDetails
     element.getAttribute('data-turbolinks-track') is 'reload'
 
   is_script = (element) ->
-    tagName = element.tagName.toLowerCase()
+    tagName = element.tagName.downcase()
     tagName is 'script'
 
   is_stylesheet = (element) ->
-    tagName = element.tagName.toLowerCase()
-    tagName is 'style' or (tagName is 'link' and element.getAttribute('rel') is 'stylesheet')
+    tagName = element.tagName.downcase()
+    tagName is 'style' or (tagName is 'link' and element.getAttribute('rel') in ['stylesheet', 'preload'])
 
   is_meta_with = (element, name) ->
-    tagName = element.tagName.toLowerCase()
+    tagName = element.tagName.downcase()
     tagName is 'meta' and element.getAttribute('name') is name
