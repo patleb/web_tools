@@ -126,6 +126,10 @@ Array.override_methods
       @push(other...)
     this
 
+Array.define_readers
+  begin: -> 0
+  end:   -> if @length then @length - 1 else 0
+
 Array.define_methods
   safe_join: (separator = ''.html_safe(true), safe = null) ->
     unless safe

@@ -82,8 +82,8 @@ Object.define_methods
   to_h: ->
     this
 
-  to_json: ->
-    JSON.stringify(this)
+  to_json: (replacer = null, space = null) ->
+    JSON.stringify(this, replacer, space)
 
   to_duration: ->
     new Duration(this)

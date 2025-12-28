@@ -71,6 +71,10 @@ String.override_methods
     return @html_safe(true) unless this and /[&<>"'`]/.test(this)
     @replace(/[&<>"'`]/g, (char) -> HTML_ESCAPES[char]).html_safe(true)
 
+String.define_readers
+  begin: -> 0
+  end:   -> if @length then @length - 1 else 0
+
 String.define_methods
   add: (other) ->
     value = this + other
