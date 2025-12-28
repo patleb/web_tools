@@ -53,12 +53,12 @@ class Test.SimpleConcept extends Js.Base
     @__did_leave++
 
 class Js.Component.SimpleElement extends Js.Component.Element
-  constants: ->
-    NAME: '.js_simple_name'
-
-  readers: ->
+  @readers
     name: -> dom.find(@NAME)
     value: -> 'value'
+
+  constants: ->
+    NAME: '.js_simple_name'
 
   events: -> [
     'hover', @NAME, (event, this_was) ->

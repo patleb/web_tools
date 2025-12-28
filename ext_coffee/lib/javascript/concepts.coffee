@@ -135,7 +135,6 @@ class Js.Concepts
       scope[alias] = element_class::constructor
 
     @define_constants(element_class)
-    @define_readers(element_class)
     @unless_defined element_class::events, =>
       @define_events(element_class::)
 

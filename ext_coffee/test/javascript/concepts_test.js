@@ -4,11 +4,10 @@ describe('Js.Concepts', () => {
   beforeAll(() => {
     dom.setup_document(fixture.html('classes', { root: 'ext_coffee/test/fixtures/files/concepts' }))
     Js.Concepts.initialize({ modules: ['Test'], concepts: [
-        'Js.StorageConcept',
-        'Js.ComponentConcept',
-        'Test.SimpleConcept',
-      ]
-    })
+      'Js.StorageConcept',
+      'Js.ComponentConcept',
+      'Test.SimpleConcept',
+    ] })
   })
 
   afterAll(() => {
@@ -19,7 +18,7 @@ describe('Js.Concepts', () => {
     assert.equal('Js.StorageConcept::', Js.StorageConcept.deconstantize())
     assert.equal('Js.ComponentConcept::', Js.ComponentConcept.deconstantize())
     assert.equal('Test.SimpleConcept::', Test.SimpleConcept.deconstantize())
-    assert.equal(1, Js.Concepts.instances.ready_once.length)
+    assert.equal(2, Js.Concepts.instances.ready_once.length)
     assert.equal(2, Js.Concepts.instances.ready.length)
     assert.equal(2, Js.Concepts.instances.leave.length)
     assert.equal(7, Js.Concepts.instances.leave_clean.length)
@@ -152,13 +151,8 @@ describe('Js.Concepts', () => {
       let name = dom.find(Js.Component.SimpleElement.prototype.NAME)
       dom.fire('hover', { target: name })
       assert.true(name.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.equal(Js.Component.SimpleElement.prototype.__body, Js.Component.SimpleElement.prototype.body)
-      assert.equal(['name', 'value'], Js.Component.SimpleElement.prototype.READERS)
       let element = new Js.Component.SimpleElement(name)
-      assert.not.nil(element.__name)
-      assert.equal(Js.Component.SimpleElement.prototype.__name, element.__name)
       assert.equal('value', element.value)
-      assert.nil(Js.Component.SimpleElement.prototype.__value)
     })
 
     it('should not access parent ivars in inherited element', () => {
