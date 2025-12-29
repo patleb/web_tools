@@ -114,8 +114,7 @@ class Js.Concepts
         return unless @constructor.storage_clean[scope]
         @leave_clean()
 
-      @define_event(concept, Js.Storage.CHANGE, Js.Storage.ROOT, concept_class::storage_clean)
-      @define_event(concept, Js.Storage.CHANGE, Js.Storage.ROOT_PERMANENT, concept_class::storage_clean)
+      @define_event(concept, Js.Storage.CHANGE, Js.Storage.ROOTS, concept_class::storage_clean)
 
   # Private
 

@@ -7,8 +7,7 @@ class Js.ComponentConcept
     RENDER: 'js_component:render'
 
   events: -> [
-    Js.Storage.CHANGE, Js.Storage.ROOT, @render_elements
-    Js.Storage.CHANGE, Js.Storage.ROOT_PERMANENT, @render_elements
+    Js.Storage.CHANGE, Js.Storage.ROOTS, @render_elements
 
     'input', @INPUTS, ({ target }) ->
       element = @elements[target.closest(@ELEMENTS).getAttribute('data-uid')]
