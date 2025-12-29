@@ -69,18 +69,16 @@ class Js.Concepts
     module ||= (names.length and names[0..-2].join('.')) or 'window'
     class_name = names.last()
 
+    module_class = module.constantize()
     concept_class = name.constantize()
     concept_class::class_name = class_name
-
     # NOTE: concept becomes a singleton where concept_class is concept.constructor
-    module_class = module.constantize()
     module_class[class_name] = concept = new concept_class
 
     if concept_class::global is true
       global_name = class_name.sub(CONCEPT, '')
       warn_defined_singleton_key(window, global_name)
       window[global_name] = concept
-
     if (alias = concept_class::alias)
       if alias.include '.'
         [scope..., alias] = alias.split('.')
@@ -110,6 +108,14 @@ class Js.Concepts
       true
 
     concept_class::each(@add_element) if concept is Js.Component
+
+    if concept_class.storage_clean
+      concept_class::storage_clean ?= ({ detail: { scope } } = {}) ->
+        return unless @constructor.storage_clean[scope]
+        @leave_clean()
+
+      @define_event(concept, Js.Storage.CHANGE, Js.Storage.ROOT, concept_class::storage_clean)
+      @define_event(concept, Js.Storage.CHANGE, Js.Storage.ROOT_PERMANENT, concept_class::storage_clean)
 
   # Private
 
@@ -171,27 +177,29 @@ class Js.Concepts
         (@__store ||= {})[name] = value
 
   @define_events: (context) ->
-    context.events().each_slice(3).each ([events, selector, handler]) ->
-      with_target = handler
-      handler = ->
-        with_target.apply(context, [arguments..., this])
-      if context.events_before
-        with_before = handler
-        handler = (event) ->
-          unless event.defaultPrevented
-            context.events_before.apply(context, arguments)
-          unless event.defaultPrevented
-            with_before.apply(context, arguments)
-      if context.events_after
-        with_after = handler
-        handler = (event) ->
-          unless event.defaultPrevented
-            with_after.apply(context, arguments)
-          unless event.defaultPrevented
-            context.events_after.apply(context, arguments)
+    context.events().each_slice(3).each ([events, selector, handler]) =>
+      @define_event(context, events, selector, handler)
 
-      events.split(/ *, */).each (event) ->
-        Rails.document_on event, selector, handler
+  @define_event: (context, events, selector, handler) ->
+    with_target = handler
+    handler = ->
+      with_target.apply(context, [arguments..., this])
+    if context.events_before
+      with_before = handler
+      handler = (event) ->
+        unless event.defaultPrevented
+          context.events_before.apply(context, arguments)
+        unless event.defaultPrevented
+          with_before.apply(context, arguments)
+    if context.events_after
+      with_after = handler
+      handler = (event) ->
+        unless event.defaultPrevented
+          with_after.apply(context, arguments)
+        unless event.defaultPrevented
+          context.events_after.apply(context, arguments)
+    events.split(/ *, */).each (event) ->
+      Rails.document_on event, selector, handler
 
   @unless_defined: (method, definition) ->
     if method? and uniq_methods.exclude(method)
