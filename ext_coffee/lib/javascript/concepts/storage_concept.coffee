@@ -6,9 +6,9 @@ class Js.StorageConcept
     root_permanent: -> storage_node(@ROOT_PERMANENT, true)
 
   constants: ->
-    ROOTS: -> "#{@ROOT},#{@ROOT_PERMANENT}"
     ROOT: '#js_storage'
     ROOT_PERMANENT: '#js_storage_permanent'
+    ROOTS: -> "#{@ROOT},#{@ROOT_PERMANENT}"
     CHANGE: 'js_storage:change'
 
   debug: (@__debug) ->

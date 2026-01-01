@@ -120,21 +120,21 @@ class Js.Component.Element
       false
 
   storage_changes: (name, options = {}) ->
-    Js.Storage.get_changes(name, options.merge @storage_options)
+    Js.Storage.get_changes(name, @storage_options.merge options)
 
   storage_change: (name, options = {}) ->
-    Js.Storage.get_change(name, options.merge @storage_options)
+    Js.Storage.get_change(name, @storage_options.merge options)
 
   storage_value: (name, options = {}) ->
-    Js.Storage.get_value(name, options.merge @storage_options)
+    Js.Storage.get_value(name, @storage_options.merge options)
 
   storage_get: (names...) ->
     return {} unless @watch
     options = names.extract_options()
-    Js.Storage.get(@storage_names(names)..., options.merge @storage_options)
+    Js.Storage.get(@storage_names(names)..., @storage_options.merge options)
 
   storage_set: (inputs, options = {}) ->
-    Js.Storage.set(inputs, options.merge @storage_options)
+    Js.Storage.set(inputs, @storage_options.merge options)
 
   storage_names: (names) ->
     return @watch if @watch and names.empty()
