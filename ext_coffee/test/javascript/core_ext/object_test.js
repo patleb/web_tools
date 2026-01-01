@@ -129,8 +129,8 @@ describe('Object', () => {
     assert.equal([1, 3], { a: 1, b: 2, c: 3 }.values_at('a', 'c'))
   })
 
-  test('#select', () => {
-    assert.equal({ b: 2 }, { a: 1, b: 2, c: 3 }.select((k, v) => v === 2))
+  test('#each_select', () => {
+    assert.equal({ b: 2 }, { a: 1, b: 2, c: 3 }.each_select((k, v) => v === 2))
   })
 
   test('#select_map', () => {

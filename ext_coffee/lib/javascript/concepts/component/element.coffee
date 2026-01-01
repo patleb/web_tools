@@ -105,7 +105,7 @@ class Js.Component.Element
   update_self: (changes, skip_callbacks = false) ->
     changes = changes.slice(@watch_ivars...)
     changed = false
-    changes = changes.select (name, [value]) =>
+    changes = changes.each_select (name, [value]) =>
       if not eql this[name], value
         this[name] = value
         changed = true

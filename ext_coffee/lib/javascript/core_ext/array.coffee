@@ -95,23 +95,25 @@ Array.override_methods
 
   each_map: Array::map
 
+  each_select: Array::filter
+
   select: Array::filter
 
   select_map: (f_item_index_self) ->
     value for item, i in this when (value = f_item_index_self(item, i, this))
 
   reject: (f_item_index_self) ->
-    @filter (item, index, self) ->
+    @select (item, index, self) ->
       not f_item_index_self(item, index, self)
 
   except: (items...) ->
     item for item in this when item not in items
 
   compact: ->
-    @filter (item) -> item?
+    @select (item) -> item?
 
   compact_blank: ->
-    @filter (item) -> item?.present()
+    @select (item) -> item?.present()
 
   first: (n = 1) ->
     return this[0] if n is 1

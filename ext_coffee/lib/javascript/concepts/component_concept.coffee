@@ -58,7 +58,7 @@ class Js.ComponentConcept
     @elements = null
 
   render_elements: ({ detail: { submitter, permanent, scope, changes } } = {}) ->
-    elements = (@elements ? {}).select (uid, element) ->
+    elements = (@elements ? {}).each_select (uid, element) ->
       if not element.watch \
       or permanent isnt element.permanent \
       or scope is 'uid' and uid isnt element.uid \

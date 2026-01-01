@@ -199,6 +199,12 @@ Object.define_methods
   each_map: (f_key_item_self) ->
     f_key_item_self(key, item, this) for key, item of this
 
+  each_select: (f_key_item) ->
+    result = {}
+    for key, item of this when f_key_item(key, item)
+      result[key] = item
+    result
+
   flatten_keys: (separator = '.', _prefix = null) ->
     @each_with_object {}, (key, item, memo) ->
       key = [_prefix, key].join(separator) if _prefix?
@@ -232,12 +238,6 @@ Object.define_methods
   values_at: (keys...) ->
     this[key] for key in keys
 
-  select: (f_key_item) ->
-    result = {}
-    for key, item of this when f_key_item(key, item)
-      result[key] = item
-    result
-
   select_map: (f_key_item) ->
     result = []
     for key, item of this when (value = f_key_item(key, item))
@@ -263,10 +263,10 @@ Object.define_methods
     result
 
   compact: ->
-    @select (key, item) -> item?
+    @each_select (key, item) -> item?
 
   compact_blank: ->
-    @select (key, item) -> item?.present()
+    @each_select (key, item) -> item?.present()
 
   merge: (objects...) ->
     @constructor.merge(this, objects...)

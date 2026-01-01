@@ -120,8 +120,8 @@ describe('Array', () => {
     assert.equal(['a', 'b', 'c'], ['c', 'b', 'a'].sort_by((v) => v))
   })
 
-  test('#select', () => {
-    assert.equal([2], [1, 2, 3].select((v) => v === 2))
+  test('#each_select', () => {
+    assert.equal([2], [1, 2, 3].each_select((v) => v === 2))
   })
 
   test('#select_map', () => {
