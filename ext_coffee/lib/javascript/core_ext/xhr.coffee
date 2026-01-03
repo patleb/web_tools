@@ -10,7 +10,7 @@ class window.XHR
   @cache_size: (@_cache_size) ->
 
   @cache_add: (type, url, data, response) ->
-    @cache ?= lru(@_cache_size or 500)
+    @cache ?= lru(@_cache_size or 1000)
     type = type.upcase()
     if type is 'GET' and data
       if data.is_a Object
