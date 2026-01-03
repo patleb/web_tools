@@ -109,13 +109,14 @@ class Js.Component.Element
       if not eql this[name], value
         this[name] = value
         changed = true
-    @changes = changes.keys()
     if @stale = changed
       if not skip_callbacks
         updates = changes.each_map (name, [change...]) =>
           [name, [change..., this["on_update_#{name}"]?(change...)]]
         @on_update?(updates.to_h())
       changes
+    else if skip_callbacks
+      {}
     else
       false
 
