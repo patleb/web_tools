@@ -12,9 +12,12 @@ Number.define_singleton_methods
     modifier = 10 ** precision
     Math[method](value * modifier * (1 + Number.EPSILON)) / modifier
 
-Number.override_methods
-  blank: ->
+Number.define_methods
+  is_nan: ->
     isNaN(this)
+
+Number.override_methods
+  blank: Number::is_nan
 
   eql: (other) ->
     return false unless other?.is_a Number

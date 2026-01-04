@@ -40,6 +40,7 @@ String.override_methods
     throw 'invalid value for Object' unless result?.is_a Object
     casts.each (key, cast) ->
       result[key] = switch cast
+        when  'nan' then  NaN
         when  'inf' then  Infinity
         when '-inf' then -Infinity
         else result[key][cast]()

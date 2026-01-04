@@ -51,6 +51,7 @@ window.type_caster = (object) ->
 window.json_caster = (object) ->
   return unless object?
   cast = object.constructor.from_json?()
+  cast ?= ('nan' if object.is_nan?())
   cast ? switch object
     when  Infinity then  'inf'
     when -Infinity then '-inf'
