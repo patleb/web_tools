@@ -76,9 +76,9 @@ Function.define_singleton_methods
       if base.start_with '@', 'this.', 'this::'
         is_ivar = true
         base = base.sub(/^(@|this\.?)/, '')
-        if is_prototype = base.startsWith '::'
+        if is_prototype = base.starts_with '::'
           base = base.sub(/^::/, '')
-      else if is_prototype = base.endsWith '::'
+      else if is_prototype = base.ends_with '::'
         base = base.sub(/::$/, '')
     else
       keys = base.keys() if keys.empty()

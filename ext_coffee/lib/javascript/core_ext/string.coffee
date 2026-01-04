@@ -104,7 +104,7 @@ String.define_methods
     throw 'invalid value for Boolean'
 
   to_i: (base = null) ->
-    value = if @toLowerCase().startsWith('0x') then this else @replace(/^0+/, '')
+    value = if @toLowerCase().starts_with('0x') then this else @replace(/^0+/, '')
     return 0 if @length > 0 and value is ''
     parseInt(value, base)
 
@@ -299,9 +299,13 @@ String.define_methods
     replace = rest if replace > rest
     "#{this[0...start]}#{string}#{this[(start + replace)..-1]}"
 
+  starts_with: String::startsWith
+
   start_with: (prefixes...) ->
     prefixes.any (prefix) =>
       @startsWith(prefix)
+
+  ends_with: String::endsWith
 
   end_with: (suffixes...) ->
     suffixes.any (suffix) =>
