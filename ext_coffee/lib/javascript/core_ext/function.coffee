@@ -69,37 +69,40 @@ Function.define_singleton_methods
   defer: (fn) ->
     setTimeout(fn, 1)
 
-  delegate_to: (receiver, base, keys...) ->
-    { force, bind, prefix = '' } = keys.extract_options()
+  delegate_to: (owner, base, keys...) ->
+    { force, bind, reader, prefix = '' } = keys.extract_options()
     if is_dynamic = base.is_a String
-      if is_prototype = base.endsWith '::'
+      throw 'must specify #delegate_to keys' if keys.empty()
+      if base.start_with '@', 'this.', 'this::'
+        is_ivar = true
+        base = base.sub(/^(@|this\.?)/, '')
+        if is_prototype = base.startsWith '::'
+          base = base.sub(/^::/, '')
+      else if is_prototype = base.endsWith '::'
         base = base.sub(/::$/, '')
     else
       keys = base.keys() if keys.empty()
+    names = []
     keys.except(Function.PROTECTED_METHODS...).each (key) ->
-      if force or not key.start_with('_') # skip private
-        delegated_key = if prefix.present() then "#{prefix}_#{key}" else key
-        if is_dynamic
-          receiver[delegated_key] = ->
-            klass = base.constantize()
-            klass = (base::) if is_prototype
-            if Object.getOwnPropertyDescriptor(Object.getPrototypeOf(klass), key).get?
-              klass[key]
-            else if bind
-              klass[key].apply(klass, arguments)
-            else
-              klass[key](arguments...)
-        else if (is_property = Object.getOwnPropertyDescriptor(base, key).get?) or base[key]?.is_a Function
-          if is_property
-            Object.defineProperty receiver, delegated_key, enumerable: false, get: -> base[key]
-          else
-            previous = receiver[key]
-            receiver[delegated_key] = if bind
-              -> base[key].apply(base, arguments)
-            else
-              base[key]
-            receiver[delegated_key].super = previous if previous?
-    receiver
+      return unless force or not key.start_with('_') # skip private
+      name = if prefix.present() then "#{prefix}_#{key}" else key
+      if is_dynamic
+        if reader
+          Object.defineProperty owner, name, enumerable: false, get: ->
+            receiver = receiver_for(this, base, is_ivar, is_prototype)
+            receiver[key]
+        else
+          owner[name] = ->
+            receiver = receiver_for(this, base, is_ivar, is_prototype)
+            if bind then receiver[key].apply(receiver, arguments) else receiver[key](arguments...)
+        names.push name
+      else if (reader = Object.getOwnPropertyDescriptor(base, key).get?) or base[key]?.is_a Function
+        if reader
+          Object.defineProperty owner, name, enumerable: false, get: -> base[key]
+        else
+          owner[name] = if bind then base[key].bind(base) else base[key]
+        names.push name
+    names
 
   debounce: (fn, wait = 100, immediate = false) ->
     timeout = null
@@ -132,21 +135,8 @@ Function.define_methods
     @constructor.defer(this)
 
   delegate_to: (base, keys...) ->
-    switch base.constructor
-      when String
-        throw 'must specify #delegate_to keys' if keys.empty()
-        if base.start_with '@', 'this.'
-          ivar_name = base.sub(/^(@|this\.)/, '')
-          keys.each (method) =>
-            this::[method] = ->
-              ivar = this[ivar_name]
-              ivar[method].apply(ivar, arguments)
-        else
-          @constructor.delegate_to(this::, base, keys...)
-      when Function
-        @constructor.delegate_to(this::, base::, keys...)
-      else
-        @constructor.delegate_to(this::, base, keys...)
+    base = (base::) if base.constructor is Function
+    @constructor.delegate_to(this::, base, keys...)
 
   new: (args...) ->
     new this(args...)
@@ -171,3 +161,13 @@ Function.define_methods
 
   nullary: ->
     @length is 0 and !!@toString().match /^function \w+\(\)/
+
+receiver_for = (owner, base, is_ivar, is_prototype) ->
+  if is_ivar
+    receiver = owner
+    receiver = (receiver::) if is_prototype
+    receiver[base]
+  else
+    receiver = base.constantize()
+    receiver = (receiver::) if is_prototype
+    receiver

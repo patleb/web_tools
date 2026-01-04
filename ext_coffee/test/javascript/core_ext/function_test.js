@@ -25,9 +25,7 @@ describe('Function', () => {
   test('.include, .extend', () => {
     let klass = Class.new()
     assert.equal('Concern', klass.context())
-    assert.equal('Base', klass.__proto__.context.super())
     assert.equal('Extended', klass.__proto__.constructor.context())
-    assert.equal('Module', klass.__proto__.constructor.context.super())
     assert.true(klass.__proto__.constructor.extended)
     assert.true(klass.__proto__.included)
   })
