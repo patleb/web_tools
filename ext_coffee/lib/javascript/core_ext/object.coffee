@@ -1,4 +1,7 @@
 Object.define_singleton_methods
+  from_string: ->
+    'to_h'
+
   dup: (object) ->
     result = {}
     for key, value of object

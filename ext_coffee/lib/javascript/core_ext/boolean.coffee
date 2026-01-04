@@ -1,3 +1,7 @@
+Boolean.define_singleton_methods
+  from_string: ->
+    'to_b'
+
 Boolean.override_methods
   blank: ->
     not @valueOf()

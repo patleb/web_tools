@@ -2,6 +2,9 @@ Number.METRIC_PREFIX =   ['f', 'p', 'n', 'µ', 'm', 'null', 'k', 'M', 'G', 'T', 
 Number.METRIC_EXPONENT = [-15, -12, -9,  -6,  -3,   null,   3,   6,   9,   12,  15]
 
 Number.define_singleton_methods
+  from_string: ->
+    'to_f'
+
   with_decimals: (method, value, precision) ->
     string = value.toString()
     if (string.split('.')[1]?.length ? parseInt(string.split('e')[1] or 0)) is precision

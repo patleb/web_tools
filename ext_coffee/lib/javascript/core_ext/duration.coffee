@@ -9,6 +9,11 @@ class window.Duration
     year:   31556952, # length of a gregorian year (365.2425 days)
   }
 
+  @from_string: ->
+    'to_duration'
+
+  @from_json: @from_string
+
   # NOTE: sub-seconds not supported
   constructor: (d) ->
     if d.is_a Array # dates sorted in ascending order

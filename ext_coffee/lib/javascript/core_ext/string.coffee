@@ -35,9 +35,14 @@ String.override_methods
     throw 'invalid value for Array' unless result?.is_a Array
     result
 
-  to_h: ->
+  to_h: (casts = {}) ->
     result = JSON.safe_parse(this)
     throw 'invalid value for Object' unless result?.is_a Object
+    casts.each (key, cast) ->
+      result[key] = switch cast
+        when  'inf' then  Infinity
+        when '-inf' then -Infinity
+        else result[key][cast]()
     result
 
   blank: ->

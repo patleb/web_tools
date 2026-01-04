@@ -78,6 +78,11 @@ class Js.StorageConcept
         input.setAttribute('value', if value? then value.safe_text() else null)
         input.setAttribute('data-was', value_was.safe_text()) if was and value_was?
         input.setAttribute('data-cast', cast) if cast
+        if value?.is_a Object
+          args = value.each_with_object {}, (key, value, memo) ->
+            return unless cast = json_caster(value)
+            memo[key] = cast
+          input.setAttribute('data-args', args.safe_text()) unless args.empty()
         @log permanent, scoped_name, value, value_was
     @storage(permanent).fire(@CHANGE, { submitter, permanent, scope, changes }) if event and changed
     changes
@@ -98,8 +103,8 @@ class Js.StorageConcept
     node
 
   log: (permanent, scoped_name, value, value_was) =>
-    tag = "[STORAGE][#{if permanent then 'P' else '-'}]"
-    @log_debug "#{tag}[#{scoped_name}] #{value_was?.safe_text()} => #{value?.safe_text()}"
+    tag = "[STORAGE][#{if permanent then 'P' else '-'}][#{scoped_name}]"
+    @log_debug "#{tag} now: #{value?.safe_text()} \n#{tag} was: #{value_was?.safe_text()}"
 
   log_debug: (msg) ->
     Logger.debug(msg) if @__debug

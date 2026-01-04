@@ -46,14 +46,14 @@ window.primitive = (object) ->
 
 window.type_caster = (object) ->
   cast = 'to_null' unless object?
-  cast ?= object.constructor.cast?() # returned method name must be defined on String
-  cast ? switch object.constructor
-    when Number   then 'to_f'
-    when Boolean  then 'to_b'
-    when Date     then 'to_date'
-    when Duration then 'to_duration'
-    when Array    then 'to_a'
-    when Object   then 'to_h'
+  cast ? object.constructor.from_string?() # returned method name must be defined on String
+
+window.json_caster = (object) ->
+  return unless object?
+  cast = object.constructor.from_json?()
+  cast ? switch object
+    when  Infinity then  'inf'
+    when -Infinity then '-inf'
 
 for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String]
   do (type) ->

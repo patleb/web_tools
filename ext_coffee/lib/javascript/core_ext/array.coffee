@@ -1,4 +1,7 @@
 Array.define_singleton_methods
+  from_string: ->
+    'to_a'
+
   wrap: (object) ->
     if object?
       if Array.is_array(object)

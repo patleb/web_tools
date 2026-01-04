@@ -60,6 +60,12 @@ Date.override_singleton_methods
       new this(args...)
 
 Date.define_singleton_methods
+  from_string: ->
+    'to_date'
+
+Date.define_singleton_methods
+  from_json: Date.from_string
+
   current: ->
     new Date(Date.now())
 
