@@ -10,6 +10,9 @@ class Js.Component.Element
       else
         { submitter: this, @permanent }
 
+  @first: ->
+    Js.Component.elements.find (uid, e) => e.constructor is this
+
   @element: (event_or_target) ->
     Js.Component.elements[@uid(event_or_target)]
 

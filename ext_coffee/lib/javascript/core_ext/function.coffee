@@ -69,6 +69,9 @@ Function.define_singleton_methods
   defer: (fn) ->
     setTimeout(fn, 1)
 
+  delegate: (owner, keys..., options) ->
+    @delegate_to(owner, options.to, keys..., options)
+
   delegate_to: (owner, base, keys...) ->
     { force, bind, reader, prefix = '' } = keys.extract_options()
     if is_dynamic = base.is_a String
@@ -133,6 +136,9 @@ Function.define_methods
 
   defer: ->
     @constructor.defer(this)
+
+  delegate: (keys..., options) ->
+    @delegate_to(options.to, keys..., options)
 
   delegate_to: (base, keys...) ->
     base = (base::) if base.constructor is Function
