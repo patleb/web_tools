@@ -193,20 +193,20 @@ HTMLElement.define_methods
   fire: (name, data) ->
     Rails.fire(this, name, data)
 
-  cast_value = (input, value) ->
-    if value? and (cast = input.getAttribute 'data-cast')?
-      if args = input.getAttribute 'data-args'
-        args = JSON.parse(args)
-      value = if cast.scoped_constantizable()
-        cast.constantize()(value, args)
-      else if cast.constantizable() and value[cast]
-        value[cast](args)
-      else # option
-        cast
-    value
+cast_value = (input, value) ->
+  if value? and (cast = input.getAttribute 'data-cast')?
+    if args = input.getAttribute 'data-args'
+      args = JSON.parse(args)
+    value = if cast.scoped_constantizable()
+      cast.constantize()(value, args)
+    else if cast.constantizable() and value[cast]
+      value[cast](args)
+    else # option
+      cast
+  value
 
-  get_value = (input, was) ->
-    if was and input.hasAttribute 'data-was'
-      input.getAttribute 'data-was'
-    else
-      input.value
+get_value = (input, was) ->
+  if was and input.hasAttribute 'data-was'
+    input.getAttribute 'data-was'
+  else
+    input.value
