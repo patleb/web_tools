@@ -5,13 +5,17 @@ class Js.RoutesConcept
     @paths = Rails.$('.js_routes').each_with_object {}, (element, memo) =>
       memo.merge(JSON.parse(element.getAttribute('data-value')))
 
-  url_for: (action, params = {}, blanks = true) ->
+  url_for: (action, params = {}, { blanks = true, decoded = false } = {}) ->
     return unless path = @paths[action]
-    @location(path, params, blanks).href
+    url = @location(path, params, blanks).href
+    url = decodeURIComponent(url) if decoded
+    url
 
-  path_for: (action, params = {}, blanks = true) ->
+  path_for: (action, params = {}, { blanks = true, decoded = false } = {}) ->
     return unless path = @paths[action]
-    @location(path, params, blanks).href.sub(/^.*\/\/[^\/]+/, '')
+    path = @location(path, params, blanks).href.sub(/^.*\/\/[^\/]+/, '')
+    path = decodeURIComponent(path) if decoded
+    path
 
   # NOTE: modern alternative
   # decode_params: (url) ->
