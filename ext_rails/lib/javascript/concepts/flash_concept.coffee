@@ -2,6 +2,7 @@ class Js.FlashConcept extends Js.Base
   global: true
 
   @readers
+    js_alert: -> Rails.find('#js_alert')
     js_notice: -> Rails.find('#js_notice')
 
   readers: ->
@@ -22,6 +23,7 @@ class Js.FlashConcept extends Js.Base
     timeout
 
   alert: (message) ->
+    @clear_alert()
     @header.append @flash_message('alert', message)...
     message
 
@@ -48,6 +50,9 @@ class Js.FlashConcept extends Js.Base
         label_ '.btn.btn-circle.btn-xs', ascii('x'), for: "js_#{key}"
       ]
     ]
+
+  clear_alert: ->
+    @clear_flash(@js_alert)
 
   clear_notice: ->
     clearTimeout(@clear_notice_timeout)
