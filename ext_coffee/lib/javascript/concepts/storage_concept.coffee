@@ -18,6 +18,7 @@ class Js.StorageConcept
     name.split(':')[0]
 
   unscoped: (name) ->
+    return if name.ends_with(':')
     name.split(':').last()
 
   scoped: (name, scope) ->

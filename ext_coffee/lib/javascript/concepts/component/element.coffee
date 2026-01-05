@@ -49,9 +49,10 @@ class Js.Component.Element
     else
       if (initialize = watch_data.is_a Object)
         @storage_set watch_data, event: false
-      watch_data.each_map (name, value) =>
+      watch_data.select_map (name, value) =>
         [scope, ivar] = [Js.Storage.unnamed(@scope, name), Js.Storage.unscoped(name)]
         @watch_scopes[scope] = true
+        return unless ivar
         @watch_ivars.push ivar
         this[ivar] = value if initialize
         name
@@ -107,13 +108,11 @@ class Js.Component.Element
     changes
 
   update_self: (changes, skip_callbacks = false) ->
-    changes = changes.slice(@watch_ivars...)
-    changed = false
-    changes = changes.each_select (name, [value]) =>
+    scopes = changes.except(@watch_ivars...)
+    changes = changes.slice(@watch_ivars...).each_select (name, [value]) =>
       if not eql this[name], value
         this[name] = value
-        changed = true
-    if @stale = changed
+    changes = if @stale = changes.present()
       if not skip_callbacks
         updates = changes.each_map (name, [change...]) =>
           [name, [change..., this["on_update_#{name}"]?(change...)]]
@@ -123,6 +122,11 @@ class Js.Component.Element
       {}
     else
       false
+    if not skip_callbacks and scopes.present()
+      updates = scopes.each_map (name, [change...]) =>
+        [name, [change..., this["on_watch_#{name}"]?(change...)]]
+      @on_watch?(updates.to_h())
+    changes
 
   storage_changes: (name, options = {}) ->
     Js.Storage.get_changes(name, @storage_options.merge options)
