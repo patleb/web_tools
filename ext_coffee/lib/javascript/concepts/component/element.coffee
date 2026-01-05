@@ -85,6 +85,7 @@ class Js.Component.Element
       @render_self changes, true
     else
       @update_self changes, true
+    @storage_fire changes
 
   render_self: (changes, skip_callbacks = false) ->
     if changes is true
@@ -139,6 +140,10 @@ class Js.Component.Element
 
   storage_set: (inputs, options = {}) ->
     Js.Storage.set(inputs, @storage_options.merge options)
+
+  storage_fire: (changes, options = {}) ->
+    Js.Storage.fire(changes, @storage_options.merge options)
+    changes
 
   storage_names: (names) ->
     return @watch if @watch and names.empty()

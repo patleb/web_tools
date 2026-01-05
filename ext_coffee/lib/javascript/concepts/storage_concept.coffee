@@ -63,7 +63,6 @@ class Js.StorageConcept
     result.reject(([name, value]) -> value is undefined).to_h()
 
   set: (inputs, { submitter = null, permanent = false, scope = '', event = true, was = false } = {}) ->
-    changed = false
     changes = inputs.each_with_object {}, (name, value, memo) =>
       scoped_name = @scoped name, scope
       if input = @storage(permanent).find("[name='#{scoped_name}']")
@@ -73,7 +72,6 @@ class Js.StorageConcept
         @storage(permanent).appendChild(input)
       if value_was is undefined or not eql value, value_was
         cast = type_caster(value)
-        changed = true
         changes = memo[@unscoped name] = [value, value_was]
         input.setAttribute('value', if value? then value.safe_text() else null)
         input.setAttribute('data-was', value_was.safe_text()) if was and value_was?
@@ -84,8 +82,11 @@ class Js.StorageConcept
             memo[key] = cast
           input.setAttribute('data-args', args.safe_text()) unless args.empty()
         @log permanent, scoped_name, value, value_was
-    @storage(permanent).fire(@CHANGE, { submitter, permanent, scope, changes }) if event and changed
+    @fire(changes, { submitter, permanent, scope }) if event
     changes
+
+  fire: (changes, { submitter = null, permanent = false, scope = '' } = {}) ->
+    @storage(permanent).fire(@CHANGE, { submitter, permanent, scope, changes }) unless changes.empty()
 
   storage: (permanent) ->
     if permanent then @root_permanent else @root
