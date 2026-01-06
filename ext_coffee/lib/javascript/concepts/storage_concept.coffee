@@ -51,6 +51,9 @@ class Js.StorageConcept
   get_value: (name, options = {}) ->
     @get(name, options)[@unscoped name]
 
+  has_value: (name, options = {}) ->
+    @get(name, options).has_key(@unscoped name)
+
   get: (names...) ->
     { permanent = false, scope = '', was = false } = names.extract_options()
     was = { was }

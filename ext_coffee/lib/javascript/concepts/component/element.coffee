@@ -137,6 +137,9 @@ class Js.Component.Element
   storage_value: (name, options = {}) ->
     Js.Storage.get_value(name, @storage_options.merge options)
 
+  storage_has: (name, options = {}) ->
+    Js.Storage.has_value(name, @storage_options.merge options)
+
   storage_get: (names...) ->
     return {} unless @watch
     options = names.extract_options()
