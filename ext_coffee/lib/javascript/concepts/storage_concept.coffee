@@ -12,6 +12,7 @@ class Js.StorageConcept
     CHANGE: 'js_storage:change'
 
   debug: (@__debug) ->
+  pad: (@__pad) ->
 
   unnamed: (scope, name) ->
     return scope unless name.include(':')
@@ -110,8 +111,9 @@ class Js.StorageConcept
       body.appendChild(node)
     node
 
-  log: (permanent, scoped_name, value, value_was) =>
+  log: (permanent, scoped_name, value, value_was) ->
     tag = "[STORAGE][#{if permanent then 'P' else '-'}][#{scoped_name}]"
+    tag = tag.ljust @__pad, '-' if @__pad
     value = 'null' unless value?
     value_was = 'null' if value_was is null
     @log_debug "#{tag} now: #{value.safe_text()} \n#{tag} was: #{value_was?.safe_text()}"
