@@ -79,7 +79,10 @@ class Js.StorageConcept
         changes = memo[@unscoped name] = [value, value_was]
         input.setAttribute('value', if value? then value.safe_text() else null)
         input.setAttribute('data-was', value_was.safe_text()) if was and value_was?
-        input.setAttribute('data-cast', cast) if cast
+        if cast
+          input.setAttribute('data-cast', cast)
+        else
+          input.removeAttribute('data-cast')
         if value?.is_a Object
           args = value.each_with_object {}, (key, value, memo) ->
             return unless cast = json_caster(value)
@@ -109,7 +112,9 @@ class Js.StorageConcept
 
   log: (permanent, scoped_name, value, value_was) =>
     tag = "[STORAGE][#{if permanent then 'P' else '-'}][#{scoped_name}]"
-    @log_debug "#{tag} now: #{value?.safe_text()} \n#{tag} was: #{value_was?.safe_text()}"
+    value = 'null' unless value?
+    value_was = 'null' if value_was is null
+    @log_debug "#{tag} now: #{value.safe_text()} \n#{tag} was: #{value_was?.safe_text()}"
 
   log_debug: (msg) ->
     Logger.debug(msg) if @__debug
