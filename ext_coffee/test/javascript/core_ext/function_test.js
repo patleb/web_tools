@@ -27,7 +27,7 @@ describe('Function', () => {
     assert.equal('Concern', klass.context())
     assert.equal('Extended', klass.__proto__.constructor.context())
     assert.true(klass.__proto__.constructor.extended)
-    assert.true(klass.__proto__.included)
+    assert.true(klass.__proto__.constructor.included)
   })
 
   test('.alias_method', () => {

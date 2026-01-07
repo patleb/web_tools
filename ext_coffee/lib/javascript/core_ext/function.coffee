@@ -137,6 +137,18 @@ Function.define_methods
   defer: ->
     @constructor.defer(this)
 
+  prepend_to: (methods) ->
+    for name, callback of methods
+      prepend_to(this::, name, callback)
+
+  append_to: (methods) ->
+    for name, callback of methods
+      append_to(this::, name, callback)
+
+  decorate: (methods) ->
+    for name, callback of methods
+      decorate(this::, name, callback)
+
   delegate: (keys..., options) ->
     @delegate_to(options.to, keys..., options)
 
@@ -150,7 +162,7 @@ Function.define_methods
   include: (base, keys...) ->
     @extend base.class_methods() if base.class_methods?
     @delegate_to base, keys...
-    base.included?.apply(this::)
+    base.included?.apply(this::constructor)
     return
 
   extend: (base, keys...) ->
