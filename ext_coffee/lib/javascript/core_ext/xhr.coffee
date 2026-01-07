@@ -85,7 +85,7 @@ class window.XHR
     if options.before_send? and options.before_send(this, options) is false
       return
     else if options.spinner
-      Js.load_spinner(@id)
+      Js.load_spinner("xhr_#{@id}")
     if options.cache and (@cache = @constructor.cache.get(@cache_key(options))) isnt undefined # value can be null
       @done(options)
     else if @xhr.readyState is XMLHttpRequest.OPENED
@@ -110,7 +110,7 @@ class window.XHR
           alert
         Flash.alert message
     options.complete?(this)
-    Js.clear_spinner(@id) if options.spinner
+    Js.clear_spinner("xhr_#{@id}") if options.spinner
 
   process_response: ->
     response = @xhr.response ? @xhr.responseText
