@@ -5,16 +5,16 @@ class Js.RoutesConcept
     @paths = Rails.$('.js_routes').each_with_object {}, (element, memo) =>
       memo.merge(JSON.parse(element.getAttribute('data-value')))
 
-  url_for: (action, params = {}, { blanks = true, decoded = false } = {}) ->
+  url_for: (action, params = {}, { blanks = true, sort = false, decode = false } = {}) ->
     return unless path = @paths[action]
-    url = @location(path, params, blanks).href
-    url = decodeURIComponent(url) if decoded
+    url = @location(path, params, blanks, sort).href
+    url = decodeURIComponent(url) if decode
     url
 
-  path_for: (action, params = {}, { blanks = true, decoded = false } = {}) ->
+  path_for: (action, params = {}, { blanks = true, sort = false, decode = false } = {}) ->
     return unless path = @paths[action]
-    path = @location(path, params, blanks).href.sub(/^.*\/\/[^\/]+/, '')
-    path = decodeURIComponent(path) if decoded
+    path = @location(path, params, blanks, sort).href.sub(/^.*\/\/[^\/]+/, '')
+    path = decodeURIComponent(path) if decode
     path
 
   # NOTE: modern alternative
@@ -33,7 +33,7 @@ class Js.RoutesConcept
 
   # Anchors not supported
   # Optional /(:variable) segment not supported
-  location: (path, params = {}, blanks = true) ->
+  location: (path, params = {}, blanks = true, sort = false) ->
     params = params.dup()
     location = @decode_url(path)
     pathname = location.pathname.split('/').map (segment) ->
@@ -42,7 +42,7 @@ class Js.RoutesConcept
       else
         segment
     location.pathname = pathname.join('/').sub(/\/$/, '')
-    location.search = params.to_query(blanks) unless params.empty()
+    location.search = params.to_query({ blanks, sort }) unless params.empty()
     location
 
   decode_url: (string) ->

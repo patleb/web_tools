@@ -13,9 +13,7 @@ class window.XHR
     @cache ?= lru(@_cache_size or 1000)
     type = type.upcase()
     if type is 'GET' and data
-      if data.is_a Object
-        data = Object.deep_sort(data)
-        data = data.to_query()
+      data = data.to_query(sort: true) if data.is_a Object
       url = Rails.push_query(url, data)
       data = undefined
     else if data?.is_a Object
@@ -54,9 +52,7 @@ class window.XHR
     options.type = options.type.upcase()
     # append data to url if it's a GET request
     if options.type is 'GET' and options.data
-      if options.data.is_a Object
-        options.data = Object.deep_sort(options.data) if options.cache
-        options.data = options.data.to_query()
+      options.data = options.data.to_query(sort: options.cache) if options.data.is_a Object
       options.url = Rails.push_query(options.url, options.data)
       delete options.data
     options.data_type = '*' unless ACCEPT_HEADERS[options.data_type]?

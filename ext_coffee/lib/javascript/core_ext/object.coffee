@@ -91,8 +91,9 @@ Object.define_methods
   to_duration: ->
     new Duration(this)
 
-  to_query: (blanks = true) ->
-    params = @each_map (param_name, param_value) ->
+  to_query: ({ blanks = true, sort = false } = {}) ->
+    params = if sort then Object.deep_sort(this) else this
+    params = params.each_map (param_name, param_value) ->
       switch param_value?.constructor
         when Object
           param_value.flatten_keys('][').each_map (names, value) ->
