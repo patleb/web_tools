@@ -81,9 +81,9 @@ Array.override_methods
     @every (item, index, self) ->
       not f_item_index_self(item, index, self)
 
-  each: (f_item_index_self) ->
-    @forEach(f_item_index_self)
-    return
+  each: Array::forEach
+
+  each_with_index: Array::forEach
 
   each_while: (f_item_index_self) ->
     for item, i in this
@@ -97,6 +97,8 @@ Array.override_methods
     , accumulator
 
   each_map: Array::map
+
+  map_with_index: Array::map
 
   each_select: Array::filter
 

@@ -99,7 +99,7 @@ class window.XHR
       options.error?(response, this)
       if (alert = options.alert)?.present()
         message = if alert is true
-          'Server Error'
+          'Server Error'.html_safe(true)
         else if alert.is_a Function
           alert(response, this)
         else

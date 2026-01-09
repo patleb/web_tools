@@ -188,6 +188,12 @@ Object.define_methods
       f_key_item_self(key, item, this)
     return
 
+  each_with_index: (i, f_key_item_index_self = null) ->
+    [i, f_key_item_index_self] = [0, i] unless f_key_item_index_self?
+    for key, item of this
+      f_key_item_index_self(key, item, i++, this)
+    return
+
   each_while: (f_key_item_self) ->
     for key, item of this
       return unless f_key_item_self(key, item, this)
@@ -202,6 +208,10 @@ Object.define_methods
 
   each_map: (f_key_item_self) ->
     f_key_item_self(key, item, this) for key, item of this
+
+  map_with_index: (i, f_key_item_index_self = null) ->
+    [i, f_key_item_index_self] = [0, i] unless f_key_item_index_self?
+    f_key_item_index_self(key, item, i++, this) for key, item of this
 
   each_select: (f_key_item) ->
     result = {}
