@@ -103,6 +103,7 @@ class Js.Component.Element
     @stale = false
     if (input = @find_input @autofocus...)
       input.focus()
+      @autofocus_was = @autofocus if @refresh
       @autofocus = null
     @after_render?(changes)
     changes
@@ -112,6 +113,7 @@ class Js.Component.Element
     changes = changes.slice(@watch_ivars...).each_select (name, [value]) =>
       if not eql this[name], value
         this[name] = value
+        true
     changes = if @stale = changes.present()
       if not skip_callbacks
         updates = changes.each_map (name, [change...]) =>
@@ -146,9 +148,11 @@ class Js.Component.Element
     Js.Storage.get(@storage_names(names)..., @storage_options.merge options)
 
   storage_set: (inputs, options = {}) ->
+    [@autofocus, @autofocus_was] = [@autofocus_was, null] if options.autofocus
     Js.Storage.set(inputs, @storage_options.merge options)
 
   storage_fire: (changes, options = {}) ->
+    [@autofocus, @autofocus_was] = [@autofocus_was, null] if options.autofocus
     Js.Storage.fire(changes, @storage_options.merge options)
     changes
 
