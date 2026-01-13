@@ -227,6 +227,12 @@ Array.define_methods
       value += f_item_index_self(this[i], i, this)
     value
 
+  count: (f_item_index_self = -> true) ->
+    value = 0
+    for i in [0...@length]
+      value++ if f_item_index_self(this[i], i, this)
+    value
+
   intersection: (other) ->
     value for value in this when value in other
 
