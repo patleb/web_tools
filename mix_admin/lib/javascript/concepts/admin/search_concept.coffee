@@ -6,7 +6,7 @@ class Js.Admin.SearchConcept
     search: -> Rails.find('.js_search')
 
   events: -> [
-    'search', '.js_search', @on_blank_search
+    'search', '.js_search', @on_search_blank
 
     'turbolinks:submit', '.js_query_bar', ->
       @query_submitted = true
@@ -65,7 +65,7 @@ class Js.Admin.SearchConcept
 
   # Private
 
-  on_blank_search: (event, target) ->
+  on_search_blank: (event, target) ->
     return if @query_submitted
     return if target.get_value()?.present()
     return unless Routes.decode_params().q
