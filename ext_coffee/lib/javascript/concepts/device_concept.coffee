@@ -14,7 +14,6 @@ class Js.DeviceConcept
     BREAKPOINT: 'js_device:breakpoint'
 
   ready_once: ->
-    @size = null # already defined on Object
     @touch = false
     window.addEventListener('touchstart', @on_touchstart, false)
     window.addEventListener('scroll', @on_scroll.throttle(), false)

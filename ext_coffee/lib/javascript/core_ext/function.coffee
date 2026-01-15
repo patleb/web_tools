@@ -42,16 +42,16 @@ Function.define_singleton_methods
         return
 
       throttled = ->
-        _now = Date.now()
-        previous = _now if not previous and options.leading is false
-        remaining = wait - (_now - previous)
+        now = Date.now()
+        previous = now if not previous and options.leading is false
+        remaining = wait - (now - previous)
         context = this
         args = arguments
         if remaining <= 0 or remaining > wait
           if timeout
             clearTimeout(timeout)
             timeout = null
-          previous = _now
+          previous = now
           result = fn.apply(context, args)
           context = args = null unless timeout
         else if not timeout and options.trailing isnt false
@@ -139,22 +139,22 @@ Function.define_methods
 
   prepend_to: (methods) ->
     for name, callback of methods
-      prepend_to(this::, name, callback)
+      prepend_to(@::, name, callback)
 
   append_to: (methods) ->
     for name, callback of methods
-      append_to(this::, name, callback)
+      append_to(@::, name, callback)
 
   decorate: (methods) ->
     for name, callback of methods
-      decorate(this::, name, callback)
+      decorate(@::, name, callback)
 
   delegate: (keys..., options) ->
     @delegate_to(options.to, keys..., options)
 
   delegate_to: (base, keys...) ->
     base = (base::) if base.constructor is Function
-    @constructor.delegate_to(this::, base, keys...)
+    @constructor.delegate_to(@::, base, keys...)
 
   new: (args...) ->
     new this(args...)
@@ -162,7 +162,7 @@ Function.define_methods
   include: (base, keys...) ->
     @extend base.class_methods() if base.class_methods?
     @delegate_to base, keys...
-    base.included?.apply(this::constructor)
+    base.included?.apply(@::constructor)
     return
 
   extend: (base, keys...) ->
@@ -171,7 +171,7 @@ Function.define_methods
     return
 
   alias_method: (to, from) ->
-    this::[to] = this::[from]
+    @::[to] = @::[from]
     return
 
   debounce: (wait = 100, immediate = false) ->

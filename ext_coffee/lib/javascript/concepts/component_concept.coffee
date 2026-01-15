@@ -55,7 +55,6 @@ class Js.ComponentConcept
   leave: ->
     @elements?.each (uid, element) ->
       element.leave?()
-    @elements = null
 
   render_elements: ({ detail: { submitter, permanent, scope, changes } } = {}) ->
     elements = (@elements ? {}).each_select (uid, element) ->
