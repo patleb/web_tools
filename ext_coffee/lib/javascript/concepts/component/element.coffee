@@ -80,12 +80,13 @@ class Js.Component.Element
   render: not_implemented
 
   # NOTE: for usage in #on_update
-  render_or_update: (changes, render) ->
-    changes = @storage_set changes, event: false
+  update: (changes, { render, stale, autofocus } = {}) ->
+    changes = @storage_set changes, { event: false, autofocus }
     if render
       @render_self changes, true
     else
       @update_self changes, true
+    @stale = stale if stale?
     @storage_fire changes
 
   render_self: (changes, skip_callbacks = false) ->
@@ -103,6 +104,7 @@ class Js.Component.Element
     @stale = false
     if (input = @find_input @autofocus...)
       input.focus()
+      input.cursor_end(true)
       @autofocus_was = @autofocus if @refresh
       @autofocus = null
     @after_render?(changes)
@@ -152,7 +154,6 @@ class Js.Component.Element
     Js.Storage.set(inputs, @storage_options.merge options)
 
   storage_fire: (changes, options = {}) ->
-    [@autofocus, @autofocus_was] = [@autofocus_was, null] if options.autofocus
     Js.Storage.fire(changes, @storage_options.merge options)
     changes
 

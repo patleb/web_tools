@@ -175,7 +175,7 @@ HTMLElement.define_methods
 
   cursor_end: (move = false) ->
     if move isnt false
-      move = @value.length * 2 if move is true
+      move = @value.length + 1 if move is true
       move = 0 if move < 0
       @setSelectionRange?(move, move)
     @selectionEnd ? 0
