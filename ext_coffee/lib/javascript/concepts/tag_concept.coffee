@@ -11,6 +11,7 @@ class Js.TagConcept
     'i', 'input'
     'label', 'li'
     'ol', 'optgroup', 'option', 'output'
+    'p',
     'select', 'span', 'sub', 'sup'
     'textarea', 'time'
     'ul'
