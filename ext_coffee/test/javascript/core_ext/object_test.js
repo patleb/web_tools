@@ -121,8 +121,8 @@ describe('Object', () => {
     assert.equal(2, count)
   })
 
-  test('#values', () => {
-    assert.equal([1, 2], { a: 1, b: 2 }.values())
+  test('#vals', () => {
+    assert.equal([1, 2], { a: 1, b: 2 }.vals())
   })
 
   test('#values_at', () => {

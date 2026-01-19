@@ -246,7 +246,7 @@ Object.define_methods
   keys: ->
     Object.keys(this)
 
-  values: ->
+  vals: ->
     item for key, item of this
 
   values_at: (keys...) ->

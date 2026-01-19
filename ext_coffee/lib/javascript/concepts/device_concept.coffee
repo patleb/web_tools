@@ -22,7 +22,7 @@ class Js.DeviceConcept
     @screens = @screens.reject((k, v) -> v.is_a Object).each_map((k, v) -> [k, v.to_i()]).to_h()
     @breakpoints = {}
     styles = window.getComputedStyle(document.documentElement, '')
-    prefix = try styles.values().join('').match(/-(webkit|moz|ms)-/)?[1]
+    prefix = try styles.vals().join('').match(/-(webkit|moz|ms)-/)?[1]
     @chrome = window.chrome?
     @webkit = not @chrome and prefix is 'webkit'
     @firefox = prefix is 'moz' or typeof InstallTrigger isnt 'undefined'
