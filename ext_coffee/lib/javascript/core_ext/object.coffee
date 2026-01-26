@@ -276,6 +276,14 @@ Object.define_methods
       result[key] = item if key not in keys
     result
 
+  transform_keys: (f_key) ->
+    @each_with_object {}, (key, item, memo) ->
+      memo[f_key(key)] = item
+
+  transform_values: (f_item) ->
+    @each_with_object {}, (key, item, memo) ->
+      memo[key] = f_item(item)
+
   compact: ->
     @each_select (key, item) -> item?
 

@@ -56,7 +56,32 @@ window.json_caster = (object) ->
     when  Infinity then  'inf'
     when -Infinity then '-inf'
 
-for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegExp, String]
+window.css = (name, fallback = null) ->
+  @_css ?= if window.CSS?.supports('color', 'var(--test)')
+    style = getComputedStyle(document.documentElement)
+    Array.from(style).select_map (key) ->
+      return unless key.starts_with '--'
+      return unless value = style.getPropertyValue(key).strip()
+      [key, value]
+    .to_h()
+  else
+    {}
+  @_css[name] ? fallback
+
+if module.hot and Env.development
+  emitter = require('webpack/hot/emitter')
+
+  reset_css = (hash) ->
+    window._css = null
+    document.dispatchEvent(new CustomEvent('webpack:hot-update', { detail: { hash } }))
+
+  document.addEventListener 'DOMContentLoaded', ->
+    emitter.on 'webpackHotUpdate', reset_css
+
+  window.addEventListener 'beforeunload', ->
+    emitter.off 'webpackHotUpdate', reset_css
+
+for type in [Array, Boolean, Date, Element, Function, Number, Object, RegExp, String]
   do (type) ->
     type.override_singleton_methods = (methods) ->
       for name, callback of methods
@@ -130,13 +155,15 @@ for type in [Array, Boolean, Date, Element, Function, Math, Number, Object, RegE
         type["#{pattern}_method"] = (name, callback) ->
           window[pattern] type::, name, callback
 
-JSON.define_singleton_methods = (methods) ->
-  for name, callback of methods
-    JSON.define_singleton_method(name, callback)
+for type in [JSON, Math]
+  do (type) ->
+    type.define_singleton_methods = (methods) ->
+      for name, callback of methods
+        type.define_singleton_method(name, callback)
 
-JSON.define_singleton_method = (name, callback) ->
-  warn_defined_singleton_key(JSON, name)
-  JSON[name] = callback
+    type.define_singleton_method = (name, callback, warn = true) ->
+      warn_defined_singleton_key(type, name) if warn
+      type[name] = callback
 
 class window.WithReaders
   @readers: (methods) ->
