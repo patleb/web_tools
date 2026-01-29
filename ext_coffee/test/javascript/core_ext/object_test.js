@@ -15,8 +15,8 @@ describe('Object', () => {
 
   test('#to_query', () => {
     assert.equal('a=1&b=2', { a: 1, b: 2 }.to_query())
-    assert.equal('a=1', { a: 1, b: ' ' }.to_query(false))
-    assert.equal('a=1', { a: 1, ' ': 2 }.to_query(false))
+    assert.equal('a=1', { a: 1, b: ' ' }.to_query({ blanks: false }))
+    assert.equal('a=1', { a: 1, ' ': 2 }.to_query({ blanks: false }))
     assert.equal('a%5B%5D=1&a%5B%5D=2', { a: [1, 2] }.to_query())
     assert.equal('a%5Bb%5D=1&a%5Bc%5D=2&d%5B%5D=3&e=4', { a: { b: 1, c: 2 }, d: [3], e: 4 }.to_query())
   })

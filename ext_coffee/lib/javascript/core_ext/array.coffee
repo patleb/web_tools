@@ -209,8 +209,8 @@ Array.define_methods
     .pluck('item')
 
   find_index: (f_item_index_self) ->
-    for i in [0...@length]
-      return i if f_item_index_self(this[i], i, this)
+    for item, i in this
+      return i if f_item_index_self(item, i, this)
     return
 
   flatten: ->
@@ -221,16 +221,18 @@ Array.define_methods
   add: (others...) ->
     @concat others...
 
-  sum: (f_item_index_self = (v) -> v) ->
+  sum: (f_item_index_self = null) ->
     value = 0
-    for i in [0...@length]
-      value += f_item_index_self(this[i], i, this)
+    if f_item_index_self?
+      value += f_item_index_self(item, i, this) for item, i in this
+    else
+      value += item for item in this
     value
 
   count: (f_item_index_self = -> true) ->
     value = 0
-    for i in [0...@length]
-      value++ if f_item_index_self(this[i], i, this)
+    for item, i in this
+      value++ if f_item_index_self(item, i, this)
     value
 
   intersection: (other) ->
@@ -250,7 +252,7 @@ Array.define_methods
 
   uniq: ->
     result = {}
-    result[this[i]] = this[i] for i in [0...@length]
+    result[item] = item for item in this
     value for key, value of result
 
   extract_options: ->
