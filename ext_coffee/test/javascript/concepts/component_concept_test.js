@@ -30,7 +30,7 @@ describe('Js.ComponentConcept', () => {
     dom.fire('input', { target: input })
     assert.html_equal('<div><h1>Today</h1></div>', banner_card.innerHTML)
     assert.equal('New name', input.get_value())
-    assert.false(card_element.stale)
+    assert.false(card_element._stale)
     assert.html_equal(
       `<div>
         <h2>Today</h2>
@@ -39,7 +39,7 @@ describe('Js.ComponentConcept', () => {
       </div>`,
       card.innerHTML
     )
-    Js.Storage.set({ banner: 'Tomorrow' }, { scope: card_element.scope })
+    Js.Storage.set({ banner: 'Tomorrow' }, { scope: card_element._scope })
     assert.html_equal(
       `<div>
         <h2>Tomorrow</h2>
@@ -67,7 +67,7 @@ describe('Js.ComponentConcept', () => {
     assert.total(1)
     const card = dom.find(`${Js.Component.ELEMENTS}[data-element=card]`)
     dom.on_event({ 'click': (event) => {
-      assert.same(card, event.element.node)
+      assert.same(card, event.element._node)
     }})
     card.find('input').click()
   })

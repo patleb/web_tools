@@ -9,7 +9,7 @@ class Test.SimpleConcept extends Js.Base
     CUSTOM: '.js_simple_custom > a'
     BODY_ROWS: -> "#{@BODY} #{@ROWS}"
 
-  readers: ->
+  memoizers: ->
     rows: ->
       dom.$(@ROWS)
 

@@ -17,7 +17,7 @@ class Js.ComponentConcept
       value_was = element.storage_value(name)
       if value_was is undefined or not eql value, value_was
         if document.activeElement is target
-          element.autofocus = switch target.type
+          element._autofocus = switch target.type
             when 'radio', 'checkbox'
               [name, value]
             else
@@ -39,8 +39,8 @@ class Js.ComponentConcept
       uid = Math.uid()
       node.setAttribute('data-uid', uid)
       memo.push new element_class(node, uid, index)
-    .sort_by((e) -> e.index)
-    .map((e) -> [e.uid, e])
+    .sort_by((e) -> e._index)
+    .map((e) -> [e._uid, e])
     .to_h()
 
     @elements.each (uid, element) =>
@@ -58,12 +58,13 @@ class Js.ComponentConcept
 
   render_elements: ({ detail: { submitter, permanent, scope, changes } } = {}) ->
     elements = (@elements ? {}).each_select (uid, element) ->
-      if not element.watch \
-      or permanent isnt element.permanent \
-      or scope is 'uid' and uid isnt element.uid \
-      or not element.watch_scopes[scope]
+      element.nullify_memoizers()
+      if not element._watch \
+      or permanent isnt element._permanent \
+      or scope is 'uid' and uid isnt element._uid \
+      or not element._watch_scopes[scope]
         false
-      else if element.rendered and (not element.refresh and element is submitter)
+      else if element._rendered and (not element._refresh and element is submitter)
         element.update_self changes
       else
         element.render_self changes

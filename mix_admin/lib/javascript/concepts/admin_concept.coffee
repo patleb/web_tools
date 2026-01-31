@@ -1,5 +1,5 @@
 class Js.AdminConcept
-  readers: ->
+  memoizers: ->
     action: -> Rails.find('.js_action').data('value')
     model: -> Rails.find('.js_model')?.data('value')
     scroll_menu: -> Rails.find('.js_scroll_menu')

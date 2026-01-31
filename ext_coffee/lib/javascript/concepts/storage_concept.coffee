@@ -1,7 +1,7 @@
 class Js.StorageConcept
   alias: 'Js.Storage'
 
-  readers: ->
+  memoizers: ->
     root: -> storage_node(@ROOT)
     root_permanent: -> storage_node(@ROOT_PERMANENT, true)
 
@@ -42,7 +42,7 @@ class Js.StorageConcept
       changes[key] = [item, item_was] if not eql item, item_was
     for key, item_was of value_was.except(keys...)
       changes[key] = [undefined, item_was]
-    changes.presence()
+    changes
 
   get_change: (name, options = {}) ->
     value = @get_value(name, options)

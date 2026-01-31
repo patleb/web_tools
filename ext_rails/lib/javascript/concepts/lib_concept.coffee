@@ -2,7 +2,7 @@ class Js.LibConcept extends Js.Base
   @readers
     role: -> Cookie.get('_role') ? 'null'
 
-  readers: ->
+  memoizers: ->
     layout:   -> Rails.find('.js_layout')?.data('value')
     scroll_y: -> @layout and @sidebar and @store('scroll_y')?["#{@role}_#{@layout}"]
     sidebar:  -> Rails.find('.drawer-side')

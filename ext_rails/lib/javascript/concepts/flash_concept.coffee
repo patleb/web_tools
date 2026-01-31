@@ -5,7 +5,7 @@ class Js.FlashConcept extends Js.Base
     js_alert: -> Rails.find('#js_alert')
     js_notice: -> Rails.find('#js_notice')
 
-  readers: ->
+  memoizers: ->
     header: -> Rails.find('#header')
 
   events: -> [

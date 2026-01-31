@@ -6,6 +6,9 @@
 class Js.DeviceConcept
   global: true
 
+  memoizers: ->
+    theme: -> document.documentElement.getAttribute('data-theme')
+
   constants: ->
     SCROLL_X:   'js_device:scroll_x'
     SCROLL_Y:   'js_device:scroll_y'

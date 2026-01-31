@@ -41,16 +41,19 @@ Number.define_methods
   to_f: Number::valueOf
 
   to_s: (type = null, precision = null) ->
+    separator = if type?.ends_with '!' then type = type.chop(); '' else ' '
     switch type
       when 'percent'
-        return "#{this * 100} %"
+        return "#{this * 100}#{separator}%"
       when 'metric'
         exponent = Math.log10(this)
         i = Math.floor(Math.floor(exponent) / 3) + 5
-        if (exponent = Number.METRIC_EXPONENT[i])?
+        return if (exponent = Number.METRIC_EXPONENT[i])?
           value = this / (10 ** exponent)
           value = value.round(precision) if precision?
-          return "#{value} #{Number.METRIC_PREFIX[i]}"
+          "#{value}#{separator}#{Number.METRIC_PREFIX[i]}"
+        else
+          "#{this}#{separator}"
       when 'decimal'
         value = if precision? then @round(precision) else @valueOf()
         [left, right] = value.toString().split('.')

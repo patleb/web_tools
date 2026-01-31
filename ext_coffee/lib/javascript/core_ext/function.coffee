@@ -184,7 +184,10 @@ receiver_for = (owner, base, is_ivar, is_prototype) ->
   if is_ivar
     receiver = owner
     receiver = (receiver::) if is_prototype
-    receiver[base]
+    if base.include '.'
+      receiver.dig(base)
+    else
+      receiver[base]
   else
     receiver = base.constantize()
     receiver = (receiver::) if is_prototype

@@ -3,12 +3,12 @@ class Js.Component.Element
 
   @readers
     storage_options: ->
-      if @scope is 'uid'
-        { submitter: this, @permanent, scope: @uid }
-      else if @scope
-        { submitter: this, @permanent, @scope }
+      if @_scope is 'uid'
+        { submitter: this, permanent: @_permanent, scope: @_uid }
+      else if @_scope
+        { submitter: this, permanent: @_permanent, scope: @_scope }
       else
-        { submitter: this, @permanent }
+        { submitter: this, permanent: @_permanent }
 
   @first: ->
     Js.Component.elements.find (uid, e) => e.constructor is this
@@ -35,41 +35,44 @@ class Js.Component.Element
       element = @element(event)
       element[method_name](arguments...)
 
-  constructor: (@node, @uid, index) ->
+  constructor: (@_node, @_uid, index) ->
     static_data = @json_or_function_or_value 'static', {}
     watch_data = @json_or_function_or_value 'watch', []
-    @permanent = @node.hasAttribute('data-turbolinks-permanent')
-    @refresh = @node.getAttribute('data-refresh')?.to_b() ? @constructor.refresh
-    @index = @node.getAttribute('data-index')?.to_i() ? @constructor.index ? index
-    @scope = @node.getAttribute('data-scope') or @constructor.scope or ''
-    @watch_scopes = {}
-    @watch_ivars = []
-    @watch = if watch_data.empty()
+    @_permanent = @_node.hasAttribute('data-turbolinks-permanent')
+    @_refresh = @_node.getAttribute('data-refresh')?.to_b() ? @constructor.refresh
+    @_index = @_node.getAttribute('data-index')?.to_i() ? @constructor.index ? index
+    @_scope = @_node.getAttribute('data-scope') or @constructor.scope or ''
+    @_watch_scopes = {}
+    @_watch_ivars = []
+    @_watch = if watch_data.empty()
       false
     else
       if (initialize = watch_data.is_a Object)
         @storage_set watch_data, event: false
       watch_data.select_map (name, value) =>
-        [scope, ivar] = [Js.Storage.unnamed(@scope, name), Js.Storage.unscoped(name)]
-        @watch_scopes[scope] = true
+        [scope, ivar] = [Js.Storage.unnamed(@_scope, name), Js.Storage.unscoped(name)]
+        @_watch_scopes[scope] = true
         return unless ivar
-        @watch_ivars.push ivar
+        @_watch_ivars.push ivar
         this[ivar] = value if initialize
         name
     static_data.each (name, value) => this[name] = value
-    @node.add_class 'no-transition' unless @refresh is false
+    @_node.add_class 'no-transition' unless @_refresh is false
 
   ready: ->
     @render_self true
 
   $: (selector) ->
-    @node.$(selector)
+    @_node.$(selector)
 
   once: (selector, callback) ->
-    @node.once(selector, callback)
+    @_node.once(selector, callback)
+
+  fire: (name, data) ->
+    @_node.fire(name, data)
 
   find: (selector) ->
-    @node.find(selector)
+    @_node.find(selector)
 
   find_input: (name, value = null) ->
     return unless name?.present()
@@ -86,7 +89,7 @@ class Js.Component.Element
       @render_self changes, true
     else
       @update_self changes, true
-    @stale = stale if stale?
+    @_stale = stale if stale?
     @storage_fire changes
 
   render_self: (changes, skip_callbacks = false) ->
@@ -94,29 +97,29 @@ class Js.Component.Element
       @storage_get().each (name, value) => this[name] = value
     else if not (changes = @update_self changes, skip_callbacks)
       return false
-    else if @rendered and @refresh is false
+    else if @_rendered and @_refresh is false
       return changes
     @before_render?(changes)
     unless (html = @render() ? '').html_safe()
       html = html.safe_text()
-    @node.innerHTML = html
-    @rendered = true
-    @stale = false
-    if (input = @find_input @autofocus...)
+    @_node.innerHTML = html
+    @_rendered = true
+    @_stale = false
+    if (input = @find_input @_autofocus...)
       input.focus()
       input.cursor_end(true)
-      @autofocus_was = @autofocus if @refresh
-      @autofocus = null
+      @_autofocus_was = @_autofocus if @_refresh
+      @_autofocus = null
     @after_render?(changes)
     changes
 
   update_self: (changes, skip_callbacks = false) ->
-    scopes = changes.except(@watch_ivars...)
-    changes = changes.slice(@watch_ivars...).each_select (name, [value]) =>
+    scopes = changes.except(@_watch_ivars...)
+    changes = changes.slice(@_watch_ivars...).each_select (name, [value]) =>
       if not eql this[name], value
         this[name] = value
         true
-    changes = if @stale = changes.present()
+    changes = if @_stale = changes.present()
       if not skip_callbacks
         updates = changes.each_map (name, [change...]) =>
           [name, [change..., this["on_update_#{name}"]?(change...)]]
@@ -145,12 +148,12 @@ class Js.Component.Element
     Js.Storage.has_value(name, @storage_options.merge options)
 
   storage_get: (names...) ->
-    return {} unless @watch
+    return {} unless @_watch
     options = names.extract_options()
     Js.Storage.get(@storage_names(names)..., @storage_options.merge options)
 
   storage_set: (inputs, options = {}) ->
-    [@autofocus, @autofocus_was] = [@autofocus_was, null] if options.autofocus
+    [@_autofocus, @_autofocus_was] = [@_autofocus_was, null] if options.autofocus
     Js.Storage.set(inputs, @storage_options.merge options)
 
   storage_fire: (changes, options = {}) ->
@@ -158,12 +161,12 @@ class Js.Component.Element
     changes
 
   storage_names: (names) ->
-    return @watch if @watch and names.empty()
+    return @_watch if @_watch and names.empty()
     names
 
   # Private
 
   json_or_function_or_value: (name, fallback) ->
-    return value if value = JSON.safe_parse(@node.getAttribute("data-#{name}"))
+    return value if value = JSON.safe_parse(@_node.getAttribute("data-#{name}"))
     value = value(this) if (value = @constructor[name])?.is_a Function
     value or fallback

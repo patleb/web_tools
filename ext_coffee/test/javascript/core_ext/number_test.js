@@ -36,7 +36,7 @@ describe('Number', () => {
   test('#to_s', () => {
     Number.METRIC_PREFIX.each((prefix, i) => {
       assert.equal(
-        prefix === 'null' ? '16.123':`16.123 ${prefix}`,
+        prefix === 'null' ? '16.123 ':`16.123 ${prefix}`,
         (16.123 * 10 ** Number.METRIC_EXPONENT[i]).to_s('metric', 3)
       )
     })

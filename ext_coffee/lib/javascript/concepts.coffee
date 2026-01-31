@@ -90,14 +90,14 @@ class Js.Concepts
       scope[alias] = concept
 
     @define_constants(concept_class)
-    @define_readers(concept_class)
+    @define_memoizers(concept_class)
+    @define_store(concept_class)
     @unless_defined concept_class::events, =>
       @define_events(concept)
 
     @instances.except('leave_clean').each (phase, all) =>
       @unless_defined concept_class::[phase], ->
         all.push(concept)
-
     concept.leave_clean = @nullify_on_leave.bind(concept)
     @instances.leave_clean.push(concept)
 
@@ -109,17 +109,12 @@ class Js.Concepts
 
     concept_class::each(@add_element) if concept is Js.Component
 
-    if concept_class.storage_clean
-      concept_class::storage_clean ?= ({ detail: { scope } } = {}) ->
-        return unless @constructor.storage_clean[scope]
-        @leave_clean()
-
-      @define_event(concept, Js.Storage.CHANGE, Js.Storage.ROOTS, concept_class::storage_clean)
+    @define_storage_scopes(concept_class, concept)
 
   # Private
 
   @nullify_on_leave: ->
-    @READERS.each (name) => @nullify(name)
+    @nullify_memoizers()
     @each (key, value) =>
       unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
@@ -140,6 +135,7 @@ class Js.Concepts
       scope[alias] = element_class::constructor
 
     @define_constants(element_class)
+    @define_memoizers(element_class)
     @unless_defined element_class::events, =>
       @define_events(element_class::)
 
@@ -160,20 +156,31 @@ class Js.Concepts
       return @define_constant(klass, name, value.apply(klass::), constants)
     constants[name] = klass::[name] = value
 
-  @define_readers: (klass) ->
-    readers = @unless_defined klass::readers, ->
-      klass::readers().each_with_object [], (name, callback, memo) ->
+  @define_memoizers: (klass) ->
+    memoizers = @unless_defined klass::memoizers, ->
+      klass::memoizers().each_with_object [], (name, callback, memo) ->
         Object.defineProperty klass::, name, enumerable: false, get: ->
           this["__#{name}"] ?= callback.apply(this, arguments)
         memo.push(name)
-    klass::READERS = readers or []
+    klass::MEMOIZERS = memoizers or []
+    klass::nullify_memoizers = ->
+      @MEMOIZERS.each (name) => @nullify(name)
     klass::nullify = (name) ->
       this["__#{name}"] = null
+
+  @define_store: (klass) ->
     klass::store = (name, value) ->
       if arguments.length is 1
         (@__store ||= {})[name]
       else
         (@__store ||= {})[name] = value
+
+  @define_storage_scopes: (klass, context) ->
+    return unless klass.storage_scopes
+    klass::storage_scopes ?= ({ detail: { scope } } = {}) ->
+      return unless scope is '' or @constructor.storage_scopes[scope]
+      @nullify_memoizers()
+    @define_event(context, Js.Storage.CHANGE, Js.Storage.ROOTS, klass::storage_scopes)
 
   @define_events: (context) ->
     context.events().each_slice(3).each ([events, selector, handler]) =>

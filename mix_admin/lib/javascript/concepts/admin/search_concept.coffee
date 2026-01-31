@@ -1,7 +1,7 @@
 class Js.Admin.SearchConcept
   DATE = /[0-9]{4}-[0-9]{2}-[0-9]{2}/
 
-  readers: ->
+  memoizers: ->
     query_bar: -> Rails.find('.js_query_bar')
     search: -> Rails.find('.js_search')
 
