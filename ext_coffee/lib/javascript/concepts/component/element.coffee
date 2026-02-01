@@ -100,6 +100,8 @@ class Js.Component.Element
     else if @_rendered and @_refresh is false
       return changes
     @before_render?(changes)
+    if (input = @find_input @_autofocus...)
+      range = input.cursor()
     unless (html = @render() ? '').html_safe()
       html = html.safe_text()
     @_node.innerHTML = html
@@ -107,7 +109,7 @@ class Js.Component.Element
     @_stale = false
     if (input = @find_input @_autofocus...)
       input.focus()
-      input.cursor_end(true)
+      input.cursor(range) if range?
       @_autofocus_was = @_autofocus if @_refresh
       @_autofocus = null
     @after_render?(changes)
@@ -121,18 +123,18 @@ class Js.Component.Element
         true
     changes = if @_stale = changes.present()
       if not skip_callbacks
-        nullified = true
         @nullify_memoizers()
         updates = changes.each_map (name, [change...]) =>
           [name, [change..., this["on_update_#{name}"]?(change...)]]
         @on_update?(updates.to_h())
+        updated = true
       changes
     else if skip_callbacks
       {}
     else
       false
     if not skip_callbacks and scopes.present()
-      @nullify_memoizers() unless nullified
+      @nullify_memoizers() unless updated
       updates = scopes.each_map (name, [change...]) =>
         [name, [change..., this["on_watch_#{name}"]?(change...)]]
       @on_watch?(updates.to_h())

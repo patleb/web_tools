@@ -166,23 +166,18 @@ HTMLElement.define_methods
       when 'input'        then @fire 'input'
     value
 
-  cursor_start: (move = false) ->
-    if move isnt false
-      switch @type
-        when 'password', 'search', 'tel', 'text', 'textarea', 'url'
-          move = 0 if move is true
-          move = 0 if move < 0
-          @setSelectionRange(move, move)
-    @selectionStart ? 0
-
-  cursor_end: (move = false) ->
-    if move isnt false
-      switch @type
-        when 'password', 'search', 'tel', 'text', 'textarea', 'url'
-          move = @value.length + 1 if move is true
-          move = 0 if move < 0
-          @setSelectionRange(move, move)
-    @selectionEnd ? 0
+  cursor: ({ start, end } = {}) ->
+    return { start: @selectionStart ? 0, end: @selectionEnd ? 0 } unless start? or end?
+    return unless @type in CURSOR_TYPES
+    if start?
+      start = 0 if start is true
+      start = 0 if start < 0
+    if end?
+      end = @value.length + 1 if end is true
+      end = 0 if end < 0
+    start ?= end
+    end ?= start
+    @setSelectionRange(start, end)
 
   valid: ->
     return true if (form = @closest('form')) and Rails.get(form, 'ujs:formnovalidate-button')
@@ -196,6 +191,8 @@ HTMLElement.define_methods
 
   fire: (name, data) ->
     Rails.fire(this, name, data)
+
+CURSOR_TYPES = ['password', 'search', 'tel', 'text', 'textarea', 'url']
 
 cast_value = (input, value) ->
   if value? and (cast = input.getAttribute 'data-cast')?

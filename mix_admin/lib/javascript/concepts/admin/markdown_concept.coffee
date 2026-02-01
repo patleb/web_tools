@@ -51,7 +51,7 @@ class Js.Admin.MarkdownConcept
     else
       textarea.setRangeText([token, token].join(''), start, end)
       textarea.focus()
-      textarea.cursor_start(start + size)
+      textarea.cursor(start: start + size)
     textarea.fire 'change'
 
   prepend_lines: (button, token) ->
@@ -71,7 +71,7 @@ class Js.Admin.MarkdownConcept
     text = "[#{text}]()"
     textarea.setRangeText(text, start, end)
     textarea.focus()
-    textarea.cursor_start(start + text_size + 3)
+    textarea.cursor(start: start + text_size + 3)
     textarea.fire 'change'
 
   push_history: (event, textarea) ->
@@ -83,8 +83,8 @@ class Js.Admin.MarkdownConcept
       undo.shift() if undo.length is MAX_HISTORY_SIZE
       [value_was, cursor_was] = push[0]
       undo.push([value_was, cursor_was]) if value_was not in [value_undo, value]
-      undo.push([value, textarea.cursor_end()])
-    push[0] = [value, textarea.cursor_end()]
+      undo.push([value, textarea.cursor().end])
+    push[0] = [value, textarea.cursor().end]
 
   undo_history: (event, button) ->
     textarea = @textarea(button)
@@ -154,7 +154,7 @@ class Js.Admin.MarkdownConcept
     text = "![#{text}](blob:#{id})"
     textarea.setRangeText(text, start, end)
     textarea.focus()
-    textarea.cursor_start(start + text.length)
+    textarea.cursor(start: start + text.length)
     textarea.fire 'change'
 
   # Private
@@ -162,7 +162,7 @@ class Js.Admin.MarkdownConcept
   selection_lines: (button) ->
     textarea = @textarea(button)
     lines = textarea.value.split("\n")
-    [start, end] = @start_end(textarea)
+    { start, end } = textarea.cursor()
     [start_i, end_i] = [null, null]
     position = 0
     lines.each (line, i) ->
@@ -175,12 +175,9 @@ class Js.Admin.MarkdownConcept
 
   selection_text: (button) ->
     textarea = @textarea(button)
-    [start, end] = @start_end(textarea)
+    { start, end } = textarea.cursor()
     text = if start is end then '' else textarea.value[start..(end - 1)]
     [textarea, text, start, end]
-
-  start_end: (textarea) ->
-    [textarea.cursor_start(), textarea.cursor_end()]
 
   textarea: (button) ->
     button.closest(@TOOLBAR).next()
@@ -189,16 +186,16 @@ class Js.Admin.MarkdownConcept
     value = textarea.get_value()
     [value_was, cursor_was] = Array.wrap(undo.pop())
     if value_was?
-      redo.push([value, textarea.cursor_end()]) if value?
+      redo.push([value, textarea.cursor().end]) if value?
       if value_was is value
         [value_was, cursor_was] = Array.wrap(undo.pop())
       push[0] = [textarea.set_value(value_was), cursor_was] if value_was?
-    textarea.cursor_end(cursor_was)
+    textarea.cursor(end: cursor_was)
     textarea.focus()
 
   get_history: (textarea) ->
     name = textarea.getAttribute('name')
-    (@history ?= {})[name] ?= { push: [[textarea.value, textarea.cursor_end()]], undo: [], redo: [] }
+    (@history ?= {})[name] ?= { push: [[textarea.value, textarea.cursor().end]], undo: [], redo: [] }
 
   read: (file) ->
     new Promise (resolve) ->

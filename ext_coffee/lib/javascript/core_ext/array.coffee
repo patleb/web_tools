@@ -170,12 +170,6 @@ Array.define_methods
   exclude: (item) ->
     item not in this
 
-  max: ->
-    Math.max this
-
-  min: ->
-    Math.min this
-
   each_slice: (size = 1) ->
     return [] unless size? and size >= 1
     result = []
@@ -220,6 +214,12 @@ Array.define_methods
 
   add: (others...) ->
     @concat others...
+
+  max: ->
+    Math.max this...
+
+  min: ->
+    Math.min this...
 
   sum: (f_item_index_self = null) ->
     value = 0

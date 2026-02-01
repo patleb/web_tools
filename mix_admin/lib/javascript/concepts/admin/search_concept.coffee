@@ -73,7 +73,7 @@ class Js.Admin.SearchConcept
 
   with_search_token: (target, callback, { reset = false, before_size = 2, token = target.get_value() } = {}) ->
     search = @search.get_value() ? ''
-    cursor_end = @search.cursor_end()
+    cursor_end = @search.cursor().end
     cursor_start = cursor_end - before_size
     cursor_start = 0 if cursor_start < 0
     before = search[cursor_start...cursor_end] or search[cursor_end - 1] ? ''
@@ -89,7 +89,7 @@ class Js.Admin.SearchConcept
     target.set_value('') if reset # otherwise can't reuse the same value, the 'change' event won't fire
     @search.set_value(search)
     @search.focus()
-    @search.cursor_end(move)
+    @search.cursor(end: move)
 
   is_after_operator: (before, { equality_only = false } = {}) ->
     if equality_only
