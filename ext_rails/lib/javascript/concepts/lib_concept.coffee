@@ -8,7 +8,7 @@ class Js.LibConcept extends Js.Base
     sidebar:  -> Rails.find('.drawer-side')
     notice:   -> Rails.find('#notice')
 
-  events: -> [
+  listeners: -> [
     Device.BREAKPOINT, document, @clear_drawer_toggle
 
     'change', '#alert, #notice', (event, target) ->

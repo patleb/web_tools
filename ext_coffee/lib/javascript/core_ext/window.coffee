@@ -167,6 +167,8 @@ for type in [JSON, Math]
 
 class window.WithReaders
   @readers: (methods) ->
+    if methods.is_a Function
+      return @readers methods()
     for name, callback of methods
       @reader(name, callback)
 

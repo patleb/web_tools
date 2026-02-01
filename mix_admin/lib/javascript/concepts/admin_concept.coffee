@@ -14,7 +14,7 @@ class Js.AdminConcept
     table_body: -> Rails.find('.js_table_body')
     export_toggles: -> Rails.$('.js_export_toggles')
 
-  events: -> [
+  listeners: -> [
     Device.RESIZE_Y, document, @toggle_scoll_menu
     Device.RESIZE_X, document, @toggle_scoll_menu
     Device.RESIZE_X, document, @reset_table_head.debounce()

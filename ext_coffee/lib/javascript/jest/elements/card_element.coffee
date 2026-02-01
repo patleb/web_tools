@@ -1,5 +1,5 @@
 class Js.Component.CardElement extends Js.Component.Element
-  events: -> [
+  listeners: -> [
     'click', @constructor.selector('input'), (event) ->
       element = @constructor.element(event)
       event.element = element

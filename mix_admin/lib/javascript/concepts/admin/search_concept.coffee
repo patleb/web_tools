@@ -5,7 +5,7 @@ class Js.Admin.SearchConcept
     query_bar: -> Rails.find('.js_query_bar')
     search: -> Rails.find('.js_search')
 
-  events: -> [
+  listeners: -> [
     'search', '.js_search', @on_search_blank
 
     'turbolinks:submit', '.js_query_bar', ->

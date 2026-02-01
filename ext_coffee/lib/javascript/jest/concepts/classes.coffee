@@ -13,7 +13,7 @@ class Test.SimpleConcept extends Js.Base
     rows: ->
       dom.$(@ROWS)
 
-  events: -> [
+  listeners: -> [
     'click', @BODY, (event, this_was) =>
       event.preventDefault() if event.skip
       event.target.add_class(@TRIGGERED)
@@ -31,14 +31,6 @@ class Test.SimpleConcept extends Js.Base
       event.preventDefault() if event.skip
       event.target.add_class(@TRIGGERED)
   ]
-
-  events_before: (event) ->
-    event.preventDefault() if event.skip_before
-    event.events_before = true
-
-  events_after: (event) ->
-    event.events_after = true
-    @public = 'after'
 
   ready_once: ->
     @did_ready_once ?= 0
@@ -60,16 +52,16 @@ class Js.Component.SimpleElement extends Js.Component.Element
   constants: ->
     NAME: '.js_simple_name'
 
-  events: -> [
+  listeners: -> [
     'hover', @NAME, (event, this_was) ->
       @name.add_class(Test.SimpleConcept.TRIGGERED)
   ]
 
 class Js.Component.ExtendElement extends Js.Component.SimpleElement
 
-# it should not redefine #constants, #readers, #ready(_once), #leave and #events on extends
+# it should not redefine #constants, #memoizers, #ready(_once), #leave and #listeners on extends
 class Test.ExtendConcept extends Test.SimpleConcept
-  events: -> [
+  listeners: -> [
     'click', @BODY, @handler
   ]
 

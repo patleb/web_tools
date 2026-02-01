@@ -8,7 +8,7 @@ class Js.FlashConcept extends Js.Base
   memoizers: ->
     header: -> Rails.find('#header')
 
-  events: -> [
+  listeners: -> [
     'change', '#js_alert, #js_notice', (event, target) ->
       @clear_flash(target)
   ]

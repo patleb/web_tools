@@ -3,7 +3,6 @@ class Js.Concepts
   CONCEPT = /Concept$/
   ELEMENT = /Element$/
   CONSTANT = /^[A-Z][A-Z0-9_]*/
-  CLASS_TYPE = /(Concept|Element)$/
 
   uniq_methods = []
   uniq_classes = {}
@@ -92,8 +91,8 @@ class Js.Concepts
     @define_constants(concept_class)
     @define_memoizers(concept_class)
     @define_store(concept_class)
-    @unless_defined concept_class::events, =>
-      @define_events(concept)
+    @unless_defined concept_class::listeners, =>
+      @define_listeners(concept)
 
     @instances.except('leave_clean').each (phase, all) =>
       @unless_defined concept_class::[phase], ->
@@ -136,8 +135,8 @@ class Js.Concepts
 
     @define_constants(element_class)
     @define_memoizers(element_class)
-    @unless_defined element_class::events, =>
-      @define_events(element_class::)
+    @unless_defined element_class::listeners, =>
+      @define_listeners(element_class::)
 
   @define_constants: (klass) ->
     constants = @unless_defined klass::constants, =>
@@ -146,13 +145,7 @@ class Js.Concepts
     klass::CONSTANTS = constants or {}
 
   @define_constant: (klass, name, value, constants) ->
-    if value.class_name
-      scope = value.class_name
-      scope = value::concept.class_name if scope is 'Element'
-      prefix = scope.sub(CLASS_TYPE, '').underscore().upcase()
-      shared = name.sub(///#{prefix}_///, '')
-      value = if value::?.concept then value::[shared] else value[shared]
-    else if value.is_a Function
+    if value.is_a Function
       return @define_constant(klass, name, value.apply(klass::), constants)
     constants[name] = klass::[name] = value
 
@@ -180,30 +173,16 @@ class Js.Concepts
     klass::storage_scopes ?= ({ detail: { scope } } = {}) ->
       return unless scope is '' or @constructor.storage_scopes[scope]
       @nullify_memoizers()
-    @define_event(context, Js.Storage.CHANGE, Js.Storage.ROOTS, klass::storage_scopes)
+    @define_listener(context, Js.Storage.CHANGE, Js.Storage.ROOTS, klass::storage_scopes)
 
-  @define_events: (context) ->
-    context.events().each_slice(3).each ([events, selector, handler]) =>
-      @define_event(context, events, selector, handler)
+  @define_listeners: (context) ->
+    context.listeners().each_slice(3).each ([events, selector, handler]) =>
+      @define_listener(context, events, selector, handler)
 
-  @define_event: (context, events, selector, handler) ->
+  @define_listener: (context, events, selector, handler) ->
     with_target = handler
     handler = ->
       with_target.apply(context, [arguments..., this])
-    if context.events_before
-      with_before = handler
-      handler = (event) ->
-        unless event.defaultPrevented
-          context.events_before.apply(context, arguments)
-        unless event.defaultPrevented
-          with_before.apply(context, arguments)
-    if context.events_after
-      with_after = handler
-      handler = (event) ->
-        unless event.defaultPrevented
-          with_after.apply(context, arguments)
-        unless event.defaultPrevented
-          context.events_after.apply(context, arguments)
     events.split(/ *, */).each (event) ->
       Rails.document_on event, selector, handler
 

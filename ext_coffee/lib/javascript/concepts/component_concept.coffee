@@ -6,7 +6,7 @@ class Js.ComponentConcept
     INPUTS: -> "#{@ELEMENTS} [data-bind]"
     RENDER: 'js_component:render'
 
-  events: -> [
+  listeners: -> [
     Js.Storage.CHANGE, Js.Storage.ROOTS, @render_elements
 
     'input', @INPUTS, ({ target }) ->
@@ -58,7 +58,6 @@ class Js.ComponentConcept
 
   render_elements: ({ detail: { submitter, permanent, scope, changes } } = {}) ->
     elements = (@elements ? {}).each_select (uid, element) ->
-      element.nullify_memoizers()
       if not element._watch \
       or permanent isnt element._permanent \
       or scope is 'uid' and uid isnt element._uid \

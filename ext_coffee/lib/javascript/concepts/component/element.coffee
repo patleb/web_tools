@@ -121,6 +121,8 @@ class Js.Component.Element
         true
     changes = if @_stale = changes.present()
       if not skip_callbacks
+        nullified = true
+        @nullify_memoizers()
         updates = changes.each_map (name, [change...]) =>
           [name, [change..., this["on_update_#{name}"]?(change...)]]
         @on_update?(updates.to_h())
@@ -130,6 +132,7 @@ class Js.Component.Element
     else
       false
     if not skip_callbacks and scopes.present()
+      @nullify_memoizers() unless nullified
       updates = scopes.each_map (name, [change...]) =>
         [name, [change..., this["on_watch_#{name}"]?(change...)]]
       @on_watch?(updates.to_h())

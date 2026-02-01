@@ -6,7 +6,7 @@ class Js.TimeConcept
     FORMATS: 'time[datetime][data-strftime]'
     FORMATTED: 'js_time:formatted'
 
-  events: -> [
+  listeners: -> [
     'turbolinks:request-start', document, ({ data: { xhr }}) ->
       xhr.setRequestHeader('X-Timezone', @zone)
 

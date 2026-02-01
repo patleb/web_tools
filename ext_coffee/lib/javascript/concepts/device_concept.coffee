@@ -21,7 +21,7 @@ class Js.DeviceConcept
     window.addEventListener('touchstart', @on_touchstart, false)
     window.addEventListener('scroll', @on_scroll.throttle(), false)
     window.addEventListener('resize', @on_resize.throttle(), false)
-    @screens = JSON.parse(process.env.SCREENS) or { lg: 1024 }
+    @screens = JSON.parse(process.env.SCREENS) or if Env.test then { lg: 1024 } else throw 'process.env.SCREENS missing'
     @screens = @screens.reject((k, v) -> v.is_a Object).each_map((k, v) -> [k, v.to_i()]).to_h()
     @breakpoints = {}
     styles = window.getComputedStyle(document.documentElement, '')

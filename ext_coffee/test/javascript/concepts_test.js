@@ -76,7 +76,7 @@ describe('Js.Concepts', () => {
   it('should nullify non-system ivars and not from #ready_once on #leave', () => {
     assert.equal('method', Test.SimpleConcept.method())
     assert.equal('constant', Test.SimpleConcept.CONSTANT)
-    assert.equal('after', Test.SimpleConcept.public)
+    assert.equal('public', Test.SimpleConcept.public)
     assert.equal('private', Test.SimpleConcept._private)
     assert.equal('system', Test.SimpleConcept.__system)
     assert.equal('inherited', Test.ExtendConcept.inherited)
@@ -101,8 +101,6 @@ describe('Js.Concepts', () => {
       let row = dom.find(Test.SimpleConcept.ROWS)
       let event = dom.fire('click', { target: row })
       assert.true(row.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.true(event.events_before)
-      assert.true(event.events_after)
     })
 
     it('should handle click events and prevent default', () => {
@@ -110,34 +108,19 @@ describe('Js.Concepts', () => {
       let event = dom.fire('click', { target: body, options: { skip: true } })
       assert.true(body.classes().include(Test.SimpleConcept.TRIGGERED))
       assert.true(event.defaultPrevented)
-      assert.true(event.events_before)
-      assert.nil(event.events_after)
     })
 
     it('should handle hover events', () => {
       let row = dom.find(Test.SimpleConcept.ROWS)
       let event = dom.fire('hover', { target: row })
       assert.true(row.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.true(event.events_before)
-      assert.true(event.events_after)
     })
 
-    it('should skip handler and after hook if prevent default is in before hook', () => {
-      let row = dom.find(Test.SimpleConcept.ROWS)
-      let event = dom.fire('hover', { target: row, options: { skip_before: true } })
-      assert.true(event.defaultPrevented)
-      assert.false(row.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.true(event.events_before)
-      assert.nil(event.events_after)
-    })
-
-    it('should skip after hook if prevent default is in handler', () => {
+    it('should handle hover events and prevent default', () => {
       let row = dom.find(Test.SimpleConcept.ROWS)
       let event = dom.fire('hover', { target: row, options: { skip: true } })
       assert.true(event.defaultPrevented)
       assert.true(row.classes().include(Test.SimpleConcept.TRIGGERED))
-      assert.true(event.events_before)
-      assert.nil(event.events_after)
     })
   })
 

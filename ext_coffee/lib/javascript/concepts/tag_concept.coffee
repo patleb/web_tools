@@ -20,7 +20,7 @@ class Js.TagConcept
   constants: ->
     INPUTS: '.js_tag_input'
 
-  events: -> [
+  listeners: -> [
     'input', @INPUTS, @on_input
   ]
 
