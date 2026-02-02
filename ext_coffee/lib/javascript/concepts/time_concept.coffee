@@ -15,7 +15,7 @@ class Js.TimeConcept
       @refresh(new_body)
 
     Js.Component.RENDER, document, ({ detail: { elements }}) ->
-      elements.each (uid, element) =>
+      elements.for_each (uid, element) =>
         @refresh(element)
   ]
 

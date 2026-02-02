@@ -106,8 +106,8 @@ describe('Object', () => {
     assert.equal(['a', 1, 'b', 2], { a: 1, b: 2 }.each_with_object([], (k, v, memo) => memo.push(k, v)))
   })
 
-  test('#each_map', () => {
-    assert.equal([1, 2], { a: 1, b: 2 }.each_map((k, v) => v))
+  test('#map_each', () => {
+    assert.equal([1, 2], { a: 1, b: 2 }.map_each((k, v) => v))
   })
 
   test('#flatten_keys', () => {
@@ -129,8 +129,8 @@ describe('Object', () => {
     assert.equal([1, 3], { a: 1, b: 2, c: 3 }.values_at('a', 'c'))
   })
 
-  test('#each_select', () => {
-    assert.equal({ b: 2 }, { a: 1, b: 2, c: 3 }.each_select((k, v) => v === 2))
+  test('#select_each', () => {
+    assert.equal({ b: 2 }, { a: 1, b: 2, c: 3 }.select_each((k, v) => v === 2))
   })
 
   test('#select_map', () => {

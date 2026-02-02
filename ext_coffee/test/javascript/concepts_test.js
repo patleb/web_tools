@@ -39,7 +39,7 @@ describe('Js.Concepts', () => {
       BODY_ROWS: '#js_simple_body .js_simple_rows',
     }
     assert.equal(constants, Test.SimpleConcept.constructor.prototype.CONSTANTS)
-    constants.each((name, value) => {
+    constants.for_each((name, value) => {
       assert.equal(value, Test.SimpleConcept[name])
     })
   })

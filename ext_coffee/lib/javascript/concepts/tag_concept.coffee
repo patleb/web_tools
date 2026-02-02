@@ -28,7 +28,7 @@ class Js.TagConcept
     window.h_ = @h_
     window.if_ = @if_
     window.unless_ = @unless_
-    @HTML_TAGS.each (tag) => @define_tag(tag)
+    @HTML_TAGS.for_each (tag) => @define_tag(tag)
 
   define: (tags...) ->
     @merge(tags...)
@@ -94,7 +94,7 @@ class Js.TagConcept
       options.delete('class') if options.class.blank()
 
     if options.data?.is_a Object
-      { data: options.delete('data') }.flatten_keys('-').each (key, value) ->
+      { data: options.delete('data') }.flatten_keys('-').for_each (key, value) ->
         options[key] = value
 
     dom = true if tag.last() is '$'

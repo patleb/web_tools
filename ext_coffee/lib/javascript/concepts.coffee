@@ -31,7 +31,7 @@ class Js.Concepts
         concept = @instances.ready_once.shift()
         concept.ready_once()
         concept.READY_ONCE_IVARS = []
-        concept.each (key, value) ->
+        concept.for_each (key, value) ->
           unless not_nullifyable(key, value)
             concept.READY_ONCE_IVARS.push(key)
       @instances.ready.each (concept) ->
@@ -51,7 +51,7 @@ class Js.Concepts
 
   @add_module: (module) ->
     modules = []
-    module.constantize().each (name) =>
+    module.constantize().for_each (name) =>
       if name.match(MODULE)
         modules.push "#{module}.#{name}"
       else
@@ -94,7 +94,7 @@ class Js.Concepts
     @unless_defined concept_class::listeners, =>
       @define_listeners(concept)
 
-    @instances.except('leave_clean').each (phase, all) =>
+    @instances.except('leave_clean').for_each (phase, all) =>
       @unless_defined concept_class::[phase], ->
         all.push(concept)
     concept.leave_clean = @nullify_on_leave.bind(concept)
@@ -106,7 +106,7 @@ class Js.Concepts
       @ready?()
       true
 
-    concept_class::each(@add_element) if concept is Js.Component
+    concept_class::for_each(@add_element) if concept is Js.Component
 
     @define_storage_scopes(concept_class, concept)
 
@@ -114,7 +114,7 @@ class Js.Concepts
 
   @nullify_on_leave: ->
     @nullify_memoizers()
-    @each (key, value) =>
+    @for_each (key, value) =>
       unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
 

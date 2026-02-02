@@ -66,7 +66,7 @@ class window.Duration
   toJSON: ->
     hash = @to_h()
     delete hash.sign if hash.sign is 1
-    hash.each_select (k, v) -> v
+    hash.select_each (k, v) -> v
 
   to_i: ->
     @sign * (

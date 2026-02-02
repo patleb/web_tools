@@ -83,6 +83,8 @@ Array.override_methods
 
   each: Array::forEach
 
+  for_each: Array::forEach
+
   each_with_index: Array::forEach
 
   each_while: (f_item_index_self) ->
@@ -96,13 +98,13 @@ Array.override_methods
       accumulator
     , accumulator
 
-  each_map: Array::map
+  map_each: Array::map
 
   map_with_index: Array::map
 
-  each_select: Array::filter
-
   select: Array::filter
+
+  select_each: Array::filter
 
   select_map: (f_item_index_self) ->
     value for item, i in this when (value = f_item_index_self(item, i, this))

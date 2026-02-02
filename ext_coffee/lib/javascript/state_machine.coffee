@@ -33,7 +33,7 @@ class window.StateMachine
 
     paths: ->
       @_paths ||= @transitions.each_with_object {}, (event, transitions, memo) ->
-        transitions.each (current, transition) ->
+        transitions.for_each (current, transition) ->
           next = transition.next
           next = transition.next_states if next.is_a Function
           (memo[current] ||= {})[event] = next
@@ -46,13 +46,13 @@ class window.StateMachine
   build: (config) ->
     @id = Math.uid()
     if config instanceof @constructor
-      config.methods?.each (name) => this[name] = config[name]
+      config.methods?.for_each (name) => this[name] = config[name]
       CLONABLE_IVARS.each (name) => this[name] = config[name]
       CONFIG_HOOKS.each (name) => this[name] = config[name]
     else
       config = @config().deep_merge(config)
       if config.methods?
-        config.methods.each (name, method) => this[name] = method
+        config.methods.for_each (name, method) => this[name] = method
         @methods = config.methods.keys()
       CONFIG_HOOKS.each (name) => this[name] = config[name] ? noop
       @initial = config.initial
@@ -207,16 +207,16 @@ class window.StateMachine
     @transitions = {}
     current_wildcards = {}
     next_wildcards = {}
-    config.events?.each (event_name, event_config) =>
+    config.events?.for_each (event_name, event_config) =>
       event_hooks = event_config.slice(EVENT_HOOKS...)
       transitions = event_config.except(EVENT_HOOKS...)
-      transitions.each (current, next) =>
+      transitions.for_each (current, next) =>
         if next.is_a Object
           [next, transition_hooks] = next.first()
           if transition_hooks.next
             hooks = @merge_hooks(transition_hooks, event_hooks)
             if hooks.next_states = @add_wildcard_or_states(next_wildcards, event_name, next, transition_hooks.next)?.to_set()
-              hooks.next_states.each (next) =>
+              hooks.next_states.for_each (next) =>
                 @add_wildcard_or_states(current_wildcards, event_name, current, next, hooks)?.each (state) =>
                   @add_transition(event_name, state, transition_hooks.next, hooks)
               return
@@ -228,22 +228,22 @@ class window.StateMachine
           @add_transition(event_name, state, next, hooks)
     @configure_states(config)
     states = @states.keys()
-    current_wildcards.each (event, { except_states, next, hooks }) =>
+    current_wildcards.for_each (event, { except_states, next, hooks }) =>
       states.except(except_states...).each (current) =>
         @add_transition(event, current, next, hooks)
     states = states.to_set()
-    next_wildcards.each (event, { except_states, next }) =>
+    next_wildcards.for_each (event, { except_states, next }) =>
       next_states = if except_states.present() then states.except(except_states...) else states
-      @transitions[event].each (current, transition) =>
+      @transitions[event].for_each (current, transition) =>
         transition.next_states = next_states if transition.next is next
 
   configure_states: (config) ->
     @add_state(@initial) if @initial
-    @terminal.each (terminal) =>
+    @terminal.for_each (terminal) =>
       @add_state(terminal)
-    config.states?.each (state_name, state_config) =>
+    config.states?.for_each (state_name, state_config) =>
       @add_state(state_name)
-      state_config.slice(STATE_CONFIG...).each (key, value) =>
+      state_config.slice(STATE_CONFIG...).for_each (key, value) =>
         @states[state_name][key] = value
 
   merge_hooks: (transition_hooks, event_hooks) ->
@@ -287,9 +287,9 @@ class window.StateMachine
     flags = @states.each_with_object {}, (state_name, _, memo) ->
       state_name.split(FLAGS).each (state_flag) ->
         memo[state_flag] = true
-    @states.each (state_name, _) =>
+    @states.for_each (state_name, _) =>
       state_flags = state_name.split(FLAGS)
-      flags.each (flag, _) =>
+      flags.for_each (flag, _) =>
         @states[state_name].data[flag] = state_flags.any (state_flag) -> flag is state_flag
 
   log: (@status) ->

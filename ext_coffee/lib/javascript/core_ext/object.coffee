@@ -94,10 +94,10 @@ Object.define_methods
 
   to_query: ({ blanks = true, sort = false } = {}) ->
     params = if sort then Object.deep_sort(this) else this
-    params = params.each_map (param_name, param_value) ->
+    params = params.map_each (param_name, param_value) ->
       switch param_value?.constructor
         when Object
-          param_value.flatten_keys('][').each_map (names, value) ->
+          param_value.flatten_keys('][').map_each (names, value) ->
             [[param_name, '[', names, ']'].join(''), value]
         when Array
           param_value.map (value) ->
@@ -184,7 +184,7 @@ Object.define_methods
       return false unless f_key_item_self(key, item, this)
     true
 
-  each: (f_key_item_self) ->
+  for_each: (f_key_item_self) ->
     for key, item of this
       f_key_item_self(key, item, this)
     return
@@ -207,51 +207,18 @@ Object.define_methods
       accumulator
     , accumulator
 
-  each_map: (f_key_item_self) ->
+  map_each: (f_key_item_self) ->
     f_key_item_self(key, item, this) for key, item of this
 
   map_with_index: (i, f_key_item_index_self = null) ->
     [i, f_key_item_index_self] = [0, i] unless f_key_item_index_self?
     f_key_item_index_self(key, item, i++, this) for key, item of this
 
-  each_select: (f_key_item) ->
+  select_each: (f_key_item) ->
     result = {}
     for key, item of this when f_key_item(key, item)
       result[key] = item
     result
-
-  flatten_keys: (separator = '.', _prefix = null) ->
-    @each_with_object {}, (key, item, memo) ->
-      key = [_prefix, key].join(separator) if _prefix?
-      if item?.is_a Object
-        item.flatten_keys(separator, key).each (nested_key, nested_item) ->
-          memo[nested_key] = nested_item
-      else
-        memo[key] = item
-
-  find: (f_key_item_self) ->
-    for key, item of this
-      return item if f_key_item_self(key, item, this)
-    return
-
-  first: (n = 1) ->
-    key = @keys().first(n)
-    return [key, this[key]] if n is 1
-    @slice(key...)
-
-  last: (n = 1) ->
-    key = @keys().last(n)
-    return [key, this[key]] if n is 1
-    @slice(key...)
-
-  keys: ->
-    Object.keys(this)
-
-  vals: ->
-    item for key, item of this
-
-  values_at: (keys...) ->
-    this[key] for key in keys
 
   select_map: (f_key_item) ->
     result = []
@@ -264,6 +231,29 @@ Object.define_methods
     for key, item of this when not f_key_item(key, item)
       result[key] = item
     result
+
+  flatten_keys: (separator = '.', _prefix = null) ->
+    @each_with_object {}, (key, item, memo) ->
+      key = [_prefix, key].join(separator) if _prefix?
+      if item?.is_a Object
+        item.flatten_keys(separator, key).for_each (nested_key, nested_item) ->
+          memo[nested_key] = nested_item
+      else
+        memo[key] = item
+
+  find: (f_key_item_self) ->
+    for key, item of this
+      return item if f_key_item_self(key, item, this)
+    return
+
+  keys: ->
+    Object.keys(this)
+
+  vals: ->
+    item for key, item of this
+
+  values_at: (keys...) ->
+    this[key] for key in keys
 
   slice: (keys...) ->
     result = {}
@@ -286,10 +276,20 @@ Object.define_methods
       memo[key] = f_item(item)
 
   compact: ->
-    @each_select (key, item) -> item?
+    @select_each (key, item) -> item?
 
   compact_blank: ->
-    @each_select (key, item) -> item?.present()
+    @select_each (key, item) -> item?.present()
+
+  first: (n = 1) ->
+    key = @keys().first(n)
+    return [key, this[key]] if n is 1
+    @slice(key...)
+
+  last: (n = 1) ->
+    key = @keys().last(n)
+    return [key, this[key]] if n is 1
+    @slice(key...)
 
   merge: (objects...) ->
     @constructor.merge(this, objects...)

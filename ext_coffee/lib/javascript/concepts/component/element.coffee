@@ -56,7 +56,7 @@ class Js.Component.Element
         @_watch_ivars.push ivar
         this[ivar] = value if initialize
         name
-    static_data.each (name, value) => this[name] = value
+    static_data.for_each (name, value) => this[name] = value
     @_node.add_class 'no-transition' unless @_refresh is false
 
   ready: ->
@@ -94,7 +94,7 @@ class Js.Component.Element
 
   render_self: (changes, skip_callbacks = false) ->
     if changes is true
-      @storage_get().each (name, value) => this[name] = value
+      @storage_get().for_each (name, value) => this[name] = value
     else if not (changes = @update_self changes, skip_callbacks)
       return false
     else if @_rendered and @_refresh is false
@@ -117,14 +117,14 @@ class Js.Component.Element
 
   update_self: (changes, skip_callbacks = false) ->
     scopes = changes.except(@_watch_ivars...)
-    changes = changes.slice(@_watch_ivars...).each_select (name, [value]) =>
+    changes = changes.slice(@_watch_ivars...).select_each (name, [value]) =>
       if not eql this[name], value
         this[name] = value
         true
     changes = if @_stale = changes.present()
       if not skip_callbacks
         @nullify_memoizers()
-        updates = changes.each_map (name, [change...]) =>
+        updates = changes.map_each (name, [change...]) =>
           [name, [change..., this["on_update_#{name}"]?(change...)]]
         @on_update?(updates.to_h())
         updated = true
@@ -135,7 +135,7 @@ class Js.Component.Element
       false
     if not skip_callbacks and scopes.present()
       @nullify_memoizers() unless updated
-      updates = scopes.each_map (name, [change...]) =>
+      updates = scopes.map_each (name, [change...]) =>
         [name, [change..., this["on_watch_#{name}"]?(change...)]]
       @on_watch?(updates.to_h())
     changes

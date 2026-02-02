@@ -43,7 +43,7 @@ class Js.ComponentConcept
     .map((e) -> [e._uid, e])
     .to_h()
 
-    @elements.each (uid, element) =>
+    @elements.for_each (uid, element) =>
       proto = Object.getPrototypeOf(element)
       unless @elements_ready_once.include proto
         @elements_ready_once.push proto
@@ -53,11 +53,11 @@ class Js.ComponentConcept
       element.after_ready?()
 
   leave: ->
-    @elements?.each (uid, element) ->
+    @elements?.for_each (uid, element) ->
       element.leave?()
 
   render_elements: ({ detail: { submitter, permanent, scope, changes } } = {}) ->
-    elements = (@elements ? {}).each_select (uid, element) ->
+    elements = (@elements ? {}).select_each (uid, element) ->
       if not element._watch \
       or permanent isnt element._permanent \
       or scope is 'uid' and uid isnt element._uid \
@@ -67,7 +67,7 @@ class Js.ComponentConcept
         element.update_self changes
       else
         element.render_self changes
-    elements.each (uid, element) -> Rails.refresh_csrf_tokens(element)
+    elements.for_each (uid, element) -> Rails.refresh_csrf_tokens(element)
     Rails.fire(document, @RENDER, { elements }) unless elements.empty()
 
 Js.Component = Js.ComponentConcept::

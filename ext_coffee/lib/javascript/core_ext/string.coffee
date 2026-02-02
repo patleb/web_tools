@@ -38,7 +38,7 @@ String.override_methods
   to_h: (casts = {}) ->
     result = JSON.safe_parse(this)
     throw 'invalid value for Object' unless result?.is_a Object
-    casts.each (key, cast) ->
+    casts.for_each (key, cast) ->
       result[key] = switch cast
         when  'nan' then  NaN
         when  'inf' then  Infinity

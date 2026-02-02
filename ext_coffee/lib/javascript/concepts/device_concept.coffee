@@ -22,7 +22,7 @@ class Js.DeviceConcept
     window.addEventListener('scroll', @on_scroll.throttle(), false)
     window.addEventListener('resize', @on_resize.throttle(), false)
     @screens = JSON.parse(process.env.SCREENS) or if Env.test then { lg: 1024 } else throw 'process.env.SCREENS missing'
-    @screens = @screens.reject((k, v) -> v.is_a Object).each_map((k, v) -> [k, v.to_i()]).to_h()
+    @screens = @screens.reject((k, v) -> v.is_a Object).map_each((k, v) -> [k, v.to_i()]).to_h()
     @breakpoints = {}
     styles = window.getComputedStyle(document.documentElement, '')
     prefix = try styles.vals().join('').match(/-(webkit|moz|ms)-/)?[1]
@@ -63,7 +63,7 @@ class Js.DeviceConcept
     if @size.x isnt @size_was?.x or @full_size.x isnt @full_size_was?.x
       screen_was = @screen or ((initial = true) and @screens.first()[0])
       included_was = true
-      @screens.each (screen, size) =>
+      @screens.for_each (screen, size) =>
         included = @breakpoints[screen] = (@size.x >= size)
         if @screen isnt screen_was and included_was and not included
           @screen = screen_was
