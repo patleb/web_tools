@@ -23,11 +23,12 @@ Object.define_singleton_methods
           target[key] = value
     target
 
-  deep_sort: (object) ->
+  deep_sort: (object, sort_array = false) ->
     if not object?.is_a?
       result = object
     else if object.is_a Array
-      result = object.map((value) -> Object.deep_sort(value)).sort()
+      result = object.map((value) -> Object.deep_sort(value, sort_array))
+      result.sort() if sort_array
     else if object.is_a Object
       result = {}
       keys = object.keys().sort (left, right) ->
@@ -40,7 +41,7 @@ Object.define_singleton_methods
         result[key] = if not (value = object[key])?.is_a?
           value
         else if value.is_a(Array) or value.is_a Object
-          Object.deep_sort(value)
+          Object.deep_sort(value, sort_array)
         else
           value
     else

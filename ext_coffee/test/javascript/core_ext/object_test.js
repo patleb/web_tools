@@ -170,7 +170,7 @@ describe('Object', () => {
 
   test('.deep_sort', () => {
     const object = { b: 1, a: [3, 2] }
-    assert.equal({ a: [2, 3], b: 1 }, Object.deep_sort(object))
-    assert.equal([2, 3], Object.deep_sort(object.a))
+    assert.equal({ a: [2, 3], b: 1 }, Object.deep_sort(object, true))
+    assert.equal([2, 3], Object.deep_sort(object.a, true))
   })
 })
