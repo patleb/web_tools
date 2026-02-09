@@ -9,9 +9,9 @@ window.Js =
     , Js.SPINNER_DEBOUNCE)
 
   clear_spinner: (id = 0) ->
-    Rails.find('.spinner_container').add_class('hidden')
-    timeout = spinners.delete(id)
-    clearTimeout(timeout)
+    clearTimeout spinners.delete(id)
+    if spinners.empty()
+      Rails.find('.spinner_container').add_class('hidden')
 
   # https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
   add_opacity: (hex, opacity) ->
