@@ -94,7 +94,7 @@ class Js.Component.Element
 
   render_self: (changes, skip_callbacks = false) ->
     if changes is true
-      @storage_get().for_each (name, value) => this[name] = value
+      @storage_sync()
     else if not (changes = @update_self changes, skip_callbacks)
       return false
     else if @_rendered and @_refresh is false
@@ -139,6 +139,9 @@ class Js.Component.Element
         [name, [change..., this["on_watch_#{name}"]?(change...)]]
       @on_watch?(updates.to_h())
     changes
+
+  storage_sync: (names...) ->
+    @storage_get(names...).for_each (name, value) => this[name] = value
 
   storage_changes: (name, options = {}) ->
     Js.Storage.get_changes(name, @storage_options.merge options)
