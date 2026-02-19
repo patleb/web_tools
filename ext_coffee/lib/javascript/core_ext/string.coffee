@@ -21,6 +21,7 @@ SINGULAR = [
   [/([^aeiouy]|qu)ies$/i, '$1y'],
   [/(^analy)(sis|ses)$/i, '$1sis'],
 ]
+ANCHOR = '::'
 # NOTE: private scopes/methods are excluded
 String.CONSTANTIZABLE = /^[A-Z][\w.:]*$/i
 String.SCOPED_CONSTANTIZABLE = /^[A-Z]\w*((\.|::)[A-Z]\w*)+$/i
@@ -169,7 +170,7 @@ String.define_methods
         new RegExp(source, flags)
     @replace(pattern, string_or_f_match)
 
-  gsub_keys: (values, { anchor = ':' } = {}) ->
+  gsub_keys: (values, { anchor = ANCHOR } = {}) ->
     string = @valueOf()
     is_function = values.is_a Function
     if is_function or values.any()

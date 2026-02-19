@@ -15,7 +15,7 @@ class window.I18n
       for name, value of options
         result = result.replace("%{#{name}}", value)
       result = result.html_safe?(true) unless escape
-    result ? key.gsub('.', ' ').humanize()
+    result ? (key.gsub('.', ' ').humanize() if fallback is true)
 
   @with_locale: (locale, callback) =>
     locale_was = @locale

@@ -120,7 +120,7 @@ describe('String', () => {
   })
 
   test('#gsub_keys', () => {
-    assert.equal('hello people!... and you 2?', 'hello :world!... and you :two?'.gsub_keys({ world: 'people', two: 2 }))
+    assert.equal('hello people!... and you 2?', 'hello ::world!... and you ::two?'.gsub_keys({ world: 'people', two: 2 }))
   })
 
   test('#gsub_template', () => {
