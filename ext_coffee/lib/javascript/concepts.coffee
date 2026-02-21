@@ -2,7 +2,7 @@ class Js.Concepts
   MODULE = /^(?![A-Z]\w*Concept$)[A-Z]/
   CONCEPT = /Concept$/
   ELEMENT = /Element$/
-  CONSTANT = /^[A-Z][A-Z0-9_]*/
+  CONSTANT = /^_*[A-Z][A-Z0-9_]*/
 
   uniq_methods = []
   uniq_classes = {}
