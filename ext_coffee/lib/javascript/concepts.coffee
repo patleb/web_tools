@@ -108,7 +108,7 @@ class Js.Concepts
 
     concept_class::for_each(@add_element) if concept is Js.Component
 
-    @define_storage_scopes(concept_class, concept)
+    @define_memoized_scopes(concept_class, concept)
 
   # Private
 
@@ -168,12 +168,12 @@ class Js.Concepts
       else
         (@__store ||= {})[name] = value
 
-  @define_storage_scopes: (klass, context) ->
-    return unless klass.storage_scopes
-    klass::storage_scopes ?= ({ detail: { scope } } = {}) ->
-      return unless scope is '' or @constructor.storage_scopes[scope]
+  @define_memoized_scopes: (klass, context) ->
+    return unless klass.memoized_scopes
+    klass::nullify_memoized_scopes ?= ({ detail: { scope } } = {}) ->
+      return unless scope is '' or @constructor.memoized_scopes[scope]
       @nullify_memoizers()
-    @define_listener(context, Js.Storage.CHANGE, Js.Storage.ROOTS, klass::storage_scopes)
+    @define_listener(context, Js.Storage.CHANGE, Js.Storage.ROOTS, klass::nullify_memoized_scopes)
 
   @define_listeners: (context) ->
     context.listeners().each_slice(3).each ([events, selector, handler]) =>
