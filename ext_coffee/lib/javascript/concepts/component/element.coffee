@@ -45,8 +45,9 @@ class Js.Component.Element
     @_refresh = @_node.getAttribute('data-refresh')?.to_b() ? @constructor.refresh
     @_index = @_node.getAttribute('data-index')?.to_i() ? @constructor.index ? index
     @_scope = @_node.getAttribute('data-scope') or @constructor.scope or ''
+    static_data.for_each (name, value) => this[name] = value
     @_watch_scopes = {}
-    @_watch_ivars = []
+    @_watch_ivars = {}
     @_watch = if watch_data.empty()
       false
     else
@@ -56,10 +57,10 @@ class Js.Component.Element
         [scope, ivar] = [Js.Storage.unnamed(@_scope, name), Js.Storage.unscoped(name)]
         @_watch_scopes[scope] = true
         return unless ivar
-        @_watch_ivars.push ivar
+        @_watch_ivars[ivar] = true
         this[ivar] = value if initialize
         name
-    static_data.for_each (name, value) => this[name] = value
+    @_watch_ivars = @_watch_ivars.keys()
     @_node.add_class 'no-transition' unless @_refresh is false
 
   ready: ->
