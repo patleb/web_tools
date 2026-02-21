@@ -212,7 +212,7 @@ String.define_methods
     @constructor(pad + this).slice(-length)
 
   upcase_first: ->
-    @charAt(0).toUpperCase() + @slice(1)
+    @charAt(0).upcase() + this[1..]
 
   camelize: (namespace = '.') ->
     @split(/[-_\s]+/).map((word) -> word.upcase_first()).join('')
@@ -234,8 +234,12 @@ String.define_methods
       .gsub(/^-|-$/i, '')
       .downcase()
 
+  titleize: ->
+    @humanize().gsub(/ ([^ ])/, (match) -> match.upcase())
+
   humanize: ->
-    @charAt(0).toUpperCase() + @gsub('_', ' ')[1..]
+    string = @full_underscore().gsub('_', ' ')
+    string.charAt(0).upcase() + string[1..]
 
   pluralize: ->
     if (rule = PLURAL.find (rule) => @match rule[0])
