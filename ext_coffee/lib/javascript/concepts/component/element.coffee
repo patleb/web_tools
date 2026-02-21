@@ -10,6 +10,9 @@ class Js.Component.Element
       else
         { submitter: this, permanent: @_permanent }
 
+  constants: ->
+    NO_CHANGES: '__NO_CHANGES__'.html_safe(true)
+
   @first: ->
     Js.Component.elements.find (uid, e) => e.constructor is this
 
@@ -102,9 +105,9 @@ class Js.Component.Element
     @before_render?(changes)
     if (input = @find_input @_autofocus...)
       range = input.cursor()
-    unless (html = @render() ? '').html_safe()
+    unless (html = @render(changes) ? '').html_safe()
       html = html.safe_text()
-    @_node.innerHTML = html
+    @_node.innerHTML = html unless eql html, @NO_CHANGES
     @_rendered = true
     @_stale = false
     if (input = @find_input @_autofocus...)
