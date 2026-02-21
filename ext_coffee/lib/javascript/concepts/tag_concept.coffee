@@ -38,13 +38,15 @@ class Js.TagConcept
     @HTML_TAGS.merge(tags.to_set())
 
   h_: (values...) =>
+    { no_space } = values.extract_options()
     if values.length is 1 and (text = values[0])?.is_a Function
       values = [text()]
     values = values.flatten().compact().map (item) ->
       item = ''.html_safe(true) unless item?
       item = item.safe_text()   unless item.html_safe()
       item.to_s()
-    values = values.join(' ')
+    separator = if no_space then '' else ' '
+    values = values.join(separator)
     values.html_safe(true)
 
   if_: (is_true, values...) =>
@@ -113,7 +115,7 @@ class Js.TagConcept
         options.autocomplete ?= 'off' if options.type is 'hidden'
       when 'select'
         options.autocomplete ?= 'off' if options.name or options.id
-    content = @h_(content) if content?.is_a Array
+    content = @h_(content, no_space: options.delete('no_space')) if content?.is_a Array
     result = if tag? then @content_tag(tag, content, options, escape) else @h_(content)
     result = result.to_s().html_safe(true) unless dom
     result
