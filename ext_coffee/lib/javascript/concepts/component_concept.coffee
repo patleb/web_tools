@@ -55,6 +55,9 @@ class Js.ComponentConcept
   leave: ->
     @elements?.for_each (uid, element) ->
       element.leave?()
+      unless element.before_ready or element._permanent or element._scope is ''
+        Js.Storage.delete(scope: element._scope)
+      Js.Storage.delete()
 
   render_elements: ({ detail: { submitter, permanent, scope, changes } } = {}) ->
     elements = (@elements ? {}).select_each (uid, element) ->

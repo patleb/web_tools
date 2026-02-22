@@ -93,6 +93,20 @@ class Js.StorageConcept
     @fire(changes, { submitter, permanent, scope }) if event
     changes
 
+  delete: (names...) ->
+    { permanent = false, scope = '' } = names.extract_options()
+    if names.length
+      names.each (name) =>
+        scoped_name = @scoped name, scope
+        @storage(permanent).find("[name='#{scoped_name}']")?.remove()
+    else
+      @storage(permanent).$("[name^='#{scope}:']").each (input) ->
+        input.remove()
+
+  clear: ({ permanent = false } = {}) ->
+    @storage(permanent).$('input').each (input) ->
+      input.remove()
+
   fire: (changes, { submitter = null, permanent = false, scope = '' } = {}) ->
     @storage(permanent).fire(@CHANGE, { submitter, permanent, scope, changes }) unless changes.empty()
 
