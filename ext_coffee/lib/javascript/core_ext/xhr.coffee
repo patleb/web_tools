@@ -32,14 +32,22 @@ class window.XHR
     @constructor.cache ?= lru(@constructor._cache_size or 500)
     @xhr = new XMLHttpRequest()
     @id = Math.uid()
+    @group = if (group = options.group) is true or not group?
+      Math.uid()
+    else
+      group
     @spinner = "xhr_#{@id}" if options.spinner
     @send(options)
 
   abort_if_pending: ->
-    return unless @xhr.readyState < XMLHttpRequest.DONE
+    return unless @pending()
+    @aborted = true
     @xhr.onreadystatechange = noop
     @xhr.abort()
     Js.clear_spinner(@spinner) if @spinner
+
+  pending: ->
+    @xhr.readyState < XMLHttpRequest.DONE
 
   status: ->
     if @cache
