@@ -16,8 +16,6 @@ packages:
   # CoffeeScript
   - 'coffee-loader'
   - 'coffeescript'
-  # ERB
-  - 'rails-erb-loader'
   # CSS
   - 'css-loader'
   - 'css-minimizer-webpack-plugin'
