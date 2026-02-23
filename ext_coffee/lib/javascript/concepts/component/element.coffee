@@ -87,7 +87,7 @@ class Js.Component.Element
   render: not_implemented
 
   # NOTE: for usage in #on_update
-  update: (changes, { render, stale, autofocus } = {}) ->
+  force_update: (changes, { render, stale, autofocus } = {}) ->
     changes = @storage_set changes, { event: false, autofocus }
     if render
       @render_self changes, true
