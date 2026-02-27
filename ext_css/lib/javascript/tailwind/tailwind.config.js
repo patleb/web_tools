@@ -106,7 +106,6 @@ const ext_css = ({ themes = true, darkTheme = 'dark' } = {}) => {
 }
 
 let plugins = [
-  require('@tailwindcss/aspect-ratio'),
   require('@tailwindcss/container-queries'),
   require('@tailwindcss/forms')({ strategy: 'class' }),
   require('@tailwindcss/typography'),

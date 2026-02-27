@@ -1,5 +1,5 @@
 packages:
-  - '@tailwindcss/aspect-ratio'
+  - '@tailwindcss/container-queries'
   - '@tailwindcss/forms'
   - '@tailwindcss/typography'
   - 'tailwindcss'
