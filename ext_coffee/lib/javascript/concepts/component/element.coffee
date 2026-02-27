@@ -54,12 +54,24 @@ class Js.Component.Element
       if (initialize = watch_data.is_a Object)
         @storage_set watch_data, event: false
       watch_data.select_map (name, value) =>
+        if name.is_a(Object) or (string_object = name.ends_with ']')
+          if string_object
+            [scope, ivars] = name.chop().split(/: *\[/, 2)
+            name = { "#{scope}": ivars.split(',').map('strip') }
+          return name.map_each (scope, ivars) =>
+            @_watch_scopes[scope] = true
+            ivars = Array.wrap(ivars)
+            ivars.select_map (ivar) =>
+              return unless ivar
+              @_watch_ivars[ivar] = true
+              Js.Storage.scoped(ivar, scope)
         [scope, ivar] = [Js.Storage.unnamed(@_scope, name), Js.Storage.unscoped(name)]
         @_watch_scopes[scope] = true
         return unless ivar
         @_watch_ivars[ivar] = true
         this[ivar] = value if initialize
         name
+      .flatten()
     @_watch_ivars = @_watch_ivars.keys()
     @_node.add_class 'no-transition' unless @_refresh is false
 
