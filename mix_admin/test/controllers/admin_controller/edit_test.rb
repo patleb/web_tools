@@ -41,7 +41,7 @@ class AdminController::EditTest < ActionDispatch::IntegrationTest
         'integer_field enum_type',
         '<label>Integer</label>',
         'One',
-        '<select name="integer" class="select select-bordered" id="integer">'\
+        '<select name="integer" class="select select-bordered" id="integer" autocomplete="off">'\
           '<option value=""> </option>'\
           '<option value="0">Zero</option>'\
           '<option value="1" selected="selected">One</option>'\

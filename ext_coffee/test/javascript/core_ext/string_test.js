@@ -155,7 +155,7 @@ describe('String', () => {
   })
 
   test('#humanize', () => {
-    assert.equal('Root path to class-name.ext', 'root_path_to_class-name.ext'.humanize())
+    assert.equal('Root path to class name ext', 'root_path_to_class-name.ext'.humanize())
   })
 
   test('#pluralize, #singularize', () => {

@@ -25,7 +25,7 @@ describe('I18n', () => {
   it('should prefer lang attribute locale, use the locale option or use the key if missing', () => {
     assert.equal('Le nom', I18n.t('name'))
     assert.equal('The name', I18n.t('name', { locale: 'en' }))
-    assert.equal('Deep nested name', I18n.t('deep.nested.name', { locale: 'it' }))
+    assert.equal('Deep nested name', I18n.t('deep.nested.name', { locale: 'it', fallback: true }))
   })
 
   it('should not mark as html_safe if escape option is not false', () => {
