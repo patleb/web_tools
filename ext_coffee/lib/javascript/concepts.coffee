@@ -14,12 +14,12 @@ class Js.Concepts
     leave: []
     leave_clean: []
 
-  @initialize: ({ concepts = [], modules = [], except = [] } = {}) ->
+  @initialize: ({ concept, concepts = [], module, modules = [], except = [] } = {}) ->
     if initialized
       return Logger.debug('Js.Concepts already initialized')
     initialized = true
-    Array.wrap(concepts).each (name) => @add_concept(name)
-    Array.wrap(modules).each (name) => @add_module(name)
+    Array.wrap(concept ? concepts).each (name) => @add_concept(name)
+    Array.wrap(module ? modules).each (name) => @add_module(name)
     Rails.document_on 'DOMContentLoaded', @on_load
     Rails.document_on 'turbolinks:before-render', @on_leave
     Rails.document_on 'turbolinks:load', @on_ready
