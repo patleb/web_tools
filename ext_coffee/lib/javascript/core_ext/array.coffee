@@ -14,6 +14,8 @@ Array.define_singleton_methods
   is_array: (object) ->
     if not object?
       false
+    else if object.is_a? Array
+      true
     else if typeof window.Symbol is 'function'
       typeof object[Symbol.iterator] is 'function' and
       typeof object.length is 'number' and
