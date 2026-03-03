@@ -88,7 +88,10 @@ class Js.StorageConcept
           args = value.each_with_object {}, (key, value, memo) ->
             return unless cast = json_caster(value)
             memo[key] = cast
-          input.setAttribute('data-args', args.safe_text()) unless args.empty()
+          if args.empty()
+            input.removeAttribute('data-args')
+          else
+            input.setAttribute('data-args', args.safe_text())
         @log permanent, scoped_name, value, value_was
     @fire(changes, { submitter, permanent, scope }) if event
     changes
