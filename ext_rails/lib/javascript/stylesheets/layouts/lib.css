@@ -18,7 +18,7 @@ html {
     }
   }
   .alert {
-    @apply absolute flex-row top-2.5 max-w-[calc(100vw-2.5rem)] lg:max-w-[calc(100vw-20.5rem)] z-[100];
+    @apply fixed flex-row top-2.5 max-w-[calc(100vw-2.5rem)] lg:max-w-[calc(100vw-20.5rem)] z-[100];
 
     .btn {
       @apply absolute top-1 right-1 mt-0;
@@ -64,6 +64,9 @@ html {
   .open_sidebar {
     @apply flex-none lg:hidden mt-2 mr-2;
 
+    i {
+      @apply text-neutral-content;
+    }
     .link {
       @apply lg:hidden xs-1:max-w-[calc(100vw-4.5rem)];
     }
