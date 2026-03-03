@@ -1,12 +1,12 @@
 :root {
-  --spinner_duration: 2000ms;
-  --spinner_size: 150px;
-  --spinner_color: #ff1d5e;
+  --spinner-duration: 2000ms;
+  --spinner-size: 150px;
+  --spinner-color: #ff1d5e;
 }
 
 .breeding-rhombus-spinner {
-  height: var(--spinner_size);
-  width: var(--spinner_size);
+  height: var(--spinner-size);
+  width: var(--spinner-size);
   position: relative;
   transform: rotate(45deg);
 }
@@ -16,12 +16,12 @@
 }
 
 .breeding-rhombus-spinner .rhombus {
-  height: calc(var(--spinner_size) / 7.5);
-  width: calc(var(--spinner_size) / 7.5);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 2.3077);
-  left: calc(var(--spinner_size) / 2.3077);
-  background-color: var(--spinner_color);
+  height: calc(var(--spinner-size) / 7.5);
+  width: calc(var(--spinner-size) / 7.5);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 2.3077);
+  left: calc(var(--spinner-size) / 2.3077);
+  background-color: var(--spinner-color);
   position: absolute;
   animation-iteration-count: infinite;
 }
@@ -31,109 +31,109 @@
 }
 
 .breeding-rhombus-spinner .rhombus.child-1 {
-  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  --delay-modifier: calc(var(--spinner-duration) * 0.05);
   animation-name: breeding-rhombus-spinner-animation-child-1;
-  height: calc(var(--spinner_size) / 7.5);
-  width: calc(var(--spinner_size) / 7.5);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 2.3077);
-  left: calc(var(--spinner_size) / 2.3077);
-  background-color: var(--spinner_color);
-  animation-delay: calc(var(--delay_modifier) * 2ms);
+  height: calc(var(--spinner-size) / 7.5);
+  width: calc(var(--spinner-size) / 7.5);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 2.3077);
+  left: calc(var(--spinner-size) / 2.3077);
+  background-color: var(--spinner-color);
+  animation-delay: calc(var(--delay-modifier) * 2ms);
 }
 
 .breeding-rhombus-spinner .rhombus.child-2 {
-  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  --delay-modifier: calc(var(--spinner-duration) * 0.05);
   animation-name: breeding-rhombus-spinner-animation-child-2;
-  height: calc(var(--spinner_size) / 7.5);
-  width: calc(var(--spinner_size) / 7.5);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 2.3077);
-  left: calc(var(--spinner_size) / 2.3077);
-  background-color: var(--spinner_color);
-  animation-delay: calc(var(--delay_modifier) * 3ms);
+  height: calc(var(--spinner-size) / 7.5);
+  width: calc(var(--spinner-size) / 7.5);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 2.3077);
+  left: calc(var(--spinner-size) / 2.3077);
+  background-color: var(--spinner-color);
+  animation-delay: calc(var(--delay-modifier) * 3ms);
 }
 
 .breeding-rhombus-spinner .rhombus.child-3 {
-  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  --delay-modifier: calc(var(--spinner-duration) * 0.05);
   animation-name: breeding-rhombus-spinner-animation-child-3;
-  height: calc(var(--spinner_size) / 7.5);
-  width: calc(var(--spinner_size) / 7.5);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 2.3077);
-  left: calc(var(--spinner_size) / 2.3077);
-  background-color: var(--spinner_color);
-  animation-delay: calc(var(--delay_modifier) * 4ms);
+  height: calc(var(--spinner-size) / 7.5);
+  width: calc(var(--spinner-size) / 7.5);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 2.3077);
+  left: calc(var(--spinner-size) / 2.3077);
+  background-color: var(--spinner-color);
+  animation-delay: calc(var(--delay-modifier) * 4ms);
 }
 
 .breeding-rhombus-spinner .rhombus.child-4 {
-  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  --delay-modifier: calc(var(--spinner-duration) * 0.05);
   animation-name: breeding-rhombus-spinner-animation-child-4;
-  height: calc(var(--spinner_size) / 7.5);
-  width: calc(var(--spinner_size) / 7.5);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 2.3077);
-  left: calc(var(--spinner_size) / 2.3077);
-  background-color: var(--spinner_color);
-  animation-delay: calc(var(--delay_modifier) * 5ms);
+  height: calc(var(--spinner-size) / 7.5);
+  width: calc(var(--spinner-size) / 7.5);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 2.3077);
+  left: calc(var(--spinner-size) / 2.3077);
+  background-color: var(--spinner-color);
+  animation-delay: calc(var(--delay-modifier) * 5ms);
 }
 
 .breeding-rhombus-spinner .rhombus.child-5 {
-  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  --delay-modifier: calc(var(--spinner-duration) * 0.05);
   animation-name: breeding-rhombus-spinner-animation-child-5;
-  height: calc(var(--spinner_size) / 7.5);
-  width: calc(var(--spinner_size) / 7.5);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 2.3077);
-  left: calc(var(--spinner_size) / 2.3077);
-  background-color: var(--spinner_color);
-  animation-delay: calc(var(--delay_modifier) * 6ms);
+  height: calc(var(--spinner-size) / 7.5);
+  width: calc(var(--spinner-size) / 7.5);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 2.3077);
+  left: calc(var(--spinner-size) / 2.3077);
+  background-color: var(--spinner-color);
+  animation-delay: calc(var(--delay-modifier) * 6ms);
 }
 
 .breeding-rhombus-spinner .rhombus.child-6 {
-  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  --delay-modifier: calc(var(--spinner-duration) * 0.05);
   animation-name: breeding-rhombus-spinner-animation-child-6;
-  height: calc(var(--spinner_size) / 7.5);
-  width: calc(var(--spinner_size) / 7.5);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 2.3077);
-  left: calc(var(--spinner_size) / 2.3077);
-  background-color: var(--spinner_color);
-  animation-delay: calc(var(--delay_modifier) * 7ms);
+  height: calc(var(--spinner-size) / 7.5);
+  width: calc(var(--spinner-size) / 7.5);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 2.3077);
+  left: calc(var(--spinner-size) / 2.3077);
+  background-color: var(--spinner-color);
+  animation-delay: calc(var(--delay-modifier) * 7ms);
 }
 
 .breeding-rhombus-spinner .rhombus.child-7 {
-  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  --delay-modifier: calc(var(--spinner-duration) * 0.05);
   animation-name: breeding-rhombus-spinner-animation-child-7;
-  height: calc(var(--spinner_size) / 7.5);
-  width: calc(var(--spinner_size) / 7.5);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 2.3077);
-  left: calc(var(--spinner_size) / 2.3077);
-  background-color: var(--spinner_color);
-  animation-delay: calc(var(--delay_modifier) * 8ms);
+  height: calc(var(--spinner-size) / 7.5);
+  width: calc(var(--spinner-size) / 7.5);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 2.3077);
+  left: calc(var(--spinner-size) / 2.3077);
+  background-color: var(--spinner-color);
+  animation-delay: calc(var(--delay-modifier) * 8ms);
 }
 
 .breeding-rhombus-spinner .rhombus.child-8 {
-  --delay_modifier: calc(var(--spinner_duration) * 0.05);
+  --delay-modifier: calc(var(--spinner-duration) * 0.05);
   animation-name: breeding-rhombus-spinner-animation-child-8;
-  height: calc(var(--spinner_size) / 7.5);
-  width: calc(var(--spinner_size) / 7.5);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 2.3077);
-  left: calc(var(--spinner_size) / 2.3077);
-  background-color: var(--spinner_color);
-  animation-delay: calc(var(--delay_modifier) * 9ms);
+  height: calc(var(--spinner-size) / 7.5);
+  width: calc(var(--spinner-size) / 7.5);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 2.3077);
+  left: calc(var(--spinner-size) / 2.3077);
+  background-color: var(--spinner-color);
+  animation-delay: calc(var(--delay-modifier) * 9ms);
 }
 
 .breeding-rhombus-spinner .rhombus.big {
-  height: calc(var(--spinner_size) / 3);
-  width: calc(var(--spinner_size) / 3);
-  animation-duration: var(--spinner_duration);
-  top: calc(var(--spinner_size) / 3);
-  left: calc(var(--spinner_size) / 3);
-  background-color: var(--spinner_color);
-  animation: breeding-rhombus-spinner-animation-child-big var(--spinner_duration) infinite;
+  height: calc(var(--spinner-size) / 3);
+  width: calc(var(--spinner-size) / 3);
+  animation-duration: var(--spinner-duration);
+  top: calc(var(--spinner-size) / 3);
+  left: calc(var(--spinner-size) / 3);
+  background-color: var(--spinner-color);
+  animation: breeding-rhombus-spinner-animation-child-big var(--spinner-duration) infinite;
   animation-delay: 0.5s;
 }
 

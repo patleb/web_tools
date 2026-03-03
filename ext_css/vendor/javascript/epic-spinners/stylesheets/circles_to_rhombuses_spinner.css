@@ -1,8 +1,8 @@
 :root {
-  --spinner_duration: 1200ms;
-  --spinner_size: 15px;
-  --spinner_color: #ff1d5e;
-  --spinner_circles_to_rhombuses: 3; /* max is 9 */
+  --spinner-duration: 1200ms;
+  --spinner-size: 15px;
+  --spinner-color: #ff1d5e;
+  --spinner-circles-to-rhombuses: 3; /* max is 9 */
 }
 
 .circles-to-rhombuses-spinner, .circles-to-rhombuses-spinner * {
@@ -10,25 +10,25 @@
 }
 
 .circles-to-rhombuses-spinner {
-  --margin_left: calc(var(--spinner_size) * 1.125);
-  height: var(--spinner_size);
-  width: calc((var(--spinner_size) + var(--margin_left)) * var(--spinner_circles_to_rhombuses));
+  --margin_left: calc(var(--spinner-size) * 1.125);
+  height: var(--spinner-size);
+  width: calc((var(--spinner-size) + var(--margin_left)) * var(--spinner-circles-to-rhombuses));
   display: flex;
   align-items: center;
   justify-content: center
 }
 
 .circles-to-rhombuses-spinner .circle {
-  height: var(--spinner_size);
-  width: var(--spinner_size);
-  margin-left: calc(var(--spinner_size) * 1.125);
+  height: var(--spinner-size);
+  width: var(--spinner-size);
+  margin-left: calc(var(--spinner-size) * 1.125);
   transform: rotate(45deg);
   border-radius: 10%;
-  border: 3px solid var(--spinner_color);
+  border: 3px solid var(--spinner-color);
   overflow: hidden;
   background: transparent;
 
-  animation: circles-to-rhombuses-animation var(--spinner_duration) linear infinite;
+  animation: circles-to-rhombuses-animation var(--spinner-duration) linear infinite;
 }
 
 .circles-to-rhombuses-spinner .circle:nth-child(1) {

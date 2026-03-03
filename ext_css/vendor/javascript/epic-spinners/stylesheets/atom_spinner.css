@@ -1,7 +1,7 @@
 :root {
-  --spinner_duration: 1000ms;
-  --spinner_size: 60px;
-  --spinner_color: #ff1d5e;
+  --spinner-duration: 1000ms;
+  --spinner-size: 60px;
+  --spinner-color: #ff1d5e;
 }
 
 .atom-spinner, .atom-spinner * {
@@ -9,8 +9,8 @@
 }
 
 .atom-spinner {
-  height: var(--spinner_size);
-  width: var(--spinner_size);
+  height: var(--spinner-size);
+  width: var(--spinner-size);
   overflow: hidden;
 }
 
@@ -24,8 +24,8 @@
 .atom-spinner .spinner-circle {
   display: block;
   position: absolute;
-  color: var(--spinner_color);
-  font-size: calc(var(--spinner_size) * 0.24);
+  color: var(--spinner-color);
+  font-size: calc(var(--spinner-size) * 0.24);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -36,27 +36,27 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  animation-duration: var(--spinner_duration);
-  border-left-width: calc(var(--spinner_size) / 25);
-  border-top-width: calc(var(--spinner_size) / 25);
-  border-left-color: var(--spinner_color);
+  animation-duration: var(--spinner-duration);
+  border-left-width: calc(var(--spinner-size) / 25);
+  border-top-width: calc(var(--spinner-size) / 25);
+  border-left-color: var(--spinner-color);
   border-left-style: solid;
   border-top-style: solid;
   border-top-color: transparent;
 }
 
 .atom-spinner .spinner-line:nth-child(1) {
-  animation: atom-spinner-animation-1 var(--spinner_duration) linear infinite;
+  animation: atom-spinner-animation-1 var(--spinner-duration) linear infinite;
   transform: rotateZ(120deg) rotateX(66deg) rotateZ(0deg);
 }
 
 .atom-spinner .spinner-line:nth-child(2) {
-  animation: atom-spinner-animation-2 var(--spinner_duration) linear infinite;
+  animation: atom-spinner-animation-2 var(--spinner-duration) linear infinite;
   transform: rotateZ(240deg) rotateX(66deg) rotateZ(0deg);
 }
 
 .atom-spinner .spinner-line:nth-child(3) {
-  animation: atom-spinner-animation-3 var(--spinner_duration) linear infinite;
+  animation: atom-spinner-animation-3 var(--spinner-duration) linear infinite;
   transform: rotateZ(360deg) rotateX(66deg) rotateZ(0deg);
 }
 

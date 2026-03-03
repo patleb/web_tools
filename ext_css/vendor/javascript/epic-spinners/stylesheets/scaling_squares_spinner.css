@@ -1,7 +1,7 @@
 :root {
-  --spinner_duration: 1250ms;
-  --spinner_size: 65px;
-  --spinner_color: #ff1d5e;
+  --spinner-duration: 1250ms;
+  --spinner-size: 65px;
+  --spinner-color: #ff1d5e;
 }
 
 .scaling-squares-spinner, .scaling-squares-spinner * {
@@ -9,33 +9,43 @@
 }
 
 .scaling-squares-spinner {
-  height: var(--spinner_size);
-  width: var(--spinner_size);
+  height: var(--spinner-size);
+  width: var(--spinner-size);
   position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  animation: scaling-squares-animation var(--spinner_duration);
+  animation: scaling-squares-animation var(--spinner-duration);
   animation-iteration-count: infinite;
   transform: rotate(0deg);
 }
 
 .scaling-squares-spinner .square {
-  height: calc(var(--spinner_size) * 0.25 / 1.3);
-  width: calc(var(--spinner_size) * 0.25 / 1.3);
+  height: calc(var(--spinner-size) * 0.25 / 1.3);
+  width: calc(var(--spinner-size) * 0.25 / 1.3);
   margin-right: auto;
   margin-left: auto;
-  border: calc(var(--spinner_size) * 0.04 / 1.3) solid var(--spinner_color);
+  border: calc(var(--spinner-size) * 0.04 / 1.3) solid var(--spinner-color);
   position: absolute;
-  animation-duration: var(--spinner_duration);
+  animation-duration: var(--spinner-duration);
   animation-iteration-count: infinite;
 }
 
-@for $i from 1 through 4 {
-  .scaling-squares-spinner .square:nth-child(#{$i}) {
-    animation-name: scaling-squares-spinner-animation-child-#{$i};
-  }
+.scaling-squares-spinner .square:nth-child(1) {
+  animation-name: scaling-squares-spinner-animation-child-1;
+}
+
+.scaling-squares-spinner .square:nth-child(2) {
+  animation-name: scaling-squares-spinner-animation-child-2;
+}
+
+.scaling-squares-spinner .square:nth-child(3) {
+  animation-name: scaling-squares-spinner-animation-child-3;
+}
+
+.scaling-squares-spinner .square:nth-child(4) {
+  animation-name: scaling-squares-spinner-animation-child-4;
 }
 
 @keyframes scaling-squares-animation {

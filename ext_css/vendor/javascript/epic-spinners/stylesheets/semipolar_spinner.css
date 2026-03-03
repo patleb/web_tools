@@ -1,7 +1,7 @@
 :root {
-  --spinner_duration: 2000ms;
-  --spinner_size: 65px;
-  --spinner_color: #ff1d5e;
+  --spinner-duration: 2000ms;
+  --spinner-size: 65px;
+  --spinner-color: #ff1d5e;
 }
 
 .semipolar-spinner, .semipolar-spinner * {
@@ -9,8 +9,8 @@
 }
 
 .semipolar-spinner {
-  height: var(--spinner_size);
-  width: var(--spinner_size);
+  height: var(--spinner-size);
+  width: var(--spinner-size);
   position: relative;
 }
 
@@ -18,72 +18,72 @@
   border-radius: 50%;
   position: absolute;
   border: calc(65px * 0.05) solid transparent;
-  border-top-color: var(--spinner_color);
-  border-left-color: var(--spinner_color);
-  animation: semipolar-spinner-animation var(--spinner_duration) infinite;
+  border-top-color: var(--spinner-color);
+  border-left-color: var(--spinner-color);
+  animation: semipolar-spinner-animation var(--spinner-duration) infinite;
 }
 
 .semipolar-spinner .ring:nth-child(1) {
-  --ring_width: calc(var(--spinner_size) * 0.05);
-  --size_decrement: calc(var(--spinner_size) * 0.2);
+  --ring_width: calc(var(--spinner-size) * 0.05);
+  --size_decrement: calc(var(--spinner-size) * 0.2);
   --position_increment: calc(var(--ring_width) * 2);
-  --size: var(--spinner_size);
+  --size: var(--spinner-size);
   --position: 0;
   height: var(--size);
   width: var(--size);
   top: var(--position);
   left: var(--position);
-  animation-delay: calc(var(--spinner_duration) * 0.1 * 4);
+  animation-delay: calc(var(--spinner-duration) * 0.1 * 4);
   z-index: 5;
 }
 
 .semipolar-spinner .ring:nth-child(2) {
-  --ring_width: calc(var(--spinner_size) * 0.05);
-  --size_decrement: calc(var(--spinner_size) * 0.2);
+  --ring_width: calc(var(--spinner-size) * 0.05);
+  --size_decrement: calc(var(--spinner-size) * 0.2);
   --position_increment: calc(var(--ring_width) * 2);
-  --size: calc(var(--spinner_size) - var(--size_decrement));
+  --size: calc(var(--spinner-size) - var(--size_decrement));
   --position: calc(var(--position_increment));
   height: var(--size);
   width: var(--size);
   top: var(--position);
   left: var(--position);
-  animation-delay: calc(var(--spinner_duration) * 0.1 * 3);
+  animation-delay: calc(var(--spinner-duration) * 0.1 * 3);
   z-index: 4;
 }
 
 .semipolar-spinner .ring:nth-child(3) {
-  --ring_width: calc(var(--spinner_size) * 0.05);
-  --size_decrement: calc(var(--spinner_size) * 0.2);
+  --ring_width: calc(var(--spinner-size) * 0.05);
+  --size_decrement: calc(var(--spinner-size) * 0.2);
   --position_increment: calc(var(--ring_width) * 2);
-  --size: calc(var(--spinner_size) - var(--size_decrement) * 2);
+  --size: calc(var(--spinner-size) - var(--size_decrement) * 2);
   --position: calc(var(--position_increment) * 2);
   height: var(--size);
   width: var(--size);
   top: var(--position);
   left: var(--position);
-  animation-delay: calc(var(--spinner_duration) * 0.1 * 2);
+  animation-delay: calc(var(--spinner-duration) * 0.1 * 2);
   z-index: 3;
 }
 
 .semipolar-spinner .ring:nth-child(4) {
-  --ring_width: calc(var(--spinner_size) * 0.05);
-  --size_decrement: calc(var(--spinner_size) * 0.2);
+  --ring_width: calc(var(--spinner-size) * 0.05);
+  --size_decrement: calc(var(--spinner-size) * 0.2);
   --position_increment: calc(var(--ring_width) * 2);
-  --size: calc(var(--spinner_size) - var(--size_decrement) * 3);
+  --size: calc(var(--spinner-size) - var(--size_decrement) * 3);
   --position: calc(var(--position_increment) * 3);
   height: var(--size);
   width: var(--size);
   top: var(--position);
   left: var(--position);
-  animation-delay: calc(var(--spinner_duration) * 0.1);
+  animation-delay: calc(var(--spinner-duration) * 0.1);
   z-index: 2;
 }
 
 .semipolar-spinner .ring:nth-child(5) {
-  --ring_width: calc(var(--spinner_size) * 0.05);
-  --size_decrement: calc(var(--spinner_size) * 0.2);
+  --ring_width: calc(var(--spinner-size) * 0.05);
+  --size_decrement: calc(var(--spinner-size) * 0.2);
   --position_increment: calc(var(--ring_width) * 2);
-  --size: calc(var(--spinner_size) - var(--size_decrement) * 4);
+  --size: calc(var(--spinner-size) - var(--size_decrement) * 4);
   --position: calc(var(--position_increment) * 4);
   height: var(--size);
   width: var(--size);

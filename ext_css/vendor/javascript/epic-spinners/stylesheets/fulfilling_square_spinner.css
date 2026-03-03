@@ -1,7 +1,7 @@
 :root {
-  --spinner_duration: 4000ms;
-  --spinner_size: 50px;
-  --spinner_color: #ff1d5e;
+  --spinner-duration: 4000ms;
+  --spinner-size: 50px;
+  --spinner-color: #ff1d5e;
 }
 
 .fulfilling-square-spinner, .fulfilling-square-spinner * {
@@ -9,20 +9,20 @@
 }
 
 .fulfilling-square-spinner {
-  height: var(--spinner_size);
-  width: var(--spinner_size);
+  height: var(--spinner-size);
+  width: var(--spinner-size);
   position: relative;
-  border: 4px solid var(--spinner_color);
-  animation: fulfilling-square-spinner-animation var(--spinner_duration) infinite ease;
+  border: 4px solid var(--spinner-color);
+  animation: fulfilling-square-spinner-animation var(--spinner-duration) infinite ease;
 }
 
 .fulfilling-square-spinner .spinner-inner {
   vertical-align: top;
   display: inline-block;
-  background-color: var(--spinner_color);
+  background-color: var(--spinner-color);
   width: 100%;
   opacity: 1;
-  animation: fulfilling-square-spinner-inner-animation var(--spinner_duration) infinite ease-in;
+  animation: fulfilling-square-spinner-inner-animation var(--spinner-duration) infinite ease-in;
 }
 
 @keyframes fulfilling-square-spinner-animation {

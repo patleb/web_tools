@@ -221,14 +221,9 @@ module CssHelper
   private
 
   def spinner_variable(type)
-    (@@_spinner_variable ||= {})[type] ||= begin
-      match = nil
-      (ExtCss.config.variables + ["vendor/epic-spinners/stylesheets/#{type}_spinner.css"]).find do |path|
-        next unless (css = Pathname.new("app/javascript/#{path}")).exist?
-        next unless (css = css.read.match(/^\s*--spinner_#{type}\s*:\s*(\d+)\s*;/))
-        match = css[1].to_i
-      end
-      [match, 9].min.presence || raise("can't find css variable --spinner_#{type}")
+    if (value = ExtCss.config.variable("--spinner-#{type}", :to_i))
+      value = [value, 9].min
     end
+    value.presence || raise("can't find css variable --spinner-#{type}")
   end
 end

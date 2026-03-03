@@ -1,7 +1,8 @@
 :root {
-  --spinner_duration: 1500ms;
-  --spinner_size: 60px;
-  --spinner_color: #ff1d5e;
+  --spinner-duration: 1500ms;
+  --spinner-size: 60px;
+  --spinner-color: #ff1d5e;
+  --spinner-ring-base: calc(var(--spinner-size) - 2px * 2) / 9;
 }
 
 .fingerprint-spinner, .fingerprint-spinner * {
@@ -9,8 +10,8 @@
 }
 
 .fingerprint-spinner {
-  height: var(--spinner_size);
-  width: var(--spinner_size);
+  height: var(--spinner-size);
+  width: var(--spinner-size);
   padding: 2px;
   overflow: hidden;
   position: relative;
@@ -20,8 +21,8 @@
   position: absolute;
   border-radius: 50%;
   border: 2px solid transparent;
-  border-top-color: var(--spinner_color);
-  animation: fingerprint-spinner-animation var(--spinner_duration) cubic-bezier(0.680, -0.750, 0.265, 1.750) infinite forwards;
+  border-top-color: var(--spinner-color);
+  animation: fingerprint-spinner-animation var(--spinner-duration) cubic-bezier(0.680, -0.750, 0.265, 1.750) infinite forwards;
   margin: auto;
   bottom: 0;
   left: 0;
@@ -29,13 +30,58 @@
   top: 0;
 }
 
-@for $i from 1 through 9 {
-  .fingerprint-spinner .spinner-ring:nth-child(#{$i}) {
-    $ring_base: calc(var(--spinner_size) - 2px * 2) / 9;
-    height: calc(#{$ring_base} + (#{$i} - 1) * #{$ring_base});
-    width: calc(#{$ring_base} + (#{$i} - 1) * #{$ring_base});
-    animation-delay: calc(50ms * #{$i});
-  }
+.fingerprint-spinner .spinner-ring:nth-child(1) {
+  height: calc(var(--spinner-ring-base) + (1 - 1) * var(--spinner-ring-base));
+  width: calc(var(--spinner-ring-base) + (1 - 1) * var(--spinner-ring-base));
+  animation-delay: calc(50ms * 1);
+}
+
+.fingerprint-spinner .spinner-ring:nth-child(2) {
+  height: calc(var(--spinner-ring-base) + (2 - 1) * var(--spinner-ring-base));
+  width: calc(var(--spinner-ring-base) + (2 - 1) * var(--spinner-ring-base));
+  animation-delay: calc(50ms * 2);
+}
+
+.fingerprint-spinner .spinner-ring:nth-child(3) {
+  height: calc(var(--spinner-ring-base) + (3 - 1) * var(--spinner-ring-base));
+  width: calc(var(--spinner-ring-base) + (3 - 1) * var(--spinner-ring-base));
+  animation-delay: calc(50ms * 3);
+}
+
+.fingerprint-spinner .spinner-ring:nth-child(4) {
+  height: calc(var(--spinner-ring-base) + (4 - 1) * var(--spinner-ring-base));
+  width: calc(var(--spinner-ring-base) + (4 - 1) * var(--spinner-ring-base));
+  animation-delay: calc(50ms * 4);
+}
+
+.fingerprint-spinner .spinner-ring:nth-child(5) {
+  height: calc(var(--spinner-ring-base) + (5 - 1) * var(--spinner-ring-base));
+  width: calc(var(--spinner-ring-base) + (5 - 1) * var(--spinner-ring-base));
+  animation-delay: calc(50ms * 5);
+}
+
+.fingerprint-spinner .spinner-ring:nth-child(6) {
+  height: calc(var(--spinner-ring-base) + (6 - 1) * var(--spinner-ring-base));
+  width: calc(var(--spinner-ring-base) + (6 - 1) * var(--spinner-ring-base));
+  animation-delay: calc(50ms * 6);
+}
+
+.fingerprint-spinner .spinner-ring:nth-child(7) {
+  height: calc(var(--spinner-ring-base) + (7 - 1) * var(--spinner-ring-base));
+  width: calc(var(--spinner-ring-base) + (7 - 1) * var(--spinner-ring-base));
+  animation-delay: calc(50ms * 7);
+}
+
+.fingerprint-spinner .spinner-ring:nth-child(8) {
+  height: calc(var(--spinner-ring-base) + (8 - 1) * var(--spinner-ring-base));
+  width: calc(var(--spinner-ring-base) + (8 - 1) * var(--spinner-ring-base));
+  animation-delay: calc(50ms * 8);
+}
+
+.fingerprint-spinner .spinner-ring:nth-child(9) {
+  height: calc(var(--spinner-ring-base) + (9 - 1) * var(--spinner-ring-base));
+  width: calc(var(--spinner-ring-base) + (9 - 1) * var(--spinner-ring-base));
+  animation-delay: calc(50ms * 9);
 }
 
 @keyframes fingerprint-spinner-animation {

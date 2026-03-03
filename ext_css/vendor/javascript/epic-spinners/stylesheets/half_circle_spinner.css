@@ -1,7 +1,7 @@
 :root {
-  --spinner_duration: 1000ms;
-  --spinner_size: 60px;
-  --spinner_color: #ff1d5e;
+  --spinner-duration: 1000ms;
+  --spinner-size: 60px;
+  --spinner-color: #ff1d5e;
 }
 
 .half-circle-spinner, .half-circle-spinner * {
@@ -9,8 +9,8 @@
 }
 
 .half-circle-spinner {
-  width: var(--spinner_size);
-  height: var(--spinner_size);
+  width: var(--spinner-size);
+  height: var(--spinner-size);
   border-radius: 100%;
   position: relative;
 }
@@ -21,17 +21,17 @@
   width: 100%;
   height: 100%;
   border-radius: 100%;
-  border: calc(var(--spinner_size) / 10) solid transparent;
+  border: calc(var(--spinner-size) / 10) solid transparent;
 }
 
 .half-circle-spinner .circle.circle-1 {
-  border-top-color: var(--spinner_color);
-  animation: half-circle-spinner-animation var(--spinner_duration) infinite;
+  border-top-color: var(--spinner-color);
+  animation: half-circle-spinner-animation var(--spinner-duration) infinite;
 }
 
 .half-circle-spinner .circle.circle-2 {
-  border-bottom-color: var(--spinner_color);
-  animation: half-circle-spinner-animation var(--spinner_duration) infinite alternate;
+  border-bottom-color: var(--spinner-color);
+  animation: half-circle-spinner-animation var(--spinner-duration) infinite alternate;
 }
 
 @keyframes half-circle-spinner-animation {
