@@ -125,6 +125,7 @@ let config = {
       DEFAULT: 'Shakapacker::TAILWIND_CONTENT_EXTRACT',
     }
   },
+  darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
     screens,
     debugScreens: {

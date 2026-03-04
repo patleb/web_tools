@@ -66,7 +66,7 @@ html {
     @apply flex-none lg:hidden mt-2 mr-2;
 
     i {
-      @apply text-neutral-content;
+      @apply text-base-content dark:text-neutral-content;
     }
     .link {
       @apply lg:hidden xs-1:max-w-[calc(100vw-4.5rem)];

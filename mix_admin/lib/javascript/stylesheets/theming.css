@@ -1,6 +1,6 @@
 .admin_layout {
   .nav_actions {
-    @apply flex-none align-middle lg-1:border-l-2 mt-3 pr-2;
+    @apply flex-none align-middle lg-1:border-l-2 lg-1:border-gray-300 dark:lg-1:border-gray-700 mt-3 pr-2;
   }
   .nav_action {
     i {
