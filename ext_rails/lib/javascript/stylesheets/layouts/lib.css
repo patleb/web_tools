@@ -76,7 +76,7 @@ html {
     @apply scrollbar-xs;
   }
   .sidebar {
-    @apply bg-base-100 w-72 overflow-y-auto;
+    @apply bg-base-100 w-72 overflow-x-hidden overflow-y-auto;
   }
   .close_sidebar {
     @apply mt-4 mb-2 mx-4 w-fit;
