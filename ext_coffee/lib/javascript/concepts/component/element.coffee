@@ -17,17 +17,24 @@ class Js.Component.Element
     Js.Component.elements.find (uid, e) => e.constructor is this
 
   @element: (event_or_target) ->
-    Js.Component.elements[@uid(event_or_target)]
+    if Js.Component.elements
+      if (target = @target event_or_target) is document
+        Rails.$(@selector()).map (target) =>
+          Js.Component.elements[@uid(target)]
+      else
+        Js.Component.elements[@uid(target)]
 
   @uid: (event_or_target) ->
     @node(event_or_target).getAttribute('data-uid')
 
   @node: (event_or_target) ->
-    if event_or_target
-      target = event_or_target.target ? event_or_target
+    if target = @target(event_or_target)
       target.closest(@selector())
     else
       Rails.find(@selector())
+
+  @target: (event_or_target) ->
+    event_or_target?.target ? event_or_target
 
   @selector: (selector) ->
     root = "#{Js.Component.ELEMENTS}[data-element='#{@::element_name}']"
@@ -35,8 +42,9 @@ class Js.Component.Element
 
   @handler: (method_name) ->
     (event) =>
-      element = @element(event)
-      element[method_name](arguments...)
+      args = arguments
+      Array.wrap(@element(event)).each (element) ->
+        element[method_name](args...)
 
   constructor: (@_node, @_uid, index) ->
     static_data = @json_or_function_or_value 'static', {}
