@@ -60,7 +60,7 @@ Number.define_methods
     else if engineering
       options = { notation: 'engineering' }
       options.merge(minimumFractionDigits: precision, maximumFractionDigits: precision) if precision
-      value = new Intl.NumberFormat('en-US', options).format(value).sub /E0$/, ''
+      value = new Intl.NumberFormat('en-US', options).format(value).sub(/E0$/, '').sub('E', 'e')
     else if type is 'dec'
       [left, right] = value.toString().split('.')
       value = if not precision? or precision <= 0

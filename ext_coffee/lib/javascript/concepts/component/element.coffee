@@ -53,6 +53,7 @@ class Js.Component.Element
     @_refresh = @_node.getAttribute('data-refresh')?.to_b() ? @constructor.refresh
     @_index = @_node.getAttribute('data-index')?.to_i() ? @constructor.index ? index
     @_scope = @_node.getAttribute('data-scope') or @constructor.scope or ''
+    @_store = !!@constructor.store
     static_data.for_each (name, value) => this[name] = value
     @_watch_scopes = {}
     @_watch_ivars = {}
