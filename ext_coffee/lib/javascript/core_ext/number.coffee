@@ -41,25 +41,36 @@ Number.define_methods
   to_f: Number::valueOf
 
   to_s: (type = null, precision = null) ->
-    separator = if type?.ends_with '!' then type = type.chop(); '' else ' '
-    switch type
-      when 'percent'
-        return "#{this * 100}#{separator}%"
-      when 'metric'
-        exponent = Math.log10(this)
-        i = Math.floor(Math.floor(exponent) / 3) + 5
-        return if (exponent = Number.METRIC_EXPONENT[i])?
-          value = this / (10 ** exponent)
-          value = value.round(precision) if precision?
-          "#{value}#{separator}#{Number.METRIC_PREFIX[i]}"
-        else
-          "#{this}#{separator}"
-      when 'decimal'
-        value = if precision? then @round(precision) else @valueOf()
-        [left, right] = value.toString().split('.')
-        return left if not precision? or precision <= 0
-        return "#{left}.#{(right or '').ljust precision, '0'}"
-    @toString()
+    return @toString() unless type
+    separator = if type.ends_with '!' then type = type.chop(); '' else ' '
+    if (metric = type is 'metric')
+      exponent = Math.log10(this)
+      i = Math.floor(Math.floor(exponent) / 3) + 5
+      exponent = Number.METRIC_EXPONENT[i]
+    unless metric and exponent
+      value = if percent = type.starts_with 'percent'
+        precision += 2 if precision?
+        this * 100
+      else
+        @valueOf()
+      value = @round(precision) if precision?
+    if metric
+      if exponent
+        value = this / (10 ** exponent)
+        value = value.round(precision) if precision?
+        "#{value}#{separator}#{Number.METRIC_PREFIX[i]}"
+      else
+        "#{value}#{separator}"
+    else if percent
+      if type.ends_with '%'
+        "#{value}#{separator}%"
+      else
+        "#{value}#{separator}"
+    else if type is 'decimal'
+      [left, right] = value.toString().split('.')
+      if not precision? or precision <= 0 then left else "#{left}.#{(right or '').ljust precision, '0'}"
+    else
+      "#{value}"
 
   to_date: ->
     new Date(this * 1000)

@@ -121,7 +121,10 @@ String.define_methods
     parseFloat(value)
 
   to_s: ->
-    this
+    if arguments.length
+      parseFloat(this).to_s(arguments...)
+    else
+      this
 
   to_date: ->
     return Date.current() if @valueOf() is 'now'
