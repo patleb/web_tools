@@ -21,6 +21,28 @@ window.Js =
     else
       hex
 
+  mix_colors: (background, foreground, opacity) ->
+    [bg, fg] = [Js.parse_color(background), Js.parse_color(foreground)]
+    alpha = 1 - opacity
+    r = Math.round(fg[0] * opacity + bg[0] * alpha)
+    g = Math.round(fg[1] * opacity + bg[1] * alpha)
+    b = Math.round(fg[2] * opacity + bg[2] * alpha)
+    "#" + [r,g,b].map((v) -> v.toString(16).padStart(2, '0')).join('')
+
+  parse_color: (color) ->
+    if typeof color is 'string'
+      if color[0] is '#'
+        switch color.length
+          when 7
+            [parseInt(color[1..2], 16), parseInt(color[3..4], 16), parseInt(color[5..6], 16)]
+          when 4
+            [parseInt(color[1] + color[1], 16), parseInt(color[2] + color[2], 16), parseInt(color[3] + color[3], 16)]
+      else if color.startsWith('rgb')
+        rgb = color.match(/\d+/g)?.map(Number)
+        rgb.slice(0, 3) if rgb?.length >= 3
+    else if Array.isArray(color) and color.length >= 3
+      color.slice(0, 3).map(Number)
+
   selected_text: ->
     Js.selection()?.toString() ? ''
 

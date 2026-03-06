@@ -112,9 +112,9 @@ String.define_methods
   to_f: (type = null) ->
     value = this
     switch type
-      when 'percent'
+      when 'pc'
         return parseFloat(value) / 100
-      when 'metric'
+      when 'm'
         if (i = Number.METRIC_PREFIX.index value.last())?
           value = value.chop().rstrip()
           value = "#{value}e#{Number.METRIC_EXPONENT[i]}"
