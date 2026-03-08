@@ -25,7 +25,7 @@ class Js.Component.Element
         Js.Component.elements[@uid(target)]
 
   @uid: (event_or_target) ->
-    @node(event_or_target).getAttribute('data-uid')
+    @node(event_or_target)?.getAttribute('data-uid')
 
   @node: (event_or_target) ->
     if target = @target(event_or_target)
