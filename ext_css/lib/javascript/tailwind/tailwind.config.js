@@ -8,6 +8,12 @@ const theme_options = {
   '--tab-radius': '0',
   '--btn-focus-scale': '0.8',
 }
+if (typeof primary !== 'undefined' && primary !== null) {
+  theme_options.primary = primary
+}
+if (typeof secondary !== 'undefined' && secondary !== null) {
+  theme_options.secondary = secondary
+}
 const themes = [{
   light: {
     ...daisyui_themes['[data-theme=light]'],
