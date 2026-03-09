@@ -42,7 +42,7 @@ class Js.TagConcept
     if values.length is 1 and (text = values[0])?.is_a Function
       values = [text()]
     values = values.flatten().compact().map (item) ->
-      item = ''.html_safe(true) unless item?
+      item = blank unless item?
       item = item.safe_text()   unless item.html_safe()
       item.to_s()
     separator = if no_space then '' else ' '
@@ -50,11 +50,11 @@ class Js.TagConcept
     values.html_safe(true)
 
   if_: (is_true, values...) =>
-    return ''.html_safe(true) unless @continue(if: is_true)
+    return blank unless @continue(if: is_true)
     @h_(values...)
 
   unless_: (is_true, values...) =>
-    return ''.html_safe(true) unless @continue(unless: is_true)
+    return blank unless @continue(unless: is_true)
     @h_(values...)
 
   # Private
@@ -84,7 +84,7 @@ class Js.TagConcept
         options = content_or_options if content_or_options?.is_a Object
     options = if options? then options.dup() else {}
 
-    return ''.html_safe(true) unless @continue(options)
+    return blank unless @continue(options)
 
     if id_classes
       [id, classes] = @parse_id_classes(id_classes)
@@ -183,7 +183,7 @@ class Js.TagConcept
         else if value isnt false
           value = name if value is true
           tag.setAttribute(name, value)
-    text ?= ''.html_safe(true)
+    text ?= blank
     tag.innerHTML = if escape and not text.html_safe()
       text.safe_text()
     else

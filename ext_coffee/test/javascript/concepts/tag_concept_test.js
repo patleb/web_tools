@@ -46,14 +46,14 @@ describe('Js.TagConcept', () => {
   describe('#if_', () => {
     it('should print if condition is true', () => {
       assert.equal(safe_values.first(), if_(true, safe_values.first()))
-      assert.equal(''.html_safe(true),  if_(false, values.first()))
+      assert.equal(blank,  if_(false, values.first()))
     })
   })
 
   describe('#unless_', () => {
     it('should print unless condition is true', () => {
       assert.equal(safe_values.first(), unless_(false, safe_values.first()))
-      assert.equal(''.html_safe(true),  unless_(true, safe_values.first()))
+      assert.equal(blank,  unless_(true, safe_values.first()))
     })
   })
 
@@ -79,8 +79,8 @@ describe('Js.TagConcept', () => {
     it('should use :if and :unless options accordingly', () => {
       assert.equal('<div>text</div>'.html_safe(true), div_('text', { if: true }))
       assert.equal('<div>text</div>'.html_safe(true), div_('text', { unless: false }))
-      assert.equal(''.html_safe(true),                div_('text', { if: false }))
-      assert.equal(''.html_safe(true),                div_('text', { unless: true }))
+      assert.equal(blank,                div_('text', { if: false }))
+      assert.equal(blank,                div_('text', { unless: true }))
     })
 
     it('should flatten :data option', () => {

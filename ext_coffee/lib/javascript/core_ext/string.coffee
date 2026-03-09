@@ -323,3 +323,5 @@ String.define_methods
     formatted = @gsub /\r?\n/g, '<br>'
     formatted = formatted.html_safe(true) if @html_safe()
     formatted
+
+Object.defineProperty(window, 'blank', enumerable: false, get: -> ''.html_safe(true))

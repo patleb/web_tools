@@ -28,7 +28,7 @@ describe('String', () => {
 
   test('#to_f', () => {
     Number.METRIC_PREFIX.each((prefix, i) => {
-      assert.equal(16.0 * 10 ** Number.METRIC_EXPONENT[i], `16.0 ${prefix}`.to_f('metric'))
+      assert.equal(16.0 * 10 ** Number.METRIC_EXPONENT[i], `16.0 ${prefix}`.to_f('m'))
     })
   })
 
@@ -48,7 +48,7 @@ describe('String', () => {
     assert.not.equal('string', string)
     assert.true('string'.eql(string))
     assert.false('string' === string)
-    assert.equal('string', ''.html_safe(true) && 'string')
+    assert.equal('string', blank && 'string')
   })
 
   test('#to_date', () => {

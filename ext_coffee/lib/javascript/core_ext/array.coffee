@@ -142,7 +142,7 @@ Array.define_readers
   end:   -> if @length then @length - 1 else 0
 
 Array.define_methods
-  safe_join: (separator = ''.html_safe(true), safe = null) ->
+  safe_join: (separator = blank, safe = null) ->
     unless safe
       safe = separator.html_safe()
       safe &&= @all (item) -> not item? or item.html_safe()
