@@ -42,7 +42,7 @@ module Sunzistrano
     def ssh = do_ssh
 
     desc 'ssh-add', 'Add Multipass ssh private key'
-    def ssh_add = do_add_ssh
+    def ssh_add = do_ssh_add
 
     desc 'snapshot [ACTION] [-i] [--master] [--cluster] [--name]', "#{SNAPSHOT_ACTIONS.map(&:upcase_first).join('/')} Multipass snapshot(s)"
     method_options i: :numeric, master: false, cluster: false, name: :string
@@ -197,7 +197,7 @@ module Sunzistrano
         end
       end
 
-      def do_add_ssh
+      def do_ssh_add
         as_virtual do
           if (web_tools = Gem.root('web_tools'))
             unless (public_key = MULTIPASS_KEY.sub_ext('.pub')).exist?
@@ -207,7 +207,7 @@ module Sunzistrano
               copy_file web_tools.join(MULTIPASS_DIR, MULTIPASS_KEY.basename), MULTIPASS_KEY, mode: :preserve
             end
           end
-          exec "ssh-add #{MULTIPASS_KEY} 2> /dev/null"
+          exec "if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then eval $(ssh-agent); fi && ssh-add #{MULTIPASS_KEY}"
         end
       end
 

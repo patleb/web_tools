@@ -43,7 +43,9 @@ module Sunzistrano
     def reset_ssh(stage) = do_reset_ssh(stage)
 
     desc 'reset_ssh_agent', 'Reset ssh-agent'
-    def reset_ssh_agent = system! 'killall ssh-agent; eval "$(ssh-agent)"'
+    def reset_ssh_agent
+      Kernel.system 'killall ssh-agent; eval "$(ssh-agent)"'
+    end
 
     no_tasks do
       delegate :owner_path, to: :Sunzistrano
@@ -268,7 +270,6 @@ module Sunzistrano
 
       def role_cmd(server)
         <<-SH.squish
-          #{ssh_virtual_key}
           cd #{bash_dir} && tar cz . |
           #{ssh_cmd} #{ssh_proxy} #{sun.ssh_user}@#{server} '#{role_remote_cmd}'
         SH
@@ -286,7 +287,6 @@ module Sunzistrano
 
       def remote_cmd(server, command, proxy: sun.cloud_cluster && sun.proxy != false)
         <<-SH.squish
-          #{ssh_virtual_key}
           #{ssh_cmd} #{ssh_proxy if proxy} #{sun.ssh_user}@#{server} '#{command}'
         SH
       end
@@ -299,15 +299,6 @@ module Sunzistrano
 
       def ssh_proxy
         "-J #{sun.ssh_user}@#{sun.server_host}" if sun.cloud_cluster
-      end
-
-      def ssh_virtual_key
-        <<-SH.squish if sun.env.virtual? && sun.proxy != false
-          if [ $(ps ax | grep [s]sh-agent | wc -l) -eq 0 ]; then
-            eval $(ssh-agent);
-          fi
-          && ssh-add #{MULTIPASS_KEY} 2> /dev/null &&
-        SH
       end
 
       def copy?(file, others)
