@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
 
   s.files = Dir["lib/**/*", "LICENSE", "README.md"]
 
-  s.add_dependency 'minitest'
+  s.add_dependency 'minitest', '~> 5.27'
   s.add_dependency 'ext_ruby', version
 end

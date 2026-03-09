@@ -14,7 +14,7 @@ let screens = false
 try {
   const tailwindConfigPath = path.resolve('./tmp/tailwind.config.js')
   if (existsSync(tailwindConfigPath)) {
-    const resolveConfig = require('tailwindcss/resolveConfig')
+    const resolveConfig = require_module('tailwindcss/resolveConfig')
     const tailwindConfig = require(tailwindConfigPath)
     const fullConfig = resolveConfig(tailwindConfig)
     screens = fullConfig.theme.screens
