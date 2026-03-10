@@ -2,7 +2,7 @@
 sun.install "nginx"
 sun.install "dirmngr gnupg apt-transport-https ca-certificates curl"
 
-curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null
+curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null
 sh -c "echo deb https://oss-binaries.phusionpassenger.com/apt/passenger $CODE main > /etc/apt/sources.list.d/passenger.list"
 sun.update
 sun.install "libnginx-mod-http-passenger"
