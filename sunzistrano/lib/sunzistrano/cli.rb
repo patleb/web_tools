@@ -44,7 +44,7 @@ module Sunzistrano
 
     desc 'reset_ssh_agent', 'Reset ssh-agent'
     def reset_ssh_agent
-      Kernel.system 'killall ssh-agent; eval "$(ssh-agent)"'
+      Kernel.exec 'killall ssh-agent; eval "$(ssh-agent)"'
     end
 
     no_tasks do
