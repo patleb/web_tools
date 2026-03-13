@@ -69,11 +69,31 @@ module Process
       @machine_id ||= File.readlines("/etc/machine-id", chomp: true).first
     end
 
+    def refresh_private_ip
+      return if (private_ip_was = self.private_ip) == (private_ip = private_ip!)
+      private_ip_file.delete(false)
+      private_ip_dir.join(private_ip).touch
+      @private_ip = private_ip
+      [private_ip, private_ip_was]
+    end
+
     def private_ip
       @private_ip ||= begin
-        ip = Pathname.new('/etc/private_ip').glob('*').first&.basename&.to_s
-        ip || Socket.ip_address_list.reverse.find{ |addrinfo| addrinfo.ipv4_private? }&.ip_address
+        ip = private_ip_file.basename.to_s unless Setting.local?
+        ip || private_ip!
       end
+    end
+
+    def private_ip!
+      Socket.ip_address_list.reverse.find{ |addrinfo| addrinfo.ipv4_private? }&.ip_address
+    end
+
+    def private_ip_file
+      private_ip_dir.glob('*').first
+    end
+
+    def private_ip_dir
+      Pathname.new('/etc/private_ip')
     end
 
     def uptime

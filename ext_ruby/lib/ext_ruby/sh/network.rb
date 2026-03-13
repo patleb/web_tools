@@ -21,7 +21,7 @@ module Sh::Network
   end
 
   def public_ip
-    'curl -s http://checkip.amazonaws.com/ && echo'
+    'curl -s http://checkip.amazonaws.com/ && echo -n'
   end
 
   def private_ip

@@ -40,6 +40,15 @@ namespace :sandbox do
 end
 
 namespace :system do
+  desc 'refresh private ip'
+  task :refresh_private_ip => :environment do
+    next unless (change = Process.host.refresh_private_ip)
+    Server.update_private_ip! *change
+    puts "if you're using db/postgres-{postgres}/private_network, then in config/sunzistrano.yml:"
+    puts "  add to recipes 'db/postgres-{postgres}/private_network_refresh-{refresh_private_ip}',"
+    puts "  set 'refresh_private_ip' (ex.: 2026_03_01) and run 'sun provision #{Setting.env}'"
+  end
+
   desc 'reboot'
   task :reboot => :environment do
     next unless File.exist?('/var/run/reboot-required')
