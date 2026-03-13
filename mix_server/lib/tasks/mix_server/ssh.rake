@@ -60,7 +60,7 @@ namespace :ssh do
         sh %{echo "#{Setting[:owner_private_key]}" > #{path}}, verbose: false
         sh %{chmod 600 #{path}}, verbose: false
       end
-      sh %{ssh-add #{path} 2> /dev/null}, verbose: false
+      sh %{ssh-add #{path}}, verbose: false
       puts "ssh key [#{path}] added"
     end
   end
