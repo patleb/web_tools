@@ -1,5 +1,3 @@
-require_dir __FILE__, 'log'
-
 namespace :log do
   desc 'cleanup old log partitions'
   task :cleanup => :environment do |t|

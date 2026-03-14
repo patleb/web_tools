@@ -1,19 +1,45 @@
 require_dir __FILE__, 'mix_server'
 
-module Try
-  class Message < ::StandardError
-    def backtrace
-      caller
-    end
-  end
-end
-
 namespace :try do
   desc "try send notice"
   task :send_notice => :environment do
     MixServer.with do |config|
       config.skip_notice = false
       Notice.deliver! Try::Message.new, data: { text: 'Text' }
+    end
+  end
+
+  %w(raise_exception sleep sleep_long).each do |name|
+    desc "try #{name.tr('_', ' ')}"
+    task name.to_sym => :environment do |t|
+      "Try::#{name.camelize}".constantize.new(self, t).run!
+    end
+  end
+
+  desc "try send email later"
+  task :send_email_later => :environment do
+    run_rake 'try:send_email', :later
+  end
+
+  desc "try send email"
+  task :send_email, [:later] => :environment do |t, args|
+    email = (defined?(ApplicationMailer) ? ApplicationMailer : LibMailer).healthcheck
+    if flag_on? args, :later
+      email.deliver_later
+    else
+      email.deliver_now
+    end
+  end
+
+  desc "try private ip"
+  task :private_ip => :environment do
+    puts Process.host.private_ip
+  end
+
+  namespace :cluster do
+    desc "try cluster private ip"
+    task :private_ip => :environment do
+      sun_rake 'try:private_ip'
     end
   end
 end

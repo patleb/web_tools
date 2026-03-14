@@ -1,5 +1,3 @@
-require_dir __FILE__, 'ext_rails'
-
 desc 'run "Some.ruby(code)" or filename.rb'
 task :runner, [:code_or_file] => :environment do |t, args|
   if (file = args[:code_or_file])&.end_with? '.rb'
@@ -16,42 +14,6 @@ namespace :list do
   task :reorganize => :environment do |t|
     Rails.application.eager_load!
     ActiveRecord::Base.listables.each(&:list_reorganize)
-  end
-end
-
-namespace :try do
-  %w(raise_exception sleep sleep_long).each do |name|
-    desc "try #{name.tr('_', ' ')}"
-    task name.to_sym => :environment do |t|
-      "Try::#{name.camelize}".constantize.new(self, t).run!
-    end
-  end
-
-  desc "try send email later"
-  task :send_email_later => :environment do
-    run_rake 'try:send_email', :later
-  end
-
-  desc "try send email"
-  task :send_email, [:later] => :environment do |t, args|
-    email = (defined?(ApplicationMailer) ? ApplicationMailer : LibMailer).healthcheck
-    if flag_on? args, :later
-      email.deliver_later
-    else
-      email.deliver_now
-    end
-  end
-
-  desc "try private ip"
-  task :private_ip => :environment do
-    puts Process.host.private_ip
-  end
-
-  namespace :cluster do
-    desc "try cluster private ip"
-    task :private_ip => :environment do
-      sun_rake 'try:private_ip'
-    end
   end
 end
 

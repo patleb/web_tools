@@ -1,5 +1,3 @@
-require_dir __FILE__, 'mix_task'
-
 namespace :task do
   desc 'dump tasks schema'
   task :dump => :environment do
