@@ -85,6 +85,7 @@ deploy:
     - tmp/cache
     - tmp/pids
     - tmp/shakapacker
+    - tmp/nginx
   linked_files:
     - config/secrets.yml
     - public/503.html

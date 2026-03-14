@@ -21,7 +21,11 @@ job.stop() { # PUBLIC
 }
 
 job.restart() { # PUBLIC
-  sudo systemctl restart "${job_service}"
+  if [[ -f "$(nginx.maintenance_file)" ]]; then
+    echo.warning "Nginx in maintenance: skipped job.restart"
+  else
+    sudo systemctl restart "${job_service}"
+  fi
 }
 
 job.wait_enable() { # PUBLIC

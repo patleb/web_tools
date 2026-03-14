@@ -5,9 +5,13 @@ export nginx_maintenance_disable_after=()
 
 # %{exec "/usr/bin/sudo -u deployer -H sh -c '/home/deployer/.rbenv/bin/#{passenger_command}'"}
 passenger.restart() { # PUBLIC
-  cd ${release_path}
-  rbenv sudo passenger-config restart-app ${deploy_path} --ignore-app-not-running
-  cd.back
+  if [[ -f "$(nginx.maintenance_file)" ]]; then
+    echo.warning "Nginx in maintenance: skipped passenger.restart"
+  else
+    cd ${release_path}
+    rbenv sudo passenger-config restart-app ${deploy_path} --ignore-app-not-running
+    cd.back
+  fi
 }
 
 nginx.maintenance_enable() { # PUBLIC
@@ -20,9 +24,11 @@ nginx.maintenance_enable() { # PUBLIC
   for after in "${nginx_maintenance_enable_after[@]}"; do
     $after
   done
+  touch "$(nginx.maintenance_file)"
 }
 
 nginx.maintenance_disable() { # PUBLIC
+  rm -f "$(nginx.maintenance_file)"
   for before in "${nginx_maintenance_disable_before[@]}"; do
     $before
   done
@@ -31,6 +37,10 @@ nginx.maintenance_disable() { # PUBLIC
   for after in "${nginx_maintenance_disable_after[@]}"; do
     $after
   done
+}
+
+nginx.maintenance_file() {
+  echo "$shared_path/$(sun.flatten_path tmp/nginx)/maintenance.txt"
 }
 
 nginx.copy_system_conf() { # PUBLIC
