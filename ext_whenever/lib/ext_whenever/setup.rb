@@ -1,6 +1,6 @@
 set :application_variable, "RAILS_APP"
 set :output, "#{Whenever.path}/log/cron.log"
-set :with, nil
+set :with, ''
 
 Setting.load(env: @environment, app: @application)
 
