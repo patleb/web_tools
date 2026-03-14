@@ -205,7 +205,7 @@ class Setting
 
       case type
       when :database
-        yml = YAML.safe_load(gsub_settings(path.read), aliases: true)
+        yml = YAML.safe_load(gsub_secrets(path.read), aliases: true)
       when :settings
         yml = YAML.safe_load(ERB.template(path, binding))
         validate_version! yml['lock']
@@ -229,9 +229,9 @@ class Setting
       (gems_yml || {}).union!(env_yml)
     end
 
-    def gsub_settings(content)
+    def gsub_secrets(content)
       content.gsub(/<%=\s*Setting\[['":]([a-zA-Z_]\w+)['"]?\]\s*%>/) do
-        @settings[$1]
+        @secrets[$1]
       end
     end
 
