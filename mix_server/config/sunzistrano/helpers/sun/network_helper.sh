@@ -43,3 +43,7 @@ sun.public_ip() { # PUBLIC
 sun.private_ip() { # PUBLIC
   <%= Sh.private_ip %>
 }
+
+sun.ntp_update() { # PUBLIC
+  sudo service ntp stop; sudo ntpd -gq; sudo service ntp start
+}
