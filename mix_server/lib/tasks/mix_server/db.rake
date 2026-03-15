@@ -25,6 +25,19 @@ namespace :db do
     end
   end
 
+  namespace :migrate do
+    desc 'revert versions'
+    task :revert_versions, [:versions] => :environment do |t, args|
+      args[:versions].squish.split(' ').each do |version|
+        old_version = ENV['VERSION']
+        ENV['VERSION'] = version
+        run_rake! 'db:migrate:down'
+      ensure
+        ENV['VERSION'] = old_version
+      end
+    end
+  end
+
   namespace :pg do
     namespace :gis do
       desc 'upgrade postgis'
