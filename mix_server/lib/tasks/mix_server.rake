@@ -65,7 +65,7 @@ namespace :sandbox do
   end
 end
 
-namespace :system do
+namespace :server do
   desc 'refresh private ip'
   task :refresh_private_ip => :environment do
     next unless (change = Process.host.refresh_private_ip)

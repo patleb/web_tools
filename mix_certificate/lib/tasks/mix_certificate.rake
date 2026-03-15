@@ -24,7 +24,7 @@ namespace! :certificate do
   def update_nginx_ssl(certificate)
     nginx_ssl_path = "/etc/nginx/ssl/#{certificate.server_host}.server"
     system "echo '#{certificate.decrypted(:key).escape_newlines}' | sudo tee #{nginx_ssl_path}.key > /dev/null"
-    sh "sudo chmod 600 #{nginx_ssl_path}.key"
+    sh "sudo chmod 600 #{nginx_ssl_path}.key", verbose: false
     system "echo '#{certificate.decrypted(:crt).escape_newlines}' | sudo tee #{nginx_ssl_path}.crt > /dev/null"
     sh "sudo systemctl reload nginx", verbose: false
   end
