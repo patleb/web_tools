@@ -79,13 +79,13 @@ module Process
 
     def private_ip
       @private_ip ||= begin
-        ip = private_ip_file.basename.to_s unless Setting.local?
+        ip = private_ip_file&.basename&.to_s unless Setting.local?
         ip || private_ip!
       end
     end
 
     def private_ip!
-      Socket.ip_address_list.reverse.find{ |addrinfo| addrinfo.ipv4_private? }&.ip_address
+      Socket.ip_address_list.reverse.find{ |addrinfo| addrinfo.ipv4_private? }&.ip_address || `#{Sh.private_ip}`.strip
     end
 
     def private_ip_file
