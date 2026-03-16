@@ -18,6 +18,10 @@ module MixUser
       end
     end
 
+    initializer 'mix_user.backup' do
+      ExtRails.config.temporary_tables << 'lib_user_sessions'
+    end
+
     ActiveSupport.on_load(:active_record) do
       require 'mix_user/active_record/connection_adapters/abstract_adapter'
 
