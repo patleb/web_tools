@@ -14,7 +14,7 @@ module MixGeo
     end
 
     initializer 'mix_geo.backup' do
-      ExtRails.config.temporary_tables.merge(%w(cities countries ips states).map{ |name| "lib_geo_#{name}" })
+      ExtRails.config.temporary_tables.merge(%w(lib_geo_cities lib_geo_countries lib_geo_ips lib_geo_states))
       ExtRails.config.excluded_tables.merge(%w(spatial_ref_sys topology layer)) if Setting[:postgis]
     end
 
