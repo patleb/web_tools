@@ -6,6 +6,10 @@ module MixGlobal
       append_migrations(app)
     end
 
+    initializer 'mix_global.backup' do
+      ExtRails.config.temporary_tables << 'lib_globals'
+    end
+
     initializer 'mix_global.admin' do
       MixAdmin.configure do |config|
         config.included_models << 'Global'
