@@ -258,6 +258,8 @@ module Sunzistrano
           while (line = stdout.gets)
             if cmd_name == :role_cmd && line.start_with?('flock:')
               print "[#{server}] Already running -- : #{line.red}" if line.start_with? 'flock: failed'
+            elsif ENV['TAGS'] == 'false'
+              print line
             else
               print "[#{server}] #{line}"
             end
