@@ -32,7 +32,7 @@ module ExtRails
     end
 
     def excluded_tables
-      @excluded_tables ||= Set.new(['schema_migrations', 'ar_internal_metadata'])
+      @excluded_tables ||= Set.new
     end
 
     def temporary_tables
@@ -41,10 +41,6 @@ module ExtRails
 
     def db_partitions
       @db_partitions ||= {}.to_hwka
-    end
-
-    def backup_excludes
-      excluded_tables + temporary_tables
     end
 
     def themes

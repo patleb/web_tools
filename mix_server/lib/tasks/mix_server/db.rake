@@ -63,7 +63,7 @@ namespace :db do
           rotate: true,
           split: true,
           md5: true,
-          excludes: ExtRails.config.backup_excludes
+          excludes: ExtRails.config.excluded_tables + ExtRails.config.temporary_tables
         ).run!
       end
     end
