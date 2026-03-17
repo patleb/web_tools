@@ -43,9 +43,10 @@ module Sunzistrano
           pid = "#{sun.deploy_path :current, 'tmp/pids', rake_log_name(command)}.pid"
           <<-SH.squish
             ppid=$(cat #{pid});
-            sudo pkill #{'-9' if sun.kill} --parent $ppid &&
-            rm -f #{pid} && echo "killed [$ppid] child processes" ||
-            rm -f #{pid} && echo "could not kill [$ppid] child processes"
+            sudo pkill #{'-9' if sun.kill} --parent $ppid && (
+              (rm -f #{pid} && echo "killed [$ppid] child processes") ||
+              (rm -f #{pid} && echo "could not kill [$ppid] child processes")
+            )
           SH
         else
           <<-SH.squish
