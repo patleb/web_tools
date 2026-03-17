@@ -89,7 +89,7 @@ PATH
       colorize
       csv
       fiddle
-      http
+      http (~> 5.3.1)
       ice_nine
       inifile
       mutex_m

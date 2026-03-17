@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'fiddle'
   s.add_dependency 'ice_nine'
   s.add_dependency 'inifile'
-  s.add_dependency 'http'
+  s.add_dependency 'http', '~> 5.3.1'
   s.add_dependency 'mutex_m'
   s.add_dependency 'ostruct'
   s.add_dependency 'parallel'
