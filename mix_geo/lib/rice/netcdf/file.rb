@@ -45,7 +45,7 @@ module NetCDF
         super(name.to_s, size)
       end
 
-      def create_var(name, type, dims, fill_value: nil)
+      def create_var(name, type, dims, fill_value: nil, checksum: nil)
         case type
         when Class
           type = type.name.demodulize if type <= Tensor::Base
@@ -58,6 +58,7 @@ module NetCDF
         dims.map!{ |x| dim(x) } unless dims.first.is_a? NetCDF::Dim
         var = super(name.to_s, type, dims)
         var.set_fill_value(fill_value, _type: type) if fill_value
+        var.set_checksum(true) if checksum
         var
       end
 
