@@ -17,6 +17,7 @@ module Db
           months:     ['--months=MONTHS',     Integer, 'Number of months in rotation (default to 2)'],
           includes:   ['--includes=INCLUDES', Array,   'Included tables (only for pg_dump and COPY command)'],
           excludes:   ['--excludes=EXCLUDES', Array,   'Excluded tables (only for pg_dump and COPY command)'],
+          partitions: ['--[no-]partitions',            'Include partitions in --includes/--excludes'],
           compress:   ['--[no-]compress',              'Compress the dump (default to true)'],
           split:      ['--[no-]split',                 'Compress and split the dump'],
           size:       ['--size=SIZE',                  'Split size (ex.: 4GB or 100MB)'],
@@ -35,6 +36,7 @@ module Db
           base_dir: Setting[:backup_dir],
           includes: [],
           excludes: [],
+          partitions: true,
           compress: true,
           wal: true,
           where: [],
@@ -125,8 +127,8 @@ module Db
           cmd_options = <<-CMD.squish
             --host #{host} --port #{port} --username #{username} --verbose --no-owner --no-acl --clean --format=c --compress=0
             #{pg_options}
-            #{only.map{ |table| "--table-and-children='#{table}'" }.join(' ')}
-            #{skip.map{ |table| "--exclude-table-data-and-children='#{table}'" }.join(' ')}
+            #{only.map{ |table| "--table#{'-and-children' if options.partitions}='#{table}'" }.join(' ')}
+            #{skip.map{ |table| "--exclude-table-data#{'-and-children' if options.partitions}='#{table}'" }.join(' ')}
             #{database}
           CMD
           output = case
