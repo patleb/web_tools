@@ -6,7 +6,7 @@ namespace :task do
   end
 
   desc 'create available tasks (and delete invalid ones)'
-  task :delete_or_create_all => :environment do
+  task :create_all => :environment do
     Task.delete_or_create_all
   end
 end
