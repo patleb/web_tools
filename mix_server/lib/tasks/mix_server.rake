@@ -59,9 +59,9 @@ namespace :sandbox do
     run_rake 'db:drop'
     run_rake 'db:create'
     run_rake 'db:migrate'
-    run_rake 'user:create', Setting[:authorized_keys].first.split(' ').last, 'passpasspass', 'deployer', true
+    run_rake 'user:create', Setting[:authorized_keys].first.split(' ').last, 'passpasspass', 'deployer', :verified
     run_rake 'task:create_all'
-    run_rake 'page:create_all' unless flag_on? args, :no_pages
+    run_rake 'page:create_all', :publish unless flag_on? args, :no_pages
   end
 end
 
