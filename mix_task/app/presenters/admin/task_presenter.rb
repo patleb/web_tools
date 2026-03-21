@@ -6,9 +6,7 @@ module Admin
     field :name do
       translated false
     end
-    field :description do
-      truncated true
-    end
+    field :description
     field :state,   editable: false
     field :updated_at
     field :duration_avg
