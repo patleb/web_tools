@@ -1,7 +1,13 @@
 namespace! :page do
   desc 'Create all pages'
-  task :create_all => :environment do
-    Page.create_pages!
+  task :create_all, [:publish] => :environment do |t, args|
+    pages = Page.create_pages!
+    next unless flag_on? args, :publish
+    pages.each do |layout_view, templates|
+      templates.each do |(template, multi_name), page|
+        page.update! published_at: Time.current
+      end
+    end
   end
 
   desc 'Create home page'

@@ -67,7 +67,6 @@ class Page < LibMainRecord
       text = File.read(path)
       text = gsub_assets(text)
       page.content.markdown.update! "text_#{locale}": text
-      page.update! published_at: Time.current
       (templates[layout.view] ||= {})[[template, multi_name]] = page
     end
   end
