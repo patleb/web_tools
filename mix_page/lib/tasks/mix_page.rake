@@ -10,6 +10,11 @@ namespace! :page do
     end
   end
 
+  desc 'Publish all pages'
+  task :publish_all => :environment do
+    PageTemplate.update_all published_at: Time.current
+  end
+
   desc 'Create home page'
   task :create_home => :environment do
     Page.create_home!
