@@ -25,13 +25,13 @@ module Rescues
     def create_args
       @create_args ||= begin
         message, backtrace = create_params.values_at(:message, :backtrace)
-        data = (create_params[:data]&.to_unsafe_h || {}).merge(user_ip: request.remote_ip, user_agent: request.user_agent)
+        data = { user_ip: request.remote_ip, user_agent: request.user_agent }
         [message, backtrace, data]
       end
     end
 
     def create_params
-      @_create_params ||= params.require(:rescue_js).permit(:message, backtrace: [], data: {})
+      @_create_params ||= params.require(:rescue_js).permit(:message, :backtrace)
     end
   end
 end
