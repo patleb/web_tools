@@ -1,11 +1,9 @@
 class UsersController < Users::BaseController
   def new
-    render_404 and return unless MixUser.config.registerable?
     @user = User.new
   end
 
   def create
-    render_404 and return unless MixUser.config.registerable?
     @user = User.new(create_params)
     User.transaction do
       @user.save!

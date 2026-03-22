@@ -1,7 +1,18 @@
 module MixUser
   module Routes
     def self.draw(mapper)
-      MixUser.config.available_routes.each do |controller, actions|
+      routes = MixUser.config.available_routes
+      if (users = routes[:users])
+        unless MixUser.config.registerable?
+          users.delete(:new)
+          users.delete(:create)
+        end
+        unless MixUser.config.editable?
+          users.delete(:edit)
+          users.delete(:update)
+        end
+      end
+      routes.each do |controller, actions|
         mapper.simple_resources path: MixUser.config.root_path / controller, controller: controller, only: actions
       end
     end

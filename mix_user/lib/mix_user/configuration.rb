@@ -42,6 +42,11 @@ module MixUser
       @registerable = !!(verbs = available_routes[:users]) && verbs.include?(:new)
     end
 
+    def editable?
+      return @editable if defined? @editable
+      @editable = !!(verbs = available_routes[:users]) && verbs.include?(:edit)
+    end
+
     def restorable?
       return @restorable if defined? @restorable
       @restorable = true
