@@ -111,7 +111,7 @@ Rails.merge
 
   # Helper function, needed to provide consistent behavior in IE
   stop_everything: (e) ->
-    e.target.fire 'ujs:everythingStopped'
+    Rails.fire(e.target, 'ujs:everythingStopped')
     e.preventDefault()
     e.stopPropagation()
     e.stopImmediatePropagation()
