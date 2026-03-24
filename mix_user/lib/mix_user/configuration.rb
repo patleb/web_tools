@@ -4,6 +4,7 @@ module MixUser
     attr_writer :json_attributes
     attr_writer :available_roles
     attr_writer :registerable
+    attr_writer :editable
     attr_writer :restorable
     attr_writer :available_routes
     attr_writer :verification_expires_in
