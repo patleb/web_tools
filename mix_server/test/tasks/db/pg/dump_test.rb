@@ -90,10 +90,8 @@ class Db::Pg::DumpTest < Db::Pg::TestCase
 
   context 'with includes and excludes' do
     let(:pg_options){[
-      "--table='test_*'",
-      "--table='test_*_id_seq'",
-      "--exclude-table='test_related_records'",
-      "--exclude-table='test_related_records_id_seq'",
+      "--table-and-children='test_*'",
+      "--exclude-table-data-and-children='test_related_records'",
     ].join(' ')}
 
     test_dump includes: ['test_*'], excludes: ['test_related_records']
