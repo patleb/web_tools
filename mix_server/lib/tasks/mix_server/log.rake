@@ -16,7 +16,7 @@ namespace :logs do
 
   desc 'report server log errors'
   task :report => :environment do
-    LogMessage.report!
+    Log.report!
   end
 
   desc 'dump log tables' # 3.6 MB
