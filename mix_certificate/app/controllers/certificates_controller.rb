@@ -1,4 +1,6 @@
 class CertificatesController < ActionController::API
+  rate_limit to: 5, within: 2.minutes
+
   def show
     record = certificate_class.select(:challenge).find_by_token! params[:token]
     render plain: record.challenge
