@@ -1,5 +1,4 @@
 class LibApiController < ActionController::API
-  include ActionController::Cookies
   include ActionController::RequestForgeryProtection
 
   prepend_before_action :set_format
