@@ -41,10 +41,12 @@ module Rake
         end
       end
     end
+    module_function :run_ftp_list
 
     def run_ftp_cat(match, **options)
       `#{Sh.ftp_cat(match, **options)}`.strip
     end
+    module_function :run_ftp_cat
 
     def git_repo
       `git remote -v | head -n1 | awk '{ print $2; }'`.strip
