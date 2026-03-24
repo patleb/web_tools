@@ -6,7 +6,7 @@ namespace :cron do
       run_rake 'file:cleanup'
       run_rake 'list:reorganize'
       run_rake 'clamav:scan'
-      run_rake 'log:extract', ignore: true
+      run_rake 'logs:extract', ignore: true
     end
   end
 
@@ -19,10 +19,10 @@ namespace :cron do
     run_rake 'global:cleanup'
     run_rake 'list:reorganize'
     run_rake 'clamav:scan'
-    run_rake 'log:cleanup'
-    run_rake 'log:extract', ignore: true
-    run_rake 'log:rollup'
-    run_rake 'log:report'
+    run_rake 'logs:cleanup'
+    run_rake 'logs:extract', ignore: true
+    run_rake 'logs:rollup'
+    run_rake 'logs:report'
     run_rake 'db:pg:dump:rotate' if flag_on? args, :dump
   end
 end

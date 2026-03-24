@@ -2,10 +2,10 @@ require './test/test_helper'
 
 module MixServer::Logs
   class CleanupTest < Rake::TestCase
-    self.task_name = 'log:cleanup'
+    self.task_name = 'logs:cleanup'
     self.use_transactional_tests = false
 
-    test 'log:cleanup' do
+    test 'logs:cleanup' do
       LogLine._drop_all_partitions!
       LogLine.create_all_partitions(weeks)
       assert_equal past_partitions, LogLine.partitions

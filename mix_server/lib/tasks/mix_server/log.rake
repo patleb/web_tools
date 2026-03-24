@@ -1,4 +1,4 @@
-namespace :log do
+namespace :logs do
   desc 'cleanup old log partitions'
   task :cleanup => :environment do |t|
     MixServer::Logs::Cleanup.new(self, t).run!

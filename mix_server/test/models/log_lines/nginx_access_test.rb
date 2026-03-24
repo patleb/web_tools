@@ -19,7 +19,7 @@ module LogLines
       MixServer::Logs.with do |config|
         log_path = config.log_path(:nginx, 'test_web_tools.access')
         config.available_paths = [log_path]
-        Rake::Task['log:extract'].invoke!
+        Rake::Task['logs:extract'].invoke!
         assert_equal Time.utc(2021, 1, 19, 15, 3, 37, 0), LogLines::NginxAccess.requests_begin_at
         assert_equal Time.utc(2021, 2, 2, 22, 15, 13, 0), LogLines::NginxAccess.requests_end_at
         assert_equal 6,     LogLines::NginxAccess.total_requests.values.sum
@@ -34,14 +34,14 @@ module LogLines
         assert_equal 0.237, LogLines::NginxAccess.time_by(:platform).values.sum
         assert_equal 14,    LogLines::NginxAccess.requests_by(:status).values.sum
 
-        Rake::Task['log:rollup'].invoke!
+        Rake::Task['logs:rollup'].invoke!
         assert_equal 3, rollup_weeks
 
         period_at = LogRollups::NginxAccess.order(period: :desc, period_at: :desc).pick(:period_at)
         LogRollups::NginxAccess.where('period_at >= ?', period_at).delete_all
 
         assert_equal 2, rollup_weeks
-        Rake::Task['log:rollup'].invoke
+        Rake::Task['logs:rollup'].invoke
         assert_equal 3, rollup_weeks
 
         assert_equal Time.utc(2021, 1, 19), LogRollups::NginxAccess.requests_begin_at
