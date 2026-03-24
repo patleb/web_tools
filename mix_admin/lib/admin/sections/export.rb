@@ -49,7 +49,7 @@ module Admin
               div_('.flex.justify-between', [
                 label_([
                   t('admin.export.csv.skip_header'),
-                  icon('info-circle.tooltip', data: { tip: t('admin.export.csv.skip_header_help') }),
+                  icon('info-circle.tooltip.tooltip-right', data: { tip: t('admin.export.csv.skip_header_help') }),
                 ]),
                 input_('.checkbox', name: 'csv_options[skip_header]', value: 'true', type: 'checkbox'),
               ]),
