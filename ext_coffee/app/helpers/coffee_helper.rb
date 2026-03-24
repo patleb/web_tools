@@ -14,6 +14,6 @@ module CoffeeHelper
   end
 
   def no_turbolinks
-    script_(src: 'js/no_turbolinks.js', defer: true)
+    script_(src: '/js/no_turbolinks.js', defer: true)
   end
 end
