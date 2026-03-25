@@ -49,8 +49,7 @@ html {
     }
   }
   .drawer-content {
-    @apply lg:border-l-2 p-4 flex flex-col justify-between gap-4;
-    height: inherit !important;
+    @apply lg:border-l-2 p-4 flex flex-col justify-between gap-4 h-full;
   }
   #header {
     @apply flex xl-1:flex-wrap -mt-2;
