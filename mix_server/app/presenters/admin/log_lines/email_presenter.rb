@@ -4,5 +4,9 @@ module Admin
     field :to
     field :subject
     field :sent
+
+    index do
+      searchable false
+    end
   end
 end

@@ -21,6 +21,7 @@ module Admin
 
     index do
       sort_by :name
+      searchable false
       exclude_fields :output, :perform
     end
   end
