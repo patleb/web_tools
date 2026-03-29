@@ -9,16 +9,23 @@ module Monit
       def self.osquery
         m_access(__method__, $osquery_log_i) do
           result = {}
-          path = case Rails.env.to_sym
-            when :test
-              MixServer::Engine.root.join('test/fixtures/files/log/osquery/osqueryd.results.log')
-            when :development
-              i = $osquery_log_i.to_i? ? ".#{$osquery_log_i.to_i}" : ''
-              Rails.root.join("config/sunzistrano/files/var/log/osquery/osqueryd.results.log#{i}")
+          path = if Rails.env.test?
+            MixServer::Engine.root.join('test/fixtures/files/log/osquery/osqueryd.results.log')
+          else
+            i = $osquery_log_i if $osquery_log_i.is_a? Numeric
+            if i && i > 0
+              suffix = ".#{i}"
+              suffix += '.gz' if i > 1
             else
-              Pathname.new(MixServer::Logs.config.osquery_log_path)
+              suffix = ''
             end
-          File.foreach(path, chomp: true) do |line|
+            if Rails.env.development?
+              Rails.root.join("tmp/log/osquery/osqueryd.results.log#{suffix}")
+            else
+              Pathname.new("#{MixServer::Logs.config.osquery_log_path}#{suffix}")
+            end
+          end
+          File.each_line(path, chomp: true) do |line|
             json = JSON.parse(line)
             name, time, diff = json.values_at('name', 'unixTime', 'diffResults')
             next unless LogLines::Osquery.names.include? name
