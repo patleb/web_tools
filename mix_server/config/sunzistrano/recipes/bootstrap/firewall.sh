@@ -4,7 +4,6 @@ sun.install "ufw"
 # /etc/ufw/applications.d/*
 ufw default deny incoming
 ufw default allow outgoing
-ufw allow ssh
 ufw limit ssh
 ufw allow http
 ufw allow https

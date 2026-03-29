@@ -1,5 +1,17 @@
 module Sunzistrano
   Cli.class_eval do
+    desc 'firewall [STAGE] [--disable]', 'Enable/Disable SSH firewall limit'
+    method_options disable: false
+    def firewall(stage)
+      with_context(stage) do
+        if sun.disable
+          run_command :disable_firewall_cmd, sun.server_host
+        else
+          run_command :enable_firewall_cmd, sun.server_host
+        end
+      end
+    end
+
     no_tasks do
       alias_method :before_role_without_firewall, :before_role
       def before_role
@@ -18,15 +30,11 @@ module Sunzistrano
       private
 
       def disable_firewall_cmd(server)
-        limit_firewall_cmd server, delete: true
+        remote_cmd server, 'command -v ufw >/dev/null && sudo ufw delete limit ssh && sudo ufw allow ssh', proxy: false
       end
 
       def enable_firewall_cmd(server)
-        limit_firewall_cmd server
-      end
-
-      def limit_firewall_cmd(server, delete: false)
-        remote_cmd server, "command -v ufw >/dev/null && sudo ufw#{' delete' if delete} limit ssh", proxy: false
+        remote_cmd server, 'command -v ufw >/dev/null && sudo ufw limit ssh', proxy: false
       end
     end
   end

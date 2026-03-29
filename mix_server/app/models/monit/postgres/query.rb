@@ -80,8 +80,8 @@ module Monit
       end
 
       def self.suggested_indexes
-        Setting.with(freeze: false) do |setting|
-          setting[:monit_interval] = 1.day
+        Setting.with(freeze: false) do
+          Setting[:monit_interval] = 1.day
           suggested_indexes_by_query = db.suggested_indexes_by_query(queries: historical.map(&:query), indexes: db_indexes)
           db.suggested_indexes(suggested_indexes_by_query: suggested_indexes_by_query, indexes: db_indexes)
         end

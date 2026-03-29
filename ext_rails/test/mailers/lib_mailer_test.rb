@@ -4,8 +4,8 @@ class LibMailerTest < ActionMailer::TestCase
   test_queue_adapter!
 
   test '#healthcheck' do
-    email = Setting.with(freeze:false) do |settings|
-      settings[:mail_to] = 'example@test.com'
+    email = Setting.with(freeze:false) do
+      Setting[:mail_to] = 'example@test.com'
       assert_equal Setting[:mail_to], 'example@test.com'
       email = LibMailer.healthcheck
       assert_emails(1){ email.deliver_now }

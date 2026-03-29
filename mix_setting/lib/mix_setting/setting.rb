@@ -29,7 +29,7 @@ class Setting
 
   def self.with(**options)
     reload(**options)
-    yield all
+    yield self
   ensure
     rollback!
   end
