@@ -150,29 +150,12 @@ module ActiveTask
       puts "[#{Time.current.utc}]#{Rake::CANCEL}[#{Process.pid}]".magenta
     end
 
-    def read_header(path)
-      read_file(path, first: true)
+    def read_header(path, **, &)
+      read_file(path, **, first: true, &)
     end
 
-    def read_file(path, first: nil)
-      i = 0
-      if (path = path.to_s).end_with? '.gz'
-        IO.popen("unpigz -c #{path}", 'rb') do |io|
-          until io.eof?
-            next if (line = io.gets&.scrub('*')).blank?
-            yield(line.chomp, i) unless i == 0 && first == false
-            i += 1
-            break if first
-          end
-        end
-      else
-        File.foreach(path, chomp: true) do |line|
-          next if (line = line.scrub('*')).blank?
-          yield(line, i) unless i == 0 && first == false
-          i += 1
-          break if first
-        end
-      end
+    def read_file(path, **, &)
+      File.each_line(path, scrub: '*', chomp: true, present: true, **, &)
     end
 
     # NOTE needed only if using a different Gemfile
