@@ -112,7 +112,7 @@ module MixServer
 
     def clamav_false_positives
       @clamav_false_positives ||= [
-        %r{/imurmurhash/}
+        %r{/imurmurhash[-/]}
       ]
     end
   end
