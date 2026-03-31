@@ -2,6 +2,8 @@
 
 Sunzistrano is a rewrite of [Sunzi](https://github.com/kenn/sunzi), a provisioning tool enabling infrastructure as code.
 
+- [User Guide](doc/guide.md)
+
 ## Usage
 
 Infrastructure code is organized through **roles** defining which **recipes** are run as Bash files.
