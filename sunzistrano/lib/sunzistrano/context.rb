@@ -115,15 +115,15 @@ module Sunzistrano
     end
 
     def role
-      @_role ||= ActiveSupport::StringInquirer.new(@role.to_s)
+      @_role ||= @role.to_s.inquiry
     end
 
     def env
-      @_env ||= ActiveSupport::StringInquirer.new(@env.to_s)
+      @_env ||= @env.to_s.inquiry
     end
 
     def app
-      @_app ||= ActiveSupport::StringInquirer.new(@app.to_s)
+      @_app ||= @app.to_s.inquiry
     end
 
     def linked_dirs

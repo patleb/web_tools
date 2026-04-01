@@ -105,6 +105,9 @@ module MixServer
           %r{(details saved to: /tmp/passenger-error-)(\w+)} => '\1*',
           %r{(Cannot checkout session because a spawning error occurred\. The identifier of the error is )(\w+)} => '\1*',
           %r{(/tmp/passenger_native_support-)(\w+)} => '\1*',
+          %r{(/bundler/gems/web_tools-)([a-f0-9]+)} => '\1*',
+          %r{( web_tools \([a-f0-9]+)} => '\1*',
+          %r{(/releases/)([a-f0-9]+)} => '\1*',
         }
       end
 
@@ -117,6 +120,7 @@ module MixServer
             'SSL routines:tls_parse_ctos_key_share:bad key share',
             'SSL routines:tls_choose_sigalg:internal error',
             'access forbidden by rule',
+            /RAILS_ENV=staging environment is not defined in .*, falling back to production environment/,
           ],
           info: [
             '[passenger_native_support.so] trying to compile for the current user',

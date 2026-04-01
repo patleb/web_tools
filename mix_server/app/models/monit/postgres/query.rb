@@ -4,7 +4,6 @@ module Monit
       ANALYZE    = 'ANALYZE '
       VISUALIZE  = '(ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON) '
       BIND_ERROR = 'bind message supplies 0 parameters'
-      DENIED_OPS = /INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|TRUNCATE|REINDEX|COPY|GRANT|REVOKE|VACUUM|ANALY[ZS]E/
 
       alias_attribute :pid, :id
       attribute       :source
@@ -23,8 +22,9 @@ module Monit
       attribute       :analyze, :boolean
       attribute       :visualize, :boolean
       attribute       :explanation
+      attribute       :admin, :boolean
 
-      validate :explain
+      validate :explain, if: :admin?
 
       scope :slow,         -> { where(long_running: false) }
       scope :long_running, -> { where(long_running: true) }
@@ -118,7 +118,7 @@ module Monit
           when visualize? then VISUALIZE
           when analyze?   then ANALYZE
           end
-        if prefix && (query.exclude?('SELECT') || query.match?(DENIED_OPS))
+        unless query =~ /select/i
           errors.add :query, :denied
           return
         end

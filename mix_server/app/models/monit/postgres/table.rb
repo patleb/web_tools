@@ -14,8 +14,9 @@ module Monit
       attribute       :total_bytes, :integer
       attribute       :cache_hit, :float
       attribute       :index_usage, :float
+      attribute       :admin, :boolean
 
-      validate :analyze
+      validate :analyze, if: :admin?
 
       def self.list
         tables = db.maintenance_info.map do |row|

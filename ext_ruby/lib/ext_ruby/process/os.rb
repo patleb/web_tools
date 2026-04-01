@@ -4,7 +4,7 @@ module Process
   SUPPORTED_OS = %w(ubuntu linuxmint)
 
   def self.os
-    @os ||= SUPPORTED_OS.include?(os_release[:id]) ? ActiveSupport::StringInquirer.new(os_release[:id]) : raise(UnsupportedOS)
+    @os ||= SUPPORTED_OS.include?(os_release[:id]) ? os_release[:id].inquiry : raise(UnsupportedOS)
   end
 
   def self.os_version
