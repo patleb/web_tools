@@ -54,9 +54,10 @@ module MixServer
         @available_paths ||= (Rails.env.test? ? [
           log_path(:syslog)
         ] : []).concat([
-          passenger_log_path(:access),
-          passenger_log_path(:packs, :access),
-          passenger_log_path(:public, :access),
+          nginx_log_path(:access),
+          nginx_log_path(:packs, :access),
+          nginx_log_path(:private, :access),
+          nginx_log_path(:public, :access),
           log_path(:nginx, :error),
           log_path(:auth),
           postgres_log_path,
@@ -213,7 +214,7 @@ module MixServer
         "log/#{Rails.env}.log"
       end
 
-      def passenger_log_path(*type, name)
+      def nginx_log_path(*type, name)
         type = type.first
         name = "#{Rails.stage}#{"-#{type.to_s.full_underscore}" if type}.#{name}"
         log_path(:nginx, name)

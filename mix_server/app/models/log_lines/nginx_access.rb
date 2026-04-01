@@ -218,8 +218,10 @@ module LogLines
         browser: (_browsers(user_agent) if browser && user_agent.present? && user_agent != '-'),
         gzip: gzip == '-' ? nil : gzip.to_f,
       }
-      global_log = log.path&.end_with?('/access.log')
-      if global_log || status == 404 || MixServer::Logs.config.filter_subnets.any?(&:include?.with(ip)) || path.end_with?(*MixServer::Logs.config.filter_endings)
+      if (global_log = log.path&.end_with?('/access.log')) \
+      || status == 404 \
+      || MixServer::Logs.config.filter_subnets.any?(&:include?.with(ip)) \
+      || path.end_with?(*MixServer::Logs.config.filter_endings)
         method, path, params = nil, '*', nil
       end
       if global_log

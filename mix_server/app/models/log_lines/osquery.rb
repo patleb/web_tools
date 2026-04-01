@@ -1,5 +1,6 @@
 module LogLines
   class Osquery < LogLine
+    NO_IP_OR_PORT = '0'
     TINY_FILE_PATH = /(([A-Z]+_?)+,?)+/
     TINY_COMMAND_PATH = /((\d+\.)*\d+:\d+,?)+/
 
@@ -100,8 +101,8 @@ module LogLines
         message, paths = extract_paths(adds, name, tiny: TINY_COMMAND_PATH) do |row, memo|
           next unless %w(connect bind).include? row['action']
           path = row.values_at('cmdline', 'path').find(&:present?) || ''
-          local = row.values_at('local_address', 'local_port').map{ |v| v.blank? ? '0' : v }
-          remote = row.values_at('remote_address', 'remote_port').map{ |v| v.blank? ? '0' : v }
+          local = row.values_at('local_address', 'local_port').map{ |v| v.blank? ? NO_IP_OR_PORT : v }
+          remote = row.values_at('remote_address', 'remote_port').map{ |v| v.blank? ? NO_IP_OR_PORT : v }
           next if servers.include? remote.first
           next if MixServer::Logs.config.known_sockets.any? do |type, sockets|
             sockets.any? do |socket|

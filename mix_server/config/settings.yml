@@ -61,7 +61,7 @@ test:
   cloud_cluster_data: ./tmp/shared_data
 
 development:
-  osquery_logger_path: ./tmp/osquery
+  osquery_logger_path: tmp/log/osquery
   cloud_provider: localhost
   cloud_master_data: ./tmp/shared_data
   cloud_cluster_data: ./tmp/shared_data

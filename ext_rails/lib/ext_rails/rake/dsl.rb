@@ -56,7 +56,9 @@ module Rake
 
     def with_stage(args, &block)
       raise 'argument [:env] must be specified' unless args[:env].present?
-      Setting.with(env: args[:env], app: args[:app], &block)
+      Setting.with(env: args[:env], app: args[:app]) do
+        yield Setting.env, Setting.app
+      end
     end
 
     def with_argv(task_name, ignore: false, retries: 0, **argv)

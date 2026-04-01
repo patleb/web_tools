@@ -12,17 +12,16 @@ module Monit
           path = if Rails.env.test?
             MixServer::Engine.root.join('test/fixtures/files/log/osquery/osqueryd.results.log')
           else
-            i = $osquery_log_i if $osquery_log_i.is_a? Numeric
-            if i && i > 0
+            if (i = $osquery_log_i.to_i) > 0
               suffix = ".#{i}"
-              suffix += '.gz' if i > 1
-            else
-              suffix = ''
             end
             if Rails.env.development?
-              Rails.root.join("tmp/log/osquery/osqueryd.results.log#{suffix}")
+              Rails.root.join("tmp/log/osquery/osqueryd.results.log#{suffix}.gz")
             else
-              Pathname.new("#{MixServer::Logs.config.osquery_log_path}#{suffix}")
+              Pathname.new("#{MixServer::Logs.config.osquery_log_path}#{suffix}.gz")
+            end
+            unless path.exist?
+              path = path.sub_ext('')
             end
           end
           File.each_line(path, chomp: true) do |line|

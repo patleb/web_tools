@@ -1,5 +1,7 @@
 module Monit
   module Osquery
+    NO_IP_OR_PORT = 0 # https://github.com/osquery/osquery/pull/8510/changes
+
     class SocketEvent < Base
       attribute :pid, :integer
       attribute :time, :datetime
@@ -16,6 +18,8 @@ module Monit
           events.select_map do |state, rows|
             rows.map do |row|
               pid, time, remote_ip, remote_port = row.values_at('pid', 'time', 'remote_address', 'remote_port')
+              remote_ip = NO_IP_OR_PORT if remote_ip.blank?
+              remote_port = NO_IP_OR_PORT if remote_port.blank?
               {
                 id: [pid, time, remote_ip, remote_port].join(':'), pid: pid, time: Time.at(time).utc,
                 local_ip: row['local_address'], local_port: row['local_port'],

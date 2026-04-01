@@ -107,7 +107,7 @@ deploy:
 
 deploy_development:
   osquery_logger_level: 0
-  osquery_database_path: ./tmp/osquery/osquery.db
+  osquery_database_path: tmp/osquery/osquery.db
   #  osquery_day: 10
   #  osquery_hour: 10
   #  osquery_minute: 10
