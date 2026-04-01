@@ -81,15 +81,16 @@ namespace :server do
   desc 'download server logs'
   task :download_logs, [:env, :app, :dump] => :environment do |t, args|
     dump = args[:dump].presence || '/opt/storage/tmp'
-    with_stage(args) do
-      env, stage, pg_version = Setting.env, Setting.stage, Setting[:postgres]
+    with_stage(args) do |env|
       sh "bin/sun firewall #{env} --disable"
       sh "bin/sun rake #{env} 'db:pg:dump -- --name=logs --base-dir=#{dump} --includes=lib_servers,lib_log*' --sudo"
       sh "bin/sun download #{env} #{dump}/logs.pg.gz --dir=tmp/log/dump"
       sh "bin/sun download #{env} '/var/log/osquery/osqueryd.results.log*' --dir=tmp/log/osquery"
       sh "bin/sun download #{env} '/var/log/nginx/*.log*' --dir=tmp/log/nginx"
-      sh "bin/sun download #{env} '#{stage}/shared/log/*.log*' --dir=tmp/log/rails --deploy"
-      sh "bin/sun download #{env} '/var/log/postgresql/postgresql-#{pg_version}-main.log*' --dir=tmp/log/postgresql"
+      sh "bin/sun download #{env} '#{Setting.stage}/shared/log/*.log*' --dir=tmp/log/rails --deploy"
+      sh "bin/sun download #{env} '/var/log/postgresql/postgresql-#{Setting[:postgres]}-main.log*' --dir=tmp/log/postgresql"
+      sh "bin/sun download #{env} '/var/log/auth.log*' --dir=tmp/log/auth"
+      sh "bin/sun download #{env} '/var/log/apt/history.log*' --dir=tmp/log/apt"
     ensure
       sh "bin/sun firewall #{env}"
     end

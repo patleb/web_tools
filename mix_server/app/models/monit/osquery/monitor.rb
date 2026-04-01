@@ -8,8 +8,6 @@ module Monit
 
       validates :threats, absence: true
       validates :heartbeats, presence: true
-      validates :file_events, absence: true
-      validates :socket_events, absence: true
 
       def self.list
         [{ id: 'monitor' }]

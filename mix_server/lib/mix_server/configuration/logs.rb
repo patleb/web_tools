@@ -167,16 +167,17 @@ module MixServer
       def known_sockets
         @known_sockets ||= {
           path: [
-            'node /usr/share/yarn/bin/yarn.js install',
             %r{^/home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/ruby /home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/bundle install},
             %r{^/home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/ruby /home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/bundle .+ --deployment .+/\.local_repo/},
             "Passenger RubyApp: /home/#{Setting[:deployer_name]}/",
             'ruby bin/rake cron:every_day', # geolite fetch or email on errors
             'ruby bin/rake runner[Monit.capture]', # email on errors
             'ruby bin/rake job:watch -- --queue=', # email on errors
-            %r{^/usr/sbin/ntpd -p /var/run/ntpd.pid -g -u \d+:\d+},
+            '/usr/sbin/ntpd -p /run/ntpd.pid',
             '/usr/bin/freshclam -d --foreground=true',
             '/usr/lib/snapd/snapd',
+            '/snap/snapd/current/usr/lib/snapd/snapd',
+            '/usr/lib/systemd/systemd-resolved', # local dns
             '/usr/bin/python3 /usr/lib/ubuntu-release-upgrader/check-new-release -q',
             '/usr/lib/apt/methods/http', # apt update
           ],
@@ -189,7 +190,7 @@ module MixServer
             0.0.0.0
             0000:0000:0000:0000:0000:0000:0000:0000
           ).concat(
-            (%w(169.254 172.17 172.18 10 192.168) + (88..95).map{ |i| "91.189.#{i}" }).map{ |ip| /^#{ip}\./ } # private networks + ubuntu ip ranges
+            %w(172.17 172.18 10 192.168).map{ |ip| /^#{ip}\./ } # private networks
           ).concat(
             Array.wrap(Setting[:ftp_host])
           ),

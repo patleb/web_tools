@@ -23,6 +23,7 @@ module LogLines
     }x
     ACCESS_LEVELS = {
       (100...400) => :info,
+      400         => :warn, # bad request
       404         => :warn, # not found
       406         => :warn, # not acceptable
       499         => :warn, # client disconnected
