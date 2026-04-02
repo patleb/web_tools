@@ -171,8 +171,7 @@ module MixServer
       def known_sockets
         @known_sockets ||= {
           path: [
-            %r{^/home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/ruby /home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/bundle install},
-            %r{^/home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/ruby /home/#{Setting[:deployer_name]}/\.rbenv/versions/[.\d]+/bin/bundle .+ --deployment .+/\.local_repo/},
+            'ruby bin/bundle install',
             "Passenger RubyApp: /home/#{Setting[:deployer_name]}/",
             'ruby bin/rake cron:every_day', # geolite fetch or email on errors
             'ruby bin/rake runner[Monit.capture]', # email on errors
