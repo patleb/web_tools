@@ -10,7 +10,7 @@ gems:
 
 provision:
   recipes:
-    # - app_packages
+    # - app-{app_update}
     - addons/rice
     - db/postgres-{postgres}/private_network
     - reboot
