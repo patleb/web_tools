@@ -25,6 +25,7 @@ module LogLines
       (100...400) => :info,
       400         => :warn, # bad request
       404         => :warn, # not found
+      405         => :warn, # method not allowed
       406         => :warn, # not acceptable
       499         => :warn, # client disconnected
       (400...500) => :error,
