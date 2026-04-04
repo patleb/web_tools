@@ -80,7 +80,7 @@ module MixServer
       end
 
       def filter_endings
-        @filter_endings ||= ['/wp-admin', '/allowurl.txt', '.php']
+        @filter_endings ||= ['/wp-admin', '/allowurl.txt', '/passwd', '.php', '.cgi', '.ini', '.aspx', '.jsp', '.do']
       end
 
       def filter_ips
