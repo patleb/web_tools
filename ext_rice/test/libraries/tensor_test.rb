@@ -44,6 +44,15 @@ class TensorTest < Rice::TestCase
     assert_equal Tensor::DFloat.from_sql('{{NULL,NULL},{NULL,NULL}}', 2, 2).to_sql, array.to_sql
   end
 
+  test '#reverse_shape' do
+    tensor = Tensor::Int32.new(4, 3).seq.reverse_shape
+    assert_equal [3, 4], tensor.shape
+    assert_equal [0, 3, 6, 9, 1, 4, 7, 10, 2, 5, 8, 11], tensor.to_a
+    tensor = Tensor::Int32.new(4, 3, 2).seq.reverse_shape
+    assert_equal [2, 3, 4], tensor.shape
+    assert_equal [0, 6, 12, 18, 2, 8, 14, 20, 4, 10, 16, 22, 1, 7, 13, 19, 3, 9, 15, 21, 5, 11, 17, 23], tensor.to_a
+  end
+
   test '#reshape' do
     assert_equal [2, 3], Tensor::Int32.new(6).reshape(2, 3).shape
     assert_equal [3, 4], Tensor::Int32.new(1, 3, 4).reshape(false, true, true).shape

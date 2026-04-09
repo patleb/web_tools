@@ -136,6 +136,37 @@ namespace Tensor {
       return *this;
     }
 
+    TENSOR reverse_shape() const {
+      if (rank == 1) return *this;
+      auto copy = TENSOR(*this);
+      auto & shape = copy.shape;
+      std::reverse(shape.begin(), shape.end());
+
+      Vsize_t src_strides(rank);
+      src_strides[0] = 1;
+      for (size_t i = 1; i < rank; ++i) src_strides[i] = src_strides[i - 1] * shape[i - 1];
+
+      Vsize_t dst_strides(rank);
+      dst_strides[rank - 1] = 1;
+      for (ssize_t i = rank - 2; i >= 0; --i) dst_strides[i] = dst_strides[i + 1] * shape[i + 1];
+
+      Vsize_t counts(rank, 0);
+      size_t src_offset = 0;
+      size_t dst_offset = 0;
+      for (size_t count = 0; count < size; ++count) {
+        copy[dst_offset] = array[src_offset];
+        for (ssize_t dim_n = rank - 1; dim_n >= 0; --dim_n) {
+          src_offset += src_strides[dim_n];
+          dst_offset += dst_strides[dim_n];
+          if (++counts[dim_n] < shape[dim_n]) break;
+          counts[dim_n] = 0;
+          src_offset -= src_strides[dim_n] * shape[dim_n];
+          dst_offset -= dst_strides[dim_n] * shape[dim_n];
+        }
+      }
+      return copy;
+    }
+
     TENSOR & reverse(const Osize_t & axis = nil) {
       auto begin = this->begin();
       auto end   = this->end();
