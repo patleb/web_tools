@@ -155,7 +155,7 @@ module MixServer
           %r{^/etc/ssh/\.\w+$},
           %r{^/etc/systemd/system/\.[-.\w]+$},
           %r{^/etc/systemd/system/(multi-user|sockets)\.target\.wants/snap[-.][-.\w~]+$},
-          %r{^/etc/systemd/system/snap[-.][-.\w~]+$},
+          %r{^/etc/systemd/system/snapd?[-.][-.\w~]+$},
           %r{^/etc/logrotate\.d/\.\w+$},
           %r{^/etc/nginx/\.\w+$},
           %r{^/etc/nginx/sites-available/\.\w+$},
