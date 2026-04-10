@@ -1,4 +1,6 @@
 class Hash
+  INTEGER = /^\d+$/
+
   def self.deep_union(*)
     union(*, deep: true)
   end
@@ -56,5 +58,22 @@ class Hash
 
   def pretty_yaml(**options)
     to_yaml(line_width: -1, **options).delete_prefix("---\n").delete_prefix("--- {}\n")
+  end
+
+  def nest_keys
+    each_with_object({}) do |(key, value), root|
+      undig_key(root, key.split('.'), value)
+    end
+  end
+
+  private
+
+  def undig_key(node, keys, value)
+    return if keys.empty?
+    key, *remaining = keys
+    key = key.to_i if key.match? INTEGER
+    return node[key] = value if remaining.empty?
+    node[key] ||= remaining.first.match?(INTEGER) ? [] : {}
+    undig_key(node[key], remaining, value)
   end
 end
