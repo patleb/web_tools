@@ -36,6 +36,7 @@ module ExtRice
           # 'uint32_t'  => 'uint64_t2',
           # 'uint64_t2' => 'uint64_t2',
         }
+        raise 'types mismatch' if config.template[:generic].keys != config.template[:numeric].values
       end
     end
   end

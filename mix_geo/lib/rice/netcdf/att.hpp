@@ -43,15 +43,15 @@ namespace NetCDF {
 
     static Att write(int file_id, int var_id, const string & name, int type_id, const Tensor::Base & values, bool scalar = false) {
       if (type_id == NC_CHAR) throw TypeError();
-      if (values.shape.size() != 1) throw TypeError();
-      if (scalar && values.size != 1) throw TypeError();
+      if (values.shape.size() != 1) throw ArgsError();
+      if (scalar && values.size != 1) throw ArgsError();
       const void * data = values.data();
       Base::check_status( nc_put_att(file_id, var_id, name.c_str(), type_id, values.size, data), file_id, var_id, name );
       return Att(file_id, var_id, name);
     }
 
     static Att write_s(int file_id, int var_id, const string & name, const string & text, bool scalar = false) {
-      if (scalar && text.size() != 1) throw TypeError();
+      if (scalar && text.size() != 1) throw ArgsError();
       Base::check_status( nc_put_att_text(file_id, var_id, name.c_str(), text.size(), text.c_str()), file_id, var_id, name );
       return Att(file_id, var_id, name);
     }

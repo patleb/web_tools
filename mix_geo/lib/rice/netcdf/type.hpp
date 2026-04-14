@@ -9,14 +9,6 @@ namespace NetCDF {
     String = NC_CHAR
   };
 
-  class TypeError : public RuntimeError {
-    public:
-
-    TypeError(CONTEXT(trace, source)):
-      RuntimeError("TypeError", trace, source) {
-    }
-  };
-
   inline int type_id(const Tensor::NType & values) {
     switch (values.index()) {
     <%- template[:netcdf].each_value.with_index do |NC_TYPE, I| -%>

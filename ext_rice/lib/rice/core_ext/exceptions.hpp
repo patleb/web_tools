@@ -26,3 +26,13 @@ class RuntimeError : public std::exception {
   std::stacktrace trace;
   std::source_location source;
 };
+<%- %w(ArgsError TypeError NotSupportedError).each do |ERROR| -%>
+
+class ERROR : public RuntimeError {
+  public:
+
+  ERROR(CONTEXT(trace, source)):
+    RuntimeError("<%= @ERROR %>", trace, source) {
+  }
+};
+<%- end -%>

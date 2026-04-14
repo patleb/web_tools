@@ -12,6 +12,8 @@ provision:
   recipes:
     # - app-{app_update}
     - addons/rice
+    - addons/matio
+    - addons/netcdf
     - db/postgres-{postgres}/private_network
     - reboot
 

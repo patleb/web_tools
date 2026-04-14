@@ -123,6 +123,8 @@ computer:
     - db/postgres_client
     - addons/rice
     - addons/gis
+    - addons/matio
+    - addons/netcdf
     - computer/grub
     - computer/backports
     - computer/xtradeb

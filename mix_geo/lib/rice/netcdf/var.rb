@@ -1,5 +1,8 @@
 module NetCDF
   Var.class_eval do
+    prepend Tensor::Readable
+    prepend Tensor::Writable
+
     module self::WithOverrides
       def name=(new_name)
         super(new_name.to_s)
@@ -29,21 +32,8 @@ module NetCDF
         end
       end
 
-      def write(values, start: nil, stride: nil)
-        if values.is_a? Tensor::Base
-          raise "not Tensor::#{type}" if values.class.name.demodulize != type.to_s
-          super(values, Array.wrap(start), Array.wrap(stride))
-        else
-          write_s(Array(values).map(&:to_s), start || 0, stride || 1)
-        end
-      end
-
-      def read(start: nil, count: nil, stride: nil)
-        tensor = if start.blank? && count.blank? && stride.blank?
-          numeric? ? super(Array.new(dims_count, 0), shape, []) : super([0], [shape.first], [])
-        else
-          super(Array.wrap(start), Array.wrap(count), Array.wrap(stride))
-        end
+      def read(**)
+        tensor = super
         tensor.fill_value = fill_value || default_fill_value if numeric?
         tensor
       end
@@ -72,31 +62,6 @@ module NetCDF
       end
     end
     prepend self::WithOverrides
-
-    def at(*indexes)
-      indexes.map do |index|
-        values = read(start: Array(index)).to_a
-        numeric? ? values.dig(*Array.new(dims_count, 0)) : values.first
-      end
-    end
-
-    def []=(*ranges, values)
-      return write(values) if ranges.empty?
-      start, count, _shape = Tensor.to_slice_args(self.shape, *ranges)
-      begin
-        shape_was = values.shape
-        values.reshape(count)
-        write(values, start: start)
-      ensure
-        values.reshape(shape_was)
-      end
-    end
-
-    def [](*ranges)
-      return read if ranges.empty?
-      start, count, shape = Tensor.to_slice_args(self.shape, *ranges)
-      read(start: start, count: count).reshape(shape)
-    end
 
     def read_att(name)
       att(name).read

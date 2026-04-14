@@ -1,4 +1,4 @@
-#include "ext_rice/core_ext/runtime_error.hpp"
+#include "ext_rice/core_ext/exceptions.hpp"
 #include "ext_rice/core_ext/finally.hpp"
 #include "ext_rice/core_ext/c.hpp"
 #include "ext_rice/core_ext/logger.hpp"

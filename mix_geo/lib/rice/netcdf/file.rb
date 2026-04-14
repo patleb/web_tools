@@ -115,6 +115,7 @@ module NetCDF
       var(name).set_fill_value(**)
     end
 
+    # NOTE: dig through vars' atts or global atts
     def dig(name, *indexes)
       return unless (object = vars[name] || atts[name])
       return object.dig(*indexes) unless indexes.empty?

@@ -20,6 +20,18 @@ module MixGeo
 
     initializer 'mix_geo.template', before: 'ext_rice.require_ext' do
       ExtRice.configure do |config|
+        config.template[:matio] = {
+          # 'Int8'   => 'MAT_C_INT8',   # 8
+          # 'Int16'  => 'MAT_C_INT16',  # 10
+          'Int32'  => 'MAT_C_INT32',  # 12
+          'Int64'  => 'MAT_C_INT64',  # 14
+          'SFloat' => 'MAT_C_SINGLE', # 5
+          'DFloat' => 'MAT_C_DOUBLE', # 6
+          'UInt8'  => 'MAT_C_UINT8',  # 9
+          # 'UInt16' => 'MAT_C_UINT16', # 11
+          # 'UInt32' => 'MAT_C_UINT32', # 13
+          # 'UInt64' => 'MAT_C_UINT64', # 15
+        }
         config.template[:netcdf] = {
           # 'Int8'   => 'NC_BYTE',   # 1
           # 'Int16'  => 'NC_SHORT',  # 3
@@ -31,9 +43,10 @@ module MixGeo
           # 'UInt16' => 'NC_USHORT', # 8
           # 'UInt32' => 'NC_UINT',   # 9
           # 'UInt64' => 'NC_UINT64', # 11
-          # 'String' => 'NC_CHAR',   # 2
         }
-        raise "types mismatch" if config.template[:netcdf].keys != config.template[:numeric].keys
+        %i(matio netcdf).each do |types|
+          raise 'types mismatch' if config.template[types].keys != config.template[:numeric].keys
+        end
       end
     end
 

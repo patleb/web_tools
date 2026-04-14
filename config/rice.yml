@@ -4,5 +4,6 @@ gems:
 
 excluded_files:
 #  - tensor
+#  - matio
 #  - netcdf
 #  - gdal

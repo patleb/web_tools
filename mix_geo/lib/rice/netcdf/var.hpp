@@ -103,12 +103,12 @@ namespace NetCDF {
       size_t dims_count = this->dims_count();
       Vsize_t starts = start.empty() ? Vsize_t(dims_count, 0) : start;
       Vsize_t counts = values.shape;
-      if (starts.size() != dims_count) throw TypeError();
-      if (counts.size() != dims_count) throw TypeError();
+      if (starts.size() != dims_count) throw ArgsError();
+      if (counts.size() != dims_count) throw ArgsError();
       if (stride.empty()) {
         check_status( nc_put_vara(file_id, id, starts.data(), counts.data(), values.data()) );
       } else {
-        if (stride.size() != dims_count) throw TypeError();
+        if (stride.size() != dims_count) throw ArgsError();
         check_status( nc_put_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.data()) );
       }
     }
@@ -131,14 +131,14 @@ namespace NetCDF {
         size_t dims_count = this->dims_count();
         Vsize_t starts = start.empty() ? Vsize_t(dims_count, 0) : start;
         Vsize_t counts = count.empty() ? Vsize_t(dims_count, 1) : count;
-        if (starts.size() != dims_count) throw TypeError();
-        if (counts.size() != dims_count) throw TypeError();
+        if (starts.size() != dims_count) throw ArgsError();
+        if (counts.size() != dims_count) throw ArgsError();
         if (stride.empty()) {
           Tensor::TENSOR values(counts);
           check_status( nc_get_vara(file_id, id, starts.data(), counts.data(), values.Base::data()) );
           return values;
         } else {
-          if (stride.size() != dims_count) throw TypeError();
+          if (stride.size() != dims_count) throw ArgsError();
           Tensor::TENSOR values(counts);
           check_status( nc_get_vars(file_id, id, starts.data(), counts.data(), stride.data(), values.Base::data()) );
           return values;
@@ -146,9 +146,9 @@ namespace NetCDF {
       }
       <%- end -%>
       case NC_CHAR: {
-        if (start.size() > 1) throw TypeError();
-        if (count.size() > 1) throw TypeError();
-        if (stride.size() > 1) throw TypeError();
+        if (start.size() > 1) throw ArgsError();
+        if (count.size() > 1) throw ArgsError();
+        if (stride.size() > 1) throw ArgsError();
         size_t max_size = this->shape()[1];
         size_t start_0 = start.empty() ? 0 : start[0];
         size_t count_0 = count.empty() ? 1 : count[0];

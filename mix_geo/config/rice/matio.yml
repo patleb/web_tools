@@ -1,0 +1,48 @@
+libs:
+  - matio
+
+include:
+  - matio.h
+
+after_include: >
+  using namespace MatIO;
+
+module MatIO:
+  V_DEFAULT: static_cast< int >(MAT_FT_DEFAULT) # V5
+  V7_3:      static_cast< int >(MAT_FT_MAT73)
+  V5:        static_cast< int >(MAT_FT_MAT5)
+  V4:        static_cast< int >(MAT_FT_MAT4)
+  V_NULL:    static_cast< int >(MAT_FT_UNDEFINED)
+
+  enum Type | MatIO::Type: [<%= template[:matio].keys.join(', ') %>, String]
+
+  def:
+    self.version:
+
+  class Base | MatIO::Base:
+
+  class File < MatIO::Base:
+    attr_reader: [path, mode]
+
+    def:
+      initialize | MatIO::File:
+        - [const string &, path]
+        - [Ostring, mode = nil]
+        - [Oint, version = nil]
+      close:
+      closed? | is_closed:
+      header:
+      version:
+      vars | _vars_:
+
+  class Var < MatIO::Base:
+    attr_reader: [name, path]
+
+    def:
+      initialize | MatIO::Var.NO_DEFAULT.COPY:
+      type:
+      dims_count:
+      bytes:
+      size:
+      shape:
+      read:
