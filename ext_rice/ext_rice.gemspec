@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'ext_rails', version
   s.add_dependency 'rice', '~> 4.5.0'
+  s.add_dependency 'ruby_memcheck'
 end
