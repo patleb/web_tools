@@ -8,8 +8,8 @@ module Tensor
       end
     end
 
-    def at(*indexes)
-      indexes.map do |index|
+    def at(indexes)
+      Array.wrap(indexes).map do |index|
         values = read(start: Array(index)).to_a
         numeric? ? values.dig(*Array.new(dims_count, 0)) : values.first
       end
