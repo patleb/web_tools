@@ -1,4 +1,6 @@
 namespace Tensor {
+  using NType = std::variant< <%= template[:numeric].keys.join(', ') %>, Vstring >;
+
   <%- template[:numeric].each do |TENSOR, T| -%>
 
   class TENSOR : public Base {
@@ -66,6 +68,17 @@ namespace Tensor {
 
     TENSOR & operator=(const TENSOR & tensor) = delete;
 
+    size_t type_size() const override {
+      return sizeof(T);
+    }
+
+    // NOTE won't consider NaN --> use #to_sql
+    bool operator==(const Tensor::Base & tensor) const {
+      if (type != tensor.type) return false;
+      if (shape != tensor.shape) return false;
+      return std::equal(begin(), end(), dynamic_cast< const TENSOR & >(tensor).begin());
+    }
+
     <%- %w(+ - * /).each do |OP| -%>
     TENSOR operator-OP-(T value) const {
       return TENSOR(array OP value, shape, fill_value);
@@ -93,13 +106,6 @@ namespace Tensor {
     auto data()          { return reinterpret_cast< T * >(_data_); }
     auto data()    const { return reinterpret_cast< const T * >(_data_); }
     auto values()  const { return V-T-(begin(), end()); }
-
-    // NOTE won't consider NaN --> use #to_sql
-    bool operator==(const Tensor::Base & tensor) const {
-      if (type != tensor.type) return false;
-      if (shape != tensor.shape) return false;
-      return std::equal(begin(), end(), dynamic_cast< const TENSOR & >(tensor).begin());
-    }
 
     TENSOR::View slice(const Vsize_t & start = {}, const Vsize_t & count = {}, const Vsize_t & stride = {}) {
       size_t offset = offset_for(start);
@@ -138,8 +144,8 @@ namespace Tensor {
 
     TENSOR reverse_shape() const {
       if (rank == 1) return *this;
-      auto copy = TENSOR(*this);
-      auto & shape = copy.shape;
+      auto tensor = TENSOR(*this);
+      auto & shape = tensor.shape;
       std::reverse(shape.begin(), shape.end());
 
       Vsize_t src_strides(rank);
@@ -154,7 +160,7 @@ namespace Tensor {
       size_t src_offset = 0;
       size_t dst_offset = 0;
       for (size_t count = 0; count < size; ++count) {
-        copy[dst_offset] = array[src_offset];
+        tensor[dst_offset] = array[src_offset];
         for (ssize_t dim_n = rank - 1; dim_n >= 0; --dim_n) {
           src_offset += src_strides[dim_n];
           dst_offset += dst_strides[dim_n];
@@ -164,7 +170,7 @@ namespace Tensor {
           dst_offset -= dst_strides[dim_n] * shape[dim_n];
         }
       }
-      return copy;
+      return tensor;
     }
 
     TENSOR & reverse(const Osize_t & axis = nil) {
@@ -215,8 +221,29 @@ namespace Tensor {
       return *this;
     }
 
-    size_t type_size() const override {
-      return sizeof(T);
+    Tensor::NType cast(Tensor::Type type, const GType & fill_value = none) const {
+      switch (type) {
+      <%- template[:numeric].each do |TENSOR, T| -%>
+      case Tensor::Type::TENSOR: {
+        auto nodata_was = this->fill_value;
+        auto nodata = is_none(fill_value) ? static_cast< T >(nodata_was) : g_cast< T >(fill_value);
+        auto tensor = Tensor::TENSOR(shape, g_cast(nodata));
+        bool isnan_nodata_was = std::isnan(nodata_was);
+        for (size_t i = 0; i < size; ++i) {
+          auto value_was = array[i];
+          auto value = static_cast< T >(value_was);
+          if (isnan_nodata_was) {
+            tensor[i] = std::isnan(value_was) ? nodata : value;
+          } else {
+            tensor[i] = (value_was == nodata_was) ? nodata : value;
+          }
+        }
+        return tensor;
+      }
+      <%- end -%>
+      default:
+        throw TypeError();
+      }
     }
 
     static TENSOR from_sql(const std::string & values, const Vsize_t & shape, const GType & fill_value = none) {
@@ -373,4 +400,44 @@ namespace Tensor {
     return dynamic_cast< TENSOR & >(*const_cast< Base * >(this));
   }
   <%- end -%>
+
+  inline Tensor::NType build(Tensor::Type type, const Vsize_t & shape, const GType & fill_value = none) {
+    switch (type) {
+    <%- template[:numeric].each do |TENSOR, T| -%>
+    case Tensor::Type::TENSOR: return Tensor::TENSOR(shape, g_cast< T >(fill_value));
+    <%- end -%>
+    default:
+      throw TypeError("invalid Tensor::Type");
+    }
+  }
+
+  inline Tensor::NType cast(Tensor::Base & tensor, Tensor::Type type) {
+    switch (type) {
+    <%- template[:numeric].each_key do |TENSOR| -%>
+    case Tensor::Type::TENSOR: return dynamic_cast< Tensor::TENSOR & >(tensor);
+    <%- end -%>
+    default:
+      throw TypeError("invalid Tensor::Type");
+    }
+  }
+
+  inline Tensor::Base & cast(Tensor::NType & tensor) {
+    switch (tensor.index()) {
+    <%- template[:numeric].size.times do |I| -%>
+    case I: return std::get< I >(tensor);
+    <%- end -%>
+    default:
+      throw TypeError("invalid Tensor::NType");
+    }
+  }
+
+  inline Tensor::Type type(const Tensor::NType & tensor) {
+    switch (tensor.index()) {
+    <%- template[:numeric].each_key.with_index do |TENSOR, I| -%>
+    case I: return Tensor::Type::TENSOR;
+    <%- end -%>
+    default:
+      throw TypeError("invalid Tensor::NType");
+    }
+  }
 }

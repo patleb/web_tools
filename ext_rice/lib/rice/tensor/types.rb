@@ -54,6 +54,10 @@ module Tensor
           super
         end
 
+        def cast(type, fill_value = nil)
+          super
+        end
+
         def to_sql(before: nil, after: nil, nulls: nil)
           super(before, after, nulls)
         end

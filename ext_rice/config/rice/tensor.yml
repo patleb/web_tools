@@ -68,6 +68,7 @@ module Tensor:
           self.seq(start);
           return self;
         }
+      cast:
       to_sql:
       to_string:
       abs:

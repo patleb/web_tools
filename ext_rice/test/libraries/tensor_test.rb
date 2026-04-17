@@ -14,6 +14,12 @@ class TensorTest < Rice::TestCase
     assert_equal 3.0, tensor[3]
   end
 
+  test '#cast' do
+    tensor = Tensor::DFloat.new(3, 2).seq
+    assert_equal (0..5).to_a, tensor.cast(Tensor::Type::SFloat).to_a
+    assert_equal (0..5).to_a, tensor.cast(Tensor::Type::Int32).to_a
+  end
+
   test '#to_sql' do
     assert_equal (d1 = '{0,1}'), Tensor::UInt8.new(2).seq.to_sql
     assert_equal (d2 = "{#{d1},{2,3}}"), Tensor::UInt8.new(2, 2).seq.to_sql
