@@ -1,4 +1,3 @@
-#include "mix_geo/matio/type.hpp"
 #include "mix_geo/matio/base.hpp"
 #include "mix_geo/matio/var.hpp"
 #include "mix_geo/matio/file.hpp"

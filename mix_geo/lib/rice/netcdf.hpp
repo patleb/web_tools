@@ -1,4 +1,3 @@
-#include "mix_geo/netcdf/type.hpp"
 #include "mix_geo/netcdf/base.hpp"
 #include "mix_geo/netcdf/dim.hpp"
 #include "mix_geo/netcdf/att.hpp"

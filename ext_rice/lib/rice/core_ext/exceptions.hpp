@@ -31,8 +31,8 @@ class RuntimeError : public std::exception {
 class ERROR : public RuntimeError {
   public:
 
-  ERROR(CONTEXT(trace, source)):
-    RuntimeError("<%= @ERROR %>", trace, source) {
+  ERROR(std::string_view what_msg = "<%= @ERROR %>", CONTEXT(trace, source)):
+    RuntimeError(what_msg, trace, source) {
   }
 };
 <%- end -%>

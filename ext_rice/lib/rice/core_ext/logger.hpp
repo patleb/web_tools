@@ -12,13 +12,30 @@ class Logger {
   <%= no_copy :Logger %>
   ~Logger() {} // no file.close, since global/static variables' destructors aren't called in DLL unload/exit
 
+  static auto timestamp() {
+    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    std::time_t time = std::chrono::system_clock::to_time_t(now);
+    std::tm utc{}; gmtime_r(&time, &utc);
+    std::chrono::duration<double> seconds = (now - std::chrono::system_clock::from_time_t(time)) + std::chrono::seconds(utc.tm_sec);
+    std::string buffer("year-mo-dy hr:mn:sc.xxxxxx UTC");
+    sprintf(&buffer.front(), "%04d-%02d-%02d %02d:%02d:%09.6f UTC",
+      utc.tm_year + 1900,
+      (uint8_t)(utc.tm_mon + 1),
+      (uint8_t)utc.tm_mday,
+      (uint8_t)utc.tm_hour,
+      (uint8_t)utc.tm_min,
+      seconds.count()
+    );
+    return buffer;
+  }
+
   // Parameter Pack: https://www.scs.stanford.edu/~dm/blog/param-pack.html
   template < class... Args >
   void log(const Args & ...messages, const LEVEL level) {
     <%- if Rails.env.local? -%>
     if (new_run) { new_run = false; file << std::endl; }
     <%- end -%>
-    file << "[" << C::timestamp() << "][" << LEVELS[level] << "]: ";
+    file << "[" << timestamp() << "][" << LEVELS[level] << "]: ";
     (file << ... << std::format("{}", messages));
     file << std::endl;
   }

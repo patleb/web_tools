@@ -1,3 +1,0 @@
-module NetCDF
-  # overrides
-end
