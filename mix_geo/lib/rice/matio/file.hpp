@@ -9,8 +9,10 @@ namespace MatIO {
     using Base::Base;
 
     explicit File(const string & path, Ostring mode = nil, Oint version = nil):
-      Base() {
-      auto _mode_ = mode.value_or("r");
+      Base(),
+      path(path),
+      mode(mode.value_or("r")) {
+      auto _mode_ = this->mode;
       auto _version_ = version.value_or(static_cast< int >(MAT_FT_DEFAULT));
       mat_acc access;
       bool create = false;
@@ -33,8 +35,6 @@ namespace MatIO {
         this->file = Mat_Open(path.c_str(), access);
       }
       if (file == NULL) throw RuntimeError("unable to open file");
-      this->path = path;
-      this->mode = _mode_;
       load_metadata();
     }
     <%= no_copy :File, indent: 4 %>
@@ -50,7 +50,7 @@ namespace MatIO {
 
     void close() {
       if (is_closed()) return;
-      for (const auto & var : matvars) Mat_VarFree(var);
+      for (auto var : matvars) Mat_VarFree(var);
       Mat_Close(file);
       this->file = NULL;
     }

@@ -1,5 +1,9 @@
 module MatIO
   File.class_eval do
+    # NOTE: matio 1.5.26 has memory leaks with file version 7.3 using HDF5, for matio version < 1.5.30, isolate in:
+    # Parallel.each([1], in_processes: 1) do
+    #   ...
+    # end
     def self.open(...)
       file = new(...)
       yield file
@@ -35,7 +39,7 @@ module MatIO
     def [](*path_and_ranges)
       path, vars = [], self.vars
       i = path_and_ranges.index do |part|
-        break true if vars.is_a? MatIO::Var
+        next true if vars.is_a? MatIO::Var
         path << part
         vars = vars[part]
         false
