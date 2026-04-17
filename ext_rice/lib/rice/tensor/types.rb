@@ -16,8 +16,12 @@ module Tensor
           super(values, **options)
         end
 
-        def [](*indexes)
-          indexes.size == 1 ? super(indexes.first) : super(indexes)
+        def [](*indexes, **)
+          case indexes.size
+          when 1    then return super(indexes.first)
+          when rank then return super(indexes) if indexes.all?(&:is_a?.with(Numeric))
+          end
+          slice(*indexes, **)
         end
 
         def []=(*indexes, value)
