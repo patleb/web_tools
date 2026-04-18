@@ -5,7 +5,11 @@ module ActionController::WithLog
     unless exception.is_a? RescueError
       exception = Rescues::RailsError.new(exception, data: Rack::Utils.log_context(request))
     end
-    Notice.deliver! exception, subject: subject
+    if Rails.env.production?
+      Log.rescue(exception)
+    else
+      Notice.deliver! exception, subject: subject
+    end
   rescue Exception => e
     Log.rescue(e)
   end
