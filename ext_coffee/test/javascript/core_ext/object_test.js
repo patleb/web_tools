@@ -61,16 +61,6 @@ describe('Object', () => {
     assert.false({ a: 1 }.has_key('b'))
   })
 
-  test('#any_keys', () => {
-    assert.false({ a: 1, b: 2, c: 3 }.any_keys('d', 'e'))
-    assert.true({ a: 1, b: 2, c: 3 }.any_keys('a', 'c', 'd'))
-  })
-
-  test('#all_keys', () => {
-    assert.true({ a: 1, b: 2, c: 3 }.all_keys('a', 'c'))
-    assert.false({ a: 1, b: 2, c: 3 }.all_keys('a', 'c', 'd'))
-  })
-
   test('#delete', () => {
     let hash = { a: 1, b: 2 }
     assert.equal(2, hash.delete('b'))
@@ -81,18 +71,6 @@ describe('Object', () => {
     assert.equal(1, { a: 1 }.dig('a'))
     assert.equal(2, { a: { b: 2 } }.dig('a.b'))
     assert.equal(3, { a: { b: [2, 3] } }.dig('a.b.1'))
-  })
-
-  test('#any', () => {
-    assert.false({}.any())
-    assert.true({ a: 1 }.any())
-    assert.true({ a: 1, b: 2 }.any((k, v) => v === 1))
-    assert.false({ a: 1, b: 2 }.any((k, v) => v === 3))
-  })
-
-  test('#all', () => {
-    assert.true({ a: 1, b: 1 }.all((k, v) => v === 1))
-    assert.false({ a: 1, b: 2 }.all((k, v) => v === 1))
   })
 
   test('#each_while', () => {

@@ -176,7 +176,7 @@ String.define_methods
   gsub_keys: (values, { anchor = ANCHOR } = {}) ->
     string = @valueOf()
     is_function = values.is_a Function
-    if is_function or values.any()
+    if is_function or values.present()
       [part, parts...] = string.split(anchor)
       parts = parts.map (segment) ->
         if (name = segment.match /^\w+/)

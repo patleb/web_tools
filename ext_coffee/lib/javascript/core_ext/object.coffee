@@ -144,16 +144,6 @@ Object.define_methods
   has_key: (key) ->
     key of this
 
-  any_keys: (keys...) ->
-    for key in keys
-      return true if key of this
-    false
-
-  all_keys: (keys...) ->
-    for key in keys
-      return false if not (key of this)
-    true
-
   delete: (key) ->
     item = this[key]
     delete this[key]
@@ -170,19 +160,6 @@ Object.define_methods
         digged = undefined
         false
     digged
-
-  any: (f_key_item_self) ->
-    if f_key_item_self?
-      for key, item of this
-        return true if f_key_item_self(key, item, this)
-      false
-    else
-      @keys_length > 0
-
-  all: (f_key_item_self) ->
-    for key, item of this
-      return false unless f_key_item_self(key, item, this)
-    true
 
   for_each: (f_key_item_self) ->
     for key, item of this
