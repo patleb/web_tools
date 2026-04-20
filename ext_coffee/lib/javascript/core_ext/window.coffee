@@ -112,7 +112,7 @@ for type in [Array, Boolean, Date, Element, Function, Number, Object, RegExp, St
     type.define_method = (name, callback, warn = true) ->
       warn_defined_key(type, name) if warn
       type::[name] = callback
-      Object.defineProperty(type::, name, enumerable: false)
+      Object.defineProperty(type::, name, enumerable: false, configurable: type is Object)
 
     type.define_readers = (methods) ->
       for name, callback of methods
