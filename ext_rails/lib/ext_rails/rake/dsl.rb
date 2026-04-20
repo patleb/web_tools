@@ -99,13 +99,13 @@ module Rake
 
     def run_rake(task_name, *args, **argv)
       with_argv(task_name, **argv) do
-        Rake::Task[task_name].invoke(*args)
+        Rake::Task[task_name].invoke(*args.map(&:to_s))
       end
     end
 
     def run_rake!(task_name, *args, **argv)
       with_argv(task_name, **argv) do
-        Rake::Task[task_name].invoke!(*args)
+        Rake::Task[task_name].invoke!(*args.map(&:to_s))
       end
     end
 
