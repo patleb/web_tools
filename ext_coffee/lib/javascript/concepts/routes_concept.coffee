@@ -29,8 +29,6 @@ class Js.RoutesConcept
       add_param(params, pair.split('='))
     params
 
-  # Private
-
   # Anchors not supported
   # Optional /(:variable) segment not supported
   location: (path, params = {}, blanks = true, sort = false) ->
@@ -44,6 +42,8 @@ class Js.RoutesConcept
     location.pathname = pathname.join('/').sub(/\/$/, '')
     location.search = params.to_query({ blanks, sort }) unless params.empty()
     location
+
+  # Private
 
   decode_url: (string) ->
     link = document.createElement('a')

@@ -61,7 +61,7 @@ class Js.DeviceConcept
       x: document.documentElement.scrollWidth or document.body.scrollWidth
       y: document.documentElement.scrollHeight or document.body.scrollHeight
     if @size.x isnt @size_was?.x or @full_size.x isnt @full_size_was?.x
-      screen_was = @screen or ((initial = true) and @screens.first()[0])
+      screen_was = @screen or ((initial = true) and @screens.front()[0])
       included_was = true
       @screens.for_each (screen, size) =>
         included = @breakpoints[screen] = (@size.x >= size)
@@ -71,7 +71,7 @@ class Js.DeviceConcept
         screen_was = screen
         included_was = included
       unless @screen
-        @screen = @screens.last()[0]
+        @screen = @screens.back()[0]
         Rails.fire(document, @BREAKPOINT, { initial, @screen })
       Rails.fire(document, @RESIZE_X)
     if @size.y isnt @size_was?.y or @full_size.y isnt @full_size_was?.y

@@ -57,11 +57,11 @@ String.override_methods
     return false unless other?.is_a String
     @valueOf() is other.valueOf()
 
-  first: (n = 1) ->
+  front: (n = 1) ->
     return this[0] if n is 1
     this[0...n]
 
-  last: (n = 1) ->
+  back: (n = 1) ->
     return this[@length - 1] if n is 1
     this[-n..-1]
 
@@ -138,6 +138,10 @@ String.define_methods
 
   to_html: ->
     Array.wrap(new DOMParser().parseFromString(this, 'text/html').body.children)
+
+  first: String::front
+
+  last: String::back
 
   chars: ->
     @split('')

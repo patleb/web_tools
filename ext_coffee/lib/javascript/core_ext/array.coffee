@@ -124,11 +124,11 @@ Array.override_methods
   compact_blank: ->
     @select (item) -> item?.present()
 
-  first: (n = 1) ->
+  front: (n = 1) ->
     return this[0] if n is 1
     this[0...n]
 
-  last: (n = 1) ->
+  back: (n = 1) ->
     return this[@length - 1] if n is 1
     this[-n..-1]
 
@@ -154,6 +154,13 @@ Array.define_methods
 
   to_set: ->
     @map((v) -> [v, true]).to_h()
+
+  first: Array::front
+
+  last: Array::back
+
+  drop: (n) ->
+    this[n..-1]
 
   has_index: (index) ->
     0 <= index < @length
@@ -218,6 +225,9 @@ Array.define_methods
 
   add: (others...) ->
     @concat others...
+
+  minmax: ->
+    [@min(), @max()]
 
   max: ->
     Math.max this...

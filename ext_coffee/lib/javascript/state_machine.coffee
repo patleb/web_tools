@@ -212,7 +212,7 @@ class window.StateMachine
       transitions = event_config.except(EVENT_HOOKS...)
       transitions.for_each (current, next) =>
         if next.is_a Object
-          [next, transition_hooks] = next.first()
+          [next, transition_hooks] = next.front()
           if transition_hooks.next
             hooks = @merge_hooks(transition_hooks, event_hooks)
             if hooks.next_states = @add_wildcard_or_states(next_wildcards, event_name, next, transition_hooks.next)?.to_set()

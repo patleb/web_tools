@@ -132,12 +132,12 @@ describe('Object', () => {
     assert.equal({ a: 0, b: false, c: '' }, { a: 0, b: false, c: '', d: null, e: undefined }.compact())
   })
 
-  test('#first, #last', () => {
+  test('#front, #back', () => {
     const object = { a: 1, b: 2, c: 3 }
-    assert.equal(['a', 1], object.first())
-    assert.equal({ a: 1, b: 2 }, object.first(2))
-    assert.equal(['c', 3], object.last())
-    assert.equal({ b: 2, c: 3 }, object.last(2))
+    assert.equal(['a', 1], object.front())
+    assert.equal({ a: 1, b: 2 }, object.front(2))
+    assert.equal(['c', 3], object.back())
+    assert.equal({ b: 2, c: 3 }, object.back(2))
   })
 
   test('#deep_merge', () => {

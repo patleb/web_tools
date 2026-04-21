@@ -258,12 +258,12 @@ Object.define_methods
   compact_blank: ->
     @select_each (key, item) -> item?.present()
 
-  first: (n = 1) ->
+  front: (n = 1) ->
     key = @keys().first(n)
     return [key, this[key]] if n is 1
     @slice(key...)
 
-  last: (n = 1) ->
+  back: (n = 1) ->
     key = @keys().last(n)
     return [key, this[key]] if n is 1
     @slice(key...)
