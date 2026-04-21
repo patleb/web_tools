@@ -22,7 +22,7 @@
   }
 }
 
-.link {
+.link:not(.link-underlined) {
   @apply link-hover;
 }
 
