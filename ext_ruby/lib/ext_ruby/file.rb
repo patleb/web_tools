@@ -1,6 +1,7 @@
 class File
   def self.each_line(path, first: nil, scrub: nil, chomp: nil, present: nil)
     i = 0
+    scrub = '�' if scrub == true
     if (path = path.to_s).end_with? '.gz'
       IO.popen("unpigz -c #{path}", 'rb') do |io|
         until io.eof?

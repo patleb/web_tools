@@ -155,7 +155,7 @@ module ActiveTask
     end
 
     def read_file(path, **, &)
-      File.each_line(path, scrub: '�', chomp: true, present: true, **, &)
+      File.each_line(path, scrub: true, chomp: true, present: true, **, &)
     end
 
     # NOTE needed only if using a different Gemfile

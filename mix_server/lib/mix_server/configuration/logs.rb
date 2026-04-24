@@ -9,7 +9,7 @@ module MixServer
       attr_writer   :available_paths
       attr_writer   :available_rollups
       attr_writer   :filter_parameters
-      attr_writer   :filter_endings
+      attr_writer   :filter_urls
       attr_writer   :filter_ips
       attr_writer   :ided_paths
       attr_writer   :ided_errors
@@ -79,8 +79,8 @@ module MixServer
         @filter_parameters ||= Rails.application.config.filter_parameters.dup
       end
 
-      def filter_endings
-        @filter_endings ||= ['/wp-admin', '/allowurl.txt', '/passwd', '.php', '.cgi', '.ini', '.aspx', '.jsp', '.do']
+      def filter_urls
+        @filter_urls ||= []
       end
 
       def filter_ips
@@ -154,8 +154,7 @@ module MixServer
           %r{^/etc/([-.\w]+/)*sed\w{1,8}$},
           %r{^/etc/ssh/\.\w+$},
           %r{^/etc/systemd/system/\.[-.\w]+$},
-          %r{^/etc/systemd/system/(multi-user|sockets)\.target\.wants/snap[-.][-.\w~]+$},
-          %r{^/etc/systemd/system/snapd?[-.][-.\w~]+$},
+          %r{^/etc/systemd/system/snapd\.mounts\.target\.wants/snap-snapd-\d+\.mount$},
           %r{^/etc/logrotate\.d/\.\w+$},
           %r{^/etc/nginx/\.\w+$},
           %r{^/etc/nginx/sites-available/\.\w+$},

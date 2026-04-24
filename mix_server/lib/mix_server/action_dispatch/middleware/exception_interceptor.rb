@@ -8,7 +8,11 @@ module ActionDispatch
       when *ActionController::BAD_REQUEST_ERRORS
         # will be reported indirectly through LogLines::App
       else
-        Notice.deliver! exception
+        if MixServer.config.notice_deliver?
+          Notice.deliver! exception
+        else
+          Log.rescue(exception)
+        end
       end
     rescue Exception => e
       Log.rescue(e)

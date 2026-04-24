@@ -186,9 +186,8 @@ module LogLines
     # 142 MB unziped logs (226K rows) -->  167 MB (- 36 MB idx) in around 3 minutes
     #   without parameters            -->  122 MB (- 31 MB idx)
     #   without parameters + browser  -->  100 MB (- 28 MB idx)
-    def self.parse(log, line, browser: true, parameters: true, **)
+    def self.parse(log, line, browser: true, filter_parameters: true, **)
       return save_and_filter_unknown(line) unless (values = line.match(ACCESS))
-
       ip, user, created_at, request, status, bytes_out, bytes_in, referer, user_agent, upstream_time, time, https, gzip, pid = values.captures
       created_at = Time.strptime(created_at, '%d/%b/%Y:%H:%M:%S %z').utc
       method, path, protocol = request.split
@@ -197,6 +196,7 @@ module LogLines
       http = protocol&.split('/')&.last&.to_f
       uri, params = (Rack::Utils.parse_url(path) rescue [INVALID_URI, nil])
       params = nil if params&.any?{ |_, v| v = v.to_s; NULL_CHARS.any?{ |c| v.include? c } }
+      params = params&.except(*MixServer::Logs.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if filter_parameters
       path = uri.path&.downcase || ''
       path = path.delete_suffix('/') unless path == '/'
       referer_uri, _referer_params = (Rack::Utils.parse_url(referer) rescue [INVALID_URI, nil]) unless referer.blank? || referer == '-'
@@ -209,25 +209,21 @@ module LogLines
         user: user == '-' ? nil : user,
         http: http == 0.0 ? nil : http,
         ssl: https == 'https',
-        method: method,
-        path: path,
-        params: (params&.except(*MixServer::Logs.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if parameters),
+        method: method, path: path, params: params,
         status: (status = status.to_i),
-        bytes_in: bytes_in&.to_i,
-        bytes_out: bytes_out.to_i,
-        time: time,
+        bytes_in: bytes_in&.to_i, bytes_out: bytes_out.to_i, time: time,
         referer: referer,
         browser: (_browsers(user_agent) if browser && user_agent.present? && user_agent != '-'),
         gzip: gzip == '-' ? nil : gzip.to_f,
       }
-      if (global_log = log.path&.end_with?('/access.log')) \
-      || status == 404 \
-      || MixServer::Logs.config.filter_subnets.any?(&:include?.with(ip)) \
-      || path.end_with?(*MixServer::Logs.config.filter_endings)
-        method, path, params = nil, '*', nil
-      end
-      if global_log
+      level = if (global = log.path&.end_with?('/access.log'))
         json_data.except! :method, :params, :referer, :browser
+        :info
+      else
+        ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
+      end
+      if global || status == 404 || _filter(log, ip, path, global)
+        method, path, params = nil, '*', nil
       end
       regex, replacement = MixServer::Logs.config.ided_paths.find{ |regex, _replacement| path.match? regex }
       path_tiny = regex ? squish(path.gsub(regex, replacement)) : squish(path)
@@ -236,7 +232,6 @@ module LogLines
         params_tiny = squish(params)
       end
       text_tiny = [status, method, path_tiny].join!(' ')
-      level = global_log ? :info : ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
       message = {
         text_hash: [text_tiny, params_tiny].join!(' '),
         text_tiny: text_tiny,
@@ -251,6 +246,11 @@ module LogLines
 
     def self.finalize(log)
       @_browsers = nil
+    end
+
+    def self._filter(log, ip, path)
+      MixServer::Logs.config.filter_subnets.any?(&:include?.with(ip)) \
+        || MixServer::Logs.config.filter_urls.any?(&:match?.with(path))
     end
 
     def self._browsers(user_agent)

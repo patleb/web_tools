@@ -2,11 +2,7 @@ module ActionController
   BAD_REQUEST_ERRORS = [
     EOFError,
     URI::InvalidURIError,
-    Rack::QueryParser::InvalidParameterError,
     ActionController::BadRequest,
-    ActionController::UnknownFormat,
-    ActionDispatch::Http::MimeNegotiation::InvalidType,
-    ActionDispatch::Http::Parameters::ParseError,
   ]
 
   module WithErrors

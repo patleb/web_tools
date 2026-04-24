@@ -66,6 +66,7 @@ module ExtRails
       require 'ext_rails/rails/initializable/collection'
 
       Setting.load
+      app.config.action_dispatch.show_exceptions = :rescuable
       app.config.action_mailer.delivery_method = :smtp
       app.config.action_mailer.smtp_settings = Setting.smtp
       app.config.action_mailer.default_url_options = Setting[:default_url_options]

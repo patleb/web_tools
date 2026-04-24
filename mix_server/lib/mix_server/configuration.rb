@@ -40,6 +40,7 @@ module MixServer
 
   has_config do
     attr_writer :render_500
+    attr_writer :notice_deliver
     attr_writer :notice_interval
     attr_writer :skip_notice
     attr_writer :throttler_max_duration
@@ -52,6 +53,11 @@ module MixServer
     def render_500
       return @render_500 if defined? @render_500
       @render_500 = !Rails.env.development?
+    end
+
+    def notice_deliver?
+      return @notice_deliver if defined? @notice_deliver
+      @notice_deliver = !Rails.env.production?
     end
 
     def notice_interval
