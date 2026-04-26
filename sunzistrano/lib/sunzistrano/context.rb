@@ -21,11 +21,10 @@ module Sunzistrano
     end
 
     def attributes
-      to_h.reject{ |_, v| (v != false && v.blank?) || v.is_a?(Hash) || v.is_a?(Array) || v.to_s.match?(/(\s|<%.+%>)/) }.merge(
+      excluded = Array.wrap(self[:attributes_excluded])
+      to_h.reject{ |k, v| excluded.include?(k) || v.is_a?(Hash) || v.is_a?(Array) || (v != false && v.blank?) }.merge(
         repo_url: repo_url,
         revision: revision,
-        owner_public_key: owner_public_key,
-        owner_private_key: owner_private_key&.escape_newlines,
         stage: stage,
         role: role,
         env: env,
@@ -102,14 +101,6 @@ module Sunzistrano
       @servers ||= cloud_cluster ? Cloud.cluster_ips : [server_host]
     end
 
-    def owner_public_key
-      self[:owner_public_key].presence && "'#{self[:owner_public_key]}'"
-    end
-
-    def owner_private_key
-      self[:owner_private_key].presence && "'#{self[:owner_private_key]}'"
-    end
-
     def stage
       "#{env}_#{app}"
     end
@@ -127,11 +118,11 @@ module Sunzistrano
     end
 
     def linked_dirs
-      self[:linked_dirs].presence && "'#{self[:linked_dirs].join(' ')}'" || "''"
+      self[:linked_dirs].presence && self[:linked_dirs].join(' ') || ''
     end
 
     def linked_files
-      self[:linked_files].presence && "'#{self[:linked_files].join(' ')}'" || "''"
+      self[:linked_files].presence && self[:linked_files].join(' ') || ''
     end
 
     def role_helpers

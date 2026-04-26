@@ -5,7 +5,7 @@ module MixAdmin
     end
 
     def self.draw(mapper)
-      mapper.scope path: MixAdmin.config.root_path, controller: 'admin', format: false do
+      mapper.scope path: MixAdmin.config.root_path, controller: 'admin' do
         Admin::Action.all(:root?).each do |action|
           name = action.key
           route_fragment = action.route_fragment

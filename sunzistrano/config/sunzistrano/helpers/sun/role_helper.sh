@@ -68,9 +68,15 @@ sun.setup_attributes() {
   for before in "${sun_setup_attributes_before[@]}"; do
     $before
   done
-  <% sun.attributes.each do |attribute, value| -%>
-    export <%= attribute %>=<%= value.respond_to?(:call) ? value.call : value %>
-  <% end -%>
+  <%- sun.attributes.each do |attribute, value| -%>
+    <%- if value.respond_to? :call -%>
+      export <%= attribute %>=<%= value.call %>
+    <%- elsif value.is_a? String -%>
+      export <%= attribute %>='<%= value.escape_newlines %>'
+    <%- else -%>
+      export <%= attribute %>=<%= value %>
+    <%- end -%>
+  <%- end -%>
   for after in "${sun_setup_attributes_after[@]}"; do
     $after
   done

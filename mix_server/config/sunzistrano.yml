@@ -90,6 +90,9 @@ deploy:
     - config/secrets.yml
     - public/503.html
   git_shallow_clone: true
+  nginx_filter_extensions: '(php|cgi|ini|aspx|jsp|do)'
+  nginx_filter_beginnings: '(wp-admin|allowurl\.txt)'
+  nginx_filter_urls: '(\Wetc\W+passwd)'
   nginx_redirects: {}
   public_dirs:
     - css

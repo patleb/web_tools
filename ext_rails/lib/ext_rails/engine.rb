@@ -61,6 +61,7 @@ module ExtRails
 
     config.before_configuration do |app|
       require 'ext_rails/action_dispatch/routing/mapper/resources'
+      require 'ext_rails/action_dispatch/routing/route_set/without_format'
       require 'ext_rails/rails/application'
       require 'ext_rails/rails/engine/with_task'
       require 'ext_rails/rails/initializable/collection'
@@ -114,7 +115,7 @@ module ExtRails
         get '/favicon.ico', to: -> (_) { [404, {}, ['']] } unless ExtRails.config.favicon_ico
         get '/.well-known/appspecific/com.chrome.devtools.json', to: -> (_) { [404, {}, ['']] }
 
-        match '(/)*not_found', via: :all, to: 'lib#render_404', format: false
+        match '(/)*not_found', via: :all, to: 'lib#render_404'
       end
     end
 
