@@ -34,6 +34,8 @@ class Js.ComponentConcept
     @elements = nodes.each_with_object [], (node, memo, index) =>
       element_type = node.getAttribute('data-element')
       element_class = "Js.Component.#{element_type.camelize('_')}Element".constantize()
+      unless element_class
+        throw "#{element_type} has no element class"
       if node.find(@ELEMENTS) or node.find('[data-element]')
         throw "#{element_class} enclosing another Js.Component.Element type"
       uid = Math.uid()

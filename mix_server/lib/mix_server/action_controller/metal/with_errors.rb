@@ -1,9 +1,5 @@
 module ActionController
-  BAD_REQUEST_ERRORS = [
-    EOFError,
-    URI::InvalidURIError,
-    ActionController::BadRequest,
-  ]
+  BAD_REQUEST_ERRORS = [EOFError, URI::InvalidURIError, ActionController::BadRequest]
 
   module WithErrors
     extend ActiveSupport::Concern

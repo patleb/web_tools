@@ -28,7 +28,7 @@ class Log < LibMainRecord
   end
 
   def self.report
-    LogMessage.report.merge(unknowns: LogUnknown.report)
+    LogMessage.report.merge(unknown_log_lines: LogUnknown.report)
   end
 
   def self.reported!

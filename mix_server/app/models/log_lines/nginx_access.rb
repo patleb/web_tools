@@ -217,13 +217,13 @@ module LogLines
         browser: (_browsers(user_agent) if browser && user_agent.present? && user_agent != '-'),
         gzip: gzip == '-' ? nil : gzip.to_f,
       }
-      level = if (global = log.path&.end_with?('/access.log'))
+      level = if (global = log.path&.end_with?('/access.log')) || status == 444 # requests filtered by nginx
         json_data.except! :method, :params, :referer, :browser
         :info
       else
         ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
       end
-      if global || status == 404 || _filter(log, ip, path, global)
+      if global || status == 404 || _filter(log, ip, path)
         method, path, params = nil, '*', nil
       end
       regex, replacement = MixServer::Logs.config.ided_paths.find{ |regex, _replacement| path.match? regex }

@@ -1,6 +1,8 @@
 class LogLine < LibMainRecord
   class IncompatibleLogLine < ::StandardError; end
 
+  INVALID_LINE_ERRORS = [JSON::GeneratorError, ActiveRecord::StatementInvalid, LogLine::IncompatibleLogLine]
+
   belongs_to :log
   belongs_to :log_message
 
@@ -158,10 +160,10 @@ class LogLine < LibMainRecord
     log_messages.tally.each do |id, count|
       LogMessage.update_counters(id, log_lines_count: count, touch: true)
     end
-  rescue JSON::GeneratorError, ActiveRecord::StatementInvalid, LogLine::IncompatibleLogLine
+  rescue *INVALID_LINE_ERRORS
     lines.each do |line|
       push(log, line)
-    rescue JSON::GeneratorError, ActiveRecord::StatementInvalid, LogLine::IncompatibleLogLine => e
+    rescue *INVALID_LINE_ERRORS => e
       save_and_filter_unknown(line.merge(error: e.class.name).pretty_hash!)
     end
   end

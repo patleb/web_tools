@@ -6,6 +6,7 @@ class Js.TagConcept
   HTML_TAGS: [
     'a'
     'b', 'button'
+    'code'
     'datalist', 'dd', 'div', 'dl', 'dt'
     'fieldset', 'form'
     'i', 'input'
