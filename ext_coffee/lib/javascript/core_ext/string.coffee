@@ -76,7 +76,7 @@ String.override_methods
   safe_text: (force = false) ->
     return this if not force and @html_safe()
     return @html_safe(true) unless this and /[&<>"'`]/.test(this)
-    @replace(/[&<>"'`]/g, (char) -> HTML_ESCAPES[char]).html_safe(true)
+    @sub(/[&<>"'`]/g, (char) -> HTML_ESCAPES[char]).html_safe(true)
 
 String.define_readers
   begin: -> 0
@@ -90,7 +90,7 @@ String.define_methods
 
   safe_regex: ->
     return this unless this and /[\\^$.*+?()[\]{}|]/.test(this)
-    @replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+    @sub(/[\\^$.*+?()[\]{}|]/g, '\\$&')
 
   html_blank: ->
     @gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
@@ -105,7 +105,7 @@ String.define_methods
     throw 'invalid value for Boolean'
 
   to_i: (base = null) ->
-    value = if @toLowerCase().starts_with('0x') then this else @replace(/^0+/, '')
+    value = if @toLowerCase().starts_with('0x') then this else @sub(/^0+/, '')
     return 0 if @length > 0 and value is ''
     parseInt(value, base)
 
@@ -130,7 +130,7 @@ String.define_methods
     return Date.current() if @valueOf() is 'now'
     if not ISO8601_SUPPORT and (matches = @match(ISO8601_PATTERN))
       [_, year, month, day, hour, minute, second, zone] = matches
-      offset = zone.replace(':', '') if zone isnt 'Z'
+      offset = zone.sub(':', '') if zone isnt 'Z'
       date = "#{year}/#{month}/#{day} #{hour}:#{minute}:#{second} GMT#{[offset]}"
     else
       date = this
@@ -175,7 +175,7 @@ String.define_methods
         { source, flags, global } = pattern
         flags += 'g' unless global
         new RegExp(source, flags)
-    @replace(pattern, string_or_f_match)
+    @sub(pattern, string_or_f_match)
 
   gsub_keys: (values, { anchor = ANCHOR } = {}) ->
     string = @valueOf()
@@ -183,10 +183,10 @@ String.define_methods
     if is_function or values.present()
       [part, parts...] = string.split(anchor)
       parts = parts.map (segment) ->
-        if (name = segment.match /^\w+/)
+        if (name = segment.match /^[a-z][a-z0-9_]+/)
           name = name[0]
           value = if is_function then values(name) else values[name]
-          segment.sub /^\w+/, value
+          segment.sub ///^#{name}///, value
         else
           segment
       string = [part].add(parts).join('')
@@ -195,7 +195,7 @@ String.define_methods
   gsub_template: (values) ->
     string = @valueOf()
     for name, value of values
-      string = string.replace(///\{\{\s*#{name.safe_regex()}\s*}}///g, value.toString())
+      string = string.sub(///\{\{\s*#{name.safe_regex()}\s*}}///g, value.toString())
     string
 
   strip: String::trim
@@ -233,7 +233,7 @@ String.define_methods
       .downcase()
 
   full_underscore: (namespace = '.') ->
-    @underscore(namespace).gsub(/[\.\/]/, '_').replace(/^_/, '').replace(/_$/, '')
+    @underscore(namespace).gsub(/[\.\/]/, '_').sub(/^_/, '').sub(/_$/, '')
 
   parameterize: ->
     @gsub(/[^a-z0-9\-_]+/i, '-')
@@ -278,7 +278,7 @@ String.define_methods
       object = window
       scope = 'window'
       scope_was = null
-      @replace(/^(\.|::)/, '').split('.').each (class_scope) ->
+      @sub(/^(\.|::)/, '').split('.').each (class_scope) ->
         return unless class_scope.match String.CONSTANTIZABLE
         class_scope.split('::').each (prototype_scope, i) ->
           scope_was = scope
