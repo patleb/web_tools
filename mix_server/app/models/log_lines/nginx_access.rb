@@ -195,14 +195,8 @@ module LogLines
       method = nil unless path
       method, path, protocol = nil, method, path unless protocol
       http = protocol&.split('/')&.last&.to_f
-      uri, params = (Rack::Utils.parse_url(path) rescue [INVALID_URI, nil])
-      params = nil if params&.any?{ |_, v| v = v.to_s; NULL_CHARS.any?{ |c| v.include? c } }
-      params = params&.except(*MixServer::Logs.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if filter_parameters
-      path = uri.path&.downcase || ''
-      path = path.delete_suffix('/') unless path == '/'
-      referer_uri, _referer_params = (Rack::Utils.parse_url(referer) rescue [INVALID_URI, nil]) unless referer.blank? || referer == '-'
-      referer_host = referer_uri&.hostname
-      referer = [(referer_host if referer_host != Setting[:server_host]), referer_uri&.path].compact.join
+      path, params = _parse_path(path, filter_parameters)
+      referer = _parse_referer(referer)
       time = time.in?([nil, '-']) ? nil : time.to_f
       time ||= upstream_time == '-' ? nil : upstream_time.to_f
       json_data = {
@@ -247,6 +241,28 @@ module LogLines
 
     def self.finalize(log)
       @_browsers = nil
+    end
+
+    def self._parse_path(path, filter)
+      uri, params = (Rack::Utils.parse_url(path) rescue [INVALID_URI, nil])
+      path = _uri_path(uri)
+      params = nil if params&.any?{ |_, v| v = v.to_s; NULL_CHARS.any?{ |c| v.include? c } }
+      params = params&.except(*MixServer::Logs.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if filter
+      [path, params]
+    end
+
+    def self._parse_referer(path)
+      uri, _params = (Rack::Utils.parse_url(path) rescue [INVALID_URI, nil]) unless path.blank? || path == '-'
+      path = _uri_path(uri)
+      host = uri&.hostname
+      [(host if host != Setting[:server_host]), path].compact.join
+    end
+
+    def self._uri_path(uri)
+      path = uri&.path&.downcase.presence || '/'
+      path = '/' if NULL_CHARS.any?{ |c| path.include? c }
+      path = path.delete_suffix('/') unless path == '/'
+      path
     end
 
     def self._filter(log, ip, path)
