@@ -187,6 +187,14 @@ class LogLine < LibMainRecord
     text.squish_all
   end
 
+  def self.scrub_unprintable(text)
+    text.gsub /[^[:print:]]/, '�'
+  end
+
+  def self.unprintable?(text)
+    text.match? /([^[:print:]]|�)/
+  end
+
   def self.with_message(message)
     unless message && (message = message.values_at(:monitor, :text_hash, :text_tiny, :text, :level)).last(2).all?(&:present?)
       raise IncompatibleLogLine, message.try(:pretty_json) || message

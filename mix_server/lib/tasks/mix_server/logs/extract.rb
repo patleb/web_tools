@@ -44,7 +44,7 @@ module MixServer::Logs
         line_i += 1
       else
         previous = lines.last
-        lines << (line = log.parse(line, mtime: mtime, previous: previous)) # line.force_encoding('utf-8')
+        lines << (line = log.parse(line.force_encoding(Encoding::UTF_8), mtime: mtime, previous: previous))
         line[:created_at] = last_created_at = normalize_timestamp(line[:created_at], last_created_at)
         line_i += 1
         lines.delete_at(-2) if line.delete(:anchored)

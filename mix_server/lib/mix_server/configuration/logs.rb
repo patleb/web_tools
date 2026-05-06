@@ -106,7 +106,7 @@ module MixServer
           %r{(Cannot checkout session because a spawning error occurred\. The identifier of the error is )(\w+)} => '\1*',
           %r{(/tmp/passenger_native_support-)(\w+)} => '\1*',
           %r{(/bundler/gems/web_tools-)([a-f0-9]+)} => '\1*',
-          %r{( web_tools \([a-f0-9]+)} => '\1*',
+          %r{( web_tools \()([a-f0-9]+)} => '\1*',
           %r{(/releases/)([a-f0-9]+)} => '\1*',
         }
       end
@@ -154,7 +154,8 @@ module MixServer
           %r{^/etc/([-.\w]+/)*sed\w{1,8}$},
           %r{^/etc/ssh/\.\w+$},
           %r{^/etc/systemd/system/\.[-.\w]+$},
-          %r{^/etc/systemd/system/snapd\.mounts\.target\.wants/snap-snapd-\d+\.mount$},
+          %r{^/etc/systemd/system/snap-[-.\w]*\.(mount|service)(\.\w+~)?$},
+          %r{^/etc/systemd/system/(multi-user|snapd\.mounts)\.target\.wants/snapd?[-.][-.\w]*\.(mount|service)(\.\w+~)?$},
           %r{^/etc/logrotate\.d/\.\w+$},
           %r{^/etc/nginx/\.\w+$},
           %r{^/etc/nginx/sites-available/\.\w+$},
@@ -201,7 +202,7 @@ module MixServer
 
       def nonthreats
         @nonthreats ||= [
-          'ruby bin/rake runner[Monit.capture]',
+          %r{ruby bin/rake runner\[Monit\.capture\]},
         ]
       end
 
@@ -214,12 +215,21 @@ module MixServer
       end
 
       def rails_log_path
-        "log/#{Rails.env}.log"
+        if Rails.env.development? && (log_env = ENV['LOG_ENV']).present?
+          log_path(:rails, log_env)
+        else
+          "log/#{Rails.env}.log"
+        end
       end
 
       def nginx_log_path(*type, name)
+        stage = if Rails.env.development? && (log_env = ENV['LOG_ENV']).present?
+          "#{log_env}_#{Rails.app}"
+        else
+          Rails.stage
+        end
         type = type.first
-        name = "#{Rails.stage}#{"-#{type.to_s.full_underscore}" if type}.#{name}"
+        name = "#{stage}#{"-#{type.to_s.full_underscore}" if type}.#{name}"
         log_path(:nginx, name)
       end
 

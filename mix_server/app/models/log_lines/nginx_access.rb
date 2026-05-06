@@ -34,7 +34,6 @@ module LogLines
       (500...600) => :fatal,
     }
     INVALID_URI = OpenStruct.new(path: nil)
-    NULL_CHARS = ["\\u0000", "\0"]
     PERIODS = %i(year month week day hour)
 
     json_attribute(
@@ -211,13 +210,13 @@ module LogLines
         browser: (_browsers(user_agent) if browser && user_agent.present? && user_agent != '-'),
         gzip: gzip == '-' ? nil : gzip.to_f,
       }
-      level = if (global = log.path&.end_with?('/access.log')) || status == 444 # requests filtered by nginx
+      level = if (global = log.path&.end_with?('/access.log'))
         json_data.except! :method, :params, :referer, :browser
         :info
       else
-        ACCESS_LEVELS.select{ |statuses| statuses === status }.values.first
+        ACCESS_LEVELS.find{ |statuses, _| statuses === status }.last
       end
-      if global || status == 404 || _filter(log, ip, path)
+      if global || level == :warn || _filter(log, ip, path)
         method, path, params = nil, '*', nil
       end
       regex, replacement = MixServer::Logs.config.ided_paths.find{ |regex, _replacement| path.match? regex }
@@ -245,9 +244,11 @@ module LogLines
 
     def self._parse_path(path, filter)
       uri, params = (Rack::Utils.parse_url(path) rescue [INVALID_URI, nil])
-      path = _uri_path(uri)
-      params = nil if params&.any?{ |_, v| v = v.to_s; NULL_CHARS.any?{ |c| v.include? c } }
-      params = params&.except(*MixServer::Logs.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if filter
+      if (path = _uri_path(uri)) == '/�' || params&.any?{ |_, v| v = v.to_s; unprintable? v }
+        path, params = '/�', nil
+      else
+        params = params&.except(*MixServer::Logs.config.filter_parameters)&.reject{ |k, v| k.nil? && v.nil? } if filter
+      end
       [path, params]
     end
 
@@ -260,7 +261,7 @@ module LogLines
 
     def self._uri_path(uri)
       path = uri&.path&.downcase.presence || '/'
-      path = '/' if NULL_CHARS.any?{ |c| path.include? c }
+      path = '/�' if unprintable? path
       path = path.delete_suffix('/') unless path == '/'
       path
     end

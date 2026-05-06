@@ -57,18 +57,19 @@ module LogLines
       else
         return { filtered: true }
       end
-      regex, replacement = MixServer::Logs.config.ided_errors.find{ |regex, _replacement| text.match? regex }
-      if regex
-        text_tiny = squish(text.gsub(regex, replacement))
-      else
-        text_tiny = squish(text)
+      text = "#{location || p_message || 'invalid'}: �" if unprintable? text
+      text_tiny = text.dup
+      MixServer::Logs.config.ided_errors.each do |regex, replacement|
+        text_tiny.gsub! regex, replacement
       end
+      text_tiny = squish(text_tiny)
       known_level, _ = MixServer::Logs.config.known_errors.find do |_level, errors|
         errors.find{ |e| e.is_a?(Regexp) ? text.match?(e) : text.include?(e) }
       end
       level = known_level || level
       level = ERROR_LEVELS[level]
       return { filtered: true } unless SYSTEM_ERROR.include? level
+      return { filtered: true } if text_tiny.start_with?('output: ') && text_tiny.size < 36 # filter invalid/short lines
 
       message = { text_tiny: text_tiny, text: text, level: level }
 
