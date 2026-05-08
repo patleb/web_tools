@@ -88,6 +88,18 @@ HTMLElement.define_methods
       element.setAttribute('data-once', true)
     elements
 
+  append_once: (id, node_or_callback) ->
+    return if @find({ id })
+    node = if node_or_callback.is_a Function
+      node_or_callback(id)
+    else
+      node_or_callback
+    if node.id
+      throw 'invalid node id' if node.id isnt id
+    else
+      node.setAttribute('id', id)
+    @appendChild(node)
+
   find: (selector) ->
     if (id = selector.id)
       document.getElementById(id)
