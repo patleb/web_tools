@@ -6,7 +6,8 @@ module MixServer::Logs
 
     def self.args
       super.merge!(
-        rotate: ['--[no-]rotate', 'Rotate current logs before extracting'],
+        rotate:   ['--[no-]rotate',              'Rotate current logs before extracting'],
+        includes: ['--includes=INCLUDES', Array, 'Included paths only']
       )
     end
 
@@ -44,7 +45,7 @@ module MixServer::Logs
         line_i += 1
       else
         previous = lines.last
-        lines << (line = log.parse(line.force_encoding(Encoding::UTF_8), mtime: mtime, previous: previous))
+        lines << (line = log.parse(line, mtime: mtime, previous: previous))
         line[:created_at] = last_created_at = normalize_timestamp(line[:created_at], last_created_at)
         line_i += 1
         lines.delete_at(-2) if line.delete(:anchored)
@@ -70,13 +71,18 @@ module MixServer::Logs
 
     def logs
       @logs ||= begin
-        MixServer::Logs.config.available_paths.sort_by{ |path| path.split('/').last(2) }.select_map do |path|
+        logs = MixServer::Logs.config.available_paths.sort_by{ |path| path.split('/').last(2) }.select_map do |path|
           if MixServer::Logs.config.force_read
             raise AccessDenied unless system("sudo chmod +r #{path}.*")
           end
           if %W(#{path} #{path}.0 #{path}.1 #{path}.1.gz).any?{ |file| File.exist? file }
             Log.find_or_create_by! server: Server.current, path: path
           end
+        end
+        if (only = options.includes.presence)
+          logs.select{ |log| only.any?{ |name| log.path.include? name } }
+        else
+          logs
         end
       end
     end

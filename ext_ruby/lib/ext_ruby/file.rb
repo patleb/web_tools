@@ -6,7 +6,7 @@ class File
       IO.popen("unpigz -c #{path}", 'rb') do |io|
         until io.eof?
           line = io.gets || ''
-          line.scrub!(scrub) if scrub
+          line = line.force_encoding(Encoding::UTF_8).scrub(scrub) if scrub
           next if present && line.blank?
           line.chomp! if chomp
           yield(line, i) unless i == 0 && first == false
@@ -16,7 +16,7 @@ class File
       end
     else
       File.foreach(path, chomp: chomp) do |line|
-        line.scrub!(scrub) if scrub
+        line = line.force_encoding(Encoding::UTF_8).scrub(scrub) if scrub
         next if present && line.blank?
         yield(line, i) unless i == 0 && first == false
         break if first
