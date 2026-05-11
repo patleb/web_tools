@@ -168,8 +168,8 @@ Rails.merge_
       # Otherwise, evaluate protocol and host of the URL against the origin
       # protocol and host.
       not (
-        (not new_url.protocol or new_url.protocol is ':') and
-          (not new_url.host or "#{old_url.protocol}//#{old_url.host}" is "#{new_url.protocol}//#{new_url.host}")
+        (not new_url.protocol or new_url.protocol is ':') and not new_url.host or
+          "#{old_url.protocol}//#{old_url.host}" is "#{new_url.protocol}//#{new_url.host}"
       )
     catch e
       # If there is an error parsing the URL, assume it is crossDomain.
