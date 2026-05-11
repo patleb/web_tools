@@ -2,7 +2,7 @@ EXPANDO = '_ujs_data'
 
 csp_nonce = null
 
-Rails.merge
+Rails.merge_
   # get and set data on a given element using "expando properties"
   # See: https://developer.mozilla.org/en-US/docs/Glossary/Expando
   get: (element, key) ->
@@ -23,7 +23,7 @@ Rails.merge
 
   once: (selector, callback) ->
     elements = Rails.$("#{selector}:not([data-once])")
-    elements.each (element) ->
+    elements.each_ (element) ->
       callback(element)
       element.setAttribute('data-once', true)
     elements
@@ -81,9 +81,9 @@ Rails.merge
         params.push(name: input.name, value: input.value)
     params.push(additional_param) if additional_param
     params.select_map (param) ->
-      if param.name?.present() and (blanks or param.value?.present())
+      if param.name?.present_() and (blanks or param.value?.present_())
         "#{encodeURIComponent(param.name)}=#{encodeURIComponent(param.value)}"
-      else if typeof param is 'string' and param.present()
+      else if typeof param is 'string' and param.present_()
         param
     .join('&')
 
@@ -92,7 +92,7 @@ Rails.merge
   # the html form attribute set
   form_elements: (form, selector) ->
     if form.matches('form')
-      Array.wrap(form.elements).select (el) -> el.matches(selector)
+      Array.wrap(form.elements).select_ (el) -> el.matches(selector)
     else
       Array.wrap(form.querySelectorAll(selector))
 

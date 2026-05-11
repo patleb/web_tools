@@ -22,10 +22,10 @@ class Js.DeviceConcept
     window.addEventListener('scroll', @on_scroll.throttle(), false)
     window.addEventListener('resize', @on_resize.throttle(), false)
     @screens = JSON.parse(process.env.SCREENS) or if Env.test then { lg: 1024 } else throw 'process.env.SCREENS missing'
-    @screens = @screens.reject((k, v) -> v.is_a Object).map_each((k, v) -> [k, v.to_i()]).to_h()
+    @screens = @screens.reject_((k, v) -> v.is_a Object).map_((k, v) -> [k, v.to_i()]).to_h()
     @breakpoints = {}
     styles = window.getComputedStyle(document.documentElement, '')
-    prefix = try styles.vals().join('').match(/-(webkit|moz|ms)-/)?[1]
+    prefix = try styles.values_().join('').match(/-(webkit|moz|ms)-/)?[1]
     @chrome = window.chrome?
     @webkit = not @chrome and prefix is 'webkit'
     @firefox = prefix is 'moz' or typeof InstallTrigger isnt 'undefined'
@@ -61,9 +61,9 @@ class Js.DeviceConcept
       x: document.documentElement.scrollWidth or document.body.scrollWidth
       y: document.documentElement.scrollHeight or document.body.scrollHeight
     if @size.x isnt @size_was?.x or @full_size.x isnt @full_size_was?.x
-      screen_was = @screen or ((initial = true) and @screens.front()[0])
+      screen_was = @screen or ((initial = true) and @screens.first_()[0])
       included_was = true
-      @screens.for_each (screen, size) =>
+      @screens.each_ (screen, size) =>
         included = @breakpoints[screen] = (@size.x >= size)
         if @screen isnt screen_was and included_was and not included
           @screen = screen_was
@@ -71,7 +71,7 @@ class Js.DeviceConcept
         screen_was = screen
         included_was = included
       unless @screen
-        @screen = @screens.back()[0]
+        @screen = @screens.last_()[0]
         Rails.fire(document, @BREAKPOINT, { initial, @screen })
       Rails.fire(document, @RESIZE_X)
     if @size.y isnt @size_was?.y or @full_size.y isnt @full_size_was?.y

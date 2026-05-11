@@ -18,7 +18,7 @@ describe('StateMachine', () => {
 
     it('should set instance variables correctly', () => {
       assert.equal('init_value', sm.initial)
-      assert.equal(['final_value'], sm.terminal.keys())
+      assert.equal(['final_value'], sm.terminal.keys_())
       assert.equal(sm.initial, sm.current)
     })
   })
@@ -96,11 +96,11 @@ describe('StateMachine', () => {
         assert.not.equal(sm.id, copy.id)
         assert.not.equal(sm.current, copy.current)
         const ivars = ['initial', 'terminal', 'states', 'methods', 'transitions']
-        ivars.each((ivar) => {
+        ivars.each_((ivar) => {
           assert.same(sm[ivar], copy[ivar])
         })
         const methods = ['state', 'initialize', 'before', 'after', 'delegate', 'on_deny', 'on_stop']
-        methods.each((method) => {
+        methods.each_((method) => {
           assert.same(sm[method], copy[method])
         })
         assert.equal('down', copy.test(copy))
@@ -125,8 +125,8 @@ describe('StateMachine', () => {
           'states.down.exit',
           'states.up.enter'
         ]
-        hooks.each((hook) => {
-          assert.deep_equal(sm, config.dig(hook).mock.calls[0][0])
+        hooks.each_((hook) => {
+          assert.deep_equal(sm, config.dig_(hook).mock.calls[0][0])
         })
       })
 
@@ -344,22 +344,22 @@ describe('StateMachine', () => {
 
     describe('with :states data', () => {
       beforeAll(() => {
-        config = { states: arrow_flags }.merge(arrow_base)
+        config = { states: arrow_flags }.merge_(arrow_base)
       })
 
       it('should assign data to @states', () => {
         assert.equal(arrow_flags['up-right'].data, sm.data)
-        assert.equal(arrow_flags, sm.states.each_with_object({}, (k, v, h) => { h[k] = v.slice('data') }))
+        assert.equal(arrow_flags, sm.states.each_with_object({}, (k, v, h) => { h[k] = v.slice_('data') }))
       })
     })
 
     describe('with :flags at true', () => {
       beforeAll(() => {
-        config = { flags: true }.merge(arrow_base)
+        config = { flags: true }.merge_(arrow_base)
       })
 
       it('should assign deduced data to @states', () => {
-        assert.equal(arrow_flags, sm.states.each_with_object({}, (k, v, h) => { h[k] = v.slice('data') }))
+        assert.equal(arrow_flags, sm.states.each_with_object({}, (k, v, h) => { h[k] = v.slice_('data') }))
       })
     })
   })
@@ -393,7 +393,7 @@ describe('StateMachine', () => {
 
     it('should define @states and @transitions correctly', () => {
       const expected_states = ['parked', 'slower_speed', 'slow_speed', 'stopped', 'normal_speed']
-      assert.equal(expected_states, sm.states.keys())
+      assert.equal(expected_states, sm.states.keys_())
       const expected_transitions = {
         park: {
           slow_speed: 'parked',

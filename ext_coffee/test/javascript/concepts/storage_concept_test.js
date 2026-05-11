@@ -17,7 +17,7 @@ describe('Js.StorageConcept', () => {
       null: null,
     }
     Js.Storage.set(inputs)
-    assert.equal(inputs, Js.Storage.get(...inputs.keys()))
+    assert.equal(inputs, Js.Storage.get(...inputs.keys_()))
     Js.Storage.set({ undefined: undefined })
     assert.equal({ undefined: null }, Js.Storage.get('undefined'))
     const new_inputs = {
@@ -31,7 +31,7 @@ describe('Js.StorageConcept', () => {
       undefined: null,
     }
     Js.Storage.set(new_inputs)
-    assert.equal(new_inputs, Js.Storage.get(...new_inputs.keys()))
+    assert.equal(new_inputs, Js.Storage.get(...new_inputs.keys_()))
     Js.Storage.set({ undefined: undefined })
     assert.equal({ undefined: null }, Js.Storage.get('undefined'))
   })

@@ -36,9 +36,9 @@ I18n.translations.deep_merge
 
 DATE = /^\d{4}(-\d{1,2}){0,2}$/
 DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-DAYS_LEAP = DAYS.dup().tap (days) -> days[1] = 29
+DAYS_LEAP = DAYS.dup_().tap_ (days) -> days[1] = 29
 WEEK_DAYS = [null, null, 0, 28, 59, 89, 120, 150, 181, 212, 242, 273, 303, 334]
-WEEK_DAYS_LEAP = WEEK_DAYS.dup().tap (days) -> days[3] = 29
+WEEK_DAYS_LEAP = WEEK_DAYS.dup_().tap_ (days) -> days[3] = 29
 
 Date.polyfill_singleton_methods
   now: ->
@@ -120,17 +120,17 @@ Date.define_readers
   offset:     -> -Math.round(@getTimezoneOffset() / 15) * 15 * 60
 
 Date.override_methods
-  blank: ->
+  blank_: ->
     false
 
-  presence: ->
+  presence_: ->
     this
 
-  eql: (other) ->
+  eql_: (other) ->
     return false unless other?.is_a Date
     @getTime() is other.getTime()
 
-  dup: ->
+  dup_: ->
     new @constructor this
 
   to_h: ->
@@ -166,7 +166,7 @@ Date.define_methods
     hours   += 24 * remainder
     minutes += hours * 60
     seconds += minutes * 60
-    date = @dup()
+    date = @dup_()
     date.month  = date.month  + sign * months  if months
     date.day    = date.day    + sign * days    if days
     date.second = date.second + sign * seconds if seconds

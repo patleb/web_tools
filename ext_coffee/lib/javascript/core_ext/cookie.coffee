@@ -19,5 +19,5 @@ class window.Cookie
 
   @remove_json: (root, keys...) =>
     json = @get_json(root)
-    keys.each (key) -> json.delete(key)
+    keys.each_ (key) -> json.delete_(key)
     @set(root, json)

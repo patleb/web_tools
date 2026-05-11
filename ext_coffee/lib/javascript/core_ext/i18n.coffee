@@ -4,13 +4,13 @@ class window.I18n
   @translations: {}
 
   @t: (key, options = {}) =>
-    scope = options.delete('scope')
-    escape = options.delete('escape') ? true
-    locale = options.delete('locale') ? @locale
-    fallback = options.delete('fallback') ? @fallback
+    scope = options.delete_('scope')
+    escape = options.delete_('escape') ? true
+    locale = options.delete_('locale') ? @locale
+    fallback = options.delete_('fallback') ? @fallback
     key = "#{scope}.#{key}" if scope
-    result = @translations[locale]?.dig(key)
-    result ?= @translations[fallback]?.dig(key) unless locale is fallback
+    result = @translations[locale]?.dig_(key)
+    result ?= @translations[fallback]?.dig_(key) unless locale is fallback
     if result?.is_a String
       for name, value of options
         result = result.replace("%{#{name}}", value)
@@ -28,7 +28,7 @@ class window.I18n
 
   @on_load: ->
     I18n.locale = document.documentElement.getAttribute('lang') or I18n.locale
-    Rails.$('.js_i18n').each (element) ->
+    Rails.$('.js_i18n').each_ (element) ->
       if translations = element.getAttribute('data-value')
         if translations = JSON.safe_parse(translations)
           I18n.translations.deep_merge(translations)

@@ -253,14 +253,15 @@ module LogLines
     end
 
     def self._parse_referer(path)
-      uri, _params = (Rack::Utils.parse_url(path) rescue [INVALID_URI, nil]) unless path.blank? || path == '-'
+      return if path.blank? || path == '-'
+      uri, _params = (Rack::Utils.parse_url(path) rescue [INVALID_URI, nil])
       path = _uri_path(uri)
       host = uri&.hostname
       [(host if host != Setting[:server_host]), path].compact.join
     end
 
     def self._uri_path(uri)
-      path = uri&.path&.downcase.presence || '/'
+      path = uri.path&.downcase.presence || '/'
       path = '/�' if unprintable? path
       path = path.delete_suffix('/') unless path == '/'
       path

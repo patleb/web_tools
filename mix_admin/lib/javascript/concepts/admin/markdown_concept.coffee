@@ -24,7 +24,7 @@ class Js.Admin.MarkdownConcept
 
   ready: ->
     @max_file_size = Rails.find(@MAX_FILE_SIZE)?.data('value')?.to_i() ? 10000000
-    Rails.$(@TEXTAREA).each (textarea) =>
+    Rails.$(@TEXTAREA).each_ (textarea) =>
       @get_history(textarea)
 
   toggle_fullscreen: (event, button) ->
@@ -57,7 +57,7 @@ class Js.Admin.MarkdownConcept
   prepend_lines: (button, token) ->
     [textarea, lines, start_i, end_i] = @selection_lines(button)
     size = token.length
-    lines[start_i..end_i].each (line, i) ->
+    lines[start_i..end_i].each_ (line, i) ->
       lines[start_i + i] = if line.start_with(token)
         line[size..-1]
       else
@@ -77,7 +77,7 @@ class Js.Admin.MarkdownConcept
   push_history: (event, textarea) ->
     { push, undo, redo } = @get_history(textarea)
     value = textarea.get_value()
-    [value_undo, cursor_undo] = Array.wrap(undo.last())
+    [value_undo, cursor_undo] = Array.wrap(undo.last_())
     if value isnt value_undo
       redo.clear(true)
       undo.shift() if undo.length is MAX_HISTORY_SIZE
@@ -165,7 +165,7 @@ class Js.Admin.MarkdownConcept
     { start, end } = textarea.cursor()
     [start_i, end_i] = [null, null]
     position = 0
-    lines.each (line, i) ->
+    lines.each_ (line, i) ->
       start_i = i if start >= position
       end_i = i if end >= position
       position += line.length + 1

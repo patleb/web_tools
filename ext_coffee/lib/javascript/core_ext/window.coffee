@@ -3,7 +3,7 @@ window.noop = ->
 window.not_implemented = -> throw new Error('NotImplementedError')
 
 window.eql = (value, other) ->
-  value is other or !!value?.eql(other)
+  value is other or !!value?.eql_(other)
 
 window.prepend_to = (object, name, callback) ->
   previous = object[name]
@@ -112,7 +112,7 @@ for type in [Array, Boolean, Date, Element, Function, Number, Object, RegExp, St
     type.define_method = (name, callback, warn = true) ->
       warn_defined_key(type, name) if warn
       type::[name] = callback
-      Object.defineProperty(type::, name, enumerable: false, configurable: type is Object)
+      Object.defineProperty(type::, name, enumerable: false)
 
     type.define_readers = (methods) ->
       for name, callback of methods

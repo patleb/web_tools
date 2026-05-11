@@ -5,7 +5,7 @@ class Turbolinks.Visit
     @controller = Turbolinks.controller
     @id = Math.uid()
     @restoration_id = restoration_id ? Math.uid()
-    @restoration_data = restoration_data.dup()
+    @restoration_data = restoration_data.dup_()
     @location = Turbolinks.Location.wrap(location)
     @state = 'initialized'
     @timing = {}
@@ -35,12 +35,12 @@ class Turbolinks.Visit
       @record_timing('visit_end')
       @state = 'completed'
       @follow_redirect()
-      @controller.dispatch_load(@timing.dup())
+      @controller.dispatch_load(@timing.dup_())
 
   fail: ->
     if @state is 'started'
       @state = 'failed'
-      @controller.dispatch_load(@timing.dup())
+      @controller.dispatch_load(@timing.dup_())
 
   change_history: ->
     unless @history_changed

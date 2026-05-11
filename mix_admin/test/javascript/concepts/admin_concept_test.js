@@ -4,8 +4,8 @@ describe('Js.AdminConcept', () => {
   concepts.with_page('admin')
 
   test('#toggle_bulk_form', () => {
-    const toggle = Js.AdminConcept.bulk_toggles.first()
-    const checkbox = Js.AdminConcept.bulk_checkboxes.first()
+    const toggle = Js.AdminConcept.bulk_toggles.first_()
+    const checkbox = Js.AdminConcept.bulk_checkboxes.first_()
     dom.on_event({ 'change': () => {
       assert.true(Js.AdminConcept.bulk_checkboxes.all(checkbox => checkbox.get_value()))
       assert.true(Js.AdminConcept.bulk_buttons.none(button => button.hasAttribute('disabled')))
@@ -17,7 +17,7 @@ describe('Js.AdminConcept', () => {
     }})
     toggle.click()
     // all checked
-    Js.AdminConcept.bulk_checkboxes.each(checkbox => checkbox.click())
+    Js.AdminConcept.bulk_checkboxes.each_(checkbox => checkbox.click())
     assert.true(toggle.get_value())
     assert.true(Js.AdminConcept.bulk_buttons.none(button => button.hasAttribute('disabled')))
     // one unchecked
@@ -27,7 +27,7 @@ describe('Js.AdminConcept', () => {
     assert.true(Js.AdminConcept.bulk_buttons.none(button => button.hasAttribute('disabled')))
     // none checked
     checkbox.click()
-    Js.AdminConcept.bulk_checkboxes.each(checkbox => checkbox.click())
+    Js.AdminConcept.bulk_checkboxes.each_(checkbox => checkbox.click())
     assert.false(toggle.get_value())
     assert.true(Js.AdminConcept.bulk_buttons.all(button => button.hasAttribute('disabled')))
     // one checked

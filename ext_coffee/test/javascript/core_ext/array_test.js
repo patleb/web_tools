@@ -12,38 +12,38 @@ describe('Array', () => {
     assert.raise([['a', 1, 2], ['b', 2, 3]].to_h)
   })
 
-  test('#blank', () => {
-    assert.true([].blank())
-    assert.false([1].blank())
-    assert.false([null].blank())
+  test('#blank_', () => {
+    assert.true([].blank_())
+    assert.false([1].blank_())
+    assert.false([null].blank_())
   })
 
-  test('#presence', () => {
-    assert.nil([].presence())
-    assert.equal([1], [1].presence())
-    assert.equal([null], [null].presence())
+  test('#presence_', () => {
+    assert.nil([].presence_())
+    assert.equal([1], [1].presence_())
+    assert.equal([null], [null].presence_())
   })
 
-  test('#empty', () => {
-    assert.true([].empty())
-    assert.false([1].empty())
-    assert.false([null].empty())
+  test('#empty_', () => {
+    assert.true([].empty_())
+    assert.false([1].empty_())
+    assert.false([null].empty_())
   })
 
-  test('#eql', () => {
-    assert.true([].eql([]))
-    assert.true([1].eql([1.0]))
-    assert.true([null].eql([undefined]))
-    assert.true([/a/ig].eql([/a/ig]))
-    assert.false([1].eql([1, 2]))
-    assert.false([].eql({}))
+  test('#eql_', () => {
+    assert.true([].eql_([]))
+    assert.true([1].eql_([1.0]))
+    assert.true([null].eql_([undefined]))
+    assert.true([/a/ig].eql_([/a/ig]))
+    assert.false([1].eql_([1, 2]))
+    assert.false([].eql_({}))
   })
 
-  test('#merge', () => {
+  test('#merge_', () => {
     let array = []
-    assert.equal([1], array.merge([1]))
+    assert.equal([1], array.merge_([1]))
     assert.equal([1], array)
-    assert.equal([1, 2, 3, 4], array.merge([2], [3, 4]))
+    assert.equal([1, 2, 3, 4], array.merge_([2], [3, 4]))
     assert.equal([1, 2, 3, 4], array)
   })
 
@@ -120,40 +120,40 @@ describe('Array', () => {
     assert.equal(['a', 'b', 'c'], ['c', 'b', 'a'].sort_by((v) => v))
   })
 
-  test('#select_each', () => {
-    assert.equal([2], [1, 2, 3].select_each((v) => v === 2))
+  test('#select_', () => {
+    assert.equal([2], [1, 2, 3].select_((v) => v === 2))
   })
 
   test('#select_map', () => {
     assert.equal(['b'], [1, 2, 3].select_map((v) => v === 2 ? 'b' : false))
   })
 
-  test('#reject', () => {
-    assert.equal([1, 3], [1, 2, 3].reject((v) => v === 2))
+  test('#reject_', () => {
+    assert.equal([1, 3], [1, 2, 3].reject_((v) => v === 2))
   })
 
-  test('#except', () => {
-    assert.equal([1, 3], [1, 2, 3].except(2))
-    assert.equal([1], [1, 2, 3].except(2, 3))
-    assert.equal([], [1].except(1))
+  test('#except_', () => {
+    assert.equal([1, 3], [1, 2, 3].except_(2))
+    assert.equal([1], [1, 2, 3].except_(2, 3))
+    assert.equal([], [1].except_(1))
   })
 
-  test('#compact', () => {
-    assert.equal([], [null, undefined].compact())
-    assert.equal([0, false, ''], [0, false, '', null, undefined].compact())
+  test('#compact_', () => {
+    assert.equal([], [null, undefined].compact_())
+    assert.equal([0, false, ''], [0, false, '', null, undefined].compact_())
   })
 
-  test('#first, #last', () => {
+  test('#first_, #last_', () => {
     const array = [1, 2, 3]
-    assert.equal(1, array.first())
-    assert.equal([1, 2], array.first(2))
-    assert.equal(3, array.last())
-    assert.equal([2, 3], array.last(2))
+    assert.equal(1, array.first_())
+    assert.equal([1, 2], array.first_(2))
+    assert.equal(3, array.last_())
+    assert.equal([2, 3], array.last_(2))
   })
 
-  test('#dup', () => {
+  test('#dup_', () => {
     const array = [1, 2]
-    const other = array.dup()
+    const other = array.dup_()
     assert.not.same(array, other)
     assert.equal(array, other)
   })

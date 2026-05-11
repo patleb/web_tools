@@ -13,7 +13,7 @@ Function.PROTECTED_METHODS = [
 ]
 
 Function.override_singleton_methods
-  deconstantize: (object) ->
+  deconstantize_: (object) ->
     name = object.__name__
     result = name
     while name
@@ -75,7 +75,7 @@ Function.define_singleton_methods
   delegate_to: (owner, base, keys...) ->
     { force, bind, reader, prefix = '' } = keys.extract_options()
     if is_dynamic = base.is_a String
-      throw 'must specify #delegate_to keys' if keys.empty()
+      throw 'must specify #delegate_to keys' if keys.empty_()
       if base.start_with '@', 'this.', 'this::'
         is_ivar = true
         base = base.sub(/^(@|this\.?)/, '')
@@ -84,11 +84,11 @@ Function.define_singleton_methods
       else if is_prototype = base.ends_with '::'
         base = base.sub(/::$/, '')
     else
-      keys = base.keys() if keys.empty()
+      keys = base.keys_() if keys.empty_()
     names = []
-    keys.except(Function.PROTECTED_METHODS...).each (key) ->
+    keys.except_(Function.PROTECTED_METHODS...).each_ (key) ->
       return unless force or not key.start_with('_') # skip private
-      name = if prefix.present() then "#{prefix}_#{key}" else key
+      name = if prefix.present_() then "#{prefix}_#{key}" else key
       if is_dynamic
         if reader
           Object.defineProperty owner, name, enumerable: false, get: ->
@@ -121,13 +121,13 @@ Function.define_singleton_methods
       timeout = setTimeout delayed, wait
 
 Function.override_methods
-  deconstantize: ->
-    @constructor.deconstantize(this)
+  deconstantize_: ->
+    @constructor.deconstantize_(this)
 
-  blank: ->
+  blank_: ->
     false
 
-  eql: (other) ->
+  eql_: (other) ->
     this is other
 
 Function.define_methods
@@ -185,7 +185,7 @@ receiver_for = (owner, base, is_ivar, is_prototype) ->
     receiver = owner
     receiver = (receiver::) if is_prototype
     if base.include '.'
-      receiver.dig(base)
+      receiver.dig_(base)
     else
       receiver[base]
   else

@@ -19,14 +19,14 @@ describe('Js.TagConcept', () => {
 
   describe('#h_', () => {
     it('should join nodes and respect #html_safe value', () => {
-      let expected = [[safe_values.first()], safe_values]
-      expected.each((expect) => {
+      let expected = [[safe_values.first_()], safe_values]
+      expected.each_((expect) => {
         let actual = h_(...expect)
         assert.equal(expect.join(' ').html_safe(true), actual)
         assert.true(actual.html_safe())
       })
-      expected = [[values.first()], values]
-      expected.each((expect) => {
+      expected = [[values.first_()], values]
+      expected.each_((expect) => {
         let actual = h_(...expect)
         assert.equal(expect.join(' ').safe_text(), actual)
         assert.true(actual.html_safe())
@@ -45,15 +45,15 @@ describe('Js.TagConcept', () => {
 
   describe('#if_', () => {
     it('should print if condition is true', () => {
-      assert.equal(safe_values.first(), if_(true, safe_values.first()))
-      assert.equal(blank,  if_(false, values.first()))
+      assert.equal(safe_values.first_(), if_(true, safe_values.first_()))
+      assert.equal(blank,  if_(false, values.first_()))
     })
   })
 
   describe('#unless_', () => {
     it('should print unless condition is true', () => {
-      assert.equal(safe_values.first(), unless_(false, safe_values.first()))
-      assert.equal(blank,  unless_(true, safe_values.first()))
+      assert.equal(safe_values.first_(), unless_(false, safe_values.first_()))
+      assert.equal(blank,  unless_(true, safe_values.first_()))
     })
   })
 
@@ -116,14 +116,14 @@ describe('Js.TagConcept', () => {
 
     it('should be able to print defined falsy values', () => {
       const values = [false, 0, NaN, '']
-      values.each((value) =>
+      values.each_((value) =>
         assert.equal(`<div>${value}</div>`.html_safe(true), div_(value))
       )
     })
 
     it('should ignore undefined falsy values', () => {
       const values = [null, undefined]
-      values.each((value) =>
+      values.each_((value) =>
         assert.equal('<div></div>'.html_safe(true), div_(value))
       )
     })

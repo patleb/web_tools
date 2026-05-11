@@ -8,11 +8,11 @@ describe('Function', () => {
     assert.false(f.is_a(Object))
   })
 
-  test('#eql', () => {
+  test('#eql_', () => {
     let same = f
     let other = () => true
-    assert.true(f.eql(same))
-    assert.false(f.eql(other))
+    assert.true(f.eql_(same))
+    assert.false(f.eql_(other))
   })
 
   test('.new', () => {
@@ -43,20 +43,20 @@ describe('Function', () => {
     assert.equal('Module Delegate', klass.module_delegate())
   })
 
-  test('.deconstantize', () => {
+  test('.deconstantize_', () => {
     let string = 'Test.ScopedClass.function'
     let object = string.constantize()
-    assert.equal('Test.ScopedClass', Test.ScopedClass.deconstantize())
-    assert.equal('Test.ScopedClass::', Test.ScopedClass.prototype.deconstantize())
+    assert.equal('Test.ScopedClass', Test.ScopedClass.deconstantize_())
+    assert.equal('Test.ScopedClass::', Test.ScopedClass.prototype.deconstantize_())
     assert.equal(object, Test.ScopedClass.function)
-    assert.equal(string, object.deconstantize())
+    assert.equal(string, object.deconstantize_())
     string = 'Test.ScopedClass::method'
     object = string.constantize()
     assert.equal(object, Test.ScopedClass.prototype.method)
-    assert.equal(string, object.deconstantize())
-    assert.undefined(Base.deconstantize())
-    assert.undefined(Base.constructor_delegate.deconstantize())
-    assert.undefined(Base.prototype.method.deconstantize())
-    assert.undefined(Base.prototype.deconstantize())
+    assert.equal(string, object.deconstantize_())
+    assert.undefined(Base.deconstantize_())
+    assert.undefined(Base.constructor_delegate.deconstantize_())
+    assert.undefined(Base.prototype.method.deconstantize_())
+    assert.undefined(Base.prototype.deconstantize_())
   })
 })

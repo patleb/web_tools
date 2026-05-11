@@ -17,7 +17,7 @@ class window.Duration
   # NOTE: sub-seconds not supported
   constructor: (d) ->
     if d.is_a Array # dates sorted in ascending order
-      d = d.last().duration(d.first())
+      d = d.last_().duration(d.first_())
     if d.is_a String
       time = false
       number = ''
@@ -42,7 +42,7 @@ class window.Duration
       @years = @months = @weeks = @days = @hours = @minutes = @seconds = 0
       [@sign, d] = [Math.sign(d), Math.abs(d)]
       return if d is 0
-      ['years', 'months', 'weeks', 'days', 'hours', 'minutes'].each (part) =>
+      ['years', 'months', 'weeks', 'days', 'hours', 'minutes'].each_ (part) =>
         seconds = Duration.SECONDS[part.singularize()]
         this[part] = Math.floor(d / seconds)
         d = d % seconds
@@ -53,10 +53,10 @@ class window.Duration
         [d.sign ? 1, d.years ? 0, d.months ? 0, d.weeks ? 0, d.days ? 0, d.hours ? 0, d.minutes ? 0, d.seconds ? 0]
           .map('to_f')
 
-  blank: ->
+  blank_: ->
     false
 
-  eql: (other) ->
+  eql_: (other) ->
     return false unless other?.is_a Duration
     @to_i() is other.to_i()
 

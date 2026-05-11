@@ -20,7 +20,7 @@ class Js.StorageConcept
 
   unscoped: (name) ->
     return if name.ends_with(':')
-    name.split(':').last()
+    name.split(':').last_()
 
   scoped: (name, scope) ->
     return name if name.include(':')
@@ -28,7 +28,7 @@ class Js.StorageConcept
 
   get_changes: (name, options = {}) ->
     value = @get_value(name, options)
-    value_was = @get_value(name, { was: true }.merge options)
+    value_was = @get_value(name, { was: true }.merge_ options)
     unless value?.is_a(Object) and value_was?.is_a(Object)
       if not eql value, value_was
         return { "#{@unscoped name}": [value, value_was] }
@@ -40,13 +40,13 @@ class Js.StorageConcept
       keys.push key
       item_was = value_was[key]
       changes[key] = [item, item_was] if not eql item, item_was
-    for key, item_was of value_was.except(keys...)
+    for key, item_was of value_was.except_(keys...)
       changes[key] = [undefined, item_was]
     changes
 
   get_change: (name, options = {}) ->
     value = @get_value(name, options)
-    value_was = @get_value(name, { was: true }.merge options)
+    value_was = @get_value(name, { was: true }.merge_ options)
     [value, value_was] if not eql value, value_was
 
   get_value: (name, options = {}) ->
@@ -65,7 +65,7 @@ class Js.StorageConcept
     else
       result = @storage(permanent).$("[name^='#{scope}:']").map (input) =>
         [input.name.sub(///^#{scope.safe_regex()}:///, ''), input.get_value(was)]
-    result.reject(([name, value]) -> value is undefined).to_h()
+    result.reject_(([name, value]) -> value is undefined).to_h()
 
   set: (inputs, { submitter = null, permanent = false, scope = '', event = true, was = false } = {}) ->
     changes = inputs.each_with_object {}, (name, value, memo) =>
@@ -77,7 +77,7 @@ class Js.StorageConcept
         @storage(permanent).appendChild(input)
       if value_was is undefined or not eql value, value_was
         cast = type_caster(value)
-        changes = memo[@unscoped name] = [value, value_was]
+        memo[@unscoped name] = [value, value_was]
         input.setAttribute('value', if value? then value.safe_text() else null)
         input.setAttribute('data-was', value_was.safe_text()) if was and value_was?
         if cast
@@ -88,7 +88,7 @@ class Js.StorageConcept
           args = value.each_with_object {}, (key, value, memo) ->
             return unless cast = json_caster(value)
             memo[key] = cast
-          if args.empty()
+          if args.empty_()
             input.removeAttribute('data-args')
           else
             input.setAttribute('data-args', args.safe_text())
@@ -99,19 +99,19 @@ class Js.StorageConcept
   delete: (names...) ->
     { permanent = false, scope = '' } = names.extract_options()
     if names.length
-      names.each (name) =>
+      names.each_ (name) =>
         scoped_name = @scoped name, scope
         @storage(permanent).find("[name='#{scoped_name}']")?.remove()
     else
-      @storage(permanent).$("[name^='#{scope}:']").each (input) ->
+      @storage(permanent).$("[name^='#{scope}:']").each_ (input) ->
         input.remove()
 
   clear: ({ permanent = false } = {}) ->
-    @storage(permanent).$('input').each (input) ->
+    @storage(permanent).$('input').each_ (input) ->
       input.remove()
 
   fire: (changes, { submitter = null, permanent = false, scope = '' } = {}) ->
-    @storage(permanent).fire(@CHANGE, { submitter, permanent, scope, changes }) unless changes.empty()
+    @storage(permanent).fire(@CHANGE, { submitter, permanent, scope, changes }) unless changes.empty_()
 
   storage: (permanent) ->
     if permanent then @root_permanent else @root

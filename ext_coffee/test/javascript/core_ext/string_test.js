@@ -1,9 +1,9 @@
 import '@@lib/ext_coffee/jest/core_ext/spec_helper'
 
 describe('String', () => {
-  test('#eql', () => {
-    assert.true("abc".eql("abc"))
-    assert.false("abc".eql("cba"))
+  test('#eql_', () => {
+    assert.true("abc".eql_("abc"))
+    assert.false("abc".eql_("cba"))
   })
 
   test('#is_a', () => {
@@ -27,7 +27,7 @@ describe('String', () => {
   })
 
   test('#to_f', () => {
-    Number.METRIC_PREFIX.each((prefix, i) => {
+    Number.METRIC_PREFIX.each_((prefix, i) => {
       assert.equal(16.0 * 10 ** Number.METRIC_EXPONENT[i], `16.0 ${prefix}`.to_f('m'))
     })
   })
@@ -46,7 +46,7 @@ describe('String', () => {
     let string = 'string'.html_safe(true)
     assert.equal('string'.html_safe(true), string)
     assert.not.equal('string', string)
-    assert.true('string'.eql(string))
+    assert.true('string'.eql_(string))
     assert.false('string' === string)
     assert.equal('string', blank && 'string')
   })
@@ -69,20 +69,20 @@ describe('String', () => {
     assert.false('text'.html_blank())
   })
 
-  test('#blank', () => {
-    assert.true(' \n'.blank())
-    assert.false('&nbsp;'.blank())
+  test('#blank_', () => {
+    assert.true(' \n'.blank_())
+    assert.false('&nbsp;'.blank_())
   })
 
-  test('#presence', () => {
-    assert.nil(''.presence())
-    assert.nil(' \n'.presence())
-    assert.equal('text', 'text'.presence())
+  test('#presence_', () => {
+    assert.nil(''.presence_())
+    assert.nil(' \n'.presence_())
+    assert.equal('text', 'text'.presence_())
   })
 
-  test('#empty', () => {
-    assert.true(''.empty())
-    assert.false(' '.empty())
+  test('#empty_', () => {
+    assert.true(''.empty_())
+    assert.false(' '.empty_())
   })
 
   test('#chars', () => {

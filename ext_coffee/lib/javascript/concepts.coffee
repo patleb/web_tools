@@ -18,8 +18,8 @@ class Js.Concepts
     if initialized
       return Logger.debug('Js.Concepts already initialized')
     initialized = true
-    Array.wrap(concept ? concepts).each (name) => @add_concept(name)
-    Array.wrap(module ? modules).each (name) => @add_module(name)
+    Array.wrap(concept ? concepts).each_ (name) => @add_concept(name)
+    Array.wrap(module ? modules).each_ (name) => @add_module(name)
     Rails.document_on 'DOMContentLoaded', @on_load
     Rails.document_on 'turbolinks:before-render', @on_leave
     Rails.document_on 'turbolinks:load', @on_ready
@@ -31,10 +31,10 @@ class Js.Concepts
         concept = @instances.ready_once.shift()
         concept.ready_once()
         concept.READY_ONCE_IVARS = []
-        concept.for_each (key, value) ->
+        concept.each_ (key, value) ->
           unless not_nullifyable(key, value)
             concept.READY_ONCE_IVARS.push(key)
-      @instances.ready.each (concept) ->
+      @instances.ready.each_ (concept) ->
         concept.before_ready?()
         concept.ready()
         concept.after_ready?()
@@ -42,21 +42,21 @@ class Js.Concepts
 
   @on_leave: (event) =>
     return if event.defaultPrevented
-    @instances.leave.each (concept) -> concept.leave()
-    @instances.leave_clean.each (concept) -> concept.leave_clean()
+    @instances.leave.each_ (concept) -> concept.leave()
+    @instances.leave_clean.each_ (concept) -> concept.leave_clean()
 
   @on_ready: (event) =>
     return if event.data.info.once
-    @instances.ready.each (concept) -> concept.ready()
+    @instances.ready.each_ (concept) -> concept.ready()
 
   @add_module: (module) ->
     modules = []
-    module.constantize().for_each (name) =>
+    module.constantize().each_ (name) =>
       if name.match(MODULE)
         modules.push "#{module}.#{name}"
       else
         @add_concept(name, { module })
-    modules.each (module) => @add_module(module)
+    modules.each_ (module) => @add_module(module)
 
   @add_concept: (name, { module = null } = {}) ->
     return unless name.match(CONCEPT)
@@ -66,7 +66,7 @@ class Js.Concepts
     uniq_classes[name] = true
     names = name.split('.')
     module ||= (names.length and names[0..-2].join('.')) or 'window'
-    class_name = names.last()
+    class_name = names.last_()
 
     module_class = module.constantize()
     concept_class = name.constantize()
@@ -94,7 +94,7 @@ class Js.Concepts
     @unless_defined concept_class::listeners, =>
       @define_listeners(concept)
 
-    @instances.except('leave_clean').for_each (phase, all) =>
+    @instances.except_('leave_clean').each_ (phase, all) =>
       @unless_defined concept_class::[phase], ->
         all.push(concept)
     concept.leave_clean = @nullify_on_leave.bind(concept)
@@ -106,7 +106,7 @@ class Js.Concepts
       @ready?()
       true
 
-    concept_class::for_each(@add_element) if concept is Js.Component
+    concept_class::each_(@add_element) if concept is Js.Component
 
     @define_memoized_scopes(concept_class, concept)
 
@@ -114,7 +114,7 @@ class Js.Concepts
 
   @nullify_on_leave: ->
     @nullify_memoizers()
-    @for_each (key, value) =>
+    @each_ (key, value) =>
       unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
 
@@ -157,7 +157,7 @@ class Js.Concepts
         memo.push(name)
     klass::MEMOIZERS = memoizers or []
     klass::nullify_memoizers = ->
-      @MEMOIZERS.each (name) => @nullify(name)
+      @MEMOIZERS.each_ (name) => @nullify(name)
     klass::nullify = (name) ->
       this["__#{name}"] = null
 
@@ -176,14 +176,14 @@ class Js.Concepts
     @define_listener(context, Js.Storage.CHANGE, Js.Storage.ROOTS, klass::nullify_memoized_scopes)
 
   @define_listeners: (context) ->
-    context.listeners().each_slice(3).each ([events, selector, handler]) =>
+    context.listeners().each_slice(3).each_ ([events, selector, handler]) =>
       @define_listener(context, events, selector, handler)
 
   @define_listener: (context, events, selector, handler) ->
     with_target = handler
     handler = ->
       with_target.apply(context, [arguments..., this])
-    events.split(/ *, */).each (event) ->
+    events.split(/ *, */).each_ (event) ->
       Rails.document_on event, selector, handler
 
   @unless_defined: (method, definition) ->

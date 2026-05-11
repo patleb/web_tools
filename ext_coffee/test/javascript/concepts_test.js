@@ -15,9 +15,9 @@ describe('Js.Concepts', () => {
   })
 
   it('should create all concept instances', () => {
-    assert.equal('Js.StorageConcept::', Js.StorageConcept.deconstantize())
-    assert.equal('Js.ComponentConcept::', Js.ComponentConcept.deconstantize())
-    assert.equal('Test.SimpleConcept::', Test.SimpleConcept.deconstantize())
+    assert.equal('Js.StorageConcept::', Js.StorageConcept.deconstantize_())
+    assert.equal('Js.ComponentConcept::', Js.ComponentConcept.deconstantize_())
+    assert.equal('Test.SimpleConcept::', Test.SimpleConcept.deconstantize_())
     assert.equal(2, Js.Concepts.instances.ready_once.length)
     assert.equal(2, Js.Concepts.instances.ready.length)
     assert.equal(2, Js.Concepts.instances.leave.length)
@@ -39,7 +39,7 @@ describe('Js.Concepts', () => {
       BODY_ROWS: '#js_simple_body .js_simple_rows',
     }
     assert.equal(constants, Test.SimpleConcept.constructor.prototype.CONSTANTS)
-    constants.for_each((name, value) => {
+    constants.each_((name, value) => {
       assert.equal(value, Test.SimpleConcept[name])
     })
   })
@@ -94,7 +94,7 @@ describe('Js.Concepts', () => {
   describe('#events', () => {
     afterEach(() => {
       dom.find(Test.SimpleConcept.BODY).remove_class(Test.SimpleConcept.TRIGGERED)
-      dom.$(Test.SimpleConcept.ROWS).each(e => e.remove_class(Test.SimpleConcept.TRIGGERED))
+      dom.$(Test.SimpleConcept.ROWS).each_(e => e.remove_class(Test.SimpleConcept.TRIGGERED))
     })
 
     it('should handle click events', () => {

@@ -12,7 +12,7 @@ module LogLines
       log = Log.create! server: Server.current, path: file.to_s.delete_suffix('.0')
       previous = nil
       file.each_line.with_index do |line, i|
-        line = LogLines::NginxError.parse(log, line, mtime: mtime, previous: previous)
+        line_was, line = line, LogLines::NginxError.parse(log, line, mtime: mtime, previous: previous)
         assert_equal ERROR_EXPECTATIONS[i], line
         previous = line
       end

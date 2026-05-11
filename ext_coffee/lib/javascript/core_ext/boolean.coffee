@@ -3,10 +3,10 @@ Boolean.define_singleton_methods
     'to_b'
 
 Boolean.override_methods
-  blank: ->
+  blank_: ->
     not @valueOf()
 
-  eql: (other) ->
+  eql_: (other) ->
     return false unless other?.is_a Boolean
     @valueOf() is other.valueOf()
 

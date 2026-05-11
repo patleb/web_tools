@@ -46,7 +46,7 @@ HTMLElement.define_methods
   to_s: ->
     @outerHTML
 
-  blank: ->
+  blank_: ->
     false
 
   html_safe: ->
@@ -83,7 +83,7 @@ HTMLElement.define_methods
 
   once: (selector, callback) ->
     elements = @$("#{selector}:not([data-once])")
-    elements.each (element) ->
+    elements.each_ (element) ->
       callback(element)
       element.setAttribute('data-once', true)
     elements
@@ -144,7 +144,7 @@ HTMLElement.define_methods
         @checked
       when 'range'
         value = get_value(this, was)
-        value = cast_value(@list.options[value], value) if @list?.present()
+        value = cast_value(@list.options[value], value) if @list?.present_()
         value
       else
         get_value(this, was)
@@ -165,8 +165,8 @@ HTMLElement.define_methods
             selected.push(option)
             changed ||= not option.selected
         return value unless changed
-        selected_was.each (option) -> option.selected = false
-        selected.each (option) -> option.selected = true
+        selected_was.each_ (option) -> option.selected = false
+        selected.each_ (option) -> option.selected = true
       when 'radio', 'checkbox'
         return value unless @checked isnt value
         this.checked = value

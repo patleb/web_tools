@@ -1,20 +1,20 @@
 import '@@lib/ext_coffee/jest/core_ext/spec_helper'
 
 describe('Number', () => {
-  test('#presence, #blank, #eql, #to_b, #to_i, #to_date, #is_integer, #is_finite, #even, #odd, #zero', () => {
-    assert.nil(NaN.presence())
-    assert.true(NaN.blank())
+  test('#presence_, #blank_, #eql_, #to_b, #to_i, #to_date, #is_integer, #is_finite, #even, #odd, #zero', () => {
+    assert.nil(NaN.presence_())
+    assert.true(NaN.blank_())
     let number = 0
-    assert.equal(number, number.presence())
+    assert.equal(number, number.presence_())
     assert.true(number.zero())
-    assert.false(number.blank())
-    assert.true(number.eql(0))
-    assert.false(number.eql(1))
+    assert.false(number.blank_())
+    assert.true(number.eql_(0))
+    assert.false(number.eql_(1))
     assert.false(number.to_b())
     assert.equal(new Date(0), number.to_date())
     assert.true(number.is_integer())
     number = 1
-    assert.equal(number, number.presence())
+    assert.equal(number, number.presence_())
     assert.false(number.zero())
     assert.true(number.to_b())
     assert.equal(new Date(1000), number.to_date())
@@ -34,7 +34,7 @@ describe('Number', () => {
   })
 
   test('#to_s', () => {
-    Number.METRIC_PREFIX.each((prefix, i) => {
+    Number.METRIC_PREFIX.each_((prefix, i) => {
       assert.equal(
         prefix === 'null' ? '16.123 ':`16.123 ${prefix}`,
         (16.123 * 10 ** Number.METRIC_EXPONENT[i]).to_s('m ', 3)
@@ -93,7 +93,7 @@ describe('Number', () => {
 
   test('#seconds, #minutes, #hours, #days, #weeks, #days, #hours, #minutes, #seconds', () => {
     for (const [scale, seconds] of Object.entries(Duration.SECONDS)) {
-      let result = 1[scale]().to_h().reject((k, v) => v.zero())
+      let result = 1[scale]().to_h().reject_((k, v) => v.zero())
       let expect = { sign: 1, [scale.pluralize()]: 1 }
       assert.equal(expect, result)
       assert.equal(3.45 * seconds, 3.45[scale.pluralize()]().to_i())

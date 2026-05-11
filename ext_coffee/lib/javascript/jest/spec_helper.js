@@ -7,7 +7,7 @@ const is_type = (object, type) => {
 const js = {
   spy_on: (object, key = null) => {
     if (is_type(object, Object)) {
-      object.for_each((key, value) => {
+      object.each_((key, value) => {
         if (is_type(value, Function)) {
           jest.spyOn(object, key)
         } else if (is_type(value, Object)) {

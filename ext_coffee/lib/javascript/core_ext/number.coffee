@@ -17,9 +17,9 @@ Number.define_methods
     isNaN(this)
 
 Number.override_methods
-  blank: Number::is_nan
+  blank_: Number::is_nan
 
-  eql: (other) ->
+  eql_: (other) ->
     return false unless other?.is_a Number
     @valueOf() is other.valueOf()
 
@@ -59,7 +59,7 @@ Number.define_methods
       separator += '%' if type.ends_with '%'
     else if engineering
       options = { notation: 'engineering' }
-      options.merge(minimumFractionDigits: precision, maximumFractionDigits: precision) if precision
+      options.merge_(minimumFractionDigits: precision, maximumFractionDigits: precision) if precision
       value = new Intl.NumberFormat('en-US', options).format(value).sub(/E0$/, '').sub('E', 'e')
     else if type is 'dec'
       [left, right] = value.toString().split('.')

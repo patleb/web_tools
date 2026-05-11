@@ -44,7 +44,7 @@ class Js.AdminConcept
 
   leave: ->
     @persist_bulk_form_scroll()
-    @mouse_scroll_x.each (scroll) -> scroll.unwheel()
+    @mouse_scroll_x.each_ (scroll) -> scroll.unwheel()
 
   restore_bulk_form_scroll: ->
     if @scroll_x
@@ -54,16 +54,16 @@ class Js.AdminConcept
     if @model and @bulk_form
       scroll_x = { left: @bulk_form.scrollLeft, width: @bulk_form.clientWidth }
       stored_scroll_x = @store('scroll_x') ? {}
-      @store('scroll_x', stored_scroll_x.merge("#{@model}_#{@action}": scroll_x))
+      @store('scroll_x', stored_scroll_x.merge_("#{@model}_#{@action}": scroll_x))
 
   toggle_bulk_form: ->
-    return unless @bulk_toggles.present()
+    return unless @bulk_toggles.present_()
     [all_checked, none_checked] = @toggle_toggles(@bulk_toggles, @bulk_checkboxes)
-    @bulk_buttons.each (button) -> button.toggleAttribute('disabled', none_checked)
+    @bulk_buttons.each_ (button) -> button.toggleAttribute('disabled', none_checked)
 
   toggle_export_schema: ->
-    return unless @export_toggles.present()
-    @export_toggles.each (toggle) =>
+    return unless @export_toggles.present_()
+    @export_toggles.each_ (toggle) =>
       @toggle_toggles(Array.wrap(toggle), @export_checkboxes(toggle))
     # TODO disable buttons if none selected
 
@@ -92,18 +92,18 @@ class Js.AdminConcept
 
   toggle_checkboxes: (toggle, checkboxes) ->
     checked = toggle.get_value()
-    checkboxes.each (checkbox) -> checkbox.set_value(checked)
+    checkboxes.each_ (checkbox) -> checkbox.set_value(checked)
 
   toggle_toggles: (toggles, checkboxes) ->
     all_checked = true
     none_checked = true
     toggle_checked = toggles.map (toggle) -> toggle.get_value()
-    checkboxes.each (checkbox) ->
+    checkboxes.each_ (checkbox) ->
       checked = checkbox.get_value()
       all_checked &&= checked
       none_checked &&= not checked
-    toggles.each((toggle, i) -> toggle.set_value(false) if none_checked and toggle_checked[i])
-    toggles.each((toggle, i) -> toggle.set_value(true) if all_checked and not toggle_checked[i])
+    toggles.each_((toggle, i) -> toggle.set_value(false) if none_checked and toggle_checked[i])
+    toggles.each_((toggle, i) -> toggle.set_value(true) if all_checked and not toggle_checked[i])
     [all_checked, none_checked]
 
 window.Js.Admin = {}

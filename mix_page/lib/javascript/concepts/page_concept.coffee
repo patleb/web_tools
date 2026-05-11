@@ -11,7 +11,7 @@ class Js.PageConcept
       items: @ITEM
       handle: @SORT
       forcePlaceholderSize: true
-    lists.each (list) =>
+    lists.each_ (list) =>
       list.addEventListener 'sortupdate', (event) =>
         item = event.detail.item
         current_id = item.data('id')

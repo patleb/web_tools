@@ -1,4 +1,4 @@
-ISO8601_SUPPORT = Date.parse('2011-01-01T12:00:00-05:00').present()
+ISO8601_SUPPORT = Date.parse('2011-01-01T12:00:00-05:00').present_()
 ISO8601_PATTERN = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|[-+]?[\d:]+)$/
 HTML_ESCAPES =
   '&': '&amp;'
@@ -29,7 +29,20 @@ String.SCOPED_CONSTANTIZABLE = /^[A-Z]\w*((\.|::)[A-Z]\w*)+$/i
 String.override_methods
   sub: String::replace
 
-  dup: not_implemented
+  dup_: not_implemented
+
+  size_: ->
+    @length
+
+  empty_: ->
+    @length is 0
+
+  blank_: ->
+    @trim().length is 0
+
+  eql_: (other) ->
+    return false unless other?.is_a String
+    @valueOf() is other.valueOf()
 
   to_a: ->
     result = JSON.safe_parse(this)
@@ -39,7 +52,7 @@ String.override_methods
   to_h: (casts = {}) ->
     result = JSON.safe_parse(this)
     throw 'invalid value for Object' unless result?.is_a Object
-    casts.for_each (key, cast) ->
+    casts.each_ (key, cast) ->
       result[key] = switch cast
         when  'nan' then  NaN
         when  'inf' then  Infinity
@@ -47,21 +60,15 @@ String.override_methods
         else result[key][cast]()
     result
 
-  blank: ->
-    @trim().length is 0
+  slice_: not_implemented
 
-  empty: ->
-    @length is 0
+  except_: not_implemented
 
-  eql: (other) ->
-    return false unless other?.is_a String
-    @valueOf() is other.valueOf()
-
-  front: (n = 1) ->
+  first_: (n = 1) ->
     return this[0] if n is 1
     this[0...n]
 
-  back: (n = 1) ->
+  last_: (n = 1) ->
     return this[@length - 1] if n is 1
     this[-n..-1]
 
@@ -93,15 +100,15 @@ String.define_methods
     @sub(/[\\^$.*+?()[\]{}|]/g, '\\$&')
 
   html_blank: ->
-    @gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank()
+    @gsub(/(<\/?p>|&nbsp;|<br>)/, '').blank_()
 
   to_null: ->
-    return null if @blank() or @match(/^(null|undefined)$/)
+    return null if @blank_() or @match(/^(null|undefined)$/)
     throw 'invalid value for null'
 
   to_b: ->
     return true if @match(/^(true|t|yes|y|1|1\.0|✓)$/i)
-    return false if @blank() or @match(/^(false|f|no|n|0|0\.0|✘)$/i)
+    return false if @blank_() or @match(/^(false|f|no|n|0|0\.0|✘)$/i)
     throw 'invalid value for Boolean'
 
   to_i: (base = null) ->
@@ -115,7 +122,7 @@ String.define_methods
       when 'pc'
         return parseFloat(value) / 100
       when 'm'
-        if (i = Number.METRIC_PREFIX.index value.last())?
+        if (i = Number.METRIC_PREFIX.index value.last_())?
           value = value.chop().rstrip()
           value = "#{value}e#{Number.METRIC_EXPONENT[i]}"
     parseFloat(value)
@@ -138,10 +145,6 @@ String.define_methods
 
   to_html: ->
     Array.wrap(new DOMParser().parseFromString(this, 'text/html').body.children)
-
-  first: String::front
-
-  last: String::back
 
   chars: ->
     @split('')
@@ -180,7 +183,7 @@ String.define_methods
   gsub_keys: (values, { anchor = ANCHOR } = {}) ->
     string = @valueOf()
     is_function = values.is_a Function
-    if is_function or values.present()
+    if is_function or values.present_()
       [part, parts...] = string.split(anchor)
       parts = parts.map (segment) ->
         if (name = segment.match /^[a-z][a-z0-9_]+/)
@@ -278,9 +281,9 @@ String.define_methods
       object = window
       scope = 'window'
       scope_was = null
-      @sub(/^(\.|::)/, '').split('.').each (class_scope) ->
+      @sub(/^(\.|::)/, '').split('.').each_ (class_scope) ->
         return unless class_scope.match String.CONSTANTIZABLE
-        class_scope.split('::').each (prototype_scope, i) ->
+        class_scope.split('::').each_ (prototype_scope, i) ->
           scope_was = scope
           scope = prototype_scope
           parent = object

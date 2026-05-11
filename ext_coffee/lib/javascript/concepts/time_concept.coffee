@@ -15,7 +15,7 @@ class Js.TimeConcept
       @refresh(new_body)
 
     Js.Component.RENDER, document, ({ detail: { elements }}) ->
-      elements.for_each (uid, element) =>
+      elements.each_ (uid, element) =>
         @refresh(element)
   ]
 
@@ -45,10 +45,10 @@ class Js.TimeConcept
         element.setAttribute('aria-label', content) unless element.hasAttribute('aria-label')
         element.textContent = content
         elements.push element
-    Rails.fire(document, @FORMATTED, { elements }) unless elements.empty()
+    Rails.fire(document, @FORMATTED, { elements }) unless elements.empty_()
 
   format_datetime = (element) ->
     datetime = element.getAttribute('datetime')?.to_date()
-    return unless datetime?.present()
+    return unless datetime?.present_()
     format = element.getAttribute('data-strftime')
     datetime.strftime(format)

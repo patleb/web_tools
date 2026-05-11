@@ -47,7 +47,23 @@ Array.decorate_methods
       @super(f_item_index_self, arg)
 
 Array.override_methods
-  dup: Array::slice
+  dup_: Array::slice
+
+  size_: ->
+    @length
+
+  empty_: ->
+    @length is 0
+
+  eql_: (other) ->
+    return false unless other?.is_a Array
+    return false unless @length is other.length
+    for item, i in this
+      if item?
+        return false unless item.eql_(other[i])
+      else
+        return false if other[i]?
+    true
 
   to_a: ->
     this
@@ -57,35 +73,7 @@ Array.override_methods
       throw 'Array#to_h: invalid conversion structure' if value.length isnt 1
       memo[key] = value[0]
 
-  empty: ->
-    @length is 0
-
-  eql: (other) ->
-    return false unless other?.is_a Array
-    return false unless @length is other.length
-    for item, i in this
-      if item?
-        return false unless item.eql(other[i])
-      else
-        return false if other[i]?
-    true
-
-  any: (f_item_index_self) ->
-    if f_item_index_self?
-      @some(f_item_index_self)
-    else
-      @length > 0
-
-  all: (f_item_index_self) ->
-    @every(f_item_index_self)
-
-  none: (f_item_index_self) ->
-    @every (item, index, self) ->
-      not f_item_index_self(item, index, self)
-
-  each: Array::forEach
-
-  for_each: Array::forEach
+  each_: Array::forEach
 
   each_with_index: Array::forEach
 
@@ -100,39 +88,42 @@ Array.override_methods
       accumulator
     , accumulator
 
-  map_each: Array::map
+  map_: Array::map
 
   map_with_index: Array::map
 
-  select: Array::filter
-
-  select_each: Array::filter
+  select_: Array::filter
 
   select_map: (f_item_index_self) ->
     value for item, i in this when (value = f_item_index_self(item, i, this))
 
-  reject: (f_item_index_self) ->
-    @select (item, index, self) ->
+  reject_: (f_item_index_self) ->
+    @select_ (item, index, self) ->
       not f_item_index_self(item, index, self)
 
-  except: (items...) ->
+  find_: Array::find
+
+  slice_: (items...) ->
+    item for item in this when item in items
+
+  except_: (items...) ->
     item for item in this when item not in items
 
-  compact: ->
-    @select (item) -> item?
+  compact_: ->
+    @select_ (item) -> item?
 
   compact_blank: ->
-    @select (item) -> item?.present()
+    @select_ (item) -> item?.present_()
 
-  front: (n = 1) ->
+  first_: (n = 1) ->
     return this[0] if n is 1
     this[0...n]
 
-  back: (n = 1) ->
+  last_: (n = 1) ->
     return this[@length - 1] if n is 1
     this[-n..-1]
 
-  merge: (others...) ->
+  merge_: (others...) ->
     for other in others
       @push(other...)
     this
@@ -155,9 +146,18 @@ Array.define_methods
   to_set: ->
     @map((v) -> [v, true]).to_h()
 
-  first: Array::front
+  any: (f_item_index_self) ->
+    if f_item_index_self?
+      @some(f_item_index_self)
+    else
+      @length > 0
 
-  last: Array::back
+  all: (f_item_index_self) ->
+    @every(f_item_index_self)
+
+  none: (f_item_index_self) ->
+    @every (item, index, self) ->
+      not f_item_index_self(item, index, self)
 
   drop: (n) ->
     this[n..-1]
@@ -270,7 +270,7 @@ Array.define_methods
     value for key, value of result
 
   extract_options: ->
-    if @last()?.is_a Object
+    if @last_()?.is_a Object
       @pop()
     else
       {}

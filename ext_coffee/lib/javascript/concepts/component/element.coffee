@@ -14,7 +14,7 @@ class Js.Component.Element
     NO_CHANGES: '__NO_CHANGES__'.html_safe(true)
 
   @first: ->
-    Js.Component.elements.find (uid, e) => e.constructor is this
+    Js.Component.elements.find_ (uid, e) => e.constructor is this
 
   @element: (event_or_target) ->
     if Js.Component.elements
@@ -43,7 +43,7 @@ class Js.Component.Element
   @handler: (method_name) ->
     (event) =>
       args = arguments
-      Array.wrap(@element(event)).each (element) ->
+      Array.wrap(@element(event)).each_ (element) ->
         element[method_name](args...)
 
   constructor: (@_node, @_uid, index) ->
@@ -54,10 +54,10 @@ class Js.Component.Element
     @_index = @_node.getAttribute('data-index')?.to_i() ? @constructor.index ? index
     @_scope = @_node.getAttribute('data-scope') or @constructor.scope or ''
     @_store = !!@constructor.store
-    static_data.for_each (name, value) => this[name] = value
+    static_data.each_ (name, value) => this[name] = value
     @_watch_scopes = {}
     @_watch_ivars = {}
-    @_watch = if watch_data.empty()
+    @_watch = if watch_data.empty_()
       false
     else
       if (initialize = watch_data.is_a Object)
@@ -67,7 +67,7 @@ class Js.Component.Element
           if string_object
             [scope, ivars] = name.chop().split(/: *\[/, 2)
             name = { "#{scope}": ivars.split(',').map('strip') }
-          return name.map_each (scope, ivars) =>
+          return name.map_ (scope, ivars) =>
             @_watch_scopes[scope] = true
             ivars = Array.wrap(ivars)
             ivars.select_map (ivar) =>
@@ -81,7 +81,7 @@ class Js.Component.Element
         this[ivar] = value if initialize
         name
       .flatten()
-    @_watch_ivars = @_watch_ivars.keys()
+    @_watch_ivars = @_watch_ivars.keys_()
     @_node.add_class 'no-transition' unless @_refresh is false
 
   ready: ->
@@ -100,7 +100,7 @@ class Js.Component.Element
     @_node.find(selector)
 
   find_input: (name, value = null) ->
-    return unless name?.present()
+    return unless name?.present_()
     selector = "[data-bind='#{name}']"
     selector += "[value='#{value}']" if value?
     @find selector
@@ -141,15 +141,15 @@ class Js.Component.Element
     changes
 
   update_self: (changes, skip_callbacks = false) ->
-    scopes = changes.except(@_watch_ivars...)
-    changes = changes.slice(@_watch_ivars...).select_each (name, [value]) =>
+    scopes = changes.except_(@_watch_ivars...)
+    changes = changes.slice_(@_watch_ivars...).select_ (name, [value]) =>
       if not eql this[name], value
         this[name] = value
         true
-    changes = if @_stale = changes.present()
+    changes = if @_stale = changes.present_()
       if not skip_callbacks
         @nullify_memoizers()
-        updates = changes.map_each (name, [change...]) =>
+        updates = changes.map_ (name, [change...]) =>
           [name, [change..., this["on_update_#{name}"]?(change...)]]
         @on_update?(updates.to_h())
         updated = true
@@ -158,43 +158,43 @@ class Js.Component.Element
       {}
     else
       false
-    if not skip_callbacks and scopes.present()
+    if not skip_callbacks and scopes.present_()
       @nullify_memoizers() unless updated
-      updates = scopes.map_each (name, [change...]) =>
+      updates = scopes.map_ (name, [change...]) =>
         [name, [change..., this["on_watch_#{name}"]?(change...)]]
       @on_watch?(updates.to_h())
     changes
 
   storage_sync: (names...) ->
-    @storage_get(names...).for_each (name, value) => this[name] = value
+    @storage_get(names...).each_ (name, value) => this[name] = value
 
   storage_changes: (name, options = {}) ->
-    Js.Storage.get_changes(name, @storage_options.merge options)
+    Js.Storage.get_changes(name, @storage_options.merge_ options)
 
   storage_change: (name, options = {}) ->
-    Js.Storage.get_change(name, @storage_options.merge options)
+    Js.Storage.get_change(name, @storage_options.merge_ options)
 
   storage_value: (name, options = {}) ->
-    Js.Storage.get_value(name, @storage_options.merge options)
+    Js.Storage.get_value(name, @storage_options.merge_ options)
 
   storage_has: (name, options = {}) ->
-    Js.Storage.has_value(name, @storage_options.merge options)
+    Js.Storage.has_value(name, @storage_options.merge_ options)
 
   storage_get: (names...) ->
     return {} unless @_watch
     options = names.extract_options()
-    Js.Storage.get(@storage_names(names)..., @storage_options.merge options)
+    Js.Storage.get(@storage_names(names)..., @storage_options.merge_ options)
 
   storage_set: (inputs, options = {}) ->
     [@_autofocus, @_autofocus_was] = [@_autofocus_was, null] if options.autofocus
-    Js.Storage.set(inputs, @storage_options.merge options)
+    Js.Storage.set(inputs, @storage_options.merge_ options)
 
   storage_fire: (changes, options = {}) ->
-    Js.Storage.fire(changes, @storage_options.merge options)
+    Js.Storage.fire(changes, @storage_options.merge_ options)
     changes
 
   storage_names: (names) ->
-    return @_watch if @_watch and names.empty()
+    return @_watch if @_watch and names.empty_()
     names
 
   # Private

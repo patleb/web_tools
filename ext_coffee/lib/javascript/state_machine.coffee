@@ -33,7 +33,7 @@ class window.StateMachine
 
     paths: ->
       @_paths ||= @transitions.each_with_object {}, (event, transitions, memo) ->
-        transitions.for_each (current, transition) ->
+        transitions.each_ (current, transition) ->
           next = transition.next
           next = transition.next_states if next.is_a Function
           (memo[current] ||= {})[event] = next
@@ -46,15 +46,15 @@ class window.StateMachine
   build: (config) ->
     @id = Math.uid()
     if config instanceof @constructor
-      config.methods?.for_each (name) => this[name] = config[name]
-      CLONABLE_IVARS.each (name) => this[name] = config[name]
-      CONFIG_HOOKS.each (name) => this[name] = config[name]
+      config.methods?.each_ (name) => this[name] = config[name]
+      CLONABLE_IVARS.each_ (name) => this[name] = config[name]
+      CONFIG_HOOKS.each_ (name) => this[name] = config[name]
     else
       config = @config().deep_merge(config)
       if config.methods?
-        config.methods.for_each (name, method) => this[name] = method
-        @methods = config.methods.keys()
-      CONFIG_HOOKS.each (name) => this[name] = config[name] ? noop
+        config.methods.each_ (name, method) => this[name] = method
+        @methods = config.methods.keys_()
+      CONFIG_HOOKS.each_ (name) => this[name] = config[name] ? noop
       @initial = config.initial
       @terminal = Array.wrap(config.terminal).to_set()
       @extract_states(config)
@@ -207,43 +207,43 @@ class window.StateMachine
     @transitions = {}
     current_wildcards = {}
     next_wildcards = {}
-    config.events?.for_each (event_name, event_config) =>
-      event_hooks = event_config.slice(EVENT_HOOKS...)
-      transitions = event_config.except(EVENT_HOOKS...)
-      transitions.for_each (current, next) =>
+    config.events?.each_ (event_name, event_config) =>
+      event_hooks = event_config.slice_(EVENT_HOOKS...)
+      transitions = event_config.except_(EVENT_HOOKS...)
+      transitions.each_ (current, next) =>
         if next.is_a Object
-          [next, transition_hooks] = next.front()
+          [next, transition_hooks] = next.first_()
           if transition_hooks.next
             hooks = @merge_hooks(transition_hooks, event_hooks)
             if hooks.next_states = @add_wildcard_or_states(next_wildcards, event_name, next, transition_hooks.next)?.to_set()
-              hooks.next_states.for_each (next) =>
-                @add_wildcard_or_states(current_wildcards, event_name, current, next, hooks)?.each (state) =>
+              hooks.next_states.each_ (next) =>
+                @add_wildcard_or_states(current_wildcards, event_name, current, next, hooks)?.each_ (state) =>
                   @add_transition(event_name, state, transition_hooks.next, hooks)
               return
             next = transition_hooks.next
         unless hooks
           hooks = @merge_hooks(transition_hooks, event_hooks)
           @add_state(next)
-        @add_wildcard_or_states(current_wildcards, event_name, current, next, hooks)?.each (state) =>
+        @add_wildcard_or_states(current_wildcards, event_name, current, next, hooks)?.each_ (state) =>
           @add_transition(event_name, state, next, hooks)
     @configure_states(config)
-    states = @states.keys()
-    current_wildcards.for_each (event, { except_states, next, hooks }) =>
-      states.except(except_states...).each (current) =>
+    states = @states.keys_()
+    current_wildcards.each_ (event, { except_states, next, hooks }) =>
+      states.except_(except_states...).each_ (current) =>
         @add_transition(event, current, next, hooks)
     states = states.to_set()
-    next_wildcards.for_each (event, { except_states, next }) =>
-      next_states = if except_states.present() then states.except(except_states...) else states
-      @transitions[event].for_each (current, transition) =>
+    next_wildcards.each_ (event, { except_states, next }) =>
+      next_states = if except_states.present_() then states.except_(except_states...) else states
+      @transitions[event].each_ (current, transition) =>
         transition.next_states = next_states if transition.next is next
 
   configure_states: (config) ->
     @add_state(@initial) if @initial
-    @terminal.for_each (terminal) =>
+    @terminal.each_ (terminal) =>
       @add_state(terminal)
-    config.states?.for_each (state_name, state_config) =>
+    config.states?.each_ (state_name, state_config) =>
       @add_state(state_name)
-      state_config.slice(STATE_CONFIG...).for_each (key, value) =>
+      state_config.slice_(STATE_CONFIG...).each_ (key, value) =>
         @states[state_name][key] = value
 
   merge_hooks: (transition_hooks, event_hooks) ->
@@ -265,7 +265,7 @@ class window.StateMachine
 
   add_except_states: (states) ->
     if states.include EXCEPT
-      @add_states(states.split(EXCEPT).last())
+      @add_states(states.split(EXCEPT).last_())
     else
       []
 
@@ -281,15 +281,15 @@ class window.StateMachine
 
   add_transition: (event, current, next, hooks) ->
     @transitions[event] ?= {}
-    @transitions[event][current] = { next }.merge(hooks)
+    @transitions[event][current] = { next }.merge_(hooks)
 
   extract_flags: ->
     flags = @states.each_with_object {}, (state_name, _, memo) ->
-      state_name.split(FLAGS).each (state_flag) ->
+      state_name.split(FLAGS).each_ (state_flag) ->
         memo[state_flag] = true
-    @states.for_each (state_name, _) =>
+    @states.each_ (state_name, _) =>
       state_flags = state_name.split(FLAGS)
-      flags.for_each (flag, _) =>
+      flags.each_ (flag, _) =>
         @states[state_name].data[flag] = state_flags.any (state_flag) -> flag is state_flag
 
   log: (@status) ->

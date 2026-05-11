@@ -18,7 +18,7 @@ class Js.Admin.SearchConcept
         else if @is_after_separator(before)
           "=#{token}"
         else if target.type is 'time'
-          if before.last() is 'T'
+          if before.last_() is 'T'
             token
           else if before.match DATE
             "T#{token}"
@@ -51,7 +51,7 @@ class Js.Admin.SearchConcept
     'click', '.js_query_field', (event, target) ->
       @with_search_token(target, (before, token) =>
         return if before is '_}' or @is_after_operator(before)
-        switch before.last() ? ''
+        switch before.last_() ? ''
           when '', ' ' then "{#{token}}"
           when '{'     then token
           when '}'     then { reopen: true, result: "|#{token}}" }
@@ -67,7 +67,7 @@ class Js.Admin.SearchConcept
 
   on_search_blank: (event, target) ->
     return if @query_submitted
-    return if target.get_value()?.present()
+    return if target.get_value()?.present_()
     return unless Routes.decode_params().q
     @query_bar.fire 'submit'
 
@@ -93,9 +93,9 @@ class Js.Admin.SearchConcept
 
   is_after_operator: (before, { equality_only = false } = {}) ->
     if equality_only
-      before.last(2)?.match /[=!]=?$/
+      before.last_(2)?.match /[=!]=?$/
     else
-      before.last(2)?.match /[=!<>]=?$/
+      before.last_(2)?.match /[=!<>]=?$/
 
   is_after_separator: (before) ->
     before is '' or before.match /[ }|]$/

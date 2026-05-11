@@ -11,7 +11,8 @@ module LogLines
 
       log = Log.create! server: Server.current, path: file.to_s.delete_suffix('.0')
       file.each_line.with_index do |line, i|
-        assert_equal ACCESS_EXPECTATIONS[i], LogLines::NginxAccess.parse(log, line, mtime: file.mtime)
+        line_was, line = line, LogLines::NginxAccess.parse(log, line, mtime: file.mtime)
+        assert_equal ACCESS_EXPECTATIONS[i], line
       end
     end
 

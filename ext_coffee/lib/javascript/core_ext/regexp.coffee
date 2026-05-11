@@ -1,11 +1,11 @@
 RegExp.override_methods
-  blank: ->
+  blank_: ->
     false
 
-  eql: (other) ->
+  eql_: (other) ->
     return false unless other?.is_a RegExp
     return false unless @source is other.source
-    @flags.chars().sort().eql(other.flags.chars().sort())
+    @flags.chars().sort().eql_(other.flags.chars().sort())
 
 RegExp.define_methods
   match: (str) ->

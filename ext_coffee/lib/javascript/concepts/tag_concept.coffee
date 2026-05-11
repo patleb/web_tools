@@ -29,20 +29,21 @@ class Js.TagConcept
     window.h_ = @h_
     window.if_ = @if_
     window.unless_ = @unless_
-    @HTML_TAGS.for_each (tag) => @define_tag(tag)
+    window.select_ = (args...) => @with_tag('select_', args...) # override Object#select_
+    @HTML_TAGS.each_ (tag) => @define_tag(tag)
 
   define: (tags...) ->
     @merge(tags...)
-    tags.each (tag) => @define_tag(tag)
+    tags.each_ (tag) => @define_tag(tag)
 
   merge: (tags...) ->
-    @HTML_TAGS.merge(tags.to_set())
+    @HTML_TAGS.merge_(tags.to_set())
 
   h_: (values...) =>
     { no_space } = values.extract_options()
     if values.length is 1 and (text = values[0])?.is_a Function
       values = [text()]
-    values = values.flatten().compact().map (item) ->
+    values = values.flatten().compact_().map (item) ->
       item = blank unless item?
       item = item.safe_text()   unless item.html_safe()
       item.to_s()
@@ -83,7 +84,7 @@ class Js.TagConcept
       else
         content = css_or_content_or_options
         options = content_or_options if content_or_options?.is_a Object
-    options = if options? then options.dup() else {}
+    options = if options? then options.dup_() else {}
 
     return blank unless @continue(options)
 
@@ -94,29 +95,29 @@ class Js.TagConcept
 
     if (classes = options.class)
       options.class = @classes_to_string(classes)
-      options.delete('class') if options.class.blank()
+      options.delete_('class') if options.class.blank_()
 
     if options.data?.is_a Object
-      { data: options.delete('data') }.flatten_keys('-').for_each (key, value) ->
+      { data: options.delete_('data') }.flatten_keys('-').each_ (key, value) ->
         options[key] = value
 
-    dom = true if tag.last() is '$'
+    dom = true if tag.last_() is '$'
     tag = tag.chop()
 
-    escape = options.delete('escape') ? true
-    content = options.delete('text') if options.text?
+    escape = options.delete_('escape') ? true
+    content = options.delete_('text') if options.text?
     content = content() if content?.is_a Function
     switch tag
       when 'a'
         options.rel = 'noopener' unless options.rel
-        options['data-turbolinks'] = options.delete('turbolinks')
+        options['data-turbolinks'] = options.delete_('turbolinks')
       when 'button'
         options.type ?= 'submit'
       when 'input'
         options.autocomplete ?= 'off' if options.type is 'hidden'
       when 'select'
         options.autocomplete ?= 'off' if options.name or options.id
-    content = @h_(content, no_space: options.delete('no_space')) if content?.is_a Array
+    content = @h_(content, no_space: options.delete_('no_space')) if content?.is_a Array
     result = if tag? then @content_tag(tag, content, options, escape) else @h_(content)
     result = result.to_s().html_safe(true) unless dom
     result
@@ -136,7 +137,7 @@ class Js.TagConcept
     classes = classes.split('.')
     if id_classes
       [id, other_classes...] = id_classes.split('.')
-      classes.merge(other_classes)
+      classes.merge_(other_classes)
     [id, classes]
 
   classes_to_array: (classes) ->
@@ -157,9 +158,9 @@ class Js.TagConcept
 
   content_tag: (tag, text, options, escape) ->
     tag = document.createElement(tag)
-    options.class = options.delete('class') # necessary to keep #id.classes order
-    cast = options.delete('data-cast')
-    args = options.delete('data-args')
+    options.class = options.delete_('class') # necessary to keep #id.classes order
+    cast = options.delete_('data-cast')
+    args = options.delete_('data-args')
     for name, value of options
       if value?
         if cast? and name is 'value'
@@ -176,7 +177,7 @@ class Js.TagConcept
                 text[value](args)
             else
               text = value(text, args)
-          value = value.deconstantize() unless value.is_a String
+          value = value.deconstantize_() unless value.is_a String
           tag.setAttribute(name, value)
           tag.setAttribute('data-args', JSON.stringify(args)) if args?
         else if name.start_with 'data'
@@ -193,19 +194,19 @@ class Js.TagConcept
 
   continue: (options = {}) ->
     if options.has_key 'if'
-      is_true = options.delete('if')
+      is_true = options.delete_('if')
       is_true = is_true() if is_true?.is_a Function
       return false unless is_true
     if options.has_key 'unless'
-      is_true = options.delete('unless')
+      is_true = options.delete_('unless')
       is_true = is_true() if is_true?.is_a Function
       return false if is_true
     true
 
   on_input: (event, target) ->
     return unless (output_ids = target.data('for'))
-    return unless (outputs = output_ids.strip().split(/ +/).map (id) -> Rails.find({ id })).present()
-    outputs.each (output) ->
+    return unless (outputs = output_ids.strip().split(/ +/).map (id) -> Rails.find({ id })).present_()
+    outputs.each_ (output) ->
       if (value = target.get_value())?
         if format = output.getAttribute 'data-format'
           if args = output.getAttribute 'data-args'

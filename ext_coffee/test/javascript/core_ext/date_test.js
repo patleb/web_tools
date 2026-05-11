@@ -57,22 +57,22 @@ describe('Date', () => {
     assert.false(Date.current().is_a(Object))
   })
 
-  test('#eql', () => {
-    assert.true(Date.current().eql(Date.current()))
-    assert.false(Date.current().eql(create_date(2001, 1, 1, 1, 1, 1)))
+  test('#eql_', () => {
+    assert.true(Date.current().eql_(Date.current()))
+    assert.false(Date.current().eql_(create_date(2001, 1, 1, 1, 1, 1)))
   })
 
-  test('#presence', () => {
+  test('#presence_', () => {
     let date = Date.current()
-    assert.equal(date, date.presence())
+    assert.equal(date, date.presence_())
     assert.equal(date, new Date(date.valueOf()))
   })
 
   test('#advance', () => {
     let date = Date.current()
-    assert.equal(Math.floor(date.dup().setMonth(date.getMonth()     + 1) / 1000), date.advance({ months:  1 }).to_i())
-    assert.equal(Math.floor(date.dup().setDate(date.getDate()       + 2) / 1000), date.advance({ days:    2 }).to_i())
-    assert.equal(Math.floor(date.dup().setSeconds(date.getSeconds() + 3) / 1000), date.advance({ seconds: 3 }).to_i())
+    assert.equal(Math.floor(date.dup_().setMonth(date.getMonth()     + 1) / 1000), date.advance({ months:  1 }).to_i())
+    assert.equal(Math.floor(date.dup_().setDate(date.getDate()       + 2) / 1000), date.advance({ days:    2 }).to_i())
+    assert.equal(Math.floor(date.dup_().setSeconds(date.getSeconds() + 3) / 1000), date.advance({ seconds: 3 }).to_i())
     assert.equal(date.to_i() + 123, date.advance(123).to_i())
     assert.equal(date.to_i() + 123, date.advance(Duration.new('PT123S')).to_i())
     assert.equal(date.to_i() + 123, date.advance({ seconds: 123 }).to_i())
