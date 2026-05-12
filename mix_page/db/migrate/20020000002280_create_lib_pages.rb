@@ -1,7 +1,7 @@
 class CreateLibPages < ActiveRecord::Migration[8.0]
   def change
     create_table :lib_pages do |t|
-      t.uuid       :uuid,                 null: false, default: 'gen_random_uuid()', index: { using: :hash }
+      t.uuid       :uuid,                 null: false, default: 'uuidv7()', index: { using: :hash }
       t.integer    :type,                 null: false
       t.integer    :view,                 null: false, index: true
       t.belongs_to :page_layout,          foreign_key: { to_table: :lib_pages }
