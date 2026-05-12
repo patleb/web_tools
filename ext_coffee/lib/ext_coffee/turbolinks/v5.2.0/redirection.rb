@@ -8,7 +8,7 @@ module Turbolinks
 
     def redirect_to(...)
       super.tap do
-        if request.accept.match?(/\b(?:java|ecma)script\b/) && request.xhr? && !request.get?
+        if request.accept&.match?(/\b(?:java|ecma)script\b/) && request.xhr? && !request.get?
           visit_location_with_turbolinks(location)
         elsif request.headers['Turbolinks-Referrer']
           store_turbolinks_location_in_session(location)
