@@ -80,8 +80,8 @@ namespace :server do
 
   desc 'download server logs'
   task :download_logs, [:env, :app, :dump] => :environment do |t, args|
-    dump = args[:dump].presence || '/opt/storage/tmp'
     with_stage(args) do |env|
+      dump = args[:dump].presence || '/opt/storage/tmp'
       sh "bin/sun firewall #{env} --disable"
       sh "bin/sun rake #{env} 'db:pg:dump -- --name=logs --base-dir=#{dump} --includes=lib_servers,lib_log*' --sudo"
       sh "bin/sun download #{env} #{dump}/logs.pg.gz --dir=tmp/log/dump"
@@ -91,6 +91,19 @@ namespace :server do
       sh "bin/sun download #{env} '/var/log/postgresql/postgresql-#{Setting[:postgres]}-main.log*' --dir=tmp/log/postgresql"
       sh "bin/sun download #{env} '/var/log/auth.log*' --dir=tmp/log/auth"
       sh "bin/sun download #{env} '/var/log/apt/history.log*' --dir=tmp/log/apt"
+    ensure
+      sh "bin/sun firewall #{env}"
+    end
+  end
+
+  desc 'download server crash logs'
+  task :download_crash_logs, [:env, :app, :log_id] => :environment do |t, args|
+    with_stage(args) do |env|
+      log_id = args[:log_id].presence || raise('argument [:log_id] must be specified')
+      sh "bin/sun firewall #{env} --disable"
+      %w( backtrace backtrace_oxt controller_configs controller_states fds main mbufs pool ulimits ).each do |name|
+        sh "bin/sun download #{env} '/var/tmp/passenger-crash-log.#{log_id}/#{name}.log' --dir=tmp/log/passenger"
+      end
     ensure
       sh "bin/sun firewall #{env}"
     end

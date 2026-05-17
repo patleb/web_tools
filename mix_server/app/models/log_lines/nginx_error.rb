@@ -24,7 +24,9 @@ module LogLines
     P_THREAD_ID    = /\w+/
     P_LOCATION     = %r{[\w/.:-]+}
     P_MESSAGE      = /[^:]+/
+    P_LOG_ID       = /\d+\.\w+/
     P_NGINX        = %r{\[ (#{P_LEVEL}) (#{P_TIME})\.\d+ (#{PID})/T#{P_THREAD_ID} (#{P_LOCATION}) \]: (#{MESSAGE})}
+    P_DUMP         = %r{\[ pid=(#{PID}) \] /var/tmp/passenger-crash-log\.(#{P_LOG_ID})}
     P_ERROR        = %r{(Error|App) (#{PID} )?(#{P_MESSAGE}): (#{MESSAGE})}
     P_ERROR_LEVELS = {
       'D3'    => 'debug',
@@ -49,6 +51,11 @@ module LogLines
         level = P_ERROR_LEVELS[level]
         created_at = Time.strptime("#{created_at} UTC", '%Y-%m-%d %H:%M:%S %z').utc
         text = "#{location}: #{text}"
+      elsif (values = line.match(P_DUMP))
+        pid, log_id = values.captures
+        level = 'error'
+        created_at = mtime
+        text = "/var/tmp/passenger-crash-log.#{log_id}"
       elsif (values = line.match(P_ERROR))
         level, pid, p_message, text = values.captures
         level = P_ERROR_LEVELS[level]
