@@ -20,7 +20,7 @@ module LogLines
         return { filtered: true } if previous&.dig(:filtered) || uuid != previous&.dig(:json_data, :uuid)
         anchored = true
         created_at, pid = previous.values_at(:created_at, :pid)
-        message = { text: text, level: :fatal }
+        message = { text: scrub_unprintable(text), level: :fatal }
       else
         return { filtered: true }
       end
