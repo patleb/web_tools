@@ -102,7 +102,7 @@ module MixServer
         @ided_errors ||= {
           %r{(SSL_do_handshake\(\) failed \(SSL: error:)(\w+)} => '\1*',
           %r{(ID: )(\w+)} => '\1*',
-          %r{(details saved to: /tmp/passenger-error-)(\w+)} => '\1*',
+          %r{(/var/tmp/passenger-crash-log\.)(\d+\.\w+)} => '\1*',
           %r{(Cannot checkout session because a spawning error occurred\. The identifier of the error is )(\w+)} => '\1*',
           %r{(/tmp/passenger_native_support-)(\w+)} => '\1*',
           %r{(/bundler/gems/web_tools-)([a-f0-9]+)} => '\1*',
