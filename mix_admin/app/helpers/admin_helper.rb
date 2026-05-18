@@ -18,7 +18,7 @@ module AdminHelper
   end
 
   def admin_link?
-    Current.logged_in? && !Current.controller.is_a?(AdminController)
+    Current.user.admin? && !Current.controller.is_a?(AdminController)
   end
 
   def app_link(**options)
