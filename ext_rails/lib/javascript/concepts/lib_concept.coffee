@@ -1,10 +1,7 @@
 class Js.LibConcept extends Js.Base
-  @readers
-    role: -> Cookie.get('_role') ? 'null'
-
   memoizers: ->
     layout:   -> Rails.find('.js_layout')?.data('value')
-    scroll_y: -> @layout and @sidebar and @store('scroll_y')?["#{@role}_#{@layout}"]
+    scroll_y: -> @layout and @sidebar and @store('scroll_y')?["#{User.role}_#{@layout}"]
     sidebar:  -> Rails.find('.drawer-side')
     notice:   -> Rails.find('#notice')
 
@@ -33,7 +30,7 @@ class Js.LibConcept extends Js.Base
     if @layout and @sidebar
       scroll_y = { top: @sidebar.scrollTop, height: @sidebar.clientHeight }
       stored_scroll_y = @store('scroll_y') ? {}
-      @store('scroll_y', stored_scroll_y.merge_("#{@role}_#{@layout}": scroll_y))
+      @store('scroll_y', stored_scroll_y.merge_("#{User.role}_#{@layout}": scroll_y))
 
   clear_drawer_toggle: ->
     Rails.find('.drawer-toggle')?.set_value(false) if Device.screen is 'lg'
@@ -50,3 +47,5 @@ class Js.LibConcept extends Js.Base
 
   adjust_autofocus: ->
     Rails.find('[autofocus]:not([type="email"],[type="number"],[type="range"])')?.cursor(end: true)
+
+window.User ?= { role: 'null' }
