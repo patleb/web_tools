@@ -89,6 +89,8 @@ HTMLElement.define_methods
     elements
 
   append_once: (id, node_or_callback) ->
+    id = id.id if id.id
+    id = id.chop() if id.starts_with '#'
     return if @find({ id })
     node = if node_or_callback.is_a Function
       node_or_callback(id)
