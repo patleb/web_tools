@@ -77,7 +77,6 @@ module LogLines
       level = known_level || level
       level = ERROR_LEVELS[level]
       return { filtered: true } unless SYSTEM_ERROR.include? level
-      return { filtered: true } if text_tiny.start_with?('output: ') && text_tiny.size < 26 # filter short ruby lines
 
       message = { text_tiny: text_tiny, text: text, level: level }
 

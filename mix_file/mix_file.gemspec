@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'image_processing'
   s.add_dependency 'image_optim'
   s.add_dependency 'image_optim_pack', '0.10.1.20240317'
+  s.add_dependency 'ruby-vips'
 end

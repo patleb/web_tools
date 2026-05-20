@@ -22,7 +22,11 @@ module MixFile
     # https://cft.vanderbilt.edu/wp-content/uploads/sites/59/Image_resolutions.pdf
     # actiontext/app/views/active_storage/blobs/_blob.html.erb
     def image_limit
-      @image_limit ||= [1024, 768]
+      @image_limit ||= if Rails.env.test?
+        [1024, 768, sharpen: true]
+      else
+        [1024, 768]
+      end
     end
   end
 end
