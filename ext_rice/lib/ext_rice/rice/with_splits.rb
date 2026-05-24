@@ -85,7 +85,7 @@ module Rice
               name = scopes.dig(-1, 2)
               case code
               when /^inline / then hpp << line
-              when INLINE     then hpp << (code.include?(name) ? line : "#{' ' * indent}inline #{line.lstrip}")
+              when INLINE     then hpp << "#{' ' * indent}inline #{line.lstrip}"
               when STATEMENT  then hpp << line
               when METHOD
                 next hpp << line if template || code.exclude?('(')
