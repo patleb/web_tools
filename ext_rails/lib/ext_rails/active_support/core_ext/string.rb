@@ -11,8 +11,8 @@ class String
     Arel.sql(self)
   end
 
-  def strip_sql(**variables)
-    result = strip.gsub(/(--.*\n|\n)/, ' ').gsub(/\s{2,}/, ' ')
+  def strip_sql(squish: false, **variables)
+    result = squish ? strip.gsub(/(--.*\n|\n)/, ' ').gsub(/\s{2,}/, ' ') : strip.gsub(/--.*$/, '')
     unless variables.empty?
       result = variables.reduce(result) do |sql, (name, value)|
         sql.gsub(/\{\{\s*#{name}\s*\}\}/, value.to_s.strip_sql)
