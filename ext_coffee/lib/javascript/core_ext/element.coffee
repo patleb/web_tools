@@ -140,7 +140,7 @@ HTMLElement.define_methods
         value = []
         for option in Array.wrap(@options)
           if option.selected
-            choice = cast_value(option, option.value)
+            choice = cast_value(option, option.value, was)
             value.push(choice)
         value = value[0] unless @multiple
         value
@@ -148,11 +148,11 @@ HTMLElement.define_methods
         @checked
       when 'range'
         value = get_value(this, was)
-        value = cast_value(@list.options[value], value) if @list?.present_()
+        value = cast_value(@list.options[value], value, was) if @list?.present_()
         value
       else
         get_value(this, was)
-    cast_value(this, value)
+    cast_value(this, value, was)
 
   set_value: (value, { event = false } = {}) ->
     return value if @disabled or @hasAttribute('disabled')
@@ -208,11 +208,27 @@ HTMLElement.define_methods
   fire: (name, data) ->
     Rails.fire(this, name, data)
 
+  has_attr: (name, was = false) ->
+    name += '-was' if was
+    @hasAttribute name
+
+  get_attr: (name, was = false) ->
+    name += '-was' if was
+    @getAttribute name
+
+  set_attr: (name, value, was = false) ->
+    name += '-was' if was
+    @setAttribute name, value
+
+  remove_attr: (name, was = false) ->
+    name += '-was' if was
+    @removeAttribute name
+
 CURSOR_TYPES = ['password', 'search', 'tel', 'text', 'textarea', 'url']
 
-cast_value = (input, value) ->
-  if value? and (cast = input.getAttribute 'data-cast')?
-    if args = input.getAttribute 'data-args'
+cast_value = (input, value, was) ->
+  if value? and (cast = input.get_attr 'data-cast', was)?
+    if args = input.get_attr 'data-args', was
       args = JSON.parse(args)
     value = if cast.scoped_constantizable()
       cast.constantize()(value, args)
@@ -223,7 +239,9 @@ cast_value = (input, value) ->
   value
 
 get_value = (input, was) ->
-  if was and input.hasAttribute 'data-was'
-    input.getAttribute 'data-was'
+  if input.has_attr 'data-value', was
+    cast_value input.get_attr('data-value', was), was
   else
     input.value
+
+window.WAS = true

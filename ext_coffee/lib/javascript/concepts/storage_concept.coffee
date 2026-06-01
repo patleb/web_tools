@@ -57,14 +57,13 @@ class Js.StorageConcept
 
   get: (names...) ->
     { permanent = false, scope = '', was = false } = names.extract_options()
-    was = { was }
     if names.length
       result = names.map (name) =>
         scoped_name = @scoped name, scope
-        [@unscoped(name), @storage(permanent).find("[name='#{scoped_name}']")?.get_value(was)]
+        [@unscoped(name), @storage(permanent).find("[name='#{scoped_name}']")?.get_value({ was })]
     else
       result = @storage(permanent).$("[name^='#{scope}:']").map (input) =>
-        [input.name.sub(///^#{scope.safe_regex()}:///, ''), input.get_value(was)]
+        [input.name.sub(///^#{scope.safe_regex()}:///, ''), input.get_value({ was })]
     result.reject_(([name, value]) -> value is undefined).to_h()
 
   set: (inputs, { submitter = null, permanent = false, scope = '', event = true, was = false } = {}) ->
@@ -76,22 +75,9 @@ class Js.StorageConcept
         input = input$ type: 'hidden', name: "#{scoped_name}", autocomplete: 'off'
         @storage(permanent).appendChild(input)
       if value_was is undefined or not eql value, value_was
-        cast = type_caster(value)
         memo[@unscoped name] = [value, value_was]
-        input.setAttribute('value', if value? then value.safe_text() else null)
-        input.setAttribute('data-was', value_was.safe_text()) if was and value_was?
-        if cast
-          input.setAttribute('data-cast', cast)
-        else
-          input.removeAttribute('data-cast')
-        if value?.is_a Object
-          args = value.each_with_object {}, (key, value, memo) ->
-            return unless cast = json_caster(value)
-            memo[key] = cast
-          if args.empty_()
-            input.removeAttribute('data-args')
-          else
-            input.setAttribute('data-args', args.safe_text())
+        set_value(input, value)
+        set_value(input, value_was, WAS) if was
         @log permanent, scoped_name, value, value_was
     @fire(changes, { submitter, permanent, scope }) if event
     changes
@@ -118,16 +104,6 @@ class Js.StorageConcept
 
   # Private
 
-  storage_node = (id_selector, permanent) ->
-    unless (node = Rails.find(id_selector))
-      body = document.body.find('[data-turbolinks-body]') ? document.body
-      if permanent
-        node = div$ id_selector, 'data-turbolinks-permanent': true
-      else
-        node = div$ id_selector
-      body.appendChild(node)
-    node
-
   log: (permanent, scoped_name, value, value_was) ->
     tag = "[STORAGE][#{if permanent then 'P' else '-'}][#{scoped_name}]"
     tag = tag.ljust @__pad, '-' if @__pad
@@ -137,3 +113,36 @@ class Js.StorageConcept
 
   log_debug: (msg) ->
     Logger.debug(msg) if @__debug
+
+  set_value = (input, value, was = false) ->
+    if not was
+      input.set_attr('value', if value? then value.safe_text() else null)
+    else if value?
+      input.set_attr('data-value', value.safe_text(), WAS)
+    else
+      remove_was = true
+      input.remove_attr('data-value', WAS)
+    if not remove_was and (cast = type_caster(value))
+      input.set_attr('data-cast', cast, was)
+    else
+      input.remove_attr('data-cast', was)
+    if value?.is_a Object
+      args = value.each_with_object {}, (key, value, memo) ->
+        return unless cast = json_caster(value)
+        memo[key] = cast
+      if args.present_()
+        input.set_attr('data-args', args.safe_text(), was)
+      else
+        input.remove_attr('data-args', was)
+    else
+      input.remove_attr('data-args', was)
+
+  storage_node = (id_selector, permanent) ->
+    unless (node = Rails.find(id_selector))
+      body = document.body.find('[data-turbolinks-body]') ? document.body
+      if permanent
+        node = div$ id_selector, 'data-turbolinks-permanent': true
+      else
+        node = div$ id_selector
+      body.appendChild(node)
+    node
