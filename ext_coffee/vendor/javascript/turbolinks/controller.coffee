@@ -7,7 +7,6 @@ class Turbolinks.Controller
   constructor: ->
     @html = document.documentElement
     @on_scroll = @on_scroll.throttle()
-    @restoration_data = {}
     @clear_cache()
     @progress_bar = new Turbolinks.ProgressBar
 
@@ -49,6 +48,7 @@ class Turbolinks.Controller
         window.location = location
 
   clear_cache: (@cache_next = false) ->
+    @restoration_data = {}
     @cache = new Turbolinks.SnapshotCache(@constructor.cache_size)
 
   reload: (reason) ->
@@ -80,6 +80,7 @@ class Turbolinks.Controller
     @location = Turbolinks.Location.wrap(location)
     @update_history('replace')
 
+  # TODO Js.Component integration: history.replaceState({ turbolinks: { restoration_id: Math.uid() } }, '', path)
   update_history: (method) ->
     state = turbolinks: { @restoration_id }
     history["#{method}State"](state, '', @location.toString())
