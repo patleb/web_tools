@@ -1,3 +1,6 @@
+append :data, [
+  div_('.js_i18n', data: { value: { Current.locale => { flash: { denied: I18n.t('flash.unauthenticated') } } } }),
+]
 extends 'layouts/application' do
   div_ '.card.card-compact', [
     div_('.card-title', area(:title)),
