@@ -173,6 +173,12 @@ ActiveRecord::Base.class_eval do
     uncached{ find_by_sql(query).first }
   end
 
+  def self.reset_sequence
+    connection.exec_query <<-SQL.strip_sql(true, table: table_name, pk: primary_key)
+      SELECT setval(pg_get_serial_sequence('{{ table }}', '{{ pk }}'), (SELECT COALESCE(MAX({{ pk }}), 0) + 1 FROM {{ table }}), FALSE)
+    SQL
+  end
+
   if Rails.env.test?
     def self.now_sql
       connection.quote(connection.type_cast(Time.current.utc))
