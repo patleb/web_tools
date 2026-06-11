@@ -242,8 +242,6 @@ module MixJob
         Thread.pass until @listener.dead? || @listener.asleep?
         @listener.kill
       end
-    rescue Exception => exception
-      Log.rescue(exception)
     end
 
     def inspect
@@ -430,6 +428,8 @@ module MixJob
             end
           end
         end
+      rescue Exception => exception
+        Log.rescue(exception)
       end
     end
   end
