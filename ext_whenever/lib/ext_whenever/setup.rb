@@ -1,8 +1,8 @@
+Setting.load(env: @environment, app: @application)
+
 set :application_variable, "RAILS_APP"
 set :output, "#{Whenever.path}/log/cron.log"
 set :with, ''
-
-Setting.load(env: @environment, app: @application)
 
 rbenv_sudo = <<-SH.squish
   rbenv sudo
