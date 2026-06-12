@@ -212,7 +212,7 @@ module ExtRails
       require 'ext_rails/active_record/tasks/database_tasks/with_single_env'
       require 'ext_rails/active_record/type/json/with_keyword_access'
       require 'ext_rails/active_record/type/encrypted'
-      ::USER_AGENT_PARSER = UserAgentParser::Parser.new
+      ::USER_AGENT_PARSER ||= UserAgentParser::Parser.new
       ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.create_unlogged_tables = Rails.env.test?
     end
 
