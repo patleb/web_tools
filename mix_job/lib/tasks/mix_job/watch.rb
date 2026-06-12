@@ -112,7 +112,7 @@ module MixJob
     end
 
     def restore_signals
-      actions.each{ thread_send :@signals, :execute }
+      actions.each{ thread_send :@signals, :execute } if Rails.env.local?
     end
 
     def restore_requests
@@ -242,6 +242,8 @@ module MixJob
         Thread.pass until @listener.dead? || @listener.asleep?
         @listener.kill
       end
+    rescue Exception => exception
+      Log.rescue(exception)
     end
 
     def inspect
@@ -256,6 +258,7 @@ module MixJob
     # https://stackoverflow.com/questions/1429951/force-flushing-of-output-to-a-file-while-bash-script-is-still-running
     # https://linux.die.net/man/1/stdbuf
     def execute
+      return unless Rails.env.local?
       started_at = Concurrent.monotonic_time
       return unless (file = actions.first)
       return unless (action = file.readlines.first&.strip).present?
