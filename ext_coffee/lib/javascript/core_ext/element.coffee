@@ -88,21 +88,13 @@ HTMLElement.define_methods
       element.setAttribute('data-once', true)
     elements
 
+  prepend_once: (id, node_or_callback) ->
+    if node = set_id(this, id, node_or_callback)
+      @prepend(node)
+
   append_once: (id, node_or_callback) ->
-    if id.id
-      id = id.id
-    else if id.starts_with '#'
-      id = id.lchop()
-    return if @find({ id })
-    node = if node_or_callback.is_a Function
-      node_or_callback(id)
-    else
-      node_or_callback
-    if node.id
-      throw 'invalid node id' if node.id isnt id
-    else
-      node.setAttribute('id', id)
-    @appendChild(node)
+    if node = set_id(this, id, node_or_callback)
+      @append(node)
 
   find: (selector) ->
     if (id = selector.id)
@@ -243,5 +235,21 @@ get_value = (input, was) ->
     cast_value input.get_attr('data-value', was), was
   else
     input.value
+
+set_id = (parent, id, node_or_callback) ->
+  if id.id
+    id = id.id
+  else if id.starts_with '#'
+    id = id.lchop()
+  return if parent.find({ id })
+  node = if node_or_callback.is_a Function
+    node_or_callback(id)
+  else
+    node_or_callback
+  if node.id
+    throw 'invalid node id' if node.id isnt id
+  else
+    node.setAttribute('id', id)
+  node
 
 window.WAS = true
