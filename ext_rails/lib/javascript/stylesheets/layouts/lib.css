@@ -20,6 +20,9 @@ html {
   .alert {
     @apply fixed flex-row top-2.5 max-w-[calc(100vw-2.5rem)] lg:max-w-[calc(100vw-20.5rem)] z-[100];
 
+    span {
+      @apply block;
+    }
     .btn {
       @apply absolute top-1 right-1 mt-0;
     }
