@@ -6,6 +6,6 @@ class Js.UserConcept extends Js.Base
     logged_in: -> @role isnt 'null'
 
   ready: ->
-    if Cookie.get('_user_denied')?.to_b()
+    if i18n_key = Cookie.get('_user_denied')
       Cookie.remove('_user_denied')
-      Flash.notice I18n.t('flash.denied')
+      Flash.alert I18n.t(i18n_key, scope: 'flash', default: 'denied').html_safe(true)

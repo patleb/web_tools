@@ -8,9 +8,9 @@ class window.I18n
     escape = options.delete_('escape') ? true
     locale = options.delete_('locale') ? @locale
     fallback = options.delete_('fallback') ? @fallback
-    key = "#{scope}.#{key}" if scope
-    result = @translations[locale]?.dig_(key)
-    result ?= @translations[fallback]?.dig_(key) unless locale is fallback
+    default_key = options.delete_('default')
+    result = @dig(key, scope, locale, fallback)
+    result ?= @dig(default_key, scope, locale, fallback) if default_key
     if result?.is_a String
       for name, value of options
         result = result.replace("%{#{name}}", value)
@@ -37,6 +37,14 @@ class window.I18n
   @on_ready: (event) ->
     return if event.data.info.once
     I18n.on_load()
+
+  # Private
+
+  @dig: (key, scope, locale, fallback) ->
+    key = "#{scope}.#{key}" if scope
+    result = @translations[locale]?.dig_(key)
+    result ?= @translations[fallback]?.dig_(key) unless locale is fallback
+    result
 
 Rails.document_on 'DOMContentLoaded', I18n.on_load
 Rails.document_on 'turbolinks:load', I18n.on_ready
