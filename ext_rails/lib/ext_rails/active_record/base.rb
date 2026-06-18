@@ -261,6 +261,11 @@ ActiveRecord::Base.class_eval do
     hash.to_hwka
   end
 
+  def new!
+    @previously_new_record = true
+    self
+  end
+
   def destroyed!
     @destroyed = true
     freeze
