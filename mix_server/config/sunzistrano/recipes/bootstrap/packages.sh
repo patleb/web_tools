@@ -52,6 +52,7 @@ fi
 
   patch
   rustc
+  cargo
   libreadline6-dev
   libncurses5-dev
   libgdbm6
