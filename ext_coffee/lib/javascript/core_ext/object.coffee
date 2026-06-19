@@ -56,22 +56,10 @@ Object.define_methods
     @size_() is 0
 
 Object.define_methods
-  __send__: (method, args...) ->
-    if this[method]?.is_a Function
-      this[method](args...)
-    else
-      @method_missing(method, args...)
-
   deconstantize_: ->
     result = Function.deconstantize_(@constructor)
     result = "#{result}::" if result
     result
-
-  instance_exec: (block, args...) ->
-    block.apply(this, args)
-
-  instance_eval: (block) ->
-    block.apply(this)
 
   dup_: ->
     @constructor.dup_(this)
