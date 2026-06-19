@@ -7,7 +7,7 @@ module MixGeo
     GEOLITE2_CSV         = 'geolite2-city-ipv4.csv'
     TMP_GEOLITE2_FOLDER  = Rails.env.test? ? 'tmp/test/geolite2' : 'tmp/geolite2'
     TMP_GEOLITE2_PREFIX  = "#{TMP_GEOLITE2_FOLDER}-ipv4-"
-    GIT_GEOLITE2_CSV_GZ  = "https://raw.githubusercontent.com/sapics/ip-location-db/main/geolite2-city/#{GEOLITE2_CSV}.gz"
+    GIT_GEOLITE2_CSV_GZ  = "https://github.com/sapics/ip-location-db/releases/download/latest/#{GEOLITE2_CSV}.gz"
     GIT_GEOLITE2_VERSION = "https://raw.githubusercontent.com/sapics/ip-location-db/main/geolite2-city/package.json"
 
     def self.args
