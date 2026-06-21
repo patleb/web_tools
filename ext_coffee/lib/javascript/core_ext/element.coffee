@@ -232,7 +232,7 @@ cast_value = (input, value, was) ->
 
 get_value = (input, was) ->
   if input.has_attr 'data-value', was
-    cast_value input.get_attr('data-value', was), was
+    cast_value input, input.get_attr('data-value', was), was
   else
     input.value
 
