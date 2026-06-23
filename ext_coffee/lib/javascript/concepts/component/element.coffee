@@ -1,6 +1,8 @@
 class Js.Component.Element
   @extend WithReaders
 
+  SCOPE = /(?:^|\/)(\w+)$/
+
   @readers
     storage_options: ->
       if @_scope is 'uid'
@@ -52,7 +54,7 @@ class Js.Component.Element
     @_permanent = @_node.hasAttribute('data-turbolinks-permanent')
     @_refresh = @_node.getAttribute('data-refresh')?.to_b() ? @constructor.refresh
     @_index = @_node.getAttribute('data-index')?.to_i() ? @constructor.index ? index
-    @_scope = @_node.getAttribute('data-scope') or @constructor.scope or ''
+    @_scope = @_node.getAttribute('data-scope') ? @constructor.scope ? @element_name.match(SCOPE)[1]
     @_store = !!@constructor.store
     static_data.each_ (name, value) => this[name] = value
     @_watch_scopes = {}
