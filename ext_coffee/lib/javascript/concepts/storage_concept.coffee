@@ -49,6 +49,10 @@ class Js.StorageConcept
     value_was = @get_value(name, { was: true }.merge_ options)
     [value, value_was] if not eql value, value_was
 
+  get_names: ({ permanent = false, scope = '' } = {}) ->
+    @storage(permanent).$("[name^='#{scope}:']").map (input) =>
+      input.name.sub(///^#{scope.safe_regex()}:///, '')
+
   get_value: (name, options = {}) ->
     @get(name, options)[@unscoped name]
 
@@ -66,7 +70,7 @@ class Js.StorageConcept
         [input.name.sub(///^#{scope.safe_regex()}:///, ''), input.get_value({ was })]
     result.reject_(([name, value]) -> value is undefined).to_h()
 
-  set: (inputs, { submitter = null, permanent = false, scope = '', event = true, was = false } = {}) ->
+  set: (inputs, { submitter = null, permanent = false, scope = '', event = true, was = false, sync = false } = {}) ->
     changes = inputs.each_with_object {}, (name, value, memo) =>
       scoped_name = @scoped name, scope
       if input = @storage(permanent).find("[name='#{scoped_name}']")
@@ -80,6 +84,8 @@ class Js.StorageConcept
         set_value(input, value_was, WAS) if was
         @log permanent, scoped_name, value, value_was
     @fire(changes, { submitter, permanent, scope }) if event
+    if submitter and sync
+      changes.each_ (name, [value, _]) -> submitter[name] = value
     changes
 
   delete: (names...) ->
@@ -99,10 +105,10 @@ class Js.StorageConcept
   fire: (changes, { submitter = null, permanent = false, scope = '' } = {}) ->
     @storage(permanent).fire(@CHANGE, { submitter, permanent, scope, changes }) unless changes.empty_()
 
+  # Private
+
   storage: (permanent) ->
     if permanent then @root_permanent else @root
-
-  # Private
 
   log: (permanent, scoped_name, value, value_was) ->
     tag = "[STORAGE][#{if permanent then 'P' else '-'}][#{scoped_name}]"

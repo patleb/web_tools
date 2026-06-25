@@ -185,7 +185,7 @@ class Js.Component.Element
   storage_get: (names...) ->
     return {} unless @_watch
     options = names.extract_options()
-    Js.Storage.get(@storage_names(names)..., @storage_options.merge_ options)
+    Js.Storage.get(@storage_names(names, stored: options.delete_('stored'))..., @storage_options.merge_ options)
 
   storage_set: (inputs, options = {}) ->
     [@_autofocus, @_autofocus_was] = [@_autofocus_was, null] if options.autofocus
@@ -195,8 +195,8 @@ class Js.Component.Element
     Js.Storage.fire(changes, @storage_options.merge_ options)
     changes
 
-  storage_names: (names) ->
-    return @_watch if @_watch and names.empty_()
+  storage_names: (names, { stored = false } = {}) ->
+    return @_watch if @_watch and not stored and names.empty_()
     names
 
   # Private
