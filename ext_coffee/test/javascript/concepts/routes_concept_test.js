@@ -10,7 +10,7 @@ describe('Js.RoutesConcept', () => {
       next: '/page/:next/',
       prev: '/:prev/page/'
     }
-    assert.equal(routes, Routes.paths)
+    assert.equal(routes, Routes.__paths)
   })
 
   test('#path_for', () => {
