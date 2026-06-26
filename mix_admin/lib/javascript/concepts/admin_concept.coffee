@@ -4,7 +4,7 @@ class Js.AdminConcept
     model: -> Rails.find('.js_model')?.data('value')
     scroll_menu: -> Rails.find('.js_scroll_menu')
     scroll_x: -> @model and @bulk_form and @store('scroll_x')?["#{@model}_#{@action}"]
-    bulk_form_scroll_x: -> Rails.$('.js_bulk_form th')
+    bulk_form_scroll_x: -> Rails.$('.js_table_head, .js_bulk_checkboxes')
     bulk_form: -> Rails.find('.js_bulk_form')
     bulk_toggles: -> Rails.$('.js_bulk_toggles')
     bulk_checkboxes: -> Rails.$('.js_bulk_checkboxes')
