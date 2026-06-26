@@ -1,4 +1,4 @@
-if process.env.NODE_ENV is 'production'
+unless Env.local
   window.rescues_caught = []
   window.rescues_ignored = []
   window.addEventListener 'error', (event) ->
