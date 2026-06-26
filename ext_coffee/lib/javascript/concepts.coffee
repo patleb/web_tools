@@ -32,7 +32,7 @@ class Js.Concepts
         concept.ready_once()
         concept.READY_ONCE_IVARS = []
         concept.each_ (key, value) ->
-          unless not_nullifyable(key, value)
+          unless not_nullifyable(concept, key, value)
             concept.READY_ONCE_IVARS.push(key)
       @instances.ready.each_ (concept) ->
         concept.before_ready?()
@@ -115,7 +115,7 @@ class Js.Concepts
   @nullify_on_leave: ->
     @nullify_memoizers()
     @each_ (key, value) =>
-      unless not_nullifyable(key, value) or @READY_ONCE_IVARS?.include(key)
+      unless not_nullifyable(this, key, value) or @READY_ONCE_IVARS?.include(key)
         this[key] = null
 
   @add_element: (name, element_class) =>
@@ -191,5 +191,5 @@ class Js.Concepts
       uniq_methods.push(method)
       definition()
 
-  not_nullifyable = (key, value) ->
-    not value? or value.is_a(Function) or key.start_with('__') or key.match(CONSTANT)
+  not_nullifyable = (context, key, value) ->
+    not context.hasOwnProperty(key) or not value? or value.is_a(Function) or key.start_with('__') or key.match(CONSTANT)
