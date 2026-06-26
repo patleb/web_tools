@@ -7,8 +7,8 @@ class window.Env
   @development: process.env.NODE_ENV is 'development'
 
   @on_load: ->
-    @name = Rails.find('.js_env')?.data('value') ? process.env.NODE_ENV
-    this[@name] = true
+    Env.name = name = Rails.find('.js_env')?.data('value') ? process.env.NODE_ENV
+    Env[name] = true
 
   @on_ready: (event) ->
     return if event.data.info.once
