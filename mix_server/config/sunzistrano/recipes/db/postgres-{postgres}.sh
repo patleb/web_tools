@@ -5,7 +5,6 @@ PG_ENV_FILE=$(pg.env_file)
 sun.install "postgresql-common"
 yes | sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh $CODE
 sun.backup_compare /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
-sun.update
 
 PG_VERSION="$(sun.installed_version postgresql-${postgres})"
 PG_PACKAGES="postgresql-${postgres} postgresql-server-dev-${postgres}"
