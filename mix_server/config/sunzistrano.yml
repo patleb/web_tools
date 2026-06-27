@@ -134,6 +134,7 @@ computer:
     - computer/packages
     - computer/docker
     - computer/cling
+    - computer/seergdb
     - computer/qgis
     - utils/packages
     - utils/htop
