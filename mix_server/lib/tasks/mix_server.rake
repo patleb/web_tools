@@ -82,7 +82,7 @@ namespace :server do
   task :download_logs, [:env, :app, :dump] => :environment do |t, args|
     with_stage(args) do |env|
       dump = args[:dump].presence || '/opt/storage/tmp'
-      sh "bin/sun firewall #{env} --disable"
+      sh "bin/sun firewall #{env} --disable-limit"
       sh "bin/sun rake #{env} 'db:pg:dump -- --name=logs --base-dir=#{dump} --includes=lib_servers,lib_log*' --sudo"
       sh "bin/sun download #{env} #{dump}/logs.pg.gz --dir=tmp/log/dump"
       sh "bin/sun download #{env} '/var/log/osquery/osqueryd.results.log*' --dir=tmp/log/osquery"
@@ -100,7 +100,7 @@ namespace :server do
   task :download_crash_logs, [:env, :app, :log_id] => :environment do |t, args|
     with_stage(args) do |env|
       log_id = args[:log_id].presence || raise('argument [:log_id] must be specified')
-      sh "bin/sun firewall #{env} --disable"
+      sh "bin/sun firewall #{env} --disable-limit"
       %w( backtrace backtrace_oxt controller_configs controller_states fds main mbufs pool ulimits ).each do |name|
         sh "bin/sun download #{env} '/var/tmp/passenger-crash-log.#{log_id}/#{name}.log' --dir=tmp/log/passenger"
       end

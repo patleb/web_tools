@@ -1,10 +1,10 @@
 module Sunzistrano
   Cli.class_eval do
-    desc 'firewall [STAGE] [--disable]', 'Enable/Disable SSH firewall limit'
-    method_options disable: false
+    desc 'firewall [STAGE] [--disable-limit]', 'Enable/Disable SSH firewall limit'
+    method_options disable_limit: false
     def firewall(stage)
       with_context(stage) do
-        if sun.disable
+        if sun.disable_limit
           run_command :disable_firewall_cmd, sun.server_host
         else
           run_command :enable_firewall_cmd, sun.server_host
