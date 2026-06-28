@@ -4,8 +4,10 @@ module Sunzistrano
   COMPUTER_ACTIONS = %w(compile install bash backup restore)
 
   Cli.class_eval do
-    desc 'computer [ACTION] [--recipe] [--force] [--task] [--sudo] [--no-verbose]', "#{COMPUTER_ACTIONS.map(&:upcase_first).join('/')} for Computer"
-    method_options recipe: :string, force: false, task: :string, sudo: false, verbose: true
+    actions = COMPUTER_ACTIONS.map(&:upcase_first).join('/')
+
+    desc 'computer [ACTION] [--server] [--recipe] [--force] [--task] [--sudo] [--no-verbose]', "#{actions} for Computer"
+    method_options server: false, recipe: :string, force: false, task: :string, sudo: false, verbose: true
     def computer(action) = do_computer(action)
 
     no_tasks do
@@ -55,7 +57,8 @@ module Sunzistrano
       end
 
       def as_computer(&block)
-        with_context 'computer', :computer, &block
+        stage = options.server ? 'computer_server' : 'computer'
+        with_context stage, :computer, &block
       end
     end
   end
