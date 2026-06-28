@@ -143,3 +143,9 @@ computer:
     - lang/ruby-{ruby_version}
     - computer/vscodium
     # - computer/akvcam-{akvcam_upgrade}
+
+computer_server:
+  recipes:
+    - bootstrap/ssh/server
+    - bootstrap/ssh
+    - addons/ssh/drive
