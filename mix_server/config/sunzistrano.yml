@@ -133,7 +133,7 @@ computer:
     - computer/xtradeb
     - computer/packages
     - computer/docker
-    - computer/cling
+    # - computer/cling --> TODO https://root.cern/install/#download-a-pre-compiled-binary-distribution
     - computer/seergdb
     - computer/qgis
     - utils/packages

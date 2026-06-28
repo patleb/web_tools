@@ -20,7 +20,7 @@ namespace! :rice do
   desc 'start cling console'
   task :cling => :environment do
     exec <<-CMD.squish
-      root --cling -l -b -q cling -I#{Rice.dst_path} -l#{Rice.gems_config[:cling].join(' -l')} --nologo
+      cling -I#{Rice.dst_path} -l#{Rice.gems_config[:cling].join(' -l')} --nologo
     CMD
   end
 
