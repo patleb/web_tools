@@ -151,4 +151,5 @@ computer_server:
     - bootstrap/firewall
     - bootstrap/firewall_deny_mail
     - computer/authorized_keys
+    - computer/static_ip
     - addons/ssh/drive
