@@ -148,5 +148,7 @@ computer_server:
   recipes:
     - bootstrap/ssh/server
     - bootstrap/ssh
-    - addons/ssh/drive
+    - bootstrap/firewall
+    - bootstrap/firewall_deny_mail
     - computer/authorized_keys
+    - addons/ssh/drive
