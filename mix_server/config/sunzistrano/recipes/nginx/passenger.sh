@@ -7,6 +7,7 @@ sh -c "echo deb https://oss-binaries.phusionpassenger.com/apt/passenger $CODE ma
 sun.update
 sun.install "libnginx-mod-http-passenger"
 sun.install "nginx-extras"
+sun.lock "$(dpkg-query -W -f='${Package}\n' 'nginx*' 'libnginx-mod-*' 2> /dev/null | grep -E -v '^nginx-abi')"
 
 sun.backup_compare "/etc/nginx/mime.types"
 sun.backup_compare "/etc/nginx/nginx.conf"
