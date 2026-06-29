@@ -25,7 +25,7 @@ module Sh::Network
   end
 
   def private_ip
-    "hostname -I | awk '{print $NF; exit}'"
+    "ip -4 addr show $(#{default_interface}) | awk 'NR==2 {print $2}' | cut -d'/' -f1"
   end
 
   def mac_address
