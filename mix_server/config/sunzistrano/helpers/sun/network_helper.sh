@@ -32,7 +32,7 @@ sun.int_to_ip() {
   echo $((${1}%256))
 }
 
-sun.default_interface() {
+sun.default_interface() { # PUBLIC
   <%= Sh.default_interface %>
 }
 
