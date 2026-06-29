@@ -1,7 +1,9 @@
 <% %W(
+  arp-scan
   iftop
   iotop
   nethogs
+  net-tools
   nmap
   tree
   ncdu
