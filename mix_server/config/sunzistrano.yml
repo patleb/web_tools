@@ -149,3 +149,4 @@ computer_server:
     - bootstrap/ssh/server
     - bootstrap/ssh
     - addons/ssh/drive
+    - computer/authorized_keys
