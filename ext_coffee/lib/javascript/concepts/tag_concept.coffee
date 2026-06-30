@@ -10,7 +10,7 @@ class Js.TagConcept
     'datalist', 'dd', 'div', 'dl', 'dt'
     'fieldset', 'form'
     'i', 'input'
-    'label', 'li'
+    'label', 'legend', 'li'
     'ol', 'optgroup', 'option', 'output'
     'p',
     'select', 'span', 'sub', 'sup'
